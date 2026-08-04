@@ -2,7 +2,28 @@ import { useState, useEffect, useRef } from 'react';
 import { Sparkles, AlertTriangle, X } from 'lucide-react';
 import Sidebar from './components/Sidebar';
 import LandingPage from './components/LandingPage';
-import ExecutiveLandingPage from './components/ExecutiveLandingPage';
+import SuiteHomePage from './components/SuiteHomePage';
+import { ASSESSMENTS } from './data/assessmentCatalog';
+
+// Every framework key that has a generic introduction page (AssessmentLanding)
+// -- i.e. everything in the catalog except option10, which ships its own
+// bespoke landing (PremiumLandingPageV10) and is routed separately below.
+const INTRO_PAGE_FRAMEWORKS = Object.keys(ASSESSMENTS).filter((k) => k !== 'option10');
+
+// Shared by Sidebar, Navbar, and SuiteHomePage -- previously this exact
+// if/else was duplicated three times and had drifted (it didn't include
+// option2/3/4). One function now, called from all three.
+function routeToFramework(fw, { setActiveFramework, setActiveSessionId, setViewMode }) {
+  setActiveFramework(fw);
+  setActiveSessionId(null);
+  if (INTRO_PAGE_FRAMEWORKS.includes(fw) || fw === 'option10') {
+    setViewMode('landing');
+    window.location.hash = `#landing-${fw}`;
+  } else {
+    setViewMode('home');
+    window.location.hash = '#home';
+  }
+}
 import PermissionsPortal from './components/PermissionsPortal';
 import ChatHistory from './components/ChatHistory';
 import DiagnosticConsole from './components/DiagnosticConsole';
@@ -1594,17 +1615,7 @@ export default function App() {
         onOpenSettings={() => setIsSettingsOpen(true)}
         onOpenLogs={() => setViewMode('logs')}
         activeFramework={activeFramework}
-        onFrameworkChange={(fw) => {
-          setActiveFramework(fw);
-          setActiveSessionId(null);
-          if (['option5', 'option6', 'option7', 'option8', 'option9', 'option10', 'option11', 'option12', 'intake'].includes(fw)) {
-            setViewMode('landing');
-            window.location.hash = `#landing-${fw}`;
-          } else {
-            setViewMode('home');
-            window.location.hash = '#home';
-          }
-        }}
+        onFrameworkChange={(fw) => routeToFramework(fw, { setActiveFramework, setActiveSessionId, setViewMode })}
       />
 
       <div className="app-main-viewport">
@@ -1616,17 +1627,7 @@ export default function App() {
           gcpToken={gcpToken}
           onSaveSettings={handleSaveSettings}
           activeFramework={activeFramework}
-          onFrameworkChange={(fw) => {
-            setActiveFramework(fw);
-            setActiveSessionId(null);
-            if (['option5', 'option6', 'option7', 'option8', 'option9', 'option10', 'option11', 'option12', 'intake'].includes(fw)) {
-              setViewMode('landing');
-              window.location.hash = `#landing-${fw}`;
-            } else {
-              setViewMode('home');
-              window.location.hash = '#home';
-            }
-          }}
+          onFrameworkChange={(fw) => routeToFramework(fw, { setActiveFramework, setActiveSessionId, setViewMode })}
           globalTheme={globalTheme}
           onThemeChange={setGlobalTheme}
           onOpenSavedLibrary={() => {
@@ -1638,21 +1639,21 @@ export default function App() {
 
         <main className="main-content" style={activeFramework === 'option10' ? { padding: 0, margin: 0, maxWidth: '100%' } : undefined}>
           {/* ---------------------------------------------------------------
-              Routing note (consolidation pass):
-              The canonical, user-facing assessment workflow is
-              `option12` (PremiumScopingAssessorV12), chosen because it is
-              the actively-developed version as of this pass -- the 7 most
-              recent commits in the repo's history all touch V12, while V10
-              (52 commits) stopped changing on 2026-06-12 and V11/V9/V8/V7/
-              V6/V5 are earlier iterations that also stopped changing.
+              Routing note (grouped-navigation pass):
+              Every assessment is grouped and linked again (see
+              src/data/assessmentCatalog.js for the grouping + per-assessment
+              content, and src/components/ui/README.md for history -- an
+              earlier pass had collapsed the sidebar down to one canonical
+              entry and archived the rest; this pass reverses that in favor
+              of organizing all of them well instead of hiding most of them).
 
-              option2/3/4/5/6/7/8/9/11 and EnterpriseReadinessV10 are kept
-              in the codebase and remain reachable via direct hash URL
-              (e.g. #agentic-discovery for option7) for internal reference,
-              but are intentionally NOT linked from Sidebar.jsx anymore.
-              Do not add new sidebar entries for them -- if one turns out to
-              have a feature worth keeping, port that feature into option12
-              and then this comment can note the removal.
+              Every framework in INTRO_PAGE_FRAMEWORKS routes through
+              AssessmentLanding (the per-assessment introduction page) before
+              landing on the actual tool -- except option10, which has its
+              own bespoke landing (PremiumLandingPageV10) and is handled
+              separately just above. EnterpriseReadinessV10.jsx remains
+              unused/unwired (dead file, confirmed via grep) -- not part of
+              this pass, still a good candidate for deletion later.
           --------------------------------------------------------------- */}
           {viewMode === 'permissions' ? (
             <PermissionsPortal />
@@ -1695,9 +1696,14 @@ export default function App() {
                 }
               }}
             />
-          ) : (viewMode === 'landing' && ['option5', 'option6', 'option7', 'option8', 'option9', 'option11', 'option12', 'intake'].includes(activeFramework)) ? (
+          ) : (viewMode === 'landing' && INTRO_PAGE_FRAMEWORKS.includes(activeFramework)) ? (
             <AssessmentLanding
               framework={activeFramework}
+              onBack={() => {
+                setActiveFramework('option1');
+                setViewMode('home');
+                window.location.hash = '#home';
+              }}
               onStart={() => {
                 if (activeFramework === 'intake') {
                   handleNewIntake();
@@ -1711,6 +1717,15 @@ export default function App() {
                 } else if (activeFramework === 'option9') {
                   setViewMode('home');
                   window.location.hash = '#premium-assessor?action=start';
+                } else if (activeFramework === 'option2') {
+                  setViewMode('home');
+                  window.location.hash = '#quick-check?action=start';
+                } else if (activeFramework === 'option3') {
+                  setViewMode('home');
+                  window.location.hash = '#engagement-model?action=start';
+                } else if (activeFramework === 'option4') {
+                  setViewMode('home');
+                  window.location.hash = '#architecture-canvas?action=start';
                 } else if (activeFramework === 'option11') {
                   window.location.hash = `#agentic-maturity-v11?id=assessment_${Date.now()}&action=start`;
                 } else if (activeFramework === 'option12') {
@@ -1733,6 +1748,11 @@ export default function App() {
                   window.location.hash = '#agentic-maturity-v11?id=demo_merck_preset&preset=merck_preset';
                 } else if (activeFramework === 'option12') {
                   window.location.hash = '#agentic-maturity-v12?id=demo_merck_preset&preset=merck_preset';
+                } else if (['option2', 'option3', 'option4'].includes(activeFramework)) {
+                  // These three tools don't have a distinct sample-prefill mode --
+                  // "try sample" just launches the tool itself.
+                  setViewMode('home');
+                  window.location.hash = `#${activeFramework}?action=start`;
                 } else {
                   setViewMode('report');
                   window.location.hash = '#maturity-report';
@@ -1814,9 +1834,9 @@ export default function App() {
               onGenerateReport={handleGenerateV7Report}
             />
           ) : viewMode === 'home' ? (
-            <ExecutiveLandingPage 
-              sessions={sessions} 
-              onStartDiscovery={() => setViewMode('form')} 
+            <SuiteHomePage
+              sessions={sessions}
+              onSelectAssessment={(fw) => routeToFramework(fw, { setActiveFramework, setActiveSessionId, setViewMode })}
               onOpenSessions={() => setIsSessionsOpen(true)}
               onViewSummary={() => setViewMode('summary')}
             />

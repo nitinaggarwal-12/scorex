@@ -1,11 +1,7 @@
+import * as Icons from 'lucide-react';
 import { FileText, LayoutDashboard, FolderHeart, Settings2, Sparkles, Home, Users, History, Activity } from 'lucide-react';
 import SectionHeader from './ui/SectionHeader';
-
-// Canonical assessment workflow. Everything else (the earlier v5-v9 and
-// v11 iterations) is archived -- not linked from this nav -- but the
-// routes still work if navigated to directly. See
-// src/components/ui/README.md for the full archive list and rationale.
-const CANONICAL_FRAMEWORK = 'option12';
+import { GROUPS, assessmentsByGroup } from '../data/assessmentCatalog';
 
 export default function Sidebar({
   viewMode,
@@ -21,8 +17,6 @@ export default function Sidebar({
   activeFramework = 'option1',
   onFrameworkChange = () => {},
 }) {
-  const isCanonicalActive = activeFramework === CANONICAL_FRAMEWORK;
-
   return (
     <aside
       className="sidebar"
@@ -77,26 +71,33 @@ export default function Sidebar({
         </button>
       </nav>
 
-      {/* Category: Assessment -- single canonical workflow.
-          Prior versions (v5-v9, v11) are intentionally not linked here;
-          see src/components/ui/README.md. */}
-      <nav aria-label="Assessment" className="no-print" style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
-        <SectionHeader>Assessment</SectionHeader>
-
-        <button
-          onClick={() => onFrameworkChange(CANONICAL_FRAMEWORK)}
-          className={`sidebar-btn ${isCanonicalActive ? 'active' : ''}`}
-          aria-current={isCanonicalActive ? 'page' : undefined}
-          style={
-            isCanonicalActive
-              ? { background: 'linear-gradient(90deg, rgba(59,130,246,0.22), rgba(6,182,212,0.22))', borderLeft: '3px solid #3b82f6' }
-              : undefined
-          }
-        >
-          <Sparkles size={17} style={{ color: '#3b82f6' }} aria-hidden="true" />
-          <span style={{ fontWeight: isCanonicalActive ? 850 : 700 }}>Use Case Readiness Assessment</span>
-        </button>
-      </nav>
+      {/* Category: Assessments, grouped logically (see
+          src/data/assessmentCatalog.js for the grouping and content
+          shared with each assessment's introduction page). */}
+      {GROUPS.map((group) => {
+        const items = assessmentsByGroup(group.id);
+        if (!items.length) return null;
+        return (
+          <nav aria-label={group.name} className="no-print" style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }} key={group.id}>
+            <SectionHeader>{group.name}</SectionHeader>
+            {items.map((a) => {
+              const Icon = Icons[a.icon] || Sparkles;
+              const isActive = activeFramework === a.id;
+              return (
+                <button
+                  key={a.id}
+                  onClick={() => onFrameworkChange(a.id)}
+                  className={`sidebar-btn ${isActive ? 'active' : ''}`}
+                  aria-current={isActive ? 'page' : undefined}
+                >
+                  <Icon size={16} style={{ color: a.accent }} aria-hidden="true" />
+                  <span style={{ fontWeight: isActive ? 800 : 600, fontSize: '0.85rem' }}>{a.name}</span>
+                </button>
+              );
+            })}
+          </nav>
+        );
+      })}
 
       {/* Category: Governance & Collaboration */}
       <nav aria-label="Governance and collaboration" style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>

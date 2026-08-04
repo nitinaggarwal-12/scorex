@@ -1,253 +1,379 @@
 import { useState } from 'react';
-import { Play, Sparkles, FolderClock, BookOpen, Target, Clock, Award, ShieldCheck, ArrowRight } from 'lucide-react';
+import * as Icons from 'lucide-react';
+import { ArrowRight, FolderClock, ArrowLeft, Wand2 } from 'lucide-react';
+import { ASSESSMENTS, GROUPS } from '../data/assessmentCatalog';
+import Button from './ui/Button';
+import Card from './ui/Card';
 
-export default function AssessmentLanding({
-  framework = 'option5',
-  onStart,
-  onTrySample,
-  onOpenSaved,
-  savedCount = 0
-}) {
-  const contentMap = {
-    option5: {
-      title: "ML Capability & MLOps Maturity Assessor (v5)",
-      subtitle: "Evaluate your enterprise machine learning engineering depth, continuous evaluation rigor, and deployment readiness.",
-      whatIs: "A consultative diagnostic framework measuring organizational capability maturity across 25 granular technical and strategic dimensions. Grounded in Google DeepMind and Cloud MLOps best practices.",
-      targetUser: "Chief Technology Officers, Lead Cloud Architects, Head of MLOps, and Enterprise AI Platform Engineering Leads.",
-      whenUsed: "During initial customer discovery, platform modernization planning, or before migrating non-standard legacy ML pipelines to managed GCP cloud infrastructure.",
-      benefits: "Identifies exact technical bottlenecks, establishes clear labor hours reduction benchmarks, and provides actionable remediation steps to achieve Level-5 autonomous AI maturity.",
-      posture: "Strengthens enterprise compliance by auditing model weight versioning, continuous evaluation regression test coverage, and automated deployment pipelines."
-    },
-    option6: {
-      title: "Financial ROI & Unit Economics Scoping Assessor (v6)",
-      subtitle: "Quantify hard commercial revenue generation, token compute TCO, and enterprise payback runways.",
-      whatIs: "An interactive unit-economics and financial modeling closing cockpit. Replaces subjective capability scores with hard empirical financial telemetry and volumetric scaling curves.",
-      targetUser: "Chief Financial Officers, Commercial P&L Owners, C-Suite Executive Sponsors, and Cloud Procurement Evaluators.",
-      whenUsed: "When presenting hard financial justification to corporate investment committees or securing capital expenditure runway for multimodal AI scaling.",
-      benefits: "Demonstrates exact payback milestones, models 50%+ compute savings via Multimodal Context Caching, and provides rigorous defense against budget objections.",
-      posture: "Mitigates financial risk exposure by modeling token consumption boundaries, caching hit ratios, and hard infrastructure licensing costs."
-    },
-    option7: {
-      title: "Agentic AI Discovery & Introspection Scanner (v7)",
-      subtitle: "Autonomous code porting, database catalog indexing, and agentless OpenAPI spec validation.",
-      whatIs: "A state-of-the-art agentic diagnostic engine that parses external SQL DDLs, Python orchestration scripts, and OpenAPI Swagger specs to assess automated migration compatibility.",
-      targetUser: "Lead Migration Engineers, Database Administrators, Enterprise Integration Architects, and AI Field Development Engineers (FDEs).",
-      whenUsed: "Before executing massive code refactoring, translating legacy Teradata/Oracle SQL queries to BigQuery, or porting monolithic Langchain wrappers to the native Gemini SDK.",
-      benefits: "Cuts manual code translation time by 80%, generates immediate prompt-compatibility diffs, and establishes automated zero-ETL data tunneling.",
-      posture: "Enhances application security by verifying immutable audit trailing across prompt executions and ensuring zero un-sanitized token persistence."
-    },
-    option8: {
-      title: "Enterprise Feasibility & Multi-Cloud Assessment (v8)",
-      subtitle: "Validate production feasibility across Strategic Alignment, Data Lakes, Latency SLAs, Security, and TCO.",
-      whatIs: "A holistic 5-Pillar executive evaluation suite designed to validate complex multi-cloud generative AI workloads for production readiness.",
-      targetUser: "Chief Information Security Officers (CISOs), Enterprise Infosec Evaluators, Vice Presidents of Engineering, and Google Cloud Field SA Partners.",
-      whenUsed: "As the ultimate gatekeeper prior to deploying regulated enterprise AI applications into sovereign healthcare and biopharma production perimeters.",
-      benefits: "Delivers a fully normalized executive fit score (0-100), populates automated GxP audit blocks, and generates a concrete 3-week joint delivery playbook.",
-      posture: "Enforces zero regulatory compromise through automated checks for inline Cloud DLP token masking, VPC Service Controls perimeters, and Cloud KMS CMEK key rotation."
-    },
-    option9: {
-      title: "Premium Executive Closing Cockpit (v9)",
-      subtitle: "The ultimate 5-in-1 executive boardroom closing dashboard combining high-fidelity graphics with rigorous multi-cloud rigor.",
-      whatIs: "An ultra-premium executive closing dossier that synthesizes real-time Vertex AI streaming analytics, interactive component dials, and two-way offline spreadsheet synchronization.",
-      targetUser: "C-Suite Board Members, Executive Leadership Teams, Managing Directors, and Strategic Google Account Executives.",
-      whenUsed: "During high-stakes boardroom executive briefings, biopharma customer intake presentations, and multi-million dollar platform vendor selections.",
-      benefits: "Wows executive stakeholders with stunning visual glassmorphism design, ensures seamless two-way offline Excel interoperability, and closes enterprise deals with undeniable clarity.",
-      posture: "Elevates corporate infosec posture by embedding verifiable proof of FDA 21 CFR Part 11 lineage logging, sovereign EU regional isolation, and hardware key access justifications."
-    },
-    intake: {
-      title: "Enterprise AI Discovery & Scoping Intake",
-      subtitle: "Capture customer requirements, current data stacks, strategic sponsorship, and timeline urgency.",
-      whatIs: "A structured discovery questionnaire designed to intake enterprise generative AI opportunities, audit technical prerequisites, and establish initial delivery scoping.",
-      targetUser: "Customer Engineers, Solution Architects, Field AI Consultants, and Lead Discovery Managers.",
-      whenUsed: "During the first discovery meeting with new prospective customers or when initiating scoping for a newly identified generative AI business opportunity.",
-      benefits: "Standardizes customer qualification, provides architectural grounding context, and automatically feeds down-stream multi-agent scoring evaluations.",
-      posture: "Verifies compliance perimeters early by logging HIPAA/GDPR constraints, current cloud sovereignty needs, and required CMEK encryption boundaries."
-    },
-    option11: {
-      title: "Agentic AI & Multi-Agent Maturity Assessor (v11)",
-      subtitle: "Measure multi-agent orchestration reliability, planning reasoning loops, and state machine persistence.",
-      whatIs: "A comprehensive technical diagnostic assessing agentic capabilities, loop safety, back-off recoverability, and multi-agent teamwork patterns. Grounded in advanced cognitive reasoning architectures.",
-      targetUser: "Chief AI Officers, Principal Agentic Architects, Lead Systems Integrators, and Cognitive Software Engineers.",
-      whenUsed: "Prior to launching production-grade autonomous agent clusters, multi-agent orchestrations, or complex stateful LangGraph/Semantic Kernel reasoning loops.",
-      benefits: "Identifies loop starvation risks, optimizes token consumption per agent execution, and establishes robust guardrails for agentic self-repair and tool execution.",
-      posture: "Strengthens autonomous compliance by validating tool-use permissions, sandboxing agent executions, and enforcing strict human-in-the-loop (HITL) overrides."
-    },
-    option12: {
-      title: "Enterprise Readiness & GxP Compliance Scoping Assessor (v12)",
-      subtitle: "Audit biopharma enterprise readiness, FDA 21 CFR Part 11 validation, and sovereign network isolation.",
-      whatIs: "The ultimate enterprise readiness scoping suite built for highly regulated perimeters. Evaluates zero-trust data ingestion pipelines, cryptographically signed audit ledgers, and secure Vertex AI sovereign environments.",
-      targetUser: "Vice Presidents of Clinical Quality, Lead Regulatory Officers, Cloud Security Directors, and Merck-Novartis Engagement Partners.",
-      whenUsed: "Prior to executing GxP compliance reviews, submitting regulatory dossiers, or launching validated clinical co-pilots in sovereign enterprise zones.",
-      benefits: "Guarantees 100% complete audit attestation, eliminates manual compliance verification overhead by 90%, and provides a clear 4-week validation roadmap.",
-      posture: "Secures regulated pipelines through immutable audit logs, strict role-based access control (RBAC), and hardware key cryptographic signing."
-    }
+/**
+ * Assessment introduction page.
+ *
+ * One component, five visual templates ("variants") selected per
+ * assessment in src/data/assessmentCatalog.js -- so assessments in the
+ * same functional group don't render identically, without hand-building
+ * 11 fully bespoke one-off page designs. See that file's ASSESSMENTS
+ * object for which assessment uses which variant, and why.
+ *
+ * variant: 'story' | 'blueprint' | 'dossier' | 'editorial' | 'canvas'
+ */
+export default function AssessmentLanding({ framework, onStart, onTrySample, onBack, onOpenSaved, savedCount = 0 }) {
+  const meta = ASSESSMENTS[framework];
 
-  };
+  if (!meta) {
+    return (
+      <Card padding="lg" style={{ maxWidth: '640px', margin: '3rem auto', textAlign: 'center' }}>
+        <p style={{ color: 'var(--text-secondary)' }}>Unknown assessment: {framework}</p>
+      </Card>
+    );
+  }
 
-  const meta = contentMap[framework] || contentMap.option5;
+  const group = GROUPS.find((g) => g.id === meta.group);
+  const Icon = Icons[meta.icon] || Icons.Sparkles;
+
+  const commonHeaderProps = { meta, group, Icon, onStart, onTrySample, onBack, onOpenSaved, savedCount };
+
+  switch (meta.variant) {
+    case 'blueprint':
+      return <BlueprintVariant {...commonHeaderProps} />;
+    case 'dossier':
+      return <DossierVariant {...commonHeaderProps} />;
+    case 'editorial':
+      return <EditorialVariant {...commonHeaderProps} />;
+    case 'canvas':
+      return <CanvasVariant {...commonHeaderProps} />;
+    case 'story':
+    default:
+      return <StoryVariant {...commonHeaderProps} />;
+  }
+}
+
+/* -------------------------------------------------------------------- */
+/* Shared: differentiator callout + CTA row, used by every variant so   */
+/* the "how this differs" answer and the launch action are consistent   */
+/* regardless of which visual template wraps them.                      */
+/* -------------------------------------------------------------------- */
+function LaunchRow({ meta, onStart, onTrySample, onOpenSaved, savedCount, style }) {
+  return (
+    <div className="intro-launch-row" style={style}>
+      <Button variant="primary" size="lg" onClick={onStart}>
+        <span>Start {meta.name}</span>
+        <ArrowRight size={17} />
+      </Button>
+      {onTrySample && (
+        <Button variant="secondary" size="lg" onClick={onTrySample}>
+          <Wand2 size={16} />
+          <span>Try with sample data</span>
+        </Button>
+      )}
+      {onOpenSaved && (
+        <Button variant="secondary" size="lg" onClick={onOpenSaved}>
+          <FolderClock size={16} />
+          <span>Saved sessions ({savedCount})</span>
+        </Button>
+      )}
+    </div>
+  );
+}
+
+function BackLink({ onBack }) {
+  if (!onBack) return null;
+  return (
+    <button type="button" onClick={onBack} className="intro-back-link">
+      <ArrowLeft size={14} /> All assessments
+    </button>
+  );
+}
+
+/* ======================================================================
+   STORY variant -- vertical narrative timeline.
+   Discovery Intake, Feasibility Assessor.
+   ====================================================================== */
+function StoryVariant({ meta, group, Icon, onStart, onTrySample, onBack, onOpenSaved, savedCount }) {
+  const steps = [
+    { label: 'What it is', body: meta.what },
+    { label: 'Why it exists', body: meta.why },
+    { label: 'Where it fits', body: meta.where },
+    { label: 'How it works', body: meta.how },
+  ];
+  return (
+    <div className="intro-page intro-story">
+      <BackLink onBack={onBack} />
+      <div className="intro-story__hero">
+        <span className="intro-eyebrow" style={{ color: meta.accent }}>{group?.name}</span>
+        <h1 className="intro-story__title">
+          <Icon size={30} style={{ color: meta.accent }} />
+          {meta.name}
+        </h1>
+        <p className="intro-story__tagline">{meta.tagline}</p>
+      </div>
+
+      <div className="intro-story__timeline">
+        {steps.map((s, i) => (
+          <div className="intro-story__step" key={s.label}>
+            <div className="intro-story__marker" style={{ borderColor: meta.accent }}>
+              <span style={{ color: meta.accent }}>{i + 1}</span>
+            </div>
+            <div className="intro-story__step-body">
+              <h3>{s.label}</h3>
+              <p>{s.body}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="intro-story__value-pair">
+        <Card padding="lg">
+          <h4>Value to the customer</h4>
+          <p>{meta.valueCustomer}</p>
+        </Card>
+        <Card padding="lg">
+          <h4>Value to you (the vendor)</h4>
+          <p>{meta.valueVendor}</p>
+        </Card>
+      </div>
+
+      <Card padding="lg" className="intro-differentiator" style={{ borderColor: meta.accent }}>
+        <span className="intro-eyebrow" style={{ color: meta.accent }}>How this differs from the other assessments</span>
+        <p>{meta.differentiator}</p>
+      </Card>
+
+      <LaunchRow meta={meta} onStart={onStart} onTrySample={onTrySample} onOpenSaved={onOpenSaved} savedCount={savedCount} />
+    </div>
+  );
+}
+
+/* ======================================================================
+   BLUEPRINT variant -- technical spec-sheet, grid background, monospace
+   labels, numbered "how" steps.
+   ML Maturity, Agentic AI Discovery, Engagement & Roadmap Model.
+   ====================================================================== */
+function BlueprintVariant({ meta, group, Icon, onStart, onTrySample, onBack, onOpenSaved, savedCount }) {
+  const howSteps = meta.how.split(/(?<=[.;])\s+/).filter(Boolean);
+  return (
+    <div className="intro-page intro-blueprint">
+      <BackLink onBack={onBack} />
+      <div className="intro-blueprint__frame">
+        <div className="intro-blueprint__corner intro-blueprint__corner--tl" />
+        <div className="intro-blueprint__corner intro-blueprint__corner--tr" />
+        <div className="intro-blueprint__corner intro-blueprint__corner--bl" />
+        <div className="intro-blueprint__corner intro-blueprint__corner--br" />
+
+        <div className="intro-blueprint__header">
+          <span className="intro-blueprint__tag" style={{ borderColor: meta.accent, color: meta.accent }}>
+            {group?.name?.toUpperCase()}
+          </span>
+          <h1 className="intro-blueprint__title">
+            <Icon size={26} style={{ color: meta.accent }} />
+            {meta.name}
+          </h1>
+          <p className="intro-blueprint__tagline">{meta.tagline}</p>
+        </div>
+
+        <div className="intro-blueprint__specs">
+          <div className="intro-blueprint__spec">
+            <span className="intro-blueprint__spec-label">WHAT</span>
+            <p>{meta.what}</p>
+          </div>
+          <div className="intro-blueprint__spec">
+            <span className="intro-blueprint__spec-label">WHY</span>
+            <p>{meta.why}</p>
+          </div>
+          <div className="intro-blueprint__spec">
+            <span className="intro-blueprint__spec-label">WHERE</span>
+            <p>{meta.where}</p>
+          </div>
+        </div>
+
+        <div className="intro-blueprint__how">
+          <span className="intro-blueprint__spec-label">HOW // EXECUTION STEPS</span>
+          <ol>
+            {howSteps.map((step, i) => (
+              <li key={i}>{step}</li>
+            ))}
+          </ol>
+        </div>
+
+        <div className="intro-blueprint__values">
+          <div>
+            <span className="intro-blueprint__spec-label">VALUE :: CUSTOMER</span>
+            <p>{meta.valueCustomer}</p>
+          </div>
+          <div>
+            <span className="intro-blueprint__spec-label">VALUE :: VENDOR</span>
+            <p>{meta.valueVendor}</p>
+          </div>
+        </div>
+
+        <div className="intro-blueprint__diff" style={{ borderColor: meta.accent }}>
+          <span className="intro-blueprint__spec-label" style={{ color: meta.accent }}>DIFFERENTIATOR</span>
+          <p>{meta.differentiator}</p>
+        </div>
+
+        <LaunchRow meta={meta} onStart={onStart} onTrySample={onTrySample} onOpenSaved={onOpenSaved} savedCount={savedCount} style={{ marginTop: '1.5rem' }} />
+      </div>
+    </div>
+  );
+}
+
+/* ======================================================================
+   DOSSIER variant -- executive briefing with tabbed sections.
+   Quick Use Case Check, Enterprise Readiness Assessor.
+   ====================================================================== */
+function DossierVariant({ meta, group, Icon, onStart, onTrySample, onBack, onOpenSaved, savedCount }) {
+  const tabs = [
+    { key: 'what', label: 'What', body: meta.what },
+    { key: 'why', label: 'Why', body: meta.why },
+    { key: 'where', label: 'Where', body: meta.where },
+    { key: 'how', label: 'How', body: meta.how },
+    { key: 'value', label: 'Value', body: `${meta.valueCustomer}\n\n${meta.valueVendor}` },
+  ];
+  const [activeTab, setActiveTab] = useState('what');
+  const active = tabs.find((t) => t.key === activeTab);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', padding: '1rem', maxWidth: '1280px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
-      
-      {/* Premium Header Action Suite */}
-      <div 
-        className="card no-print" 
-        style={{ 
-          background: 'linear-gradient(135deg, rgba(26, 115, 232, 0.08) 0%, rgba(168, 85, 247, 0.08) 100%)', 
-          border: '1px solid var(--border-color)', 
-          borderRadius: '20px', 
-          padding: '1.75rem 2rem', 
-          display: 'flex', 
-          flexDirection: 'column', 
-          gap: '1.5rem' 
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.5rem' }}>
-              <span className="badge badge-purple" style={{ textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 800 }}>
-                {framework.toUpperCase()} Portal Landing
-              </span>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Autonomous Enterprise Standard</span>
-            </div>
-            <h1 style={{ fontSize: '1.85rem', fontWeight: 850, color: 'var(--text-primary)', margin: 0 }}>
-              {meta.title}
-            </h1>
-            <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', marginTop: '0.45rem', maxWidth: '800px' }}>
-              {meta.subtitle}
-            </p>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-            <button 
-              onClick={onStart}
-              className="btn btn-primary"
-              style={{ background: 'linear-gradient(90deg, #1a73e8 0%, #3b82f6 100%)', padding: '0.75rem 1.4rem', fontWeight: 800, fontSize: '0.9rem', borderRadius: '10px', boxShadow: '0 8px 24px rgba(26,115,232,0.3)', border: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}
-            >
-              <Play size={18} />
-              <span>Start an Assessment</span>
-            </button>
-
-            <button 
-              onClick={onTrySample}
-              className="btn btn-outline"
-              style={{ borderColor: 'var(--google-purple)', color: 'var(--google-purple)', background: 'rgba(168, 85, 247, 0.06)', padding: '0.75rem 1.2rem', fontWeight: 750, fontSize: '0.9rem', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}
-            >
-              <Sparkles size={18} />
-              <span>Try Sample (Prefilled Inputs)</span>
-            </button>
-
-            <button 
-              onClick={onOpenSaved}
-              className="btn btn-outline"
-              style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)', background: 'var(--bg-surface)', padding: '0.75rem 1.2rem', fontWeight: 750, fontSize: '0.9rem', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}
-            >
-              <FolderClock size={18} style={{ color: 'var(--google-blue)' }} />
-              <span>Saved Assessments ({savedCount})</span>
-            </button>
-          </div>
-        </div>
+    <div className="intro-page intro-dossier">
+      <BackLink onBack={onBack} />
+      <div className="intro-dossier__banner" style={{ background: meta.accent }}>
+        <span>{group?.name} &mdash; Briefing Document</span>
       </div>
 
-      {/* 5 Premium Informational Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1.5rem' }}>
-        
-        {/* What This Assessment Is */}
-        <div className="card" style={{ background: 'var(--bg-surface)', borderColor: 'var(--border-color)', padding: '1.75rem', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '1rem', transition: 'all 0.2s ease', position: 'relative' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{ background: 'rgba(26,115,232,0.1)', color: 'var(--google-blue)', padding: '0.6rem', borderRadius: '10px' }}>
-              <BookOpen size={24} />
-            </div>
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>What This Assessment Is</h3>
-          </div>
-          <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
-            {meta.whatIs}
-          </p>
+      <div className="intro-dossier__header">
+        <div className="intro-dossier__icon" style={{ background: meta.accent }}>
+          <Icon size={22} color="white" />
         </div>
-
-        {/* Who The Target User Is */}
-        <div className="card" style={{ background: 'var(--bg-surface)', borderColor: 'var(--border-color)', padding: '1.75rem', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '1rem', transition: 'all 0.2s ease', position: 'relative' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{ background: 'rgba(168,85,247,0.1)', color: 'var(--google-purple)', padding: '0.6rem', borderRadius: '10px' }}>
-              <Target size={24} />
-            </div>
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>Who The Target User Is</h3>
-          </div>
-          <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
-            {meta.targetUser}
-          </p>
-        </div>
-
-        {/* When This Can Be Used */}
-        <div className="card" style={{ background: 'var(--bg-surface)', borderColor: 'var(--border-color)', padding: '1.75rem', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '1rem', transition: 'all 0.2s ease', position: 'relative' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{ background: 'rgba(245,158,11,0.1)', color: 'var(--google-amber)', padding: '0.6rem', borderRadius: '10px' }}>
-              <Clock size={24} />
-            </div>
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>When This Can Be Used</h3>
-          </div>
-          <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
-            {meta.whenUsed}
-          </p>
-        </div>
-
-        {/* What Will Be The Benefits */}
-        <div className="card" style={{ background: 'var(--bg-surface)', borderColor: 'var(--border-color)', padding: '1.75rem', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '1rem', transition: 'all 0.2s ease', position: 'relative' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{ background: 'rgba(16,185,129,0.1)', color: 'var(--google-green)', padding: '0.6rem', borderRadius: '10px' }}>
-              <Award size={24} />
-            </div>
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>What Will Be The Benefits</h3>
-          </div>
-          <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
-            {meta.benefits}
-          </p>
-        </div>
-
-        {/* How It Improves Customers Posture */}
-        <div className="card" style={{ background: 'var(--bg-surface)', borderColor: 'var(--border-color)', padding: '1.75rem', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '1rem', transition: 'all 0.2s ease', position: 'relative' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{ background: 'rgba(239,68,68,0.1)', color: 'var(--google-red)', padding: '0.6rem', borderRadius: '10px' }}>
-              <ShieldCheck size={24} />
-            </div>
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>How It Improves Customer Posture</h3>
-          </div>
-          <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
-            {meta.posture}
-          </p>
-        </div>
-
-      </div>
-
-      {/* Quick Launch Bottom Banner */}
-      <div 
-        className="card" 
-        style={{ 
-          background: 'var(--bg-card)', 
-          border: '1px solid var(--border-color)', 
-          borderRadius: '16px', 
-          padding: '1.5rem 2rem', 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center', 
-          flexWrap: 'wrap', 
-          gap: '1rem' 
-        }}
-      >
         <div>
-          <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)' }}>Ready to launch your enterprise discovery?</h4>
-          <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>Experience zero data stubbing and real-time Google Cloud MLOps telemetry.</p>
+          <h1>{meta.name}</h1>
+          <p>{meta.tagline}</p>
         </div>
-        <button 
-          onClick={onStart} 
-          className="btn btn-primary" 
-          style={{ background: 'var(--text-primary)', color: 'var(--bg-surface)', padding: '0.65rem 1.4rem', border: 'none', borderRadius: '8px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}
-        >
-          <span>Begin Assessment Session</span>
-          <ArrowRight size={16} />
-        </button>
       </div>
 
+      <div className="intro-dossier__tabs" role="tablist">
+        {tabs.map((t) => (
+          <button
+            key={t.key}
+            role="tab"
+            aria-selected={activeTab === t.key}
+            className={`intro-dossier__tab ${activeTab === t.key ? 'is-active' : ''}`}
+            style={activeTab === t.key ? { borderColor: meta.accent, color: meta.accent } : undefined}
+            onClick={() => setActiveTab(t.key)}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      <Card padding="lg" className="intro-dossier__panel">
+        {active.body.split('\n\n').map((para, i) => (
+          <p key={i}>{para}</p>
+        ))}
+      </Card>
+
+      <Card padding="lg" className="intro-differentiator" style={{ borderColor: meta.accent }}>
+        <span className="intro-eyebrow" style={{ color: meta.accent }}>How this differs from the other assessments</span>
+        <p>{meta.differentiator}</p>
+      </Card>
+
+      <LaunchRow meta={meta} onStart={onStart} onTrySample={onTrySample} onOpenSaved={onOpenSaved} savedCount={savedCount} />
+    </div>
+  );
+}
+
+/* ======================================================================
+   EDITORIAL variant -- magazine-style, large headline, pull quote.
+   Financial ROI Assessor, Executive Scoping Assessor.
+   ====================================================================== */
+function EditorialVariant({ meta, group, Icon, onStart, onTrySample, onBack, onOpenSaved, savedCount }) {
+  return (
+    <div className="intro-page intro-editorial">
+      <BackLink onBack={onBack} />
+      <span className="intro-eyebrow" style={{ color: meta.accent }}>{group?.name}</span>
+      <h1 className="intro-editorial__headline">{meta.name}</h1>
+      <p className="intro-editorial__pullquote" style={{ borderColor: meta.accent }}>{meta.tagline}</p>
+
+      <div className="intro-editorial__columns">
+        <div>
+          <h4>What it is</h4>
+          <p>{meta.what}</p>
+          <h4>Why it exists</h4>
+          <p>{meta.why}</p>
+          <h4>Where it fits</h4>
+          <p>{meta.where}</p>
+        </div>
+        <div>
+          <h4>How it works</h4>
+          <p>{meta.how}</p>
+          <h4>Value to the customer</h4>
+          <p>{meta.valueCustomer}</p>
+          <h4>Value to you (the vendor)</h4>
+          <p>{meta.valueVendor}</p>
+        </div>
+      </div>
+
+      <div className="intro-editorial__diff" style={{ background: meta.accent + '1a', borderLeftColor: meta.accent }}>
+        <Icon size={20} style={{ color: meta.accent }} />
+        <div>
+          <strong>How this differs from the other assessments</strong>
+          <p>{meta.differentiator}</p>
+        </div>
+      </div>
+
+      <LaunchRow meta={meta} onStart={onStart} onTrySample={onTrySample} onOpenSaved={onOpenSaved} savedCount={savedCount} />
+    </div>
+  );
+}
+
+/* ======================================================================
+   CANVAS variant -- spatial / nodal layout, connected cards.
+   Architecture Blueprint Canvas, Agentic Maturity Assessor.
+   ====================================================================== */
+function CanvasVariant({ meta, group, Icon, onStart, onTrySample, onBack, onOpenSaved, savedCount }) {
+  const nodes = [
+    { label: 'What', body: meta.what },
+    { label: 'Why', body: meta.why },
+    { label: 'Where', body: meta.where },
+    { label: 'How', body: meta.how },
+  ];
+  return (
+    <div className="intro-page intro-canvas">
+      <BackLink onBack={onBack} />
+      <div className="intro-canvas__hero">
+        <div className="intro-canvas__hero-icon" style={{ borderColor: meta.accent, color: meta.accent }}>
+          <Icon size={26} />
+        </div>
+        <div>
+          <span className="intro-eyebrow" style={{ color: meta.accent }}>{group?.name}</span>
+          <h1>{meta.name}</h1>
+          <p>{meta.tagline}</p>
+        </div>
+      </div>
+
+      <div className="intro-canvas__grid">
+        {nodes.map((n, i) => (
+          <div className="intro-canvas__node" key={n.label} style={{ borderColor: meta.accent }}>
+            <span className="intro-canvas__node-index" style={{ background: meta.accent }}>{i + 1}</span>
+            <h4>{n.label}</h4>
+            <p>{n.body}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="intro-canvas__values">
+        <Card padding="lg">
+          <h4>Value to the customer</h4>
+          <p>{meta.valueCustomer}</p>
+        </Card>
+        <Card padding="lg">
+          <h4>Value to you (the vendor)</h4>
+          <p>{meta.valueVendor}</p>
+        </Card>
+      </div>
+
+      <Card padding="lg" className="intro-differentiator" style={{ borderColor: meta.accent }}>
+        <span className="intro-eyebrow" style={{ color: meta.accent }}>How this differs from the other assessments</span>
+        <p>{meta.differentiator}</p>
+      </Card>
+
+      <LaunchRow meta={meta} onStart={onStart} onTrySample={onTrySample} onOpenSaved={onOpenSaved} savedCount={savedCount} />
     </div>
   );
 }

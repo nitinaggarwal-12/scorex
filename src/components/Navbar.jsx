@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Cloud, Sparkles, Settings, Globe, LogOut, ChevronDown, Key, Sun, Moon, Zap } from 'lucide-react';
+import { ASSESSMENTS } from '../data/assessmentCatalog';
 
 export default function Navbar({ onOpenSettings, currency, onCurrencyChange, apiKey, gcpToken, onSaveSettings, activeFramework = 'option1', onFrameworkChange, globalTheme = 'dark', onThemeChange, onOpenSavedLibrary }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -47,20 +48,12 @@ export default function Navbar({ onOpenSettings, currency, onCurrencyChange, api
   const [path] = hash.split('?');
   const route = path.replace('#', '').replace('/', '');
 
-  // Canonical assessment workflow gets a plain, function-based title.
-  // Archived frameworks (option4-9, option11) keep their titles too, in
-  // case they're reached via a direct legacy hash link, but none of
-  // these carry a version number in front of the user anymore.
+  // Title comes from the same catalog that drives the sidebar and the
+  // introduction pages (src/data/assessmentCatalog.js) -- one name per
+  // assessment, defined once, instead of a fourth place that could drift.
   let navTitle = 'Use Case Intake Form';
-  if (activeFramework === 'option12') {
-    navTitle = 'Use Case Readiness Assessment';
-  }
-  else if (activeFramework === 'option10') navTitle = 'Gemini Enterprise AI • Portfolio Intelligence Engine';
-  else if (activeFramework === 'option9') navTitle = 'Premium Scoping Assessor (archived)';
-  else if (activeFramework === 'option8') navTitle = 'Unified Discovery & Scoping Assessor (archived)';
-  else if (activeFramework === 'option4') navTitle = 'Architecture Blueprint Canvas';
-  else if (activeFramework === 'option5' || activeFramework === 'option6') navTitle = 'Gemini Maturity Assessor (archived)';
-  else if (activeFramework === 'option7') navTitle = 'Agentic AI Use Case Discovery (archived)';
+  if (activeFramework === 'option10') navTitle = 'Gemini Enterprise AI • Portfolio Intelligence Engine';
+  else if (ASSESSMENTS[activeFramework]) navTitle = ASSESSMENTS[activeFramework].name;
   else if (route === 'home') navTitle = 'Executive Briefing Cockpit';
   else if (route === 'form') navTitle = 'Use Case Discovery Wizard';
   else if (route === 'summary') navTitle = 'Portfolio Summary Analytics';
