@@ -345,9 +345,10 @@ export default function DiagnosticConsole({ sessions = [] }) {
             </div>
             <button 
               onClick={() => setActiveInspectSession(null)}
+              aria-label="Close session inspector"
               style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: '0.2rem' }}
             >
-              <X size={18} />
+              <X size={18} aria-hidden="true" />
             </button>
           </div>
 

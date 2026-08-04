@@ -219,9 +219,10 @@ export default function ChatAssistant({ isOpen, onClose, reportData, formData, a
           </button>
           <button
             onClick={onClose}
+            aria-label="Close chat"
             style={{ background: 'transparent', border: 'none', color: '#ffffff', cursor: 'pointer', padding: '0.25rem' }}
           >
-            <X size={18} />
+            <X size={18} aria-hidden="true" />
           </button>
         </div>
       </div>

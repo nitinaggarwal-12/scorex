@@ -639,8 +639,9 @@ export default function ReportView({ reportData: rawReportData, prevScores, onEd
               className="btn btn-secondary"
               style={{ padding: '0.2rem 0.5rem', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.25rem', height: '28px' }}
               title="Cancel edits"
+              aria-label="Cancel edits"
             >
-              <X size={12} />
+              <X size={12} aria-hidden="true" />
               <span>Cancel</span>
             </button>
             <button

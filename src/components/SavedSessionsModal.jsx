@@ -24,8 +24,8 @@ export default function SavedSessionsModal({ isOpen, onClose, sessions, onLoadSe
               </p>
             </div>
           </div>
-          <button onClick={onClose} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>
-            <X size={20} />
+          <button onClick={onClose} aria-label="Close saved blueprints" style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>
+            <X size={20} aria-hidden="true" />
           </button>
         </div>
 

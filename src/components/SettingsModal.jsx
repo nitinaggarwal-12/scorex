@@ -70,8 +70,8 @@ export default function SettingsModal({ isOpen, onClose, apiKey, gcpToken, isSup
               <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Configure ADC authentication or flagship inference architecture</p>
             </div>
           </div>
-          <button onClick={onClose} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>
-            <X size={20} />
+          <button onClick={onClose} aria-label="Close settings" style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>
+            <X size={20} aria-hidden="true" />
           </button>
         </div>
 

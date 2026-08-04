@@ -12,7 +12,7 @@ export default function VersionDiffModal({ isOpen, onClose, session, v1Name, v2N
         <div className="modal-box" onClick={e => e.stopPropagation()} style={{ maxWidth: '500px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <h3 style={{ fontWeight: 700, color: 'var(--text-primary)' }}>Select Valid Versions</h3>
-            <button onClick={onClose} style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}><X size={20} /></button>
+            <button onClick={onClose} aria-label="Close version comparison" style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}><X size={20} aria-hidden="true" /></button>
           </div>
           <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Please select two different versions of this blueprint to compare.</p>
         </div>
@@ -75,8 +75,8 @@ export default function VersionDiffModal({ isOpen, onClose, session, v1Name, v2N
               Usecase: <strong>{session.reportName}</strong> • ID: {session.reportId}
             </p>
           </div>
-          <button onClick={onClose} className="btn btn-secondary" style={{ minWidth: 'auto', padding: '0.4rem' }}>
-            <X size={20} />
+          <button onClick={onClose} aria-label="Close version comparison" className="btn btn-secondary" style={{ minWidth: 'auto', padding: '0.4rem' }}>
+            <X size={20} aria-hidden="true" />
           </button>
         </div>
 

@@ -2766,7 +2766,7 @@ export default function PremiumLandingPageV10({ onStartAssessment, onSelectPrese
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.25rem' }}>
                   {showSourcesModal.ingestedSources.images.map((img, idx) => (
                     <div key={idx} style={{ background: t.boxBg, padding: '0.75rem', borderRadius: '20px', border: t.boxBorder, display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <img src={img.url || "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=400&q=80"} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '14px' }} />
+                      <img src={img.url || "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=400&q=80"} alt={img.alt || img.caption || 'Uploaded reference image'} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '14px' }} />
                       <div>
                         <strong style={{ display: 'block', fontSize: '0.95rem', color: t.textMain }}>{img.name}</strong>
                         <span style={{ fontSize: '0.8rem', color: t.textSub }}>High-Resolution Visual Diagram</span>
