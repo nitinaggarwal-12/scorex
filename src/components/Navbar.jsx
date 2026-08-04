@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import { Cloud, Sparkles, Settings, Globe, LogOut, ChevronDown, Key, Sun, Moon, Zap } from 'lucide-react';
+import { Cloud, Sparkles, Settings, Globe, LogOut, ChevronDown, Key, Sun, Moon, Zap, AlertTriangle } from 'lucide-react';
 import { ASSESSMENTS } from '../data/assessmentCatalog';
 
-export default function Navbar({ onOpenSettings, currency, onCurrencyChange, apiKey, gcpToken, onSaveSettings, activeFramework = 'option1', onFrameworkChange, globalTheme = 'dark', onThemeChange, onOpenSavedLibrary }) {
+export default function Navbar({ onOpenSettings, currency, onCurrencyChange, apiKey, gcpToken, onSaveSettings, activeFramework = 'option1', onFrameworkChange, globalTheme = 'dark', onThemeChange, onOpenSavedLibrary, onOpenDisclaimer }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -227,6 +227,15 @@ export default function Navbar({ onOpenSettings, currency, onCurrencyChange, api
             <option value="EUR" style={{ background: '#0f172a', color: '#fff' }}>EUR (€)</option>
           </select>
         </div>
+
+        {/* Persistent reminder: repo is public, no confidential data.
+            Always visible, not just shown once -- see DisclaimerModal.jsx. */}
+        {onOpenDisclaimer && (
+          <button type="button" onClick={onOpenDisclaimer} className="disclaimer-banner">
+            <AlertTriangle size={12} aria-hidden="true" />
+            <span>No confidential data</span>
+          </button>
+        )}
 
         {/* Global Sun/Moon Theme Toggle */}
         <button

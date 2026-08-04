@@ -1,5 +1,5 @@
 import * as Icons from 'lucide-react';
-import { FileText, LayoutDashboard, FolderHeart, Settings2, Sparkles, Home, Users, History, Activity } from 'lucide-react';
+import { FileText, LayoutDashboard, FolderHeart, Settings2, Sparkles, Home, Users, History, Activity, ScrollText } from 'lucide-react';
 import SectionHeader from './ui/SectionHeader';
 import { GROUPS, assessmentsByGroup } from '../data/assessmentCatalog';
 
@@ -14,6 +14,7 @@ export default function Sidebar({
   onOpenChatHistory,
   onOpenSettings,
   onOpenLogs,
+  onOpenDisclaimer,
   activeFramework = 'option1',
   onFrameworkChange = () => {},
 }) {
@@ -143,6 +144,11 @@ export default function Sidebar({
         <button onClick={onOpenSettings} className="sidebar-btn">
           <Settings2 size={17} aria-hidden="true" />
           <span>Portal Configuration</span>
+        </button>
+
+        <button onClick={onOpenDisclaimer} className="sidebar-btn">
+          <ScrollText size={17} aria-hidden="true" />
+          <span>Disclaimer &amp; Data Policy</span>
         </button>
       </nav>
 

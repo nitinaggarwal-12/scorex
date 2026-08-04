@@ -33,6 +33,7 @@ import ReportView from './components/ReportView';
 import PortfolioSummary from './components/PortfolioSummary';
 import ChatAssistant from './components/ChatAssistant';
 import SettingsModal from './components/SettingsModal';
+import DisclaimerModal, { DISCLAIMER_STORAGE_KEY } from './components/DisclaimerModal';
 import SavedSessionsModal from './components/SavedSessionsModal';
 import VersionDiffModal from './components/VersionDiffModal';
 import InteractiveDiscoveryFramework from './components/InteractiveDiscoveryFramework';
@@ -434,6 +435,17 @@ export default function App() {
   const [sessionsFilter, setSessionsFilter] = useState('all'); // 'all' | 'pending' | 'approved'
   const [isCompareOpen, setIsCompareOpen] = useState(false);
   const [compareSession, setCompareSession] = useState(null);
+
+  // Blocks the UI on first run until acknowledged; reopenable anytime
+  // afterward (Sidebar "Disclaimer & Data Policy" link, Navbar banner)
+  // without re-blocking. Versioned key so editing the disclaimer text
+  // later forces re-acknowledgment.
+  const [isDisclaimerOpen, setIsDisclaimerOpen] = useState(
+    () => localStorage.getItem(DISCLAIMER_STORAGE_KEY) !== 'true'
+  );
+  const [disclaimerForceAccept, setDisclaimerForceAccept] = useState(
+    () => localStorage.getItem(DISCLAIMER_STORAGE_KEY) !== 'true'
+  );
   const [compareV1, setCompareV1] = useState('');
   const [compareV2, setCompareV2] = useState('');
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -1614,6 +1626,7 @@ export default function App() {
         onOpenChatHistory={() => setViewMode('chat_history')}
         onOpenSettings={() => setIsSettingsOpen(true)}
         onOpenLogs={() => setViewMode('logs')}
+        onOpenDisclaimer={() => { setDisclaimerForceAccept(false); setIsDisclaimerOpen(true); }}
         activeFramework={activeFramework}
         onFrameworkChange={(fw) => routeToFramework(fw, { setActiveFramework, setActiveSessionId, setViewMode })}
       />
@@ -1635,6 +1648,7 @@ export default function App() {
             setViewMode('landing');
             window.location.hash = '#portfolio-intelligence-v10?view=saved_library';
           }}
+          onOpenDisclaimer={() => { setDisclaimerForceAccept(false); setIsDisclaimerOpen(true); }}
         />
 
         <main className="main-content" style={activeFramework === 'option10' ? { padding: 0, margin: 0, maxWidth: '100%' } : undefined}>
@@ -1907,6 +1921,17 @@ export default function App() {
         gcpToken={gcpToken}
         isSuperAdmin={isSuperAdmin}
         onSaveSettings={handleSaveSettings}
+      />
+
+      <DisclaimerModal
+        isOpen={isDisclaimerOpen}
+        forceAccept={disclaimerForceAccept}
+        onAccept={() => {
+          localStorage.setItem(DISCLAIMER_STORAGE_KEY, 'true');
+          setIsDisclaimerOpen(false);
+          setDisclaimerForceAccept(false);
+        }}
+        onClose={() => setIsDisclaimerOpen(false)}
       />
 
       <SavedSessionsModal
