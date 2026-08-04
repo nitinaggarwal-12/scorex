@@ -134,6 +134,23 @@ const bootstrapDatabaseSchema = async () => {
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
     `);
+
+    // disclaimer_acceptances: audit log of who acknowledged the open-source
+    // / no-confidential-data / liability disclaimer, and when. Append-only
+    // -- re-accepting inserts a new row rather than overwriting the last
+    // one, so the history stays intact. See src/components/DisclaimerModal.jsx
+    // for the client side and src/components/ui/README.md for context.
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS disclaimer_acceptances (
+        id SERIAL PRIMARY KEY,
+        client_id VARCHAR(255) NOT NULL,
+        disclaimer_version VARCHAR(50) NOT NULL,
+        accepted_at TIMESTAMP WITH TIME ZONE NOT NULL,
+        recorded_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        user_agent TEXT,
+        display_name VARCHAR(255)
+      );
+    `);
     
     // Seed default demo reports if empty
     await dbPool.query(`
@@ -178,6 +195,50 @@ const syncToFlatFileBackup = (entries) => {
 // Stub endpoints to satisfy App.jsx bootstrap network sync over reverse proxy
 app.get('/api/sessions', (req, res) => res.json([]));
 app.get('/api/settings', (req, res) => res.json({}));
+
+// Disclaimer acceptance audit log -- real endpoints, not stubs, backed by
+// the disclaimer_acceptances table created in bootstrapDatabaseSchema()
+// above. This is THE production backend (npm start -> node server.js);
+// there is a separate Python/FastAPI backend in scoring_agent/main.py with
+// its own copy of these two routes, but it is not what Railway runs --
+// keep both in sync if either changes, or better, pick one and delete the
+// other (see the code comment on bootstrapDatabaseSchema for more).
+app.post('/api/disclaimer-acceptance', async (req, res) => {
+  const { client_id, disclaimer_version, accepted_at, user_agent, display_name } = req.body || {};
+  if (!client_id || !disclaimer_version || !accepted_at) {
+    return res.status(422).json({ error: 'client_id, disclaimer_version, and accepted_at are required' });
+  }
+  try {
+    await pool.query(
+      `INSERT INTO disclaimer_acceptances (client_id, disclaimer_version, accepted_at, user_agent, display_name)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [client_id, disclaimer_version, accepted_at, user_agent || null, display_name || null]
+    );
+    res.json({ status: 'success' });
+  } catch (err) {
+    console.error('[DISCLAIMER_ACCEPTANCE] Failed to record acceptance:', err.message);
+    res.status(500).json({ error: 'Failed to record disclaimer acceptance' });
+  }
+});
+
+app.get('/api/disclaimer-acceptance/:clientId', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT disclaimer_version, accepted_at FROM disclaimer_acceptances
+       WHERE client_id = $1 ORDER BY accepted_at DESC LIMIT 1`,
+      [req.params.clientId]
+    );
+    if (result.rows.length === 0) return res.json({ accepted: false });
+    res.json({
+      accepted: true,
+      disclaimer_version: result.rows[0].disclaimer_version,
+      accepted_at: result.rows[0].accepted_at,
+    });
+  } catch (err) {
+    console.error('[DISCLAIMER_ACCEPTANCE] Failed to look up acceptance:', err.message);
+    res.status(500).json({ error: 'Failed to fetch disclaimer acceptance' });
+  }
+});
 
 // GET: Fetch all assessments (Primary Postgres with Flat-File Fallback)
 app.get('/api/v10/assessments', async (req, res) => {
