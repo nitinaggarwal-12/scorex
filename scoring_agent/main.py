@@ -157,6 +157,13 @@ class SettingsPayload(BaseModel):
     key: str
     value: str
 
+class DisclaimerAcceptancePayload(BaseModel):
+    client_id: str
+    disclaimer_version: str
+    accepted_at: str
+    user_agent: str | None = None
+    display_name: str | None = None
+
 class BenchmarkPayload(BaseModel):
     peer_name: str
     use_case: str
@@ -193,6 +200,96 @@ def save_setting(payload: SettingsPayload):
     except Exception as e:
         conn.rollback()
         raise HTTPException(status_code=500, detail=f"Failed to save setting: {e}")
+    finally:
+        cursor.close()
+        conn.close()
+
+# ---------------------------------------------------------------------------
+# Disclaimer acceptance audit log.
+#
+# Records that a user acknowledged the open-source / no-confidential-data /
+# liability disclaimer (see src/components/DisclaimerModal.jsx), for audit
+# purposes -- proof that the warning was shown and accepted, not just that
+# it was displayed. This is a durable record; localStorage on the client is
+# the fast local gate that gets checked on load, this table is the record
+# that survives a cleared browser or a different device.
+#
+# NOTE: unlike every other table this API touches, `disclaimer_acceptances`
+# has no provisioning step anywhere else in this repo (there's no schema.sql
+# or migration script for ANY table here -- they're all assumed to exist,
+# provisioned out of band). Rather than add a table this endpoint can't
+# find and silently 500 forever, CREATE TABLE IF NOT EXISTS runs inline
+# here so it self-provisions on first call. This isn't a substitute for a
+# real migration system -- worth setting one up if this app grows more
+# tables than it already quietly has.
+# ---------------------------------------------------------------------------
+
+def _ensure_disclaimer_table(cursor):
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS disclaimer_acceptances (
+            id SERIAL PRIMARY KEY,
+            client_id TEXT NOT NULL,
+            disclaimer_version TEXT NOT NULL,
+            accepted_at TIMESTAMPTZ NOT NULL,
+            recorded_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+            user_agent TEXT,
+            display_name TEXT
+        )
+    """)
+
+@app.post("/api/disclaimer-acceptance")
+def record_disclaimer_acceptance(payload: DisclaimerAcceptancePayload):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        _ensure_disclaimer_table(cursor)
+        cursor.execute("""
+            INSERT INTO disclaimer_acceptances
+                (client_id, disclaimer_version, accepted_at, user_agent, display_name)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (
+            payload.client_id,
+            payload.disclaimer_version,
+            payload.accepted_at,
+            payload.user_agent,
+            payload.display_name,
+        ))
+        conn.commit()
+        return {"status": "success"}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=f"Failed to record disclaimer acceptance: {e}")
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.get("/api/disclaimer-acceptance/{client_id}")
+def get_disclaimer_acceptance(client_id: str):
+    """Most recent acceptance record for a given client, if any. Used to
+    reconcile acceptance state across devices/browsers -- not required for
+    the same-browser gate, which reads localStorage directly."""
+    conn = get_db_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    try:
+        _ensure_disclaimer_table(cursor)
+        cursor.execute("""
+            SELECT disclaimer_version, accepted_at
+            FROM disclaimer_acceptances
+            WHERE client_id = %s
+            ORDER BY accepted_at DESC
+            LIMIT 1
+        """, (client_id,))
+        row = cursor.fetchone()
+        conn.commit()
+        if not row:
+            return {"accepted": False}
+        return {
+            "accepted": True,
+            "disclaimer_version": row["disclaimer_version"],
+            "accepted_at": row["accepted_at"].isoformat() if row["accepted_at"] else None,
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch disclaimer acceptance: {e}")
     finally:
         cursor.close()
         conn.close()

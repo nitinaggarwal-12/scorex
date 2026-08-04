@@ -33,7 +33,7 @@ import ReportView from './components/ReportView';
 import PortfolioSummary from './components/PortfolioSummary';
 import ChatAssistant from './components/ChatAssistant';
 import SettingsModal from './components/SettingsModal';
-import DisclaimerModal, { DISCLAIMER_STORAGE_KEY } from './components/DisclaimerModal';
+import DisclaimerModal, { DISCLAIMER_STORAGE_KEY, DISCLAIMER_VERSION } from './components/DisclaimerModal';
 import SavedSessionsModal from './components/SavedSessionsModal';
 import VersionDiffModal from './components/VersionDiffModal';
 import InteractiveDiscoveryFramework from './components/InteractiveDiscoveryFramework';
@@ -344,8 +344,7 @@ export default function App() {
   const isBootedRef = useRef(false); // Prevent initial State-to-Hash races on F5 reloads!
   const [sessions, setSessions] = useState([]);
 
-  const saveSessionToDb = async (session) => {
-    try {
+  const saveSessionToDb = async (session) => {    try {
       await fetch('/api/sessions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -366,6 +365,27 @@ export default function App() {
       });
     } catch (err) {
       console.error("Failed to save session to DB:", err);
+    }
+  };
+
+  const recordDisclaimerAcceptance = async () => {
+    try {
+      await fetch('/api/disclaimer-acceptance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          client_id: clientId,
+          disclaimer_version: DISCLAIMER_VERSION,
+          accepted_at: new Date().toISOString(),
+          user_agent: navigator.userAgent,
+        })
+      });
+    } catch (err) {
+      // Deliberately non-blocking: the localStorage flag is what actually
+      // gates the UI, so a backend/DB outage shouldn't lock anyone out of
+      // the tool. This is a durable audit record on top of that, not the
+      // gate itself -- if this call fails, log it and move on.
+      console.error("Failed to record disclaimer acceptance to DB:", err);
     }
   };
 
@@ -430,6 +450,19 @@ export default function App() {
     }
   });
   
+  // Anonymous, persistent per-browser identifier -- this app has no real
+  // auth system (the Navbar's "admin@..." identity is a hardcoded label,
+  // not a logged-in user), so this is what ties a disclaimer acceptance
+  // record to "this browser" for audit purposes.
+  const [clientId] = useState(() => {
+    let id = localStorage.getItem('gemini_client_id');
+    if (!id) {
+      id = crypto.randomUUID();
+      localStorage.setItem('gemini_client_id', id);
+    }
+    return id;
+  });
+
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSessionsOpen, setIsSessionsOpen] = useState(false);
   const [sessionsFilter, setSessionsFilter] = useState('all'); // 'all' | 'pending' | 'approved'
@@ -1930,6 +1963,7 @@ export default function App() {
           localStorage.setItem(DISCLAIMER_STORAGE_KEY, 'true');
           setIsDisclaimerOpen(false);
           setDisclaimerForceAccept(false);
+          recordDisclaimerAcceptance();
         }}
         onClose={() => setIsDisclaimerOpen(false)}
       />
