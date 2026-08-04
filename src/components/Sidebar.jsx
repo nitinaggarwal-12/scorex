@@ -1,205 +1,149 @@
-import { useState } from 'react';
-import { FileText, LayoutDashboard, FolderHeart, Settings2, Sparkles, Home, Users, History, Activity, Compass, ChevronRight } from 'lucide-react';
+import { FileText, LayoutDashboard, FolderHeart, Settings2, Sparkles, Home, Users, History, Activity } from 'lucide-react';
+import SectionHeader from './ui/SectionHeader';
 
-export default function Sidebar({ 
-  viewMode, 
-  reportData, 
-  onGoHome, 
-  onNewIntake, 
-  onViewSummary, 
-  onOpenSessions, 
-  onOpenPermissions, 
-  onOpenChatHistory, 
-  onOpenSettings, 
+// Canonical assessment workflow. Everything else (the earlier v5-v9 and
+// v11 iterations) is archived -- not linked from this nav -- but the
+// routes still work if navigated to directly. See
+// src/components/ui/README.md for the full archive list and rationale.
+const CANONICAL_FRAMEWORK = 'option12';
+
+export default function Sidebar({
+  viewMode,
+  reportData,
+  onGoHome,
+  onNewIntake,
+  onViewSummary,
+  onOpenSessions,
+  onOpenPermissions,
+  onOpenChatHistory,
+  onOpenSettings,
   onOpenLogs,
   activeFramework = 'option1',
-  onFrameworkChange = () => {}
+  onFrameworkChange = () => {},
 }) {
-  const [isAssessHovered, setIsAssessHovered] = useState(false);
+  const isCanonicalActive = activeFramework === CANONICAL_FRAMEWORK;
 
   return (
-    <aside className="sidebar" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', height: '100%', position: 'relative', zIndex: 10000, overflowY: 'auto' }}>
-      
+    <aside
+      className="sidebar"
+      style={{ display: 'flex', flexDirection: 'column', gap: '1rem', height: '100%', position: 'relative', zIndex: 10000, overflowY: 'auto' }}
+    >
       {/* Brand Section */}
-      <div className="sidebar-brand" onClick={onGoHome} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.65rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1rem', marginBottom: '0.5rem' }}>
+      <button
+        type="button"
+        className="sidebar-brand"
+        onClick={onGoHome}
+        aria-label="Go to home"
+        style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.65rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1rem', marginBottom: '0.5rem', background: 'transparent', border: 'none', borderBottomWidth: '1px', borderBottomStyle: 'solid', borderBottomColor: 'var(--border-color)', width: '100%', textAlign: 'left' }}
+      >
         <div style={{ background: 'var(--google-blue)', color: 'white', padding: '0.5rem', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Sparkles size={20} />
+          <Sparkles size={20} aria-hidden="true" />
         </div>
         <div>
           <span style={{ fontWeight: 850, fontSize: '1.1rem', color: 'var(--text-primary)', display: 'block' }}>Gemini Enterprise</span>
           <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginTop: '0.05rem' }}>Use Case Suite</div>
         </div>
-      </div>
+      </button>
 
       {/* Category: Core Workspace */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
-        <span style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1.5px', paddingLeft: '0.75rem', marginBottom: '0.25rem', display: 'block' }}>
-          Core Workspace
-        </span>
-        
+      <nav aria-label="Core workspace" style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+        <SectionHeader>Core Workspace</SectionHeader>
+
         <button
           onClick={onGoHome}
           className={`sidebar-btn ${viewMode === 'home' && activeFramework === 'option1' ? 'active' : ''}`}
+          aria-current={viewMode === 'home' && activeFramework === 'option1' ? 'page' : undefined}
         >
-          <Home size={17} />
+          <Home size={17} aria-hidden="true" />
           <span>Overview Home</span>
         </button>
 
         <button
           onClick={onViewSummary}
           className={`sidebar-btn ${viewMode === 'summary' ? 'active' : ''}`}
+          aria-current={viewMode === 'summary' ? 'page' : undefined}
         >
-          <LayoutDashboard size={17} />
+          <LayoutDashboard size={17} aria-hidden="true" />
           <span>Portfolio Summary</span>
         </button>
 
         <button
           onClick={() => onFrameworkChange('intake')}
           className={`sidebar-btn ${viewMode === 'landing' && activeFramework === 'intake' ? 'active' : ''}`}
+          aria-current={viewMode === 'landing' && activeFramework === 'intake' ? 'page' : undefined}
         >
-          <FileText size={17} />
+          <FileText size={17} aria-hidden="true" />
           <span>New Discovery Intake</span>
         </button>
+      </nav>
 
-      </div>
-
-      {/* Category: Assessment Modules (Direct Standalone Links Organized Logically) */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }} className="no-print">
-        <span style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1.5px', paddingLeft: '0.75rem', marginBottom: '0.25rem', display: 'block' }}>
-          Assessment Modules
-        </span>
-
-        <button
-          onClick={() => onFrameworkChange('option5')}
-          className={`sidebar-btn ${activeFramework === 'option5' ? 'active' : ''}`}
-        >
-          <Compass size={17} style={{ color: 'var(--google-blue)' }} />
-          <span style={{ fontWeight: activeFramework === 'option5' ? 800 : 600 }}>ML Maturity Assessor (v5)</span>
-        </button>
+      {/* Category: Assessment -- single canonical workflow.
+          Prior versions (v5-v9, v11) are intentionally not linked here;
+          see src/components/ui/README.md. */}
+      <nav aria-label="Assessment" className="no-print" style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+        <SectionHeader>Assessment</SectionHeader>
 
         <button
-          onClick={() => onFrameworkChange('option6')}
-          className={`sidebar-btn ${activeFramework === 'option6' ? 'active' : ''}`}
+          onClick={() => onFrameworkChange(CANONICAL_FRAMEWORK)}
+          className={`sidebar-btn ${isCanonicalActive ? 'active' : ''}`}
+          aria-current={isCanonicalActive ? 'page' : undefined}
+          style={
+            isCanonicalActive
+              ? { background: 'linear-gradient(90deg, rgba(59,130,246,0.22), rgba(6,182,212,0.22))', borderLeft: '3px solid #3b82f6' }
+              : undefined
+          }
         >
-          <Activity size={17} style={{ color: 'var(--google-green)' }} />
-          <span style={{ fontWeight: activeFramework === 'option6' ? 800 : 600 }}>Financial ROI Assessor (v6)</span>
+          <Sparkles size={17} style={{ color: '#3b82f6' }} aria-hidden="true" />
+          <span style={{ fontWeight: isCanonicalActive ? 850 : 700 }}>Use Case Readiness Assessment</span>
         </button>
-
-        <button
-          onClick={() => onFrameworkChange('option7')}
-          className={`sidebar-btn ${activeFramework === 'option7' ? 'active' : ''}`}
-        >
-          <Sparkles size={17} style={{ color: 'var(--google-purple)' }} />
-          <span style={{ fontWeight: activeFramework === 'option7' ? 800 : 600 }}>Agentic AI Discovery (v7)</span>
-        </button>
-
-        <button
-          onClick={() => onFrameworkChange('option8')}
-          className={`sidebar-btn ${activeFramework === 'option8' ? 'active' : ''}`}
-        >
-          <Sparkles size={17} style={{ color: 'var(--google-amber)' }} />
-          <span style={{ fontWeight: activeFramework === 'option8' ? 800 : 600 }}>Feasibility Assessor (v8)</span>
-        </button>
-
-        <button
-          onClick={() => onFrameworkChange('option9')}
-          className={`sidebar-btn ${activeFramework === 'option9' ? 'active' : ''}`}
-        >
-          <Sparkles size={17} style={{ color: 'var(--google-blue)' }} />
-          <span style={{ fontWeight: activeFramework === 'option9' ? 800 : 600 }}>Premium Executive Assessor (v9)</span>
-        </button>
-
-        <button
-          onClick={() => onFrameworkChange('option10')}
-          className={`sidebar-btn ${activeFramework === 'option10' ? 'active' : ''}`}
-          style={{
-            background: activeFramework === 'option10' ? 'linear-gradient(90deg, rgba(16,185,129,0.22), rgba(6,182,212,0.22))' : 'transparent',
-            borderLeft: activeFramework === 'option10' ? '3px solid #10b981' : 'none'
-          }}
-        >
-          <Sparkles size={17} style={{ color: '#10b981', animation: activeFramework === 'option10' ? 'pulse 1.5s infinite' : 'none' }} />
-          <span style={{ fontWeight: activeFramework === 'option10' ? 850 : 700, color: activeFramework === 'option10' ? '#10b981' : 'inherit' }}>
-            Portfolio Intelligence (v10)
-          </span>
-        </button>
-
-        <button
-          onClick={() => onFrameworkChange('option11')}
-          className={`sidebar-btn ${activeFramework === 'option11' ? 'active' : ''}`}
-        >
-          <Sparkles size={17} style={{ color: 'var(--google-purple)' }} />
-          <span style={{ fontWeight: activeFramework === 'option11' ? 800 : 600 }}>Agentic Maturity (v11)</span>
-        </button>
-
-        <button
-          onClick={() => onFrameworkChange('option12')}
-          className={`sidebar-btn ${activeFramework === 'option12' ? 'active' : ''}`}
-          style={{
-            background: activeFramework === 'option12' ? 'linear-gradient(90deg, rgba(59,130,246,0.22), rgba(6,182,212,0.22))' : 'transparent',
-            borderLeft: activeFramework === 'option12' ? '3px solid #3b82f6' : 'none'
-          }}
-        >
-          <Sparkles size={17} style={{ color: '#3b82f6', animation: activeFramework === 'option12' ? 'pulse 1.5s infinite' : 'none' }} />
-          <span style={{ fontWeight: activeFramework === 'option12' ? 850 : 700, color: activeFramework === 'option12' ? '#3b82f6' : 'inherit' }}>
-            Enterprise Readiness (v12)
-          </span>
-        </button>
-
-      </div>
+      </nav>
 
       {/* Category: Governance & Collaboration */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
-        <span style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1.5px', paddingLeft: '0.75rem', marginBottom: '0.25rem', display: 'block' }}>
-          Governance & IAM
-        </span>
+      <nav aria-label="Governance and collaboration" style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+        <SectionHeader>Governance &amp; IAM</SectionHeader>
 
-        <button
-          onClick={onOpenSessions}
-          className="sidebar-btn"
-        >
-          <FolderHeart size={17} />
+        <button onClick={onOpenSessions} className="sidebar-btn">
+          <FolderHeart size={17} aria-hidden="true" />
           <span>Saved Blueprints</span>
         </button>
 
         <button
           onClick={onOpenPermissions}
           className={`sidebar-btn ${viewMode === 'permissions' ? 'active' : ''}`}
+          aria-current={viewMode === 'permissions' ? 'page' : undefined}
         >
-          <Users size={17} />
+          <Users size={17} aria-hidden="true" />
           <span>Access Control (IAM)</span>
         </button>
 
         <button
           onClick={onOpenChatHistory}
           className={`sidebar-btn ${viewMode === 'chat_history' ? 'active' : ''}`}
+          aria-current={viewMode === 'chat_history' ? 'page' : undefined}
         >
-          <History size={17} />
+          <History size={17} aria-hidden="true" />
           <span>Executive Briefing Chat</span>
         </button>
-      </div>
+      </nav>
 
       {/* Category: System Administration */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', marginTop: 'auto' }}>
-        <span style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1.5px', paddingLeft: '0.75rem', marginBottom: '0.25rem', display: 'block' }}>
-          Administration
-        </span>
+      <nav aria-label="Administration" style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', marginTop: 'auto' }}>
+        <SectionHeader>Administration</SectionHeader>
 
         <button
           onClick={onOpenLogs}
           className={`sidebar-btn ${viewMode === 'logs' ? 'active' : ''}`}
+          aria-current={viewMode === 'logs' ? 'page' : undefined}
         >
-          <Activity size={17} />
-          <span>Diagnostics & Telemetry</span>
+          <Activity size={17} aria-hidden="true" />
+          <span>Diagnostics &amp; Telemetry</span>
         </button>
 
-        <button
-          onClick={onOpenSettings}
-          className="sidebar-btn"
-        >
-          <Settings2 size={17} />
+        <button onClick={onOpenSettings} className="sidebar-btn">
+          <Settings2 size={17} aria-hidden="true" />
           <span>Portal Configuration</span>
         </button>
-      </div>
+      </nav>
 
       {/* Versioning footer */}
       <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', textAlign: 'center', borderTop: '1px solid var(--border-color)', paddingTop: '0.85rem', marginTop: '0.5rem' }}>

@@ -47,15 +47,20 @@ export default function Navbar({ onOpenSettings, currency, onCurrencyChange, api
   const [path] = hash.split('?');
   const route = path.replace('#', '').replace('/', '');
 
+  // Canonical assessment workflow gets a plain, function-based title.
+  // Archived frameworks (option4-9, option11) keep their titles too, in
+  // case they're reached via a direct legacy hash link, but none of
+  // these carry a version number in front of the user anymore.
   let navTitle = 'Use Case Intake Form';
-  if (activeFramework === 'option10') {
-    navTitle = 'Gemini Enterprise AI • Portfolio Intelligence Engine';
+  if (activeFramework === 'option12') {
+    navTitle = 'Use Case Readiness Assessment';
   }
-  else if (activeFramework === 'option9') navTitle = 'Premium Scoping Assessor (v9)';
-  else if (activeFramework === 'option8') navTitle = 'Unified Discovery & Scoping Assessor';
+  else if (activeFramework === 'option10') navTitle = 'Gemini Enterprise AI • Portfolio Intelligence Engine';
+  else if (activeFramework === 'option9') navTitle = 'Premium Scoping Assessor (archived)';
+  else if (activeFramework === 'option8') navTitle = 'Unified Discovery & Scoping Assessor (archived)';
   else if (activeFramework === 'option4') navTitle = 'Architecture Blueprint Canvas';
-  else if (activeFramework === 'option5' || activeFramework === 'option6') navTitle = 'Gemini Maturity Assessor';
-  else if (activeFramework === 'option7') navTitle = 'Agentic AI Use Case Discovery';
+  else if (activeFramework === 'option5' || activeFramework === 'option6') navTitle = 'Gemini Maturity Assessor (archived)';
+  else if (activeFramework === 'option7') navTitle = 'Agentic AI Use Case Discovery (archived)';
   else if (route === 'home') navTitle = 'Executive Briefing Cockpit';
   else if (route === 'form') navTitle = 'Use Case Discovery Wizard';
   else if (route === 'summary') navTitle = 'Portfolio Summary Analytics';
@@ -262,6 +267,9 @@ export default function Navbar({ onOpenSettings, currency, onCurrencyChange, api
         <div style={{ position: 'relative' }} ref={dropdownRef}>
           <button 
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            aria-haspopup="true"
+            aria-expanded={isDropdownOpen}
+            aria-label="Account menu"
             style={{ 
               display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.2rem 0.5rem', 
               borderRadius: '100px', background: globalTheme === 'light' ? '#f1f5f9' : 'rgba(255,255,255,0.06)', 

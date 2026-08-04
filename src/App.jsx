@@ -1637,6 +1637,23 @@ export default function App() {
         />
 
         <main className="main-content" style={activeFramework === 'option10' ? { padding: 0, margin: 0, maxWidth: '100%' } : undefined}>
+          {/* ---------------------------------------------------------------
+              Routing note (consolidation pass):
+              The canonical, user-facing assessment workflow is
+              `option12` (PremiumScopingAssessorV12), chosen because it is
+              the actively-developed version as of this pass -- the 7 most
+              recent commits in the repo's history all touch V12, while V10
+              (52 commits) stopped changing on 2026-06-12 and V11/V9/V8/V7/
+              V6/V5 are earlier iterations that also stopped changing.
+
+              option2/3/4/5/6/7/8/9/11 and EnterpriseReadinessV10 are kept
+              in the codebase and remain reachable via direct hash URL
+              (e.g. #agentic-discovery for option7) for internal reference,
+              but are intentionally NOT linked from Sidebar.jsx anymore.
+              Do not add new sidebar entries for them -- if one turns out to
+              have a feature worth keeping, port that feature into option12
+              and then this comment can note the removal.
+          --------------------------------------------------------------- */}
           {viewMode === 'permissions' ? (
             <PermissionsPortal />
           ) : viewMode === 'chat_history' ? (
