@@ -1004,3 +1004,153 @@ body.light-theme .step-item {
   transform-origin: center;
 }
 
+
+/* ==========================================================================
+   Shared UI Kit (src/components/ui/*)
+   Canonical primitives for buttons, cards, section headers, and score
+   badges. New screens should build on these instead of redeclaring inline
+   styles. Existing screens are being migrated incrementally — see
+   src/components/ui/README.md for rollout status.
+   ========================================================================== */
+
+.ui-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.ui-btn--sm { font-size: 0.8rem; padding: 0.45rem 0.75rem; }
+.ui-btn--md { font-size: 0.9rem; padding: 0.7rem 1rem; }
+.ui-btn--lg { font-size: 1rem; padding: 0.9rem 1.5rem; }
+
+.ui-btn--icon-only { padding: 0.5rem; aspect-ratio: 1; }
+
+.ui-btn--primary {
+  background: var(--google-blue);
+  color: white;
+  border-color: var(--google-blue);
+}
+.ui-btn--primary:hover:not(:disabled) { background: var(--google-blue-hover); }
+
+.ui-btn--secondary {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: var(--border-color);
+}
+.ui-btn--secondary:hover:not(:disabled) {
+  background: var(--google-blue-light);
+  color: var(--google-blue);
+}
+
+.ui-btn--ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: transparent;
+}
+.ui-btn--ghost:hover:not(:disabled) { background: rgba(255, 255, 255, 0.06); }
+
+.ui-btn--danger {
+  background: transparent;
+  color: var(--google-red);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+.ui-btn--danger:hover:not(:disabled) { background: var(--google-red-light); }
+
+.ui-btn.is-active {
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.18) 0%, rgba(168, 85, 247, 0.12) 100%);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: var(--google-blue);
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.18);
+}
+
+.ui-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.ui-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+.ui-card--pad-none { padding: 0; }
+.ui-card--pad-sm { padding: 0.75rem; }
+.ui-card--pad-md { padding: 1.25rem; }
+.ui-card--pad-lg { padding: 2rem; }
+
+.ui-section-header {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding-left: 0.75rem;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+.ui-score-badge {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  font-weight: 800;
+  line-height: 1.1;
+}
+.ui-score-badge--sm { width: 2.5rem; height: 2.5rem; font-size: 0.85rem; }
+.ui-score-badge--md { width: 3.5rem; height: 3.5rem; font-size: 1.1rem; }
+.ui-score-badge--lg { width: 5rem; height: 5rem; font-size: 1.5rem; }
+
+.ui-score-badge--good {
+  background: var(--google-green-light);
+  color: var(--google-green);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+.ui-score-badge--moderate {
+  background: var(--google-amber-light);
+  color: var(--google-amber);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+.ui-score-badge--risk {
+  background: var(--google-red-light);
+  color: var(--google-red);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.ui-score-badge__label {
+  font-size: 0.55rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.8;
+}
+
+/* ==========================================================================
+   Accessibility: visible keyboard focus states
+   Prior to this, focus was only styled on form inputs — buttons, links,
+   and modal close controls had no visible focus indicator, which fails
+   WCAG 2.1 SC 2.4.7 for keyboard users.
+   ========================================================================== */
+
+:focus-visible {
+  outline: 2px solid var(--google-blue);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.ui-btn:focus-visible {
+  outline: 2px solid var(--google-blue);
+  outline-offset: 2px;
+}
+
+.sidebar-btn:focus-visible {
+  outline: 2px solid var(--google-blue);
+  outline-offset: -1px;
+}
