@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import * as Icons from 'lucide-react';
-import { ArrowRight, FolderClock, ArrowLeft, Wand2 } from 'lucide-react';
+import { ArrowRight, FolderClock, ArrowLeft, Wand2, Check } from 'lucide-react';
 import { ASSESSMENTS, GROUPS } from '../data/assessmentCatalog';
 import Button from './ui/Button';
 import Card from './ui/Card';
@@ -29,8 +29,13 @@ export default function AssessmentLanding({ framework, onStart, onTrySample, onB
 
   const group = GROUPS.find((g) => g.id === meta.group);
   const Icon = Icons[meta.icon] || Icons.Sparkles;
+  // CSS custom property consumed throughout index.css's intro-page styles
+  // (glow color, scan-line tint, seal color, connector-line color, etc.)
+  // so each assessment's accent color drives its variant's signature
+  // element, not just its icon.
+  const accentStyle = { '--intro-accent': meta.accent };
 
-  const commonHeaderProps = { meta, group, Icon, onStart, onTrySample, onBack, onOpenSaved, savedCount };
+  const commonHeaderProps = { meta, group, Icon, onStart, onTrySample, onBack, onOpenSaved, savedCount, accentStyle };
 
   switch (meta.variant) {
     case 'blueprint':
@@ -88,7 +93,7 @@ function BackLink({ onBack }) {
    STORY variant -- vertical narrative timeline.
    Discovery Intake, Feasibility Assessor.
    ====================================================================== */
-function StoryVariant({ meta, group, Icon, onStart, onTrySample, onBack, onOpenSaved, savedCount }) {
+function StoryVariant({ meta, group, Icon, onStart, onTrySample, onBack, onOpenSaved, savedCount, accentStyle }) {
   const steps = [
     { label: 'What it is', body: meta.what },
     { label: 'Why it exists', body: meta.why },
@@ -96,7 +101,7 @@ function StoryVariant({ meta, group, Icon, onStart, onTrySample, onBack, onOpenS
     { label: 'How it works', body: meta.how },
   ];
   return (
-    <div className="intro-page intro-story">
+    <div className="intro-page intro-story" style={accentStyle}>
       <BackLink onBack={onBack} />
       <div className="intro-story__hero">
         <span className="intro-eyebrow" style={{ color: meta.accent }}>{group?.name}</span>
@@ -147,10 +152,10 @@ function StoryVariant({ meta, group, Icon, onStart, onTrySample, onBack, onOpenS
    labels, numbered "how" steps.
    ML Maturity, Agentic AI Discovery, Engagement & Roadmap Model.
    ====================================================================== */
-function BlueprintVariant({ meta, group, Icon, onStart, onTrySample, onBack, onOpenSaved, savedCount }) {
+function BlueprintVariant({ meta, group, Icon, onStart, onTrySample, onBack, onOpenSaved, savedCount, accentStyle }) {
   const howSteps = meta.how.split(/(?<=[.;])\s+/).filter(Boolean);
   return (
-    <div className="intro-page intro-blueprint">
+    <div className="intro-page intro-blueprint" style={accentStyle}>
       <BackLink onBack={onBack} />
       <div className="intro-blueprint__frame">
         <div className="intro-blueprint__corner intro-blueprint__corner--tl" />
@@ -219,7 +224,7 @@ function BlueprintVariant({ meta, group, Icon, onStart, onTrySample, onBack, onO
    DOSSIER variant -- executive briefing with tabbed sections.
    Quick Use Case Check, Enterprise Readiness Assessor.
    ====================================================================== */
-function DossierVariant({ meta, group, Icon, onStart, onTrySample, onBack, onOpenSaved, savedCount }) {
+function DossierVariant({ meta, group, Icon, onStart, onTrySample, onBack, onOpenSaved, savedCount, accentStyle }) {
   const tabs = [
     { key: 'what', label: 'What', body: meta.what },
     { key: 'why', label: 'Why', body: meta.why },
@@ -231,7 +236,10 @@ function DossierVariant({ meta, group, Icon, onStart, onTrySample, onBack, onOpe
   const active = tabs.find((t) => t.key === activeTab);
 
   return (
-    <div className="intro-page intro-dossier">
+    <div className="intro-page intro-dossier" style={accentStyle}>
+      <div className="intro-dossier__seal" aria-hidden="true">
+        <Check size={26} style={{ color: meta.accent }} strokeWidth={3} />
+      </div>
       <BackLink onBack={onBack} />
       <div className="intro-dossier__banner" style={{ background: meta.accent }}>
         <span>{group?.name} &mdash; Briefing Document</span>
@@ -282,9 +290,9 @@ function DossierVariant({ meta, group, Icon, onStart, onTrySample, onBack, onOpe
    EDITORIAL variant -- magazine-style, large headline, pull quote.
    Financial ROI Assessor, Executive Scoping Assessor.
    ====================================================================== */
-function EditorialVariant({ meta, group, Icon, onStart, onTrySample, onBack, onOpenSaved, savedCount }) {
+function EditorialVariant({ meta, group, Icon, onStart, onTrySample, onBack, onOpenSaved, savedCount, accentStyle }) {
   return (
-    <div className="intro-page intro-editorial">
+    <div className="intro-page intro-editorial" style={accentStyle}>
       <BackLink onBack={onBack} />
       <span className="intro-eyebrow" style={{ color: meta.accent }}>{group?.name}</span>
       <h1 className="intro-editorial__headline">{meta.name}</h1>
@@ -326,7 +334,7 @@ function EditorialVariant({ meta, group, Icon, onStart, onTrySample, onBack, onO
    CANVAS variant -- spatial / nodal layout, connected cards.
    Architecture Blueprint Canvas, Agentic Maturity Assessor.
    ====================================================================== */
-function CanvasVariant({ meta, group, Icon, onStart, onTrySample, onBack, onOpenSaved, savedCount }) {
+function CanvasVariant({ meta, group, Icon, onStart, onTrySample, onBack, onOpenSaved, savedCount, accentStyle }) {
   const nodes = [
     { label: 'What', body: meta.what },
     { label: 'Why', body: meta.why },
@@ -334,7 +342,7 @@ function CanvasVariant({ meta, group, Icon, onStart, onTrySample, onBack, onOpen
     { label: 'How', body: meta.how },
   ];
   return (
-    <div className="intro-page intro-canvas">
+    <div className="intro-page intro-canvas" style={accentStyle}>
       <BackLink onBack={onBack} />
       <div className="intro-canvas__hero">
         <div className="intro-canvas__hero-icon" style={{ borderColor: meta.accent, color: meta.accent }}>
@@ -348,6 +356,12 @@ function CanvasVariant({ meta, group, Icon, onStart, onTrySample, onBack, onOpen
       </div>
 
       <div className="intro-canvas__grid">
+        <svg className="intro-canvas__connectors" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M 10 20 Q 50 5, 90 20" />
+          <path d="M 10 80 Q 50 95, 90 80" />
+          <path d="M 25 15 L 25 85" />
+          <path d="M 75 15 L 75 85" />
+        </svg>
         {nodes.map((n, i) => (
           <div className="intro-canvas__node" key={n.label} style={{ borderColor: meta.accent }}>
             <span className="intro-canvas__node-index" style={{ background: meta.accent }}>{i + 1}</span>
