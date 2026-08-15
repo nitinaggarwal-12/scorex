@@ -2664,6 +2664,7 @@ app.get('/api/assessments', requireAuth, async (req, res) => {
     res.json({
       success: true,
       data: assessmentsList
+    });
   } catch (error) {
     console.error('Error retrieving assessments from PostgreSQL, falling back to file storage:', error.message);
     try {
@@ -3485,7 +3486,6 @@ app.post('/api/assessment/:id/audit-event', async (req, res) => {
 
 // Serve React app for all non-API routes
 const buildPath = path.join(__dirname, '../client/build');
-const fs = require('fs');
 
 if (fs.existsSync(buildPath)) {
   app.use(express.static(buildPath, {
