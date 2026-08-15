@@ -365,15 +365,16 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                   type="button"
                   onClick={() => {
                     const guestUser = {
-                      id: 'guest_' + Date.now(),
-                      email: 'guest@enterprise.com',
-                      role: 'consumer',
-                      firstName: 'Guest',
-                      lastName: 'Explorer'
+                      id: 'admin_guest_' + Date.now(),
+                      email: 'admin.guest@enterprise.com',
+                      role: 'admin',
+                      firstName: 'Admin',
+                      lastName: 'Guest'
                     };
-                    authService.setSession('guest_session_' + Date.now(), guestUser);
+                    authService.setSession('guest_admin_session_' + Date.now(), guestUser);
+                    localStorage.setItem('user', JSON.stringify(guestUser));
                     localStorage.setItem('scorex_disclaimer_accepted', 'true');
-                    toast.success('Logged in as Guest Explorer');
+                    toast.success('Admin Mode Unlocked (Full Access)');
                     if (onLoginSuccess) {
                       onLoginSuccess(guestUser);
                     }
