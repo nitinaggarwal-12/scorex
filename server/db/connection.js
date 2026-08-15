@@ -124,6 +124,11 @@ class DatabaseConnection {
       }
       
       this.pool = new Pool(poolConfig);
+      
+      // Prevent unhandled error crashes from idle client disconnects
+      this.pool.on('error', (err) => {
+        console.warn('⚠️  PostgreSQL pool client error (handled):', err.message);
+      });
 
       // Test connection
       const client = await this.pool.connect();
