@@ -10,7 +10,7 @@ class GeminiService {
   constructor() {
     this.apiKey = process.env.GEMINI_API_KEY || null;
     this.primaryModel = process.env.GEMINI_MODEL || 'gemini-3.7-flash';
-    this.fallbackModels = ['gemini-2.5-flash', 'gemini-3.1-pro', 'gemini-2.5-pro'];
+    this.fallbackModels = ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.0-flash'];
     this.client = null;
 
     if (this.apiKey) {
@@ -32,7 +32,7 @@ class GeminiService {
   /**
    * Internal helper to generate content with automatic model fallback
    */
-  async _generateWithFallback(prompt, systemInstruction = '', temperature = 0.7) {
+  async _generateWithFallback(prompt, systemInstruction = '', temperature = 0.7, responseMimeType = null) {
     if (!this.isAvailable()) {
       throw new Error('Gemini API key is not configured');
     }
@@ -47,6 +47,9 @@ class GeminiService {
         };
         if (systemInstruction) {
           config.systemInstruction = systemInstruction;
+        }
+        if (responseMimeType) {
+          config.responseMimeType = responseMimeType;
         }
 
         const response = await this.client.models.generateContent({

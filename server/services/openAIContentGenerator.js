@@ -38,11 +38,23 @@ class OpenAIContentGenerator {
           : this.buildOverallPrompt(assessment);
         
         const systemPrompt = this.getSystemPrompt();
-        const result = await geminiService._generateWithFallback(prompt + '\n\nIMPORTANT: Return ONLY a valid JSON object matching the requested schema.', systemPrompt, 0.7);
-        const jsonMatch = result.text.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          const parsed = JSON.parse(jsonMatch[0]);
-          console.log(`✅ Gemini (gemini-3.7-flash) generated and parsed successfully (${result.modelUsed})`);
+        const result = await geminiService._generateWithFallback(
+          prompt + '\n\nIMPORTANT: Return ONLY a valid JSON object matching the requested schema.', 
+          systemPrompt, 
+          0.7,
+          'application/json'
+        );
+        let parsed = null;
+        try {
+          parsed = JSON.parse(result.text);
+        } catch (e) {
+          const jsonMatch = result.text.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            parsed = JSON.parse(jsonMatch[0]);
+          }
+        }
+        if (parsed) {
+          console.log(`✅ Gemini generated and parsed successfully (${result.modelUsed})`);
           const formatted = pillarId 
             ? this.formatPillarResults(parsed, assessment, pillarId)
             : this.formatOverallResults(parsed, assessment);
