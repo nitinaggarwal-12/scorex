@@ -783,12 +783,16 @@ const GlobalNav = () => {
           <ActionButtons>
             {currentUser ? (
               <>
-                {/* Dashboard Button */}
-                {currentUser.role !== 'consumer' && (
-                  <SecondaryCTAButton onClick={() => navigate('/insights-dashboard')}>
-                    Dashboard
-                  </SecondaryCTAButton>
-                )}
+                <SecondaryCTAButton onClick={() => navigate('/insights-dashboard')}>
+                  Dashboard
+                </SecondaryCTAButton>
+                <SecondaryCTAButton onClick={handleTrySample}>
+                  <FiPlay size={14} />
+                  Try Sample
+                </SecondaryCTAButton>
+                <CTAButton onClick={() => navigate('/start')}>
+                  Start Assessment →
+                </CTAButton>
 
                 {/* Assessments Dropdown */}
                 <DropdownContainer className="dropdown-container">
