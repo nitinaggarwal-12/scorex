@@ -1037,6 +1037,7 @@ const GlobalNav = () => {
                     </DropdownEmailLink>
                   </DropdownMenu>
                 </DropdownContainer>
+              </>
             ) : (
               <>
                 <SecondaryCTAButton onClick={() => handleExploreAsGuest('/dashboard')}>
