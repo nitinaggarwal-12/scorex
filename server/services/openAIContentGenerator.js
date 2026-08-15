@@ -42,16 +42,14 @@ class OpenAIContentGenerator {
         const jsonMatch = result.text.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
           const parsed = JSON.parse(jsonMatch[0]);
-          return {
-            overallScores: parsed.overallScores,
-            pillarScores: parsed.pillarScores,
-            executiveSummary: parsed.executiveSummary,
-            recommendations: parsed.recommendations,
-            rawContent: parsed,
-            generatedAt: new Date().toISOString(),
-            model: result.modelUsed,
-            source: 'gemini'
-          };
+          console.log(`✅ Gemini (gemini-3.7-flash) generated and parsed successfully (${result.modelUsed})`);
+          const formatted = pillarId 
+            ? this.formatPillarResults(parsed, assessment, pillarId)
+            : this.formatOverallResults(parsed, assessment);
+          formatted.source = 'gemini';
+          formatted.model = result.modelUsed;
+          formatted.generatedAt = new Date().toISOString();
+          return formatted;
         }
       } catch (geminiErr) {
         console.warn('⚠️ Gemini content generation notice, falling back:', geminiErr.message);

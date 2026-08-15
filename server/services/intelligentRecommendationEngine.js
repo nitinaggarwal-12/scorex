@@ -14,143 +14,143 @@ class IntelligentRecommendationEngine {
       // Platform Governance
       'resource_conflicts': {
         problem: 'Resource conflicts between environments',
-        solution: 'Implement workspace-level resource isolation using separate Databricks workspaces for dev/staging/prod, with Unity Catalog providing centralized governance across all environments.',
+        solution: 'Implement environment-level resource isolation (dev/staging/prod) with an enterprise Unified Catalog providing centralized metadata governance, access control, and quota enforcement across all environments.',
         steps: [
-          'Create dedicated workspaces: dev-workspace, staging-workspace, prod-workspace',
-          'Configure workspace-specific cluster policies to prevent resource contention',
-          'Use Unity Catalog metastore shared across workspaces for unified governance',
-          'Set up budget alerts per workspace to track and control costs',
-          'Enable audit logging to monitor cross-workspace activity'
+          'Establish dedicated workspace environments: dev, staging, and production',
+          'Configure compute auto-scaling policies and resource quotas to prevent noisy-neighbor contention',
+          'Use centralized metadata catalog shared across environments for unified governance and lineage',
+          'Set up automated budget alerts per project to track and control cloud compute costs',
+          'Enable unified audit logging to monitor cross-environment operations and access'
         ],
-        databricks_features: ['Unity Catalog', 'Workspace Administration', 'Cluster Policies', 'Budget Alerts']
+        databricks_features: ['Unified Metadata Catalog', 'Environment Resource Isolation', 'Automated Quota & Compute Policies', 'FinOps Budget Alerts']
       },
       'error_handling': {
         problem: 'Poor error handling and recovery',
-        solution: 'Implement robust error handling with Delta Live Tables automated retry logic, dead letter queues, and alerting for failed pipeline steps.',
+        solution: 'Implement robust declarative data pipeline error handling with automated retry policies, dead-letter queues, and real-time observability alerts for failed processing stages.',
         steps: [
-          'Use Delta Live Tables with automatic retry policies for transient failures',
-          'Configure @expect_or_drop() for data quality issues to quarantine bad records',
-          'Set up dead letter tables to capture and analyze failed records',
-          'Enable Databricks Workflows email alerts for pipeline failures',
-          'Implement idempotent pipeline logic to safely retry operations'
+          'Deploy declarative data pipelines with automated retry logic for transient infrastructure failures',
+          'Configure automated data quality assertions to quarantine invalid records without crashing pipelines',
+          'Set up dead-letter queues/tables to isolate and inspect rejected records for root cause analysis',
+          'Enable automated alerting channels (Slack, Email, PagerDuty) for pipeline execution anomalies',
+          'Implement idempotent pipeline logic and checkpointing to safely retry failed operations'
         ],
-        databricks_features: ['Delta Live Tables', 'Workflows', 'Delta Lake ACID', 'Lakehouse Monitoring']
+        databricks_features: ['Declarative Pipeline Framework', 'Automated Quality Assertions & Quarantining', 'Dead Letter Queues', 'Pipeline Observability & Alerting']
       },
       'manual_deployment': {
         problem: 'Manual, error-prone deployment processes',
-        solution: 'Adopt Databricks Asset Bundles (DABs) for infrastructure-as-code deployment, enabling automated, repeatable deployments across environments.',
+        solution: 'Adopt declarative Infrastructure-as-Code (IaC) and CI/CD automation pipelines for reproducible, zero-downtime deployments across staging and production environments.',
         steps: [
-          'Define infrastructure using databricks.yml bundle configuration',
-          'Store bundle code in Git (GitHub/GitLab/Bitbucket)',
-          'Use `databricks bundle deploy` command in CI/CD pipeline',
-          'Implement separate bundle targets for dev/staging/prod',
-          'Enable drift detection to catch manual configuration changes'
+          'Define platform infrastructure and job configurations as code (Terraform / declarative templates)',
+          'Store all pipeline definitions and configuration in version control (Git)',
+          'Automate linting, unit testing, and deployment execution in CI/CD runners',
+          'Implement isolated staging and production deployment targets with automated verification gates',
+          'Enable drift detection to catch manual configuration changes and enforce consistency'
         ],
-        databricks_features: ['Asset Bundles', 'Databricks CLI', 'Git Integration', 'CI/CD Workflows']
+        databricks_features: ['Infrastructure-as-Code (IaC)', 'CI/CD Automated Deployment', 'Git Version Control Integration', 'Drift Detection & Guardrails']
       },
       
       // Data Engineering
       'poor_data_quality': {
         problem: 'Poor data quality at ingestion',
-        solution: 'Implement Delta Live Tables with expectations to enforce data quality rules at ingestion, automatically quarantining bad data.',
+        solution: 'Implement declarative data pipelines with automated data quality expectations and validation gates at ingestion, quarantining bad data while preserving pipeline uptime.',
         steps: [
-          'Define DLT pipeline with @dlt.table decorators',
-          'Add @expect_or_drop("valid_email", "email IS NOT NULL") for data quality',
-          'Use @expect_or_fail() for critical business rules',
-          'Monitor data quality metrics in DLT event log',
-          'Set up alerts when quality thresholds are breached'
+          'Define multi-layer lakehouse architecture (Raw/Bronze -> Cleansed/Silver -> Curated/Gold)',
+          'Add automated schema enforcement and data validation rules at ingestion boundaries',
+          'Configure automated quarantine tables for failed schema or business constraint records',
+          'Monitor data quality anomaly metrics and freshness thresholds in continuous telemetry dashboards',
+          'Set up automated notifications when data quality drop rates exceed SLA thresholds'
         ],
-        databricks_features: ['Delta Live Tables', 'Expectations', 'Auto Loader', 'Lakehouse Monitoring']
+        databricks_features: ['Declarative Data Pipelines', 'Automated Data Quality Gates', 'Streaming Ingestion Engine', 'Continuous Data Quality Monitoring']
       },
       'pipeline_failures': {
         problem: 'Frequent pipeline failures',
-        solution: 'Use Databricks Workflows with automated retry logic, notifications, and dependency management to create resilient data pipelines.',
+        solution: 'Use enterprise workflow orchestration with automated DAG dependency management, intelligent retry backoffs, and execution checkpointing to ensure resilient data pipelines.',
         steps: [
-          'Convert notebooks to Delta Live Tables for declarative ETL',
-          'Configure retry policies in Workflows (max_retries=3, timeout)',
-          'Set up email/Slack alerts for job failures',
-          'Use task dependencies to ensure proper execution order',
-          'Enable run history and logs for troubleshooting'
+          'Modernize legacy batch scripts into structured DAGs with clear task dependencies',
+          'Configure exponential retry backoffs and timeout policies for resilient job execution',
+          'Set up integrated alerting notifications for task failures and SLA misses',
+          'Utilize checkpointed state storage to allow resumes from the point of failure',
+          'Centralize execution logs and metrics for accelerated troubleshooting'
         ],
-        databricks_features: ['Workflows', 'Delta Live Tables', 'Job Scheduling', 'Alerting']
+        databricks_features: ['Enterprise Workflow Orchestration', 'Automated Retry & Checkpointing', 'DAG Dependency Management', 'Real-time Pipeline Alerting']
       },
       
       // Machine Learning
       'no_experiment_tracking': {
         problem: 'No centralized experiment tracking',
-        solution: 'Implement MLflow Tracking to automatically log all experiments, parameters, metrics, and models in a centralized registry.',
+        solution: 'Implement a centralized Model Registry and Experiment Tracking platform to automatically record hyperparameters, code versions, metrics, and model artifacts in a reproducible repository.',
         steps: [
-          'Use mlflow.autolog() to automatically capture experiments',
-          'Log parameters with mlflow.log_param("learning_rate", 0.01)',
-          'Track metrics with mlflow.log_metric("accuracy", 0.95)',
-          'Register models with MLflow Model Registry',
-          'Compare experiments using MLflow UI'
+          'Integrate open standard experiment tracking to automatically log model runs and parameters',
+          'Standardize metric logging (accuracy, F1, loss, latency) across all data science teams',
+          'Centralize model versioning and transition stages (staging, production, archived) in a model registry',
+          'Enable model artifact lineage linking training datasets to deployed models',
+          'Implement visual model comparison dashboards to evaluate candidate architectures'
         ],
-        databricks_features: ['MLflow Tracking', 'MLflow Model Registry', 'Experiments', 'AutoML']
+        databricks_features: ['Centralized Experiment Tracking', 'Model Registry & Lifecycle Management', 'Automated Hyperparameter Logging', 'Model Benchmarking Dashboards']
       },
       'model_monitoring': {
         problem: 'No model monitoring in production',
-        solution: 'Deploy Lakehouse Monitoring to automatically track model drift, performance degradation, and data quality issues in production.',
+        solution: 'Deploy full-lifecycle model observability to continuously monitor model prediction quality, data drift, feature distribution shifts, and inference latency in production.',
         steps: [
-          'Enable Lakehouse Monitoring on inference tables',
-          'Configure drift detection for input features',
-          'Set up prediction quality monitors',
-          'Create alerts for performance degradation',
-          'Review monitoring dashboards daily'
+          'Log inference request and prediction payloads to governed monitoring tables',
+          'Configure automated statistical drift detection for input feature distributions',
+          'Set up performance degradation alerts based on ground truth feedback loops',
+          'Establish automated retraining pipelines triggered by drift thresholds',
+          'Publish live model health and SLA dashboards for engineering and business stakeholders'
         ],
-        databricks_features: ['Lakehouse Monitoring', 'Model Serving', 'MLflow', 'System Tables']
+        databricks_features: ['Continuous Model Observability', 'Automated Feature Drift Detection', 'Managed Model Inference Endpoints', 'Automated Retraining Triggers']
       },
       
       // Analytics & BI
       'slow_queries': {
         problem: 'Slow query performance',
-        solution: 'Enable Photon acceleration, implement Z-ordering and Liquid Clustering on Delta tables, and use Serverless SQL for automatic optimization.',
+        solution: 'Implement serverless vectorized query engines, automated open table compaction, data clustering, and intelligent caching for sub-second query performance on lakehouse storage.',
         steps: [
-          'Enable Photon on SQL warehouses for 3-5x speedup',
-          'Run OPTIMIZE command with Z-ORDER BY on filter columns',
-          'Enable Liquid Clustering: ALTER TABLE SET TBLPROPERTIES("clustering"="true")',
-          'Use Serverless SQL warehouses for auto-scaling',
-          'Review Query Profile to identify bottlenecks'
+          'Enable serverless vectorized SQL compute pools for elastic auto-scaling',
+          'Apply data clustering and auto-compaction on high-cardinality filter columns',
+          'Configure intelligent result caching and intermediate materialize views for repetitive queries',
+          'Utilize query execution profiling to identify table scan bottlenecks and missing partition filters',
+          'Establish right-sized compute tiers mapped to workload complexity'
         ],
-        databricks_features: ['Photon', 'Liquid Clustering', 'Serverless SQL', 'Query Profile']
+        databricks_features: ['Vectorized Serverless SQL Engine', 'Open Table Auto-Compaction & Clustering', 'Intelligent Result Caching', 'Query Execution Profiler']
       },
       'inconsistent_performance': {
         problem: 'Inconsistent query performance',
-        solution: 'Implement Delta caching, predictive I/O, and query result caching to ensure consistent performance.',
+        solution: 'Implement centralized semantic data modeling, predictive data caching, and auto-scaling compute pools to ensure deterministic query performance across peak loads.',
         steps: [
-          'Enable disk caching on frequently accessed tables',
-          'Use Serverless SQL for consistent resource allocation',
-          'Enable query result caching for repeated queries',
-          'Partition tables by date/region for query pruning',
-          'Set up query monitoring to track performance trends'
+          'Deploy a centralized semantic layer to standardize metrics and eliminate redundant scans',
+          'Configure elastic compute auto-scaling to absorb peak analytical concurrency spikes',
+          'Enable predictive I/O and query result caching for executive dashboards',
+          'Partition underlying storage by optimal time/region dimensions',
+          'Track query concurrency metrics to maintain consistent SLAs'
         ],
-        databricks_features: ['Delta Caching', 'Serverless SQL', 'Result Caching', 'Predictive I/O']
+        databricks_features: ['Centralized Semantic Layer', 'Elastic Auto-Scaling Compute', 'Predictive Caching & Materialized Views', 'Workload Concurrency Management']
       },
       
       // Generative AI
       'no_genai_strategy': {
         problem: 'No clear GenAI strategy',
-        solution: 'Start with Databricks AI Playground to experiment with foundation models, then build RAG applications using Mosaic AI Agent Framework.',
+        solution: 'Establish an enterprise Generative AI roadmap starting with governed vector search for Retrieval-Augmented Generation (RAG), secure AI gateways, and multi-model benchmarking.',
         steps: [
-          'Use AI Playground to test different LLMs (Claude, GPT-4, Llama)',
-          'Identify 2-3 high-value use cases (document QA, code generation)',
-          'Build POC with Mosaic AI Agent Framework for RAG',
-          'Index knowledge base using Vector Search',
-          'Deploy agents with MLflow for serving'
+          'Establish an AI Gateway with cost attribution, rate limiting, and token controls',
+          'Identify and prioritize top 2-3 high-ROI business use cases (knowledge retrieval, automated synthesis)',
+          'Deploy governed vector databases synced with curated enterprise data for RAG pipelines',
+          'Implement automated LLM evaluation frameworks to benchmark accuracy, hallucination, and latency',
+          'Deploy secure inference endpoints with role-based access control and PII guardrails'
         ],
-        databricks_features: ['AI Playground', 'Mosaic AI Agent Framework', 'Vector Search', 'Model Serving']
+        databricks_features: ['Enterprise AI Gateway', 'Governed Vector Database & RAG', 'Automated LLM Evaluation Framework', 'Multi-Model Inference Endpoints']
       },
       'prompt_management': {
         problem: 'No prompt engineering practices',
-        solution: 'Use AI Playground for prompt development and testing, then version prompts in MLflow for production deployment.',
+        solution: 'Implement prompt versioning, automated evaluation harnesses, and enterprise guardrails to ensure consistent, secure GenAI deployments.',
         steps: [
-          'Develop prompts in AI Playground with ground truth evaluation',
-          'Version prompts as MLflow experiments',
-          'Use prompt templates with variables for dynamic inputs',
-          'A/B test different prompts in production',
-          'Monitor prompt effectiveness with custom metrics'
+          'Centralize prompt templates in a version-controlled repository with parameterized inputs',
+          'Implement automated ground-truth evaluation suites for prompt regression testing',
+          'Deploy input and output guardrails to detect PII leaks, prompt injection, and hallucinations',
+          'Perform structured A/B testing on prompt variants in staging environments',
+          'Track prompt performance, latency, and token cost metrics across models'
         ],
-        databricks_features: ['AI Playground', 'Prompt Engineering', 'MLflow', 'A/B Testing']
+        databricks_features: ['Centralized Prompt Repository', 'Automated Prompt Evaluation Suites', 'LLM Safety & PII Guardrails', 'A/B Testing & Cost Profiling']
       }
     };
   }

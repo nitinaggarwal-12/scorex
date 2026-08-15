@@ -1,175 +1,132 @@
 /**
- * Databricks Feature Mapper
- * Maps assessment responses to actual Databricks product features and capabilities
- * Based on official Databricks release notes and documentation
- * 
- * Source: https://docs.databricks.com/aws/en/release-notes/product/
- * Last Updated: October 2025
+ * Enterprise Architecture Capability & Feature Mapper
+ * Maps assessment responses to modern open data, analytics, and AI architecture capabilities
  */
 
 class DatabricksFeatureMapper {
   constructor() {
-    // Latest Databricks features organized by maturity level and pillar
+    // Enterprise architecture capabilities organized by maturity level and pillar
     this.featuresByPillar = {
       platform_governance: {
         emerging: {
           features: [
             {
-              name: 'Unity Catalog',
-              description: 'Unified governance solution for data and AI',
-              benefits: ['Centralized access control', 'Data discovery', 'Lineage tracking'],
-              releaseDate: 'GA - October 2024',
-              docs: 'https://docs.databricks.com/data-governance/unity-catalog/index.html'
+              name: "Unified Metadata & Catalog Governance",
+              description: "Centralized metadata catalog and access policy enforcement across multi-cloud storage",
+              benefits: ["Centralized access control", "Data discovery", "Automated lineage tracking"],
+              releaseDate: "GA"
             },
             {
-              name: 'Delta Sharing',
-              description: 'Open protocol for secure data sharing (Revenue-generating)',
-              benefits: ['Share live data securely', 'No data duplication', 'Open standard', 'Cross-platform sharing'],
-              releaseDate: 'GA with row/column filters - October 2025',
-              docs: 'https://docs.databricks.com/data-sharing/index.html',
-              monetization: 'Enables data monetization and ecosystem growth'
+              name: "Governed Data Exchange",
+              description: "Open protocol for zero-copy secure data exchange with internal and external partners",
+              benefits: ["Secure cross-platform data sharing", "Zero data duplication", "Fine-grained policy enforcement"],
+              releaseDate: "GA"
             },
             {
-              name: 'Databricks Marketplace',
-              description: 'Data and AI marketplace for monetization (Revenue-generating)',
-              benefits: ['Monetize data assets', 'Discover data products', 'AI app distribution', 'Partner ecosystem'],
-              releaseDate: 'GA - October 2025',
-              docs: 'https://docs.databricks.com/marketplace/index.html',
-              monetization: 'Platform for data product monetization and consumption-based revenue'
+              name: "Enterprise Data Product Catalog",
+              description: "Self-service marketplace for governed data assets, metrics, and models",
+              benefits: ["Accelerated data discovery", "Domain-driven data ownership", "Consumer self-service"],
+              releaseDate: "GA"
             },
             {
-              name: 'Serverless Compute',
-              description: 'Instantly available compute without cluster management',
-              benefits: ['Zero cluster management', 'Sub-second startup', 'Cost optimization'],
-              releaseDate: 'Updated to 17.3 - October 2025',
-              docs: 'https://docs.databricks.com/serverless-compute/index.html'
-            },
-            {
-              name: 'Clean Rooms',
-              description: 'Privacy-preserving data collaboration',
-              benefits: ['Secure multi-party analytics', 'No raw data exposure', 'Compliance-friendly'],
-              releaseDate: 'Public Preview - October 2025',
-              docs: 'https://docs.databricks.com/clean-rooms/index.html',
-              monetization: 'Enables secure data collaboration and new revenue streams'
+              name: "Elastic Serverless Compute Pools",
+              description: "On-demand elastic compute infrastructure without manual cluster management",
+              benefits: ["Zero cluster provisioning", "Sub-second elasticity", "Automated idle termination"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Implement Unity Catalog: Create metastore → Assign to workspaces → Migrate existing databases using SYNC command → Configure grants with GRANT SELECT/MODIFY → Enable audit logging',
-            'Deploy Serverless SQL warehouses: Create serverless warehouse (Starter/Pro/Enterprise) → Configure scaling (min/max DBU) → Set query timeouts → Enable Photon acceleration → Migrate workloads from classic clusters',
-            'Upgrade to DBR 17.3 LTS: Test compatibility with existing code → Update cluster policies → Set Runtime 17.3 as default → Benchmark performance gains → Validate Photon improvements'
+            "Deploy Unified Metadata Catalog: Establish 3-tier namespace (catalog.schema.table) -> Configure IAM access policies -> Enable centralized audit logging",
+            "Provision Elastic Serverless Compute: Configure auto-scaling compute pools -> Define max execution timeouts -> Enforce auto-termination for inactive resources",
+            "Standardize Infrastructure-as-Code: Define workspace and access policies in Terraform / Pulumi -> Automate deployment via CI/CD"
           ]
         },
         developing: {
           features: [
             {
-              name: 'Context-Based Ingress Control',
-              description: 'Advanced network security with context-aware access',
-              benefits: ['Enhanced security', 'Conditional access', 'Compliance support'],
-              releaseDate: 'Beta - October 2025',
-              docs: 'https://docs.databricks.com/security/network/index.html'
+              name: "Attribute-Based Access Control (ABAC)",
+              description: "Dynamic tag-based access control and runtime column/row level security filtering",
+              benefits: ["Dynamic security policies", "Reduced policy sprawl", "Automated compliance"],
+              releaseDate: "GA"
             },
             {
-              name: 'Data Classification',
-              description: 'Automatic PII and sensitive data discovery',
-              benefits: ['Automated compliance', 'Risk mitigation', 'Data privacy'],
-              releaseDate: 'Public Preview - October 2025',
-              docs: 'https://docs.databricks.com/data-governance/data-classification.html'
+              name: "Automated PII & Sensitive Data Discovery",
+              description: "Continuous scanning and classification for sensitive data and compliance tags",
+              benefits: ["Automated compliance (GDPR/HIPAA)", "Risk mitigation", "Data privacy enforcement"],
+              releaseDate: "GA"
             },
             {
-              name: 'Budget Policy Support',
-              description: 'Cost control with automated budget policies',
-              benefits: ['Cost management', 'Spending alerts', 'Resource optimization'],
-              releaseDate: 'Public Preview - August 2025',
-              docs: 'https://docs.databricks.com/administration-guide/account-settings/budgets.html'
+              name: "FinOps Budget & Quota Enforcement",
+              description: "Automated spending controls, project-level quotas, and proactive cost anomaly alerts",
+              benefits: ["Cost transparency", "Proactive budget alerting", "Resource chargeback"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Implement Context-Based Ingress Control for enhanced security',
-            'Enable Data Classification for compliance',
-            'Set up Budget Policies for cost governance'
+            "Implement Attribute-Based Access Control (ABAC) for dynamic row and column level masking",
+            "Enable automated PII classification across all ingestion landing zones",
+            "Configure project-level FinOps budget alerts and cluster auto-termination rules"
           ]
         },
         maturing: {
           features: [
             {
-              name: 'Governed Tags',
-              description: 'Enterprise-grade tagging for data assets',
-              benefits: ['Better organization', 'Policy enforcement', 'Cost attribution'],
-              releaseDate: 'Public Preview - August 2025',
-              docs: 'https://docs.databricks.com/data-governance/unity-catalog/tags.html'
+              name: "Governed Metadata Tagging System",
+              description: "Enterprise-grade classification taxonomy and policy enforcement tags",
+              benefits: ["Consistent taxonomy", "Automated policy inheritance", "Cost attribution"],
+              releaseDate: "GA"
             },
             {
-              name: 'Certification Status System',
-              description: 'Mark trusted data assets with certification badges',
-              benefits: ['Data trust', 'Quality assurance', 'User confidence'],
-              releaseDate: 'Public Preview - October 2025',
-              docs: 'https://docs.databricks.com/data-governance/unity-catalog/index.html'
+              name: "Asset Trust & Certification Framework",
+              description: "Official gold-standard asset badges and verified data quality seals",
+              benefits: ["Data consumer trust", "Verified data products", "Executive dashboard reliability"],
+              releaseDate: "GA"
             },
             {
-              name: 'Access Requests in Unity Catalog',
-              description: 'Self-service data access request workflow',
-              benefits: ['Faster data access', 'Audit trail', 'Governance compliance'],
-              releaseDate: 'Public Preview - August 2025',
-              docs: 'https://docs.databricks.com/data-governance/unity-catalog/manage-privileges/access-requests.html'
+              name: "Self-Service Access Request Workflows",
+              description: "Automated access approval workflows with time-bound credentials and audit trails",
+              benefits: ["Faster access approval", "Complete audit trail", "Zero privilege creep"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Implement Governed Tags for better data organization',
-            'Use Certification Status for trusted datasets',
-            'Enable Access Requests for self-service governance'
+            "Implement governed taxonomy tags for business domain organization",
+            "Enforce certification status badges on production analytical datasets",
+            "Deploy self-service data access request workflows with automated manager approval"
           ]
         },
         optimized: {
           features: [
             {
-              name: 'Enhanced Security & Compliance',
-              description: 'Enterprise-grade security controls for regulated industries',
-              benefits: ['Regulatory compliance', 'Audit readiness', 'Security certifications'],
-              releaseDate: 'September 2025',
-              docs: 'https://docs.databricks.com/security/index.html'
+              name: "Automated Compliance & Security Profiles",
+              description: "Continuous security auditing against SOC2, HIPAA, and ISO27001 benchmarks",
+              benefits: ["Continuous compliance verification", "Audit readiness", "Automated remediation"],
+              releaseDate: "GA"
             },
             {
-              name: 'Unity Catalog External Locations',
-              description: 'Secure external data access with centralized governance',
-              benefits: ['Centralized access control', 'Cloud storage security', 'Audit logging'],
-              releaseDate: 'GA',
-              docs: 'https://docs.databricks.com/data-governance/unity-catalog/manage-external-locations-and-credentials.html'
-            },
-            {
-              name: 'Advanced Cluster Policies',
-              description: 'Fine-grained control over cluster configurations',
-              benefits: ['Cost control', 'Security enforcement', 'Standardization'],
-              releaseDate: 'GA',
-              docs: 'https://docs.databricks.com/administration-guide/clusters/policies.html'
+              name: "Governed Multi-Cloud Storage Gateways",
+              description: "Secure cloud object storage connectivity with centralized credential rotation",
+              benefits: ["Direct IAM role federation", "Encrypted transit", "Centralized storage audit"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Implement advanced security controls and compliance features',
-            'Configure Unity Catalog external locations for governed data access',
-            'Enforce cluster policies for cost and security governance'
+            "Deploy continuous security posture and compliance profile monitoring",
+            "Configure governed multi-cloud storage gateways with automated IAM credential rotation"
           ]
         },
         innovative: {
           features: [
             {
-              name: 'Serverless SQL',
-              description: 'Fully managed SQL compute with instant availability',
-              benefits: ['Zero infrastructure management', 'Instant queries', 'Auto-scaling'],
-              releaseDate: 'GA',
-              docs: 'https://docs.databricks.com/sql/admin/create-sql-warehouse.html'
-            },
-            {
-              name: 'Databricks Assistant',
-              description: 'AI-powered coding assistant for notebooks and SQL',
-              benefits: ['AI code generation', 'Query optimization', 'Error fixing'],
-              releaseDate: 'Public Preview',
-              docs: 'https://docs.databricks.com/notebooks/databricks-assistant.html'
+              name: "Autonomous Governance & Self-Healing Policies",
+              description: "AI-assisted anomaly detection for data access, lineage deviations, and schema drift",
+              benefits: ["Zero-touch policy enforcement", "Predictive threat prevention", "Automated documentation"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Adopt Serverless SQL for simplified data analytics',
-            'Enable Databricks Assistant for AI-powered development',
-            'Explore latest platform innovations and beta features'
+            "Adopt autonomous governance policies for real-time anomaly detection and access prevention",
+            "Enable AI-assisted metadata enrichment and documentation synthesis"
           ]
         }
       },
@@ -178,166 +135,88 @@ class DatabricksFeatureMapper {
         emerging: {
           features: [
             {
-              name: 'Lakeflow Connect',
-              description: 'Managed connectors for SaaS data ingestion (Revenue-generating)',
-              benefits: ['Zero-code SaaS integration', '100+ pre-built connectors', 'Automated schema evolution', 'Reduces time-to-insight from weeks to hours'],
-              releaseDate: 'GA - October 2025',
-              docs: 'https://docs.databricks.com/connect/index.html',
-              monetization: 'Premium feature - DBU consumption based on data volume'
+              name: "Declarative Data Pipelines",
+              description: "Declarative ETL/ELT pipelines with built-in data quality expectations and auto-recovery",
+              benefits: ["Simplified pipeline development", "Built-in quality assertions", "Automated lineage capture"],
+              releaseDate: "GA"
             },
             {
-              name: 'Delta Live Tables (DLT)',
-              description: 'Declarative ETL framework for reliable pipelines',
-              benefits: ['Simplified ETL', 'Data quality checks', 'Auto-recovery'],
-              releaseDate: 'GA',
-              docs: 'https://docs.databricks.com/delta-live-tables/index.html'
+              name: "Streaming Ingestion & Schema Evolution",
+              description: "Scalable streaming ingestion from cloud storage with automated schema detection",
+              benefits: ["Automated schema drift handling", "Incremental file discovery", "Zero-maintenance ingest"],
+              releaseDate: "GA"
             },
             {
-              name: 'Lakeflow Pipelines Editor',
-              description: 'Visual pipeline builder for declarative ETL',
-              benefits: ['No-code pipeline creation', 'Visual debugging', 'Faster development'],
-              releaseDate: 'Public Preview - September 2025',
-              docs: 'https://docs.databricks.com/delta-live-tables/pipeline-editor.html'
-            },
-            {
-              name: 'Auto Loader',
-              description: 'Efficient incremental file ingestion',
-              benefits: ['Automatic schema detection', 'File discovery', 'Cost-effective'],
-              releaseDate: 'GA with file events - September 2025',
-              docs: 'https://docs.databricks.com/ingestion/auto-loader/index.html'
-            },
-            {
-              name: 'Streaming Tables',
-              description: 'Simplified streaming data processing',
-              benefits: ['Simplified streaming syntax', 'Automatic backfill', 'Built-in quality checks'],
-              releaseDate: 'Public Preview - October 2025',
-              docs: 'https://docs.databricks.com/structured-streaming/streaming-tables.html'
+              name: "Open Table Format Optimization",
+              description: "High-performance open table storage (Delta Lake / Iceberg) with automated compaction",
+              benefits: ["ACID transactions", "Time travel & rollback", "Sub-second read performance"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Migrate to Delta Live Tables: Define pipelines using @dlt.table/@dlt.view decorators → Add expectations for data quality (expect_or_fail/expect_or_drop) → Configure refresh mode (triggered/continuous) → Enable pipeline observability → Set up event logs for monitoring → Implement incremental processing with APPLY CHANGES FOR CDC',
-            'Deploy Lakeflow Pipelines Editor: Create visual DAG for data flows → Configure source connections (cloud storage/databases) → Define transformations with SQL/Python → Add data quality rules → Set up lineage tracking → Schedule refresh intervals',
-            'Implement Auto Loader for streaming ingestion: Use cloudFiles format → Configure schema evolution (addNewColumns/rescue) → Set up checkpoint location → Enable file notifications (queue/directory) → Define trigger intervals → Add schema hints for complex types'
+            "Migrate legacy scripts to declarative data pipelines with automated data quality assertions",
+            "Implement streaming ingestion for landing zones with automated schema evolution",
+            "Standardize on open table formats with automated file compaction and clustering"
           ]
         },
         developing: {
           features: [
             {
-              name: 'Lakeflow Connect',
-              description: 'Enterprise connectors for data ingestion',
-              benefits: ['Pre-built connectors', 'Simplified integration', 'Managed pipelines'],
-              releaseDate: 'Zerobus Ingest - October 2025',
-              docs: 'https://docs.databricks.com/ingestion/lakeflow-connect/index.html'
+              name: "Automated Change Data Capture (CDC)",
+              description: "Real-time incremental change capture from transactional databases into the lakehouse",
+              benefits: ["Sub-minute data freshness", "Low source database impact", "Simplified SCD Type 1 & 2"],
+              releaseDate: "GA"
             },
             {
-              name: 'Serverless Jobs Performance Mode',
-              description: 'Optimized serverless execution for production workloads',
-              benefits: ['Better performance', 'Auto-optimization', 'Cost tracking'],
-              releaseDate: 'Default for UI - September 2025',
-              docs: 'https://docs.databricks.com/jobs/serverless-jobs.html'
-            },
-            {
-              name: 'Jobs Triggered on Source Table Update',
-              description: 'Event-driven pipeline orchestration',
-              benefits: ['Real-time processing', 'Reduced latency', 'Efficient resource use'],
-              releaseDate: 'October 2025',
-              docs: 'https://docs.databricks.com/jobs/delta-live-tables.html'
+              name: "Pipeline Observability & Alerting",
+              description: "Comprehensive runtime telemetry, latency tracking, and proactive anomaly notifications",
+              benefits: ["Proactive issue detection", "SLA tracking", "Root cause diagnostic insights"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Migrate connectors to Lakeflow Connect',
-            'Enable Performance Mode for production jobs',
-            'Implement event-driven pipelines with table triggers'
+            "Implement automated CDC ingestion for core relational and transactional databases",
+            "Configure pipeline observability dashboards with automated Slack and email alerts"
           ]
         },
         maturing: {
           features: [
             {
-              name: 'Delta Lake Liquid Clustering',
-              description: 'Automatic data clustering for query performance',
-              benefits: ['No manual tuning', 'Adaptive optimization', 'Query acceleration'],
-              releaseDate: 'GA for DLT - August 2025',
-              docs: 'https://docs.databricks.com/delta/clustering.html'
-            },
-            {
-              name: 'Delta Lake Optimizations',
-              description: 'Advanced compression and storage optimizations',
-              benefits: ['Reduced storage costs', 'Faster queries', 'Better performance'],
-              releaseDate: 'GA',
-              docs: 'https://docs.databricks.com/delta/optimizations/index.html'
-            },
-            {
-              name: 'Databricks Workflows',
-              description: 'Orchestrate data pipelines and jobs',
-              benefits: ['Job scheduling', 'Dependency management', 'Monitoring'],
-              releaseDate: 'GA',
-              docs: 'https://docs.databricks.com/workflows/index.html'
+              name: "Event-Driven Workflow Orchestration",
+              description: "Enterprise DAG orchestration triggered by data arrival, schedules, or API webhooks",
+              benefits: ["End-to-end dependency management", "Idempotent execution", "Automated retry backoffs"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Enable Liquid Clustering for all large tables',
-            'Migrate to Zstd compression for cost savings',
-            'Use Backfill for historical data reprocessing'
+            "Modernize batch orchestrations to event-driven DAG execution models",
+            "Implement automated retry and error-handling policies across all data transformation workflows"
           ]
         },
         optimized: {
           features: [
             {
-              name: 'Python Custom Data Sources for DLT',
-              description: 'Extend DLT with custom Python sources',
-              benefits: ['Flexible integration', 'Custom logic', 'Reusable components'],
-              releaseDate: 'September 2025',
-              docs: 'https://docs.databricks.com/delta-live-tables/python-ref.html'
-            },
-            {
-              name: 'Stream Progress Metrics',
-              description: 'Real-time streaming pipeline monitoring',
-              benefits: ['Visibility', 'Performance tuning', 'SLA monitoring'],
-              releaseDate: 'Public Preview - September 2025',
-              docs: 'https://docs.databricks.com/delta-live-tables/observability.html'
-            },
-            {
-              name: 'SCD Type 2 Support',
-              description: 'Slowly changing dimensions tracking',
-              benefits: ['Historical tracking', 'Audit trail', 'Time-travel queries'],
-              releaseDate: 'SQL Server connector - September 2025',
-              docs: 'https://docs.databricks.com/delta-live-tables/cdc.html'
+              name: "Zero-Copy Data Virtualization",
+              description: "Query remote databases and object storage without massive data duplication",
+              benefits: ["Instant cross-system analytics", "Reduced storage duplication", "Unified query layer"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Implement Python Custom Sources for complex logic',
-            'Monitor streaming with Progress Metrics',
-            'Use SCD Type 2 for dimension tables'
+            "Deploy zero-copy query federation across operational databases and lakehouse storage"
           ]
         },
         innovative: {
           features: [
             {
-              name: 'Lakebase Postgres',
-              description: 'Transactional database on lakehouse',
-              benefits: ['OLTP on lakehouse', 'Unified platform', 'Cost consolidation'],
-              releaseDate: 'Public Preview - August 2025',
-              docs: 'https://docs.databricks.com/delta-live-tables/index.html'
-            },
-            {
-              name: 'Lakebase Synced Tables',
-              description: 'Real-time sync from external databases',
-              benefits: ['Near real-time data', 'Simplified ETL', 'Reduced complexity'],
-              releaseDate: 'Snapshot mode - August 2025',
-              docs: 'https://docs.databricks.com/ingestion/index.html'
-            },
-            {
-              name: 'ai_parse_document',
-              description: 'AI-powered document parsing',
-              benefits: ['Extract structured data', 'OCR capabilities', 'Intelligent parsing'],
-              releaseDate: 'Public Preview - October 2025',
-              docs: 'https://docs.databricks.com/sql/language-manual/sql-ref-functions-builtin.html'
+              name: "Autonomous Pipeline Optimization",
+              description: "Self-tuning data pipelines that optimize compute sizing and file layouts dynamically",
+              benefits: ["Automated cost minimization", "Maximized throughput", "Zero manual tuning"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Evaluate Lakebase for OLTP workloads',
-            'Use Synced Tables for real-time replication',
-            'Leverage ai_parse_document for unstructured data'
+            "Enable autonomous compute sizing and adaptive file compaction policies"
           ]
         }
       },
@@ -346,144 +225,87 @@ class DatabricksFeatureMapper {
         emerging: {
           features: [
             {
-              name: 'Databricks SQL',
-              description: 'High-performance SQL analytics platform',
-              benefits: ['Fast queries', 'BI tool integration', 'Photon acceleration'],
-              releaseDate: 'GA',
-              docs: 'https://docs.databricks.com/sql/index.html'
+              name: "Vectorized Serverless SQL Engine",
+              description: "Elastic SQL compute pool with sub-second response times and auto-suspend",
+              benefits: ["Instant query availability", "Zero infrastructure management", "Pay-per-query efficiency"],
+              releaseDate: "GA"
             },
             {
-              name: 'Dashboards and Genie Spaces',
-              description: 'Interactive dashboards with AI assistant',
-              benefits: ['Self-service analytics', 'Natural language queries', 'Collaboration'],
-              releaseDate: 'Tagging - October 2025',
-              docs: 'https://docs.databricks.com/dashboards/index.html'
+              name: "Centralized Semantic Layer",
+              description: "Standardized business metrics definitions, dimensions, and KPI calculations",
+              benefits: ["Single source of truth", "Consistent metrics across BI tools", "Faster self-service"],
+              releaseDate: "GA"
             },
             {
-              name: 'Databricks Connector for Google Sheets',
-              description: 'Direct integration with Google Sheets',
-              benefits: ['Familiar interface', 'Easy data access', 'Collaboration'],
-              releaseDate: 'Additional features - October 2025',
-              docs: 'https://docs.databricks.com/partners/google-sheets.html'
+              name: "Executive Dashboard & Alerting System",
+              description: "Interactive analytics dashboards with scheduled refreshes and automated KPI threshold alerts",
+              benefits: ["Real-time KPI monitoring", "Self-service exploration", "Automated executive reports"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Start with Databricks SQL for analytics',
-            'Create interactive Dashboards with Genie',
-            'Enable Google Sheets connector for business users'
+            "Provision serverless SQL compute pools for elastic BI and analytical exploration",
+            "Establish centralized semantic layer definitions for core corporate KPIs",
+            "Connect enterprise BI tools (Power BI, Tableau, ThoughtSpot) via native connectors"
           ]
         },
         developing: {
           features: [
             {
-              name: 'Power BI Databricks Connector',
-              description: 'M2M OAuth for secure Power BI integration',
-              benefits: ['Secure connection', 'SSO support', 'Enterprise ready'],
-              releaseDate: 'M2M OAuth - August 2025',
-              docs: 'https://docs.databricks.com/partners/bi/power-bi.html'
+              name: "Natural Language AI Analytics",
+              description: "Conversational natural language interface for non-technical business analytics",
+              benefits: ["Democratized data access", "Instant ad-hoc answers", "Reduced analyst backlog"],
+              releaseDate: "GA"
             },
             {
-              name: 'Explore Table Data with LLM',
-              description: 'Natural language data exploration',
-              benefits: ['No SQL required', 'Faster insights', 'Democratized analytics'],
-              releaseDate: 'Public Preview - September 2025',
-              docs: 'https://docs.databricks.com/machine-learning/foundation-models/index.html'
-            },
-            {
-              name: 'Partition Metadata',
-              description: 'Optimized query planning with partition info',
-              benefits: ['Faster queries', 'Better performance', 'Cost reduction'],
-              releaseDate: 'GA - October 2025',
-              docs: 'https://docs.databricks.com/delta/table-details.html'
+              name: "Intelligent Query Result Caching",
+              description: "Multi-tiered caching layer for accelerated repeated queries and executive dashboards",
+              benefits: ["Zero-compute repeat queries", "Instant dashboard load times", "Lower cloud costs"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Upgrade Power BI connector to M2M OAuth',
-            'Enable LLM-based exploration for analysts',
-            'Leverage Partition Metadata for performance'
+            "Enable natural-language query interfaces for self-service business user exploration",
+            "Configure predictive result caching for high-concurrency executive dashboards"
           ]
         },
         maturing: {
           features: [
             {
-              name: 'Databricks Connector for Microsoft Power Platform',
-              description: 'Integration with Power Apps and Power Automate',
-              benefits: ['Low-code integration', 'Workflow automation', 'App development'],
-              releaseDate: 'Public Preview - September 2025',
-              docs: 'https://docs.databricks.com/integrations/partners.html'
-            },
-            {
-              name: 'SQL MCP Server',
-              description: 'Model Context Protocol for SQL',
-              benefits: ['Standardized interface', 'Tool integration', 'Extensibility'],
-              releaseDate: 'Beta - October 2025',
-              docs: 'https://docs.databricks.com/integrations/index.html'
-            },
-            {
-              name: 'Unified Runs List',
-              description: 'Centralized view of all executions',
-              benefits: ['Better monitoring', 'Unified tracking', 'Easier debugging'],
-              releaseDate: 'Public Preview - October 2025',
-              docs: 'https://docs.databricks.com/workflows/index.html'
+              name: "Cross-Engine Query Federation",
+              description: "Direct querying across cloud warehouses and object storage without ETL movement",
+              benefits: ["Faster cross-platform insights", "Eliminates redundant data pipelines", "Unified SQL interface"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Integrate with Power Platform for low-code solutions',
-            'Adopt SQL MCP Server for standardization',
-            'Use Unified Runs List for operational visibility'
+            "Implement query federation to query external databases directly without bespoke pipelines"
           ]
         },
         optimized: {
           features: [
             {
-              name: 'Route-Optimized Endpoints',
-              description: 'Performance-optimized query endpoints',
-              benefits: ['Lower latency', 'Better throughput', 'Cost efficiency'],
-              releaseDate: 'September 2025',
-              docs: 'https://docs.databricks.com/sql/admin/query-optimization.html'
-            },
-            {
-              name: 'Delta Sharing on Lakehouse Federation',
-              description: 'Share data across platforms',
-              benefits: ['Cross-platform sharing', 'Secure distribution', 'Unified governance'],
-              releaseDate: 'Beta - September 2025',
-              docs: 'https://docs.databricks.com/data-sharing/index.html'
-            },
-            {
-              name: 'Tables on Default Storage (Delta Sharing)',
-              description: 'Share tables without external storage',
-              benefits: ['Simplified sharing', 'Reduced complexity', 'Cost savings'],
-              releaseDate: 'Beta - September 2025',
-              docs: 'https://docs.databricks.com/data-sharing/index.html'
+              name: "Continuous Real-Time Streaming Analytics",
+              description: "Sub-second real-time streaming SQL queries on continuous event data",
+              benefits: ["Immediate operational decisioning", "Live telemetry monitoring", "Fraud detection"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Migrate to Route-Optimized Endpoints',
-            'Implement Delta Sharing for data products',
-            'Share tables on default storage for simplicity'
+            "Deploy real-time streaming analytics pipelines for live operational visibility"
           ]
         },
         innovative: {
           features: [
             {
-              name: 'Delta Sharing with Row Filters and Column Masks',
-              description: 'Fine-grained data sharing controls',
-              benefits: ['Privacy-preserving sharing', 'Compliance', 'Granular access'],
-              releaseDate: 'GA - October 2025',
-              docs: 'https://docs.databricks.com/data-sharing/index.html'
-            },
-            {
-              name: 'Mount Delta Shares to Catalog',
-              description: 'Seamless integration of shared data',
-              benefits: ['Unified access', 'Simplified discovery', 'Easy consumption'],
-              releaseDate: 'September 2025',
-              docs: 'https://docs.databricks.com/data-sharing/read-data.html'
+              name: "Predictive & Prescriptive Business Insights",
+              description: "Embedded machine learning algorithms generating automated trend forecasts and root cause analysis",
+              benefits: ["Automated anomaly explanation", "Forward-looking insights", "Proactive business alerts"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Implement row-level security for Delta Sharing',
-            'Mount shared catalogs for unified access',
-            'Build data marketplace with Delta Sharing'
+            "Embed automated trend forecasting and prescriptive insights into business reporting"
           ]
         }
       },
@@ -492,144 +314,87 @@ class DatabricksFeatureMapper {
         emerging: {
           features: [
             {
-              name: 'MLflow on Databricks',
-              description: 'Enterprise ML lifecycle management',
-              benefits: ['Experiment tracking', 'Model registry', 'Deployment automation'],
-              releaseDate: 'GA',
-              docs: 'https://docs.databricks.com/mlflow/index.html'
+              name: "Centralized Experiment Tracking",
+              description: "Standardized logging for model parameters, code versions, metrics, and artifacts",
+              benefits: ["Reproducible experiments", "Side-by-side model comparison", "Team collaboration"],
+              releaseDate: "GA"
             },
             {
-              name: 'Feature Engineering in Unity Catalog',
-              description: 'Centralized feature store',
-              benefits: ['Feature reuse', 'Consistency', 'Governance'],
-              releaseDate: 'GA',
-              docs: 'https://docs.databricks.com/machine-learning/feature-store/index.html'
+              name: "Enterprise Model Registry",
+              description: "Governed model lifecycle management from staging to production and deprecation",
+              benefits: ["Versioned model artifacts", "Automated governance checks", "Controlled release gates"],
+              releaseDate: "GA"
             },
             {
-              name: 'Serverless GPU Compute',
-              description: 'On-demand GPU for ML workloads',
-              benefits: ['No cluster management', 'H100 support', 'Multinode training'],
-              releaseDate: 'Beta H100 - September 2025',
-              docs: 'https://docs.databricks.com/machine-learning/train-model/index.html'
+              name: "Managed Real-Time Model Serving",
+              description: "Auto-scaling inference endpoints with zero-downtime rollouts and traffic splitting",
+              benefits: ["Low-latency inference", "Elastic CPU/GPU scaling", "A/B testing support"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Implement MLflow for ML experiment tracking',
-            'Create Feature Store in Unity Catalog',
-            'Use Serverless GPU for training workloads'
+            "Integrate open standard experiment tracking to record all data science training runs",
+            "Establish an enterprise Model Registry to govern production model deployments",
+            "Deploy real-time model inference endpoints with automated scaling policies"
           ]
         },
         developing: {
           features: [
             {
-              name: 'Databricks Online Feature Stores',
-              description: 'Low-latency feature serving',
-              benefits: ['Real-time inference', 'Sub-10ms latency', 'Managed service'],
-              releaseDate: 'Public Preview - September 2025',
-              docs: 'https://docs.databricks.com/machine-learning/feature-store/online-tables.html'
+              name: "Centralized Feature Store & Serving",
+              description: "Shared repository for curated features ensuring training/serving consistency",
+              benefits: ["Eliminated feature drift", "Feature reusability across teams", "Low-latency online lookup"],
+              releaseDate: "GA"
             },
             {
-              name: 'MLflow Metadata in System Tables',
-              description: 'Centralized ML metrics and lineage',
-              benefits: ['ML governance', 'Audit trail', 'Cost attribution'],
-              releaseDate: 'Public Preview - September 2025',
-              docs: 'https://docs.databricks.com/machine-learning/manage-model-lifecycle/index.html'
-            },
-            {
-              name: 'Scheduled Jobs for Serverless GPU',
-              description: 'Automated ML pipeline execution',
-              benefits: ['Scheduled training', 'Cost efficiency', 'Production ML'],
-              releaseDate: 'August 2025',
-              docs: 'https://docs.databricks.com/compute/serverless.html'
+              name: "Automated Model Drift & Observability",
+              description: "Continuous monitoring of model prediction quality, data drift, and latency degradation",
+              benefits: ["Proactive degradation alerts", "Automated retraining triggers", "Ground truth tracking"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Deploy Online Feature Stores for real-time ML',
-            'Enable MLflow system tables for governance',
-            'Schedule GPU jobs for production pipelines'
+            "Deploy a centralized Feature Store for top ML features to guarantee training-serving parity",
+            "Configure production model monitoring dashboards with automated drift alerts"
           ]
         },
         maturing: {
           features: [
             {
-              name: 'Mosaic AI Model Serving',
-              description: 'Scalable model deployment platform',
-              benefits: ['Auto-scaling', 'A/B testing', 'Monitoring'],
-              releaseDate: 'GPT-5 support - October 2025',
-              docs: 'https://docs.databricks.com/machine-learning/model-serving/index.html'
-            },
-            {
-              name: 'OpenAI GPT OSS Models',
-              description: 'Open-source GPT models on Databricks',
-              benefits: ['Function calling', 'Batch inference', 'Structured outputs'],
-              releaseDate: 'August 2025',
-              docs: 'https://docs.databricks.com/machine-learning/foundation-models/openai-gpt-oss.html'
-            },
-            {
-              name: 'Anthropic Claude Models',
-              description: 'Claude Sonnet 4.5 with prompt caching',
-              benefits: ['Cost reduction', 'Better performance', 'Enterprise features'],
-              releaseDate: 'October 2025',
-              docs: 'https://docs.databricks.com/machine-learning/foundation-models/claude.html'
+              name: "Distributed AutoML & Hyperparameter Tuning",
+              description: "Automated model architecture search, hyperparameter optimization, and baseline generation",
+              benefits: ["Accelerated experimentation", "Optimal model architectures", "Automated code generation"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Deploy models with Mosaic AI Model Serving',
-            'Use OpenAI GPT OSS for cost-effective LLMs',
-            'Leverage Claude Sonnet 4.5 with prompt caching'
+            "Utilize distributed AutoML for rapid baseline model generation and hyperparameter search"
           ]
         },
         optimized: {
           features: [
             {
-              name: 'Multimodal Support',
-              description: 'Process text, images, audio, and video',
-              benefits: ['Unified processing', 'Richer ML models', 'New use cases'],
-              releaseDate: 'October 2025',
-              docs: 'https://docs.databricks.com/machine-learning/multimodal.html'
-            },
-            {
-              name: 'Token-Based Rate Limits on AI Gateway',
-              description: 'Fine-grained API cost control',
-              benefits: ['Cost management', 'Fair usage', 'Budget protection'],
-              releaseDate: 'August 2025',
-              docs: 'https://docs.databricks.com/machine-learning/ai-gateway/rate-limits.html'
-            },
-            {
-              name: 'Provisioned Throughput for Foundation Models',
-              description: 'Guaranteed capacity for production workloads',
-              benefits: ['Predictable latency', 'SLA support', 'Cost savings'],
-              releaseDate: 'OpenAI GPT OSS - August 2025',
-              docs: 'https://docs.databricks.com/machine-learning/foundation-models/provisioned-throughput.html'
+              name: "Continuous Retraining & CI/CD for ML (CT/CD)",
+              description: "Automated continuous training pipelines triggered by model drift or new data volume",
+              benefits: ["Zero-touch model updates", "Persistent high model accuracy", "Deterministic releases"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Enable Multimodal support for advanced use cases',
-            'Implement token-based rate limits for cost control',
-            'Use Provisioned Throughput for production apps'
+            "Implement automated continuous retraining (CT) pipelines integrated with CI/CD gates"
           ]
         },
         innovative: {
           features: [
             {
-              name: 'Mosaic AI Model Serving with GPT-5',
-              description: 'Latest OpenAI GPT-5 models',
-              benefits: ['Cutting-edge capabilities', 'Better reasoning', 'Higher quality'],
-              releaseDate: 'GA - October 2025',
-              docs: 'https://docs.databricks.com/machine-learning/foundation-models/index.html'
-            },
-            {
-              name: 'AWS Capacity Blocks for Compute',
-              description: 'Reserve compute capacity on AWS',
-              benefits: ['Guaranteed availability', 'Cost predictability', 'Planning'],
-              releaseDate: 'October 2025',
-              docs: 'https://docs.databricks.com/compute/configure.html'
+              name: "Domain-Specific Foundation Model Adaptation",
+              description: "Fine-tuning (PEFT/LoRA) and continuous pre-training on proprietary enterprise corpus",
+              benefits: ["Specialized domain accuracy", "Protected intellectual property", "Lower inference costs"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Adopt GPT-5 for state-of-the-art capabilities',
-            'Reserve capacity blocks for critical workloads',
-            'Participate in beta programs for new models'
+            "Deploy parameter-efficient fine-tuning (PEFT) for proprietary enterprise NLP tasks"
           ]
         }
       },
@@ -638,144 +403,87 @@ class DatabricksFeatureMapper {
         emerging: {
           features: [
             {
-              name: 'Mosaic AI Agent Framework',
-              description: 'Build production-quality AI agents',
-              benefits: ['RAG support', 'Tool calling', 'Evaluation framework'],
-              releaseDate: 'Automatic auth - September 2025',
-              docs: 'https://docs.databricks.com/generative-ai/agent-framework/index.html'
+              name: "Enterprise AI Gateway",
+              description: "Centralized gateway for model routing, token rate limiting, cost tracking, and security",
+              benefits: ["Multi-model fallback", "Centralized cost attribution", "Credential protection"],
+              releaseDate: "GA"
             },
             {
-              name: 'AI Playground',
-              description: 'Interactive testing environment for LLMs',
-              benefits: ['Rapid prototyping', 'Model comparison', 'Prompt engineering'],
-              releaseDate: 'GA - August 2025',
-              docs: 'https://docs.databricks.com/generative-ai/ai-playground.html'
+              name: "Governed Vector Database & Hybrid Search",
+              description: "Managed vector search index synced with enterprise data lakehouse for RAG pipelines",
+              benefits: ["Sub-50ms vector search", "Hybrid lexical & semantic search", "Role-based access filtering"],
+              releaseDate: "GA"
             },
             {
-              name: 'Databricks Assistant',
-              description: 'AI-powered coding assistant',
-              benefits: ['Code generation', 'Natural language SQL', 'Debugging help'],
-              releaseDate: 'User instructions - August 2025',
-              docs: 'https://docs.databricks.com/assistant/index.html'
+              name: "Enterprise RAG Architecture",
+              description: "End-to-end Retrieval-Augmented Generation pipeline for contextual knowledge retrieval",
+              benefits: ["Grounded LLM outputs", "Zero hallucination on internal data", "Dynamic document sync"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Build first AI agent with Agent Framework',
-            'Use AI Playground for prompt development',
-            'Enable Databricks Assistant for productivity'
+            "Deploy an enterprise AI Gateway to manage token costs, API rate limits, and model routing",
+            "Provision governed vector databases synced with curated enterprise documents for RAG",
+            "Build validated RAG prototypes for internal high-impact knowledge discovery use cases"
           ]
         },
         developing: {
           features: [
             {
-              name: 'Mosaic AI Vector Search',
-              description: 'Managed vector database for RAG',
-              benefits: ['Semantic search', 'Hybrid search', 'Auto-sync'],
-              releaseDate: 'Reranker - August 2025',
-              docs: 'https://docs.databricks.com/generative-ai/vector-search.html'
+              name: "Automated LLM Evaluation Framework",
+              description: "Automated benchmarking for hallucination rate, ground truth adherence, and latency",
+              benefits: ["Objective model scoring", "Regression prevention", "Quality assurance gates"],
+              releaseDate: "GA"
             },
             {
-              name: 'External MCP Servers',
-              description: 'Integrate external tools with Model Context Protocol',
-              benefits: ['Tool extensibility', 'Custom integrations', 'Enterprise tools'],
-              releaseDate: 'Beta - August 2025',
-              docs: 'https://docs.databricks.com/generative-ai/agent-framework/index.html'
-            },
-            {
-              name: 'Databricks Apps for Genie',
-              description: 'Deploy AI applications with Genie resources',
-              benefits: ['Easy deployment', 'No infrastructure', 'Integrated experience'],
-              releaseDate: 'September 2025',
-              docs: 'https://docs.databricks.com/integrations/genie.html'
+              name: "AI Safety Guardrails & PII Masking",
+              description: "Real-time input and output filtering for PII redaction, prompt injection, and toxic content",
+              benefits: ["Enterprise data privacy", "Prompt injection mitigation", "Brand safety enforcement"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Implement Vector Search for RAG applications',
-            'Integrate external tools with MCP Servers',
-            'Deploy AI apps with Databricks Apps'
+            "Implement automated evaluation benchmarks to score LLM outputs before production release",
+            "Deploy input and output safety guardrails with automatic PII masking"
           ]
         },
         maturing: {
           features: [
             {
-              name: 'AI Agents: Authorize On-Behalf-Of-User',
-              description: 'User context for AI agent actions',
-              benefits: ['Fine-grained permissions', 'Audit trail', 'Secure delegation'],
-              releaseDate: 'Public Preview - September 2025',
-              docs: 'https://docs.databricks.com/generative-ai/agent-framework/index.html'
-            },
-            {
-              name: 'Data Science Agent (Assistant)',
-              description: 'AI agent for data science workflows',
-              benefits: ['Code generation', 'Analysis assistance', 'Amazon Bedrock support'],
-              releaseDate: 'Beta - September 2025',
-              docs: 'https://docs.databricks.com/assistant/index.html'
-            },
-            {
-              name: 'Databricks-Hosted Foundation Models',
-              description: 'Pre-deployed models without setup',
-              benefits: ['Zero setup', 'Managed infrastructure', 'Cost-effective'],
-              releaseDate: 'GA for Assistant - August 2025',
-              docs: 'https://docs.databricks.com/machine-learning/foundation-models/hosted-models.html'
+              name: "Autonomous Multi-Agent Orchestration",
+              description: "Multi-agent frameworks for complex multi-step reasoning, tool execution, and planning",
+              benefits: ["Automated complex workflows", "Specialized tool use", "Human-in-the-loop oversight"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Use on-behalf-of-user for secure AI agents',
-            'Enable Data Science Agent for analysts',
-            'Leverage hosted models for quick starts'
+            "Deploy multi-agent orchestrators for autonomous, multi-step enterprise workflows"
           ]
         },
         optimized: {
           features: [
             {
-              name: 'Compliance Support for Vector Search',
-              description: 'Enterprise-grade vector database compliance',
-              benefits: ['Data residency', 'Compliance certifications', 'Audit logs'],
-              releaseDate: 'Standard endpoints - September 2025',
-              docs: 'https://docs.databricks.com/generative-ai/vector-search.html'
-            },
-            {
-              name: 'Prompt Caching for Claude',
-              description: 'Reduce costs with intelligent caching',
-              benefits: ['Up to 90% cost reduction', 'Faster responses', 'Better UX'],
-              releaseDate: 'October 2025',
-              docs: 'https://docs.databricks.com/machine-learning/foundation-models/claude.html'
-            },
-            {
-              name: 'Assistant Edit Mode',
-              description: 'Multi-cell refactoring and advanced edits',
-              benefits: ['Complex refactoring', 'Multi-cell operations', 'Code quality'],
-              releaseDate: 'August 2025',
-              docs: 'https://docs.databricks.com/assistant/index.html'
+              name: "Enterprise Parameter-Efficient Fine-Tuning (PEFT)",
+              description: "Domain adaptation of open foundation models using LoRA/QLoRA on private enterprise data",
+              benefits: ["Superior domain precision", "Lower inference footprint", "Complete data sovereignty"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Enable compliance features for production Vector Search',
-            'Implement prompt caching to reduce costs',
-            'Use Assistant Edit Mode for code refactoring'
+            "Implement PEFT fine-tuning pipelines for high-value vertical specialized domains"
           ]
         },
         innovative: {
           features: [
             {
-              name: 'Alibaba Cloud Qwen3-Next Instruct',
-              description: 'Latest multilingual foundation model',
-              benefits: ['Multiple languages', 'Strong performance', 'Cost-effective'],
-              releaseDate: 'Beta - October 2025',
-              docs: 'https://docs.databricks.com/machine-learning/foundation-models/index.html'
-            },
-            {
-              name: 'Assistant Integrated with Compute',
-              description: 'Context-aware assistance across platform',
-              benefits: ['Better suggestions', 'Resource awareness', 'Unified experience'],
-              releaseDate: 'August 2025',
-              docs: 'https://docs.databricks.com/assistant/index.html'
+              name: "Autonomous Self-Improving AI Systems",
+              description: "Continuous feedback reinforcement and automated synthetic data generation for optimization",
+              benefits: ["Self-optimizing prompt strategies", "Continuous quality uplift", "Reduced manual tuning"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Experiment with Qwen3-Next for multilingual apps',
-            'Leverage compute-integrated Assistant',
-            'Contribute to AI feature beta programs'
+            "Integrate user feedback telemetry into automated fine-tuning and evaluation loops"
           ]
         }
       },
@@ -784,144 +492,87 @@ class DatabricksFeatureMapper {
         emerging: {
           features: [
             {
-              name: 'Databricks Asset Bundles',
-              description: 'Infrastructure as code for Databricks',
-              benefits: ['CI/CD automation', 'Version control', 'Repeatable deployments'],
-              releaseDate: 'GA in workspace - October 2025',
-              docs: 'https://docs.databricks.com/dev-tools/bundles/index.html'
+              name: "Full-Stack Platform Telemetry & Observability",
+              description: "Centralized query history, cluster utilization metrics, and user audit logs",
+              benefits: ["Unified observability", "Resource right-sizing", "Instant root cause debugging"],
+              releaseDate: "GA"
             },
             {
-              name: 'Notebook Execution Minimap',
-              description: 'Visual tracking of notebook runs',
-              benefits: ['Better debugging', 'Execution visibility', 'Navigation'],
-              releaseDate: 'August 2025',
-              docs: 'https://docs.databricks.com/notebooks/index.html'
+              name: "Declarative Infrastructure-as-Code (IaC)",
+              description: "Automated environment and access provisioning using version-controlled templates",
+              benefits: ["Repeatable environments", "Zero manual drift", "Automated CI/CD validation"],
+              releaseDate: "GA"
             },
             {
-              name: 'Enhanced Autocomplete',
-              description: 'Context-aware code completion',
-              benefits: ['Faster coding', 'Fewer errors', 'Better productivity'],
-              releaseDate: 'Complex data types - August 2025',
-              docs: 'https://docs.databricks.com/notebooks/autocomplete.html'
+              name: "Automated FinOps & Cost Allocation",
+              description: "Granular cost attribution per department, budget thresholds, and auto-idle shutdown",
+              benefits: ["Eliminated cloud waste", "Transparent chargeback", "Proactive budget alerting"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Adopt Asset Bundles for deployment automation',
-            'Use Notebook Minimap for execution tracking',
-            'Enable Enhanced Autocomplete for developers'
+            "Establish centralized observability dashboards tracking cluster utilization and query latency",
+            "Standardize platform provisioning using Infrastructure-as-Code (IaC) templates",
+            "Implement automated FinOps policies including idle compute auto-termination"
           ]
         },
         developing: {
           features: [
             {
-              name: 'Billable Usage Table for Serverless',
-              description: 'Track performance mode and costs',
-              benefits: ['Cost transparency', 'Usage optimization', 'Chargeback'],
-              releaseDate: 'October 2025',
-              docs: 'https://docs.databricks.com/administration-guide/account-settings/usage.html'
+              name: "Continuous Integration & Deployment (CI/CD)",
+              description: "Automated test runners, pull-request verification, and zero-downtime releases",
+              benefits: ["Accelerated release velocity", "Higher code quality", "Automated rollback capability"],
+              releaseDate: "GA"
             },
             {
-              name: 'Git Email Identity for Folders',
-              description: 'Author tracking for Git folders',
-              benefits: ['Proper attribution', 'Audit trail', 'Collaboration'],
-              releaseDate: 'October 2025',
-              docs: 'https://docs.databricks.com/repos/index.html'
-            },
-            {
-              name: 'Databricks GitHub App Permissions',
-              description: 'Enhanced GitHub integration',
-              benefits: ['Better security', 'Fine-grained access', 'Compliance'],
-              releaseDate: 'October 2025',
-              docs: 'https://docs.databricks.com/repos/repos-setup.html'
+              name: "Disaster Recovery & Multi-Region Replication",
+              description: "Automated snapshotting, cross-region replication, and rapid failover runbooks",
+              benefits: ["RPO < 15 min, RTO < 1 hour", "Business continuity", "Data loss prevention"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Monitor serverless usage with billable tables',
-            'Configure Git email identity for attribution',
-            'Update GitHub App with new permissions'
+            "Deploy automated CI/CD deployment pipelines for all analytical data and ML code",
+            "Configure cross-region data replication and test disaster recovery failover procedures"
           ]
         },
         maturing: {
           features: [
             {
-              name: 'Pipeline Update Timeline Table',
-              description: 'Track DLT pipeline changes over time',
-              benefits: ['Change management', 'Debugging', 'Audit trail'],
-              releaseDate: 'Public Preview - September 2025',
-              docs: 'https://docs.databricks.com/delta-live-tables/observability.html'
-            },
-            {
-              name: 'Set Run-As User for DLT',
-              description: 'Execute pipelines as specific users',
-              benefits: ['Security', 'Compliance', 'Delegation'],
-              releaseDate: 'August 2025',
-              docs: 'https://docs.databricks.com/delta-live-tables/index.html'
-            },
-            {
-              name: 'Single-Node Compute (Standard Access Mode)',
-              description: 'Simplified single-node clusters',
-              benefits: ['Cost savings', 'Faster startup', 'Development efficiency'],
-              releaseDate: 'GA - August 2025',
-              docs: 'https://docs.databricks.com/clusters/configure.html'
+              name: "Center of Excellence (CoE) & Enablement Hub",
+              description: "Standardized architectural design patterns, onboarding templates, and training tracks",
+              benefits: ["Democratized platform adoption", "Architecture standardization", "Faster team ramp-up"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Use Pipeline Timeline for change tracking',
-            'Configure run-as user for secure pipelines',
-            'Adopt single-node clusters for development'
+            "Establish a Center of Excellence (CoE) with standardized reference architectures and training"
           ]
         },
         optimized: {
           features: [
             {
-              name: 'Disable Legacy Features for New Workspaces',
-              description: 'Start with modern features only',
-              benefits: ['Cleaner experience', 'Better security', 'Future-proof'],
-              releaseDate: 'Public Preview - August 2025',
-              docs: 'https://docs.databricks.com/workspace/index.html'
-            },
-            {
-              name: 'Account SCIM 2.0 Updates',
-              description: 'Enhanced user provisioning',
-              benefits: ['Better synchronization', 'SSO integration', 'Automation'],
-              releaseDate: 'August 2025',
-              docs: 'https://docs.databricks.com/administration-guide/users-groups/scim/index.html'
-            },
-            {
-              name: 'Databricks Terraform Provider (Lakebase)',
-              description: 'IaC support for Lakebase resources',
-              benefits: ['Automation', 'Consistency', 'GitOps'],
-              releaseDate: 'July 2025',
-              docs: 'https://registry.terraform.io/providers/databricks/databricks/latest'
+              name: "Autonomous Workload Right-Sizing",
+              description: "AI-driven compute profiling that dynamically selects optimal cluster sizes and memory",
+              benefits: ["Optimized price-performance", "Automated resource tuning", "Zero over-provisioning"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Disable legacy features for new workspaces',
-            'Upgrade to SCIM 2.0 for user management',
-            'Use Terraform for infrastructure automation'
+            "Enable autonomous workload profiling and right-sizing for all recurring jobs"
           ]
         },
         innovative: {
           features: [
             {
-              name: 'Serverless Base Environment Management',
-              description: 'Customize serverless Python environments',
-              benefits: ['Custom packages', 'Version control', 'Team standards'],
-              releaseDate: 'Public Preview - August 2025',
-              docs: 'https://docs.databricks.com/serverless-compute/index.html'
-            },
-            {
-              name: 'PrivateLink from Serverless to VPC',
-              description: 'Secure serverless connectivity',
-              benefits: ['Network isolation', 'Compliance', 'Security'],
-              releaseDate: 'GA - August 2025',
-              docs: 'https://docs.databricks.com/security/network/classic/privatelink.html'
+              name: "Zero-Touch Autonomous Platform Operations",
+              description: "Self-healing platform operations with automated anomaly remediation and proactive scaling",
+              benefits: ["99.99% platform availability", "Zero manual maintenance", "Autonomous resilience"],
+              releaseDate: "GA"
             }
           ],
           recommendations: [
-            'Manage serverless environments centrally',
-            'Configure PrivateLink for secure connectivity',
-            'Establish center of excellence for best practices'
+            "Implement self-healing automated operational runbooks for proactive issue resolution"
           ]
         }
       }
@@ -937,14 +588,14 @@ class DatabricksFeatureMapper {
    */
   getRecommendationsForPillar(pillarId, maturityLevel, responses = {}) {
     const maturityLevelMap = {
-      1: 'emerging',
-      2: 'developing',
-      3: 'maturing',
-      4: 'optimized',
-      5: 'innovative'
+      1: "emerging",
+      2: "developing",
+      3: "maturing",
+      4: "optimized",
+      5: "innovative"
     };
 
-    const level = maturityLevelMap[maturityLevel] || 'emerging';
+    const level = maturityLevelMap[maturityLevel] || "emerging";
     const pillarFeatures = this.featuresByPillar[pillarId];
 
     if (!pillarFeatures || !pillarFeatures[level]) {
@@ -964,7 +615,7 @@ class DatabricksFeatureMapper {
       nextLevel: nextLevel ? {
         level: maturityLevel + 1,
         name: maturityLevelMap[maturityLevel + 1].charAt(0).toUpperCase() + maturityLevelMap[maturityLevel + 1].slice(1),
-        features: nextLevel.features.slice(0, 3), // Top 3 next-level features
+        features: nextLevel.features.slice(0, 3),
         recommendations: nextLevel.recommendations.slice(0, 3)
       } : null,
       quickWins: this.identifyQuickWins(pillarId, maturityLevel, responses),
@@ -973,60 +624,58 @@ class DatabricksFeatureMapper {
   }
 
   /**
-   * Identify next steps (customer engagement activities)
+   * Identify next steps (advisory activities)
    */
   identifyQuickWins(pillarId, maturityLevel, responses) {
     const currentLevel = this.featuresByPillar[pillarId];
     if (!currentLevel) return [];
 
-    // Customer engagement activities mapped to each pillar
     const nextStepsByPillar = {
       platform_governance: [
-        'Schedule Unity Catalog discovery workshop to assess current data governance maturity',
-        'Conduct hands-on training on row/column-level security and dynamic views',
-        'Arrange proof-of-concept for automated data classification and tagging',
-        'Book technical deep-dive session on audit logging and compliance reporting'
+        "Conduct Unified Catalog discovery workshop to assess enterprise data governance maturity",
+        "Implement fine-grained access control with row/column filtering and dynamic data masking",
+        "Deploy automated sensitive data classification and compliance tagging (GDPR/HIPAA/SOC2)",
+        "Configure centralized audit logging, access review workflows, and FinOps budget guardrails"
       ],
       data_engineering: [
-        'Attend Delta Live Tables workshop for automated pipeline orchestration',
-        'Schedule hands-on training for Auto Loader and streaming ingestion patterns',
-        'Conduct lakehouse architecture assessment and migration planning session',
-        'Arrange technical enablement on Databricks Workflows and CI/CD best practices'
+        "Design declarative data pipelines with automated data quality expectations and validation gates",
+        "Implement auto-scaling streaming ingestion and automated schema evolution for object storage",
+        "Standardize on open table formats (Delta/Iceberg) with automated compaction and file clustering",
+        "Set up automated workflow orchestration DAGs with proactive alerting and CI/CD verification"
       ],
       analytics_bi: [
-        'Schedule Serverless SQL and Photon acceleration discovery session',
-        'Conduct AI/BI and Genie demo for natural language analytics capabilities',
-        'Arrange hands-on training for dashboard best practices and query optimization',
-        'Book technical workshop on semantic layer and metrics definitions'
+        "Provision elastic serverless vectorized SQL compute pools for sub-second query performance",
+        "Deploy centralized enterprise semantic layer to standardize KPIs and business metric definitions",
+        "Implement zero-copy query federation across enterprise databases and object storage",
+        "Conduct executive dashboard optimization and natural-language analytical query enablement"
       ],
       machine_learning: [
-        'Schedule MLflow and Feature Store technical deep-dive session',
-        'Conduct hands-on training for model deployment and monitoring workflows',
-        'Arrange proof-of-concept for AutoML and hyperparameter tuning',
-        'Book enablement session on experiment tracking and model registry best practices'
+        "Establish centralized Experiment Tracking and Model Registry for reproducible ML lifecycles",
+        "Deploy enterprise Feature Store to eliminate feature drift between training and inference",
+        "Configure auto-scaling managed model serving endpoints with zero-downtime rollouts",
+        "Implement production model observability, prediction monitoring, and automated retraining triggers"
       ],
       generative_ai: [
-        'Schedule Vector Search and RAG architecture workshop',
-        'Conduct Mosaic AI and Foundation Models discovery session',
-        'Arrange hands-on training for prompt engineering and evaluation frameworks',
-        'Book technical deep-dive on GenAI governance and security controls'
+        "Deploy governed vector databases and hybrid search for enterprise RAG architectures",
+        "Establish an enterprise AI Gateway with token rate limiting, cost attribution, and security filters",
+        "Implement automated evaluation benchmarks for hallucination scoring, latency, and ground truth",
+        "Deploy multi-model inference endpoints with safety guardrails and automated PII redaction"
       ],
       operational_excellence: [
-        'Establish Center of Excellence (CoE) structure and governance framework',
-        'Schedule platform adoption workshop and change management training',
-        'Conduct cost optimization and chargeback model planning session',
-        'Arrange technical enablement program for team upskilling and certification'
+        "Establish Center of Excellence (CoE) operating model and data enablement paths",
+        "Implement Infrastructure-as-Code (IaC) templates for automated environment provisioning",
+        "Deploy full-stack platform observability, compute right-sizing, and idle resource elimination",
+        "Establish disaster recovery runbooks with cross-region replication and automated snapshot testing"
       ]
     };
 
     const pillarSteps = nextStepsByPillar[pillarId] || [
-      'Schedule discovery session to assess current capabilities',
-      'Conduct hands-on training for key platform features',
-      'Arrange proof-of-concept to validate use cases',
-      'Book technical deep-dive with Databricks solution architects'
+      "Schedule architecture review session to assess current technical maturity",
+      "Conduct hands-on technical workshop for core target platform capabilities",
+      "Deploy targeted proof-of-concept to validate critical business use cases",
+      "Book strategic architecture deep-dive with Principal Data & AI Architects"
     ];
 
-    // Return 3-4 relevant next steps based on maturity level
     const numberOfSteps = maturityLevel <= 2 ? 4 : 3;
     return pillarSteps.slice(0, numberOfSteps);
   }
@@ -1037,7 +686,7 @@ class DatabricksFeatureMapper {
   identifyStrategicMoves(pillarId, maturityLevel, responses) {
     if (maturityLevel >= 5) return [];
 
-    const nextLevelKey = { 1: 'developing', 2: 'maturing', 3: 'optimized', 4: 'innovative' }[maturityLevel];
+    const nextLevelKey = { 1: "developing", 2: "maturing", 3: "optimized", 4: "innovative" }[maturityLevel];
     const nextLevel = this.featuresByPillar[pillarId]?.[nextLevelKey];
 
     if (!nextLevel) return [];
@@ -1046,9 +695,9 @@ class DatabricksFeatureMapper {
       title: f.name,
       description: f.description,
       benefits: f.benefits,
-      timeline: '3-6 months',
-      impact: 'Transformational',
-      docs: f.docs
+      timeline: "3-6 months",
+      impact: "Transformational",
+      docs: null
     }));
   }
 
@@ -1060,7 +709,7 @@ class DatabricksFeatureMapper {
       currentMaturity: {
         level: maturityLevel,
         features: [],
-        recommendations: ['Assess your current state', 'Identify gaps', 'Plan improvements']
+        recommendations: ["Assess your current state", "Identify gaps", "Plan improvements"]
       },
       nextLevel: null,
       quickWins: [],
@@ -1079,7 +728,6 @@ class DatabricksFeatureMapper {
       longTerm: []     // 12+ months
     };
 
-    // Analyze each pillar and categorize recommendations
     Object.keys(assessmentResults.pillars || {}).forEach(pillarId => {
       const pillar = assessmentResults.pillars[pillarId];
       const recs = this.getRecommendationsForPillar(pillarId, pillar.currentScore || 1, pillar.responses);
@@ -1098,4 +746,3 @@ class DatabricksFeatureMapper {
 }
 
 module.exports = new DatabricksFeatureMapper();
-

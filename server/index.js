@@ -1582,15 +1582,25 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
         // Use the intelligent recommendations we already generated for categoryDetails
         const pillarDetails = categoryDetails[pillarId];
         if (pillarDetails && pillarDetails._intelligentEngine) {
-          console.log(`✅ Using cached intelligent recommendations for ${pillarId} in prioritizedActions`);
+          console.log(`✅ Merging intelligent recommendations for ${pillarId} in prioritizedActions (preserving AI actions)`);
+          const existingRecs = (action.recommendations && action.recommendations.length > 0) 
+            ? action.recommendations 
+            : (pillarDetails.recommendations || []);
+          const existingTheGood = (action.theGood && action.theGood.length > 0)
+            ? action.theGood
+            : (pillarDetails.theGood || []);
+          const existingTheBad = (action.theBad && action.theBad.length > 0)
+            ? action.theBad
+            : (pillarDetails.theBad || []);
+
           return {
             ...action,
-            theGood: pillarDetails.theGood || [],
-            theBad: pillarDetails.theBad || [],
-            recommendations: pillarDetails.recommendations || [],
-            nextSteps: pillarDetails.nextSteps || [],
-            specificRecommendations: pillarDetails.nextSteps || [],
-            databricksFeatures: pillarDetails.databricksFeatures || [],
+            theGood: existingTheGood,
+            theBad: existingTheBad,
+            recommendations: existingRecs,
+            nextSteps: action.nextSteps || pillarDetails.nextSteps || [],
+            specificRecommendations: action.specificRecommendations || pillarDetails.nextSteps || [],
+            databricksFeatures: action.databricksFeatures || pillarDetails.databricksFeatures || [],
             _intelligentEngine: true,
             _painPointsAnalyzed: pillarDetails._painPointsAnalyzed || 0,
             _strengthsIdentified: pillarDetails._strengthsIdentified || 0

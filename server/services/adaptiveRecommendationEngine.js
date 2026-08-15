@@ -12,10 +12,10 @@ class AdaptiveRecommendationEngine {
         priority: 'critical',
         title: 'Implement Data Quality Framework',
         actions: [
-          'Deploy data quality monitoring with Great Expectations or Databricks data quality rules',
-          'Establish data validation checkpoints in pipelines',
+          'Deploy declarative data quality validation rules at ingestion checkpoints',
+          'Establish automated data quality assertion gates in pipelines',
           'Implement automated data profiling and anomaly detection',
-          'Create data quality dashboards and alerts'
+          'Create data quality telemetry dashboards and proactive alerts'
         ],
         impact: 'Addresses your reported data quality concerns directly'
       },
@@ -23,10 +23,10 @@ class AdaptiveRecommendationEngine {
         priority: 'high',
         title: 'Optimize Performance and Query Speed',
         actions: [
-          'Enable Photon engine for query acceleration',
-          'Implement Delta Lake optimization (Z-ordering, compaction)',
-          'Review and optimize cluster configurations',
-          'Implement caching strategies for frequently accessed data'
+          'Enable vectorized SQL engines for query acceleration',
+          'Implement open table storage optimization (compaction, clustering, z-ordering)',
+          'Review and right-size compute cluster configurations',
+          'Implement caching strategies for frequently accessed analytical data'
         ],
         impact: 'Resolves your performance bottlenecks'
       },
@@ -34,10 +34,10 @@ class AdaptiveRecommendationEngine {
         priority: 'high',
         title: 'Enhance Scalability Architecture',
         actions: [
-          'Implement auto-scaling cluster policies',
-          'Optimize data partitioning strategy',
+          'Implement auto-scaling cluster compute policies',
+          'Optimize data partitioning and storage clustering strategy',
           'Deploy multi-cluster management for workload isolation',
-          'Consider serverless SQL for elastic compute'
+          'Utilize serverless SQL pools for elastic query concurrency'
         ],
         impact: 'Addresses your scalability challenges'
       },
@@ -45,10 +45,10 @@ class AdaptiveRecommendationEngine {
         priority: 'high',
         title: 'Simplify Integration Architecture',
         actions: [
-          'Implement Databricks Partner Connect for common integrations',
-          'Standardize on REST APIs and streaming interfaces',
-          'Deploy integration templates and reusable connectors',
-          'Document integration patterns and best practices'
+          'Implement pre-built managed connectors for common SaaS and database integrations',
+          'Standardize on REST APIs, event streams, and zero-copy query federation',
+          'Deploy integration templates and reusable ETL connectors',
+          'Document enterprise integration patterns and best practices'
         ],
         impact: 'Reduces integration complexity you\'re experiencing'
       },
@@ -56,10 +56,10 @@ class AdaptiveRecommendationEngine {
         priority: 'critical',
         title: 'Strengthen Security Posture',
         actions: [
-          'Implement Unity Catalog for centralized governance',
-          'Enable audit logging and compliance monitoring',
-          'Deploy column and row-level security',
-          'Implement secrets management and credential vaulting'
+          'Implement Unified Catalog for centralized metadata and access governance',
+          'Enable comprehensive audit logging and compliance monitoring',
+          'Deploy fine-grained column and row-level security masking',
+          'Implement secrets management and automated credential rotation'
         ],
         impact: 'Closes your identified security gaps'
       },
@@ -67,10 +67,10 @@ class AdaptiveRecommendationEngine {
         priority: 'medium',
         title: 'Implement Cost Optimization Strategy',
         actions: [
-          'Deploy cost monitoring and budget alerts',
-          'Implement cluster policies and auto-termination',
-          'Optimize storage with lifecycle policies',
-          'Review and rightsize compute resources'
+          'Deploy FinOps cost monitoring and budget alerts',
+          'Implement compute auto-termination and right-sizing policies',
+          'Optimize storage with automated lifecycle tiering policies',
+          'Review and eliminate idle compute allocations'
         ],
         impact: 'Addresses your cost concerns'
       },
@@ -78,10 +78,10 @@ class AdaptiveRecommendationEngine {
         priority: 'medium',
         title: 'Increase Automation Coverage',
         actions: [
-          'Implement Databricks Workflows for orchestration',
-          'Automate deployment with CI/CD pipelines',
+          'Implement enterprise workflow orchestration for DAG execution',
+          'Automate deployment with Infrastructure-as-Code and CI/CD pipelines',
           'Deploy auto-scaling and auto-recovery policies',
-          'Implement automated testing and validation'
+          'Implement automated testing and verification gates'
         ],
         impact: 'Reduces manual effort you\'ve identified'
       },
@@ -89,10 +89,10 @@ class AdaptiveRecommendationEngine {
         priority: 'medium',
         title: 'Enhance Monitoring and Observability',
         actions: [
-          'Deploy comprehensive monitoring dashboards',
-          'Implement alerting for critical metrics',
-          'Integrate with enterprise monitoring tools',
-          'Establish SLAs and SLO tracking'
+          'Deploy comprehensive platform telemetry dashboards',
+          'Implement proactive alerting for critical SLA metrics',
+          'Integrate with enterprise observability and alerting tools',
+          'Establish SLAs and SLO tracking for analytical pipelines'
         ],
         impact: 'Fills your monitoring gaps'
       },
@@ -102,10 +102,10 @@ class AdaptiveRecommendationEngine {
         priority: 'high',
         title: 'Accelerate Time-to-Insights',
         actions: [
-          'Implement self-service analytics with Databricks SQL',
-          'Deploy pre-built dashboards and templates',
-          'Optimize query performance for faster results',
-          'Enable real-time streaming analytics'
+          'Implement self-service analytics with serverless vectorized SQL',
+          'Deploy pre-built executive dashboards and templates',
+          'Optimize query performance for sub-second analytical results',
+          'Enable real-time streaming analytics pipelines'
         ],
         impact: 'Speeds up insights delivery as requested'
       },
@@ -113,10 +113,10 @@ class AdaptiveRecommendationEngine {
         priority: 'high',
         title: 'Enable Self-Service Analytics',
         actions: [
-          'Deploy Databricks SQL with user-friendly interface',
-          'Create curated datasets and semantic layer',
-          'Implement role-based access control',
-          'Provide training and documentation'
+          'Deploy intuitive self-service SQL exploration and BI tooling',
+          'Create curated gold-standard datasets and centralized semantic layer',
+          'Implement attribute-based access control for seamless discovery',
+          'Provide self-service documentation and data dictionaries'
         ],
         impact: 'Empowers business users per your needs'
       },
@@ -124,10 +124,10 @@ class AdaptiveRecommendationEngine {
         priority: 'high',
         title: 'Break Down Data Silos',
         actions: [
-          'Implement unified lakehouse architecture',
-          'Deploy Delta Sharing for cross-organization data access',
-          'Establish data mesh with federated ownership',
-          'Create enterprise data catalog'
+          'Implement unified lakehouse architecture with open table formats',
+          'Deploy governed zero-copy data exchange for cross-organization access',
+          'Establish domain-oriented data mesh with federated ownership',
+          'Create enterprise data product catalog'
         ],
         impact: 'Unifies your siloed data sources'
       },
@@ -135,10 +135,10 @@ class AdaptiveRecommendationEngine {
         priority: 'critical',
         title: 'Ensure Regulatory Compliance',
         actions: [
-          'Implement Unity Catalog for compliance controls',
-          'Deploy audit logging and data lineage tracking',
-          'Establish data retention and deletion policies',
-          'Create compliance dashboards and reports'
+          'Implement Unified Catalog for automated compliance controls',
+          'Deploy audit logging and column-level data lineage tracking',
+          'Establish automated data retention and deletion policies',
+          'Create continuous compliance dashboards and regulatory audit reports'
         ],
         impact: 'Addresses your compliance concerns'
       },
@@ -146,10 +146,10 @@ class AdaptiveRecommendationEngine {
         priority: 'medium',
         title: 'Close Skill Gaps',
         actions: [
-          'Implement Databricks Academy training programs',
-          'Deploy collaborative notebooks for knowledge sharing',
-          'Create internal centers of excellence',
-          'Hire or train data engineering expertise'
+          'Implement structured architectural enablement and training programs',
+          'Deploy collaborative notebooks and shared template libraries',
+          'Establish Center of Excellence (CoE) best practice standards',
+          'Upskill teams in modern declarative data engineering and MLOps'
         ],
         impact: 'Builds capabilities you\'ve identified as lacking'
       },
@@ -499,30 +499,30 @@ class AdaptiveRecommendationEngine {
         summary += `${idx + 1}. **${area.name}** (Level ${scores.current} → ${scores.future})\n`;
         summary += `   Timeline: ${timeline} | Impact: ${scores.gap >= 2 ? 'High' : 'Medium'}\n`;
         
-        // Add specific Databricks features to adopt
+        // Add specific architecture capabilities to adopt
         if (areaId === 'platform_governance') {
-          summary += '   Key Actions: Implement Unity Catalog for centralized governance, enable audit logging, deploy RBAC with attribute-based access control\n';
+          summary += '   Key Actions: Implement Unified Catalog for centralized metadata governance, enable audit logging, deploy ABAC with attribute-based access control\n';
         } else if (areaId === 'data_engineering') {
-          summary += '   Key Actions: Adopt Delta Live Tables for automated pipelines, implement Lakehouse Monitoring for data quality, enable Auto Loader for streaming ingestion\n';
+          summary += '   Key Actions: Adopt declarative data pipelines with quality assertions, implement pipeline observability, enable streaming ingestion\n';
         } else if (areaId === 'analytics_bi') {
-          summary += '   Key Actions: Deploy Databricks SQL with Serverless compute, enable AI/BI dashboards, implement Genie for natural language queries\n';
+          summary += '   Key Actions: Deploy serverless vectorized SQL compute pools, establish centralized semantic layer, implement natural language query capabilities\n';
         } else if (areaId === 'machine_learning') {
-          summary += '   Key Actions: Adopt MLflow for experiment tracking, deploy Feature Store for reusable features, implement Model Registry for governance\n';
+          summary += '   Key Actions: Adopt centralized experiment tracking, deploy Feature Store for reusable features, implement Model Registry for lifecycle governance\n';
         } else if (areaId === 'generative_ai') {
-          summary += '   Key Actions: Deploy Vector Search for RAG applications, use Model Serving for LLM deployment, implement Agent Framework for AI applications\n';
+          summary += '   Key Actions: Deploy governed Vector Search for RAG applications, establish AI Gateway for token routing, implement evaluation guardrails\n';
         } else if (areaId === 'operational_excellence') {
-          summary += '   Key Actions: Enable Serverless Compute for cost optimization, implement FinOps dashboards, deploy automated scaling policies\n';
+          summary += '   Key Actions: Enable auto-scaling compute for cost optimization, implement FinOps dashboards, deploy automated CI/CD deployment pipelines\n';
         }
         summary += '\n';
       });
     }
     
     summary += '**Expected Business Outcomes:**\n';
-    summary += '• Improved data platform reliability and governance posture\n';
-    summary += '• Faster time-to-insight with modern Databricks capabilities\n';
-    summary += '• Reduced manual effort through automation and AI\n';
-    summary += '• Better cost efficiency through serverless and optimized compute\n';
-    summary += '• Enhanced compliance and audit capabilities\n\n';
+    summary += '• Improved enterprise data platform reliability and governance posture\n';
+    summary += '• Faster time-to-insight with modern open lakehouse capabilities\n';
+    summary += '• Reduced manual effort through automation, declarative pipelines, and AI\n';
+    summary += '• Better cost efficiency through serverless and right-sized compute\n';
+    summary += '• Enhanced compliance and audit readiness across multi-cloud environments\n\n';
     
     const allAreas = Object.keys(areaScores);
     summary += `**Assessment Confidence:** Based on ${allAreas.length} pillar(s) with ${totalPainPoints} specific challenges identified`;

@@ -190,21 +190,21 @@ class SampleAssessmentGenerator {
       
       `We rely on ${tool1} and ${tool2} for this today. Managing ${metric} manually with significant ${problem}. Looking to modernize - current licensing costs $150K/year plus operational overhead.`,
       
-      `Legacy ${tool1} environment is hurting productivity. We have ${metric} with constant ${problem}. Our data engineering team wastes 60% of time troubleshooting instead of delivering value. Need to consolidate to Databricks.`,
+      `Legacy ${tool1} environment is hurting productivity. We have ${metric} with constant ${problem}. Our data engineering team wastes 60% of time troubleshooting instead of delivering value. Need to consolidate and modernize our architecture.`,
       
-      `Running outdated ${tool1} with ${metric}. System performance degrading - experiencing ${problem} weekly. Maintenance window growing, business getting frustrated. Evaluating Databricks for 10x improvement.`,
+      `Running outdated ${tool1} with ${metric}. System performance degrading - experiencing ${problem} weekly. Maintenance window growing, business getting frustrated. Evaluating modern open architecture for 10x improvement.`,
       
       `Stuck on ${tool1} managing ${metric}. Critical issues: ${problem}, high TCO ($200K+ annually), vendor limitations. Business approved migration to modern Lakehouse - targeting 50% cost reduction.`,
       
-      `Current setup: ${tool1} + ${tool2} with ${metric}. ${problem} causing SLA breaches and business impact. CTO pushing for unified platform - Databricks POC approved for Q1 2026.`,
+      `Current setup: ${tool1} + ${tool2} with ${metric}. ${problem} causing SLA breaches and business impact. CTO pushing for unified platform - architecture modernization POC approved for Q1 2026.`,
       
       `Maintaining ${metric} across fragmented ${tool1} infrastructure. Daily ${problem} requiring manual intervention. Team morale low due to technical debt. Executive mandate to modernize platform.`,
       
       `Operations bottleneck with ${tool1} - managing ${metric}. ${problem} limiting our competitive advantage. Cannot support real-time use cases or ML workloads with current architecture.`,
       
-      `Multi-vendor cost spiral: ${tool1} ($120K/year), Snowflake warehouse ($40K/month), ${tool2} licenses ($80K/year). Total: $600K+ annually. Plus ${metric} and ${problem}. ROI case for Databricks consolidation approved.`,
+      `Multi-vendor cost spiral: ${tool1} ($120K/year), data warehouse ($40K/month), ${tool2} licenses ($80K/year). Total: $600K+ annually. Plus ${metric} and ${problem}. ROI case for architecture consolidation approved.`,
       
-      `Painful fragmentation: ${tool1} for ingestion, Snowflake for storage, ${tool2} for transformation. ${metric} scattered across tools. ${problem} due to lack of integration. Need unified Lakehouse platform.`,
+      `Painful fragmentation: ${tool1} for ingestion, separate warehouse for storage, ${tool2} for transformation. ${metric} scattered across tools. ${problem} due to lack of integration. Need unified modern data & AI platform.`,
       
       `Technical debt accumulating with ${tool1}. We have ${metric} that nobody wants to touch. ${problem} becoming existential risk. Board asking why we can't do real-time analytics like competitors.`,
       
@@ -303,7 +303,7 @@ class SampleAssessmentGenerator {
     const nameFormats = [
       `${companyName} - ${currentMonth} ${currentYear} Maturity Assessment`,
       `${companyName} Data Platform Assessment - Q${Math.ceil((new Date().getMonth() + 1) / 3)} ${currentYear}`,
-      `${companyName} Databricks Readiness Evaluation`,
+      `${companyName} Enterprise Data & AI Maturity Evaluation`,
       `${companyName} - ${completionLevel === 'full' ? 'Comprehensive' : 'Preliminary'} Technical Review`,
       `${companyName} Cloud Analytics Assessment ${currentYear}`
     ];
@@ -326,7 +326,7 @@ class SampleAssessmentGenerator {
       editHistory: [
         {
           timestamp: new Date().toISOString(),
-          editorEmail: 'sample-generator@databricks.com',
+          editorEmail: 'admin@scorex-platform.com',
           changes: 'Sample assessment created'
         }
       ]
