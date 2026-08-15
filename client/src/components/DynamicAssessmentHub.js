@@ -16,6 +16,7 @@ import {
   FiClock,
   FiSearch,
   FiFilter,
+  FiList,
   FiAward,
   FiLayers,
   FiToggleLeft,
