@@ -38,8 +38,12 @@ import AssessmentLanding from './components/AssessmentLanding';
 import LoginModal from './components/LoginModal';
 import InsightsDashboard from './components/InsightsDashboard';
 import AssessmentMatrixFlow from './components/AssessmentMatrixFlow';
+import UserGuideView from './components/UserGuideView';
+import PitchDeckView from './components/PitchDeckView';
+import DeepDiveView from './components/DeepDiveView';
+import WorkflowDemoView from './components/WorkflowDemoView';
 
-import { generateReportData } from './services/aiService';
+import { generateReportData, generateMaturityReport } from './services/aiService';
 import './index.css';
 
 const mapMaturityToTechnicalReport = (maturityReport, fData) => {
@@ -551,7 +555,8 @@ export default function App() {
       const route = path.replace('#', '');
 
       const validRoutes = [
-        'home', 'dashboard', 'insights-dashboard', 'assessment', 'matrix', 'form', 'report', 'chat_history', 'logs', 'summary',
+        'home', 'dashboard', 'insights-dashboard', 'assessment', 'matrix', 'deep-dive', 'pitch-deck', 'user-guide', 'workflow-demo',
+        'form', 'report', 'chat_history', 'logs', 'summary',
         'architecture-canvas', 'maturity-assessor', 'maturity-report', 'agentic-discovery', 'agentic-report', 'agentic-maturity-v12'
       ];
 
@@ -561,10 +566,20 @@ export default function App() {
         setViewMode('landing');
         setActiveSessionId(null);
       } else if (validRoutes.includes(route)) {
-        if (route === 'dashboard' || route === 'insights-dashboard') {
+        if (route === 'home') {
+          setViewMode('home');
+        } else if (route === 'dashboard' || route === 'insights-dashboard') {
           setViewMode('dashboard');
         } else if (route === 'assessment' || route === 'matrix') {
           setViewMode('matrix');
+        } else if (route === 'deep-dive') {
+          setViewMode('deep-dive');
+        } else if (route === 'pitch-deck') {
+          setViewMode('pitch-deck');
+        } else if (route === 'user-guide') {
+          setViewMode('user-guide');
+        } else if (route === 'workflow-demo') {
+          setViewMode('workflow-demo');
         } else if (route === 'agentic-maturity-v12') {
           setActiveFramework('option12');
           const isLandingOnly = !query || query.trim() === '' || query.includes('view=saved_library');
@@ -1547,30 +1562,10 @@ export default function App() {
 
   return (
     <div className="app-layout">
-      <Sidebar
-        viewMode={viewMode}
-        reportData={reportData}
-        onGoHome={() => {
-          setActiveFramework('option1');
-          setViewMode('home');
-        }}
-        onNewIntake={handleNewIntake}
-        onViewSummary={() => {
-          setActiveFramework('option1');
-          setViewMode('summary');
-        }}
-        onOpenSessions={() => { setSessionsFilter('all'); setIsSessionsOpen(true); }}
-        onOpenChatHistory={() => setViewMode('chat_history')}
-        onOpenSettings={() => setIsSettingsOpen(true)}
-        onOpenLogs={() => setViewMode('logs')}
-        onOpenDisclaimer={() => { setDisclaimerForceAccept(false); setIsDisclaimerOpen(true); }}
-        activeFramework={activeFramework}
-        onFrameworkChange={(fw) => routeToFramework(fw, { setActiveFramework, setActiveSessionId, setViewMode })}
-      />
-
       <div className="app-main-viewport">
         <Navbar
           user={currentUser}
+          viewMode={viewMode}
           onLoginClick={() => setIsLoginModalOpen(true)}
           onLogoutClick={() => setCurrentUser(null)}
           onOpenDashboard={() => {
@@ -1593,7 +1588,35 @@ export default function App() {
         />
 
         <main className="main-content">
-          {viewMode === 'dashboard' ? (
+          {viewMode === 'user-guide' ? (
+            <UserGuideView
+              onStartAssessment={() => {
+                setViewMode('matrix');
+                window.location.hash = '#assessment';
+              }}
+            />
+          ) : viewMode === 'pitch-deck' ? (
+            <PitchDeckView
+              onStartAssessment={() => {
+                setViewMode('matrix');
+                window.location.hash = '#assessment';
+              }}
+            />
+          ) : viewMode === 'deep-dive' ? (
+            <DeepDiveView
+              onStartAssessment={() => {
+                setViewMode('matrix');
+                window.location.hash = '#assessment';
+              }}
+            />
+          ) : viewMode === 'workflow-demo' ? (
+            <WorkflowDemoView
+              onStartAssessment={() => {
+                setViewMode('matrix');
+                window.location.hash = '#assessment';
+              }}
+            />
+          ) : viewMode === 'dashboard' ? (
             <InsightsDashboard 
               sessions={sessions}
               onSelectAssessment={(fw) => {
@@ -1605,16 +1628,51 @@ export default function App() {
             />
           ) : viewMode === 'matrix' ? (
             <AssessmentMatrixFlow
-              customerTitle="CityTech Solutions Data & AI Assessment"
+              customerTitle="Enterprise Data & AI Maturity Assessment"
               onBack={() => {
                 setViewMode('home');
                 window.location.hash = '#home';
               }}
-              onSubmit={() => {
-                setActiveFramework('option12');
+              onSubmit={async (matrixAnswers) => {
+                setIsGenerating(true);
+                setGenStep(1);
+                const meta = {
+                  customerName: 'Enterprise Client',
+                  subVertical: 'Enterprise Technology',
+                  useCaseName: 'Data & AI Modernization Strategy',
+                  useCaseDesc: matrixAnswers?.notes || 'Enterprise Assessment'
+                };
+                const rep = await generateMaturityReport(meta, matrixAnswers, apiKey, gcpToken, (s) => setGenStep(s));
+                setReportData(rep);
+                setIsGenerating(false);
                 setViewMode('report');
-                window.location.hash = '#agentic-report';
+                window.location.hash = '#report';
               }}
+            />
+          ) : viewMode === 'home' ? (
+            <SuiteHomePage
+              sessions={sessions}
+              onStartAssessment={(fw) => {
+                setActiveFramework(fw || 'option12');
+                setViewMode('matrix');
+                window.location.hash = '#assessment';
+              }}
+              onSelectAssessment={(fw) => {
+                setActiveFramework(fw);
+                setViewMode('matrix');
+                window.location.hash = '#assessment';
+              }}
+              onOpenDashboard={() => {
+                setViewMode('dashboard');
+                window.location.hash = '#dashboard';
+              }}
+              onTrySample={() => {
+                setActiveFramework('option12');
+                setViewMode('matrix');
+                window.location.hash = '#assessment';
+              }}
+              onOpenSessions={() => setIsSessionsOpen(true)}
+              onViewSummary={() => setViewMode('summary')}
             />
           ) : viewMode === 'chat_history' ? (
             <ChatHistory />
@@ -1635,40 +1693,12 @@ export default function App() {
                 window.location.hash = '#home';
               }}
               onStart={() => {
-                if (activeFramework === 'intake') {
-                  handleNewIntake();
-                  window.location.hash = '#form?action=start';
-                } else if (activeFramework === 'option7') {
-                  setViewMode('home');
-                  window.location.hash = '#agentic-discovery?action=start';
-                } else if (activeFramework === 'option4') {
-                  setViewMode('home');
-                  window.location.hash = '#architecture-canvas?action=start';
-                } else if (activeFramework === 'option12') {
-                  window.location.hash = `#agentic-maturity-v12?id=assessment_${Date.now()}&action=start`;
-                } else {
-                  setViewMode('home');
-                  window.location.hash = `#maturity-assessor?action=start`;
-                }
+                setViewMode('matrix');
+                window.location.hash = '#assessment';
               }}
               onTrySample={() => {
-                const sampleForm = { company: 'Merck & Co.', useCaseName: 'Clinical Trial Protocol Auditor', industry: 'Biopharma', urgency: '5', mlMaturity: '4' };
-                setFormData(sampleForm);
-                if (activeFramework === 'intake') {
-                  setViewMode('form');
-                  window.location.hash = '#form?action=start';
-                } else if (activeFramework === 'option7') {
-                  setViewMode('report');
-                  window.location.hash = '#agentic-report';
-                } else if (activeFramework === 'option12') {
-                  window.location.hash = '#agentic-maturity-v12?id=demo_merck_preset&preset=merck_preset';
-                } else if (activeFramework === 'option4') {
-                  setViewMode('home');
-                  window.location.hash = '#architecture-canvas?action=start';
-                } else {
-                  setViewMode('report');
-                  window.location.hash = '#maturity-report';
-                }
+                setViewMode('matrix');
+                window.location.hash = '#assessment';
               }}
               onOpenSaved={() => {
                 setSessionsFilter(activeFramework);
@@ -1684,8 +1714,8 @@ export default function App() {
               sessions={sessions}
               onSaveSession={handleSaveMaturitySession}
               onBackToLanding={() => {
-                setViewMode('landing');
-                window.location.hash = '#landing-option12';
+                setViewMode('home');
+                window.location.hash = '#home';
               }}
             />
           ) : activeFramework === 'option4' ? (
@@ -1713,31 +1743,6 @@ export default function App() {
               activeSessionId={activeSessionId}
               onSessionIdChange={(id) => setActiveSessionId(id)}
               onGenerateReport={handleGenerateV7Report}
-            />
-          ) : viewMode === 'home' ? (
-            <SuiteHomePage
-              sessions={sessions}
-              onStartAssessment={(fw) => {
-                setActiveFramework(fw || 'option12');
-                setViewMode('matrix');
-                window.location.hash = '#assessment';
-              }}
-              onSelectAssessment={(fw) => {
-                setActiveFramework(fw);
-                setViewMode('matrix');
-                window.location.hash = '#assessment';
-              }}
-              onOpenDashboard={() => {
-                setViewMode('dashboard');
-                window.location.hash = '#dashboard';
-              }}
-              onTrySample={() => {
-                setActiveFramework('option12');
-                setViewMode('matrix');
-                window.location.hash = '#assessment';
-              }}
-              onOpenSessions={() => setIsSessionsOpen(true)}
-              onViewSummary={() => setViewMode('summary')}
             />
           ) : viewMode === 'form' ? (
             <IntakeForm

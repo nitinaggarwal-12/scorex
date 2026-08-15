@@ -20,6 +20,7 @@ import { ASSESSMENTS } from '../data/assessmentCatalog';
 
 export default function Navbar({
   user,
+  viewMode = 'home',
   onLoginClick,
   onLogoutClick,
   onOpenDashboard,
@@ -58,9 +59,17 @@ export default function Navbar({
     if (section === 'home') {
       window.location.hash = '#home';
     } else if (section === 'dashboard') {
-      onOpenDashboard();
-    } else {
-      alert(`📌 Navigating to ${section.replace('-', ' ').toUpperCase()} section...`);
+      window.location.hash = '#dashboard';
+    } else if (section === 'deep-dive') {
+      window.location.hash = '#deep-dive';
+    } else if (section === 'pitch-deck') {
+      window.location.hash = '#pitch-deck';
+    } else if (section === 'user-guide') {
+      window.location.hash = '#user-guide';
+    } else if (section === 'workflow-demo') {
+      window.location.hash = '#workflow-demo';
+    } else if (section === 'assessment') {
+      window.location.hash = '#assessment';
     }
   };
 
@@ -68,19 +77,34 @@ export default function Navbar({
     <header className="ref-navbar no-print">
       {/* LEFT NAVIGATION LINKS */}
       <div className="ref-nav-left">
-        <button className="ref-nav-link active" onClick={() => handleNavClick('home')}>
+        <button 
+          className={`ref-nav-link ${viewMode === 'home' ? 'active' : ''}`} 
+          onClick={() => handleNavClick('home')}
+        >
           Home
         </button>
-        <button className="ref-nav-link" onClick={() => handleNavClick('deep-dive')}>
+        <button 
+          className={`ref-nav-link ${viewMode === 'deep-dive' ? 'active' : ''}`} 
+          onClick={() => handleNavClick('deep-dive')}
+        >
           Deep Dive
         </button>
-        <button className="ref-nav-link" onClick={() => handleNavClick('pitch-deck')}>
+        <button 
+          className={`ref-nav-link ${viewMode === 'pitch-deck' ? 'active' : ''}`} 
+          onClick={() => handleNavClick('pitch-deck')}
+        >
           Pitch Deck
         </button>
-        <button className="ref-nav-link" onClick={() => handleNavClick('user-guide')}>
+        <button 
+          className={`ref-nav-link ${viewMode === 'user-guide' ? 'active' : ''}`} 
+          onClick={() => handleNavClick('user-guide')}
+        >
           User Guide
         </button>
-        <button className="ref-nav-link" onClick={() => handleNavClick('workflow-demo')}>
+        <button 
+          className={`ref-nav-link ${viewMode === 'workflow-demo' ? 'active' : ''}`} 
+          onClick={() => handleNavClick('workflow-demo')}
+        >
           Workflow Demo
         </button>
       </div>
@@ -88,7 +112,10 @@ export default function Navbar({
       {/* RIGHT ACTION CONTROLS */}
       <div className="ref-nav-right">
         {/* Dashboard Button */}
-        <button className="btn-nav-dashboard" onClick={onOpenDashboard}>
+        <button 
+          className={`btn-nav-dashboard ${viewMode === 'dashboard' ? 'active' : ''}`} 
+          onClick={() => handleNavClick('dashboard')}
+        >
           Dashboard
         </button>
 
@@ -151,24 +178,24 @@ export default function Navbar({
               <button 
                 className="ref-dropdown-item"
                 onClick={() => {
-                  onSelectAssessment('option12');
+                  window.location.hash = '#assessment';
                   setIsAssignmentsOpen(false);
                 }}
               >
                 <div className="dropdown-item-text">
-                  <span className="item-title">CityTech Solutions Data & AI</span>
+                  <span className="item-title">Enterprise Data & AI Maturity Audit</span>
                   <span className="item-sub">6 of 6 pillars • Ready for review</span>
                 </div>
               </button>
               <button 
                 className="ref-dropdown-item"
                 onClick={() => {
-                  onSelectAssessment('option5');
+                  window.location.hash = '#assessment';
                   setIsAssignmentsOpen(false);
                 }}
               >
                 <div className="dropdown-item-text">
-                  <span className="item-title">Merck Clinical Trial ML Audit</span>
+                  <span className="item-title">Production GenAI Gateway Audit</span>
                   <span className="item-sub">Draft • 4 of 6 pillars</span>
                 </div>
               </button>
@@ -185,7 +212,9 @@ export default function Navbar({
         {/* Start Assessment CTA */}
         <button 
           className="btn-nav-start"
-          onClick={() => onSelectAssessment('option12')}
+          onClick={() => {
+            window.location.hash = '#assessment';
+          }}
         >
           <span>Start Assessment →</span>
         </button>
@@ -208,28 +237,28 @@ export default function Navbar({
 
             {isAdminOpen && (
               <div className="ref-dropdown-menu admin-menu">
-                <button className="ref-dropdown-item" onClick={() => { alert("Switched to Author mode"); setIsAdminOpen(false); }}>
+                <button className="ref-dropdown-item" onClick={() => { setIsAdminOpen(false); }}>
                   <UserCheck size={16} />
                   <span>Switch to Author</span>
                 </button>
-                <button className="ref-dropdown-item" onClick={() => { alert("Switched to Consumer mode"); setIsAdminOpen(false); }}>
+                <button className="ref-dropdown-item" onClick={() => { setIsAdminOpen(false); }}>
                   <Users size={16} />
                   <span>Switch to Consumer</span>
                 </button>
                 <button className="ref-dropdown-item" onClick={() => { onOpenSettings(); setIsAdminOpen(false); }}>
                   <Lock size={16} />
-                  <span>Change Password / Keys</span>
+                  <span>API Keys & Credentials</span>
                 </button>
                 <button className="ref-dropdown-item" onClick={() => { onLogoutClick(); setIsAdminOpen(false); }}>
                   <LogOut size={16} />
                   <span>Logout</span>
                 </button>
                 <div className="dropdown-divider"></div>
-                <button className="ref-dropdown-item" onClick={() => { alert("Feedback modal opened."); setIsAdminOpen(false); }}>
+                <button className="ref-dropdown-item" onClick={() => { setIsAdminOpen(false); }}>
                   <MessageSquare size={16} />
                   <span>Give Feedback</span>
                 </button>
-                <button className="ref-dropdown-item" onClick={() => { alert("Viewing all feedback..."); setIsAdminOpen(false); }}>
+                <button className="ref-dropdown-item" onClick={() => { setIsAdminOpen(false); }}>
                   <MessageSquare size={16} />
                   <span>View All Feedback</span>
                 </button>
