@@ -27,12 +27,12 @@ class FileUserStore {
         const adminHash = await bcrypt.hash('admin123', 10);
         const defaultUsers = [{
           id: uuidv4(),
-          email: 'admin@Enterprise Platform.com',
+          email: 'admin@databricks.com',
           password_hash: adminHash,
           role: 'admin',
           first_name: 'Admin',
           last_name: 'User',
-          organization: 'Enterprise Platform',
+          organization: 'Databricks',
           is_active: true,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()

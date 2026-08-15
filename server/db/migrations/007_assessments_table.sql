@@ -41,7 +41,7 @@ CREATE TRIGGER trigger_update_assessments_updated_at
   EXECUTE FUNCTION update_assessments_updated_at();
 
 -- Comment on table and columns
-COMMENT ON TABLE assessments IS 'Stores Enterprise Data & AI Maturity Assessments';
+COMMENT ON TABLE assessments IS 'Stores Databricks maturity assessments';
 COMMENT ON COLUMN assessments.id IS 'Unique assessment identifier (UUID)';
 COMMENT ON COLUMN assessments.status IS 'Assessment status: in_progress, submitted, completed, assigned';
 COMMENT ON COLUMN assessments.responses IS 'JSON object containing all assessment responses';

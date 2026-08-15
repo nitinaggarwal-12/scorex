@@ -113,7 +113,7 @@ const machineLearningPillar = {
       questions: [
         {
           id: 'deployment_automation',
-          question: 'How automated is your model deployment and promotion process within Enterprise Platform?',
+          question: 'How automated is your model deployment and promotion process within Databricks?',
           perspectives: [
             {
               id: 'current_state',

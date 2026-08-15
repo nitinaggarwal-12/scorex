@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: databricks-maturity-assessment
+    runtime: node
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: chmod +x build.sh && ./build.sh
+    startCommand: chmod +x start.sh && ./start.sh
+    envVars:
+      - key: NODE_ENV
+        value: production
+    healthCheckPath: /api/health
+    autoDeploy: true
+

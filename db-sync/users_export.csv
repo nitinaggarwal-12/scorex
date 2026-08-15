@@ -1,0 +1,11 @@
+id,email,password_hash,role,first_name,last_name,organization,is_active,last_login_at,created_at,updated_at,created_by
+1,admin@databricks.com,$2b$10$PNrmXZqKMzBc619kNilSIul0xyWSsTOlAIRlg/vU03vT4Q4zYnmEO,admin,Admin,User,Databricks,t,2025-12-22 16:43:02.967808,2025-11-11 19:39:33.56868,2025-12-22 16:43:02.967808,
+2,john.doe@acme.com,$2b$10$6UoHw7uZJ849rokub5PMTOYP8OMYoqlGWexGrkTJOS/koDWGGIu0a,consumer,John,Doe,Acme Corp,t,,2025-11-11 19:51:31.259848,2025-11-11 19:51:31.259848,
+3,jane.smith@techco.com,$2b$10$6UoHw7uZJ849rokub5PMTOYP8OMYoqlGWexGrkTJOS/koDWGGIu0a,consumer,Jane,Smith,TechCo,t,,2025-11-11 19:51:31.259848,2025-11-11 19:51:31.259848,
+4,bob.jones@startup.io,$2b$10$6UoHw7uZJ849rokub5PMTOYP8OMYoqlGWexGrkTJOS/koDWGGIu0a,consumer,Bob,Jones,Startup Inc,t,,2025-11-11 19:51:31.259848,2025-11-11 19:51:31.259848,
+5,quinn.davis934@cloudsystems.com,$2b$10$m6.6.TuJyZv5/VhxXjkptOhVwsv./493b28HFY6Ml6YGn5KWXn9mC,author,Quinn,Davis,CloudSystemsInc,t,2025-12-22 15:50:33.867489,2025-11-11 19:54:57.312818,2025-12-22 15:50:33.867489,1
+6,sam.evans606@aiventures.com,$2b$10$ykqiy42PjUVtGyvcW1yHtO90HYPuoMmwq96no9esr0wfaofIhsMfi,consumer,Sam,Evans,AI Ventures,t,,2025-11-11 20:26:30.549429,2025-11-11 20:26:30.549429,1
+7,avery.evans549@techcorp.com,$2b$10$DMAw0HkpxK41YPLJdP3ln.O3WvRTJseh1Ab/5e7VyVlBTsodKgnEO,consumer,Avery,Evans,TechCorp,t,,2025-11-12 01:17:46.245821,2025-11-12 01:17:46.245821,1
+8,taylor.harris879@aiventures.com,$2b$10$g2uwG0DQTsDtqDwMqqB.WefJw66g4IqAAAa4reNXwfR4ukVoZD9sW,author,Taylor,Harris,AI Ventures,t,,2025-11-12 01:17:48.161627,2025-11-12 01:17:57.892775,1
+9,author@databricks.com,$2b$10$dbE0yEMT1SXIiCpscsYUlu2W2iU6AavP62tR8dOV0V71tHVBNG13C,author,Author,User,Databricks,t,2025-12-17 19:24:04.68595,2025-11-12 16:25:48.874408,2025-12-17 19:24:04.68595,
+10,consumer@example.com,$2b$10$SZQqgXNUDwh1WikhSF6UNujAUvgJWU6nB3yIRhp3Yl2NZVrPKaBfa,consumer,Consumer,User,Example Corp,t,2025-11-12 16:36:17.246809,2025-11-12 16:25:48.874408,2025-11-12 16:36:17.246809,

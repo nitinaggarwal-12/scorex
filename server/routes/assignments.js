@@ -46,16 +46,16 @@ async function sendAssignmentEmail(consumer, author, assessmentId, assessmentNam
     to: consumer.email,
     subject: isReminder ? `Reminder: Complete Your Assessment - ${assessmentName}` : `New Assessment Assigned: ${assessmentName}`,
     html: `
-      <h2>${isReminder ? 'Assessment Reminder' : 'New Enterprise Data & AI Maturity Assessment Assigned'}</h2>
+      <h2>${isReminder ? 'Assessment Reminder' : 'New Databricks Maturity Assessment Assigned'}</h2>
       <p>Hello ${consumer.first_name || 'there'},</p>
       ${customMessage ? `<p>${customMessage}</p>` : ''}
-      <p>${author.first_name} ${author.last_name} from ${author.organization || 'Enterprise Platform'} has ${isReminder ? 'asked you to complete' : 'assigned you'} a maturity assessment.</p>
+      <p>${author.first_name} ${author.last_name} from ${author.organization || 'Databricks'} has ${isReminder ? 'asked you to complete' : 'assigned you'} a maturity assessment.</p>
       <p><strong>Assessment:</strong> ${assessmentName}</p>
       <p>Please click the link below to ${isReminder ? 'continue' : 'start'} your assessment:</p>
       <p><a href="${assessmentUrl}" style="display: inline-block; padding: 12px 24px; background-color: #FF3621; color: white; text-decoration: none; border-radius: 4px;">${isReminder ? 'Continue Assessment' : 'Start Assessment'}</a></p>
       <p>Or copy and paste this link into your browser:</p>
       <p>${assessmentUrl}</p>
-      <p>Thank you,<br>Enterprise Platform Team</p>
+      <p>Thank you,<br>Databricks Team</p>
     `
   };
   

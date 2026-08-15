@@ -1,8 +1,8 @@
 /**
  * Database Setup Script
  * 
- * Initializes PostgreSQL database with Enterprise Platform features schema and seed data
- * Source: Official Enterprise Platform release notes
+ * Initializes PostgreSQL database with Databricks features schema and seed data
+ * Source: Official Databricks release notes
  */
 
 const { Pool } = require('pg');
@@ -40,7 +40,7 @@ async function checkDatabaseExists() {
       SELECT table_name 
       FROM information_schema.tables 
       WHERE table_schema = 'public' 
-        AND table_name = 'platform_features'
+        AND table_name = 'databricks_features'
     `);
     
     return result.rows.length > 0;
@@ -52,7 +52,7 @@ async function checkDatabaseExists() {
 
 async function getFeatureCount() {
   try {
-    const result = await pool.query('SELECT COUNT(*) as count FROM platform_features');
+    const result = await pool.query('SELECT COUNT(*) as count FROM databricks_features');
     return parseInt(result.rows[0].count);
   } catch (error) {
     return 0;
@@ -60,7 +60,7 @@ async function getFeatureCount() {
 }
 
 async function setupDatabase() {
-  console.log('🚀 Enterprise Platform Feature Database Setup\n');
+  console.log('🚀 Databricks Feature Database Setup\n');
   console.log('================================================');
   
   if (!process.env.DATABASE_URL) {
@@ -96,8 +96,8 @@ async function setupDatabase() {
     // Run migrations
     console.log('📦 Running database migrations...\n');
     
-    await runMigration('001_platform_features.sql');
-    await runMigration('002_seed_platform_features.sql');
+    await runMigration('001_databricks_features.sql');
+    await runMigration('002_seed_databricks_features.sql');
     await runMigration('003_comprehensive_features_seed.sql');
     
     // Verify setup

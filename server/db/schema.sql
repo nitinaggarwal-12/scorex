@@ -1,4 +1,4 @@
--- Enterprise Data & AI Maturity Assessment Database Schema
+-- Databricks Maturity Assessment Database Schema
 -- PostgreSQL 14+
 
 -- Create assessments table
@@ -69,7 +69,7 @@ WHERE status != 'deleted'
 ORDER BY updated_at DESC;
 
 -- Comments for documentation
-COMMENT ON TABLE assessments IS 'Stores all Enterprise Data & AI Maturity Assessments with full response data';
+COMMENT ON TABLE assessments IS 'Stores all Databricks maturity assessments with full response data';
 COMMENT ON COLUMN assessments.responses IS 'JSONB object containing all question responses';
 COMMENT ON COLUMN assessments.completed_categories IS 'JSONB array of completed pillar IDs';
 COMMENT ON COLUMN assessments.edit_history IS 'JSONB array tracking who edited and when';

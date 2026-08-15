@@ -523,7 +523,7 @@ const PitchDeck = () => {
         }
       }
 
-      pdf.save('Enterprise Platform-pitch-deck.pdf');
+      pdf.save('databricks-pitch-deck.pdf');
       setCurrentSlide(0);
       setIsPrinting(false);
     }, 100);
@@ -562,7 +562,7 @@ const PitchDeck = () => {
               lineHeight: 1.6,
               margin: 0
             }}>
-              A comprehensive, executive-grade assessment that maps your current state, identifies gaps, and provides a clear roadmap to data & AI excellence with Enterprise Platform.
+              A comprehensive, executive-grade assessment that maps your current state, identifies gaps, and provides a clear roadmap to data & AI excellence with Databricks.
             </p>
           </div>
         </SlideContent>
@@ -1006,7 +1006,7 @@ const PitchDeck = () => {
               color: 'rgba(255, 255, 255, 0.9)',
               margin: 0
             }}>
-              Contact us at: <strong>nitin.aggarwal@Enterprise Platform.com</strong>
+              Contact us at: <strong>nitin.aggarwal@databricks.com</strong>
             </p>
           </div>
         </SlideContent>
@@ -1024,7 +1024,7 @@ const PitchDeck = () => {
     return (
       <SlideshowOverlay>
         <SlideshowHeader>
-          <SlideshowTitle>Enterprise Platform Data & AI Transformation</SlideshowTitle>
+          <SlideshowTitle>Databricks Data & AI Transformation</SlideshowTitle>
           <SlideshowControls>
             <ControlButton onClick={() => setShowSlideshow(false)}>
               <FiX />
@@ -1072,7 +1072,7 @@ const PitchDeck = () => {
           Transform Your Data & AI Journey
         </HeroTitle>
         <HeroSubtitle>
-          A comprehensive, executive-grade assessment that maps your current state, identifies gaps, and provides a clear roadmap to data & AI excellence with Enterprise Platform.
+          A comprehensive, executive-grade assessment that maps your current state, identifies gaps, and provides a clear roadmap to data & AI excellence with Databricks.
         </HeroSubtitle>
       </HeroSection>
 

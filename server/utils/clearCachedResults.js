@@ -2,7 +2,7 @@
 
 /**
  * Utility to clear cached results from assessments
- * This forces regeneration with fresh Enterprise Platform features
+ * This forces regeneration with fresh Databricks features
  */
 
 const fs = require('fs');
@@ -50,7 +50,7 @@ function clearCachedResults() {
     console.log('\n✅ Cache clearing complete!');
     console.log(`📊 Cleared ${clearedCount} assessments`);
     console.log(`📁 File: ${DATA_FILE}`);
-    console.log('\n💡 Next time you view results, they will be regenerated with Enterprise Platform features!');
+    console.log('\n💡 Next time you view results, they will be regenerated with Databricks features!');
     
   } catch (error) {
     console.error('❌ Error clearing cached results:', error);

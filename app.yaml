@@ -1,0 +1,23 @@
+command:
+  - "sh"
+  - "-c"
+  - "npm install && cd client && npm install && npm run build && cd .. && npm start"
+
+env:
+  - name: NODE_ENV
+    value: production
+  - name: PORT
+    value: "8080"
+  - name: LAKEBASE_HOST
+    value: instance-ee2a221d-960d-4811-b669-190fcf608365.database.cloud.databricks.com
+  - name: LAKEBASE_PORT
+    value: "5432"
+  - name: LAKEBASE_DATABASE
+    value: databricks_postgres
+  - name: LAKEBASE_USER
+    value: nitin.aggarwal@databricks.com
+  - name: LAKEBASE_PASSWORD
+    value: "{{secrets/maturity-assessment/LAKEBASE_TOKEN}}"
+  - name: SESSION_SECRET
+    value: "{{secrets/maturity-assessment/SESSION_SECRET}}"
+

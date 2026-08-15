@@ -1,6 +1,6 @@
 /**
  * Fix all broken documentation links in the feature mapper
- * Replace speculative/broken links with actual working Enterprise Platform documentation
+ * Replace speculative/broken links with actual working Databricks documentation
  */
 
 const fs = require('fs');
@@ -42,7 +42,7 @@ const brokenLinks = {
   'data-sharing/default-storage.html': 'data-sharing/index.html',
   'machine-learning/serverless-gpu.html': 'machine-learning/train-model/index.html',
   'jobs/serverless-gpu-scheduling.html': 'compute/serverless.html',
-  'machine-learning/Enterprise Model Registry-system-tables.html': 'machine-learning/manage-model-lifecycle/index.html',
+  'machine-learning/mlflow-system-tables.html': 'machine-learning/manage-model-lifecycle/index.html',
   'generative-ai/mcp-servers.html': 'generative-ai/agent-framework/index.html',
   'generative-ai/genie-apps.html': 'integrations/genie.html',
   'generative-ai/agent-framework/authorize-user.html': 'generative-ai/agent-framework/index.html',
@@ -50,13 +50,13 @@ const brokenLinks = {
   'data-governance/certification.html': 'data-governance/unity-catalog/index.html',
 };
 
-const filePath = path.join(__dirname, '../services/platformFeatureMapper.js');
+const filePath = path.join(__dirname, '../services/databricksFeatureMapper.js');
 let content = fs.readFileSync(filePath, 'utf8');
 
 let replacements = 0;
 for (const [broken, fixed] of Object.entries(brokenLinks)) {
-  const brokenUrl = `https://docs.enterprisePlatform.com/${broken}`;
-  const fixedUrl = `https://docs.enterprisePlatform.com/${fixed}`;
+  const brokenUrl = `https://docs.databricks.com/${broken}`;
+  const fixedUrl = `https://docs.databricks.com/${fixed}`;
   
   if (content.includes(brokenUrl)) {
     content = content.replace(new RegExp(brokenUrl.replace(/\//g, '\\/'), 'g'), fixedUrl);

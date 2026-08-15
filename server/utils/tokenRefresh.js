@@ -1,8 +1,8 @@
 const axios = require('axios');
 
 /**
- * Enterprise Platform OAuth Token Manager for Lakebase
- * Uses Enterprise Platform API to get tokens that work with Lakebase PostgreSQL
+ * Databricks OAuth Token Manager for Lakebase
+ * Uses Databricks API to get tokens that work with Lakebase PostgreSQL
  */
 class LakebaseTokenManager {
   constructor() {
@@ -11,9 +11,9 @@ class LakebaseTokenManager {
     this.refreshInterval = null;
     this.pool = null; // Will be set by connection manager
     
-    // Use enterprise workspace token from environment (provided by Enterprise Platform Apps)
-    this.workspaceToken = process.env.enterprisePlatform_TOKEN;
-    this.workspaceUrl = process.env.enterprisePlatform_HOST || 'https://e2-demo-field-eng.cloud.enterprisePlatform.com';
+    // Use Databricks workspace token from environment (provided by Databricks Apps)
+    this.workspaceToken = process.env.DATABRICKS_TOKEN;
+    this.workspaceUrl = process.env.DATABRICKS_HOST || 'https://e2-demo-field-eng.cloud.databricks.com';
   }
 
   /**
@@ -27,7 +27,7 @@ class LakebaseTokenManager {
    * Get a valid OAuth token for Lakebase
    */
   async getToken() {
-    // For Enterprise Platform Apps, we use the workspace token directly
+    // For Databricks Apps, we use the workspace token directly
     // This is automatically provided and refreshed by the platform
     if (this.workspaceToken) {
       return this.workspaceToken;
@@ -64,8 +64,8 @@ class LakebaseTokenManager {
     // Update the password in the pool options
     // Note: pg doesn't support dynamic password updates, 
     // so we'd need to recreate the pool, but that's expensive
-    // Instead, we rely on enterprise workspace token being auto-refreshed
-    console.log('🔑 Token updated (workspace token auto-managed by Enterprise Platform)');
+    // Instead, we rely on Databricks workspace token being auto-refreshed
+    console.log('🔑 Token updated (workspace token auto-managed by Databricks)');
   }
 }
 

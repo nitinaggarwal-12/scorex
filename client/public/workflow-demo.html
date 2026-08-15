@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Databricks Maturity Assessment - Interactive Workflow Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Premium animated background */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(118, 75, 162, 0.2) 0%, transparent 50%);
+            animation: backgroundShift 15s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 10px 20px;
+            box-sizing: border-box;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 10px;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 3px;
+            text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .header p {
+            font-size: 0.85rem;
+            opacity: 0.95;
+            text-shadow: 0 1px 10px rgba(0,0,0,0.2);
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .demo-container {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 
+                0 20px 60px rgba(0,0,0,0.3),
+                0 0 0 1px rgba(255,255,255,0.1) inset;
+            overflow: hidden;
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.8s ease 0.3s both;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .nav-arrow {
+            position: fixed;
+            bottom: 40px;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            background: rgba(102, 126, 234, 0.15);
+            border-radius: 50%;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .demo-container:hover .nav-arrow {
+            opacity: 0.7;
+        }
+
+        .nav-arrow:hover {
+            opacity: 1 !important;
+            background: rgba(102, 126, 234, 0.25);
+            transform: scale(1.15);
+        }
+
+        .nav-arrow:active {
+            transform: scale(1.05);
+        }
+
+        .nav-arrow svg {
+            width: 28px;
+            height: 28px;
+            fill: none;
+            stroke: #667eea;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .nav-arrow:hover svg {
+            stroke: #764ba2;
+        }
+
+        .nav-arrow:disabled {
+            opacity: 0 !important;
+            cursor: not-allowed;
+        }
+
+        .exit-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: none;
+        }
+
+        .exit-btn:hover {
+            opacity: 1 !important;
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .demo-container:hover .exit-btn {
+            opacity: 0.7;
+        }
+
+        #prevBtn {
+            left: 60px;
+        }
+
+        #nextBtn {
+            right: 60px;
+        }
+
+        .progress-bar {
+            height: 5px;
+            background: #e9ecef;
+            position: relative;
+            overflow: visible;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0%;
+            position: relative;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6));
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(100px); }
+        }
+
+        .step-indicator {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 30px 20px;
+            background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+            border-right: 1px solid #e9ecef;
+            min-width: 120px;
+            position: relative;
+        }
+
+        .step-indicator::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: linear-gradient(180deg, transparent 0%, #667eea 50%, transparent 100%);
+            opacity: 0.3;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            padding: 15px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .step:hover .step-number {
+            transform: scale(1.1);
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e9ecef;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .step-number:hover {
+            border-color: #667eea;
+        }
+
+        .step.active .step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: scale(1.15);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .step.completed .step-number {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            }
+            50% {
+                box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+            }
+        }
+
+        .step-label {
+            font-size: 0.8rem;
+            color: #6c757d;
+            font-weight: 500;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .step.active .step-label {
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .content-area {
+            padding: 20px 40px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+            background: white;
+            position: relative;
+        }
+
+        .step-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+            width: 100%;
+            max-width: 1200px;
+            transform: scale(1.05);
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .screenshot {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+            border: 3px solid #e9ecef;
+        }
+
+        .step-title {
+            font-size: 1.4rem;
+            color: #1e293b;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            position: relative;
+            padding-bottom: 8px;
+        }
+
+        .step-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+
+        .step-icon {
+            font-size: 1.4rem;
+        }
+
+        .step-description {
+            font-size: 0.9rem;
+            color: #475569;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 8px 14px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .feature-list li:hover {
+            background: #e9ecef;
+            transform: translateX(3px);
+        }
+
+        .feature-icon {
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .mockup {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 10px;
+            padding: 12px;
+            border: 1px solid #e9ecef;
+            margin: 8px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: all 0.3s ease;
+        }
+
+        .mockup:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            border-color: #667eea;
+        }
+
+        .mockup-header {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .mockup-content {
+            display: grid;
+            gap: 10px;
+        }
+
+        .mockup-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .mockup-label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.95rem;
+        }
+
+        .mockup-input {
+            padding: 12px 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+        }
+
+        .mockup-button {
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mockup-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .mockup-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .mockup-button:hover::before {
+            left: 100%;
+        }
+
+        .mockup-button:active {
+            transform: translateY(0);
+        }
+
+        .chart-mockup {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+            text-align: center;
+        }
+
+        .chart-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #667eea;
+            margin: 10px 0;
+        }
+
+        .chart-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .arrow {
+            font-size: 2rem;
+            color: #667eea;
+            margin: 0 10px;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #fde68a 0%, #fcd34d 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, #e0e7ff 0%, #f0f4ff 100%);
+            border-left: 4px solid #667eea;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 12px 0;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tip-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .tip-box strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .step-indicator {
+                padding: 15px 10px;
+            }
+
+            .step-label {
+                font-size: 0.75rem;
+            }
+
+            .content-area {
+                padding: 20px;
+            }
+
+            .chart-mockup {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="exit-btn" onclick="window.location.href='/'" title="Exit Demo">
+            ✕
+        </button>
+        
+        <div class="header">
+            <h1>🚀 Databricks Maturity Assessment</h1>
+            <p>Interactive Workflow Demo - See How It Works</p>
+        </div>
+
+        <div class="demo-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div style="position: absolute; top: 15px; right: 20px; z-index: 100; background: rgba(255,255,255,0.95); padding: 8px 16px; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); font-size: 0.85rem; font-weight: 600; color: #667eea;">
+                <span id="progressPercent">0%</span> Complete
+            </div>
+
+            <div class="step-indicator">
+                <div class="step active" data-step="1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Start</div>
+                </div>
+                <div class="step" data-step="2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Assessment</div>
+                </div>
+                <div class="step" data-step="3">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Submit</div>
+                </div>
+                <div class="step" data-step="4">
+                    <div class="step-number">4</div>
+                    <div class="step-label">Reports</div>
+                </div>
+                <div class="step" data-step="5">
+                    <div class="step-number">5</div>
+                    <div class="step-label">Analysis</div>
+                </div>
+            </div>
+
+            <div class="content-area">
+                <button class="nav-arrow" id="prevBtn" disabled>
+                    <svg viewBox="0 0 24 24">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+                <button class="nav-arrow" id="nextBtn">
+                    <svg viewBox="0 0 24 24">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+                
+                <!-- Step 1: Homepage -->
+                <div class="step-content active" data-step="1">
+                    <div class="step-title">
+                        <span class="step-icon">🏠</span>
+                        Welcome to the Assessment Tool
+                    </div>
+                    <div class="step-description">
+                        Start your journey to assess your organization's Databricks maturity across 6 key pillars.
+                    </div>
+
+                    <div class="mockup">
+                        <div class="mockup-header">🎯 Get Started</div>
+                        <div class="mockup-content">
+                            <div class="feature-list">
+                                <li>
+                                    <span class="feature-icon">📊</span>
+                                    <span><strong>Comprehensive Assessment</strong> - Evaluate 6 pillars of maturity</span>
+                                </li>
+                                <li>
+                                    <span class="feature-icon">⏱️</span>
+                                    <span><strong>15-20 Minutes</strong> - Quick and efficient process</span>
+                                </li>
+                                <li>
+                                    <span class="feature-icon">💾</span>
+                                    <span><strong>Auto-Save</strong> - Resume anytime, never lose progress</span>
+                                </li>
+                                <li>
+                                    <span class="feature-icon">📈</span>
+                                    <span><strong>Instant Reports</strong> - Get detailed insights immediately</span>
+                                </li>
+                            </div>
+                            <button class="mockup-button">🚀 Start Assessment</button>
+                        </div>
+                    </div>
+
+                    <div class="tip-box">
+                        <strong>💡 Pro Tip:</strong>
+                        Try the sample assessment first to see what the process looks like!
+                    </div>
+                </div>
+
+                <!-- Step 2: Assessment Questions -->
+                <div class="step-content" data-step="2">
+                    <div class="step-title">
+                        <span class="step-icon">📝</span>
+                        Answer Assessment Questions
+                    </div>
+                    <div class="step-description">
+                        For each pillar, rate your current and target maturity levels, and add context about your challenges.
+                    </div>
+
+                    <div class="mockup">
+                        <div class="mockup-header">🏛️ Platform & Governance - Question 1 of 10</div>
+                        <div class="mockup-content">
+                            <div class="mockup-field">
+                                <div class="mockup-label">Question:</div>
+                                <div style="padding: 15px; background: white; border-radius: 8px; border: 2px solid #e9ecef;">
+                                    <strong>How mature is your data governance framework?</strong>
+                                </div>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                <div class="mockup-field">
+                                    <div class="mockup-label">Current Maturity Level:</div>
+                                    <div style="padding: 10px 20px; background: white; border: 2px solid #667eea; border-radius: 8px; font-weight: 600; color: #667eea; text-align: center;">
+                                        Level 2: Experiment
+                                    </div>
+                                </div>
+
+                                <div class="mockup-field">
+                                    <div class="mockup-label">Target Maturity Level:</div>
+                                    <div style="padding: 10px 20px; background: white; border: 2px solid #28a745; border-radius: 8px; font-weight: 600; color: #28a745; text-align: center;">
+                                        Level 4: Optimize
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mockup-field">
+                                <div class="mockup-label">Technical Pain Points:</div>
+                                <textarea class="mockup-input" rows="2" placeholder="e.g., Manual access control, no centralized catalog...">Manual access control management, inconsistent data lineage</textarea>
+                            </div>
+
+                            <div class="mockup-field">
+                                <div class="mockup-label">Business Pain Points:</div>
+                                <textarea class="mockup-input" rows="2" placeholder="e.g., Compliance delays, audit challenges...">Compliance audit delays, lack of data trust</textarea>
+                            </div>
+
+                            <div class="mockup-field">
+                                <div class="mockup-label">Notes (Optional):</div>
+                                <textarea class="mockup-input" rows="2" placeholder="Add any additional context...">Need Unity Catalog implementation by Q2</textarea>
+                            </div>
+
+                            <button class="mockup-button">Next Question →</button>
+                        </div>
+                    </div>
+
+                    <div class="tip-box">
+                        <strong>💡 Pro Tip:</strong>
+                        Be honest about your current state - this helps generate more accurate recommendations!
+                    </div>
+                </div>
+
+                <!-- Step 3: Submit Assessment -->
+                <div class="step-content" data-step="3">
+                    <div class="step-title">
+                        <span class="step-icon">✅</span>
+                        Review & Submit
+                    </div>
+                    <div class="step-description">
+                        Review your responses across all 6 pillars before submitting to generate your maturity report.
+                    </div>
+
+                    <div class="mockup">
+                        <div class="mockup-header">📋 Assessment Summary</div>
+                        <div class="mockup-content">
+                            <div class="feature-list">
+                                <li>
+                                    <span class="feature-icon">✅</span>
+                                    <span><strong>Platform & Governance</strong> - 10 questions completed</span>
+                                </li>
+                                <li>
+                                    <span class="feature-icon">✅</span>
+                                    <span><strong>Data Engineering</strong> - 10 questions completed</span>
+                                </li>
+                                <li>
+                                    <span class="feature-icon">✅</span>
+                                    <span><strong>Analytics & BI</strong> - 10 questions completed</span>
+                                </li>
+                                <li>
+                                    <span class="feature-icon">✅</span>
+                                    <span><strong>Machine Learning</strong> - 10 questions completed</span>
+                                </li>
+                                <li>
+                                    <span class="feature-icon">✅</span>
+                                    <span><strong>Generative AI</strong> - 10 questions completed</span>
+                                </li>
+                                <li>
+                                    <span class="feature-icon">✅</span>
+                                    <span><strong>Operational Excellence</strong> - 10 questions completed</span>
+                                </li>
+                            </div>
+
+                            <div style="background: #e0e7ff; padding: 20px; border-radius: 10px; margin: 20px 0; text-align: center;">
+                                <div style="font-size: 1.2rem; color: #667eea; margin-bottom: 10px;">
+                                    <strong>60 Questions Completed</strong>
+                                </div>
+                                <div style="color: #6c757d;">
+                                    Ready to generate your comprehensive maturity report
+                                </div>
+                            </div>
+
+                            <button class="mockup-button">🎯 Submit Assessment</button>
+                        </div>
+                    </div>
+
+                    <div class="tip-box">
+                        <strong>💡 What Happens Next:</strong>
+                        Your responses will be analyzed to generate a comprehensive maturity report with scores, gaps, and recommendations.
+                    </div>
+                </div>
+
+                <!-- Step 4: View Reports -->
+                <div class="step-content" data-step="4">
+                    <div class="step-title">
+                        <span class="step-icon">📊</span>
+                        Maturity Report Generated
+                    </div>
+                    <div class="step-description">
+                        View your comprehensive maturity assessment results with scores, gaps, and actionable recommendations.
+                    </div>
+
+                    <div class="chart-mockup">
+                        <div class="chart-card">
+                            <div class="chart-label">Current Maturity</div>
+                            <div class="chart-value">2.3</div>
+                            <div class="chart-label">Experiment</div>
+                        </div>
+                        <div class="chart-card">
+                            <span class="arrow">→</span>
+                        </div>
+                        <div class="chart-card">
+                            <div class="chart-label">Target Maturity</div>
+                            <div class="chart-value">4.1</div>
+                            <div class="chart-label">Optimize</div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="mockup">
+                            <div class="mockup-header">📈 Pillar Breakdown</div>
+                            <div class="mockup-content">
+                                <div class="feature-list">
+                                    <li>
+                                        <span class="feature-icon">🏛️</span>
+                                        <span><strong>Platform & Governance:</strong> 3.0 → 4.3 <span class="highlight">Gap: 1.3</span></span>
+                                    </li>
+                                    <li>
+                                        <span class="feature-icon">🔷</span>
+                                        <span><strong>Data Engineering:</strong> 1.6 → 4.1 <span class="highlight">Gap: 2.5</span></span>
+                                    </li>
+                                    <li>
+                                        <span class="feature-icon">📊</span>
+                                        <span><strong>Analytics & BI:</strong> 2.8 → 4.3 <span class="highlight">Gap: 1.5</span></span>
+                                    </li>
+                                    <li>
+                                        <span class="feature-icon">🤖</span>
+                                        <span><strong>Machine Learning:</strong> 2.5 → 4.0 <span class="highlight">Gap: 1.5</span></span>
+                                    </li>
+                                    <li>
+                                        <span class="feature-icon">✨</span>
+                                        <span><strong>Generative AI:</strong> 1.3 → 3.6 <span class="highlight">Gap: 2.3</span></span>
+                                    </li>
+                                    <li>
+                                        <span class="feature-icon">⚙️</span>
+                                        <span><strong>Operational Excellence:</strong> 2.6 → 4.1 <span class="highlight">Gap: 1.5</span></span>
+                                    </li>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mockup">
+                            <div class="mockup-header">🎯 Key Recommendations</div>
+                            <div class="feature-list">
+                                <li>
+                                    <span class="feature-icon">🏛️</span>
+                                    <span><strong>Implement Unity Catalog</strong> for centralized governance</span>
+                                </li>
+                                <li>
+                                    <span class="feature-icon">🔷</span>
+                                    <span><strong>Deploy Delta Live Tables</strong> for automated pipelines</span>
+                                </li>
+                                <li>
+                                    <span class="feature-icon">📊</span>
+                                    <span><strong>Adopt Databricks SQL Warehouses</strong> for scalable analytics</span>
+                                </li>
+                                <li>
+                                    <span class="feature-icon">🤖</span>
+                                    <span><strong>Establish MLOps</strong> with MLflow for model lifecycle</span>
+                                </li>
+                                <li>
+                                    <span class="feature-icon">✨</span>
+                                    <span><strong>Integrate Mosaic AI</strong> for enterprise LLM deployment</span>
+                                </li>
+                                <li>
+                                    <span class="feature-icon">⚙️</span>
+                                    <span><strong>Enable Auto-scaling & Monitoring</strong> for cost optimization</span>
+                                </li>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tip-box">
+                        <strong>💡 Multiple Report Views:</strong>
+                        Access Executive Dashboard, Industry Benchmarks, and Insights Dashboard for different perspectives!
+                    </div>
+                </div>
+
+                <!-- Step 5: Analyze Data -->
+                <div class="step-content" data-step="5">
+                    <div class="step-title">
+                        <span class="step-icon">🔍</span>
+                        Analyze & Take Action
+                    </div>
+                    <div class="step-description">
+                        Dive deeper into your data with multiple analysis tools and export options.
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="mockup">
+                            <div class="mockup-header">📊 Available Reports & Tools</div>
+                            <div class="mockup-content">
+                                <div class="feature-list">
+                                    <li>
+                                        <span class="feature-icon">📈</span>
+                                        <span><strong>Maturity Report</strong> - Detailed scores and recommendations</span>
+                                    </li>
+                                    <li>
+                                        <span class="feature-icon">🎯</span>
+                                        <span><strong>Executive Dashboard</strong> - C-level strategic view</span>
+                                    </li>
+                                    <li>
+                                        <span class="feature-icon">📊</span>
+                                        <span><strong>Industry Benchmarks</strong> - Compare with peers</span>
+                                    </li>
+                                    <li>
+                                        <span class="feature-icon">💡</span>
+                                        <span><strong>Insights Dashboard</strong> - KPIs and trends</span>
+                                    </li>
+                                    <li>
+                                        <span class="feature-icon">🎬</span>
+                                        <span><strong>Slideshow Mode</strong> - Present to stakeholders</span>
+                                    </li>
+                                    <li>
+                                        <span class="feature-icon">🖨️</span>
+                                        <span><strong>Print to PDF</strong> - Share offline</span>
+                                    </li>
+                                    <li>
+                                        <span class="feature-icon">📥</span>
+                                        <span><strong>Export to Excel</strong> - Detailed data analysis</span>
+                                    </li>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mockup">
+                            <div class="mockup-header">🎯 Next Steps</div>
+                            <div class="feature-list">
+                                <li>
+                                    <span class="feature-icon">1️⃣</span>
+                                    <span><strong>Analyze Gap Priorities</strong> - Focus on highest-impact areas first</span>
+                                </li>
+                                <li>
+                                    <span class="feature-icon">2️⃣</span>
+                                    <span><strong>Engage Stakeholders</strong> - Present findings to leadership team</span>
+                                </li>
+                                <li>
+                                    <span class="feature-icon">3️⃣</span>
+                                    <span><strong>Build Roadmap</strong> - Create 90-day implementation plan</span>
+                                </li>
+                                <li>
+                                    <span class="feature-icon">4️⃣</span>
+                                    <span><strong>Allocate Resources</strong> - Assign owners and budget</span>
+                                </li>
+                                <li>
+                                    <span class="feature-icon">5️⃣</span>
+                                    <span><strong>Execute Quick Wins</strong> - Implement low-effort, high-value items</span>
+                                </li>
+                                <li>
+                                    <span class="feature-icon">6️⃣</span>
+                                    <span><strong>Monitor & Iterate</strong> - Track KPIs and re-assess quarterly</span>
+                                </li>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tip-box">
+                        <strong>🎉 Congratulations!</strong>
+                        You've completed the assessment workflow. Ready to start your own assessment?
+                    </div>
+
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button class="mockup-button" onclick="window.location.href='/'">
+                            🚀 Start Your Assessment Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 5;
+
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressFill = document.getElementById('progressFill');
+
+        function updateUI() {
+            // Update step indicators
+            document.querySelectorAll('.step').forEach(step => {
+                const stepNum = parseInt(step.dataset.step);
+                step.classList.remove('active', 'completed');
+                if (stepNum === currentStep) {
+                    step.classList.add('active');
+                } else if (stepNum < currentStep) {
+                    step.classList.add('completed');
+                }
+            });
+
+            // Update content
+            document.querySelectorAll('.step-content').forEach(content => {
+                content.classList.remove('active');
+                if (parseInt(content.dataset.step) === currentStep) {
+                    content.classList.add('active');
+                }
+            });
+
+            // Update buttons
+            prevBtn.disabled = currentStep === 1;
+            nextBtn.disabled = false;
+
+            // Update progress bar
+            const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            progressFill.style.width = progress + '%';
+            document.getElementById('progressPercent').textContent = Math.round(progress) + '%';
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateUI();
+            } else {
+                // Finish - redirect to actual app
+                if (confirm('Ready to start your own assessment?')) {
+                    window.location.href = '/';
+                }
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentStep > 1) {
+                currentStep--;
+                updateUI();
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' && currentStep < totalSteps) {
+                nextBtn.click();
+            } else if (e.key === 'ArrowLeft' && currentStep > 1) {
+                prevBtn.click();
+            }
+        });
+
+        // Step number click navigation
+        document.querySelectorAll('.step').forEach(step => {
+            step.addEventListener('click', () => {
+                const stepNum = parseInt(step.dataset.step);
+                currentStep = stepNum;
+                updateUI();
+            });
+        });
+
+        // Initialize
+        updateUI();
+    </script>
+</body>
+</html>
+

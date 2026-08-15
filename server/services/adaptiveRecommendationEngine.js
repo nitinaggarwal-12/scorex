@@ -12,7 +12,7 @@ class AdaptiveRecommendationEngine {
         priority: 'critical',
         title: 'Implement Data Quality Framework',
         actions: [
-          'Deploy data quality monitoring with Great Expectations or Enterprise Platform data quality rules',
+          'Deploy data quality monitoring with Great Expectations or Databricks data quality rules',
           'Establish data validation checkpoints in pipelines',
           'Implement automated data profiling and anomaly detection',
           'Create data quality dashboards and alerts'
@@ -45,7 +45,7 @@ class AdaptiveRecommendationEngine {
         priority: 'high',
         title: 'Simplify Integration Architecture',
         actions: [
-          'Implement Enterprise Platform Partner Connect for common integrations',
+          'Implement Databricks Partner Connect for common integrations',
           'Standardize on REST APIs and streaming interfaces',
           'Deploy integration templates and reusable connectors',
           'Document integration patterns and best practices'
@@ -56,7 +56,7 @@ class AdaptiveRecommendationEngine {
         priority: 'critical',
         title: 'Strengthen Security Posture',
         actions: [
-          'Implement Unified Data Catalog & Governance for centralized governance',
+          'Implement Unity Catalog for centralized governance',
           'Enable audit logging and compliance monitoring',
           'Deploy column and row-level security',
           'Implement secrets management and credential vaulting'
@@ -78,7 +78,7 @@ class AdaptiveRecommendationEngine {
         priority: 'medium',
         title: 'Increase Automation Coverage',
         actions: [
-          'Implement Enterprise Platform Workflows for orchestration',
+          'Implement Databricks Workflows for orchestration',
           'Automate deployment with CI/CD pipelines',
           'Deploy auto-scaling and auto-recovery policies',
           'Implement automated testing and validation'
@@ -102,7 +102,7 @@ class AdaptiveRecommendationEngine {
         priority: 'high',
         title: 'Accelerate Time-to-Insights',
         actions: [
-          'Implement self-service analytics with Enterprise SQL Warehouse',
+          'Implement self-service analytics with Databricks SQL',
           'Deploy pre-built dashboards and templates',
           'Optimize query performance for faster results',
           'Enable real-time streaming analytics'
@@ -113,7 +113,7 @@ class AdaptiveRecommendationEngine {
         priority: 'high',
         title: 'Enable Self-Service Analytics',
         actions: [
-          'Deploy Enterprise SQL Warehouse with user-friendly interface',
+          'Deploy Databricks SQL with user-friendly interface',
           'Create curated datasets and semantic layer',
           'Implement role-based access control',
           'Provide training and documentation'
@@ -135,7 +135,7 @@ class AdaptiveRecommendationEngine {
         priority: 'critical',
         title: 'Ensure Regulatory Compliance',
         actions: [
-          'Implement Unified Data Catalog & Governance for compliance controls',
+          'Implement Unity Catalog for compliance controls',
           'Deploy audit logging and data lineage tracking',
           'Establish data retention and deletion policies',
           'Create compliance dashboards and reports'
@@ -146,7 +146,7 @@ class AdaptiveRecommendationEngine {
         priority: 'medium',
         title: 'Close Skill Gaps',
         actions: [
-          'Implement Enterprise Platform Academy training programs',
+          'Implement Databricks Academy training programs',
           'Deploy collaborative notebooks for knowledge sharing',
           'Create internal centers of excellence',
           'Hire or train data engineering expertise'
@@ -499,15 +499,15 @@ class AdaptiveRecommendationEngine {
         summary += `${idx + 1}. **${area.name}** (Level ${scores.current} → ${scores.future})\n`;
         summary += `   Timeline: ${timeline} | Impact: ${scores.gap >= 2 ? 'High' : 'Medium'}\n`;
         
-        // Add specific Enterprise Platform features to adopt
+        // Add specific Databricks features to adopt
         if (areaId === 'platform_governance') {
-          summary += '   Key Actions: Implement Unified Data Catalog & Governance for centralized governance, enable audit logging, deploy RBAC with attribute-based access control\n';
+          summary += '   Key Actions: Implement Unity Catalog for centralized governance, enable audit logging, deploy RBAC with attribute-based access control\n';
         } else if (areaId === 'data_engineering') {
-          summary += '   Key Actions: Adopt Declarative Data Pipelines for automated pipelines, implement Continuous Data Observability for data quality, enable Auto Loader for streaming ingestion\n';
+          summary += '   Key Actions: Adopt Delta Live Tables for automated pipelines, implement Lakehouse Monitoring for data quality, enable Auto Loader for streaming ingestion\n';
         } else if (areaId === 'analytics_bi') {
-          summary += '   Key Actions: Deploy Enterprise SQL Warehouse with Serverless compute, enable AI/BI dashboards, implement Genie for natural language queries\n';
+          summary += '   Key Actions: Deploy Databricks SQL with Serverless compute, enable AI/BI dashboards, implement Genie for natural language queries\n';
         } else if (areaId === 'machine_learning') {
-          summary += '   Key Actions: Adopt Enterprise Model Registry for experiment tracking, deploy Feature Store for reusable features, implement Model Registry for governance\n';
+          summary += '   Key Actions: Adopt MLflow for experiment tracking, deploy Feature Store for reusable features, implement Model Registry for governance\n';
         } else if (areaId === 'generative_ai') {
           summary += '   Key Actions: Deploy Vector Search for RAG applications, use Model Serving for LLM deployment, implement Agent Framework for AI applications\n';
         } else if (areaId === 'operational_excellence') {
@@ -519,7 +519,7 @@ class AdaptiveRecommendationEngine {
     
     summary += '**Expected Business Outcomes:**\n';
     summary += '• Improved data platform reliability and governance posture\n';
-    summary += '• Faster time-to-insight with modern Enterprise Platform capabilities\n';
+    summary += '• Faster time-to-insight with modern Databricks capabilities\n';
     summary += '• Reduced manual effort through automation and AI\n';
     summary += '• Better cost efficiency through serverless and optimized compute\n';
     summary += '• Enhanced compliance and audit capabilities\n\n';

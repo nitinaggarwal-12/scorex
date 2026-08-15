@@ -1278,7 +1278,7 @@ const Dashboard = () => {
       toast.loading('Preparing export...', { id: 'export' });
       
       // Build CSV content
-      let csvContent = 'Enterprise Data & AI Maturity Assessment - DASHBOARD DATA\n';
+      let csvContent = 'DATABRICKS MATURITY ASSESSMENT - DASHBOARD DATA\n';
       csvContent += `Generated: ${new Date().toLocaleString()}\n\n`;
       
       // Overview Section
@@ -1369,7 +1369,7 @@ const Dashboard = () => {
       const url = URL.createObjectURL(blob);
       const timestamp = new Date().toISOString().split('T')[0];
       link.setAttribute('href', url);
-      link.setAttribute('download', `Enterprise Platform-dashboard-insights-${timestamp}.csv`);
+      link.setAttribute('download', `databricks-dashboard-insights-${timestamp}.csv`);
       link.style.visibility = 'hidden';
       document.body.appendChild(link);
       link.click();
@@ -2104,7 +2104,7 @@ const Dashboard = () => {
                       lineHeight: 1.6
                     }}
                   >
-                    Real-time analytics across all Enterprise Data & AI Maturity Assessments
+                    Real-time analytics across all Databricks maturity assessments
                   </motion.p>
                   <motion.div
                     initial={{ y: 20, opacity: 0 }}

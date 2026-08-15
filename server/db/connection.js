@@ -46,7 +46,7 @@ class DatabaseConnection {
     try {
       console.log('🔌 Connecting to PostgreSQL database...');
       
-      // Check for individual Lakebase environment variables first (Enterprise Platform Apps)
+      // Check for individual Lakebase environment variables first (Databricks Apps)
       const lakebaseHost = process.env.LAKEBASE_HOST;
       const lakebasePort = process.env.LAKEBASE_PORT;
       const lakebaseDatabase = process.env.LAKEBASE_DATABASE;
@@ -56,7 +56,7 @@ class DatabaseConnection {
       let poolConfig;
       
       if (lakebaseHost && lakebaseDatabase && lakebaseUser && lakebasePassword) {
-        // Use individual environment variables (Enterprise Platform Apps)
+        // Use individual environment variables (Databricks Apps)
         console.log('📊 Using Lakebase environment variables');
         poolConfig = {
           host: lakebaseHost,

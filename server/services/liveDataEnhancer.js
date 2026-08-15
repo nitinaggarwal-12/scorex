@@ -1,5 +1,5 @@
-// Live Data Enhancer - Fetches latest Enterprise Platform features and best practices
-// Can integrate with OpenAI, web scraping, or Enterprise Platform APIs
+// Live Data Enhancer - Fetches latest Databricks features and best practices
+// Can integrate with OpenAI, web scraping, or Databricks APIs
 
 const https = require('https');
 
@@ -14,7 +14,7 @@ class LiveDataEnhancer {
   }
 
   /**
-   * Enhance recommendations with latest Enterprise Platform features
+   * Enhance recommendations with latest Databricks features
    * This would call OpenAI or web APIs in production
    */
   async enhanceRecommendations(baseRecommendations, userProfile) {
@@ -43,19 +43,19 @@ class LiveDataEnhancer {
   }
 
   /**
-   * Fetch latest Enterprise Platform features and capabilities
+   * Fetch latest Databricks features and capabilities
    * In production, this would call:
    * - OpenAI API for web search
-   * - Enterprise Platform docs API
-   * - Enterprise Platform release notes
+   * - Databricks docs API
+   * - Databricks release notes
    * - Industry blogs/news
    */
   async fetchLatestData() {
     // Placeholder for multiple data sources
     const promises = [
       this.fetchFromOpenAI(),
-      this.fetchFromPlatformAPI(),
-      this.fetchFromPlatformDocs(),
+      this.fetchFromDatabricksAPI(),
+      this.fetchFromDatabricksDocs(),
       this.fetchIndustryNews()
     ];
 
@@ -79,8 +79,8 @@ class LiveDataEnhancer {
       };
     }
 
-    const query = `What are the latest Enterprise Platform features and capabilities announced in 2024? 
-    Focus on: Unified Data Catalog & Governance updates, Continuous Data Observability, Mosaic AI, serverless compute, 
+    const query = `What are the latest Databricks features and capabilities announced in 2024? 
+    Focus on: Unity Catalog updates, Lakehouse Monitoring, Mosaic AI, serverless compute, 
     Delta Lake improvements, and data governance features.
     
     For each feature provide:
@@ -94,7 +94,7 @@ class LiveDataEnhancer {
     - addresses: which pain points it solves`;
 
     try {
-      console.log('🔍 Fetching latest Enterprise Platform features from OpenAI...');
+      console.log('🔍 Fetching latest Databricks features from OpenAI...');
       
       const OpenAI = require('openai');
       const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -104,7 +104,7 @@ class LiveDataEnhancer {
         messages: [
           { 
             role: 'system', 
-            content: 'You are a Enterprise Platform platform expert with deep knowledge of the latest features. Provide accurate, up-to-date information about Enterprise Platform capabilities. Return responses in valid JSON format only.'
+            content: 'You are a Databricks platform expert with deep knowledge of the latest features. Provide accurate, up-to-date information about Databricks capabilities. Return responses in valid JSON format only.'
           },
           { role: 'user', content: query }
         ],
@@ -133,31 +133,31 @@ class LiveDataEnhancer {
   }
 
   /**
-   * Fetch from Enterprise Platform official API (if available)
+   * Fetch from Databricks official API (if available)
    */
-  async fetchFromPlatformAPI() {
-    // Enterprise Platform doesn't have a public features API, but you could:
+  async fetchFromDatabricksAPI() {
+    // Databricks doesn't have a public features API, but you could:
     // - Parse release notes
     // - Query documentation
-    // - Use Enterprise Platform SDK
+    // - Use Databricks SDK
     
     // Placeholder
     return {
-      source: 'platform_api',
+      source: 'databricks_api',
       features: []
     };
   }
 
   /**
-   * Scrape Enterprise Platform documentation
+   * Scrape Databricks documentation
    */
-  async fetchFromPlatformDocs() {
+  async fetchFromDatabricksDocs() {
     // Could use cheerio + axios to scrape docs
-    // Or Enterprise Platform docs API if available
+    // Or Databricks docs API if available
     
     // Placeholder
     return {
-      source: 'platform_docs',
+      source: 'databricks_docs',
       features: []
     };
   }
@@ -167,7 +167,7 @@ class LiveDataEnhancer {
    */
   async fetchIndustryNews() {
     // Could fetch from:
-    // - Enterprise Platform blog
+    // - Databricks blog
     // - Industry publications
     // - Community forums
     
@@ -364,7 +364,7 @@ class LiveDataEnhancer {
   getMockLatestFeatures() {
     return [
       {
-        name: 'Continuous Data Observability',
+        name: 'Lakehouse Monitoring',
         description: 'Automated data quality and ML monitoring with custom metrics',
         benefit: 'Detect data quality issues before they impact business',
         difficulty: 'intermediate',
@@ -372,7 +372,7 @@ class LiveDataEnhancer {
         addresses: ['data_quality_issues', 'monitoring_gaps'],
         pillar: 'platform_governance',
         releaseDate: '2024-06-01',
-        guide: 'Enable in Unified Data Catalog & Governance → Monitoring → Create Monitor'
+        guide: 'Enable in Unity Catalog → Monitoring → Create Monitor'
       },
       {
         name: 'AI Functions in SQL',
@@ -397,7 +397,7 @@ class LiveDataEnhancer {
         guide: 'Create workflow → Select Serverless compute type'
       },
       {
-        name: 'Unified Data Catalog & Governance for AI',
+        name: 'Unity Catalog for AI',
         description: 'Govern LLM models, prompts, and AI assets centrally',
         benefit: 'Ensure AI governance, lineage, and compliance',
         difficulty: 'intermediate',
@@ -416,7 +416,7 @@ class LiveDataEnhancer {
         addresses: ['lack_of_automation', 'limited_self_service'],
         pillar: 'generative_ai',
         releaseDate: '2024-10-01',
-        guide: 'Use Agent Framework SDK → Enterprise Model Registry.langchain.log_model()'
+        guide: 'Use Agent Framework SDK → mlflow.langchain.log_model()'
       }
     ];
   }

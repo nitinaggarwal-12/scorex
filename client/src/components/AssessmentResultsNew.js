@@ -1823,7 +1823,7 @@ const ResultsNotReleased = ({ assessmentId }) => {
         >
           <ContactTitle>Need Assistance?</ContactTitle>
           <ContactText>
-            If you have any questions or require immediate access, please contact your Enterprise Platform Account Team.
+            If you have any questions or require immediate access, please contact your Databricks Account Team.
           </ContactText>
         </ContactSection>
 
@@ -2075,11 +2075,11 @@ const AssessmentResultsNew = () => {
     const currentData = getPillarData(pillarId);
     console.log('[Edit] Fresh pillar data:', currentData);
     
-    // Format Enterprise Platform recommendations for editing
+    // Format Databricks recommendations for editing
     let recommendationsText = '';
-    if (currentData.platformFeatures && currentData.platformFeatures.length > 0) {
-      // If we have Enterprise Platform features, show them with their full details
-      recommendationsText = currentData.platformFeatures.map(feature => {
+    if (currentData.databricksFeatures && currentData.databricksFeatures.length > 0) {
+      // If we have Databricks features, show them with their full details
+      recommendationsText = currentData.databricksFeatures.map(feature => {
         let text = `${feature.name}`;
         if (feature.description) {
           text += ` - ${feature.description}`;
@@ -3231,7 +3231,7 @@ const AssessmentResultsNew = () => {
         title: 'Phase 1: Foundation (0–3 months)',
         ...phaseColors.phase1,
         items: customizations.phases.phase1 || [
-          'Implement Unified Data Catalog & Governance with initial RBAC roles',
+          'Implement Unity Catalog with initial RBAC roles',
           'Establish data quality monitoring and observability',
           'Launch initial governance enablement sessions'
         ]
@@ -3253,7 +3253,7 @@ const AssessmentResultsNew = () => {
         items: customizations.phases.phase3 || [
           'Formalize MLOps CI/CD for model deployment',
           'Expand GenAI use cases with RAG implementation',
-          'Align data mesh principles with Unified Data Catalog & Governance'
+          'Align data mesh principles with Unity Catalog'
         ]
       }
     ];
@@ -3293,17 +3293,17 @@ const AssessmentResultsNew = () => {
       : null;
     console.log(`[AssessmentResultsNew] prioritized for ${pillarId}:`, prioritized);
     if (prioritized) {
-      console.log(`[AssessmentResultsNew] Found prioritized data with platformFeatures:`, prioritized.platformFeatures?.length || 0);
+      console.log(`[AssessmentResultsNew] Found prioritized data with databricksFeatures:`, prioritized.databricksFeatures?.length || 0);
     }
 
     // FIX: Backend returns theGood/theBad in prioritizedActions array
     // prioritizedActions is the source of truth for pillar-specific good/bad/recommendations
-    // NEW: Also includes platformFeatures, quickWins, specificRecommendations
-    const platformFeatures = prioritized?.platformFeatures || [];
+    // NEW: Also includes databricksFeatures, quickWins, specificRecommendations
+    const databricksFeatures = prioritized?.databricksFeatures || [];
     const actions = prioritized?.actions || [];
     
-    // Combine recommendations: prioritize platformFeatures, then fall back to actions
-    const combinedRecommendations = platformFeatures.length > 0 ? platformFeatures : actions;
+    // Combine recommendations: prioritize databricksFeatures, then fall back to actions
+    const combinedRecommendations = databricksFeatures.length > 0 ? databricksFeatures : actions;
     
     // Combine nextSteps: prioritize specificRecommendations, then fall back to generic nextSteps
     const specificRecs = prioritized?.specificRecommendations || [];
@@ -3315,23 +3315,23 @@ const AssessmentResultsNew = () => {
       theBad: prioritized?.theBad || [],    // Direct access from prioritizedActions
       recommendations: combinedRecommendations,  // Combined recommendations
       nextSteps: combinedNextSteps,  // Combined next steps
-      // NEW: Enterprise Platform-specific features
-      platformFeatures: platformFeatures,
+      // NEW: Databricks-specific features
+      databricksFeatures: databricksFeatures,
       quickWins: prioritized?.quickWins || [],
       strategicMoves: prioritized?.strategicMoves || [],
       specificRecommendations: specificRecs,
       nextLevelFeatures: prioritized?.nextLevelFeatures || [],
-      platformSource: prioritized?._source || null,
-      platformDocsUrl: prioritized?._docsUrl || null
+      databricksSource: prioritized?._source || null,
+      databricksDocsUrl: prioritized?._docsUrl || null
     };
     
     console.log(`[AssessmentResultsNew] Final data for ${pillarId}:`, data);
-    console.log(`[AssessmentResultsNew] Enterprise Platform features for ${pillarId}:`, data.platformFeatures?.length || 0);
+    console.log(`[AssessmentResultsNew] Databricks features for ${pillarId}:`, data.databricksFeatures?.length || 0);
     console.log(`[AssessmentResultsNew] Recommendations for ${pillarId}:`, data.recommendations?.length || 0);
     console.log(`[AssessmentResultsNew] Sample recommendations:`, data.recommendations?.slice(0, 2));
     
     // Check if recommendations are personalized or generic
-    if (data.recommendations.length === 0 && data.platformFeatures.length === 0) {
+    if (data.recommendations.length === 0 && data.databricksFeatures.length === 0) {
       console.warn(`⚠️ [${pillarId}] NO RECOMMENDATIONS FOUND! This assessment may not have been fully completed or needs to be refreshed.`);
       console.warn(`⚠️ [${pillarId}] Click the green "Refresh" button to regenerate personalized recommendations based on your assessment data.`);
     } else if (data.recommendations.length > 0) {
@@ -3446,7 +3446,7 @@ const AssessmentResultsNew = () => {
                 ⚠️ You're viewing old cached data with generic content
               </div>
               <div style={{ fontSize: '0.938rem', opacity: 0.95 }}>
-                Click the green "Refresh Results" button below to regenerate with YOUR dynamic Enterprise Platform recommendations!
+                Click the green "Refresh Results" button below to regenerate with YOUR dynamic Databricks recommendations!
               </div>
             </div>
             <button
@@ -4030,12 +4030,12 @@ const AssessmentResultsNew = () => {
                     </div>
                     <div>
                       <label style={{ display: 'block', fontWeight: 600, marginBottom: '8px', color: '#3b82f6', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <FiInfo /> Enterprise Platform Recommendations (one per line):
+                        <FiInfo /> Databricks Recommendations (one per line):
                       </label>
                       <EditableTextarea
                         value={editedContent.recommendations || ''}
                         onChange={(e) => setEditedContent({ ...editedContent, recommendations: e.target.value })}
-                        placeholder="Enter Enterprise Platform recommendations, one per line..."
+                        placeholder="Enter Databricks recommendations, one per line..."
                       />
                     </div>
                   </PillarBody>
@@ -4890,7 +4890,7 @@ const AssessmentResultsNew = () => {
                       </div>
                     </PillarTopRow>
 
-                    {/* Full Width: Enterprise Platform Recommendations */}
+                    {/* Full Width: Databricks Recommendations */}
                     <PillarFullWidth style={{
                       background: customizations.cardColors[`features-${pillar.id}`]?.bg || '#ffffff',
                       border: `2px solid ${customizations.cardColors[`features-${pillar.id}`]?.border || '#e5e7eb'}`
@@ -4899,7 +4899,7 @@ const AssessmentResultsNew = () => {
                     <div className="column-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <FiInfo />
-                        {data.platformFeatures && data.platformFeatures.length > 0 ? 'Enterprise Platform Recommendations' : 'Recommendations'}
+                        {data.databricksFeatures && data.databricksFeatures.length > 0 ? 'Databricks Recommendations' : 'Recommendations'}
                       </div>
                       <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                         <button
@@ -4971,7 +4971,7 @@ const AssessmentResultsNew = () => {
                         </button>
                       </div>
                     </div>
-                    {data.platformFeatures && data.platformFeatures.length > 0 ? (
+                    {data.databricksFeatures && data.databricksFeatures.length > 0 ? (
                       <div>
                         {/* Features Grid */}
                         <div style={{ 
@@ -4980,7 +4980,7 @@ const AssessmentResultsNew = () => {
                           gap: '16px',
                           marginBottom: '20px'
                         }}>
-                          {data.platformFeatures.slice(0, 8).map((feature, idx) => {
+                          {data.databricksFeatures.slice(0, 8).map((feature, idx) => {
                             const featureKey = `${pillar.id}-feature-${idx}`;
                             const isEditing = editingFeature === featureKey;
                             const displayFeature = customizations.features[featureKey] !== undefined 
@@ -5335,7 +5335,7 @@ const AssessmentResultsNew = () => {
                                   ...editedContent,
                                   [`new-feature-${pillar.id}-name`]: e.target.value
                                 })}
-                                placeholder="Feature name (e.g., Unified Data Catalog & Governance)"
+                                placeholder="Feature name (e.g., Unity Catalog)"
                                 style={{
                                   fontWeight: 700,
                                   fontSize: '0.95rem',
@@ -5426,9 +5426,9 @@ const AssessmentResultsNew = () => {
                         )}
                       </ul>
                     )}
-                    {data.enterprisePlatformSource && (
+                    {data.databricksSource && (
                       <div style={{ marginTop: '12px', paddingTop: '8px', borderTop: '1px solid #e5e7eb', fontSize: '0.7rem', color: '#9ca3af', fontStyle: 'italic' }}>
-                        Source: {data.enterprisePlatformSource}
+                        Source: {data.databricksSource}
                       </div>
                     )}
                   </PillarColumn>
@@ -6516,7 +6516,7 @@ const AssessmentResultsNew = () => {
                       ...pillarDef,
                       score: score,
                       maturityLevel: getMaturityLevel(score),
-                      recommendations: pillarData?.platformFeatures || pillarData?.recommendations || [],
+                      recommendations: pillarData?.databricksFeatures || pillarData?.recommendations || [],
                       good: pillarData?.theGood || [],
                       bad: pillarData?.theBad || [],
                       nextSteps: pillarData?.specificRecommendations || pillarData?.nextSteps || []
@@ -6556,7 +6556,7 @@ const AssessmentResultsNew = () => {
                             borderBottom: `3px solid ${pillar.color}20`
                           }}>
                             <span style={{ fontSize: '1.8rem' }}>🧱</span>
-                            Enterprise Platform Recommendations
+                            Databricks Recommendations
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                             {pillar.recommendations.slice(0, 8).map((rec, idx) => {
@@ -7129,7 +7129,7 @@ const AssessmentResultsNew = () => {
                         color: 'rgba(255, 255, 255, 0.7)',
                         marginTop: '20px'
                       }}>
-                        For support: nitin.aggarwal@Enterprise Platform.com
+                        For support: nitin.aggarwal@databricks.com
                       </div>
                     </div>
                   )}

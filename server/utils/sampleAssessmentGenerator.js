@@ -73,7 +73,7 @@ class SampleAssessmentGenerator {
     this.assessmentDescriptions = [
       'Q4 2025 data platform maturity assessment for board presentation',
       'Cloud migration readiness evaluation - Phase 2',
-      'Annual Enterprise Platform optimization and cost analysis review',
+      'Annual Databricks optimization and cost analysis review',
       'Post-merger data integration capability assessment',
       'GenAI readiness and ML platform evaluation',
       'Regulatory compliance and data governance audit',
@@ -159,7 +159,7 @@ class SampleAssessmentGenerator {
         problems: ['slow queries (5+ min)', 'dashboard sprawl', 'inconsistent metrics', 'exploding costs', 'no self-service', 'data silos', 'manual refreshes', 'poor performance']
       },
       machine_learning: {
-        tools: ['SageMaker', 'Jupyter notebooks', 'Azure ML', 'on-prem Python', 'Excel models', 'R scripts', 'SAS', 'custom Flask APIs', 'Enterprise Model Registry OSS'],
+        tools: ['SageMaker', 'Jupyter notebooks', 'Azure ML', 'on-prem Python', 'Excel models', 'R scripts', 'SAS', 'custom Flask APIs', 'MLflow OSS'],
         metrics: ['50+ ML models', '30+ scattered Jupyter notebooks', '20+ SageMaker endpoints', '100+ untracked experiments', '10+ data scientists', '15+ model versions', '200GB model artifacts'],
         problems: ['no experiment tracking', 'manual deployment', 'version chaos', 'zero monitoring', 'model drift undetected', 'slow iteration cycles', 'siloed work', '3-week deployment delays']
       },
@@ -190,19 +190,19 @@ class SampleAssessmentGenerator {
       
       `We rely on ${tool1} and ${tool2} for this today. Managing ${metric} manually with significant ${problem}. Looking to modernize - current licensing costs $150K/year plus operational overhead.`,
       
-      `Legacy ${tool1} environment is hurting productivity. We have ${metric} with constant ${problem}. Our data engineering team wastes 60% of time troubleshooting instead of delivering value. Need to consolidate to Enterprise Platform.`,
+      `Legacy ${tool1} environment is hurting productivity. We have ${metric} with constant ${problem}. Our data engineering team wastes 60% of time troubleshooting instead of delivering value. Need to consolidate to Databricks.`,
       
-      `Running outdated ${tool1} with ${metric}. System performance degrading - experiencing ${problem} weekly. Maintenance window growing, business getting frustrated. Evaluating Enterprise Platform for 10x improvement.`,
+      `Running outdated ${tool1} with ${metric}. System performance degrading - experiencing ${problem} weekly. Maintenance window growing, business getting frustrated. Evaluating Databricks for 10x improvement.`,
       
       `Stuck on ${tool1} managing ${metric}. Critical issues: ${problem}, high TCO ($200K+ annually), vendor limitations. Business approved migration to modern Lakehouse - targeting 50% cost reduction.`,
       
-      `Current setup: ${tool1} + ${tool2} with ${metric}. ${problem} causing SLA breaches and business impact. CTO pushing for unified platform - Enterprise Platform POC approved for Q1 2026.`,
+      `Current setup: ${tool1} + ${tool2} with ${metric}. ${problem} causing SLA breaches and business impact. CTO pushing for unified platform - Databricks POC approved for Q1 2026.`,
       
       `Maintaining ${metric} across fragmented ${tool1} infrastructure. Daily ${problem} requiring manual intervention. Team morale low due to technical debt. Executive mandate to modernize platform.`,
       
       `Operations bottleneck with ${tool1} - managing ${metric}. ${problem} limiting our competitive advantage. Cannot support real-time use cases or ML workloads with current architecture.`,
       
-      `Multi-vendor cost spiral: ${tool1} ($120K/year), Snowflake warehouse ($40K/month), ${tool2} licenses ($80K/year). Total: $600K+ annually. Plus ${metric} and ${problem}. ROI case for Enterprise Platform consolidation approved.`,
+      `Multi-vendor cost spiral: ${tool1} ($120K/year), Snowflake warehouse ($40K/month), ${tool2} licenses ($80K/year). Total: $600K+ annually. Plus ${metric} and ${problem}. ROI case for Databricks consolidation approved.`,
       
       `Painful fragmentation: ${tool1} for ingestion, Snowflake for storage, ${tool2} for transformation. ${metric} scattered across tools. ${problem} due to lack of integration. Need unified Lakehouse platform.`,
       
@@ -303,7 +303,7 @@ class SampleAssessmentGenerator {
     const nameFormats = [
       `${companyName} - ${currentMonth} ${currentYear} Maturity Assessment`,
       `${companyName} Data Platform Assessment - Q${Math.ceil((new Date().getMonth() + 1) / 3)} ${currentYear}`,
-      `${companyName} Enterprise Platform Readiness Evaluation`,
+      `${companyName} Databricks Readiness Evaluation`,
       `${companyName} - ${completionLevel === 'full' ? 'Comprehensive' : 'Preliminary'} Technical Review`,
       `${companyName} Cloud Analytics Assessment ${currentYear}`
     ];
@@ -326,7 +326,7 @@ class SampleAssessmentGenerator {
       editHistory: [
         {
           timestamp: new Date().toISOString(),
-          editorEmail: 'sample-generator@Enterprise Platform.com',
+          editorEmail: 'sample-generator@databricks.com',
           changes: 'Sample assessment created'
         }
       ]

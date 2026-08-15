@@ -3,11 +3,11 @@
 -- Created: 2025-01-12
 
 -- Add Author test user
--- Email: author@Enterprise Platform.com
+-- Email: author@databricks.com
 -- Password: author123
 INSERT INTO users (email, password_hash, role, first_name, last_name, organization, is_active)
-SELECT 'author@Enterprise Platform.com', '$2b$10$dbE0yEMT1SXIiCpscsYUlu2W2iU6AavP62tR8dOV0V71tHVBNG13C', 'author', 'Author', 'User', 'Enterprise Platform', true
-WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'author@Enterprise Platform.com');
+SELECT 'author@databricks.com', '$2b$10$dbE0yEMT1SXIiCpscsYUlu2W2iU6AavP62tR8dOV0V71tHVBNG13C', 'author', 'Author', 'User', 'Databricks', true
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'author@databricks.com');
 
 -- Add Consumer test user
 -- Email: consumer@example.com
@@ -20,7 +20,7 @@ WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'consumer@example.com');
 DO $$
 BEGIN
   RAISE NOTICE 'Test users created:';
-  RAISE NOTICE '  Author: author@Enterprise Platform.com / author123';
+  RAISE NOTICE '  Author: author@databricks.com / author123';
   RAISE NOTICE '  Consumer: consumer@example.com / consumer123';
 END $$;
 

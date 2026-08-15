@@ -630,10 +630,10 @@ const ExecutiveSummaryNew = () => {
           const constraintsSection = dynamicSummary.match(/## CRITICAL CONSTRAINTS([\s\S]*?)## TRANSFORMATION ROADMAP/)?.[1] || 
             'Your assessment identified specific challenges that limit platform capabilities, team productivity, and business agility.';
           
-          // Extract transformation roadmap from prioritizedActions with Enterprise Platform features
+          // Extract transformation roadmap from prioritizedActions with Databricks features
           const transformationRoadmap = (data.prioritizedActions || []).map(action => {
             const pillarName = action.pillar || action.pillarId || action.area || 'Unknown';
-            const platformFeatures = action.platformFeatures || [];
+            const databricksFeatures = action.databricksFeatures || [];
             const quickWins = action.quickWins || action.specificRecommendations || [];
             
             return {
@@ -643,8 +643,8 @@ const ExecutiveSummaryNew = () => {
               gap: action.gap || 0,
               timeline: action.timeline || '6-12 months',
               impact: action.impact || 'High',
-              actions: platformFeatures.slice(0, 3).map(f => f.name || f.title || f),
-              platformFeatures: platformFeatures,
+              actions: databricksFeatures.slice(0, 3).map(f => f.name || f.title || f),
+              databricksFeatures: databricksFeatures,
               quickWins: quickWins
             };
           });
@@ -655,7 +655,7 @@ const ExecutiveSummaryNew = () => {
             ? outcomesMatch[1].split('\n').filter(line => line.trim().startsWith('•')).map(line => line.trim().substring(1).trim())
             : [
                 'Improved data platform reliability and governance',
-                'Faster time-to-insight with modern Enterprise Platform capabilities',
+                'Faster time-to-insight with modern Databricks capabilities',
                 'Reduced manual effort through automation',
                 'Better cost efficiency through serverless compute',
                 'Enhanced compliance and audit capabilities'
@@ -896,9 +896,9 @@ const ExecutiveSummaryNew = () => {
       gap,
       timeline: gap >= 2 ? '6–12 months' : gap >= 1 ? '3–6 months' : '1–3 months',
       impact: gap >= 2 ? 'High' : gap >= 1 ? 'Medium' : 'Low',
-      actions: (action.platformFeatures || []).slice(0, 3).map(f => f.name || f.title || f),
-      // NEW: Include Enterprise Platform features
-      platformFeatures: action.platformFeatures || [],
+      actions: (action.databricksFeatures || []).slice(0, 3).map(f => f.name || f.title || f),
+      // NEW: Include Databricks features
+      databricksFeatures: action.databricksFeatures || [],
       quickWins: action.quickWins || []
     };
   });
@@ -935,7 +935,7 @@ const ExecutiveSummaryNew = () => {
                 </div>
                 <div style={{ fontSize: '1rem', marginBottom: '16px', lineHeight: 1.6 }}>
                   This assessment has <strong>{resultsData?.assessmentInfo?.questionsAnswered || 0} questions answered</strong>. 
-                  The Executive Summary requires assessment responses to generate "What's Working", "Key Challenges", and Enterprise Platform recommendations.
+                  The Executive Summary requires assessment responses to generate "What's Working", "Key Challenges", and Databricks recommendations.
                 </div>
                 <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                   <button
@@ -988,7 +988,7 @@ const ExecutiveSummaryNew = () => {
             <ActionButton
               onClick={async () => {
                 console.log('[ExecutiveSummaryNew] Regenerating with dynamic content...');
-                toast.loading('Regenerating with Enterprise Platform features...', { id: 'refresh' });
+                toast.loading('Regenerating with Databricks features...', { id: 'refresh' });
                 try {
                   // Force backend to regenerate by calling results API with forceRefresh
                   const freshResults = await assessmentService.getAssessmentResults(assessmentId, true);
@@ -1001,12 +1001,12 @@ const ExecutiveSummaryNew = () => {
                     // Re-extract dynamic content from fresh results
                     console.log('[ExecutiveSummaryNew] Re-initializing with fresh dynamic content');
                     
-                    // Extract transformation roadmap with Enterprise Platform features
+                    // Extract transformation roadmap with Databricks features
                     const roadmapItems = [];
                     if (data.prioritizedActions && Array.isArray(data.prioritizedActions)) {
                       data.prioritizedActions.forEach((action) => {
                         const pillarName = action.pillar || action.pillarId || action.area || 'Unknown';
-                        const platformFeatures = action.platformFeatures || [];
+                        const databricksFeatures = action.databricksFeatures || [];
                         const quickWins = action.quickWins || action.specificRecommendations || [];
                         
                         roadmapItems.push({
@@ -1016,8 +1016,8 @@ const ExecutiveSummaryNew = () => {
                           gap: action.gap || 0,
                           timeline: action.timeline || '6-12 months',
                           impact: action.impact || 'High',
-                          actions: platformFeatures.slice(0, 3).map(f => f.name || f.title || f),
-                          platformFeatures: platformFeatures,
+                          actions: databricksFeatures.slice(0, 3).map(f => f.name || f.title || f),
+                          databricksFeatures: databricksFeatures,
                           quickWins: quickWins
                         });
                       });
@@ -1375,7 +1375,7 @@ const ExecutiveSummaryNew = () => {
                   </li>
                   <li>
                     <FiCheckCircle size={18} />
-                    Faster time-to-insight with modern Enterprise Platform capabilities
+                    Faster time-to-insight with modern Databricks capabilities
                   </li>
                   <li>
                     <FiCheckCircle size={18} />

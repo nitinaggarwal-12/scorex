@@ -313,7 +313,7 @@ const genAIReadinessFramework = {
             { value: 1, label: "No versioning", score: 1 },
             { value: 2, label: "Manual tracking in spreadsheets", score: 2 },
             { value: 3, label: "Git-based versioning", score: 3 },
-            { value: 4, label: "Enterprise Model Registry or similar experiment tracking", score: 4 },
+            { value: 4, label: "MLflow or similar experiment tracking", score: 4 },
             { value: 5, label: "Comprehensive lineage and governance", score: 5 }
           ]
         },
@@ -488,13 +488,13 @@ const genAIReadinessFramework = {
     platform: {
       low: [
         "Assess current infrastructure capabilities and gaps",
-        "Select GenAI platform (Enterprise Platform, Azure OpenAI, etc.)",
+        "Select GenAI platform (Databricks, Azure OpenAI, etc.)",
         "Establish data lakehouse foundation",
         "Implement basic model serving infrastructure"
       ],
       medium: [
         "Build vector database and RAG capabilities",
-        "Implement model management and versioning (Enterprise Model Registry)",
+        "Implement model management and versioning (MLflow)",
         "Establish scalable inference infrastructure",
         "Create data engineering pipelines for GenAI"
       ],

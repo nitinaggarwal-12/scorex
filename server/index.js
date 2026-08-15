@@ -13,7 +13,7 @@ const RecommendationEngine = require('./services/recommendationEngine');
 const AdaptiveRecommendationEngine = require('./services/adaptiveRecommendationEngine');
 const LiveDataEnhancer = require('./services/liveDataEnhancer');
 const OpenAIContentGenerator = require('./services/openAIContentGenerator');
-const EnterpriseFeatureMapper = require('./services/databricksFeatureMapper');
+const DatabricksFeatureMapper = require('./services/databricksFeatureMapper');
 const ContextAwareRecommendationEngine = require('./services/contextAwareRecommendationEngine');
 const IntelligentRecommendationEngine = require('./services/intelligentRecommendationEngine_v2');
 const featureDB = require('./services/databricksFeatureDatabase');
@@ -161,7 +161,7 @@ app.get('/status', async (req, res) => {
     
     res.json({
       success: true,
-      message: 'Enterprise Data & AI Maturity Assessment API is running',
+      message: 'Databricks Maturity Assessment API is running',
       environment: process.env.NODE_ENV,
       timestamp: new Date().toISOString(),
       storage: {
@@ -1287,65 +1287,65 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
       console.log('Overall scores:', recommendations.overall);
       console.log('Recommendations:', recommendations.prioritizedActions?.length || 0);
       
-      // 🎯 ENHANCE with real Enterprise Platform product features
-      console.log('🔧 Enhancing recommendations with actual Enterprise Platform features...');
+      // 🎯 ENHANCE with real Databricks product features
+      console.log('🔧 Enhancing recommendations with actual Databricks features...');
       try {
-        // Enhance prioritizedActions with real Enterprise Platform features for each pillar
+        // Enhance prioritizedActions with real Databricks features for each pillar
         if (recommendations.prioritizedActions && Array.isArray(recommendations.prioritizedActions)) {
           recommendations.prioritizedActions = recommendations.prioritizedActions.map(action => {
             const pillarId = action.pillarId || action.area || action.pillar;
             const maturityLevel = recommendations.areaScores?.[pillarId]?.currentScore || action.currentScore || 1;
             
-            // Get contextualized Enterprise Platform features for this pillar
-            const enterprisePlatformRecs = platformFeatureMapper.getRecommendationsForPillar(
+            // Get contextualized Databricks features for this pillar
+            const databricksRecs = DatabricksFeatureMapper.getRecommendationsForPillar(
               pillarId,
               Math.round(maturityLevel),
               assessment.responses
             );
             
-            console.log(`🔧 Enhancing pillar ${pillarId} (level ${Math.round(maturityLevel)}) with ${enterprisePlatformRecs.currentMaturity?.features?.length || 0} features`);
+            console.log(`🔧 Enhancing pillar ${pillarId} (level ${Math.round(maturityLevel)}) with ${databricksRecs.currentMaturity?.features?.length || 0} features`);
             
-            // Enhance action with actual platform features
+            // Enhance action with actual Databricks features
             // NOTE: specificRecommendations (Next Steps) will be set by IntelligentRecommendationEngine later
             return {
               ...action,
-              platformFeatures: enterprisePlatformRecs.currentMaturity?.features || [],
-              nextLevelFeatures: enterprisePlatformRecs.nextLevel?.features || [],
-              quickWins: enterprisePlatformRecs.quickWins || [],
-              strategicMoves: enterprisePlatformRecs.strategicMoves || [],
+              databricksFeatures: databricksRecs.currentMaturity?.features || [],
+              nextLevelFeatures: databricksRecs.nextLevel?.features || [],
+              quickWins: databricksRecs.quickWins || [],
+              strategicMoves: databricksRecs.strategicMoves || [],
               // DO NOT SET specificRecommendations here - let intelligent engine handle it
-              _source: 'Enterprise Platform Release Notes - 2026',
-              _docsUrl: 'https://docs.enterpriseplatform.com'
+              _source: 'Databricks Release Notes - October 2025',
+              _docsUrl: 'https://docs.databricks.com/aws/en/release-notes/product/'
             };
           });
-          console.log(`✅ Enhanced ${recommendations.prioritizedActions.length} pillar recommendations with enterprise platform features`);
+          console.log(`✅ Enhanced ${recommendations.prioritizedActions.length} pillar recommendations with Databricks features`);
           // Log first pillar for debugging
           if (recommendations.prioritizedActions.length > 0) {
             console.log(`📊 Sample enhanced pillar:`, {
               pillarId: recommendations.prioritizedActions[0].pillarId || recommendations.prioritizedActions[0].area,
-              platformFeatures: recommendations.prioritizedActions[0].platformFeatures?.length || 0,
+              databricksFeatures: recommendations.prioritizedActions[0].databricksFeatures?.length || 0,
               quickWins: recommendations.prioritizedActions[0].quickWins?.length || 0,
               specificRecommendations: recommendations.prioritizedActions[0].specificRecommendations?.length || 0
             });
           }
         }
         
-        // Add platform-specific quick wins to overall recommendations
+        // Add Databricks-specific quick wins to overall recommendations
         if (recommendations.quickWins) {
-          const enterprisePlatformQuickWins = [];
+          const databricksQuickWins = [];
           Object.keys(recommendations.areaScores || {}).forEach(pillarId => {
             const level = Math.round(recommendations.areaScores[pillarId].currentScore || 1);
-            const recs = platformFeatureMapper.getRecommendationsForPillar(pillarId, level);
+            const recs = DatabricksFeatureMapper.getRecommendationsForPillar(pillarId, level);
             if (recs.quickWins) {
-              enterprisePlatformQuickWins.push(...recs.quickWins);
+              databricksQuickWins.push(...recs.quickWins);
             }
           });
-          recommendations.enterprisePlatformQuickWins = enterprisePlatformQuickWins.slice(0, 5);
-          console.log(`✅ Added ${enterprisePlatformQuickWins.length} enterprise platform quick wins`);
+          recommendations.databricksQuickWins = databricksQuickWins.slice(0, 5);
+          console.log(`✅ Added ${databricksQuickWins.length} Databricks quick wins`);
         }
         
       } catch (error) {
-        console.error('⚠️  Error enhancing with Enterprise Platform features:', error);
+        console.error('⚠️  Error enhancing with Databricks features:', error);
         console.log('Continuing with base recommendations');
       }
     } else {
@@ -1537,7 +1537,7 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
       
       console.log(`✅ Found ${intelligentRecs.recommendations.length} intelligent recommendations for ${pillarId}`);
       console.log(`✅ Found ${intelligentRecs.nextSteps.length} customer-specific next steps for ${pillarId}`);
-      console.log(`✅ Found ${intelligentRecs.platformFeatures.length} Enterprise Platform features for ${pillarId}`);
+      console.log(`✅ Found ${intelligentRecs.databricksFeatures.length} Databricks features for ${pillarId}`);
       console.log(`✅ Found ${intelligentRecs.theGood.length} strengths and ${intelligentRecs.theBad.length} challenges for ${pillarId}`);
       
       // 🚨 CRITICAL FIX: Populate categoryDetails with intelligent recommendations
@@ -1546,7 +1546,7 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
         categoryDetails[pillarId].theBad = intelligentRecs.theBad || [];
         categoryDetails[pillarId].recommendations = intelligentRecs.recommendations || [];
         categoryDetails[pillarId].nextSteps = intelligentRecs.nextSteps || [];
-        categoryDetails[pillarId].platformFeatures = intelligentRecs.platformFeatures || [];
+        categoryDetails[pillarId].databricksFeatures = intelligentRecs.databricksFeatures || [];
         categoryDetails[pillarId].painPoints = intelligentRecs.theBad || []; // Alias for backward compatibility
         categoryDetails[pillarId]._intelligentEngine = true;
         categoryDetails[pillarId]._painPointsAnalyzed = intelligentRecs.theBad?.length || 0;
@@ -1570,7 +1570,7 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
             recommendations: pillarDetails.recommendations || [],
             nextSteps: pillarDetails.nextSteps || [],
             specificRecommendations: pillarDetails.nextSteps || [],
-            platformFeatures: pillarDetails.platformFeatures || [],
+            databricksFeatures: pillarDetails.databricksFeatures || [],
             _intelligentEngine: true,
             _painPointsAnalyzed: pillarDetails._painPointsAnalyzed || 0,
             _strengthsIdentified: pillarDetails._strengthsIdentified || 0
@@ -1681,7 +1681,7 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
       quickWins: recommendations.quickWins,
       riskAreas: recommendations.riskAreas,
       executiveSummary: recommendations.executiveSummary || '', // ADAPTIVE: Executive summary
-      whatsNew: recommendations.whatsNew, // ADAPTIVE: Latest Enterprise Platform features
+      whatsNew: recommendations.whatsNew, // ADAPTIVE: Latest Databricks features
       pillarStatus: assessmentFramework.assessmentAreas.map(area => {
         const isCompleted = assessment.completedCategories.includes(area.id);
         const hasResponses = areasWithResponses.some(a => a.id === area.id);
@@ -2436,7 +2436,7 @@ app.get('/api/health', async (req, res) => {
   res.json({
     status: 'ok',
     success: true,
-    message: 'Enterprise Data & AI Maturity Assessment API is running',
+    message: 'Databricks Maturity Assessment API is running',
     timestamp: new Date().toISOString(),
     version: '1.0.0'
   });
@@ -2910,28 +2910,28 @@ app.get('/api/assessment/:id/pillar/:pillarId/results', async (req, res) => {
     const futureScore = pillarResults.pillar.futureScore || 0;
     const gap = pillarResults.pillar.gap || 0;
     
-    // 🎯 ENHANCE with real Enterprise Platform product features
-    console.log(`🔧 Enhancing pillar ${pillarId} with actual Enterprise Platform features...`);
+    // 🎯 ENHANCE with real Databricks product features
+    console.log(`🔧 Enhancing pillar ${pillarId} with actual Databricks features...`);
     try {
-      const enterprisePlatformRecs = platformFeatureMapper.getRecommendationsForPillar(
+      const databricksRecs = DatabricksFeatureMapper.getRecommendationsForPillar(
         pillarId,
         Math.round(currentScore),
         assessment.responses
       );
       
-      // Add Enterprise Platform features to pillar results
-      pillarResults.platformFeatures = enterprisePlatformRecs.currentMaturity?.features || [];
-      pillarResults.nextLevelFeatures = enterprisePlatformRecs.nextLevel?.features || [];
-      pillarResults.quickWins = enterprisePlatformRecs.quickWins || [];
-      pillarResults.strategicMoves = enterprisePlatformRecs.strategicMoves || [];
-      pillarResults.specificRecommendations = enterprisePlatformRecs.quickWins || []; // Use quickWins for "Next Steps" (customer engagement)
-      pillarResults._source = 'Enterprise Platform Release Notes - October 2025';
-      pillarResults._docsUrl = 'https://docs.enterprisePlatform.com/aws/en/release-notes/product/';
+      // Add Databricks features to pillar results
+      pillarResults.databricksFeatures = databricksRecs.currentMaturity?.features || [];
+      pillarResults.nextLevelFeatures = databricksRecs.nextLevel?.features || [];
+      pillarResults.quickWins = databricksRecs.quickWins || [];
+      pillarResults.strategicMoves = databricksRecs.strategicMoves || [];
+      pillarResults.specificRecommendations = databricksRecs.quickWins || []; // Use quickWins for "Next Steps" (customer engagement)
+      pillarResults._source = 'Databricks Release Notes - October 2025';
+      pillarResults._docsUrl = 'https://docs.databricks.com/aws/en/release-notes/product/';
       
-      console.log(`✅ Enhanced pillar ${pillarId} with ${pillarResults.platformFeatures.length} Enterprise Platform features`);
+      console.log(`✅ Enhanced pillar ${pillarId} with ${pillarResults.databricksFeatures.length} Databricks features`);
     } catch (error) {
-      console.error('⚠️  Error enhancing pillar with Enterprise Platform features:', error);
-      pillarResults.platformFeatures = [];
+      console.error('⚠️  Error enhancing pillar with Databricks features:', error);
+      pillarResults.databricksFeatures = [];
     }
     
     // 🔥 INTELLIGENT RECOMMENDATIONS: Generate customer-specific, actionable solutions (NOW WITH DATABASE! 🚀)
@@ -2962,8 +2962,8 @@ app.get('/api/assessment/:id/pillar/:pillarId/results', async (req, res) => {
         pillarResults.specificRecommendations = intelligentRecs.nextSteps;
         pillarResults.quickWins = intelligentRecs.nextSteps;
       }
-      if (intelligentRecs.platformFeatures.length > 0) {
-        pillarResults.platformFeatures = intelligentRecs.platformFeatures;
+      if (intelligentRecs.databricksFeatures.length > 0) {
+        pillarResults.databricksFeatures = intelligentRecs.databricksFeatures;
       }
       
       pillarResults._intelligentEngine = true;
@@ -2995,8 +2995,8 @@ app.get('/api/assessment/:id/pillar/:pillarId/results', async (req, res) => {
       theGood: pillarResults.theGood || [],
       theBad: pillarResults.theBad || [],
       recommendations: pillarResults.recommendations || [],
-      // NEW: Enterprise Platform-specific features
-      platformFeatures: pillarResults.platformFeatures || [],
+      // NEW: Databricks-specific features
+      databricksFeatures: pillarResults.databricksFeatures || [],
       nextLevelFeatures: pillarResults.nextLevelFeatures || [],
       quickWins: pillarResults.quickWins || [],
       strategicMoves: pillarResults.strategicMoves || [],
@@ -3459,7 +3459,7 @@ if (process.env.VERCEL !== '1') {
     await db.initialize();
     
     app.listen(PORT, async () => {
-      console.log(`🚀 Enterprise Data & AI Maturity Assessment API running on port ${PORT}`);
+      console.log(`🚀 Databricks Maturity Assessment API running on port ${PORT}`);
       console.log(`📊 Assessment framework loaded with ${assessmentFramework.assessmentAreas.length} areas`);
       
       // Get assessment count asynchronously

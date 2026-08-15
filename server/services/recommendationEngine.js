@@ -1,4 +1,4 @@
-// Enterprise Data & AI Maturity Assessment Recommendation Engine
+// Databricks Maturity Assessment Recommendation Engine
 // Analyzes assessment results and provides tailored recommendations
 
 const assessmentFramework = require('../data/assessmentFramework');
@@ -14,9 +14,9 @@ class RecommendationEngine {
           description: 'Your current data infrastructure needs significant modernization to support advanced analytics.',
           actions: [
             'Migrate from traditional databases to cloud-based data lakehouse architecture',
-            'Implement Enterprise Platform as your unified analytics platform',
+            'Implement Databricks as your unified analytics platform',
             'Establish data lake storage with Delta Lake for ACID transactions',
-            'Set up automated data pipelines with Enterprise Platform workflows'
+            'Set up automated data pipelines with Databricks workflows'
           ],
           timeline: '6-12 months',
           effort: 'high',
@@ -27,8 +27,8 @@ class RecommendationEngine {
           title: 'Enhance Data Processing Capabilities',
           description: 'Upgrade your data processing to handle larger volumes and enable real-time analytics.',
           actions: [
-            'Implement Enterprise Platform for unified batch and streaming processing',
-            'Migrate ETL processes to modern ELT patterns with Declarative Data Pipelines',
+            'Implement Databricks for unified batch and streaming processing',
+            'Migrate ETL processes to modern ELT patterns with Delta Live Tables',
             'Establish data quality monitoring and automated testing',
             'Optimize data storage with partitioning and Z-ordering'
           ],
@@ -58,7 +58,7 @@ class RecommendationEngine {
             'Implement advanced performance tuning techniques',
             'Explore photon engine for query acceleration',
             'Establish advanced cost optimization strategies',
-            'Evaluate emerging Enterprise Platform features for competitive advantage'
+            'Evaluate emerging Databricks features for competitive advantage'
           ],
           timeline: '1-3 months',
           effort: 'low-medium',
@@ -87,10 +87,10 @@ class RecommendationEngine {
           title: 'Establish ML Foundation',
           description: 'Build foundational machine learning capabilities to unlock data value.',
           actions: [
-            'Set up Enterprise Platform ML workspace and collaborative notebooks',
-            'Implement Enterprise Model Registry for experiment tracking and model management',
+            'Set up Databricks ML workspace and collaborative notebooks',
+            'Implement MLflow for experiment tracking and model management',
             'Establish feature store for reusable ML features',
-            'Train team on basic ML concepts and Enterprise Platform ML tools'
+            'Train team on basic ML concepts and Databricks ML tools'
           ],
           timeline: '3-6 months',
           effort: 'medium',
@@ -101,7 +101,7 @@ class RecommendationEngine {
           title: 'Accelerate ML Adoption',
           description: 'Scale your ML capabilities and establish production-ready workflows.',
           actions: [
-            'Implement automated ML pipelines with Enterprise Platform AutoML',
+            'Implement automated ML pipelines with Databricks AutoML',
             'Establish model deployment and monitoring processes',
             'Create ML governance framework and model registry',
             'Develop citizen data scientist program'
@@ -162,7 +162,7 @@ class RecommendationEngine {
           description: 'Critical need to establish basic data governance to ensure data quality and compliance.',
           actions: [
             'Define data governance policies and procedures',
-            'Implement Unified Data Catalog & Governance for centralized data governance',
+            'Implement Unity Catalog for centralized data governance',
             'Establish data stewardship roles and responsibilities',
             'Create data classification and access control framework'
           ],
@@ -756,25 +756,25 @@ class RecommendationEngine {
     sortedPillars.forEach(pillar => {
       if (pillar.current <= 2 && pillar.id === 'platform-governance') {
         businessEnabl.push({
-          capability: 'Unified Data Governance (Unified Data Catalog & Governance)',
+          capability: 'Unified Data Governance (Unity Catalog)',
           business: '**60-70% reduction in compliance preparation time** and **50% lower governance costs**. Organizations with mature governance report **40% faster time-to-market** for data products and **30-35% improvement** in data team efficiency (Gartner, 2024)'
         });
       }
       if (pillar.current <= 2 && pillar.id === 'data-engineering') {
         businessEnabl.push({
-          capability: 'Automated Data Pipelines (Declarative Data Pipelines)',
+          capability: 'Automated Data Pipelines (Delta Live Tables)',
           business: '**70-80% reduction in pipeline development time** + **90% fewer production incidents**. Automation enables **3-4x faster data delivery** and frees **25-35% of engineering capacity** for strategic work (IDC, 2024)'
         });
       }
       if (pillar.current <= 3 && pillar.id === 'analytics-bi') {
         businessEnabl.push({
-          capability: 'Serverless Analytics (Enterprise SQL Warehouse)',
+          capability: 'Serverless Analytics (Databricks SQL)',
           business: '**50-60% infrastructure cost reduction** through auto-scaling + **3-5x query performance improvement**. Self-service analytics **increases decision velocity by 40-60%** and **reduces analyst wait time by 70%** (Forrester, 2023)'
         });
       }
       if (pillar.current <= 2 && pillar.id === 'ml-mlops') {
         businessEnabl.push({
-          capability: 'Production ML Operations (Enterprise Model Registry Ecosystem)',
+          capability: 'Production ML Operations (MLflow Ecosystem)',
           business: '**3-5x more models in production** + **80% faster time-to-production**. Mature MLOps practices **increase model success rate from 22% to 80%** and deliver **2-3x better ROI** on AI investments (Gartner/IDC, 2024)'
         });
       }
@@ -804,11 +804,11 @@ class RecommendationEngine {
     if (criticalPillars.length >= 2) {
       summary += `**Phase 1 (0-90 days): Stabilization & Quick Wins** → **Expected Impact: 10-15% operational efficiency improvement**\n`;
       summary += `• Launch "platform stabilization sprint" targeting ${criticalPillars.slice(0,2).map(p => p.name.replace(/^[^\s]+\s/, '')).join(' & ')} to reach baseline maturity (Level 3)\n`;
-      summary += `• Deploy Unified Data Catalog & Governance for immediate **60-70% compliance overhead reduction** and **30% faster data access**\n`;
+      summary += `• Deploy Unity Catalog for immediate **60-70% compliance overhead reduction** and **30% faster data access**\n`;
       summary += `• Implement automated monitoring to eliminate firefighting and **reclaim 25-30% of engineering capacity**\n\n`;
       
       summary += `**Phase 2 (3-6 months): Capability Transformation** → **Expected Impact: 30-40% productivity gain + 50% cost reduction**\n`;
-      summary += `• Transform data pipelines with Declarative Data Pipelines (**70-80% development time reduction** + **90% fewer incidents**)\n`;
+      summary += `• Transform data pipelines with Delta Live Tables (**70-80% development time reduction** + **90% fewer incidents**)\n`;
       summary += `• Establish MLOps foundation enabling **3-5x model velocity** and **60% higher success rate**\n`;
       summary += `• Deploy serverless analytics for analyst self-service at **50-60% lower infrastructure cost**\n\n`;
       
@@ -923,7 +923,7 @@ class RecommendationEngine {
     return mapping[areaId] || 'infrastructure';
   }
 
-  // Generate pillar-specific prioritized actions with latest Enterprise Platform features
+  // Generate pillar-specific prioritized actions with latest Databricks features
   generatePrioritizedActions(areaScores, responses) {
     const actions = [];
     
@@ -978,21 +978,21 @@ class RecommendationEngine {
     // Pillar-specific recommendations with latest features
     const pillarRecommendations = {
       platform_governance: {
-        title: 'Unified Data Catalog & Governance & Governance Foundation',
+        title: 'Unity Catalog & Governance Foundation',
         rationale: `Current Score: ${Math.round(currentScore)}/5 → Target: ${Math.round(futureScore)}/5. Establishing centralized governance is critical for data trust, compliance, and scalability.`,
         features: [
           {
-            name: 'Unified Data Catalog & Governance',
+            name: 'Unity Catalog',
             status: 'GA',
-            action: 'Migrate to Unified Data Catalog & Governance for centralized metadata, access control, and data lineage',
+            action: 'Migrate to Unity Catalog for centralized metadata, access control, and data lineage',
             why: 'Provides fine-grained access control, automatic lineage, and cross-workspace governance',
             effort: gap >= 2 ? '2-3 months' : '1-2 months',
             impact: 'High - Enables secure data sharing and compliance'
           },
           {
-            name: 'Continuous Data Observability',
+            name: 'Lakehouse Monitoring',
             status: 'GA',
-            action: 'Implement data quality monitoring with Continuous Data Observability',
+            action: 'Implement data quality monitoring with Lakehouse Monitoring',
             why: 'Automated drift detection and quality metrics reduce manual oversight by 70%',
             effort: '3-4 weeks',
             impact: 'High - Proactive data quality management'
@@ -1010,13 +1010,13 @@ class RecommendationEngine {
       },
       
       data_engineering: {
-        title: 'Declarative Data Pipelines & Streaming Excellence',
+        title: 'Delta Live Tables & Streaming Excellence',
         rationale: `Current Score: ${Math.round(currentScore)}/5 → Target: ${Math.round(futureScore)}/5. Modernizing data pipelines with declarative approach reduces maintenance by 60% and improves reliability.`,
         features: [
           {
-            name: 'Declarative Data Pipelines (DLT)',
+            name: 'Delta Live Tables (DLT)',
             status: 'GA',
-            action: 'Migrate ETL pipelines to Declarative Data Pipelines with expectations',
+            action: 'Migrate ETL pipelines to Delta Live Tables with expectations',
             why: 'Declarative pipelines with built-in quality checks, auto-scaling, and lineage',
             effort: gap >= 2 ? '2-4 months' : '1-2 months',
             impact: 'Very High - 60% reduction in pipeline maintenance'
@@ -1054,7 +1054,7 @@ class RecommendationEngine {
         rationale: `Current Score: ${Math.round(currentScore)}/5 → Target: ${Math.round(futureScore)}/5. Enabling self-service analytics reduces analyst bottlenecks and accelerates time-to-insights by 50%.`,
         features: [
           {
-            name: 'Enterprise AI/BI',
+            name: 'Databricks AI/BI',
             status: 'GA',
             action: 'Deploy AI/BI dashboards with Genie conversational interface',
             why: 'Natural language queries democratize data access for business users',
@@ -1110,9 +1110,9 @@ class RecommendationEngine {
             impact: 'High - 10x faster model deployment'
           },
           {
-            name: 'Enterprise Model Registry Recipes',
+            name: 'MLflow Recipes',
             status: 'GA',
-            action: 'Standardize ML workflows with Enterprise Model Registry Recipes templates',
+            action: 'Standardize ML workflows with MLflow Recipes templates',
             why: 'Pre-built templates for classification, regression reduce setup from days to hours',
             effort: '1-2 weeks',
             impact: 'Medium - Faster ML project kickoffs'
@@ -1158,9 +1158,9 @@ class RecommendationEngine {
             impact: 'Medium - Faster LLM evaluation and selection'
           },
           {
-            name: 'Enterprise Model Registry LLM Tracking',
+            name: 'MLflow LLM Tracking',
             status: 'GA',
-            action: 'Track and evaluate LLM applications with Enterprise Model Registry',
+            action: 'Track and evaluate LLM applications with MLflow',
             why: 'Log prompts, responses, and evaluation metrics for GenAI apps',
             effort: '1-2 weeks',
             impact: 'High - Systematic GenAI quality improvement'
@@ -1190,7 +1190,7 @@ class RecommendationEngine {
             impact: 'High - Visibility into costs and usage patterns'
           },
           {
-            name: 'Enterprise AI Advisor',
+            name: 'Databricks Assistant',
             status: 'GA',
             action: 'Enable AI assistant for code completion and generation',
             why: 'AI-powered coding assistant increases developer productivity by 30%',
@@ -1200,7 +1200,7 @@ class RecommendationEngine {
           {
             name: 'Asset Bundles',
             status: 'GA',
-            action: 'Adopt Enterprise Platform Asset Bundles for CI/CD',
+            action: 'Adopt Databricks Asset Bundles for CI/CD',
             why: 'GitOps-style deployment of jobs, pipelines, and dashboards',
             effort: '2-4 weeks',
             impact: 'High - Automated deployment pipeline'
@@ -1507,7 +1507,7 @@ class RecommendationEngine {
     const technologyStrengths = {
       platform_governance: {
         level4: [
-          'Unified Data Catalog & Governance used for data governance with access controls of reasonable granularity',
+          'Unity Catalog used for data governance with access controls of reasonable granularity',
           'Workspace organization follows naming conventions with clear RBAC policies',
           'Audit logs and lineage tracking implemented for compliance requirements'
         ],
@@ -1524,14 +1524,14 @@ class RecommendationEngine {
       },
       data_engineering: {
         level4: [
-          'Declarative Data Pipelines (DLT) pipelines implemented for critical data workflows',
+          'Delta Live Tables (DLT) pipelines implemented for critical data workflows',
           'Automated data quality checks with DLT expectations and monitoring',
           'Streaming data ingestion using Auto Loader and structured streaming'
         ],
         level3: [
           'Data pipelines implemented with Delta Lake for ACID transactions',
           'Good resource utilization management through auto-scaling clusters',
-          'Pipeline orchestration using Enterprise Platform workflows or external tools'
+          'Pipeline orchestration using Databricks workflows or external tools'
         ],
         level2: [
           'Basic batch data pipelines operational',
@@ -1541,13 +1541,13 @@ class RecommendationEngine {
       },
       analytics_bi: {
         level4: [
-          'Self-service analytics platform with Enterprise SQL Warehouse and serverless compute',
+          'Self-service analytics platform with Databricks SQL and serverless compute',
           'AI/BI dashboards deployed for natural language data exploration',
           'Query optimization with Photon engine and caching strategies'
         ],
         level3: [
           'Moderately developed self-service platform with role-based access to analytics tools and datasets',
-          'SQL analytics accessible through Enterprise SQL Warehouse interface',
+          'SQL analytics accessible through Databricks SQL interface',
           'Basic dashboarding and reporting capabilities available'
         ],
         level2: [
@@ -1558,12 +1558,12 @@ class RecommendationEngine {
       },
       machine_learning: {
         level4: [
-          'Enterprise Model Registry used for experiment tracking, model registry, and deployment',
+          'MLflow used for experiment tracking, model registry, and deployment',
           'Feature Store implemented for feature reuse and consistency',
           'Automated ML pipelines with model monitoring and retraining'
         ],
         level3: [
-          'ML experimentation supported with Enterprise Model Registry tracking',
+          'ML experimentation supported with MLflow tracking',
           'Model deployment process established',
           'Basic feature engineering pipelines operational'
         ],
@@ -1576,7 +1576,7 @@ class RecommendationEngine {
       generative_ai: {
         level4: [
           'Vector Search implemented for RAG applications',
-          'LLM fine-tuning and deployment using enterprise data & AI foundation Models',
+          'LLM fine-tuning and deployment using Databricks Foundation Models',
           'GenAI governance with Model Serving and monitoring'
         ],
         level3: [
@@ -1602,7 +1602,7 @@ class RecommendationEngine {
           'Regular knowledge sharing sessions conducted'
         ],
         level2: [
-          'Core team trained on Enterprise Platform platform',
+          'Core team trained on Databricks platform',
           'Initial adoption in key use cases',
           'Basic support structure in place'
         ]
@@ -1752,7 +1752,7 @@ class RecommendationEngine {
       platform_governance: [
         'Manual monitoring, auditing and data integrity checks',
         'No fine-grained access control or attribute-based access control (ABAC)',
-        'Missing Unified Data Catalog & Governance for centralized governance and lineage',
+        'Missing Unity Catalog for centralized governance and lineage',
         'No Disaster Recovery (DR) strategy or backup policies',
         'Limited audit trail visibility for compliance requirements',
         'No formal security incident response process'
@@ -1760,8 +1760,8 @@ class RecommendationEngine {
       data_engineering: [
         'Data is not trusted due to quality concerns. No automated data quality frameworks currently exist',
         'Manual pipeline deployments without CI/CD automation',
-        'Under-utilization of Enterprise Platform native connectors for migration of external data sources',
-        'ADF or external tools mainly used for orchestration rather than Enterprise Platform workflows',
+        'Under-utilization of Databricks native connectors for migration of external data sources',
+        'ADF or external tools mainly used for orchestration rather than Databricks workflows',
         'No streaming data ingestion or real-time processing capabilities',
         'Missing data quality monitoring and automated alerts'
       ],
@@ -1774,7 +1774,7 @@ class RecommendationEngine {
         'Query performance issues during peak usage times'
       ],
       machine_learning: [
-        'No Enterprise Model Registry Model Registry for centralized model management',
+        'No MLflow Model Registry for centralized model management',
         'Missing Feature Store leading to duplicate feature engineering work',
         'Manual model deployment without automated pipelines',
         'No model monitoring or drift detection in production',
@@ -1805,13 +1805,13 @@ class RecommendationEngine {
       'poor_isolation': 'Teams working in silos duplicate work and miss opportunities for reuse and collaboration',
       'data_quality': 'Data trust issues cause reports to be questioned or ignored by executives',
       'slow_pipelines': 'Batch-only processing delays insights by days while competitors act in real-time',
-      'manual_processes': 'Cannot use Declarative Data Pipelines or Enterprise Platform Workflows for automated pipeline orchestration',
-      'deployment_issues': 'No CI/CD with Enterprise Platform Asset Bundles means longer deployment cycles compared to automated approaches',
-      'monitoring_gaps': 'Missing Continuous Data Observability means data quality issues are found reactively by business users instead of proactively through automated alerts',
+      'manual_processes': 'Cannot use Delta Live Tables or Databricks Workflows for automated pipeline orchestration',
+      'deployment_issues': 'No CI/CD with Databricks Asset Bundles means longer deployment cycles compared to automated approaches',
+      'monitoring_gaps': 'Missing Lakehouse Monitoring means data quality issues are found reactively by business users instead of proactively through automated alerts',
       'security_concerns': 'Vulnerabilities expose organization to potential security breaches and compliance issues',
       'performance_issues': 'Cannot use Serverless SQL or Photon acceleration, resulting in slower query performance that impacts user productivity',
       'scalability_limits': 'Missing autoscaling and serverless compute blocks concurrent user growth and requires manual cluster management',
-      'integration_complexity': 'No Unified Data Catalog & Governance federation or Partner Connect means longer integration cycles for new data sources',
+      'integration_complexity': 'No Unity Catalog federation or Partner Connect means longer integration cycles for new data sources',
       'complex_scaling': 'Scaling challenges prevent onboarding new teams and use cases efficiently',
       'audit_trails': 'Missing audit trails create compliance exposure and slow down investigations',
       'monitoring_blind_spots': 'Lack of visibility means reacting to issues instead of preventing them',
@@ -1821,7 +1821,7 @@ class RecommendationEngine {
       'reporting_complexity': 'Complex reporting tools require expensive specialists for simple requests',
       'automation_gaps': 'Manual operations increase error rates and prevent scaling to new workloads',
       'access_complexity': 'Complicated access controls slow productivity and frustrate data consumers',
-      'metadata_gaps': 'No Unified Data Catalog & Governance search or AI-generated documentation makes data discovery time-consuming for analysts',
+      'metadata_gaps': 'No Unity Catalog search or AI-generated documentation makes data discovery time-consuming for analysts',
       'performance_impact': 'Missing Query Profile and Photon means slower query performance compared to optimized configurations',
       'security_gaps': 'No row/column-level security or dynamic views blocks secure, granular data sharing capabilities',
       'approval_workflows': 'Approval delays extend deployment cycles and reduce business agility',
@@ -1834,10 +1834,10 @@ class RecommendationEngine {
       'slow_insights': 'Stale data means decisions lag market reality, missing time-sensitive opportunities',
       'team_bottlenecks': 'Analyst dependencies create queues for basic business questions',
       'quality_issues': 'Poor data quality leads to bad decisions and costly rework cycles',
-      'skill_gaps': 'Team cannot effectively use Unified Data Catalog & Governance, Declarative Data Pipelines, or Enterprise Model Registry features due to lack of training',
+      'skill_gaps': 'Team cannot effectively use Unity Catalog, Delta Live Tables, or MLflow features due to lack of training',
       'compliance_risks': 'Missing audit capabilities expose organization to SOC2/GDPR compliance challenges',
       'low_adoption': 'Low platform adoption means teams continue using Excel and legacy tools instead of modern capabilities',
-      'missed_opportunities': 'Cannot leverage Enterprise AI/BI, Genie, or Mosaic AI productivity enhancements',
+      'missed_opportunities': 'Cannot leverage Databricks AI/BI, Genie, or Mosaic AI productivity enhancements',
       'competitive_disadvantage': 'Competitors deploy models faster using MLOps automation compared to manual processes',
       'user_frustration': 'Poor user experience impacts talent retention',
       'business_disruption': 'Unplanned downtime impacts revenue and productivity',
@@ -1854,9 +1854,9 @@ class RecommendationEngine {
       'data_quality_issues': 'Downstream quality problems require 10x the effort to fix vs prevention',
       'manual_overhead': 'Manual processes prevent scaling beyond current team capacity',
       'security_breaches': 'Data breaches lead to significant costs and reputation damage',
-      'duplicate_efforts': 'Without Unified Data Catalog & Governance Feature Engineering or Feature Store, teams rebuild the same ML features multiple times',
+      'duplicate_efforts': 'Without Unity Catalog Feature Engineering or Feature Store, teams rebuild the same ML features multiple times',
       'compliance_risk': 'No model lineage or governance blocks deployment of regulated AI use cases',
-      'knowledge_loss': 'No Enterprise Model Registry experiment tracking means lost model knowledge and longer recreation cycles',
+      'knowledge_loss': 'No MLflow experiment tracking means lost model knowledge and longer recreation cycles',
       'scaling_challenges': 'Cannot use Model Serving or automated retraining, limiting the number of production models',
       'unclear_value': 'No ROI measurement makes it impossible to prioritize investments',
       'stakeholder_confusion': 'Unclear strategy causes teams to work on low-value initiatives',
@@ -1940,22 +1940,22 @@ class RecommendationEngine {
       // Generate pillar-specific, highly impactful challenges with quantified consequences
       const specificChallenges = {
         platform_governance: {
-          low: 'Without Unified Data Catalog & Governance, you cannot leverage AI/ML governance, dynamic views, or row/column-level security—blocking production AI workloads',
+          low: 'Without Unity Catalog, you cannot leverage AI/ML governance, dynamic views, or row/column-level security—blocking production AI workloads',
           medium: 'Manual access controls consume 40+ hours/month of admin time and create 2-3 week delays for data requests',
           high: 'Missing lakehouse architecture means paying 3-5x more for separate data warehouse + data lake infrastructure'
         },
         data_engineering: {
-          low: 'Cannot use Declarative Data Pipelines or Auto Loader—forcing manual pipeline maintenance that costs $500K+/year in engineering time',
+          low: 'Cannot use Delta Live Tables or Auto Loader—forcing manual pipeline maintenance that costs $500K+/year in engineering time',
           medium: 'No pipeline observability means 6-12 hour MTTR for failures vs 15-minute industry benchmark with DLT expectations',
           high: 'Batch-only pipelines delay business decisions by 24-48 hours while real-time competitors capture market opportunities'
         },
         analytics_bi: {
           low: 'Business users blocked from self-service analytics—IT handles 200+ monthly requests vs 20 with proper SQL warehouse setup',
-          medium: 'Cannot leverage Enterprise AI/BI, Genie, or serverless warehouses—missing 60% improvement in analyst productivity',
+          medium: 'Cannot leverage Databricks AI/BI, Genie, or serverless warehouses—missing 60% improvement in analyst productivity',
           high: 'Slow query performance (5-10 min) drives users back to Excel, undermining $500K+ platform investment'
         },
         machine_learning: {
-          low: 'Without Enterprise Model Registry and Feature Store, teams rebuild same features 3-4 times—wasting $300K+/year in duplicate effort',
+          low: 'Without MLflow and Feature Store, teams rebuild same features 3-4 times—wasting $300K+/year in duplicate effort',
           medium: 'Cannot use Model Serving or MLOps workflows—models take 4-6 months to production vs 2-4 weeks with automation',
           high: 'Stuck at 2-3 models in production when competitors operate 20-50+ models, capturing 10x more business value'
         },
@@ -1965,7 +1965,7 @@ class RecommendationEngine {
           high: 'Competitors launched GenAI features 12+ months ago, capturing market share while you\'re still evaluating technology'
         },
         operational_excellence: {
-          low: 'Platform adoption under 25%—wasting $200K-500K annually on unused Enterprise Platform licenses and missed productivity gains',
+          low: 'Platform adoption under 25%—wasting $200K-500K annually on unused Databricks licenses and missed productivity gains',
           medium: 'No training programs means 6-9 month ramp time for new users vs 4-6 weeks, limiting team scaling and agility',
           high: 'Cannot demonstrate platform ROI with usage metrics—putting $1M+ annual investment at risk in next budget cycle'
         }
@@ -1988,7 +1988,7 @@ class RecommendationEngine {
     
     // Always ensure exactly 4 challenges
     const genericChallenges = [
-      'Current maturity level limits ability to leverage advanced Enterprise Platform capabilities',
+      'Current maturity level limits ability to leverage advanced Databricks capabilities',
       'Identified gaps increase total cost of ownership and operational overhead',
       'Missing automation creates dependency bottlenecks and slows innovation velocity',
       'Limited adoption prevents realization of full platform ROI and strategic value'
@@ -2067,7 +2067,7 @@ class RecommendationEngine {
         if (pain.includes('slow') && (feature.name.includes('Serverless') || feature.name.includes('Optimization') || feature.name.includes('Clustering'))) {
           relevanceScore += 15;
         }
-        if (pain.includes('isolation') && (feature.name.includes('Unified Data Catalog & Governance') || feature.name.includes('Feature Store'))) {
+        if (pain.includes('isolation') && (feature.name.includes('Unity Catalog') || feature.name.includes('Feature Store'))) {
           relevanceScore += 15;
         }
         if (pain.includes('monitoring') && (feature.name.includes('Monitoring') || feature.name.includes('System Tables') || feature.name.includes('Audit'))) {
@@ -2089,7 +2089,7 @@ class RecommendationEngine {
         if (pain.includes('bottleneck') && (feature.name.includes('Self-service') || feature.name.includes('AI/BI') || feature.name.includes('AutoML'))) {
           relevanceScore += 12;
         }
-        if (pain.includes('quality') && (feature.name.includes('Monitoring') || feature.name.includes('Unified Data Catalog & Governance'))) {
+        if (pain.includes('quality') && (feature.name.includes('Monitoring') || feature.name.includes('Unity Catalog'))) {
           relevanceScore += 12;
         }
         if (pain.includes('adoption') && (feature.name.includes('Genie') || feature.name.includes('AI/BI') || feature.name.includes('Assistant'))) {

@@ -4,18 +4,18 @@
 -- Total Features: 10
 
 
--- Multi-Agent Supervisor with Unified Data Catalog & Governance Functions
+-- Multi-Agent Supervisor with Unity Catalog Functions
 INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
-VALUES (1, 'poor_isolation', 'generative_ai', 'Use Multi-Agent Supervisor with Unified Data Catalog & Governance Functions to solve poor isolation - Orchestrate complex GenAI workflows with multi-agent collaboration and function calling')
+VALUES (1, 'poor_isolation', 'generative_ai', 'Use Multi-Agent Supervisor with Unity Catalog Functions to solve poor isolation - Orchestrate complex GenAI workflows with multi-agent collaboration and function calling')
 ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
 INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
-VALUES (1, 'manual_provisioning', 'generative_ai', 'Implement Multi-Agent Supervisor with Unified Data Catalog & Governance Functions for manual provisioning resolution - Orchestrate complex GenAI workflows with multi-agent collaboration and function ')
+VALUES (1, 'manual_provisioning', 'generative_ai', 'Implement Multi-Agent Supervisor with Unity Catalog Functions for manual provisioning resolution - Orchestrate complex GenAI workflows with multi-agent collaboration and function ')
 ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
 INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
-VALUES (1, 'inconsistent_configs', 'generative_ai', 'Use Multi-Agent Supervisor with Unified Data Catalog & Governance Functions to solve inconsistent configs - Orchestrate complex GenAI workflows with multi-agent collaboration and function calling')
+VALUES (1, 'inconsistent_configs', 'generative_ai', 'Use Multi-Agent Supervisor with Unity Catalog Functions to solve inconsistent configs - Orchestrate complex GenAI workflows with multi-agent collaboration and function calling')
 ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
 INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
-VALUES (1, 'compliance_risks', 'generative_ai', 'Use Multi-Agent Supervisor with Unified Data Catalog & Governance Functions to solve compliance risks - Orchestrate complex GenAI workflows with multi-agent collaboration and function calling')
+VALUES (1, 'compliance_risks', 'generative_ai', 'Use Multi-Agent Supervisor with Unity Catalog Functions to solve compliance risks - Orchestrate complex GenAI workflows with multi-agent collaboration and function calling')
 ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
 
 -- Serverless Compute Runtime 17.3
@@ -57,71 +57,71 @@ INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, re
 VALUES (4, 'error_handling', 'data_engineering', 'Deploy Lakeflow Pipelines Visual Editor to address error handling with visual pipeline development with 80% faster time-to-production')
 ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
 
--- Enterprise Platform Online Feature Store
+-- Databricks Online Feature Store
 INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
-VALUES (5, 'manual_processes', 'machine_learning', 'Use Enterprise Platform Online Feature Store to solve manual processes - Ultra-low latency feature serving for real-time ML with <10ms p99')
+VALUES (5, 'manual_processes', 'machine_learning', 'Use Databricks Online Feature Store to solve manual processes - Ultra-low latency feature serving for real-time ML with <10ms p99')
 ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
 INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
-VALUES (5, 'reproducibility_issues', 'machine_learning', 'Deploy Enterprise Platform Online Feature Store to address reproducibility issues with ultra-low latency feature serving for real-time ml with <10ms p99')
+VALUES (5, 'reproducibility_issues', 'machine_learning', 'Deploy Databricks Online Feature Store to address reproducibility issues with ultra-low latency feature serving for real-time ml with <10ms p99')
 ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
 INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
-VALUES (5, 'scattered_artifacts', 'machine_learning', 'Implement Enterprise Platform Online Feature Store for scattered artifacts resolution - Ultra-low latency feature serving for real-time ML with <10ms p99')
+VALUES (5, 'scattered_artifacts', 'machine_learning', 'Implement Databricks Online Feature Store for scattered artifacts resolution - Ultra-low latency feature serving for real-time ML with <10ms p99')
 ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
 INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
-VALUES (5, 'no_tracking', 'machine_learning', 'Deploy Enterprise Platform Online Feature Store to address no tracking with ultra-low latency feature serving for real-time ml with <10ms p99')
-ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
-
--- Automatic Liquid Clustering for Declarative Data Pipelines
-INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
-VALUES (6, 'complex_integrations', 'analytics_bi', 'Use Automatic Liquid Clustering for Declarative Data Pipelines to solve complex integrations - Self-optimizing table layout for 2-5× query performance improvement')
-ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
-INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
-VALUES (6, 'pipeline_maintenance', 'analytics_bi', 'Use Automatic Liquid Clustering for Declarative Data Pipelines to solve pipeline maintenance - Self-optimizing table layout for 2-5× query performance improvement')
-ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
-INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
-VALUES (6, 'error_handling', 'analytics_bi', 'Deploy Automatic Liquid Clustering for Declarative Data Pipelines to address error handling with self-optimizing table layout for 2-5× query performance improvement')
-ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
-INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
-VALUES (6, 'data_quality_issues', 'analytics_bi', 'Use Automatic Liquid Clustering for Declarative Data Pipelines to solve data quality issues - Self-optimizing table layout for 2-5× query performance improvement')
-ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
-INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
-VALUES (6, 'manual_processes', 'analytics_bi', 'Leverage Automatic Liquid Clustering for Declarative Data Pipelines to eliminate manual processes through advanced Self-optimizing table layout for 2-5× query performance impr')
+VALUES (5, 'no_tracking', 'machine_learning', 'Deploy Databricks Online Feature Store to address no tracking with ultra-low latency feature serving for real-time ml with <10ms p99')
 ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
 
--- Access Requests in Unified Data Catalog & Governance
+-- Automatic Liquid Clustering for Delta Live Tables
 INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
-VALUES (7, 'poor_isolation', 'platform_governance', 'Deploy Access Requests in Unified Data Catalog & Governance to address poor isolation with self-service data access workflows with approval automation')
+VALUES (6, 'complex_integrations', 'analytics_bi', 'Use Automatic Liquid Clustering for Delta Live Tables to solve complex integrations - Self-optimizing table layout for 2-5× query performance improvement')
 ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
 INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
-VALUES (7, 'manual_provisioning', 'platform_governance', 'Leverage Access Requests in Unified Data Catalog & Governance to eliminate manual provisioning through advanced Self-service data access workflows with approval automation')
+VALUES (6, 'pipeline_maintenance', 'analytics_bi', 'Use Automatic Liquid Clustering for Delta Live Tables to solve pipeline maintenance - Self-optimizing table layout for 2-5× query performance improvement')
 ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
 INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
-VALUES (7, 'inconsistent_configs', 'platform_governance', 'Use Access Requests in Unified Data Catalog & Governance to solve inconsistent configs - Self-service data access workflows with approval automation')
+VALUES (6, 'error_handling', 'analytics_bi', 'Deploy Automatic Liquid Clustering for Delta Live Tables to address error handling with self-optimizing table layout for 2-5× query performance improvement')
 ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
 INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
-VALUES (7, 'compliance_risks', 'platform_governance', 'Use Access Requests in Unified Data Catalog & Governance to solve compliance risks - Self-service data access workflows with approval automation')
-ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
-
--- Unified Data Catalog & Governance External Locations
-INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
-VALUES (8, 'poor_isolation', 'platform_governance', 'Leverage Unified Data Catalog & Governance External Locations to eliminate poor isolation through advanced Federated governance for external cloud storage with central')
+VALUES (6, 'data_quality_issues', 'analytics_bi', 'Use Automatic Liquid Clustering for Delta Live Tables to solve data quality issues - Self-optimizing table layout for 2-5× query performance improvement')
 ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
 INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
-VALUES (8, 'manual_provisioning', 'platform_governance', 'Implement Unified Data Catalog & Governance External Locations for manual provisioning resolution - Federated governance for external cloud storage with centralized access control')
-ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
-INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
-VALUES (8, 'inconsistent_configs', 'platform_governance', 'Implement Unified Data Catalog & Governance External Locations for inconsistent configs resolution - Federated governance for external cloud storage with centralized access control')
+VALUES (6, 'manual_processes', 'analytics_bi', 'Leverage Automatic Liquid Clustering for Delta Live Tables to eliminate manual processes through advanced Self-optimizing table layout for 2-5× query performance impr')
 ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
 
--- Enterprise AI Advisor
+-- Access Requests in Unity Catalog
 INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
-VALUES (9, 'slow_queries', 'generative_ai', 'Deploy Enterprise AI Advisor to address slow queries with ai-powered code generation and sql assistance for enhanced productivity')
+VALUES (7, 'poor_isolation', 'platform_governance', 'Deploy Access Requests in Unity Catalog to address poor isolation with self-service data access workflows with approval automation')
 ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
 INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
-VALUES (9, 'inconsistent_performance', 'generative_ai', 'Implement Enterprise AI Advisor for inconsistent performance resolution - AI-powered code generation and SQL assistance for enhanced productivity')
+VALUES (7, 'manual_provisioning', 'platform_governance', 'Leverage Access Requests in Unity Catalog to eliminate manual provisioning through advanced Self-service data access workflows with approval automation')
 ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
 INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
-VALUES (9, 'delayed_insights', 'generative_ai', 'Implement Enterprise AI Advisor for delayed insights resolution - AI-powered code generation and SQL assistance for enhanced productivity')
+VALUES (7, 'inconsistent_configs', 'platform_governance', 'Use Access Requests in Unity Catalog to solve inconsistent configs - Self-service data access workflows with approval automation')
+ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
+INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
+VALUES (7, 'compliance_risks', 'platform_governance', 'Use Access Requests in Unity Catalog to solve compliance risks - Self-service data access workflows with approval automation')
+ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
+
+-- Unity Catalog External Locations
+INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
+VALUES (8, 'poor_isolation', 'platform_governance', 'Leverage Unity Catalog External Locations to eliminate poor isolation through advanced Federated governance for external cloud storage with central')
+ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
+INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
+VALUES (8, 'manual_provisioning', 'platform_governance', 'Implement Unity Catalog External Locations for manual provisioning resolution - Federated governance for external cloud storage with centralized access control')
+ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
+INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
+VALUES (8, 'inconsistent_configs', 'platform_governance', 'Implement Unity Catalog External Locations for inconsistent configs resolution - Federated governance for external cloud storage with centralized access control')
+ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
+
+-- Databricks Assistant
+INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
+VALUES (9, 'slow_queries', 'generative_ai', 'Deploy Databricks Assistant to address slow queries with ai-powered code generation and sql assistance for enhanced productivity')
+ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
+INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
+VALUES (9, 'inconsistent_performance', 'generative_ai', 'Implement Databricks Assistant for inconsistent performance resolution - AI-powered code generation and SQL assistance for enhanced productivity')
+ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
+INSERT INTO feature_pain_point_mapping (feature_id, pain_point_value, pillar, recommendation_text)
+VALUES (9, 'delayed_insights', 'generative_ai', 'Implement Databricks Assistant for delayed insights resolution - AI-powered code generation and SQL assistance for enhanced productivity')
 ON CONFLICT (feature_id, pain_point_value) DO NOTHING;
 
 -- System Tables

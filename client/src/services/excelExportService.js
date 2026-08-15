@@ -50,7 +50,7 @@ export const exportAssessmentToExcel = async (assessmentId, assessmentName = 'As
       addResultsOverviewSheet(workbook, resultsData);
       addBusinessImpactSheet(workbook, resultsData);
       addPillarAnalysisSheet(workbook, resultsData); // Combined: Strengths, Challenges, Recommendations
-      addPlatformRecommendationsSheet(workbook, resultsData);
+      addDatabricksRecommendationsSheet(workbook, resultsData);
       addOverallNextStepsSheet(workbook, resultsData);
     }
     
@@ -332,19 +332,19 @@ function addBusinessImpactSheet(workbook, resultsData) {
 }
 
 /**
- * Add Enterprise Platform Recommendations sheet with all recommended features
+ * Add Databricks Recommendations sheet with all recommended features
  */
-function addPlatformRecommendationsSheet(workbook, resultsData) {
+function addDatabricksRecommendationsSheet(workbook, resultsData) {
   const recsData = [
-    ['PLATFORM RECOMMENDATIONS BY PILLAR'],
+    ['DATABRICKS RECOMMENDATIONS BY PILLAR'],
     [''],
     ['Pillar', 'Feature/Product', 'Description']
   ];
   
   if (resultsData.prioritizedActions) {
     resultsData.prioritizedActions.forEach(pillar => {
-      if (pillar.platformFeatures && pillar.platformFeatures.length > 0) {
-        pillar.platformFeatures.forEach((feature, idx) => {
+      if (pillar.databricksFeatures && pillar.databricksFeatures.length > 0) {
+        pillar.databricksFeatures.forEach((feature, idx) => {
           recsData.push([
             idx === 0 ? (pillar.pillarName || pillar.pillar) : '', // Only show pillar name once
             feature.name || feature,
@@ -357,7 +357,7 @@ function addPlatformRecommendationsSheet(workbook, resultsData) {
   
   const ws = XLSX.utils.aoa_to_sheet(recsData);
   ws['!cols'] = [{ wch: 30 }, { wch: 35 }, { wch: 70 }];
-  XLSX.utils.book_append_sheet(workbook, ws, 'Enterprise Platform Features');
+  XLSX.utils.book_append_sheet(workbook, ws, 'Databricks Features');
 }
 
 /**

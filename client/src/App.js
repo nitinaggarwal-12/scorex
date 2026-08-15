@@ -1,5 +1,5 @@
 /**
- * Enterprise Data & AI Maturity Assessment Application
+ * Databricks Maturity Assessment Application
  * Version: 2.2.0 - Added floating slideshow buttons and version history - Nov 17, 2025
  */
 import React, { useState, useEffect } from 'react';
@@ -37,13 +37,12 @@ import PitchDeck from './components/PitchDeck';
 import GenAIReadiness from './components/GenAIReadiness';
 import GenAIReadinessReport from './components/GenAIReadinessReport';
 import GenAIReadinessList from './components/GenAIReadinessList';
-import DisclaimerPolicyModal from './components/DisclaimerPolicyModal';
 
 // Services
 import * as assessmentService from './services/assessmentService';
 import authService from './services/authService';
 
-// Protected Route Component (Only for admin functions like user management)
+// Protected Route Component
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = authService.isAuthenticated();
   
@@ -97,18 +96,6 @@ function App() {
   const [currentAssessment, setCurrentAssessment] = useState(null);
   const [assessmentFramework, setAssessmentFramework] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isDisclaimerOpen, setIsDisclaimerOpen] = useState(() => {
-    return localStorage.getItem('scorex_disclaimer_accepted') !== 'true';
-  });
-
-  const handleAcceptDisclaimer = () => {
-    localStorage.setItem('scorex_disclaimer_accepted', 'true');
-    setIsDisclaimerOpen(false);
-    if (!authService.isAuthenticated()) {
-      authService.setSession('guest_session_' + Date.now(), { role: 'consumer', email: 'guest@enterprise.com' });
-    }
-    toast.success('Terms accepted. Welcome to the Assessment Portal!');
-  };
   
   // Track pathname changes
   useEffect(() => {
@@ -307,7 +294,11 @@ function App() {
           
           <Route 
             path="/insights-dashboard" 
-            element={<Dashboard />} 
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } 
           />
           
           <Route 
@@ -317,22 +308,38 @@ function App() {
           
           <Route 
             path="/genai-readiness" 
-            element={<GenAIReadiness />} 
+            element={
+              <ProtectedRoute>
+                <GenAIReadiness />
+              </ProtectedRoute>
+            } 
           />
           
           <Route 
             path="/genai-readiness/edit/:id" 
-            element={<GenAIReadiness />} 
+            element={
+              <ProtectedRoute>
+                <GenAIReadiness />
+              </ProtectedRoute>
+            } 
           />
           
           <Route 
             path="/genai-readiness/list" 
-            element={<GenAIReadinessList />} 
+            element={
+              <ProtectedRoute>
+                <GenAIReadinessList />
+              </ProtectedRoute>
+            } 
           />
           
           <Route 
             path="/genai-readiness/report/:id" 
-            element={<GenAIReadinessReport />} 
+            element={
+              <ProtectedRoute>
+                <GenAIReadinessReport />
+              </ProtectedRoute>
+            } 
           />
           
           <Route 
@@ -362,56 +369,82 @@ function App() {
           <Route 
             path="/start" 
             element={
-              <AssessmentStart 
-                onStart={startAssessment}
-              />
+              <ProtectedRoute>
+                <AssessmentStart 
+                  onStart={startAssessment}
+                />
+              </ProtectedRoute>
             } 
           />
           
           <Route 
             path="/assessment/:assessmentId/:categoryId" 
             element={
-              <AssessmentQuestion 
-                framework={assessmentFramework}
-                currentAssessment={currentAssessment}
-                onUpdateStatus={updateAssessmentStatus}
-              />
+              <ProtectedRoute>
+                <AssessmentQuestion 
+                  framework={assessmentFramework}
+                  currentAssessment={currentAssessment}
+                  onUpdateStatus={updateAssessmentStatus}
+                />
+              </ProtectedRoute>
             } 
           />
           
           <Route 
             path="/results/:assessmentId" 
             element={
-              <AssessmentResults 
-                currentAssessment={currentAssessment}
-                framework={assessmentFramework}
-              />
+              <ProtectedRoute>
+                <AssessmentResults 
+                  currentAssessment={currentAssessment}
+                  framework={assessmentFramework}
+                />
+              </ProtectedRoute>
             } 
           />
           
           <Route 
             path="/executive/:assessmentId" 
-            element={<ExecutiveCommandCenter />} 
+            element={
+              <ProtectedRoute>
+                <ExecutiveCommandCenter />
+              </ProtectedRoute>
+            } 
           />
           
           <Route 
             path="/benchmarks/:assessmentId" 
-            element={<IndustryBenchmarkingReport />} 
+            element={
+              <ProtectedRoute>
+                <IndustryBenchmarkingReport />
+              </ProtectedRoute>
+            } 
           />
           
           <Route 
             path="/history/:assessmentId" 
-            element={<AssessmentHistory />} 
+            element={
+              <ProtectedRoute>
+                <AssessmentHistory />
+              </ProtectedRoute>
+            } 
           />
           
           <Route 
             path="/assessments" 
-            element={<AssessmentManagement />} 
+            element={
+              <ProtectedRoute>
+                <AssessmentManagement />
+              </ProtectedRoute>
+            } 
           />
           
           <Route 
             path="/my-assessments" 
-            element={<MyAssessments />}
+            element={
+              <ProtectedRoute>
+                <MyAssessments />
+              </ProtectedRoute>
+            }
           />
           
           <Route 

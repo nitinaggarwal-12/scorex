@@ -113,7 +113,7 @@ Object.keys(painPointsByPillar).forEach(pillar => {
       sql += `  '${painPointValue}',\n`;
       sql += `  '${pillar}',\n`;
       sql += `  'Deploy ' || f.name || ' to address ${painPointValue.replace(/_/g, ' ')} - ' || f.short_description\n`;
-      sql += `FROM platform_features f\n`;
+      sql += `FROM databricks_features f\n`;
       sql += `WHERE f.category = '${category}'\n`;
       sql += `  AND f.ga_status IN ('GA', 'Public Preview')\n`;
       sql += `ON CONFLICT (feature_id, pain_point_value) DO NOTHING;\n\n`;

@@ -1,15 +1,15 @@
 /**
- * Enterprise Platform Feature Database Service
+ * Databricks Feature Database Service
  * 
  * Dynamic feature retrieval from PostgreSQL database seeded with official
- * Enterprise Platform release notes content.
+ * Databricks release notes content.
  * 
- * Source: https://docs.enterprisePlatform.com/aws/en/release-notes/product/
+ * Source: https://docs.databricks.com/aws/en/release-notes/product/
  */
 
 const { Pool } = require('pg');
 
-class platformFeatureDatabase {
+class DatabricksFeatureDatabase {
   constructor() {
     // Initialize PostgreSQL connection
     this.pool = new Pool({
@@ -20,7 +20,7 @@ class platformFeatureDatabase {
       connectionTimeoutMillis: 2000,
     });
 
-    console.log('[PlatformFeatureDB] Initialized with DATABASE_URL:', process.env.DATABASE_URL ? 'Set' : 'NOT SET');
+    console.log('[DatabricksFeatureDB] Initialized with DATABASE_URL:', process.env.DATABASE_URL ? 'Set' : 'NOT SET');
   }
 
   /**
@@ -61,7 +61,7 @@ class platformFeatureDatabase {
               f.name ILIKE '%' || replace(pain_value, '_', ' ') || '%'
               OR f.short_description ILIKE '%' || replace(pain_value, '_', ' ') || '%'
           ) as keyword_relevance
-        FROM platform_features f
+        FROM databricks_features f
         INNER JOIN feature_pain_point_mapping fpm ON f.id = fpm.feature_id
         WHERE fpm.pain_point_value = ANY($1)
           AND fpm.pillar = $2
@@ -80,7 +80,7 @@ class platformFeatureDatabase {
       const result = await this.pool.query(query, [painPointValues, pillar]);
       return result.rows;
     } catch (error) {
-      console.error('[PlatformFeatureDB] Error fetching features for pain points:', error.message);
+      console.error('[DatabricksFeatureDB] Error fetching features for pain points:', error.message);
       return [];
     }
   }
@@ -104,7 +104,7 @@ class platformFeatureDatabase {
           f.is_serverless,
           f.requires_unity_catalog,
           f.complexity_weeks
-        FROM platform_features f
+        FROM databricks_features f
         WHERE f.category = $1
           AND f.ga_status IN ('GA', 'Public Preview')
         ORDER BY 
@@ -119,7 +119,7 @@ class platformFeatureDatabase {
       const result = await this.pool.query(query, [category, limit]);
       return result.rows;
     } catch (error) {
-      console.error('[PlatformFeatureDB] Error fetching features by category:', error.message);
+      console.error('[DatabricksFeatureDB] Error fetching features by category:', error.message);
       return [];
     }
   }
@@ -135,7 +135,7 @@ class platformFeatureDatabase {
           api_method,
           configuration_example,
           terraform_resource,
-          platform_cli_command,
+          databricks_cli_command,
           prerequisites
         FROM feature_technical_details
         WHERE feature_id = $1;
@@ -144,7 +144,7 @@ class platformFeatureDatabase {
       const result = await this.pool.query(query, [featureId]);
       return result.rows[0] || null;
     } catch (error) {
-      console.error('[PlatformFeatureDB] Error fetching technical details:', error.message);
+      console.error('[DatabricksFeatureDB] Error fetching technical details:', error.message);
       return null;
     }
   }
@@ -175,7 +175,7 @@ class platformFeatureDatabase {
       const result = await this.pool.query(query, [featureId]);
       return result.rows;
     } catch (error) {
-      console.error('[PlatformFeatureDB] Error fetching benefits:', error.message);
+      console.error('[DatabricksFeatureDB] Error fetching benefits:', error.message);
       return [];
     }
   }
@@ -200,7 +200,7 @@ class platformFeatureDatabase {
       const result = await this.pool.query(query, [featureId]);
       return result.rows;
     } catch (error) {
-      console.error('[PlatformFeatureDB] Error fetching implementation steps:', error.message);
+      console.error('[DatabricksFeatureDB] Error fetching implementation steps:', error.message);
       return [];
     }
   }
@@ -211,7 +211,7 @@ class platformFeatureDatabase {
   async getFeatureDetails(featureId) {
     try {
       const featureResult = await this.pool.query(
-        'SELECT * FROM platform_features WHERE id = $1',
+        'SELECT * FROM databricks_features WHERE id = $1',
         [featureId]
       );
       
@@ -233,7 +233,7 @@ class platformFeatureDatabase {
         implementation_steps: steps
       };
     } catch (error) {
-      console.error('[PlatformFeatureDB] Error fetching feature details:', error.message);
+      console.error('[DatabricksFeatureDB] Error fetching feature details:', error.message);
       return null;
     }
   }
@@ -253,7 +253,7 @@ class platformFeatureDatabase {
           f.ga_quarter,
           f.ga_status,
           f.documentation_url as docs
-        FROM platform_features f
+        FROM databricks_features f
         WHERE (
           f.name ILIKE $1
           OR f.short_description ILIKE $1
@@ -281,7 +281,7 @@ class platformFeatureDatabase {
       const result = await this.pool.query(query, params);
       return result.rows;
     } catch (error) {
-      console.error('[PlatformFeatureDB] Error searching features:', error.message);
+      console.error('[DatabricksFeatureDB] Error searching features:', error.message);
       return [];
     }
   }
@@ -303,7 +303,7 @@ class platformFeatureDatabase {
           f.documentation_url as docs,
           f.is_serverless,
           f.requires_unity_catalog
-        FROM platform_features f
+        FROM databricks_features f
         WHERE f.ga_status IN ('GA', 'Public Preview')
         ORDER BY f.release_date DESC, f.id DESC
         LIMIT $1;
@@ -312,7 +312,7 @@ class platformFeatureDatabase {
       const result = await this.pool.query(query, [limit]);
       return result.rows;
     } catch (error) {
-      console.error('[PlatformFeatureDB] Error fetching latest features:', error.message);
+      console.error('[DatabricksFeatureDB] Error fetching latest features:', error.message);
       return [];
     }
   }
@@ -348,7 +348,7 @@ class platformFeatureDatabase {
           f.complexity_weeks,
           f.is_serverless,
           f.requires_unity_catalog
-        FROM platform_features f
+        FROM databricks_features f
         WHERE f.category = $1
           AND f.ga_status IN ('GA', 'Public Preview')
           AND f.complexity_weeks <= $2
@@ -367,7 +367,7 @@ class platformFeatureDatabase {
       const result = await this.pool.query(query, [category, maxComplexity]);
       return result.rows;
     } catch (error) {
-      console.error('[PlatformFeatureDB] Error fetching features by maturity:', error.message);
+      console.error('[DatabricksFeatureDB] Error fetching features by maturity:', error.message);
       return [];
     }
   }
@@ -377,7 +377,7 @@ class platformFeatureDatabase {
    */
   async healthCheck() {
     try {
-      const result = await this.pool.query('SELECT COUNT(*) as count FROM platform_features');
+      const result = await this.pool.query('SELECT COUNT(*) as count FROM databricks_features');
       const count = parseInt(result.rows[0].count);
       
       return {
@@ -386,7 +386,7 @@ class platformFeatureDatabase {
         connected: true
       };
     } catch (error) {
-      console.error('[PlatformFeatureDB] Health check failed:', error.message);
+      console.error('[DatabricksFeatureDB] Health check failed:', error.message);
       return {
         status: 'unhealthy',
         error: error.message,
@@ -404,5 +404,5 @@ class platformFeatureDatabase {
 }
 
 // Export singleton instance
-module.exports = new platformFeatureDatabase();
+module.exports = new DatabricksFeatureDatabase();
 

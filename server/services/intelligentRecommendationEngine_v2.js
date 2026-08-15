@@ -6,54 +6,54 @@
  * - Category-aware defaults per pillar
  */
 
-const platformFeatureMapper = require('./databricksFeatureMapper');
+const databricksFeatureMapper = require('./databricksFeatureMapper');
 const featureDB = require('./databricksFeatureDatabase');
 
 class IntelligentRecommendationEngine {
   constructor() {
-    this.featureMapper = platformFeatureMapper;
+    this.featureMapper = databricksFeatureMapper;
     this.featureDB = featureDB;
     
-    // KEYWORD → Enterprise Platform FEATURE/SOLUTION MAPPING
+    // KEYWORD → DATABRICKS FEATURE/SOLUTION MAPPING
     this.keywordMap = {
       // Governance & Security
       'coe': {
-        features: ['Unified Data Catalog & Governance', 'Account Console', 'System Tables', 'Enterprise Platform Academy'],
-        solution: 'Establish Center of Excellence with Unified Data Catalog & Governance governance framework, System Tables for tracking, and Enterprise Platform Academy for training',
+        features: ['Unity Catalog', 'Account Console', 'System Tables', 'Databricks Academy'],
+        solution: 'Establish Center of Excellence with Unity Catalog governance framework, System Tables for tracking, and Databricks Academy for training',
         category: 'governance'
       },
       'governance': {
-        features: ['Unified Data Catalog & Governance', 'Audit Logs', 'Compliance Security Profile', 'Data Classification'],
-        solution: 'Implement Unified Data Catalog & Governance for centralized governance with automated audit logging and compliance controls',
+        features: ['Unity Catalog', 'Audit Logs', 'Compliance Security Profile', 'Data Classification'],
+        solution: 'Implement Unity Catalog for centralized governance with automated audit logging and compliance controls',
         category: 'governance'
       },
       'security': {
-        features: ['Unified Data Catalog & Governance', 'Private Link', 'Customer-Managed Keys', 'IP Access Lists'],
+        features: ['Unity Catalog', 'Private Link', 'Customer-Managed Keys', 'IP Access Lists'],
         solution: 'Deploy network isolation with Private Link, encrypt data with customer-managed keys, and enforce IP allowlists',
         category: 'security'
       },
       'access': {
-        features: ['Unified Data Catalog & Governance', 'RBAC', 'ABAC', 'Service Principals'],
-        solution: 'Configure role-based and attribute-based access control via Unified Data Catalog & Governance with service principal automation',
+        features: ['Unity Catalog', 'RBAC', 'ABAC', 'Service Principals'],
+        solution: 'Configure role-based and attribute-based access control via Unity Catalog with service principal automation',
         category: 'security'
       },
       'sharing': {
-        features: ['Delta Sharing', 'Enterprise Platform Marketplace', 'Clean Rooms', 'Unified Data Catalog & Governance'],
-        solution: 'Enable secure data sharing with Delta Sharing for external partners, Enterprise Platform Marketplace for data monetization, and Clean Rooms for privacy-preserving collaboration',
+        features: ['Delta Sharing', 'Databricks Marketplace', 'Clean Rooms', 'Unity Catalog'],
+        solution: 'Enable secure data sharing with Delta Sharing for external partners, Databricks Marketplace for data monetization, and Clean Rooms for privacy-preserving collaboration',
         category: 'governance'
       },
       'marketplace': {
-        features: ['Enterprise Platform Marketplace', 'Delta Sharing', 'Lakehouse Apps', 'Partner Connect'],
-        solution: 'Monetize data assets via Enterprise Platform Marketplace, share securely with Delta Sharing, and distribute AI apps with Lakehouse Apps',
+        features: ['Databricks Marketplace', 'Delta Sharing', 'Lakehouse Apps', 'Partner Connect'],
+        solution: 'Monetize data assets via Databricks Marketplace, share securely with Delta Sharing, and distribute AI apps with Lakehouse Apps',
         category: 'governance'
       },
       'monetization': {
-        features: ['Enterprise Platform Marketplace', 'Delta Sharing', 'Data Products', 'Unified Data Catalog & Governance'],
-        solution: 'Build data products with Unified Data Catalog & Governance, monetize via Enterprise Platform Marketplace, and enable secure consumption with Delta Sharing',
+        features: ['Databricks Marketplace', 'Delta Sharing', 'Data Products', 'Unity Catalog'],
+        solution: 'Build data products with Unity Catalog, monetize via Databricks Marketplace, and enable secure consumption with Delta Sharing',
         category: 'governance'
       },
       'collaboration': {
-        features: ['Delta Sharing', 'Clean Rooms', 'Enterprise Platform Marketplace', 'Lakehouse Federation'],
+        features: ['Delta Sharing', 'Clean Rooms', 'Databricks Marketplace', 'Lakehouse Federation'],
         solution: 'Collaborate securely with Delta Sharing for open sharing, Clean Rooms for privacy-preserving analytics, and Marketplace for discovery',
         category: 'governance'
       },
@@ -65,22 +65,22 @@ class IntelligentRecommendationEngine {
       
       // Training & Enablement
       'training': {
-        features: ['Enterprise Platform Academy', 'Partner Training', 'Community Edition', 'Certification Programs'],
-        solution: 'Scale enablement with Enterprise Platform Academy online courses, partner-led workshops, and hands-on labs',
+        features: ['Databricks Academy', 'Partner Training', 'Community Edition', 'Certification Programs'],
+        solution: 'Scale enablement with Databricks Academy online courses, partner-led workshops, and hands-on labs',
         category: 'enablement'
       },
       'adoption': {
-        features: ['Enterprise AI Advisor', 'Quickstart Templates', 'Solution Accelerators', 'Community'],
+        features: ['Databricks Assistant', 'Quickstart Templates', 'Solution Accelerators', 'Community'],
         solution: 'Accelerate adoption with AI Assistant for code generation, pre-built templates, and community support',
         category: 'enablement'
       },
       'learning': {
-        features: ['Enterprise Platform Academy', 'Documentation', 'Enterprise Platform University', 'Hands-on Labs'],
+        features: ['Databricks Academy', 'Documentation', 'Databricks University', 'Hands-on Labs'],
         solution: 'Provide continuous learning through Academy courses, comprehensive docs, and hands-on practice environments',
         category: 'enablement'
       },
       'knowledge': {
-        features: ['Enterprise AI Advisor', 'Documentation', 'Community Forums', 'Solution Accelerators'],
+        features: ['Databricks Assistant', 'Documentation', 'Community Forums', 'Solution Accelerators'],
         solution: 'Build knowledge base with AI Assistant, searchable docs, community Q&A, and reusable accelerators',
         category: 'enablement'
       },
@@ -126,22 +126,22 @@ class IntelligentRecommendationEngine {
       
       // Monitoring & Observability
       'monitoring': {
-        features: ['Continuous Data Observability', 'System Tables', 'Audit Logs', 'Enterprise SQL Warehouse Dashboards'],
-        solution: 'Implement comprehensive monitoring with Continuous Data Observability for data quality and System Tables for usage tracking',
+        features: ['Lakehouse Monitoring', 'System Tables', 'Audit Logs', 'Databricks SQL Dashboards'],
+        solution: 'Implement comprehensive monitoring with Lakehouse Monitoring for data quality and System Tables for usage tracking',
         category: 'observability'
       },
       'observability': {
-        features: ['Continuous Data Observability', 'System Tables', 'Audit Logs', 'Query History'],
-        solution: 'Build observability stack with Continuous Data Observability, System Tables analysis, and audit log review',
+        features: ['Lakehouse Monitoring', 'System Tables', 'Audit Logs', 'Query History'],
+        solution: 'Build observability stack with Lakehouse Monitoring, System Tables analysis, and audit log review',
         category: 'observability'
       },
       'logging': {
-        features: ['Audit Logs', 'Cluster Logs', 'Declarative Data Pipelines Event Log', 'System Tables'],
+        features: ['Audit Logs', 'Cluster Logs', 'Delta Live Tables Event Log', 'System Tables'],
         solution: 'Centralize logging with audit logs for security, cluster logs for debugging, and DLT event logs for pipelines',
         category: 'observability'
       },
       'alerting': {
-        features: ['Budget Alerts', 'Workflow Notifications', 'Continuous Data Observability Alerts', 'SQL Alerts'],
+        features: ['Budget Alerts', 'Workflow Notifications', 'Lakehouse Monitoring Alerts', 'SQL Alerts'],
         solution: 'Configure multi-layered alerting: budget overruns, job failures, data quality issues, and query performance',
         category: 'observability'
       },
@@ -153,30 +153,30 @@ class IntelligentRecommendationEngine {
         category: 'collaboration'
       },
       'version': {
-        features: ['Git Integration', 'Repos', 'Enterprise Platform Asset Bundles', 'Enterprise Model Registry Model Versions'],
+        features: ['Git Integration', 'Repos', 'Databricks Asset Bundles', 'MLflow Model Versions'],
         solution: 'Implement version control for notebooks with Git integration and infrastructure with Asset Bundles',
         category: 'devops'
       },
       'deployment': {
-        features: ['Asset Bundles', 'CI/CD', 'Enterprise Platform CLI', 'Terraform Provider'],
+        features: ['Asset Bundles', 'CI/CD', 'Databricks CLI', 'Terraform Provider'],
         solution: 'Automate deployments with Asset Bundles, CI/CD pipelines, and infrastructure-as-code via Terraform',
         category: 'devops'
       },
       'cicd': {
-        features: ['Asset Bundles', 'Enterprise Platform CLI', 'GitHub Actions', 'Terraform'],
-        solution: 'Build CI/CD pipeline with Asset Bundles, Enterprise Platform CLI for automation, and GitHub Actions for orchestration',
+        features: ['Asset Bundles', 'Databricks CLI', 'GitHub Actions', 'Terraform'],
+        solution: 'Build CI/CD pipeline with Asset Bundles, Databricks CLI for automation, and GitHub Actions for orchestration',
         category: 'devops'
       },
       
       // Data Engineering
       'pipeline': {
-        features: ['Declarative Data Pipelines', 'Lakeflow Pipelines', 'Workflows', 'Auto Loader', 'Change Data Capture'],
-        solution: 'Modernize pipelines with Declarative Data Pipelines for declarative ETL, Lakeflow Pipelines for visual development, Auto Loader for streaming, and CDC for real-time sync',
+        features: ['Delta Live Tables', 'Lakeflow Pipelines', 'Workflows', 'Auto Loader', 'Change Data Capture'],
+        solution: 'Modernize pipelines with Delta Live Tables for declarative ETL, Lakeflow Pipelines for visual development, Auto Loader for streaming, and CDC for real-time sync',
         category: 'data_engineering'
       },
       'quality': {
-        features: ['Declarative Data Pipelines Expectations', 'Continuous Data Observability', 'Data Quality Checks', 'Great Expectations'],
-        solution: 'Enforce data quality with DLT expectations, monitor with Continuous Data Observability, and validate with quality checks',
+        features: ['Delta Live Tables Expectations', 'Lakehouse Monitoring', 'Data Quality Checks', 'Great Expectations'],
+        solution: 'Enforce data quality with DLT expectations, monitor with Lakehouse Monitoring, and validate with quality checks',
         category: 'data_engineering'
       },
       'ingestion': {
@@ -185,7 +185,7 @@ class IntelligentRecommendationEngine {
         category: 'data_engineering'
       },
       'streaming': {
-        features: ['Structured Streaming', 'Declarative Data Pipelines', 'Auto Loader', 'Kafka Integration', 'Streaming Tables'],
+        features: ['Structured Streaming', 'Delta Live Tables', 'Auto Loader', 'Kafka Integration', 'Streaming Tables'],
         solution: 'Build streaming pipelines with Structured Streaming, DLT for declarative logic, Streaming Tables for simplified development, and native Kafka integration',
         category: 'data_engineering'
       },
@@ -202,13 +202,13 @@ class IntelligentRecommendationEngine {
       
       // Machine Learning
       'experiment': {
-        features: ['Enterprise Model Registry Tracking', 'Enterprise Model Registry Experiments', 'AutoML', 'Enterprise Platform Notebooks'],
-        solution: 'Track all experiments with Enterprise Model Registry autologging, compare runs in UI, and accelerate with AutoML',
+        features: ['MLflow Tracking', 'MLflow Experiments', 'AutoML', 'Databricks Notebooks'],
+        solution: 'Track all experiments with MLflow autologging, compare runs in UI, and accelerate with AutoML',
         category: 'machine_learning'
       },
       'model': {
-        features: ['Mosaic AI Model Serving', 'Enterprise Model Registry Model Registry', 'Feature Engineering', 'Continuous Data Observability'],
-        solution: 'Deploy models with Mosaic AI Model Serving for production-grade inference, manage lifecycle with Enterprise Model Registry Registry, and monitor with Continuous Data Observability',
+        features: ['Mosaic AI Model Serving', 'MLflow Model Registry', 'Feature Engineering', 'Lakehouse Monitoring'],
+        solution: 'Deploy models with Mosaic AI Model Serving for production-grade inference, manage lifecycle with MLflow Registry, and monitor with Lakehouse Monitoring',
         category: 'machine_learning'
       },
       'serving': {
@@ -217,8 +217,8 @@ class IntelligentRecommendationEngine {
         category: 'machine_learning'
       },
       'feature': {
-        features: ['Feature Engineering in Unified Data Catalog & Governance', 'Online Tables', 'Feature Serving'],
-        solution: 'Centralize features in Unified Data Catalog & Governance Feature Engineering, serve with low-latency Online Tables for real-time ML',
+        features: ['Feature Engineering in Unity Catalog', 'Online Tables', 'Feature Serving'],
+        solution: 'Centralize features in Unity Catalog Feature Engineering, serve with low-latency Online Tables for real-time ML',
         category: 'machine_learning'
       },
       'online': {
@@ -244,13 +244,13 @@ class IntelligentRecommendationEngine {
         category: 'genai'
       },
       'agent': {
-        features: ['Mosaic AI Agent Framework', 'Mosaic AI Agent Evaluation', 'Compound AI Systems', 'Enterprise Model Registry AI Gateway'],
-        solution: 'Build compound AI systems with Mosaic AI Agent Framework, evaluate quality with Agent Evaluation, and orchestrate with Enterprise Model Registry',
+        features: ['Mosaic AI Agent Framework', 'Mosaic AI Agent Evaluation', 'Compound AI Systems', 'MLflow AI Gateway'],
+        solution: 'Build compound AI systems with Mosaic AI Agent Framework, evaluate quality with Agent Evaluation, and orchestrate with MLflow',
         category: 'genai'
       },
       'prompt': {
-        features: ['AI Playground', 'Enterprise Model Registry', 'Mosaic AI Gateway', 'Prompt Engineering Tools'],
-        solution: 'Develop prompts in AI Playground, version with Enterprise Model Registry, monitor quality with Mosaic AI Gateway, and optimize costs',
+        features: ['AI Playground', 'MLflow', 'Mosaic AI Gateway', 'Prompt Engineering Tools'],
+        solution: 'Develop prompts in AI Playground, version with MLflow, monitor quality with Mosaic AI Gateway, and optimize costs',
         category: 'genai'
       },
       'vector': {
@@ -259,24 +259,24 @@ class IntelligentRecommendationEngine {
         category: 'genai'
       },
       'evaluation': {
-        features: ['Mosaic AI Agent Evaluation', 'Enterprise Model Registry Evaluate', 'AI Playground', 'LLM Judges'],
-        solution: 'Evaluate GenAI quality with Mosaic AI Agent Evaluation for multi-turn conversations, Enterprise Model Registry for metrics tracking, and LLM judges for automated assessment',
+        features: ['Mosaic AI Agent Evaluation', 'MLflow Evaluate', 'AI Playground', 'LLM Judges'],
+        solution: 'Evaluate GenAI quality with Mosaic AI Agent Evaluation for multi-turn conversations, MLflow for metrics tracking, and LLM judges for automated assessment',
         category: 'genai'
       },
       
       // Analytics & BI
       'dashboard': {
-        features: ['Enterprise SQL Warehouse Dashboards', 'Genie', 'Power BI Connector', 'Tableau Integration'],
-        solution: 'Build dashboards with Enterprise SQL Warehouse for internal users, Genie for natural language, and BI connectors for external tools',
+        features: ['Databricks SQL Dashboards', 'Genie', 'Power BI Connector', 'Tableau Integration'],
+        solution: 'Build dashboards with Databricks SQL for internal users, Genie for natural language, and BI connectors for external tools',
         category: 'analytics'
       },
       'reporting': {
-        features: ['Enterprise SQL Warehouse', 'Scheduled Queries', 'Alerts', 'Dashboard Sharing'],
+        features: ['Databricks SQL', 'Scheduled Queries', 'Alerts', 'Dashboard Sharing'],
         solution: 'Automate reporting with scheduled SQL queries, set up alerts for anomalies, and share dashboards with stakeholders',
         category: 'analytics'
       },
       'visualization': {
-        features: ['Enterprise SQL Warehouse Dashboards', 'Genie', 'Partner Connectors', 'Python Visualization Libraries'],
+        features: ['Databricks SQL Dashboards', 'Genie', 'Partner Connectors', 'Python Visualization Libraries'],
         solution: 'Create visualizations with SQL dashboards, conversational Genie interface, or export to Tableau/Power BI',
         category: 'analytics'
       },
@@ -292,38 +292,38 @@ class IntelligentRecommendationEngine {
       // OPERATIONAL EXCELLENCE - CoE & Governance
       'no_coe': {
         problem: 'No formal Center of Excellence structure',
-        solution: 'Establish Enterprise Platform CoE with dedicated team (2-3 platform engineers, 1 data architect), Unified Data Catalog & Governance governance framework, System Tables for adoption tracking, and Enterprise Platform Academy for continuous training.',
+        solution: 'Establish Databricks CoE with dedicated team (2-3 platform engineers, 1 data architect), Unity Catalog governance framework, System Tables for adoption tracking, and Databricks Academy for continuous training.',
         recommendations: [
           '**Create CoE charter**: Define mission (governance, enablement, innovation), scope (platform management, best practices, training), and success metrics (adoption rate, time-to-insight, cost savings)',
-          '**Staff CoE team**: Assign 2-3 platform engineers for infrastructure, 1 data architect for design patterns, and leverage Enterprise Platform Professional Services for 3-month onboarding',
-          '**Deploy Unified Data Catalog & Governance**: Centralize data governance with metastore, implement RBAC for access control, enable audit logging for compliance, and create data classification tags',
-          '**Launch training program**: Enroll 20 users in Enterprise Platform Academy (Fundamentals, Data Engineering, ML), conduct monthly office hours, build internal knowledge base with runbooks',
+          '**Staff CoE team**: Assign 2-3 platform engineers for infrastructure, 1 data architect for design patterns, and leverage Databricks Professional Services for 3-month onboarding',
+          '**Deploy Unity Catalog**: Centralize data governance with metastore, implement RBAC for access control, enable audit logging for compliance, and create data classification tags',
+          '**Launch training program**: Enroll 20 users in Databricks Academy (Fundamentals, Data Engineering, ML), conduct monthly office hours, build internal knowledge base with runbooks',
           '**Track adoption metrics**: Use System Tables to monitor cluster usage, job success rates, user activity, and create executive dashboard showing CoE ROI'
         ],
-        platform_features: ['Unified Data Catalog & Governance', 'Enterprise Platform Academy', 'Account Console', 'System Tables', 'Professional Services'],
+        databricks_features: ['Unity Catalog', 'Databricks Academy', 'Account Console', 'System Tables', 'Professional Services'],
         next_steps: [
           'Workshop: CoE Design & Roadmap with stakeholders (1 day)',
           'Assessment: Current state gaps vs. target operating model',
-          'Engagement: Enterprise Platform Professional Services for CoE setup (3 months)',
-          'Training: Enterprise Platform Academy enrollment for 20 initial users',
-          'Implementation: Unified Data Catalog & Governance deployment with pilot use case (4 weeks)'
+          'Engagement: Databricks Professional Services for CoE setup (3 months)',
+          'Training: Databricks Academy enrollment for 20 initial users',
+          'Implementation: Unity Catalog deployment with pilot use case (4 weeks)'
         ]
       },
       
       'unclear_charter': {
         problem: 'Unclear CoE charter and responsibilities',
-        solution: 'Define clear CoE charter with three pillars: Governance (Unified Data Catalog & Governance policies), Enablement (training/support), Innovation (Labs/POCs). Establish RACI matrix, SLAs, and quarterly review process.',
+        solution: 'Define clear CoE charter with three pillars: Governance (Unity Catalog policies), Enablement (training/support), Innovation (Labs/POCs). Establish RACI matrix, SLAs, and quarterly review process.',
         recommendations: [
-          '**Document CoE charter**: Define pillars - Governance (Unified Data Catalog & Governance, audit logs, compliance), Enablement (training, support, best practices), Innovation (evaluate new features, POCs, Labs tools)',
+          '**Document CoE charter**: Define pillars - Governance (Unity Catalog, audit logs, compliance), Enablement (training, support, best practices), Innovation (evaluate new features, POCs, Labs tools)',
           '**Create RACI matrix**: Platform ownership (CoE), data ownership (domain teams), security policies (InfoSec + CoE), cost management (FinOps + CoE)',
           '**Establish SLAs**: Platform uptime 99.9%, support response 4 hours, training monthly, documentation updates bi-weekly, quarterly innovation reviews',
           '**Build metrics dashboard**: System Tables → cluster utilization, job success rates, support ticket volume, training completion, cost per workload',
           '**Quarterly reviews**: Present CoE impact to exec team - adoption metrics, cost savings (e.g. 30% reduction via cluster policies), time-to-insight improvements (e.g. 50% faster with DLT)'
         ],
-        platform_features: ['Unified Data Catalog & Governance', 'System Tables', 'Account Console', 'Enterprise Platform Academy', 'Continuous Data Observability'],
+        databricks_features: ['Unity Catalog', 'System Tables', 'Account Console', 'Databricks Academy', 'Lakehouse Monitoring'],
         next_steps: [
           'Workshop: CoE Charter Definition with exec sponsors and stakeholders',
-          'Consulting: Enterprise Platform Customer Success for CoE best practices',
+          'Consulting: Databricks Customer Success for CoE best practices',
           'Documentation: RACI matrix, SLAs, escalation procedures',
           'Implementation: System Tables dashboards for adoption tracking (2 weeks)',
           'Review: First quarterly CoE impact presentation to leadership'
@@ -332,19 +332,19 @@ class IntelligentRecommendationEngine {
       
       'resource_constraints': {
         problem: 'Insufficient CoE resources to support growing platform',
-        solution: 'Augment CoE with Enterprise Platform Professional Services (3-6 month engagement), partner SI resources (2-3 consultants), Enterprise Platform Academy for scalable training, and community support channels.',
+        solution: 'Augment CoE with Databricks Professional Services (3-6 month engagement), partner SI resources (2-3 consultants), Databricks Academy for scalable training, and community support channels.',
         recommendations: [
-          '**Engage Enterprise Platform Professional Services**: 3-6 month engagement for platform setup, Unified Data Catalog & Governance design, migration strategy, performance optimization, and CoE team training',
-          '**Partner with System Integrator**: Augment CoE with 2-3 consultants from Slalom, Deloitte, Accenture, or Enterprise Platform partners for surge capacity and specialized skills',
-          '**Scale training via Academy**: Enterprise Platform Academy online courses for self-paced learning (100+ courses), monthly group training sessions, quarterly certification push',
-          '**Leverage Enterprise Platform Community**: Forums for peer support, Slack channels for real-time help, user group meetups, GitHub repos with sample code and best practices',
-          '**Build self-service platform**: Quickstart templates, Solution Accelerators, documented runbooks, Enterprise AI Advisor for code generation, reducing CoE support burden'
+          '**Engage Databricks Professional Services**: 3-6 month engagement for platform setup, Unity Catalog design, migration strategy, performance optimization, and CoE team training',
+          '**Partner with System Integrator**: Augment CoE with 2-3 consultants from Slalom, Deloitte, Accenture, or Databricks partners for surge capacity and specialized skills',
+          '**Scale training via Academy**: Databricks Academy online courses for self-paced learning (100+ courses), monthly group training sessions, quarterly certification push',
+          '**Leverage Databricks Community**: Forums for peer support, Slack channels for real-time help, user group meetups, GitHub repos with sample code and best practices',
+          '**Build self-service platform**: Quickstart templates, Solution Accelerators, documented runbooks, Databricks Assistant for code generation, reducing CoE support burden'
         ],
-        platform_features: ['Professional Services', 'Enterprise Platform Academy', 'Partner Network', 'Community', 'Solution Accelerators'],
+        databricks_features: ['Professional Services', 'Databricks Academy', 'Partner Network', 'Community', 'Solution Accelerators'],
         next_steps: [
-          'Engagement: Enterprise Platform Professional Services scoping call and SOW',
+          'Engagement: Databricks Professional Services scoping call and SOW',
           'RFP: System integrator partners for CoE augmentation (2-4 week selection)',
-          'Enrollment: Enterprise Platform Academy licenses for 50 users',
+          'Enrollment: Databricks Academy licenses for 50 users',
           'Setup: Internal knowledge base (Confluence/Notion) with runbooks',
           'Pilot: Self-service quickstart templates for common use cases'
         ]
@@ -352,15 +352,15 @@ class IntelligentRecommendationEngine {
       
       'standards_gaps': {
         problem: 'Incomplete standards and guidelines for platform use',
-        solution: 'Create comprehensive standards: Enterprise Platform Asset Bundles for IaC, cluster policies for compute governance, Unified Data Catalog & Governance for data standards, naming conventions, and automated compliance checks.',
+        solution: 'Create comprehensive standards: Databricks Asset Bundles for IaC, cluster policies for compute governance, Unity Catalog for data standards, naming conventions, and automated compliance checks.',
         recommendations: [
           '**Define compute standards**: Cluster policies with approved instance types, auto-termination (2 hours), Photon enabled, spot instances for dev/test, libraries allowlist',
-          '**Data standards via Unified Data Catalog & Governance**: Naming conventions (bronze/silver/gold), classification tags (PII, sensitive), quality tiers (certified/uncertified), retention policies',
+          '**Data standards via Unity Catalog**: Naming conventions (bronze/silver/gold), classification tags (PII, sensitive), quality tiers (certified/uncertified), retention policies',
           '**IaC with Asset Bundles**: All resources (jobs, clusters, notebooks) defined in YAML, version controlled in Git, deployed via CI/CD, tested in dev before prod',
           '**Code standards**: PEP 8 for Python, notebook documentation requirements, automated testing with pytest, pre-commit hooks for linting',
-          '**Security standards**: No storage credentials in code (use Unified Data Catalog & Governance), service principals for automation, IP allowlists for sensitive workspaces, audit log monitoring'
+          '**Security standards**: No storage credentials in code (use Unity Catalog), service principals for automation, IP allowlists for sensitive workspaces, audit log monitoring'
         ],
-        platform_features: ['Asset Bundles', 'Cluster Policies', 'Unified Data Catalog & Governance', 'Audit Logs', 'Git Integration'],
+        databricks_features: ['Asset Bundles', 'Cluster Policies', 'Unity Catalog', 'Audit Logs', 'Git Integration'],
         next_steps: [
           'Workshop: Standards Definition with platform team and domain leads',
           'Documentation: Standards wiki with examples, templates, and decision logs',
@@ -372,18 +372,18 @@ class IntelligentRecommendationEngine {
       
       'adoption_challenges': {
         problem: 'Difficulty driving standards adoption across teams',
-        solution: 'Drive adoption with Enterprise AI Advisor for code generation from standards, Solution Accelerators as reference implementations, gamification (leaderboards, badges), and executive sponsorship.',
+        solution: 'Drive adoption with Databricks Assistant for code generation from standards, Solution Accelerators as reference implementations, gamification (leaderboards, badges), and executive sponsorship.',
         recommendations: [
-          '**Make standards easy**: Enterprise AI Advisor trained on your standards generates compliant code, quickstart templates with standards baked in, one-click setup for common patterns',
+          '**Make standards easy**: Databricks Assistant trained on your standards generates compliant code, quickstart templates with standards baked in, one-click setup for common patterns',
           '**Show the value**: Benchmark study showing 50% time savings with standards, highlight team successes, exec sponsors champion adoption in all-hands meetings',
           '**Gamification**: Leaderboard for teams meeting standards (tracked via System Tables), badges for certifications, quarterly awards for best practices showcase',
-          '**Embed in onboarding**: New team members complete standards training (Enterprise Platform Academy custom course) before platform access, pair with mentor for first project',
+          '**Embed in onboarding**: New team members complete standards training (Databricks Academy custom course) before platform access, pair with mentor for first project',
           '**Progressive enforcement**: Start with recommendations, then warnings, then required approvals for non-compliant deployments, with clear escalation path and exceptions process'
         ],
-        platform_features: ['Enterprise AI Advisor', 'Solution Accelerators', 'System Tables', 'Enterprise Platform Academy', 'Quickstart Templates'],
+        databricks_features: ['Databricks Assistant', 'Solution Accelerators', 'System Tables', 'Databricks Academy', 'Quickstart Templates'],
         next_steps: [
           'Development: Quickstart templates for top 5 use cases',
-          'Training: Custom Enterprise Platform Academy course on your standards',
+          'Training: Custom Databricks Academy course on your standards',
           'Dashboard: Adoption leaderboard from System Tables (weekly updates)',
           'Communication: Monthly newsletter highlighting team wins and new tools',
           'Review: Quarterly adoption metrics review with exec team'
@@ -430,9 +430,9 @@ class IntelligentRecommendationEngine {
       problem: painPoint.label,
       solution: `${keywordData.solution}`,
       recommendations: [
-        `Recommended Enterprise Platform products/features: ${keywordData.features.join(', ')}`
+        `Recommended Databricks products/features: ${keywordData.features.join(', ')}`
       ],
-      platform_features: keywordData.features
+      databricks_features: keywordData.features
       // Note: High-level Next Steps are handled by buildContextualNextSteps() using nextStepsLibrary
     };
   }
@@ -443,17 +443,17 @@ class IntelligentRecommendationEngine {
   generateTechnicalImplementation(primaryFeature, secondaryFeature, painPointLabel, category) {
     // Feature-specific API endpoints and configuration
     const technicalMappings = {
-      'Unified Data Catalog & Governance': {
+      'Unity Catalog': {
         steps: [
-          '• Deploy Unified Data Catalog & Governance metastore via REST API: \`POST /api/2.1/unity-catalog/metastores\` with AWS S3/Azure ADLS/GCS root storage configuration',
+          '• Deploy Unity Catalog metastore via REST API: \`POST /api/2.1/unity-catalog/metastores\` with AWS S3/Azure ADLS/GCS root storage configuration',
           '• Configure fine-grained access control with \`GRANT\` statements: \`GRANT SELECT ON catalog.schema.table TO \`user@domain.com\`\` and attribute-based policies',
           '• Enable audit logging: \`ALTER CATALOG catalog_name SET AUDIT = true\` and stream to System Tables (\`system.access.audit\`) for compliance dashboards',
           '• Integrate with Identity Provider via SCIM 2.0: \`POST /api/2.0/accounts/{account_id}/scim/v2/Users\` for automated user/group provisioning'
         ],
-        complexity: '4-6 weeks, requires Enterprise Platform Certified Associate + security/IAM expertise + Terraform/IaC skills',
+        complexity: '4-6 weeks, requires Databricks Certified Associate + security/IAM expertise + Terraform/IaC skills',
         prerequisites: 'Account admin permissions, cloud IAM roles, external location credentials, Delta Lake knowledge'
       },
-      'Declarative Data Pipelines': {
+      'Delta Live Tables': {
         steps: [
           '• Define DLT pipelines in Python/SQL with declarative expectations: \`@dlt.table(name="orders_clean", expectations={"valid_order": "order_id IS NOT NULL"})\`',
           '• Configure DLT settings via API: \`POST /api/2.0/pipelines\` with \`{"development": false, "photon_enabled": true, "serverless": true}\`',
@@ -461,19 +461,19 @@ class IntelligentRecommendationEngine {
           '• Monitor pipeline health via Event Log: \`SELECT * FROM event_log(TABLE(LIVE.pipeline_events)) WHERE level = "ERROR"\` and integrate with PagerDuty/Slack'
         ],
         complexity: '3-5 weeks, requires PySpark expertise + DataOps experience + CI/CD pipeline skills',
-        prerequisites: 'Enterprise Platform Runtime 11.3+, Unified Data Catalog & Governance enabled, source data in Delta format, version control (Git)'
+        prerequisites: 'Databricks Runtime 11.3+, Unity Catalog enabled, source data in Delta format, version control (Git)'
       },
-      'Enterprise Model Registry': {
+      'MLflow': {
         steps: [
-          '• Configure Enterprise Model Registry Tracking Server with backend store: \`Enterprise Model Registry.set_tracking_uri("Enterprise Platform")\` and artifact store in Unified Data Catalog & Governance volumes',
-          '• Implement experiment tracking with autologging: \`Enterprise Model Registry.autolog()\` for scikit-learn/XGBoost/TensorFlow with hyperparameter capture',
-          '• Register models in Unified Data Catalog & Governance: \`Enterprise Model Registry.register_model(f"runs:/{run_id}/model", "catalog.schema.model_name")\` with versioning and aliases',
+          '• Configure MLflow Tracking Server with backend store: \`mlflow.set_tracking_uri("databricks")\` and artifact store in Unity Catalog volumes',
+          '• Implement experiment tracking with autologging: \`mlflow.autolog()\` for scikit-learn/XGBoost/TensorFlow with hyperparameter capture',
+          '• Register models in Unity Catalog: \`mlflow.register_model(f"runs:/{run_id}/model", "catalog.schema.model_name")\` with versioning and aliases',
           '• Deploy to Model Serving: \`POST /api/2.0/serving-endpoints\` with \`{"served_models": [{"model_name": "...", "model_version": "1", "workload_size": "Small", "scale_to_zero_enabled": true}]}\`'
         ],
         complexity: '3-4 weeks, requires ML engineering + MLOps + Kubernetes/container knowledge',
-        prerequisites: 'Enterprise Platform ML Runtime, Unified Data Catalog & Governance, Model Registry access, production endpoint permissions'
+        prerequisites: 'Databricks ML Runtime, Unity Catalog, Model Registry access, production endpoint permissions'
       },
-      'Enterprise SQL Warehouse': {
+      'Databricks SQL': {
         steps: [
           '• Provision Serverless SQL Warehouse: \`POST /api/2.0/sql/warehouses\` with \`{"name": "...", "cluster_size": "2X-Small", "serverless": true, "enable_photon": true}\`',
           '• Implement Liquid Clustering for query optimization: \`ALTER TABLE catalog.schema.table CLUSTER BY (column1, column2)\` for 2-5× performance improvement',
@@ -481,17 +481,17 @@ class IntelligentRecommendationEngine {
           '• Set up SQL Alerts with Webhooks: \`POST /api/2.0/preview/sql/alerts\` with Slack/email notification on SLA breach or anomaly detection'
         ],
         complexity: '2-3 weeks, requires SQL optimization + data modeling + BI integration experience',
-        prerequisites: 'Enterprise SQL Warehouse Pro/Serverless, Unified Data Catalog & Governance with SELECT grants, Photon enabled, Serverless GA (Q2 2024)'
+        prerequisites: 'Databricks SQL Pro/Serverless, Unity Catalog with SELECT grants, Photon enabled, Serverless GA (Q2 2024)'
       },
       'Model Serving': {
         steps: [
           '• Deploy Serverless Model Serving endpoint: \`POST /api/2.0/serving-endpoints\` with auto-scaling (0-10 instances) and GPU support (A10G/A100)',
-          '• Configure AI Gateway for rate limiting, PII detection: \`POST /api/2.0/serving-endpoints/{name}/config\` with Continuous Data Observability integration',
+          '• Configure AI Gateway for rate limiting, PII detection: \`POST /api/2.0/serving-endpoints/{name}/config\` with Lakehouse Monitoring integration',
           '• Implement A/B testing with traffic splitting: Update endpoint config with \`{"traffic_config": {"routes": [{"served_model_name": "champion", "traffic_percentage": 90}, {"served_model_name": "challenger", "traffic_percentage": 10}]}}\`',
           '• Monitor inference latency and drift: Query \`system.serving.inference_log\` and \`system.serving.request_log\` for real-time dashboards'
         ],
         complexity: '3-5 weeks, requires MLOps + distributed systems + monitoring/observability expertise',
-        prerequisites: 'Enterprise Platform ML Runtime, registered models in Unified Data Catalog & Governance, production workspace, Serverless Compute GA'
+        prerequisites: 'Databricks ML Runtime, registered models in Unity Catalog, production workspace, Serverless Compute GA'
       },
       'Workflows': {
         steps: [
@@ -501,21 +501,21 @@ class IntelligentRecommendationEngine {
           '• Set up alerting and SLA monitoring: \`POST /api/2.1/jobs/{job_id}/runs/submit\` with email/webhook notifications on failure, timeout, or SLA breach'
         ],
         complexity: '2-4 weeks, requires orchestration + DevOps + Git workflow expertise',
-        prerequisites: 'Enterprise Platform Jobs access, Git integration enabled, service principal for automation, Unified Data Catalog & Governance for secrets'
+        prerequisites: 'Databricks Jobs access, Git integration enabled, service principal for automation, Unity Catalog for secrets'
       }
     };
     
     // Get technical implementation for primary feature, fallback to generic
     const implementation = technicalMappings[primaryFeature] || {
       steps: [
-        `• Deploy ${primaryFeature} via Enterprise Platform REST API (\`/api/2.1/...\`) with OAuth 2.0 service principal authentication`,
-        `• Configure ${secondaryFeature} integration using infrastructure-as-code (Enterprise Platform Asset Bundles or Terraform Provider)`,
-        `• Implement monitoring and observability with System Tables (\`system.compute.*\`, \`system.billing.*\`) and Continuous Data Observability`,
+        `• Deploy ${primaryFeature} via Databricks REST API (\`/api/2.1/...\`) with OAuth 2.0 service principal authentication`,
+        `• Configure ${secondaryFeature} integration using infrastructure-as-code (Databricks Asset Bundles or Terraform Provider)`,
+        `• Implement monitoring and observability with System Tables (\`system.compute.*\`, \`system.billing.*\`) and Lakehouse Monitoring`,
         `• Enable CI/CD pipeline with automated testing (pytest), security scanning (SAST/DAST), and blue-green deployment`,
         `**Latest Features**: Serverless Compute (GA Q2 2024), Enhanced Autoscaling, System Tables for Billing/Governance`
       ],
-      complexity: '3-6 weeks | Requires: Enterprise Platform Certified Associate + platform engineering + DevOps + cloud architecture',
-      prerequisites: 'Account/Workspace admin, Unified Data Catalog & Governance, cloud IAM roles (AWS/Azure/GCP), Git repository, CI/CD platform'
+      complexity: '3-6 weeks | Requires: Databricks Certified Associate + platform engineering + DevOps + cloud architecture',
+      prerequisites: 'Account/Workspace admin, Unity Catalog, cloud IAM roles (AWS/Azure/GCP), Git repository, CI/CD platform'
     };
     
     return implementation;
@@ -527,7 +527,7 @@ class IntelligentRecommendationEngine {
   pillarDefaultRecommendation(painPoint, pillarId) {
     const pillarDefaults = {
       'platform_governance': {
-        features: ['Unified Data Catalog & Governance', 'Account Console', 'Audit Logs', 'Cluster Policies'],
+        features: ['Unity Catalog', 'Account Console', 'Audit Logs', 'Cluster Policies'],
         apiEndpoints: [
           '\`POST /api/2.1/unity-catalog/metastores\` - Deploy centralized metastore with multi-cloud storage',
           '\`POST /api/2.0/policies/clusters/create\` - Enforce compute governance with auto-termination and Photon',
@@ -538,43 +538,43 @@ class IntelligentRecommendationEngine {
         latestFeature: 'Attribute-Based Access Control (ABAC) - GA Q3 2024'
       },
       'data_engineering': {
-        features: ['Declarative Data Pipelines', 'Workflows', 'Auto Loader', 'Continuous Data Observability'],
+        features: ['Delta Live Tables', 'Workflows', 'Auto Loader', 'Lakehouse Monitoring'],
         apiEndpoints: [
           '\`POST /api/2.0/pipelines\` - Deploy DLT with Serverless compute and Change Data Capture (CDC)',
           '\`POST /api/2.1/jobs/create\` - Orchestrate multi-task DAGs with conditional execution and retries',
           '\`POST /api/2.0/lakehouse-monitors\` - Monitor data quality with drift detection and automated alerting',
           '\`SELECT * FROM cloud_files("s3://bucket", "json")\` - Auto Loader for schema evolution and backfill'
         ],
-        complexity: '4-6 weeks | Requires: PySpark + Enterprise Platform Runtime 13.3+ + DataOps/DevOps skills',
+        complexity: '4-6 weeks | Requires: PySpark + Databricks Runtime 13.3+ + DataOps/DevOps skills',
         latestFeature: 'DLT Serverless + Predictive I/O - GA Q1 2024'
       },
       'analytics_bi': {
-        features: ['Enterprise SQL Warehouse', 'Photon', 'Genie', 'Liquid Clustering'],
+        features: ['Databricks SQL', 'Photon', 'Genie', 'Liquid Clustering'],
         apiEndpoints: [
           '\`POST /api/2.0/sql/warehouses\` - Provision Serverless SQL with auto-scaling (2X-Small to 4X-Large)',
           '\`ALTER TABLE catalog.schema.table CLUSTER BY (col1, col2)\` - Implement Liquid Clustering for 2-5× query speedup',
           '\`POST /api/2.0/preview/genie/spaces\` - Deploy Genie AI analyst with natural language query interface',
           '\`POST /api/2.0/sql/dashboards\` - Automate dashboard refresh with scheduled queries and Slack alerts'
         ],
-        complexity: '3-5 weeks | Requires: SQL tuning + Unified Data Catalog & Governance + BI tool integration (Tableau/Power BI)',
+        complexity: '3-5 weeks | Requires: SQL tuning + Unity Catalog + BI tool integration (Tableau/Power BI)',
         latestFeature: 'Genie (AI Analyst) + Serverless SQL GA - Q2 2024'
       },
       'machine_learning': {
-        features: ['Enterprise Model Registry', 'Feature Store', 'Model Serving', 'Continuous Data Observability'],
+        features: ['MLflow', 'Feature Store', 'Model Serving', 'Lakehouse Monitoring'],
         apiEndpoints: [
-          '\`Enterprise Model Registry.register_model("runs:/{run_id}/model", "catalog.schema.model")\` - Version models in Unified Data Catalog & Governance',
+          '\`mlflow.register_model("runs:/{run_id}/model", "catalog.schema.model")\` - Version models in Unity Catalog',
           '\`POST /api/2.0/serving-endpoints\` - Deploy Serverless Model Serving with GPU (A10G) and auto-scaling',
           '\`POST /api/2.0/feature-store/feature-tables\` - Centralize features with Online Tables for <10ms serving',
           '\`POST /api/2.0/lakehouse-monitors\` - Monitor model drift, data quality, and inference latency in production'
         ],
         complexity: '4-6 weeks | Requires: ML Engineering + MLOps + Kubernetes + monitoring expertise',
-        latestFeature: 'Serverless Model Serving + Continuous Data Observability for ML - GA Q1 2024'
+        latestFeature: 'Serverless Model Serving + Lakehouse Monitoring for ML - GA Q1 2024'
       },
       'generative_ai': {
         features: ['Mosaic AI Agent Framework', 'Vector Search', 'Foundation Model APIs', 'AI Gateway'],
         apiEndpoints: [
           '\`POST /api/2.0/vector-search/indexes\` - Deploy hybrid search with embedding models (BGE, OpenAI, Cohere)',
-          '\`Enterprise Model Registry.langchain.log_model()\` - Register RAG chain in Model Registry with Agent Evaluation framework',
+          '\`mlflow.langchain.log_model()\` - Register RAG chain in Model Registry with Agent Evaluation framework',
           '\`POST /api/2.0/serving-endpoints/{name}/invocations\` - Serve Foundation Models (Llama 3, DBRX, Mixtral) via AI Gateway',
           '\`POST /api/2.0/serving-endpoints/{name}/config\` - Configure rate limiting, PII detection, prompt firewall'
         ],
@@ -582,15 +582,15 @@ class IntelligentRecommendationEngine {
         latestFeature: 'Mosaic AI Agent Framework + Agent Evaluation - GA Q3 2024'
       },
       'operational_excellence': {
-        features: ['Unified Data Catalog & Governance', 'System Tables', 'Enterprise Platform Academy', 'Asset Bundles'],
+        features: ['Unity Catalog', 'System Tables', 'Databricks Academy', 'Asset Bundles'],
         apiEndpoints: [
           '\`SELECT * FROM system.compute.clusters WHERE date >= current_date() - 30\` - Analyze compute utilization',
-          '\`Enterprise Platform bundle deploy\` - Deploy infrastructure-as-code with Asset Bundles (YAML + Git)',
+          '\`databricks bundle deploy\` - Deploy infrastructure-as-code with Asset Bundles (YAML + Git)',
           '\`POST /api/2.0/workspace/import\` - Automate notebook deployment with CI/CD (GitHub Actions)',
           '\`GET /api/2.0/clusters/list\` - Audit cluster configurations for compliance and cost optimization'
         ],
         complexity: '3-5 weeks | Requires: Platform engineering + System Tables + Terraform + DevOps',
-        latestFeature: 'Enterprise Platform Asset Bundles (DABs) + Enhanced System Tables - GA Q4 2023'
+        latestFeature: 'Databricks Asset Bundles (DABs) + Enhanced System Tables - GA Q4 2023'
       }
     };
     
@@ -598,12 +598,12 @@ class IntelligentRecommendationEngine {
     
     return {
       problem: painPoint.label,
-      solution: `Deploy ${defaults.features.join(', ')} with production-grade architecture, security, and monitoring. Implementation requires deep Enterprise Platform platform expertise and infrastructure-as-code patterns.`,
+      solution: `Deploy ${defaults.features.join(', ')} with production-grade architecture, security, and monitoring. Implementation requires deep Databricks platform expertise and infrastructure-as-code patterns.`,
       recommendations: [
         `**Technical Architecture for ${painPoint.label}**:`,
         ...defaults.apiEndpoints,
       ],
-      platform_features: defaults.features
+      databricks_features: defaults.features
       // Note: High-level Next Steps are handled by buildContextualNextSteps() using nextStepsLibrary
     };
   }
@@ -693,8 +693,8 @@ class IntelligentRecommendationEngine {
           if (solution.next_steps) {
             allNextSteps.push(...solution.next_steps);
           }
-          if (solution.enterprisePlatform_features) {
-            solution.enterprisePlatform_features.forEach(f => featureSet.add(f));
+          if (solution.databricks_features) {
+            solution.databricks_features.forEach(f => featureSet.add(f));
           }
         }
       }
@@ -718,10 +718,10 @@ class IntelligentRecommendationEngine {
     const theGood = this.buildContextualStrengths(assessment, pillarId, painPoints, comments, stateGaps, pillarFramework);
     const theBad = this.buildContextualChallenges(assessment, pillarId, topPainPoints, comments, stateGaps);
     
-    // 🚀 BUILD Enterprise Platform FEATURES from database
+    // 🚀 BUILD DATABRICKS FEATURES from database
     let painPointFeatures;
     if (dbFeatures.length > 0) {
-      console.log(`[IntelligentEngine V2] ✅ Building ${dbFeatures.length} Enterprise Platform Features from DATABASE`);
+      console.log(`[IntelligentEngine V2] ✅ Building ${dbFeatures.length} Databricks Features from DATABASE`);
       
       // 🔥 ADD "WHY" TO EACH FEATURE based on user pain points and comments
       painPointFeatures = dbFeatures.map((f, featureIndex) => {
@@ -758,28 +758,28 @@ class IntelligentRecommendationEngine {
             // GenAI Features
             'Mosaic AI Model Serving': 'Deploy production-ready AI models with built-in governance and monitoring',
             'AI Gateway': 'Centralized gateway for LLM usage with governance, cost tracking, and quality control',
-            'Continuous Data Observability': 'Automated monitoring for data quality, schema changes, and model performance',
+            'Lakehouse Monitoring': 'Automated monitoring for data quality, schema changes, and model performance',
             'System Tables': 'Built-in queryable logs for usage tracking, billing analysis, and audit compliance',
             'Vector Search': 'High-performance vector similarity search for RAG applications',
             'AI Functions': 'Call LLMs directly from SQL for AI-powered data transformations',
             'Agent Framework': 'Build and deploy multi-step AI agents with tool integration',
-            'Unified Data Catalog & Governance for AI': 'Govern AI models, prompts, and feature sets with centralized catalog',
+            'Unity Catalog for AI': 'Govern AI models, prompts, and feature sets with centralized catalog',
             
             // ML Features
-            'Enterprise Model Registry': 'End-to-end ML lifecycle management with experiment tracking and model registry',
+            'MLflow': 'End-to-end ML lifecycle management with experiment tracking and model registry',
             'Feature Store': 'Centralized repository for ML features with version control and lineage',
             'AutoML': 'Automated machine learning for rapid model development',
             'Model Registry': 'Version control and governance for production ML models',
             'Model Serving': 'Low-latency endpoints for real-time ML predictions',
             
             // Data Engineering Features
-            'Declarative Data Pipelines': 'Declarative ETL pipelines with built-in quality controls',
+            'Delta Live Tables': 'Declarative ETL pipelines with built-in quality controls',
             'Delta Sharing': 'Secure data sharing without copying or moving data',
             'Workflows': 'Orchestrate data, analytics, and ML pipelines',
             'Autoloader': 'Incrementally and efficiently process new data files',
             
             // Platform Governance Features (CRITICAL - these were missing!)
-            'Unified Data Catalog & Governance': 'Unified governance for data and AI assets with centralized access control',
+            'Unity Catalog': 'Unified governance for data and AI assets with centralized access control',
             'Data Lineage': 'Automatic tracking of data transformations and dependencies',
             'Semantic Layer': 'Business-friendly semantic layer for consistent metrics and definitions',
             'Compliance Security Profile': 'Pre-configured security controls for regulatory compliance',
@@ -793,14 +793,14 @@ class IntelligentRecommendationEngine {
             'Liquid Clustering': 'Self-optimizing data layout without manual tuning',
             
             // Collaboration & BI Features
-            'Enterprise SQL Warehouse': 'Powerful SQL analytics with native BI integrations',
+            'Databricks SQL': 'Powerful SQL analytics with native BI integrations',
             'SQL Warehouses': 'Dedicated compute for SQL queries with auto-scaling',
             'Dashboards': 'Interactive visualizations and reporting',
             'Alerts': 'Automated notifications for data changes and anomalies',
             'Query Profile': 'Detailed query execution analysis for optimization',
             
             // Data Quality Features
-            'Expectations': 'Data quality validation rules for Declarative Data Pipelines',
+            'Expectations': 'Data quality validation rules for Delta Live Tables',
             'Quality Metrics': 'Automated data quality scoring and monitoring',
             'Schema Evolution': 'Automatic handling of schema changes',
             
@@ -810,9 +810,9 @@ class IntelligentRecommendationEngine {
             'Tagging': 'Cost allocation by team, project, or workload',
             
             // Training & Enablement Features (CRITICAL - these were causing duplicates!)
-            'Enterprise Platform Academy': 'Free online training and certification programs for platform adoption',
+            'Databricks Academy': 'Free online training and certification programs for platform adoption',
             'Professional Services': 'Expert consulting for architecture, migrations, and best practices',
-            'Community Edition': 'Free access to Enterprise Platform for learning and experimentation',
+            'Community Edition': 'Free access to Databricks for learning and experimentation',
             'Partner Connect': 'Pre-integrated ecosystem partners for extended functionality',
             
             // Workspace & Admin Features
@@ -824,7 +824,7 @@ class IntelligentRecommendationEngine {
             // Notebook & Development Features
             'Notebooks': 'Collaborative notebooks with multi-language support',
             'Repos': 'Git integration for version control and CI/CD',
-            'Enterprise Platform Asset Bundles': 'Infrastructure-as-code for deployment automation',
+            'Databricks Asset Bundles': 'Infrastructure-as-code for deployment automation',
             
             // Job & Orchestration Features
             'Job Scheduler': 'Reliable job scheduling with dependency management',
@@ -889,7 +889,7 @@ class IntelligentRecommendationEngine {
       // 🎯 FILTER OUT CROSS-PILLAR CONTAMINATION
       // Remove features that don't belong to this pillar
       const genAIFeatures = ['AI Gateway', 'Vector Search', 'Mosaic AI', 'Foundation Model', 'AI Playground', 'DBRX', 'AI Functions', 'Agent Framework'];
-      const mlFeatures = ['Enterprise Model Registry', 'Feature Store', 'Model Registry', 'Model Serving', 'AutoML'];
+      const mlFeatures = ['MLflow', 'Feature Store', 'Model Registry', 'Model Serving', 'AutoML'];
       
       if (pillarId === 'data_engineering') {
         // Data Engineering should NOT have GenAI or ML features
@@ -905,7 +905,7 @@ class IntelligentRecommendationEngine {
         );
         console.log(`[IntelligentEngine V2] 🧹 Filtered out GenAI features, ${painPointFeatures.length} features remaining for ${pillarId}`);
       } else if (pillarId === 'platform_governance') {
-        // Platform should NOT have GenAI-specific features (but can have Unified Data Catalog & Governance, Audit Logs, etc.)
+        // Platform should NOT have GenAI-specific features (but can have Unity Catalog, Audit Logs, etc.)
         const genAIOnlyFeatures = ['AI Gateway', 'Vector Search', 'Mosaic AI', 'Foundation Model', 'AI Playground', 'DBRX', 'AI Functions', 'Agent Framework'];
         painPointFeatures = painPointFeatures.filter(f => 
           !genAIOnlyFeatures.some(genAI => f.name.includes(genAI))
@@ -929,7 +929,7 @@ class IntelligentRecommendationEngine {
       theBad: theBad,
       recommendations: allRecommendations.slice(0, 8),
       nextSteps: allNextSteps.slice(0, 6),  // 🔥 FIXED: Max 6 next steps as requested
-      platformFeatures: painPointFeatures.slice(0, 8) // 🔥 FIXED: Max 8 features as requested
+      databricksFeatures: painPointFeatures.slice(0, 8) // 🔥 FIXED: Max 8 features as requested
     };
   }
 
@@ -988,7 +988,7 @@ class IntelligentRecommendationEngine {
       // Build the recommendation structure
       const recommendation = {
         title: feature.name,
-        description: feature.detailed_description || feature.description || 'Advanced Enterprise Platform capability to address your technical challenges',
+        description: feature.detailed_description || feature.description || 'Advanced Databricks capability to address your technical challenges',
         benefits: benefits,
         icon: this.getCategoryIcon(feature.category),
         gaStatus: feature.ga_status || 'GA',
@@ -1002,12 +1002,12 @@ class IntelligentRecommendationEngine {
         const tech = featureDetails.capabilities;
         recommendation.technicalDetails = {
           complexity: this.getComplexityFromWeeks(feature.complexity_weeks),
-          prerequisites: tech.prerequisites || 'enterprise workspace with appropriate permissions',
+          prerequisites: tech.prerequisites || 'Databricks workspace with appropriate permissions',
           apiEndpoint: tech.api_endpoint,
           apiMethod: tech.api_method,
           configExample: tech.configuration_example,
           terraformResource: tech.terraform_resource,
-          platformCLI: tech.enterprisePlatform_cli_command
+          databricksCLI: tech.databricks_cli_command
         };
 
         // Add implementation steps if available
@@ -1056,7 +1056,7 @@ class IntelligentRecommendationEngine {
     const nextStepsLibrary = {
       platform_governance: [
         'Executive Alignment: Present governance vision to leadership; secure funding and sponsorship for cross-domain rollout',
-        'Workshop: Conduct a Platform Governance & Unified Data Catalog & Governance Workshop with Enterprise Platform SMEs to align architecture, access models, and catalog strategy',
+        'Workshop: Conduct a Platform Governance & Unity Catalog Workshop with Databricks SMEs to align architecture, access models, and catalog strategy',
         'Enablement & Training: Role-based sessions for platform admins and data stewards on workspace hierarchy, permissions, lineage, and FinOps tagging',
         'Adoption Strategy: Start with one business domain as a pilot (e.g., Finance, Clinical, or Claims), then scale horizontally',
         'Assessment: Run a Security, Compliance & Governance Assessment to benchmark against HIPAA, HITRUST, and GxP best practices',
@@ -1065,7 +1065,7 @@ class IntelligentRecommendationEngine {
         'Change Management: Create a governance council; publish policies, catalog taxonomy, and data ownership matrix'
       ],
       data_engineering: [
-        'Workshop: Host a LakeFlow / Declarative Data Pipelines Ingestion Strategy Workshop to align on ingestion patterns, SLAs, and DQ policies',
+        'Workshop: Host a LakeFlow / Delta Live Tables Ingestion Strategy Workshop to align on ingestion patterns, SLAs, and DQ policies',
         'Enablement: Train engineers and analysts on medallion architecture principles, CDC integration, and cost-efficient job scheduling',
         'Adoption & Pilot: Identify 1-2 high-value pipelines for modernization (e.g., Claims ETL or Member 360 ingestion) as lighthouse examples',
         'Assessment: Conduct a Pipeline Reliability & Cost Optimization Assessment to quantify gains from migration',
@@ -1075,8 +1075,8 @@ class IntelligentRecommendationEngine {
         'Change Management: Create documentation and reusable templates for new pipelines; standardize intake and approval workflows'
       ],
       analytics_bi: [
-        'Workshop: Run a Modern BI on Lakehouse Workshop (Enterprise SQL Warehouse + Power BI) to align dashboard strategy',
-        'Enablement: Train business users on dataset discovery via Unified Data Catalog & Governance and certified data usage',
+        'Workshop: Run a Modern BI on Lakehouse Workshop (Databricks SQL + Power BI) to align dashboard strategy',
+        'Enablement: Train business users on dataset discovery via Unity Catalog and certified data usage',
         'Adoption: Identify top 5 dashboards to migrate; ensure alignment with governed datasets and performance SLAs',
         'Assessment: Execute a BI Performance & Adoption Assessment to evaluate latency, concurrency, and usability',
         'Industry Outlook: Share BI modernization success stories (payer/provider data democratization)',
@@ -1085,9 +1085,9 @@ class IntelligentRecommendationEngine {
         'Success Metrics: Measure report refresh frequency, active dashboard usage, and time-to-insight KPIs'
       ],
       machine_learning: [
-        'Workshop: Conduct a Model Lifecycle Management Workshop covering Enterprise Model Registry, Model Registry, and MLOps governance',
+        'Workshop: Conduct a Model Lifecycle Management Workshop covering MLflow, Model Registry, and MLOps governance',
         'Enablement: Provide training for DS/ML teams on model versioning, experiment tracking, and deployment workflows',
-        'Adoption: Select one business use case (e.g., fraud detection, churn prediction, or risk scoring) for Enterprise Model Registry deployment pilot',
+        'Adoption: Select one business use case (e.g., fraud detection, churn prediction, or risk scoring) for MLflow deployment pilot',
         'Assessment: Perform an ML Governance & Readiness Assessment focusing on model lineage, explainability, and audit',
         'Industry Outlook: Review state of MLOps adoption and regulated AI compliance in healthcare and life sciences',
         'Partner / SI Engagement: Engage AI partners (ZS, IQVIA, Deloitte AI) for co-development or validation support',
@@ -1100,7 +1100,7 @@ class IntelligentRecommendationEngine {
         'Adoption: Identify 2–3 lighthouse GenAI use cases (e.g., Prior Auth Optimization, Intelligent Documentation, Customer Support Copilot)',
         'Assessment: Perform a GenAI Readiness & Risk Assessment (focus: privacy, bias, and model auditability)',
         'Industry Outlook: Present evolving trends — GenAI copilots, regulated model governance, fine-tuning ethics, and AI act implications',
-        'Partner / SI Engagement: Collaborate with GenAI implementation partners (Quantiphi, Enterprise Platform PS, or industry ISVs)',
+        'Partner / SI Engagement: Collaborate with GenAI implementation partners (Quantiphi, Databricks PS, or industry ISVs)',
         'Change Management: Define a responsible-AI policy; involve legal, compliance, and data ethics teams early',
         'Measurement: Track adoption metrics: user satisfaction, productivity gains, task automation rates'
       ],
@@ -1274,29 +1274,29 @@ class IntelligentRecommendationEngine {
   }
   
   mapPainPointsToFeatures(painPoints, pillarId) {
-    // Map pain points to specific Enterprise Platform features that solve them
+    // Map pain points to specific Databricks features that solve them
     // 🔥 CRITICAL: Organized by PILLAR first, then pain points
     // This prevents cross-pillar contamination when pain point names overlap
     const featureMapByPillar = {
       platform_governance: {
-        'poor_isolation': ['Unified Data Catalog & Governance', 'Workspace Administration', 'Private Link', 'IP Access Lists'],
-        'quality_issues': ['Unified Data Catalog & Governance', 'Data Classification', 'Compliance Security Profile', 'Audit Logs'],
-        'compliance_gaps': ['Unified Data Catalog & Governance', 'Audit Logs', 'Compliance Security Profile', 'Data Classification'],
-        'compliance_risks': ['Unified Data Catalog & Governance', 'Audit Logs', 'Compliance Security Profile', 'Data Classification'],
-        'weak_access_control': ['Unified Data Catalog & Governance', 'Service Principals', 'Attribute-Based Access Control', 'Row-Level Security'],
-        'no_audit_logs': ['Audit Logs', 'System Tables', 'Unified Data Catalog & Governance Audit', 'Compliance Security Profile'],
-        'manual_provisioning': ['Enterprise Platform Asset Bundles', 'Terraform Provider', 'Enterprise Platform CLI', 'Account Console'],
-        'no_iac': ['Enterprise Platform Asset Bundles', 'Terraform Provider', 'Enterprise Platform CLI', 'Workspace API'],
+        'poor_isolation': ['Unity Catalog', 'Workspace Administration', 'Private Link', 'IP Access Lists'],
+        'quality_issues': ['Unity Catalog', 'Data Classification', 'Compliance Security Profile', 'Audit Logs'],
+        'compliance_gaps': ['Unity Catalog', 'Audit Logs', 'Compliance Security Profile', 'Data Classification'],
+        'compliance_risks': ['Unity Catalog', 'Audit Logs', 'Compliance Security Profile', 'Data Classification'],
+        'weak_access_control': ['Unity Catalog', 'Service Principals', 'Attribute-Based Access Control', 'Row-Level Security'],
+        'no_audit_logs': ['Audit Logs', 'System Tables', 'Unity Catalog Audit', 'Compliance Security Profile'],
+        'manual_provisioning': ['Databricks Asset Bundles', 'Terraform Provider', 'Databricks CLI', 'Account Console'],
+        'no_iac': ['Databricks Asset Bundles', 'Terraform Provider', 'Databricks CLI', 'Workspace API'],
         'resource_conflicts': ['Workspace Administration', 'Cluster Policies', 'Budget Alerts', 'Account Console']
       },
       
       data_engineering: {
-        'poor_quality': ['Declarative Data Pipelines', 'Auto Loader', 'Streaming Tables', 'Change Data Capture'],
-        'pipeline_failures': ['Declarative Data Pipelines', 'Workflows', 'Enterprise Platform Jobs', 'Alerting'],
-        'manual_pipelines': ['Declarative Data Pipelines', 'Workflows', 'Enterprise Platform Jobs', 'Auto Loader'],
-        'no_monitoring': ['Declarative Data Pipelines Event Log', 'Workflows', 'Job Monitoring', 'Alerting'],
+        'poor_quality': ['Delta Live Tables', 'Auto Loader', 'Streaming Tables', 'Change Data Capture'],
+        'pipeline_failures': ['Delta Live Tables', 'Workflows', 'Databricks Jobs', 'Alerting'],
+        'manual_pipelines': ['Delta Live Tables', 'Workflows', 'Databricks Jobs', 'Auto Loader'],
+        'no_monitoring': ['Delta Live Tables Event Log', 'Workflows', 'Job Monitoring', 'Alerting'],
         'scattered_data': ['Delta Lake', 'Auto Loader', 'Streaming Tables', 'Workflows'],
-        'error_handling': ['Declarative Data Pipelines', 'Workflows', 'Alerting', 'Job Retries'],
+        'error_handling': ['Delta Live Tables', 'Workflows', 'Alerting', 'Job Retries'],
         'ingestion_issues': ['Auto Loader', 'Copy Into', 'Streaming Tables', 'Change Data Capture']
       },
       
@@ -1306,102 +1306,102 @@ class IntelligentRecommendationEngine {
       'resource_contention': ['Serverless SQL', 'SQL Warehouses', 'Cluster Policies', 'Photon'],
       'optimization_difficulty': ['Query Profile', 'Query History', 'Photon', 'Liquid Clustering'],
       'monitoring_gaps': ['Query History', 'Query Profile', 'SQL Warehouses', 'Dashboards'],
-      'metric_inconsistency': ['Semantic Layer', 'Genie', 'Dashboards', 'Enterprise SQL Warehouse'],
+      'metric_inconsistency': ['Semantic Layer', 'Genie', 'Dashboards', 'Databricks SQL'],
       'no_shared_layer': ['Semantic Layer', 'Genie Spaces', 'Dashboards', 'SQL Warehouses'],
-      'duplicate_logic': ['Semantic Layer', 'Genie', 'Enterprise SQL Warehouse', 'SQL Warehouses'],
+      'duplicate_logic': ['Semantic Layer', 'Genie', 'Databricks SQL', 'SQL Warehouses'],
       'version_confusion': ['Semantic Layer', 'Dashboards', 'Genie', 'SQL Warehouses'],
       'documentation_gaps': ['Semantic Layer', 'Genie Spaces', 'Dashboards', 'SQL Warehouses'],
-      'conflicting_reports': ['Enterprise SQL Warehouse', 'Dashboards', 'Semantic Layer', 'Genie'],
-      'trust_issues': ['Enterprise SQL Warehouse', 'Dashboards', 'Genie Spaces', 'Semantic Layer'],
-      'decision_delays': ['Enterprise SQL Warehouse', 'Dashboards', 'Serverless SQL', 'Genie'],
+      'conflicting_reports': ['Databricks SQL', 'Dashboards', 'Semantic Layer', 'Genie'],
+      'trust_issues': ['Databricks SQL', 'Dashboards', 'Genie Spaces', 'Semantic Layer'],
+      'decision_delays': ['Databricks SQL', 'Dashboards', 'Serverless SQL', 'Genie'],
       'wasted_effort': ['Semantic Layer', 'Genie', 'Dashboards', 'SQL Warehouses'],
-      'compliance_risk': ['SQL Warehouses', 'Enterprise SQL Warehouse', 'Row-Level Security', 'Query History'],
-      'poor_discoverability': ['Enterprise SQL Warehouse', 'Genie Spaces', 'Dashboards', 'SQL Warehouses'],
-      'catalog_gaps': ['Enterprise SQL Warehouse', 'Genie Spaces', 'SQL Warehouses', 'Dashboards'],
-      'unclear_lineage': ['Enterprise SQL Warehouse', 'Dashboards', 'SQL Warehouses', 'Genie'],
-      'access_complexity': ['SQL Warehouses', 'Serverless SQL', 'Enterprise SQL Warehouse', 'Partner Connect'],
-      'quality_uncertainty': ['Enterprise SQL Warehouse', 'Dashboards', 'Genie', 'SQL Warehouses'],
-      'integration_complexity': ['Partner Connect', 'Power BI Connector', 'Tableau Integration', 'Enterprise SQL Warehouse'],
+      'compliance_risk': ['SQL Warehouses', 'Databricks SQL', 'Row-Level Security', 'Query History'],
+      'poor_discoverability': ['Databricks SQL', 'Genie Spaces', 'Dashboards', 'SQL Warehouses'],
+      'catalog_gaps': ['Databricks SQL', 'Genie Spaces', 'SQL Warehouses', 'Dashboards'],
+      'unclear_lineage': ['Databricks SQL', 'Dashboards', 'SQL Warehouses', 'Genie'],
+      'access_complexity': ['SQL Warehouses', 'Serverless SQL', 'Databricks SQL', 'Partner Connect'],
+      'quality_uncertainty': ['Databricks SQL', 'Dashboards', 'Genie', 'SQL Warehouses'],
+      'integration_complexity': ['Partner Connect', 'Power BI Connector', 'Tableau Integration', 'Databricks SQL'],
       'performance_issues': ['Photon', 'Serverless SQL', 'Liquid Clustering', 'Result Caching'],
-      'data_extracts': ['Partner Connect', 'Enterprise SQL Warehouse', 'SQL Warehouses', 'Serverless SQL'],
+      'data_extracts': ['Partner Connect', 'Databricks SQL', 'SQL Warehouses', 'Serverless SQL'],
       'refresh_delays': ['Serverless SQL', 'Photon', 'Result Caching', 'SQL Warehouses'],
-      'limited_interactivity': ['Enterprise SQL Warehouse', 'Dashboards', 'Genie', 'SQL Warehouses'],
-      'stale_dashboards': ['Serverless SQL', 'Dashboards', 'SQL Warehouses', 'Enterprise SQL Warehouse'],
-      'inconsistent_schedules': ['Enterprise SQL Warehouse', 'Dashboards', 'SQL Warehouses', 'Workflows'],
+      'limited_interactivity': ['Databricks SQL', 'Dashboards', 'Genie', 'SQL Warehouses'],
+      'stale_dashboards': ['Serverless SQL', 'Dashboards', 'SQL Warehouses', 'Databricks SQL'],
+      'inconsistent_schedules': ['Databricks SQL', 'Dashboards', 'SQL Warehouses', 'Workflows'],
       'kpi_proliferation': ['Semantic Layer', 'Genie', 'Dashboards', 'SQL Warehouses'],
-      'version_control': ['Dashboards', 'Enterprise SQL Warehouse', 'SQL Warehouses', 'Genie'],
-      'access_management': ['SQL Warehouses', 'Enterprise SQL Warehouse', 'Serverless SQL', 'Partner Connect'],
-      'audit_trails': ['Query History', 'SQL Warehouses', 'Enterprise SQL Warehouse', 'Dashboards'],
+      'version_control': ['Dashboards', 'Databricks SQL', 'SQL Warehouses', 'Genie'],
+      'access_management': ['SQL Warehouses', 'Databricks SQL', 'Serverless SQL', 'Partner Connect'],
+      'audit_trails': ['Query History', 'SQL Warehouses', 'Databricks SQL', 'Dashboards'],
       'conflicting_kpis': ['Semantic Layer', 'Dashboards', 'SQL Warehouses', 'Genie'],
-      'report_sprawl': ['Dashboards', 'Enterprise SQL Warehouse', 'Genie Spaces', 'SQL Warehouses'],
-      'trust_erosion': ['Enterprise SQL Warehouse', 'Dashboards', 'Semantic Layer', 'Genie'],
-      'tool_complexity': ['Genie', 'Enterprise SQL Warehouse', 'Dashboards', 'SQL Warehouses'],
-      'access_barriers': ['SQL Warehouses', 'Serverless SQL', 'Partner Connect', 'Enterprise SQL Warehouse'],
-      'training_gaps': ['Enterprise SQL Warehouse', 'Genie', 'Dashboards', 'SQL Warehouses'],
-      'limited_tooling': ['Genie', 'Enterprise SQL Warehouse', 'Dashboards', 'SQL Warehouses'],
-      'support_burden': ['Genie', 'Enterprise SQL Warehouse', 'Dashboards', 'SQL Warehouses'],
-      'analyst_bottleneck': ['Genie', 'Enterprise SQL Warehouse', 'Dashboards', 'SQL Warehouses'],
-      'slow_decisions': ['Enterprise SQL Warehouse', 'Dashboards', 'Serverless SQL', 'Genie'],
-      'low_data_literacy': ['Genie', 'Enterprise SQL Warehouse', 'Dashboards', 'SQL Warehouses'],
-      'missed_opportunities': ['Genie', 'Enterprise SQL Warehouse', 'Dashboards', 'SQL Warehouses'],
-      'security_gaps': ['SQL Warehouses', 'Enterprise SQL Warehouse', 'Serverless SQL', 'Row-Level Security'],
-      'wild_west_access': ['SQL Warehouses', 'Enterprise SQL Warehouse', 'Row-Level Security', 'Serverless SQL'],
-      'quality_control': ['Enterprise SQL Warehouse', 'Dashboards', 'SQL Warehouses', 'Genie'],
-      'audit_challenges': ['Query History', 'SQL Warehouses', 'Enterprise SQL Warehouse', 'Dashboards'],
-      'policy_enforcement': ['SQL Warehouses', 'Enterprise SQL Warehouse', 'Serverless SQL', 'Row-Level Security'],
-      'data_misuse': ['SQL Warehouses', 'Query History', 'Row-Level Security', 'Enterprise SQL Warehouse'],
-      'regulatory_exposure': ['Enterprise SQL Warehouse', 'SQL Warehouses', 'Query History', 'Row-Level Security'],
+      'report_sprawl': ['Dashboards', 'Databricks SQL', 'Genie Spaces', 'SQL Warehouses'],
+      'trust_erosion': ['Databricks SQL', 'Dashboards', 'Semantic Layer', 'Genie'],
+      'tool_complexity': ['Genie', 'Databricks SQL', 'Dashboards', 'SQL Warehouses'],
+      'access_barriers': ['SQL Warehouses', 'Serverless SQL', 'Partner Connect', 'Databricks SQL'],
+      'training_gaps': ['Databricks SQL', 'Genie', 'Dashboards', 'SQL Warehouses'],
+      'limited_tooling': ['Genie', 'Databricks SQL', 'Dashboards', 'SQL Warehouses'],
+      'support_burden': ['Genie', 'Databricks SQL', 'Dashboards', 'SQL Warehouses'],
+      'analyst_bottleneck': ['Genie', 'Databricks SQL', 'Dashboards', 'SQL Warehouses'],
+      'slow_decisions': ['Databricks SQL', 'Dashboards', 'Serverless SQL', 'Genie'],
+      'low_data_literacy': ['Genie', 'Databricks SQL', 'Dashboards', 'SQL Warehouses'],
+      'missed_opportunities': ['Genie', 'Databricks SQL', 'Dashboards', 'SQL Warehouses'],
+      'security_gaps': ['SQL Warehouses', 'Databricks SQL', 'Serverless SQL', 'Row-Level Security'],
+      'wild_west_access': ['SQL Warehouses', 'Databricks SQL', 'Row-Level Security', 'Serverless SQL'],
+      'quality_control': ['Databricks SQL', 'Dashboards', 'SQL Warehouses', 'Genie'],
+      'audit_challenges': ['Query History', 'SQL Warehouses', 'Databricks SQL', 'Dashboards'],
+      'policy_enforcement': ['SQL Warehouses', 'Databricks SQL', 'Serverless SQL', 'Row-Level Security'],
+      'data_misuse': ['SQL Warehouses', 'Query History', 'Row-Level Security', 'Databricks SQL'],
+      'regulatory_exposure': ['Databricks SQL', 'SQL Warehouses', 'Query History', 'Row-Level Security'],
       'inconsistent_analysis': ['Semantic Layer', 'Genie', 'Dashboards', 'SQL Warehouses'],
-      'sharing_complexity': ['Partner Connect', 'Enterprise SQL Warehouse', 'SQL Warehouses', 'Delta Sharing'],
-      'security_concerns': ['SQL Warehouses', 'Enterprise SQL Warehouse', 'Row-Level Security', 'Partner Connect'],
-      'format_compatibility': ['Partner Connect', 'Enterprise SQL Warehouse', 'SQL Warehouses', 'Delta Sharing'],
-      'access_provisioning': ['SQL Warehouses', 'Serverless SQL', 'Enterprise SQL Warehouse', 'Partner Connect'],
-      'tracking_gaps': ['Query History', 'SQL Warehouses', 'Enterprise SQL Warehouse', 'Dashboards'],
-      'partner_friction': ['Partner Connect', 'Power BI Connector', 'Tableau Integration', 'Enterprise SQL Warehouse'],
-      'collaboration_barriers': ['Partner Connect', 'Enterprise SQL Warehouse', 'Delta Sharing', 'SQL Warehouses'],
-      'revenue_impact': ['Partner Connect', 'Enterprise SQL Warehouse', 'Dashboards', 'SQL Warehouses'],
-      'competitive_disadvantage': ['Enterprise SQL Warehouse', 'Dashboards', 'Genie', 'Partner Connect'],
-      'data_silos': ['Lakehouse Federation', 'Partner Connect', 'SQL Warehouses', 'Enterprise SQL Warehouse'],
+      'sharing_complexity': ['Partner Connect', 'Databricks SQL', 'SQL Warehouses', 'Delta Sharing'],
+      'security_concerns': ['SQL Warehouses', 'Databricks SQL', 'Row-Level Security', 'Partner Connect'],
+      'format_compatibility': ['Partner Connect', 'Databricks SQL', 'SQL Warehouses', 'Delta Sharing'],
+      'access_provisioning': ['SQL Warehouses', 'Serverless SQL', 'Databricks SQL', 'Partner Connect'],
+      'tracking_gaps': ['Query History', 'SQL Warehouses', 'Databricks SQL', 'Dashboards'],
+      'partner_friction': ['Partner Connect', 'Power BI Connector', 'Tableau Integration', 'Databricks SQL'],
+      'collaboration_barriers': ['Partner Connect', 'Databricks SQL', 'Delta Sharing', 'SQL Warehouses'],
+      'revenue_impact': ['Partner Connect', 'Databricks SQL', 'Dashboards', 'SQL Warehouses'],
+      'competitive_disadvantage': ['Databricks SQL', 'Dashboards', 'Genie', 'Partner Connect'],
+      'data_silos': ['Lakehouse Federation', 'Partner Connect', 'SQL Warehouses', 'Databricks SQL'],
       'join_performance': ['Photon', 'Liquid Clustering', 'Serverless SQL', 'SQL Warehouses'],
-      'schema_conflicts': ['Lakehouse Federation', 'Enterprise SQL Warehouse', 'SQL Warehouses', 'Partner Connect'],
-      'governance_gaps': ['SQL Warehouses', 'Enterprise SQL Warehouse', 'Row-Level Security', 'Query History'],
-      'limited_insights': ['Enterprise SQL Warehouse', 'Dashboards', 'Genie', 'SQL Warehouses'],
-      'integration_delays': ['Partner Connect', 'Lakehouse Federation', 'Enterprise SQL Warehouse', 'SQL Warehouses'],
-      'duplicate_data': ['Lakehouse Federation', 'Enterprise SQL Warehouse', 'SQL Warehouses', 'Delta Sharing'],
-      'monetization_barriers': ['Partner Connect', 'Enterprise SQL Warehouse', 'Dashboards', 'SQL Warehouses'],
-      'packaging_complexity': ['Partner Connect', 'Enterprise SQL Warehouse', 'Delta Sharing', 'SQL Warehouses'],
-      'limited_reach': ['Partner Connect', 'Enterprise SQL Warehouse', 'Dashboards', 'SQL Warehouses'],
-      'value_capture': ['Partner Connect', 'Enterprise SQL Warehouse', 'Dashboards', 'SQL Warehouses'],
-        'market_readiness': ['Partner Connect', 'Enterprise SQL Warehouse', 'Dashboards', 'SQL Warehouses']
+      'schema_conflicts': ['Lakehouse Federation', 'Databricks SQL', 'SQL Warehouses', 'Partner Connect'],
+      'governance_gaps': ['SQL Warehouses', 'Databricks SQL', 'Row-Level Security', 'Query History'],
+      'limited_insights': ['Databricks SQL', 'Dashboards', 'Genie', 'SQL Warehouses'],
+      'integration_delays': ['Partner Connect', 'Lakehouse Federation', 'Databricks SQL', 'SQL Warehouses'],
+      'duplicate_data': ['Lakehouse Federation', 'Databricks SQL', 'SQL Warehouses', 'Delta Sharing'],
+      'monetization_barriers': ['Partner Connect', 'Databricks SQL', 'Dashboards', 'SQL Warehouses'],
+      'packaging_complexity': ['Partner Connect', 'Databricks SQL', 'Delta Sharing', 'SQL Warehouses'],
+      'limited_reach': ['Partner Connect', 'Databricks SQL', 'Dashboards', 'SQL Warehouses'],
+      'value_capture': ['Partner Connect', 'Databricks SQL', 'Dashboards', 'SQL Warehouses'],
+        'market_readiness': ['Partner Connect', 'Databricks SQL', 'Dashboards', 'SQL Warehouses']
       },
       
       machine_learning: {
-        'no_experiment_tracking': ['Enterprise Model Registry Tracking', 'Enterprise Model Registry Autologging', 'Experiments', 'Enterprise Model Registry UI'],
-        'no_model_registry': ['Enterprise Model Registry Model Registry', 'Model Versioning', 'Model Aliases', 'Model Lineage'],
-        'scattered_artifacts': ['Enterprise Model Registry Model Registry', 'Enterprise Model Registry Tracking', 'Experiments', 'Artifacts Store'],
-        'no_model_monitoring': ['Model Serving Metrics', 'Model Monitoring', 'Inference Tables', 'Enterprise Model Registry'],
-        'manual_retraining': ['Enterprise Model Registry Webhooks', 'Workflows', 'AutoML', 'Model Serving'],
+        'no_experiment_tracking': ['MLflow Tracking', 'MLflow Autologging', 'Experiments', 'MLflow UI'],
+        'no_model_registry': ['MLflow Model Registry', 'Model Versioning', 'Model Aliases', 'Model Lineage'],
+        'scattered_artifacts': ['MLflow Model Registry', 'MLflow Tracking', 'Experiments', 'Artifacts Store'],
+        'no_model_monitoring': ['Model Serving Metrics', 'Model Monitoring', 'Inference Tables', 'MLflow'],
+        'manual_retraining': ['MLflow Webhooks', 'Workflows', 'AutoML', 'Model Serving'],
         'no_feature_store': ['Feature Store', 'Online Tables', 'Feature Serving', 'Feature Engineering'],
-        'model_failures': ['Model Serving', 'Model Monitoring', 'Inference Tables', 'Enterprise Model Registry']
+        'model_failures': ['Model Serving', 'Model Monitoring', 'Inference Tables', 'MLflow']
       },
       
       generative_ai: {
         'no_genai_strategy': ['AI Playground', 'Mosaic AI Agent Framework', 'AI Functions', 'Foundation Models'],
         'unclear_use_cases': ['AI Playground', 'Solution Accelerators', 'Vector Search', 'AI Functions'],
         'no_vector_search': ['Vector Search', 'Online Tables', 'Delta Sync', 'Mosaic AI'],
-        'prompt_management': ['AI Playground', 'Enterprise Model Registry', 'AI Gateway', 'Prompt Engineering'],
+        'prompt_management': ['AI Playground', 'MLflow', 'AI Gateway', 'Prompt Engineering'],
         'no_rag': ['Mosaic AI Agent Framework', 'Vector Search', 'AI Functions', 'Foundation Models'],
         'reputation_risk': ['Mosaic AI Model Serving', 'AI Gateway', 'Model Monitoring', 'AI Functions'],
         'compliance_risk': ['AI Gateway', 'Model Monitoring', 'AI Functions', 'Mosaic AI']
       },
       
       operational_excellence: {
-        'no_coe': ['Enterprise Platform Academy', 'Professional Services', 'Partner Network', 'Community'],
+        'no_coe': ['Databricks Academy', 'Professional Services', 'Partner Network', 'Community'],
         'unclear_charter': ['System Tables', 'Account Console', 'Workspace Administration', 'Usage Analytics'],
-        'resource_constraints': ['Enterprise Platform Academy', 'Professional Services', 'Community', 'Documentation'],
-        'standards_gaps': ['Enterprise Platform Asset Bundles', 'Cluster Policies', 'Workspace Templates', 'Best Practices'],
-        'adoption_challenges': ['Enterprise AI Advisor', 'Solution Accelerators', 'Enterprise Platform Academy', 'Community'],
-        'no_training': ['Enterprise Platform Academy', 'Partner Training', 'Certification Programs', 'Learning Paths'],
+        'resource_constraints': ['Databricks Academy', 'Professional Services', 'Community', 'Documentation'],
+        'standards_gaps': ['Databricks Asset Bundles', 'Cluster Policies', 'Workspace Templates', 'Best Practices'],
+        'adoption_challenges': ['Databricks Assistant', 'Solution Accelerators', 'Databricks Academy', 'Community'],
+        'no_training': ['Databricks Academy', 'Partner Training', 'Certification Programs', 'Learning Paths'],
         'poor_collaboration': ['Repos', 'Git Integration', 'Comments', 'Notebooks'],
         'no_cost_tracking': ['System Tables', 'Budget Alerts', 'Usage Analytics', 'Cost Management']
       }
@@ -1457,28 +1457,28 @@ class IntelligentRecommendationEngine {
         // GenAI Features
         'Mosaic AI Model Serving': 'Deploy production-ready AI models with built-in governance and monitoring',
         'AI Gateway': 'Centralized gateway for LLM usage with governance, cost tracking, and quality control',
-        'Continuous Data Observability': 'Automated monitoring for data quality, schema changes, and model performance',
+        'Lakehouse Monitoring': 'Automated monitoring for data quality, schema changes, and model performance',
         'System Tables': 'Built-in queryable logs for usage tracking, billing analysis, and audit compliance',
         'Vector Search': 'High-performance vector similarity search for RAG applications',
         'AI Functions': 'Call LLMs directly from SQL for AI-powered data transformations',
         'Agent Framework': 'Build and deploy multi-step AI agents with tool integration',
-        'Unified Data Catalog & Governance for AI': 'Govern AI models, prompts, and feature sets with centralized catalog',
+        'Unity Catalog for AI': 'Govern AI models, prompts, and feature sets with centralized catalog',
         
         // ML Features
-        'Enterprise Model Registry': 'End-to-end ML lifecycle management with experiment tracking and model registry',
+        'MLflow': 'End-to-end ML lifecycle management with experiment tracking and model registry',
         'Feature Store': 'Centralized repository for ML features with version control and lineage',
         'AutoML': 'Automated machine learning for rapid model development',
         'Model Registry': 'Version control and governance for production ML models',
         'Model Serving': 'Low-latency endpoints for real-time ML predictions',
         
         // Data Engineering Features
-        'Declarative Data Pipelines': 'Declarative ETL pipelines with built-in quality controls',
+        'Delta Live Tables': 'Declarative ETL pipelines with built-in quality controls',
         'Delta Sharing': 'Secure data sharing without copying or moving data',
         'Workflows': 'Orchestrate data, analytics, and ML pipelines',
         'Autoloader': 'Incrementally and efficiently process new data files',
         
         // Platform Governance Features
-        'Unified Data Catalog & Governance': 'Unified governance for data and AI assets with centralized access control',
+        'Unity Catalog': 'Unified governance for data and AI assets with centralized access control',
         'Data Lineage': 'Automatic tracking of data transformations and dependencies',
         'Semantic Layer': 'Business-friendly semantic layer for consistent metrics and definitions',
         'Compliance Security Profile': 'Pre-configured security controls for regulatory compliance',
@@ -1492,14 +1492,14 @@ class IntelligentRecommendationEngine {
         'Liquid Clustering': 'Self-optimizing data layout without manual tuning',
         
         // Collaboration & BI Features
-        'Enterprise SQL Warehouse': 'Powerful SQL analytics with native BI integrations',
+        'Databricks SQL': 'Powerful SQL analytics with native BI integrations',
         'SQL Warehouses': 'Dedicated compute for SQL queries with auto-scaling',
         'Dashboards': 'Interactive visualizations and reporting',
         'Alerts': 'Automated notifications for data changes and anomalies',
         'Query Profile': 'Detailed query execution analysis for optimization',
         
         // Data Quality Features
-        'Expectations': 'Data quality validation rules for Declarative Data Pipelines',
+        'Expectations': 'Data quality validation rules for Delta Live Tables',
         'Quality Metrics': 'Automated data quality scoring and monitoring',
         'Schema Evolution': 'Automatic handling of schema changes',
         
@@ -1509,9 +1509,9 @@ class IntelligentRecommendationEngine {
         'Tagging': 'Cost allocation by team, project, or workload',
         
         // Training & Enablement Features (CRITICAL!)
-        'Enterprise Platform Academy': 'Free online training and certification programs for platform adoption',
+        'Databricks Academy': 'Free online training and certification programs for platform adoption',
         'Professional Services': 'Expert consulting for architecture, migrations, and best practices',
-        'Community Edition': 'Free access to Enterprise Platform for learning and experimentation',
+        'Community Edition': 'Free access to Databricks for learning and experimentation',
         'Partner Connect': 'Pre-integrated ecosystem partners for extended functionality',
         
         // Workspace & Admin Features
@@ -1523,7 +1523,7 @@ class IntelligentRecommendationEngine {
         // Notebook & Development Features
         'Notebooks': 'Collaborative notebooks with multi-language support',
         'Repos': 'Git integration for version control and CI/CD',
-        'Enterprise Platform Asset Bundles': 'Infrastructure-as-code for deployment automation',
+        'Databricks Asset Bundles': 'Infrastructure-as-code for deployment automation',
         
         // Job & Orchestration Features
         'Job Scheduler': 'Reliable job scheduling with dependency management',
@@ -1586,23 +1586,23 @@ class IntelligentRecommendationEngine {
   
   getFeatureDescription(featureName) {
     const descriptions = {
-      'Unified Data Catalog & Governance': 'Unified governance for data and AI assets with centralized access control',
+      'Unity Catalog': 'Unified governance for data and AI assets with centralized access control',
       'Audit Logs': 'Track and monitor all workspace activities for compliance and security',
       'Delta Sharing': 'Securely share live data across organizations without copying',
-      'Declarative Data Pipelines': 'Declarative ETL framework with automatic quality monitoring',
-      'Continuous Data Observability': 'Monitor data quality, schema changes, and model performance',
+      'Delta Live Tables': 'Declarative ETL framework with automatic quality monitoring',
+      'Lakehouse Monitoring': 'Monitor data quality, schema changes, and model performance',
       'Photon': 'High-performance query engine for 3-5x faster SQL and DataFrame queries',
       'Serverless SQL': 'Auto-scaling SQL warehouses with instant start and pay-per-query pricing',
       'Liquid Clustering': 'Automatic data layout optimization without manual Z-ordering',
-      'Enterprise Model Registry': 'Open-source platform for ML lifecycle management',
+      'MLflow': 'Open-source platform for ML lifecycle management',
       'Model Serving': 'Deploy models as REST APIs with auto-scaling and monitoring',
       'Vector Search': 'Managed vector database for similarity search and RAG applications',
       'AI Gateway': 'Centralized gateway for LLM usage with governance and cost tracking',
       'Workflows': 'Orchestrate data pipelines and ML workflows with dependencies',
       'Auto Loader': 'Incremental data ingestion with schema evolution and automatic recovery',
-      'Enterprise Platform Asset Bundles': 'Infrastructure as code for Enterprise Platform resources',
+      'Databricks Asset Bundles': 'Infrastructure as code for Databricks resources',
       'Feature Store': 'Centralized repository for ML features with point-in-time lookups',
-      'Enterprise Platform Academy': 'Free online training and certification programs',
+      'Databricks Academy': 'Free online training and certification programs',
       'System Tables': 'Queryable logs for usage, billing, and audit data',
       'Cluster Policies': 'Governance rules to control cluster configurations and costs',
       'Row-Level Security': 'Fine-grained access control at the row level',
@@ -1611,16 +1611,16 @@ class IntelligentRecommendationEngine {
       'Data Classification': 'Tag and classify data for governance and compliance',
       'Clean Rooms': 'Collaborate on sensitive data without revealing raw data'
     };
-    return descriptions[featureName] || `${featureName} capability for Enterprise Platform`;
+    return descriptions[featureName] || `${featureName} capability for Databricks`;
   }
   
   getFeatureBenefits(featureName) {
     const benefits = {
-      'Unified Data Catalog & Governance': ['Centralized governance', 'Fine-grained access control', 'Data lineage', 'Cross-workspace sharing'],
+      'Unity Catalog': ['Centralized governance', 'Fine-grained access control', 'Data lineage', 'Cross-workspace sharing'],
       'Audit Logs': ['Compliance tracking', 'Security monitoring', 'Activity history', 'Forensics'],
       'Delta Sharing': ['Secure data sharing', 'No data duplication', 'Live data access', 'Cross-organization collaboration'],
-      'Declarative Data Pipelines': ['Automated quality checks', 'Declarative pipelines', 'Error handling', 'Data lineage'],
-      'Continuous Data Observability': ['Data quality monitoring', 'Drift detection', 'Automated alerting', 'Historical tracking'],
+      'Delta Live Tables': ['Automated quality checks', 'Declarative pipelines', 'Error handling', 'Data lineage'],
+      'Lakehouse Monitoring': ['Data quality monitoring', 'Drift detection', 'Automated alerting', 'Historical tracking'],
       'Photon': ['3-5x faster queries', 'Lower costs', 'No code changes', 'Automatic optimization'],
       'Serverless SQL': ['Instant start', 'Auto-scaling', 'Pay-per-query', 'No cluster management'],
       'Row-Level Security': ['Fine-grained access', 'Dynamic filtering', 'Compliance', 'Data privacy'],
@@ -1629,7 +1629,7 @@ class IntelligentRecommendationEngine {
       'Data Classification': ['Automated tagging', 'Compliance tracking', 'Data discovery', 'Governance policies'],
       'Clean Rooms': ['Privacy-preserving analytics', 'Secure collaboration', 'No raw data exposure', 'Regulatory compliance']
     };
-    return benefits[featureName] || ['Addresses identified challenges', 'Enterprise Platform managed service'];
+    return benefits[featureName] || ['Addresses identified challenges', 'Databricks managed service'];
   }
   
   /**
@@ -1692,12 +1692,12 @@ class IntelligentRecommendationEngine {
       return b.gap - a.gap;
     });
     
-    // Phase 1 (0-3 months): Foundation - Critical items + Unified Data Catalog & Governance (foundational)
+    // Phase 1 (0-3 months): Foundation - Critical items + Unity Catalog (foundational)
     const phase1Items = [];
     const phase2Items = [];
     const phase3Items = [];
     
-    // Always include Unified Data Catalog & Governance if there are governance/platform challenges
+    // Always include Unity Catalog if there are governance/platform challenges
     const hasGovernanceChallenges = sorted.some(p => 
       p.pillarId === 'platform_governance' || 
       p.theBad?.some(challenge => 
@@ -1708,7 +1708,7 @@ class IntelligentRecommendationEngine {
     );
     
     if (hasGovernanceChallenges) {
-      phase1Items.push('Implement Unified Data Catalog & Governance for centralized governance - reducing compliance risk and manual access management');
+      phase1Items.push('Implement Unity Catalog for centralized governance - reducing compliance risk and manual access management');
     }
     
     // Phase 1: Critical priority pillars (gap >= 2)
@@ -1726,7 +1726,7 @@ class IntelligentRecommendationEngine {
     
     phase1CriticalPillars.slice(0, 2).forEach(pillar => {
       const topChallenge = pillar.theBad?.[0] || `Maturity gap of ${pillar.gap} levels`;
-      const topFeature = pillar.platformFeatures?.[0]?.name || 'recommended features';
+      const topFeature = pillar.databricksFeatures?.[0]?.name || 'recommended features';
       const outcome = businessOutcomes[pillar.pillarId] || 'driving measurable business value';
       
       // 🔥 MORE DYNAMIC: Use actual user comments if available, otherwise use challenge
@@ -1775,7 +1775,7 @@ class IntelligentRecommendationEngine {
     const highPriorityPillars = sorted.filter(p => p.gap === 1 || (p.gap >= 2 && !criticalPillars.slice(0, 2).includes(p)));
     highPriorityPillars.slice(0, 2).forEach(pillar => {
       // 🔥 DYNAMIC: Vary which feature is mentioned (use 2nd or 1st)
-      const topFeature = pillar.platformFeatures?.[1]?.name || pillar.platformFeatures?.[0]?.name || 'capabilities';
+      const topFeature = pillar.databricksFeatures?.[1]?.name || pillar.databricksFeatures?.[0]?.name || 'capabilities';
       const outcome = businessOutcomes[pillar.pillarId] || 'improving operational efficiency';
       
       // 🔥 DYNAMIC: Use multiple challenges if available
@@ -1848,7 +1848,7 @@ class IntelligentRecommendationEngine {
     // Add data mesh if multiple pillars are mature
     const maturePillars = sorted.filter(p => p.currentScore >= 4);
     if (maturePillars.length >= 3) {
-      phase3Items.push('Align data mesh principles with Unified Data Catalog & Governance - enabling domain-oriented data ownership and reducing data silos');
+      phase3Items.push('Align data mesh principles with Unity Catalog - enabling domain-oriented data ownership and reducing data silos');
     }
     
     // Ensure we have at least 3 items in Phase 3
@@ -1936,7 +1936,7 @@ class IntelligentRecommendationEngine {
       speedMultiplier += analyticsImprovement * 0.20; // +20% per level (down from 30%)
       
       // Bonus if deploying Photon/Serverless (conservative for Life Sciences)
-      const hasPhoton = analyticsPillar.platformFeatures?.some(f => 
+      const hasPhoton = analyticsPillar.databricksFeatures?.some(f => 
         f.name && (f.name.includes('Photon') || f.name.includes('Serverless'))
       );
       if (hasPhoton) {
@@ -1949,8 +1949,8 @@ class IntelligentRecommendationEngine {
       speedMultiplier += dataImprovement * 0.15; // +15% per level (down from 20%)
       
       // Bonus for DLT automation
-      const hasDLT = dataEngPillar.platformFeatures?.some(f => 
-        f.name && f.name.includes('Declarative Data Pipelines')
+      const hasDLT = dataEngPillar.databricksFeatures?.some(f => 
+        f.name && f.name.includes('Delta Live Tables')
       );
       if (hasDLT) {
         speedMultiplier += 0.20; // +20% boost from DLT (down from 30%)
@@ -1972,7 +1972,7 @@ class IntelligentRecommendationEngine {
       costSavings += platformImprovement * 1.5; // 1.5% per level (down from 2.5%)
       
       // Bonus for serverless/auto-scaling (modest in regulated environments)
-      const hasServerless = platformPillar.platformFeatures?.some(f => 
+      const hasServerless = platformPillar.databricksFeatures?.some(f => 
         f.name && (f.name.includes('Serverless') || f.name.includes('Auto Scaling'))
       );
       if (hasServerless) {
@@ -1980,7 +1980,7 @@ class IntelligentRecommendationEngine {
       }
       
       // Bonus for budget controls
-      const hasBudgets = platformPillar.platformFeatures?.some(f => 
+      const hasBudgets = platformPillar.databricksFeatures?.some(f => 
         f.name && (f.name.includes('Budget') || f.name.includes('Cost'))
       );
       if (hasBudgets) {
@@ -2007,7 +2007,7 @@ class IntelligentRecommendationEngine {
       overheadReduction += dataImprovement * 4; // 4% per level (down from 6%)
       
       // Bonus for automation features (conservative with validation requirements)
-      const hasAutomation = dataEngPillar.platformFeatures?.some(f => 
+      const hasAutomation = dataEngPillar.databricksFeatures?.some(f => 
         f.name && (f.name.includes('Auto Loader') || f.name.includes('DLT') || f.name.includes('Workflow'))
       );
       if (hasAutomation) {
@@ -2022,8 +2022,8 @@ class IntelligentRecommendationEngine {
       overheadReduction += mlImprovement * 3; // 3% per level (down from 5%)
       
       // Bonus for MLOps automation
-      const hasMLOps = mlPillar.platformFeatures?.some(f => 
-        f.name && (f.name.includes('Enterprise Model Registry') || f.name.includes('Model Serving'))
+      const hasMLOps = mlPillar.databricksFeatures?.some(f => 
+        f.name && (f.name.includes('MLflow') || f.name.includes('Model Serving'))
       );
       if (hasMLOps) {
         overheadReduction += 4; // +4% from MLOps (down from 6%)
@@ -2035,12 +2035,12 @@ class IntelligentRecommendationEngine {
       const platformImprovement = platformPillar.gap || 0;
       overheadReduction += platformImprovement * 3; // 3% per level (down from 4%)
       
-      // Bonus for Unified Data Catalog & Governance (reduces manual access management)
-      const hasUnityCatalog = platformPillar.platformFeatures?.some(f => 
-        f.name && f.name.includes('Unified Data Catalog & Governance')
+      // Bonus for Unity Catalog (reduces manual access management)
+      const hasUnityCatalog = platformPillar.databricksFeatures?.some(f => 
+        f.name && f.name.includes('Unity Catalog')
       );
       if (hasUnityCatalog) {
-        overheadReduction += 5; // +5% from Unified Data Catalog & Governance (down from 7%)
+        overheadReduction += 5; // +5% from Unity Catalog (down from 7%)
       }
     }
     
@@ -2058,7 +2058,7 @@ class IntelligentRecommendationEngine {
       timeToMarket += mlImprovement * 5; // 5% per level (down from 8%)
       
       // Bonus for Feature Store (speeds up model development, but validation still required)
-      const hasFeatureStore = mlPillar.platformFeatures?.some(f => 
+      const hasFeatureStore = mlPillar.databricksFeatures?.some(f => 
         f.name && f.name.includes('Feature Store')
       );
       if (hasFeatureStore) {
@@ -2071,7 +2071,7 @@ class IntelligentRecommendationEngine {
       timeToMarket += genAIImprovement * 4; // 4% per level (down from 7%)
       
       // Bonus for pre-built LLMs (still requires validation for clinical use)
-      const hasLLMs = genAIPillar.platformFeatures?.some(f => 
+      const hasLLMs = genAIPillar.databricksFeatures?.some(f => 
         f.name && (f.name.includes('DBRX') || f.name.includes('Foundation Model'))
       );
       if (hasLLMs) {
@@ -2091,7 +2091,7 @@ class IntelligentRecommendationEngine {
       dataQuality += dataImprovement * 5; // 5% per level (down from 6%)
       
       // Bonus for Delta Lake (ACID compliance - important for audit trails)
-      const hasDelta = dataEngPillar.platformFeatures?.some(f => 
+      const hasDelta = dataEngPillar.databricksFeatures?.some(f => 
         f.name && f.name.includes('Delta')
       );
       if (hasDelta) {
@@ -2099,7 +2099,7 @@ class IntelligentRecommendationEngine {
       }
       
       // Bonus for Data Quality features (critical for Life Sciences)
-      const hasDQ = dataEngPillar.platformFeatures?.some(f => 
+      const hasDQ = dataEngPillar.databricksFeatures?.some(f => 
         f.name && (f.name.includes('Quality') || f.name.includes('Expectations'))
       );
       if (hasDQ) {
@@ -2111,12 +2111,12 @@ class IntelligentRecommendationEngine {
       const platformImprovement = platformPillar.gap || 0;
       dataQuality += platformImprovement * 4; // 4% per level (down from 5%)
       
-      // Bonus for Unified Data Catalog & Governance (lineage + governance - critical for compliance)
-      const hasUnityCatalog = platformPillar.platformFeatures?.some(f => 
-        f.name && f.name.includes('Unified Data Catalog & Governance')
+      // Bonus for Unity Catalog (lineage + governance - critical for compliance)
+      const hasUnityCatalog = platformPillar.databricksFeatures?.some(f => 
+        f.name && f.name.includes('Unity Catalog')
       );
       if (hasUnityCatalog) {
-        dataQuality += 8; // +8% from Unified Data Catalog & Governance (down from 10%)
+        dataQuality += 8; // +8% from Unity Catalog (down from 10%)
       }
     }
     
@@ -2135,7 +2135,7 @@ class IntelligentRecommendationEngine {
     
     // Bonus for collaborative features
     if (analyticsPillar) {
-      const hasNotebooks = analyticsPillar.platformFeatures?.some(f => 
+      const hasNotebooks = analyticsPillar.databricksFeatures?.some(f => 
         f.name && f.name.includes('Notebook')
       );
       if (hasNotebooks) {
@@ -2145,7 +2145,7 @@ class IntelligentRecommendationEngine {
     
     // Bonus for automation
     if (opExPillar) {
-      const hasWorkflows = opExPillar.platformFeatures?.some(f => 
+      const hasWorkflows = opExPillar.databricksFeatures?.some(f => 
         f.name && f.name.includes('Workflow')
       );
       if (hasWorkflows) {
@@ -2182,7 +2182,7 @@ class IntelligentRecommendationEngine {
         drivers: [
           dataEngPillar ? 'Data pipeline automation' : null,
           mlPillar ? 'MLOps automation' : null,
-          platformPillar ? 'Governance automation (Unified Data Catalog & Governance)' : null
+          platformPillar ? 'Governance automation (Unity Catalog)' : null
         ].filter(Boolean).slice(0, 2)
       },
       timeToMarket: {
@@ -2199,7 +2199,7 @@ class IntelligentRecommendationEngine {
         label: 'Improvement in data quality and stakeholder trust',
         drivers: [
           dataEngPillar ? 'Delta Lake ACID compliance' : null,
-          platformPillar ? 'Unified Data Catalog & Governance governance & lineage' : null,
+          platformPillar ? 'Unity Catalog governance & lineage' : null,
           'Automated data quality monitoring'
         ].filter(Boolean).slice(0, 2)
       },
@@ -2584,7 +2584,7 @@ class IntelligentRecommendationEngine {
     const pillarStrengths = {
       platform_governance: {
         basic: [
-          allComments.includes('Unified Data Catalog & Governance') ? 'Unified Data Catalog & Governance deployed with centralized governance' : null,
+          allComments.includes('unity catalog') ? 'Unity Catalog deployed with centralized governance' : null,
           allComments.includes('rbac') || allComments.includes('role-based') ? 'Role-based access control implemented' : null,
           allComments.includes('sso') || allComments.includes('single sign') ? 'Single Sign-On (SSO) for unified authentication' : null,
           (avgCurrent >= 2) ? 'Environment separation established (dev/staging/prod)' : null,
@@ -2599,7 +2599,7 @@ class IntelligentRecommendationEngine {
       data_engineering: {
         basic: [
           allComments.includes('delta') ? 'Delta Lake architecture for reliable data storage' : null,
-          allComments.includes('dlt') || allComments.includes('Declarative Data Pipelines') ? 'Declarative Data Pipelines for declarative ETL' : null,
+          allComments.includes('dlt') || allComments.includes('delta live tables') ? 'Delta Live Tables for declarative ETL' : null,
           allComments.includes('streaming') ? 'Real-time streaming ingestion operational' : null,
           (avgCurrent >= 2) ? 'Medallion architecture (Bronze/Silver/Gold) in place' : null,
           !painPoints.some(p => p.value.includes('quality')) ? 'Data quality validation processes established' : null
@@ -2626,7 +2626,7 @@ class IntelligentRecommendationEngine {
       },
       machine_learning: {
         basic: [
-          allComments.includes('Enterprise Model Registry') ? 'Enterprise Model Registry for experiment tracking and model registry' : null,
+          allComments.includes('mlflow') ? 'MLflow for experiment tracking and model registry' : null,
           allComments.includes('model serving') ? 'Model Serving endpoints for production inference' : null,
           (avgCurrent >= 2) ? 'Structured ML lifecycle with versioning' : null,
           !painPoints.some(p => p.value.includes('deployment')) ? 'Established model deployment processes' : null,
@@ -2942,15 +2942,15 @@ class IntelligentRecommendationEngine {
     const text = commentText.toLowerCase();
     
     // Extract specific tool/capability mentions
-    if (text.includes('Unified Data Catalog & Governance')) return 'Unified Data Catalog & Governance deployed for governance';
-    if (text.includes('Declarative Data Pipelines') || text.includes('dlt')) return 'Declarative Data Pipelines in production';
-    if (text.includes('Enterprise Model Registry')) return 'Enterprise Model Registry for experiment tracking and model registry';
+    if (text.includes('unity catalog')) return 'Unity Catalog deployed for governance';
+    if (text.includes('delta live tables') || text.includes('dlt')) return 'Delta Live Tables in production';
+    if (text.includes('mlflow')) return 'MLflow for experiment tracking and model registry';
     if (text.includes('photon')) return 'Photon engine enabled for performance';
     if (text.includes('serverless')) return 'Serverless compute in use';
-    if (text.includes('workflows')) return 'Enterprise Platform Workflows for orchestration';
+    if (text.includes('workflows')) return 'Databricks Workflows for orchestration';
     if (text.includes('vector search')) return 'Vector Search operational for RAG';
     if (text.includes('feature store')) return 'Feature Store for ML feature management';
-    if (text.includes('Continuous Data Observability')) return 'Continuous Data Observability for data quality';
+    if (text.includes('lakehouse monitoring')) return 'Lakehouse Monitoring for data quality';
     
     return null;
   }
@@ -2962,7 +2962,7 @@ class IntelligentRecommendationEngine {
   getFeatureVerb(featureName) {
     const verbMap = {
       // Monitoring/Observability features
-      'Continuous Data Observability': 'Provides automated monitoring to prevent',
+      'Lakehouse Monitoring': 'Provides automated monitoring to prevent',
       'System Tables': 'Delivers queryable insights to track and prevent',
       'Audit Logs': 'Enables compliance tracking to avoid',
       
@@ -2974,18 +2974,18 @@ class IntelligentRecommendationEngine {
       'Agent Framework': 'Orchestrates multi-step AI workflows to prevent',
       
       // ML features
-      'Enterprise Model Registry': 'Tracks ML experiments to avoid',
+      'MLflow': 'Tracks ML experiments to avoid',
       'Feature Store': 'Manages ML features centrally to eliminate',
       'AutoML': 'Accelerates model development to reduce',
       'Model Registry': 'Governs model versions to prevent',
       
       // Data Engineering
-      'Declarative Data Pipelines': 'Automates data quality checks to prevent',
+      'Delta Live Tables': 'Automates data quality checks to prevent',
       'Delta Sharing': 'Enables secure sharing to avoid',
       'Workflows': 'Orchestrates pipelines to reduce',
       
       // Platform Governance
-      'Unified Data Catalog & Governance': 'Centralizes governance to eliminate',
+      'Unity Catalog': 'Centralizes governance to eliminate',
       'Workspace Organization': 'Structures environments to avoid',
       'RBAC': 'Controls access to prevent'
     };

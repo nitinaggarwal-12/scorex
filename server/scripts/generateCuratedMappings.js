@@ -98,7 +98,7 @@ function calculateRelevance(painPoint, feature) {
     'platform': ['platform', 'infrastructure', 'compute', 'runtime', 'cluster', 'security', 'governance', 'access', 'audit', 'compliance'],
     'data_engineering': ['pipeline', 'etl', 'delta', 'stream', 'ingestion', 'data', 'quality', 'orchestration', 'workflow'],
     'analytics': ['query', 'sql', 'dashboard', 'warehouse', 'analytics', 'bi', 'reporting'],
-    'machine_learning': ['ml', 'model', 'feature', 'training', 'inference', 'Enterprise Model Registry', 'experiment'],
+    'machine_learning': ['ml', 'model', 'feature', 'training', 'inference', 'mlflow', 'experiment'],
     'generative_ai': ['llm', 'genai', 'ai', 'agent', 'rag', 'vector', 'embedding', 'prompt']
   };
   
@@ -117,7 +117,7 @@ function calculateRelevance(painPoint, feature) {
     // Fetch all features from database
     const featuresResult = await pool.query(`
       SELECT id, name, category, short_description as description, ga_status
-      FROM platform_features
+      FROM databricks_features
       WHERE ga_status IN ('GA', 'Public Preview')
       ORDER BY category, name
     `);

@@ -171,42 +171,42 @@ const LandingPage = ({ framework, onStartAssessment }) => {
     {
       icon: '🧱',
       title: 'Platform & Governance',
-      description: 'Assess how well your enterprise data & AI foundation is secured, scalable, and governed.',
+      description: 'Assess how well your Databricks foundation is secured, scalable, and governed.',
       dimensions: 'Environment Architecture, Security & Access Control, Governance & Compliance, Observability & Monitoring, Cost Management',
       color: '#3b82f6'
     },
     {
       icon: '💾',
       title: 'Data Engineering & Integration',
-      description: 'Evaluate how efficiently data is ingested, transformed, and managed within Enterprise Platform.',
+      description: 'Evaluate how efficiently data is ingested, transformed, and managed within Databricks.',
       dimensions: 'Ingestion Strategy, Lakehouse Architecture, Pipeline Orchestration, Data Quality, Performance & Scalability',
       color: '#10b981'
     },
     {
       icon: '📊',
       title: 'Analytics & BI Modernization',
-      description: 'Assess how Enterprise Platform supports governed analytics, performance, and self-service access.',
+      description: 'Assess how Databricks supports governed analytics, performance, and self-service access.',
       dimensions: 'Query Performance, Data Modeling, Visualization & Reporting, Self-Service Enablement, Collaboration & Sharing',
       color: '#f59e0b'
     },
     {
       icon: '🧠',
       title: 'Machine Learning & MLOps',
-      description: 'Understand how Enterprise Platform is leveraged for classical and predictive ML use cases.',
+      description: 'Understand how Databricks is leveraged for classical and predictive ML use cases.',
       dimensions: 'Experimentation & Tracking, Model Deployment, Feature Management, ML Lifecycle Governance, Business Impact',
       color: '#8b5cf6'
     },
     {
       icon: '🤖',
       title: 'Generative AI & Agentic Capabilities',
-      description: 'Evaluate readiness to operationalize GenAI and agent-based intelligence within Enterprise Platform.',
+      description: 'Evaluate readiness to operationalize GenAI and agent-based intelligence within Databricks.',
       dimensions: 'GenAI Strategy, Data & Knowledge Readiness, Application Development, Evaluation & Quality Control, Responsible AI',
       color: '#ef4444'
     },
     {
       icon: '🚀',
       title: 'Operational Excellence & Adoption',
-      description: 'Measure organizational readiness, adoption velocity, and realized value from Enterprise Platform.',
+      description: 'Measure organizational readiness, adoption velocity, and realized value from Databricks.',
       dimensions: 'Center of Excellence, Community of Practice, Training & Enablement, Financial Management, Innovation & Improvement',
       color: '#06b6d4'
     }
@@ -218,7 +218,7 @@ const LandingPage = ({ framework, onStartAssessment }) => {
         <ContentWrapper>
           <SectionTitle>Why Take This Assessment?</SectionTitle>
           <SectionSubtitle>
-            Gain clarity on your Enterprise Platform journey and unlock the full potential of your data and AI initiatives.
+            Gain clarity on your Databricks journey and unlock the full potential of your data and AI initiatives.
           </SectionSubtitle>
 
           <BenefitsGrid>
@@ -233,7 +233,7 @@ const LandingPage = ({ framework, onStartAssessment }) => {
               </BenefitIcon>
               <BenefitTitle>Accelerate Growth</BenefitTitle>
               <BenefitDescription>
-                Identify opportunities to maximize your Enterprise Platform investment and accelerate your data maturity journey.
+                Identify opportunities to maximize your Databricks investment and accelerate your data maturity journey.
               </BenefitDescription>
             </BenefitCard>
 
@@ -304,7 +304,7 @@ const LandingPage = ({ framework, onStartAssessment }) => {
               </BenefitIcon>
               <BenefitTitle>Best Practices</BenefitTitle>
               <BenefitDescription>
-                Learn from industry best practices and proven patterns for successful Enterprise Platform implementations.
+                Learn from industry best practices and proven patterns for successful Databricks implementations.
               </BenefitDescription>
             </BenefitCard>
           </BenefitsGrid>
@@ -315,7 +315,7 @@ const LandingPage = ({ framework, onStartAssessment }) => {
         <ContentWrapper>
           <SectionTitle>Assessment Pillars</SectionTitle>
           <SectionSubtitle>
-            Evaluate your Enterprise Platform maturity across these 6 comprehensive pillars, each containing 5 dimensions with targeted questions.
+            Evaluate your Databricks maturity across these 6 comprehensive pillars, each containing 5 dimensions with targeted questions.
           </SectionSubtitle>
 
           <PillarsGrid>

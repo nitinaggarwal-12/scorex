@@ -1,0 +1,65 @@
+name: Keep nikita branch up to date
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  update-nikita:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch branches
+        run: |
+          git fetch origin main nikita --no-tags --prune || true
+
+      - name: Ensure nikita branch exists locally
+        run: |
+          git checkout -B nikita origin/nikita || git checkout -B nikita
+
+      - name: Try merge origin/main into nikita
+        id: attempt
+        run: |
+          set -e
+          if git merge --no-edit origin/main; then
+            git push origin nikita
+            echo "merged=true" >> $GITHUB_OUTPUT
+          else
+            git merge --abort || true
+            TS=$(date -u +%Y%m%d%H%M%S)
+            BRANCH="update/nikita-${TS}"
+            git checkout -B "${BRANCH}" origin/main
+            git push origin "${BRANCH}"
+            echo "merged=false" >> $GITHUB_OUTPUT
+            echo "update_branch=${BRANCH}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create PR if merge failed
+        if: steps.attempt.outputs.merged == 'false'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const branch = '${{ steps.attempt.outputs.update_branch }}';
+            await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head: branch,
+              base: 'nikita',
+              title: `Update nikita from main (conflicts)`,
+              body: `Automatic merge of main into nikita failed. I pushed ${branch} containing main. Please resolve conflicts and merge.`
+            });

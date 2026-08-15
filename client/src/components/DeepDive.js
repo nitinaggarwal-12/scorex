@@ -2226,10 +2226,10 @@ const DeepDive = () => {
   const [objectives, setObjectives] = useState([
     {
       id: 'obj-1',
-      title: 'Enable our customers to build a scalable, secure, and governed foundation on Enterprise Platform',
+      title: 'Enable our customers to build a scalable, secure, and governed foundation on Databricks',
       content: `Technical practitioners within our customers' organizations aim to create a platform that is reliable, performant, and compliant with enterprise standards.
 
-The Technical Maturity Model enables Enterprise Platform to provide customers with a structured framework to benchmark their platform readiness and operational excellence across the Lakehouse.`,
+The Technical Maturity Model enables Databricks to provide customers with a structured framework to benchmark their platform readiness and operational excellence across the Lakehouse.`,
       icon: '🏗️',
       borderColor: '#f97316'
     },
@@ -2244,10 +2244,10 @@ The Technical Maturity Model enables us to elevate discussions beyond workloads 
     },
     {
       id: 'obj-3',
-      title: "Position Enterprise Platform as a strategic partner in the customer's modernization journey",
-      content: `With thousands of customer engagements, Enterprise Platform uniquely understands what 'good' looks like across platform operations, data engineering, analytics, ML, and GenAI adoption.
+      title: "Position Databricks as a strategic partner in the customer's modernization journey",
+      content: `With thousands of customer engagements, Databricks uniquely understands what 'good' looks like across platform operations, data engineering, analytics, ML, and GenAI adoption.
 
-Position Enterprise Platform as a trusted advisor with deep technical expertise — helping customers accelerate their journey toward platform maturity through best practices, Value Acceleration, Partner Solutions, and Technical Account engagements.`,
+Position Databricks as a trusted advisor with deep technical expertise — helping customers accelerate their journey toward platform maturity through best practices, Value Acceleration, Partner Solutions, and Technical Account engagements.`,
       icon: '🤝',
       borderColor: '#8b5cf6'
     }
@@ -2268,7 +2268,7 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
         { letter: 'D.', name: 'Observability & Monitoring' },
         { letter: 'E.', name: 'Cost Management' }
       ],
-      description: 'Foundational platform capabilities for a secure, governed, and scalable Enterprise Platform deployment.'
+      description: 'Foundational platform capabilities for a secure, governed, and scalable Databricks deployment.'
     },
     {
       id: 'cat-2',
@@ -2353,10 +2353,10 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
       id: 'tsp-1',
       category: 'Platform & Governance',
       color: '#f97316',
-      need: 'Establish secure, scalable, and well-governed enterprise data environments',
+      need: 'Establish secure, scalable, and well-governed Databricks environments',
       activities: [
         'Platform Foundations Workshop',
-        'ABAC & Unified Data Catalog & Governance implementation review',
+        'ABAC & Unity Catalog implementation review',
         'IaC setup via Terraform & DABs'
       ],
       outcome: 'Standardized & Governed Lakehouse Foundation'
@@ -2391,7 +2391,7 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
       color: '#dc2626',
       need: 'Standardize ML lifecycle management',
       activities: [
-        'Enterprise Model Registry governance setup',
+        'MLflow governance setup',
         'Feature Store onboarding',
         'Model Serving & CI/CD enablement'
       ],
@@ -2405,7 +2405,7 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
       activities: [
         'AI Gateway integration',
         'Vector Search & embedding pipeline enablement',
-        'Agentic app deployment via Enterprise Platform Apps'
+        'Agentic app deployment via Databricks Apps'
       ],
       outcome: 'Enterprise GenAI Adoption Readiness'
     },
@@ -2434,7 +2434,7 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
     {
       id: 'ep-2',
       time: 'H1 2026',
-      engagement: 'Unified Data Catalog & Governance, IaC, ABAC, Observability Workshops',
+      engagement: 'Unity Catalog, IaC, ABAC, Observability Workshops',
       focusArea: 'Secure & Governed Foundation'
     },
     {
@@ -2446,7 +2446,7 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
     {
       id: 'ep-4',
       time: 'H1 2027',
-      engagement: 'Enterprise Model Registry, Model Serving, Feature Store Workshops',
+      engagement: 'MLflow, Model Serving, Feature Store Workshops',
       focusArea: 'Scalable ML Lifecycle'
     },
     {
@@ -2473,8 +2473,8 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
       maturityLevel: 4, // Optimize/Transform
       maturityDescriptions: {
         explore: 'Isolated sandboxes; minimal governance.',
-        experiment: 'IaC introduced; early DLT or Enterprise Model Registry pilots.',
-        formalize: 'Stable CI/CD pipelines; partial Unified Data Catalog & Governance.',
+        experiment: 'IaC introduced; early DLT or MLflow pilots.',
+        formalize: 'Stable CI/CD pipelines; partial Unity Catalog.',
         optimize: 'Automated provisioning, lineage tracking.',
         transform: 'Policy-as-code; self-service Lakehouse platform.'
       },
@@ -2482,29 +2482,29 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
       approach: [
         'Run FinOps workshops for cost and performance optimization.',
         'Deep-dive reviews of observability, lineage, and monitoring.',
-        'Implement ABAC and central Unified Data Catalog & Governance governance.',
-        'Build CI/CD automation using Enterprise Platform Asset Bundles.',
-        'Position Enterprise Platform as the innovation and optimization partner.'
+        'Implement ABAC and central Unity Catalog governance.',
+        'Build CI/CD automation using Databricks Asset Bundles.',
+        'Position Databricks as the innovation and optimization partner.'
       ]
     },
     {
       id: 'scenario-2',
-      title: 'Azure – Already Using Enterprise Platform',
+      title: 'Azure – Already Using Databricks',
       color: '#3b82f6',
       bgColor: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
       maturityLevel: 3, // Formalize/Optimize
       maturityDescriptions: {
         explore: 'Ad-hoc usage; limited visibility.',
         experiment: 'Initial pipelines; workspace-specific access.',
-        formalize: 'Identity and Unified Data Catalog & Governance integration.',
+        formalize: 'Identity and Unity Catalog integration.',
         optimize: 'IaC automation; monitoring enabled.',
         transform: 'Governed multi-workspace setup with Azure governance and FinOps.'
       },
-      scenario: 'Existing Azure Enterprise Platform customers underutilizing governance and automation capabilities, needing optimization and enablement alignment.',
+      scenario: 'Existing Azure Databricks customers underutilizing governance and automation capabilities, needing optimization and enablement alignment.',
       approach: [
         'Conduct Lakehouse Health Check on architecture and usage.',
         'Deploy Terraform templates for workspace consistency.',
-        'Integrate Azure Monitor and Continuous Data Observability.',
+        'Integrate Azure Monitor and Lakehouse Monitoring.',
         'Align with Azure GTM for FinOps and governance visibility.'
       ]
     },
@@ -2516,16 +2516,16 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
       maturityLevel: 3, // Formalize/Optimize
       maturityDescriptions: {
         explore: 'Legacy DWH or Hadoop nearing obsolescence.',
-        experiment: 'POCs to validate Enterprise Platform migration.',
+        experiment: 'POCs to validate Databricks migration.',
         formalize: 'Migration factory; hybrid coexistence.',
         optimize: 'DLT pipelines; schema evolution automated.',
-        transform: 'Fully modernized Lakehouse governed by Unified Data Catalog & Governance.'
+        transform: 'Fully modernized Lakehouse governed by Unity Catalog.'
       },
       scenario: 'Customers facing time-sensitive migrations off legacy systems needing fast modernization while ensuring governance and continuity.',
       approach: [
         'Engage migration specialists to define architecture roadmap.',
         'Modernize ingestion using LakeFlow and Delta pipelines.',
-        'Embed Unified Data Catalog & Governance and audit readiness from day one.',
+        'Embed Unity Catalog and audit readiness from day one.',
         'Deliver TCO reduction through consolidation and automation.'
       ]
     },
@@ -2545,7 +2545,7 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
       scenario: 'Independent workspaces cause governance fragmentation and duplicated costs, requiring unification and governance centralization.',
       approach: [
         'Run workspace discovery and consolidation assessment.',
-        'Implement Unified Data Catalog & Governance with ABAC for federated governance.',
+        'Implement Unity Catalog with ABAC for federated governance.',
         'Automate provisioning via Terraform for lifecycle control.',
         'Enable FinOps dashboards for visibility and accountability.'
       ]
@@ -2559,7 +2559,7 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
       maturityDescriptions: {
         explore: 'Strategic intent without technical execution.',
         experiment: 'Early pilots and architecture reviews.',
-        formalize: 'Unified Data Catalog & Governance and CI/CD adoption.',
+        formalize: 'Unity Catalog and CI/CD adoption.',
         optimize: 'Observability and automation aligned to KPIs.',
         transform: 'Platform-as-a-Service with governed Lakehouse adoption.'
       },
@@ -2568,7 +2568,7 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
         'Conduct Technical Maturity Assessment across six pillars.',
         'Map current and target states with quantified maturity gaps.',
         'Develop roadmap with modernization milestones and KPIs.',
-        'Position Enterprise Platform as the enabler of continuous modernization.'
+        'Position Databricks as the enabler of continuous modernization.'
       ]
     }
   ]);
@@ -2588,8 +2588,8 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
         },
         {
           stage: '2. Experiment',
-          description: 'Teams begin adopting Terraform or manual Unified Data Catalog & Governance setup but lack policy consistency. Introduce baseline access models and automated provisioning across dev/test/prod.',
-          tools: 'Unified Data Catalog & Governance QuickStart, Terraform Templates, Workspace Policies'
+          description: 'Teams begin adopting Terraform or manual Unity Catalog setup but lack policy consistency. Introduce baseline access models and automated provisioning across dev/test/prod.',
+          tools: 'Unity Catalog QuickStart, Terraform Templates, Workspace Policies'
         },
         {
           stage: '3. Formalize',
@@ -2627,7 +2627,7 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
         {
           stage: '3. Formalize',
           description: 'Pipelines now include expectations, lineage, and notifications. Standardize CDC patterns and implement monitoring.',
-          tools: 'Quality Expectations, Lineage View, Continuous Data Observability'
+          tools: 'Quality Expectations, Lineage View, Lakehouse Monitoring'
         },
         {
           stage: '4. Optimize',
@@ -2659,7 +2659,7 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
         },
         {
           stage: '3. Formalize',
-          description: 'Business units adopt shared semantic models via Unified Data Catalog & Governance. DBSQL dashboards are certified and automated for refresh.',
+          description: 'Business units adopt shared semantic models via Unity Catalog. DBSQL dashboards are certified and automated for refresh.',
           tools: 'Certified Dashboards, Semantic Layer Templates'
         },
         {
@@ -2682,8 +2682,8 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
       levels: [
         {
           stage: '1. Explore',
-          description: 'Models trained locally without traceability. Introduce Enterprise Model Registry Tracking and centralized artifact management.',
-          tools: 'Enterprise Model Registry Starter Notebook, Model Governance Guide'
+          description: 'Models trained locally without traceability. Introduce MLflow Tracking and centralized artifact management.',
+          tools: 'MLflow Starter Notebook, Model Governance Guide'
         },
         {
           stage: '2. Experiment',
@@ -2698,7 +2698,7 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
         {
           stage: '4. Optimize',
           description: 'Model Serving is automated with event-driven retraining and explainability.',
-          tools: 'Enterprise Model Registry + Feature Store Integration, Bias Detection Library'
+          tools: 'MLflow + Feature Store Integration, Bias Detection Library'
         },
         {
           stage: '5. Transform',
@@ -2725,7 +2725,7 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
         },
         {
           stage: '3. Formalize',
-          description: 'GenAI models deployed as Enterprise Platform Apps with Vector Search. Compliance and cost governance implemented.',
+          description: 'GenAI models deployed as Databricks Apps with Vector Search. Compliance and cost governance implemented.',
           tools: 'Vector Search Setup, Observability Dashboards'
         },
         {
@@ -2749,7 +2749,7 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
         {
           stage: '1. Explore',
           description: 'Job failures are detected manually; limited FinOps visibility. Establish observability and cost tracking.',
-          tools: 'FinOps Starter Dashboard, Continuous Data Observability'
+          tools: 'FinOps Starter Dashboard, Lakehouse Monitoring'
         },
         {
           stage: '2. Experiment',
@@ -2798,7 +2798,7 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
           levels: [
             'Minimal identity integration; credentials managed manually.',
             'Some SSO setup; limited access segmentation.',
-            'Unified Data Catalog & Governance or SCIM integrated; basic role-based model.',
+            'Unity Catalog or SCIM integrated; basic role-based model.',
             'Fine-grained ABAC and table ACLs; access managed centrally.',
             'Enterprise-wide zero-trust model, federated IDP, cross-workspace governance.'
           ]
@@ -2808,7 +2808,7 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
           levels: [
             'No cataloging or lineage; ad-hoc data ownership.',
             'Manual tagging of assets; limited data stewardship.',
-            'Unified Data Catalog & Governance used for governed access and auditing.',
+            'Unity Catalog used for governed access and auditing.',
             'Data lineage & classification automated; compliance reports generated.',
             'Policy-as-code and regulatory alignment (HIPAA, HITRUST, GDPR) continuously enforced.'
           ]
@@ -2818,7 +2818,7 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
           levels: [
             'Manual job checks; no proactive monitoring.',
             'Basic dashboards for cluster utilization and costs.',
-            'Centralized monitoring via Continuous Data Observability or Enterprise Model Registry tracking.',
+            'Centralized monitoring via Lakehouse Monitoring or MLflow tracking.',
             'Alerting, anomaly detection, and audit dashboards established.',
             'Predictive monitoring; auto-remediation and FinOps optimization integrated.'
           ]
@@ -2914,8 +2914,8 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
           levels: [
             'Flat tables; no standard semantic model.',
             'Ad-hoc star schemas built.',
-            'Business layer modeled in Declarative Data Pipelines.',
-            'Reusable models deployed in Unified Data Catalog & Governance.',
+            'Business layer modeled in Delta Live Tables.',
+            'Reusable models deployed in Unity Catalog.',
             'Enterprise-wide semantic layer (AI/BI Genie) unified across org.'
           ]
         },
@@ -2944,7 +2944,7 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
           levels: [
             'Static exports.',
             'BI tools connected via ODBC/JDBC.',
-            'Unified Data Catalog & Governance Shares for internal use.',
+            'Unity Catalog Shares for internal use.',
             'Delta Sharing adopted for partners.',
             'Cross-organization sharing automated with audit trails.'
           ]
@@ -2961,8 +2961,8 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
           name: 'Experimentation & Tracking',
           levels: [
             'Local training; no versioning.',
-            'Enterprise Model Registry manually used.',
-            'Enterprise Model Registry integrated across teams.',
+            'MLflow manually used.',
+            'MLflow integrated across teams.',
             'CI/CD pipelines automate model registration.',
             'Full model lineage and reproducibility across org.'
           ]
@@ -3040,7 +3040,7 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
           levels: [
             'PoC chatbots or notebooks.',
             'Simple GenAI apps built with SDKs.',
-            'Apps operationalized using Enterprise Platform Apps.',
+            'Apps operationalized using Databricks Apps.',
             'Multi-agent orchestration using AI Gateway.',
             'Full enterprise agent network orchestrating workflows.'
           ]
@@ -3098,7 +3098,7 @@ Position Enterprise Platform as a trusted advisor with deep technical expertise 
           levels: [
             'Ad-hoc trainings.',
             'Some onboarding materials.',
-            'Structured Enterprise Platform Academy program.',
+            'Structured Databricks Academy program.',
             'Role-based enablement pathways.',
             'Continuous learning ecosystem with AI-powered skill tracking.'
           ]
@@ -4200,7 +4200,7 @@ Transform: Fully governed multi-domain Lakehouse with automation.`;
           <div style={{ flex: 1 }}>
             <PageTitle>The Objective of a Technical Maturity Assessment</PageTitle>
             <PageSubtitle>
-              Understand the strategic goals and comprehensive framework behind Enterprise Data & AI Maturity Assessments
+              Understand the strategic goals and comprehensive framework behind Databricks maturity assessments
             </PageSubtitle>
           </div>
           
@@ -5003,7 +5003,7 @@ Transform: Fully governed multi-domain Lakehouse with automation.`;
                           const selected = e.target.value;
                           if (selected === 'platform') {
                             handleFormChange('title', 'Platform & Governance');
-                            handleFormChange('description', 'Foundational platform capabilities for a secure, governed, and scalable Enterprise Platform deployment.');
+                            handleFormChange('description', 'Foundational platform capabilities for a secure, governed, and scalable Databricks deployment.');
                           } else if (selected === 'data') {
                             handleFormChange('title', 'Data Engineering & Integration');
                             handleFormChange('description', 'Build robust, scalable data pipelines with modern lakehouse architecture and quality controls.');

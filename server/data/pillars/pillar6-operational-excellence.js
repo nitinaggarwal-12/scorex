@@ -15,7 +15,7 @@ const operationalExcellencePillar = {
       questions: [
         {
           id: 'coe_structure',
-          question: 'How formally is your CoE structured to define Enterprise Platform standards and best practices?',
+          question: 'How formally is your CoE structured to define Databricks standards and best practices?',
           perspectives: [
             {
               id: 'current_state',
@@ -113,7 +113,7 @@ const operationalExcellencePillar = {
       questions: [
         {
           id: 'collaboration_strength',
-          question: 'How strong is the internal collaboration and knowledge-sharing culture around Enterprise Platform usage?',
+          question: 'How strong is the internal collaboration and knowledge-sharing culture around Databricks usage?',
           perspectives: [
             {
               id: 'current_state',
@@ -211,7 +211,7 @@ const operationalExcellencePillar = {
       questions: [
         {
           id: 'training_programs',
-          question: 'How comprehensive are your Enterprise Platform enablement programs for engineers, analysts, and data scientists?',
+          question: 'How comprehensive are your Databricks enablement programs for engineers, analysts, and data scientists?',
           perspectives: [
             {
               id: 'current_state',
@@ -309,7 +309,7 @@ const operationalExcellencePillar = {
       questions: [
         {
           id: 'value_linkage',
-          question: 'How clearly are Enterprise Platform costs linked to business value or productivity gains?',
+          question: 'How clearly are Databricks costs linked to business value or productivity gains?',
           perspectives: [
             {
               id: 'current_state',
@@ -340,7 +340,7 @@ const operationalExcellencePillar = {
               label: 'Business Pain Points',
               type: 'multiple_choice',
               options: [
-                { value: 'roi_unclear', label: 'Unclear ROI on Enterprise Platform', score: 4 },
+                { value: 'roi_unclear', label: 'Unclear ROI on Databricks', score: 4 },
                 { value: 'budget_justification', label: 'Difficulty justifying budget', score: 4 },
                 { value: 'cost_perception', label: 'Perceived as cost center, not value driver', score: 4 },
                 { value: 'optimization_challenges', label: 'Difficult to prioritize optimization', score: 3 },
@@ -407,7 +407,7 @@ const operationalExcellencePillar = {
       questions: [
         {
           id: 'innovation_adoption',
-          question: 'How proactive is your organization in evaluating and piloting new Enterprise Platform capabilities?',
+          question: 'How proactive is your organization in evaluating and piloting new Databricks capabilities?',
           perspectives: [
             {
               id: 'current_state',

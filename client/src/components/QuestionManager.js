@@ -447,7 +447,7 @@ const SAMPLE_QUESTIONS = {
       category: 'Streaming Data',
       maturity_level_1: 'Batch processing only with significant delays',
       maturity_level_2: 'Basic streaming for specific use cases',
-      maturity_level_3: 'Standardized streaming architecture with Declarative Data Pipelines',
+      maturity_level_3: 'Standardized streaming architecture with Delta Live Tables',
       maturity_level_4: 'Advanced stream processing with exactly-once semantics',
       maturity_level_5: 'Unified batch and streaming with auto-scaling'
     }
@@ -583,7 +583,7 @@ const SAMPLE_QUESTIONS = {
       category: 'Data Governance',
       maturity_level_1: 'No centralized data catalog or governance',
       maturity_level_2: 'Basic metadata management',
-      maturity_level_3: 'Enterprise data catalog with Unified Data Catalog & Governance',
+      maturity_level_3: 'Enterprise data catalog with Unity Catalog',
       maturity_level_4: 'Automated data classification and lineage',
       maturity_level_5: 'AI-powered data discovery and policy enforcement'
     },

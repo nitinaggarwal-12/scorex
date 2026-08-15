@@ -1,0 +1,2654 @@
+[
+  {
+    "value": "inconsistent_configs",
+    "label": "Inconsistent environment configurations",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "manual_provisioning",
+    "label": "Manual environment provisioning",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "poor_isolation",
+    "label": "Poor environment isolation",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "deployment_issues",
+    "label": "Deployment consistency issues",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "resource_conflicts",
+    "label": "Resource conflicts between environments",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "slow_deployment",
+    "label": "Slow time-to-market for new features",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "environment_costs",
+    "label": "High environment management costs",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "team_bottlenecks",
+    "label": "Team bottlenecks in environment access",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "quality_issues",
+    "label": "Quality issues from environment differences",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "compliance_risks",
+    "label": "Compliance risks from inconsistency",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "resource_contention",
+    "label": "Resource contention between teams",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "performance_degradation",
+    "label": "Performance degradation under load",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "complex_scaling",
+    "label": "Complex manual scaling processes",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "infrastructure_limits",
+    "label": "Infrastructure capacity limits",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "monitoring_gaps",
+    "label": "Inadequate scaling monitoring",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "team_blocking",
+    "label": "Teams blocked waiting for resources",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "project_delays",
+    "label": "Project delays due to scaling issues",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "high_costs",
+    "label": "High costs from over-provisioning",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "poor_utilization",
+    "label": "Poor resource utilization",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "competitive_disadvantage",
+    "label": "Competitive disadvantage from slow scaling",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "auth_complexity",
+    "label": "Complex authentication setup",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "access_management",
+    "label": "Difficult access management",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "security_gaps",
+    "label": "Security policy gaps",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "audit_trails",
+    "label": "Incomplete audit trails",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "integration_issues",
+    "label": "Identity provider integration issues",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "security_breaches",
+    "label": "Risk of security breaches",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "compliance_violations",
+    "label": "Compliance violations",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "access_delays",
+    "label": "Delays in granting access",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "admin_overhead",
+    "label": "High administrative overhead",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "user_frustration",
+    "label": "User frustration with access",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "data_exposure",
+    "label": "Risk of sensitive data exposure",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "over_privileged",
+    "label": "Over-privileged user access",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "encryption_gaps",
+    "label": "Encryption implementation gaps",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "monitoring_blind_spots",
+    "label": "Security monitoring blind spots",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "policy_enforcement",
+    "label": "Inconsistent policy enforcement",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "regulatory_risk",
+    "label": "Regulatory compliance risk",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "data_breaches",
+    "label": "Risk of costly data breaches",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "customer_trust",
+    "label": "Customer trust concerns",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "audit_failures",
+    "label": "Failed security audits",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "business_disruption",
+    "label": "Business disruption from security issues",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "policy_gaps",
+    "label": "Inconsistent policy enforcement",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "lineage_tracking",
+    "label": "Poor data lineage tracking",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "manual_processes",
+    "label": "Manual governance processes",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "metadata_management",
+    "label": "Inadequate metadata management",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "integration_complexity",
+    "label": "Complex governance tool integration",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "compliance_failures",
+    "label": "Compliance audit failures",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "data_quality_issues",
+    "label": "Data quality and trust issues",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "regulatory_fines",
+    "label": "Risk of regulatory fines",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "operational_inefficiency",
+    "label": "Operational inefficiencies",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "decision_delays",
+    "label": "Delayed decision making",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "audit_complexity",
+    "label": "Complex audit trail generation",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "data_retention",
+    "label": "Data retention policy enforcement",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "reporting_gaps",
+    "label": "Compliance reporting gaps",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "change_tracking",
+    "label": "Inadequate change tracking",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "tool_integration",
+    "label": "Compliance tool integration issues",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "regulatory_penalties",
+    "label": "Regulatory penalties and fines",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "audit_costs",
+    "label": "High audit preparation costs",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "business_risk",
+    "label": "Business continuity risks",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "reputation_damage",
+    "label": "Reputation damage from violations",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "alert_noise",
+    "label": "Too many false positive alerts",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "metric_correlation",
+    "label": "Difficulty correlating metrics",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "performance_impact",
+    "label": "Monitoring performance impact",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "tool_fragmentation",
+    "label": "Fragmented monitoring tools",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "unplanned_downtime",
+    "label": "Unplanned system downtime",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "slow_issue_resolution",
+    "label": "Slow issue resolution",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "user_impact",
+    "label": "Unexpected user impact",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "resource_waste",
+    "label": "Resource waste from poor visibility",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "sla_breaches",
+    "label": "SLA breaches and penalties",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "late_detection",
+    "label": "Late issue detection",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "manual_response",
+    "label": "Manual issue response processes",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "alert_fatigue",
+    "label": "Alert fatigue from noise",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "root_cause_analysis",
+    "label": "Difficult root cause analysis",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "escalation_delays",
+    "label": "Delays in issue escalation",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "service_disruption",
+    "label": "Frequent service disruptions",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "customer_impact",
+    "label": "Customer-facing impact",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "operational_costs",
+    "label": "High operational support costs",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "team_burnout",
+    "label": "Team burnout from firefighting",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "missed_slas",
+    "label": "Missed service level agreements",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "cost_attribution",
+    "label": "Difficult cost attribution",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "usage_visibility",
+    "label": "Poor usage visibility",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "reporting_complexity",
+    "label": "Complex cost reporting",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "tagging_inconsistency",
+    "label": "Inconsistent resource tagging",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "tool_limitations",
+    "label": "Cost management tool limitations",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "budget_overruns",
+    "label": "Frequent budget overruns",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "cost_surprises",
+    "label": "Unexpected cost spikes",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "no_accountability",
+    "label": "Lack of cost accountability",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "inefficient_spending",
+    "label": "Inefficient resource spending",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "budget_planning",
+    "label": "Difficult budget planning",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "optimization_complexity",
+    "label": "Complex optimization processes",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "resource_rightsizing",
+    "label": "Difficult resource rightsizing",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "automation_gaps",
+    "label": "Lack of optimization automation",
+    "pillar": "platform_governance",
+    "type": "technical_pain"
+  },
+  {
+    "value": "wasted_spend",
+    "label": "Significant wasted cloud spend",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "no_cost_discipline",
+    "label": "Lack of cost discipline",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "team_conflicts",
+    "label": "Team conflicts over resource costs",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "roi_unclear",
+    "label": "Unclear ROI on data investments",
+    "pillar": "platform_governance",
+    "type": "business_pain"
+  },
+  {
+    "value": "complex_integrations",
+    "label": "Complex source system integrations",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "data_format_issues",
+    "label": "Data format and schema inconsistencies",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "pipeline_maintenance",
+    "label": "High pipeline maintenance overhead",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "error_handling",
+    "label": "Poor error handling and recovery",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "throughput_issues",
+    "label": "Ingestion throughput limitations",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "data_delays",
+    "label": "Data availability delays impacting decisions",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "integration_costs",
+    "label": "High costs for new source integrations",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "data_quality",
+    "label": "Poor data quality at ingestion",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "business_agility",
+    "label": "Limited agility for new data needs",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "schema_breakage",
+    "label": "Frequent pipeline failures from schema changes",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "manual_fixes",
+    "label": "Manual intervention required for recovery",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "data_loss_risk",
+    "label": "Risk of data loss during failures",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "recovery_complexity",
+    "label": "Complex recovery procedures",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "data_unavailability",
+    "label": "Critical data unavailable during failures",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "operational_overhead",
+    "label": "High operational overhead for recovery",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "trust_issues",
+    "label": "Loss of stakeholder trust",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "compliance_risk",
+    "label": "Compliance risks from data gaps",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "data_organization",
+    "label": "Poor data organization and structure",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "layer_confusion",
+    "label": "Unclear layer boundaries and responsibilities",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "duplicate_data",
+    "label": "Data duplication across layers",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "transformation_complexity",
+    "label": "Complex transformation logic",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "performance_issues",
+    "label": "Performance issues from poor structure",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "data_discovery",
+    "label": "Difficulty finding the right data",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "inconsistent_metrics",
+    "label": "Inconsistent metrics across teams",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "storage_costs",
+    "label": "High storage costs from duplication",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "slow_insights",
+    "label": "Slow time to insights",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "trust_deficit",
+    "label": "Low trust in data accuracy",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "rigid_structure",
+    "label": "Rigid architecture resisting change",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "new_source_complexity",
+    "label": "Complexity adding new data sources",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "format_limitations",
+    "label": "Limited support for new data formats",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "integration_effort",
+    "label": "High effort for system integrations",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "scalability_constraints",
+    "label": "Architecture scalability constraints",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "slow_adaptation",
+    "label": "Slow adaptation to new requirements",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "missed_opportunities",
+    "label": "Missed opportunities due to inflexibility",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "integration_delays",
+    "label": "Delays in partner/vendor integrations",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "competitive_lag",
+    "label": "Competitive lag from slow data adoption",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "innovation_barriers",
+    "label": "Barriers to data innovation",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "scheduling_issues",
+    "label": "Unreliable job scheduling",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "dependency_failures",
+    "label": "Dependency management failures",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "retry_logic",
+    "label": "Inadequate retry and recovery logic",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "maintenance_burden",
+    "label": "High maintenance burden",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "data_freshness",
+    "label": "Stale data impacting decisions",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "pipeline_failures",
+    "label": "Frequent pipeline failures",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "sla_misses",
+    "label": "Missing data SLAs",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "team_frustration",
+    "label": "Team frustration with reliability",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "version_control",
+    "label": "Inconsistent version control",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "testing_gaps",
+    "label": "Inadequate pipeline testing",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "environment_drift",
+    "label": "Environment configuration drift",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "production_incidents",
+    "label": "Production incidents from bad deployments",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "slow_releases",
+    "label": "Slow release cycles",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "rollback_complexity",
+    "label": "Complex rollback procedures",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "audit_gaps",
+    "label": "Compliance audit gaps",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "validation_gaps",
+    "label": "Incomplete data validation",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "quality_rules",
+    "label": "Inconsistent quality rules",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "error_detection",
+    "label": "Late error detection",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "reconciliation_complexity",
+    "label": "Complex data reconciliation",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "recovery_procedures",
+    "label": "Manual recovery procedures",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "bad_decisions",
+    "label": "Business decisions on bad data",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "trust_erosion",
+    "label": "Erosion of data trust",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "metric_visibility",
+    "label": "Poor quality metric visibility",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "stakeholder_communication",
+    "label": "Difficult stakeholder communication",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "trend_analysis",
+    "label": "Limited quality trend analysis",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "late_discovery",
+    "label": "Late discovery of data issues",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "stakeholder_frustration",
+    "label": "Stakeholder frustration with quality",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "reactive_approach",
+    "label": "Reactive vs proactive quality management",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "sla_impacts",
+    "label": "Quality issues impacting SLAs",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "slow_pipelines",
+    "label": "Slow pipeline execution times",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "parallelization_gaps",
+    "label": "Limited parallelization",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "resource_inefficiency",
+    "label": "Inefficient resource utilization",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "bottlenecks",
+    "label": "Pipeline bottlenecks",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "optimization_difficulty",
+    "label": "Difficult performance optimization",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "data_latency",
+    "label": "High data latency impacting decisions",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "compute_costs",
+    "label": "High compute costs",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "user_experience",
+    "label": "Poor user experience from slow queries",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "scalability_limits",
+    "label": "Cannot scale to meet demand",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "manual_scaling",
+    "label": "Manual scaling processes",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "over_provisioning",
+    "label": "Over-provisioning to handle peaks",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "scaling_delays",
+    "label": "Slow scaling response times",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "configuration_complexity",
+    "label": "Complex scaling configuration",
+    "pillar": "data_engineering",
+    "type": "technical_pain"
+  },
+  {
+    "value": "cost_inefficiency",
+    "label": "Cost inefficiency from static sizing",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "capacity_planning",
+    "label": "Difficult capacity planning",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "business_impact",
+    "label": "Business impact from scaling delays",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "wasted_resources",
+    "label": "Wasted resources during low demand",
+    "pillar": "data_engineering",
+    "type": "business_pain"
+  },
+  {
+    "value": "slow_queries",
+    "label": "Slow query execution times",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "inconsistent_performance",
+    "label": "Inconsistent query performance",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "delayed_insights",
+    "label": "Delayed business insights",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "report_timeouts",
+    "label": "Dashboard and report timeouts",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "adoption_barriers",
+    "label": "Barriers to analytics adoption",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "ad_hoc_optimization",
+    "label": "Ad-hoc, reactive optimization only",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "lack_of_tools",
+    "label": "Lack of optimization tools and guidance",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "query_complexity",
+    "label": "Complex query patterns difficult to optimize",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "indexing_gaps",
+    "label": "Inadequate indexing and partitioning",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "knowledge_gaps",
+    "label": "Team knowledge gaps in optimization",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "high_compute_costs",
+    "label": "High compute costs from inefficiency",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "poor_user_experience",
+    "label": "Poor user experience",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "limited_scalability",
+    "label": "Limited scalability for users",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "optimization_delays",
+    "label": "Long delays for optimization work",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "metric_inconsistency",
+    "label": "Inconsistent metric definitions",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "no_shared_layer",
+    "label": "No shared semantic layer",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "duplicate_logic",
+    "label": "Duplicate calculation logic",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "version_confusion",
+    "label": "Confusion over metric versions",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "documentation_gaps",
+    "label": "Poor metric documentation",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "conflicting_reports",
+    "label": "Conflicting reports and dashboards",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "wasted_effort",
+    "label": "Wasted effort on metric reconciliation",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "poor_discoverability",
+    "label": "Difficult data discovery",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "catalog_gaps",
+    "label": "Incomplete data catalog",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "unclear_lineage",
+    "label": "Unclear data lineage",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "access_complexity",
+    "label": "Complex data access procedures",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "quality_uncertainty",
+    "label": "Uncertainty about data quality",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "analyst_inefficiency",
+    "label": "Analyst time wasted searching for data",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "duplicate_work",
+    "label": "Duplicate data preparation work",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "low_reuse",
+    "label": "Low reuse of curated datasets",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "onboarding_delays",
+    "label": "Slow onboarding for new analysts",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "data_extracts",
+    "label": "Dependence on data extracts",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "refresh_delays",
+    "label": "Slow dashboard refresh times",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "limited_interactivity",
+    "label": "Limited dashboard interactivity",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "stale_dashboards",
+    "label": "Stale dashboard data",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "limited_adoption",
+    "label": "Limited dashboard adoption",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "reporting_delays",
+    "label": "Delayed reporting cycles",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "cost_overhead",
+    "label": "High BI licensing and infrastructure costs",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "inconsistent_schedules",
+    "label": "Inconsistent refresh schedules",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "kpi_proliferation",
+    "label": "KPI definition proliferation",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "conflicting_kpis",
+    "label": "Conflicting KPI values",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "report_sprawl",
+    "label": "Uncontrolled report sprawl",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "compliance_gaps",
+    "label": "Compliance and audit gaps",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "tool_complexity",
+    "label": "Tools too complex for business users",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "access_barriers",
+    "label": "Barriers to data access",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "training_gaps",
+    "label": "Insufficient user training",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "limited_tooling",
+    "label": "Limited self-service tooling",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "support_burden",
+    "label": "High support burden for analysts",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "analyst_bottleneck",
+    "label": "Analyst bottleneck for insights",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "slow_decisions",
+    "label": "Slow decision-making cycles",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "low_data_literacy",
+    "label": "Low organizational data literacy",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "wild_west_access",
+    "label": "\"Wild west\" data access",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "quality_control",
+    "label": "Lack of quality control",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "audit_challenges",
+    "label": "Difficult usage auditing",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "data_misuse",
+    "label": "Risk of data misuse",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "inconsistent_analysis",
+    "label": "Inconsistent analysis across teams",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "regulatory_exposure",
+    "label": "Regulatory exposure",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "sharing_complexity",
+    "label": "Complex data sharing processes",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "security_concerns",
+    "label": "Security concerns with external sharing",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "format_compatibility",
+    "label": "Data format compatibility issues",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "access_provisioning",
+    "label": "Slow access provisioning",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "tracking_gaps",
+    "label": "Inadequate usage tracking",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "partner_friction",
+    "label": "Partner integration friction",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "collaboration_barriers",
+    "label": "Barriers to data collaboration",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "revenue_impact",
+    "label": "Lost revenue from sharing limitations",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "data_silos",
+    "label": "Persistent data silos",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "join_performance",
+    "label": "Poor performance for cross-domain joins",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "schema_conflicts",
+    "label": "Schema and semantic conflicts",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "governance_gaps",
+    "label": "Governance gaps across domains",
+    "pillar": "analytics_bi",
+    "type": "technical_pain"
+  },
+  {
+    "value": "limited_insights",
+    "label": "Limited cross-functional insights",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "opportunity_cost",
+    "label": "Opportunity cost from siloed data",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "decision_friction",
+    "label": "Friction in cross-domain decisions",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "strategic_limitations",
+    "label": "Strategic limitations from data isolation",
+    "pillar": "analytics_bi",
+    "type": "business_pain"
+  },
+  {
+    "value": "no_tracking",
+    "label": "No centralized experiment tracking",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "reproducibility_issues",
+    "label": "Difficult to reproduce results",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "scattered_artifacts",
+    "label": "Scattered model artifacts",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "manual_logging",
+    "label": "Manual experiment logging",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "comparison_difficulty",
+    "label": "Difficult experiment comparison",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "slow_iteration",
+    "label": "Slow ML iteration cycles",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "knowledge_loss",
+    "label": "Knowledge loss when team members leave",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "limited_reuse",
+    "label": "Limited model and feature reuse",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "dependency_issues",
+    "label": "Dependency management issues",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "data_versioning",
+    "label": "Lack of data versioning",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "model_packaging",
+    "label": "Inconsistent model packaging",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "seed_management",
+    "label": "Poor random seed management",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "debugging_difficulty",
+    "label": "Difficult to debug model issues",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "production_failures",
+    "label": "Model failures in production",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "manual_deployment",
+    "label": "Manual model deployment processes",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "no_cicd",
+    "label": "No CI/CD for models",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "environment_inconsistency",
+    "label": "Environment inconsistencies",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "rollback_difficulty",
+    "label": "Difficult model rollbacks",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "slow_time_to_value",
+    "label": "Slow time to value for models",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "deployment_failures",
+    "label": "Frequent deployment failures",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "resource_intensive",
+    "label": "Resource-intensive deployment process",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "innovation_bottleneck",
+    "label": "Bottleneck for ML innovation",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "no_monitoring",
+    "label": "No production model monitoring",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "drift_detection",
+    "label": "No automated drift detection",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "alert_gaps",
+    "label": "Inadequate alerting on model degradation",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "manual_retraining",
+    "label": "Manual retraining triggers",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "performance_tracking",
+    "label": "Limited performance tracking",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "silent_failures",
+    "label": "Silent model degradation",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "revenue_loss",
+    "label": "Revenue loss from model failures",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "no_feature_store",
+    "label": "No centralized feature store",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "duplicate_features",
+    "label": "Duplicate feature engineering",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "consistency_issues",
+    "label": "Training-serving feature consistency issues",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "discovery_difficulty",
+    "label": "Difficult feature discovery",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "versioning_gaps",
+    "label": "Inadequate feature versioning",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "slow_development",
+    "label": "Slow ML development cycles",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "model_failures",
+    "label": "Model failures from feature inconsistency",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "limited_collaboration",
+    "label": "Limited cross-team collaboration",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "inconsistent_practices",
+    "label": "Inconsistent data prep practices",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "pipeline_fragility",
+    "label": "Fragile data pipelines",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "quality_gaps",
+    "label": "Data quality gaps",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "scalability_issues",
+    "label": "Scalability limitations",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "data_scientist_bottleneck",
+    "label": "Data scientists spending time on data prep",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "unclear_ownership",
+    "label": "Unclear model ownership",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "no_approval_gates",
+    "label": "No approval gates for production",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "review_inconsistency",
+    "label": "Inconsistent review processes",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "accountability_gaps",
+    "label": "Lack of accountability for models",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "risk_exposure",
+    "label": "Regulatory and business risk exposure",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "incident_response",
+    "label": "Slow incident response",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "no_lineage",
+    "label": "No model lineage tracking",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "compliance_manual",
+    "label": "Manual compliance processes",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "bias_detection",
+    "label": "No automated bias detection",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "explainability_gaps",
+    "label": "Limited model explainability",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "bias_incidents",
+    "label": "Model bias incidents",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "legal_exposure",
+    "label": "Legal exposure from unexplainable models",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "pilot_to_prod_gap",
+    "label": "Large pilot-to-production gap",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "deployment_barriers",
+    "label": "Technical deployment barriers",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "infrastructure_gaps",
+    "label": "Infrastructure limitations",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "low_roi",
+    "label": "Low ROI on ML investments",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "failed_pilots",
+    "label": "Many pilots never reach production",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "long_timelines",
+    "label": "Long time-to-value for ML",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "value_realization",
+    "label": "Difficulty measuring value delivery",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "custom_solutions",
+    "label": "Every use case requires custom solution",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "platform_gaps",
+    "label": "ML platform capability gaps",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "resource_constraints",
+    "label": "Resource and infrastructure constraints",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "knowledge_silos",
+    "label": "Knowledge silos across teams",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "tooling_fragmentation",
+    "label": "Fragmented ML tooling",
+    "pillar": "machine_learning",
+    "type": "technical_pain"
+  },
+  {
+    "value": "limited_ml_adoption",
+    "label": "Limited ML adoption across organization",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "long_onboarding",
+    "label": "Long onboarding time for new use cases",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "team_bottleneck",
+    "label": "ML team as bottleneck",
+    "pillar": "machine_learning",
+    "type": "business_pain"
+  },
+  {
+    "value": "no_strategy",
+    "label": "No clear GenAI strategy",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "disconnected_efforts",
+    "label": "Disconnected from data strategy",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "unclear_use_cases",
+    "label": "Unclear priority use cases",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "technology_uncertainty",
+    "label": "Uncertainty about technology choices",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "skills_gaps",
+    "label": "Team skills and knowledge gaps",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "competitive_pressure",
+    "label": "Competitive pressure to adopt GenAI",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "unclear_roi",
+    "label": "Unclear ROI from GenAI",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "budget_uncertainty",
+    "label": "Budget and resource uncertainty",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "stakeholder_expectations",
+    "label": "Misaligned stakeholder expectations",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "vague_requirements",
+    "label": "Vague use case requirements",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "unrealistic_expectations",
+    "label": "Unrealistic technical expectations",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "data_readiness",
+    "label": "Data not ready for GenAI",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "poc_challenges",
+    "label": "Difficulty building POCs",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "evaluation_gaps",
+    "label": "No clear success metrics",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "scattered_efforts",
+    "label": "Scattered GenAI efforts",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "value_uncertainty",
+    "label": "Uncertainty about business value",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "prioritization_challenges",
+    "label": "Difficulty prioritizing use cases",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "stakeholder_confusion",
+    "label": "Stakeholder confusion about GenAI",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "unstructured_data",
+    "label": "Unstructured data not accessible",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "no_vector_search",
+    "label": "No vector search capability",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "chunking_challenges",
+    "label": "Difficulty with data chunking and embedding",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "integration_gaps",
+    "label": "Gaps in data integration",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "limited_context",
+    "label": "Limited context for GenAI applications",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "hallucinations",
+    "label": "High risk of model hallucinations",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "poor_relevance",
+    "label": "Poor response relevance",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "data_prep_delays",
+    "label": "Long delays for data preparation",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "ungoverned_sources",
+    "label": "Ungoverned knowledge sources",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "quality_checks",
+    "label": "No automated quality checks",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "access_control",
+    "label": "Inadequate access control",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "lineage_gaps",
+    "label": "No lineage for GenAI outputs",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "output_quality",
+    "label": "Inconsistent output quality",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "misinformation",
+    "label": "Risk of spreading misinformation",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "reputation_risk",
+    "label": "Reputation risk from bad outputs",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "no_infrastructure",
+    "label": "No GenAI infrastructure",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "api_limitations",
+    "label": "API rate limits and latency",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "cost_concerns",
+    "label": "High inference costs",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "reliability_issues",
+    "label": "Application reliability issues",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "cost_overruns",
+    "label": "Unexpected cost overruns",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "no_standards",
+    "label": "No integration standards",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "slow_integration",
+    "label": "Slow integration cycles",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "inconsistent_ux",
+    "label": "Inconsistent user experience",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "scaling_challenges",
+    "label": "Difficulty scaling GenAI adoption",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "security_incidents",
+    "label": "Risk of security incidents",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "no_validation",
+    "label": "No systematic validation",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "manual_review",
+    "label": "Manual review only",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "hallucination_detection",
+    "label": "No hallucination detection",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "quality_metrics",
+    "label": "Lack of quality metrics",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "user_trust",
+    "label": "Low user trust",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "manual_overhead",
+    "label": "High manual validation overhead",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "content_safety",
+    "label": "No automated content safety checks",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "user_feedback",
+    "label": "No user feedback loop",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "silent_degradation",
+    "label": "Silent quality degradation",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "safety_incidents",
+    "label": "Content safety incidents",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "user_complaints",
+    "label": "Increase in user complaints",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "brand_risk",
+    "label": "Brand and reputation risk",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "no_guardrails",
+    "label": "No technical guardrails",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "pii_detection",
+    "label": "No automated PII detection",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "content_filtering",
+    "label": "No content filtering",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "ethical_concerns",
+    "label": "Ethical concerns from stakeholders",
+    "pillar": "generative_ai",
+    "type": "business_pain"
+  },
+  {
+    "value": "no_logging",
+    "label": "No interaction logging",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "explainability",
+    "label": "Limited output explainability",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "user_attribution",
+    "label": "Poor user attribution",
+    "pillar": "generative_ai",
+    "type": "technical_pain"
+  },
+  {
+    "value": "no_coe",
+    "label": "No formal CoE structure",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "unclear_charter",
+    "label": "Unclear CoE charter and responsibilities",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "standards_gaps",
+    "label": "Incomplete standards and guidelines",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "adoption_challenges",
+    "label": "Difficulty driving standards adoption",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "slow_adoption",
+    "label": "Slow adoption of best practices",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  },
+  {
+    "value": "low_influence",
+    "label": "Limited CoE influence",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "communication_gaps",
+    "label": "Poor communication with teams",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "tooling_gaps",
+    "label": "Lack of enablement tools",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "feedback_loops",
+    "label": "Weak feedback loops",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "measurement_gaps",
+    "label": "Difficulty measuring CoE impact",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "architecture_debt",
+    "label": "Growing technical debt",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  },
+  {
+    "value": "team_confusion",
+    "label": "Team confusion about standards",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  },
+  {
+    "value": "siloed_teams",
+    "label": "Siloed teams and knowledge",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "no_sharing_platform",
+    "label": "No knowledge sharing platform",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "code_reuse",
+    "label": "Limited code/asset reuse",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "learning_barriers",
+    "label": "Barriers to learning from others",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "slow_problem_solving",
+    "label": "Slow problem resolution",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  },
+  {
+    "value": "innovation_lag",
+    "label": "Limited innovation sharing",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  },
+  {
+    "value": "onboarding_friction",
+    "label": "Friction in team onboarding",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  },
+  {
+    "value": "no_asset_catalog",
+    "label": "No central asset catalog",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "quality_standards",
+    "label": "No quality standards for shared assets",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "reinvention",
+    "label": "Constant reinvention of solutions",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  },
+  {
+    "value": "velocity_impact",
+    "label": "Negative impact on team velocity",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  },
+  {
+    "value": "quality_inconsistency",
+    "label": "Inconsistent quality across teams",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  },
+  {
+    "value": "no_formal_training",
+    "label": "No formal training programs",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "outdated_content",
+    "label": "Outdated training content",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "limited_coverage",
+    "label": "Limited role coverage",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "hands_on_gaps",
+    "label": "Lack of hands-on practice",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "underutilization",
+    "label": "Platform underutilization",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  },
+  {
+    "value": "employee_frustration",
+    "label": "Employee frustration",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  },
+  {
+    "value": "no_updates",
+    "label": "No regular capability updates",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "demo_gaps",
+    "label": "Lack of practical demonstrations",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "capability_unawareness",
+    "label": "Teams unaware of new capabilities",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  },
+  {
+    "value": "stale_practices",
+    "label": "Stale practices and patterns",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  },
+  {
+    "value": "attribution_gaps",
+    "label": "Difficult cost-to-value attribution",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "metric_gaps",
+    "label": "Lack of productivity metrics",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "budget_justification",
+    "label": "Difficulty justifying budget",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  },
+  {
+    "value": "cost_perception",
+    "label": "Perceived as cost center, not value driver",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  },
+  {
+    "value": "optimization_challenges",
+    "label": "Difficult to prioritize optimization",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  },
+  {
+    "value": "stakeholder_skepticism",
+    "label": "Stakeholder skepticism",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  },
+  {
+    "value": "no_reviews",
+    "label": "No regular review process",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "manual_analysis",
+    "label": "Manual, time-consuming analysis",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "action_gaps",
+    "label": "Insights not translated to actions",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "stakeholder_engagement",
+    "label": "Difficult stakeholder engagement",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "misaligned_priorities",
+    "label": "Spending misaligned with priorities",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  },
+  {
+    "value": "no_evaluation",
+    "label": "No evaluation process for new features",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "risk_aversion",
+    "label": "Risk-averse culture",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "testing_barriers",
+    "label": "Barriers to pilot testing",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "adoption_delays",
+    "label": "Long delays in adoption",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "missed_capabilities",
+    "label": "Missing out on valuable capabilities",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  },
+  {
+    "value": "efficiency_gaps",
+    "label": "Missed efficiency opportunities",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  },
+  {
+    "value": "no_feedback_loop",
+    "label": "No systematic feedback loop",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "learning_capture",
+    "label": "Poor capture of lessons learned",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "retrospective_gaps",
+    "label": "Inconsistent retrospectives",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "action_tracking",
+    "label": "No tracking of improvement actions",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "roadmap_disconnect",
+    "label": "Feedback disconnected from roadmap",
+    "pillar": "operational_excellence",
+    "type": "technical_pain"
+  },
+  {
+    "value": "repeated_mistakes",
+    "label": "Repeated mistakes and issues",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  },
+  {
+    "value": "slow_improvement",
+    "label": "Slow improvement cycles",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  },
+  {
+    "value": "team_disengagement",
+    "label": "Team disengagement from process",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  },
+  {
+    "value": "value_leakage",
+    "label": "Value leakage from unaddressed issues",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  },
+  {
+    "value": "culture_impact",
+    "label": "Negative impact on culture",
+    "pillar": "operational_excellence",
+    "type": "business_pain"
+  }
+]

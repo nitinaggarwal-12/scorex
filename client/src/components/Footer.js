@@ -148,7 +148,7 @@ const Footer = () => {
         <FooterBrand>
           <h3>Data & AI Maturity Assessment</h3>
           <p>
-            A comprehensive framework to evaluate, benchmark, and accelerate your Enterprise Platform journey. 
+            A comprehensive framework to evaluate, benchmark, and accelerate your Databricks journey. 
             Built by practitioners, for practitioners.
           </p>
           <div className="security">

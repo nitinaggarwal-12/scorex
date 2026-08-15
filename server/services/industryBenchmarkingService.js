@@ -659,7 +659,7 @@ CRITICAL REQUIREMENTS:
           relevance: 'Critical for competitive positioning'
         },
         {
-          trend: 'Modern data platforms (Enterprise Platform, Snowflake) seeing 45% adoption growth',
+          trend: 'Modern data platforms (Databricks, Snowflake) seeing 45% adoption growth',
           impact: 'High',
           relevance: 'Platform consolidation trend'
         },

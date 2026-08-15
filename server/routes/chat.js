@@ -268,26 +268,26 @@ function getSuggestedFollowUpQuestions(messageLower, pageType, hasAssessmentData
     console.log('[Questions] Returning', selected.length, 'questions:', selected);
     return selected.slice(0, 4);
   };
-  // Specific Enterprise Platform features mentioned
+  // Specific Databricks features mentioned
   if (messageLower.includes('delta lake')) {
     return [
       "How does time travel work in Delta Lake?",
       "What are ACID transactions?",
       "How do I implement Delta Lake?",
-      "Tell me about Unified Data Catalog & Governance"
+      "Tell me about Unity Catalog"
     ];
   }
   
-  if (messageLower.includes('Unified Data Catalog & Governance')) {
+  if (messageLower.includes('unity catalog')) {
     return [
       "How does data lineage work?",
       "What are fine-grained permissions?",
-      "How do I set up Unified Data Catalog & Governance?",
+      "How do I set up Unity Catalog?",
       "Tell me about Delta Lake"
     ];
   }
   
-  if (messageLower.includes('Enterprise Model Registry')) {
+  if (messageLower.includes('mlflow')) {
     return [
       "How do I track experiments?",
       "What is the Model Registry?",
@@ -296,7 +296,7 @@ function getSuggestedFollowUpQuestions(messageLower, pageType, hasAssessmentData
     ];
   }
   
-  if (messageLower.includes('Declarative Data Pipelines') || messageLower.includes('dlt')) {
+  if (messageLower.includes('delta live tables') || messageLower.includes('dlt')) {
     return [
       "How do I build DLT pipelines?",
       "What are data quality expectations?",
@@ -319,7 +319,7 @@ function getSuggestedFollowUpQuestions(messageLower, pageType, hasAssessmentData
       "How do I deploy a model?",
       "What about real-time inference?",
       "How does auto-scaling work?",
-      "Tell me about Enterprise Model Registry"
+      "Tell me about MLflow"
     ];
   }
   
@@ -335,7 +335,7 @@ function getSuggestedFollowUpQuestions(messageLower, pageType, hasAssessmentData
   // Specific pillars mentioned
   if (messageLower.includes('platform') && messageLower.includes('governance')) {
     return [
-      "Tell me about Unified Data Catalog & Governance",
+      "Tell me about Unity Catalog",
       "How do I implement access controls?",
       "What about data lineage?",
       "Tell me about Data Engineering"
@@ -345,13 +345,13 @@ function getSuggestedFollowUpQuestions(messageLower, pageType, hasAssessmentData
   if (messageLower.includes('data engineering')) {
     return [
       "Tell me about Delta Lake",
-      "What is Declarative Data Pipelines?",
+      "What is Delta Live Tables?",
       "How do I ensure data quality?",
       "Tell me about Analytics & BI"
     ];
   }
   
-  if (messageLower.includes('analytics') || (messageLower.includes('bi') && !messageLower.includes('Enterprise Platform'))) {
+  if (messageLower.includes('analytics') || (messageLower.includes('bi') && !messageLower.includes('databricks'))) {
     return [
       "What is Photon?",
       "How do I create dashboards?",
@@ -362,7 +362,7 @@ function getSuggestedFollowUpQuestions(messageLower, pageType, hasAssessmentData
   
   if (messageLower.includes('machine learning') || messageLower.includes('mlops')) {
     return [
-      "Tell me about Enterprise Model Registry",
+      "Tell me about MLflow",
       "What is Model Serving?",
       "How do I track experiments?",
       "Tell me about Generative AI"
@@ -401,7 +401,7 @@ function getSuggestedFollowUpQuestions(messageLower, pageType, hasAssessmentData
     return getRotatedQuestions(
       ["Tell me about Platform Governance", "Tell me about Data Engineering", "Tell me about Machine Learning", "What are maturity levels?"],
       ["Tell me about Analytics & BI", "Tell me about Generative AI", "Tell me about Operational Excellence", "How are pillars scored?"],
-      ["What is Delta Lake?", "What is Unified Data Catalog & Governance?", "How do I rate maturity?", "How long does it take?"]
+      ["What is Delta Lake?", "What is Unity Catalog?", "How do I rate maturity?", "How long does it take?"]
     );
   }
   
@@ -428,7 +428,7 @@ function getSuggestedFollowUpQuestions(messageLower, pageType, hasAssessmentData
     return [
       "What are my biggest gaps?",
       "How can I improve?",
-      "Show me Enterprise Platform recommendations",
+      "Show me Databricks recommendations",
       "What should I prioritize?"
     ];
   }
@@ -437,7 +437,7 @@ function getSuggestedFollowUpQuestions(messageLower, pageType, hasAssessmentData
   if (messageLower.includes('gap') || messageLower.includes('improve') || messageLower.includes('priority')) {
     return [
       "Show me specific recommendations",
-      "What Enterprise Platform features should I adopt?",
+      "What Databricks features should I adopt?",
       "How do I create a roadmap?",
       "What are quick wins?"
     ];
@@ -559,7 +559,7 @@ function getSuggestedFollowUpQuestions(messageLower, pageType, hasAssessmentData
     ],
     maturity_report: [
       "What are my biggest gaps?",
-      "Show me Enterprise Platform recommendations",
+      "Show me Databricks recommendations",
       "Can I edit this report?",
       "How do I export to PDF?"
     ],
@@ -665,11 +665,11 @@ function extractEntities(message) {
   if (lower.match(/\b(generative ai|gen ai|genai|llm|ai)\b/)) entities.pillars.push('generative_ai');
   if (lower.match(/\b(operational excellence|operations|monitoring|optimization)\b/)) entities.pillars.push('operational_excellence');
   
-  // Enterprise Platform Features
+  // Databricks Features
   if (lower.match(/\b(delta lake|delta)\b/)) entities.features.push('delta_lake');
-  if (lower.match(/\b(Unified Data Catalog & Governance|catalog)\b/)) entities.features.push('unity_catalog');
-  if (lower.match(/\b(Enterprise Model Registry)\b/)) entities.features.push('Enterprise Model Registry');
-  if (lower.match(/\b(Declarative Data Pipelines|dlt)\b/)) entities.features.push('delta_live_tables');
+  if (lower.match(/\b(unity catalog|catalog)\b/)) entities.features.push('unity_catalog');
+  if (lower.match(/\b(mlflow)\b/)) entities.features.push('mlflow');
+  if (lower.match(/\b(delta live tables|dlt)\b/)) entities.features.push('delta_live_tables');
   if (lower.match(/\b(photon)\b/)) entities.features.push('photon');
   if (lower.match(/\b(model serving|serving)\b/)) entities.features.push('model_serving');
   if (lower.match(/\b(ai gateway|gateway)\b/)) entities.features.push('ai_gateway');
@@ -754,7 +754,7 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
   
   // ===== INTELLIGENT ENTITY-BASED RESPONSES =====
   
-  // Handle specific Enterprise Platform feature questions
+  // Handle specific Databricks feature questions
   if (entities.features.length > 0) {
     const featureDetails = {
       delta_lake: {
@@ -771,8 +771,8 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
         pillar: "Data Engineering"
       },
       unity_catalog: {
-        name: "Unified Data Catalog & Governance",
-        description: "**Unified Data Catalog & Governance** provides unified governance for all your data and AI assets across clouds.",
+        name: "Unity Catalog",
+        description: "**Unity Catalog** provides unified governance for all your data and AI assets across clouds.",
         keyFeatures: [
           "**Centralized Governance** - Single place to manage all data assets",
           "**Fine-Grained Access Control** - Row/column level security",
@@ -784,8 +784,8 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
         pillar: "Platform & Governance"
       },
       mlflow: {
-        name: "Enterprise Model Registry (MLflow-compatible)",
-        description: "**Enterprise Model Registry** is an open-source platform for managing the complete ML lifecycle.",
+        name: "MLflow",
+        description: "**MLflow** is an open-source platform for managing the complete ML lifecycle.",
         keyFeatures: [
           "**Experiment Tracking** - Log parameters, metrics, and artifacts",
           "**Model Registry** - Version and manage ML models",
@@ -797,8 +797,8 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
         pillar: "Machine Learning"
       },
       delta_live_tables: {
-        name: "Declarative Data Pipelines (DLT)",
-        description: "**Declarative Data Pipelines** is a declarative framework for building reliable data pipelines.",
+        name: "Delta Live Tables (DLT)",
+        description: "**Delta Live Tables** is a declarative framework for building reliable data pipelines.",
         keyFeatures: [
           "**Declarative Pipelines** - Define what you want, not how to build it",
           "**Auto-Scaling** - Automatically scales compute resources",
@@ -870,7 +870,7 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
       let response = `${details.description}\n\n**Key Capabilities:**\n${details.keyFeatures.map(f => `• ${f}`).join('\n')}\n\n**Use Case:** ${details.useCase}\n\n**Related Pillar:** ${details.pillar}`;
       
       if (intent === 'instruction' && messageLower.includes('use')) {
-        response += `\n\n**Getting Started:**\n• Check your ${details.pillar} maturity score\n• Review recommendations in your maturity report\n• Start with pilot projects to build expertise\n• Leverage Enterprise Platform documentation and training`;
+        response += `\n\n**Getting Started:**\n• Check your ${details.pillar} maturity score\n• Review recommendations in your maturity report\n• Start with pilot projects to build expertise\n• Leverage Databricks documentation and training`;
       }
       
       return respond(response);
@@ -885,7 +885,7 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
         icon: "🏛️",
         description: "Focuses on security, compliance, access control, and unified governance across your data platform.",
         keyAreas: [
-          "**Unified Data Catalog & Governance** - Centralized data governance",
+          "**Unity Catalog** - Centralized data governance",
           "**Access Controls** - Fine-grained permissions (row/column level)",
           "**Data Lineage** - Track data flow and transformations",
           "**Audit & Compliance** - Complete audit trails",
@@ -905,7 +905,7 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
         description: "Covers data pipelines, ETL/ELT processes, data quality, and integration patterns.",
         keyAreas: [
           "**Delta Lake** - Reliable data lake storage",
-          "**Declarative Data Pipelines** - Declarative pipeline framework",
+          "**Delta Live Tables** - Declarative pipeline framework",
           "**Auto Loader** - Incremental file ingestion",
           "**Data Quality** - Expectations and monitoring",
           "**Pipeline Orchestration** - Workflow management"
@@ -942,7 +942,7 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
         icon: "🤖",
         description: "Covers ML model development, training, deployment, monitoring, and lifecycle management.",
         keyAreas: [
-          "**Enterprise Model Registry** - ML lifecycle management",
+          "**MLflow** - ML lifecycle management",
           "**Feature Store** - Centralized feature repository",
           "**Model Serving** - Real-time and batch inference",
           "**AutoML** - Automated model training",
@@ -1052,8 +1052,8 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
   // Handle greeting with context
   if (intent === 'greeting') {
     const greetings = [
-      `Hello! 👋 I'm your Enterprise Data & AI Maturity Assessment assistant. You're currently on the **${pageType.replace('_', ' ')}** page.`,
-      `Hi there! 😊 Welcome to the Enterprise Data & AI Maturity Assessment. I can help you with anything on this page.`,
+      `Hello! 👋 I'm your Databricks Maturity Assessment assistant. You're currently on the **${pageType.replace('_', ' ')}** page.`,
+      `Hi there! 😊 Welcome to the Databricks Maturity Assessment. I can help you with anything on this page.`,
       `Hey! 🎯 Ready to explore the assessment? I'm here to guide you through the **${pageType.replace('_', ' ')}** section.`
     ];
     
@@ -1077,7 +1077,7 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
       response += "**You're viewing your Maturity Report.** Here's what you can do:\n\n";
       response += "• **Review Scores** - See your maturity levels for each pillar\n";
       response += "• **Check Gaps** - Identify areas for improvement\n";
-      response += "• **Read Recommendations** - Get specific Enterprise Platform features to adopt\n";
+      response += "• **Read Recommendations** - Get specific Databricks features to adopt\n";
       response += "• **Edit Content** - Hover over cards to customize\n";
       response += "• **Export** - Use slideshow mode to create PDFs\n\n";
       response += "What specific aspect would you like help with?";
@@ -1098,7 +1098,7 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
   
   // Questions about pillars (general) - MOVED UP for priority
   if (messageLower.includes('pillar') || messageLower.includes('categories') || messageLower.includes('areas') || messageLower.includes('6 pillars')) {
-    return respond("**The 6 Assessment Pillars:**\n\n🏛️ **[Platform & Governance](/deep-dive#platform-governance)**\nSecurity, compliance, Unified Data Catalog & Governance, access control\n\n🔷 **[Data Engineering](/deep-dive#data-engineering)**\nData pipelines, ETL, Delta Lake, data quality\n\n📊 **[Analytics & BI](/deep-dive#analytics-bi)**\nReporting, dashboards, SQL analytics, visualization\n\n🤖 **[Machine Learning](/deep-dive#machine-learning)**\nML models, MLOps, Enterprise Model Registry, model deployment\n\n✨ **[Generative AI](/deep-dive#generative-ai)**\nLLMs, AI applications, AI Gateway, RAG patterns\n\n⚙️ **[Operational Excellence](/deep-dive#operational-excellence)**\nMonitoring, cost optimization, reliability\n\n📚 [View Full Deep Dive](/deep-dive) - Detailed explanation of all pillars\n🚀 [Start Assessment](/assessment/start) - Begin now");
+    return respond("**The 6 Assessment Pillars:**\n\n🏛️ **[Platform & Governance](/deep-dive#platform-governance)**\nSecurity, compliance, Unity Catalog, access control\n\n🔷 **[Data Engineering](/deep-dive#data-engineering)**\nData pipelines, ETL, Delta Lake, data quality\n\n📊 **[Analytics & BI](/deep-dive#analytics-bi)**\nReporting, dashboards, SQL analytics, visualization\n\n🤖 **[Machine Learning](/deep-dive#machine-learning)**\nML models, MLOps, MLflow, model deployment\n\n✨ **[Generative AI](/deep-dive#generative-ai)**\nLLMs, AI applications, AI Gateway, RAG patterns\n\n⚙️ **[Operational Excellence](/deep-dive#operational-excellence)**\nMonitoring, cost optimization, reliability\n\n📚 [View Full Deep Dive](/deep-dive) - Detailed explanation of all pillars\n🚀 [Start Assessment](/assessment/start) - Begin now");
   }
   
   // ===== PAGE-SPECIFIC CONTEXT RESPONSES =====
@@ -1106,7 +1106,7 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
   // HOME PAGE
   if (pageType === 'home') {
     if ((messageLower.includes('what') || messageLower.includes('this page') || messageLower.includes('here')) && !messageLower.includes('pillar')) {
-      return respond("You're on the **Home Page** of the Enterprise Data & AI Maturity Assessment tool.\n\nFrom here you can:\n• **Start a new assessment** - Click 'Start Assessment'\n• **Try a sample** - See a demo assessment\n• **View your dashboard** - See all your assessments\n• **Learn more** - Check out the Deep Dive, User Guide, or Pitch Deck\n\nWhat would you like to do?");
+      return respond("You're on the **Home Page** of the Databricks Maturity Assessment tool.\n\nFrom here you can:\n• **Start a new assessment** - Click 'Start Assessment'\n• **Try a sample** - See a demo assessment\n• **View your dashboard** - See all your assessments\n• **Learn more** - Check out the Deep Dive, User Guide, or Pitch Deck\n\nWhat would you like to do?");
     }
   }
   
@@ -1130,7 +1130,7 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
   if (pageType === 'maturity_report' && assessmentData) {
     if (messageLower.includes('what') || messageLower.includes('this page') || messageLower.includes('report')) {
       const org = assessmentData.organization || 'your organization';
-      return `You're viewing the **Maturity Report** for ${org}.\n\nThis report shows:\n• **Overall maturity scores** across 6 pillars\n• **Current vs Target** maturity levels\n• **Gap analysis** for each pillar\n• **Enterprise Platform Recommendations** - specific features to adopt\n• **Next Steps** - actionable roadmap\n\n**Actions you can take:**\n• Edit any section (hover to see edit icons)\n• Start slideshow mode\n• Print the report\n• Customize colors and content`;
+      return `You're viewing the **Maturity Report** for ${org}.\n\nThis report shows:\n• **Overall maturity scores** across 6 pillars\n• **Current vs Target** maturity levels\n• **Gap analysis** for each pillar\n• **Databricks Recommendations** - specific features to adopt\n• **Next Steps** - actionable roadmap\n\n**Actions you can take:**\n• Edit any section (hover to see edit icons)\n• Start slideshow mode\n• Print the report\n• Customize colors and content`;
     }
     
     if (messageLower.includes('score') || messageLower.includes('maturity') || messageLower.includes('level')) {
@@ -1165,8 +1165,8 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
       }
     }
     
-    if (messageLower.includes('recommendation') || messageLower.includes('Enterprise Platform') || messageLower.includes('feature')) {
-      return respond("**Enterprise Platform Recommendations** are tailored to your assessment!\n\nEach pillar shows specific Enterprise Platform features and capabilities that match your maturity level and goals:\n\n• **Delta Lake** - For data reliability\n• **Unified Data Catalog & Governance** - For governance\n• **Enterprise Model Registry** - For ML lifecycle\n• **Declarative Data Pipelines** - For data pipelines\n• **Model Serving** - For ML deployment\n• **AI Gateway** - For GenAI apps\n\nScroll down to see recommendations for each pillar. You can edit them too!");
+    if (messageLower.includes('recommendation') || messageLower.includes('databricks') || messageLower.includes('feature')) {
+      return respond("**Databricks Recommendations** are tailored to your assessment!\n\nEach pillar shows specific Databricks features and capabilities that match your maturity level and goals:\n\n• **Delta Lake** - For data reliability\n• **Unity Catalog** - For governance\n• **MLflow** - For ML lifecycle\n• **Delta Live Tables** - For data pipelines\n• **Model Serving** - For ML deployment\n• **AI Gateway** - For GenAI apps\n\nScroll down to see recommendations for each pillar. You can edit them too!");
     }
     
     if (messageLower.includes('edit') || messageLower.includes('change') || messageLower.includes('customize')) {
@@ -1252,8 +1252,8 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
   
   // ===== GENERAL KNOWLEDGE RESPONSES =====
   
-  if (messageLower.includes('Enterprise Platform') && (messageLower.includes('feature') || messageLower.includes('product') || messageLower.includes('capability'))) {
-    return respond("**Key Enterprise Platform Capabilities:**\n\n**Data Engineering:**\n• [Delta Lake](/deep-dive#data-engineering) - ACID transactions, time travel\n• Declarative Data Pipelines - Declarative pipelines\n• Auto Loader - Incremental data ingestion\n\n**Governance:**\n• [Unified Data Catalog & Governance](/deep-dive#platform-governance) - Unified governance\n• Data lineage - Track data flow\n• Access controls - Fine-grained permissions\n\n**ML & AI:**\n• [Enterprise Model Registry](/deep-dive#machine-learning) - ML lifecycle management\n• Model Serving - Deploy models at scale\n• [AI Gateway](/deep-dive#generative-ai) - Secure GenAI development\n\n**Performance:**\n• Photon - High-speed query engine\n• Serverless - Auto-scaling compute\n\n📚 [Learn More - Deep Dive](/deep-dive)\n🚀 [Start Assessment](/assessment/start)");
+  if (messageLower.includes('databricks') && (messageLower.includes('feature') || messageLower.includes('product') || messageLower.includes('capability'))) {
+    return respond("**Key Databricks Capabilities:**\n\n**Data Engineering:**\n• [Delta Lake](/deep-dive#data-engineering) - ACID transactions, time travel\n• Delta Live Tables - Declarative pipelines\n• Auto Loader - Incremental data ingestion\n\n**Governance:**\n• [Unity Catalog](/deep-dive#platform-governance) - Unified governance\n• Data lineage - Track data flow\n• Access controls - Fine-grained permissions\n\n**ML & AI:**\n• [MLflow](/deep-dive#machine-learning) - ML lifecycle management\n• Model Serving - Deploy models at scale\n• [AI Gateway](/deep-dive#generative-ai) - Secure GenAI development\n\n**Performance:**\n• Photon - High-speed query engine\n• Serverless - Auto-scaling compute\n\n📚 [Learn More - Deep Dive](/deep-dive)\n🚀 [Start Assessment](/assessment/start)");
   }
   
   if (messageLower.includes('how to start') || messageLower.includes('how do i start') || messageLower.includes('begin')) {
@@ -1262,7 +1262,7 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
   
   // Handle "Does it work with existing code?" and compatibility questions
   if (messageLower.includes('existing code') || messageLower.includes('work with my code') || messageLower.includes('compatibility') || messageLower.includes('integrate')) {
-    return respond("**Yes! The assessment works with ANY Enterprise Platform implementation.** ✅\n\n**What we assess:**\n• **Your current processes** - regardless of tools used\n• **Your maturity level** - not specific technologies\n• **Your capabilities** - business outcomes, not code\n• **Your goals** - where you want to be\n\n**No code changes needed!**\nThe assessment evaluates your organization's maturity across data engineering, analytics, ML, GenAI, governance, and operations. It's **technology-agnostic** - we assess capabilities and practices, not specific implementations.\n\n**After assessment:**\nRecommendations show how Enterprise Platform features map to your maturity gaps, but the assessment itself is universal.\n\n**Bottom line:** Your existing code, data, and processes are the INPUT - the assessment OUTPUT shows where you are and where you could be.");
+    return respond("**Yes! The assessment works with ANY Databricks implementation.** ✅\n\n**What we assess:**\n• **Your current processes** - regardless of tools used\n• **Your maturity level** - not specific technologies\n• **Your capabilities** - business outcomes, not code\n• **Your goals** - where you want to be\n\n**No code changes needed!**\nThe assessment evaluates your organization's maturity across data engineering, analytics, ML, GenAI, governance, and operations. It's **technology-agnostic** - we assess capabilities and practices, not specific implementations.\n\n**After assessment:**\nRecommendations show how Databricks features map to your maturity gaps, but the assessment itself is universal.\n\n**Bottom line:** Your existing code, data, and processes are the INPUT - the assessment OUTPUT shows where you are and where you could be.");
   }
   
   if (messageLower.includes('slideshow') || messageLower.includes('present') || messageLower.includes('print')) {

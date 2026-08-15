@@ -615,7 +615,7 @@ const UserGuide = () => {
               maxWidth: '900px',
               margin: 0
             }}>
-              Everything you need to know about the Enterprise Platform Technical Maturity Assessment tool
+              Everything you need to know about the Databricks Technical Maturity Assessment tool
             </p>
           </div>
         </SlideContent>
@@ -1222,7 +1222,7 @@ const UserGuide = () => {
               color: 'white',
               fontWeight: 600
             }}>
-              nitin.aggarwal@Enterprise Platform.com
+              nitin.aggarwal@databricks.com
             </p>
           </div>
         </SlideContent>
@@ -1671,7 +1671,7 @@ const UserGuide = () => {
                   Need additional help?
                 </TroubleshootTitle>
                 <TroubleshootSolution>
-                  <strong>Contact Support:</strong> For issues not covered here, reach out to <strong>nitin.aggarwal@Enterprise Platform.com</strong> with your assessment ID, role, and a description of the problem. Include screenshots if possible.
+                  <strong>Contact Support:</strong> For issues not covered here, reach out to <strong>nitin.aggarwal@databricks.com</strong> with your assessment ID, role, and a description of the problem. Include screenshots if possible.
                 </TroubleshootSolution>
               </TroubleshootCard>
             </div>

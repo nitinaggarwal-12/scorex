@@ -356,7 +356,7 @@ const AssessmentStart = ({ onStart }) => {
       >
         <FormTitle>Start Your Assessment</FormTitle>
         <FormSubtitle>
-          Begin your Enterprise Data & AI Maturity Assessment journey. We'll guide you through 
+          Begin your Databricks maturity assessment journey. We'll guide you through 
           evaluating your current capabilities and future goals.
         </FormSubtitle>
 

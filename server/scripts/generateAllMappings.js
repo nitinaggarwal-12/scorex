@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Generate comprehensive pain point mappings for ALL 442 pain points in the framework
- * This ensures every pain point can return relevant Enterprise Platform features
+ * This ensures every pain point can return relevant Databricks features
  */
 
 const framework = require('../data/assessmentFramework');
@@ -73,7 +73,7 @@ Object.keys(painPointsByPillar).forEach(pillar => {
       sql += `  '${painPoint}',\n`;
       sql += `  '${pillar}',\n`;
       sql += `  'Address ${painPoint.replace(/_/g, ' ')} with ' || f.name || ' - ' || f.short_description\n`;
-      sql += `FROM platform_features f\n`;
+      sql += `FROM databricks_features f\n`;
       sql += `WHERE f.category = '${category}'\n`;
       sql += `  AND f.ga_status IN ('GA', 'Public Preview')\n`;
       sql += `LIMIT 2  -- Top 2 features per category per pain point\n`;

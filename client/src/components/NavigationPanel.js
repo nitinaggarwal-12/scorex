@@ -506,7 +506,7 @@ const NavigationPanel = ({ framework, currentAssessment, onAssessmentUpdate }) =
       { progress: 10, message: 'Analyzing assessment responses...' },
       { progress: 25, message: 'Calculating maturity scores...' },
       { progress: 40, message: 'Generating recommendations...' },
-      { progress: 55, message: 'Identifying Enterprise Platform features...' },
+      { progress: 55, message: 'Identifying Databricks features...' },
       { progress: 70, message: 'Building strategic roadmap...' },
       { progress: 85, message: 'Calculating business impact...' },
       { progress: 95, message: 'Finalizing report...' },
@@ -809,7 +809,7 @@ const NavigationPanel = ({ framework, currentAssessment, onAssessmentUpdate }) =
                 We'll analyze your responses and generate a comprehensive report with:
                 <ul style={{ marginTop: '12px', paddingLeft: '20px', color: '#4b5563' }}>
                   <li>Maturity scores and gap analysis</li>
-                  <li>Personalized Enterprise Platform recommendations</li>
+                  <li>Personalized Databricks recommendations</li>
                   <li>Strategic roadmap and next steps</li>
                   <li>Expected business impact metrics</li>
                 </ul>

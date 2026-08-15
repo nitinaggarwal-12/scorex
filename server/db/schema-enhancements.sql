@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS roi_templates (
   risk_reduction_score INTEGER, -- 1-10
   business_value_score INTEGER, -- 1-10
   prerequisites JSONB DEFAULT '[]',
-  platform_features JSONB DEFAULT '[]',
+  databricks_features JSONB DEFAULT '[]',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

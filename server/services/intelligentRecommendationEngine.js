@@ -4,55 +4,55 @@
  * Based on actual pain points, comments, and current/future state gap
  */
 
-const platformFeatureMapper = require('./platformFeatureMapper');
+const databricksFeatureMapper = require('./databricksFeatureMapper');
 
 class IntelligentRecommendationEngine {
   constructor() {
-    this.featureMapper = platformFeatureMapper; // It's already an instance
+    this.featureMapper = databricksFeatureMapper; // It's already an instance
     // Map pain points to specific, actionable solutions
     this.solutionMap = {
       // Platform Governance
       'resource_conflicts': {
         problem: 'Resource conflicts between environments',
-        solution: 'Implement workspace-level resource isolation using separate enterprise workspaces for dev/staging/prod, with Unified Data Catalog & Governance providing centralized governance across all environments.',
+        solution: 'Implement workspace-level resource isolation using separate Databricks workspaces for dev/staging/prod, with Unity Catalog providing centralized governance across all environments.',
         steps: [
           'Create dedicated workspaces: dev-workspace, staging-workspace, prod-workspace',
           'Configure workspace-specific cluster policies to prevent resource contention',
-          'Use Unified Data Catalog & Governance metastore shared across workspaces for unified governance',
+          'Use Unity Catalog metastore shared across workspaces for unified governance',
           'Set up budget alerts per workspace to track and control costs',
           'Enable audit logging to monitor cross-workspace activity'
         ],
-        platform_features: ['Unified Data Catalog & Governance', 'Workspace Administration', 'Cluster Policies', 'Budget Alerts']
+        databricks_features: ['Unity Catalog', 'Workspace Administration', 'Cluster Policies', 'Budget Alerts']
       },
       'error_handling': {
         problem: 'Poor error handling and recovery',
-        solution: 'Implement robust error handling with Declarative Data Pipelines automated retry logic, dead letter queues, and alerting for failed pipeline steps.',
+        solution: 'Implement robust error handling with Delta Live Tables automated retry logic, dead letter queues, and alerting for failed pipeline steps.',
         steps: [
-          'Use Declarative Data Pipelines with automatic retry policies for transient failures',
+          'Use Delta Live Tables with automatic retry policies for transient failures',
           'Configure @expect_or_drop() for data quality issues to quarantine bad records',
           'Set up dead letter tables to capture and analyze failed records',
-          'Enable Enterprise Platform Workflows email alerts for pipeline failures',
+          'Enable Databricks Workflows email alerts for pipeline failures',
           'Implement idempotent pipeline logic to safely retry operations'
         ],
-        platform_features: ['Declarative Data Pipelines', 'Workflows', 'Delta Lake ACID', 'Continuous Data Observability']
+        databricks_features: ['Delta Live Tables', 'Workflows', 'Delta Lake ACID', 'Lakehouse Monitoring']
       },
       'manual_deployment': {
         problem: 'Manual, error-prone deployment processes',
-        solution: 'Adopt Enterprise Platform Asset Bundles (DABs) for infrastructure-as-code deployment, enabling automated, repeatable deployments across environments.',
+        solution: 'Adopt Databricks Asset Bundles (DABs) for infrastructure-as-code deployment, enabling automated, repeatable deployments across environments.',
         steps: [
-          'Define infrastructure using Enterprise Platform.yml bundle configuration',
+          'Define infrastructure using databricks.yml bundle configuration',
           'Store bundle code in Git (GitHub/GitLab/Bitbucket)',
-          'Use `Enterprise Platform bundle deploy` command in CI/CD pipeline',
+          'Use `databricks bundle deploy` command in CI/CD pipeline',
           'Implement separate bundle targets for dev/staging/prod',
           'Enable drift detection to catch manual configuration changes'
         ],
-        platform_features: ['Asset Bundles', 'Enterprise Platform CLI', 'Git Integration', 'CI/CD Workflows']
+        databricks_features: ['Asset Bundles', 'Databricks CLI', 'Git Integration', 'CI/CD Workflows']
       },
       
       // Data Engineering
       'poor_data_quality': {
         problem: 'Poor data quality at ingestion',
-        solution: 'Implement Declarative Data Pipelines with expectations to enforce data quality rules at ingestion, automatically quarantining bad data.',
+        solution: 'Implement Delta Live Tables with expectations to enforce data quality rules at ingestion, automatically quarantining bad data.',
         steps: [
           'Define DLT pipeline with @dlt.table decorators',
           'Add @expect_or_drop("valid_email", "email IS NOT NULL") for data quality',
@@ -60,45 +60,45 @@ class IntelligentRecommendationEngine {
           'Monitor data quality metrics in DLT event log',
           'Set up alerts when quality thresholds are breached'
         ],
-        platform_features: ['Declarative Data Pipelines', 'Expectations', 'Auto Loader', 'Continuous Data Observability']
+        databricks_features: ['Delta Live Tables', 'Expectations', 'Auto Loader', 'Lakehouse Monitoring']
       },
       'pipeline_failures': {
         problem: 'Frequent pipeline failures',
-        solution: 'Use Enterprise Platform Workflows with automated retry logic, notifications, and dependency management to create resilient data pipelines.',
+        solution: 'Use Databricks Workflows with automated retry logic, notifications, and dependency management to create resilient data pipelines.',
         steps: [
-          'Convert notebooks to Declarative Data Pipelines for declarative ETL',
+          'Convert notebooks to Delta Live Tables for declarative ETL',
           'Configure retry policies in Workflows (max_retries=3, timeout)',
           'Set up email/Slack alerts for job failures',
           'Use task dependencies to ensure proper execution order',
           'Enable run history and logs for troubleshooting'
         ],
-        platform_features: ['Workflows', 'Declarative Data Pipelines', 'Job Scheduling', 'Alerting']
+        databricks_features: ['Workflows', 'Delta Live Tables', 'Job Scheduling', 'Alerting']
       },
       
       // Machine Learning
       'no_experiment_tracking': {
         problem: 'No centralized experiment tracking',
-        solution: 'Implement Enterprise Model Registry Tracking to automatically log all experiments, parameters, metrics, and models in a centralized registry.',
+        solution: 'Implement MLflow Tracking to automatically log all experiments, parameters, metrics, and models in a centralized registry.',
         steps: [
-          'Use Enterprise Model Registry.autolog() to automatically capture experiments',
-          'Log parameters with Enterprise Model Registry.log_param("learning_rate", 0.01)',
-          'Track metrics with Enterprise Model Registry.log_metric("accuracy", 0.95)',
-          'Register models with Enterprise Model Registry Model Registry',
-          'Compare experiments using Enterprise Model Registry UI'
+          'Use mlflow.autolog() to automatically capture experiments',
+          'Log parameters with mlflow.log_param("learning_rate", 0.01)',
+          'Track metrics with mlflow.log_metric("accuracy", 0.95)',
+          'Register models with MLflow Model Registry',
+          'Compare experiments using MLflow UI'
         ],
-        platform_features: ['Enterprise Model Registry Tracking', 'Enterprise Model Registry Model Registry', 'Experiments', 'AutoML']
+        databricks_features: ['MLflow Tracking', 'MLflow Model Registry', 'Experiments', 'AutoML']
       },
       'model_monitoring': {
         problem: 'No model monitoring in production',
-        solution: 'Deploy Continuous Data Observability to automatically track model drift, performance degradation, and data quality issues in production.',
+        solution: 'Deploy Lakehouse Monitoring to automatically track model drift, performance degradation, and data quality issues in production.',
         steps: [
-          'Enable Continuous Data Observability on inference tables',
+          'Enable Lakehouse Monitoring on inference tables',
           'Configure drift detection for input features',
           'Set up prediction quality monitors',
           'Create alerts for performance degradation',
           'Review monitoring dashboards daily'
         ],
-        platform_features: ['Continuous Data Observability', 'Model Serving', 'Enterprise Model Registry', 'System Tables']
+        databricks_features: ['Lakehouse Monitoring', 'Model Serving', 'MLflow', 'System Tables']
       },
       
       // Analytics & BI
@@ -112,7 +112,7 @@ class IntelligentRecommendationEngine {
           'Use Serverless SQL warehouses for auto-scaling',
           'Review Query Profile to identify bottlenecks'
         ],
-        platform_features: ['Photon', 'Liquid Clustering', 'Serverless SQL', 'Query Profile']
+        databricks_features: ['Photon', 'Liquid Clustering', 'Serverless SQL', 'Query Profile']
       },
       'inconsistent_performance': {
         problem: 'Inconsistent query performance',
@@ -124,33 +124,33 @@ class IntelligentRecommendationEngine {
           'Partition tables by date/region for query pruning',
           'Set up query monitoring to track performance trends'
         ],
-        platform_features: ['Delta Caching', 'Serverless SQL', 'Result Caching', 'Predictive I/O']
+        databricks_features: ['Delta Caching', 'Serverless SQL', 'Result Caching', 'Predictive I/O']
       },
       
       // Generative AI
       'no_genai_strategy': {
         problem: 'No clear GenAI strategy',
-        solution: 'Start with Enterprise AI Playground to experiment with foundation models, then build RAG applications using Mosaic AI Agent Framework.',
+        solution: 'Start with Databricks AI Playground to experiment with foundation models, then build RAG applications using Mosaic AI Agent Framework.',
         steps: [
           'Use AI Playground to test different LLMs (Claude, GPT-4, Llama)',
           'Identify 2-3 high-value use cases (document QA, code generation)',
           'Build POC with Mosaic AI Agent Framework for RAG',
           'Index knowledge base using Vector Search',
-          'Deploy agents with Enterprise Model Registry for serving'
+          'Deploy agents with MLflow for serving'
         ],
-        platform_features: ['AI Playground', 'Mosaic AI Agent Framework', 'Vector Search', 'Model Serving']
+        databricks_features: ['AI Playground', 'Mosaic AI Agent Framework', 'Vector Search', 'Model Serving']
       },
       'prompt_management': {
         problem: 'No prompt engineering practices',
-        solution: 'Use AI Playground for prompt development and testing, then version prompts in Enterprise Model Registry for production deployment.',
+        solution: 'Use AI Playground for prompt development and testing, then version prompts in MLflow for production deployment.',
         steps: [
           'Develop prompts in AI Playground with ground truth evaluation',
-          'Version prompts as Enterprise Model Registry experiments',
+          'Version prompts as MLflow experiments',
           'Use prompt templates with variables for dynamic inputs',
           'A/B test different prompts in production',
           'Monitor prompt effectiveness with custom metrics'
         ],
-        platform_features: ['AI Playground', 'Prompt Engineering', 'Enterprise Model Registry', 'A/B Testing']
+        databricks_features: ['AI Playground', 'Prompt Engineering', 'MLflow', 'A/B Testing']
       }
     };
   }
@@ -173,10 +173,10 @@ class IntelligentRecommendationEngine {
       theBad: this.extractChallenges(painPoints, comments),
       recommendations: this.generateActionableSolutions(painPoints, comments, stateGaps),
       nextSteps: this.generateNextSteps(painPoints, stateGaps),
-      platformFeatures: []
+      databricksFeatures: []
     };
     
-    // Get Enterprise Platform features from platformFeatureMapper (always reliable)
+    // Get Databricks features from DatabricksFeatureMapper (always reliable)
     const currentScore = Math.round(stateGaps[0]?.current || 3);
     const futureScore = Math.round(stateGaps[0]?.future || 4);
     const pillarRecs = this.featureMapper.getRecommendationsForPillar(pillarId, currentScore, {});
@@ -187,9 +187,9 @@ class IntelligentRecommendationEngine {
     const allMapperFeatures = [...currentFeatures, ...nextLevelFeatures];
     
     // Use feature mapper's features as the primary source
-    recommendations.platformFeatures = allMapperFeatures.slice(0, 4); // Top 4 most relevant
+    recommendations.databricksFeatures = allMapperFeatures.slice(0, 4); // Top 4 most relevant
     
-    console.log(`[IntelligentEngine] Using ${recommendations.platformFeatures.length} Enterprise Platform features from feature mapper for pillar ${pillarId}`);
+    console.log(`[IntelligentEngine] Using ${recommendations.databricksFeatures.length} Databricks features from feature mapper for pillar ${pillarId}`);
     
     return recommendations;
   }
@@ -363,7 +363,7 @@ class IntelligentRecommendationEngine {
         solutions.push(recommendation);
       } else {
         // Generate generic but helpful recommendation
-        solutions.push(`Address **${pp.label}**: Implement best practices for ${pp.label.toLowerCase()}, leverage Enterprise Platform platform capabilities, and establish automated monitoring.`);
+        solutions.push(`Address **${pp.label}**: Implement best practices for ${pp.label.toLowerCase()}, leverage Databricks platform capabilities, and establish automated monitoring.`);
       }
     });
     
@@ -385,7 +385,7 @@ class IntelligentRecommendationEngine {
     
     // Add general next steps
     steps.push('POC Development: Build proof-of-concept for top priority use case (2-4 weeks)');
-    steps.push('Training: Enterprise Platform platform training for team (1 day hands-on workshop)');
+    steps.push('Training: Databricks platform training for team (1 day hands-on workshop)');
     
     return steps;
   }

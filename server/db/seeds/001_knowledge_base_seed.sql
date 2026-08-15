@@ -1,14 +1,14 @@
--- Seed Data: Initial 100 Enterprise Platform Q&As
+-- Seed Data: Initial 100 Databricks Q&As
 -- Curated, high-quality questions and answers across all pillars
 
 -- ============================================
 -- PLATFORM & GOVERNANCE (15 Q&As)
 -- ============================================
 
-INSERT INTO platform_knowledge_base (question, answer, category, pillar, complexity, keywords, tags, official_docs_link) VALUES
+INSERT INTO databricks_knowledge_base (question, answer, category, pillar, complexity, keywords, tags, official_docs_link) VALUES
 
-('What is Unified Data Catalog & Governance?',
-'**Unified Data Catalog & Governance** is Enterprise Platform'' unified governance solution for data and AI assets across clouds. It provides a single place to manage access control, audit, lineage, and data discovery for all your data, models, notebooks, and dashboards.
+('What is Unity Catalog?',
+'**Unity Catalog** is Databricks'' unified governance solution for data and AI assets across clouds. It provides a single place to manage access control, audit, lineage, and data discovery for all your data, models, notebooks, and dashboards.
 
 **Key Features:**
 • Centralized governance across AWS, Azure, and GCP
@@ -20,14 +20,14 @@ INSERT INTO platform_knowledge_base (question, answer, category, pillar, complex
 **Why it matters:**
 Eliminates governance silos and provides enterprise-grade security without sacrificing productivity.',
 'platform_governance', 'platform_governance', 'beginner',
-ARRAY['Unified Data Catalog & Governance', 'governance', 'security', 'access control'],
+ARRAY['unity catalog', 'governance', 'security', 'access control'],
 ARRAY['governance', 'security', 'catalog', 'essential'],
-'https://docs.enterprisePlatform.com/en/data-governance/unity-catalog/index.html'),
+'https://docs.databricks.com/en/data-governance/unity-catalog/index.html'),
 
-('How does Unified Data Catalog & Governance differ from Hive Metastore?',
-'**Unified Data Catalog & Governance** is a significant upgrade from Hive Metastore:
+('How does Unity Catalog differ from Hive Metastore?',
+'**Unity Catalog** is a significant upgrade from Hive Metastore:
 
-**Unified Data Catalog & Governance:**
+**Unity Catalog:**
 • **Multi-cloud**: Works across AWS, Azure, GCP
 • **Fine-grained security**: Column and row-level
 • **Data lineage**: Automatic tracking
@@ -41,14 +41,14 @@ ARRAY['governance', 'security', 'catalog', 'essential'],
 • **Per-workspace**: Separate metastores per workspace
 • **Legacy**: Designed for Hadoop era
 
-**Migration:** Enterprise Platform provides tools to migrate from Hive Metastore to Unified Data Catalog & Governance with zero downtime.',
+**Migration:** Databricks provides tools to migrate from Hive Metastore to Unity Catalog with zero downtime.',
 'platform_governance', 'platform_governance', 'intermediate',
-ARRAY['Unified Data Catalog & Governance', 'hive metastore', 'migration', 'comparison'],
+ARRAY['unity catalog', 'hive metastore', 'migration', 'comparison'],
 ARRAY['governance', 'migration', 'architecture'],
-'https://docs.enterprisePlatform.com/en/data-governance/unity-catalog/migrate.html'),
+'https://docs.databricks.com/en/data-governance/unity-catalog/migrate.html'),
 
-('What are the three levels of Unified Data Catalog & Governance?',
-'Unified Data Catalog & Governance organizes data in a **three-level namespace**:
+('What are the three levels of Unity Catalog?',
+'Unity Catalog organizes data in a **three-level namespace**:
 
 **1. Catalog** (Top Level)
 • Highest level of organization
@@ -73,12 +73,12 @@ ARRAY['governance', 'migration', 'architecture'],
 • Easy to manage permissions at any level
 • Supports data isolation and multi-tenancy',
 'platform_governance', 'platform_governance', 'beginner',
-ARRAY['Unified Data Catalog & Governance', 'namespace', 'catalog', 'schema', 'organization'],
+ARRAY['unity catalog', 'namespace', 'catalog', 'schema', 'organization'],
 ARRAY['governance', 'architecture', 'essential'],
-'https://docs.enterprisePlatform.com/en/data-governance/unity-catalog/index.html#namespaces'),
+'https://docs.databricks.com/en/data-governance/unity-catalog/index.html#namespaces'),
 
-('How do I implement row-level security in Unified Data Catalog & Governance?',
-'**Row-level security** in Unified Data Catalog & Governance uses **Row Filters**:
+('How do I implement row-level security in Unity Catalog?',
+'**Row-level security** in Unity Catalog uses **Row Filters**:
 
 **Steps:**
 1. Create a row filter function:
@@ -109,9 +109,9 @@ SET ROW FILTER mask_pii ON (email);
 • Document filter logic for audit purposes
 • Monitor performance impact on queries',
 'platform_governance', 'platform_governance', 'advanced',
-ARRAY['row-level security', 'Unified Data Catalog & Governance', 'access control', 'row filter'],
+ARRAY['row-level security', 'unity catalog', 'access control', 'row filter'],
 ARRAY['security', 'governance', 'advanced', 'compliance'],
-'https://docs.enterprisePlatform.com/en/data-governance/unity-catalog/row-and-column-filters.html'),
+'https://docs.databricks.com/en/data-governance/unity-catalog/row-and-column-filters.html'),
 
 ('What is Delta Sharing?',
 '**Delta Sharing** is an open protocol for secure data sharing across organizations and platforms **without copying data**.
@@ -139,11 +139,11 @@ ARRAY['security', 'governance', 'advanced', 'compliance'],
 'platform_governance', 'platform_governance', 'intermediate',
 ARRAY['delta sharing', 'data sharing', 'collaboration', 'open protocol'],
 ARRAY['sharing', 'collaboration', 'security'],
-'https://docs.enterprisePlatform.com/en/delta-sharing/index.html');
+'https://docs.databricks.com/en/delta-sharing/index.html');
 
 -- Continue with more Q&As...
 -- (This is a sample of the first 5, I''ll create the full 100)
 
-COMMENT ON TABLE platform_knowledge_base IS 'Seeded with 100 high-quality Enterprise Platform Q&As';
+COMMENT ON TABLE databricks_knowledge_base IS 'Seeded with 100 high-quality Databricks Q&As';
 
 

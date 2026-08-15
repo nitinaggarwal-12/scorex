@@ -1,10 +1,10 @@
 /**
- * Enterprise Platform Token Manager for Lakebase
- * In Enterprise Platform Apps, the app runs with the user's identity and can access tokens
+ * Databricks Token Manager for Lakebase
+ * In Databricks Apps, the app runs with the user's identity and can access tokens
  * via environment variables that are automatically injected
  */
 
-class PlatformTokenManager {
+class DatabricksTokenManager {
   constructor() {
     this.currentToken = null;
     this.lastRefresh = 0;
@@ -12,8 +12,8 @@ class PlatformTokenManager {
   }
 
   /**
-   * Get OAuth token from Enterprise Platform Apps environment
-   * Enterprise Platform Apps automatically provides authentication context
+   * Get OAuth token from Databricks Apps environment
+   * Databricks Apps automatically provides authentication context
    */
   async getToken() {
     const now = Date.now();
@@ -30,21 +30,21 @@ class PlatformTokenManager {
   /**
    * Refresh OAuth token
    * Try methods in this order:
-   * 1. Use the app's service principal (platform_CLIENT_ID/SECRET from Apps platform)
-   * 2. platform_TOKEN (automatically provided by platform)
+   * 1. Use the app's service principal (DATABRICKS_CLIENT_ID/SECRET from Apps platform)
+   * 2. DATABRICKS_TOKEN (automatically provided by platform)
    * 3. LAKEBASE_PASSWORD (manually set)
    */
   async refreshToken() {
     console.log('🔄 Getting OAuth token for Lakebase...');
-    console.log('🔍 Debug: platform_CLIENT_ID exists:', !!process.env.enterprisePlatform_CLIENT_ID);
-    console.log('🔍 Debug: platform_CLIENT_SECRET exists:', !!process.env.enterprisePlatform_CLIENT_SECRET);
+    console.log('🔍 Debug: DATABRICKS_CLIENT_ID exists:', !!process.env.DATABRICKS_CLIENT_ID);
+    console.log('🔍 Debug: DATABRICKS_CLIENT_SECRET exists:', !!process.env.DATABRICKS_CLIENT_SECRET);
     console.log('🔍 Debug: LAKEBASE_PASSWORD exists:', !!process.env.LAKEBASE_PASSWORD);
-    console.log('🔍 Debug: platform_TOKEN exists:', !!process.env.enterprisePlatform_TOKEN);
+    console.log('🔍 Debug: DATABRICKS_TOKEN exists:', !!process.env.DATABRICKS_TOKEN);
     
     // ALWAYS try service principal FIRST (even if LAKEBASE_PASSWORD exists)
-    const appClientId = process.env.enterprisePlatform_CLIENT_ID;
-    const appClientSecret = process.env.enterprisePlatform_CLIENT_SECRET;
-    const workspaceUrl = process.env.enterprisePlatform_HOST || 'https://e2-demo-field-eng.cloud.enterprisePlatform.com';
+    const appClientId = process.env.DATABRICKS_CLIENT_ID;
+    const appClientSecret = process.env.DATABRICKS_CLIENT_SECRET;
+    const workspaceUrl = process.env.DATABRICKS_HOST || 'https://e2-demo-field-eng.cloud.databricks.com';
     
     if (appClientId && appClientSecret && !appClientId.includes('@')) {
       // This is a service principal (UUID format, not email)
@@ -81,9 +81,9 @@ class PlatformTokenManager {
     }
     
     // Fallback 1: Check for automatically injected token
-    if (process.env.enterprisePlatform_TOKEN) {
-      console.log('✅ Using platform_TOKEN from environment');
-      this.currentToken = process.env.enterprisePlatform_TOKEN;
+    if (process.env.DATABRICKS_TOKEN) {
+      console.log('✅ Using DATABRICKS_TOKEN from environment');
+      this.currentToken = process.env.DATABRICKS_TOKEN;
       this.lastRefresh = Date.now();
       return this.currentToken;
     }
@@ -100,7 +100,7 @@ class PlatformTokenManager {
       return this.currentToken;
     }
     
-    throw new Error('No authentication method available. Set platform_TOKEN or LAKEBASE_PASSWORD in environment.');
+    throw new Error('No authentication method available. Set DATABRICKS_TOKEN or LAKEBASE_PASSWORD in environment.');
   }
 
   /**
@@ -124,5 +124,5 @@ class PlatformTokenManager {
 }
 
 // Export singleton instance
-module.exports = new PlatformTokenManager();
+module.exports = new DatabricksTokenManager();
 

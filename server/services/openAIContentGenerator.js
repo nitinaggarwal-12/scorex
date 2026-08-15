@@ -88,25 +88,25 @@ class OpenAIContentGenerator {
    * Get system prompt for OpenAI
    */
   getSystemPrompt() {
-    return `You are a Enterprise Platform platform expert and CTO advisor specializing in data platform maturity assessments.
+    return `You are a Databricks platform expert and CTO advisor specializing in data platform maturity assessments.
 
 Your role is to analyze assessment responses and provide:
 1. Accurate, data-driven insights based on actual user input
-2. Specific, actionable recommendations using latest Enterprise Platform features (2024-2025)
+2. Specific, actionable recommendations using latest Databricks features (2024-2025)
 3. Strategic guidance focused on business impact and ROI
 4. Factual analysis without speculative dollar amounts
 
 Key principles:
 - Base ALL recommendations on actual user responses (current state, future state, pain points, comments)
-- Reference only real Enterprise Platform features with verified capabilities
+- Reference only real Databricks features with verified capabilities
 - Focus on measurable business outcomes, not made-up cost figures
 - Provide CTO-level strategic narrative, not just technical lists
 - Be specific about WHY recommendations matter to THIS organization
 
-Latest Enterprise Platform capabilities to consider:
-- Unified Data Catalog & Governance for governance and data sharing
-- Declarative Data Pipelines for automated data pipelines
-- Continuous Data Observability for data quality
+Latest Databricks capabilities to consider:
+- Unity Catalog for governance and data sharing
+- Delta Live Tables for automated data pipelines
+- Lakehouse Monitoring for data quality
 - Serverless compute for cost optimization
 - AI/BI with Genie for natural language queries
 - Mosaic AI for GenAI applications
@@ -165,7 +165,7 @@ Return ONLY valid JSON with the exact structure requested.`;
       };
     });
 
-    return `# Enterprise Platform Platform Maturity Assessment Analysis
+    return `# Databricks Platform Maturity Assessment Analysis
 
 ## Organization Context
 - **Assessment ID:** ${assessment.id}
@@ -210,14 +210,14 @@ Based ONLY on the data provided above, generate a comprehensive overall assessme
    - Current state assessment with specific strengths/weaknesses identified from responses
    - Critical constraints impacting the organization (be specific based on pain points selected)
    - Transformation roadmap with timeline (reference actual gap sizes)
-   - Priority initiatives with specific Enterprise Platform features that address identified pain points
+   - Priority initiatives with specific Databricks features that address identified pain points
    - Expected business outcomes (based on gaps and pain points, not made-up numbers)
 
 4. **Top 5 Priority Recommendations:**
    For each recommendation provide:
    - Title
    - Description (why it matters to THIS organization based on their responses)
-   - Specific actions (using latest Enterprise Platform features)
+   - Specific actions (using latest Databricks features)
    - Business impact (based on pain points addressed)
    - Timeline estimate
    - Priority level (critical/high/medium/low)
@@ -317,33 +317,33 @@ ${filledQuestions.map((q, idx) => `
 - Additional Comments: ${q.comment || 'None'}
 `).join('\n')}
 
-## Task - Act as Enterprise Platform ${area.name} SME (Subject Matter Expert)
+## Task - Act as Databricks ${area.name} SME (Subject Matter Expert)
 
-You are a PASSIONATE Enterprise Platform solutions architect with 8+ years of hands-on experience. You've implemented ${area.name} for Fortune 500 companies. You LOVE Enterprise Platform and know every feature intimately. You speak with confidence and specificity because you've done this dozens of times.
+You are a PASSIONATE Databricks solutions architect with 8+ years of hands-on experience. You've implemented ${area.name} for Fortune 500 companies. You LOVE Databricks and know every feature intimately. You speak with confidence and specificity because you've done this dozens of times.
 
-## Your Enterprise Platform Expertise Context (Oct 2024):
+## Your Databricks Expertise Context (Oct 2024):
 
-**Latest Enterprise Platform Capabilities:**
-- Unified Data Catalog & Governance: Fine-grained governance, attribute-based access control (ABAC), data lineage across clouds
-- Declarative Data Pipelines (DLT): Declarative ETL, auto-scaling, expectations for data quality, CDC support
-- Enterprise SQL Warehouse Serverless: Sub-second query response, photon engine, automatic scaling
-- Enterprise Model Registry 2.x: Model registry, automated retraining, feature serving, LLM tracking
-- Enterprise AI Advisor: AI-powered SQL/Python code generation, debugging assistant
+**Latest Databricks Capabilities:**
+- Unity Catalog: Fine-grained governance, attribute-based access control (ABAC), data lineage across clouds
+- Delta Live Tables (DLT): Declarative ETL, auto-scaling, expectations for data quality, CDC support
+- Databricks SQL Serverless: Sub-second query response, photon engine, automatic scaling
+- MLflow 2.x: Model registry, automated retraining, feature serving, LLM tracking
+- Databricks Assistant: AI-powered SQL/Python code generation, debugging assistant
 - Vector Search: Native vector database for RAG applications, auto-sync with Delta tables
 - Lakehouse Federation: Query Snowflake, BigQuery, PostgreSQL without data movement
 - AI/BI Dashboards: Genie for natural language queries, automatic insights
 - Workflows: Orchestration with 100+ tasks, dynamic task mapping, better than Airflow
-- Enterprise Platform Apps: Deploy Streamlit/Gradio apps directly on platform
+- Databricks Apps: Deploy Streamlit/Gradio apps directly on platform
 
 **Common Anti-Patterns You've Seen:**
-- Manual workspace provisioning → Use Terraform + Unified Data Catalog & Governance assignment automation
+- Manual workspace provisioning → Use Terraform + Unity Catalog assignment automation
 - Scattered notebooks → Migrate to DLT pipelines with Git integration
 - Manual cluster management → Use Serverless SQL and Jobs compute
 - Custom monitoring → Use System Tables (audit logs, query history, lineage)
 - Multiple ETL tools → Consolidate to DLT + Workflows
-- Fragmented governance → Unified Data Catalog & Governance as single source of truth
+- Fragmented governance → Unity Catalog as single source of truth
 
-**Pillar-Specific Enterprise Platform Expertise for ${area.name}:**
+**Pillar-Specific Databricks Expertise for ${area.name}:**
 
 ${this.getPillarSpecificContext(pillarId)}
 
@@ -353,7 +353,7 @@ Generate DIRECT, ACTIONABLE, UNAMBIGUOUS recommendations based on the data above
 **Remember:** You're not a consultant giving vague advice. You're a hands-on architect who has BUILT this exact solution 50+ times. Give them the EXACT steps you would take if you joined their team tomorrow. Use real feature names, real commands, real timelines from your experience.
 
 ### Requirements for Actionable Recommendations:
-- **Be Specific**: Name exact Enterprise Platform features/products (Unified Data Catalog & Governance, Declarative Data Pipelines, Enterprise Model Registry, etc.)
+- **Be Specific**: Name exact Databricks features/products (Unity Catalog, Delta Live Tables, MLflow, etc.)
 - **Be Prescriptive**: Tell them WHAT to do, HOW to do it, and WHEN to do it
 - **Be Technical**: Include actual implementation steps, not high-level platitudes
 - **Address Pain Points**: Explicitly map each recommendation to the pain points they selected
@@ -366,9 +366,9 @@ Generate DIRECT, ACTIONABLE, UNAMBIGUOUS recommendations based on the data above
 ❌ "Improve security posture"
 
 ### Good Example (Specific & Actionable):
-✅ "Enable Unified Data Catalog & Governance on your workspace within 2 weeks: 1) Create metastore in your region, 2) Assign to workspace, 3) Migrate 5 critical schemas using UC migration tool, 4) Configure external locations for your S3 buckets. This addresses your 'Inconsistent access control' pain point."
+✅ "Enable Unity Catalog on your workspace within 2 weeks: 1) Create metastore in your region, 2) Assign to workspace, 3) Migrate 5 critical schemas using UC migration tool, 4) Configure external locations for your S3 buckets. This addresses your 'Inconsistent access control' pain point."
 
-✅ "Implement Declarative Data Pipelines for your ETL pipelines: Week 1-2: Identify 3 critical batch jobs, Week 3-4: Rewrite using DLT declarative syntax, Week 5: Set up expectations for data quality, Week 6: Enable CDC for incremental loads. This solves your 'Manual pipeline monitoring' pain."
+✅ "Implement Delta Live Tables for your ETL pipelines: Week 1-2: Identify 3 critical batch jobs, Week 3-4: Rewrite using DLT declarative syntax, Week 5: Set up expectations for data quality, Week 6: Enable CDC for incremental loads. This solves your 'Manual pipeline monitoring' pain."
 
 Generate:
 
@@ -386,15 +386,15 @@ Generate:
    Each must include:
    - **Title**: Action-oriented (starts with verb: "Enable...", "Migrate...", "Implement...")
    - **Why Now**: Which specific pain point(s) this addresses from their responses
-   - **Specific Actions**: Numbered steps (1, 2, 3...) with exact Enterprise Platform features
+   - **Specific Actions**: Numbered steps (1, 2, 3...) with exact Databricks features
    - **Prerequisites**: What must be in place first
    - **Timeline**: Weeks or sprints (be realistic: 1-4 weeks typical)
    - **Team Required**: Who needs to execute (Data Engineers, Platform Admin, etc.)
    - **Success Metrics**: How to measure completion
    - **Priority**: Critical/High/Medium based on pain severity
 
-4. **Enterprise Platform Features/Products** (3-5 specific items):
-   - Feature name (e.g., "Unified Data Catalog & Governance", "Declarative Data Pipelines", "Enterprise SQL Warehouse Serverless")
+4. **Databricks Features/Products** (3-5 specific items):
+   - Feature name (e.g., "Unity Catalog", "Delta Live Tables", "Databricks SQL Serverless")
    - Status (GA/Public Preview/Private Preview as of Oct 2024)
    - Why relevant: Map directly to their pain points
    - Quick win or foundational: Flag if this unlocks other capabilities
@@ -412,7 +412,7 @@ Return JSON with this structure:
       "title": "<Action-oriented title starting with verb>",
       "whyNow": "<Which pain points this addresses>",
       "actions": [
-        "Step 1: <Specific action with Enterprise Platform feature>",
+        "Step 1: <Specific action with Databricks feature>",
         "Step 2: <Next specific action>",
         "Step 3: <Continue...>"
       ],
@@ -423,9 +423,9 @@ Return JSON with this structure:
       "priority": "<critical|high|medium based on pain severity>"
     }
   ],
-  "platformFeatures": [
+  "databricksFeatures": [
     {
-      "name": "<Exact Enterprise Platform feature name>",
+      "name": "<Exact Databricks feature name>",
       "status": "<GA|Public Preview|Private Preview>",
       "relevance": "<Why relevant to their pain points>",
       "type": "<quick-win|foundational>",
@@ -604,7 +604,7 @@ Return JSON with this structure:
    * Format pillar results from OpenAI response
    */
   formatPillarResults(content, assessment, pillarId) {
-    const { scores, summary, recommendations, platformFeatures } = content;
+    const { scores, summary, recommendations, databricksFeatures } = content;
     const area = assessmentFramework.assessmentAreas.find(a => a.id === pillarId);
     
     // Generate dimension-level gap actions
@@ -622,7 +622,7 @@ Return JSON with this structure:
       },
       summary: summary || '',
       recommendations: recommendations || [],
-      platformFeatures: platformFeatures || [],
+      databricksFeatures: databricksFeatures || [],
       painPointRecommendations: recommendations || [],
       gapBasedActions: gapActions,
       commentBasedInsights: []
@@ -694,7 +694,7 @@ Return JSON with this structure:
         },
         summary: `Based on your responses, this pillar shows a ${scores.gap}-level gap requiring focused attention.`,
         recommendations: recommendations.prioritizedActions || [],
-        platformFeatures: [],
+        databricksFeatures: [],
         painPointRecommendations: recommendations.painPointRecommendations || [],
         gapBasedActions: gapActions, // Use dimension-level gaps
         commentBasedInsights: recommendations.commentBasedInsights || []
@@ -720,13 +720,13 @@ Return JSON with this structure:
   }
 
   /**
-   * Get pillar-specific Enterprise Platform expertise context
+   * Get pillar-specific Databricks expertise context
    */
   getPillarSpecificContext(pillarId) {
     const contexts = {
       platform_governance: `
 **Platform & Governance Expertise:**
-- Unified Data Catalog & Governance is THE game-changer (GA since 2023). It's not optional anymore.
+- Unity Catalog is THE game-changer (GA since 2023). It's not optional anymore.
 - Start with account-level metastore → Assign to workspaces → Migrate legacy Hive metastore
 - Use external locations for S3/ADLS/GCS buckets (no more mount points!)
 - Implement attribute-based access control (ABAC) for dynamic row/column filtering
@@ -743,12 +743,12 @@ Return JSON with this structure:
 
       data_engineering: `
 **Data Engineering Expertise:**
-- Declarative Data Pipelines (DLT) > custom notebooks. Period. 10x faster to build, 5x less code.
+- Delta Live Tables (DLT) > custom notebooks. Period. 10x faster to build, 5x less code.
 - Use DLT expectations for data quality: @dlt.expect() for warnings, @dlt.expect_or_drop() for drops
 - Streaming tables with Auto Loader for S3/ADLS (handles schema evolution automatically)
 - Liquid clustering replaces Z-ORDER (no more manual optimization!)
 - Change Data Feed (CDF) for incremental processing - enable with ALTER TABLE
-- Unified Data Catalog & Governance volumes for unstructured data (PDFs, images, etc.)
+- Unity Catalog volumes for unstructured data (PDFs, images, etc.)
 - Workflows > Airflow - native integration, better UI, automatic retries
 
 **Quick Wins (Week 1-2):**
@@ -759,13 +759,13 @@ Return JSON with this structure:
 
       analytics_bi: `
 **Analytics & BI Expertise:**
-- Enterprise SQL Warehouse Serverless = game over for Snowflake on cost (pay per query second)
+- Databricks SQL Serverless = game over for Snowflake on cost (pay per query second)
 - Photon engine 2.0: 3-5x faster, no config needed
 - Genie (AI/BI) for natural language queries - business users LOVE this
 - SQL warehouses with serverless compute auto-scale 0 to 100+ clusters
 - Query federation to read Snowflake/BigQuery without ETL (saves months)
 - Dashboards with automatic refresh, alerts, scheduled emails
-- SQL UDFs and Enterprise Platform Functions for reusable logic
+- SQL UDFs and Databricks Functions for reusable logic
 - Query profile shows exact bottlenecks (scan vs compute vs network)
 
 **Quick Wins (Week 1-2):**
@@ -776,16 +776,16 @@ Return JSON with this structure:
 
       machine_learning: `
 **Machine Learning Expertise:**
-- Enterprise Model Registry is industry standard (not just Enterprise Platform) - 10M+ downloads/month
+- MLflow is industry standard (not just Databricks) - 10M+ downloads/month
 - Feature Store for reusable features across models (training/serving consistency)
 - Model serving with auto-scaling (CPU or GPU), A/B testing built-in
 - AutoML for baseline models in 10 minutes (95% accuracy often)
 - Hyperopt for distributed hyperparameter tuning (100x faster)
-- Unified Data Catalog & Governance for model governance (lineage from data to model to endpoint)
+- Unity Catalog for model governance (lineage from data to model to endpoint)
 - Mosaic AI Model Training for distributed LLMs (LLaMA, Mistral, etc.)
 
 **Quick Wins (Week 1-2):**
-1. Register existing model in Enterprise Model Registry
+1. Register existing model in MLflow
 2. Deploy to Model Serving endpoint
 3. Create Feature Store for top 10 features
 4. Run AutoML on one use case`,
@@ -798,14 +798,14 @@ Return JSON with this structure:
 - DBRX model (open-source, outperforms GPT-3.5) runs natively
 - LLM eval suite for testing quality (perplexity, ROUGE, BLEU)
 - AI Functions (ai_query, ai_extract) in SQL - query your data with natural language
-- Model Serving supports vLLM, TGI, Enterprise Model Registry (flexible deployment)
+- Model Serving supports vLLM, TGI, MLflow (flexible deployment)
 - Pay per token pricing for Foundation Model APIs
 
 **Quick Wins (Week 1-2):**
 1. Create vector search endpoint
 2. Ingest documents to Delta table
 3. Build RAG chatbot with RAG Studio
-4. Deploy with Enterprise Platform Apps`,
+4. Deploy with Databricks Apps`,
 
       operational_excellence: `
 **Operational Excellence Expertise:**
@@ -813,7 +813,7 @@ Return JSON with this structure:
 - Use system.compute.clusters to track cluster utilization and right-size
 - Query history (system.query.history) shows slow queries and optimization opportunities
 - Workflows for orchestration: 100+ task types, dynamic mapping, error handling
-- Enterprise Platform CLI 0.2+ uses REST API 2.1 (10x faster than legacy CLI)
+- Databricks CLI 0.2+ uses REST API 2.1 (10x faster than legacy CLI)
 - Terraform provider 1.x for infrastructure as code (workspaces, clusters, jobs, notebooks)
 - Budget alerts to prevent cost overruns (set at workspace or job level)
 - Enhanced autoscaling: Scale down to zero for cost, scale up in seconds

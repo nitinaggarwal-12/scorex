@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 # Dependencies
 node_modules/
 
@@ -9,67 +7,22 @@ client/build/
 # Data files (contains assessment data)
 server/data/assessments.json
 
-# Environment variables and secrets
+# Environment variables
 .env
-.env.*
-*.key
-*.pem
-*gcp-key*.json
+.env.local
 
-# Scratch and test output
-scratch/
-screenshots/
-
->>>>>>> 7333aa8 (feat: complete ScoreX Enterprise Data & AI Maturity Assessment with vendor-neutral framework, public access, disclaimer popup, and all features)
 # Logs
-logs
 *.log
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# OS files
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+Thumbs.db
 
-# Python
-.venv/
-__pycache__/
-*.pyc
-
-# Scratch and temporary directories
-scratch/
-backup_archive/
-
-# Local Test Scripts & Certs
-test_*.js
-probe_*.js
-scratch_*.js
-scratch_*.cjs
-platform_daemon.js
-list_ai_models.js
-localhost*.pem
-*.pem
-
-# Local Credentials and Configs
-.env
-.env.*
-gcp-key.json
-nitinagga-ge*.json
-gemini_credentials_*.json
-
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 

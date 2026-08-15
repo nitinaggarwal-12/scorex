@@ -14,7 +14,7 @@ SELECT
   'inconsistent_configs',
   'platform_governance',
   'Address inconsistent configs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -27,7 +27,7 @@ SELECT
   'inconsistent_configs',
   'platform_governance',
   'Address inconsistent configs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -40,7 +40,7 @@ SELECT
   'inconsistent_configs',
   'platform_governance',
   'Address inconsistent configs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -53,7 +53,7 @@ SELECT
   'manual_provisioning',
   'platform_governance',
   'Address manual provisioning with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -66,7 +66,7 @@ SELECT
   'manual_provisioning',
   'platform_governance',
   'Address manual provisioning with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -79,7 +79,7 @@ SELECT
   'manual_provisioning',
   'platform_governance',
   'Address manual provisioning with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -92,7 +92,7 @@ SELECT
   'poor_isolation',
   'platform_governance',
   'Address poor isolation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -105,7 +105,7 @@ SELECT
   'poor_isolation',
   'platform_governance',
   'Address poor isolation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -118,7 +118,7 @@ SELECT
   'poor_isolation',
   'platform_governance',
   'Address poor isolation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -131,7 +131,7 @@ SELECT
   'deployment_issues',
   'platform_governance',
   'Address deployment issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -144,7 +144,7 @@ SELECT
   'deployment_issues',
   'platform_governance',
   'Address deployment issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -157,7 +157,7 @@ SELECT
   'deployment_issues',
   'platform_governance',
   'Address deployment issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -170,7 +170,7 @@ SELECT
   'resource_conflicts',
   'platform_governance',
   'Address resource conflicts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -183,7 +183,7 @@ SELECT
   'resource_conflicts',
   'platform_governance',
   'Address resource conflicts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -196,7 +196,7 @@ SELECT
   'resource_conflicts',
   'platform_governance',
   'Address resource conflicts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -209,7 +209,7 @@ SELECT
   'slow_deployment',
   'platform_governance',
   'Address slow deployment with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -222,7 +222,7 @@ SELECT
   'slow_deployment',
   'platform_governance',
   'Address slow deployment with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -235,7 +235,7 @@ SELECT
   'slow_deployment',
   'platform_governance',
   'Address slow deployment with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -248,7 +248,7 @@ SELECT
   'environment_costs',
   'platform_governance',
   'Address environment costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -261,7 +261,7 @@ SELECT
   'environment_costs',
   'platform_governance',
   'Address environment costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -274,7 +274,7 @@ SELECT
   'environment_costs',
   'platform_governance',
   'Address environment costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -287,7 +287,7 @@ SELECT
   'team_bottlenecks',
   'platform_governance',
   'Address team bottlenecks with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -300,7 +300,7 @@ SELECT
   'team_bottlenecks',
   'platform_governance',
   'Address team bottlenecks with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -313,7 +313,7 @@ SELECT
   'team_bottlenecks',
   'platform_governance',
   'Address team bottlenecks with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -326,7 +326,7 @@ SELECT
   'quality_issues',
   'platform_governance',
   'Address quality issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -339,7 +339,7 @@ SELECT
   'quality_issues',
   'platform_governance',
   'Address quality issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -352,7 +352,7 @@ SELECT
   'quality_issues',
   'platform_governance',
   'Address quality issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -365,7 +365,7 @@ SELECT
   'compliance_risks',
   'platform_governance',
   'Address compliance risks with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -378,7 +378,7 @@ SELECT
   'compliance_risks',
   'platform_governance',
   'Address compliance risks with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -391,7 +391,7 @@ SELECT
   'compliance_risks',
   'platform_governance',
   'Address compliance risks with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -404,7 +404,7 @@ SELECT
   'resource_contention',
   'platform_governance',
   'Address resource contention with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -417,7 +417,7 @@ SELECT
   'resource_contention',
   'platform_governance',
   'Address resource contention with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -430,7 +430,7 @@ SELECT
   'resource_contention',
   'platform_governance',
   'Address resource contention with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -443,7 +443,7 @@ SELECT
   'performance_degradation',
   'platform_governance',
   'Address performance degradation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -456,7 +456,7 @@ SELECT
   'performance_degradation',
   'platform_governance',
   'Address performance degradation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -469,7 +469,7 @@ SELECT
   'performance_degradation',
   'platform_governance',
   'Address performance degradation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -482,7 +482,7 @@ SELECT
   'complex_scaling',
   'platform_governance',
   'Address complex scaling with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -495,7 +495,7 @@ SELECT
   'complex_scaling',
   'platform_governance',
   'Address complex scaling with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -508,7 +508,7 @@ SELECT
   'complex_scaling',
   'platform_governance',
   'Address complex scaling with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -521,7 +521,7 @@ SELECT
   'infrastructure_limits',
   'platform_governance',
   'Address infrastructure limits with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -534,7 +534,7 @@ SELECT
   'infrastructure_limits',
   'platform_governance',
   'Address infrastructure limits with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -547,7 +547,7 @@ SELECT
   'infrastructure_limits',
   'platform_governance',
   'Address infrastructure limits with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -560,7 +560,7 @@ SELECT
   'monitoring_gaps',
   'platform_governance',
   'Address monitoring gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -573,7 +573,7 @@ SELECT
   'monitoring_gaps',
   'platform_governance',
   'Address monitoring gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -586,7 +586,7 @@ SELECT
   'monitoring_gaps',
   'platform_governance',
   'Address monitoring gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -599,7 +599,7 @@ SELECT
   'team_blocking',
   'platform_governance',
   'Address team blocking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -612,7 +612,7 @@ SELECT
   'team_blocking',
   'platform_governance',
   'Address team blocking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -625,7 +625,7 @@ SELECT
   'team_blocking',
   'platform_governance',
   'Address team blocking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -638,7 +638,7 @@ SELECT
   'project_delays',
   'platform_governance',
   'Address project delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -651,7 +651,7 @@ SELECT
   'project_delays',
   'platform_governance',
   'Address project delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -664,7 +664,7 @@ SELECT
   'project_delays',
   'platform_governance',
   'Address project delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -677,7 +677,7 @@ SELECT
   'high_costs',
   'platform_governance',
   'Address high costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -690,7 +690,7 @@ SELECT
   'high_costs',
   'platform_governance',
   'Address high costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -703,7 +703,7 @@ SELECT
   'high_costs',
   'platform_governance',
   'Address high costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -716,7 +716,7 @@ SELECT
   'poor_utilization',
   'platform_governance',
   'Address poor utilization with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -729,7 +729,7 @@ SELECT
   'poor_utilization',
   'platform_governance',
   'Address poor utilization with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -742,7 +742,7 @@ SELECT
   'poor_utilization',
   'platform_governance',
   'Address poor utilization with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -755,7 +755,7 @@ SELECT
   'competitive_disadvantage',
   'platform_governance',
   'Address competitive disadvantage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -768,7 +768,7 @@ SELECT
   'competitive_disadvantage',
   'platform_governance',
   'Address competitive disadvantage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -781,7 +781,7 @@ SELECT
   'competitive_disadvantage',
   'platform_governance',
   'Address competitive disadvantage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -794,7 +794,7 @@ SELECT
   'auth_complexity',
   'platform_governance',
   'Address auth complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -807,7 +807,7 @@ SELECT
   'auth_complexity',
   'platform_governance',
   'Address auth complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -820,7 +820,7 @@ SELECT
   'auth_complexity',
   'platform_governance',
   'Address auth complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -833,7 +833,7 @@ SELECT
   'access_management',
   'platform_governance',
   'Address access management with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -846,7 +846,7 @@ SELECT
   'access_management',
   'platform_governance',
   'Address access management with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -859,7 +859,7 @@ SELECT
   'access_management',
   'platform_governance',
   'Address access management with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -872,7 +872,7 @@ SELECT
   'security_gaps',
   'platform_governance',
   'Address security gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -885,7 +885,7 @@ SELECT
   'security_gaps',
   'platform_governance',
   'Address security gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -898,7 +898,7 @@ SELECT
   'security_gaps',
   'platform_governance',
   'Address security gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -911,7 +911,7 @@ SELECT
   'audit_trails',
   'platform_governance',
   'Address audit trails with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -924,7 +924,7 @@ SELECT
   'audit_trails',
   'platform_governance',
   'Address audit trails with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -937,7 +937,7 @@ SELECT
   'audit_trails',
   'platform_governance',
   'Address audit trails with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -950,7 +950,7 @@ SELECT
   'integration_issues',
   'platform_governance',
   'Address integration issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -963,7 +963,7 @@ SELECT
   'integration_issues',
   'platform_governance',
   'Address integration issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -976,7 +976,7 @@ SELECT
   'integration_issues',
   'platform_governance',
   'Address integration issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -989,7 +989,7 @@ SELECT
   'security_breaches',
   'platform_governance',
   'Address security breaches with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1002,7 +1002,7 @@ SELECT
   'security_breaches',
   'platform_governance',
   'Address security breaches with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1015,7 +1015,7 @@ SELECT
   'security_breaches',
   'platform_governance',
   'Address security breaches with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1028,7 +1028,7 @@ SELECT
   'compliance_violations',
   'platform_governance',
   'Address compliance violations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1041,7 +1041,7 @@ SELECT
   'compliance_violations',
   'platform_governance',
   'Address compliance violations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1054,7 +1054,7 @@ SELECT
   'compliance_violations',
   'platform_governance',
   'Address compliance violations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1067,7 +1067,7 @@ SELECT
   'access_delays',
   'platform_governance',
   'Address access delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1080,7 +1080,7 @@ SELECT
   'access_delays',
   'platform_governance',
   'Address access delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1093,7 +1093,7 @@ SELECT
   'access_delays',
   'platform_governance',
   'Address access delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1106,7 +1106,7 @@ SELECT
   'admin_overhead',
   'platform_governance',
   'Address admin overhead with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1119,7 +1119,7 @@ SELECT
   'admin_overhead',
   'platform_governance',
   'Address admin overhead with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1132,7 +1132,7 @@ SELECT
   'admin_overhead',
   'platform_governance',
   'Address admin overhead with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1145,7 +1145,7 @@ SELECT
   'user_frustration',
   'platform_governance',
   'Address user frustration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1158,7 +1158,7 @@ SELECT
   'user_frustration',
   'platform_governance',
   'Address user frustration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1171,7 +1171,7 @@ SELECT
   'user_frustration',
   'platform_governance',
   'Address user frustration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1184,7 +1184,7 @@ SELECT
   'data_exposure',
   'platform_governance',
   'Address data exposure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1197,7 +1197,7 @@ SELECT
   'data_exposure',
   'platform_governance',
   'Address data exposure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1210,7 +1210,7 @@ SELECT
   'data_exposure',
   'platform_governance',
   'Address data exposure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1223,7 +1223,7 @@ SELECT
   'over_privileged',
   'platform_governance',
   'Address over privileged with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1236,7 +1236,7 @@ SELECT
   'over_privileged',
   'platform_governance',
   'Address over privileged with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1249,7 +1249,7 @@ SELECT
   'over_privileged',
   'platform_governance',
   'Address over privileged with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1262,7 +1262,7 @@ SELECT
   'encryption_gaps',
   'platform_governance',
   'Address encryption gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1275,7 +1275,7 @@ SELECT
   'encryption_gaps',
   'platform_governance',
   'Address encryption gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1288,7 +1288,7 @@ SELECT
   'encryption_gaps',
   'platform_governance',
   'Address encryption gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1301,7 +1301,7 @@ SELECT
   'monitoring_blind_spots',
   'platform_governance',
   'Address monitoring blind spots with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1314,7 +1314,7 @@ SELECT
   'monitoring_blind_spots',
   'platform_governance',
   'Address monitoring blind spots with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1327,7 +1327,7 @@ SELECT
   'monitoring_blind_spots',
   'platform_governance',
   'Address monitoring blind spots with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1340,7 +1340,7 @@ SELECT
   'policy_enforcement',
   'platform_governance',
   'Address policy enforcement with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1353,7 +1353,7 @@ SELECT
   'policy_enforcement',
   'platform_governance',
   'Address policy enforcement with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1366,7 +1366,7 @@ SELECT
   'policy_enforcement',
   'platform_governance',
   'Address policy enforcement with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1379,7 +1379,7 @@ SELECT
   'regulatory_risk',
   'platform_governance',
   'Address regulatory risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1392,7 +1392,7 @@ SELECT
   'regulatory_risk',
   'platform_governance',
   'Address regulatory risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1405,7 +1405,7 @@ SELECT
   'regulatory_risk',
   'platform_governance',
   'Address regulatory risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1418,7 +1418,7 @@ SELECT
   'data_breaches',
   'platform_governance',
   'Address data breaches with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1431,7 +1431,7 @@ SELECT
   'data_breaches',
   'platform_governance',
   'Address data breaches with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1444,7 +1444,7 @@ SELECT
   'data_breaches',
   'platform_governance',
   'Address data breaches with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1457,7 +1457,7 @@ SELECT
   'customer_trust',
   'platform_governance',
   'Address customer trust with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1470,7 +1470,7 @@ SELECT
   'customer_trust',
   'platform_governance',
   'Address customer trust with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1483,7 +1483,7 @@ SELECT
   'customer_trust',
   'platform_governance',
   'Address customer trust with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1496,7 +1496,7 @@ SELECT
   'audit_failures',
   'platform_governance',
   'Address audit failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1509,7 +1509,7 @@ SELECT
   'audit_failures',
   'platform_governance',
   'Address audit failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1522,7 +1522,7 @@ SELECT
   'audit_failures',
   'platform_governance',
   'Address audit failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1535,7 +1535,7 @@ SELECT
   'business_disruption',
   'platform_governance',
   'Address business disruption with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1548,7 +1548,7 @@ SELECT
   'business_disruption',
   'platform_governance',
   'Address business disruption with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1561,7 +1561,7 @@ SELECT
   'business_disruption',
   'platform_governance',
   'Address business disruption with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1574,7 +1574,7 @@ SELECT
   'policy_gaps',
   'platform_governance',
   'Address policy gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1587,7 +1587,7 @@ SELECT
   'policy_gaps',
   'platform_governance',
   'Address policy gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1600,7 +1600,7 @@ SELECT
   'policy_gaps',
   'platform_governance',
   'Address policy gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1613,7 +1613,7 @@ SELECT
   'lineage_tracking',
   'platform_governance',
   'Address lineage tracking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1626,7 +1626,7 @@ SELECT
   'lineage_tracking',
   'platform_governance',
   'Address lineage tracking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1639,7 +1639,7 @@ SELECT
   'lineage_tracking',
   'platform_governance',
   'Address lineage tracking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1652,7 +1652,7 @@ SELECT
   'manual_processes',
   'platform_governance',
   'Address manual processes with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1665,7 +1665,7 @@ SELECT
   'manual_processes',
   'platform_governance',
   'Address manual processes with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1678,7 +1678,7 @@ SELECT
   'manual_processes',
   'platform_governance',
   'Address manual processes with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1691,7 +1691,7 @@ SELECT
   'metadata_management',
   'platform_governance',
   'Address metadata management with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1704,7 +1704,7 @@ SELECT
   'metadata_management',
   'platform_governance',
   'Address metadata management with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1717,7 +1717,7 @@ SELECT
   'metadata_management',
   'platform_governance',
   'Address metadata management with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1730,7 +1730,7 @@ SELECT
   'integration_complexity',
   'platform_governance',
   'Address integration complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1743,7 +1743,7 @@ SELECT
   'integration_complexity',
   'platform_governance',
   'Address integration complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1756,7 +1756,7 @@ SELECT
   'integration_complexity',
   'platform_governance',
   'Address integration complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1769,7 +1769,7 @@ SELECT
   'compliance_failures',
   'platform_governance',
   'Address compliance failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1782,7 +1782,7 @@ SELECT
   'compliance_failures',
   'platform_governance',
   'Address compliance failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1795,7 +1795,7 @@ SELECT
   'compliance_failures',
   'platform_governance',
   'Address compliance failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1808,7 +1808,7 @@ SELECT
   'data_quality_issues',
   'platform_governance',
   'Address data quality issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1821,7 +1821,7 @@ SELECT
   'data_quality_issues',
   'platform_governance',
   'Address data quality issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1834,7 +1834,7 @@ SELECT
   'data_quality_issues',
   'platform_governance',
   'Address data quality issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1847,7 +1847,7 @@ SELECT
   'regulatory_fines',
   'platform_governance',
   'Address regulatory fines with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1860,7 +1860,7 @@ SELECT
   'regulatory_fines',
   'platform_governance',
   'Address regulatory fines with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1873,7 +1873,7 @@ SELECT
   'regulatory_fines',
   'platform_governance',
   'Address regulatory fines with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1886,7 +1886,7 @@ SELECT
   'operational_inefficiency',
   'platform_governance',
   'Address operational inefficiency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1899,7 +1899,7 @@ SELECT
   'operational_inefficiency',
   'platform_governance',
   'Address operational inefficiency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1912,7 +1912,7 @@ SELECT
   'operational_inefficiency',
   'platform_governance',
   'Address operational inefficiency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1925,7 +1925,7 @@ SELECT
   'decision_delays',
   'platform_governance',
   'Address decision delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1938,7 +1938,7 @@ SELECT
   'decision_delays',
   'platform_governance',
   'Address decision delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1951,7 +1951,7 @@ SELECT
   'decision_delays',
   'platform_governance',
   'Address decision delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1964,7 +1964,7 @@ SELECT
   'audit_complexity',
   'platform_governance',
   'Address audit complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1977,7 +1977,7 @@ SELECT
   'audit_complexity',
   'platform_governance',
   'Address audit complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -1990,7 +1990,7 @@ SELECT
   'audit_complexity',
   'platform_governance',
   'Address audit complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2003,7 +2003,7 @@ SELECT
   'data_retention',
   'platform_governance',
   'Address data retention with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2016,7 +2016,7 @@ SELECT
   'data_retention',
   'platform_governance',
   'Address data retention with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2029,7 +2029,7 @@ SELECT
   'data_retention',
   'platform_governance',
   'Address data retention with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2042,7 +2042,7 @@ SELECT
   'reporting_gaps',
   'platform_governance',
   'Address reporting gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2055,7 +2055,7 @@ SELECT
   'reporting_gaps',
   'platform_governance',
   'Address reporting gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2068,7 +2068,7 @@ SELECT
   'reporting_gaps',
   'platform_governance',
   'Address reporting gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2081,7 +2081,7 @@ SELECT
   'change_tracking',
   'platform_governance',
   'Address change tracking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2094,7 +2094,7 @@ SELECT
   'change_tracking',
   'platform_governance',
   'Address change tracking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2107,7 +2107,7 @@ SELECT
   'change_tracking',
   'platform_governance',
   'Address change tracking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2120,7 +2120,7 @@ SELECT
   'tool_integration',
   'platform_governance',
   'Address tool integration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2133,7 +2133,7 @@ SELECT
   'tool_integration',
   'platform_governance',
   'Address tool integration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2146,7 +2146,7 @@ SELECT
   'tool_integration',
   'platform_governance',
   'Address tool integration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2159,7 +2159,7 @@ SELECT
   'regulatory_penalties',
   'platform_governance',
   'Address regulatory penalties with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2172,7 +2172,7 @@ SELECT
   'regulatory_penalties',
   'platform_governance',
   'Address regulatory penalties with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2185,7 +2185,7 @@ SELECT
   'regulatory_penalties',
   'platform_governance',
   'Address regulatory penalties with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2198,7 +2198,7 @@ SELECT
   'audit_costs',
   'platform_governance',
   'Address audit costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2211,7 +2211,7 @@ SELECT
   'audit_costs',
   'platform_governance',
   'Address audit costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2224,7 +2224,7 @@ SELECT
   'audit_costs',
   'platform_governance',
   'Address audit costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2237,7 +2237,7 @@ SELECT
   'business_risk',
   'platform_governance',
   'Address business risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2250,7 +2250,7 @@ SELECT
   'business_risk',
   'platform_governance',
   'Address business risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2263,7 +2263,7 @@ SELECT
   'business_risk',
   'platform_governance',
   'Address business risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2276,7 +2276,7 @@ SELECT
   'reputation_damage',
   'platform_governance',
   'Address reputation damage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2289,7 +2289,7 @@ SELECT
   'reputation_damage',
   'platform_governance',
   'Address reputation damage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2302,7 +2302,7 @@ SELECT
   'reputation_damage',
   'platform_governance',
   'Address reputation damage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2315,7 +2315,7 @@ SELECT
   'alert_noise',
   'platform_governance',
   'Address alert noise with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2328,7 +2328,7 @@ SELECT
   'alert_noise',
   'platform_governance',
   'Address alert noise with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2341,7 +2341,7 @@ SELECT
   'alert_noise',
   'platform_governance',
   'Address alert noise with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2354,7 +2354,7 @@ SELECT
   'metric_correlation',
   'platform_governance',
   'Address metric correlation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2367,7 +2367,7 @@ SELECT
   'metric_correlation',
   'platform_governance',
   'Address metric correlation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2380,7 +2380,7 @@ SELECT
   'metric_correlation',
   'platform_governance',
   'Address metric correlation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2393,7 +2393,7 @@ SELECT
   'performance_impact',
   'platform_governance',
   'Address performance impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2406,7 +2406,7 @@ SELECT
   'performance_impact',
   'platform_governance',
   'Address performance impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2419,7 +2419,7 @@ SELECT
   'performance_impact',
   'platform_governance',
   'Address performance impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2432,7 +2432,7 @@ SELECT
   'tool_fragmentation',
   'platform_governance',
   'Address tool fragmentation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2445,7 +2445,7 @@ SELECT
   'tool_fragmentation',
   'platform_governance',
   'Address tool fragmentation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2458,7 +2458,7 @@ SELECT
   'tool_fragmentation',
   'platform_governance',
   'Address tool fragmentation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2471,7 +2471,7 @@ SELECT
   'unplanned_downtime',
   'platform_governance',
   'Address unplanned downtime with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2484,7 +2484,7 @@ SELECT
   'unplanned_downtime',
   'platform_governance',
   'Address unplanned downtime with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2497,7 +2497,7 @@ SELECT
   'unplanned_downtime',
   'platform_governance',
   'Address unplanned downtime with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2510,7 +2510,7 @@ SELECT
   'slow_issue_resolution',
   'platform_governance',
   'Address slow issue resolution with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2523,7 +2523,7 @@ SELECT
   'slow_issue_resolution',
   'platform_governance',
   'Address slow issue resolution with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2536,7 +2536,7 @@ SELECT
   'slow_issue_resolution',
   'platform_governance',
   'Address slow issue resolution with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2549,7 +2549,7 @@ SELECT
   'user_impact',
   'platform_governance',
   'Address user impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2562,7 +2562,7 @@ SELECT
   'user_impact',
   'platform_governance',
   'Address user impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2575,7 +2575,7 @@ SELECT
   'user_impact',
   'platform_governance',
   'Address user impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2588,7 +2588,7 @@ SELECT
   'resource_waste',
   'platform_governance',
   'Address resource waste with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2601,7 +2601,7 @@ SELECT
   'resource_waste',
   'platform_governance',
   'Address resource waste with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2614,7 +2614,7 @@ SELECT
   'resource_waste',
   'platform_governance',
   'Address resource waste with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2627,7 +2627,7 @@ SELECT
   'sla_breaches',
   'platform_governance',
   'Address sla breaches with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2640,7 +2640,7 @@ SELECT
   'sla_breaches',
   'platform_governance',
   'Address sla breaches with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2653,7 +2653,7 @@ SELECT
   'sla_breaches',
   'platform_governance',
   'Address sla breaches with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2666,7 +2666,7 @@ SELECT
   'late_detection',
   'platform_governance',
   'Address late detection with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2679,7 +2679,7 @@ SELECT
   'late_detection',
   'platform_governance',
   'Address late detection with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2692,7 +2692,7 @@ SELECT
   'late_detection',
   'platform_governance',
   'Address late detection with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2705,7 +2705,7 @@ SELECT
   'manual_response',
   'platform_governance',
   'Address manual response with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2718,7 +2718,7 @@ SELECT
   'manual_response',
   'platform_governance',
   'Address manual response with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2731,7 +2731,7 @@ SELECT
   'manual_response',
   'platform_governance',
   'Address manual response with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2744,7 +2744,7 @@ SELECT
   'alert_fatigue',
   'platform_governance',
   'Address alert fatigue with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2757,7 +2757,7 @@ SELECT
   'alert_fatigue',
   'platform_governance',
   'Address alert fatigue with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2770,7 +2770,7 @@ SELECT
   'alert_fatigue',
   'platform_governance',
   'Address alert fatigue with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2783,7 +2783,7 @@ SELECT
   'root_cause_analysis',
   'platform_governance',
   'Address root cause analysis with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2796,7 +2796,7 @@ SELECT
   'root_cause_analysis',
   'platform_governance',
   'Address root cause analysis with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2809,7 +2809,7 @@ SELECT
   'root_cause_analysis',
   'platform_governance',
   'Address root cause analysis with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2822,7 +2822,7 @@ SELECT
   'escalation_delays',
   'platform_governance',
   'Address escalation delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2835,7 +2835,7 @@ SELECT
   'escalation_delays',
   'platform_governance',
   'Address escalation delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2848,7 +2848,7 @@ SELECT
   'escalation_delays',
   'platform_governance',
   'Address escalation delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2861,7 +2861,7 @@ SELECT
   'service_disruption',
   'platform_governance',
   'Address service disruption with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2874,7 +2874,7 @@ SELECT
   'service_disruption',
   'platform_governance',
   'Address service disruption with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2887,7 +2887,7 @@ SELECT
   'service_disruption',
   'platform_governance',
   'Address service disruption with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2900,7 +2900,7 @@ SELECT
   'customer_impact',
   'platform_governance',
   'Address customer impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2913,7 +2913,7 @@ SELECT
   'customer_impact',
   'platform_governance',
   'Address customer impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2926,7 +2926,7 @@ SELECT
   'customer_impact',
   'platform_governance',
   'Address customer impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2939,7 +2939,7 @@ SELECT
   'operational_costs',
   'platform_governance',
   'Address operational costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2952,7 +2952,7 @@ SELECT
   'operational_costs',
   'platform_governance',
   'Address operational costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2965,7 +2965,7 @@ SELECT
   'operational_costs',
   'platform_governance',
   'Address operational costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2978,7 +2978,7 @@ SELECT
   'team_burnout',
   'platform_governance',
   'Address team burnout with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -2991,7 +2991,7 @@ SELECT
   'team_burnout',
   'platform_governance',
   'Address team burnout with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3004,7 +3004,7 @@ SELECT
   'team_burnout',
   'platform_governance',
   'Address team burnout with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3017,7 +3017,7 @@ SELECT
   'missed_slas',
   'platform_governance',
   'Address missed slas with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3030,7 +3030,7 @@ SELECT
   'missed_slas',
   'platform_governance',
   'Address missed slas with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3043,7 +3043,7 @@ SELECT
   'missed_slas',
   'platform_governance',
   'Address missed slas with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3056,7 +3056,7 @@ SELECT
   'cost_attribution',
   'platform_governance',
   'Address cost attribution with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3069,7 +3069,7 @@ SELECT
   'cost_attribution',
   'platform_governance',
   'Address cost attribution with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3082,7 +3082,7 @@ SELECT
   'cost_attribution',
   'platform_governance',
   'Address cost attribution with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3095,7 +3095,7 @@ SELECT
   'usage_visibility',
   'platform_governance',
   'Address usage visibility with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3108,7 +3108,7 @@ SELECT
   'usage_visibility',
   'platform_governance',
   'Address usage visibility with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3121,7 +3121,7 @@ SELECT
   'usage_visibility',
   'platform_governance',
   'Address usage visibility with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3134,7 +3134,7 @@ SELECT
   'reporting_complexity',
   'platform_governance',
   'Address reporting complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3147,7 +3147,7 @@ SELECT
   'reporting_complexity',
   'platform_governance',
   'Address reporting complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3160,7 +3160,7 @@ SELECT
   'reporting_complexity',
   'platform_governance',
   'Address reporting complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3173,7 +3173,7 @@ SELECT
   'tagging_inconsistency',
   'platform_governance',
   'Address tagging inconsistency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3186,7 +3186,7 @@ SELECT
   'tagging_inconsistency',
   'platform_governance',
   'Address tagging inconsistency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3199,7 +3199,7 @@ SELECT
   'tagging_inconsistency',
   'platform_governance',
   'Address tagging inconsistency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3212,7 +3212,7 @@ SELECT
   'tool_limitations',
   'platform_governance',
   'Address tool limitations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3225,7 +3225,7 @@ SELECT
   'tool_limitations',
   'platform_governance',
   'Address tool limitations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3238,7 +3238,7 @@ SELECT
   'tool_limitations',
   'platform_governance',
   'Address tool limitations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3251,7 +3251,7 @@ SELECT
   'budget_overruns',
   'platform_governance',
   'Address budget overruns with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3264,7 +3264,7 @@ SELECT
   'budget_overruns',
   'platform_governance',
   'Address budget overruns with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3277,7 +3277,7 @@ SELECT
   'budget_overruns',
   'platform_governance',
   'Address budget overruns with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3290,7 +3290,7 @@ SELECT
   'cost_surprises',
   'platform_governance',
   'Address cost surprises with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3303,7 +3303,7 @@ SELECT
   'cost_surprises',
   'platform_governance',
   'Address cost surprises with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3316,7 +3316,7 @@ SELECT
   'cost_surprises',
   'platform_governance',
   'Address cost surprises with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3329,7 +3329,7 @@ SELECT
   'no_accountability',
   'platform_governance',
   'Address no accountability with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3342,7 +3342,7 @@ SELECT
   'no_accountability',
   'platform_governance',
   'Address no accountability with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3355,7 +3355,7 @@ SELECT
   'no_accountability',
   'platform_governance',
   'Address no accountability with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3368,7 +3368,7 @@ SELECT
   'inefficient_spending',
   'platform_governance',
   'Address inefficient spending with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3381,7 +3381,7 @@ SELECT
   'inefficient_spending',
   'platform_governance',
   'Address inefficient spending with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3394,7 +3394,7 @@ SELECT
   'inefficient_spending',
   'platform_governance',
   'Address inefficient spending with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3407,7 +3407,7 @@ SELECT
   'budget_planning',
   'platform_governance',
   'Address budget planning with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3420,7 +3420,7 @@ SELECT
   'budget_planning',
   'platform_governance',
   'Address budget planning with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3433,7 +3433,7 @@ SELECT
   'budget_planning',
   'platform_governance',
   'Address budget planning with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3446,7 +3446,7 @@ SELECT
   'optimization_complexity',
   'platform_governance',
   'Address optimization complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3459,7 +3459,7 @@ SELECT
   'optimization_complexity',
   'platform_governance',
   'Address optimization complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3472,7 +3472,7 @@ SELECT
   'optimization_complexity',
   'platform_governance',
   'Address optimization complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3485,7 +3485,7 @@ SELECT
   'resource_rightsizing',
   'platform_governance',
   'Address resource rightsizing with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3498,7 +3498,7 @@ SELECT
   'resource_rightsizing',
   'platform_governance',
   'Address resource rightsizing with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3511,7 +3511,7 @@ SELECT
   'resource_rightsizing',
   'platform_governance',
   'Address resource rightsizing with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3524,7 +3524,7 @@ SELECT
   'automation_gaps',
   'platform_governance',
   'Address automation gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3537,7 +3537,7 @@ SELECT
   'automation_gaps',
   'platform_governance',
   'Address automation gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3550,7 +3550,7 @@ SELECT
   'automation_gaps',
   'platform_governance',
   'Address automation gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3563,7 +3563,7 @@ SELECT
   'wasted_spend',
   'platform_governance',
   'Address wasted spend with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3576,7 +3576,7 @@ SELECT
   'wasted_spend',
   'platform_governance',
   'Address wasted spend with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3589,7 +3589,7 @@ SELECT
   'wasted_spend',
   'platform_governance',
   'Address wasted spend with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3602,7 +3602,7 @@ SELECT
   'no_cost_discipline',
   'platform_governance',
   'Address no cost discipline with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3615,7 +3615,7 @@ SELECT
   'no_cost_discipline',
   'platform_governance',
   'Address no cost discipline with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3628,7 +3628,7 @@ SELECT
   'no_cost_discipline',
   'platform_governance',
   'Address no cost discipline with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3641,7 +3641,7 @@ SELECT
   'team_conflicts',
   'platform_governance',
   'Address team conflicts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3654,7 +3654,7 @@ SELECT
   'team_conflicts',
   'platform_governance',
   'Address team conflicts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3667,7 +3667,7 @@ SELECT
   'team_conflicts',
   'platform_governance',
   'Address team conflicts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3680,7 +3680,7 @@ SELECT
   'roi_unclear',
   'platform_governance',
   'Address roi unclear with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'platform'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3693,7 +3693,7 @@ SELECT
   'roi_unclear',
   'platform_governance',
   'Address roi unclear with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3706,7 +3706,7 @@ SELECT
   'roi_unclear',
   'platform_governance',
   'Address roi unclear with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-governance'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3723,7 +3723,7 @@ SELECT
   'complex_integrations',
   'data_engineering',
   'Address complex integrations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3736,7 +3736,7 @@ SELECT
   'complex_integrations',
   'data_engineering',
   'Address complex integrations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3749,7 +3749,7 @@ SELECT
   'complex_integrations',
   'data_engineering',
   'Address complex integrations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3762,7 +3762,7 @@ SELECT
   'data_format_issues',
   'data_engineering',
   'Address data format issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3775,7 +3775,7 @@ SELECT
   'data_format_issues',
   'data_engineering',
   'Address data format issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3788,7 +3788,7 @@ SELECT
   'data_format_issues',
   'data_engineering',
   'Address data format issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3801,7 +3801,7 @@ SELECT
   'pipeline_maintenance',
   'data_engineering',
   'Address pipeline maintenance with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3814,7 +3814,7 @@ SELECT
   'pipeline_maintenance',
   'data_engineering',
   'Address pipeline maintenance with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3827,7 +3827,7 @@ SELECT
   'pipeline_maintenance',
   'data_engineering',
   'Address pipeline maintenance with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3840,7 +3840,7 @@ SELECT
   'error_handling',
   'data_engineering',
   'Address error handling with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3853,7 +3853,7 @@ SELECT
   'error_handling',
   'data_engineering',
   'Address error handling with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3866,7 +3866,7 @@ SELECT
   'error_handling',
   'data_engineering',
   'Address error handling with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3879,7 +3879,7 @@ SELECT
   'throughput_issues',
   'data_engineering',
   'Address throughput issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3892,7 +3892,7 @@ SELECT
   'throughput_issues',
   'data_engineering',
   'Address throughput issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3905,7 +3905,7 @@ SELECT
   'throughput_issues',
   'data_engineering',
   'Address throughput issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3918,7 +3918,7 @@ SELECT
   'data_delays',
   'data_engineering',
   'Address data delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3931,7 +3931,7 @@ SELECT
   'data_delays',
   'data_engineering',
   'Address data delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3944,7 +3944,7 @@ SELECT
   'data_delays',
   'data_engineering',
   'Address data delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3957,7 +3957,7 @@ SELECT
   'integration_costs',
   'data_engineering',
   'Address integration costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3970,7 +3970,7 @@ SELECT
   'integration_costs',
   'data_engineering',
   'Address integration costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3983,7 +3983,7 @@ SELECT
   'integration_costs',
   'data_engineering',
   'Address integration costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -3996,7 +3996,7 @@ SELECT
   'data_quality',
   'data_engineering',
   'Address data quality with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4009,7 +4009,7 @@ SELECT
   'data_quality',
   'data_engineering',
   'Address data quality with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4022,7 +4022,7 @@ SELECT
   'data_quality',
   'data_engineering',
   'Address data quality with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4035,7 +4035,7 @@ SELECT
   'team_bottlenecks',
   'data_engineering',
   'Address team bottlenecks with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4048,7 +4048,7 @@ SELECT
   'team_bottlenecks',
   'data_engineering',
   'Address team bottlenecks with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4061,7 +4061,7 @@ SELECT
   'team_bottlenecks',
   'data_engineering',
   'Address team bottlenecks with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4074,7 +4074,7 @@ SELECT
   'business_agility',
   'data_engineering',
   'Address business agility with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4087,7 +4087,7 @@ SELECT
   'business_agility',
   'data_engineering',
   'Address business agility with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4100,7 +4100,7 @@ SELECT
   'business_agility',
   'data_engineering',
   'Address business agility with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4113,7 +4113,7 @@ SELECT
   'schema_breakage',
   'data_engineering',
   'Address schema breakage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4126,7 +4126,7 @@ SELECT
   'schema_breakage',
   'data_engineering',
   'Address schema breakage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4139,7 +4139,7 @@ SELECT
   'schema_breakage',
   'data_engineering',
   'Address schema breakage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4152,7 +4152,7 @@ SELECT
   'manual_fixes',
   'data_engineering',
   'Address manual fixes with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4165,7 +4165,7 @@ SELECT
   'manual_fixes',
   'data_engineering',
   'Address manual fixes with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4178,7 +4178,7 @@ SELECT
   'manual_fixes',
   'data_engineering',
   'Address manual fixes with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4191,7 +4191,7 @@ SELECT
   'data_loss_risk',
   'data_engineering',
   'Address data loss risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4204,7 +4204,7 @@ SELECT
   'data_loss_risk',
   'data_engineering',
   'Address data loss risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4217,7 +4217,7 @@ SELECT
   'data_loss_risk',
   'data_engineering',
   'Address data loss risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4230,7 +4230,7 @@ SELECT
   'monitoring_gaps',
   'data_engineering',
   'Address monitoring gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4243,7 +4243,7 @@ SELECT
   'monitoring_gaps',
   'data_engineering',
   'Address monitoring gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4256,7 +4256,7 @@ SELECT
   'monitoring_gaps',
   'data_engineering',
   'Address monitoring gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4269,7 +4269,7 @@ SELECT
   'recovery_complexity',
   'data_engineering',
   'Address recovery complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4282,7 +4282,7 @@ SELECT
   'recovery_complexity',
   'data_engineering',
   'Address recovery complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4295,7 +4295,7 @@ SELECT
   'recovery_complexity',
   'data_engineering',
   'Address recovery complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4308,7 +4308,7 @@ SELECT
   'data_unavailability',
   'data_engineering',
   'Address data unavailability with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4321,7 +4321,7 @@ SELECT
   'data_unavailability',
   'data_engineering',
   'Address data unavailability with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4334,7 +4334,7 @@ SELECT
   'data_unavailability',
   'data_engineering',
   'Address data unavailability with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4347,7 +4347,7 @@ SELECT
   'operational_overhead',
   'data_engineering',
   'Address operational overhead with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4360,7 +4360,7 @@ SELECT
   'operational_overhead',
   'data_engineering',
   'Address operational overhead with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4373,7 +4373,7 @@ SELECT
   'operational_overhead',
   'data_engineering',
   'Address operational overhead with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4386,7 +4386,7 @@ SELECT
   'sla_breaches',
   'data_engineering',
   'Address sla breaches with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4399,7 +4399,7 @@ SELECT
   'sla_breaches',
   'data_engineering',
   'Address sla breaches with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4412,7 +4412,7 @@ SELECT
   'sla_breaches',
   'data_engineering',
   'Address sla breaches with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4425,7 +4425,7 @@ SELECT
   'trust_issues',
   'data_engineering',
   'Address trust issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4438,7 +4438,7 @@ SELECT
   'trust_issues',
   'data_engineering',
   'Address trust issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4451,7 +4451,7 @@ SELECT
   'trust_issues',
   'data_engineering',
   'Address trust issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4464,7 +4464,7 @@ SELECT
   'compliance_risk',
   'data_engineering',
   'Address compliance risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4477,7 +4477,7 @@ SELECT
   'compliance_risk',
   'data_engineering',
   'Address compliance risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4490,7 +4490,7 @@ SELECT
   'compliance_risk',
   'data_engineering',
   'Address compliance risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4503,7 +4503,7 @@ SELECT
   'data_organization',
   'data_engineering',
   'Address data organization with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4516,7 +4516,7 @@ SELECT
   'data_organization',
   'data_engineering',
   'Address data organization with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4529,7 +4529,7 @@ SELECT
   'data_organization',
   'data_engineering',
   'Address data organization with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4542,7 +4542,7 @@ SELECT
   'layer_confusion',
   'data_engineering',
   'Address layer confusion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4555,7 +4555,7 @@ SELECT
   'layer_confusion',
   'data_engineering',
   'Address layer confusion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4568,7 +4568,7 @@ SELECT
   'layer_confusion',
   'data_engineering',
   'Address layer confusion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4581,7 +4581,7 @@ SELECT
   'duplicate_data',
   'data_engineering',
   'Address duplicate data with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4594,7 +4594,7 @@ SELECT
   'duplicate_data',
   'data_engineering',
   'Address duplicate data with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4607,7 +4607,7 @@ SELECT
   'duplicate_data',
   'data_engineering',
   'Address duplicate data with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4620,7 +4620,7 @@ SELECT
   'transformation_complexity',
   'data_engineering',
   'Address transformation complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4633,7 +4633,7 @@ SELECT
   'transformation_complexity',
   'data_engineering',
   'Address transformation complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4646,7 +4646,7 @@ SELECT
   'transformation_complexity',
   'data_engineering',
   'Address transformation complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4659,7 +4659,7 @@ SELECT
   'performance_issues',
   'data_engineering',
   'Address performance issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4672,7 +4672,7 @@ SELECT
   'performance_issues',
   'data_engineering',
   'Address performance issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4685,7 +4685,7 @@ SELECT
   'performance_issues',
   'data_engineering',
   'Address performance issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4698,7 +4698,7 @@ SELECT
   'data_discovery',
   'data_engineering',
   'Address data discovery with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4711,7 +4711,7 @@ SELECT
   'data_discovery',
   'data_engineering',
   'Address data discovery with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4724,7 +4724,7 @@ SELECT
   'data_discovery',
   'data_engineering',
   'Address data discovery with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4737,7 +4737,7 @@ SELECT
   'inconsistent_metrics',
   'data_engineering',
   'Address inconsistent metrics with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4750,7 +4750,7 @@ SELECT
   'inconsistent_metrics',
   'data_engineering',
   'Address inconsistent metrics with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4763,7 +4763,7 @@ SELECT
   'inconsistent_metrics',
   'data_engineering',
   'Address inconsistent metrics with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4776,7 +4776,7 @@ SELECT
   'storage_costs',
   'data_engineering',
   'Address storage costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4789,7 +4789,7 @@ SELECT
   'storage_costs',
   'data_engineering',
   'Address storage costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4802,7 +4802,7 @@ SELECT
   'storage_costs',
   'data_engineering',
   'Address storage costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4815,7 +4815,7 @@ SELECT
   'slow_insights',
   'data_engineering',
   'Address slow insights with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4828,7 +4828,7 @@ SELECT
   'slow_insights',
   'data_engineering',
   'Address slow insights with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4841,7 +4841,7 @@ SELECT
   'slow_insights',
   'data_engineering',
   'Address slow insights with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4854,7 +4854,7 @@ SELECT
   'trust_deficit',
   'data_engineering',
   'Address trust deficit with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4867,7 +4867,7 @@ SELECT
   'trust_deficit',
   'data_engineering',
   'Address trust deficit with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4880,7 +4880,7 @@ SELECT
   'trust_deficit',
   'data_engineering',
   'Address trust deficit with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4893,7 +4893,7 @@ SELECT
   'rigid_structure',
   'data_engineering',
   'Address rigid structure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4906,7 +4906,7 @@ SELECT
   'rigid_structure',
   'data_engineering',
   'Address rigid structure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4919,7 +4919,7 @@ SELECT
   'rigid_structure',
   'data_engineering',
   'Address rigid structure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4932,7 +4932,7 @@ SELECT
   'new_source_complexity',
   'data_engineering',
   'Address new source complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4945,7 +4945,7 @@ SELECT
   'new_source_complexity',
   'data_engineering',
   'Address new source complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4958,7 +4958,7 @@ SELECT
   'new_source_complexity',
   'data_engineering',
   'Address new source complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4971,7 +4971,7 @@ SELECT
   'format_limitations',
   'data_engineering',
   'Address format limitations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4984,7 +4984,7 @@ SELECT
   'format_limitations',
   'data_engineering',
   'Address format limitations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -4997,7 +4997,7 @@ SELECT
   'format_limitations',
   'data_engineering',
   'Address format limitations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5010,7 +5010,7 @@ SELECT
   'integration_effort',
   'data_engineering',
   'Address integration effort with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5023,7 +5023,7 @@ SELECT
   'integration_effort',
   'data_engineering',
   'Address integration effort with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5036,7 +5036,7 @@ SELECT
   'integration_effort',
   'data_engineering',
   'Address integration effort with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5049,7 +5049,7 @@ SELECT
   'scalability_constraints',
   'data_engineering',
   'Address scalability constraints with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5062,7 +5062,7 @@ SELECT
   'scalability_constraints',
   'data_engineering',
   'Address scalability constraints with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5075,7 +5075,7 @@ SELECT
   'scalability_constraints',
   'data_engineering',
   'Address scalability constraints with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5088,7 +5088,7 @@ SELECT
   'slow_adaptation',
   'data_engineering',
   'Address slow adaptation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5101,7 +5101,7 @@ SELECT
   'slow_adaptation',
   'data_engineering',
   'Address slow adaptation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5114,7 +5114,7 @@ SELECT
   'slow_adaptation',
   'data_engineering',
   'Address slow adaptation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5127,7 +5127,7 @@ SELECT
   'missed_opportunities',
   'data_engineering',
   'Address missed opportunities with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5140,7 +5140,7 @@ SELECT
   'missed_opportunities',
   'data_engineering',
   'Address missed opportunities with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5153,7 +5153,7 @@ SELECT
   'missed_opportunities',
   'data_engineering',
   'Address missed opportunities with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5166,7 +5166,7 @@ SELECT
   'integration_delays',
   'data_engineering',
   'Address integration delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5179,7 +5179,7 @@ SELECT
   'integration_delays',
   'data_engineering',
   'Address integration delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5192,7 +5192,7 @@ SELECT
   'integration_delays',
   'data_engineering',
   'Address integration delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5205,7 +5205,7 @@ SELECT
   'competitive_lag',
   'data_engineering',
   'Address competitive lag with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5218,7 +5218,7 @@ SELECT
   'competitive_lag',
   'data_engineering',
   'Address competitive lag with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5231,7 +5231,7 @@ SELECT
   'competitive_lag',
   'data_engineering',
   'Address competitive lag with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5244,7 +5244,7 @@ SELECT
   'innovation_barriers',
   'data_engineering',
   'Address innovation barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5257,7 +5257,7 @@ SELECT
   'innovation_barriers',
   'data_engineering',
   'Address innovation barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5270,7 +5270,7 @@ SELECT
   'innovation_barriers',
   'data_engineering',
   'Address innovation barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5283,7 +5283,7 @@ SELECT
   'scheduling_issues',
   'data_engineering',
   'Address scheduling issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5296,7 +5296,7 @@ SELECT
   'scheduling_issues',
   'data_engineering',
   'Address scheduling issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5309,7 +5309,7 @@ SELECT
   'scheduling_issues',
   'data_engineering',
   'Address scheduling issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5322,7 +5322,7 @@ SELECT
   'dependency_failures',
   'data_engineering',
   'Address dependency failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5335,7 +5335,7 @@ SELECT
   'dependency_failures',
   'data_engineering',
   'Address dependency failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5348,7 +5348,7 @@ SELECT
   'dependency_failures',
   'data_engineering',
   'Address dependency failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5361,7 +5361,7 @@ SELECT
   'retry_logic',
   'data_engineering',
   'Address retry logic with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5374,7 +5374,7 @@ SELECT
   'retry_logic',
   'data_engineering',
   'Address retry logic with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5387,7 +5387,7 @@ SELECT
   'retry_logic',
   'data_engineering',
   'Address retry logic with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5400,7 +5400,7 @@ SELECT
   'maintenance_burden',
   'data_engineering',
   'Address maintenance burden with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5413,7 +5413,7 @@ SELECT
   'maintenance_burden',
   'data_engineering',
   'Address maintenance burden with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5426,7 +5426,7 @@ SELECT
   'maintenance_burden',
   'data_engineering',
   'Address maintenance burden with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5439,7 +5439,7 @@ SELECT
   'data_freshness',
   'data_engineering',
   'Address data freshness with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5452,7 +5452,7 @@ SELECT
   'data_freshness',
   'data_engineering',
   'Address data freshness with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5465,7 +5465,7 @@ SELECT
   'data_freshness',
   'data_engineering',
   'Address data freshness with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5478,7 +5478,7 @@ SELECT
   'operational_costs',
   'data_engineering',
   'Address operational costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5491,7 +5491,7 @@ SELECT
   'operational_costs',
   'data_engineering',
   'Address operational costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5504,7 +5504,7 @@ SELECT
   'operational_costs',
   'data_engineering',
   'Address operational costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5517,7 +5517,7 @@ SELECT
   'pipeline_failures',
   'data_engineering',
   'Address pipeline failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5530,7 +5530,7 @@ SELECT
   'pipeline_failures',
   'data_engineering',
   'Address pipeline failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5543,7 +5543,7 @@ SELECT
   'pipeline_failures',
   'data_engineering',
   'Address pipeline failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5556,7 +5556,7 @@ SELECT
   'sla_misses',
   'data_engineering',
   'Address sla misses with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5569,7 +5569,7 @@ SELECT
   'sla_misses',
   'data_engineering',
   'Address sla misses with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5582,7 +5582,7 @@ SELECT
   'sla_misses',
   'data_engineering',
   'Address sla misses with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5595,7 +5595,7 @@ SELECT
   'team_frustration',
   'data_engineering',
   'Address team frustration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5608,7 +5608,7 @@ SELECT
   'team_frustration',
   'data_engineering',
   'Address team frustration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5621,7 +5621,7 @@ SELECT
   'team_frustration',
   'data_engineering',
   'Address team frustration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5634,7 +5634,7 @@ SELECT
   'version_control',
   'data_engineering',
   'Address version control with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5647,7 +5647,7 @@ SELECT
   'version_control',
   'data_engineering',
   'Address version control with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5660,7 +5660,7 @@ SELECT
   'version_control',
   'data_engineering',
   'Address version control with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5673,7 +5673,7 @@ SELECT
   'testing_gaps',
   'data_engineering',
   'Address testing gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5686,7 +5686,7 @@ SELECT
   'testing_gaps',
   'data_engineering',
   'Address testing gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5699,7 +5699,7 @@ SELECT
   'testing_gaps',
   'data_engineering',
   'Address testing gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5712,7 +5712,7 @@ SELECT
   'deployment_issues',
   'data_engineering',
   'Address deployment issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5725,7 +5725,7 @@ SELECT
   'deployment_issues',
   'data_engineering',
   'Address deployment issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5738,7 +5738,7 @@ SELECT
   'deployment_issues',
   'data_engineering',
   'Address deployment issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5751,7 +5751,7 @@ SELECT
   'environment_drift',
   'data_engineering',
   'Address environment drift with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5764,7 +5764,7 @@ SELECT
   'environment_drift',
   'data_engineering',
   'Address environment drift with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5777,7 +5777,7 @@ SELECT
   'environment_drift',
   'data_engineering',
   'Address environment drift with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5790,7 +5790,7 @@ SELECT
   'change_tracking',
   'data_engineering',
   'Address change tracking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5803,7 +5803,7 @@ SELECT
   'change_tracking',
   'data_engineering',
   'Address change tracking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5816,7 +5816,7 @@ SELECT
   'change_tracking',
   'data_engineering',
   'Address change tracking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5829,7 +5829,7 @@ SELECT
   'production_incidents',
   'data_engineering',
   'Address production incidents with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5842,7 +5842,7 @@ SELECT
   'production_incidents',
   'data_engineering',
   'Address production incidents with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5855,7 +5855,7 @@ SELECT
   'production_incidents',
   'data_engineering',
   'Address production incidents with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5868,7 +5868,7 @@ SELECT
   'slow_releases',
   'data_engineering',
   'Address slow releases with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5881,7 +5881,7 @@ SELECT
   'slow_releases',
   'data_engineering',
   'Address slow releases with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5894,7 +5894,7 @@ SELECT
   'slow_releases',
   'data_engineering',
   'Address slow releases with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5907,7 +5907,7 @@ SELECT
   'quality_issues',
   'data_engineering',
   'Address quality issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5920,7 +5920,7 @@ SELECT
   'quality_issues',
   'data_engineering',
   'Address quality issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5933,7 +5933,7 @@ SELECT
   'quality_issues',
   'data_engineering',
   'Address quality issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5946,7 +5946,7 @@ SELECT
   'rollback_complexity',
   'data_engineering',
   'Address rollback complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5959,7 +5959,7 @@ SELECT
   'rollback_complexity',
   'data_engineering',
   'Address rollback complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5972,7 +5972,7 @@ SELECT
   'rollback_complexity',
   'data_engineering',
   'Address rollback complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5985,7 +5985,7 @@ SELECT
   'audit_gaps',
   'data_engineering',
   'Address audit gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -5998,7 +5998,7 @@ SELECT
   'audit_gaps',
   'data_engineering',
   'Address audit gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6011,7 +6011,7 @@ SELECT
   'audit_gaps',
   'data_engineering',
   'Address audit gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6024,7 +6024,7 @@ SELECT
   'validation_gaps',
   'data_engineering',
   'Address validation gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6037,7 +6037,7 @@ SELECT
   'validation_gaps',
   'data_engineering',
   'Address validation gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6050,7 +6050,7 @@ SELECT
   'validation_gaps',
   'data_engineering',
   'Address validation gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6063,7 +6063,7 @@ SELECT
   'quality_rules',
   'data_engineering',
   'Address quality rules with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6076,7 +6076,7 @@ SELECT
   'quality_rules',
   'data_engineering',
   'Address quality rules with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6089,7 +6089,7 @@ SELECT
   'quality_rules',
   'data_engineering',
   'Address quality rules with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6102,7 +6102,7 @@ SELECT
   'error_detection',
   'data_engineering',
   'Address error detection with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6115,7 +6115,7 @@ SELECT
   'error_detection',
   'data_engineering',
   'Address error detection with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6128,7 +6128,7 @@ SELECT
   'error_detection',
   'data_engineering',
   'Address error detection with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6141,7 +6141,7 @@ SELECT
   'reconciliation_complexity',
   'data_engineering',
   'Address reconciliation complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6154,7 +6154,7 @@ SELECT
   'reconciliation_complexity',
   'data_engineering',
   'Address reconciliation complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6167,7 +6167,7 @@ SELECT
   'reconciliation_complexity',
   'data_engineering',
   'Address reconciliation complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6180,7 +6180,7 @@ SELECT
   'recovery_procedures',
   'data_engineering',
   'Address recovery procedures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6193,7 +6193,7 @@ SELECT
   'recovery_procedures',
   'data_engineering',
   'Address recovery procedures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6206,7 +6206,7 @@ SELECT
   'recovery_procedures',
   'data_engineering',
   'Address recovery procedures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6219,7 +6219,7 @@ SELECT
   'bad_decisions',
   'data_engineering',
   'Address bad decisions with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6232,7 +6232,7 @@ SELECT
   'bad_decisions',
   'data_engineering',
   'Address bad decisions with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6245,7 +6245,7 @@ SELECT
   'bad_decisions',
   'data_engineering',
   'Address bad decisions with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6258,7 +6258,7 @@ SELECT
   'customer_impact',
   'data_engineering',
   'Address customer impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6271,7 +6271,7 @@ SELECT
   'customer_impact',
   'data_engineering',
   'Address customer impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6284,7 +6284,7 @@ SELECT
   'customer_impact',
   'data_engineering',
   'Address customer impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6297,7 +6297,7 @@ SELECT
   'trust_erosion',
   'data_engineering',
   'Address trust erosion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6310,7 +6310,7 @@ SELECT
   'trust_erosion',
   'data_engineering',
   'Address trust erosion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6323,7 +6323,7 @@ SELECT
   'trust_erosion',
   'data_engineering',
   'Address trust erosion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6336,7 +6336,7 @@ SELECT
   'compliance_violations',
   'data_engineering',
   'Address compliance violations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6349,7 +6349,7 @@ SELECT
   'compliance_violations',
   'data_engineering',
   'Address compliance violations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6362,7 +6362,7 @@ SELECT
   'compliance_violations',
   'data_engineering',
   'Address compliance violations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6375,7 +6375,7 @@ SELECT
   'alert_noise',
   'data_engineering',
   'Address alert noise with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6388,7 +6388,7 @@ SELECT
   'alert_noise',
   'data_engineering',
   'Address alert noise with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6401,7 +6401,7 @@ SELECT
   'alert_noise',
   'data_engineering',
   'Address alert noise with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6414,7 +6414,7 @@ SELECT
   'metric_visibility',
   'data_engineering',
   'Address metric visibility with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6427,7 +6427,7 @@ SELECT
   'metric_visibility',
   'data_engineering',
   'Address metric visibility with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6440,7 +6440,7 @@ SELECT
   'metric_visibility',
   'data_engineering',
   'Address metric visibility with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6453,7 +6453,7 @@ SELECT
   'stakeholder_communication',
   'data_engineering',
   'Address stakeholder communication with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6466,7 +6466,7 @@ SELECT
   'stakeholder_communication',
   'data_engineering',
   'Address stakeholder communication with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6479,7 +6479,7 @@ SELECT
   'stakeholder_communication',
   'data_engineering',
   'Address stakeholder communication with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6492,7 +6492,7 @@ SELECT
   'trend_analysis',
   'data_engineering',
   'Address trend analysis with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6505,7 +6505,7 @@ SELECT
   'trend_analysis',
   'data_engineering',
   'Address trend analysis with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6518,7 +6518,7 @@ SELECT
   'trend_analysis',
   'data_engineering',
   'Address trend analysis with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6531,7 +6531,7 @@ SELECT
   'late_discovery',
   'data_engineering',
   'Address late discovery with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6544,7 +6544,7 @@ SELECT
   'late_discovery',
   'data_engineering',
   'Address late discovery with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6557,7 +6557,7 @@ SELECT
   'late_discovery',
   'data_engineering',
   'Address late discovery with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6570,7 +6570,7 @@ SELECT
   'stakeholder_frustration',
   'data_engineering',
   'Address stakeholder frustration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6583,7 +6583,7 @@ SELECT
   'stakeholder_frustration',
   'data_engineering',
   'Address stakeholder frustration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6596,7 +6596,7 @@ SELECT
   'stakeholder_frustration',
   'data_engineering',
   'Address stakeholder frustration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6609,7 +6609,7 @@ SELECT
   'reactive_approach',
   'data_engineering',
   'Address reactive approach with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6622,7 +6622,7 @@ SELECT
   'reactive_approach',
   'data_engineering',
   'Address reactive approach with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6635,7 +6635,7 @@ SELECT
   'reactive_approach',
   'data_engineering',
   'Address reactive approach with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6648,7 +6648,7 @@ SELECT
   'sla_impacts',
   'data_engineering',
   'Address sla impacts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6661,7 +6661,7 @@ SELECT
   'sla_impacts',
   'data_engineering',
   'Address sla impacts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6674,7 +6674,7 @@ SELECT
   'sla_impacts',
   'data_engineering',
   'Address sla impacts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6687,7 +6687,7 @@ SELECT
   'reputation_damage',
   'data_engineering',
   'Address reputation damage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6700,7 +6700,7 @@ SELECT
   'reputation_damage',
   'data_engineering',
   'Address reputation damage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6713,7 +6713,7 @@ SELECT
   'reputation_damage',
   'data_engineering',
   'Address reputation damage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6726,7 +6726,7 @@ SELECT
   'slow_pipelines',
   'data_engineering',
   'Address slow pipelines with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6739,7 +6739,7 @@ SELECT
   'slow_pipelines',
   'data_engineering',
   'Address slow pipelines with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6752,7 +6752,7 @@ SELECT
   'slow_pipelines',
   'data_engineering',
   'Address slow pipelines with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6765,7 +6765,7 @@ SELECT
   'parallelization_gaps',
   'data_engineering',
   'Address parallelization gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6778,7 +6778,7 @@ SELECT
   'parallelization_gaps',
   'data_engineering',
   'Address parallelization gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6791,7 +6791,7 @@ SELECT
   'parallelization_gaps',
   'data_engineering',
   'Address parallelization gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6804,7 +6804,7 @@ SELECT
   'resource_inefficiency',
   'data_engineering',
   'Address resource inefficiency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6817,7 +6817,7 @@ SELECT
   'resource_inefficiency',
   'data_engineering',
   'Address resource inefficiency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6830,7 +6830,7 @@ SELECT
   'resource_inefficiency',
   'data_engineering',
   'Address resource inefficiency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6843,7 +6843,7 @@ SELECT
   'bottlenecks',
   'data_engineering',
   'Address bottlenecks with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6856,7 +6856,7 @@ SELECT
   'bottlenecks',
   'data_engineering',
   'Address bottlenecks with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6869,7 +6869,7 @@ SELECT
   'bottlenecks',
   'data_engineering',
   'Address bottlenecks with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6882,7 +6882,7 @@ SELECT
   'optimization_difficulty',
   'data_engineering',
   'Address optimization difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6895,7 +6895,7 @@ SELECT
   'optimization_difficulty',
   'data_engineering',
   'Address optimization difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6908,7 +6908,7 @@ SELECT
   'optimization_difficulty',
   'data_engineering',
   'Address optimization difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6921,7 +6921,7 @@ SELECT
   'data_latency',
   'data_engineering',
   'Address data latency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6934,7 +6934,7 @@ SELECT
   'data_latency',
   'data_engineering',
   'Address data latency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6947,7 +6947,7 @@ SELECT
   'data_latency',
   'data_engineering',
   'Address data latency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6960,7 +6960,7 @@ SELECT
   'compute_costs',
   'data_engineering',
   'Address compute costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6973,7 +6973,7 @@ SELECT
   'compute_costs',
   'data_engineering',
   'Address compute costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6986,7 +6986,7 @@ SELECT
   'compute_costs',
   'data_engineering',
   'Address compute costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -6999,7 +6999,7 @@ SELECT
   'user_experience',
   'data_engineering',
   'Address user experience with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7012,7 +7012,7 @@ SELECT
   'user_experience',
   'data_engineering',
   'Address user experience with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7025,7 +7025,7 @@ SELECT
   'user_experience',
   'data_engineering',
   'Address user experience with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7038,7 +7038,7 @@ SELECT
   'scalability_limits',
   'data_engineering',
   'Address scalability limits with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7051,7 +7051,7 @@ SELECT
   'scalability_limits',
   'data_engineering',
   'Address scalability limits with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7064,7 +7064,7 @@ SELECT
   'scalability_limits',
   'data_engineering',
   'Address scalability limits with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7077,7 +7077,7 @@ SELECT
   'competitive_disadvantage',
   'data_engineering',
   'Address competitive disadvantage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7090,7 +7090,7 @@ SELECT
   'competitive_disadvantage',
   'data_engineering',
   'Address competitive disadvantage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7103,7 +7103,7 @@ SELECT
   'competitive_disadvantage',
   'data_engineering',
   'Address competitive disadvantage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7116,7 +7116,7 @@ SELECT
   'manual_scaling',
   'data_engineering',
   'Address manual scaling with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7129,7 +7129,7 @@ SELECT
   'manual_scaling',
   'data_engineering',
   'Address manual scaling with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7142,7 +7142,7 @@ SELECT
   'manual_scaling',
   'data_engineering',
   'Address manual scaling with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7155,7 +7155,7 @@ SELECT
   'over_provisioning',
   'data_engineering',
   'Address over provisioning with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7168,7 +7168,7 @@ SELECT
   'over_provisioning',
   'data_engineering',
   'Address over provisioning with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7181,7 +7181,7 @@ SELECT
   'over_provisioning',
   'data_engineering',
   'Address over provisioning with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7194,7 +7194,7 @@ SELECT
   'scaling_delays',
   'data_engineering',
   'Address scaling delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7207,7 +7207,7 @@ SELECT
   'scaling_delays',
   'data_engineering',
   'Address scaling delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7220,7 +7220,7 @@ SELECT
   'scaling_delays',
   'data_engineering',
   'Address scaling delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7233,7 +7233,7 @@ SELECT
   'resource_contention',
   'data_engineering',
   'Address resource contention with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7246,7 +7246,7 @@ SELECT
   'resource_contention',
   'data_engineering',
   'Address resource contention with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7259,7 +7259,7 @@ SELECT
   'resource_contention',
   'data_engineering',
   'Address resource contention with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7272,7 +7272,7 @@ SELECT
   'configuration_complexity',
   'data_engineering',
   'Address configuration complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7285,7 +7285,7 @@ SELECT
   'configuration_complexity',
   'data_engineering',
   'Address configuration complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7298,7 +7298,7 @@ SELECT
   'configuration_complexity',
   'data_engineering',
   'Address configuration complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7311,7 +7311,7 @@ SELECT
   'cost_inefficiency',
   'data_engineering',
   'Address cost inefficiency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7324,7 +7324,7 @@ SELECT
   'cost_inefficiency',
   'data_engineering',
   'Address cost inefficiency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7337,7 +7337,7 @@ SELECT
   'cost_inefficiency',
   'data_engineering',
   'Address cost inefficiency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7350,7 +7350,7 @@ SELECT
   'performance_degradation',
   'data_engineering',
   'Address performance degradation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7363,7 +7363,7 @@ SELECT
   'performance_degradation',
   'data_engineering',
   'Address performance degradation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7376,7 +7376,7 @@ SELECT
   'performance_degradation',
   'data_engineering',
   'Address performance degradation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7389,7 +7389,7 @@ SELECT
   'capacity_planning',
   'data_engineering',
   'Address capacity planning with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7402,7 +7402,7 @@ SELECT
   'capacity_planning',
   'data_engineering',
   'Address capacity planning with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7415,7 +7415,7 @@ SELECT
   'capacity_planning',
   'data_engineering',
   'Address capacity planning with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7428,7 +7428,7 @@ SELECT
   'business_impact',
   'data_engineering',
   'Address business impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7441,7 +7441,7 @@ SELECT
   'business_impact',
   'data_engineering',
   'Address business impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7454,7 +7454,7 @@ SELECT
   'business_impact',
   'data_engineering',
   'Address business impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7467,7 +7467,7 @@ SELECT
   'wasted_resources',
   'data_engineering',
   'Address wasted resources with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'data-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7480,7 +7480,7 @@ SELECT
   'wasted_resources',
   'data_engineering',
   'Address wasted resources with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'etl-elt'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7493,7 +7493,7 @@ SELECT
   'wasted_resources',
   'data_engineering',
   'Address wasted resources with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'orchestration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7510,7 +7510,7 @@ SELECT
   'slow_queries',
   'analytics_bi',
   'Address slow queries with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7523,7 +7523,7 @@ SELECT
   'slow_queries',
   'analytics_bi',
   'Address slow queries with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7536,7 +7536,7 @@ SELECT
   'slow_queries',
   'analytics_bi',
   'Address slow queries with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7549,7 +7549,7 @@ SELECT
   'slow_queries',
   'analytics_bi',
   'Address slow queries with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7562,7 +7562,7 @@ SELECT
   'inconsistent_performance',
   'analytics_bi',
   'Address inconsistent performance with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7575,7 +7575,7 @@ SELECT
   'inconsistent_performance',
   'analytics_bi',
   'Address inconsistent performance with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7588,7 +7588,7 @@ SELECT
   'inconsistent_performance',
   'analytics_bi',
   'Address inconsistent performance with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7601,7 +7601,7 @@ SELECT
   'inconsistent_performance',
   'analytics_bi',
   'Address inconsistent performance with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7614,7 +7614,7 @@ SELECT
   'resource_contention',
   'analytics_bi',
   'Address resource contention with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7627,7 +7627,7 @@ SELECT
   'resource_contention',
   'analytics_bi',
   'Address resource contention with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7640,7 +7640,7 @@ SELECT
   'resource_contention',
   'analytics_bi',
   'Address resource contention with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7653,7 +7653,7 @@ SELECT
   'resource_contention',
   'analytics_bi',
   'Address resource contention with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7666,7 +7666,7 @@ SELECT
   'optimization_difficulty',
   'analytics_bi',
   'Address optimization difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7679,7 +7679,7 @@ SELECT
   'optimization_difficulty',
   'analytics_bi',
   'Address optimization difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7692,7 +7692,7 @@ SELECT
   'optimization_difficulty',
   'analytics_bi',
   'Address optimization difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7705,7 +7705,7 @@ SELECT
   'optimization_difficulty',
   'analytics_bi',
   'Address optimization difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7718,7 +7718,7 @@ SELECT
   'monitoring_gaps',
   'analytics_bi',
   'Address monitoring gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7731,7 +7731,7 @@ SELECT
   'monitoring_gaps',
   'analytics_bi',
   'Address monitoring gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7744,7 +7744,7 @@ SELECT
   'monitoring_gaps',
   'analytics_bi',
   'Address monitoring gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7757,7 +7757,7 @@ SELECT
   'monitoring_gaps',
   'analytics_bi',
   'Address monitoring gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7770,7 +7770,7 @@ SELECT
   'user_frustration',
   'analytics_bi',
   'Address user frustration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7783,7 +7783,7 @@ SELECT
   'user_frustration',
   'analytics_bi',
   'Address user frustration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7796,7 +7796,7 @@ SELECT
   'user_frustration',
   'analytics_bi',
   'Address user frustration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7809,7 +7809,7 @@ SELECT
   'user_frustration',
   'analytics_bi',
   'Address user frustration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7822,7 +7822,7 @@ SELECT
   'delayed_insights',
   'analytics_bi',
   'Address delayed insights with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7835,7 +7835,7 @@ SELECT
   'delayed_insights',
   'analytics_bi',
   'Address delayed insights with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7848,7 +7848,7 @@ SELECT
   'delayed_insights',
   'analytics_bi',
   'Address delayed insights with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7861,7 +7861,7 @@ SELECT
   'delayed_insights',
   'analytics_bi',
   'Address delayed insights with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7874,7 +7874,7 @@ SELECT
   'report_timeouts',
   'analytics_bi',
   'Address report timeouts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7887,7 +7887,7 @@ SELECT
   'report_timeouts',
   'analytics_bi',
   'Address report timeouts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7900,7 +7900,7 @@ SELECT
   'report_timeouts',
   'analytics_bi',
   'Address report timeouts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7913,7 +7913,7 @@ SELECT
   'report_timeouts',
   'analytics_bi',
   'Address report timeouts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7926,7 +7926,7 @@ SELECT
   'adoption_barriers',
   'analytics_bi',
   'Address adoption barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7939,7 +7939,7 @@ SELECT
   'adoption_barriers',
   'analytics_bi',
   'Address adoption barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7952,7 +7952,7 @@ SELECT
   'adoption_barriers',
   'analytics_bi',
   'Address adoption barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7965,7 +7965,7 @@ SELECT
   'adoption_barriers',
   'analytics_bi',
   'Address adoption barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7978,7 +7978,7 @@ SELECT
   'competitive_lag',
   'analytics_bi',
   'Address competitive lag with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -7991,7 +7991,7 @@ SELECT
   'competitive_lag',
   'analytics_bi',
   'Address competitive lag with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8004,7 +8004,7 @@ SELECT
   'competitive_lag',
   'analytics_bi',
   'Address competitive lag with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8017,7 +8017,7 @@ SELECT
   'competitive_lag',
   'analytics_bi',
   'Address competitive lag with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8030,7 +8030,7 @@ SELECT
   'ad_hoc_optimization',
   'analytics_bi',
   'Address ad hoc optimization with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8043,7 +8043,7 @@ SELECT
   'ad_hoc_optimization',
   'analytics_bi',
   'Address ad hoc optimization with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8056,7 +8056,7 @@ SELECT
   'ad_hoc_optimization',
   'analytics_bi',
   'Address ad hoc optimization with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8069,7 +8069,7 @@ SELECT
   'ad_hoc_optimization',
   'analytics_bi',
   'Address ad hoc optimization with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8082,7 +8082,7 @@ SELECT
   'lack_of_tools',
   'analytics_bi',
   'Address lack of tools with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8095,7 +8095,7 @@ SELECT
   'lack_of_tools',
   'analytics_bi',
   'Address lack of tools with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8108,7 +8108,7 @@ SELECT
   'lack_of_tools',
   'analytics_bi',
   'Address lack of tools with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8121,7 +8121,7 @@ SELECT
   'lack_of_tools',
   'analytics_bi',
   'Address lack of tools with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8134,7 +8134,7 @@ SELECT
   'query_complexity',
   'analytics_bi',
   'Address query complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8147,7 +8147,7 @@ SELECT
   'query_complexity',
   'analytics_bi',
   'Address query complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8160,7 +8160,7 @@ SELECT
   'query_complexity',
   'analytics_bi',
   'Address query complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8173,7 +8173,7 @@ SELECT
   'query_complexity',
   'analytics_bi',
   'Address query complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8186,7 +8186,7 @@ SELECT
   'indexing_gaps',
   'analytics_bi',
   'Address indexing gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8199,7 +8199,7 @@ SELECT
   'indexing_gaps',
   'analytics_bi',
   'Address indexing gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8212,7 +8212,7 @@ SELECT
   'indexing_gaps',
   'analytics_bi',
   'Address indexing gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8225,7 +8225,7 @@ SELECT
   'indexing_gaps',
   'analytics_bi',
   'Address indexing gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8238,7 +8238,7 @@ SELECT
   'knowledge_gaps',
   'analytics_bi',
   'Address knowledge gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8251,7 +8251,7 @@ SELECT
   'knowledge_gaps',
   'analytics_bi',
   'Address knowledge gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8264,7 +8264,7 @@ SELECT
   'knowledge_gaps',
   'analytics_bi',
   'Address knowledge gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8277,7 +8277,7 @@ SELECT
   'knowledge_gaps',
   'analytics_bi',
   'Address knowledge gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8290,7 +8290,7 @@ SELECT
   'high_compute_costs',
   'analytics_bi',
   'Address high compute costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8303,7 +8303,7 @@ SELECT
   'high_compute_costs',
   'analytics_bi',
   'Address high compute costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8316,7 +8316,7 @@ SELECT
   'high_compute_costs',
   'analytics_bi',
   'Address high compute costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8329,7 +8329,7 @@ SELECT
   'high_compute_costs',
   'analytics_bi',
   'Address high compute costs with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8342,7 +8342,7 @@ SELECT
   'poor_user_experience',
   'analytics_bi',
   'Address poor user experience with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8355,7 +8355,7 @@ SELECT
   'poor_user_experience',
   'analytics_bi',
   'Address poor user experience with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8368,7 +8368,7 @@ SELECT
   'poor_user_experience',
   'analytics_bi',
   'Address poor user experience with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8381,7 +8381,7 @@ SELECT
   'poor_user_experience',
   'analytics_bi',
   'Address poor user experience with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8394,7 +8394,7 @@ SELECT
   'limited_scalability',
   'analytics_bi',
   'Address limited scalability with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8407,7 +8407,7 @@ SELECT
   'limited_scalability',
   'analytics_bi',
   'Address limited scalability with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8420,7 +8420,7 @@ SELECT
   'limited_scalability',
   'analytics_bi',
   'Address limited scalability with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8433,7 +8433,7 @@ SELECT
   'limited_scalability',
   'analytics_bi',
   'Address limited scalability with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8446,7 +8446,7 @@ SELECT
   'optimization_delays',
   'analytics_bi',
   'Address optimization delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8459,7 +8459,7 @@ SELECT
   'optimization_delays',
   'analytics_bi',
   'Address optimization delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8472,7 +8472,7 @@ SELECT
   'optimization_delays',
   'analytics_bi',
   'Address optimization delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8485,7 +8485,7 @@ SELECT
   'optimization_delays',
   'analytics_bi',
   'Address optimization delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8498,7 +8498,7 @@ SELECT
   'reactive_approach',
   'analytics_bi',
   'Address reactive approach with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8511,7 +8511,7 @@ SELECT
   'reactive_approach',
   'analytics_bi',
   'Address reactive approach with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8524,7 +8524,7 @@ SELECT
   'reactive_approach',
   'analytics_bi',
   'Address reactive approach with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8537,7 +8537,7 @@ SELECT
   'reactive_approach',
   'analytics_bi',
   'Address reactive approach with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8550,7 +8550,7 @@ SELECT
   'metric_inconsistency',
   'analytics_bi',
   'Address metric inconsistency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8563,7 +8563,7 @@ SELECT
   'metric_inconsistency',
   'analytics_bi',
   'Address metric inconsistency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8576,7 +8576,7 @@ SELECT
   'metric_inconsistency',
   'analytics_bi',
   'Address metric inconsistency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8589,7 +8589,7 @@ SELECT
   'metric_inconsistency',
   'analytics_bi',
   'Address metric inconsistency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8602,7 +8602,7 @@ SELECT
   'no_shared_layer',
   'analytics_bi',
   'Address no shared layer with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8615,7 +8615,7 @@ SELECT
   'no_shared_layer',
   'analytics_bi',
   'Address no shared layer with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8628,7 +8628,7 @@ SELECT
   'no_shared_layer',
   'analytics_bi',
   'Address no shared layer with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8641,7 +8641,7 @@ SELECT
   'no_shared_layer',
   'analytics_bi',
   'Address no shared layer with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8654,7 +8654,7 @@ SELECT
   'duplicate_logic',
   'analytics_bi',
   'Address duplicate logic with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8667,7 +8667,7 @@ SELECT
   'duplicate_logic',
   'analytics_bi',
   'Address duplicate logic with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8680,7 +8680,7 @@ SELECT
   'duplicate_logic',
   'analytics_bi',
   'Address duplicate logic with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8693,7 +8693,7 @@ SELECT
   'duplicate_logic',
   'analytics_bi',
   'Address duplicate logic with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8706,7 +8706,7 @@ SELECT
   'version_confusion',
   'analytics_bi',
   'Address version confusion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8719,7 +8719,7 @@ SELECT
   'version_confusion',
   'analytics_bi',
   'Address version confusion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8732,7 +8732,7 @@ SELECT
   'version_confusion',
   'analytics_bi',
   'Address version confusion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8745,7 +8745,7 @@ SELECT
   'version_confusion',
   'analytics_bi',
   'Address version confusion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8758,7 +8758,7 @@ SELECT
   'documentation_gaps',
   'analytics_bi',
   'Address documentation gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8771,7 +8771,7 @@ SELECT
   'documentation_gaps',
   'analytics_bi',
   'Address documentation gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8784,7 +8784,7 @@ SELECT
   'documentation_gaps',
   'analytics_bi',
   'Address documentation gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8797,7 +8797,7 @@ SELECT
   'documentation_gaps',
   'analytics_bi',
   'Address documentation gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8810,7 +8810,7 @@ SELECT
   'conflicting_reports',
   'analytics_bi',
   'Address conflicting reports with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8823,7 +8823,7 @@ SELECT
   'conflicting_reports',
   'analytics_bi',
   'Address conflicting reports with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8836,7 +8836,7 @@ SELECT
   'conflicting_reports',
   'analytics_bi',
   'Address conflicting reports with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8849,7 +8849,7 @@ SELECT
   'conflicting_reports',
   'analytics_bi',
   'Address conflicting reports with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8862,7 +8862,7 @@ SELECT
   'trust_issues',
   'analytics_bi',
   'Address trust issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8875,7 +8875,7 @@ SELECT
   'trust_issues',
   'analytics_bi',
   'Address trust issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8888,7 +8888,7 @@ SELECT
   'trust_issues',
   'analytics_bi',
   'Address trust issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8901,7 +8901,7 @@ SELECT
   'trust_issues',
   'analytics_bi',
   'Address trust issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8914,7 +8914,7 @@ SELECT
   'decision_delays',
   'analytics_bi',
   'Address decision delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8927,7 +8927,7 @@ SELECT
   'decision_delays',
   'analytics_bi',
   'Address decision delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8940,7 +8940,7 @@ SELECT
   'decision_delays',
   'analytics_bi',
   'Address decision delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8953,7 +8953,7 @@ SELECT
   'decision_delays',
   'analytics_bi',
   'Address decision delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8966,7 +8966,7 @@ SELECT
   'wasted_effort',
   'analytics_bi',
   'Address wasted effort with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8979,7 +8979,7 @@ SELECT
   'wasted_effort',
   'analytics_bi',
   'Address wasted effort with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -8992,7 +8992,7 @@ SELECT
   'wasted_effort',
   'analytics_bi',
   'Address wasted effort with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9005,7 +9005,7 @@ SELECT
   'wasted_effort',
   'analytics_bi',
   'Address wasted effort with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9018,7 +9018,7 @@ SELECT
   'compliance_risk',
   'analytics_bi',
   'Address compliance risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9031,7 +9031,7 @@ SELECT
   'compliance_risk',
   'analytics_bi',
   'Address compliance risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9044,7 +9044,7 @@ SELECT
   'compliance_risk',
   'analytics_bi',
   'Address compliance risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9057,7 +9057,7 @@ SELECT
   'compliance_risk',
   'analytics_bi',
   'Address compliance risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9070,7 +9070,7 @@ SELECT
   'poor_discoverability',
   'analytics_bi',
   'Address poor discoverability with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9083,7 +9083,7 @@ SELECT
   'poor_discoverability',
   'analytics_bi',
   'Address poor discoverability with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9096,7 +9096,7 @@ SELECT
   'poor_discoverability',
   'analytics_bi',
   'Address poor discoverability with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9109,7 +9109,7 @@ SELECT
   'poor_discoverability',
   'analytics_bi',
   'Address poor discoverability with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9122,7 +9122,7 @@ SELECT
   'catalog_gaps',
   'analytics_bi',
   'Address catalog gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9135,7 +9135,7 @@ SELECT
   'catalog_gaps',
   'analytics_bi',
   'Address catalog gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9148,7 +9148,7 @@ SELECT
   'catalog_gaps',
   'analytics_bi',
   'Address catalog gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9161,7 +9161,7 @@ SELECT
   'catalog_gaps',
   'analytics_bi',
   'Address catalog gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9174,7 +9174,7 @@ SELECT
   'unclear_lineage',
   'analytics_bi',
   'Address unclear lineage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9187,7 +9187,7 @@ SELECT
   'unclear_lineage',
   'analytics_bi',
   'Address unclear lineage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9200,7 +9200,7 @@ SELECT
   'unclear_lineage',
   'analytics_bi',
   'Address unclear lineage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9213,7 +9213,7 @@ SELECT
   'unclear_lineage',
   'analytics_bi',
   'Address unclear lineage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9226,7 +9226,7 @@ SELECT
   'access_complexity',
   'analytics_bi',
   'Address access complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9239,7 +9239,7 @@ SELECT
   'access_complexity',
   'analytics_bi',
   'Address access complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9252,7 +9252,7 @@ SELECT
   'access_complexity',
   'analytics_bi',
   'Address access complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9265,7 +9265,7 @@ SELECT
   'access_complexity',
   'analytics_bi',
   'Address access complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9278,7 +9278,7 @@ SELECT
   'quality_uncertainty',
   'analytics_bi',
   'Address quality uncertainty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9291,7 +9291,7 @@ SELECT
   'quality_uncertainty',
   'analytics_bi',
   'Address quality uncertainty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9304,7 +9304,7 @@ SELECT
   'quality_uncertainty',
   'analytics_bi',
   'Address quality uncertainty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9317,7 +9317,7 @@ SELECT
   'quality_uncertainty',
   'analytics_bi',
   'Address quality uncertainty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9330,7 +9330,7 @@ SELECT
   'analyst_inefficiency',
   'analytics_bi',
   'Address analyst inefficiency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9343,7 +9343,7 @@ SELECT
   'analyst_inefficiency',
   'analytics_bi',
   'Address analyst inefficiency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9356,7 +9356,7 @@ SELECT
   'analyst_inefficiency',
   'analytics_bi',
   'Address analyst inefficiency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9369,7 +9369,7 @@ SELECT
   'analyst_inefficiency',
   'analytics_bi',
   'Address analyst inefficiency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9382,7 +9382,7 @@ SELECT
   'duplicate_work',
   'analytics_bi',
   'Address duplicate work with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9395,7 +9395,7 @@ SELECT
   'duplicate_work',
   'analytics_bi',
   'Address duplicate work with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9408,7 +9408,7 @@ SELECT
   'duplicate_work',
   'analytics_bi',
   'Address duplicate work with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9421,7 +9421,7 @@ SELECT
   'duplicate_work',
   'analytics_bi',
   'Address duplicate work with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9434,7 +9434,7 @@ SELECT
   'low_reuse',
   'analytics_bi',
   'Address low reuse with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9447,7 +9447,7 @@ SELECT
   'low_reuse',
   'analytics_bi',
   'Address low reuse with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9460,7 +9460,7 @@ SELECT
   'low_reuse',
   'analytics_bi',
   'Address low reuse with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9473,7 +9473,7 @@ SELECT
   'low_reuse',
   'analytics_bi',
   'Address low reuse with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9486,7 +9486,7 @@ SELECT
   'trust_deficit',
   'analytics_bi',
   'Address trust deficit with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9499,7 +9499,7 @@ SELECT
   'trust_deficit',
   'analytics_bi',
   'Address trust deficit with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9512,7 +9512,7 @@ SELECT
   'trust_deficit',
   'analytics_bi',
   'Address trust deficit with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9525,7 +9525,7 @@ SELECT
   'trust_deficit',
   'analytics_bi',
   'Address trust deficit with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9538,7 +9538,7 @@ SELECT
   'onboarding_delays',
   'analytics_bi',
   'Address onboarding delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9551,7 +9551,7 @@ SELECT
   'onboarding_delays',
   'analytics_bi',
   'Address onboarding delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9564,7 +9564,7 @@ SELECT
   'onboarding_delays',
   'analytics_bi',
   'Address onboarding delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9577,7 +9577,7 @@ SELECT
   'onboarding_delays',
   'analytics_bi',
   'Address onboarding delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9590,7 +9590,7 @@ SELECT
   'integration_complexity',
   'analytics_bi',
   'Address integration complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9603,7 +9603,7 @@ SELECT
   'integration_complexity',
   'analytics_bi',
   'Address integration complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9616,7 +9616,7 @@ SELECT
   'integration_complexity',
   'analytics_bi',
   'Address integration complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9629,7 +9629,7 @@ SELECT
   'integration_complexity',
   'analytics_bi',
   'Address integration complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9642,7 +9642,7 @@ SELECT
   'performance_issues',
   'analytics_bi',
   'Address performance issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9655,7 +9655,7 @@ SELECT
   'performance_issues',
   'analytics_bi',
   'Address performance issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9668,7 +9668,7 @@ SELECT
   'performance_issues',
   'analytics_bi',
   'Address performance issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9681,7 +9681,7 @@ SELECT
   'performance_issues',
   'analytics_bi',
   'Address performance issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9694,7 +9694,7 @@ SELECT
   'data_extracts',
   'analytics_bi',
   'Address data extracts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9707,7 +9707,7 @@ SELECT
   'data_extracts',
   'analytics_bi',
   'Address data extracts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9720,7 +9720,7 @@ SELECT
   'data_extracts',
   'analytics_bi',
   'Address data extracts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9733,7 +9733,7 @@ SELECT
   'data_extracts',
   'analytics_bi',
   'Address data extracts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9746,7 +9746,7 @@ SELECT
   'refresh_delays',
   'analytics_bi',
   'Address refresh delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9759,7 +9759,7 @@ SELECT
   'refresh_delays',
   'analytics_bi',
   'Address refresh delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9772,7 +9772,7 @@ SELECT
   'refresh_delays',
   'analytics_bi',
   'Address refresh delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9785,7 +9785,7 @@ SELECT
   'refresh_delays',
   'analytics_bi',
   'Address refresh delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9798,7 +9798,7 @@ SELECT
   'limited_interactivity',
   'analytics_bi',
   'Address limited interactivity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9811,7 +9811,7 @@ SELECT
   'limited_interactivity',
   'analytics_bi',
   'Address limited interactivity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9824,7 +9824,7 @@ SELECT
   'limited_interactivity',
   'analytics_bi',
   'Address limited interactivity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9837,7 +9837,7 @@ SELECT
   'limited_interactivity',
   'analytics_bi',
   'Address limited interactivity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9850,7 +9850,7 @@ SELECT
   'stale_dashboards',
   'analytics_bi',
   'Address stale dashboards with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9863,7 +9863,7 @@ SELECT
   'stale_dashboards',
   'analytics_bi',
   'Address stale dashboards with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9876,7 +9876,7 @@ SELECT
   'stale_dashboards',
   'analytics_bi',
   'Address stale dashboards with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9889,7 +9889,7 @@ SELECT
   'stale_dashboards',
   'analytics_bi',
   'Address stale dashboards with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9902,7 +9902,7 @@ SELECT
   'limited_adoption',
   'analytics_bi',
   'Address limited adoption with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9915,7 +9915,7 @@ SELECT
   'limited_adoption',
   'analytics_bi',
   'Address limited adoption with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9928,7 +9928,7 @@ SELECT
   'limited_adoption',
   'analytics_bi',
   'Address limited adoption with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9941,7 +9941,7 @@ SELECT
   'limited_adoption',
   'analytics_bi',
   'Address limited adoption with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9954,7 +9954,7 @@ SELECT
   'reporting_delays',
   'analytics_bi',
   'Address reporting delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9967,7 +9967,7 @@ SELECT
   'reporting_delays',
   'analytics_bi',
   'Address reporting delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9980,7 +9980,7 @@ SELECT
   'reporting_delays',
   'analytics_bi',
   'Address reporting delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -9993,7 +9993,7 @@ SELECT
   'reporting_delays',
   'analytics_bi',
   'Address reporting delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10006,7 +10006,7 @@ SELECT
   'cost_overhead',
   'analytics_bi',
   'Address cost overhead with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10019,7 +10019,7 @@ SELECT
   'cost_overhead',
   'analytics_bi',
   'Address cost overhead with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10032,7 +10032,7 @@ SELECT
   'cost_overhead',
   'analytics_bi',
   'Address cost overhead with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10045,7 +10045,7 @@ SELECT
   'cost_overhead',
   'analytics_bi',
   'Address cost overhead with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10058,7 +10058,7 @@ SELECT
   'inconsistent_schedules',
   'analytics_bi',
   'Address inconsistent schedules with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10071,7 +10071,7 @@ SELECT
   'inconsistent_schedules',
   'analytics_bi',
   'Address inconsistent schedules with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10084,7 +10084,7 @@ SELECT
   'inconsistent_schedules',
   'analytics_bi',
   'Address inconsistent schedules with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10097,7 +10097,7 @@ SELECT
   'inconsistent_schedules',
   'analytics_bi',
   'Address inconsistent schedules with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10110,7 +10110,7 @@ SELECT
   'kpi_proliferation',
   'analytics_bi',
   'Address kpi proliferation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10123,7 +10123,7 @@ SELECT
   'kpi_proliferation',
   'analytics_bi',
   'Address kpi proliferation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10136,7 +10136,7 @@ SELECT
   'kpi_proliferation',
   'analytics_bi',
   'Address kpi proliferation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10149,7 +10149,7 @@ SELECT
   'kpi_proliferation',
   'analytics_bi',
   'Address kpi proliferation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10162,7 +10162,7 @@ SELECT
   'version_control',
   'analytics_bi',
   'Address version control with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10175,7 +10175,7 @@ SELECT
   'version_control',
   'analytics_bi',
   'Address version control with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10188,7 +10188,7 @@ SELECT
   'version_control',
   'analytics_bi',
   'Address version control with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10201,7 +10201,7 @@ SELECT
   'version_control',
   'analytics_bi',
   'Address version control with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10214,7 +10214,7 @@ SELECT
   'access_management',
   'analytics_bi',
   'Address access management with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10227,7 +10227,7 @@ SELECT
   'access_management',
   'analytics_bi',
   'Address access management with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10240,7 +10240,7 @@ SELECT
   'access_management',
   'analytics_bi',
   'Address access management with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10253,7 +10253,7 @@ SELECT
   'access_management',
   'analytics_bi',
   'Address access management with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10266,7 +10266,7 @@ SELECT
   'audit_trails',
   'analytics_bi',
   'Address audit trails with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10279,7 +10279,7 @@ SELECT
   'audit_trails',
   'analytics_bi',
   'Address audit trails with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10292,7 +10292,7 @@ SELECT
   'audit_trails',
   'analytics_bi',
   'Address audit trails with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10305,7 +10305,7 @@ SELECT
   'audit_trails',
   'analytics_bi',
   'Address audit trails with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10318,7 +10318,7 @@ SELECT
   'conflicting_kpis',
   'analytics_bi',
   'Address conflicting kpis with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10331,7 +10331,7 @@ SELECT
   'conflicting_kpis',
   'analytics_bi',
   'Address conflicting kpis with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10344,7 +10344,7 @@ SELECT
   'conflicting_kpis',
   'analytics_bi',
   'Address conflicting kpis with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10357,7 +10357,7 @@ SELECT
   'conflicting_kpis',
   'analytics_bi',
   'Address conflicting kpis with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10370,7 +10370,7 @@ SELECT
   'report_sprawl',
   'analytics_bi',
   'Address report sprawl with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10383,7 +10383,7 @@ SELECT
   'report_sprawl',
   'analytics_bi',
   'Address report sprawl with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10396,7 +10396,7 @@ SELECT
   'report_sprawl',
   'analytics_bi',
   'Address report sprawl with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10409,7 +10409,7 @@ SELECT
   'report_sprawl',
   'analytics_bi',
   'Address report sprawl with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10422,7 +10422,7 @@ SELECT
   'compliance_gaps',
   'analytics_bi',
   'Address compliance gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10435,7 +10435,7 @@ SELECT
   'compliance_gaps',
   'analytics_bi',
   'Address compliance gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10448,7 +10448,7 @@ SELECT
   'compliance_gaps',
   'analytics_bi',
   'Address compliance gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10461,7 +10461,7 @@ SELECT
   'compliance_gaps',
   'analytics_bi',
   'Address compliance gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10474,7 +10474,7 @@ SELECT
   'maintenance_burden',
   'analytics_bi',
   'Address maintenance burden with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10487,7 +10487,7 @@ SELECT
   'maintenance_burden',
   'analytics_bi',
   'Address maintenance burden with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10500,7 +10500,7 @@ SELECT
   'maintenance_burden',
   'analytics_bi',
   'Address maintenance burden with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10513,7 +10513,7 @@ SELECT
   'maintenance_burden',
   'analytics_bi',
   'Address maintenance burden with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10526,7 +10526,7 @@ SELECT
   'trust_erosion',
   'analytics_bi',
   'Address trust erosion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10539,7 +10539,7 @@ SELECT
   'trust_erosion',
   'analytics_bi',
   'Address trust erosion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10552,7 +10552,7 @@ SELECT
   'trust_erosion',
   'analytics_bi',
   'Address trust erosion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10565,7 +10565,7 @@ SELECT
   'trust_erosion',
   'analytics_bi',
   'Address trust erosion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10578,7 +10578,7 @@ SELECT
   'tool_complexity',
   'analytics_bi',
   'Address tool complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10591,7 +10591,7 @@ SELECT
   'tool_complexity',
   'analytics_bi',
   'Address tool complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10604,7 +10604,7 @@ SELECT
   'tool_complexity',
   'analytics_bi',
   'Address tool complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10617,7 +10617,7 @@ SELECT
   'tool_complexity',
   'analytics_bi',
   'Address tool complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10630,7 +10630,7 @@ SELECT
   'access_barriers',
   'analytics_bi',
   'Address access barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10643,7 +10643,7 @@ SELECT
   'access_barriers',
   'analytics_bi',
   'Address access barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10656,7 +10656,7 @@ SELECT
   'access_barriers',
   'analytics_bi',
   'Address access barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10669,7 +10669,7 @@ SELECT
   'access_barriers',
   'analytics_bi',
   'Address access barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10682,7 +10682,7 @@ SELECT
   'training_gaps',
   'analytics_bi',
   'Address training gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10695,7 +10695,7 @@ SELECT
   'training_gaps',
   'analytics_bi',
   'Address training gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10708,7 +10708,7 @@ SELECT
   'training_gaps',
   'analytics_bi',
   'Address training gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10721,7 +10721,7 @@ SELECT
   'training_gaps',
   'analytics_bi',
   'Address training gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10734,7 +10734,7 @@ SELECT
   'limited_tooling',
   'analytics_bi',
   'Address limited tooling with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10747,7 +10747,7 @@ SELECT
   'limited_tooling',
   'analytics_bi',
   'Address limited tooling with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10760,7 +10760,7 @@ SELECT
   'limited_tooling',
   'analytics_bi',
   'Address limited tooling with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10773,7 +10773,7 @@ SELECT
   'limited_tooling',
   'analytics_bi',
   'Address limited tooling with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10786,7 +10786,7 @@ SELECT
   'support_burden',
   'analytics_bi',
   'Address support burden with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10799,7 +10799,7 @@ SELECT
   'support_burden',
   'analytics_bi',
   'Address support burden with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10812,7 +10812,7 @@ SELECT
   'support_burden',
   'analytics_bi',
   'Address support burden with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10825,7 +10825,7 @@ SELECT
   'support_burden',
   'analytics_bi',
   'Address support burden with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10838,7 +10838,7 @@ SELECT
   'analyst_bottleneck',
   'analytics_bi',
   'Address analyst bottleneck with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10851,7 +10851,7 @@ SELECT
   'analyst_bottleneck',
   'analytics_bi',
   'Address analyst bottleneck with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10864,7 +10864,7 @@ SELECT
   'analyst_bottleneck',
   'analytics_bi',
   'Address analyst bottleneck with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10877,7 +10877,7 @@ SELECT
   'analyst_bottleneck',
   'analytics_bi',
   'Address analyst bottleneck with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10890,7 +10890,7 @@ SELECT
   'slow_decisions',
   'analytics_bi',
   'Address slow decisions with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10903,7 +10903,7 @@ SELECT
   'slow_decisions',
   'analytics_bi',
   'Address slow decisions with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10916,7 +10916,7 @@ SELECT
   'slow_decisions',
   'analytics_bi',
   'Address slow decisions with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10929,7 +10929,7 @@ SELECT
   'slow_decisions',
   'analytics_bi',
   'Address slow decisions with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10942,7 +10942,7 @@ SELECT
   'low_data_literacy',
   'analytics_bi',
   'Address low data literacy with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10955,7 +10955,7 @@ SELECT
   'low_data_literacy',
   'analytics_bi',
   'Address low data literacy with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10968,7 +10968,7 @@ SELECT
   'low_data_literacy',
   'analytics_bi',
   'Address low data literacy with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10981,7 +10981,7 @@ SELECT
   'low_data_literacy',
   'analytics_bi',
   'Address low data literacy with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -10994,7 +10994,7 @@ SELECT
   'missed_opportunities',
   'analytics_bi',
   'Address missed opportunities with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11007,7 +11007,7 @@ SELECT
   'missed_opportunities',
   'analytics_bi',
   'Address missed opportunities with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11020,7 +11020,7 @@ SELECT
   'missed_opportunities',
   'analytics_bi',
   'Address missed opportunities with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11033,7 +11033,7 @@ SELECT
   'missed_opportunities',
   'analytics_bi',
   'Address missed opportunities with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11046,7 +11046,7 @@ SELECT
   'security_gaps',
   'analytics_bi',
   'Address security gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11059,7 +11059,7 @@ SELECT
   'security_gaps',
   'analytics_bi',
   'Address security gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11072,7 +11072,7 @@ SELECT
   'security_gaps',
   'analytics_bi',
   'Address security gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11085,7 +11085,7 @@ SELECT
   'security_gaps',
   'analytics_bi',
   'Address security gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11098,7 +11098,7 @@ SELECT
   'wild_west_access',
   'analytics_bi',
   'Address wild west access with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11111,7 +11111,7 @@ SELECT
   'wild_west_access',
   'analytics_bi',
   'Address wild west access with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11124,7 +11124,7 @@ SELECT
   'wild_west_access',
   'analytics_bi',
   'Address wild west access with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11137,7 +11137,7 @@ SELECT
   'wild_west_access',
   'analytics_bi',
   'Address wild west access with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11150,7 +11150,7 @@ SELECT
   'quality_control',
   'analytics_bi',
   'Address quality control with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11163,7 +11163,7 @@ SELECT
   'quality_control',
   'analytics_bi',
   'Address quality control with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11176,7 +11176,7 @@ SELECT
   'quality_control',
   'analytics_bi',
   'Address quality control with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11189,7 +11189,7 @@ SELECT
   'quality_control',
   'analytics_bi',
   'Address quality control with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11202,7 +11202,7 @@ SELECT
   'audit_challenges',
   'analytics_bi',
   'Address audit challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11215,7 +11215,7 @@ SELECT
   'audit_challenges',
   'analytics_bi',
   'Address audit challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11228,7 +11228,7 @@ SELECT
   'audit_challenges',
   'analytics_bi',
   'Address audit challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11241,7 +11241,7 @@ SELECT
   'audit_challenges',
   'analytics_bi',
   'Address audit challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11254,7 +11254,7 @@ SELECT
   'policy_enforcement',
   'analytics_bi',
   'Address policy enforcement with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11267,7 +11267,7 @@ SELECT
   'policy_enforcement',
   'analytics_bi',
   'Address policy enforcement with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11280,7 +11280,7 @@ SELECT
   'policy_enforcement',
   'analytics_bi',
   'Address policy enforcement with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11293,7 +11293,7 @@ SELECT
   'policy_enforcement',
   'analytics_bi',
   'Address policy enforcement with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11306,7 +11306,7 @@ SELECT
   'data_misuse',
   'analytics_bi',
   'Address data misuse with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11319,7 +11319,7 @@ SELECT
   'data_misuse',
   'analytics_bi',
   'Address data misuse with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11332,7 +11332,7 @@ SELECT
   'data_misuse',
   'analytics_bi',
   'Address data misuse with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11345,7 +11345,7 @@ SELECT
   'data_misuse',
   'analytics_bi',
   'Address data misuse with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11358,7 +11358,7 @@ SELECT
   'inconsistent_analysis',
   'analytics_bi',
   'Address inconsistent analysis with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11371,7 +11371,7 @@ SELECT
   'inconsistent_analysis',
   'analytics_bi',
   'Address inconsistent analysis with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11384,7 +11384,7 @@ SELECT
   'inconsistent_analysis',
   'analytics_bi',
   'Address inconsistent analysis with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11397,7 +11397,7 @@ SELECT
   'inconsistent_analysis',
   'analytics_bi',
   'Address inconsistent analysis with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11410,7 +11410,7 @@ SELECT
   'regulatory_exposure',
   'analytics_bi',
   'Address regulatory exposure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11423,7 +11423,7 @@ SELECT
   'regulatory_exposure',
   'analytics_bi',
   'Address regulatory exposure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11436,7 +11436,7 @@ SELECT
   'regulatory_exposure',
   'analytics_bi',
   'Address regulatory exposure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11449,7 +11449,7 @@ SELECT
   'regulatory_exposure',
   'analytics_bi',
   'Address regulatory exposure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11462,7 +11462,7 @@ SELECT
   'sharing_complexity',
   'analytics_bi',
   'Address sharing complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11475,7 +11475,7 @@ SELECT
   'sharing_complexity',
   'analytics_bi',
   'Address sharing complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11488,7 +11488,7 @@ SELECT
   'sharing_complexity',
   'analytics_bi',
   'Address sharing complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11501,7 +11501,7 @@ SELECT
   'sharing_complexity',
   'analytics_bi',
   'Address sharing complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11514,7 +11514,7 @@ SELECT
   'security_concerns',
   'analytics_bi',
   'Address security concerns with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11527,7 +11527,7 @@ SELECT
   'security_concerns',
   'analytics_bi',
   'Address security concerns with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11540,7 +11540,7 @@ SELECT
   'security_concerns',
   'analytics_bi',
   'Address security concerns with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11553,7 +11553,7 @@ SELECT
   'security_concerns',
   'analytics_bi',
   'Address security concerns with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11566,7 +11566,7 @@ SELECT
   'format_compatibility',
   'analytics_bi',
   'Address format compatibility with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11579,7 +11579,7 @@ SELECT
   'format_compatibility',
   'analytics_bi',
   'Address format compatibility with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11592,7 +11592,7 @@ SELECT
   'format_compatibility',
   'analytics_bi',
   'Address format compatibility with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11605,7 +11605,7 @@ SELECT
   'format_compatibility',
   'analytics_bi',
   'Address format compatibility with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11618,7 +11618,7 @@ SELECT
   'access_provisioning',
   'analytics_bi',
   'Address access provisioning with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11631,7 +11631,7 @@ SELECT
   'access_provisioning',
   'analytics_bi',
   'Address access provisioning with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11644,7 +11644,7 @@ SELECT
   'access_provisioning',
   'analytics_bi',
   'Address access provisioning with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11657,7 +11657,7 @@ SELECT
   'access_provisioning',
   'analytics_bi',
   'Address access provisioning with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11670,7 +11670,7 @@ SELECT
   'tracking_gaps',
   'analytics_bi',
   'Address tracking gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11683,7 +11683,7 @@ SELECT
   'tracking_gaps',
   'analytics_bi',
   'Address tracking gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11696,7 +11696,7 @@ SELECT
   'tracking_gaps',
   'analytics_bi',
   'Address tracking gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11709,7 +11709,7 @@ SELECT
   'tracking_gaps',
   'analytics_bi',
   'Address tracking gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11722,7 +11722,7 @@ SELECT
   'partner_friction',
   'analytics_bi',
   'Address partner friction with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11735,7 +11735,7 @@ SELECT
   'partner_friction',
   'analytics_bi',
   'Address partner friction with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11748,7 +11748,7 @@ SELECT
   'partner_friction',
   'analytics_bi',
   'Address partner friction with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11761,7 +11761,7 @@ SELECT
   'partner_friction',
   'analytics_bi',
   'Address partner friction with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11774,7 +11774,7 @@ SELECT
   'collaboration_barriers',
   'analytics_bi',
   'Address collaboration barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11787,7 +11787,7 @@ SELECT
   'collaboration_barriers',
   'analytics_bi',
   'Address collaboration barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11800,7 +11800,7 @@ SELECT
   'collaboration_barriers',
   'analytics_bi',
   'Address collaboration barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11813,7 +11813,7 @@ SELECT
   'collaboration_barriers',
   'analytics_bi',
   'Address collaboration barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11826,7 +11826,7 @@ SELECT
   'revenue_impact',
   'analytics_bi',
   'Address revenue impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11839,7 +11839,7 @@ SELECT
   'revenue_impact',
   'analytics_bi',
   'Address revenue impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11852,7 +11852,7 @@ SELECT
   'revenue_impact',
   'analytics_bi',
   'Address revenue impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11865,7 +11865,7 @@ SELECT
   'revenue_impact',
   'analytics_bi',
   'Address revenue impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11878,7 +11878,7 @@ SELECT
   'competitive_disadvantage',
   'analytics_bi',
   'Address competitive disadvantage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11891,7 +11891,7 @@ SELECT
   'competitive_disadvantage',
   'analytics_bi',
   'Address competitive disadvantage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11904,7 +11904,7 @@ SELECT
   'competitive_disadvantage',
   'analytics_bi',
   'Address competitive disadvantage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11917,7 +11917,7 @@ SELECT
   'competitive_disadvantage',
   'analytics_bi',
   'Address competitive disadvantage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11930,7 +11930,7 @@ SELECT
   'data_silos',
   'analytics_bi',
   'Address data silos with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11943,7 +11943,7 @@ SELECT
   'data_silos',
   'analytics_bi',
   'Address data silos with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11956,7 +11956,7 @@ SELECT
   'data_silos',
   'analytics_bi',
   'Address data silos with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11969,7 +11969,7 @@ SELECT
   'data_silos',
   'analytics_bi',
   'Address data silos with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11982,7 +11982,7 @@ SELECT
   'join_performance',
   'analytics_bi',
   'Address join performance with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -11995,7 +11995,7 @@ SELECT
   'join_performance',
   'analytics_bi',
   'Address join performance with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12008,7 +12008,7 @@ SELECT
   'join_performance',
   'analytics_bi',
   'Address join performance with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12021,7 +12021,7 @@ SELECT
   'join_performance',
   'analytics_bi',
   'Address join performance with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12034,7 +12034,7 @@ SELECT
   'schema_conflicts',
   'analytics_bi',
   'Address schema conflicts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12047,7 +12047,7 @@ SELECT
   'schema_conflicts',
   'analytics_bi',
   'Address schema conflicts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12060,7 +12060,7 @@ SELECT
   'schema_conflicts',
   'analytics_bi',
   'Address schema conflicts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12073,7 +12073,7 @@ SELECT
   'schema_conflicts',
   'analytics_bi',
   'Address schema conflicts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12086,7 +12086,7 @@ SELECT
   'governance_gaps',
   'analytics_bi',
   'Address governance gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12099,7 +12099,7 @@ SELECT
   'governance_gaps',
   'analytics_bi',
   'Address governance gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12112,7 +12112,7 @@ SELECT
   'governance_gaps',
   'analytics_bi',
   'Address governance gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12125,7 +12125,7 @@ SELECT
   'governance_gaps',
   'analytics_bi',
   'Address governance gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12138,7 +12138,7 @@ SELECT
   'limited_insights',
   'analytics_bi',
   'Address limited insights with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12151,7 +12151,7 @@ SELECT
   'limited_insights',
   'analytics_bi',
   'Address limited insights with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12164,7 +12164,7 @@ SELECT
   'limited_insights',
   'analytics_bi',
   'Address limited insights with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12177,7 +12177,7 @@ SELECT
   'limited_insights',
   'analytics_bi',
   'Address limited insights with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12190,7 +12190,7 @@ SELECT
   'integration_delays',
   'analytics_bi',
   'Address integration delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12203,7 +12203,7 @@ SELECT
   'integration_delays',
   'analytics_bi',
   'Address integration delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12216,7 +12216,7 @@ SELECT
   'integration_delays',
   'analytics_bi',
   'Address integration delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12229,7 +12229,7 @@ SELECT
   'integration_delays',
   'analytics_bi',
   'Address integration delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12242,7 +12242,7 @@ SELECT
   'opportunity_cost',
   'analytics_bi',
   'Address opportunity cost with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12255,7 +12255,7 @@ SELECT
   'opportunity_cost',
   'analytics_bi',
   'Address opportunity cost with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12268,7 +12268,7 @@ SELECT
   'opportunity_cost',
   'analytics_bi',
   'Address opportunity cost with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12281,7 +12281,7 @@ SELECT
   'opportunity_cost',
   'analytics_bi',
   'Address opportunity cost with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12294,7 +12294,7 @@ SELECT
   'decision_friction',
   'analytics_bi',
   'Address decision friction with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12307,7 +12307,7 @@ SELECT
   'decision_friction',
   'analytics_bi',
   'Address decision friction with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12320,7 +12320,7 @@ SELECT
   'decision_friction',
   'analytics_bi',
   'Address decision friction with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12333,7 +12333,7 @@ SELECT
   'decision_friction',
   'analytics_bi',
   'Address decision friction with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12346,7 +12346,7 @@ SELECT
   'strategic_limitations',
   'analytics_bi',
   'Address strategic limitations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'analytics'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12359,7 +12359,7 @@ SELECT
   'strategic_limitations',
   'analytics_bi',
   'Address strategic limitations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'bi'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12372,7 +12372,7 @@ SELECT
   'strategic_limitations',
   'analytics_bi',
   'Address strategic limitations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'sql'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12385,7 +12385,7 @@ SELECT
   'strategic_limitations',
   'analytics_bi',
   'Address strategic limitations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'visualization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12402,7 +12402,7 @@ SELECT
   'no_tracking',
   'machine_learning',
   'Address no tracking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12415,7 +12415,7 @@ SELECT
   'no_tracking',
   'machine_learning',
   'Address no tracking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12428,7 +12428,7 @@ SELECT
   'no_tracking',
   'machine_learning',
   'Address no tracking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12441,7 +12441,7 @@ SELECT
   'reproducibility_issues',
   'machine_learning',
   'Address reproducibility issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12454,7 +12454,7 @@ SELECT
   'reproducibility_issues',
   'machine_learning',
   'Address reproducibility issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12467,7 +12467,7 @@ SELECT
   'reproducibility_issues',
   'machine_learning',
   'Address reproducibility issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12480,7 +12480,7 @@ SELECT
   'scattered_artifacts',
   'machine_learning',
   'Address scattered artifacts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12493,7 +12493,7 @@ SELECT
   'scattered_artifacts',
   'machine_learning',
   'Address scattered artifacts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12506,7 +12506,7 @@ SELECT
   'scattered_artifacts',
   'machine_learning',
   'Address scattered artifacts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12519,7 +12519,7 @@ SELECT
   'manual_logging',
   'machine_learning',
   'Address manual logging with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12532,7 +12532,7 @@ SELECT
   'manual_logging',
   'machine_learning',
   'Address manual logging with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12545,7 +12545,7 @@ SELECT
   'manual_logging',
   'machine_learning',
   'Address manual logging with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12558,7 +12558,7 @@ SELECT
   'comparison_difficulty',
   'machine_learning',
   'Address comparison difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12571,7 +12571,7 @@ SELECT
   'comparison_difficulty',
   'machine_learning',
   'Address comparison difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12584,7 +12584,7 @@ SELECT
   'comparison_difficulty',
   'machine_learning',
   'Address comparison difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12597,7 +12597,7 @@ SELECT
   'wasted_effort',
   'machine_learning',
   'Address wasted effort with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12610,7 +12610,7 @@ SELECT
   'wasted_effort',
   'machine_learning',
   'Address wasted effort with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12623,7 +12623,7 @@ SELECT
   'wasted_effort',
   'machine_learning',
   'Address wasted effort with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12636,7 +12636,7 @@ SELECT
   'slow_iteration',
   'machine_learning',
   'Address slow iteration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12649,7 +12649,7 @@ SELECT
   'slow_iteration',
   'machine_learning',
   'Address slow iteration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12662,7 +12662,7 @@ SELECT
   'slow_iteration',
   'machine_learning',
   'Address slow iteration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12675,7 +12675,7 @@ SELECT
   'knowledge_loss',
   'machine_learning',
   'Address knowledge loss with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12688,7 +12688,7 @@ SELECT
   'knowledge_loss',
   'machine_learning',
   'Address knowledge loss with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12701,7 +12701,7 @@ SELECT
   'knowledge_loss',
   'machine_learning',
   'Address knowledge loss with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12714,7 +12714,7 @@ SELECT
   'audit_challenges',
   'machine_learning',
   'Address audit challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12727,7 +12727,7 @@ SELECT
   'audit_challenges',
   'machine_learning',
   'Address audit challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12740,7 +12740,7 @@ SELECT
   'audit_challenges',
   'machine_learning',
   'Address audit challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12753,7 +12753,7 @@ SELECT
   'limited_reuse',
   'machine_learning',
   'Address limited reuse with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12766,7 +12766,7 @@ SELECT
   'limited_reuse',
   'machine_learning',
   'Address limited reuse with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12779,7 +12779,7 @@ SELECT
   'limited_reuse',
   'machine_learning',
   'Address limited reuse with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12792,7 +12792,7 @@ SELECT
   'environment_drift',
   'machine_learning',
   'Address environment drift with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12805,7 +12805,7 @@ SELECT
   'environment_drift',
   'machine_learning',
   'Address environment drift with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12818,7 +12818,7 @@ SELECT
   'environment_drift',
   'machine_learning',
   'Address environment drift with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12831,7 +12831,7 @@ SELECT
   'dependency_issues',
   'machine_learning',
   'Address dependency issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12844,7 +12844,7 @@ SELECT
   'dependency_issues',
   'machine_learning',
   'Address dependency issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12857,7 +12857,7 @@ SELECT
   'dependency_issues',
   'machine_learning',
   'Address dependency issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12870,7 +12870,7 @@ SELECT
   'data_versioning',
   'machine_learning',
   'Address data versioning with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12883,7 +12883,7 @@ SELECT
   'data_versioning',
   'machine_learning',
   'Address data versioning with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12896,7 +12896,7 @@ SELECT
   'data_versioning',
   'machine_learning',
   'Address data versioning with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12909,7 +12909,7 @@ SELECT
   'model_packaging',
   'machine_learning',
   'Address model packaging with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12922,7 +12922,7 @@ SELECT
   'model_packaging',
   'machine_learning',
   'Address model packaging with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12935,7 +12935,7 @@ SELECT
   'model_packaging',
   'machine_learning',
   'Address model packaging with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12948,7 +12948,7 @@ SELECT
   'seed_management',
   'machine_learning',
   'Address seed management with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12961,7 +12961,7 @@ SELECT
   'seed_management',
   'machine_learning',
   'Address seed management with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12974,7 +12974,7 @@ SELECT
   'seed_management',
   'machine_learning',
   'Address seed management with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -12987,7 +12987,7 @@ SELECT
   'debugging_difficulty',
   'machine_learning',
   'Address debugging difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13000,7 +13000,7 @@ SELECT
   'debugging_difficulty',
   'machine_learning',
   'Address debugging difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13013,7 +13013,7 @@ SELECT
   'debugging_difficulty',
   'machine_learning',
   'Address debugging difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13026,7 +13026,7 @@ SELECT
   'production_failures',
   'machine_learning',
   'Address production failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13039,7 +13039,7 @@ SELECT
   'production_failures',
   'machine_learning',
   'Address production failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13052,7 +13052,7 @@ SELECT
   'production_failures',
   'machine_learning',
   'Address production failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13065,7 +13065,7 @@ SELECT
   'trust_issues',
   'machine_learning',
   'Address trust issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13078,7 +13078,7 @@ SELECT
   'trust_issues',
   'machine_learning',
   'Address trust issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13091,7 +13091,7 @@ SELECT
   'trust_issues',
   'machine_learning',
   'Address trust issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13104,7 +13104,7 @@ SELECT
   'compliance_risk',
   'machine_learning',
   'Address compliance risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13117,7 +13117,7 @@ SELECT
   'compliance_risk',
   'machine_learning',
   'Address compliance risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13130,7 +13130,7 @@ SELECT
   'compliance_risk',
   'machine_learning',
   'Address compliance risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13143,7 +13143,7 @@ SELECT
   'rollback_complexity',
   'machine_learning',
   'Address rollback complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13156,7 +13156,7 @@ SELECT
   'rollback_complexity',
   'machine_learning',
   'Address rollback complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13169,7 +13169,7 @@ SELECT
   'rollback_complexity',
   'machine_learning',
   'Address rollback complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13182,7 +13182,7 @@ SELECT
   'manual_deployment',
   'machine_learning',
   'Address manual deployment with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13195,7 +13195,7 @@ SELECT
   'manual_deployment',
   'machine_learning',
   'Address manual deployment with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13208,7 +13208,7 @@ SELECT
   'manual_deployment',
   'machine_learning',
   'Address manual deployment with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13221,7 +13221,7 @@ SELECT
   'no_cicd',
   'machine_learning',
   'Address no cicd with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13234,7 +13234,7 @@ SELECT
   'no_cicd',
   'machine_learning',
   'Address no cicd with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13247,7 +13247,7 @@ SELECT
   'no_cicd',
   'machine_learning',
   'Address no cicd with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13260,7 +13260,7 @@ SELECT
   'environment_inconsistency',
   'machine_learning',
   'Address environment inconsistency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13273,7 +13273,7 @@ SELECT
   'environment_inconsistency',
   'machine_learning',
   'Address environment inconsistency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13286,7 +13286,7 @@ SELECT
   'environment_inconsistency',
   'machine_learning',
   'Address environment inconsistency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13299,7 +13299,7 @@ SELECT
   'rollback_difficulty',
   'machine_learning',
   'Address rollback difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13312,7 +13312,7 @@ SELECT
   'rollback_difficulty',
   'machine_learning',
   'Address rollback difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13325,7 +13325,7 @@ SELECT
   'rollback_difficulty',
   'machine_learning',
   'Address rollback difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13338,7 +13338,7 @@ SELECT
   'testing_gaps',
   'machine_learning',
   'Address testing gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13351,7 +13351,7 @@ SELECT
   'testing_gaps',
   'machine_learning',
   'Address testing gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13364,7 +13364,7 @@ SELECT
   'testing_gaps',
   'machine_learning',
   'Address testing gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13377,7 +13377,7 @@ SELECT
   'slow_time_to_value',
   'machine_learning',
   'Address slow time to value with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13390,7 +13390,7 @@ SELECT
   'slow_time_to_value',
   'machine_learning',
   'Address slow time to value with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13403,7 +13403,7 @@ SELECT
   'slow_time_to_value',
   'machine_learning',
   'Address slow time to value with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13416,7 +13416,7 @@ SELECT
   'deployment_failures',
   'machine_learning',
   'Address deployment failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13429,7 +13429,7 @@ SELECT
   'deployment_failures',
   'machine_learning',
   'Address deployment failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13442,7 +13442,7 @@ SELECT
   'deployment_failures',
   'machine_learning',
   'Address deployment failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13455,7 +13455,7 @@ SELECT
   'resource_intensive',
   'machine_learning',
   'Address resource intensive with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13468,7 +13468,7 @@ SELECT
   'resource_intensive',
   'machine_learning',
   'Address resource intensive with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13481,7 +13481,7 @@ SELECT
   'resource_intensive',
   'machine_learning',
   'Address resource intensive with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13494,7 +13494,7 @@ SELECT
   'innovation_bottleneck',
   'machine_learning',
   'Address innovation bottleneck with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13507,7 +13507,7 @@ SELECT
   'innovation_bottleneck',
   'machine_learning',
   'Address innovation bottleneck with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13520,7 +13520,7 @@ SELECT
   'innovation_bottleneck',
   'machine_learning',
   'Address innovation bottleneck with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13533,7 +13533,7 @@ SELECT
   'business_risk',
   'machine_learning',
   'Address business risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13546,7 +13546,7 @@ SELECT
   'business_risk',
   'machine_learning',
   'Address business risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13559,7 +13559,7 @@ SELECT
   'business_risk',
   'machine_learning',
   'Address business risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13572,7 +13572,7 @@ SELECT
   'no_monitoring',
   'machine_learning',
   'Address no monitoring with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13585,7 +13585,7 @@ SELECT
   'no_monitoring',
   'machine_learning',
   'Address no monitoring with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13598,7 +13598,7 @@ SELECT
   'no_monitoring',
   'machine_learning',
   'Address no monitoring with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13611,7 +13611,7 @@ SELECT
   'drift_detection',
   'machine_learning',
   'Address drift detection with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13624,7 +13624,7 @@ SELECT
   'drift_detection',
   'machine_learning',
   'Address drift detection with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13637,7 +13637,7 @@ SELECT
   'drift_detection',
   'machine_learning',
   'Address drift detection with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13650,7 +13650,7 @@ SELECT
   'alert_gaps',
   'machine_learning',
   'Address alert gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13663,7 +13663,7 @@ SELECT
   'alert_gaps',
   'machine_learning',
   'Address alert gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13676,7 +13676,7 @@ SELECT
   'alert_gaps',
   'machine_learning',
   'Address alert gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13689,7 +13689,7 @@ SELECT
   'manual_retraining',
   'machine_learning',
   'Address manual retraining with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13702,7 +13702,7 @@ SELECT
   'manual_retraining',
   'machine_learning',
   'Address manual retraining with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13715,7 +13715,7 @@ SELECT
   'manual_retraining',
   'machine_learning',
   'Address manual retraining with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13728,7 +13728,7 @@ SELECT
   'performance_tracking',
   'machine_learning',
   'Address performance tracking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13741,7 +13741,7 @@ SELECT
   'performance_tracking',
   'machine_learning',
   'Address performance tracking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13754,7 +13754,7 @@ SELECT
   'performance_tracking',
   'machine_learning',
   'Address performance tracking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13767,7 +13767,7 @@ SELECT
   'silent_failures',
   'machine_learning',
   'Address silent failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13780,7 +13780,7 @@ SELECT
   'silent_failures',
   'machine_learning',
   'Address silent failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13793,7 +13793,7 @@ SELECT
   'silent_failures',
   'machine_learning',
   'Address silent failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13806,7 +13806,7 @@ SELECT
   'customer_impact',
   'machine_learning',
   'Address customer impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13819,7 +13819,7 @@ SELECT
   'customer_impact',
   'machine_learning',
   'Address customer impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13832,7 +13832,7 @@ SELECT
   'customer_impact',
   'machine_learning',
   'Address customer impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13845,7 +13845,7 @@ SELECT
   'revenue_loss',
   'machine_learning',
   'Address revenue loss with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13858,7 +13858,7 @@ SELECT
   'revenue_loss',
   'machine_learning',
   'Address revenue loss with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13871,7 +13871,7 @@ SELECT
   'revenue_loss',
   'machine_learning',
   'Address revenue loss with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13884,7 +13884,7 @@ SELECT
   'trust_erosion',
   'machine_learning',
   'Address trust erosion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13897,7 +13897,7 @@ SELECT
   'trust_erosion',
   'machine_learning',
   'Address trust erosion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13910,7 +13910,7 @@ SELECT
   'trust_erosion',
   'machine_learning',
   'Address trust erosion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13923,7 +13923,7 @@ SELECT
   'reactive_approach',
   'machine_learning',
   'Address reactive approach with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13936,7 +13936,7 @@ SELECT
   'reactive_approach',
   'machine_learning',
   'Address reactive approach with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13949,7 +13949,7 @@ SELECT
   'reactive_approach',
   'machine_learning',
   'Address reactive approach with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13962,7 +13962,7 @@ SELECT
   'no_feature_store',
   'machine_learning',
   'Address no feature store with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13975,7 +13975,7 @@ SELECT
   'no_feature_store',
   'machine_learning',
   'Address no feature store with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -13988,7 +13988,7 @@ SELECT
   'no_feature_store',
   'machine_learning',
   'Address no feature store with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14001,7 +14001,7 @@ SELECT
   'duplicate_features',
   'machine_learning',
   'Address duplicate features with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14014,7 +14014,7 @@ SELECT
   'duplicate_features',
   'machine_learning',
   'Address duplicate features with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14027,7 +14027,7 @@ SELECT
   'duplicate_features',
   'machine_learning',
   'Address duplicate features with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14040,7 +14040,7 @@ SELECT
   'consistency_issues',
   'machine_learning',
   'Address consistency issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14053,7 +14053,7 @@ SELECT
   'consistency_issues',
   'machine_learning',
   'Address consistency issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14066,7 +14066,7 @@ SELECT
   'consistency_issues',
   'machine_learning',
   'Address consistency issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14079,7 +14079,7 @@ SELECT
   'discovery_difficulty',
   'machine_learning',
   'Address discovery difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14092,7 +14092,7 @@ SELECT
   'discovery_difficulty',
   'machine_learning',
   'Address discovery difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14105,7 +14105,7 @@ SELECT
   'discovery_difficulty',
   'machine_learning',
   'Address discovery difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14118,7 +14118,7 @@ SELECT
   'versioning_gaps',
   'machine_learning',
   'Address versioning gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14131,7 +14131,7 @@ SELECT
   'versioning_gaps',
   'machine_learning',
   'Address versioning gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14144,7 +14144,7 @@ SELECT
   'versioning_gaps',
   'machine_learning',
   'Address versioning gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14157,7 +14157,7 @@ SELECT
   'slow_development',
   'machine_learning',
   'Address slow development with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14170,7 +14170,7 @@ SELECT
   'slow_development',
   'machine_learning',
   'Address slow development with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14183,7 +14183,7 @@ SELECT
   'slow_development',
   'machine_learning',
   'Address slow development with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14196,7 +14196,7 @@ SELECT
   'model_failures',
   'machine_learning',
   'Address model failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14209,7 +14209,7 @@ SELECT
   'model_failures',
   'machine_learning',
   'Address model failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14222,7 +14222,7 @@ SELECT
   'model_failures',
   'machine_learning',
   'Address model failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14235,7 +14235,7 @@ SELECT
   'limited_collaboration',
   'machine_learning',
   'Address limited collaboration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14248,7 +14248,7 @@ SELECT
   'limited_collaboration',
   'machine_learning',
   'Address limited collaboration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14261,7 +14261,7 @@ SELECT
   'limited_collaboration',
   'machine_learning',
   'Address limited collaboration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14274,7 +14274,7 @@ SELECT
   'quality_issues',
   'machine_learning',
   'Address quality issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14287,7 +14287,7 @@ SELECT
   'quality_issues',
   'machine_learning',
   'Address quality issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14300,7 +14300,7 @@ SELECT
   'quality_issues',
   'machine_learning',
   'Address quality issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14313,7 +14313,7 @@ SELECT
   'inconsistent_practices',
   'machine_learning',
   'Address inconsistent practices with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14326,7 +14326,7 @@ SELECT
   'inconsistent_practices',
   'machine_learning',
   'Address inconsistent practices with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14339,7 +14339,7 @@ SELECT
   'inconsistent_practices',
   'machine_learning',
   'Address inconsistent practices with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14352,7 +14352,7 @@ SELECT
   'manual_processes',
   'machine_learning',
   'Address manual processes with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14365,7 +14365,7 @@ SELECT
   'manual_processes',
   'machine_learning',
   'Address manual processes with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14378,7 +14378,7 @@ SELECT
   'manual_processes',
   'machine_learning',
   'Address manual processes with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14391,7 +14391,7 @@ SELECT
   'pipeline_fragility',
   'machine_learning',
   'Address pipeline fragility with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14404,7 +14404,7 @@ SELECT
   'pipeline_fragility',
   'machine_learning',
   'Address pipeline fragility with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14417,7 +14417,7 @@ SELECT
   'pipeline_fragility',
   'machine_learning',
   'Address pipeline fragility with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14430,7 +14430,7 @@ SELECT
   'quality_gaps',
   'machine_learning',
   'Address quality gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14443,7 +14443,7 @@ SELECT
   'quality_gaps',
   'machine_learning',
   'Address quality gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14456,7 +14456,7 @@ SELECT
   'quality_gaps',
   'machine_learning',
   'Address quality gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14469,7 +14469,7 @@ SELECT
   'scalability_issues',
   'machine_learning',
   'Address scalability issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14482,7 +14482,7 @@ SELECT
   'scalability_issues',
   'machine_learning',
   'Address scalability issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14495,7 +14495,7 @@ SELECT
   'scalability_issues',
   'machine_learning',
   'Address scalability issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14508,7 +14508,7 @@ SELECT
   'data_scientist_bottleneck',
   'machine_learning',
   'Address data scientist bottleneck with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14521,7 +14521,7 @@ SELECT
   'data_scientist_bottleneck',
   'machine_learning',
   'Address data scientist bottleneck with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14534,7 +14534,7 @@ SELECT
   'data_scientist_bottleneck',
   'machine_learning',
   'Address data scientist bottleneck with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14547,7 +14547,7 @@ SELECT
   'resource_waste',
   'machine_learning',
   'Address resource waste with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14560,7 +14560,7 @@ SELECT
   'resource_waste',
   'machine_learning',
   'Address resource waste with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14573,7 +14573,7 @@ SELECT
   'resource_waste',
   'machine_learning',
   'Address resource waste with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14586,7 +14586,7 @@ SELECT
   'limited_scalability',
   'machine_learning',
   'Address limited scalability with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14599,7 +14599,7 @@ SELECT
   'limited_scalability',
   'machine_learning',
   'Address limited scalability with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14612,7 +14612,7 @@ SELECT
   'limited_scalability',
   'machine_learning',
   'Address limited scalability with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14625,7 +14625,7 @@ SELECT
   'unclear_ownership',
   'machine_learning',
   'Address unclear ownership with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14638,7 +14638,7 @@ SELECT
   'unclear_ownership',
   'machine_learning',
   'Address unclear ownership with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14651,7 +14651,7 @@ SELECT
   'unclear_ownership',
   'machine_learning',
   'Address unclear ownership with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14664,7 +14664,7 @@ SELECT
   'no_approval_gates',
   'machine_learning',
   'Address no approval gates with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14677,7 +14677,7 @@ SELECT
   'no_approval_gates',
   'machine_learning',
   'Address no approval gates with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14690,7 +14690,7 @@ SELECT
   'no_approval_gates',
   'machine_learning',
   'Address no approval gates with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14703,7 +14703,7 @@ SELECT
   'documentation_gaps',
   'machine_learning',
   'Address documentation gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14716,7 +14716,7 @@ SELECT
   'documentation_gaps',
   'machine_learning',
   'Address documentation gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14729,7 +14729,7 @@ SELECT
   'documentation_gaps',
   'machine_learning',
   'Address documentation gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14742,7 +14742,7 @@ SELECT
   'review_inconsistency',
   'machine_learning',
   'Address review inconsistency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14755,7 +14755,7 @@ SELECT
   'review_inconsistency',
   'machine_learning',
   'Address review inconsistency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14768,7 +14768,7 @@ SELECT
   'review_inconsistency',
   'machine_learning',
   'Address review inconsistency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14781,7 +14781,7 @@ SELECT
   'change_tracking',
   'machine_learning',
   'Address change tracking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14794,7 +14794,7 @@ SELECT
   'change_tracking',
   'machine_learning',
   'Address change tracking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14807,7 +14807,7 @@ SELECT
   'change_tracking',
   'machine_learning',
   'Address change tracking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14820,7 +14820,7 @@ SELECT
   'accountability_gaps',
   'machine_learning',
   'Address accountability gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14833,7 +14833,7 @@ SELECT
   'accountability_gaps',
   'machine_learning',
   'Address accountability gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14846,7 +14846,7 @@ SELECT
   'accountability_gaps',
   'machine_learning',
   'Address accountability gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14859,7 +14859,7 @@ SELECT
   'risk_exposure',
   'machine_learning',
   'Address risk exposure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14872,7 +14872,7 @@ SELECT
   'risk_exposure',
   'machine_learning',
   'Address risk exposure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14885,7 +14885,7 @@ SELECT
   'risk_exposure',
   'machine_learning',
   'Address risk exposure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14898,7 +14898,7 @@ SELECT
   'compliance_failures',
   'machine_learning',
   'Address compliance failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14911,7 +14911,7 @@ SELECT
   'compliance_failures',
   'machine_learning',
   'Address compliance failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14924,7 +14924,7 @@ SELECT
   'compliance_failures',
   'machine_learning',
   'Address compliance failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14937,7 +14937,7 @@ SELECT
   'incident_response',
   'machine_learning',
   'Address incident response with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14950,7 +14950,7 @@ SELECT
   'incident_response',
   'machine_learning',
   'Address incident response with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14963,7 +14963,7 @@ SELECT
   'incident_response',
   'machine_learning',
   'Address incident response with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14976,7 +14976,7 @@ SELECT
   'no_lineage',
   'machine_learning',
   'Address no lineage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -14989,7 +14989,7 @@ SELECT
   'no_lineage',
   'machine_learning',
   'Address no lineage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15002,7 +15002,7 @@ SELECT
   'no_lineage',
   'machine_learning',
   'Address no lineage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15015,7 +15015,7 @@ SELECT
   'audit_gaps',
   'machine_learning',
   'Address audit gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15028,7 +15028,7 @@ SELECT
   'audit_gaps',
   'machine_learning',
   'Address audit gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15041,7 +15041,7 @@ SELECT
   'audit_gaps',
   'machine_learning',
   'Address audit gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15054,7 +15054,7 @@ SELECT
   'compliance_manual',
   'machine_learning',
   'Address compliance manual with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15067,7 +15067,7 @@ SELECT
   'compliance_manual',
   'machine_learning',
   'Address compliance manual with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15080,7 +15080,7 @@ SELECT
   'compliance_manual',
   'machine_learning',
   'Address compliance manual with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15093,7 +15093,7 @@ SELECT
   'bias_detection',
   'machine_learning',
   'Address bias detection with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15106,7 +15106,7 @@ SELECT
   'bias_detection',
   'machine_learning',
   'Address bias detection with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15119,7 +15119,7 @@ SELECT
   'bias_detection',
   'machine_learning',
   'Address bias detection with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15132,7 +15132,7 @@ SELECT
   'explainability_gaps',
   'machine_learning',
   'Address explainability gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15145,7 +15145,7 @@ SELECT
   'explainability_gaps',
   'machine_learning',
   'Address explainability gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15158,7 +15158,7 @@ SELECT
   'explainability_gaps',
   'machine_learning',
   'Address explainability gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15171,7 +15171,7 @@ SELECT
   'regulatory_risk',
   'machine_learning',
   'Address regulatory risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15184,7 +15184,7 @@ SELECT
   'regulatory_risk',
   'machine_learning',
   'Address regulatory risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15197,7 +15197,7 @@ SELECT
   'regulatory_risk',
   'machine_learning',
   'Address regulatory risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15210,7 +15210,7 @@ SELECT
   'audit_failures',
   'machine_learning',
   'Address audit failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15223,7 +15223,7 @@ SELECT
   'audit_failures',
   'machine_learning',
   'Address audit failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15236,7 +15236,7 @@ SELECT
   'audit_failures',
   'machine_learning',
   'Address audit failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15249,7 +15249,7 @@ SELECT
   'bias_incidents',
   'machine_learning',
   'Address bias incidents with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15262,7 +15262,7 @@ SELECT
   'bias_incidents',
   'machine_learning',
   'Address bias incidents with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15275,7 +15275,7 @@ SELECT
   'bias_incidents',
   'machine_learning',
   'Address bias incidents with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15288,7 +15288,7 @@ SELECT
   'reputation_damage',
   'machine_learning',
   'Address reputation damage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15301,7 +15301,7 @@ SELECT
   'reputation_damage',
   'machine_learning',
   'Address reputation damage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15314,7 +15314,7 @@ SELECT
   'reputation_damage',
   'machine_learning',
   'Address reputation damage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15327,7 +15327,7 @@ SELECT
   'legal_exposure',
   'machine_learning',
   'Address legal exposure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15340,7 +15340,7 @@ SELECT
   'legal_exposure',
   'machine_learning',
   'Address legal exposure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15353,7 +15353,7 @@ SELECT
   'legal_exposure',
   'machine_learning',
   'Address legal exposure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15366,7 +15366,7 @@ SELECT
   'pilot_to_prod_gap',
   'machine_learning',
   'Address pilot to prod gap with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15379,7 +15379,7 @@ SELECT
   'pilot_to_prod_gap',
   'machine_learning',
   'Address pilot to prod gap with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15392,7 +15392,7 @@ SELECT
   'pilot_to_prod_gap',
   'machine_learning',
   'Address pilot to prod gap with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15405,7 +15405,7 @@ SELECT
   'deployment_barriers',
   'machine_learning',
   'Address deployment barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15418,7 +15418,7 @@ SELECT
   'deployment_barriers',
   'machine_learning',
   'Address deployment barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15431,7 +15431,7 @@ SELECT
   'deployment_barriers',
   'machine_learning',
   'Address deployment barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15444,7 +15444,7 @@ SELECT
   'infrastructure_gaps',
   'machine_learning',
   'Address infrastructure gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15457,7 +15457,7 @@ SELECT
   'infrastructure_gaps',
   'machine_learning',
   'Address infrastructure gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15470,7 +15470,7 @@ SELECT
   'infrastructure_gaps',
   'machine_learning',
   'Address infrastructure gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15483,7 +15483,7 @@ SELECT
   'integration_complexity',
   'machine_learning',
   'Address integration complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15496,7 +15496,7 @@ SELECT
   'integration_complexity',
   'machine_learning',
   'Address integration complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15509,7 +15509,7 @@ SELECT
   'integration_complexity',
   'machine_learning',
   'Address integration complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15522,7 +15522,7 @@ SELECT
   'performance_issues',
   'machine_learning',
   'Address performance issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15535,7 +15535,7 @@ SELECT
   'performance_issues',
   'machine_learning',
   'Address performance issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15548,7 +15548,7 @@ SELECT
   'performance_issues',
   'machine_learning',
   'Address performance issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15561,7 +15561,7 @@ SELECT
   'low_roi',
   'machine_learning',
   'Address low roi with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15574,7 +15574,7 @@ SELECT
   'low_roi',
   'machine_learning',
   'Address low roi with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15587,7 +15587,7 @@ SELECT
   'low_roi',
   'machine_learning',
   'Address low roi with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15600,7 +15600,7 @@ SELECT
   'failed_pilots',
   'machine_learning',
   'Address failed pilots with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15613,7 +15613,7 @@ SELECT
   'failed_pilots',
   'machine_learning',
   'Address failed pilots with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15626,7 +15626,7 @@ SELECT
   'failed_pilots',
   'machine_learning',
   'Address failed pilots with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15639,7 +15639,7 @@ SELECT
   'long_timelines',
   'machine_learning',
   'Address long timelines with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15652,7 +15652,7 @@ SELECT
   'long_timelines',
   'machine_learning',
   'Address long timelines with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15665,7 +15665,7 @@ SELECT
   'long_timelines',
   'machine_learning',
   'Address long timelines with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15678,7 +15678,7 @@ SELECT
   'value_realization',
   'machine_learning',
   'Address value realization with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15691,7 +15691,7 @@ SELECT
   'value_realization',
   'machine_learning',
   'Address value realization with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15704,7 +15704,7 @@ SELECT
   'value_realization',
   'machine_learning',
   'Address value realization with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15717,7 +15717,7 @@ SELECT
   'stakeholder_frustration',
   'machine_learning',
   'Address stakeholder frustration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15730,7 +15730,7 @@ SELECT
   'stakeholder_frustration',
   'machine_learning',
   'Address stakeholder frustration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15743,7 +15743,7 @@ SELECT
   'stakeholder_frustration',
   'machine_learning',
   'Address stakeholder frustration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15756,7 +15756,7 @@ SELECT
   'custom_solutions',
   'machine_learning',
   'Address custom solutions with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15769,7 +15769,7 @@ SELECT
   'custom_solutions',
   'machine_learning',
   'Address custom solutions with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15782,7 +15782,7 @@ SELECT
   'custom_solutions',
   'machine_learning',
   'Address custom solutions with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15795,7 +15795,7 @@ SELECT
   'platform_gaps',
   'machine_learning',
   'Address platform gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15808,7 +15808,7 @@ SELECT
   'platform_gaps',
   'machine_learning',
   'Address platform gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15821,7 +15821,7 @@ SELECT
   'platform_gaps',
   'machine_learning',
   'Address platform gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15834,7 +15834,7 @@ SELECT
   'resource_constraints',
   'machine_learning',
   'Address resource constraints with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15847,7 +15847,7 @@ SELECT
   'resource_constraints',
   'machine_learning',
   'Address resource constraints with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15860,7 +15860,7 @@ SELECT
   'resource_constraints',
   'machine_learning',
   'Address resource constraints with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15873,7 +15873,7 @@ SELECT
   'knowledge_silos',
   'machine_learning',
   'Address knowledge silos with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15886,7 +15886,7 @@ SELECT
   'knowledge_silos',
   'machine_learning',
   'Address knowledge silos with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15899,7 +15899,7 @@ SELECT
   'knowledge_silos',
   'machine_learning',
   'Address knowledge silos with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15912,7 +15912,7 @@ SELECT
   'tooling_fragmentation',
   'machine_learning',
   'Address tooling fragmentation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15925,7 +15925,7 @@ SELECT
   'tooling_fragmentation',
   'machine_learning',
   'Address tooling fragmentation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15938,7 +15938,7 @@ SELECT
   'tooling_fragmentation',
   'machine_learning',
   'Address tooling fragmentation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15951,7 +15951,7 @@ SELECT
   'limited_ml_adoption',
   'machine_learning',
   'Address limited ml adoption with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15964,7 +15964,7 @@ SELECT
   'limited_ml_adoption',
   'machine_learning',
   'Address limited ml adoption with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15977,7 +15977,7 @@ SELECT
   'limited_ml_adoption',
   'machine_learning',
   'Address limited ml adoption with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -15990,7 +15990,7 @@ SELECT
   'long_onboarding',
   'machine_learning',
   'Address long onboarding with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16003,7 +16003,7 @@ SELECT
   'long_onboarding',
   'machine_learning',
   'Address long onboarding with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16016,7 +16016,7 @@ SELECT
   'long_onboarding',
   'machine_learning',
   'Address long onboarding with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16029,7 +16029,7 @@ SELECT
   'team_bottleneck',
   'machine_learning',
   'Address team bottleneck with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16042,7 +16042,7 @@ SELECT
   'team_bottleneck',
   'machine_learning',
   'Address team bottleneck with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16055,7 +16055,7 @@ SELECT
   'team_bottleneck',
   'machine_learning',
   'Address team bottleneck with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16068,7 +16068,7 @@ SELECT
   'missed_opportunities',
   'machine_learning',
   'Address missed opportunities with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16081,7 +16081,7 @@ SELECT
   'missed_opportunities',
   'machine_learning',
   'Address missed opportunities with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16094,7 +16094,7 @@ SELECT
   'missed_opportunities',
   'machine_learning',
   'Address missed opportunities with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16107,7 +16107,7 @@ SELECT
   'competitive_lag',
   'machine_learning',
   'Address competitive lag with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'machine-learning'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16120,7 +16120,7 @@ SELECT
   'competitive_lag',
   'machine_learning',
   'Address competitive lag with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'mlops'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16133,7 +16133,7 @@ SELECT
   'competitive_lag',
   'machine_learning',
   'Address competitive lag with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'feature-engineering'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16150,7 +16150,7 @@ SELECT
   'no_strategy',
   'generative_ai',
   'Address no strategy with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16163,7 +16163,7 @@ SELECT
   'no_strategy',
   'generative_ai',
   'Address no strategy with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16176,7 +16176,7 @@ SELECT
   'no_strategy',
   'generative_ai',
   'Address no strategy with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16189,7 +16189,7 @@ SELECT
   'disconnected_efforts',
   'generative_ai',
   'Address disconnected efforts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16202,7 +16202,7 @@ SELECT
   'disconnected_efforts',
   'generative_ai',
   'Address disconnected efforts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16215,7 +16215,7 @@ SELECT
   'disconnected_efforts',
   'generative_ai',
   'Address disconnected efforts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16228,7 +16228,7 @@ SELECT
   'unclear_use_cases',
   'generative_ai',
   'Address unclear use cases with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16241,7 +16241,7 @@ SELECT
   'unclear_use_cases',
   'generative_ai',
   'Address unclear use cases with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16254,7 +16254,7 @@ SELECT
   'unclear_use_cases',
   'generative_ai',
   'Address unclear use cases with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16267,7 +16267,7 @@ SELECT
   'technology_uncertainty',
   'generative_ai',
   'Address technology uncertainty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16280,7 +16280,7 @@ SELECT
   'technology_uncertainty',
   'generative_ai',
   'Address technology uncertainty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16293,7 +16293,7 @@ SELECT
   'technology_uncertainty',
   'generative_ai',
   'Address technology uncertainty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16306,7 +16306,7 @@ SELECT
   'skills_gaps',
   'generative_ai',
   'Address skills gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16319,7 +16319,7 @@ SELECT
   'skills_gaps',
   'generative_ai',
   'Address skills gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16332,7 +16332,7 @@ SELECT
   'skills_gaps',
   'generative_ai',
   'Address skills gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16345,7 +16345,7 @@ SELECT
   'competitive_pressure',
   'generative_ai',
   'Address competitive pressure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16358,7 +16358,7 @@ SELECT
   'competitive_pressure',
   'generative_ai',
   'Address competitive pressure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16371,7 +16371,7 @@ SELECT
   'competitive_pressure',
   'generative_ai',
   'Address competitive pressure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16384,7 +16384,7 @@ SELECT
   'unclear_roi',
   'generative_ai',
   'Address unclear roi with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16397,7 +16397,7 @@ SELECT
   'unclear_roi',
   'generative_ai',
   'Address unclear roi with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16410,7 +16410,7 @@ SELECT
   'unclear_roi',
   'generative_ai',
   'Address unclear roi with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16423,7 +16423,7 @@ SELECT
   'missed_opportunities',
   'generative_ai',
   'Address missed opportunities with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16436,7 +16436,7 @@ SELECT
   'missed_opportunities',
   'generative_ai',
   'Address missed opportunities with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16449,7 +16449,7 @@ SELECT
   'missed_opportunities',
   'generative_ai',
   'Address missed opportunities with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16462,7 +16462,7 @@ SELECT
   'budget_uncertainty',
   'generative_ai',
   'Address budget uncertainty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16475,7 +16475,7 @@ SELECT
   'budget_uncertainty',
   'generative_ai',
   'Address budget uncertainty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16488,7 +16488,7 @@ SELECT
   'budget_uncertainty',
   'generative_ai',
   'Address budget uncertainty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16501,7 +16501,7 @@ SELECT
   'stakeholder_expectations',
   'generative_ai',
   'Address stakeholder expectations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16514,7 +16514,7 @@ SELECT
   'stakeholder_expectations',
   'generative_ai',
   'Address stakeholder expectations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16527,7 +16527,7 @@ SELECT
   'stakeholder_expectations',
   'generative_ai',
   'Address stakeholder expectations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16540,7 +16540,7 @@ SELECT
   'vague_requirements',
   'generative_ai',
   'Address vague requirements with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16553,7 +16553,7 @@ SELECT
   'vague_requirements',
   'generative_ai',
   'Address vague requirements with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16566,7 +16566,7 @@ SELECT
   'vague_requirements',
   'generative_ai',
   'Address vague requirements with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16579,7 +16579,7 @@ SELECT
   'unrealistic_expectations',
   'generative_ai',
   'Address unrealistic expectations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16592,7 +16592,7 @@ SELECT
   'unrealistic_expectations',
   'generative_ai',
   'Address unrealistic expectations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16605,7 +16605,7 @@ SELECT
   'unrealistic_expectations',
   'generative_ai',
   'Address unrealistic expectations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16618,7 +16618,7 @@ SELECT
   'data_readiness',
   'generative_ai',
   'Address data readiness with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16631,7 +16631,7 @@ SELECT
   'data_readiness',
   'generative_ai',
   'Address data readiness with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16644,7 +16644,7 @@ SELECT
   'data_readiness',
   'generative_ai',
   'Address data readiness with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16657,7 +16657,7 @@ SELECT
   'poc_challenges',
   'generative_ai',
   'Address poc challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16670,7 +16670,7 @@ SELECT
   'poc_challenges',
   'generative_ai',
   'Address poc challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16683,7 +16683,7 @@ SELECT
   'poc_challenges',
   'generative_ai',
   'Address poc challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16696,7 +16696,7 @@ SELECT
   'evaluation_gaps',
   'generative_ai',
   'Address evaluation gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16709,7 +16709,7 @@ SELECT
   'evaluation_gaps',
   'generative_ai',
   'Address evaluation gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16722,7 +16722,7 @@ SELECT
   'evaluation_gaps',
   'generative_ai',
   'Address evaluation gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16735,7 +16735,7 @@ SELECT
   'scattered_efforts',
   'generative_ai',
   'Address scattered efforts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16748,7 +16748,7 @@ SELECT
   'scattered_efforts',
   'generative_ai',
   'Address scattered efforts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16761,7 +16761,7 @@ SELECT
   'scattered_efforts',
   'generative_ai',
   'Address scattered efforts with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16774,7 +16774,7 @@ SELECT
   'value_uncertainty',
   'generative_ai',
   'Address value uncertainty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16787,7 +16787,7 @@ SELECT
   'value_uncertainty',
   'generative_ai',
   'Address value uncertainty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16800,7 +16800,7 @@ SELECT
   'value_uncertainty',
   'generative_ai',
   'Address value uncertainty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16813,7 +16813,7 @@ SELECT
   'prioritization_challenges',
   'generative_ai',
   'Address prioritization challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16826,7 +16826,7 @@ SELECT
   'prioritization_challenges',
   'generative_ai',
   'Address prioritization challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16839,7 +16839,7 @@ SELECT
   'prioritization_challenges',
   'generative_ai',
   'Address prioritization challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16852,7 +16852,7 @@ SELECT
   'resource_waste',
   'generative_ai',
   'Address resource waste with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16865,7 +16865,7 @@ SELECT
   'resource_waste',
   'generative_ai',
   'Address resource waste with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16878,7 +16878,7 @@ SELECT
   'resource_waste',
   'generative_ai',
   'Address resource waste with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16891,7 +16891,7 @@ SELECT
   'stakeholder_confusion',
   'generative_ai',
   'Address stakeholder confusion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16904,7 +16904,7 @@ SELECT
   'stakeholder_confusion',
   'generative_ai',
   'Address stakeholder confusion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16917,7 +16917,7 @@ SELECT
   'stakeholder_confusion',
   'generative_ai',
   'Address stakeholder confusion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16930,7 +16930,7 @@ SELECT
   'unstructured_data',
   'generative_ai',
   'Address unstructured data with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16943,7 +16943,7 @@ SELECT
   'unstructured_data',
   'generative_ai',
   'Address unstructured data with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16956,7 +16956,7 @@ SELECT
   'unstructured_data',
   'generative_ai',
   'Address unstructured data with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16969,7 +16969,7 @@ SELECT
   'no_vector_search',
   'generative_ai',
   'Address no vector search with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16982,7 +16982,7 @@ SELECT
   'no_vector_search',
   'generative_ai',
   'Address no vector search with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -16995,7 +16995,7 @@ SELECT
   'no_vector_search',
   'generative_ai',
   'Address no vector search with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17008,7 +17008,7 @@ SELECT
   'data_quality',
   'generative_ai',
   'Address data quality with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17021,7 +17021,7 @@ SELECT
   'data_quality',
   'generative_ai',
   'Address data quality with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17034,7 +17034,7 @@ SELECT
   'data_quality',
   'generative_ai',
   'Address data quality with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17047,7 +17047,7 @@ SELECT
   'chunking_challenges',
   'generative_ai',
   'Address chunking challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17060,7 +17060,7 @@ SELECT
   'chunking_challenges',
   'generative_ai',
   'Address chunking challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17073,7 +17073,7 @@ SELECT
   'chunking_challenges',
   'generative_ai',
   'Address chunking challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17086,7 +17086,7 @@ SELECT
   'integration_gaps',
   'generative_ai',
   'Address integration gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17099,7 +17099,7 @@ SELECT
   'integration_gaps',
   'generative_ai',
   'Address integration gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17112,7 +17112,7 @@ SELECT
   'integration_gaps',
   'generative_ai',
   'Address integration gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17125,7 +17125,7 @@ SELECT
   'limited_context',
   'generative_ai',
   'Address limited context with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17138,7 +17138,7 @@ SELECT
   'limited_context',
   'generative_ai',
   'Address limited context with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17151,7 +17151,7 @@ SELECT
   'limited_context',
   'generative_ai',
   'Address limited context with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17164,7 +17164,7 @@ SELECT
   'hallucinations',
   'generative_ai',
   'Address hallucinations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17177,7 +17177,7 @@ SELECT
   'hallucinations',
   'generative_ai',
   'Address hallucinations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17190,7 +17190,7 @@ SELECT
   'hallucinations',
   'generative_ai',
   'Address hallucinations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17203,7 +17203,7 @@ SELECT
   'poor_relevance',
   'generative_ai',
   'Address poor relevance with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17216,7 +17216,7 @@ SELECT
   'poor_relevance',
   'generative_ai',
   'Address poor relevance with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17229,7 +17229,7 @@ SELECT
   'poor_relevance',
   'generative_ai',
   'Address poor relevance with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17242,7 +17242,7 @@ SELECT
   'data_prep_delays',
   'generative_ai',
   'Address data prep delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17255,7 +17255,7 @@ SELECT
   'data_prep_delays',
   'generative_ai',
   'Address data prep delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17268,7 +17268,7 @@ SELECT
   'data_prep_delays',
   'generative_ai',
   'Address data prep delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17281,7 +17281,7 @@ SELECT
   'business_impact',
   'generative_ai',
   'Address business impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17294,7 +17294,7 @@ SELECT
   'business_impact',
   'generative_ai',
   'Address business impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17307,7 +17307,7 @@ SELECT
   'business_impact',
   'generative_ai',
   'Address business impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17320,7 +17320,7 @@ SELECT
   'ungoverned_sources',
   'generative_ai',
   'Address ungoverned sources with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17333,7 +17333,7 @@ SELECT
   'ungoverned_sources',
   'generative_ai',
   'Address ungoverned sources with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17346,7 +17346,7 @@ SELECT
   'ungoverned_sources',
   'generative_ai',
   'Address ungoverned sources with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17359,7 +17359,7 @@ SELECT
   'version_control',
   'generative_ai',
   'Address version control with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17372,7 +17372,7 @@ SELECT
   'version_control',
   'generative_ai',
   'Address version control with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17385,7 +17385,7 @@ SELECT
   'version_control',
   'generative_ai',
   'Address version control with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17398,7 +17398,7 @@ SELECT
   'quality_checks',
   'generative_ai',
   'Address quality checks with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17411,7 +17411,7 @@ SELECT
   'quality_checks',
   'generative_ai',
   'Address quality checks with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17424,7 +17424,7 @@ SELECT
   'quality_checks',
   'generative_ai',
   'Address quality checks with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17437,7 +17437,7 @@ SELECT
   'access_control',
   'generative_ai',
   'Address access control with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17450,7 +17450,7 @@ SELECT
   'access_control',
   'generative_ai',
   'Address access control with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17463,7 +17463,7 @@ SELECT
   'access_control',
   'generative_ai',
   'Address access control with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17476,7 +17476,7 @@ SELECT
   'lineage_gaps',
   'generative_ai',
   'Address lineage gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17489,7 +17489,7 @@ SELECT
   'lineage_gaps',
   'generative_ai',
   'Address lineage gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17502,7 +17502,7 @@ SELECT
   'lineage_gaps',
   'generative_ai',
   'Address lineage gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17515,7 +17515,7 @@ SELECT
   'output_quality',
   'generative_ai',
   'Address output quality with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17528,7 +17528,7 @@ SELECT
   'output_quality',
   'generative_ai',
   'Address output quality with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17541,7 +17541,7 @@ SELECT
   'output_quality',
   'generative_ai',
   'Address output quality with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17554,7 +17554,7 @@ SELECT
   'trust_issues',
   'generative_ai',
   'Address trust issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17567,7 +17567,7 @@ SELECT
   'trust_issues',
   'generative_ai',
   'Address trust issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17580,7 +17580,7 @@ SELECT
   'trust_issues',
   'generative_ai',
   'Address trust issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17593,7 +17593,7 @@ SELECT
   'compliance_risk',
   'generative_ai',
   'Address compliance risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17606,7 +17606,7 @@ SELECT
   'compliance_risk',
   'generative_ai',
   'Address compliance risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17619,7 +17619,7 @@ SELECT
   'compliance_risk',
   'generative_ai',
   'Address compliance risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17632,7 +17632,7 @@ SELECT
   'misinformation',
   'generative_ai',
   'Address misinformation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17645,7 +17645,7 @@ SELECT
   'misinformation',
   'generative_ai',
   'Address misinformation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17658,7 +17658,7 @@ SELECT
   'misinformation',
   'generative_ai',
   'Address misinformation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17671,7 +17671,7 @@ SELECT
   'reputation_risk',
   'generative_ai',
   'Address reputation risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17684,7 +17684,7 @@ SELECT
   'reputation_risk',
   'generative_ai',
   'Address reputation risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17697,7 +17697,7 @@ SELECT
   'reputation_risk',
   'generative_ai',
   'Address reputation risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17710,7 +17710,7 @@ SELECT
   'no_infrastructure',
   'generative_ai',
   'Address no infrastructure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17723,7 +17723,7 @@ SELECT
   'no_infrastructure',
   'generative_ai',
   'Address no infrastructure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17736,7 +17736,7 @@ SELECT
   'no_infrastructure',
   'generative_ai',
   'Address no infrastructure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17749,7 +17749,7 @@ SELECT
   'api_limitations',
   'generative_ai',
   'Address api limitations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17762,7 +17762,7 @@ SELECT
   'api_limitations',
   'generative_ai',
   'Address api limitations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17775,7 +17775,7 @@ SELECT
   'api_limitations',
   'generative_ai',
   'Address api limitations with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17788,7 +17788,7 @@ SELECT
   'scalability_issues',
   'generative_ai',
   'Address scalability issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17801,7 +17801,7 @@ SELECT
   'scalability_issues',
   'generative_ai',
   'Address scalability issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17814,7 +17814,7 @@ SELECT
   'scalability_issues',
   'generative_ai',
   'Address scalability issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17827,7 +17827,7 @@ SELECT
   'cost_concerns',
   'generative_ai',
   'Address cost concerns with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17840,7 +17840,7 @@ SELECT
   'cost_concerns',
   'generative_ai',
   'Address cost concerns with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17853,7 +17853,7 @@ SELECT
   'cost_concerns',
   'generative_ai',
   'Address cost concerns with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17866,7 +17866,7 @@ SELECT
   'integration_complexity',
   'generative_ai',
   'Address integration complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17879,7 +17879,7 @@ SELECT
   'integration_complexity',
   'generative_ai',
   'Address integration complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17892,7 +17892,7 @@ SELECT
   'integration_complexity',
   'generative_ai',
   'Address integration complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17905,7 +17905,7 @@ SELECT
   'slow_development',
   'generative_ai',
   'Address slow development with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17918,7 +17918,7 @@ SELECT
   'slow_development',
   'generative_ai',
   'Address slow development with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17931,7 +17931,7 @@ SELECT
   'slow_development',
   'generative_ai',
   'Address slow development with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17944,7 +17944,7 @@ SELECT
   'user_experience',
   'generative_ai',
   'Address user experience with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17957,7 +17957,7 @@ SELECT
   'user_experience',
   'generative_ai',
   'Address user experience with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17970,7 +17970,7 @@ SELECT
   'user_experience',
   'generative_ai',
   'Address user experience with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17983,7 +17983,7 @@ SELECT
   'reliability_issues',
   'generative_ai',
   'Address reliability issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -17996,7 +17996,7 @@ SELECT
   'reliability_issues',
   'generative_ai',
   'Address reliability issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18009,7 +18009,7 @@ SELECT
   'reliability_issues',
   'generative_ai',
   'Address reliability issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18022,7 +18022,7 @@ SELECT
   'cost_overruns',
   'generative_ai',
   'Address cost overruns with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18035,7 +18035,7 @@ SELECT
   'cost_overruns',
   'generative_ai',
   'Address cost overruns with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18048,7 +18048,7 @@ SELECT
   'cost_overruns',
   'generative_ai',
   'Address cost overruns with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18061,7 +18061,7 @@ SELECT
   'competitive_lag',
   'generative_ai',
   'Address competitive lag with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18074,7 +18074,7 @@ SELECT
   'competitive_lag',
   'generative_ai',
   'Address competitive lag with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18087,7 +18087,7 @@ SELECT
   'competitive_lag',
   'generative_ai',
   'Address competitive lag with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18100,7 +18100,7 @@ SELECT
   'no_standards',
   'generative_ai',
   'Address no standards with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18113,7 +18113,7 @@ SELECT
   'no_standards',
   'generative_ai',
   'Address no standards with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18126,7 +18126,7 @@ SELECT
   'no_standards',
   'generative_ai',
   'Address no standards with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18139,7 +18139,7 @@ SELECT
   'custom_solutions',
   'generative_ai',
   'Address custom solutions with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18152,7 +18152,7 @@ SELECT
   'custom_solutions',
   'generative_ai',
   'Address custom solutions with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18165,7 +18165,7 @@ SELECT
   'custom_solutions',
   'generative_ai',
   'Address custom solutions with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18178,7 +18178,7 @@ SELECT
   'security_gaps',
   'generative_ai',
   'Address security gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18191,7 +18191,7 @@ SELECT
   'security_gaps',
   'generative_ai',
   'Address security gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18204,7 +18204,7 @@ SELECT
   'security_gaps',
   'generative_ai',
   'Address security gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18217,7 +18217,7 @@ SELECT
   'error_handling',
   'generative_ai',
   'Address error handling with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18230,7 +18230,7 @@ SELECT
   'error_handling',
   'generative_ai',
   'Address error handling with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18243,7 +18243,7 @@ SELECT
   'error_handling',
   'generative_ai',
   'Address error handling with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18256,7 +18256,7 @@ SELECT
   'monitoring_gaps',
   'generative_ai',
   'Address monitoring gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18269,7 +18269,7 @@ SELECT
   'monitoring_gaps',
   'generative_ai',
   'Address monitoring gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18282,7 +18282,7 @@ SELECT
   'monitoring_gaps',
   'generative_ai',
   'Address monitoring gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18295,7 +18295,7 @@ SELECT
   'slow_integration',
   'generative_ai',
   'Address slow integration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18308,7 +18308,7 @@ SELECT
   'slow_integration',
   'generative_ai',
   'Address slow integration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18321,7 +18321,7 @@ SELECT
   'slow_integration',
   'generative_ai',
   'Address slow integration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18334,7 +18334,7 @@ SELECT
   'maintenance_burden',
   'generative_ai',
   'Address maintenance burden with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18347,7 +18347,7 @@ SELECT
   'maintenance_burden',
   'generative_ai',
   'Address maintenance burden with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18360,7 +18360,7 @@ SELECT
   'maintenance_burden',
   'generative_ai',
   'Address maintenance burden with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18373,7 +18373,7 @@ SELECT
   'inconsistent_ux',
   'generative_ai',
   'Address inconsistent ux with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18386,7 +18386,7 @@ SELECT
   'inconsistent_ux',
   'generative_ai',
   'Address inconsistent ux with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18399,7 +18399,7 @@ SELECT
   'inconsistent_ux',
   'generative_ai',
   'Address inconsistent ux with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18412,7 +18412,7 @@ SELECT
   'scaling_challenges',
   'generative_ai',
   'Address scaling challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18425,7 +18425,7 @@ SELECT
   'scaling_challenges',
   'generative_ai',
   'Address scaling challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18438,7 +18438,7 @@ SELECT
   'scaling_challenges',
   'generative_ai',
   'Address scaling challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18451,7 +18451,7 @@ SELECT
   'security_incidents',
   'generative_ai',
   'Address security incidents with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18464,7 +18464,7 @@ SELECT
   'security_incidents',
   'generative_ai',
   'Address security incidents with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18477,7 +18477,7 @@ SELECT
   'security_incidents',
   'generative_ai',
   'Address security incidents with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18490,7 +18490,7 @@ SELECT
   'no_validation',
   'generative_ai',
   'Address no validation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18503,7 +18503,7 @@ SELECT
   'no_validation',
   'generative_ai',
   'Address no validation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18516,7 +18516,7 @@ SELECT
   'no_validation',
   'generative_ai',
   'Address no validation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18529,7 +18529,7 @@ SELECT
   'manual_review',
   'generative_ai',
   'Address manual review with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18542,7 +18542,7 @@ SELECT
   'manual_review',
   'generative_ai',
   'Address manual review with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18555,7 +18555,7 @@ SELECT
   'manual_review',
   'generative_ai',
   'Address manual review with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18568,7 +18568,7 @@ SELECT
   'hallucination_detection',
   'generative_ai',
   'Address hallucination detection with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18581,7 +18581,7 @@ SELECT
   'hallucination_detection',
   'generative_ai',
   'Address hallucination detection with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18594,7 +18594,7 @@ SELECT
   'hallucination_detection',
   'generative_ai',
   'Address hallucination detection with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18607,7 +18607,7 @@ SELECT
   'quality_metrics',
   'generative_ai',
   'Address quality metrics with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18620,7 +18620,7 @@ SELECT
   'quality_metrics',
   'generative_ai',
   'Address quality metrics with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18633,7 +18633,7 @@ SELECT
   'quality_metrics',
   'generative_ai',
   'Address quality metrics with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18646,7 +18646,7 @@ SELECT
   'testing_gaps',
   'generative_ai',
   'Address testing gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18659,7 +18659,7 @@ SELECT
   'testing_gaps',
   'generative_ai',
   'Address testing gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18672,7 +18672,7 @@ SELECT
   'testing_gaps',
   'generative_ai',
   'Address testing gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18685,7 +18685,7 @@ SELECT
   'user_trust',
   'generative_ai',
   'Address user trust with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18698,7 +18698,7 @@ SELECT
   'user_trust',
   'generative_ai',
   'Address user trust with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18711,7 +18711,7 @@ SELECT
   'user_trust',
   'generative_ai',
   'Address user trust with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18724,7 +18724,7 @@ SELECT
   'business_risk',
   'generative_ai',
   'Address business risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18737,7 +18737,7 @@ SELECT
   'business_risk',
   'generative_ai',
   'Address business risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18750,7 +18750,7 @@ SELECT
   'business_risk',
   'generative_ai',
   'Address business risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18763,7 +18763,7 @@ SELECT
   'manual_overhead',
   'generative_ai',
   'Address manual overhead with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18776,7 +18776,7 @@ SELECT
   'manual_overhead',
   'generative_ai',
   'Address manual overhead with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18789,7 +18789,7 @@ SELECT
   'manual_overhead',
   'generative_ai',
   'Address manual overhead with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18802,7 +18802,7 @@ SELECT
   'reputation_damage',
   'generative_ai',
   'Address reputation damage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18815,7 +18815,7 @@ SELECT
   'reputation_damage',
   'generative_ai',
   'Address reputation damage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18828,7 +18828,7 @@ SELECT
   'reputation_damage',
   'generative_ai',
   'Address reputation damage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18841,7 +18841,7 @@ SELECT
   'no_monitoring',
   'generative_ai',
   'Address no monitoring with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18854,7 +18854,7 @@ SELECT
   'no_monitoring',
   'generative_ai',
   'Address no monitoring with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18867,7 +18867,7 @@ SELECT
   'no_monitoring',
   'generative_ai',
   'Address no monitoring with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18880,7 +18880,7 @@ SELECT
   'drift_detection',
   'generative_ai',
   'Address drift detection with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18893,7 +18893,7 @@ SELECT
   'drift_detection',
   'generative_ai',
   'Address drift detection with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18906,7 +18906,7 @@ SELECT
   'drift_detection',
   'generative_ai',
   'Address drift detection with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18919,7 +18919,7 @@ SELECT
   'content_safety',
   'generative_ai',
   'Address content safety with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18932,7 +18932,7 @@ SELECT
   'content_safety',
   'generative_ai',
   'Address content safety with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18945,7 +18945,7 @@ SELECT
   'content_safety',
   'generative_ai',
   'Address content safety with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18958,7 +18958,7 @@ SELECT
   'user_feedback',
   'generative_ai',
   'Address user feedback with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18971,7 +18971,7 @@ SELECT
   'user_feedback',
   'generative_ai',
   'Address user feedback with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18984,7 +18984,7 @@ SELECT
   'user_feedback',
   'generative_ai',
   'Address user feedback with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -18997,7 +18997,7 @@ SELECT
   'alert_gaps',
   'generative_ai',
   'Address alert gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19010,7 +19010,7 @@ SELECT
   'alert_gaps',
   'generative_ai',
   'Address alert gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19023,7 +19023,7 @@ SELECT
   'alert_gaps',
   'generative_ai',
   'Address alert gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19036,7 +19036,7 @@ SELECT
   'silent_degradation',
   'generative_ai',
   'Address silent degradation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19049,7 +19049,7 @@ SELECT
   'silent_degradation',
   'generative_ai',
   'Address silent degradation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19062,7 +19062,7 @@ SELECT
   'silent_degradation',
   'generative_ai',
   'Address silent degradation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19075,7 +19075,7 @@ SELECT
   'safety_incidents',
   'generative_ai',
   'Address safety incidents with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19088,7 +19088,7 @@ SELECT
   'safety_incidents',
   'generative_ai',
   'Address safety incidents with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19101,7 +19101,7 @@ SELECT
   'safety_incidents',
   'generative_ai',
   'Address safety incidents with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19114,7 +19114,7 @@ SELECT
   'user_complaints',
   'generative_ai',
   'Address user complaints with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19127,7 +19127,7 @@ SELECT
   'user_complaints',
   'generative_ai',
   'Address user complaints with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19140,7 +19140,7 @@ SELECT
   'user_complaints',
   'generative_ai',
   'Address user complaints with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19153,7 +19153,7 @@ SELECT
   'brand_risk',
   'generative_ai',
   'Address brand risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19166,7 +19166,7 @@ SELECT
   'brand_risk',
   'generative_ai',
   'Address brand risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19179,7 +19179,7 @@ SELECT
   'brand_risk',
   'generative_ai',
   'Address brand risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19192,7 +19192,7 @@ SELECT
   'reactive_approach',
   'generative_ai',
   'Address reactive approach with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19205,7 +19205,7 @@ SELECT
   'reactive_approach',
   'generative_ai',
   'Address reactive approach with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19218,7 +19218,7 @@ SELECT
   'reactive_approach',
   'generative_ai',
   'Address reactive approach with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19231,7 +19231,7 @@ SELECT
   'no_guardrails',
   'generative_ai',
   'Address no guardrails with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19244,7 +19244,7 @@ SELECT
   'no_guardrails',
   'generative_ai',
   'Address no guardrails with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19257,7 +19257,7 @@ SELECT
   'no_guardrails',
   'generative_ai',
   'Address no guardrails with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19270,7 +19270,7 @@ SELECT
   'pii_detection',
   'generative_ai',
   'Address pii detection with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19283,7 +19283,7 @@ SELECT
   'pii_detection',
   'generative_ai',
   'Address pii detection with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19296,7 +19296,7 @@ SELECT
   'pii_detection',
   'generative_ai',
   'Address pii detection with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19309,7 +19309,7 @@ SELECT
   'content_filtering',
   'generative_ai',
   'Address content filtering with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19322,7 +19322,7 @@ SELECT
   'content_filtering',
   'generative_ai',
   'Address content filtering with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19335,7 +19335,7 @@ SELECT
   'content_filtering',
   'generative_ai',
   'Address content filtering with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19348,7 +19348,7 @@ SELECT
   'bias_detection',
   'generative_ai',
   'Address bias detection with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19361,7 +19361,7 @@ SELECT
   'bias_detection',
   'generative_ai',
   'Address bias detection with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19374,7 +19374,7 @@ SELECT
   'bias_detection',
   'generative_ai',
   'Address bias detection with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19387,7 +19387,7 @@ SELECT
   'policy_enforcement',
   'generative_ai',
   'Address policy enforcement with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19400,7 +19400,7 @@ SELECT
   'policy_enforcement',
   'generative_ai',
   'Address policy enforcement with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19413,7 +19413,7 @@ SELECT
   'policy_enforcement',
   'generative_ai',
   'Address policy enforcement with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19426,7 +19426,7 @@ SELECT
   'data_breaches',
   'generative_ai',
   'Address data breaches with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19439,7 +19439,7 @@ SELECT
   'data_breaches',
   'generative_ai',
   'Address data breaches with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19452,7 +19452,7 @@ SELECT
   'data_breaches',
   'generative_ai',
   'Address data breaches with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19465,7 +19465,7 @@ SELECT
   'ethical_concerns',
   'generative_ai',
   'Address ethical concerns with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19478,7 +19478,7 @@ SELECT
   'ethical_concerns',
   'generative_ai',
   'Address ethical concerns with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19491,7 +19491,7 @@ SELECT
   'ethical_concerns',
   'generative_ai',
   'Address ethical concerns with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19504,7 +19504,7 @@ SELECT
   'legal_exposure',
   'generative_ai',
   'Address legal exposure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19517,7 +19517,7 @@ SELECT
   'legal_exposure',
   'generative_ai',
   'Address legal exposure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19530,7 +19530,7 @@ SELECT
   'legal_exposure',
   'generative_ai',
   'Address legal exposure with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19543,7 +19543,7 @@ SELECT
   'adoption_barriers',
   'generative_ai',
   'Address adoption barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19556,7 +19556,7 @@ SELECT
   'adoption_barriers',
   'generative_ai',
   'Address adoption barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19569,7 +19569,7 @@ SELECT
   'adoption_barriers',
   'generative_ai',
   'Address adoption barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19582,7 +19582,7 @@ SELECT
   'no_logging',
   'generative_ai',
   'Address no logging with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19595,7 +19595,7 @@ SELECT
   'no_logging',
   'generative_ai',
   'Address no logging with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19608,7 +19608,7 @@ SELECT
   'no_logging',
   'generative_ai',
   'Address no logging with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19621,7 +19621,7 @@ SELECT
   'audit_trails',
   'generative_ai',
   'Address audit trails with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19634,7 +19634,7 @@ SELECT
   'audit_trails',
   'generative_ai',
   'Address audit trails with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19647,7 +19647,7 @@ SELECT
   'audit_trails',
   'generative_ai',
   'Address audit trails with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19660,7 +19660,7 @@ SELECT
   'explainability',
   'generative_ai',
   'Address explainability with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19673,7 +19673,7 @@ SELECT
   'explainability',
   'generative_ai',
   'Address explainability with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19686,7 +19686,7 @@ SELECT
   'explainability',
   'generative_ai',
   'Address explainability with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19699,7 +19699,7 @@ SELECT
   'user_attribution',
   'generative_ai',
   'Address user attribution with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19712,7 +19712,7 @@ SELECT
   'user_attribution',
   'generative_ai',
   'Address user attribution with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19725,7 +19725,7 @@ SELECT
   'user_attribution',
   'generative_ai',
   'Address user attribution with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19738,7 +19738,7 @@ SELECT
   'accountability_gaps',
   'generative_ai',
   'Address accountability gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19751,7 +19751,7 @@ SELECT
   'accountability_gaps',
   'generative_ai',
   'Address accountability gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19764,7 +19764,7 @@ SELECT
   'accountability_gaps',
   'generative_ai',
   'Address accountability gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19777,7 +19777,7 @@ SELECT
   'audit_failures',
   'generative_ai',
   'Address audit failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19790,7 +19790,7 @@ SELECT
   'audit_failures',
   'generative_ai',
   'Address audit failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19803,7 +19803,7 @@ SELECT
   'audit_failures',
   'generative_ai',
   'Address audit failures with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19816,7 +19816,7 @@ SELECT
   'debugging_difficulty',
   'generative_ai',
   'Address debugging difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19829,7 +19829,7 @@ SELECT
   'debugging_difficulty',
   'generative_ai',
   'Address debugging difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19842,7 +19842,7 @@ SELECT
   'debugging_difficulty',
   'generative_ai',
   'Address debugging difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19855,7 +19855,7 @@ SELECT
   'trust_deficit',
   'generative_ai',
   'Address trust deficit with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19868,7 +19868,7 @@ SELECT
   'trust_deficit',
   'generative_ai',
   'Address trust deficit with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19881,7 +19881,7 @@ SELECT
   'trust_deficit',
   'generative_ai',
   'Address trust deficit with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19894,7 +19894,7 @@ SELECT
   'regulatory_risk',
   'generative_ai',
   'Address regulatory risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'generative-ai'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19907,7 +19907,7 @@ SELECT
   'regulatory_risk',
   'generative_ai',
   'Address regulatory risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'llm'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19920,7 +19920,7 @@ SELECT
   'regulatory_risk',
   'generative_ai',
   'Address regulatory risk with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'vector-search'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19937,7 +19937,7 @@ SELECT
   'no_coe',
   'operational_excellence',
   'Address no coe with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19950,7 +19950,7 @@ SELECT
   'no_coe',
   'operational_excellence',
   'Address no coe with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19963,7 +19963,7 @@ SELECT
   'no_coe',
   'operational_excellence',
   'Address no coe with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19976,7 +19976,7 @@ SELECT
   'unclear_charter',
   'operational_excellence',
   'Address unclear charter with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -19989,7 +19989,7 @@ SELECT
   'unclear_charter',
   'operational_excellence',
   'Address unclear charter with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20002,7 +20002,7 @@ SELECT
   'unclear_charter',
   'operational_excellence',
   'Address unclear charter with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20015,7 +20015,7 @@ SELECT
   'resource_constraints',
   'operational_excellence',
   'Address resource constraints with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20028,7 +20028,7 @@ SELECT
   'resource_constraints',
   'operational_excellence',
   'Address resource constraints with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20041,7 +20041,7 @@ SELECT
   'resource_constraints',
   'operational_excellence',
   'Address resource constraints with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20054,7 +20054,7 @@ SELECT
   'standards_gaps',
   'operational_excellence',
   'Address standards gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20067,7 +20067,7 @@ SELECT
   'standards_gaps',
   'operational_excellence',
   'Address standards gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20080,7 +20080,7 @@ SELECT
   'standards_gaps',
   'operational_excellence',
   'Address standards gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20093,7 +20093,7 @@ SELECT
   'adoption_challenges',
   'operational_excellence',
   'Address adoption challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20106,7 +20106,7 @@ SELECT
   'adoption_challenges',
   'operational_excellence',
   'Address adoption challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20119,7 +20119,7 @@ SELECT
   'adoption_challenges',
   'operational_excellence',
   'Address adoption challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20132,7 +20132,7 @@ SELECT
   'inconsistent_practices',
   'operational_excellence',
   'Address inconsistent practices with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20145,7 +20145,7 @@ SELECT
   'inconsistent_practices',
   'operational_excellence',
   'Address inconsistent practices with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20158,7 +20158,7 @@ SELECT
   'inconsistent_practices',
   'operational_excellence',
   'Address inconsistent practices with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20171,7 +20171,7 @@ SELECT
   'knowledge_silos',
   'operational_excellence',
   'Address knowledge silos with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20184,7 +20184,7 @@ SELECT
   'knowledge_silos',
   'operational_excellence',
   'Address knowledge silos with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20197,7 +20197,7 @@ SELECT
   'knowledge_silos',
   'operational_excellence',
   'Address knowledge silos with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20210,7 +20210,7 @@ SELECT
   'slow_adoption',
   'operational_excellence',
   'Address slow adoption with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20223,7 +20223,7 @@ SELECT
   'slow_adoption',
   'operational_excellence',
   'Address slow adoption with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20236,7 +20236,7 @@ SELECT
   'slow_adoption',
   'operational_excellence',
   'Address slow adoption with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20249,7 +20249,7 @@ SELECT
   'quality_issues',
   'operational_excellence',
   'Address quality issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20262,7 +20262,7 @@ SELECT
   'quality_issues',
   'operational_excellence',
   'Address quality issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20275,7 +20275,7 @@ SELECT
   'quality_issues',
   'operational_excellence',
   'Address quality issues with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20288,7 +20288,7 @@ SELECT
   'innovation_barriers',
   'operational_excellence',
   'Address innovation barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20301,7 +20301,7 @@ SELECT
   'innovation_barriers',
   'operational_excellence',
   'Address innovation barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20314,7 +20314,7 @@ SELECT
   'innovation_barriers',
   'operational_excellence',
   'Address innovation barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20327,7 +20327,7 @@ SELECT
   'low_influence',
   'operational_excellence',
   'Address low influence with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20340,7 +20340,7 @@ SELECT
   'low_influence',
   'operational_excellence',
   'Address low influence with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20353,7 +20353,7 @@ SELECT
   'low_influence',
   'operational_excellence',
   'Address low influence with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20366,7 +20366,7 @@ SELECT
   'communication_gaps',
   'operational_excellence',
   'Address communication gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20379,7 +20379,7 @@ SELECT
   'communication_gaps',
   'operational_excellence',
   'Address communication gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20392,7 +20392,7 @@ SELECT
   'communication_gaps',
   'operational_excellence',
   'Address communication gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20405,7 +20405,7 @@ SELECT
   'tooling_gaps',
   'operational_excellence',
   'Address tooling gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20418,7 +20418,7 @@ SELECT
   'tooling_gaps',
   'operational_excellence',
   'Address tooling gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20431,7 +20431,7 @@ SELECT
   'tooling_gaps',
   'operational_excellence',
   'Address tooling gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20444,7 +20444,7 @@ SELECT
   'feedback_loops',
   'operational_excellence',
   'Address feedback loops with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20457,7 +20457,7 @@ SELECT
   'feedback_loops',
   'operational_excellence',
   'Address feedback loops with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20470,7 +20470,7 @@ SELECT
   'feedback_loops',
   'operational_excellence',
   'Address feedback loops with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20483,7 +20483,7 @@ SELECT
   'measurement_gaps',
   'operational_excellence',
   'Address measurement gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20496,7 +20496,7 @@ SELECT
   'measurement_gaps',
   'operational_excellence',
   'Address measurement gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20509,7 +20509,7 @@ SELECT
   'measurement_gaps',
   'operational_excellence',
   'Address measurement gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20522,7 +20522,7 @@ SELECT
   'governance_gaps',
   'operational_excellence',
   'Address governance gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20535,7 +20535,7 @@ SELECT
   'governance_gaps',
   'operational_excellence',
   'Address governance gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20548,7 +20548,7 @@ SELECT
   'governance_gaps',
   'operational_excellence',
   'Address governance gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20561,7 +20561,7 @@ SELECT
   'architecture_debt',
   'operational_excellence',
   'Address architecture debt with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20574,7 +20574,7 @@ SELECT
   'architecture_debt',
   'operational_excellence',
   'Address architecture debt with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20587,7 +20587,7 @@ SELECT
   'architecture_debt',
   'operational_excellence',
   'Address architecture debt with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20600,7 +20600,7 @@ SELECT
   'team_confusion',
   'operational_excellence',
   'Address team confusion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20613,7 +20613,7 @@ SELECT
   'team_confusion',
   'operational_excellence',
   'Address team confusion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20626,7 +20626,7 @@ SELECT
   'team_confusion',
   'operational_excellence',
   'Address team confusion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20639,7 +20639,7 @@ SELECT
   'onboarding_delays',
   'operational_excellence',
   'Address onboarding delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20652,7 +20652,7 @@ SELECT
   'onboarding_delays',
   'operational_excellence',
   'Address onboarding delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20665,7 +20665,7 @@ SELECT
   'onboarding_delays',
   'operational_excellence',
   'Address onboarding delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20678,7 +20678,7 @@ SELECT
   'roi_unclear',
   'operational_excellence',
   'Address roi unclear with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20691,7 +20691,7 @@ SELECT
   'roi_unclear',
   'operational_excellence',
   'Address roi unclear with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20704,7 +20704,7 @@ SELECT
   'roi_unclear',
   'operational_excellence',
   'Address roi unclear with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20717,7 +20717,7 @@ SELECT
   'siloed_teams',
   'operational_excellence',
   'Address siloed teams with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20730,7 +20730,7 @@ SELECT
   'siloed_teams',
   'operational_excellence',
   'Address siloed teams with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20743,7 +20743,7 @@ SELECT
   'siloed_teams',
   'operational_excellence',
   'Address siloed teams with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20756,7 +20756,7 @@ SELECT
   'no_sharing_platform',
   'operational_excellence',
   'Address no sharing platform with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20769,7 +20769,7 @@ SELECT
   'no_sharing_platform',
   'operational_excellence',
   'Address no sharing platform with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20782,7 +20782,7 @@ SELECT
   'no_sharing_platform',
   'operational_excellence',
   'Address no sharing platform with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20795,7 +20795,7 @@ SELECT
   'documentation_gaps',
   'operational_excellence',
   'Address documentation gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20808,7 +20808,7 @@ SELECT
   'documentation_gaps',
   'operational_excellence',
   'Address documentation gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20821,7 +20821,7 @@ SELECT
   'documentation_gaps',
   'operational_excellence',
   'Address documentation gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20834,7 +20834,7 @@ SELECT
   'code_reuse',
   'operational_excellence',
   'Address code reuse with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20847,7 +20847,7 @@ SELECT
   'code_reuse',
   'operational_excellence',
   'Address code reuse with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20860,7 +20860,7 @@ SELECT
   'code_reuse',
   'operational_excellence',
   'Address code reuse with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20873,7 +20873,7 @@ SELECT
   'learning_barriers',
   'operational_excellence',
   'Address learning barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20886,7 +20886,7 @@ SELECT
   'learning_barriers',
   'operational_excellence',
   'Address learning barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20899,7 +20899,7 @@ SELECT
   'learning_barriers',
   'operational_excellence',
   'Address learning barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20912,7 +20912,7 @@ SELECT
   'duplicate_work',
   'operational_excellence',
   'Address duplicate work with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20925,7 +20925,7 @@ SELECT
   'duplicate_work',
   'operational_excellence',
   'Address duplicate work with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20938,7 +20938,7 @@ SELECT
   'duplicate_work',
   'operational_excellence',
   'Address duplicate work with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20951,7 +20951,7 @@ SELECT
   'slow_problem_solving',
   'operational_excellence',
   'Address slow problem solving with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20964,7 +20964,7 @@ SELECT
   'slow_problem_solving',
   'operational_excellence',
   'Address slow problem solving with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20977,7 +20977,7 @@ SELECT
   'slow_problem_solving',
   'operational_excellence',
   'Address slow problem solving with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -20990,7 +20990,7 @@ SELECT
   'innovation_lag',
   'operational_excellence',
   'Address innovation lag with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21003,7 +21003,7 @@ SELECT
   'innovation_lag',
   'operational_excellence',
   'Address innovation lag with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21016,7 +21016,7 @@ SELECT
   'innovation_lag',
   'operational_excellence',
   'Address innovation lag with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21029,7 +21029,7 @@ SELECT
   'onboarding_friction',
   'operational_excellence',
   'Address onboarding friction with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21042,7 +21042,7 @@ SELECT
   'onboarding_friction',
   'operational_excellence',
   'Address onboarding friction with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21055,7 +21055,7 @@ SELECT
   'onboarding_friction',
   'operational_excellence',
   'Address onboarding friction with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21068,7 +21068,7 @@ SELECT
   'knowledge_loss',
   'operational_excellence',
   'Address knowledge loss with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21081,7 +21081,7 @@ SELECT
   'knowledge_loss',
   'operational_excellence',
   'Address knowledge loss with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21094,7 +21094,7 @@ SELECT
   'knowledge_loss',
   'operational_excellence',
   'Address knowledge loss with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21107,7 +21107,7 @@ SELECT
   'no_asset_catalog',
   'operational_excellence',
   'Address no asset catalog with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21120,7 +21120,7 @@ SELECT
   'no_asset_catalog',
   'operational_excellence',
   'Address no asset catalog with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21133,7 +21133,7 @@ SELECT
   'no_asset_catalog',
   'operational_excellence',
   'Address no asset catalog with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21146,7 +21146,7 @@ SELECT
   'discovery_difficulty',
   'operational_excellence',
   'Address discovery difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21159,7 +21159,7 @@ SELECT
   'discovery_difficulty',
   'operational_excellence',
   'Address discovery difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21172,7 +21172,7 @@ SELECT
   'discovery_difficulty',
   'operational_excellence',
   'Address discovery difficulty with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21185,7 +21185,7 @@ SELECT
   'version_control',
   'operational_excellence',
   'Address version control with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21198,7 +21198,7 @@ SELECT
   'version_control',
   'operational_excellence',
   'Address version control with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21211,7 +21211,7 @@ SELECT
   'version_control',
   'operational_excellence',
   'Address version control with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21224,7 +21224,7 @@ SELECT
   'quality_standards',
   'operational_excellence',
   'Address quality standards with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21237,7 +21237,7 @@ SELECT
   'quality_standards',
   'operational_excellence',
   'Address quality standards with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21250,7 +21250,7 @@ SELECT
   'quality_standards',
   'operational_excellence',
   'Address quality standards with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21263,7 +21263,7 @@ SELECT
   'low_reuse',
   'operational_excellence',
   'Address low reuse with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21276,7 +21276,7 @@ SELECT
   'low_reuse',
   'operational_excellence',
   'Address low reuse with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21289,7 +21289,7 @@ SELECT
   'low_reuse',
   'operational_excellence',
   'Address low reuse with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21302,7 +21302,7 @@ SELECT
   'reinvention',
   'operational_excellence',
   'Address reinvention with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21315,7 +21315,7 @@ SELECT
   'reinvention',
   'operational_excellence',
   'Address reinvention with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21328,7 +21328,7 @@ SELECT
   'reinvention',
   'operational_excellence',
   'Address reinvention with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21341,7 +21341,7 @@ SELECT
   'velocity_impact',
   'operational_excellence',
   'Address velocity impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21354,7 +21354,7 @@ SELECT
   'velocity_impact',
   'operational_excellence',
   'Address velocity impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21367,7 +21367,7 @@ SELECT
   'velocity_impact',
   'operational_excellence',
   'Address velocity impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21380,7 +21380,7 @@ SELECT
   'quality_inconsistency',
   'operational_excellence',
   'Address quality inconsistency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21393,7 +21393,7 @@ SELECT
   'quality_inconsistency',
   'operational_excellence',
   'Address quality inconsistency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21406,7 +21406,7 @@ SELECT
   'quality_inconsistency',
   'operational_excellence',
   'Address quality inconsistency with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21419,7 +21419,7 @@ SELECT
   'maintenance_burden',
   'operational_excellence',
   'Address maintenance burden with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21432,7 +21432,7 @@ SELECT
   'maintenance_burden',
   'operational_excellence',
   'Address maintenance burden with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21445,7 +21445,7 @@ SELECT
   'maintenance_burden',
   'operational_excellence',
   'Address maintenance burden with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21458,7 +21458,7 @@ SELECT
   'no_formal_training',
   'operational_excellence',
   'Address no formal training with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21471,7 +21471,7 @@ SELECT
   'no_formal_training',
   'operational_excellence',
   'Address no formal training with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21484,7 +21484,7 @@ SELECT
   'no_formal_training',
   'operational_excellence',
   'Address no formal training with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21497,7 +21497,7 @@ SELECT
   'outdated_content',
   'operational_excellence',
   'Address outdated content with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21510,7 +21510,7 @@ SELECT
   'outdated_content',
   'operational_excellence',
   'Address outdated content with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21523,7 +21523,7 @@ SELECT
   'outdated_content',
   'operational_excellence',
   'Address outdated content with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21536,7 +21536,7 @@ SELECT
   'limited_coverage',
   'operational_excellence',
   'Address limited coverage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21549,7 +21549,7 @@ SELECT
   'limited_coverage',
   'operational_excellence',
   'Address limited coverage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21562,7 +21562,7 @@ SELECT
   'limited_coverage',
   'operational_excellence',
   'Address limited coverage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21575,7 +21575,7 @@ SELECT
   'access_barriers',
   'operational_excellence',
   'Address access barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21588,7 +21588,7 @@ SELECT
   'access_barriers',
   'operational_excellence',
   'Address access barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21601,7 +21601,7 @@ SELECT
   'access_barriers',
   'operational_excellence',
   'Address access barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21614,7 +21614,7 @@ SELECT
   'hands_on_gaps',
   'operational_excellence',
   'Address hands on gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21627,7 +21627,7 @@ SELECT
   'hands_on_gaps',
   'operational_excellence',
   'Address hands on gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21640,7 +21640,7 @@ SELECT
   'hands_on_gaps',
   'operational_excellence',
   'Address hands on gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21653,7 +21653,7 @@ SELECT
   'skills_gaps',
   'operational_excellence',
   'Address skills gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21666,7 +21666,7 @@ SELECT
   'skills_gaps',
   'operational_excellence',
   'Address skills gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21679,7 +21679,7 @@ SELECT
   'skills_gaps',
   'operational_excellence',
   'Address skills gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21692,7 +21692,7 @@ SELECT
   'support_burden',
   'operational_excellence',
   'Address support burden with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21705,7 +21705,7 @@ SELECT
   'support_burden',
   'operational_excellence',
   'Address support burden with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21718,7 +21718,7 @@ SELECT
   'support_burden',
   'operational_excellence',
   'Address support burden with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21731,7 +21731,7 @@ SELECT
   'underutilization',
   'operational_excellence',
   'Address underutilization with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21744,7 +21744,7 @@ SELECT
   'underutilization',
   'operational_excellence',
   'Address underutilization with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21757,7 +21757,7 @@ SELECT
   'underutilization',
   'operational_excellence',
   'Address underutilization with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21770,7 +21770,7 @@ SELECT
   'employee_frustration',
   'operational_excellence',
   'Address employee frustration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21783,7 +21783,7 @@ SELECT
   'employee_frustration',
   'operational_excellence',
   'Address employee frustration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21796,7 +21796,7 @@ SELECT
   'employee_frustration',
   'operational_excellence',
   'Address employee frustration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21809,7 +21809,7 @@ SELECT
   'no_updates',
   'operational_excellence',
   'Address no updates with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21822,7 +21822,7 @@ SELECT
   'no_updates',
   'operational_excellence',
   'Address no updates with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21835,7 +21835,7 @@ SELECT
   'no_updates',
   'operational_excellence',
   'Address no updates with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21848,7 +21848,7 @@ SELECT
   'demo_gaps',
   'operational_excellence',
   'Address demo gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21861,7 +21861,7 @@ SELECT
   'demo_gaps',
   'operational_excellence',
   'Address demo gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21874,7 +21874,7 @@ SELECT
   'demo_gaps',
   'operational_excellence',
   'Address demo gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21887,7 +21887,7 @@ SELECT
   'capability_unawareness',
   'operational_excellence',
   'Address capability unawareness with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21900,7 +21900,7 @@ SELECT
   'capability_unawareness',
   'operational_excellence',
   'Address capability unawareness with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21913,7 +21913,7 @@ SELECT
   'capability_unawareness',
   'operational_excellence',
   'Address capability unawareness with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21926,7 +21926,7 @@ SELECT
   'missed_opportunities',
   'operational_excellence',
   'Address missed opportunities with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21939,7 +21939,7 @@ SELECT
   'missed_opportunities',
   'operational_excellence',
   'Address missed opportunities with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21952,7 +21952,7 @@ SELECT
   'missed_opportunities',
   'operational_excellence',
   'Address missed opportunities with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21965,7 +21965,7 @@ SELECT
   'stale_practices',
   'operational_excellence',
   'Address stale practices with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21978,7 +21978,7 @@ SELECT
   'stale_practices',
   'operational_excellence',
   'Address stale practices with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -21991,7 +21991,7 @@ SELECT
   'stale_practices',
   'operational_excellence',
   'Address stale practices with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22004,7 +22004,7 @@ SELECT
   'competitive_lag',
   'operational_excellence',
   'Address competitive lag with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22017,7 +22017,7 @@ SELECT
   'competitive_lag',
   'operational_excellence',
   'Address competitive lag with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22030,7 +22030,7 @@ SELECT
   'competitive_lag',
   'operational_excellence',
   'Address competitive lag with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22043,7 +22043,7 @@ SELECT
   'no_tracking',
   'operational_excellence',
   'Address no tracking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22056,7 +22056,7 @@ SELECT
   'no_tracking',
   'operational_excellence',
   'Address no tracking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22069,7 +22069,7 @@ SELECT
   'no_tracking',
   'operational_excellence',
   'Address no tracking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22082,7 +22082,7 @@ SELECT
   'attribution_gaps',
   'operational_excellence',
   'Address attribution gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22095,7 +22095,7 @@ SELECT
   'attribution_gaps',
   'operational_excellence',
   'Address attribution gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22108,7 +22108,7 @@ SELECT
   'attribution_gaps',
   'operational_excellence',
   'Address attribution gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22121,7 +22121,7 @@ SELECT
   'metric_gaps',
   'operational_excellence',
   'Address metric gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22134,7 +22134,7 @@ SELECT
   'metric_gaps',
   'operational_excellence',
   'Address metric gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22147,7 +22147,7 @@ SELECT
   'metric_gaps',
   'operational_excellence',
   'Address metric gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22160,7 +22160,7 @@ SELECT
   'reporting_complexity',
   'operational_excellence',
   'Address reporting complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22173,7 +22173,7 @@ SELECT
   'reporting_complexity',
   'operational_excellence',
   'Address reporting complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22186,7 +22186,7 @@ SELECT
   'reporting_complexity',
   'operational_excellence',
   'Address reporting complexity with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22199,7 +22199,7 @@ SELECT
   'data_quality',
   'operational_excellence',
   'Address data quality with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22212,7 +22212,7 @@ SELECT
   'data_quality',
   'operational_excellence',
   'Address data quality with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22225,7 +22225,7 @@ SELECT
   'data_quality',
   'operational_excellence',
   'Address data quality with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22238,7 +22238,7 @@ SELECT
   'budget_justification',
   'operational_excellence',
   'Address budget justification with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22251,7 +22251,7 @@ SELECT
   'budget_justification',
   'operational_excellence',
   'Address budget justification with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22264,7 +22264,7 @@ SELECT
   'budget_justification',
   'operational_excellence',
   'Address budget justification with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22277,7 +22277,7 @@ SELECT
   'cost_perception',
   'operational_excellence',
   'Address cost perception with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22290,7 +22290,7 @@ SELECT
   'cost_perception',
   'operational_excellence',
   'Address cost perception with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22303,7 +22303,7 @@ SELECT
   'cost_perception',
   'operational_excellence',
   'Address cost perception with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22316,7 +22316,7 @@ SELECT
   'optimization_challenges',
   'operational_excellence',
   'Address optimization challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22329,7 +22329,7 @@ SELECT
   'optimization_challenges',
   'operational_excellence',
   'Address optimization challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22342,7 +22342,7 @@ SELECT
   'optimization_challenges',
   'operational_excellence',
   'Address optimization challenges with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22355,7 +22355,7 @@ SELECT
   'stakeholder_skepticism',
   'operational_excellence',
   'Address stakeholder skepticism with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22368,7 +22368,7 @@ SELECT
   'stakeholder_skepticism',
   'operational_excellence',
   'Address stakeholder skepticism with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22381,7 +22381,7 @@ SELECT
   'stakeholder_skepticism',
   'operational_excellence',
   'Address stakeholder skepticism with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22394,7 +22394,7 @@ SELECT
   'no_reviews',
   'operational_excellence',
   'Address no reviews with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22407,7 +22407,7 @@ SELECT
   'no_reviews',
   'operational_excellence',
   'Address no reviews with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22420,7 +22420,7 @@ SELECT
   'no_reviews',
   'operational_excellence',
   'Address no reviews with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22433,7 +22433,7 @@ SELECT
   'manual_analysis',
   'operational_excellence',
   'Address manual analysis with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22446,7 +22446,7 @@ SELECT
   'manual_analysis',
   'operational_excellence',
   'Address manual analysis with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22459,7 +22459,7 @@ SELECT
   'manual_analysis',
   'operational_excellence',
   'Address manual analysis with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22472,7 +22472,7 @@ SELECT
   'action_gaps',
   'operational_excellence',
   'Address action gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22485,7 +22485,7 @@ SELECT
   'action_gaps',
   'operational_excellence',
   'Address action gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22498,7 +22498,7 @@ SELECT
   'action_gaps',
   'operational_excellence',
   'Address action gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22511,7 +22511,7 @@ SELECT
   'stakeholder_engagement',
   'operational_excellence',
   'Address stakeholder engagement with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22524,7 +22524,7 @@ SELECT
   'stakeholder_engagement',
   'operational_excellence',
   'Address stakeholder engagement with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22537,7 +22537,7 @@ SELECT
   'stakeholder_engagement',
   'operational_excellence',
   'Address stakeholder engagement with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22550,7 +22550,7 @@ SELECT
   'wasted_spend',
   'operational_excellence',
   'Address wasted spend with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22563,7 +22563,7 @@ SELECT
   'wasted_spend',
   'operational_excellence',
   'Address wasted spend with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22576,7 +22576,7 @@ SELECT
   'wasted_spend',
   'operational_excellence',
   'Address wasted spend with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22589,7 +22589,7 @@ SELECT
   'misaligned_priorities',
   'operational_excellence',
   'Address misaligned priorities with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22602,7 +22602,7 @@ SELECT
   'misaligned_priorities',
   'operational_excellence',
   'Address misaligned priorities with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22615,7 +22615,7 @@ SELECT
   'misaligned_priorities',
   'operational_excellence',
   'Address misaligned priorities with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22628,7 +22628,7 @@ SELECT
   'reactive_approach',
   'operational_excellence',
   'Address reactive approach with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22641,7 +22641,7 @@ SELECT
   'reactive_approach',
   'operational_excellence',
   'Address reactive approach with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22654,7 +22654,7 @@ SELECT
   'reactive_approach',
   'operational_excellence',
   'Address reactive approach with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22667,7 +22667,7 @@ SELECT
   'budget_overruns',
   'operational_excellence',
   'Address budget overruns with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22680,7 +22680,7 @@ SELECT
   'budget_overruns',
   'operational_excellence',
   'Address budget overruns with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22693,7 +22693,7 @@ SELECT
   'budget_overruns',
   'operational_excellence',
   'Address budget overruns with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22706,7 +22706,7 @@ SELECT
   'accountability_gaps',
   'operational_excellence',
   'Address accountability gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22719,7 +22719,7 @@ SELECT
   'accountability_gaps',
   'operational_excellence',
   'Address accountability gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22732,7 +22732,7 @@ SELECT
   'accountability_gaps',
   'operational_excellence',
   'Address accountability gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22745,7 +22745,7 @@ SELECT
   'no_evaluation',
   'operational_excellence',
   'Address no evaluation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22758,7 +22758,7 @@ SELECT
   'no_evaluation',
   'operational_excellence',
   'Address no evaluation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22771,7 +22771,7 @@ SELECT
   'no_evaluation',
   'operational_excellence',
   'Address no evaluation with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22784,7 +22784,7 @@ SELECT
   'risk_aversion',
   'operational_excellence',
   'Address risk aversion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22797,7 +22797,7 @@ SELECT
   'risk_aversion',
   'operational_excellence',
   'Address risk aversion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22810,7 +22810,7 @@ SELECT
   'risk_aversion',
   'operational_excellence',
   'Address risk aversion with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22823,7 +22823,7 @@ SELECT
   'testing_barriers',
   'operational_excellence',
   'Address testing barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22836,7 +22836,7 @@ SELECT
   'testing_barriers',
   'operational_excellence',
   'Address testing barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22849,7 +22849,7 @@ SELECT
   'testing_barriers',
   'operational_excellence',
   'Address testing barriers with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22862,7 +22862,7 @@ SELECT
   'adoption_delays',
   'operational_excellence',
   'Address adoption delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22875,7 +22875,7 @@ SELECT
   'adoption_delays',
   'operational_excellence',
   'Address adoption delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22888,7 +22888,7 @@ SELECT
   'adoption_delays',
   'operational_excellence',
   'Address adoption delays with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22901,7 +22901,7 @@ SELECT
   'missed_capabilities',
   'operational_excellence',
   'Address missed capabilities with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22914,7 +22914,7 @@ SELECT
   'missed_capabilities',
   'operational_excellence',
   'Address missed capabilities with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22927,7 +22927,7 @@ SELECT
   'missed_capabilities',
   'operational_excellence',
   'Address missed capabilities with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22940,7 +22940,7 @@ SELECT
   'competitive_disadvantage',
   'operational_excellence',
   'Address competitive disadvantage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22953,7 +22953,7 @@ SELECT
   'competitive_disadvantage',
   'operational_excellence',
   'Address competitive disadvantage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22966,7 +22966,7 @@ SELECT
   'competitive_disadvantage',
   'operational_excellence',
   'Address competitive disadvantage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22979,7 +22979,7 @@ SELECT
   'efficiency_gaps',
   'operational_excellence',
   'Address efficiency gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -22992,7 +22992,7 @@ SELECT
   'efficiency_gaps',
   'operational_excellence',
   'Address efficiency gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23005,7 +23005,7 @@ SELECT
   'efficiency_gaps',
   'operational_excellence',
   'Address efficiency gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23018,7 +23018,7 @@ SELECT
   'team_frustration',
   'operational_excellence',
   'Address team frustration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23031,7 +23031,7 @@ SELECT
   'team_frustration',
   'operational_excellence',
   'Address team frustration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23044,7 +23044,7 @@ SELECT
   'team_frustration',
   'operational_excellence',
   'Address team frustration with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23057,7 +23057,7 @@ SELECT
   'no_feedback_loop',
   'operational_excellence',
   'Address no feedback loop with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23070,7 +23070,7 @@ SELECT
   'no_feedback_loop',
   'operational_excellence',
   'Address no feedback loop with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23083,7 +23083,7 @@ SELECT
   'no_feedback_loop',
   'operational_excellence',
   'Address no feedback loop with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23096,7 +23096,7 @@ SELECT
   'learning_capture',
   'operational_excellence',
   'Address learning capture with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23109,7 +23109,7 @@ SELECT
   'learning_capture',
   'operational_excellence',
   'Address learning capture with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23122,7 +23122,7 @@ SELECT
   'learning_capture',
   'operational_excellence',
   'Address learning capture with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23135,7 +23135,7 @@ SELECT
   'retrospective_gaps',
   'operational_excellence',
   'Address retrospective gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23148,7 +23148,7 @@ SELECT
   'retrospective_gaps',
   'operational_excellence',
   'Address retrospective gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23161,7 +23161,7 @@ SELECT
   'retrospective_gaps',
   'operational_excellence',
   'Address retrospective gaps with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23174,7 +23174,7 @@ SELECT
   'action_tracking',
   'operational_excellence',
   'Address action tracking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23187,7 +23187,7 @@ SELECT
   'action_tracking',
   'operational_excellence',
   'Address action tracking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23200,7 +23200,7 @@ SELECT
   'action_tracking',
   'operational_excellence',
   'Address action tracking with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23213,7 +23213,7 @@ SELECT
   'roadmap_disconnect',
   'operational_excellence',
   'Address roadmap disconnect with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23226,7 +23226,7 @@ SELECT
   'roadmap_disconnect',
   'operational_excellence',
   'Address roadmap disconnect with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23239,7 +23239,7 @@ SELECT
   'roadmap_disconnect',
   'operational_excellence',
   'Address roadmap disconnect with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23252,7 +23252,7 @@ SELECT
   'repeated_mistakes',
   'operational_excellence',
   'Address repeated mistakes with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23265,7 +23265,7 @@ SELECT
   'repeated_mistakes',
   'operational_excellence',
   'Address repeated mistakes with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23278,7 +23278,7 @@ SELECT
   'repeated_mistakes',
   'operational_excellence',
   'Address repeated mistakes with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23291,7 +23291,7 @@ SELECT
   'slow_improvement',
   'operational_excellence',
   'Address slow improvement with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23304,7 +23304,7 @@ SELECT
   'slow_improvement',
   'operational_excellence',
   'Address slow improvement with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23317,7 +23317,7 @@ SELECT
   'slow_improvement',
   'operational_excellence',
   'Address slow improvement with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23330,7 +23330,7 @@ SELECT
   'team_disengagement',
   'operational_excellence',
   'Address team disengagement with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23343,7 +23343,7 @@ SELECT
   'team_disengagement',
   'operational_excellence',
   'Address team disengagement with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23356,7 +23356,7 @@ SELECT
   'team_disengagement',
   'operational_excellence',
   'Address team disengagement with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23369,7 +23369,7 @@ SELECT
   'value_leakage',
   'operational_excellence',
   'Address value leakage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23382,7 +23382,7 @@ SELECT
   'value_leakage',
   'operational_excellence',
   'Address value leakage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23395,7 +23395,7 @@ SELECT
   'value_leakage',
   'operational_excellence',
   'Address value leakage with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23408,7 +23408,7 @@ SELECT
   'culture_impact',
   'operational_excellence',
   'Address culture impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'collaboration'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23421,7 +23421,7 @@ SELECT
   'culture_impact',
   'operational_excellence',
   'Address culture impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'cost-optimization'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point
@@ -23434,7 +23434,7 @@ SELECT
   'culture_impact',
   'operational_excellence',
   'Address culture impact with ' || f.name || ' - ' || f.short_description
-FROM platform_features f
+FROM databricks_features f
 WHERE f.category = 'monitoring'
   AND f.ga_status IN ('GA', 'Public Preview')
 LIMIT 2  -- Top 2 features per category per pain point

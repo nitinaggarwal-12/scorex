@@ -1576,7 +1576,7 @@ const IndustryBenchmarkingReport = () => {
       >
       {/* Report Header */}
       <ReportHeader>
-        <BrandingLogo>Enterprise Data & AI Maturity Assessment</BrandingLogo>
+        <BrandingLogo>DATABRICKS MATURITY ASSESSMENT</BrandingLogo>
         <ReportTitle>Industry Benchmarking Report</ReportTitle>
         <ReportSubtitle>
           Data Platform Maturity Analysis  •  {assessment?.industry || 'Industry'}  •  {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
@@ -2252,7 +2252,7 @@ const IndustryBenchmarkingReport = () => {
                         {/* Report Header */}
                         <div style={{ padding: '16px 24px', background: 'rgba(255, 255, 255, 0.95)', borderRadius: '12px', flexShrink: 0 }}>
                           <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#3b82f6', letterSpacing: '0.1em', marginBottom: '8px' }}>
-                            Enterprise Data & AI Maturity Assessment
+                            DATABRICKS MATURITY ASSESSMENT
                           </div>
                           <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#1e293b', margin: '0 0 8px 0' }}>
                             Industry Benchmarking Report

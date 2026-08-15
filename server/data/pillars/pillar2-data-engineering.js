@@ -1,13 +1,13 @@
 // Pillar 2: Data Engineering & Integration
-// 💾 Data Engineering & Integration - Evaluate how efficiently data is ingested, transformed, and managed within Enterprise Platform.
+// 💾 Data Engineering & Integration - Evaluate how efficiently data is ingested, transformed, and managed within Databricks.
 
 const { generateMaturityOptions } = require('../standardMaturityLevels');
 
 const dataEngineeringPillar = {
   id: 'data_engineering',
   name: '💾 Data',
-  description: 'Evaluate how efficiently data is ingested, transformed, and managed within Enterprise Platform.',
-  goal: 'Evaluate how efficiently data is ingested, transformed, and managed within Enterprise Platform.',
+  description: 'Evaluate how efficiently data is ingested, transformed, and managed within Databricks.',
+  goal: 'Evaluate how efficiently data is ingested, transformed, and managed within Databricks.',
   dimensions: [
     {
       id: 'ingestion_strategy',
@@ -113,7 +113,7 @@ const dataEngineeringPillar = {
       questions: [
         {
           id: 'lakehouse_structure',
-          question: 'How well-structured are your raw, curated, and consumption data layers within your Enterprise Lakehouse?',
+          question: 'How well-structured are your raw, curated, and consumption data layers within your Databricks Lakehouse?',
           perspectives: [
             {
               id: 'current_state',
@@ -211,7 +211,7 @@ const dataEngineeringPillar = {
       questions: [
         {
           id: 'orchestration_reliability',
-          question: 'How reliable and maintainable are your Enterprise Platform data pipelines from scheduling to dependency management?',
+          question: 'How reliable and maintainable are your Databricks data pipelines from scheduling to dependency management?',
           perspectives: [
             {
               id: 'current_state',
@@ -309,7 +309,7 @@ const dataEngineeringPillar = {
       questions: [
         {
           id: 'quality_validation',
-          question: 'How standardized are your data-validation, reconciliation, and recovery processes in Enterprise Platform?',
+          question: 'How standardized are your data-validation, reconciliation, and recovery processes in Databricks?',
           perspectives: [
             {
               id: 'current_state',

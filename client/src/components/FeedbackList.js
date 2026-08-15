@@ -511,7 +511,7 @@ const FreeTextAnswer = styled.div`
 `;
 
 const QUESTIONS = [
-  "Is the Enterprise Data & AI Maturity Assessment tool easy to use?",
+  "Is the Databricks Maturity Assessment tool easy to use?",
   "Do the assessment results provide valuable insights?",
   "Would you recommend this tool to your colleagues?",
   "Are the recommendations actionable and relevant?",

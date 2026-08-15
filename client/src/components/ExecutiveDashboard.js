@@ -891,7 +891,7 @@ const ExecutiveDashboard = ({ results, assessment, hideImperatives = false }) =>
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="e.g., Deploy Unified Data Catalog & Governance for centralized governance"
+                  placeholder="e.g., Deploy Unity Catalog for centralized governance"
                   required
                 />
               </FormGroup>
@@ -1041,7 +1041,7 @@ function getStrategicImperatives(results, categoryDetails) {
     
     // Customize based on pillar
     if (gap.id.includes('platform') || gap.id.includes('governance')) {
-      title = 'Deploy Unified Data Catalog & Governance for centralized governance';
+      title = 'Deploy Unity Catalog for centralized governance';
       impact = 'Reduce compliance risk 60%';
       timeline = '4-6 weeks';
     } else if (gap.id.includes('data_engineering')) {
@@ -1057,7 +1057,7 @@ function getStrategicImperatives(results, categoryDetails) {
       impact = 'Reduce deployment time 70%';
       timeline = '6-8 weeks';
     } else if (gap.id.includes('analytics')) {
-      title = 'Scale Enterprise SQL Warehouse with serverless warehouses';
+      title = 'Scale Databricks SQL with serverless warehouses';
       impact = 'Improve query speed 3x';
       timeline = '2-4 weeks';
     } else {

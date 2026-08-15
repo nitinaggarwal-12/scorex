@@ -139,19 +139,19 @@ const Header = ({ currentAssessment }) => {
     <HeaderContainer>
       <HeaderContent>
         <Nav>
-          <NavLink href="https://www.enterprisePlatform.com/why-Enterprise Platform" target="_blank" rel="noopener noreferrer">
-            Why Enterprise Platform
+          <NavLink href="https://www.databricks.com/why-databricks" target="_blank" rel="noopener noreferrer">
+            Why Databricks
           </NavLink>
-          <NavLink href="https://www.enterprisePlatform.com/product" target="_blank" rel="noopener noreferrer">
+          <NavLink href="https://www.databricks.com/product" target="_blank" rel="noopener noreferrer">
             Product
           </NavLink>
-          <NavLink href="https://www.enterprisePlatform.com/solutions" target="_blank" rel="noopener noreferrer">
+          <NavLink href="https://www.databricks.com/solutions" target="_blank" rel="noopener noreferrer">
             Solutions
           </NavLink>
-          <NavLink href="https://www.enterprisePlatform.com/resources" target="_blank" rel="noopener noreferrer">
+          <NavLink href="https://www.databricks.com/resources" target="_blank" rel="noopener noreferrer">
             Resources
           </NavLink>
-          <NavLink href="https://www.enterprisePlatform.com/company/about-us" target="_blank" rel="noopener noreferrer">
+          <NavLink href="https://www.databricks.com/company/about-us" target="_blank" rel="noopener noreferrer">
             About
           </NavLink>
         </Nav>
@@ -172,7 +172,7 @@ const Header = ({ currentAssessment }) => {
           </IconButton>
           <TextButton 
             as="a" 
-            href="https://accounts.cloud.enterprisePlatform.com/login" 
+            href="https://accounts.cloud.databricks.com/login" 
             target="_blank" 
             rel="noopener noreferrer"
           >
@@ -180,13 +180,13 @@ const Header = ({ currentAssessment }) => {
           </TextButton>
           <TextButton 
             as="a" 
-            href="https://www.enterprisePlatform.com/company/contact" 
+            href="https://www.databricks.com/company/contact" 
             target="_blank" 
             rel="noopener noreferrer"
           >
             Contact Us
           </TextButton>
-          <TryButton onClick={() => window.location.href = '/'}>Try Enterprise Platform</TryButton>
+          <TryButton onClick={() => window.location.href = '/'}>Try Databricks</TryButton>
         </RightSection>
       </HeaderContent>
     </HeaderContainer>

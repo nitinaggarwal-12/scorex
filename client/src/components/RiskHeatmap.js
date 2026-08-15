@@ -599,7 +599,7 @@ const getSampleRisks = () => {
       financialImpact: '$5M-$20M',
       description: 'Lack of centralized governance increases risk of data breaches, regulatory fines, and compliance violations.',
       mitigation: [
-        'Deploy Unified Data Catalog & Governance for centralized governance',
+        'Deploy Unity Catalog for centralized governance',
         'Implement audit logging and access controls',
         'Establish data classification policies',
         'Conduct regular compliance audits'
@@ -631,7 +631,7 @@ const getSampleRisks = () => {
       financialImpact: '$500K-$2M/yr',
       description: 'Unreliable data pipelines cause delays, data quality issues, and business disruptions.',
       mitigation: [
-        'Implement Declarative Data Pipelines for reliability',
+        'Implement Delta Live Tables for reliability',
         'Add automated testing and monitoring',
         'Enable data quality checks',
         'Set up alerting and notifications'
@@ -718,7 +718,7 @@ const getRisks = (results) => {
           financialImpact: '$5M-$20M',
           description: 'Lack of centralized governance increases risk of data breaches, regulatory fines, and compliance violations.',
           mitigation: [
-            'Deploy Unified Data Catalog & Governance for centralized governance',
+            'Deploy Unity Catalog for centralized governance',
             'Implement audit logging and access controls',
             'Establish data classification policies',
             'Conduct regular compliance audits'
@@ -760,7 +760,7 @@ const getRisks = (results) => {
           description: 'Manual data pipelines and slow ingestion processes delay business insights and decision-making.',
           mitigation: [
             'Implement Lakeflow Connect for automated ingestion',
-            'Deploy Declarative Data Pipelines for pipeline orchestration',
+            'Deploy Delta Live Tables for pipeline orchestration',
             'Optimize data processing with Photon engine',
             'Establish SLAs for data freshness'
           ],

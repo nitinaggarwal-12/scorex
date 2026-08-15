@@ -1,4 +1,4 @@
-// Enterprise Data & AI Maturity Assessment Framework
+// Databricks Maturity Assessment Framework
 // Updated to match user's 6-pillar, 5-dimension, 2-question structure
 
 // Import all pillar definitions

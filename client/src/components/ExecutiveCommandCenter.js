@@ -1125,7 +1125,7 @@ const ExecutiveCommandCenter = () => {
     if (navigator.share) {
       navigator.share({
         title: 'Executive Command Center',
-        text: 'View our Enterprise Data & AI Maturity Assessment executive summary',
+        text: 'View our Databricks maturity assessment executive summary',
         url: url
       }).catch(err => console.log('Error sharing:', err));
     } else {
@@ -1940,7 +1940,7 @@ const ExecutiveCommandCenter = () => {
                   <br/>
                   • https://google.com (extracts Google logo)
                   <br/>
-                  • https://Enterprise Platform.com (extracts Enterprise Platform logo)
+                  • https://databricks.com (extracts Databricks logo)
                   <br/>
                   • https://company.com/logo.png (direct image link)
                 </div>
@@ -1993,7 +1993,7 @@ const ExecutiveCommandCenter = () => {
                         <label>Subtitle/Description</label>
                         <textarea
                           rows="2"
-                          value={formData.subtitle || 'Customize assumptions to see your specific business case for Enterprise Platform'}
+                          value={formData.subtitle || 'Customize assumptions to see your specific business case for Databricks'}
                           onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
                           placeholder="Enter subtitle..."
                         />
@@ -2154,7 +2154,7 @@ const ExecutiveCommandCenter = () => {
                                 fontWeight: 700
                               }}>1</div>
                               <div style={{ fontSize: '1.5rem', fontWeight: 700 }}>
-                                Implement Unified Data Catalog & Governance
+                                Implement Unity Catalog
                               </div>
                             </div>
                             <div style={{ fontSize: '1.1rem', opacity: 0.95, lineHeight: '1.6', paddingLeft: '64px' }}>
@@ -2182,7 +2182,7 @@ const ExecutiveCommandCenter = () => {
                                 fontWeight: 700
                               }}>2</div>
                               <div style={{ fontSize: '1.5rem', fontWeight: 700 }}>
-                                Deploy Declarative Data Pipelines
+                                Deploy Delta Live Tables
                               </div>
                             </div>
                             <div style={{ fontSize: '1.1rem', opacity: 0.95, lineHeight: '1.6', paddingLeft: '64px' }}>

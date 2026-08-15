@@ -212,7 +212,7 @@ const ErrorMessage = styled.div`
 `;
 
 const QUESTIONS = [
-  "Is the Enterprise Data & AI Maturity Assessment tool easy to use?",
+  "Is the Databricks Maturity Assessment tool easy to use?",
   "Do the assessment results provide valuable insights?",
   "Would you recommend this tool to your colleagues?",
   "Are the recommendations actionable and relevant?",
@@ -313,7 +313,7 @@ const FeedbackForm = () => {
       >
         <Title>We Value Your Feedback</Title>
         <Subtitle>
-          Help us improve the Enterprise Data & AI Maturity Assessment tool
+          Help us improve the Databricks Maturity Assessment tool
         </Subtitle>
 
         {error && <ErrorMessage>{error}</ErrorMessage>}

@@ -89,14 +89,14 @@ CREATE INDEX IF NOT EXISTS idx_assessments_user ON assessments(user_id);
 -- Password hash for 'admin123' using bcrypt rounds=10
 -- Note: The migration will attempt to create this user, but will skip if it already exists
 -- Default credentials:
---   Email: admin@Enterprise Platform.com
+--   Email: admin@databricks.com
 --   Password: admin123
 -- ⚠️  IMPORTANT: Change this password immediately after first login!
 DO $$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM users WHERE email = 'admin@Enterprise Platform.com') THEN
+  IF NOT EXISTS (SELECT 1 FROM users WHERE email = 'admin@databricks.com') THEN
     INSERT INTO users (email, password_hash, role, first_name, last_name, organization, is_active)
-    VALUES ('admin@Enterprise Platform.com', '$2b$10$PNrmXZqKMzBc619kNilSIul0xyWSsTOlAIRlg/vU03vT4Q4zYnmEO', 'admin', 'Admin', 'User', 'Enterprise Platform', true);
+    VALUES ('admin@databricks.com', '$2b$10$PNrmXZqKMzBc619kNilSIul0xyWSsTOlAIRlg/vU03vT4Q4zYnmEO', 'admin', 'Admin', 'User', 'Databricks', true);
     RAISE NOTICE 'Default admin user created';
   ELSE
     RAISE NOTICE 'Admin user already exists, skipping creation';

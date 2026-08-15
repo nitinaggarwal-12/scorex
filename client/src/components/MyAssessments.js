@@ -338,7 +338,7 @@ const MyAssessments = () => {
             }</p>
             {currentUser?.role === 'consumer' && (
               <p style={{ marginTop: '8px', fontSize: '0.875rem' }}>
-                Your Enterprise Platform team will assign assessments to you via email.
+                Your Databricks team will assign assessments to you via email.
               </p>
             )}
           </EmptyState>
@@ -375,7 +375,7 @@ const MyAssessments = () => {
                 
                 {assignment.status === 'submitted' && (
                   <CardDescription>
-                    Your assessment has been submitted and is awaiting review by your Enterprise Platform team. 
+                    Your assessment has been submitted and is awaiting review by your Databricks team. 
                     You'll be notified when results are available.
                   </CardDescription>
                 )}
