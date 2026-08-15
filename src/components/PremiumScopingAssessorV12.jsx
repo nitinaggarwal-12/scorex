@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Sparkles, Check, ChevronRight, Play, ArrowLeft, ArrowRight, Download, Upload, Trash2, Edit2, AlertTriangle, Eye, HelpCircle, Shield, Layers, TrendingUp, BarChart3, ShieldAlert, Award, FileText, Settings, Sliders, Calendar, HelpCircle as HelpIcon, Activity, CheckSquare, ShieldCheck, Globe, Users, Database, Zap, RefreshCw } from 'lucide-react';
+import { generateMaturityReport } from '../services/aiService';
 
 // ==========================================================================
 // 25-Question Consultative Scoping Framework (V12 Merck-Novartis Spec)
@@ -1142,7 +1143,6 @@ export default function PremiumScopingAssessorV12({
   // Live Vertex AI / Gemini flash compilation
   const handleRunLiveGeminiAssessment = async () => {
     const ts = () => new Date().toISOString().replace('T', ' ').substring(11, 23);
-    const { generateMaturityReport } = await import('../services/aiService');
 
     setGeminiStreamingState({
       active: true,

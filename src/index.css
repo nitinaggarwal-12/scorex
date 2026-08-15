@@ -846,46 +846,7 @@ body.light-theme {
   color: var(--text-primary);
 }
 
-/* 🌟 Premium V10 Dynamic Light Theme Overrides */
-body.light-theme .premium-landing-v10 {
-  background: #f8fafc !important;
-  color: #0f172a !important;
-}
-
-body.light-theme .premium-landing-v10 header {
-  background: rgba(255, 255, 255, 0.85) !important;
-  border-bottom: 1px solid #cbd5e1 !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
-}
-
-body.light-theme .premium-landing-v10 header span {
-  color: #0f172a !important;
-}
-
 body.light-theme [style*="rgba(15, 23, 42,"],
-body.light-theme [style*="rgba(15,23,42,"],
-body.light-theme [style*="rgba(11,15,25,"],
-body.light-theme [style*="rgba(15,23,42,0.65)"] {
-  background: #ffffff !important;
-  border: 1px solid #cbd5e1 !important;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06) !important;
-  color: #0f172a !important;
-}
-
-body.light-theme [style*="rgba(6,9,19,0.6)"] {
-  background: #f8fafc !important;
-  border: 1px solid #e2e8f0 !important;
-}
-
-body.light-theme .premium-landing-v10 h1,
-body.light-theme .premium-landing-v10 h2,
-body.light-theme .premium-landing-v10 h3,
-body.light-theme .premium-landing-v10 h4,
-body.light-theme .premium-landing-v10 p,
-body.light-theme [style*="#ffffff"],
-body.light-theme [style*="#f8fafc"] {
-  color: #0f172a !important;
-}
 
 body.light-theme [style*="rgba(15,23,42,0.7)"] {
   background: #ffffff !important;
