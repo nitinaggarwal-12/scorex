@@ -1,234 +1,250 @@
-import { useState, useRef, useEffect } from 'react';
-import { Cloud, Sparkles, Settings, Globe, LogOut, ChevronDown, Key, Sun, Moon, Zap, AlertTriangle } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { 
+  BarChart2, 
+  ChevronDown, 
+  User, 
+  LogOut, 
+  Lock, 
+  MessageSquare, 
+  ListChecks, 
+  Sparkles, 
+  FileText, 
+  Layers, 
+  LogIn, 
+  ArrowRight,
+  ShieldCheck,
+  UserCheck,
+  Users
+} from 'lucide-react';
 import { ASSESSMENTS } from '../data/assessmentCatalog';
 
-export default function Navbar({ onOpenSettings, currency, onCurrencyChange, apiKey, gcpToken, onSaveSettings, activeFramework = 'option1', onFrameworkChange, globalTheme = 'dark', onThemeChange, onOpenSavedLibrary, onOpenDisclaimer }) {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+export default function Navbar({
+  user,
+  onLoginClick,
+  onLogoutClick,
+  onOpenDashboard,
+  onSelectAssessment,
+  activeFramework = 'option12',
+  onOpenSettings,
+  onOpenDisclaimer,
+  onTrySample
+}) {
+  const [isAssessmentsOpen, setIsAssessmentsOpen] = useState(false);
+  const [isAssignmentsOpen, setIsAssignmentsOpen] = useState(false);
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
 
-  const [v10Title, setV10Title] = useState(null);
+  const assessmentsRef = useRef(null);
+  const assignmentsRef = useRef(null);
+  const adminRef = useRef(null);
 
+  // Close dropdowns on outside click
   useEffect(() => {
-    const checkTitle = () => {
-      try {
-        const stored = localStorage.getItem('v10_active_customer_title');
-        if (stored) {
-          setV10Title(JSON.parse(stored));
-        }
-      } catch(e) {}
-    };
-    checkTitle();
-    window.addEventListener('v10_title_change', checkTitle);
-    return () => window.removeEventListener('v10_title_change', checkTitle);
-  }, []);
-
-  useEffect(() => {
-    if (!isDropdownOpen) return;
-    const handleOutsideClick = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setIsDropdownOpen(false);
+    const handleClickOutside = (e) => {
+      if (assessmentsRef.current && !assessmentsRef.current.contains(e.target)) {
+        setIsAssessmentsOpen(false);
+      }
+      if (assignmentsRef.current && !assignmentsRef.current.contains(e.target)) {
+        setIsAssignmentsOpen(false);
+      }
+      if (adminRef.current && !adminRef.current.contains(e.target)) {
+        setIsAdminOpen(false);
       }
     };
-    document.addEventListener('click', handleOutsideClick);
-    return () => document.removeEventListener('click', handleOutsideClick);
-  }, [isDropdownOpen]);
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
 
-  const handleLogout = () => {
-    onSaveSettings({ apiKey: '', gcpToken: '' });
-    setIsDropdownOpen(false);
-    alert("👋 Successfully disconnected active Google Cloud credentials. Workspace has reverted to Simulation Mode.");
+  const handleNavClick = (section) => {
+    if (section === 'home') {
+      window.location.hash = '#home';
+    } else if (section === 'dashboard') {
+      onOpenDashboard();
+    } else {
+      alert(`📌 Navigating to ${section.replace('-', ' ').toUpperCase()} section...`);
+    }
   };
-
-  const handleOpenSettingsMenu = () => {
-    onOpenSettings();
-    setIsDropdownOpen(false);
-  };
-
-  const hash = window.location.hash || '#home';
-  const [path] = hash.split('?');
-  const route = path.replace('#', '').replace('/', '');
-
-  // Title comes from the same catalog that drives the sidebar and the
-  // introduction pages (src/data/assessmentCatalog.js)
-  let navTitle = 'Use Case Intake Form';
-  if (ASSESSMENTS[activeFramework]) navTitle = ASSESSMENTS[activeFramework].name;
-  else if (route === 'home') navTitle = 'Executive Briefing Cockpit';
-  else if (route === 'form') navTitle = 'Use Case Discovery Wizard';
-  else if (route === 'summary') navTitle = 'Portfolio Summary Analytics';
-  else if (route === 'report') navTitle = 'Feasibility Scoped Dossier';
-  else if (route === 'logs') navTitle = 'Diagnostics & System Telemetry';
 
   return (
-    <header 
-      className="header no-print" 
-      style={{ 
-        position: 'sticky',
-        top: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '1rem',
-        padding: '0.85rem 1.75rem',
-        background: globalTheme === 'light' ? 'rgba(255,255,255,0.85)' : 'rgba(10, 15, 29, 0.85)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: globalTheme === 'light' ? '1px solid #cbd5e1' : '1px solid rgba(255,255,255,0.08)',
-        boxShadow: globalTheme === 'light' ? '0 4px 20px rgba(0,0,0,0.05)' : '0 4px 30px rgba(0,0,0,0.4)',
-        zIndex: 9999
-      }}
-    >
-      {/* COLUMN 1: LEFT Brand & Connectivity Lockup */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{ background: 'var(--google-blue-light)', color: 'var(--google-blue)', padding: '0.5rem', borderRadius: '8px', border: '1px solid rgba(0, 98, 86, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Cloud size={24} />
-          </div>
-          <div>
-            <span style={{ fontWeight: 900, fontSize: '1.2rem', color: 'var(--text-primary)', display: 'block' }}>{navTitle}</span>
-          </div>
-        </div>
-
-        {/* Live GenAI Mode Status Badge right next to logo */}
-        <div 
-          style={{ 
-            display: 'flex', alignItems: 'center', gap: '0.4rem',
-            background: globalTheme === 'light' ? '#ecfdf5' : 'rgba(16,185,129,0.15)',
-            border: globalTheme === 'light' ? '1px solid #a7f3d0' : '1px solid rgba(16,185,129,0.35)',
-            padding: '0.35rem 0.85rem', borderRadius: '100px'
-          }}
-        >
-          <span style={{ display: 'inline-block', width: '7px', height: '7px', borderRadius: '50%', background: '#10b981', animation: 'pulse 1.5s infinite' }} />
-          <span style={{ fontSize: '0.7rem', fontWeight: 850, color: '#10b981', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-            LIVE GENAI ACTIVE
-          </span>
-        </div>
+    <header className="ref-navbar no-print">
+      {/* LEFT NAVIGATION LINKS */}
+      <div className="ref-nav-left">
+        <button className="ref-nav-link active" onClick={() => handleNavClick('home')}>
+          Home
+        </button>
+        <button className="ref-nav-link" onClick={() => handleNavClick('deep-dive')}>
+          Deep Dive
+        </button>
+        <button className="ref-nav-link" onClick={() => handleNavClick('pitch-deck')}>
+          Pitch Deck
+        </button>
+        <button className="ref-nav-link" onClick={() => handleNavClick('user-guide')}>
+          User Guide
+        </button>
+        <button className="ref-nav-link" onClick={() => handleNavClick('workflow-demo')}>
+          Workflow Demo
+        </button>
       </div>
 
-      {/* COLUMN 3: RIGHT Profile & Settings Command Strip */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        {/* Currency Dropdown Select */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', background: globalTheme === 'light' ? '#f1f5f9' : 'rgba(255,255,255,0.06)', padding: '0.25rem 0.65rem', borderRadius: '100px', border: globalTheme === 'light' ? '1px solid #cbd5e1' : '1px solid rgba(255,255,255,0.1)' }}>
-          <Globe size={13} style={{ color: globalTheme === 'light' ? '#64748b' : '#94a3b8' }} />
-          <select
-            value={currency}
-            onChange={e => onCurrencyChange(e.target.value)}
-            style={{ 
-              background: 'transparent', border: 'none', fontSize: '0.75rem', fontWeight: 750,
-              color: globalTheme === 'light' ? '#0f172a' : '#ffffff', cursor: 'pointer', outline: 'none'
-            }}
-          >
-            <option value="USD" style={{ background: '#0f172a', color: '#fff' }}>USD ($)</option>
-            <option value="EUR" style={{ background: '#0f172a', color: '#fff' }}>EUR (€)</option>
-          </select>
-        </div>
-
-        {/* Persistent reminder: repo is public, no confidential data.
-            Always visible, not just shown once -- see DisclaimerModal.jsx. */}
-        {onOpenDisclaimer && (
-          <button type="button" onClick={onOpenDisclaimer} className="disclaimer-banner">
-            <AlertTriangle size={12} aria-hidden="true" />
-            <span>No confidential data</span>
-          </button>
-        )}
-
-        {/* Global Sun/Moon Theme Toggle */}
-        <button
-          onClick={() => onThemeChange(globalTheme === 'light' ? 'dark' : 'light')}
-          style={{
-            padding: '0.4rem 0.85rem',
-            fontSize: '0.75rem', fontWeight: 750,
-            borderRadius: '100px',
-            background: globalTheme === 'light' ? '#f1f5f9' : 'rgba(255,255,255,0.06)',
-            border: globalTheme === 'light' ? '1px solid #cbd5e1' : '1px solid rgba(255,255,255,0.1)',
-            color: globalTheme === 'light' ? '#0f172a' : '#ffffff',
-            display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer',
-            transition: 'all 0.2s'
-          }}
-          title={globalTheme === 'light' ? 'Activate Futuristic Dark Mode' : 'Activate High-Contrast Light Mode'}
-        >
-          {globalTheme === 'light' ? (
-            <>
-              <Moon size={13} style={{ color: '#4285f4' }} />
-              <span>Dark</span>
-            </>
-          ) : (
-            <>
-              <Sun size={13} style={{ color: '#f59e0b' }} />
-              <span>Light</span>
-            </>
-          )}
+      {/* RIGHT ACTION CONTROLS */}
+      <div className="ref-nav-right">
+        {/* Dashboard Button */}
+        <button className="btn-nav-dashboard" onClick={onOpenDashboard}>
+          Dashboard
         </button>
 
-        {/* Logged In User Dropdown Trigger */}
-        <div style={{ position: 'relative' }} ref={dropdownRef}>
+        {/* Assessments Dropdown */}
+        <div className="ref-nav-dropdown-wrapper" ref={assessmentsRef}>
           <button 
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            aria-haspopup="true"
-            aria-expanded={isDropdownOpen}
-            aria-label="Account menu"
-            style={{ 
-              display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.2rem 0.5rem', 
-              borderRadius: '100px', background: globalTheme === 'light' ? '#f1f5f9' : 'rgba(255,255,255,0.06)', 
-              border: globalTheme === 'light' ? '1px solid #cbd5e1' : '1px solid rgba(255,255,255,0.1)', 
-              color: globalTheme === 'light' ? '#0f172a' : '#ffffff', cursor: 'pointer', height: '38px' 
+            className="btn-nav-dropdown"
+            onClick={() => {
+              setIsAssessmentsOpen(!isAssessmentsOpen);
+              setIsAssignmentsOpen(false);
+              setIsAdminOpen(false);
             }}
           >
-            <div style={{ background: 'linear-gradient(135deg, #1a73e8 0%, #4285f4 100%)', color: '#ffffff', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 850, fontSize: '0.75rem', boxShadow: '0 2px 8px rgba(26,115,232,0.3)' }}>
-              NA
-            </div>
-            <ChevronDown size={13} style={{ color: globalTheme === 'light' ? '#64748b' : '#94a3b8' }} />
+            <FileText size={15} />
+            <span>Assessments</span>
+            <ChevronDown size={14} />
           </button>
 
-          {/* Floating User Dropdown Menu */}
-          {isDropdownOpen && (
-            <div 
-              style={{ 
-                position: 'absolute', right: 0, top: '115%', width: '280px', 
-                padding: '1.25rem', zIndex: 99999, 
-                background: globalTheme === 'light' ? '#ffffff' : '#0f172a',
-                border: globalTheme === 'light' ? '1px solid #cbd5e1' : '1px solid rgba(255,255,255,0.12)',
-                boxShadow: '0 20px 50px rgba(0,0,0,0.6)', borderRadius: '16px',
-                display: 'flex', flexDirection: 'column', gap: '0.85rem'
-              }}
-            >
-              {/* Account details */}
-              <div style={{ borderBottom: globalTheme === 'light' ? '1px solid #e2e8f0' : '1px solid rgba(255,255,255,0.08)', paddingBottom: '0.85rem' }}>
-                <span style={{ fontSize: '0.7rem', fontWeight: 800, color: globalTheme === 'light' ? '#64748b' : '#94a3b8', textTransform: 'uppercase' }}>
-                  Authenticated Active Identity
-                </span>
-                <div style={{ fontSize: '0.88rem', fontWeight: 800, color: globalTheme === 'light' ? '#0f172a' : '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '0.3rem' }}>
-                  admin@nitinagga.altostrat.com
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.4rem' }}>
-                  <span style={{ fontSize: '0.75rem', color: globalTheme === 'light' ? '#64748b' : '#94a3b8' }}>GCP Project:</span>
-                  <span style={{ background: 'rgba(59,130,246,0.15)', color: '#3b82f6', border: '1px solid rgba(59,130,246,0.3)', padding: '0.15rem 0.6rem', borderRadius: '100px', fontSize: '0.65rem', fontWeight: 800 }}>
-                    nitinagga-ge
-                  </span>
-                </div>
-              </div>
-
-              {/* Actions list */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                <button 
-                  onClick={handleOpenSettingsMenu}
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'transparent', border: 'none', color: globalTheme === 'light' ? '#334155' : '#e2e8f0', padding: '0.5rem', borderRadius: '8px', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', textAlign: 'left' }}
+          {isAssessmentsOpen && (
+            <div className="ref-dropdown-menu">
+              <div className="dropdown-header-label">AVAILABLE ASSESSMENTS</div>
+              {Object.values(ASSESSMENTS).map((a) => (
+                <button
+                  key={a.id}
+                  className="ref-dropdown-item"
+                  onClick={() => {
+                    onSelectAssessment(a.id);
+                    setIsAssessmentsOpen(false);
+                  }}
                 >
-                  <Settings size={15} />
-                  <span>Settings & Cloud Credentials</span>
+                  <span className="dropdown-item-accent" style={{ color: a.accent }}>●</span>
+                  <div className="dropdown-item-text">
+                    <span className="item-title">{a.name}</span>
+                    <span className="item-sub">{a.tagline}</span>
+                  </div>
                 </button>
-
-                <button 
-                  onClick={handleLogout}
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.25)', color: '#ef4444', padding: '0.5rem 0.75rem', borderRadius: '8px', fontSize: '0.82rem', fontWeight: 800, cursor: 'pointer', textAlign: 'left', marginTop: '0.25rem' }}
-                >
-                  <LogOut size={15} />
-                  <span>Disconnect Credentials</span>
-                </button>
-              </div>
+              ))}
             </div>
           )}
         </div>
+
+        {/* Assignments Dropdown */}
+        <div className="ref-nav-dropdown-wrapper" ref={assignmentsRef}>
+          <button 
+            className="btn-nav-dropdown"
+            onClick={() => {
+              setIsAssignmentsOpen(!isAssignmentsOpen);
+              setIsAssessmentsOpen(false);
+              setIsAdminOpen(false);
+            }}
+          >
+            <ListChecks size={15} />
+            <span>Assignments</span>
+            <ChevronDown size={14} />
+          </button>
+
+          {isAssignmentsOpen && (
+            <div className="ref-dropdown-menu">
+              <div className="dropdown-header-label">ACTIVE ASSIGNMENTS</div>
+              <button 
+                className="ref-dropdown-item"
+                onClick={() => {
+                  onSelectAssessment('option12');
+                  setIsAssignmentsOpen(false);
+                }}
+              >
+                <div className="dropdown-item-text">
+                  <span className="item-title">CityTech Solutions Data & AI</span>
+                  <span className="item-sub">6 of 6 pillars • Ready for review</span>
+                </div>
+              </button>
+              <button 
+                className="ref-dropdown-item"
+                onClick={() => {
+                  onSelectAssessment('option5');
+                  setIsAssignmentsOpen(false);
+                }}
+              >
+                <div className="dropdown-item-text">
+                  <span className="item-title">Merck Clinical Trial ML Audit</span>
+                  <span className="item-sub">Draft • 4 of 6 pillars</span>
+                </div>
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Try Sample Button (if guest or logged in) */}
+        <button className="btn-nav-sample" onClick={onTrySample}>
+          <Sparkles size={14} />
+          <span>Try Sample</span>
+        </button>
+
+        {/* Start Assessment CTA */}
+        <button 
+          className="btn-nav-start"
+          onClick={() => onSelectAssessment('option12')}
+        >
+          <span>Start Assessment →</span>
+        </button>
+
+        {/* User / Admin Dropdown or Login button */}
+        {user ? (
+          <div className="ref-nav-dropdown-wrapper" ref={adminRef}>
+            <button 
+              className="btn-nav-admin"
+              onClick={() => {
+                setIsAdminOpen(!isAdminOpen);
+                setIsAssessmentsOpen(false);
+                setIsAssignmentsOpen(false);
+              }}
+            >
+              <User size={15} />
+              <span>{user.role === 'admin' ? 'Admin' : 'Account'}</span>
+              <ChevronDown size={14} />
+            </button>
+
+            {isAdminOpen && (
+              <div className="ref-dropdown-menu admin-menu">
+                <button className="ref-dropdown-item" onClick={() => { alert("Switched to Author mode"); setIsAdminOpen(false); }}>
+                  <UserCheck size={16} />
+                  <span>Switch to Author</span>
+                </button>
+                <button className="ref-dropdown-item" onClick={() => { alert("Switched to Consumer mode"); setIsAdminOpen(false); }}>
+                  <Users size={16} />
+                  <span>Switch to Consumer</span>
+                </button>
+                <button className="ref-dropdown-item" onClick={() => { onOpenSettings(); setIsAdminOpen(false); }}>
+                  <Lock size={16} />
+                  <span>Change Password / Keys</span>
+                </button>
+                <button className="ref-dropdown-item" onClick={() => { onLogoutClick(); setIsAdminOpen(false); }}>
+                  <LogOut size={16} />
+                  <span>Logout</span>
+                </button>
+                <div className="dropdown-divider"></div>
+                <button className="ref-dropdown-item" onClick={() => { alert("Feedback modal opened."); setIsAdminOpen(false); }}>
+                  <MessageSquare size={16} />
+                  <span>Give Feedback</span>
+                </button>
+                <button className="ref-dropdown-item" onClick={() => { alert("Viewing all feedback..."); setIsAdminOpen(false); }}>
+                  <MessageSquare size={16} />
+                  <span>View All Feedback</span>
+                </button>
+                <div className="dropdown-user-email">
+                  <span>{user.email || 'admin@databricks.com'}</span>
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <button className="btn-nav-login" onClick={onLoginClick}>
+            <LogIn size={15} />
+            <span>Login</span>
+          </button>
+        )}
       </div>
     </header>
   );

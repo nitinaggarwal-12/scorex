@@ -35,6 +35,9 @@ import MaturityAssessor from './components/MaturityAssessor';
 import AgenticDiscoveryV7 from './components/AgenticDiscoveryV7';
 import PremiumScopingAssessorV12 from './components/PremiumScopingAssessorV12';
 import AssessmentLanding from './components/AssessmentLanding';
+import LoginModal from './components/LoginModal';
+import InsightsDashboard from './components/InsightsDashboard';
+import AssessmentMatrixFlow from './components/AssessmentMatrixFlow';
 
 import { generateReportData } from './services/aiService';
 import './index.css';
@@ -476,6 +479,12 @@ export default function App() {
       return true;
     }
   });
+  const [currentUser, setCurrentUser] = useState({
+    email: 'admin@databricks.com',
+    role: 'admin',
+    isGuest: false
+  });
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
   const [genStep, setGenStep] = useState(0);
@@ -542,7 +551,7 @@ export default function App() {
       const route = path.replace('#', '');
 
       const validRoutes = [
-        'home', 'form', 'report', 'chat_history', 'logs', 'summary',
+        'home', 'dashboard', 'insights-dashboard', 'assessment', 'matrix', 'form', 'report', 'chat_history', 'logs', 'summary',
         'architecture-canvas', 'maturity-assessor', 'maturity-report', 'agentic-discovery', 'agentic-report', 'agentic-maturity-v12'
       ];
 
@@ -552,7 +561,11 @@ export default function App() {
         setViewMode('landing');
         setActiveSessionId(null);
       } else if (validRoutes.includes(route)) {
-        if (route === 'agentic-maturity-v12') {
+        if (route === 'dashboard' || route === 'insights-dashboard') {
+          setViewMode('dashboard');
+        } else if (route === 'assessment' || route === 'matrix') {
+          setViewMode('matrix');
+        } else if (route === 'agentic-maturity-v12') {
           setActiveFramework('option12');
           const isLandingOnly = !query || query.trim() === '' || query.includes('view=saved_library');
           setViewMode(isLandingOnly ? 'landing' : 'assessor');
@@ -1530,68 +1543,7 @@ export default function App() {
     window.dispatchEvent(new CustomEvent('trigger_chat_prompt', { detail: promptText }));
   };
 
-  if (!isUserLoggedIn) {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100vw', height: '100vh', background: 'var(--bg-primary)', padding: '2rem', position: 'relative', overflow: 'hidden' }}>
-        <div className="card" style={{ width: '100%', maxWidth: '420px', padding: '2.5rem 2rem', borderRadius: '20px', background: 'var(--bg-surface)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-lg)', textAlign: 'center', zIndex: 10 }}>
-          <div style={{ background: 'var(--google-blue-light)', color: 'var(--google-blue)', padding: '0.75rem', borderRadius: '12px', width: 'fit-content', margin: '0 auto 1.25rem auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Sparkles size={28} />
-          </div>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>Gemini Advisor Suite</h2>
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1.75rem', lineHeight: 1.4 }}>
-            Google Cloud Use Case Discovery & Feasibility Engine. Authenticate with active SSO credentials to manage diagnostic run histories.
-          </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', textAlign: 'left', marginBottom: '1.5rem' }}>
-            <div className="form-group">
-              <label className="form-label" style={{ fontSize: '0.7rem' }}>Active Identity (Email)</label>
-              <input 
-                type="email" 
-                className="form-input" 
-                style={{ padding: '0.45rem 0.75rem', fontSize: '0.8rem' }}
-                defaultValue="admin@nitinagga.altostrat.com" 
-                disabled 
-              />
-            </div>
-            <div className="form-group">
-              <label className="form-label" style={{ fontSize: '0.7rem' }}>Google Cloud Project ID</label>
-              <input 
-                type="text" 
-                className="form-input" 
-                style={{ padding: '0.45rem 0.75rem', fontSize: '0.8rem' }}
-                defaultValue="nitinagga-ge" 
-                disabled 
-              />
-            </div>
-          </div>
-
-          <button 
-            onClick={() => {
-              setApiKey('demo_key');
-              setGcpToken('demo_token');
-              setIsUserLoggedIn(true);
-            }}
-            className="btn btn-primary" 
-            style={{ width: '100%', padding: '0.75rem', fontSize: '0.9rem', fontWeight: 700, borderRadius: '8px', background: 'linear-gradient(90deg, #1a73e8 0%, #4285f4 100%)', color: '#ffffff', border: 'none', boxShadow: '0 4px 12px rgba(26, 115, 232, 0.25)', cursor: 'pointer', marginBottom: '0.75rem' }}
-          >
-            🔑 Connect Identity via SSO
-          </button>
-
-          <button 
-            onClick={() => {
-              setApiKey('demo_key');
-              setGcpToken('demo_token');
-              setIsUserLoggedIn(true);
-            }}
-            className="btn btn-outline" 
-            style={{ width: '100%', padding: '0.65rem', fontSize: '0.8rem', fontWeight: 600, borderRadius: '8px', color: 'var(--text-secondary)', borderColor: 'var(--border-color)', cursor: 'pointer' }}
-          >
-            🌐 Connect via Local Workstation Auth (ADC)
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="app-layout">
@@ -1618,24 +1570,53 @@ export default function App() {
 
       <div className="app-main-viewport">
         <Navbar
-          onOpenSettings={() => setIsSettingsOpen(true)}
-          currency={currency}
-          onCurrencyChange={setCurrency}
-          apiKey={apiKey}
-          gcpToken={gcpToken}
-          onSaveSettings={handleSaveSettings}
-          activeFramework={activeFramework}
-          onFrameworkChange={(fw) => routeToFramework(fw, { setActiveFramework, setActiveSessionId, setViewMode })}
-          globalTheme={globalTheme}
-          onThemeChange={setGlobalTheme}
-          onOpenSavedLibrary={() => {
-            setIsSessionsOpen(true);
+          user={currentUser}
+          onLoginClick={() => setIsLoginModalOpen(true)}
+          onLogoutClick={() => setCurrentUser(null)}
+          onOpenDashboard={() => {
+            setViewMode('dashboard');
+            window.location.hash = '#dashboard';
           }}
+          onSelectAssessment={(fw) => {
+            setActiveFramework(fw);
+            setViewMode('matrix');
+            window.location.hash = '#assessment';
+          }}
+          onTrySample={() => {
+            setActiveFramework('option12');
+            setViewMode('matrix');
+            window.location.hash = '#assessment';
+          }}
+          activeFramework={activeFramework}
+          onOpenSettings={() => setIsSettingsOpen(true)}
           onOpenDisclaimer={() => { setDisclaimerForceAccept(false); setIsDisclaimerOpen(true); }}
         />
 
         <main className="main-content">
-          {viewMode === 'chat_history' ? (
+          {viewMode === 'dashboard' ? (
+            <InsightsDashboard 
+              sessions={sessions}
+              onSelectAssessment={(fw) => {
+                setActiveFramework(fw);
+                setViewMode('matrix');
+                window.location.hash = '#assessment';
+              }}
+              onLoadSession={handleLoadSession}
+            />
+          ) : viewMode === 'matrix' ? (
+            <AssessmentMatrixFlow
+              customerTitle="CityTech Solutions Data & AI Assessment"
+              onBack={() => {
+                setViewMode('home');
+                window.location.hash = '#home';
+              }}
+              onSubmit={() => {
+                setActiveFramework('option12');
+                setViewMode('report');
+                window.location.hash = '#agentic-report';
+              }}
+            />
+          ) : viewMode === 'chat_history' ? (
             <ChatHistory />
           ) : viewMode === 'logs' ? (
             <DiagnosticConsole sessions={sessions} onDeleteSession={handleDeleteSession} />
@@ -1736,7 +1717,25 @@ export default function App() {
           ) : viewMode === 'home' ? (
             <SuiteHomePage
               sessions={sessions}
-              onSelectAssessment={(fw) => routeToFramework(fw, { setActiveFramework, setActiveSessionId, setViewMode })}
+              onStartAssessment={(fw) => {
+                setActiveFramework(fw || 'option12');
+                setViewMode('matrix');
+                window.location.hash = '#assessment';
+              }}
+              onSelectAssessment={(fw) => {
+                setActiveFramework(fw);
+                setViewMode('matrix');
+                window.location.hash = '#assessment';
+              }}
+              onOpenDashboard={() => {
+                setViewMode('dashboard');
+                window.location.hash = '#dashboard';
+              }}
+              onTrySample={() => {
+                setActiveFramework('option12');
+                setViewMode('matrix');
+                window.location.hash = '#assessment';
+              }}
               onOpenSessions={() => setIsSessionsOpen(true)}
               onViewSummary={() => setViewMode('summary')}
             />
@@ -1765,31 +1764,29 @@ export default function App() {
         </main>
       </div>
 
-      {/* Interactive Floating Chat Assistant */}
-      <div style={{ position: 'fixed', bottom: '1.5rem', right: '1.5rem', zIndex: 85 }}>
-        {!isChatOpen && (
-          <button
-            onClick={() => setIsChatOpen(true)}
-            className="pulse-fab"
-            style={{
-              width: '56px',
-              height: '56px',
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, #1a73e8 0%, #4285f4 100%)',
-              color: '#ffffff',
-              border: '1px solid rgba(255,255,255,0.15)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              outline: 'none'
-            }}
-            title="Open Gemini AI Assistant"
-          >
-            <Sparkles size={22} />
-          </button>
-        )}
-      </div>
+      {/* Floating Purple Action Button (Chat Assistant trigger) */}
+      {!isChatOpen && (
+        <button
+          onClick={() => setIsChatOpen(true)}
+          className="floating-chat-fab"
+          title="Open Databricks AI Assistant"
+        >
+          <Sparkles size={24} />
+        </button>
+      )}
+
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onLogin={(u) => {
+          setCurrentUser(u);
+          setIsUserLoggedIn(true);
+        }}
+        onExploreAsGuest={() => {
+          setCurrentUser({ email: 'guest@enterprise.com', role: 'consumer', isGuest: true });
+          setIsUserLoggedIn(true);
+        }}
+      />
 
       <ChatAssistant
         isOpen={isChatOpen}
