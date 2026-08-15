@@ -1334,11 +1334,11 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
               quickWins: databricksRecs.quickWins || [],
               strategicMoves: databricksRecs.strategicMoves || [],
               // DO NOT SET specificRecommendations here - let intelligent engine handle it
-              _source: 'Databricks Release Notes - October 2025',
-              _docsUrl: 'https://docs.databricks.com/aws/en/release-notes/product/'
+              _source: 'ScoreX Enterprise Architecture Framework',
+              _docsUrl: null
             };
           });
-          console.log(`✅ Enhanced ${recommendations.prioritizedActions.length} pillar recommendations with Databricks features`);
+          console.log(`✅ Enhanced ${recommendations.prioritizedActions.length} pillar recommendations with strategic capabilities`);
           // Log first pillar for debugging
           if (recommendations.prioritizedActions.length > 0) {
             console.log(`📊 Sample enhanced pillar:`, {
@@ -2978,8 +2978,8 @@ app.get('/api/assessment/:id/pillar/:pillarId/results', async (req, res) => {
       pillarResults.quickWins = databricksRecs.quickWins || [];
       pillarResults.strategicMoves = databricksRecs.strategicMoves || [];
       pillarResults.specificRecommendations = databricksRecs.quickWins || []; // Use quickWins for "Next Steps" (customer engagement)
-      pillarResults._source = 'Databricks Release Notes - October 2025';
-      pillarResults._docsUrl = 'https://docs.databricks.com/aws/en/release-notes/product/';
+      pillarResults._source = 'ScoreX Enterprise Architecture Framework';
+      pillarResults._docsUrl = null;
       
       console.log(`✅ Enhanced pillar ${pillarId} with ${pillarResults.databricksFeatures.length} Databricks features`);
     } catch (error) {

@@ -1,8 +1,9 @@
 const OpenAI = require('openai');
+const geminiService = require('./geminiService');
 
 /**
- * Generate Industry Benchmarking Report using OpenAI
- * Professional-grade competitive intelligence and market analysis
+ * Generate Industry Benchmarking Report using Gemini (gemini-3.7-flash) or OpenAI
+ * Professional-grade, vendor-neutral competitive intelligence and market analysis
  */
 class IndustryBenchmarkingService {
   
@@ -12,7 +13,6 @@ class IndustryBenchmarkingService {
   getOpenAIClient() {
     if (!this.openaiClient) {
       if (!process.env.OPENAI_API_KEY) {
-        console.warn('[IndustryBenchmarking] OPENAI_API_KEY not set, will use fallback data');
         return null;
       }
       this.openaiClient = new OpenAI({
@@ -32,63 +32,75 @@ class IndustryBenchmarkingService {
    * @returns {Promise<object>} Comprehensive benchmarking report
    */
   async generateComprehensiveBenchmarkReport(industry, assessment, customerScore, pillarScores, painPoints) {
-    console.log(`[IndustryBenchmarking] Generating professional report for ${industry}`);
+    console.log(`[IndustryBenchmarking] Generating professional benchmarking report for ${industry}`);
     
+    // 🌟 1. Primary: Use Gemini 3.7 Flash if available
+    if (geminiService.isAvailable()) {
+      try {
+        console.log('[IndustryBenchmarking] Generating benchmark report using Gemini 3.7 Flash...');
+        const geminiReport = await geminiService.generateIndustryBenchmarkReport(
+          industry,
+          assessment,
+          customerScore,
+          pillarScores,
+          painPoints
+        );
+        
+        if (geminiReport && geminiReport.executiveSummary) {
+          console.log('✅ [IndustryBenchmarking] Gemini 3.7 Flash report generated successfully');
+          return this.enrichReportWithMetrics(geminiReport, industry, customerScore, pillarScores);
+        }
+      } catch (geminiError) {
+        console.warn('⚠️ [IndustryBenchmarking] Gemini report generation failed, attempting OpenAI fallback:', geminiError.message);
+      }
+    }
+    
+    // 🌟 2. Secondary fallback: OpenAI if configured
     try {
       const openai = this.getOpenAIClient();
       
-      // If no OpenAI client (missing API key), use fallback immediately
-      if (!openai) {
-        console.log('[IndustryBenchmarking] No OpenAI client available, using fallback report');
-        return this.getFallbackReport(industry, customerScore, pillarScores);
-      }
-      
-      const prompt = this.buildBenchmarkingPrompt(industry, assessment, customerScore, pillarScores, painPoints);
-      
-      const response = await openai.chat.completions.create({
-        model: 'gpt-4',
-        messages: [
-          {
-            role: 'system',
-            content: `You are a Senior Data Platform Strategy Consultant with 20+ years of experience in 
-                     digital transformation consulting, data platform strategy, and competitive intelligence.
-                     
-                     You have deep expertise in:
-                     - Industry benchmarking and competitive analysis
-                     - Data platform maturity assessment
-                     - Digital transformation roadmaps
-                     - C-suite advisory and strategic recommendations
-                     - Market research from leading industry analysts
-                     
-                     Your reports are:
-                     - Executive-ready and board-level quality
-                     - Data-driven with specific metrics and percentiles
-                     - Action-oriented with clear recommendations
-                     - Industry-specific with relevant context
-                     - Professional, concise, and impactful
-                     
-                     CRITICAL: Return ONLY valid JSON, no markdown, no code blocks.`
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        temperature: 0.8,
-        max_tokens: 4000,
-        response_format: { type: "json_object" }
-      });
+      if (openai) {
+        console.log('[IndustryBenchmarking] Generating report using OpenAI fallback...');
+        const prompt = this.buildBenchmarkingPrompt(industry, assessment, customerScore, pillarScores, painPoints);
+        
+        const response = await openai.chat.completions.create({
+          model: 'gpt-4o-mini',
+          messages: [
+            {
+              role: 'system',
+              content: `You are a Senior Enterprise Data & AI Strategy Consultant with 20+ years of experience in 
+                       digital transformation consulting, data platform strategy, and competitive intelligence.
+                       
+                       Your reports are:
+                       - 100% vendor-neutral and architecture-focused
+                       - Executive-ready and board-level quality
+                       - Data-driven with specific metrics and percentiles
+                       - Action-oriented with clear recommendations
+                       - Professional, concise, and impactful
+                       
+                       CRITICAL: Return ONLY valid JSON matching the requested structure.`
+            },
+            {
+              role: 'user',
+              content: prompt
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 4000,
+          response_format: { type: "json_object" }
+        });
 
-      const benchmarkReport = JSON.parse(response.choices[0].message.content);
-      
-      console.log('[IndustryBenchmarking] Generated comprehensive report');
-      
-      return this.enrichReportWithMetrics(benchmarkReport, industry, customerScore, pillarScores);
-      
+        const benchmarkReport = JSON.parse(response.choices[0].message.content);
+        console.log('✅ [IndustryBenchmarking] OpenAI report generated successfully');
+        return this.enrichReportWithMetrics(benchmarkReport, industry, customerScore, pillarScores);
+      }
     } catch (error) {
-      console.error('[IndustryBenchmarking] Error generating report:', error);
-      return this.getFallbackReport(industry, customerScore, pillarScores);
+      console.warn('⚠️ [IndustryBenchmarking] OpenAI fallback failed:', error.message);
     }
+    
+    // 🌟 3. Default fallback: Statistically calibrated industry dataset
+    console.log('[IndustryBenchmarking] Using statistically calibrated fallback report');
+    return this.getFallbackReport(industry, customerScore, pillarScores);
   }
 
   /**

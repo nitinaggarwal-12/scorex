@@ -67,7 +67,7 @@ router.post('/conversation/start', async (req, res) => {
   }
 });
 
-// Send a message and get AI response (Powered by Gemini 3.1 Pro)
+// Send a message and get AI response (Powered by Gemini 3.7 Flash)
 router.post('/message', async (req, res) => {
   try {
     const { conversationId, message, sessionId, userEmail, context } = req.body;
@@ -138,10 +138,10 @@ router.post('/message', async (req, res) => {
     let aiResponse = null;
     let suggestedQuestions = null;
 
-    // 🌟 1. Try Gemini 3.1 Pro first if API key is provided
+    // 🌟 1. Try Gemini 3.7 Flash first if API key is provided
     if (geminiService.isAvailable()) {
       try {
-        console.log('🤖 Generating response with Gemini AI...');
+        console.log('🤖 Generating response with Gemini 3.7 Flash AI...');
         const geminiResult = await geminiService.generateChatResponse(
           message,
           history,
