@@ -50,7 +50,7 @@ export const exportAssessmentToExcel = async (assessmentId, assessmentName = 'As
       addResultsOverviewSheet(workbook, resultsData);
       addBusinessImpactSheet(workbook, resultsData);
       addPillarAnalysisSheet(workbook, resultsData); // Combined: Strengths, Challenges, Recommendations
-      addDatabricksRecommendationsSheet(workbook, resultsData);
+      addPlatformRecommendationsSheet(workbook, resultsData);
       addOverallNextStepsSheet(workbook, resultsData);
     }
     
@@ -332,19 +332,20 @@ function addBusinessImpactSheet(workbook, resultsData) {
 }
 
 /**
- * Add Databricks Recommendations sheet with all recommended features
+ * Add Platform Capability Recommendations sheet with all recommended features
  */
-function addDatabricksRecommendationsSheet(workbook, resultsData) {
+function addPlatformRecommendationsSheet(workbook, resultsData) {
   const recsData = [
-    ['DATABRICKS RECOMMENDATIONS BY PILLAR'],
+    ['STRATEGIC CAPABILITY RECOMMENDATIONS BY PILLAR'],
     [''],
-    ['Pillar', 'Feature/Product', 'Description']
+    ['Pillar', 'Capability / Modern Pattern', 'Description']
   ];
   
   if (resultsData.prioritizedActions) {
     resultsData.prioritizedActions.forEach(pillar => {
-      if (pillar.databricksFeatures && pillar.databricksFeatures.length > 0) {
-        pillar.databricksFeatures.forEach((feature, idx) => {
+      const features = pillar.platformFeatures || pillar.databricksFeatures;
+      if (features && features.length > 0) {
+        features.forEach((feature, idx) => {
           recsData.push([
             idx === 0 ? (pillar.pillarName || pillar.pillar) : '', // Only show pillar name once
             feature.name || feature,
@@ -357,7 +358,7 @@ function addDatabricksRecommendationsSheet(workbook, resultsData) {
   
   const ws = XLSX.utils.aoa_to_sheet(recsData);
   ws['!cols'] = [{ wch: 30 }, { wch: 35 }, { wch: 70 }];
-  XLSX.utils.book_append_sheet(workbook, ws, 'Databricks Features');
+  XLSX.utils.book_append_sheet(workbook, ws, 'Platform Capabilities');
 }
 
 /**

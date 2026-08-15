@@ -1045,19 +1045,19 @@ function getStrategicImperatives(results, categoryDetails) {
       impact = 'Reduce compliance risk 60%';
       timeline = '4-6 weeks';
     } else if (gap.id.includes('data_engineering')) {
-      title = 'Implement Lakeflow Connect for data ingestion';
-      impact = 'Accelerate ingestion 10x';
+      title = 'Implement declarative data pipelines and automated quality checks';
+      impact = 'Accelerate ingestion & transformation 10x';
       timeline = '6-8 weeks';
     } else if (gap.id.includes('genai') || gap.id.includes('generative')) {
-      title = 'Launch Mosaic AI Agents for GenAI apps';
-      impact = 'Unlock $800K revenue';
+      title = 'Launch enterprise GenAI agents & RAG architecture';
+      impact = 'Unlock substantial efficiency & new revenue streams';
       timeline = '8-12 weeks';
     } else if (gap.id.includes('machine_learning') || gap.id.includes('ml')) {
-      title = 'Deploy Mosaic AI Model Serving for production ML';
-      impact = 'Reduce deployment time 70%';
+      title = 'Deploy centralized MLOps and managed model serving';
+      impact = 'Reduce model deployment time 70%';
       timeline = '6-8 weeks';
     } else if (gap.id.includes('analytics')) {
-      title = 'Scale Databricks SQL with serverless warehouses';
+      title = 'Scale serverless SQL warehouses and semantic layer';
       impact = 'Improve query speed 3x';
       timeline = '2-4 weeks';
     } else {

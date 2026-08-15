@@ -139,27 +139,27 @@ const Header = ({ currentAssessment }) => {
     <HeaderContainer>
       <HeaderContent>
         <Nav>
-          <NavLink href="https://www.databricks.com/why-databricks" target="_blank" rel="noopener noreferrer">
-            Why Databricks
+          <NavLink href="/deep-dive">
+            Architecture
           </NavLink>
-          <NavLink href="https://www.databricks.com/product" target="_blank" rel="noopener noreferrer">
-            Product
+          <NavLink href="/insights">
+            Benchmarks
           </NavLink>
-          <NavLink href="https://www.databricks.com/solutions" target="_blank" rel="noopener noreferrer">
-            Solutions
+          <NavLink href="/executive-dashboard">
+            Command Center
           </NavLink>
-          <NavLink href="https://www.databricks.com/resources" target="_blank" rel="noopener noreferrer">
-            Resources
+          <NavLink href="/user-guide">
+            User Guide
           </NavLink>
-          <NavLink href="https://www.databricks.com/company/about-us" target="_blank" rel="noopener noreferrer">
-            About
+          <NavLink href="/pitch-deck">
+            Overview
           </NavLink>
         </Nav>
         
         <CenterSection>
           <CenterLink href="/" onClick={(e) => { e.preventDefault(); window.location.href = '/'; }}>
             <FiLayers size={18} />
-            Data & AI Technical Maturity Assessment Framework
+            ScoreX Enterprise Data & AI Maturity Assessment
           </CenterLink>
         </CenterSection>
         
@@ -172,21 +172,17 @@ const Header = ({ currentAssessment }) => {
           </IconButton>
           <TextButton 
             as="a" 
-            href="https://accounts.cloud.databricks.com/login" 
-            target="_blank" 
-            rel="noopener noreferrer"
+            href="/dashboard" 
           >
-            Login
+            Dashboard
           </TextButton>
           <TextButton 
             as="a" 
-            href="https://www.databricks.com/company/contact" 
-            target="_blank" 
-            rel="noopener noreferrer"
+            href="/feedback" 
           >
-            Contact Us
+            Feedback
           </TextButton>
-          <TryButton onClick={() => window.location.href = '/'}>Try Databricks</TryButton>
+          <TryButton onClick={() => window.location.href = '/assessment/start'}>Start Assessment</TryButton>
         </RightSection>
       </HeaderContent>
     </HeaderContainer>

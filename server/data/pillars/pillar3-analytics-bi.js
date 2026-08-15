@@ -15,7 +15,7 @@ const analyticsBIPillar = {
       questions: [
         {
           id: 'performance_consistency',
-          question: 'How consistently do your analytic workloads meet expected response times within Databricks?',
+          question: 'How consistently do your analytic workloads meet expected response times across your data platform?',
           perspectives: [
             {
               id: 'current_state',
@@ -159,7 +159,7 @@ const analyticsBIPillar = {
         },
         {
           id: 'data_discovery',
-          question: 'How easily can analysts discover, reuse, and trust curated datasets within Databricks?',
+          question: 'How easily can analysts discover, reuse, and trust curated datasets across the enterprise?',
           perspectives: [
             {
               id: 'current_state',
@@ -211,7 +211,7 @@ const analyticsBIPillar = {
       questions: [
         {
           id: 'dashboard_integration',
-          question: 'How well integrated are your dashboards and reporting tools with your Databricks Lakehouse?',
+          question: 'How well integrated are your dashboards and reporting tools with your data warehouse and lakehouse layer?',
           perspectives: [
             {
               id: 'current_state',
@@ -309,7 +309,7 @@ const analyticsBIPillar = {
       questions: [
         {
           id: 'user_empowerment',
-          question: 'How empowered are business users to perform ad-hoc analysis directly in Databricks?',
+          question: 'How empowered are business users to perform ad-hoc analysis directly on self-service data layers?',
           perspectives: [
             {
               id: 'current_state',
@@ -407,7 +407,7 @@ const analyticsBIPillar = {
       questions: [
         {
           id: 'external_sharing',
-          question: 'How easily can users or partners access and share governed datasets through Databricks?',
+          question: 'How easily can users or external partners access and share governed datasets securely?',
           perspectives: [
             {
               id: 'current_state',

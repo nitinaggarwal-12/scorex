@@ -1125,7 +1125,7 @@ const ExecutiveCommandCenter = () => {
     if (navigator.share) {
       navigator.share({
         title: 'Executive Command Center',
-        text: 'View our Databricks maturity assessment executive summary',
+        text: 'View our enterprise data & AI maturity assessment executive summary',
         url: url
       }).catch(err => console.log('Error sharing:', err));
     } else {
@@ -1940,7 +1940,7 @@ const ExecutiveCommandCenter = () => {
                   <br/>
                   • https://google.com (extracts Google logo)
                   <br/>
-                  • https://databricks.com (extracts Databricks logo)
+                  • https://microsoft.com (extracts Microsoft logo)
                   <br/>
                   • https://company.com/logo.png (direct image link)
                 </div>
@@ -1993,7 +1993,7 @@ const ExecutiveCommandCenter = () => {
                         <label>Subtitle/Description</label>
                         <textarea
                           rows="2"
-                          value={formData.subtitle || 'Customize assumptions to see your specific business case for Databricks'}
+                          value={formData.subtitle || 'Customize assumptions to see your specific business case and ROI potential'}
                           onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
                           placeholder="Enter subtitle..."
                         />

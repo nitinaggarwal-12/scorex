@@ -391,7 +391,7 @@ function getSuggestedFollowUpQuestions(messageLower, pageType, hasAssessmentData
     ];
   }
   
-  if (messageLower.includes('analytics') || (messageLower.includes('bi') && !messageLower.includes('databricks'))) {
+  if (messageLower.includes('analytics') || messageLower.includes('bi')) {
     return [
       "What is Photon?",
       "How do I create dashboards?",
@@ -468,7 +468,7 @@ function getSuggestedFollowUpQuestions(messageLower, pageType, hasAssessmentData
     return [
       "What are my biggest gaps?",
       "How can I improve?",
-      "Show me Databricks recommendations",
+      "Show me strategic recommendations",
       "What should I prioritize?"
     ];
   }
@@ -477,7 +477,7 @@ function getSuggestedFollowUpQuestions(messageLower, pageType, hasAssessmentData
   if (messageLower.includes('gap') || messageLower.includes('improve') || messageLower.includes('priority')) {
     return [
       "Show me specific recommendations",
-      "What Databricks features should I adopt?",
+      "What platform capabilities should I adopt?",
       "How do I create a roadmap?",
       "What are quick wins?"
     ];
@@ -599,7 +599,7 @@ function getSuggestedFollowUpQuestions(messageLower, pageType, hasAssessmentData
     ],
     maturity_report: [
       "What are my biggest gaps?",
-      "Show me Databricks recommendations",
+      "Show me strategic recommendations",
       "Can I edit this report?",
       "How do I export to PDF?"
     ],
@@ -910,7 +910,7 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
       let response = `${details.description}\n\n**Key Capabilities:**\n${details.keyFeatures.map(f => `• ${f}`).join('\n')}\n\n**Use Case:** ${details.useCase}\n\n**Related Pillar:** ${details.pillar}`;
       
       if (intent === 'instruction' && messageLower.includes('use')) {
-        response += `\n\n**Getting Started:**\n• Check your ${details.pillar} maturity score\n• Review recommendations in your maturity report\n• Start with pilot projects to build expertise\n• Leverage Databricks documentation and training`;
+        response += `\n\n**Getting Started:**\n• Check your ${details.pillar} maturity score\n• Review recommendations in your maturity report\n• Start with pilot projects to build expertise\n• Leverage architecture documentation and best practices`;
       }
       
       return respond(response);
@@ -1092,8 +1092,8 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
   // Handle greeting with context
   if (intent === 'greeting') {
     const greetings = [
-      `Hello! 👋 I'm your Databricks Maturity Assessment assistant. You're currently on the **${pageType.replace('_', ' ')}** page.`,
-      `Hi there! 😊 Welcome to the Databricks Maturity Assessment. I can help you with anything on this page.`,
+      `Hello! 👋 I'm your Enterprise Data & AI Maturity Assessment advisor. You're currently on the **${pageType.replace('_', ' ')}** page.`,
+      `Hi there! 😊 Welcome to the Data & AI Maturity Assessment. I can help you with anything on this page.`,
       `Hey! 🎯 Ready to explore the assessment? I'm here to guide you through the **${pageType.replace('_', ' ')}** section.`
     ];
     
@@ -1117,7 +1117,7 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
       response += "**You're viewing your Maturity Report.** Here's what you can do:\n\n";
       response += "• **Review Scores** - See your maturity levels for each pillar\n";
       response += "• **Check Gaps** - Identify areas for improvement\n";
-      response += "• **Read Recommendations** - Get specific Databricks features to adopt\n";
+      response += "• **Read Recommendations** - Get strategic platform capabilities to adopt\n";
       response += "• **Edit Content** - Hover over cards to customize\n";
       response += "• **Export** - Use slideshow mode to create PDFs\n\n";
       response += "What specific aspect would you like help with?";
@@ -1138,7 +1138,7 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
   
   // Questions about pillars (general) - MOVED UP for priority
   if (messageLower.includes('pillar') || messageLower.includes('categories') || messageLower.includes('areas') || messageLower.includes('6 pillars')) {
-    return respond("**The 6 Assessment Pillars:**\n\n🏛️ **[Platform & Governance](/deep-dive#platform-governance)**\nSecurity, compliance, Unity Catalog, access control\n\n🔷 **[Data Engineering](/deep-dive#data-engineering)**\nData pipelines, ETL, Delta Lake, data quality\n\n📊 **[Analytics & BI](/deep-dive#analytics-bi)**\nReporting, dashboards, SQL analytics, visualization\n\n🤖 **[Machine Learning](/deep-dive#machine-learning)**\nML models, MLOps, MLflow, model deployment\n\n✨ **[Generative AI](/deep-dive#generative-ai)**\nLLMs, AI applications, AI Gateway, RAG patterns\n\n⚙️ **[Operational Excellence](/deep-dive#operational-excellence)**\nMonitoring, cost optimization, reliability\n\n📚 [View Full Deep Dive](/deep-dive) - Detailed explanation of all pillars\n🚀 [Start Assessment](/assessment/start) - Begin now");
+    return respond("**The 6 Assessment Pillars:**\n\n🏛️ **[Platform & Governance](/deep-dive#platform-governance)**\nSecurity, compliance, unified catalog, access control\n\n🔷 **[Data Engineering](/deep-dive#data-engineering)**\nData pipelines, ETL, lakehouse table formats, data quality\n\n📊 **[Analytics & BI](/deep-dive#analytics-bi)**\nReporting, dashboards, SQL analytics, visualization\n\n🤖 **[Machine Learning](/deep-dive#machine-learning)**\nML models, MLOps, experiment tracking, model deployment\n\n✨ **[Generative AI](/deep-dive#generative-ai)**\nLLMs, AI applications, AI gateway, RAG patterns\n\n⚙️ **[Operational Excellence](/deep-dive#operational-excellence)**\nMonitoring, cost optimization, reliability\n\n📚 [View Full Deep Dive](/deep-dive) - Detailed explanation of all pillars\n🚀 [Start Assessment](/assessment/start) - Begin now");
   }
   
   // ===== PAGE-SPECIFIC CONTEXT RESPONSES =====
@@ -1146,7 +1146,7 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
   // HOME PAGE
   if (pageType === 'home') {
     if ((messageLower.includes('what') || messageLower.includes('this page') || messageLower.includes('here')) && !messageLower.includes('pillar')) {
-      return respond("You're on the **Home Page** of the Databricks Maturity Assessment tool.\n\nFrom here you can:\n• **Start a new assessment** - Click 'Start Assessment'\n• **Try a sample** - See a demo assessment\n• **View your dashboard** - See all your assessments\n• **Learn more** - Check out the Deep Dive, User Guide, or Pitch Deck\n\nWhat would you like to do?");
+      return respond("You're on the **Home Page** of the Enterprise Data & AI Maturity Assessment tool.\n\nFrom here you can:\n• **Start a new assessment** - Click 'Start Assessment'\n• **Try a sample** - See a demo assessment\n• **View your dashboard** - See all your assessments\n• **Learn more** - Check out the Deep Dive, User Guide, or Pitch Deck\n\nWhat would you like to do?");
     }
   }
   
@@ -1170,7 +1170,7 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
   if (pageType === 'maturity_report' && assessmentData) {
     if (messageLower.includes('what') || messageLower.includes('this page') || messageLower.includes('report')) {
       const org = assessmentData.organization || 'your organization';
-      return `You're viewing the **Maturity Report** for ${org}.\n\nThis report shows:\n• **Overall maturity scores** across 6 pillars\n• **Current vs Target** maturity levels\n• **Gap analysis** for each pillar\n• **Databricks Recommendations** - specific features to adopt\n• **Next Steps** - actionable roadmap\n\n**Actions you can take:**\n• Edit any section (hover to see edit icons)\n• Start slideshow mode\n• Print the report\n• Customize colors and content`;
+      return `You're viewing the **Maturity Report** for ${org}.\n\nThis report shows:\n• **Overall maturity scores** across 6 pillars\n• **Current vs Target** maturity levels\n• **Gap analysis** for each pillar\n• **Strategic Recommendations** - specific capabilities to adopt\n• **Next Steps** - actionable roadmap\n\n**Actions you can take:**\n• Edit any section (hover to see edit icons)\n• Start slideshow mode\n• Print the report\n• Customize colors and content`;
     }
     
     if (messageLower.includes('score') || messageLower.includes('maturity') || messageLower.includes('level')) {
@@ -1205,8 +1205,8 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
       }
     }
     
-    if (messageLower.includes('recommendation') || messageLower.includes('databricks') || messageLower.includes('feature')) {
-      return respond("**Databricks Recommendations** are tailored to your assessment!\n\nEach pillar shows specific Databricks features and capabilities that match your maturity level and goals:\n\n• **Delta Lake** - For data reliability\n• **Unity Catalog** - For governance\n• **MLflow** - For ML lifecycle\n• **Delta Live Tables** - For data pipelines\n• **Model Serving** - For ML deployment\n• **AI Gateway** - For GenAI apps\n\nScroll down to see recommendations for each pillar. You can edit them too!");
+    if (messageLower.includes('recommendation') || messageLower.includes('feature')) {
+      return respond("**Strategic Recommendations** are tailored to your assessment!\n\nEach pillar shows modern platform capabilities and architectures that match your maturity level and goals:\n\n• **Modern Lakehouse Storage** - For data reliability and ACID consistency\n• **Unified Catalog** - For cross-cloud governance and fine-grained access control\n• **MLOps & Experiment Tracking** - For ML reproducibility and registry\n• **Declarative Pipelines** - For automated ETL and data quality\n• **Managed Model Serving** - For production ML deployment\n• **AI Gateway & RAG** - For enterprise GenAI applications\n\nScroll down to see recommendations for each pillar. You can edit them too!");
     }
     
     if (messageLower.includes('edit') || messageLower.includes('change') || messageLower.includes('customize')) {
@@ -1292,8 +1292,8 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
   
   // ===== GENERAL KNOWLEDGE RESPONSES =====
   
-  if (messageLower.includes('databricks') && (messageLower.includes('feature') || messageLower.includes('product') || messageLower.includes('capability'))) {
-    return respond("**Key Databricks Capabilities:**\n\n**Data Engineering:**\n• [Delta Lake](/deep-dive#data-engineering) - ACID transactions, time travel\n• Delta Live Tables - Declarative pipelines\n• Auto Loader - Incremental data ingestion\n\n**Governance:**\n• [Unity Catalog](/deep-dive#platform-governance) - Unified governance\n• Data lineage - Track data flow\n• Access controls - Fine-grained permissions\n\n**ML & AI:**\n• [MLflow](/deep-dive#machine-learning) - ML lifecycle management\n• Model Serving - Deploy models at scale\n• [AI Gateway](/deep-dive#generative-ai) - Secure GenAI development\n\n**Performance:**\n• Photon - High-speed query engine\n• Serverless - Auto-scaling compute\n\n📚 [Learn More - Deep Dive](/deep-dive)\n🚀 [Start Assessment](/assessment/start)");
+  if (messageLower.includes('platform') && (messageLower.includes('feature') || messageLower.includes('product') || messageLower.includes('capability'))) {
+    return respond("**Key Enterprise Data & AI Platform Capabilities:**\n\n**Data Engineering:**\n• [Modern Lakehouse Formats](/deep-dive#data-engineering) - ACID transactions, time travel\n• Declarative Pipelines - Automated data engineering & quality expectations\n• Streaming & Auto-scaling Ingestion - Continuous real-time loading\n\n**Governance:**\n• [Unified Catalog](/deep-dive#platform-governance) - Cross-cloud data and AI governance\n• Automated Data Lineage - End-to-end data flow tracking\n• Fine-Grained Access Controls - Row/column level security & attribute masking\n\n**ML & AI:**\n• [MLOps Platform](/deep-dive#machine-learning) - Experiment tracking & model registry\n• Managed Model Serving - Real-time and batch model inference\n• [AI Gateway & RAG](/deep-dive#generative-ai) - Secure GenAI development & evaluation\n\n**Analytics:**\n• Vectorized Query Engines - High-speed query acceleration\n• Serverless SQL Warehouses - Auto-scaling on-demand compute\n\n📚 [Learn More - Deep Dive](/deep-dive)\n🚀 [Start Assessment](/assessment/start)");
   }
   
   if (messageLower.includes('how to start') || messageLower.includes('how do i start') || messageLower.includes('begin')) {
@@ -1302,7 +1302,7 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
   
   // Handle "Does it work with existing code?" and compatibility questions
   if (messageLower.includes('existing code') || messageLower.includes('work with my code') || messageLower.includes('compatibility') || messageLower.includes('integrate')) {
-    return respond("**Yes! The assessment works with ANY Databricks implementation.** ✅\n\n**What we assess:**\n• **Your current processes** - regardless of tools used\n• **Your maturity level** - not specific technologies\n• **Your capabilities** - business outcomes, not code\n• **Your goals** - where you want to be\n\n**No code changes needed!**\nThe assessment evaluates your organization's maturity across data engineering, analytics, ML, GenAI, governance, and operations. It's **technology-agnostic** - we assess capabilities and practices, not specific implementations.\n\n**After assessment:**\nRecommendations show how Databricks features map to your maturity gaps, but the assessment itself is universal.\n\n**Bottom line:** Your existing code, data, and processes are the INPUT - the assessment OUTPUT shows where you are and where you could be.");
+    return respond("**Yes! The assessment works with ANY data & AI architecture.** ✅\n\n**What we assess:**\n• **Your current processes** - regardless of tools used\n• **Your maturity level** - not specific technologies\n• **Your capabilities** - business outcomes, not vendor lock-in\n• **Your goals** - where you want to be\n\n**No code changes needed!**\nThe assessment evaluates your organization's maturity across data engineering, analytics, ML, GenAI, governance, and operational excellence. It is **100% vendor-neutral and technology-agnostic**.\n\n**After assessment:**\nRecommendations show proven architectural patterns and best practices mapped directly to your maturity gaps.\n\n**Bottom line:** Your existing platform and processes are the input — the assessment output illuminates your roadmap to enterprise AI maturity.");
   }
   
   if (messageLower.includes('slideshow') || messageLower.includes('present') || messageLower.includes('print')) {

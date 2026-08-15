@@ -655,7 +655,7 @@ const ExecutiveSummaryNew = () => {
             ? outcomesMatch[1].split('\n').filter(line => line.trim().startsWith('•')).map(line => line.trim().substring(1).trim())
             : [
                 'Improved data platform reliability and governance',
-                'Faster time-to-insight with modern Databricks capabilities',
+                'Faster time-to-insight with modern data & AI platform capabilities',
                 'Reduced manual effort through automation',
                 'Better cost efficiency through serverless compute',
                 'Enhanced compliance and audit capabilities'
@@ -935,7 +935,7 @@ const ExecutiveSummaryNew = () => {
                 </div>
                 <div style={{ fontSize: '1rem', marginBottom: '16px', lineHeight: 1.6 }}>
                   This assessment has <strong>{resultsData?.assessmentInfo?.questionsAnswered || 0} questions answered</strong>. 
-                  The Executive Summary requires assessment responses to generate "What's Working", "Key Challenges", and Databricks recommendations.
+                  The Executive Summary requires assessment responses to generate "What's Working", "Key Challenges", and strategic recommendations.
                 </div>
                 <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                   <button
@@ -988,7 +988,7 @@ const ExecutiveSummaryNew = () => {
             <ActionButton
               onClick={async () => {
                 console.log('[ExecutiveSummaryNew] Regenerating with dynamic content...');
-                toast.loading('Regenerating with Databricks features...', { id: 'refresh' });
+                toast.loading('Regenerating with platform recommendations...', { id: 'refresh' });
                 try {
                   // Force backend to regenerate by calling results API with forceRefresh
                   const freshResults = await assessmentService.getAssessmentResults(assessmentId, true);
@@ -1375,7 +1375,7 @@ const ExecutiveSummaryNew = () => {
                   </li>
                   <li>
                     <FiCheckCircle size={18} />
-                    Faster time-to-insight with modern Databricks capabilities
+                    Faster time-to-insight with modern data & AI platform capabilities
                   </li>
                   <li>
                     <FiCheckCircle size={18} />

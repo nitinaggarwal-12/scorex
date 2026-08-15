@@ -15,7 +15,7 @@ const generativeAIPillar = {
       questions: [
         {
           id: 'genai_vision',
-          question: 'How aligned is your GenAI vision with your broader data and analytics strategy on Databricks?',
+          question: 'How aligned is your GenAI vision with your broader enterprise data and analytics strategy?',
           perspectives: [
             {
               id: 'current_state',
@@ -453,7 +453,7 @@ const generativeAIPillar = {
         },
         {
           id: 'genai_transparency',
-          question: 'How transparent and traceable are GenAI interactions and responses across your Databricks footprint?',
+          question: 'How transparent and traceable are GenAI interactions and model responses across your enterprise footprint?',
           perspectives: [
             {
               id: 'current_state',

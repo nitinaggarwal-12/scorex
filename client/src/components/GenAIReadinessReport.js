@@ -255,10 +255,10 @@ const GenAIReadinessReport = () => {
     },
     {
       step: "5",
-      title: "Engage Databricks Experts",
-      description: "Connect with your Databricks account team and architects to explore how our platform, catalog, and models can accelerate your GenAI journey.",
+      title: "Engage Architecture Advisory",
+      description: "Connect with enterprise architecture leads and data platform experts to explore how unified governance, catalogs, and serving architectures accelerate your GenAI journey.",
       timeframe: "Ongoing",
-      action: "Schedule a architecture deep-dive on Unity Catalog and Model Serving."
+      action: "Schedule an architecture deep-dive on Unified Governance and Model Serving."
     }
   ];
 
@@ -409,7 +409,7 @@ const GenAIReadinessReport = () => {
       {/* Detailed Recommendations with Premium Sliding Tabs */}
       <div className="detailed-recommendations-section">
         <h2>Detailed Pillar Recommendations</h2>
-        <p className="section-intro">Select a pillar below to review current status, leverages on Databricks, and customized action items.</p>
+        <p className="section-intro">Select a pillar below to review current status, architectural leverage, and customized action items.</p>
         
         {/* Sliding Tabs Bar */}
         <div className="recommendations-tabs-bar">
@@ -454,7 +454,7 @@ const GenAIReadinessReport = () => {
               </div>
 
               <div className="tab-card-grid">
-                {/* Left Side: Status and Databricks Leverage */}
+                {/* Left Side: Status and Platform Leverage */}
                 <div className="tab-grid-column status-column">
                   <div className="card-sub-section">
                     <h5>Current Status</h5>
@@ -469,11 +469,11 @@ const GenAIReadinessReport = () => {
                   </div>
 
                   <div className="card-sub-section leverage-section">
-                    <h5>Databricks Platform Leverage</h5>
+                    <h5>Platform Capability Leverage</h5>
                     <div className="leverage-info-box">
                       <FiTrendingUp className="leverage-icon" />
                       <p>
-                        Leverage <strong>Databricks Unity Catalog</strong> for unified governance of models, features, and datasets, and deploy secure models with low-latency using <strong>Model Serving</strong>.
+                        Leverage a <strong>Unified Catalog</strong> for centralized governance of models, features, and datasets, and deploy secure models with low-latency using <strong>Managed Model Serving</strong>.
                       </p>
                     </div>
                   </div>

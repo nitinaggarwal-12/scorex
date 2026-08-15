@@ -1870,7 +1870,7 @@ const AssessmentQuestion = ({ framework, currentAssessment, onUpdateStatus }) =>
       { progress: 10, message: 'Analyzing assessment responses...' },
       { progress: 25, message: 'Calculating maturity scores...' },
       { progress: 40, message: 'Generating recommendations...' },
-      { progress: 55, message: 'Identifying Databricks features...' },
+      { progress: 55, message: 'Mapping platform capabilities...' },
       { progress: 70, message: 'Building strategic roadmap...' },
       { progress: 85, message: 'Calculating business impact...' },
       { progress: 95, message: 'Finalizing report...' },

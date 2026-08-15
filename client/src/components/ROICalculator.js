@@ -589,14 +589,14 @@ const ROICalculator = ({ results, assessment }) => {
 
     const totalRevenue = genAIRevenue + mlRevenue + dataMonetization;
 
-    // Databricks investment (simplified)
-    const databricksInvestment = 
+    // Modern platform investment (simplified)
+    const platformInvestment = 
       (assumptions.dataVolumeTB * 3000) + // Storage + compute
-      (assumptions.teamSize * 10000); // Per-user licensing
+      (assumptions.teamSize * 10000); // Per-user licensing & infra
 
     // 3-year value
     const threeYearValue = (totalSavings + totalRevenue) * 3;
-    const threeYearInvestment = databricksInvestment * 3;
+    const threeYearInvestment = platformInvestment * 3;
     const netROI = threeYearValue - threeYearInvestment;
     const roiRatio = threeYearValue / threeYearInvestment;
 
@@ -617,7 +617,7 @@ const ROICalculator = ({ results, assessment }) => {
       investment: threeYearInvestment,
       netROI,
       roiRatio,
-      paybackMonths: Math.ceil((databricksInvestment / (totalSavings + totalRevenue)) * 12)
+      paybackMonths: Math.ceil((platformInvestment / (totalSavings + totalRevenue)) * 12)
     };
   };
 
@@ -686,7 +686,7 @@ const ROICalculator = ({ results, assessment }) => {
           Interactive ROI Calculator
         </CalculatorTitle>
         <CalculatorSubtitle>
-          Customize assumptions to see your specific business case for Databricks
+          Customize assumptions to see your specific business case and ROI potential
         </CalculatorSubtitle>
       </CalculatorHeader>
 
@@ -861,7 +861,7 @@ const ROICalculator = ({ results, assessment }) => {
       <InfoBox>
         <FiInfo size={20} style={{ flexShrink: 0, marginTop: '2px' }} />
         <InfoText>
-          <strong>How we calculate ROI:</strong> Based on industry benchmarks from Forrester Total Economic Impact studies and Databricks customer case studies. 
+          <strong>How we calculate ROI:</strong> Based on industry benchmarks from Forrester Total Economic Impact studies and enterprise data architecture case studies. 
           Actual results vary by organization. Conservative scenario uses lower-bound estimates, Realistic uses median values, and Optimistic uses upper-quartile results.
         </InfoText>
       </InfoBox>

@@ -85,11 +85,11 @@ transporter.verify(function(error, success) {
           const mailOptions = {
             from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
             to: recipient,
-            subject: '✅ Databricks Assessment - Email Configuration Test',
+            subject: '✅ ScoreX Assessment - Email Configuration Test',
             html: `
               <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <h2 style="color: #FF3621;">✅ Email Configuration Successful!</h2>
-                <p>Your Databricks Maturity Assessment email configuration is working correctly.</p>
+                <h2 style="color: #2563eb;">✅ Email Configuration Successful!</h2>
+                <p>Your ScoreX Maturity Assessment email configuration is working correctly.</p>
                 
                 <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
                   <h3 style="margin-top: 0;">Configuration Details:</h3>
@@ -104,12 +104,12 @@ transporter.verify(function(error, success) {
                 <p>You can now:</p>
                 <ul>
                   <li>✅ Send assessment assignment notifications</li>
-                  <li>✅ Send reminder emails to consumers</li>
+                  <li>✅ Send reminder emails to participants</li>
                   <li>✅ Notify authors of completed assessments</li>
                 </ul>
                 
                 <p style="color: #666; font-size: 12px; margin-top: 30px;">
-                  This is a test email from the Databricks Maturity Assessment Platform.<br>
+                  This is a test email from the ScoreX Maturity Assessment Platform.<br>
                   Timestamp: ${new Date().toISOString()}
                 </p>
               </div>

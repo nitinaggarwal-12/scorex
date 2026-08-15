@@ -837,7 +837,7 @@ const HomePageNew = () => {
       <Section id="why-assessment">
         <SectionHeader>
           <h2>Why take this assessment?</h2>
-          <p>Gain clarity on your Databricks journey and unlock the full potential of your data and AI initiatives.</p>
+          <p>Gain clarity on your enterprise data & AI journey and unlock the full potential of your initiatives.</p>
         </SectionHeader>
 
         <Grid className="three-columns">
@@ -852,7 +852,7 @@ const HomePageNew = () => {
             </CardIcon>
             <CardTitle>Accelerate Growth</CardTitle>
             <CardDescription>
-              Identify opportunities to maximize your Databricks investment and accelerate your data maturity journey.
+              Identify opportunities to maximize your data & AI platform investments and accelerate your transformation.
             </CardDescription>
           </Card>
 
@@ -927,7 +927,7 @@ const HomePageNew = () => {
             </CardIcon>
             <CardTitle>Best Practices</CardTitle>
             <CardDescription>
-              Learn from industry best practices and proven patterns for successful Databricks implementations.
+              Learn from industry best practices and proven architectural patterns for data & AI implementations.
             </CardDescription>
           </Card>
         </Grid>
@@ -992,7 +992,7 @@ const HomePageNew = () => {
       <Section id="pillars" className="alt-bg">
         <SectionHeader>
           <h2>Assessment Pillars</h2>
-          <p>Evaluate your Databricks maturity across these six comprehensive pillars. Each contains five dimensions with targeted questions.</p>
+          <p>Evaluate your enterprise data & AI maturity across these six comprehensive pillars. Each contains five dimensions with targeted questions.</p>
         </SectionHeader>
 
         <Grid className="three-columns">
@@ -1007,7 +1007,7 @@ const HomePageNew = () => {
               <h3>Platform & Governance</h3>
             </div>
             <div className="pillar-desc">
-              Assess how well your Databricks foundation is secured, scalable, and governed.
+              Assess how well your data & AI platform foundation is secured, scalable, and governed.
             </div>
             <div className="dimensions-label">Dimensions:</div>
             <div className="dimensions">
@@ -1033,7 +1033,7 @@ const HomePageNew = () => {
               <h3>Data Engineering & Integration</h3>
             </div>
             <div className="pillar-desc">
-              Evaluate how efficiently data is ingested, transformed, and managed within Databricks.
+              Evaluate how efficiently data is ingested, transformed, and managed across your data pipelines.
             </div>
             <div className="dimensions-label">Dimensions:</div>
             <div className="dimensions">
@@ -1059,7 +1059,7 @@ const HomePageNew = () => {
               <h3>Analytics & BI Modernization</h3>
             </div>
             <div className="pillar-desc">
-              Assess how Databricks supports governed analytics, performance, and self-service access.
+              Assess how your platform supports governed analytics, query performance, and self-service access.
             </div>
             <div className="dimensions-label">Dimensions:</div>
             <div className="dimensions">
@@ -1085,7 +1085,7 @@ const HomePageNew = () => {
               <h3>Machine Learning & MLOps</h3>
             </div>
             <div className="pillar-desc">
-              Understand how Databricks is leveraged for classical and predictive ML use cases with reliable operations.
+              Understand how machine learning is leveraged for predictive ML use cases with reliable operations.
             </div>
             <div className="dimensions-label">Dimensions:</div>
             <div className="dimensions">
@@ -1137,7 +1137,7 @@ const HomePageNew = () => {
               <h3>Operational Excellence & Adoption</h3>
             </div>
             <div className="pillar-desc">
-              Measure organizational readiness, adoption velocity, and realized value from Databricks.
+              Measure organizational readiness, adoption velocity, and realized value across data & AI programs.
             </div>
             <div className="dimensions-label">Dimensions:</div>
             <div className="dimensions">
@@ -1174,9 +1174,9 @@ const HomePageNew = () => {
       <Footer>
         <FooterContent>
           <FooterBrand>
-            <h3>Data & AI Maturity Assessment</h3>
+            <h3>ScoreX Enterprise Data & AI Maturity</h3>
             <p>
-              A comprehensive framework to evaluate, benchmark, and accelerate your Databricks journey. 
+              A comprehensive vendor-neutral framework to evaluate, benchmark, and accelerate your data & AI transformation. 
               Built by practitioners, for practitioners.
             </p>
             <div className="security">

@@ -1,5 +1,5 @@
 {
-  "name": "databricks-assessment-client",
+  "name": "scorex-client",
   "version": "1.0.1",
   "private": true,
   "dependencies": {

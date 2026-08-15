@@ -1,15 +1,15 @@
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-// Professional Databricks brand colors
+// Professional executive theme colors
 const COLORS = {
-  primary: '#FF3621',      // Databricks Red
-  secondary: '#00A972',    // Databricks Green
-  accent: '#1B3139',       // Dark Blue
-  text: '#2C2C2C',
-  lightGray: '#F5F5F5',
-  mediumGray: '#CCCCCC',
-  darkGray: '#666666',
+  primary: '#2563EB',      // Primary Blue
+  secondary: '#10B981',    // Success Green
+  accent: '#1E293B',       // Slate Navy
+  text: '#1E293B',
+  lightGray: '#F8FAFC',
+  mediumGray: '#CBD5E1',
+  darkGray: '#64748B',
   white: '#FFFFFF',
   blue: '#3B82F6',
   green: '#10B981',
@@ -69,12 +69,12 @@ class ProfessionalPDFExporter {
     this.doc.setFontSize(10);
     this.doc.setTextColor(COLORS.primary);
     this.doc.setFont('helvetica', 'bold');
-    this.doc.text('DATABRICKS', this.margin, 25);
+    this.doc.text('SCOREX', this.margin, 25);
     
     this.doc.setFontSize(8);
     this.doc.setTextColor(COLORS.darkGray);
     this.doc.setFont('helvetica', 'normal');
-    this.doc.text('Technical Maturity Assessment Report', this.pageWidth - this.margin, 25, { align: 'right' });
+    this.doc.text('Enterprise Data & AI Maturity Assessment Report', this.pageWidth - this.margin, 25, { align: 'right' });
     
     this.doc.setDrawColor(COLORS.mediumGray);
     this.doc.setLineWidth(0.5);
@@ -127,13 +127,13 @@ class ProfessionalPDFExporter {
     
     // Title
     this.doc.setTextColor(COLORS.white);
-    this.doc.setFontSize(32);
+    this.doc.setFontSize(28);
     this.doc.setFont('helvetica', 'bold');
-    this.doc.text('Databricks', this.pageWidth / 2, 55, { align: 'center' });
+    this.doc.text('SCOREX', this.pageWidth / 2, 52, { align: 'center' });
     
-    this.doc.setFontSize(20);
+    this.doc.setFontSize(18);
     this.doc.setFont('helvetica', 'normal');
-    this.doc.text('Technical Maturity Assessment', this.pageWidth / 2, 90, { align: 'center' });
+    this.doc.text('Enterprise Data & AI Maturity Assessment', this.pageWidth / 2, 88, { align: 'center' });
     
     // Organization info box
     let yPos = 160;
@@ -199,7 +199,7 @@ class ProfessionalPDFExporter {
     this.doc.setFontSize(9);
     this.doc.setTextColor(COLORS.mediumGray);
     this.doc.text(
-      'Prepared by Databricks Technical Maturity Assessment Platform',
+      'Prepared by ScoreX Enterprise Data & AI Maturity Assessment Platform',
       this.pageWidth / 2,
       this.pageHeight - 30,
       { align: 'center' }
@@ -278,7 +278,7 @@ class ProfessionalPDFExporter {
     
     // Ensure summaryText is always a string
     if (!summaryText || typeof summaryText !== 'string' || summaryText === '{}' || summaryText === '[object Object]' || summaryText === 'null' || summaryText === 'undefined') {
-      summaryText = 'This assessment provides a comprehensive evaluation of your Databricks technical maturity across six key pillars. ' +
+      summaryText = 'This assessment provides a comprehensive evaluation of your enterprise data & AI technical maturity across six key pillars. ' +
         'The findings reveal structured processes with opportunities for optimization through automation, governance integration, and AI enablement.';
     }
     
@@ -694,7 +694,7 @@ class ProfessionalPDFExporter {
     this.doc.setFont('helvetica', 'normal');
     this.doc.setTextColor(COLORS.text);
     
-    const methodologyText = `This assessment evaluates your organization's Databricks technical maturity across six key pillars. Each pillar contains multiple dimensions with specific questions designed to assess current capabilities and future aspirations.
+    const methodologyText = `This assessment evaluates your organization's enterprise data & AI technical maturity across six key pillars. Each pillar contains multiple dimensions with specific questions designed to assess current capabilities and future aspirations.
 
 The maturity framework uses a 5-level scale:
 • Level 1 (Explore): Ad-hoc processes, limited capabilities
@@ -779,7 +779,7 @@ export const generateProfessionalReport = (results, assessmentInfo) => {
     // Generate filename
     const date = new Date().toISOString().split('T')[0];
     const orgName = (assessmentInfo.organizationName || 'Organization').replace(/[^a-z0-9]/gi, '_');
-    const filename = `Databricks_Maturity_Assessment_${orgName}_${date}.pdf`;
+    const filename = `ScoreX_Maturity_Assessment_${orgName}_${date}.pdf`;
     
     // Save the PDF
     doc.save(filename);

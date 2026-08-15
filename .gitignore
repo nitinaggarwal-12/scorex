@@ -7,9 +7,16 @@ client/build/
 # Data files (contains assessment data)
 server/data/assessments.json
 
-# Environment variables
+# Environment variables & keys
 .env
 .env.local
+.env.*
+*.key
+*.pem
+*gcp-key*.json
+
+# Scratch & temporary artifacts
+scratch/
 
 # Logs
 *.log

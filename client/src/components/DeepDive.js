@@ -2226,28 +2226,28 @@ const DeepDive = () => {
   const [objectives, setObjectives] = useState([
     {
       id: 'obj-1',
-      title: 'Enable our customers to build a scalable, secure, and governed foundation on Databricks',
-      content: `Technical practitioners within our customers' organizations aim to create a platform that is reliable, performant, and compliant with enterprise standards.
+      title: 'Enable organizations to build a scalable, secure, and governed data & AI foundation',
+      content: `Technical practitioners within organizations aim to create an enterprise platform that is reliable, performant, and compliant with modern standards.
 
-The Technical Maturity Model enables Databricks to provide customers with a structured framework to benchmark their platform readiness and operational excellence across the Lakehouse.`,
+The Technical Maturity Model provides a structured framework to benchmark platform readiness and operational excellence across the lakehouse architecture.`,
       icon: '🏗️',
       borderColor: '#f97316'
     },
     {
       id: 'obj-2',
-      title: 'Help customers identify and overcome technical and operational gaps',
-      content: `A mature platform is not only about performance — success depends on governance, integration, observability, and operational excellence. Technical maturity assessments help highlight dependencies across architecture, data pipelines, security, and team enablement.
+      title: 'Help teams identify and overcome technical and operational gaps',
+      content: `A mature platform is not only about compute performance — success depends on governance, integration, observability, and operational excellence. Technical maturity assessments highlight dependencies across architecture, data pipelines, security, and team enablement.
 
-The Technical Maturity Model enables us to elevate discussions beyond workloads and clusters — helping customers align technology, processes, and people for long-term scalability and reliability.`,
+The Technical Maturity Model elevates discussions beyond point tools — helping leaders align technology, processes, and people for long-term scalability and reliability.`,
       icon: '🎯',
       borderColor: '#3b82f6'
     },
     {
       id: 'obj-3',
-      title: "Position Databricks as a strategic partner in the customer's modernization journey",
-      content: `With thousands of customer engagements, Databricks uniquely understands what 'good' looks like across platform operations, data engineering, analytics, ML, and GenAI adoption.
+      title: "Establish a clear strategic roadmap for enterprise modernization",
+      content: `Drawing on proven industry best practices, the framework synthesizes what excellence looks like across platform operations, data engineering, analytics, ML, and GenAI adoption.
 
-Position Databricks as a trusted advisor with deep technical expertise — helping customers accelerate their journey toward platform maturity through best practices, Value Acceleration, Partner Solutions, and Technical Account engagements.`,
+Accelerate your journey toward platform maturity through actionable best practices, value acceleration, and structured operational milestones.`,
       icon: '🤝',
       borderColor: '#8b5cf6'
     }
@@ -2268,7 +2268,7 @@ Position Databricks as a trusted advisor with deep technical expertise — helpi
         { letter: 'D.', name: 'Observability & Monitoring' },
         { letter: 'E.', name: 'Cost Management' }
       ],
-      description: 'Foundational platform capabilities for a secure, governed, and scalable Databricks deployment.'
+      description: 'Foundational platform capabilities for a secure, governed, and scalable cloud data deployment.'
     },
     {
       id: 'cat-2',
@@ -2353,11 +2353,11 @@ Position Databricks as a trusted advisor with deep technical expertise — helpi
       id: 'tsp-1',
       category: 'Platform & Governance',
       color: '#f97316',
-      need: 'Establish secure, scalable, and well-governed Databricks environments',
+      need: 'Establish secure, scalable, and well-governed cloud data environments',
       activities: [
         'Platform Foundations Workshop',
-        'ABAC & Unity Catalog implementation review',
-        'IaC setup via Terraform & DABs'
+        'ABAC & Unified Catalog implementation review',
+        'IaC setup via Terraform & declarative templates'
       ],
       outcome: 'Standardized & Governed Lakehouse Foundation'
     },
@@ -2367,8 +2367,8 @@ Position Databricks as a trusted advisor with deep technical expertise — helpi
       color: '#3b82f6',
       need: 'Streamline ingestion, orchestration, and data quality',
       activities: [
-        'LakeFlow Connect onboarding',
-        'DLT & Auto Loader enablement',
+        'Automated Ingestion Connectors onboarding',
+        'Declarative Pipelines & Streaming enablement',
         'Quality rule automation with expectations'
       ],
       outcome: 'Reliable & Automated Data Pipelines'
@@ -2377,10 +2377,10 @@ Position Databricks as a trusted advisor with deep technical expertise — helpi
       id: 'tsp-3',
       category: 'Analytics & BI Modernization',
       color: '#10b981',
-      need: 'Accelerate self-service analytics & performance',
+      need: 'Accelerate self-service analytics & query performance',
       activities: [
-        'DBSQL Serverless adoption',
-        'AI BI workshops (Genie / AI Functions)',
+        'Serverless SQL Warehouses adoption',
+        'AI/BI workshops (Semantic Layer / AI Query Assist)',
         'Cost optimization dashboards'
       ],
       outcome: 'Self-Service Analytics at Scale'
@@ -2391,7 +2391,7 @@ Position Databricks as a trusted advisor with deep technical expertise — helpi
       color: '#dc2626',
       need: 'Standardize ML lifecycle management',
       activities: [
-        'MLflow governance setup',
+        'MLOps governance & registry setup',
         'Feature Store onboarding',
         'Model Serving & CI/CD enablement'
       ],
@@ -2401,11 +2401,11 @@ Position Databricks as a trusted advisor with deep technical expertise — helpi
       id: 'tsp-5',
       category: 'Generative AI & Agents',
       color: '#8b5cf6',
-      need: 'Enable GenAI experimentation with governance',
+      need: 'Enable GenAI experimentation with enterprise governance',
       activities: [
-        'AI Gateway integration',
+        'AI Gateway & Guardrails integration',
         'Vector Search & embedding pipeline enablement',
-        'Agentic app deployment via Databricks Apps'
+        'Agentic app deployment & observability'
       ],
       outcome: 'Enterprise GenAI Adoption Readiness'
     },
@@ -2482,93 +2482,93 @@ Position Databricks as a trusted advisor with deep technical expertise — helpi
       approach: [
         'Run FinOps workshops for cost and performance optimization.',
         'Deep-dive reviews of observability, lineage, and monitoring.',
-        'Implement ABAC and central Unity Catalog governance.',
-        'Build CI/CD automation using Databricks Asset Bundles.',
-        'Position Databricks as the innovation and optimization partner.'
+        'Implement ABAC and central unified catalog governance.',
+        'Build CI/CD automation using declarative asset templates.',
+        'Establish long-term architectural optimization roadmap.'
       ]
     },
     {
       id: 'scenario-2',
-      title: 'Azure – Already Using Databricks',
+      title: 'Cloud Enterprise – Optimization',
       color: '#3b82f6',
       bgColor: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
       maturityLevel: 3, // Formalize/Optimize
       maturityDescriptions: {
         explore: 'Ad-hoc usage; limited visibility.',
         experiment: 'Initial pipelines; workspace-specific access.',
-        formalize: 'Identity and Unity Catalog integration.',
+        formalize: 'Identity and unified catalog integration.',
         optimize: 'IaC automation; monitoring enabled.',
-        transform: 'Governed multi-workspace setup with Azure governance and FinOps.'
+        transform: 'Governed multi-workspace setup with enterprise governance and FinOps.'
       },
-      scenario: 'Existing Azure Databricks customers underutilizing governance and automation capabilities, needing optimization and enablement alignment.',
+      scenario: 'Existing cloud data platform customers underutilizing governance and automation capabilities, needing optimization and enablement alignment.',
       approach: [
         'Conduct Lakehouse Health Check on architecture and usage.',
         'Deploy Terraform templates for workspace consistency.',
-        'Integrate Azure Monitor and Lakehouse Monitoring.',
-        'Align with Azure GTM for FinOps and governance visibility.'
+        'Integrate unified monitoring and telemetry dashboards.',
+        'Align FinOps and governance visibility across teams.'
       ]
     },
     {
       id: 'scenario-3',
-      title: 'Migration-Led – Burning Platform',
+      title: 'Migration-Led – Modernization',
       color: '#dc2626',
       bgColor: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
       maturityLevel: 3, // Formalize/Optimize
       maturityDescriptions: {
         explore: 'Legacy DWH or Hadoop nearing obsolescence.',
-        experiment: 'POCs to validate Databricks migration.',
+        experiment: 'POCs to validate lakehouse migration.',
         formalize: 'Migration factory; hybrid coexistence.',
-        optimize: 'DLT pipelines; schema evolution automated.',
-        transform: 'Fully modernized Lakehouse governed by Unity Catalog.'
+        optimize: 'Declarative pipelines; schema evolution automated.',
+        transform: 'Fully modernized lakehouse governed by unified catalog.'
       },
       scenario: 'Customers facing time-sensitive migrations off legacy systems needing fast modernization while ensuring governance and continuity.',
       approach: [
         'Engage migration specialists to define architecture roadmap.',
-        'Modernize ingestion using LakeFlow and Delta pipelines.',
-        'Embed Unity Catalog and audit readiness from day one.',
+        'Modernize ingestion using automated pipeline connectors.',
+        'Embed unified catalog and audit readiness from day one.',
         'Deliver TCO reduction through consolidation and automation.'
       ]
     },
     {
       id: 'scenario-4',
-      title: 'Shadow IT',
+      title: 'Shadow IT & Fragmentation',
       color: '#10b981',
       bgColor: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
       maturityLevel: 3, // Formalize/Optimize
       maturityDescriptions: {
         explore: 'Disparate workspaces; no visibility.',
-        experiment: 'Uncoordinated clusters and governance gaps.',
+        experiment: 'Uncoordinated compute and governance gaps.',
         formalize: 'Central workspace registry; minimal identity integration.',
         optimize: 'Unified catalog and FinOps tagging.',
-        transform: 'Fully governed multi-domain Lakehouse with automation.'
+        transform: 'Fully governed multi-domain lakehouse with automation.'
       },
-      scenario: 'Independent workspaces cause governance fragmentation and duplicated costs, requiring unification and governance centralization.',
+      scenario: 'Independent teams cause governance fragmentation and duplicated costs, requiring unification and governance centralization.',
       approach: [
-        'Run workspace discovery and consolidation assessment.',
-        'Implement Unity Catalog with ABAC for federated governance.',
+        'Run platform discovery and consolidation assessment.',
+        'Implement unified catalog with ABAC for federated governance.',
         'Automate provisioning via Terraform for lifecycle control.',
         'Enable FinOps dashboards for visibility and accountability.'
       ]
     },
     {
       id: 'scenario-5',
-      title: 'Strategy Directions',
+      title: 'Strategic AI Directions',
       color: '#8b5cf6',
       bgColor: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
       maturityLevel: 3, // Formalize/Optimize
       maturityDescriptions: {
         explore: 'Strategic intent without technical execution.',
         experiment: 'Early pilots and architecture reviews.',
-        formalize: 'Unity Catalog and CI/CD adoption.',
+        formalize: 'Unified catalog and CI/CD adoption.',
         optimize: 'Observability and automation aligned to KPIs.',
-        transform: 'Platform-as-a-Service with governed Lakehouse adoption.'
+        transform: 'Platform-as-a-Service with governed lakehouse adoption.'
       },
       scenario: 'Executives have defined an AI-first vision but need a concrete technical roadmap to operationalize platform modernization.',
       approach: [
         'Conduct Technical Maturity Assessment across six pillars.',
         'Map current and target states with quantified maturity gaps.',
         'Develop roadmap with modernization milestones and KPIs.',
-        'Position Databricks as the enabler of continuous modernization.'
+        'Establish framework for continuous architectural modernization.'
       ]
     }
   ]);
@@ -2725,7 +2725,7 @@ Position Databricks as a trusted advisor with deep technical expertise — helpi
         },
         {
           stage: '3. Formalize',
-          description: 'GenAI models deployed as Databricks Apps with Vector Search. Compliance and cost governance implemented.',
+          description: 'GenAI models deployed as containerized apps with Vector Search. Compliance and cost governance implemented.',
           tools: 'Vector Search Setup, Observability Dashboards'
         },
         {
@@ -3040,7 +3040,7 @@ Position Databricks as a trusted advisor with deep technical expertise — helpi
           levels: [
             'PoC chatbots or notebooks.',
             'Simple GenAI apps built with SDKs.',
-            'Apps operationalized using Databricks Apps.',
+            'Apps operationalized using containerized deployments.',
             'Multi-agent orchestration using AI Gateway.',
             'Full enterprise agent network orchestrating workflows.'
           ]
@@ -3098,7 +3098,7 @@ Position Databricks as a trusted advisor with deep technical expertise — helpi
           levels: [
             'Ad-hoc trainings.',
             'Some onboarding materials.',
-            'Structured Databricks Academy program.',
+            'Structured training academy program.',
             'Role-based enablement pathways.',
             'Continuous learning ecosystem with AI-powered skill tracking.'
           ]
@@ -4200,7 +4200,7 @@ Transform: Fully governed multi-domain Lakehouse with automation.`;
           <div style={{ flex: 1 }}>
             <PageTitle>The Objective of a Technical Maturity Assessment</PageTitle>
             <PageSubtitle>
-              Understand the strategic goals and comprehensive framework behind Databricks maturity assessments
+              Understand the strategic goals and comprehensive framework behind Enterprise Data & AI maturity assessments
             </PageSubtitle>
           </div>
           
@@ -5003,7 +5003,7 @@ Transform: Fully governed multi-domain Lakehouse with automation.`;
                           const selected = e.target.value;
                           if (selected === 'platform') {
                             handleFormChange('title', 'Platform & Governance');
-                            handleFormChange('description', 'Foundational platform capabilities for a secure, governed, and scalable Databricks deployment.');
+                            handleFormChange('description', 'Foundational platform capabilities for a secure, governed, and scalable cloud data deployment.');
                           } else if (selected === 'data') {
                             handleFormChange('title', 'Data Engineering & Integration');
                             handleFormChange('description', 'Build robust, scalable data pipelines with modern lakehouse architecture and quality controls.');

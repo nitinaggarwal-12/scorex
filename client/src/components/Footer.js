@@ -146,9 +146,9 @@ const Footer = () => {
     <FooterContainer>
       <FooterContent>
         <FooterBrand>
-          <h3>Data & AI Maturity Assessment</h3>
+          <h3>ScoreX Enterprise Data & AI Maturity</h3>
           <p>
-            A comprehensive framework to evaluate, benchmark, and accelerate your Databricks journey. 
+            A comprehensive vendor-neutral framework to evaluate, benchmark, and accelerate your modern enterprise data & AI journey. 
             Built by practitioners, for practitioners.
           </p>
           <div className="security">

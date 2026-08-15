@@ -1,7 +1,7 @@
 {
-  "name": "databricks-maturity-assessment",
+  "name": "scorex",
   "version": "1.0.0",
-  "description": "A comprehensive Databricks maturity assessment application",
+  "description": "ScoreX - A comprehensive Enterprise Data & AI maturity assessment platform",
   "main": "server/index.js",
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\"",

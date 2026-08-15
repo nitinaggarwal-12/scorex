@@ -1,5 +1,5 @@
-// Databricks Maturity Assessment Framework
-// Updated to match user's 6-pillar, 5-dimension, 2-question structure
+// Enterprise Data & AI Maturity Assessment Framework
+// Updated to match 6-pillar, 5-dimension, 2-question structure
 
 // Import all pillar definitions
 const platformGovernancePillar = require('./pillars/pillar1-platform-governance');

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "🚀 Starting Databricks Maturity Assessment..."
+echo "🚀 Starting ScoreX Maturity Assessment..."
 
 # Verify build directory exists
 if [ ! -d "client/build" ]; then

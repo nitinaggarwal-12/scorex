@@ -1,13 +1,13 @@
 // Pillar 1: Platform & Governance
-// 🧱 Platform & Governance - Assess how well the Databricks foundation is secured, scalable, and governed.
+// 🧱 Platform & Governance - Assess how well the modern data & AI platform foundation is secured, scalable, and governed.
 
 const { generateMaturityOptions } = require('../standardMaturityLevels');
 
 const platformGovernancePillar = {
   id: 'platform_governance',
   name: '🧱 Platform',
-  description: 'Assess how well the Databricks foundation is secured, scalable, and governed.',
-  goal: 'Assess how well the Databricks foundation is secured, scalable, and governed.',
+  description: 'Assess how well the data & AI foundation is secured, scalable, and governed.',
+  goal: 'Assess how well the data & AI foundation is secured, scalable, and governed.',
   dimensions: [
     {
       id: 'environment_architecture',
@@ -15,7 +15,7 @@ const platformGovernancePillar = {
       questions: [
         {
           id: 'env_standardization',
-          question: 'How standardized and isolated are your Databricks environments across development, staging, and production?',
+          question: 'How standardized and isolated are your data & AI environments across development, staging, and production?',
           perspectives: [
             {
               id: 'current_state',
@@ -113,7 +113,7 @@ const platformGovernancePillar = {
       questions: [
         {
           id: 'auth_consistency',
-          question: 'How consistent are your authentication and access-control practices across all Databricks workspaces?',
+          question: 'How consistent are your authentication and access-control practices across all platform workspaces and accounts?',
           perspectives: [
             {
               id: 'current_state',
@@ -211,7 +211,7 @@ const platformGovernancePillar = {
       questions: [
         {
           id: 'governance_centralization',
-          question: 'How centralized and consistent are your governance, lineage, and policy enforcement practices in Databricks?',
+          question: 'How centralized and consistent are your governance, lineage, and policy enforcement practices across your data platform?',
           perspectives: [
             {
               id: 'current_state',
@@ -309,7 +309,7 @@ const platformGovernancePillar = {
       questions: [
         {
           id: 'visibility_comprehensiveness',
-          question: 'How comprehensive is your visibility into Databricks job health, user activity, and platform utilization?',
+          question: 'How comprehensive is your visibility into data pipeline health, compute usage, and platform utilization?',
           perspectives: [
             {
               id: 'current_state',
@@ -407,7 +407,7 @@ const platformGovernancePillar = {
       questions: [
         {
           id: 'cost_tracking',
-          question: 'How effectively do you track Databricks usage and costs by team or project?',
+          question: 'How effectively do you track platform compute usage and costs by team or project?',
           perspectives: [
             {
               id: 'current_state',

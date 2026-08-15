@@ -1823,7 +1823,7 @@ const ResultsNotReleased = ({ assessmentId }) => {
         >
           <ContactTitle>Need Assistance?</ContactTitle>
           <ContactText>
-            If you have any questions or require immediate access, please contact your Databricks Account Team.
+            If you have any questions or require assistance, please contact your Enterprise Architecture Lead or Assessment Administrator.
           </ContactText>
         </ContactSection>
 
@@ -3446,7 +3446,7 @@ const AssessmentResultsNew = () => {
                 ⚠️ You're viewing old cached data with generic content
               </div>
               <div style={{ fontSize: '0.938rem', opacity: 0.95 }}>
-                Click the green "Refresh Results" button below to regenerate with YOUR dynamic Databricks recommendations!
+                Click the green "Refresh Results" button below to regenerate with YOUR dynamic platform recommendations!
               </div>
             </div>
             <button
@@ -4030,12 +4030,12 @@ const AssessmentResultsNew = () => {
                     </div>
                     <div>
                       <label style={{ display: 'block', fontWeight: 600, marginBottom: '8px', color: '#3b82f6', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <FiInfo /> Databricks Recommendations (one per line):
+                        <FiInfo /> Strategic Recommendations (one per line):
                       </label>
                       <EditableTextarea
                         value={editedContent.recommendations || ''}
                         onChange={(e) => setEditedContent({ ...editedContent, recommendations: e.target.value })}
-                        placeholder="Enter Databricks recommendations, one per line..."
+                        placeholder="Enter strategic recommendations, one per line..."
                       />
                     </div>
                   </PillarBody>
@@ -4899,7 +4899,7 @@ const AssessmentResultsNew = () => {
                     <div className="column-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <FiInfo />
-                        {data.databricksFeatures && data.databricksFeatures.length > 0 ? 'Databricks Recommendations' : 'Recommendations'}
+                        Strategic Recommendations
                       </div>
                       <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                         <button
@@ -6556,7 +6556,7 @@ const AssessmentResultsNew = () => {
                             borderBottom: `3px solid ${pillar.color}20`
                           }}>
                             <span style={{ fontSize: '1.8rem' }}>🧱</span>
-                            Databricks Recommendations
+                            Strategic Recommendations
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                             {pillar.recommendations.slice(0, 8).map((rec, idx) => {
@@ -7129,7 +7129,7 @@ const AssessmentResultsNew = () => {
                         color: 'rgba(255, 255, 255, 0.7)',
                         marginTop: '20px'
                       }}>
-                        For support: nitin.aggarwal@databricks.com
+                        Enterprise Data & AI Architecture Advisory
                       </div>
                     </div>
                   )}

@@ -235,13 +235,13 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
       const role = result.user.role;
       
       if (isDatabricks && role === 'consumer') {
-        setError('Consumer accounts should use the Customer login');
+        setError('Participant accounts should use the Participant login');
         setIsLoading(false);
         return;
       }
       
       if (!isDatabricks && (role === 'admin' || role === 'author')) {
-        setError('Databricks team members should use the Databricks login');
+        setError('Admin and Author team members should use the Admin login');
         setIsLoading(false);
         return;
       }
@@ -278,12 +278,12 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
 
             <SidePanel $isDatabricks={isDatabricks}>
               <SidePanelTitle>
-                {isDatabricks ? 'Databricks Team' : 'Customer Portal'}
+                {isDatabricks ? 'Admin & Author Portal' : 'Participant Portal'}
               </SidePanelTitle>
               <SidePanelSubtitle>
                 {isDatabricks 
-                  ? 'Access your authoring and administration tools to manage customer assessments and deliver insights.'
-                  : 'Complete your assigned assessments and view your maturity reports once released by your Databricks team.'
+                  ? 'Access authoring and administration tools to manage organization assessments and deliver insights.'
+                  : 'Complete your assigned assessments and view your maturity reports once released by your administrator.'
                 }
               </SidePanelSubtitle>
             </SidePanel>
@@ -295,21 +295,21 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                   $active={isDatabricks}
                   onClick={() => setView('databricks')}
                 >
-                  Databricks
+                  Admin / Author
                 </ViewButton>
                 <ViewButton
                   type="button"
                   $active={!isDatabricks}
                   onClick={() => setView('customer')}
                 >
-                  Customer
+                  Participant
                 </ViewButton>
               </ViewSelector>
 
               <Title>Sign In</Title>
               <Subtitle>
                 {isDatabricks 
-                  ? 'Sign in to your Databricks account'
+                  ? 'Sign in to your Admin / Author account'
                   : 'Sign in to access your assessments'
                 }
               </Subtitle>

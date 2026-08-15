@@ -78,18 +78,18 @@ class GeminiService {
       return null;
     }
 
-    const systemInstruction = `You are the Lead Databricks Architecture & AI Maturity Advisor for ScoreX (Databricks Maturity Assessment Platform).
+    const systemInstruction = `You are the Lead Enterprise Data & AI Maturity Advisor for ScoreX (Enterprise Data & AI Maturity Assessment Platform).
 Your goal is to guide organizations to higher maturity stages across the 6 core pillars:
-1. Platform & Governance (Unity Catalog, IAM, FinOps, Disaster Recovery)
-2. Data Engineering (Delta Lake, Delta Live Tables, Auto Loader, Liquid Clustering, Workflows)
-3. Analytics & BI (Databricks SQL Serverless, Photon Engine, Semantic Layer, Delta Sharing)
-4. Machine Learning (MLflow, Feature Store, Model Serving, MLOps, Lakehouse Monitoring)
-5. Generative AI (Mosaic AI, Vector Search, Foundation Model APIs, RAG Evaluation, Guardrails)
-6. Operational Excellence (Center of Excellence, CI/CD, Observability, Cost Governance, Enablement)
+1. Platform & Governance (Enterprise Governance, Unified Catalog, IAM, FinOps, Disaster Recovery)
+2. Data Engineering (Modern Lakehouse Storage, Declarative Data Pipelines, Auto-scaling Ingestion, Workflows)
+3. Analytics & BI (Serverless SQL Engines, Vectorized Query Acceleration, Semantic Layer, Governed Data Sharing)
+4. Machine Learning (MLOps, Feature Stores, Managed Model Serving, Drift Monitoring)
+5. Generative AI (Foundation Models, Vector Databases, RAG Architectures, Evaluation & Guardrails)
+6. Operational Excellence (Center of Excellence, CI/CD Automation, Full-stack Observability, Enablement)
 
 Format your responses with clear Markdown formatting:
-- Use bolding for key terms and Databricks features.
-- Provide actionable, architecture-backed advice.
+- Use bolding for key concepts and architectural best practices.
+- Provide actionable, vendor-neutral, architecture-backed advice.
 - Keep responses concise (2-4 paragraphs max), engaging, and structured.`;
 
     let contextDetails = '';
@@ -142,9 +142,9 @@ Provide a direct, consultative, and insightful response. At the very end of your
       return {
         response: mainResponse,
         suggestedQuestions: suggestedQuestions.length > 0 ? suggestedQuestions : [
-          "How do we migrate to Unity Catalog?",
+          "How do we implement a unified data catalog?",
           "What is our biggest maturity gap?",
-          "Tell me about Delta Live Tables best practices"
+          "Tell me about declarative data pipeline best practices"
         ],
         model: result.modelUsed
       };
@@ -162,7 +162,7 @@ Provide a direct, consultative, and insightful response. At the very end of your
       return null;
     }
 
-    const systemInstruction = `You are an Executive Enterprise Architect synthesizing a Databricks Maturity Assessment for executive leadership.`;
+    const systemInstruction = `You are an Executive Enterprise Architect synthesizing an Enterprise Data & AI Maturity Assessment for executive leadership.`;
 
     const pillarSummary = Object.entries(pillarScores)
       .map(([k, v]) => `- ${v.name || k}: Score ${v.score || 'N/A'}/5 (${v.maturityLevel?.level || 'N/A'})`)

@@ -395,7 +395,7 @@ const AssessmentDashboard = ({ currentAssessment: propAssessment, framework, onL
           transition={{ duration: 0.6 }}
         >
           <WelcomeTitle>Welcome Back!</WelcomeTitle>
-          <WelcomeSubtitle>Continue your Databricks maturity assessment</WelcomeSubtitle>
+          <WelcomeSubtitle>Continue your Data & AI maturity assessment</WelcomeSubtitle>
         </WelcomeSection>
 
         <AssessmentCard
@@ -405,7 +405,7 @@ const AssessmentDashboard = ({ currentAssessment: propAssessment, framework, onL
         >
           <AssessmentHeader>
             <AssessmentInfo>
-              <AssessmentTitle>{currentAssessment.assessmentName || 'Databricks Assessment'}</AssessmentTitle>
+              <AssessmentTitle>{currentAssessment.assessmentName || 'Maturity Assessment'}</AssessmentTitle>
               <AssessmentMeta>
                 <MetaItem>
                   <FiUser size={16} />

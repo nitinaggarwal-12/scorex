@@ -1,5 +1,5 @@
 /**
- * Databricks Maturity Assessment Application
+ * ScoreX - Enterprise Data & AI Maturity Assessment Application
  * Version: 2.2.0 - Added floating slideshow buttons and version history - Nov 17, 2025
  */
 import React, { useState, useEffect } from 'react';

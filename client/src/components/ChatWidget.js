@@ -467,7 +467,7 @@ const ChatWidget = () => {
       maturity_report: [
         "What do my scores mean?",
         "How can I improve my maturity?",
-        "What are Databricks Recommendations?",
+        "What are Strategic Recommendations?",
         "Can I edit this report?"
       ],
       executive_dashboard: [
@@ -641,7 +641,7 @@ const ChatWidget = () => {
                 <WelcomeMessage>
                   <WelcomeIcon>👋</WelcomeIcon>
                   <WelcomeText>
-                    Hi! I'm your Databricks Maturity Assessment assistant. 
+                    Hi! I'm your Data & AI Maturity Assessment assistant. 
                     Click a question below or type your own!
                   </WelcomeText>
                 </WelcomeMessage>

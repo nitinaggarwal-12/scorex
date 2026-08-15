@@ -1530,7 +1530,7 @@ const AssessmentResults = ({ currentAssessment, framework }) => {
           @page {
             margin: 0.5in;
             @top-center {
-              content: "Databricks Maturity Assessment";
+              content: "ScoreX Enterprise Data & AI Maturity Assessment";
             }
           }
           
@@ -1802,7 +1802,7 @@ const AssessmentResults = ({ currentAssessment, framework }) => {
               {/* Left: Title and Date */}
               <div style={{ flex: '0 0 auto' }}>
                 <h1 style={{ fontSize: '2rem', fontWeight: 800, color: '#1a1a1a', marginBottom: '8px', letterSpacing: '-0.02em' }}>
-                  {results.assessmentInfo?.assessmentName || 'Databricks Maturity Assessment'}
+                  {results.assessmentInfo?.assessmentName || 'Enterprise Data & AI Maturity Assessment'}
                 </h1>
                 <p style={{ fontSize: '1rem', color: '#64748b', fontWeight: 500 }}>
                   Executive Summary • {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
@@ -2205,7 +2205,7 @@ const AssessmentResults = ({ currentAssessment, framework }) => {
                               </li>
                               <li style={{ marginBottom: '10px', paddingLeft: '20px', position: 'relative' }}>
                                 <span style={{ position: 'absolute', left: '0', top: '2px', color: '#22c55e', fontWeight: 'bold' }}>•</span>
-                                Databricks platform ready for enhancement
+                                Modern data & AI platform ready for enhancement
                               </li>
                             </>
                           )}

@@ -488,7 +488,7 @@ const genAIReadinessFramework = {
     platform: {
       low: [
         "Assess current infrastructure capabilities and gaps",
-        "Select GenAI platform (Databricks, Azure OpenAI, etc.)",
+        "Select enterprise GenAI & LLM platform",
         "Establish data lakehouse foundation",
         "Implement basic model serving infrastructure"
       ],

@@ -528,7 +528,7 @@ const HomePage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Evaluate your organization's Databricks maturity across 6 key pillars and receive personalized recommendations to accelerate your data and AI journey.
+          Evaluate your organization's enterprise data & AI maturity across 6 key pillars and receive actionable, vendor-neutral recommendations to accelerate your transformation.
         </HeroSubtitle>
         
         <ButtonGroup
@@ -631,8 +631,8 @@ const HomePage = () => {
         <ContentWrapper>
           <SectionTitle>How It Works</SectionTitle>
           <SectionSubtitle>
-            Our comprehensive assessment evaluates your Databricks implementation across multiple dimensions, 
-            providing actionable insights and a clear roadmap for improvement.
+            Our comprehensive framework evaluates your modern data & AI platform across multiple dimensions, 
+            providing actionable insights and a clear roadmap for transformation.
           </SectionSubtitle>
 
           <ProcessGrid>
