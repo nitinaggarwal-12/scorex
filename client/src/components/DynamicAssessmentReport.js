@@ -25,15 +25,21 @@ import dynamicAssessmentService from '../services/dynamicAssessmentService';
 import LoadingSpinner from './LoadingSpinner';
 
 const Container = styled.div`
-  min-height: calc(100vh - 80px);
+  min-height: 100vh;
   background: linear-gradient(135deg, #0b0f19 0%, #111827 50%, #171b30 100%);
   color: #f3f4f6;
-  padding: 40px 24px;
+  padding: 108px 36px 60px;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    padding: 92px 16px 40px;
+  }
 `;
 
 const Wrapper = styled.div`
-  max-width: 1400px;
+  max-width: 1560px;
   margin: 0 auto;
+  width: 100%;
 `;
 
 const PromoteBanner = styled.div`
