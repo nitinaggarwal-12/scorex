@@ -210,19 +210,19 @@ router.get('/conversation/:conversationId/messages', async (req, res) => {
   try {
     const { conversationId } = req.params;
 
-    if (!await isPostgresAvailable()) {
-      return res.status(503).json({ error: 'Database not available' });
+    if (await isPostgresAvailable()) {
+      const messages = await pool.query(
+        `SELECT id, role, content, created_at 
+         FROM chat_messages 
+         WHERE conversation_id = $1 
+         ORDER BY created_at ASC`,
+        [conversationId]
+      );
+      return res.json({ messages: messages.rows });
     }
 
-    const messages = await pool.query(
-      `SELECT id, role, content, created_at 
-       FROM chat_messages 
-       WHERE conversation_id = $1 
-       ORDER BY created_at ASC`,
-      [conversationId]
-    );
-
-    res.json({ messages: messages.rows });
+    const messages = memoryMessages.get(conversationId) || [];
+    res.json({ messages });
   } catch (error) {
     console.error('Error fetching messages:', error);
     res.status(500).json({ error: 'Failed to fetch messages' });
@@ -234,28 +234,28 @@ router.get('/conversations', async (req, res) => {
   try {
     const { sessionId, userEmail } = req.query;
 
-    if (!await isPostgresAvailable()) {
-      return res.status(503).json({ error: 'Database not available' });
+    if (await isPostgresAvailable()) {
+      let query = `SELECT * FROM chat_conversations WHERE `;
+      let params = [];
+
+      if (sessionId) {
+        query += `session_id = $1 `;
+        params.push(sessionId);
+      } else if (userEmail) {
+        query += `user_email = $1 `;
+        params.push(userEmail);
+      } else {
+        return res.status(400).json({ error: 'sessionId or userEmail required' });
+      }
+
+      query += `ORDER BY last_message_at DESC LIMIT 10`;
+
+      const conversations = await pool.query(query, params);
+      return res.json({ conversations: conversations.rows });
     }
 
-    let query = `SELECT * FROM chat_conversations WHERE `;
-    let params = [];
-
-    if (sessionId) {
-      query += `session_id = $1 `;
-      params.push(sessionId);
-    } else if (userEmail) {
-      query += `user_email = $1 `;
-      params.push(userEmail);
-    } else {
-      return res.status(400).json({ error: 'sessionId or userEmail required' });
-    }
-
-    query += `ORDER BY last_message_at DESC LIMIT 10`;
-
-    const conversations = await pool.query(query, params);
-
-    res.json({ conversations: conversations.rows });
+    const list = Array.from(memoryConversations.values());
+    res.json({ conversations: list });
   } catch (error) {
     console.error('Error fetching conversations:', error);
     res.status(500).json({ error: 'Failed to fetch conversations' });
