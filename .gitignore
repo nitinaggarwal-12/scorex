@@ -1,3 +1,26 @@
+<<<<<<< HEAD
+=======
+# Dependencies
+node_modules/
+
+# Production build
+client/build/
+
+# Data files (contains assessment data)
+server/data/assessments.json
+
+# Environment variables and secrets
+.env
+.env.*
+*.key
+*.pem
+*gcp-key*.json
+
+# Scratch and test output
+scratch/
+screenshots/
+
+>>>>>>> 7333aa8 (feat: complete ScoreX Enterprise Data & AI Maturity Assessment with vendor-neutral framework, public access, disclaimer popup, and all features)
 # Logs
 logs
 *.log
