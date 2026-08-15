@@ -363,7 +363,7 @@ class IntelligentRecommendationEngine {
         solutions.push(recommendation);
       } else {
         // Generate generic but helpful recommendation
-        solutions.push(`Address **${pp.label}**: Implement best practices for ${pp.label.toLowerCase()}, leverage Databricks platform capabilities, and establish automated monitoring.`);
+        solutions.push(`Address **${pp.label}**: Implement best practices for ${pp.label.toLowerCase()}, leverage modern open data architecture capabilities, and establish automated monitoring.`);
       }
     });
     
@@ -385,7 +385,7 @@ class IntelligentRecommendationEngine {
     
     // Add general next steps
     steps.push('POC Development: Build proof-of-concept for top priority use case (2-4 weeks)');
-    steps.push('Training: Databricks platform training for team (1 day hands-on workshop)');
+    steps.push('Technical Enablement: Modern data & AI platform hands-on workshop (1 day hands-on workshop)');
     
     return steps;
   }

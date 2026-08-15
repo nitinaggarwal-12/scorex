@@ -643,7 +643,11 @@ const ExecutiveSummaryNew = () => {
               gap: action.gap || 0,
               timeline: action.timeline || '6-12 months',
               impact: action.impact || 'High',
-              actions: databricksFeatures.slice(0, 3).map(f => f.name || f.title || f),
+              actions: (action.recommendations && action.recommendations.length > 0)
+                ? action.recommendations.slice(0, 3).map(r => typeof r === 'string' ? r : (r.title || r.name || r.action || ''))
+                : (action.actions && action.actions.length > 0)
+                ? action.actions.slice(0, 3).map(a => typeof a === 'string' ? a : (a.title || a.name || ''))
+                : databricksFeatures.slice(0, 3).map(f => f.name || f.title || f),
               databricksFeatures: databricksFeatures,
               quickWins: quickWins
             };
@@ -896,8 +900,11 @@ const ExecutiveSummaryNew = () => {
       gap,
       timeline: gap >= 2 ? '6–12 months' : gap >= 1 ? '3–6 months' : '1–3 months',
       impact: gap >= 2 ? 'High' : gap >= 1 ? 'Medium' : 'Low',
-      actions: (action.databricksFeatures || []).slice(0, 3).map(f => f.name || f.title || f),
-      // NEW: Include Databricks features
+      actions: (action.recommendations && action.recommendations.length > 0)
+        ? action.recommendations.slice(0, 3).map(r => typeof r === 'string' ? r : (r.title || r.name || r.action || ''))
+        : (action.actions && action.actions.length > 0)
+        ? action.actions.slice(0, 3).map(a => typeof a === 'string' ? a : (a.title || a.name || ''))
+        : (action.databricksFeatures || []).slice(0, 3).map(f => f.name || f.title || f),
       databricksFeatures: action.databricksFeatures || [],
       quickWins: action.quickWins || []
     };
@@ -1016,7 +1023,11 @@ const ExecutiveSummaryNew = () => {
                           gap: action.gap || 0,
                           timeline: action.timeline || '6-12 months',
                           impact: action.impact || 'High',
-                          actions: databricksFeatures.slice(0, 3).map(f => f.name || f.title || f),
+                          actions: (action.recommendations && action.recommendations.length > 0)
+                            ? action.recommendations.slice(0, 3).map(r => typeof r === 'string' ? r : (r.title || r.name || r.action || ''))
+                            : (action.actions && action.actions.length > 0)
+                            ? action.actions.slice(0, 3).map(a => typeof a === 'string' ? a : (a.title || a.name || ''))
+                            : databricksFeatures.slice(0, 3).map(f => f.name || f.title || f),
                           databricksFeatures: databricksFeatures,
                           quickWins: quickWins
                         });

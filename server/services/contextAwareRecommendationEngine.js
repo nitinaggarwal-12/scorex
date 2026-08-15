@@ -6,50 +6,50 @@
 
 class ContextAwareRecommendationEngine {
   constructor() {
-    // Map pain point values to specific Databricks solutions
+    // Map pain point values to specific Enterprise Lakehouse solutions
     this.painPointSolutions = {
       // Platform & Governance
       inconsistent_configs: {
-        features: ['Terraform Provider for Databricks', 'Databricks CLI', 'Infrastructure as Code templates'],
+        features: ['Terraform Cloud Provider', 'Platform Automation CLI', 'Infrastructure as Code templates'],
         recommendations: [
           'Implement Infrastructure as Code with Terraform: `terraform init` → Define workspace config → Apply with `terraform apply` → Version control in Git',
-          'Use Databricks CLI for config sync: Install databricks-cli → Configure profiles → Export configs with `databricks workspace export_dir` → Import to standardize',
+          'Use Platform Automation CLI for config sync: Install databricks-cli → Configure profiles → Export configs with `databricks workspace export_dir` → Import to standardize',
           'Create environment templates: Define JSON workspace configs → Use REST API `/api/2.0/workspace/import` → Automate with CI/CD pipelines'
         ],
         nextSteps: [
           'IaC Discovery Workshop: Review current environment setup, identify config drift, design Terraform modules for standardization',
-          'Databricks CLI Training: Hands-on session on workspace exports, imports, and automation scripts'
+          'Platform Automation Training: Hands-on session on workspace exports, imports, and automation scripts'
         ]
       },
       manual_provisioning: {
-        features: ['Workspace Federation', 'Account Console API', 'Terraform Databricks Provider'],
+        features: ['Workspace Federation', 'Account Console API', 'Terraform Cloud Provider'],
         recommendations: [
           'Automate workspace provisioning: Use Account API `/accounts/{account_id}/workspaces` → POST with config JSON → Integrate with ServiceNow/Jira for approval workflow',
           'Deploy Terraform workspace module: Define azurerm_databricks_workspace resource → Configure private link → Apply with approval gates in GitLab CI',
-          'Enable self-service portal: Build internal tool calling Databricks Account API → User fills form → Backend creates workspace with predefined policies'
+          'Enable self-service portal: Build internal tool calling Platform Management API → User fills form → Backend creates workspace with predefined policies'
         ],
         nextSteps: [
           'Automation Readiness Assessment: Audit current provisioning process, identify bottlenecks, design approval workflows',
-          'Self-Service POC: Build prototype workspace request portal, integrate with Databricks API, pilot with one team'
+          'Self-Service POC: Build prototype workspace request portal, integrate with Platform Management API, pilot with one team'
         ]
       },
       poor_isolation: {
-        features: ['Unity Catalog', 'Private Link/Service Endpoints', 'Network Security'],
+        features: ['Unified Metadata Catalog', 'Private Link/Service Endpoints', 'Network Security'],
         recommendations: [
           'Implement network isolation: Configure Azure Private Link → Create private endpoints for workspace → Set up DNS resolution → Test connectivity isolation',
-          'Deploy Unity Catalog metastore per environment: CREATE METASTORE dev_metastore → GRANT CREATE CATALOG to dev_group → Enforce with workspace assignment',
+          'Deploy Unified Metadata Catalog metastore per environment: CREATE METASTORE dev_metastore → GRANT CREATE CATALOG to dev_group → Enforce with workspace assignment',
           'Configure workspace-level RBAC: Assign separate metastores (dev/staging/prod) → Use catalog grants for cross-environment access → Enable audit logging'
         ],
         nextSteps: [
           'Network Architecture Workshop: Design private link topology, plan IP address ranges, review security group rules',
-          'Unity Catalog Isolation Planning: Define metastore strategy per environment, plan data sharing policies'
+          'Unified Metadata Catalog Isolation Planning: Define metastore strategy per environment, plan data sharing policies'
         ]
       },
       deployment_issues: {
-        features: ['Databricks Asset Bundles', 'Repos API', 'Databricks CLI'],
+        features: ['Declarative CI/CD Asset Bundles', 'Repos API', 'Platform Automation CLI'],
         recommendations: [
-          'Adopt Databricks Asset Bundles: Init with `databricks bundle init` → Define bundle.yml with jobs/DLT pipelines → Deploy with `databricks bundle deploy --target prod`',
-          'Integrate Git-based deployments: Connect Databricks Repos to GitHub → Create deployment notebook → Trigger via webhook on PR merge to main branch',
+          'Adopt Declarative CI/CD Asset Bundles: Init with `databricks bundle init` → Define bundle.yml with jobs/DLT pipelines → Deploy with `databricks bundle deploy --target prod`',
+          'Integrate Git-based deployments: Connect Git-Integrated Repositories to GitHub → Create deployment notebook → Trigger via webhook on PR merge to main branch',
           'Implement blue-green deployments: Maintain two job versions → Route traffic with job parameters → Rollback instantly by switching version parameter'
         ],
         nextSteps: [
@@ -60,7 +60,7 @@ class ContextAwareRecommendationEngine {
       
       // Data Engineering
       no_quality_checks: {
-        features: ['Delta Live Tables Expectations', 'Lakehouse Monitoring', 'Data Quality API'],
+        features: ['Declarative Data Pipelines Expectations', 'Lakehouse Monitoring', 'Data Quality API'],
         recommendations: [
           'Implement DLT expectations: Add @expect_or_fail("valid_email", "email RLIKE \'^[^@]+@[^@]+\\.[^@]+$\'") → Deploy pipeline → Monitor quarantine table',
           'Enable Lakehouse Monitoring: Run CALL create_monitor(table_name, profile_metrics) → Set alerts on drift → Create dashboard with system.monitoring.profiles',
@@ -72,7 +72,7 @@ class ContextAwareRecommendationEngine {
         ]
       },
       manual_pipelines: {
-        features: ['Delta Live Tables', 'Workflows', 'Auto Loader'],
+        features: ['Declarative Data Pipelines', 'Workflows', 'Auto Loader'],
         recommendations: [
           'Migrate to DLT: Convert notebook pipeline → Define bronze/silver/gold layers in DLT Python → Use @dlt.table decorator → Deploy with continuous mode',
           'Implement Auto Loader: Replace file ingestion with `spark.readStream.format("cloudFiles")` → Set schema hints → Enable schema evolution with .option("cloudFiles.schemaEvolution", "true")',
@@ -86,15 +86,15 @@ class ContextAwareRecommendationEngine {
       
       // Analytics & BI
       complex_sql: {
-        features: ['Databricks SQL', 'AI/BI Dashboards', 'SQL Warehouse Serverless'],
+        features: ['Serverless SQL', 'AI/BI Dashboards', 'SQL Warehouse Serverless'],
         recommendations: [
           'Deploy Serverless SQL Warehouse: Create warehouse with serverless → Enable Photon → Configure auto-stop 10 min → Grant access to analysts',
           'Build analyst-friendly views: CREATE VIEW sales_summary AS SELECT... → Add descriptions with COMMENT → Tag with CLASSIFY for discovery',
-          'Implement dashboard library: Create 10 templated SQL dashboards → Use parameters for filtering → Schedule refreshes with Databricks Jobs'
+          'Implement dashboard library: Create 10 templated SQL dashboards → Use parameters for filtering → Schedule refreshes with Enterprise Lakehouse Jobs'
         ],
         nextSteps: [
-          'SQL Enablement Program: Train analysts on Databricks SQL Editor, teach query optimization, create best practices guide',
-          'Dashboard Design Workshop: Review current Tableau/PowerBI dashboards, design migration plan to Databricks SQL'
+          'SQL Enablement Program: Train analysts on Serverless SQL Editor, teach query optimization, create best practices guide',
+          'Dashboard Design Workshop: Review current Tableau/PowerBI dashboards, design migration plan to Serverless SQL'
         ]
       },
       no_self_service: {
@@ -112,7 +112,7 @@ class ContextAwareRecommendationEngine {
       
       // Machine Learning
       no_ml_tracking: {
-        features: ['MLflow', 'Model Registry', 'Unity Catalog for ML'],
+        features: ['MLflow', 'Model Registry', 'Unified Metadata Catalog for ML'],
         recommendations: [
           'Implement MLflow tracking: Add mlflow.autolog() → Log params with mlflow.log_param() → Register model with mlflow.register_model() → View in MLflow UI',
           'Set up Model Registry: Create UC catalog for ML models → Register with `mlflow.register_model(model_uri, "models.prod.fraud_detection")` → Add tags and descriptions',
@@ -136,7 +136,7 @@ class ContextAwareRecommendationEngine {
         ]
       },
       no_feature_store: {
-        features: ['Unity Catalog Feature Store', 'Feature Engineering in Unity Catalog'],
+        features: ['Unified Metadata Catalog Feature Store', 'Feature Engineering in Unified Metadata Catalog'],
         recommendations: [
           'Implement Feature Store: CREATE FEATURE TABLE customer_features → Add features with FeatureEngineeringClient.create_table() → Lookup at training/serving time',
           'Build feature pipeline: Create DLT pipeline → Compute features (aggregations/windows) → Write to feature table → Enable automatic updates',
@@ -150,7 +150,7 @@ class ContextAwareRecommendationEngine {
       
       // Generative AI
       no_genai: {
-        features: ['Mosaic AI', 'Foundation Model APIs', 'Vector Search'],
+        features: ['Enterprise AI', 'Foundation Model APIs', 'Vector Search'],
         recommendations: [
           'Deploy Vector Search: CREATE VECTOR SEARCH INDEX docs_index → Ingest documents with embeddings → Query with similarity_search() → Build RAG app',
           'Enable Foundation Model APIs: Access via `spark.databricks.com/fmaas/v1/completions` → Call Llama-3-70B or MPT-7B → Implement prompt templates → Monitor costs',
@@ -164,7 +164,7 @@ class ContextAwareRecommendationEngine {
       no_llm_governance: {
         features: ['AI Playground', 'Prompt Engineering', 'LLM Guardrails'],
         recommendations: [
-          'Implement prompt management: Create prompt library in Unity Catalog → Version control with Git → Test in AI Playground → Deploy with Model Serving',
+          'Implement prompt management: Create prompt library in Unified Metadata Catalog → Version control with Git → Test in AI Playground → Deploy with Model Serving',
           'Add LLM guardrails: Use LangChain guardrails library → Filter PII with regex → Check output safety with HuggingFace moderator → Log all interactions',
           'Monitor LLM quality: Track output diversity with system.monitoring → Implement human feedback loop → A/B test prompts → Measure task success rate'
         ],
@@ -176,14 +176,14 @@ class ContextAwareRecommendationEngine {
       
       // Operational Excellence
       no_training: {
-        features: ['Databricks Academy', 'Learning Paths', 'Certification Programs'],
+        features: ['Enterprise Enablement Academy', 'Learning Paths', 'Certification Programs'],
         recommendations: [
-          'Launch enablement program: Enroll team in Databricks Academy → Assign role-based learning paths → Track completion in LMS → Offer certification vouchers',
+          'Launch enablement program: Enroll team in Enterprise Enablement Academy → Assign role-based learning paths → Track completion in LMS → Offer certification vouchers',
           'Build internal knowledge base: Create Wiki with best practices → Record lunch-and-learn sessions → Maintain FAQ → Create quickstart templates',
           'Establish Center of Excellence: Form CoE with 5 experts → Host weekly office hours → Review code/architecture → Maintain reusable assets library'
         ],
         nextSteps: [
-          'Training Needs Assessment: Survey teams on skill gaps, identify priority topics, map to Databricks Academy courses',
+          'Training Needs Assessment: Survey teams on skill gaps, identify priority topics, map to Enterprise Enablement Academy courses',
           'CoE Formation Workshop: Define CoE charter, select initial members, plan recurring activities'
         ]
       },
@@ -196,7 +196,7 @@ class ContextAwareRecommendationEngine {
         ],
         nextSteps: [
           'Cost Attribution Workshop: Design tagging strategy, map teams to cost centers, plan reporting cadence',
-          'System Tables Dashboard Build: Create Databricks SQL dashboard with cost trends, top spenders, optimization opportunities'
+          'System Tables Dashboard Build: Create Serverless SQL dashboard with cost trends, top spenders, optimization opportunities'
         ]
       }
     };
@@ -209,7 +209,7 @@ class ContextAwareRecommendationEngine {
   generateContextAwareRecommendations(assessment, pillarId, maturityLevel, pillarFramework = null) {
     const responses = assessment.responses || {};
     const result = {
-      // SOLUTIONS (for Databricks Recommendations section)
+      // SOLUTIONS (for Enterprise Lakehouse Recommendations section)
       features: [],
       recommendations: [],
       nextSteps: [],
@@ -378,7 +378,7 @@ class ContextAwareRecommendationEngine {
     
     // Generate customer engagement activities based on pain point type
     if (label.includes('manual') || label.includes('automation')) {
-      return `Automation Workshop for ${problem}: Review current manual processes → Design workflow automation with Databricks Jobs → Build POC pipeline → Measure time savings`;
+      return `Automation Workshop for ${problem}: Review current manual processes → Design workflow automation with Enterprise Lakehouse Jobs → Build POC pipeline → Measure time savings`;
     }
     
     if (label.includes('performance') || label.includes('slow') || label.includes('optimization')) {
@@ -390,7 +390,7 @@ class ContextAwareRecommendationEngine {
     }
     
     if (label.includes('security') || label.includes('governance') || label.includes('compliance')) {
-      return `Governance Framework Workshop: Assess current security posture → Design Unity Catalog implementation → Plan RBAC and audit strategy → Define rollout timeline`;
+      return `Governance Framework Workshop: Assess current security posture → Design Unified Metadata Catalog implementation → Plan RBAC and audit strategy → Define rollout timeline`;
     }
     
     if (label.includes('quality') || label.includes('validation') || label.includes('error')) {
@@ -402,11 +402,11 @@ class ContextAwareRecommendationEngine {
     }
     
     if (label.includes('training') || label.includes('skill') || label.includes('knowledge')) {
-      return `Databricks Training Program: Assess skill gaps → Assign Databricks Academy courses → Conduct hands-on workshops → Establish internal knowledge base`;
+      return `Enterprise Lakehouse Training Program: Assess skill gaps → Assign Enterprise Enablement Academy courses → Conduct hands-on workshops → Establish internal knowledge base`;
     }
     
     if (label.includes('collaboration') || label.includes('sharing')) {
-      return `Collaboration Enhancement Session: Review current workflows → Implement Databricks Repos and workspace structure → Train on sharing and version control`;
+      return `Collaboration Enhancement Session: Review current workflows → Implement Git-Integrated Repositories and workspace structure → Train on sharing and version control`;
     }
     
     // Default next step
@@ -414,7 +414,7 @@ class ContextAwareRecommendationEngine {
   }
 
   /**
-   * Generate smart, contextual Databricks recommendation based on pain point label
+   * Generate smart, contextual Enterprise Lakehouse recommendation based on pain point label
    */
   generateSmartRecommendation(painPoint, pillarId) {
     const label = painPoint.label.toLowerCase();
@@ -422,15 +422,15 @@ class ContextAwareRecommendationEngine {
     
     // Keyword-based recommendation generation
     if (label.includes('manual') || label.includes('automation')) {
-      return `Automate ${painPoint.label.toLowerCase()}: Implement Databricks Workflows with task dependencies → Use job parameters for flexibility → Schedule with cron or event triggers → Enable automatic retries and alerts`;
+      return `Automate ${painPoint.label.toLowerCase()}: Implement Enterprise Workflow Orchestration with task dependencies → Use job parameters for flexibility → Schedule with cron or event triggers → Enable automatic retries and alerts`;
     }
     
     if (label.includes('monitoring') || label.includes('observability') || label.includes('visibility')) {
-      return `Implement Lakehouse Monitoring for ${painPoint.label.toLowerCase()}: Enable system tables (system.billing.usage, system.compute.clusters) → Create monitoring dashboards → Set up alerts with Databricks SQL → Track metrics over time`;
+      return `Implement Lakehouse Monitoring for ${painPoint.label.toLowerCase()}: Enable system tables (system.billing.usage, system.compute.clusters) → Create monitoring dashboards → Set up alerts with Serverless SQL → Track metrics over time`;
     }
     
     if (label.includes('quality') || label.includes('validation')) {
-      return `Address ${painPoint.label.toLowerCase()}: Use Delta Live Tables expectations with @expect_or_fail() → Implement data quality checks → Monitor with Lakehouse Monitoring → Create quarantine tables for invalid data`;
+      return `Address ${painPoint.label.toLowerCase()}: Use Declarative Data Pipelines expectations with @expect_or_fail() → Implement data quality checks → Monitor with Lakehouse Monitoring → Create quarantine tables for invalid data`;
     }
     
     if (label.includes('performance') || label.includes('slow') || label.includes('latency')) {
@@ -442,19 +442,19 @@ class ContextAwareRecommendationEngine {
     }
     
     if (label.includes('security') || label.includes('access') || label.includes('permission')) {
-      return `Secure ${painPoint.label.toLowerCase()}: Implement Unity Catalog for centralized governance → Use fine-grained ACLs → Enable audit logging → Set up attribute-based access control (ABAC)`;
+      return `Secure ${painPoint.label.toLowerCase()}: Implement Unified Metadata Catalog for centralized governance → Use fine-grained ACLs → Enable audit logging → Set up attribute-based access control (ABAC)`;
     }
     
     if (label.includes('deployment') || label.includes('release') || label.includes('ci/cd')) {
-      return `Streamline ${painPoint.label.toLowerCase()}: Use Databricks Asset Bundles (databricks bundle deploy) → Integrate with GitHub Actions → Implement blue-green deployments → Version control notebooks and jobs`;
+      return `Streamline ${painPoint.label.toLowerCase()}: Use Declarative CI/CD Asset Bundles (databricks bundle deploy) → Integrate with GitHub Actions → Implement blue-green deployments → Version control notebooks and jobs`;
     }
     
     if (label.includes('governance') || label.includes('compliance') || label.includes('audit')) {
-      return `Establish ${painPoint.label.toLowerCase()}: Deploy Unity Catalog for lineage tracking → Enable audit logs → Implement data classification with tags → Create compliance reports from system tables`;
+      return `Establish ${painPoint.label.toLowerCase()}: Deploy Unified Metadata Catalog for lineage tracking → Enable audit logs → Implement data classification with tags → Create compliance reports from system tables`;
     }
     
     if (label.includes('collaboration') || label.includes('sharing') || label.includes('team')) {
-      return `Improve ${painPoint.label.toLowerCase()}: Use Databricks Repos for Git integration → Share dashboards with stakeholders → Implement workspace folders structure → Enable notebook comments and version control`;
+      return `Improve ${painPoint.label.toLowerCase()}: Use Git-Integrated Repositories for Git integration → Share dashboards with stakeholders → Implement workspace folders structure → Enable notebook comments and version control`;
     }
     
     if (label.includes('scale') || label.includes('capacity') || label.includes('growth')) {
@@ -462,24 +462,24 @@ class ContextAwareRecommendationEngine {
     }
     
     // Default technical recommendation
-    return `Address ${painPoint.label}: Leverage Databricks platform capabilities → Implement automation with Workflows → Monitor with system tables → Apply best practices from Databricks documentation`;
+    return `Address ${painPoint.label}: Leverage Enterprise Lakehouse platform capabilities → Implement automation with Workflows → Monitor with system tables → Apply best practices from Enterprise Lakehouse documentation`;
   }
 
   /**
-   * Analyze comments for Databricks feature mentions and generate insights
+   * Analyze comments for Enterprise Lakehouse feature mentions and generate insights
    */
   analyzeComments(comments, pillarId) {
     const insights = [];
     const featureKeywords = {
-      'Unity Catalog': ['unity catalog', 'uc', 'metastore', 'catalog'],
-      'Delta Live Tables': ['dlt', 'delta live tables', 'live tables', 'expectations'],
+      'Unified Metadata Catalog': ['unity catalog', 'uc', 'metastore', 'catalog'],
+      'Declarative Data Pipelines': ['dlt', 'delta live tables', 'live tables', 'expectations'],
       'MLflow': ['mlflow', 'model registry', 'experiment tracking'],
       'Vector Search': ['vector search', 'embeddings', 'similarity search', 'rag'],
-      'Databricks SQL': ['dbsql', 'sql warehouse', 'serverless', 'photon'],
+      'Serverless SQL': ['dbsql', 'sql warehouse', 'serverless', 'photon'],
       'Auto Loader': ['auto loader', 'cloudfiles', 'streaming ingestion'],
       'Genie': ['genie', 'natural language', 'ai/bi'],
       'Model Serving': ['model serving', 'inference', 'endpoint'],
-      'Mosaic AI': ['mosaic', 'foundation model', 'llm fine-tuning']
+      'Enterprise AI': ['mosaic', 'foundation model', 'llm fine-tuning']
     };
 
     comments.forEach(comment => {

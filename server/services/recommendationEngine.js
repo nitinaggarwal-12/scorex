@@ -1524,14 +1524,14 @@ class RecommendationEngine {
       },
       data_engineering: {
         level4: [
-          'Delta Live Tables (DLT) pipelines implemented for critical data workflows',
-          'Automated data quality checks with DLT expectations and monitoring',
-          'Streaming data ingestion using Auto Loader and structured streaming'
+          'Declarative data pipelines implemented for critical data workflows',
+          'Automated data quality checks with expectation gates and continuous monitoring',
+          'Streaming data ingestion using scalable structured streaming'
         ],
         level3: [
-          'Data pipelines implemented with Delta Lake for ACID transactions',
-          'Good resource utilization management through auto-scaling clusters',
-          'Pipeline orchestration using Databricks workflows or external tools'
+          'Data pipelines implemented with open table formats (Delta/Iceberg) for ACID transactions',
+          'Good resource utilization management through auto-scaling compute pools',
+          'Pipeline orchestration using enterprise workflow DAGs'
         ],
         level2: [
           'Basic batch data pipelines operational',
@@ -1541,13 +1541,13 @@ class RecommendationEngine {
       },
       analytics_bi: {
         level4: [
-          'Self-service analytics platform with Databricks SQL and serverless compute',
-          'AI/BI dashboards deployed for natural language data exploration',
-          'Query optimization with Photon engine and caching strategies'
+          'Self-service analytics platform with serverless vectorized SQL compute',
+          'AI-assisted dashboards deployed for natural language data exploration',
+          'Query optimization with vectorized execution and caching strategies'
         ],
         level3: [
           'Moderately developed self-service platform with role-based access to analytics tools and datasets',
-          'SQL analytics accessible through Databricks SQL interface',
+          'SQL analytics accessible through standardized SQL interfaces',
           'Basic dashboarding and reporting capabilities available'
         ],
         level2: [
@@ -1558,13 +1558,13 @@ class RecommendationEngine {
       },
       machine_learning: {
         level4: [
-          'MLflow used for experiment tracking, model registry, and deployment',
-          'Feature Store implemented for feature reuse and consistency',
+          'MLflow / open standard tracking used for experiment tracking, model registry, and deployment',
+          'Feature Store implemented for feature reuse and training/serving consistency',
           'Automated ML pipelines with model monitoring and retraining'
         ],
         level3: [
-          'ML experimentation supported with MLflow tracking',
-          'Model deployment process established',
+          'ML experimentation supported with centralized experiment tracking',
+          'Model deployment process established with managed endpoints',
           'Basic feature engineering pipelines operational'
         ],
         level2: [
@@ -1575,9 +1575,9 @@ class RecommendationEngine {
       },
       generative_ai: {
         level4: [
-          'Vector Search implemented for RAG applications',
-          'LLM fine-tuning and deployment using Databricks Foundation Models',
-          'GenAI governance with Model Serving and monitoring'
+          'Vector Search implemented for enterprise RAG applications',
+          'LLM fine-tuning and deployment using governed foundation models',
+          'GenAI governance with Model Serving and evaluation monitoring'
         ],
         level3: [
           'Proof-of-concept GenAI applications developed',
@@ -1592,9 +1592,9 @@ class RecommendationEngine {
       },
       operational_excellence: {
         level4: [
-          'Center of Excellence (CoE) established with dedicated resources',
+          'Center of Excellence (CoE) established with dedicated platform engineering',
           'Comprehensive training programs and enablement initiatives',
-          'Strong adoption metrics with clear ROI tracking'
+          'Strong adoption metrics with clear FinOps ROI tracking'
         ],
         level3: [
           'Platform adoption growing with active user community',
@@ -1602,7 +1602,7 @@ class RecommendationEngine {
           'Regular knowledge sharing sessions conducted'
         ],
         level2: [
-          'Core team trained on Databricks platform',
+          'Core team trained on modern cloud data architecture',
           'Initial adoption in key use cases',
           'Basic support structure in place'
         ]
@@ -1747,71 +1747,71 @@ class RecommendationEngine {
     const uniqueCustomerChallenges = [...new Set(customerChallenges)];
     challenges.push(...uniqueCustomerChallenges.slice(0, 4));
     
-    // Technology-specific challenges based on pillar and common gaps (fallback if < 4)
+    // Specific challenges based on pillar and common gaps (fallback if < 4)
     const specificChallenges = {
       platform_governance: [
         'Manual monitoring, auditing and data integrity checks',
         'No fine-grained access control or attribute-based access control (ABAC)',
-        'Missing Unity Catalog for centralized governance and lineage',
-        'No Disaster Recovery (DR) strategy or backup policies',
+        'Missing Unified Catalog for centralized metadata governance and lineage',
+        'No Disaster Recovery (DR) strategy or automated backup policies',
         'Limited audit trail visibility for compliance requirements',
         'No formal security incident response process'
       ],
       data_engineering: [
         'Data is not trusted due to quality concerns. No automated data quality frameworks currently exist',
         'Manual pipeline deployments without CI/CD automation',
-        'Under-utilization of Databricks native connectors for migration of external data sources',
-        'ADF or external tools mainly used for orchestration rather than Databricks workflows',
+        'Fragmented ingestion connectors for migration of external data sources',
+        'Legacy batch scripts used for orchestration without automated retry DAGs',
         'No streaming data ingestion or real-time processing capabilities',
         'Missing data quality monitoring and automated alerts'
       ],
       analytics_bi: [
         'Complex SQL queries require specialized expertise to write and optimize',
         'No self-service analytics capabilities for business users',
-        'Missing Photon acceleration for faster query performance',
+        'Missing vectorized acceleration for faster query performance',
         'Limited dashboard sharing and collaboration features',
-        'No AI/BI or natural language query capabilities',
+        'No natural language query capabilities or conversational BI',
         'Query performance issues during peak usage times'
       ],
       machine_learning: [
-        'No MLflow Model Registry for centralized model management',
+        'No centralized Model Registry for governed model lifecycle management',
         'Missing Feature Store leading to duplicate feature engineering work',
-        'Manual model deployment without automated pipelines',
-        'No model monitoring or drift detection in production',
+        'Manual model deployment without automated CI/CD pipelines',
+        'No model monitoring or prediction drift detection in production',
         'Limited experiment tracking and reproducibility',
         'Lack of automated retraining workflows'
       ],
       generative_ai: [
         'No Vector Search implementation for RAG applications',
-        'Limited access to Foundation Models or LLM capabilities',
-        'Missing GenAI governance and monitoring frameworks',
-        'No prompt engineering standardization or best practices',
-        'Lack of evaluation metrics for GenAI application quality',
+        'Limited access to Foundation Models or LLM capabilities with security controls',
+        'Missing GenAI governance and automated evaluation frameworks',
+        'No prompt engineering standardization or versioning',
+        'Lack of evaluation metrics for GenAI hallucination and accuracy',
         'No fine-tuning capabilities for domain-specific models'
       ],
       operational_excellence: [
         'No formal Center of Excellence (CoE) or governance structure',
         'Limited documentation and knowledge sharing across teams',
         'Insufficient training programs for platform adoption',
-        'No chargeback or cost allocation mechanisms',
-        'Lack of platform usage metrics and ROI tracking',
+        'No chargeback or FinOps cost allocation mechanisms',
+        'Lack of platform usage telemetry and ROI tracking',
         'Missing best practices repository and reference architectures'
       ]
     };
     
-    // Business impact map - translate pain points into real consequences (FACTUAL - NO MADE-UP COSTS)
+    // Business impact map - translate pain points into real consequences
     const impactMap = {
       // Technical Pain Impacts
       'poor_isolation': 'Teams working in silos duplicate work and miss opportunities for reuse and collaboration',
       'data_quality': 'Data trust issues cause reports to be questioned or ignored by executives',
       'slow_pipelines': 'Batch-only processing delays insights by days while competitors act in real-time',
-      'manual_processes': 'Cannot use Delta Live Tables or Databricks Workflows for automated pipeline orchestration',
-      'deployment_issues': 'No CI/CD with Databricks Asset Bundles means longer deployment cycles compared to automated approaches',
-      'monitoring_gaps': 'Missing Lakehouse Monitoring means data quality issues are found reactively by business users instead of proactively through automated alerts',
+      'manual_processes': 'Cannot use declarative pipelines or modern DAG workflows for automated orchestration',
+      'deployment_issues': 'No CI/CD with Infrastructure-as-Code means longer deployment cycles compared to automated approaches',
+      'monitoring_gaps': 'Missing continuous platform monitoring means data quality issues are found reactively by business users',
       'security_concerns': 'Vulnerabilities expose organization to potential security breaches and compliance issues',
-      'performance_issues': 'Cannot use Serverless SQL or Photon acceleration, resulting in slower query performance that impacts user productivity',
-      'scalability_limits': 'Missing autoscaling and serverless compute blocks concurrent user growth and requires manual cluster management',
-      'integration_complexity': 'No Unity Catalog federation or Partner Connect means longer integration cycles for new data sources',
+      'performance_issues': 'Missing vectorized SQL acceleration results in slower query performance that impacts user productivity',
+      'scalability_limits': 'Missing autoscaling and serverless compute blocks concurrent user growth and requires manual infrastructure management',
+      'integration_complexity': 'No centralized catalog federation means longer integration cycles for new data sources',
       'complex_scaling': 'Scaling challenges prevent onboarding new teams and use cases efficiently',
       'audit_trails': 'Missing audit trails create compliance exposure and slow down investigations',
       'monitoring_blind_spots': 'Lack of visibility means reacting to issues instead of preventing them',
@@ -1821,8 +1821,8 @@ class RecommendationEngine {
       'reporting_complexity': 'Complex reporting tools require expensive specialists for simple requests',
       'automation_gaps': 'Manual operations increase error rates and prevent scaling to new workloads',
       'access_complexity': 'Complicated access controls slow productivity and frustrate data consumers',
-      'metadata_gaps': 'No Unity Catalog search or AI-generated documentation makes data discovery time-consuming for analysts',
-      'performance_impact': 'Missing Query Profile and Photon means slower query performance compared to optimized configurations',
+      'metadata_gaps': 'No unified catalog search makes data discovery time-consuming for analysts',
+      'performance_impact': 'Missing vectorized query execution means slower query performance compared to optimized configurations',
       'security_gaps': 'No row/column-level security or dynamic views blocks secure, granular data sharing capabilities',
       'approval_workflows': 'Approval delays extend deployment cycles and reduce business agility',
       'change_management': 'Change management overhead makes teams avoid improvements altogether',
@@ -1834,10 +1834,10 @@ class RecommendationEngine {
       'slow_insights': 'Stale data means decisions lag market reality, missing time-sensitive opportunities',
       'team_bottlenecks': 'Analyst dependencies create queues for basic business questions',
       'quality_issues': 'Poor data quality leads to bad decisions and costly rework cycles',
-      'skill_gaps': 'Team cannot effectively use Unity Catalog, Delta Live Tables, or MLflow features due to lack of training',
-      'compliance_risks': 'Missing audit capabilities expose organization to SOC2/GDPR compliance challenges',
-      'low_adoption': 'Low platform adoption means teams continue using Excel and legacy tools instead of modern capabilities',
-      'missed_opportunities': 'Cannot leverage Databricks AI/BI, Genie, or Mosaic AI productivity enhancements',
+      'skill_gaps': 'Team cannot effectively utilize modern lakehouse, MLOps, or GenAI features due to lack of training',
+      'compliance_risks': 'Missing audit capabilities expose organization to regulatory compliance challenges',
+      'low_adoption': 'Low platform adoption means teams continue using spreadsheets and legacy tools',
+      'missed_opportunities': 'Cannot leverage modern AI/BI, conversational search, or GenAI productivity enhancements',
       'competitive_disadvantage': 'Competitors deploy models faster using MLOps automation compared to manual processes',
       'user_frustration': 'Poor user experience impacts talent retention',
       'business_disruption': 'Unplanned downtime impacts revenue and productivity',
