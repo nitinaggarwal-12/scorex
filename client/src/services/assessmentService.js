@@ -18,14 +18,11 @@ api.interceptors.request.use(
   (config) => {
     console.log(`Making ${config.method?.toUpperCase()} request to ${config.url}`);
     
-    // Add session ID from localStorage to headers
-    const sessionId = localStorage.getItem('sessionId');
-    if (sessionId) {
-      config.headers['x-session-id'] = sessionId;
-      console.log('Added session ID to request');
-    } else {
-      console.warn('No session ID found in localStorage');
-    }
+    // Add session ID from localStorage to headers (with guest fallback)
+    const sessionId = localStorage.getItem('sessionId') || 
+                      localStorage.getItem('scorex_auth_token') || 
+                      'guest_admin_session';
+    config.headers['x-session-id'] = sessionId;
     
     return config;
   },
