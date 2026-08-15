@@ -3483,22 +3483,24 @@ app.post('/api/assessment/:id/audit-event', async (req, res) => {
   }
 });
 
-// Serve React app for all non-API routes in production
-if (process.env.NODE_ENV === 'production') {
-  // Serve static files (JS, CSS, images, manifest.json, etc.) - must be BEFORE catch-all
-  app.use(express.static(path.join(__dirname, '../client/build'), {
+// Serve React app for all non-API routes
+const buildPath = path.join(__dirname, '../client/build');
+const fs = require('fs');
+
+if (fs.existsSync(buildPath)) {
+  app.use(express.static(buildPath, {
     setHeaders: (res, filePath) => {
-      // Set proper content types
       if (filePath.endsWith('.json')) {
         res.setHeader('Content-Type', 'application/json');
       }
     }
   }));
-  
-  // Catch-all handler for non-API routes - must be LAST
-  app.get('*', async (req, res) => {
-    const indexPath = path.join(__dirname, '../client/build', 'index.html');
-    console.log(`Serving index.html from: ${indexPath}`);
+
+  app.get('*', (req, res) => {
+    if (req.path.startsWith('/api/')) {
+      return res.status(404).json({ success: false, message: 'API endpoint not found' });
+    }
+    const indexPath = path.join(buildPath, 'index.html');
     res.sendFile(indexPath, (err) => {
       if (err) {
         console.error('Error serving index.html:', err);
