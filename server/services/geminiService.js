@@ -8,8 +8,8 @@ const { GoogleGenAI } = require('@google/genai');
 class GeminiService {
   constructor() {
     this.apiKey = process.env.GEMINI_API_KEY || null;
-    this.primaryModel = process.env.GEMINI_MODEL || 'gemini-3.1-pro';
-    this.fallbackModels = ['gemini-2.5-pro', 'gemini-2.5-flash'];
+    this.primaryModel = process.env.GEMINI_MODEL || 'gemini-3.1-pro-preview';
+    this.fallbackModels = ['gemini-3.1-pro', 'gemini-2.5-pro', 'gemini-2.5-flash'];
     this.client = null;
 
     if (this.apiKey) {
