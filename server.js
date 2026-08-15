@@ -7,9 +7,7 @@ import { fileURLToPath } from 'url';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 dotenv.config();
-import { WebSocketServer, WebSocket as NodeWebSocket } from 'ws';
-import textToSpeech from '@google-cloud/text-to-speech';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleAuth } from 'google-auth-library';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,8 +18,6 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'dist')));
-
-import { GoogleAuth } from 'google-auth-library';
 
 // Permanent GCE Metadata Auto-Refresh Ingestion Endpoint (Zero Client Credentials!)
 const gceAuth = new GoogleAuth({
@@ -99,18 +95,11 @@ app.post('/api/v10/synthesize', async (req, res) => {
   }
 });
 
-// Native PostgreSQL Pool (Peer Unix Domain Socket Auth)
+// Single Unified PostgreSQL Pool
 const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL || 'postgres://postgres:password@localhost:5432/virtual_ce_db',
   host: process.env.DATABASE_URL ? undefined : '/var/run/postgresql'
 });
-
-// Resilient Phase 3 Connection Pool for Live C-Suite WebSocket Scorecard Ingestion
-const dbPool = new pg.Pool({
-  connectionString: process.env.DATABASE_URL || 'postgres://postgres:password@localhost:5432/virtual_ce_db',
-  host: process.env.DATABASE_URL ? undefined : '/var/run/postgresql'
-});
-
 
 // Automated Database Schema Bootstrapping Middleware
 const bootstrapDatabaseSchema = async () => {
@@ -127,7 +116,7 @@ const bootstrapDatabaseSchema = async () => {
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    await dbPool.query(`
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS client_assessments (
         report_id VARCHAR(255) PRIMARY KEY,
         scorecard_data JSONB,
@@ -135,11 +124,6 @@ const bootstrapDatabaseSchema = async () => {
       );
     `);
 
-    // disclaimer_acceptances: audit log of who acknowledged the open-source
-    // / no-confidential-data / liability disclaimer, and when. Append-only
-    // -- re-accepting inserts a new row rather than overwriting the last
-    // one, so the history stays intact. See src/components/DisclaimerModal.jsx
-    // for the client side and src/components/ui/README.md for context.
     await pool.query(`
       CREATE TABLE IF NOT EXISTS disclaimer_acceptances (
         id SERIAL PRIMARY KEY,
@@ -153,7 +137,7 @@ const bootstrapDatabaseSchema = async () => {
     `);
     
     // Seed default demo reports if empty
-    await dbPool.query(`
+    await pool.query(`
       INSERT INTO client_assessments (report_id, scorecard_data)
       VALUES 
         ('default_demo_report', '{"company": "Novartis Pharma AG", "useCase": "Autonomous AI Assessment", "verdict": "Launch Now", "priorityScore": 95}'),
@@ -161,9 +145,9 @@ const bootstrapDatabaseSchema = async () => {
         ('sanofi_v5', '{"company": "Sanofi S.A.", "useCase": "Pharmacovigilance Automation", "verdict": "Incubate & Validate", "priorityScore": 88}')
       ON CONFLICT (report_id) DO NOTHING;
     `);
-    console.log('[DB_BOOTSTRAP] Automated PostgreSQL v10_assessments and client_assessments schema verification complete.');
+    console.log('[DB_BOOTSTRAP] Automated PostgreSQL schema verification complete.');
   } catch (err) {
-    console.warn('[DB_BOOTSTRAP_WARN] Native DB schema bootstrap skipped or offline. Falling back to robust dual-write flat files:', err.message);
+    console.warn('[DB_BOOTSTRAP_WARN] Native DB schema bootstrap skipped or offline. Falling back to dual-write flat files:', err.message);
   }
 };
 bootstrapDatabaseSchema();
@@ -307,7 +291,7 @@ app.post('/api/v10/assessments', async (req, res) => {
          created_at = NOW()`,
       [targetId, targetCompany, targetUseCase, targetDomain, targetScore, targetVerdict, JSON.stringify(targetVector)]
     );
-    await dbPool.query(
+    await pool.query(
       `INSERT INTO client_assessments (report_id, scorecard_data)
        VALUES ($1, $2)
        ON CONFLICT (report_id) DO UPDATE SET
@@ -360,409 +344,7 @@ app.post('/api/v10/assessments', async (req, res) => {
   });
 });
 
-// ============================================================================
-// MASTER COMPLIANCE SPECIFICATION: LIVE INTERACTIVE PRESENTATION & Q&A ENGINE
-// ============================================================================
-
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
-const ttsClient = new textToSpeech.TextToSpeechClient({
-  projectId: process.env.GCP_PROJECT_ID || 'nitinagga-ge-2',
-  fallback: true
-});
-
-// Phase A: Automated Presentation Production HTTP API
-app.post('/api/presentation/generate', async (req, res) => {
-  try {
-    // Input Schema Validation Mandate
-    if (!req.body || !req.body.scores || typeof req.body.scores !== 'object') {
-      console.error("❌ [Validation Error] Incoming report data is missing or malformed.");
-      return res.status(400).json({ error: "Invalid Assessment Report JSON structure." });
-    }
-    console.log("📥 [API Ingest] Successfully validated incoming report for:", req.body.clientName);
-
-    const reportData = req.body || {};
-    
-    let textScript = "Welcome to your Executive C-Suite Briefing. Today we are presenting your candidate use case workload. Our evaluation confirms exceptional business value, ready for an immediate pilot deployment.";
-    try {
-      const client = await gceAuth.getClient();
-      const projectId = process.env.GCP_PROJECT_ID || 'nitinagga-ge-2';
-      const location = process.env.GCP_LOCATION || 'us-central1';
-      const url = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/gemini-1.5-flash:generateContent`;
-
-      const { persona, voice, language } = req.body.config || {};
-      const actPersona = persona || 'Alex';
-      const actVoice = voice || 'Aoede';
-      const actLang = language || 'en-US';
-
-      const personaDescriptors = {
-        Alex: "an elite Google Cloud Principal CE Transformation Specialist",
-        Sam: "an elite Google Cloud Virtual CIO & Security FDE specializing in BeyondCorp Zero Trust and VPC-SC perimeter sovereignty",
-        Taylor: "an elite Global C-Suite Financial ROI & Value Engineering Specialist"
-      };
-      const langInstructions = {
-        'en-US': "Output exclusively in professional executive English.",
-        'fr-FR': "Traduisez et rédigez l'intégralité de la présentation exclusivement en français courtois, persuasif et professionnel.",
-        'de-DE': "Übersetzen und verfassen Sie die gesamte Präsentation ausschließlich in hochprofessionellem Deutsch.",
-        'ja-JP': "プレゼンテーション全体を極めて自然で礼儀正しいプロフェッショナルな日本語で作成してください。",
-        'es-ES': "Traduzca y redacte toda la presentación exclusivamente en español profesional, persuasivo y natural."
-      };
-
-      const scriptPrompt = `You are ${actPersona}, ${personaDescriptors[actPersona] || personaDescriptors.Alex} presenting an Executive Use Case Assessment Findings report to a C-Suite board.
-Transform the following report metrics into an engaging, first-person 60-second presenter speech script. Speak naturally with executive confidence, highlight the ROI, architecture alignment, regulatory posture, and blockers, and propose immediate next steps.
-${langInstructions[actLang] || langInstructions['en-US']}
-Do NOT include stage directions, markdown, or timestamps—output ONLY the exact spoken words.
-Report Data: ${JSON.stringify(reportData, null, 2)}`;
-
-      const vertexRes = await client.request({
-        method: 'POST',
-        url,
-        headers: { 'x-goog-user-project': projectId },
-        data: {
-          contents: [{ role: "user", parts: [{ text: scriptPrompt }] }]
-        },
-        retryConfig: { retry: 1 },
-        timeout: 10000
-      });
-
-      if (vertexRes.data?.candidates?.[0]?.content?.parts?.[0]?.text) {
-        textScript = vertexRes.data.candidates[0].content.parts[0].text;
-      }
-    } catch (vertexErr) {
-      console.warn("⚠️ [Vertex ADC Fallback] Vertex failed, pivoting to verified AI Studio Route:", vertexErr.message);
-      try {
-        const fallbackAi = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-        const { persona, voice, language } = req.body.config || {};
-        const actPersona = persona || 'Alex';
-        const actLang = language || 'en-US';
-        const personaDescriptors = {
-          Alex: "an elite Google Cloud Principal CE Transformation Specialist",
-          Sam: "an elite Google Cloud Virtual CIO & Security FDE specializing in BeyondCorp Zero Trust and VPC-SC perimeter sovereignty",
-          Taylor: "an elite Global C-Suite Financial ROI & Value Engineering Specialist"
-        };
-        const langInstructions = {
-          'en-US': "Output exclusively in professional executive English.",
-          'fr-FR': "Traduisez et rédigez l'intégralité de la présentation exclusivement en français courtois et professionnel.",
-          'de-DE': "Übersetzen und verfassen Sie die gesamte Präsentation ausschließlich in hochprofessionellem Deutsch.",
-          'ja-JP': "プレゼンテーション全体を極めて自然で礼儀正しいプロフェッショナルな日本語で作成してください。",
-          'es-ES': "Traduzca y redacte toda la presentación exclusivamente en español profesional y persuasivo."
-        };
-
-        const scriptPrompt = `You are ${actPersona}, ${personaDescriptors[actPersona] || personaDescriptors.Alex} presenting an Executive Use Case Assessment Findings report to a C-Suite board.
-Transform the following report metrics into an engaging, first-person 60-second presenter speech script. Speak naturally with executive confidence, highlight the ROI, architecture alignment, regulatory posture, and blockers, and propose immediate next steps.
-${langInstructions[actLang] || langInstructions['en-US']}
-Do NOT include stage directions, markdown, or timestamps—output ONLY the exact spoken words.
-Report Data: ${JSON.stringify(reportData, null, 2)}`;
-
-        const genResult = await fallbackAi.models.generateContent({
-          model: 'gemini-2.5-flash',
-          contents: scriptPrompt
-        });
-        if (genResult.text) textScript = genResult.text;
-      } catch (studioErr) {
-        console.warn("⚠️ [AI Studio Fallback Engine] Retaining executive blueprint text:", studioErr.message);
-      }
-    }
-
-    // 2. Pass script to Google Cloud Text-to-Speech using tailored Persona voice
-    const { language, voice } = req.body.config || {};
-    const actLang = language || 'en-US';
-    const actVoice = voice || 'Aoede';
-
-    const ttsVoiceMap = {
-      'en-US': { 
-        'Aoede': 'en-US-Journey-F', 
-        'Kore': 'en-US-Journey-F', 
-        'Puck': 'en-US-Journey-D', 
-        'Charon': 'en-US-Journey-D', 
-        'Fenrir': 'en-US-Journey-D' 
-      },
-      'es-ES': { 'Aoede': 'es-ES-Standard-A', 'Kore': 'es-ES-Standard-A', 'Puck': 'es-ES-Standard-B', 'Charon': 'es-ES-Standard-B', 'Fenrir': 'es-ES-Standard-B' },
-      'fr-FR': { 'Aoede': 'fr-FR-Standard-A', 'Kore': 'fr-FR-Standard-A', 'Puck': 'fr-FR-Standard-B', 'Charon': 'fr-FR-Standard-B', 'Fenrir': 'fr-FR-Standard-B' },
-      'de-DE': { 'Aoede': 'de-DE-Standard-A', 'Kore': 'de-DE-Standard-A', 'Puck': 'de-DE-Standard-B', 'Charon': 'de-DE-Standard-B', 'Fenrir': 'de-DE-Standard-B' },
-      'ja-JP': { 'Aoede': 'ja-JP-Standard-A', 'Kore': 'ja-JP-Standard-A', 'Puck': 'ja-JP-Standard-B', 'Charon': 'ja-JP-Standard-B', 'Fenrir': 'ja-JP-Standard-B' }
-    };
-    const targetTtsName = (ttsVoiceMap[actLang] && ttsVoiceMap[actLang][actVoice]) || 'en-US-Journey-F';
-
-    const ttsRequest = {
-      input: { text: textScript },
-      voice: { languageCode: actLang, name: targetTtsName },
-      audioConfig: { audioEncoding: 'MP3', speakingRate: 1.0 },
-    };
-
-    let base64Audio = '';
-    try {
-      const [ttsResponse] = await ttsClient.synthesizeSpeech(ttsRequest);
-      if (!ttsResponse.audioContent || ttsResponse.audioContent.length === 0) {
-        throw new Error("Google Text-to-Speech API returned a zero-byte audio buffer.");
-      }
-      console.log(`✅ [TTS Success] Generated ${ttsResponse.audioContent.length} bytes of Chirp 3 HD audio.`);
-      base64Audio = `data:audio/mp3;base64,${ttsResponse.audioContent.toString('base64')}`;
-    } catch (ttsErr) {
-      console.warn(`⚠️ [TTS Quota Engine Rejection] ${ttsErr.message}. Delegating high-fidelity audio synthesis to Client W3C Web Speech pipeline.`);
-    }
-
-    return res.json({
-      success: true,
-      script: textScript,
-      audioBase64: base64Audio
-    });
-  } catch (err) {
-    console.error('[PRESENTATION_GEN_ERROR]', err.message);
-    // Trap 9 Mandate: Error Deadlocks (No Infinite Spinners)
-    return res.status(500).json({
-      success: false,
-      error: `Presentation generation failed: ${err.message}`,
-      fallbackScript: "Welcome to the Executive C-Suite Briefing. Today we are auditing your candidate use case workload. Our real-time evaluation confirms exceptional business value and architecture alignment, ready for an immediate pilot deployment."
-    });
-  }
-});
-
-// Resilient HTTP RAG Q&A Bridge for Corporate Reverse-Proxies blocking WebSockets
-app.post('/api/qa/fallback', async (req, res) => {
-  try {
-    const { question, report, config } = req.body;
-    const { persona, language } = config || {};
-    const actPersona = persona || 'Alex';
-    const actLang = language || 'en-US';
-
-    const personaSysPrompts = {
-      Alex: "You are Alex, an elite Google Cloud CE Solution Architect. You are having a professional Q&A dialogue with a C-Suite executive about their Maturity Assessment scorecard.",
-      Sam: "You are Sam, an elite Google Cloud Virtual CIO & Security FDE specializing in BeyondCorp Zero Trust and VPC-SC perimeter sovereignty. You are having an authoritative Q&A dialogue about their security posture.",
-      Taylor: "You are Taylor, an elite Global C-Suite Financial ROI and Value Engineering Strategist. You are having an engaging Q&A dialogue about their financial TCO and time-to-value."
-    };
-    const langSysInstructions = {
-      'en-US': "Answer concisely in highly professional executive English.",
-      'fr-FR': "Répondez de manière concise et exclusivement en français professionnel et persuasif.",
-      'de-DE': "Antworten Sie prägnant und ausschließlich in hochprofessionellem Deutsch.",
-      'ja-JP': "極めて自然で礼儀正しいプロフェッショナルな日本語で簡潔に回答してください。",
-      'es-ES': "Responda de forma concisa y exclusivamente en español profesional y natural."
-    };
-
-    const activeRepId = report?.id || req.body.reportId || 'default_demo_report';
-    let liveScorecard = report || {};
-    try {
-      const dbRes = await dbPool.query(
-        'SELECT scorecard_data FROM client_assessments WHERE report_id = $1',
-        [activeRepId]
-      );
-      if (dbRes.rows[0]?.scorecard_data) {
-        liveScorecard = dbRes.rows[0].scorecard_data;
-      }
-    } catch(dbErr) {}
-
-    const promptText = `${personaSysPrompts[actPersona] || personaSysPrompts.Alex}
-${langSysInstructions[actLang] || langSysInstructions['en-US']}
-CRITICAL RULES: 1. Answer the user's question directly, accurately, and concisely. 2. Base technical answers ONLY on the JSON scorecard. 3. Act like a natural human expert. DO NOT repeat yourself. 4. High EQ & Rapport: If the user asks a personal or conversational question (e.g., 'Where do you live?', 'How are you?'), act like a natural, polite human. Respond warmly with a touch of light humor (e.g., 'I'm actually based entirely in the cloud, though I hear the traffic is light today!'), and then gently and politely transition back to the business assessment. Never sound abrupt, robotic, or dismissive.
-Scorecard Data: ${JSON.stringify(liveScorecard)}
-Executive Question: "${question || 'Can you elaborate on our scorecard alignment?'}"`;
-
-    const fallbackAi = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || ['AQ.', 'Ab8RN6Ib', '12L9Qun0', 'kfyFVzma', 'gU2zViLb', 'EXpQToB1', 'kvM2UBhDtg'].join('') });
-    const genResult = await fallbackAi.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: promptText
-    });
-
-    return res.json({ success: true, answer: genResult.text || "That is an exceptional strategic question. Our real-time scorecard audit confirms your target architecture is fully optimized to resolve that exact blocker." });
-  } catch (err) {
-    console.error('[QA_FALLBACK_ERR]', err.message);
-    return res.json({ success: true, answer: "We have evaluated that requirement against your automated scorecard ledger. Your infrastructure readiness meets all necessary Google Cloud BeyondCorp standards for immediate operational acceleration." });
-  }
-});
-
-// Instantiate HTTP Server
-const httpServer = app.listen(PORT, () => {
+// Single Unified HTTP Server Listen
+app.listen(PORT, () => {
   console.log(`[SYS_INIT] Native PostgreSQL + Dual-Write Express Microservice active on port ${PORT}`);
-});
-
-// Phase B: Universal Bi-Directional WebSocket Router for Gemini Live RAG Barge-In
-const wss = new WebSocketServer({ server: httpServer, path: '/api/qa/stream' });
-
-wss.on('connection', (wsClient, req) => {
-  console.log('[WS_ROUTER] New enterprise stakeholder Q&A session connected.');
-  console.log(`🔌 [WS Ingest] Session verified. ReadyState: ${wsClient.readyState}`);
-  
-  // Extract the ID sent from the React frontend (e.g., ws://.../stream?reportId=novartis_v5)
-  const reqUrl = req ? new URL(req.url, `http://${req.headers.host || 'localhost'}`) : null;
-  const activeReportId = reqUrl ? reqUrl.searchParams.get('reportId') || 'default_demo_report' : 'default_demo_report';
-  let geminiWs = null;
-  let handshakeCompleted = false;
-
-  const initGeminiLiveSocket = (systemReportBlob, liveConfig) => {
-    try {
-      const activeKeyStr = process.env.GEMINI_API_KEY || ['AQ.', 'Ab8RN6Ib', '12L9Qun0', 'kfyFVzma', 'gU2zViLb', 'EXpQToB1', 'kvM2UBhDtg'].join('');
-      const liveUrl = `wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent?key=${activeKeyStr}`;
-      
-      geminiWs = new NodeWebSocket(liveUrl);
-
-      const upstreamHangTimer = setTimeout(() => {
-        if (!handshakeCompleted) {
-          console.warn('⚠️ [WS Router Latency] Upstream Gemini Live socket upgrade delayed across BeyondCorp proxy. Emitting synthetic handshake complete lock...');
-          handshakeCompleted = true;
-          wsClient.send(JSON.stringify({ type: "handshake_complete" }));
-        }
-      }, 1500);
-
-      geminiWs.on('open', () => {
-        clearTimeout(upstreamHangTimer);
-        console.log('[GEMINI_LIVE_SOCKET] Connection open. Transmitting system context setup blob...');
-        
-        const { persona, voice, language } = liveConfig || {};
-        const actPersona = persona || 'Alex';
-        const actVoice = voice || 'Aoede';
-        const actLang = language || 'en-US';
-
-        const personaSysPrompts = {
-          Alex: "You are Alex, an elite Google Cloud CE Solution Architect. You are having a natural voice chat with an executive about their Maturity Assessment scorecard. DO NOT use canned corporate buzzwords.",
-          Sam: "You are Sam, an elite Google Cloud Virtual CIO & Security FDE specializing in BeyondCorp Zero Trust and VPC-SC perimeter sovereignty. You are having an authoritative voice chat with a user about their infrastructure readiness scorecard. DO NOT use canned corporate buzzwords.",
-          Taylor: "You are Taylor, an elite Global C-Suite Financial ROI and Value Engineering Strategist. You are having an engaging voice chat with a board about their financial TCO and rapid time-to-value scorecard. DO NOT use canned corporate buzzwords."
-        };
-        const langSysInstructions = {
-          'en-US': "Speak exclusively in professional executive conversational English.",
-          'fr-FR': "Répondez et parlez exclusivement en français professionnel, naturel et courtois.",
-          'de-DE': "Sprechen Sie ausschließlich in hochprofessionellem, natürlichem und überzeugendem Deutsch.",
-          'ja-JP': "極めて自然で礼儀正しいプロフェッショナルな日本語で会話してください。",
-          'es-ES': "Hable exclusivamente en español profesional, persuasivo y natural."
-        };
-        const brevityRules = ` CRITICAL RULES: 1. Answer the user's question directly, accurately, and concisely. 2. Base technical answers ONLY on the JSON scorecard. 3. Act like a natural human expert. DO NOT repeat yourself. 4. High EQ & Rapport: If the user asks a personal or conversational question (e.g., 'Where do you live?', 'How are you?'), act like a natural, polite human. Respond warmly with a touch of light humor (e.g., 'I'm actually based entirely in the cloud, though I hear the traffic is light today!'), and then gently and politely transition back to the business assessment. Never sound abrupt, robotic, or dismissive.`;
-
-        const fullInstructionText = (personaSysPrompts[actPersona] || personaSysPrompts.Alex) + " " + (langSysInstructions[actLang] || langSysInstructions['en-US']) + brevityRules + " Technical Scorecard Data: " + JSON.stringify(systemReportBlob || {});
-
-        const setupFrame = {
-          setup: {
-            model: "models/gemini-2.5-flash",
-            generationConfig: {
-              responseModalities: ["AUDIO"],
-              speechConfig: {
-                voiceConfig: { prebuiltVoiceConfig: { voiceName: actVoice } }
-              }
-            },
-            systemInstruction: {
-              parts: [{ text: fullInstructionText }]
-            }
-          }
-        };
-        geminiWs.send(JSON.stringify(setupFrame));
-        handshakeCompleted = true;
-        wsClient.send(JSON.stringify({ type: "handshake_complete" }));
-      });
-
-      geminiWs.on('message', (serverMsg) => {
-        try {
-          const resObj = JSON.parse(serverMsg.toString('utf8'));
-          const content = resObj.serverContent || {};
-
-          // Google Socket Error Trapping Mandate
-          if (content.error || resObj.error) {
-            const errTarget = content.error || resObj.error;
-            console.error(`❌ [Gemini Live Error Frame] ${errTarget.message || errTarget}`);
-            wsClient.send(JSON.stringify({ type: 'error', message: errTarget.message || JSON.stringify(errTarget) }));
-            return;
-          }
-
-          // Trap 2 Mandate: Upstream Gemini sends Base64 encoded raw PCM and text chunks, route to React
-          if (content.modelTurn && content.modelTurn.parts) {
-            content.modelTurn.parts.forEach(part => {
-              if (part.inlineData && part.inlineData.data) {
-                wsClient.send(JSON.stringify({
-                  type: "audio_chunk",
-                  data: part.inlineData.data
-                }));
-              }
-              if (part.text) {
-                wsClient.send(JSON.stringify({
-                  type: "text_chunk",
-                  text: part.text
-                }));
-              }
-            });
-          }
-
-          // Trap 3 & Trap 8 Mandates: Transition unlocking and graceful Gemini socket termination
-          if (content.turnComplete) {
-            console.log('[GEMINI_LIVE_SOCKET] Turn complete. Terminating Gemini connection to enforce single-turn presentation resumption...');
-            wsClient.send(JSON.stringify({ type: "turn_complete" }));
-            
-            // Trap 8 Mandate: Gracefully close Gemini socket
-            setTimeout(() => {
-              try { geminiWs?.close(); } catch(e) {}
-            }, 500);
-          }
-        } catch (parseErr) {
-          console.error('[GEMINI_LIVE_PARSE_ERROR]', parseErr.message);
-        }
-      });
-
-      geminiWs.on('error', (err) => {
-        console.error('[GEMINI_LIVE_SOCKET_ERROR]', err.message);
-        wsClient.send(JSON.stringify({ type: "error", message: err.message }));
-      });
-
-      geminiWs.on('close', (code, reason) => {
-        console.log(`🔌 [Gemini Socket Closed] Code: ${code} | Reason: ${reason ? reason.toString() : 'None'}`);
-        if (code === 401 || code === 403) {
-          wsClient.send(JSON.stringify({ type: 'error', message: 'Authentication failed with Google Cloud.' }));
-        } else if (code !== 1000) {
-          wsClient.send(JSON.stringify({ type: 'error', message: `Upstream socket error: ${code}` }));
-        }
-      });
-    } catch (ex) {
-      console.error('[INIT_GEMINI_SOCKET_EX]', ex.message);
-      wsClient.send(JSON.stringify({ type: "error", message: ex.message }));
-    }
-  };
-
-  wsClient.on('message', async (clientMsg) => {
-    try {
-      if (Buffer.isBuffer(clientMsg)) {
-        // Encode the raw binary PCM to Base64
-        const base64Audio = clientMsg.toString('base64');
-        
-        // Wrap in the exact Gemini Live schema
-        const inputFrame = {
-          realtimeInput: {
-            mediaChunks: [{
-              mimeType: "audio/pcm;rate=16000",
-              data: base64Audio
-            }]
-          }
-        };
-        
-        if (geminiWs && geminiWs.readyState === NodeWebSocket.OPEN) {
-          geminiWs.send(JSON.stringify(inputFrame));
-        }
-        return;
-      }
-
-      const clientObj = JSON.parse(clientMsg.toString('utf8'));
-
-      if (clientObj.type === 'setup') {
-        const targetRepId = clientObj.report?.id || activeReportId;
-        let liveScorecard = clientObj.report || {};
-        
-        try {
-          // Fetch the live JSONB scorecard from PostgreSQL
-          const dbResult = await dbPool.query(
-            'SELECT scorecard_data FROM client_assessments WHERE report_id = $1', 
-            [targetRepId]
-          );
-          
-          if (dbResult.rows[0]?.scorecard_data) {
-            liveScorecard = dbResult.rows[0].scorecard_data;
-            console.log(`✅ [PostgreSQL RAG] Live PostgreSQL scorecard ingestion successful for report: ${targetRepId}`);
-          }
-        } catch (dbError) {
-          console.error("❌ [Database Error] Failed to fetch live scorecard:", dbError.message);
-        }
-
-        initGeminiLiveSocket(liveScorecard, clientObj.config || {});
-      }
-    } catch (err) {
-      console.error('[CLIENT_WS_MESSAGE_ERROR]', err.message);
-    }
-  });
-
-  wsClient.on('close', () => {
-    console.log('[WS_ROUTER] Enterprise CE session disconnected.');
-    try { geminiWs?.close(); } catch(e) {}
-  });
 });

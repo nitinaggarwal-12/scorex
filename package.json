@@ -12,7 +12,6 @@
   },
 
   "dependencies": {
-    "@google-cloud/text-to-speech": "^6.4.1",
     "@google/genai": "^2.8.0",
     "cors": "^2.8.6",
     "dotenv": "^16.4.7",
@@ -21,8 +20,7 @@
     "lucide-react": "^1.16.0",
     "pg": "^8.21.0",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6",
-    "ws": "^8.18.0"
+    "react-dom": "^19.2.6"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
