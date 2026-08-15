@@ -360,6 +360,51 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                 >
                   {isLoading ? 'Signing in...' : 'Sign In'}
                 </SubmitButton>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const guestUser = {
+                      id: 'guest_' + Date.now(),
+                      email: 'guest@enterprise.com',
+                      role: 'consumer',
+                      firstName: 'Guest',
+                      lastName: 'Explorer'
+                    };
+                    authService.setSession('guest_session_' + Date.now(), guestUser);
+                    localStorage.setItem('scorex_disclaimer_accepted', 'true');
+                    toast.success('Logged in as Guest Explorer');
+                    if (onLoginSuccess) {
+                      onLoginSuccess(guestUser);
+                    }
+                    onClose();
+                  }}
+                  style={{
+                    width: '100%',
+                    marginTop: '12px',
+                    padding: '12px 16px',
+                    background: 'transparent',
+                    border: '1.5px solid #0e3688',
+                    borderRadius: '8px',
+                    color: '#0e3688',
+                    fontWeight: 600,
+                    fontSize: '0.875rem',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.background = '#f0f4ff';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                  }}
+                >
+                  Explore as Guest (No Sign In Required) →
+                </button>
               </Form>
             </FormPanel>
           </Modal>

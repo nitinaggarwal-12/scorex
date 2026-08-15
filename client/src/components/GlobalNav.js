@@ -530,6 +530,22 @@ const GlobalNav = () => {
     }
   };
 
+  const handleExploreAsGuest = (redirectPath = '/start') => {
+    closeMobileMenu();
+    const guestUser = {
+      id: 'guest_' + Date.now(),
+      email: 'guest@enterprise.com',
+      role: 'consumer',
+      firstName: 'Guest',
+      lastName: 'Explorer'
+    };
+    authService.setSession('guest_session_' + Date.now(), guestUser);
+    setCurrentUser(guestUser);
+    localStorage.setItem('scorex_disclaimer_accepted', 'true');
+    toast.success('Browsing as Guest (No login required)');
+    navigate(redirectPath);
+  };
+
   // Generate UNIQUE, question-specific customer comments
   // 🔥 CRITICAL: Uses TRUE randomness + timestamp to ensure NO TWO ASSESSMENTS ARE EVER THE SAME
   const generateRealisticComment = (pillarId, dimensionId, questionId, currentState, timestamp) => {
@@ -1021,25 +1037,24 @@ const GlobalNav = () => {
                     </DropdownEmailLink>
                   </DropdownMenu>
                 </DropdownContainer>
-              </>
             ) : (
               <>
-                <SecondaryCTAButton onClick={() => {
-                  setShowLoginModal(true);
-                }}>
+                <SecondaryCTAButton onClick={() => handleExploreAsGuest('/dashboard')}>
                   Dashboard
                 </SecondaryCTAButton>
-                <SecondaryCTAButton onClick={() => {
-                  setShowLoginModal(true);
-                }}>
+                <SecondaryCTAButton onClick={handleTrySample}>
                   <FiPlay size={14} />
                   Try Sample
+                </SecondaryCTAButton>
+                <SecondaryCTAButton onClick={() => handleExploreAsGuest('/start')}>
+                  <FiUser size={14} />
+                  Explore as Guest
                 </SecondaryCTAButton>
                 <SecondaryCTAButton onClick={() => setShowLoginModal(true)}>
                   <FiLogIn size={14} />
                   Login
                 </SecondaryCTAButton>
-                <CTAButton onClick={() => setShowLoginModal(true)}>
+                <CTAButton onClick={() => handleExploreAsGuest('/start')}>
                   Start Assessment →
                 </CTAButton>
               </>
@@ -1115,16 +1130,20 @@ const GlobalNav = () => {
           <>
             <MobileSecondaryCTAButton onClick={() => {
               closeMobileMenu();
-              setShowLoginModal(true);
+              handleExploreAsGuest('/dashboard');
             }}>
               Dashboard
             </MobileSecondaryCTAButton>
-            <MobileSecondaryCTAButton onClick={() => {
-              closeMobileMenu();
-              setShowLoginModal(true);
-            }}>
+            <MobileSecondaryCTAButton onClick={handleTrySample}>
               <FiPlay size={16} />
               Try Sample
+            </MobileSecondaryCTAButton>
+            <MobileSecondaryCTAButton onClick={() => {
+              closeMobileMenu();
+              handleExploreAsGuest('/start');
+            }}>
+              <FiUser size={16} />
+              Explore as Guest
             </MobileSecondaryCTAButton>
             <MobileSecondaryCTAButton onClick={() => {
               closeMobileMenu();
@@ -1135,7 +1154,7 @@ const GlobalNav = () => {
             </MobileSecondaryCTAButton>
             <MobileCTAButton onClick={() => {
               closeMobileMenu();
-              setShowLoginModal(true);
+              handleExploreAsGuest('/start');
             }}>
               Start Assessment →
             </MobileCTAButton>
