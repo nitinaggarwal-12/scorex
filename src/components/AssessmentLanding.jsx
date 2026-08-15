@@ -356,11 +356,8 @@ function CanvasVariant({ meta, group, Icon, onStart, onTrySample, onBack, onOpen
       </div>
 
       <div className="intro-canvas__grid">
-        <svg className="intro-canvas__connectors" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M 10 20 Q 50 5, 90 20" />
-          <path d="M 10 80 Q 50 95, 90 80" />
-          <path d="M 25 15 L 25 85" />
-          <path d="M 75 15 L 75 85" />
+        <svg className="intro-canvas__connectors" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M 80 50 L 920 50" />
         </svg>
         {nodes.map((n, i) => (
           <div className="intro-canvas__node" key={n.label} style={{ borderColor: meta.accent }}>
