@@ -265,9 +265,9 @@ export async function generateReportData(formData, candidateKeys = {}, onStep = 
 // Universal Dual Project Active Balance & Failover Cascade Engine
 async function findAndExecuteWorkingModel(candidateKeys, promptPayload, onLog = () => {}) {
   const cascadeModels = [
+    'gemini-3.1-pro-preview',
     'gemini-2.5-pro',
     'gemini-2.5-flash',
-    'gemini-3.1-pro-preview',
     'gemini-3.5-flash',
     'gemini-2.0-flash'
   ];
@@ -912,8 +912,8 @@ Ensure the output is pure valid JSON without markdown formatting tags or backtic
       await new Promise(resolve => setTimeout(resolve, 450));
 
       onStep(4, "[JSON] Ingesting 25-Question Scoping matrices and details... [PENDING]");
-      const activeModel = localStorage.getItem('gemini_selected_model') || 'gemini-3.5-pro';
-      const wireModel = 'gemini-2.5-pro';
+      const activeModel = localStorage.getItem('gemini_selected_model') || 'gemini-3.1-pro-preview';
+      const wireModel = 'gemini-3.1-pro-preview';
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${wireModel}:generateContent?key=${apiKey}`;
       const response = await fetch(endpoint, {
         method: 'POST',

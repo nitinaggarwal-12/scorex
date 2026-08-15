@@ -1,100 +1,97 @@
 import React, { useState } from 'react';
-import { X, Mail, Lock, Sparkles, ShieldCheck, ArrowRight } from 'lucide-react';
+import { ShieldCheck, Mail, Lock, User, Sparkles, X, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 export default function LoginModal({ isOpen, onClose, onLogin, onExploreAsGuest }) {
-  const [activeTab, setActiveTab] = useState('databricks'); // 'databricks' | 'customer'
-  const [email, setEmail] = useState('admin@databricks.com');
+  const [activeTab, setActiveTab] = useState('advisor'); // 'advisor' | 'customer'
+  const [email, setEmail] = useState('admin@enterprise.com');
   const [password, setPassword] = useState('admin123');
-  const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
 
   const handleSubmit = (e) => {
-    e?.preventDefault();
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    e.preventDefault();
+    if (onLogin) {
       onLogin({
-        email: email || (activeTab === 'databricks' ? 'admin@databricks.com' : 'customer@company.com'),
-        role: activeTab === 'databricks' ? 'admin' : 'consumer',
+        email: email || (activeTab === 'advisor' ? 'admin@enterprise.com' : 'customer@enterprise.com'),
+        role: activeTab === 'advisor' ? 'admin' : 'consumer',
         isGuest: false
       });
-      onClose();
-    }, 300);
+    }
+    onClose();
   };
 
-  const handleGuest = () => {
-    onExploreAsGuest();
+  const handleGuestEntry = () => {
+    if (onExploreAsGuest) {
+      onExploreAsGuest();
+    }
     onClose();
   };
 
   return (
     <div className="login-modal-overlay" onClick={onClose}>
       <div className="login-modal-card" onClick={(e) => e.stopPropagation()}>
-        {/* Close button */}
-        <button className="login-modal-close" onClick={onClose} aria-label="Close modal">
+        {/* Close Button */}
+        <button className="login-modal-close" onClick={onClose}>
           <X size={20} />
         </button>
 
-        {/* LEFT PANEL: Solid Red/Coral Brand Panel */}
+        {/* Left Coral / Amber Brand Panel */}
         <div className="login-modal-left">
           <div className="login-modal-left-content">
-            <h2>{activeTab === 'databricks' ? 'Databricks Team' : 'Enterprise Customer'}</h2>
+            <h2>{activeTab === 'advisor' ? 'Enterprise Assessment Suite' : 'Enterprise Customer'}</h2>
             <p>
-              {activeTab === 'databricks'
-                ? 'Access your authoring and administration tools to manage customer assessments and deliver insights.'
-                : 'Access your team assessments, view personalized benchmarks, and export executive roadmaps.'}
+              {activeTab === 'advisor' 
+                ? 'Sign in to access your cross-workload portfolio diagnostics, executive benchmarks, and live dynamic maturity evaluations.'
+                : 'Complete assigned maturity assessments, view targeted architectural gap analysis, and explore transformation roadmaps.'}
             </p>
           </div>
           <div className="login-modal-left-footer">
-            <ShieldCheck size={18} />
-            <span>Secure Enterprise Workspace</span>
+            <ShieldCheck size={16} />
+            <span>Enterprise-Grade Security & Governance</span>
           </div>
         </div>
 
-        {/* RIGHT PANEL: Sign In Form */}
+        {/* Right Form Panel */}
         <div className="login-modal-right">
           {/* Segmented Toggle */}
           <div className="login-segmented-toggle">
             <button
               type="button"
-              className={`login-segment-btn ${activeTab === 'databricks' ? 'active' : ''}`}
+              className={`login-segment-btn ${activeTab === 'advisor' ? 'active' : ''}`}
               onClick={() => {
-                setActiveTab('databricks');
-                setEmail('admin@databricks.com');
-                setPassword('admin123');
+                setActiveTab('advisor');
+                setEmail('admin@enterprise.com');
               }}
             >
-              Databricks
+              Advisor / Lead
             </button>
             <button
               type="button"
               className={`login-segment-btn ${activeTab === 'customer' ? 'active' : ''}`}
               onClick={() => {
                 setActiveTab('customer');
-                setEmail('lead@customer.com');
-                setPassword('customer123');
+                setEmail('customer@enterprise.com');
               }}
             >
-              Customer
+              Customer / Stakeholder
             </button>
           </div>
 
           <div className="login-form-header">
-            <h3>Sign In</h3>
-            <p>Sign in to your {activeTab === 'databricks' ? 'Databricks' : 'Customer'} account</p>
+            <h3>Welcome Back</h3>
+            <p>Sign in to your {activeTab === 'advisor' ? 'Advisor' : 'Customer'} account</p>
           </div>
 
           <form onSubmit={handleSubmit} className="login-form">
             <div className="login-input-group">
               <label>Email Address</label>
               <div className="login-input-wrapper">
-                <Mail className="login-input-icon" size={18} />
+                <Mail size={16} className="login-input-icon" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@company.com"
+                  placeholder="name@enterprise.com"
                   required
                 />
               </div>
@@ -103,7 +100,7 @@ export default function LoginModal({ isOpen, onClose, onLogin, onExploreAsGuest 
             <div className="login-input-group">
               <label>Password</label>
               <div className="login-input-wrapper">
-                <Lock className="login-input-icon" size={18} />
+                <Lock size={16} className="login-input-icon" />
                 <input
                   type="password"
                   value={password}
@@ -114,20 +111,23 @@ export default function LoginModal({ isOpen, onClose, onLogin, onExploreAsGuest 
               </div>
             </div>
 
-            <button type="submit" className="login-submit-btn" disabled={loading}>
-              {loading ? 'Signing in...' : 'Sign In'}
+            <button type="submit" className="login-submit-btn">
+              Sign In
             </button>
           </form>
 
-          {/* Explore as Guest Option */}
           <div className="login-guest-divider">
             <span>OR</span>
           </div>
 
-          <button type="button" className="login-guest-btn" onClick={handleGuest}>
+          {/* Direct Guest Bypass Option */}
+          <button 
+            type="button" 
+            className="login-guest-btn"
+            onClick={handleGuestEntry}
+          >
             <Sparkles size={16} />
-            <span>Explore as Guest (No sign-in required)</span>
-            <ArrowRight size={15} />
+            <span>Explore as Guest (No sign in required)</span>
           </button>
         </div>
       </div>

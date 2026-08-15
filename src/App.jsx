@@ -480,7 +480,7 @@ export default function App() {
     }
   });
   const [currentUser, setCurrentUser] = useState({
-    email: 'admin@databricks.com',
+    email: 'admin@enterprise.com',
     role: 'admin',
     isGuest: false
   });
@@ -1769,7 +1769,7 @@ export default function App() {
         <button
           onClick={() => setIsChatOpen(true)}
           className="floating-chat-fab"
-          title="Open Databricks AI Assistant"
+          title="Open Enterprise AI Assistant"
         >
           <Sparkles size={24} />
         </button>

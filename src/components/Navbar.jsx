@@ -234,7 +234,7 @@ export default function Navbar({
                   <span>View All Feedback</span>
                 </button>
                 <div className="dropdown-user-email">
-                  <span>{user.email || 'admin@databricks.com'}</span>
+                  <span>{user.email || 'admin@enterprise.com'}</span>
                 </div>
               </div>
             )}
