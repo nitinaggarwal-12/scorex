@@ -3501,28 +3501,27 @@ if (process.env.NODE_ENV === 'production') {
 
 // Start server (only if not in serverless environment)
 if (process.env.VERCEL !== '1') {
-  // Initialize database connection BEFORE starting the server
   const db = require('./db/connection');
   
-  (async () => {
-    await db.initialize();
+  // Start listening immediately on 0.0.0.0 to guarantee instant port binding
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Databricks Maturity Assessment API running on port ${PORT}`);
+    console.log(`📊 Assessment framework loaded with ${assessmentFramework.assessmentAreas.length} areas`);
+    console.log(`🔗 API Health Check: http://localhost:${PORT}/api/health`);
     
-    app.listen(PORT, async () => {
-      console.log(`🚀 Databricks Maturity Assessment API running on port ${PORT}`);
-      console.log(`📊 Assessment framework loaded with ${assessmentFramework.assessmentAreas.length} areas`);
-      
-      // Get assessment count asynchronously
+    // Asynchronously initialize database in background without blocking server startup
+    db.initialize().then(async () => {
       try {
         const assessmentRepo = require('./db/assessmentRepository');
         const count = await assessmentRepo.count();
-        console.log(`💾 ${count} assessment(s) in PostgreSQL database`);
-      } catch (error) {
-        console.log(`💾 Assessment storage initialized (count unavailable)`);
+        console.log(`💾 ${count} assessment(s) ready in storage`);
+      } catch (err) {
+        console.log(`💾 Assessment storage initialized`);
       }
-      
-      console.log(`🔗 API Health Check: http://localhost:${PORT}/api/health`);
+    }).catch(err => {
+      console.warn('Background database initialization notice:', err.message);
     });
-  })();
+  });
 }
 
 module.exports = app;
