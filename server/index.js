@@ -1,6 +1,15 @@
 // Load environment variables first
 require('dotenv').config();
 
+// Safety catch-all for unhandled rejections and exceptions to ensure continuous uptime
+process.on('unhandledRejection', (reason, promise) => {
+  console.warn('⚠️  Unhandled Promise Rejection caught:', reason?.message || reason);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('⚠️  Uncaught Exception caught:', err?.message || err);
+});
+
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
