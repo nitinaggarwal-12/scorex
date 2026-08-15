@@ -8,25 +8,40 @@ const { GoogleGenAI } = require('@google/genai');
  */
 class GeminiService {
   constructor() {
-    this.apiKey = process.env.GEMINI_API_KEY || null;
     this.primaryModel = process.env.GEMINI_MODEL || 'gemini-3.7-flash';
     this.fallbackModels = ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.0-flash'];
     this.client = null;
+    this.initClient();
+  }
 
-    if (this.apiKey) {
+  getApiKey() {
+    return process.env.GEMINI_API_KEY || 
+           process.env.GOOGLE_API_KEY || 
+           process.env.GOOGLE_GEMINI_API_KEY || 
+           null;
+  }
+
+  initClient() {
+    const key = this.getApiKey();
+    if (key) {
       try {
-        this.client = new GoogleGenAI({ apiKey: this.apiKey });
+        this.client = new GoogleGenAI({ apiKey: key });
         console.log(`🤖 Gemini AI Service initialized with default model: ${this.primaryModel}`);
+        return this.client;
       } catch (err) {
         console.warn('⚠️ Failed to initialize GoogleGenAI client:', err.message);
       }
     } else {
       console.log('ℹ️ GEMINI_API_KEY not configured. GeminiService in standby (fallback mode active).');
     }
+    return null;
   }
 
   isAvailable() {
-    return Boolean(this.apiKey && this.client);
+    if (!this.client && this.getApiKey()) {
+      this.initClient();
+    }
+    return Boolean(this.client);
   }
 
   /**
@@ -34,7 +49,7 @@ class GeminiService {
    */
   async _generateWithFallback(prompt, systemInstruction = '', temperature = 0.7, responseMimeType = null) {
     if (!this.isAvailable()) {
-      throw new Error('Gemini API key is not configured');
+      throw new Error('Gemini API key is not configured. Please set GEMINI_API_KEY in your environment variables (or in your Railway project under Variables).');
     }
 
     const modelsToTry = [this.primaryModel, ...this.fallbackModels];
