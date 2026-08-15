@@ -458,8 +458,19 @@ app.post('/api/assessment/start', requireAuth, async (req, res) => {
 app.get('/api/assessment/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const assessmentRepo = require('./db/assessmentRepository');
-    const assessment = await assessmentRepo.findById(id);
+    let assessment = null;
+    try {
+      const assessmentRepo = require('./db/assessmentRepository');
+      assessment = await assessmentRepo.findById(id);
+    } catch (e) {
+      console.warn('Postgres findById error:', e.message);
+    }
+    
+    if (!assessment) {
+      const DataStore = require('./utils/dataStore');
+      const fileDataStore = new DataStore(path.join(__dirname, '../data/assessments.json'));
+      assessment = fileDataStore.get(id);
+    }
     
     if (!assessment) {
       console.log(`❌ [API /assessment/:id] Assessment ${id} not found`);
@@ -2644,14 +2655,46 @@ app.get('/api/assessments', requireAuth, async (req, res) => {
     res.json({
       success: true,
       data: assessmentsList
-    });
   } catch (error) {
-    console.error('Error retrieving assessments:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error retrieving assessments',
-      error: error.message
-    });
+    console.error('Error retrieving assessments from PostgreSQL, falling back to file storage:', error.message);
+    try {
+      const DataStore = require('./utils/dataStore');
+      const fileDataStore = new DataStore(path.join(__dirname, '../data/assessments.json'));
+      const allFileAssessments = fileDataStore.getAll() || {};
+      const list = Object.values(allFileAssessments).map(a => ({
+        id: a.id,
+        organization_name: a.organizationName || a.organization_name || 'Enterprise',
+        contact_email: a.contactEmail || a.contact_email || 'demo@enterprise.com',
+        contact_name: '',
+        contact_role: '',
+        industry: a.industry || 'Technology',
+        assessment_name: a.assessmentName || a.assessment_name || 'Databricks Assessment',
+        assessment_description: a.assessmentDescription || '',
+        status: a.status || 'completed',
+        started_at: a.startedAt || a.started_at || new Date().toISOString(),
+        created_at: a.createdAt || a.created_at || new Date().toISOString(),
+        updated_at: a.updatedAt || a.updated_at || new Date().toISOString(),
+        completed_at: a.completedAt || a.completed_at,
+        completedCategories: a.completedCategories || a.completed_categories || [],
+        completed_categories: a.completedCategories || a.completed_categories || [],
+        total_categories: assessmentFramework.assessmentAreas.length,
+        progress: a.progress || 100,
+        creator_name: 'Advisor Lead',
+        user_id: 'guest_admin',
+        results_released: true
+      }));
+      list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      return res.json({
+        success: true,
+        data: list
+      });
+    } catch (fallbackError) {
+      res.status(500).json({
+        success: false,
+        message: 'Error retrieving assessments',
+        error: error.message
+      });
+    }
   }
 });
 
@@ -3142,26 +3185,32 @@ app.post('/api/assessment/generate-sample', requireAuth, async (req, res) => {
       specificPillars
     });
     
-    // Save to PostgreSQL
-    const assessmentRepo = require('./db/assessmentRepository');
-    await assessmentRepo.create({
-      id: sampleAssessment.id,
-      assessmentName: sampleAssessment.assessmentName,
-      assessmentDescription: sampleAssessment.assessmentDescription || '',
-      organizationName: sampleAssessment.organizationName,
-      contactEmail: sampleAssessment.contactEmail,
-      industry: sampleAssessment.industry,
-      status: sampleAssessment.status,
-      progress: sampleAssessment.progress || Math.round((sampleAssessment.completedCategories.length / 6) * 100),
-      currentCategory: sampleAssessment.currentCategory || null,
-      completedCategories: sampleAssessment.completedCategories,
-      responses: sampleAssessment.responses,
-      editHistory: sampleAssessment.editHistory || [],
-      startedAt: sampleAssessment.startedAt || new Date().toISOString(),
-      userId: req.user.id  // Set the creator's user ID
-    });
-    
-    console.log(`✅ Sample assessment created in PostgreSQL: ${sampleAssessment.id} (${sampleAssessment.assessmentName})`);
+    // Save to PostgreSQL if available, otherwise file store
+    try {
+      const assessmentRepo = require('./db/assessmentRepository');
+      await assessmentRepo.create({
+        id: sampleAssessment.id,
+        assessmentName: sampleAssessment.assessmentName,
+        assessmentDescription: sampleAssessment.assessmentDescription || '',
+        organizationName: sampleAssessment.organizationName,
+        contactEmail: sampleAssessment.contactEmail,
+        industry: sampleAssessment.industry,
+        status: sampleAssessment.status,
+        progress: sampleAssessment.progress || Math.round((sampleAssessment.completedCategories.length / 6) * 100),
+        currentCategory: sampleAssessment.currentCategory || null,
+        completedCategories: sampleAssessment.completedCategories,
+        responses: sampleAssessment.responses,
+        editHistory: sampleAssessment.editHistory || [],
+        startedAt: sampleAssessment.startedAt || new Date().toISOString(),
+        userId: req.user?.id || 'guest_admin'
+      });
+      console.log(`✅ Sample assessment created in PostgreSQL: ${sampleAssessment.id}`);
+    } catch (dbErr) {
+      console.warn('PostgreSQL save error, using file dataStore fallback:', dbErr.message);
+      const DataStore = require('./utils/dataStore');
+      const fileDataStore = new DataStore(path.join(__dirname, '../data/assessments.json'));
+      fileDataStore.set(sampleAssessment.id, sampleAssessment);
+    }
     console.log(`   Completed pillars: ${sampleAssessment.completedCategories.length}/6`);
     console.log(`   Total responses: ${Object.keys(sampleAssessment.responses).length}`);
     
