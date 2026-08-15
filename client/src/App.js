@@ -37,6 +37,10 @@ import PitchDeck from './components/PitchDeck';
 import GenAIReadiness from './components/GenAIReadiness';
 import GenAIReadinessReport from './components/GenAIReadinessReport';
 import GenAIReadinessList from './components/GenAIReadinessList';
+import DynamicAssessmentGenerator from './components/DynamicAssessmentGenerator';
+import DynamicAssessmentRunner from './components/DynamicAssessmentRunner';
+import DynamicAssessmentReport from './components/DynamicAssessmentReport';
+import DynamicAssessmentHub from './components/DynamicAssessmentHub';
 
 // Services
 import * as assessmentService from './services/assessmentService';
@@ -338,6 +342,51 @@ function App() {
             element={
               <ProtectedRoute>
                 <GenAIReadinessReport />
+              </ProtectedRoute>
+            } 
+          />
+          
+          <Route 
+            path="/assessments/ai-generator" 
+            element={
+              <ProtectedRoute>
+                <DynamicAssessmentGenerator />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/assessments/custom-hub" 
+            element={
+              <ProtectedRoute>
+                <DynamicAssessmentHub />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/assessments/run/:typeKey" 
+            element={
+              <ProtectedRoute>
+                <DynamicAssessmentRunner />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/assessments/run/instance/:id" 
+            element={
+              <ProtectedRoute>
+                <DynamicAssessmentRunner />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/assessments/report/:id" 
+            element={
+              <ProtectedRoute>
+                <DynamicAssessmentReport />
               </ProtectedRoute>
             } 
           />

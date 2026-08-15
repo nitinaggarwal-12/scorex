@@ -6,6 +6,8 @@ client/build/
 
 # Data files (contains assessment data)
 server/data/assessments.json
+data/*.json
+data/
 
 # Environment variables & keys
 .env

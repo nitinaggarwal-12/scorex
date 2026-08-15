@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { FiMenu, FiX, FiPlay, FiList, FiLogIn, FiLogOut, FiUser, FiFileText, FiUsers, FiSend, FiChevronDown, FiLock, FiUserPlus, FiMail, FiMessageSquare, FiSettings, FiBook, FiMonitor, FiCpu } from 'react-icons/fi';
+import { FiMenu, FiX, FiPlay, FiList, FiLogIn, FiLogOut, FiUser, FiFileText, FiUsers, FiSend, FiChevronDown, FiLock, FiUserPlus, FiMail, FiMessageSquare, FiSettings, FiBook, FiMonitor, FiCpu, FiAward, FiLayers } from 'react-icons/fi';
+import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import * as assessmentService from '../services/assessmentService';
+import dynamicAssessmentService from '../services/dynamicAssessmentService';
 import authService from '../services/authService';
 import LoginModal from './LoginModal';
 
@@ -433,6 +435,22 @@ const GlobalNav = () => {
   const [assessmentsDropdownOpen, setAssessmentsDropdownOpen] = useState(false);
   const [assignmentsDropdownOpen, setAssignmentsDropdownOpen] = useState(false);
   const [adminDropdownOpen, setAdminDropdownOpen] = useState(false);
+  const [promotedTypes, setPromotedTypes] = useState([]);
+
+  const fetchPromotedTypes = async () => {
+    try {
+      const types = await dynamicAssessmentService.getAssessmentTypes(true);
+      setPromotedTypes(types || []);
+    } catch (e) {
+      console.warn('Failed to load promoted assessment types:', e);
+    }
+  };
+
+  useEffect(() => {
+    fetchPromotedTypes();
+    window.addEventListener('assessment-types-updated', fetchPromotedTypes);
+    return () => window.removeEventListener('assessment-types-updated', fetchPromotedTypes);
+  }, []);
 
   useEffect(() => {
     if (authService.isAuthenticated()) {
@@ -810,7 +828,7 @@ const GlobalNav = () => {
                       setAssessmentsDropdownOpen(false);
                     }}>
                       <FiPlay />
-                      Start Assessment
+                      Data & AI Maturity Assessment
                     </DropdownItem>
                     {currentUser.role !== 'consumer' && (
                       <DropdownItem onClick={() => {
@@ -821,6 +839,41 @@ const GlobalNav = () => {
                         Try Sample
                       </DropdownItem>
                     )}
+                    <DropdownItem onClick={() => {
+                      navigate('/genai-readiness');
+                      setAssessmentsDropdownOpen(false);
+                    }}>
+                      <FiCpu />
+                      Gen AI Readiness Assessment
+                    </DropdownItem>
+
+                    {/* Dynamically Promoted Custom Assessment Types */}
+                    {promotedTypes.map((type) => (
+                      <DropdownItem 
+                        key={type.id || type.typeKey}
+                        onClick={() => {
+                          navigate(`/assessments/ai-generator`);
+                          setAssessmentsDropdownOpen(false);
+                        }}
+                      >
+                        <FiAward style={{ color: type.color || '#818cf8' }} />
+                        {type.title}
+                      </DropdownItem>
+                    ))}
+
+                    <DropdownDivider />
+                    <DropdownItem 
+                      style={{ color: '#8b5cf6', fontWeight: '700' }}
+                      onClick={() => {
+                        navigate('/assessments/ai-generator');
+                        setAssessmentsDropdownOpen(false);
+                      }}
+                    >
+                      <HiSparkles style={{ color: '#a855f7' }} />
+                      ✨ AI Assessment Generator
+                    </DropdownItem>
+
+                    <DropdownDivider />
                     <DropdownItem onClick={() => {
                       navigate('/my-assessments');
                       setAssessmentsDropdownOpen(false);
@@ -835,20 +888,12 @@ const GlobalNav = () => {
                       <FiList />
                       All Assessments
                     </DropdownItem>
-                    <DropdownDivider />
                     <DropdownItem onClick={() => {
-                      navigate('/genai-readiness');
+                      navigate('/assessments/custom-hub');
                       setAssessmentsDropdownOpen(false);
                     }}>
-                      <FiCpu />
-                      New Gen AI Assessment
-                    </DropdownItem>
-                    <DropdownItem onClick={() => {
-                      navigate('/genai-readiness/list');
-                      setAssessmentsDropdownOpen(false);
-                    }}>
-                      <FiList />
-                      Gen AI Assessments
+                      <FiLayers />
+                      Assessment Types & Portfolio
                     </DropdownItem>
                     {currentUser.role === 'admin' && !currentUser.testMode && (
                       <DropdownItem onClick={() => {
@@ -1081,17 +1126,21 @@ const GlobalNav = () => {
         
         {currentUser ? (
           <>
+            <MobileSecondaryCTAButton onClick={() => handleNavigate('/assessments/ai-generator')}>
+              <HiSparkles size={16} style={{ color: '#c084fc' }} />
+              AI Assessment Generator
+            </MobileSecondaryCTAButton>
+            <MobileSecondaryCTAButton onClick={() => handleNavigate('/assessments/custom-hub')}>
+              <FiLayers size={16} />
+              Assessment Types & Portfolio
+            </MobileSecondaryCTAButton>
             <MobileSecondaryCTAButton onClick={() => handleNavigate('/my-assessments')}>
               <FiFileText size={16} />
               My Assessments
             </MobileSecondaryCTAButton>
             <MobileSecondaryCTAButton onClick={() => handleNavigate('/genai-readiness')}>
               <FiCpu size={16} />
-              New Gen AI Assessment
-            </MobileSecondaryCTAButton>
-            <MobileSecondaryCTAButton onClick={() => handleNavigate('/genai-readiness/list')}>
-              <FiList size={16} />
-              Gen AI Assessments
+              Gen AI Readiness
             </MobileSecondaryCTAButton>
             {currentUser.role !== 'consumer' && (
               <>

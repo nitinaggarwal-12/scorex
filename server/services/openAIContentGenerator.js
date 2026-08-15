@@ -423,18 +423,49 @@ Return JSON with this structure:
   }
 
   /**
+   * Resolve any variation of pillar id or name to standard assessmentFramework area
+   */
+  matchPillar(idOrName) {
+    if (!idOrName) return null;
+    const clean = idOrName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+    
+    const direct = assessmentFramework.assessmentAreas.find(a => 
+      a.id === idOrName || 
+      a.id.toLowerCase() === idOrName.toLowerCase() ||
+      a.name.toLowerCase() === idOrName.toLowerCase()
+    );
+    if (direct) return direct;
+    
+    if (clean.includes('platform') || clean.includes('governance')) {
+      return assessmentFramework.assessmentAreas.find(a => a.id === 'platform_governance');
+    }
+    if (clean.includes('data_eng') || (clean.includes('data') && !clean.includes('science'))) {
+      return assessmentFramework.assessmentAreas.find(a => a.id === 'data_engineering');
+    }
+    if (clean.includes('analytic') || clean.includes('bi')) {
+      return assessmentFramework.assessmentAreas.find(a => a.id === 'analytics_bi');
+    }
+    if (clean.includes('genai') || clean.includes('generative') || clean.includes('llm')) {
+      return assessmentFramework.assessmentAreas.find(a => a.id === 'generative_ai');
+    }
+    if (clean.includes('machine') || clean.includes('ml') || clean.includes('ai')) {
+      return assessmentFramework.assessmentAreas.find(a => a.id === 'machine_learning');
+    }
+    if (clean.includes('operat') || clean.includes('enable') || clean.includes('coe')) {
+      return assessmentFramework.assessmentAreas.find(a => a.id === 'operational_excellence');
+    }
+    
+    return null;
+  }
+
+  /**
    * Generate pillar-specific prioritized actions from pillar scores
    */
-  generatePillarPrioritizedActions(pillarScores, assessment) {
+  generatePillarPrioritizedActions(pillarScores = {}, assessment) {
     const actions = [];
     const responses = assessment.responses || {};
     
-    console.log(`[OpenAI] Generating pillar actions for ${Object.keys(pillarScores).length} pillars`);
-    
-    Object.keys(pillarScores).forEach(pillarId => {
-      const pillar = assessmentFramework.assessmentAreas.find(a => a.id === pillarId);
-      if (!pillar) return;
-      
+    assessmentFramework.assessmentAreas.forEach(pillar => {
       // CRITICAL FIX: Only generate actions for pillars with actual responses
       const pillarHasResponses = pillar.dimensions.some(dimension =>
         dimension.questions.some(question => {
@@ -445,11 +476,16 @@ Return JSON with this structure:
       );
       
       if (!pillarHasResponses) {
-        console.log(`⏭️ Skipping pillar ${pillarId} - no responses found`);
-        return; // Skip this pillar - no data to generate actions from
+        return;
       }
       
-      const scores = pillarScores[pillarId] || {};
+      let scores = pillarScores[pillar.id];
+      if (!scores) {
+        const matchedKey = Object.keys(pillarScores || {}).find(k => this.matchPillar(k)?.id === pillar.id);
+        if (matchedKey) scores = pillarScores[matchedKey];
+      }
+      scores = scores || {};
+
       const currentScore = Math.round(typeof scores.current === 'number' ? scores.current : 3);
       const futureScore = Math.round(typeof scores.future === 'number' ? scores.future : 4);
       const gap = Math.round(typeof scores.gap === 'number' ? scores.gap : (futureScore - currentScore));
@@ -472,10 +508,8 @@ Return JSON with this structure:
         });
       });
       
-      // Generate action for ALL completed pillars (even if gap is 0)
-      console.log(`[OpenAI] Creating action for pillar ${pillarId} (gap: ${gap})`);
       actions.push({
-        pillarId: pillarId,
+        pillarId: pillar.id,
         pillarName: pillar.name,
         currentScore: currentScore,
         targetScore: futureScore,
@@ -491,8 +525,6 @@ Return JSON with this structure:
           responses,
           pillar
         ),
-        // NOTE: actions/recommendations will be populated by context-aware engine
-        // Don't generate generic garbage here - let the pain-point-based recommendations take over
         actions: [],
         recommendations: []
       });
@@ -525,14 +557,17 @@ Return JSON with this structure:
     const gap = typeof overallScores.gap === 'number' ? overallScores.gap : (futureScore - currentScore);
 
     const validPillars = {};
-    Object.keys(pillarScores).forEach(pillarId => {
-      const area = assessmentFramework.assessmentAreas.find(a => a.id === pillarId);
-      if (!area) return;
-      const pScore = pillarScores[pillarId] || {};
+    assessmentFramework.assessmentAreas.forEach(area => {
+      let pScore = pillarScores[area.id];
+      if (!pScore) {
+        const matchedKey = Object.keys(pillarScores || {}).find(k => this.matchPillar(k)?.id === area.id);
+        if (matchedKey) pScore = pillarScores[matchedKey];
+      }
+      pScore = pScore || {};
       const c = typeof pScore.current === 'number' ? pScore.current : 3;
       const f = typeof pScore.future === 'number' ? pScore.future : 4;
       const g = typeof pScore.gap === 'number' ? pScore.gap : (f - c);
-      validPillars[pillarId] = {
+      validPillars[area.id] = {
         current: Math.round(c),
         future: Math.round(f),
         gap: Math.round(g),
@@ -564,7 +599,7 @@ Return JSON with this structure:
    * Generate dimension-level gap-based actions for a pillar
    */
   generatePillarGapActions(assessment, pillarId) {
-    const area = assessmentFramework.assessmentAreas.find(a => a.id === pillarId);
+    const area = this.matchPillar(pillarId);
     if (!area) return [];
 
     const responses = assessment.responses || {};
@@ -607,14 +642,14 @@ Return JSON with this structure:
    */
   formatPillarResults(content, assessment, pillarId) {
     const { scores, summary, recommendations, databricksFeatures } = content;
-    const area = assessmentFramework.assessmentAreas.find(a => a.id === pillarId);
+    const area = this.matchPillar(pillarId);
     
     // Generate dimension-level gap actions
     const gapActions = this.generatePillarGapActions(assessment, pillarId);
     
     return {
       pillar: {
-        id: pillarId,
+        id: area ? area.id : pillarId,
         name: area ? area.name : pillarId,
         currentScore: Math.round(scores?.current || 3),
         futureScore: Math.round(scores?.future || 4),
@@ -634,18 +669,21 @@ Return JSON with this structure:
   /**
    * Format pillar categories for overall results
    */
-  formatPillarCategories(pillarScores) {
+  formatPillarCategories(pillarScores = {}) {
     const categories = {};
     
-    Object.keys(pillarScores || {}).forEach(pillarId => {
-      const area = assessmentFramework.assessmentAreas.find(a => a.id === pillarId);
-      if (!area) return;
-      const scores = pillarScores[pillarId] || {};
+    assessmentFramework.assessmentAreas.forEach(area => {
+      let scores = pillarScores[area.id];
+      if (!scores) {
+        const matchedKey = Object.keys(pillarScores || {}).find(k => this.matchPillar(k)?.id === area.id);
+        if (matchedKey) scores = pillarScores[matchedKey];
+      }
+      scores = scores || {};
       const current = typeof scores.current === 'number' ? scores.current : 3;
       const future = typeof scores.future === 'number' ? scores.future : 4;
       const gap = typeof scores.gap === 'number' ? scores.gap : (future - current);
       
-      categories[pillarId] = {
+      categories[area.id] = {
         name: area.name,
         currentScore: Math.round(current),
         futureScore: Math.round(future),
