@@ -449,10 +449,10 @@ Return JSON with this structure:
         return; // Skip this pillar - no data to generate actions from
       }
       
-      const scores = pillarScores[pillarId];
-      const currentScore = Math.round(scores.current);
-      const futureScore = Math.round(scores.future);
-      const gap = Math.round(scores.gap);
+      const scores = pillarScores[pillarId] || {};
+      const currentScore = Math.round(typeof scores.current === 'number' ? scores.current : 3);
+      const futureScore = Math.round(typeof scores.future === 'number' ? scores.future : 4);
+      const gap = Math.round(typeof scores.gap === 'number' ? scores.gap : (futureScore - currentScore));
       
       // Get pain points for this pillar
       const pillarPainPoints = [];
@@ -512,28 +512,43 @@ Return JSON with this structure:
    * Format overall results from OpenAI response
    */
   formatOverallResults(content, assessment) {
-    const { overallScores, pillarScores, executiveSummary, recommendations } = content;
+    const overallScores = content.overallScores || content.overall || content.scores || {};
+    const pillarScores = content.pillarScores || content.pillar_scores || content.areaScores || content.pillars || {};
+    const executiveSummary = content.executiveSummary || content.summary || content.narrative || '';
+    const recommendations = content.recommendations || content.topRecommendations || [];
     
     // Generate pillar-specific prioritized actions
     const pillarActions = this.generatePillarPrioritizedActions(pillarScores, assessment);
     
+    const currentScore = typeof overallScores.currentScore === 'number' ? overallScores.currentScore : 3;
+    const futureScore = typeof overallScores.futureScore === 'number' ? overallScores.futureScore : 4;
+    const gap = typeof overallScores.gap === 'number' ? overallScores.gap : (futureScore - currentScore);
+
+    const validPillars = {};
+    Object.keys(pillarScores).forEach(pillarId => {
+      const area = assessmentFramework.assessmentAreas.find(a => a.id === pillarId);
+      if (!area) return;
+      const pScore = pillarScores[pillarId] || {};
+      const c = typeof pScore.current === 'number' ? pScore.current : 3;
+      const f = typeof pScore.future === 'number' ? pScore.future : 4;
+      const g = typeof pScore.gap === 'number' ? pScore.gap : (f - c);
+      validPillars[pillarId] = {
+        current: Math.round(c),
+        future: Math.round(f),
+        gap: Math.round(g),
+        overall: Math.round((c + f) / 2)
+      };
+    });
+
     return {
       overall: {
-        currentScore: Math.round(overallScores.currentScore),
-        futureScore: Math.round(overallScores.futureScore),
-        gap: Math.round(overallScores.gap),
-        level: this.getMaturityLevel(overallScores.currentScore),
+        currentScore: Math.round(currentScore),
+        futureScore: Math.round(futureScore),
+        gap: Math.round(gap),
+        level: this.getMaturityLevel(currentScore),
         summary: executiveSummary
       },
-      areaScores: Object.keys(pillarScores).reduce((acc, pillarId) => {
-        acc[pillarId] = {
-          current: Math.round(pillarScores[pillarId].current),
-          future: Math.round(pillarScores[pillarId].future),
-          gap: Math.round(pillarScores[pillarId].gap),
-          overall: Math.round((pillarScores[pillarId].current + pillarScores[pillarId].future) / 2)
-        };
-        return acc;
-      }, {}),
+      areaScores: validPillars,
       categories: this.formatPillarCategories(pillarScores),
       prioritizedActions: pillarActions, // Use pillar-structured actions
       painPointRecommendations: recommendations || [],
@@ -600,12 +615,12 @@ Return JSON with this structure:
     return {
       pillar: {
         id: pillarId,
-        name: area.name,
-        currentScore: Math.round(scores.current),
-        futureScore: Math.round(scores.future),
-        gap: parseFloat(scores.gap.toFixed(1)), // Fix floating point precision
-        level: this.getMaturityLevel(scores.current),
-        targetLevel: this.getMaturityLevel(scores.future)
+        name: area ? area.name : pillarId,
+        currentScore: Math.round(scores?.current || 3),
+        futureScore: Math.round(scores?.future || 4),
+        gap: parseFloat((scores?.gap || 1).toFixed(1)), // Fix floating point precision
+        level: this.getMaturityLevel(scores?.current || 3),
+        targetLevel: this.getMaturityLevel(scores?.future || 4)
       },
       summary: summary || '',
       recommendations: recommendations || [],
@@ -622,17 +637,21 @@ Return JSON with this structure:
   formatPillarCategories(pillarScores) {
     const categories = {};
     
-    Object.keys(pillarScores).forEach(pillarId => {
+    Object.keys(pillarScores || {}).forEach(pillarId => {
       const area = assessmentFramework.assessmentAreas.find(a => a.id === pillarId);
-      const scores = pillarScores[pillarId];
+      if (!area) return;
+      const scores = pillarScores[pillarId] || {};
+      const current = typeof scores.current === 'number' ? scores.current : 3;
+      const future = typeof scores.future === 'number' ? scores.future : 4;
+      const gap = typeof scores.gap === 'number' ? scores.gap : (future - current);
       
       categories[pillarId] = {
         name: area.name,
-        currentScore: Math.round(scores.current),
-        futureScore: Math.round(scores.future),
-        gap: Math.round(scores.gap),
-        level: this.getMaturityLevel(scores.current),
-        targetLevel: this.getMaturityLevel(scores.future),
+        currentScore: Math.round(current),
+        futureScore: Math.round(future),
+        gap: Math.round(gap),
+        level: this.getMaturityLevel(current),
+        targetLevel: this.getMaturityLevel(future),
         recommendations: []
       };
     });
