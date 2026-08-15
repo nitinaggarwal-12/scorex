@@ -235,8 +235,8 @@ app.get('/api/disclaimer-acceptance/:clientId', async (req, res) => {
       accepted_at: result.rows[0].accepted_at,
     });
   } catch (err) {
-    console.error('[DISCLAIMER_ACCEPTANCE] Failed to look up acceptance:', err.message);
-    res.status(500).json({ error: 'Failed to fetch disclaimer acceptance' });
+    console.warn('[DISCLAIMER_ACCEPTANCE_WARN] DB offline or table missing, defaulting to client storage:', err.message);
+    res.json({ accepted: false });
   }
 });
 
@@ -364,7 +364,7 @@ app.post('/api/v10/assessments', async (req, res) => {
 // MASTER COMPLIANCE SPECIFICATION: LIVE INTERACTIVE PRESENTATION & Q&A ENGINE
 // ============================================================================
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || 'AIzaSyC5Qz7M-yDCdlNEsPt97ffuLYlw871h818' });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 const ttsClient = new textToSpeech.TextToSpeechClient({
   projectId: process.env.GCP_PROJECT_ID || 'nitinagga-ge-2',
   fallback: true

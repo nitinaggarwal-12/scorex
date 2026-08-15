@@ -25,13 +25,13 @@ export const GROUPS = [
   },
   {
     id: 'financial',
-    name: 'Financial & Portfolio',
-    description: 'The numbers conversation — unit economics, TCO payback, and a cross-use-case view for accounts running several initiatives at once.',
+    name: 'Financial ROI',
+    description: 'The numbers conversation — unit economics, compute tokenomics, and TCO payback for the proposed workload.',
   },
   {
     id: 'technical',
     name: 'Technical & Consultative Scoping',
-    description: 'Deeper feasibility, executive framing, live architecture co-design, and the delivery plan for how the engagement actually runs.',
+    description: 'Deeper feasibility, executive framing, and live architecture co-design on Vertex AI.',
   },
 ];
 
@@ -150,22 +150,6 @@ export const ASSESSMENTS = {
     valueVendor: 'Turns "this seems valuable" into a quantitative case that survives a budget review.',
     differentiator: 'The only assessment whose primary output is a financial chart rather than a readiness score, architecture diagram, or compliance record.',
   },
-  option10: {
-    id: 'option10',
-    group: 'financial',
-    variant: 'bespoke',
-    accent: '#10b981',
-    icon: 'Sparkles',
-    name: 'Portfolio Intelligence',
-    tagline: 'One pane of glass across every use case an account is running — not just one.',
-    what: 'A cross-use-case portfolio view for accounts running multiple parallel assessments. Tracks each one, compares them side by side, and supports collaborative, threaded annotations directly on the generated reports.',
-    why: 'Large accounts don\u2019t run one AI use case at a time — they run several, in parallel, at different stages. A single-use-case scorecard can\u2019t show that picture; this is the tool built specifically to show it.',
-    where: 'Accounts with three or more active or prospective use cases under evaluation at once.',
-    how: 'Launch from a preset or an existing saved assessment; annotate and discuss the resulting reports collaboratively with threaded comments.',
-    valueCustomer: 'A single pane of glass across all of their AI initiatives, instead of a folder of disconnected reports that don\u2019t talk to each other.',
-    valueVendor: 'Surfaces cross-sell and expansion opportunities that are invisible when every use case is scored in isolation.',
-    differentiator: 'The only multi-use-case, account-level view in the suite — every other assessment here scores exactly one use case at a time.',
-  },
 
   option8: {
     id: 'option8',
@@ -214,22 +198,6 @@ export const ASSESSMENTS = {
     valueCustomer: 'Walks away with the same diagram their own team helped edit, not a vendor-produced diagram to interpret and push back on later.',
     valueVendor: 'Produces genuine buy-in during the session itself, instead of discovering disagreement after the diagram is already "final."',
     differentiator: 'The only assessment in the suite that is a drawing tool, not a questionnaire — everything else here produces a score or a report; this produces a diagram.',
-  },
-  option3: {
-    id: 'option3',
-    group: 'technical',
-    variant: 'blueprint',
-    accent: 'var(--google-red)',
-    icon: 'Sparkles',
-    name: 'Engagement & Roadmap Model',
-    tagline: 'A great architecture is worthless without a plan for who does what, by when.',
-    what: 'Defines the joint engagement structure between the vendor\u2019s delivery team and the customer\u2019s team — roles, working cadence, and a concrete multi-week technical roadmap.',
-    why: 'Scope and architecture agreement doesn\u2019t automatically produce a delivery plan. Ambiguity about ownership and timeline is one of the most common reasons a well-scoped engagement stalls after kickoff.',
-    where: 'Once scope and architecture are roughly agreed, before kickoff — the last step before work actually starts.',
-    how: 'A structured roadmap and roles template covering the first several weeks of joint delivery.',
-    valueCustomer: 'Removes ambiguity about who owns what before the engagement starts, not after something slips.',
-    valueVendor: 'A concrete, shareable delivery plan to set expectations with the customer\u2019s team from day one.',
-    differentiator: 'The only "how we\u2019ll work together" artifact in the suite. Every other tool answers what the use case is or whether it\u2019s ready; this answers who does it and when.',
   },
 };
 

@@ -49,11 +49,9 @@ export default function Navbar({ onOpenSettings, currency, onCurrencyChange, api
   const route = path.replace('#', '').replace('/', '');
 
   // Title comes from the same catalog that drives the sidebar and the
-  // introduction pages (src/data/assessmentCatalog.js) -- one name per
-  // assessment, defined once, instead of a fourth place that could drift.
+  // introduction pages (src/data/assessmentCatalog.js)
   let navTitle = 'Use Case Intake Form';
-  if (activeFramework === 'option10') navTitle = 'Gemini Enterprise AI • Portfolio Intelligence Engine';
-  else if (ASSESSMENTS[activeFramework]) navTitle = ASSESSMENTS[activeFramework].name;
+  if (ASSESSMENTS[activeFramework]) navTitle = ASSESSMENTS[activeFramework].name;
   else if (route === 'home') navTitle = 'Executive Briefing Cockpit';
   else if (route === 'form') navTitle = 'Use Case Discovery Wizard';
   else if (route === 'summary') navTitle = 'Portfolio Summary Analytics';
@@ -83,33 +81,14 @@ export default function Navbar({ onOpenSettings, currency, onCurrencyChange, api
     >
       {/* COLUMN 1: LEFT Brand & Connectivity Lockup */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        {activeFramework === 'option10' ? (
-          <div 
-            onClick={() => {
-              window.location.hash = '#portfolio-intelligence-v10';
-              window.dispatchEvent(new Event('hashchange'));
-            }}
-            style={{ 
-              display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer'
-            }}
-          >
-            <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 15px rgba(139,92,246,0.5)' }}>
-              <Zap size={18} color="#ffffff" />
-            </div>
-            <span style={{ fontWeight: 900, fontSize: '1.25rem', color: globalTheme === 'light' ? '#0f172a' : '#ffffff', letterSpacing: '-0.5px' }}>
-              Scanner<span style={{ color: '#38bdf8' }}>IQ</span>
-            </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{ background: 'var(--google-blue-light)', color: 'var(--google-blue)', padding: '0.5rem', borderRadius: '8px', border: '1px solid rgba(0, 98, 86, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Cloud size={24} />
           </div>
-        ) : (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{ background: 'var(--google-blue-light)', color: 'var(--google-blue)', padding: '0.5rem', borderRadius: '8px', border: '1px solid rgba(0, 98, 86, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Cloud size={24} />
-            </div>
-            <div>
-              <span style={{ fontWeight: 900, fontSize: '1.2rem', color: 'var(--text-primary)', display: 'block' }}>{navTitle}</span>
-            </div>
+          <div>
+            <span style={{ fontWeight: 900, fontSize: '1.2rem', color: 'var(--text-primary)', display: 'block' }}>{navTitle}</span>
           </div>
-        )}
+        </div>
 
         {/* Live GenAI Mode Status Badge right next to logo */}
         <div 
@@ -126,89 +105,6 @@ export default function Navbar({ onOpenSettings, currency, onCurrencyChange, api
           </span>
         </div>
       </div>
-
-      {/* COLUMN 2: CENTER Minimalist Clean Navigation Links (No Heavy Box Container) */}
-      {activeFramework === 'option10' && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.75rem' }}>
-          {(window.location.hash || '').includes('view=') && (
-            <span
-              onClick={() => {
-                window.location.hash = '#portfolio-intelligence-v10';
-                window.dispatchEvent(new Event('hashchange'));
-              }}
-              style={{
-                color: globalTheme === 'light' ? '#2563eb' : '#60a5fa',
-                fontSize: '0.88rem', fontWeight: 800, cursor: 'pointer',
-                display: 'flex', alignItems: 'center', gap: '0.4rem',
-                transition: 'opacity 0.2s ease'
-              }}
-              onMouseOver={e => e.currentTarget.style.opacity = '0.7'}
-              onMouseOut={e => e.currentTarget.style.opacity = '1'}
-            >
-              🏠 Overview
-            </span>
-          )}
-
-          <span
-            onClick={() => {
-              window.location.hash = `#portfolio-intelligence-v10?id=assessment_${Date.now()}&action=start`;
-              window.dispatchEvent(new Event('hashchange'));
-            }}
-            style={{
-              color: '#10b981',
-              fontSize: '0.88rem', fontWeight: 850, cursor: 'pointer',
-              display: 'flex', alignItems: 'center', gap: '0.4rem',
-              transition: 'opacity 0.2s ease'
-            }}
-            onMouseOver={e => e.currentTarget.style.opacity = '0.7'}
-            onMouseOut={e => e.currentTarget.style.opacity = '1'}
-          >
-            ⚡ Start Assessment
-          </span>
-
-          {(!window.location.hash || !window.location.hash.includes('saved')) && (
-            <span
-              onClick={() => {
-                if (onOpenSavedLibrary) {
-                  onOpenSavedLibrary();
-                } else {
-                  window.location.hash = '#portfolio-intelligence-v10?view=saved_library';
-                  window.dispatchEvent(new Event('hashchange'));
-                }
-              }}
-              style={{
-                color: globalTheme === 'light' ? '#0f172a' : '#f8fafc',
-                fontSize: '0.88rem', fontWeight: 800, cursor: 'pointer',
-                display: 'flex', alignItems: 'center', gap: '0.4rem',
-                transition: 'opacity 0.2s ease'
-              }}
-              onMouseOver={e => e.currentTarget.style.opacity = '0.7'}
-              onMouseOut={e => e.currentTarget.style.opacity = '1'}
-            >
-              📂 Saved Library
-            </span>
-          )}
-
-          {(!window.location.hash || !window.location.hash.includes('portfolio_dashboard')) && (
-            <span
-              onClick={() => {
-                window.location.hash = '#portfolio-intelligence-v10?view=portfolio_dashboard';
-                window.dispatchEvent(new Event('hashchange'));
-              }}
-              style={{
-                color: '#a855f7',
-                fontSize: '0.88rem', fontWeight: 800, cursor: 'pointer',
-                display: 'flex', alignItems: 'center', gap: '0.4rem',
-                transition: 'opacity 0.2s ease'
-              }}
-              onMouseOver={e => e.currentTarget.style.opacity = '0.7'}
-              onMouseOut={e => e.currentTarget.style.opacity = '1'}
-            >
-              📊 Dashboard
-            </span>
-          )}
-        </div>
-      )}
 
       {/* COLUMN 3: RIGHT Profile & Settings Command Strip */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -335,84 +231,6 @@ export default function Navbar({ onOpenSettings, currency, onCurrencyChange, api
           )}
         </div>
       </div>
-
-      {activeFramework === 'option10' && (!window.location.hash || window.location.hash === '#portfolio-intelligence-v10') && (
-        <div 
-          className="no-print"
-          style={{ 
-            width: '100%', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center', 
-            flexWrap: 'wrap', 
-            gap: '1.75rem',
-            paddingTop: '0.75rem',
-            marginTop: '0.4rem',
-            borderTop: globalTheme === 'light' ? '1px solid #cbd5e1' : '1px solid rgba(255,255,255,0.08)',
-            fontSize: '0.82rem'
-          }}
-        >
-          <span
-            onClick={() => {
-              const el = document.getElementById('section-why');
-              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }}
-            style={{ fontWeight: 750, color: '#38bdf8', cursor: 'pointer', transition: 'opacity 0.2s' }}
-            onMouseOver={e => e.currentTarget.style.opacity = '0.7'}
-            onMouseOut={e => e.currentTarget.style.opacity = '1'}
-          >
-            Why this assessment exists
-          </span>
-          <span style={{ color: '#64748b' }}>•</span>
-          <span
-            onClick={() => {
-              const el = document.getElementById('section-methodology');
-              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }}
-            style={{ fontWeight: 750, color: '#34d399', cursor: 'pointer', transition: 'opacity 0.2s' }}
-            onMouseOver={e => e.currentTarget.style.opacity = '0.7'}
-            onMouseOut={e => e.currentTarget.style.opacity = '1'}
-          >
-            Methodology: 10-pillar prioritization model
-          </span>
-          <span style={{ color: '#64748b' }}>•</span>
-          <span
-            onClick={() => {
-              const el = document.getElementById('section-receive');
-              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }}
-            style={{ fontWeight: 750, color: '#c084fc', cursor: 'pointer', transition: 'opacity 0.2s' }}
-            onMouseOver={e => e.currentTarget.style.opacity = '0.7'}
-            onMouseOut={e => e.currentTarget.style.opacity = '1'}
-          >
-            What stakeholders receive
-          </span>
-          <span style={{ color: '#64748b' }}>•</span>
-          <span
-            onClick={() => {
-              const el = document.getElementById('section-benchmarks');
-              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }}
-            style={{ fontWeight: 750, color: '#f472b6', cursor: 'pointer', transition: 'opacity 0.2s' }}
-            onMouseOver={e => e.currentTarget.style.opacity = '0.7'}
-            onMouseOut={e => e.currentTarget.style.opacity = '1'}
-          >
-            Industry benchmark intelligence
-          </span>
-          <span style={{ color: '#64748b' }}>•</span>
-          <span
-            onClick={() => {
-              const el = document.getElementById('section-stories');
-              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }}
-            style={{ fontWeight: 750, color: '#fbbf24', cursor: 'pointer', transition: 'opacity 0.2s' }}
-            onMouseOver={e => e.currentTarget.style.opacity = '0.7'}
-            onMouseOut={e => e.currentTarget.style.opacity = '1'}
-          >
-            Success story examples
-          </span>
-        </div>
-      )}
     </header>
   );
 }

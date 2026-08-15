@@ -1,22 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
 import { Sparkles, AlertTriangle, X } from 'lucide-react';
 import Sidebar from './components/Sidebar';
-import LandingPage from './components/LandingPage';
 import SuiteHomePage from './components/SuiteHomePage';
 import { ASSESSMENTS } from './data/assessmentCatalog';
 
-// Every framework key that has a generic introduction page (AssessmentLanding)
-// -- i.e. everything in the catalog except option10, which ships its own
-// bespoke landing (PremiumLandingPageV10) and is routed separately below.
-const INTRO_PAGE_FRAMEWORKS = Object.keys(ASSESSMENTS).filter((k) => k !== 'option10');
+// Every framework key that has an introduction page (AssessmentLanding)
+const INTRO_PAGE_FRAMEWORKS = Object.keys(ASSESSMENTS);
 
-// Shared by Sidebar, Navbar, and SuiteHomePage -- previously this exact
-// if/else was duplicated three times and had drifted (it didn't include
-// option2/3/4). One function now, called from all three.
+// Shared by Sidebar, Navbar, and SuiteHomePage
 function routeToFramework(fw, { setActiveFramework, setActiveSessionId, setViewMode }) {
   setActiveFramework(fw);
   setActiveSessionId(null);
-  if (INTRO_PAGE_FRAMEWORKS.includes(fw) || fw === 'option10') {
+  if (INTRO_PAGE_FRAMEWORKS.includes(fw)) {
     setViewMode('landing');
     window.location.hash = `#landing-${fw}`;
   } else {
@@ -37,14 +32,11 @@ import DisclaimerModal, { DISCLAIMER_STORAGE_KEY, DISCLAIMER_VERSION } from './c
 import SavedSessionsModal from './components/SavedSessionsModal';
 import VersionDiffModal from './components/VersionDiffModal';
 import InteractiveDiscoveryFramework from './components/InteractiveDiscoveryFramework';
-import FdeEngagementModelV3 from './components/FdeEngagementModelV3';
 import ArchitectureCanvas from './components/ArchitectureCanvas';
 import MaturityAssessor from './components/MaturityAssessor';
 import AgenticDiscoveryV7 from './components/AgenticDiscoveryV7';
 import UnifiedScopingAssessor from './components/UnifiedScopingAssessor';
 import PremiumScopingAssessorV9 from './components/PremiumScopingAssessorV9';
-import PremiumLandingPageV10 from './components/PremiumLandingPageV10';
-import PremiumScopingAssessorV10 from './components/PremiumScopingAssessorV10';
 import PremiumScopingAssessorV11 from './components/PremiumScopingAssessorV11';
 import PremiumScopingAssessorV12 from './components/PremiumScopingAssessorV12';
 import AssessmentLanding from './components/AssessmentLanding';
@@ -324,12 +316,12 @@ export default function App() {
   const [activeFramework, setActiveFramework] = useState(() => {
     try {
       const hash = window.location.hash || '#home';
-      if (!hash || hash === '#home' || hash.includes('portfolio-intelligence-v10')) {
-        return 'option10';
+      if (!hash || hash === '#home') {
+        return 'option12';
       }
-      return localStorage.getItem('gemini_active_framework') || 'option10';
+      return localStorage.getItem('gemini_active_framework') || 'option12';
     } catch {
-      return 'option10';
+      return 'option12';
     }
   });
 
@@ -556,7 +548,7 @@ export default function App() {
 
       const validRoutes = [
         'home', 'form', 'report', 'permissions', 'chat_history', 'logs', 'summary',
-        'framework-interactive', 'fde-model', 'architecture-canvas', 'maturity-assessor', 'maturity-report', 'agentic-discovery', 'agentic-report', 'unified-assessment', 'premium-assessor', 'portfolio-intelligence-v10', 'agentic-maturity-v11', 'agentic-maturity-v12'
+        'framework-interactive', 'architecture-canvas', 'maturity-assessor', 'maturity-report', 'agentic-discovery', 'agentic-report', 'unified-assessment', 'premium-assessor', 'agentic-maturity-v11', 'agentic-maturity-v12'
       ];
 
       if (route.startsWith('landing-')) {
@@ -565,11 +557,7 @@ export default function App() {
         setViewMode('landing');
         setActiveSessionId(null);
       } else if (validRoutes.includes(route)) {
-        if (route === 'portfolio-intelligence-v10') {
-          setActiveFramework('option10');
-          const isLandingOnly = !query || query.trim() === '' || query.includes('view=saved_library');
-          setViewMode(isLandingOnly ? 'landing' : 'assessor');
-        } else if (route === 'agentic-maturity-v11') {
+        if (route === 'agentic-maturity-v11') {
           setActiveFramework('option11');
           const isLandingOnly = !query || query.trim() === '' || query.includes('view=saved_library');
           setViewMode(isLandingOnly ? 'landing' : 'assessor');
@@ -603,9 +591,6 @@ export default function App() {
           setViewMode((viewMode === 'landing' && !query?.includes('action=start') && !query?.includes('session=')) ? 'landing' : 'home');
         } else if (route === 'framework-interactive') {
           setActiveFramework('option2');
-          setViewMode('home');
-        } else if (route === 'fde-model') {
-          setActiveFramework('option3');
           setViewMode('home');
         } else if (route === 'architecture-canvas') {
           setActiveFramework('option4');
@@ -798,7 +783,7 @@ export default function App() {
   // Synchronize React State -> URL Hash
   useEffect(() => {
     // Check if hash-parser has resolved boot query params first!
-    if (!isBootedRef.current || activeFramework === 'option10') return;
+    if (!isBootedRef.current) return;
 
     let newHash = `#${viewMode}`;
 
@@ -808,8 +793,6 @@ export default function App() {
       newHash = `#landing-${activeFramework}`;
     } else if (isGlobalRoute) {
       newHash = `#${viewMode}`;
-    } else if (activeFramework === 'option10') {
-      return;
     } else if (activeFramework === 'option9') {
       newHash = '#premium-assessor';
     } else if (activeFramework === 'intake' || viewMode === 'form') {
@@ -818,8 +801,6 @@ export default function App() {
       newHash = '#unified-assessment';
     } else if (activeFramework === 'option2') {
       newHash = '#framework-interactive';
-    } else if (activeFramework === 'option3') {
-      newHash = '#fde-model';
     } else if (activeFramework === 'option4') {
       newHash = '#architecture-canvas';
     } else if (activeFramework === 'option5' || activeFramework === 'option6') {
@@ -1677,31 +1658,12 @@ export default function App() {
           globalTheme={globalTheme}
           onThemeChange={setGlobalTheme}
           onOpenSavedLibrary={() => {
-            setActiveFramework('option10');
-            setViewMode('landing');
-            window.location.hash = '#portfolio-intelligence-v10?view=saved_library';
+            setIsSessionsOpen(true);
           }}
           onOpenDisclaimer={() => { setDisclaimerForceAccept(false); setIsDisclaimerOpen(true); }}
         />
 
-        <main className="main-content" style={activeFramework === 'option10' ? { padding: 0, margin: 0, maxWidth: '100%' } : undefined}>
-          {/* ---------------------------------------------------------------
-              Routing note (grouped-navigation pass):
-              Every assessment is grouped and linked again (see
-              src/data/assessmentCatalog.js for the grouping + per-assessment
-              content, and src/components/ui/README.md for history -- an
-              earlier pass had collapsed the sidebar down to one canonical
-              entry and archived the rest; this pass reverses that in favor
-              of organizing all of them well instead of hiding most of them).
-
-              Every framework in INTRO_PAGE_FRAMEWORKS routes through
-              AssessmentLanding (the per-assessment introduction page) before
-              landing on the actual tool -- except option10, which has its
-              own bespoke landing (PremiumLandingPageV10) and is handled
-              separately just above. EnterpriseReadinessV10.jsx remains
-              unused/unwired (dead file, confirmed via grep) -- not part of
-              this pass, still a good candidate for deletion later.
-          --------------------------------------------------------------- */}
+        <main className="main-content">
           {viewMode === 'permissions' ? (
             <PermissionsPortal />
           ) : viewMode === 'chat_history' ? (
@@ -1713,35 +1675,6 @@ export default function App() {
               sessions={sessions}
               onLoadSession={handleLoadSession}
               onNewIntake={handleNewIntake}
-            />
-          ) : (activeFramework === 'option10' && viewMode === 'landing') ? (
-            <PremiumLandingPageV10 
-              globalTheme={globalTheme}
-              onStartAssessment={() => {
-                setViewMode('assessor');
-                window.location.hash = `#portfolio-intelligence-v10?id=assessment_${Date.now()}&action=start`;
-              }}
-              onSelectPreset={(presetKey) => {
-                setViewMode('assessor');
-                window.location.hash = `#portfolio-intelligence-v10?id=demo_${presetKey}&preset=${presetKey}`;
-              }}
-              onOpenSavedAssessment={(tile) => {
-                setViewMode('assessor');
-                window.location.hash = `#portfolio-intelligence-v10?id=${tile.id}&preset=${tile.presetKey || 'ai_scanned_custom'}&company=${encodeURIComponent(tile.company || 'Novartis Oncology')}&useCase=${encodeURIComponent(tile.useCase || tile.title || 'GMAX Pricing Agent')}`;
-              }}
-            />
-          ) : (activeFramework === 'option10' && viewMode === 'assessor') ? (
-
-            <PremiumScopingAssessorV10 
-              globalTheme={globalTheme}
-              apiKey={apiKey}
-              gcpToken={gcpToken}
-              onBackToLanding={() => {
-                setViewMode('landing');
-                if (!window.location.hash.includes('view=')) {
-                  window.location.hash = '#portfolio-intelligence-v10';
-                }
-              }}
             />
           ) : (viewMode === 'landing' && INTRO_PAGE_FRAMEWORKS.includes(activeFramework)) ? (
             <AssessmentLanding
@@ -1767,9 +1700,6 @@ export default function App() {
                 } else if (activeFramework === 'option2') {
                   setViewMode('home');
                   window.location.hash = '#quick-check?action=start';
-                } else if (activeFramework === 'option3') {
-                  setViewMode('home');
-                  window.location.hash = '#engagement-model?action=start';
                 } else if (activeFramework === 'option4') {
                   setViewMode('home');
                   window.location.hash = '#architecture-canvas?action=start';
@@ -1795,8 +1725,8 @@ export default function App() {
                   window.location.hash = '#agentic-maturity-v11?id=demo_merck_preset&preset=merck_preset';
                 } else if (activeFramework === 'option12') {
                   window.location.hash = '#agentic-maturity-v12?id=demo_merck_preset&preset=merck_preset';
-                } else if (['option2', 'option3', 'option4'].includes(activeFramework)) {
-                  // These three tools don't have a distinct sample-prefill mode --
+                } else if (['option2', 'option4'].includes(activeFramework)) {
+                  // These tools don't have a distinct sample-prefill mode --
                   // "try sample" just launches the tool itself.
                   setViewMode('home');
                   window.location.hash = `#${activeFramework}?action=start`;
@@ -1852,8 +1782,6 @@ export default function App() {
             />
           ) : activeFramework === 'option2' ? (
             <InteractiveDiscoveryFramework sessions={sessions} />
-          ) : activeFramework === 'option3' ? (
-            <FdeEngagementModelV3 />
           ) : activeFramework === 'option4' ? (
             <ArchitectureCanvas />
           ) : activeFramework === 'option5' || activeFramework === 'option6' ? (

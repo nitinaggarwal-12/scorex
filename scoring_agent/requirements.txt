@@ -1,7 +1,0 @@
-google-cloud-aiplatform
-google-adk
-google-cloud-storage
-pydantic
-fastapi
-uvicorn
-psycopg2-binary

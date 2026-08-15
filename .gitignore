@@ -28,6 +28,10 @@ dist-ssr
 __pycache__/
 *.pyc
 
+# Scratch and temporary directories
+scratch/
+backup_archive/
+
 # Local Test Scripts & Certs
 test_*.js
 probe_*.js
@@ -36,6 +40,7 @@ scratch_*.cjs
 platform_daemon.js
 list_ai_models.js
 localhost*.pem
+*.pem
 
 # Local Credentials and Configs
 .env
