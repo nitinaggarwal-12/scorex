@@ -1,5 +1,5 @@
 import * as Icons from 'lucide-react';
-import { FileText, LayoutDashboard, FolderHeart, Settings2, Sparkles, Home, Users, History, Activity, ScrollText } from 'lucide-react';
+import { LayoutDashboard, FolderHeart, Settings2, Sparkles, Home, History, Activity, ScrollText } from 'lucide-react';
 import SectionHeader from './ui/SectionHeader';
 import { GROUPS, assessmentsByGroup } from '../data/assessmentCatalog';
 
@@ -10,7 +10,6 @@ export default function Sidebar({
   onNewIntake,
   onViewSummary,
   onOpenSessions,
-  onOpenPermissions,
   onOpenChatHistory,
   onOpenSettings,
   onOpenLogs,
@@ -61,15 +60,6 @@ export default function Sidebar({
           <LayoutDashboard size={17} aria-hidden="true" />
           <span>Portfolio Summary</span>
         </button>
-
-        <button
-          onClick={() => onFrameworkChange('intake')}
-          className={`sidebar-btn ${viewMode === 'landing' && activeFramework === 'intake' ? 'active' : ''}`}
-          aria-current={viewMode === 'landing' && activeFramework === 'intake' ? 'page' : undefined}
-        >
-          <FileText size={17} aria-hidden="true" />
-          <span>New Discovery Intake</span>
-        </button>
       </nav>
 
       {/* Category: Assessments, grouped logically (see
@@ -102,20 +92,11 @@ export default function Sidebar({
 
       {/* Category: Governance & Collaboration */}
       <nav aria-label="Governance and collaboration" style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
-        <SectionHeader>Governance &amp; IAM</SectionHeader>
+        <SectionHeader>Governance &amp; Collaboration</SectionHeader>
 
         <button onClick={onOpenSessions} className="sidebar-btn">
           <FolderHeart size={17} aria-hidden="true" />
           <span>Saved Blueprints</span>
-        </button>
-
-        <button
-          onClick={onOpenPermissions}
-          className={`sidebar-btn ${viewMode === 'permissions' ? 'active' : ''}`}
-          aria-current={viewMode === 'permissions' ? 'page' : undefined}
-        >
-          <Users size={17} aria-hidden="true" />
-          <span>Access Control (IAM)</span>
         </button>
 
         <button

@@ -56,7 +56,6 @@ export default function Navbar({ onOpenSettings, currency, onCurrencyChange, api
   else if (route === 'form') navTitle = 'Use Case Discovery Wizard';
   else if (route === 'summary') navTitle = 'Portfolio Summary Analytics';
   else if (route === 'report') navTitle = 'Feasibility Scoped Dossier';
-  else if (route === 'permissions') navTitle = 'Governance & IAM Admin';
   else if (route === 'logs') navTitle = 'Diagnostics & System Telemetry';
 
   return (

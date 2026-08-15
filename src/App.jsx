@@ -19,7 +19,6 @@ function routeToFramework(fw, { setActiveFramework, setActiveSessionId, setViewM
     window.location.hash = '#home';
   }
 }
-import PermissionsPortal from './components/PermissionsPortal';
 import ChatHistory from './components/ChatHistory';
 import DiagnosticConsole from './components/DiagnosticConsole';
 import Navbar from './components/Navbar';
@@ -31,13 +30,9 @@ import SettingsModal from './components/SettingsModal';
 import DisclaimerModal, { DISCLAIMER_STORAGE_KEY, DISCLAIMER_VERSION } from './components/DisclaimerModal';
 import SavedSessionsModal from './components/SavedSessionsModal';
 import VersionDiffModal from './components/VersionDiffModal';
-import InteractiveDiscoveryFramework from './components/InteractiveDiscoveryFramework';
 import ArchitectureCanvas from './components/ArchitectureCanvas';
 import MaturityAssessor from './components/MaturityAssessor';
 import AgenticDiscoveryV7 from './components/AgenticDiscoveryV7';
-import UnifiedScopingAssessor from './components/UnifiedScopingAssessor';
-import PremiumScopingAssessorV9 from './components/PremiumScopingAssessorV9';
-import PremiumScopingAssessorV11 from './components/PremiumScopingAssessorV11';
 import PremiumScopingAssessorV12 from './components/PremiumScopingAssessorV12';
 import AssessmentLanding from './components/AssessmentLanding';
 
@@ -547,8 +542,8 @@ export default function App() {
       const route = path.replace('#', '');
 
       const validRoutes = [
-        'home', 'form', 'report', 'permissions', 'chat_history', 'logs', 'summary',
-        'framework-interactive', 'architecture-canvas', 'maturity-assessor', 'maturity-report', 'agentic-discovery', 'agentic-report', 'unified-assessment', 'premium-assessor', 'agentic-maturity-v11', 'agentic-maturity-v12'
+        'home', 'form', 'report', 'chat_history', 'logs', 'summary',
+        'architecture-canvas', 'maturity-assessor', 'maturity-report', 'agentic-discovery', 'agentic-report', 'agentic-maturity-v12'
       ];
 
       if (route.startsWith('landing-')) {
@@ -557,18 +552,7 @@ export default function App() {
         setViewMode('landing');
         setActiveSessionId(null);
       } else if (validRoutes.includes(route)) {
-        if (route === 'agentic-maturity-v11') {
-          setActiveFramework('option11');
-          const isLandingOnly = !query || query.trim() === '' || query.includes('view=saved_library');
-          setViewMode(isLandingOnly ? 'landing' : 'assessor');
-          if (query) {
-            const params = new URLSearchParams(query);
-            const sessId = params.get('session') || params.get('id');
-            if (sessId) {
-              setActiveSessionId(sessId);
-            }
-          }
-        } else if (route === 'agentic-maturity-v12') {
+        if (route === 'agentic-maturity-v12') {
           setActiveFramework('option12');
           const isLandingOnly = !query || query.trim() === '' || query.includes('view=saved_library');
           setViewMode(isLandingOnly ? 'landing' : 'assessor');
@@ -579,19 +563,9 @@ export default function App() {
               setActiveSessionId(sessId);
             }
           }
-
-        } else if (route === 'premium-assessor') {
-          setActiveFramework('option9');
-          setViewMode((viewMode === 'landing' && !query?.includes('action=start') && !query?.includes('session=')) ? 'landing' : 'home');
         } else if (route === 'form') {
           setActiveFramework('intake');
           setViewMode((viewMode === 'landing' && !query?.includes('action=start') && !query?.includes('session=')) ? 'landing' : 'form');
-        } else if (route === 'unified-assessment') {
-          setActiveFramework('option8');
-          setViewMode((viewMode === 'landing' && !query?.includes('action=start') && !query?.includes('session=')) ? 'landing' : 'home');
-        } else if (route === 'framework-interactive') {
-          setActiveFramework('option2');
-          setViewMode('home');
         } else if (route === 'architecture-canvas') {
           setActiveFramework('option4');
           setViewMode('home');
@@ -1255,9 +1229,7 @@ export default function App() {
     }
 
     let redirectHash = `#maturity-assessor?session=${targetSessId}`;
-    if (activeFramework === 'option11') {
-      redirectHash = `#agentic-maturity-v11?session=${targetSessId}`;
-    } else if (activeFramework === 'option12') {
+    if (activeFramework === 'option12') {
       redirectHash = `#agentic-maturity-v12?session=${targetSessId}`;
     } else if (activeFramework === 'option5' || activeFramework === 'option6') {
       redirectHash = viewMode === 'report' 
@@ -1636,7 +1608,6 @@ export default function App() {
           setViewMode('summary');
         }}
         onOpenSessions={() => { setSessionsFilter('all'); setIsSessionsOpen(true); }}
-        onOpenPermissions={() => setViewMode('permissions')}
         onOpenChatHistory={() => setViewMode('chat_history')}
         onOpenSettings={() => setIsSettingsOpen(true)}
         onOpenLogs={() => setViewMode('logs')}
@@ -1664,9 +1635,7 @@ export default function App() {
         />
 
         <main className="main-content">
-          {viewMode === 'permissions' ? (
-            <PermissionsPortal />
-          ) : viewMode === 'chat_history' ? (
+          {viewMode === 'chat_history' ? (
             <ChatHistory />
           ) : viewMode === 'logs' ? (
             <DiagnosticConsole sessions={sessions} onDeleteSession={handleDeleteSession} />
@@ -1691,20 +1660,9 @@ export default function App() {
                 } else if (activeFramework === 'option7') {
                   setViewMode('home');
                   window.location.hash = '#agentic-discovery?action=start';
-                } else if (activeFramework === 'option8') {
-                  setViewMode('home');
-                  window.location.hash = '#unified-assessment?action=start';
-                } else if (activeFramework === 'option9') {
-                  setViewMode('home');
-                  window.location.hash = '#premium-assessor?action=start';
-                } else if (activeFramework === 'option2') {
-                  setViewMode('home');
-                  window.location.hash = '#quick-check?action=start';
                 } else if (activeFramework === 'option4') {
                   setViewMode('home');
                   window.location.hash = '#architecture-canvas?action=start';
-                } else if (activeFramework === 'option11') {
-                  window.location.hash = `#agentic-maturity-v11?id=assessment_${Date.now()}&action=start`;
                 } else if (activeFramework === 'option12') {
                   window.location.hash = `#agentic-maturity-v12?id=assessment_${Date.now()}&action=start`;
                 } else {
@@ -1721,15 +1679,11 @@ export default function App() {
                 } else if (activeFramework === 'option7') {
                   setViewMode('report');
                   window.location.hash = '#agentic-report';
-                } else if (activeFramework === 'option11') {
-                  window.location.hash = '#agentic-maturity-v11?id=demo_merck_preset&preset=merck_preset';
                 } else if (activeFramework === 'option12') {
                   window.location.hash = '#agentic-maturity-v12?id=demo_merck_preset&preset=merck_preset';
-                } else if (['option2', 'option4'].includes(activeFramework)) {
-                  // These tools don't have a distinct sample-prefill mode --
-                  // "try sample" just launches the tool itself.
+                } else if (activeFramework === 'option4') {
                   setViewMode('home');
-                  window.location.hash = `#${activeFramework}?action=start`;
+                  window.location.hash = '#architecture-canvas?action=start';
                 } else {
                   setViewMode('report');
                   window.location.hash = '#maturity-report';
@@ -1740,25 +1694,6 @@ export default function App() {
                 setIsSessionsOpen(true);
               }}
               savedCount={sessions.filter(s => s?.framework === activeFramework).length}
-            />
-          ) : activeFramework === 'option9' ? (
-            <PremiumScopingAssessorV9 
-              activeSessionId={activeSessionId} 
-              apiKey={apiKey}
-              gcpToken={gcpToken}
-            />
-          ) : activeFramework === 'option11' ? (
-            <PremiumScopingAssessorV11 
-              globalTheme={globalTheme}
-              apiKey={apiKey}
-              gcpToken={gcpToken}
-              activeSessionId={activeSessionId}
-              sessions={sessions}
-              onSaveSession={handleSaveMaturitySession}
-              onBackToLanding={() => {
-                setViewMode('landing');
-                window.location.hash = '#landing-option11';
-              }}
             />
           ) : activeFramework === 'option12' ? (
             <PremiumScopingAssessorV12 
@@ -1772,16 +1707,6 @@ export default function App() {
                 window.location.hash = '#landing-option12';
               }}
             />
-
-
-          ) : activeFramework === 'option8' ? (
-            <UnifiedScopingAssessor 
-              activeSessionId={activeSessionId} 
-              apiKey={apiKey}
-              gcpToken={gcpToken}
-            />
-          ) : activeFramework === 'option2' ? (
-            <InteractiveDiscoveryFramework sessions={sessions} />
           ) : activeFramework === 'option4' ? (
             <ArchitectureCanvas />
           ) : activeFramework === 'option5' || activeFramework === 'option6' ? (
