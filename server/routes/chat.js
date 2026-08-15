@@ -2,10 +2,16 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db/connection');
 const { v4: uuidv4 } = require('uuid');
+const geminiService = require('../services/geminiService');
+
+// In-memory conversation fallback store
+const memoryConversations = new Map();
+const memoryMessages = new Map();
 
 // Helper function to check if PostgreSQL is available
 async function isPostgresAvailable() {
   try {
+    if (!pool.isInitialized) return false;
     await pool.query('SELECT 1');
     return true;
   } catch (error) {
@@ -18,40 +24,50 @@ router.post('/conversation/start', async (req, res) => {
   try {
     const { userEmail, sessionId, assessmentId } = req.body;
 
-    if (!await isPostgresAvailable()) {
-      return res.status(503).json({ error: 'Database not available' });
+    if (await isPostgresAvailable()) {
+      let conversation = await pool.query(
+        `SELECT * FROM chat_conversations 
+         WHERE session_id = $1 
+         AND last_message_at > NOW() - INTERVAL '24 hours'
+         ORDER BY last_message_at DESC 
+         LIMIT 1`,
+        [sessionId]
+      );
+
+      if (conversation.rows.length > 0) {
+        return res.json({ conversation: conversation.rows[0] });
+      }
+
+      const newConversation = await pool.query(
+        `INSERT INTO chat_conversations (user_email, session_id, assessment_id, context_type)
+         VALUES ($1, $2, $3, $4)
+         RETURNING *`,
+        [userEmail, sessionId, assessmentId, assessmentId ? 'assessment' : 'general']
+      );
+
+      return res.json({ conversation: newConversation.rows[0] });
     }
 
-    // Check if there's an existing active conversation
-    let conversation = await pool.query(
-      `SELECT * FROM chat_conversations 
-       WHERE session_id = $1 
-       AND last_message_at > NOW() - INTERVAL '24 hours'
-       ORDER BY last_message_at DESC 
-       LIMIT 1`,
-      [sessionId]
-    );
-
-    if (conversation.rows.length > 0) {
-      return res.json({ conversation: conversation.rows[0] });
-    }
-
-    // Create new conversation
-    const newConversation = await pool.query(
-      `INSERT INTO chat_conversations (user_email, session_id, assessment_id, context_type)
-       VALUES ($1, $2, $3, $4)
-       RETURNING *`,
-      [userEmail, sessionId, assessmentId, assessmentId ? 'assessment' : 'general']
-    );
-
-    res.json({ conversation: newConversation.rows[0] });
+    // In-memory fallback
+    const convId = uuidv4();
+    const conv = {
+      id: convId,
+      user_email: userEmail || 'guest@enterprise.com',
+      session_id: sessionId,
+      assessment_id: assessmentId,
+      context_type: assessmentId ? 'assessment' : 'general',
+      created_at: new Date().toISOString(),
+      last_message_at: new Date().toISOString()
+    };
+    memoryConversations.set(convId, conv);
+    return res.json({ conversation: conv });
   } catch (error) {
     console.error('Error starting conversation:', error);
     res.status(500).json({ error: 'Failed to start conversation' });
   }
 });
 
-// Send a message and get AI response
+// Send a message and get AI response (Powered by Gemini 3.1 Pro)
 router.post('/message', async (req, res) => {
   try {
     const { conversationId, message, sessionId, userEmail, context } = req.body;
@@ -60,100 +76,124 @@ router.post('/message', async (req, res) => {
       return res.status(400).json({ error: 'Message is required' });
     }
 
-    if (!await isPostgresAvailable()) {
-      return res.status(503).json({ error: 'Database not available' });
-    }
+    let convId = conversationId || uuidv4();
+    const pgReady = await isPostgresAvailable();
 
-    let convId = conversationId;
+    if (pgReady) {
+      if (!conversationId) {
+        const newConv = await pool.query(
+          `INSERT INTO chat_conversations (user_email, session_id, context_type)
+           VALUES ($1, $2, $3)
+           RETURNING *`,
+          [userEmail, sessionId, context?.pageType || 'general']
+        );
+        convId = newConv.rows[0].id;
+      }
 
-    // Create conversation if it doesn't exist
-    if (!convId) {
-      const newConv = await pool.query(
-        `INSERT INTO chat_conversations (user_email, session_id, context_type)
-         VALUES ($1, $2, $3)
-         RETURNING *`,
-        [userEmail, sessionId, context?.pageType || 'general']
+      await pool.query(
+        `INSERT INTO chat_messages (conversation_id, role, content)
+         VALUES ($1, $2, $3)`,
+        [convId, 'user', message]
       );
-      convId = newConv.rows[0].id;
+
+      await pool.query(
+        `UPDATE chat_conversations 
+         SET last_message_at = NOW() 
+         WHERE id = $1`,
+        [convId]
+      );
+    } else {
+      // In-memory message tracking
+      const msgs = memoryMessages.get(convId) || [];
+      msgs.push({ role: 'user', content: message, created_at: new Date().toISOString() });
+      memoryMessages.set(convId, msgs);
     }
 
-    // Save user message
-    await pool.query(
-      `INSERT INTO chat_messages (conversation_id, role, content)
-       VALUES ($1, $2, $3)`,
-      [convId, 'user', message]
-    );
-
-    // Update last_message_at
-    await pool.query(
-      `UPDATE chat_conversations 
-       SET last_message_at = NOW() 
-       WHERE id = $1`,
-      [convId]
-    );
-
-    // Get conversation context (last 10 messages)
-    const contextMessages = await pool.query(
-      `SELECT role, content FROM chat_messages 
-       WHERE conversation_id = $1 
-       ORDER BY created_at DESC 
-       LIMIT 10`,
-      [convId]
-    );
+    // Get conversation context
+    let history = [];
+    if (pgReady) {
+      const contextMessages = await pool.query(
+        `SELECT role, content FROM chat_messages 
+         WHERE conversation_id = $1 
+         ORDER BY created_at DESC 
+         LIMIT 10`,
+        [convId]
+      );
+      history = (contextMessages.rows || []).reverse();
+    } else {
+      history = memoryMessages.get(convId) || [];
+    }
 
     // Get assessment data if available
     let assessmentData = null;
     if (context?.pageData?.assessmentId) {
       try {
-        const assessmentResult = await pool.query(
-          `SELECT * FROM assessments WHERE id = $1`,
-          [context.pageData.assessmentId]
-        );
-        if (assessmentResult.rows.length > 0) {
-          assessmentData = assessmentResult.rows[0];
-        }
+        const assessmentRepo = require('../db/assessmentRepository');
+        assessmentData = await assessmentRepo.findById(context.pageData.assessmentId);
       } catch (err) {
-        console.error('Error fetching assessment data:', err);
+        console.warn('Notice fetching assessment for chat context:', err.message);
       }
     }
 
-    // Generate AI response with full context
-    const { response: aiResponse, suggestedQuestions } = await generateSmartAIResponse(
-      message, 
-      contextMessages.rows.reverse(), 
-      context,
-      assessmentData,
-      pool
-    );
+    let aiResponse = null;
+    let suggestedQuestions = null;
 
-    // Save AI response
-    await pool.query(
-      `INSERT INTO chat_messages (conversation_id, role, content)
-       VALUES ($1, $2, $3)`,
-      [convId, 'assistant', aiResponse]
-    );
+    // 🌟 1. Try Gemini 3.1 Pro first if API key is provided
+    if (geminiService.isAvailable()) {
+      try {
+        console.log('🤖 Generating response with Gemini AI...');
+        const geminiResult = await geminiService.generateChatResponse(
+          message,
+          history,
+          context,
+          assessmentData
+        );
+        if (geminiResult && geminiResult.response) {
+          aiResponse = geminiResult.response;
+          suggestedQuestions = geminiResult.suggestedQuestions;
+          console.log(`✅ Received Gemini response (${geminiResult.model})`);
+        }
+      } catch (geminiError) {
+        console.warn('⚠️ Gemini chat call notice, using local engine fallback:', geminiError.message);
+      }
+    }
 
-    // Update last_message_at again
-    await pool.query(
-      `UPDATE chat_conversations 
-       SET last_message_at = NOW() 
-       WHERE id = $1`,
-      [convId]
-    );
+    // 🌟 2. Fallback to smart heuristic domain knowledge engine
+    if (!aiResponse) {
+      const fallbackResult = await generateSmartAIResponse(
+        message, 
+        history, 
+        context,
+        assessmentData,
+        pool
+      );
+      aiResponse = fallbackResult.response;
+      suggestedQuestions = fallbackResult.suggestedQuestions;
+    }
 
-    console.log('[API] AI Response type:', typeof aiResponse);
-    console.log('[API] AI Response keys:', aiResponse ? Object.keys(aiResponse) : 'null');
-    console.log('[API] suggestedQuestions type:', typeof suggestedQuestions);
-    console.log('[API] suggestedQuestions value:', suggestedQuestions);
-    
-    // Ensure suggestedQuestions is always an array
+    // Save assistant message
+    if (pgReady) {
+      await pool.query(
+        `INSERT INTO chat_messages (conversation_id, role, content)
+         VALUES ($1, $2, $3)`,
+        [convId, 'assistant', aiResponse]
+      );
+      await pool.query(
+        `UPDATE chat_conversations 
+         SET last_message_at = NOW() 
+         WHERE id = $1`,
+        [convId]
+      );
+    } else {
+      const msgs = memoryMessages.get(convId) || [];
+      msgs.push({ role: 'assistant', content: aiResponse, created_at: new Date().toISOString() });
+      memoryMessages.set(convId, msgs);
+    }
+
     const finalSuggestedQuestions = Array.isArray(suggestedQuestions) && suggestedQuestions.length > 0 
       ? suggestedQuestions 
       : ["Tell me more", "What else?", "How does this work?", "Show me examples"];
-    
-    console.log('[API] Final suggested questions:', finalSuggestedQuestions);
-    console.log('[API] Sending response...');
-    
+
     res.json({
       conversationId: convId,
       response: aiResponse,

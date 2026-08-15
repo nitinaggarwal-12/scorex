@@ -1,8 +1,6 @@
-// OpenAI Content Generator - Generates all assessment content dynamically
-// This service sends assessment data to OpenAI and gets back personalized recommendations
-
 const assessmentFramework = require('../data/assessmentFramework');
 const RecommendationEngine = require('./recommendationEngine');
+const geminiService = require('./geminiService');
 
 class OpenAIContentGenerator {
   constructor() {
@@ -21,20 +19,46 @@ class OpenAIContentGenerator {
         console.error('❌ Failed to initialize OpenAI:', error.message);
         this.isInitialized = false;
       }
-    } else {
-      console.warn('⚠️  OpenAI API key not configured. Content generation will use fallback logic.');
     }
   }
 
   /**
-   * Generate complete assessment results using OpenAI
+   * Generate complete assessment results using Gemini or OpenAI
    * @param {object} assessment - Full assessment object with responses
    * @param {string} pillarId - Optional: specific pillar to generate results for
    * @returns {object} Complete results structure
    */
   async generateAssessmentContent(assessment, pillarId = null) {
+    // 🌟 1. Try Gemini (Gemini 3.1 Pro) if available
+    if (geminiService.isAvailable()) {
+      try {
+        console.log(`🤖 Generating ${pillarId ? 'pillar' : 'overall'} content with Gemini for assessment ${assessment.id}`);
+        const prompt = pillarId 
+          ? this.buildPillarPrompt(assessment, pillarId)
+          : this.buildOverallPrompt(assessment);
+        
+        const systemPrompt = this.getSystemPrompt();
+        const result = await geminiService._generateWithFallback(prompt + '\n\nIMPORTANT: Return ONLY a valid JSON object matching the requested schema.', systemPrompt, 0.7);
+        const jsonMatch = result.text.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const parsed = JSON.parse(jsonMatch[0]);
+          return {
+            overallScores: parsed.overallScores,
+            pillarScores: parsed.pillarScores,
+            executiveSummary: parsed.executiveSummary,
+            recommendations: parsed.recommendations,
+            rawContent: parsed,
+            generatedAt: new Date().toISOString(),
+            model: result.modelUsed,
+            source: 'gemini'
+          };
+        }
+      } catch (geminiErr) {
+        console.warn('⚠️ Gemini content generation notice, falling back:', geminiErr.message);
+      }
+    }
+
     if (!this.isInitialized) {
-      console.warn('⚠️  OpenAI not initialized, using fallback content');
       return this.generateFallbackContent(assessment, pillarId);
     }
 
