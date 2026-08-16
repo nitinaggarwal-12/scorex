@@ -17,12 +17,14 @@ import {
   FiFileText,
   FiList,
   FiTarget,
-  FiCheck
+  FiCheck,
+  FiSliders
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import dynamicAssessmentService from '../services/dynamicAssessmentService';
 import LoadingSpinner from './LoadingSpinner';
+import ScenarioSimulator from './ScenarioSimulator';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -409,6 +411,8 @@ const DynamicAssessmentReport = () => {
   const [report, setReport] = useState(null);
   const [framework, setFramework] = useState(null);
   const [isPromoted, setIsPromoted] = useState(false);
+  const [showSimulator, setShowSimulator] = useState(false);
+  const [simulatedTargets, setSimulatedTargets] = useState(null);
 
   useEffect(() => {
     loadReport();
@@ -462,11 +466,23 @@ const DynamicAssessmentReport = () => {
     dimensionScores: instance.scores || {}
   };
 
+  const dimensionScoresForSimulator = {};
+  if (framework && framework.dimensions) {
+    framework.dimensions.forEach(dim => {
+      const dScore = scores.dimensionScores?.[dim.id] || {};
+      dimensionScoresForSimulator[dim.id] = {
+        name: dim.name,
+        current: typeof dScore.score === 'number' ? dScore.score : (instance.responses?.[`${dim.id}_current`] || 2.5),
+        future: simulatedTargets?.[dim.id] || (typeof dScore.targetScore === 'number' ? dScore.targetScore : 4.0)
+      };
+    });
+  }
+
   return (
     <Container>
       <Wrapper>
-        {/* Navigation back */}
-        <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        {/* Navigation back & action controls */}
+        <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
           <button 
             style={{ background: 'transparent', border: 'none', color: '#94a3b8', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.95rem' }}
             onClick={() => navigate('/assessments')}
@@ -474,13 +490,33 @@ const DynamicAssessmentReport = () => {
             <FiArrowLeft /> Back to Assessments
           </button>
 
-          <button 
-            style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#fff', padding: '8px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
-            onClick={() => window.print()}
-          >
-            <FiDownload /> Export / Print Report
-          </button>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <button 
+              style={{ background: showSimulator ? '#4f46e5' : 'rgba(99, 102, 241, 0.25)', border: '1px solid rgba(139, 92, 246, 0.5)', color: '#c084fc', padding: '8px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
+              onClick={() => setShowSimulator(!showSimulator)}
+            >
+              <FiSliders /> {showSimulator ? 'Hide What-If Simulator' : '🎛️ What-If Scenario Simulator'}
+            </button>
+
+            <button 
+              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#fff', padding: '8px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+              onClick={() => window.print()}
+            >
+              <FiDownload /> Export / Print Report
+            </button>
+          </div>
         </div>
+
+        {/* Interactive What-If Scenario Simulator */}
+        <AnimatePresence>
+          {showSimulator && Object.keys(dimensionScoresForSimulator).length > 0 && (
+            <ScenarioSimulator
+              initialScores={dimensionScoresForSimulator}
+              onSimulateChange={(newTargets) => setSimulatedTargets(newTargets)}
+              isDynamic={true}
+            />
+          )}
+        </AnimatePresence>
 
         {/* Promote to Assessment Type Banner */}
         <PromoteBanner>

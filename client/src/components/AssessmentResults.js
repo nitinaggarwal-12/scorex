@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { FiDownload, FiTrendingUp, FiTarget, FiAlertTriangle, FiCheckCircle, FiArrowRight, FiFileText, FiBarChart2, FiAlertCircle, FiEdit2, FiUpload, FiX, FiLink } from 'react-icons/fi';
+import { FiDownload, FiTrendingUp, FiTarget, FiAlertTriangle, FiCheckCircle, FiArrowRight, FiFileText, FiBarChart2, FiAlertCircle, FiEdit2, FiUpload, FiX, FiLink, FiSliders } from 'react-icons/fi';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, RadialLinearScale, PointElement, LineElement, Filler } from 'chart.js';
 import { Bar, Radar } from 'react-chartjs-2';
 import toast from 'react-hot-toast';
@@ -10,6 +10,7 @@ import * as assessmentService from '../services/assessmentService';
 import { generateProfessionalReport } from '../services/pdfExportService';
 import LoadingSpinner from './LoadingSpinner';
 import AssessmentHeader from './AssessmentHeader';
+import ScenarioSimulator from './ScenarioSimulator';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, RadialLinearScale, PointElement, LineElement, Filler);
 
@@ -1135,6 +1136,8 @@ const AssessmentResults = ({ currentAssessment, framework }) => {
   const [showURLInput, setShowURLInput] = useState(false);
   const [logoURL, setLogoURL] = useState('');
   const [loadingURL, setLoadingURL] = useState(false);
+  const [showSimulator, setShowSimulator] = useState(false);
+  const [simulatedTargets, setSimulatedTargets] = useState(null);
 
   useEffect(() => {
     const loadResults = async () => {
@@ -1382,9 +1385,12 @@ const AssessmentResults = ({ currentAssessment, framework }) => {
   const currentScores = Object.keys(results.categoryDetails).map(key => 
     results.categoryDetails[key].currentScore || 0
   );
-  const futureScores = Object.keys(results.categoryDetails).map(key => 
-    results.categoryDetails[key].futureScore || 0
-  );
+  const futureScores = Object.keys(results.categoryDetails).map(key => {
+    if (simulatedTargets && simulatedTargets[key] !== undefined) {
+      return simulatedTargets[key];
+    }
+    return results.categoryDetails[key].futureScore || 0;
+  });
   
   // Calculate overall current and future scores
   const overallCurrentScore = currentScores.length > 0 
@@ -1405,10 +1411,10 @@ const AssessmentResults = ({ currentAssessment, framework }) => {
         borderWidth: 2,
       },
       {
-        label: 'Future Vision',
+        label: simulatedTargets ? 'Simulated Target' : 'Future Vision',
         data: futureScores,
-        backgroundColor: 'rgba(16, 185, 129, 0.8)',
-        borderColor: 'rgba(16, 185, 129, 1)',
+        backgroundColor: simulatedTargets ? 'rgba(139, 92, 246, 0.8)' : 'rgba(16, 185, 129, 0.8)',
+        borderColor: simulatedTargets ? 'rgba(139, 92, 246, 1)' : 'rgba(16, 185, 129, 1)',
         borderWidth: 2,
       },
     ],
@@ -1420,6 +1426,21 @@ const AssessmentResults = ({ currentAssessment, framework }) => {
       {
         label: 'Current Maturity',
         data: currentScores,
+        fill: true,
+        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+        borderColor: 'rgba(59, 130, 246, 1)',
+        borderWidth: 2,
+      },
+      {
+        label: simulatedTargets ? 'Simulated Target' : 'Future Vision',
+        data: futureScores,
+        fill: true,
+        backgroundColor: simulatedTargets ? 'rgba(139, 92, 246, 0.2)' : 'rgba(16, 185, 129, 0.2)',
+        borderColor: simulatedTargets ? 'rgba(139, 92, 246, 1)' : 'rgba(16, 185, 129, 1)',
+        borderWidth: 2,
+      },
+    ],
+  };
         fill: true,
         backgroundColor: 'rgba(59, 130, 246, 0.2)',
         borderColor: 'rgba(59, 130, 246, 1)',
@@ -1847,6 +1868,16 @@ const AssessmentResults = ({ currentAssessment, framework }) => {
                   Edit Assessment
                 </SecondaryButton>
                 <SecondaryButton
+                  onClick={() => setShowSimulator(!showSimulator)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  style={{ padding: '8px 16px', fontSize: '0.85rem', background: showSimulator ? '#4f46e5' : '#6366f1', color: 'white', border: 'none' }}
+                  title="Simulate target maturity levels, ROI impact, and required timelines"
+                >
+                  <FiSliders size={14} />
+                  {showSimulator ? 'Hide What-If Simulator' : '🎛️ What-If Simulator'}
+                </SecondaryButton>
+                <SecondaryButton
                   onClick={() => navigate(`/executive-summary/${assessmentId}`)}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -1876,6 +1907,16 @@ const AssessmentResults = ({ currentAssessment, framework }) => {
               </div>
             </div>
           </div>
+
+          {/* Interactive What-If Scenario Simulator */}
+          <AnimatePresence>
+            {showSimulator && results.categoryDetails && (
+              <ScenarioSimulator
+                initialScores={results.categoryDetails}
+                onSimulateChange={(newTargets) => setSimulatedTargets(newTargets)}
+              />
+            )}
+          </AnimatePresence>
 
           {/* Main Dashboard Grid */}
           <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: '24px', marginBottom: '24px' }}>
