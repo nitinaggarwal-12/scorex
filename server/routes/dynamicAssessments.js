@@ -11,7 +11,7 @@ const dynamicEngine = require('../services/dynamicAssessmentEngine');
 // 1. AI-generate assessment framework from natural language prompt and AUTO-PERSIST as template
 router.post('/generate-framework', async (req, res) => {
   try {
-    const { prompt, industry, targetAudience, focusAreas } = req.body;
+    const { prompt, industry, targetAudience, focusAreas, tier } = req.body;
     if (!prompt || typeof prompt !== 'string' || !prompt.trim()) {
       return res.status(400).json({ success: false, error: 'Prompt is required' });
     }
@@ -19,7 +19,8 @@ router.post('/generate-framework', async (req, res) => {
     const framework = await dynamicEngine.generateFrameworkFromPrompt(prompt.trim(), {
       industry,
       targetAudience,
-      focusAreas
+      focusAreas,
+      tier
     });
 
     // Auto-persist into template registry as a draft

@@ -14,17 +14,48 @@ class DynamicAssessmentEngine {
    * AI-generate a complete structured assessment framework from a user prompt
    */
   async generateFrameworkFromPrompt(prompt, options = {}) {
-    console.log('🤖 Generating dynamic assessment framework from prompt with Gemini (gemini-3.7-flash)...');
+    const tier = options.tier || 'deep_dive'; // 'rapid' | 'deep_dive' | 'comprehensive'
+    console.log(`🤖 Generating dynamic assessment framework (Tier: ${tier}) with Gemini (gemini-3.7-flash)...`);
     console.log('📝 Prompt:', prompt);
 
+    let tierConfig = {
+      dimRange: '5 to 6 distinct dimensions',
+      qPerDim: 'exactly 2 rigorous, distinct questions per dimension',
+      totalTarget: '10 to 12 questions total',
+      estimatedMinutes: 15,
+      descriptionDepth: 'comprehensive capability deep-dive'
+    };
+
+    if (tier === 'rapid') {
+      tierConfig = {
+        dimRange: '3 to 4 distinct dimensions',
+        qPerDim: 'exactly 2 focused questions per dimension',
+        totalTarget: '6 to 8 questions total',
+        estimatedMinutes: 8,
+        descriptionDepth: 'rapid executive diagnostic pulse'
+      };
+    } else if (tier === 'comprehensive') {
+      tierConfig = {
+        dimRange: '6 to 8 distinct dimensions',
+        qPerDim: '3 to 4 granular questions per dimension',
+        totalTarget: '24 to 32 questions total',
+        estimatedMinutes: 45,
+        descriptionDepth: 'full enterprise due-diligence audit'
+      };
+    }
+
     const systemInstruction = `You are a Principal Enterprise Strategy & Assessment Framework Architect.
-Your role is to design world-class, vendor-neutral maturity assessments for any technology, domain, industry, architecture, or business discipline.
+Your role is to design world-class, audit-grade maturity assessments for any technology, domain, industry, architecture, or business discipline.
 
 Generate a comprehensive, production-ready assessment framework JSON that conforms EXACTLY to the specified schema.
-The assessment must be deep, practical, and highly actionable with 4 to 6 distinct dimensions and 2 to 4 rigorous questions per dimension.
+The assessment must be deep, practical, and highly actionable with ${tierConfig.dimRange} and ${tierConfig.qPerDim} (${tierConfig.totalTarget}).
+
+CRITICAL DEPTH MANDATE:
+- Never generate a shallow 1-question or 2-question stub.
+- You MUST create ${tierConfig.dimRange} with ${tierConfig.qPerDim} so the assessment captures complete operational reality.
 
 Rules for Question & Option Design:
-1. Each question must evaluate a specific capability or architectural pattern.
+1. Each question must evaluate a specific capability, process, or architectural pattern.
 2. Provide exactly 5 distinct maturity options for each question (Scores 1 to 5):
    - Score 1: Ad-hoc / Manual / No formal practice
    - Score 2: Initial experimentation / Fragmented / Early stage
@@ -37,9 +68,10 @@ Rules for Question & Option Design:
     const userPrompt = `DESIGN AN ASSESSMENT FRAMEWORK FOR:
 ${prompt}
 
-${options.industry ? `Target Industry: ${options.industry}` : ''}
-${options.targetAudience ? `Target Audience: ${options.targetAudience}` : ''}
-${options.focusAreas ? `Specific Focus Areas: ${options.focusAreas}` : ''}
+- Target Depth Tier: ${tier.toUpperCase()} (${tierConfig.descriptionDepth}, ${tierConfig.totalTarget})
+${options.industry ? `- Target Industry: ${options.industry}` : ''}
+${options.targetAudience ? `- Target Audience: ${options.targetAudience}` : ''}
+${options.focusAreas ? `- Specific Focus Areas: ${options.focusAreas}` : ''}
 
 Output a strictly valid JSON object with the following schema:
 {

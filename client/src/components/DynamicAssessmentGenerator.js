@@ -213,6 +213,91 @@ const Input = styled.input`
   }
 `;
 
+const TierSection = styled.div`
+  margin: 20px 0 24px;
+`;
+
+const TierSectionLabel = styled.div`
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const TierSelectorGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+
+  @media (max-width: 860px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const TierCard = styled.div`
+  background: ${props => props.$selected ? 'rgba(99, 102, 241, 0.15)' : 'rgba(15, 23, 42, 0.6)'};
+  border: 1.5px solid ${props => props.$selected ? '#818cf8' : 'rgba(255, 255, 255, 0.08)'};
+  border-radius: 14px;
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  box-shadow: ${props => props.$selected ? '0 8px 24px rgba(99, 102, 241, 0.25)' : 'none'};
+
+  &:hover {
+    border-color: ${props => props.$selected ? '#818cf8' : 'rgba(255, 255, 255, 0.2)'};
+    background: ${props => props.$selected ? 'rgba(99, 102, 241, 0.2)' : 'rgba(15, 23, 42, 0.8)'};
+    transform: translateY(-2px);
+  }
+`;
+
+const TierHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+`;
+
+const TierTitle = styled.div`
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: ${props => props.$selected ? '#ffffff' : '#e2e8f0'};
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const TierBadge = styled.span`
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  background: ${props => props.$highlight ? 'rgba(16, 185, 129, 0.2)' : 'rgba(148, 163, 184, 0.15)'};
+  color: ${props => props.$highlight ? '#34d399' : '#94a3b8'};
+  border: 1px solid ${props => props.$highlight ? 'rgba(16, 185, 129, 0.4)' : 'rgba(255, 255, 255, 0.1)'};
+`;
+
+const TierDesc = styled.div`
+  font-size: 0.82rem;
+  color: #94a3b8;
+  line-height: 1.45;
+  margin-bottom: 10px;
+`;
+
+const TierStats = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.76rem;
+  color: ${props => props.$selected ? '#c7d2fe' : '#64748b'};
+  font-weight: 600;
+`;
+
 const GenerateButton = styled.button`
   display: inline-flex;
   align-items: center;
@@ -465,6 +550,7 @@ const DynamicAssessmentGenerator = () => {
   const [prompt, setPrompt] = useState('');
   const [industry, setIndustry] = useState('');
   const [targetAudience, setTargetAudience] = useState('');
+  const [selectedTier, setSelectedTier] = useState('deep_dive'); // 'rapid' | 'deep_dive' | 'comprehensive'
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedFramework, setGeneratedFramework] = useState(null);
   
@@ -489,7 +575,8 @@ const DynamicAssessmentGenerator = () => {
       toast.loading('Generating custom assessment framework with Gemini 3.7...', { id: 'generating' });
       const response = await dynamicAssessmentService.generateFramework(textToUse.trim(), {
         industry,
-        targetAudience
+        targetAudience,
+        tier: selectedTier
       });
 
       if (response.success && response.framework) {
@@ -621,6 +708,74 @@ const DynamicAssessmentGenerator = () => {
               );
             })}
           </PresetGrid>
+
+          {/* Assessment Depth Tier Selector */}
+          <TierSection>
+            <TierSectionLabel>
+              <FiLayers color="#818cf8" /> Assessment Diagnostic Depth Tier:
+            </TierSectionLabel>
+            <TierSelectorGrid>
+              <TierCard 
+                $selected={selectedTier === 'rapid'}
+                onClick={() => setSelectedTier('rapid')}
+              >
+                <TierHeader>
+                  <TierTitle $selected={selectedTier === 'rapid'}>
+                    ⚡ Tier 1: Rapid Diagnostic
+                  </TierTitle>
+                  <TierBadge>Fast Pulse</TierBadge>
+                </TierHeader>
+                <TierDesc>
+                  6 to 8 questions focused on core high-priority bottlenecks and rapid risk heatmaps.
+                </TierDesc>
+                <TierStats $selected={selectedTier === 'rapid'}>
+                  <span>⏱️ ~8 Mins</span>
+                  <span>•</span>
+                  <span>📋 6–8 Questions</span>
+                </TierStats>
+              </TierCard>
+
+              <TierCard 
+                $selected={selectedTier === 'deep_dive'}
+                onClick={() => setSelectedTier('deep_dive')}
+              >
+                <TierHeader>
+                  <TierTitle $selected={selectedTier === 'deep_dive'}>
+                    🎯 Tier 2: Deep-Dive (Recommended)
+                  </TierTitle>
+                  <TierBadge $highlight={true}>⭐ Recommended</TierBadge>
+                </TierHeader>
+                <TierDesc>
+                  10 to 14 questions covering 5 pillars with 3-phase transformation roadmap and FinOps NPV ROI.
+                </TierDesc>
+                <TierStats $selected={selectedTier === 'deep_dive'}>
+                  <span>⏱️ ~15 Mins</span>
+                  <span>•</span>
+                  <span>📋 10–14 Questions</span>
+                </TierStats>
+              </TierCard>
+
+              <TierCard 
+                $selected={selectedTier === 'comprehensive'}
+                onClick={() => setSelectedTier('comprehensive')}
+              >
+                <TierHeader>
+                  <TierTitle $selected={selectedTier === 'comprehensive'}>
+                    🏢 Tier 3: Enterprise Audit
+                  </TierTitle>
+                  <TierBadge>Due Diligence</TierBadge>
+                </TierHeader>
+                <TierDesc>
+                  24 to 32 questions across 6+ pillars for complete board-level architecture audit.
+                </TierDesc>
+                <TierStats $selected={selectedTier === 'comprehensive'}>
+                  <span>⏱️ ~45 Mins</span>
+                  <span>•</span>
+                  <span>📋 24–32 Questions</span>
+                </TierStats>
+              </TierCard>
+            </TierSelectorGrid>
+          </TierSection>
 
           <ControlsRow>
             <MetaInputs>

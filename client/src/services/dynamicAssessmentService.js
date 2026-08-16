@@ -13,7 +13,8 @@ class DynamicAssessmentService {
       prompt,
       industry: options.industry,
       targetAudience: options.targetAudience,
-      focusAreas: options.focusAreas
+      focusAreas: options.focusAreas,
+      tier: options.tier
     });
     return response.data;
   }

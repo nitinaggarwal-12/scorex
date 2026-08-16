@@ -15,7 +15,7 @@ const STARTER_PRODUCTION_TEMPLATES = [
     typeKey: 'openai_to_gemini_enterprise_migration',
     title: 'OpenAI to Gemini Enterprise Migration Assessment',
     subtitle: 'Enterprise GenAI Architecture Modernization & Cost Arbitrage',
-    description: 'Comprehensive evaluation for migrating enterprise GenAI workloads from OpenAI / Azure OpenAI to Google Gemini Enterprise on Vertex AI, covering prompt compatibility, long context, and token economics.',
+    description: 'Comprehensive evaluation for migrating enterprise GenAI workloads from OpenAI / Azure OpenAI to Google Gemini Enterprise on Vertex AI, covering prompt compatibility, long context, context caching, security, and agentic orchestration.',
     icon: 'HiSparkles',
     badge: 'GenAI Migration',
     color: '#8b5cf6',
@@ -27,7 +27,7 @@ const STARTER_PRODUCTION_TEMPLATES = [
       typeKey: 'openai_to_gemini_enterprise_migration',
       title: 'OpenAI to Gemini Enterprise Migration Assessment',
       subtitle: 'Enterprise GenAI Architecture Modernization & Cost Arbitrage',
-      description: 'Evaluate technical feasibility, prompt migration, long-context window optimization, and cost arbitrage for migrating to Google Gemini Enterprise.',
+      description: 'Evaluate technical feasibility, prompt migration, long-context window optimization, token cost arbitrage, VPC security, and multi-agent mesh for Google Gemini Enterprise.',
       icon: 'HiSparkles',
       badge: 'GenAI Migration',
       color: '#8b5cf6',
@@ -64,6 +64,36 @@ const STARTER_PRODUCTION_TEMPLATES = [
             },
             {
               id: 'api_02',
+              text: 'How are tool definitions, structured function calling, and schema validations handled across microservices?',
+              guidance: 'Review how tool schemas are serialized, invoked, and error-handled across backend LLM agents.',
+              options: [
+                { value: 1, score: 1, label: 'Manual string prompt parsing for tools without formal JSON schema declarations.' },
+                { value: 2, score: 2, label: 'OpenAI-specific tool_choice parameters tightly bound to single endpoints.' },
+                { value: 3, score: 3, label: 'Standardized JSON Schema tool definitions decoupled from underlying SDKs.' },
+                { value: 4, score: 4, label: 'Centralized Model Context Protocol (MCP) server registry with automatic schema validation.' },
+                { value: 5, score: 5, label: 'Dynamic zero-trust tool orchestration with automatic schema migration, sandboxing, and execution telemetry.' }
+              ],
+              technicalPainPoints: [
+                'Tool schema drift breaking downstream application parsing',
+                'Complex parameter transformations between OpenAI and Gemini function calling specs',
+                'Lack of audit logging for tool invocations'
+              ],
+              businessPainPoints: [
+                'Production outages caused by unexpected tool payload changes',
+                'Slow developer velocity building agentic capabilities',
+                'Security vulnerabilities from unvalidated function execution'
+              ]
+            }
+          ]
+        },
+        {
+          id: 'long_context_rag',
+          name: 'Long-Context Windows vs Chunked RAG',
+          description: 'Evaluates strategy for leveraging ultra-long context windows (1M–2M tokens) vs legacy chunked vector retrieval.',
+          weight: 1,
+          questions: [
+            {
+              id: 'ctx_01',
               text: 'What is your current strategy for leveraging ultra-long context windows (1M–2M tokens) vs legacy chunked RAG?',
               guidance: 'Evaluate whether complex vector chunking and brittle embedding retrieval can be simplified using Gemini native long-context.',
               options: [
@@ -82,6 +112,28 @@ const STARTER_PRODUCTION_TEMPLATES = [
                 'Inaccurate hallucinations in complex compliance and legal document analysis',
                 'High infrastructure costs for dedicated vector database clusters',
                 'Delayed user responses due to multi-hop RAG latency'
+              ]
+            },
+            {
+              id: 'ctx_02',
+              text: 'How does your architecture handle multi-document synthesis, cross-referencing, and long-form audit trails?',
+              guidance: 'Assess multi-document reasoning over entire codebases, technical manuals, or financial portfolios.',
+              options: [
+                { value: 1, score: 1, label: 'Single-document analysis only; cannot synthesize relationships across multiple source files.' },
+                { value: 2, score: 2, label: 'Ad-hoc Map-Reduce summarization chains with high latency and context degradation.' },
+                { value: 3, score: 3, label: 'Long-context document ingestion up to 128k tokens with basic citation tracking.' },
+                { value: 4, score: 4, label: 'Full multi-file workspace ingestion into 1M token windows with exact line-level citation.' },
+                { value: 5, score: 5, label: 'Real-time multi-modal synthesis (text, audio, video, diagrams) across millions of tokens with verified grounding.' }
+              ],
+              technicalPainPoints: [
+                'Information loss across Map-Reduce summarization chains',
+                'Inability to analyze complete code repositories or long recordings in a single pass',
+                'High error rates in multi-hop query resolution'
+              ],
+              businessPainPoints: [
+                'Missed critical cross-document compliance red flags',
+                'Analyst burnout from manual verification of fragmented summaries',
+                'Slower turnaround time on strategic business intelligence reports'
               ]
             }
           ]
@@ -113,13 +165,35 @@ const STARTER_PRODUCTION_TEMPLATES = [
                 'Unpredictable monthly invoice volatility causing budget disputes',
                 'Inability to scale GenAI features to all enterprise end-users'
               ]
+            },
+            {
+              id: 'cost_02',
+              text: 'What is your model routing strategy across high-performance (Pro/Flash) and cost-optimized tiers?',
+              guidance: 'Review automated routing between lightweight models (Gemini Flash) for classification and reasoning models (Gemini Pro) for complex analysis.',
+              options: [
+                { value: 1, score: 1, label: 'Single expensive flagship model used for all tasks, including trivial classification and extraction.' },
+                { value: 2, score: 2, label: 'Manual developer selection of model tier per microservice without centralized cost governance.' },
+                { value: 3, score: 3, label: 'Rule-based gateway routing simple queries to lightweight models and complex tasks to flagship models.' },
+                { value: 4, score: 4, label: 'Dynamic LLM cascade/router that dynamically elevates queries only upon confidence thresholds.' },
+                { value: 5, score: 5, label: 'Autonomous semantic router with real-time latency/cost optimization, batch processing offloading, and automated distillation.' }
+              ],
+              technicalPainPoints: [
+                'Over-utilization of premium models for low-complexity formatting tasks',
+                'Lack of automated failover or routing between model tiers',
+                'High latency on user-facing applications due to oversized model invocation'
+              ],
+              businessPainPoints: [
+                'Massive unnecessary cloud spend on commodity AI operations',
+                'Slower application responsiveness degrading user conversion',
+                'Inability to budget predictable cost-per-user margins'
+              ]
             }
           ]
         },
         {
           id: 'security_governance_privacy',
           name: 'Enterprise Security, CMEK & Data Governance',
-          description: 'Evaluates private networking (PSC), Customer-Managed Encryption Keys (CMEK), and zero training guarantees.',
+          description: 'Evaluates private networking (PSC), Customer-Managed Encryption Keys (CMEK), VPC controls, and zero training guarantees.',
           weight: 1,
           questions: [
             {
@@ -143,6 +217,80 @@ const STARTER_PRODUCTION_TEMPLATES = [
                 'Severe regulatory fines under HIPAA, GDPR, or financial regulations',
                 'Customer mistrust regarding data privacy and proprietary IP protection'
               ]
+            },
+            {
+              id: 'sec_02',
+              text: 'How are prompt injection attacks, sensitive PII leakage, and AI safety guardrails enforced in real time?',
+              guidance: 'Assess real-time input/output content filtering, toxicity checks, automated PII scrubbing, and red-teaming protocols.',
+              options: [
+                { value: 1, score: 1, label: 'No automated safety filtering; reliance on default model behaviors with zero prompt injection defense.' },
+                { value: 2, score: 2, label: 'Basic regex-based PII scrubbing before sending prompts to external APIs.' },
+                { value: 3, score: 3, label: 'Configurable cloud provider safety filters enabled for toxicity, harassment, and harmful categories.' },
+                { value: 4, score: 4, label: 'Comprehensive bidirectional guardrail layer detecting prompt jailbreaks, hallucination drift, and PII masking.' },
+                { value: 5, score: 5, label: 'Adaptive Zero-Trust AI firewall with automated red-teaming evals, cryptographic audit trails, and instant policy enforcement.' }
+              ],
+              technicalPainPoints: [
+                'Vulnerability to direct and indirect prompt injection attacks',
+                'Accidental transmission of confidential customer PII in prompt logs',
+                'Lack of real-time monitoring for toxic or hallucinated outputs'
+              ],
+              businessPainPoints: [
+                'Severe brand and reputational damage from unvetted AI responses',
+                'Legal liability from leaked proprietary or customer confidential data',
+                'Executive hesitation to deploy customer-facing autonomous agents'
+              ]
+            }
+          ]
+        },
+        {
+          id: 'agentic_tool_mesh',
+          name: 'Multi-Agent Mesh & Autonomous Tooling',
+          description: 'Evaluates multi-agent orchestration, asynchronous task delegation, Model Context Protocol (MCP), and multimodal ingestion.',
+          weight: 1,
+          questions: [
+            {
+              id: 'agent_01',
+              text: 'How does your platform orchestrate autonomous multi-agent workflows and asynchronous task delegation?',
+              guidance: 'Review agent frameworks, state management, supervisor-worker hierarchies, and Model Context Protocol (MCP) integrations.',
+              options: [
+                { value: 1, score: 1, label: 'Single synchronous prompt-response chains with no agentic delegation or persistent memory.' },
+                { value: 2, score: 2, label: 'Linear chain-of-thought scripts with rigid hardcoded step transitions and high failure rates.' },
+                { value: 3, score: 3, label: 'Modular agent graph framework with retry mechanics, state persistence, and human-in-the-loop approvals.' },
+                { value: 4, score: 4, label: 'Distributed multi-agent mesh with specialized supervisor agents, dynamic tool selection, and asynchronous execution.' },
+                { value: 5, score: 5, label: 'Autonomous self-healing multi-agent ecosystem with Model Context Protocol (MCP), continuous evaluation, and real-time telemetry.' }
+              ],
+              technicalPainPoints: [
+                'Agent hallucination loops and compounding errors across multi-step chains',
+                'Lack of standardized protocol for connecting agents to enterprise data tools',
+                'High latency and token waste from redundant agent deliberations'
+              ],
+              businessPainPoints: [
+                'Inability to automate complex, end-to-end knowledge workflows',
+                'High human supervision overhead negating automation efficiency gains',
+                'Slow time-to-market for enterprise agentic product features'
+              ]
+            },
+            {
+              id: 'agent_02',
+              text: 'What is your capability to process and ground multi-modal inputs (PDF diagrams, audio recordings, video feeds, spreadsheets)?',
+              guidance: 'Evaluate native multimodal reasoning vs separate OCR/speech-to-text conversion pipelines.',
+              options: [
+                { value: 1, score: 1, label: 'Text-only processing; separate external OCR and transcription tools required with significant data loss.' },
+                { value: 2, score: 2, label: 'Basic OCR for scanned PDFs, but inability to reason over complex tables, charts, or audio/video streams.' },
+                { value: 3, score: 3, label: 'Hybrid pipeline supporting images and formatted PDFs alongside textual RAG.' },
+                { value: 4, score: 4, label: 'Native multimodal ingestion across high-resolution PDFs, audio, video, and code repositories in a single model pass.' },
+                { value: 5, score: 5, label: 'Unified enterprise multimodal intelligence engine with sub-second cross-modal search, grounding, and reasoning.' }
+              ],
+              technicalPainPoints: [
+                'Brittle multi-tool pipelines converting PDFs and audio into imperfect text',
+                'Loss of layout and spatial context in complex tabular documents and diagrams',
+                'Massive latency penalty coordinating multiple specialized models'
+              ],
+              businessPainPoints: [
+                'Inability to automate document-heavy workflows in insurance, legal, and healthcare',
+                'High operational cost of maintaining multiple third-party conversion services',
+                'Poor user experience when interacting with rich enterprise assets'
+              ]
             }
           ]
         }
@@ -161,7 +309,7 @@ const STARTER_PRODUCTION_TEMPLATES = [
     typeKey: 'finops_cloud_cost_optimization',
     title: 'FinOps & Cloud Cost Optimization Assessment',
     subtitle: 'Enterprise Cloud Financial Management & Unit Economics Framework',
-    description: 'Evaluate your organization\'s capability to understand, optimize, and govern cloud and AI spend while driving maximum business value and unit margin accountability.',
+    description: 'Evaluate your organization\'s capability to understand, optimize, and govern cloud and AI spend while driving maximum business value, unit margin accountability, and automated FinOps execution.',
     icon: 'FiTrendingUp',
     badge: 'FinOps',
     color: '#10b981',
@@ -173,7 +321,7 @@ const STARTER_PRODUCTION_TEMPLATES = [
       typeKey: 'finops_cloud_cost_optimization',
       title: 'FinOps & Cloud Cost Optimization Assessment',
       subtitle: 'Enterprise Cloud Financial Management & Unit Economics Framework',
-      description: 'Comprehensive FinOps framework covering visibility, rightsizing, anomaly detection, rate commitments, and FinOps culture.',
+      description: 'Comprehensive 5-dimension FinOps framework covering visibility & tagging, anomaly detection, commitment economics, storage lifecycle, and unit economics.',
       icon: 'FiTrendingUp',
       badge: 'FinOps',
       color: '#10b981',
@@ -182,8 +330,8 @@ const STARTER_PRODUCTION_TEMPLATES = [
       dimensions: [
         {
           id: 'cost_visibility',
-          name: 'Cost Visibility & Allocation',
-          description: 'Mechanisms for tracking, tagging, and allocating cloud expenditure to business units and product squads.',
+          name: 'Cost Visibility & Allocation Taxonomy',
+          description: 'Mechanisms for tracking, tagging, and allocating cloud expenditure to business units, product squads, and Kubernetes containers.',
           weight: 1,
           questions: [
             {
@@ -207,12 +355,34 @@ const STARTER_PRODUCTION_TEMPLATES = [
                 'Lack of accountability among product and engineering squads',
                 'Inability to calculate accurate customer unit gross margins'
               ]
+            },
+            {
+              id: 'cva_02',
+              text: 'How automated is your multi-cloud billing data ingestion and monthly showback/chargeback reporting cadence?',
+              guidance: 'Review daily billing data exports (FOCUS spec / BigQuery / CUR), automated normalization, and self-service showback portals.',
+              options: [
+                { value: 1, score: 1, label: 'Manual spreadsheet downloads once a month with no centralized reporting or squad visibility.' },
+                { value: 2, score: 2, label: 'Static cloud console cost dashboards reviewed ad-hoc by finance with 15-day reporting lag.' },
+                { value: 3, score: 3, label: 'Automated daily billing ingestion into a central warehouse with monthly departmental showback reports.' },
+                { value: 4, score: 4, label: 'Automated daily showback dashboard mapped to engineering squads with FOCUS 1.0 schema normalization.' },
+                { value: 5, score: 5, label: 'Real-time automated chargeback with direct budget accountability, self-service cost exploration, and executive KPI attribution.' }
+              ],
+              technicalPainPoints: [
+                'Inconsistent billing schemas across AWS, GCP, and Azure requiring manual reconciliation',
+                'High latency in billing data exports masking real-time runaway spend',
+                'Lack of granular daily breakdown by team and application tier'
+              ],
+              businessPainPoints: [
+                'Disputed inter-departmental chargebacks causing friction between engineering and finance',
+                'Slow financial close cycles due to manual cloud invoice auditing',
+                'Zero squad-level motivation to optimize infrastructure spend'
+              ]
             }
           ]
         },
         {
           id: 'anomaly_rightsizing',
-          name: 'Anomaly Detection & Rightsizing',
+          name: 'Anomaly Detection & Continuous Rightsizing',
           description: 'Capabilities to detect runaway spend spikes and continuously optimize compute, storage, and database tiers.',
           weight: 1,
           questions: [
@@ -236,6 +406,184 @@ const STARTER_PRODUCTION_TEMPLATES = [
                 'Unbudgeted quarterly budget overruns wiping out operational margins',
                 'Erosion of executive trust in engineering cloud governance',
                 'Reactive firefighting disrupting sprint product roadmap delivery'
+              ]
+            },
+            {
+              id: 'anom_02',
+              text: 'How automated is the identification and rightsizing of over-provisioned VMs, idle clusters, and orphaned storage?',
+              guidance: 'Assess 15-min auto-suspend cluster policies, automated disk cleanup, and serverless compute adoption.',
+              options: [
+                { value: 1, score: 1, label: 'Static infrastructure with no rightsizing; clusters run 24/7 regardless of actual utilization.' },
+                { value: 2, score: 2, label: 'Periodic manual rightsizing reviews during annual budgeting cycles.' },
+                { value: 3, score: 3, label: 'Automated recommendations generated by cloud tools with manual engineering sprint execution.' },
+                { value: 4, score: 4, label: 'Automated idle resource termination (e.g. 15-min auto-suspend) and weekly rightsizing automation.' },
+                { value: 5, score: 5, label: 'Fully autonomous rightsizing with continuous serverless scaling, spot/preemptible arbitrage, and zero idle waste.' }
+              ],
+              technicalPainPoints: [
+                'Orphaned unattached disks and idle test databases accumulating silent recurring costs',
+                'Over-provisioned memory and CPU buffers on non-production clusters',
+                'Engineers ignoring manual rightsizing ticket backlogs'
+              ],
+              businessPainPoints: [
+                'Wasted 20–40% of monthly cloud budget on non-productive computing power',
+                'High carbon footprint and ESG inefficiency from unutilized cloud hardware',
+                'Capital misallocation that could otherwise fund product innovation'
+              ]
+            }
+          ]
+        },
+        {
+          id: 'rate_optimization_commitments',
+          name: 'Commitment Economics & Rate Optimization',
+          description: 'Strategy for maximizing discount coverage through Reserved Instances (RIs), Savings Plans, Committed Use Discounts (CUDs), and DBU commitments.',
+          weight: 1,
+          questions: [
+            {
+              id: 'rate_01',
+              text: 'What is your organization\'s coverage and utilization rate for commitment-based discounts (Savings Plans / RIs / CUDs)?',
+              guidance: 'Evaluate baseline compute coverage (>75%), flexible multi-year discount strategies, and expiration tracking.',
+              options: [
+                { value: 1, score: 1, label: '100% on-demand pricing with zero commitment discounts or reserved instances.' },
+                { value: 2, score: 2, label: 'Ad-hoc 1-year RI purchases for specific legacy servers (<40% baseline coverage).' },
+                { value: 3, score: 3, label: 'Centralized commitment strategy achieving 60-75% compute coverage with quarterly reviews.' },
+                { value: 4, score: 4, label: 'Portfolio of compute savings plans and flexible CUDs maintaining 75-90% coverage with automated utilization monitoring.' },
+                { value: 5, score: 5, label: 'Dynamic algorithmic commitment portfolio management with automated secondary marketplace arbitrage (>92% coverage).' }
+              ],
+              technicalPainPoints: [
+                'Rigid legacy instance reservations stranded after architectural migrations',
+                'Lack of visibility into commitment expiration schedules causing surprise rate hikes',
+                'Difficulty forecasting dynamic GenAI compute workloads for multi-year commitments'
+              ],
+              businessPainPoints: [
+                'Paying 30–60% higher on-demand compute premiums across core production systems',
+                'Unused commitment waste due to poor capacity forecasting',
+                'Lack of financial engineering alignment between procurement and engineering'
+              ]
+            },
+            {
+              id: 'rate_02',
+              text: 'How are SaaS and specialized data platform commitments (Databricks DBUs, Snowflake Credits, Vertex AI quotas) managed?',
+              guidance: 'Assess multi-year pre-commit discounts, consumption draw-down forecasting, and burst rate controls.',
+              options: [
+                { value: 1, score: 1, label: 'Month-to-month list price billing with no enterprise discount schedule or consumption tracking.' },
+                { value: 2, score: 2, label: 'Basic annual contract with manual draw-down monitoring by procurement.' },
+                { value: 3, score: 3, label: 'Centralized contract management with monthly consumption burn-rate forecasting against commits.' },
+                { value: 4, score: 4, label: 'Tiered enterprise commitment optimization with predictive draw-down alerts and multi-workload allocation.' },
+                { value: 5, score: 5, label: 'Fully integrated consumption governance with real-time rate arbitrage, predictive contract re-negotiation, and 40%+ discount realization.' }
+              ],
+              technicalPainPoints: [
+                'Unmonitored credit burn leading to early contract exhaustion and high overage rates',
+                'Siloed contract negotiations across different business units forfeiting enterprise volume tiers',
+                'No tooling to correlate SaaS platform consumption with underlying cloud infrastructure'
+              ],
+              businessPainPoints: [
+                'Unexpected six-figure overage true-up bills at annual contract renewal',
+                'Sub-optimal enterprise discount tiers due to fragmented vendor negotiations',
+                'Inability to accurately forecast annual software and data platform CapEx/OpEx'
+              ]
+            }
+          ]
+        },
+        {
+          id: 'storage_lakehouse_lifecycle',
+          name: 'Storage Lifecycle & Data Lakehouse Tiering',
+          description: 'Techniques for managing data storage growth, table vacuuming, partition pruning, and automated cold storage tiering.',
+          weight: 1,
+          questions: [
+            {
+              id: 'stor_01',
+              text: 'How automated is your object storage lifecycle policy (GCS / S3 / ADLS) and cold storage tiering strategy?',
+              guidance: 'Review automated transitions to Nearline/Coldline/Glacier, non-current version deletion, and incomplete multipart upload cleanup.',
+              options: [
+                { value: 1, score: 1, label: 'All data retained indefinitely in standard hot storage with zero lifecycle policies or deletion rules.' },
+                { value: 2, score: 2, label: 'Basic manual archiving of legacy project folders once every few years.' },
+                { value: 3, score: 3, label: 'Standardized lifecycle policies moving data to cooler tiers after 90–180 days across major buckets.' },
+                { value: 4, score: 4, label: 'Automated policy-driven tiering (Hot -> Cool -> Archive) with automated cleanup of incomplete uploads and old versions.' },
+                { value: 5, score: 5, label: 'Intelligent access-tiering with zero-copy analytics, automated retention compliance enforcement, and 70% storage TCO reduction.' }
+              ],
+              technicalPainPoints: [
+                'Storage volume growing exponentially year-over-year with unreferenced historical data',
+                'Terabytes of orphaned multipart upload chunks accumulating silent billing charges',
+                'Inconsistent bucket-level retention policies causing compliance risks'
+              ],
+              businessPainPoints: [
+                'Rapidly ballooning monthly cloud storage bills with diminishing analytical utility',
+                'Increased attack surface from unbounded, unmonitored historical data lakes',
+                'High retrieval cost surprises when un-archiving bulk data for audits'
+              ]
+            },
+            {
+              id: 'stor_02',
+              text: 'How consistently are Delta Lake / Apache Iceberg table maintenance operations (VACUUM, OPTIMIZE, partition pruning) automated?',
+              guidance: 'Assess automated deletion of expired table snapshots, compaction of small files, and partition maintenance.',
+              options: [
+                { value: 1, score: 1, label: 'No open table format maintenance; uncompacted small files and expired snapshots persist forever.' },
+                { value: 2, score: 2, label: 'Ad-hoc manual OPTIMIZE / VACUUM scripts run only when table query performance noticeably degrades.' },
+                { value: 3, score: 3, label: 'Scheduled weekly maintenance jobs compacting files and vacuuming snapshots older than 30 days.' },
+                { value: 4, score: 4, label: 'Automated serverless table maintenance pipelines optimizing layout (Z-Order/Liquid Clustering) and enforcing 7-day retention.' },
+                { value: 5, score: 5, label: 'Self-tuning lakehouse engine with automated continuous compaction, zero-overhead time travel, and optimized physical layout.' }
+              ],
+              technicalPainPoints: [
+                'Millions of small files (the "small file problem") causing 10x slower query performance and high metadata costs',
+                'Accumulated historical snapshots consuming 50%+ of total lakehouse storage',
+                'Table maintenance jobs failing due to cluster resource contention'
+              ],
+              businessPainPoints: [
+                'Degraded BI dashboard refresh speeds frustrating business decision-makers',
+                'Inflated query scan costs in serverless SQL engines due to lack of partition pruning',
+                'High engineering maintenance overhead manually tuning database tables'
+              ]
+            }
+          ]
+        },
+        {
+          id: 'unit_economics_governance',
+          name: 'Unit Economics & FinOps Culture',
+          description: 'Ability to measure cost per business transaction, enforce CI/CD cost guardrails, and foster cultural accountability.',
+          weight: 1,
+          questions: [
+            {
+              id: 'gov_01',
+              text: 'How mature is your organization\'s cloud unit economics capability (cost per active user, cost per query, cost per order)?',
+              guidance: 'Evaluate correlation of cloud telemetry with business KPIs and gross margin impact modeling.',
+              options: [
+                { value: 1, score: 1, label: 'Cloud is treated as an undifferentiated overhead cost center with zero unit margin visibility.' },
+                { value: 2, score: 2, label: 'Basic top-line metrics (total cloud spend vs company revenue) calculated quarterly in spreadsheets.' },
+                { value: 3, score: 3, label: 'Key customer and product tier unit costs tracked monthly and shared with engineering managers.' },
+                { value: 4, score: 4, label: 'Automated unit economic dashboards tracking cost per transaction/user embedded in product roadmap planning.' },
+                { value: 5, score: 5, label: 'Real-time unit economic telemetry driving dynamic pricing, customer gross margin optimization, and automated resource quotas.' }
+              ],
+              technicalPainPoints: [
+                'Inability to attribute backend pipeline costs to specific customer tenants or business events',
+                'Disjointed telemetry between application logs, business analytics, and cloud billing',
+                'Lack of real-time unit margin alerts when customer usage patterns change'
+              ],
+              businessPainPoints: [
+                'Unknowingly servicing unprofitable customers with negative unit gross margins',
+                'Inability to price complex enterprise SaaS tiers accurately',
+                'Finance and engineering operating with conflicting priorities and metrics'
+              ]
+            },
+            {
+              id: 'gov_02',
+              text: 'How integrated are shift-left cost estimates, CI/CD budget guardrails, and FinOps training across engineering teams?',
+              guidance: 'Assess Infracost/Terraform PR cost checks, automated pipeline circuit breakers, and FinOps Foundation practitioner certifications.',
+              options: [
+                { value: 1, score: 1, label: 'Zero cost visibility during development; engineers deploy infrastructure without cost awareness.' },
+                { value: 2, score: 2, label: 'Informal cost awareness through periodic all-hands presentations with no tooling integration.' },
+                { value: 3, score: 3, label: 'Automated PR cost estimation comments in CI/CD (e.g. Infracost) with required manager sign-off for large changes.' },
+                { value: 4, score: 4, label: 'Shift-left policy-as-code guardrails blocking unauthorized expensive resource deployment, with dedicated FinOps champions.' },
+                { value: 5, score: 5, label: 'Comprehensive FinOps culture with gamified team efficiency metrics, automated circuit breakers, and continuous certification.' }
+              ],
+              technicalPainPoints: [
+                'Accidental deployment of oversized instances ($10k+/mo) slipping past code reviews',
+                'No automated pre-deployment cost checks in Terraform / CloudFormation pipelines',
+                'Lack of automated feedback loops informing developers of the cost of their code'
+              ],
+              businessPainPoints: [
+                'Cost overruns caught only weeks after production deployment rather than at code review',
+                'High friction between DevOps, Finance, and Architecture teams',
+                'Lack of engineering ownership for sustainable cloud architecture'
               ]
             }
           ]
@@ -264,13 +612,10 @@ class CustomAssessmentRepository {
 
   ensureStarterTemplates() {
     try {
-      const existing = typesFileStore.getAll() || {};
-      if (Object.keys(existing).length < 2) {
-        STARTER_PRODUCTION_TEMPLATES.forEach(tpl => {
-          typesFileStore.set(tpl.typeKey, tpl);
-        });
-        console.log('✅ Seeded production-ready assessment starter templates in registry.');
-      }
+      STARTER_PRODUCTION_TEMPLATES.forEach(tpl => {
+        typesFileStore.set(tpl.typeKey, tpl);
+      });
+      console.log('✅ Synchronized 10-question production assessment starter templates in registry.');
     } catch (e) {
       console.warn('Could not seed starter templates:', e.message);
     }
