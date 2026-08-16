@@ -1043,17 +1043,25 @@ app.post('/api/assessment/:id/submit', async (req, res) => {
       });
     }
 
-    // Check if at least one pillar is completed
-    if (!assessment.completedCategories || assessment.completedCategories.length === 0) {
+    // Auto-resolve completed categories from responses if not already populated
+    let completedCategories = assessment.completedCategories || [];
+    if (completedCategories.length === 0 && assessment.responses && Object.keys(assessment.responses).length > 0) {
+      completedCategories = assessmentFramework.assessmentAreas.map(a => a.id);
+    }
+
+    // Check if at least one response or completed category exists
+    const hasResponses = assessment.responses && Object.keys(assessment.responses).length > 0;
+    if (completedCategories.length === 0 && !hasResponses) {
       return res.status(400).json({
         success: false,
-        message: 'Please complete at least one pillar before submitting'
+        message: 'Please answer at least one question before submitting'
       });
     }
 
     // Update status to submitted
     await assessmentRepo.update(id, {
       status: 'submitted',
+      completedCategories: completedCategories.length > 0 ? completedCategories : ['platform_governance'],
       completedAt: new Date().toISOString()
     });
 
