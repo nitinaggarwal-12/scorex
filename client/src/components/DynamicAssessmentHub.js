@@ -30,15 +30,21 @@ import dynamicAssessmentService from '../services/dynamicAssessmentService';
 import LoadingSpinner from './LoadingSpinner';
 
 const HubContainer = styled.div`
-  min-height: calc(100vh - 80px);
+  min-height: 100vh;
   background: linear-gradient(135deg, #0b0f19 0%, #111827 50%, #171b30 100%);
   color: #f3f4f6;
-  padding: 40px 24px;
+  padding: 108px 36px 60px;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    padding: 92px 16px 40px;
+  }
 `;
 
 const ContentWrapper = styled.div`
-  max-width: 1400px;
+  max-width: 1560px;
   margin: 0 auto;
+  width: 100%;
 `;
 
 const HeaderSection = styled.div`
@@ -48,6 +54,12 @@ const HeaderSection = styled.div`
   margin-bottom: 36px;
   flex-wrap: wrap;
   gap: 20px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+    margin-bottom: 24px;
+  }
 `;
 
 const HeaderTitle = styled.h1`
@@ -55,11 +67,16 @@ const HeaderTitle = styled.h1`
   font-weight: 800;
   color: #ffffff;
   margin-bottom: 8px;
+
+  @media (max-width: 768px) {
+    font-size: 1.75rem;
+  }
 `;
 
 const HeaderSubtitle = styled.p`
   color: #94a3b8;
   font-size: 1.05rem;
+  line-height: 1.5;
 `;
 
 const CreateBtn = styled.button`
@@ -74,12 +91,18 @@ const CreateBtn = styled.button`
   box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   transition: all 0.2s ease;
+  min-height: 48px;
 
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 15px 30px rgba(99, 102, 241, 0.6);
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
   }
 `;
 
@@ -89,6 +112,8 @@ const TabBar = styled.div`
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding-bottom: 16px;
   margin-bottom: 32px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 `;
 
 const Tab = styled.button`
@@ -98,8 +123,11 @@ const Tab = styled.button`
   padding: 10px 20px;
   border-radius: 10px;
   font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: nowrap;
+  min-height: 44px;
 
   &:hover {
     color: #ffffff;
@@ -108,8 +136,13 @@ const Tab = styled.button`
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 24px;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
 `;
 
 const TypeCard = styled.div`
@@ -118,6 +151,11 @@ const TypeCard = styled.div`
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   padding: 28px;
+
+  @media (max-width: 768px) {
+    padding: 20px 16px;
+    border-radius: 16px;
+  }
   display: flex;
   flex-direction: column;
   justify-content: space-between;

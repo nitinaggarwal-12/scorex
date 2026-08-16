@@ -15,7 +15,9 @@ import {
   FiChevronRight,
   FiChevronDown,
   FiEdit3,
-  FiLayers
+  FiLayers,
+  FiMenu,
+  FiX
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
@@ -28,12 +30,13 @@ const Container = styled.div`
   display: flex;
   overflow: hidden;
   padding-top: 68px; /* Fixed GlobalNav offset */
+  position: relative;
 `;
 
 /* =========================================================
-   LEFT SIDEBAR NAVIGATION PANEL
+   SIDEBAR NAVIGATION PANEL (DESKTOP + MOBILE DRAWER)
    ========================================================= */
-const Sidebar = styled.aside`
+const DesktopSidebar = styled.aside`
   width: 340px;
   background: white;
   border-right: 1px solid #e5e7eb;
@@ -49,6 +52,63 @@ const Sidebar = styled.aside`
 
   @media (max-width: 1024px) {
     display: none;
+  }
+`;
+
+const MobileDrawerOverlay = styled(motion.div)`
+  display: none;
+
+  @media (max-width: 1024px) {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 1100;
+  }
+`;
+
+const MobileDrawerContent = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 320px;
+  max-width: 85vw;
+  background: white;
+  z-index: 1101;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25);
+  overflow-y: auto;
+`;
+
+const DrawerCloseHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid #f1f5f9;
+`;
+
+const DrawerCloseButton = styled.button`
+  background: #f1f5f9;
+  border: none;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #475569;
+  cursor: pointer;
+
+  &:hover {
+    background: #e2e8f0;
+    color: #1e293b;
   }
 `;
 
@@ -106,6 +166,7 @@ const DimensionNavHeader = styled.button`
   border: none;
   cursor: pointer;
   text-align: left;
+  min-height: 48px;
 
   &:hover {
     background: #f8fafc;
@@ -121,15 +182,16 @@ const DimNavLeft = styled.div`
 `;
 
 const StatusDot = styled.div`
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: ${props => props.$completed ? '#10b981' : '#e2e8f0'};
-  color: white;
+  color: ${props => props.$completed ? '#ffffff' : '#64748b'};
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.75rem;
+  font-weight: 700;
   flex-shrink: 0;
 `;
 
@@ -140,12 +202,6 @@ const DimNavName = styled.div`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-`;
-
-const DimNavScore = styled.div`
-  font-size: 0.75rem;
-  color: #64748b;
-  font-weight: 500;
 `;
 
 const QuestionsSubList = styled.div`
@@ -161,7 +217,7 @@ const QuestionSubItem = styled.button`
   font-weight: ${props => props.$active ? '700' : '500'};
   border: none;
   border-radius: 6px;
-  padding: 6px 10px;
+  padding: 8px 10px;
   font-size: 0.8rem;
   text-align: left;
   cursor: pointer;
@@ -169,6 +225,7 @@ const QuestionSubItem = styled.button`
   align-items: center;
   gap: 8px;
   transition: all 0.2s ease;
+  min-height: 36px;
 
   &:hover {
     background: #f1f5f9;
@@ -187,9 +244,11 @@ const MainContentWrapper = styled.main`
   flex-direction: column;
   overflow: hidden;
   position: relative;
+  width: calc(100% - 340px);
 
   @media (max-width: 1024px) {
     margin-left: 0;
+    width: 100%;
   }
 `;
 
@@ -198,9 +257,14 @@ const ScrollableBody = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
   padding: 24px 32px 120px;
+  -webkit-overflow-scrolling: touch;
 
-  @media (max-width: 768px) {
-    padding: 16px 16px 100px;
+  @media (max-width: 1024px) {
+    padding: 20px 20px 110px;
+  }
+
+  @media (max-width: 640px) {
+    padding: 14px 12px 100px;
   }
 `;
 
@@ -208,20 +272,27 @@ const ScrollableBody = styled.div`
 const TopHeaderBar = styled.div`
   background: white;
   border-radius: 16px;
-  padding: 20px 24px;
-  margin-bottom: 24px;
+  padding: 18px 24px;
+  margin-bottom: 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 16px;
+
+  @media (max-width: 768px) {
+    padding: 14px 16px;
+    gap: 12px;
+  }
 `;
 
 const HeaderTitleGroup = styled.div`
   display: flex;
   align-items: center;
   gap: 14px;
+  flex: 1;
+  min-width: 240px;
 `;
 
 const DimensionIconCircle = styled.div`
@@ -235,19 +306,49 @@ const DimensionIconCircle = styled.div`
   justify-content: center;
   font-size: 1.3rem;
   box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+  flex-shrink: 0;
+
+  @media (max-width: 640px) {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+  }
 `;
 
 const DimensionHeading = styled.h1`
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   font-weight: 700;
   color: #1e293b;
-  margin: 0 0 4px 0;
+  margin: 0 0 2px 0;
+
+  @media (max-width: 640px) {
+    font-size: 1.15rem;
+  }
 `;
 
 const DimensionSubHeading = styled.p`
-  font-size: 0.875rem;
+  font-size: 0.825rem;
   color: #64748b;
   margin: 0;
+  line-height: 1.3;
+`;
+
+const MobileDimensionDrawerButton = styled.button`
+  display: none;
+
+  @media (max-width: 1024px) {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #ffefe9;
+    color: #ff6b35;
+    border: 1px solid #ffcca3;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
 `;
 
 const TopNavFilters = styled.div`
@@ -255,6 +356,13 @@ const TopNavFilters = styled.div`
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
+  width: 100%;
+  justify-content: space-between;
+
+  @media (min-width: 769px) {
+    width: auto;
+    justify-content: flex-end;
+  }
 `;
 
 const FilterPillGroup = styled.div`
@@ -277,10 +385,19 @@ const FilterPill = styled.button`
   cursor: pointer;
 `;
 
-const QuestionNumberRow = styled.div`
+const QuestionNumberScrollWrap = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  overflow-x: auto;
+  max-width: 100%;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const QuestionCircle = styled.button`
@@ -301,6 +418,7 @@ const QuestionCircle = styled.button`
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 
   &:hover {
     transform: scale(1.1);
@@ -317,20 +435,30 @@ const AutoSaveBadge = styled.div`
 `;
 
 /* =========================================================
-   QUESTION CARD WITH 5-COLUMN PERSPECTIVES GRID
+   QUESTION CARD WITH RESPONSIVE 5-COLUMN PERSPECTIVES GRID
    ========================================================= */
 const QuestionContainerCard = styled(motion.div)`
   background: white;
   border-radius: 20px;
-  padding: 36px 32px;
+  padding: 32px 28px;
   margin-bottom: 24px;
   box-shadow: 0 6px 30px rgba(0, 0, 0, 0.06);
+
+  @media (max-width: 768px) {
+    padding: 20px 16px;
+    border-radius: 16px;
+  }
 `;
 
 const QuestionTitleArea = styled.div`
   text-align: center;
   max-width: 900px;
-  margin: 0 auto 32px;
+  margin: 0 auto 28px;
+
+  @media (max-width: 768px) {
+    text-align: left;
+    margin-bottom: 20px;
+  }
 `;
 
 const QuestionNumberTag = styled.div`
@@ -343,42 +471,48 @@ const QuestionNumberTag = styled.div`
 `;
 
 const QuestionPromptText = styled.h2`
-  font-size: 1.45rem;
+  font-size: 1.35rem;
   font-weight: 700;
   color: #1e293b;
   line-height: 1.4;
   margin-bottom: 12px;
+
+  @media (max-width: 640px) {
+    font-size: 1.15rem;
+  }
 `;
 
 const QuestionGuidance = styled.div`
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   color: #64748b;
   background: #f8fafc;
   border-left: 3px solid #ff6b35;
-  padding: 10px 16px;
+  padding: 10px 14px;
   border-radius: 6px;
   display: inline-block;
   text-align: left;
+  line-height: 1.45;
 `;
 
-/* 5-Column Grid Layout */
+/* Responsive Multi-Viewport Grid */
 const PerspectivesGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  gap: 18px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
 
-  @media (max-width: 1560px) {
-    grid-template-columns: repeat(5, minmax(210px, 1fr));
-    overflow-x: auto;
-    padding-bottom: 12px;
+  @media (max-width: 1400px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
   }
 
-  @media (max-width: 1200px) {
-    grid-template-columns: 1fr 1fr;
+  @media (max-width: 992px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 640px) {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
 `;
 
@@ -389,14 +523,14 @@ const PerspectiveColumn = styled.div`
 `;
 
 const PerspectiveHeader = styled.div`
-  font-size: 0.95rem;
+  font-size: 0.925rem;
   font-weight: 700;
   color: #1e293b;
   text-align: center;
   padding: 10px 12px;
   background: #f8fafc;
   border-radius: 10px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -407,7 +541,7 @@ const PerspectiveHeader = styled.div`
 const OptionsStack = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   flex: 1;
 `;
 
@@ -415,13 +549,14 @@ const MaturityOptionCard = styled.button`
   background: ${props => props.$selected ? '#fff7ed' : '#ffffff'};
   border: 2px solid ${props => props.$selected ? '#ff6b35' : '#e2e8f0'};
   border-radius: 12px;
-  padding: 14px 12px;
+  padding: 12px 12px;
   text-align: left;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
+  min-height: 48px;
   box-shadow: ${props => props.$selected ? '0 4px 12px rgba(255, 107, 53, 0.15)' : 'none'};
 
   &:hover {
@@ -431,7 +566,7 @@ const MaturityOptionCard = styled.button`
 `;
 
 const OptionStageTag = styled.span`
-  font-size: 0.75rem;
+  font-size: 0.725rem;
   font-weight: 800;
   color: ${props => props.$selected ? '#ff6b35' : '#64748b'};
   text-transform: uppercase;
@@ -439,8 +574,8 @@ const OptionStageTag = styled.span`
 `;
 
 const OptionText = styled.span`
-  font-size: 0.85rem;
-  line-height: 1.45;
+  font-size: 0.825rem;
+  line-height: 1.4;
   color: ${props => props.$selected ? '#1e293b' : '#475569'};
   font-weight: ${props => props.$selected ? '600' : '400'};
 `;
@@ -450,24 +585,28 @@ const PainCheckboxCard = styled.label`
   background: ${props => props.$checked ? '#fef2f2' : '#ffffff'};
   border: 1.5px solid ${props => props.$checked ? '#ef4444' : '#e2e8f0'};
   border-radius: 10px;
-  padding: 12px 14px;
+  padding: 10px 12px;
   margin-bottom: 8px;
   display: flex;
   align-items: flex-start;
   gap: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
+  min-height: 44px;
 
   input {
     margin-top: 3px;
     accent-color: #ef4444;
     cursor: pointer;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
   }
 
   span {
-    font-size: 0.85rem;
+    font-size: 0.825rem;
     color: ${props => props.$checked ? '#991b1b' : '#334155'};
-    line-height: 1.4;
+    line-height: 1.35;
     font-weight: ${props => props.$checked ? '600' : '400'};
   }
 
@@ -480,16 +619,17 @@ const PainCheckboxCard = styled.label`
 const NotesArea = styled.textarea`
   width: 100%;
   flex: 1;
-  min-height: 260px;
+  min-height: 220px;
   border: 1.5px solid #cbd5e1;
   border-radius: 12px;
-  padding: 14px;
+  padding: 12px;
   font-family: inherit;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   color: #1e293b;
-  line-height: 1.6;
+  line-height: 1.5;
   resize: vertical;
   background: #ffffff;
+  box-sizing: border-box;
 
   &:focus {
     outline: none;
@@ -512,25 +652,36 @@ const StickyBottomBar = styled.div`
   right: 0;
   background: white;
   border-top: 1px solid #e2e8f0;
-  padding: 16px 36px;
+  padding: 14px 28px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   z-index: 40;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+
+  @media (max-width: 640px) {
+    padding: 12px 16px;
+  }
 `;
 
 const NavActionButton = styled.button`
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  padding: 12px 24px;
-  border-radius: 12px;
+  padding: 10px 20px;
+  border-radius: 10px;
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s ease;
   border: none;
+  min-height: 44px;
+
+  @media (max-width: 640px) {
+    padding: 10px 14px;
+    font-size: 0.85rem;
+  }
 `;
 
 const BackButton = styled(NavActionButton)`
@@ -577,6 +728,7 @@ const DynamicAssessmentRunner = () => {
   const [activeQIdx, setActiveQIdx] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [savedStatus, setSavedStatus] = useState('saved');
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -737,77 +889,117 @@ const DynamicAssessmentRunner = () => {
 
   const isLastQuestion = activeDimIdx === dimensions.length - 1 && activeQIdx === questions.length - 1;
 
+  const renderNavContent = () => (
+    <>
+      <SidebarHeader>
+        <OrgTitleRow>
+          <OrgName title={instance?.customerName || 'Organization'}>
+            {instance?.customerName || 'Assessment'}
+          </OrgName>
+          <span style={{ fontSize: '0.75rem', background: '#e0f2fe', color: '#0369a1', padding: '3px 8px', borderRadius: '12px', fontWeight: '700' }}>
+            {Math.round((totalAnswered / Math.max(1, totalQuestions)) * 100)}%
+          </span>
+        </OrgTitleRow>
+        <OrgMeta>
+          {dimensions.length} dimensions • {totalAnswered} of {totalQuestions} completed
+        </OrgMeta>
+      </SidebarHeader>
+
+      <SidebarNavList>
+        {dimensions.map((dim, dIdx) => {
+          const dimQuestions = dim.questions || [];
+          const dimAnswered = dimQuestions.filter(q => responses[q.id] !== undefined).length;
+          const isCompleted = dimAnswered === dimQuestions.length && dimQuestions.length > 0;
+          const isDimActive = dIdx === activeDimIdx;
+
+          return (
+            <DimensionNavItem key={dim.id || dIdx} $active={isDimActive}>
+              <DimensionNavHeader onClick={() => {
+                setActiveDimIdx(dIdx);
+                setActiveQIdx(0);
+                setIsMobileDrawerOpen(false);
+              }}>
+                <DimNavLeft>
+                  <StatusDot $completed={isCompleted}>
+                    {isCompleted ? '✓' : `${dimAnswered}/${dimQuestions.length}`}
+                  </StatusDot>
+                  <DimNavName $active={isDimActive}>{dim.name}</DimNavName>
+                </DimNavLeft>
+                {isDimActive ? <FiChevronDown color="#ff6b35" /> : <FiChevronRight color="#94a3b8" />}
+              </DimensionNavHeader>
+
+              {isDimActive && (
+                <QuestionsSubList>
+                  {dimQuestions.map((q, qSubIdx) => {
+                    const isQActive = qSubIdx === activeQIdx;
+                    const isQAnswered = responses[q.id] !== undefined;
+
+                    return (
+                      <QuestionSubItem
+                        key={q.id || qSubIdx}
+                        $active={isQActive}
+                        onClick={() => {
+                          setActiveQIdx(qSubIdx);
+                          setIsMobileDrawerOpen(false);
+                        }}
+                      >
+                        <span style={{ color: isQAnswered ? '#10b981' : '#94a3b8' }}>
+                          {isQAnswered ? '●' : '○'}
+                        </span>
+                        <span>Q{qSubIdx + 1}: {q.text.substring(0, 24)}...</span>
+                      </QuestionSubItem>
+                    );
+                  })}
+                </QuestionsSubList>
+              )}
+            </DimensionNavItem>
+          );
+        })}
+      </SidebarNavList>
+    </>
+  );
+
   return (
     <Container>
-      {/* 1. LEFT NAVIGATION PANEL */}
-      <Sidebar>
-        <SidebarHeader>
-          <OrgTitleRow>
-            <OrgName title={instance?.customerName || 'Organization'}>
-              {instance?.customerName || 'Assessment'}
-            </OrgName>
-            <span style={{ fontSize: '0.75rem', background: '#e0f2fe', color: '#0369a1', padding: '3px 8px', borderRadius: '12px', fontWeight: '700' }}>
-              {Math.round((totalAnswered / Math.max(1, totalQuestions)) * 100)}%
-            </span>
-          </OrgTitleRow>
-          <OrgMeta>
-            {dimensions.length} dimensions • {totalAnswered} of {totalQuestions} completed
-          </OrgMeta>
-        </SidebarHeader>
+      {/* 1. DESKTOP LEFT SIDEBAR */}
+      <DesktopSidebar>
+        {renderNavContent()}
+      </DesktopSidebar>
 
-        <SidebarNavList>
-          {dimensions.map((dim, dIdx) => {
-            const dimQuestions = dim.questions || [];
-            const dimAnswered = dimQuestions.filter(q => responses[q.id] !== undefined).length;
-            const isCompleted = dimAnswered === dimQuestions.length && dimQuestions.length > 0;
-            const isDimActive = dIdx === activeDimIdx;
+      {/* 2. MOBILE / TABLET SLIDE-OVER DRAWER */}
+      <AnimatePresence>
+        {isMobileDrawerOpen && (
+          <>
+            <MobileDrawerOverlay 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileDrawerOpen(false)}
+            />
+            <MobileDrawerContent
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            >
+              <DrawerCloseHeader>
+                <div style={{ fontWeight: 700, color: '#1e293b', fontSize: '1rem' }}>
+                  Assessment Dimensions
+                </div>
+                <DrawerCloseButton onClick={() => setIsMobileDrawerOpen(false)}>
+                  <FiX size={18} />
+                </DrawerCloseButton>
+              </DrawerCloseHeader>
+              {renderNavContent()}
+            </MobileDrawerContent>
+          </>
+        )}
+      </AnimatePresence>
 
-            return (
-              <DimensionNavItem key={dim.id || dIdx} $active={isDimActive}>
-                <DimensionNavHeader onClick={() => {
-                  setActiveDimIdx(dIdx);
-                  setActiveQIdx(0);
-                }}>
-                  <DimNavLeft>
-                    <StatusDot $completed={isCompleted}>
-                      {isCompleted ? '✓' : `${dimAnswered}/${dimQuestions.length}`}
-                    </StatusDot>
-                    <DimNavName $active={isDimActive}>{dim.name}</DimNavName>
-                  </DimNavLeft>
-                  {isDimActive ? <FiChevronDown color="#ff6b35" /> : <FiChevronRight color="#94a3b8" />}
-                </DimensionNavHeader>
-
-                {isDimActive && (
-                  <QuestionsSubList>
-                    {dimQuestions.map((q, qSubIdx) => {
-                      const isQActive = qSubIdx === activeQIdx;
-                      const isQAnswered = responses[q.id] !== undefined;
-
-                      return (
-                        <QuestionSubItem
-                          key={q.id || qSubIdx}
-                          $active={isQActive}
-                          onClick={() => setActiveQIdx(qSubIdx)}
-                        >
-                          <span style={{ color: isQAnswered ? '#10b981' : '#94a3b8' }}>
-                            {isQAnswered ? '●' : '○'}
-                          </span>
-                          <span>Q{qSubIdx + 1}: {q.text.substring(0, 24)}...</span>
-                        </QuestionSubItem>
-                      );
-                    })}
-                  </QuestionsSubList>
-                )}
-              </DimensionNavItem>
-            );
-          })}
-        </SidebarNavList>
-      </Sidebar>
-
-      {/* 2. MAIN CONTENT WRAPPER */}
+      {/* 3. MAIN CONTENT WRAPPER */}
       <MainContentWrapper>
         <ScrollableBody>
-          {/* Top Progress & Breadcrumb Section */}
+          {/* Top Progress & Header Bar */}
           <TopHeaderBar>
             <HeaderTitleGroup>
               <DimensionIconCircle>
@@ -819,13 +1011,17 @@ const DynamicAssessmentRunner = () => {
               </div>
             </HeaderTitleGroup>
 
+            <MobileDimensionDrawerButton onClick={() => setIsMobileDrawerOpen(true)}>
+              <FiLayers /> Dimensions ({activeDimIdx + 1}/{dimensions.length})
+            </MobileDimensionDrawerButton>
+
             <TopNavFilters>
               <FilterPillGroup>
                 <FilterPill $active={true}>All {questions.length}</FilterPill>
                 <FilterPill $active={false}>Done {questions.filter(q => responses[q.id] !== undefined).length}</FilterPill>
               </FilterPillGroup>
 
-              <QuestionNumberRow>
+              <QuestionNumberScrollWrap>
                 {questions.map((q, idx) => (
                   <QuestionCircle
                     key={q.id || idx}
@@ -836,7 +1032,7 @@ const DynamicAssessmentRunner = () => {
                     {idx + 1}
                   </QuestionCircle>
                 ))}
-              </QuestionNumberRow>
+              </QuestionNumberScrollWrap>
 
               <AutoSaveBadge>
                 <FiCheckCircle /> {savedStatus === 'saving' ? 'Saving...' : 'Saved'}
@@ -844,7 +1040,7 @@ const DynamicAssessmentRunner = () => {
             </TopNavFilters>
           </TopHeaderBar>
 
-          {/* 3. QUESTION CARD (5-COLUMN PERSPECTIVES GRID) */}
+          {/* 4. QUESTION CARD (RESPONSIVE 5-COLUMN PERSPECTIVES GRID) */}
           {currentQ && (
             <QuestionContainerCard
               key={currentQ.id}
@@ -991,13 +1187,13 @@ const DynamicAssessmentRunner = () => {
           )}
         </ScrollableBody>
 
-        {/* 4. BOTTOM STICKY ACTION BAR */}
+        {/* 5. BOTTOM STICKY ACTION BAR */}
         <StickyBottomBar>
           <BackButton onClick={prevQuestion}>
             <FiArrowLeft /> Back
           </BackButton>
 
-          <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
             {!isLastQuestion ? (
               <NextButton onClick={nextQuestion}>
                 Next <FiArrowRight />

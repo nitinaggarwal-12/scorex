@@ -53,6 +53,12 @@ const PromoteBanner = styled.div`
   justify-content: space-between;
   gap: 20px;
   flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    padding: 20px 16px;
+    flex-direction: column;
+    align-items: stretch;
+  }
 `;
 
 const PromoteInfo = styled.div`
@@ -87,11 +93,17 @@ const PromoteBtn = styled.button`
   transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  min-height: 48px;
 
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 12px 25px rgba(99, 102, 241, 0.6);
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
   }
 `;
 
@@ -103,6 +115,11 @@ const HeroCard = styled.div`
   padding: 40px;
   margin-bottom: 32px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+
+  @media (max-width: 768px) {
+    padding: 20px 16px;
+    border-radius: 18px;
+  }
 `;
 
 const HeroHeader = styled.div`
@@ -112,6 +129,11 @@ const HeroHeader = styled.div`
   gap: 24px;
   flex-wrap: wrap;
   margin-bottom: 24px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 16px;
+  }
 `;
 
 const HeroBadge = styled.span`
@@ -133,6 +155,10 @@ const HeroTitle = styled.h1`
   font-weight: 800;
   color: #ffffff;
   margin-bottom: 8px;
+
+  @media (max-width: 768px) {
+    font-size: 1.75rem;
+  }
 `;
 
 const HeroMeta = styled.div`
@@ -161,6 +187,13 @@ const ScoreSection = styled.div`
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
   padding: 24px 32px;
+
+  @media (max-width: 768px) {
+    padding: 16px 20px;
+    width: 100%;
+    box-sizing: border-box;
+    justify-content: space-between;
+  }
 `;
 
 const ScoreBig = styled.div`
@@ -170,6 +203,10 @@ const ScoreBig = styled.div`
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   line-height: 1;
+
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
 `;
 
 const LevelBadge = styled.div`
@@ -187,6 +224,7 @@ const TwoColGrid = styled.div`
 
   @media (max-width: 992px) {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
 `;
 
@@ -196,6 +234,11 @@ const Card = styled.div`
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 24px;
   padding: 32px;
+
+  @media (max-width: 768px) {
+    padding: 20px 16px;
+    border-radius: 18px;
+  }
 `;
 
 const CardTitle = styled.h2`

@@ -92,6 +92,12 @@ const PromptCard = styled.div`
   padding: 36px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   margin-bottom: 40px;
+
+  @media (max-width: 768px) {
+    padding: 20px 16px;
+    border-radius: 18px;
+    margin-bottom: 24px;
+  }
 `;
 
 const TextArea = styled.textarea`
@@ -100,13 +106,14 @@ const TextArea = styled.textarea`
   background: rgba(15, 23, 42, 0.8);
   border: 1px solid rgba(99, 102, 241, 0.3);
   border-radius: 16px;
-  padding: 20px;
+  padding: 18px;
   color: #f8fafc;
-  font-size: 1.1rem;
+  font-size: 1rem;
   line-height: 1.6;
   resize: vertical;
   transition: all 0.2s ease;
   font-family: inherit;
+  box-sizing: border-box;
 
   &:focus {
     outline: none;
@@ -121,10 +128,14 @@ const TextArea = styled.textarea`
 
 const PresetGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 12px;
-  margin-top: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+  margin-top: 18px;
   margin-bottom: 24px;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const PresetChip = styled.button`
@@ -134,12 +145,13 @@ const PresetChip = styled.button`
   background: rgba(15, 23, 42, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
-  padding: 12px 16px;
+  padding: 12px 14px;
   color: #cbd5e1;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   text-align: left;
   cursor: pointer;
   transition: all 0.2s ease;
+  min-height: 48px;
 
   &:hover {
     background: rgba(99, 102, 241, 0.15);
@@ -159,44 +171,64 @@ const ControlsRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 16px;
   flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
 `;
 
 const MetaInputs = styled.div`
   display: flex;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
+  flex: 1;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    width: 100%;
+  }
 `;
 
 const Input = styled.input`
   background: rgba(15, 23, 42, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  padding: 10px 16px;
+  padding: 12px 16px;
   color: #f8fafc;
   font-size: 0.9rem;
+  box-sizing: border-box;
+  flex: 1;
+  min-height: 44px;
 
   &:focus {
     outline: none;
     border-color: #818cf8;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
   }
 `;
 
 const GenerateButton = styled.button`
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
   color: white;
   border: none;
   border-radius: 14px;
-  padding: 14px 32px;
-  font-size: 1.05rem;
+  padding: 14px 28px;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
   transition: all 0.2s ease;
+  min-height: 48px;
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
@@ -207,6 +239,10 @@ const GenerateButton = styled.button`
     opacity: 0.6;
     cursor: not-allowed;
   }
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 const FrameworkPreview = styled.div`
@@ -214,8 +250,13 @@ const FrameworkPreview = styled.div`
   backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 24px;
-  padding: 40px;
+  padding: 36px;
   margin-bottom: 40px;
+
+  @media (max-width: 768px) {
+    padding: 20px 16px;
+    border-radius: 18px;
+  }
 `;
 
 const FrameworkHeader = styled.div`

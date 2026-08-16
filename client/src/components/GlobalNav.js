@@ -68,11 +68,7 @@ const TopNav = styled.div`
     gap: 16px;
   }
 
-  @media (max-width: 768px) {
-    gap: 12px;
-  }
-
-  @media (max-width: 640px) {
+  @media (max-width: 1024px) {
     display: none;
   }
 `;
@@ -82,7 +78,7 @@ const ActionButtons = styled.div`
   align-items: center;
   gap: 12px;
   
-  @media (max-width: 640px) {
+  @media (max-width: 1024px) {
     display: none;
   }
 `;
@@ -96,7 +92,7 @@ const MobileMenuButton = styled.button`
   padding: 8px;
   font-size: 24px;
   
-  @media (max-width: 640px) {
+  @media (max-width: 1024px) {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -110,7 +106,7 @@ const MobileMenuButton = styled.button`
 const MobileMenu = styled.div`
   display: none;
   
-  @media (max-width: 640px) {
+  @media (max-width: 1024px) {
     display: ${props => props.$isOpen ? 'flex' : 'none'};
     position: fixed;
     top: 60px;
