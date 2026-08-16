@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { FiMenu, FiX, FiPlay, FiList, FiLogIn, FiLogOut, FiUser, FiFileText, FiUsers, FiSend, FiChevronDown, FiLock, FiUserPlus, FiMail, FiMessageSquare, FiSettings, FiBook, FiMonitor, FiCpu, FiAward, FiLayers } from 'react-icons/fi';
+import { FiMenu, FiX, FiPlay, FiList, FiLogIn, FiLogOut, FiUser, FiFileText, FiUsers, FiSend, FiChevronDown, FiLock, FiUserPlus, FiMail, FiMessageSquare, FiSettings, FiBook, FiMonitor, FiCpu, FiAward, FiLayers, FiBarChart2 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import * as assessmentService from '../services/assessmentService';
@@ -398,6 +398,85 @@ const DropdownDivider = styled.div`
   margin: 8px 0;
 `;
 
+const TrySampleDropdownContainer = styled.div`
+  position: relative;
+  display: inline-block;
+`;
+
+const TrySampleMenu = styled.div`
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.15);
+  min-width: 340px;
+  padding: 8px 0;
+  z-index: 1000;
+  opacity: ${props => props.$isOpen ? 1 : 0};
+  visibility: ${props => props.$isOpen ? 'visible' : 'hidden'};
+  transform: translateY(${props => props.$isOpen ? '0' : '-10px'});
+  transition: all 0.25s ease;
+`;
+
+const TrySampleHeader = styled.div`
+  padding: 10px 18px 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 4px;
+`;
+
+const TrySampleOption = styled.button`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 10px 18px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: #f8fafc;
+  }
+
+  strong {
+    font-size: 0.88rem;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2px;
+  }
+
+  span {
+    font-size: 0.75rem;
+    color: #64748b;
+  }
+`;
+
+const MobileSubLink = styled.button`
+  background: none;
+  border: none;
+  color: #475569;
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 8px 16px;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+
+  &:hover {
+    color: #3b82f6;
+  }
+`;
+
 const DropdownEmailLink = styled.button`
   display: flex;
   align-items: center;
@@ -431,11 +510,13 @@ const GlobalNav = () => {
   const [assessmentsDropdownOpen, setAssessmentsDropdownOpen] = useState(false);
   const [assignmentsDropdownOpen, setAssignmentsDropdownOpen] = useState(false);
   const [adminDropdownOpen, setAdminDropdownOpen] = useState(false);
+  const [trySampleDropdownOpen, setTrySampleDropdownOpen] = useState(false);
+  const [mobileTrySampleOpen, setMobileTrySampleOpen] = useState(false);
   const [promotedTypes, setPromotedTypes] = useState([]);
 
   const fetchPromotedTypes = async () => {
     try {
-      const types = await dynamicAssessmentService.getAssessmentTypes(true);
+      const types = await dynamicAssessmentService.getAssessmentTypes(false);
       setPromotedTypes(types || []);
     } catch (e) {
       console.warn('Failed to load promoted assessment types:', e);
@@ -461,6 +542,7 @@ const GlobalNav = () => {
         setAssessmentsDropdownOpen(false);
         setAssignmentsDropdownOpen(false);
         setAdminDropdownOpen(false);
+        setTrySampleDropdownOpen(false);
       }
     };
     document.addEventListener('click', handleClickOutside);
@@ -476,7 +558,6 @@ const GlobalNav = () => {
 
   const handleLoginSuccess = (user) => {
     setCurrentUser(user);
-    // Redirect based on role
     if (user.role === 'consumer') {
       navigate('/my-assessments');
     } else if (user.role === 'author' || user.role === 'admin') {
@@ -486,15 +567,14 @@ const GlobalNav = () => {
 
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
+    setMobileTrySampleOpen(false);
   };
 
   const scrollToSection = (sectionId) => {
     closeMobileMenu();
-    // If not on home page, navigate to home first with scroll state
     if (location.pathname !== '/') {
       navigate('/', { state: { scrollTo: sectionId } });
     } else {
-      // Already on home page, just scroll
       const element = document.getElementById(sectionId);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -513,36 +593,44 @@ const GlobalNav = () => {
     navigate(path);
   };
 
-  const handleTrySample = async () => {
+  const handleTrySampleCore = async () => {
     closeMobileMenu();
+    setTrySampleDropdownOpen(false);
     try {
-      toast.loading('Generating sample assessment...', { id: 'sample-assessment' });
+      toast.loading('Generating Enterprise Data & AI sample...', { id: 'sample-assessment' });
       const result = await assessmentService.generateSampleAssessment();
-      
-      console.log('[GlobalNav] Sample assessment result:', result);
-      
-      // Extract assessmentId from various possible response structures
       const assessmentId = result?.assessment?.id || result?.data?.assessmentId || result?.assessmentId || result?.id;
-      
-      if (!assessmentId) {
-        console.error('[GlobalNav] No assessment ID found in result:', result);
-        throw new Error('No assessment ID returned from server');
-      }
-      
-      console.log('[GlobalNav] Assessment ID:', assessmentId);
-      
-      
-      // Longer delay to ensure assessment is fully saved
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Navigate to the first question page
-      console.log('[GlobalNav] Navigating to:', `/assessment/${assessmentId}/platform_governance`);
+      if (!assessmentId) throw new Error('No assessment ID returned from server');
+      await new Promise(resolve => setTimeout(resolve, 800));
       navigate(`/assessment/${assessmentId}/platform_governance`);
     } catch (error) {
       console.error('[GlobalNav] Error creating sample assessment:', error);
-      
+      toast.error('Failed to create sample assessment');
     }
   };
+
+  const handleTrySampleGenAI = () => {
+    closeMobileMenu();
+    setTrySampleDropdownOpen(false);
+    toast.success('Loading Gen AI Readiness sample assessment...');
+    navigate('/genai-readiness');
+  };
+
+  const handleTrySampleDynamic = async (typeKey, title) => {
+    closeMobileMenu();
+    setTrySampleDropdownOpen(false);
+    try {
+      toast.loading(`Spinning up sample for "${title}"...`, { id: 'sample-assessment' });
+      const result = await dynamicAssessmentService.generateSampleForType(typeKey);
+      toast.success(`"${title}" sample loaded!`, { id: 'sample-assessment' });
+      navigate(`/assessments/run/instance/${result.instanceId}`);
+    } catch (error) {
+      console.error('[GlobalNav] Error creating dynamic sample:', error);
+      toast.error('Failed to create dynamic sample');
+    }
+  };
+
+  const handleTrySample = handleTrySampleCore;
 
   const handleExploreAsGuest = (redirectPath = '/insights-dashboard') => {
     closeMobileMenu();
@@ -800,10 +888,48 @@ const GlobalNav = () => {
                 <SecondaryCTAButton onClick={() => navigate('/insights-dashboard')}>
                   Dashboard
                 </SecondaryCTAButton>
-                <SecondaryCTAButton onClick={handleTrySample}>
-                  <FiPlay size={14} />
-                  Try Sample
-                </SecondaryCTAButton>
+
+                {/* Try Sample Dropdown */}
+                <TrySampleDropdownContainer 
+                  className="dropdown-container"
+                  onMouseEnter={() => setTrySampleDropdownOpen(true)}
+                  onMouseLeave={() => setTrySampleDropdownOpen(false)}
+                >
+                  <SecondaryCTAButton onClick={() => setTrySampleDropdownOpen(!trySampleDropdownOpen)}>
+                    <FiPlay size={14} />
+                    Try Sample
+                    <FiChevronDown size={14} className="chevron" style={{ marginLeft: '-2px', transform: trySampleDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                  </SecondaryCTAButton>
+                  
+                  <TrySampleMenu $isOpen={trySampleDropdownOpen}>
+                    <TrySampleHeader>Select Sample Assessment</TrySampleHeader>
+                    <TrySampleOption onClick={handleTrySampleCore}>
+                      <strong><FiBarChart2 style={{ color: '#ff6b35' }} /> Enterprise Data & AI Maturity</strong>
+                      <span>ConnectPlus Telecom • 6-Pillar Full Framework</span>
+                    </TrySampleOption>
+                    <TrySampleOption onClick={handleTrySampleGenAI}>
+                      <strong><FiCpu style={{ color: '#3b82f6' }} /> Gen AI Enterprise Readiness</strong>
+                      <span>Global Retail Cloud AI • 6 Dimensions</span>
+                    </TrySampleOption>
+                    {promotedTypes.map((type) => (
+                      <TrySampleOption 
+                        key={type.id || type.typeKey} 
+                        onClick={() => handleTrySampleDynamic(type.typeKey, type.title)}
+                      >
+                        <strong>
+                          <FiAward style={{ color: type.color || '#8b5cf6' }} /> 
+                          {type.title}
+                        </strong>
+                        <span>{type.subtitle || 'Autopopulated sample evaluation with AI report'}</span>
+                      </TrySampleOption>
+                    ))}
+                    <DropdownDivider />
+                    <TrySampleOption onClick={() => { setTrySampleDropdownOpen(false); navigate('/assessments/custom-hub'); }}>
+                      <strong style={{ color: '#8b5cf6' }}><FiLayers /> Browse All Assessment Templates →</strong>
+                    </TrySampleOption>
+                  </TrySampleMenu>
+                </TrySampleDropdownContainer>
+
                 <CTAButton onClick={() => navigate('/start')}>
                   Start Assessment →
                 </CTAButton>
@@ -826,15 +952,6 @@ const GlobalNav = () => {
                       <FiPlay />
                       Data & AI Maturity Assessment
                     </DropdownItem>
-                    {currentUser.role !== 'consumer' && (
-                      <DropdownItem onClick={() => {
-                        handleTrySample();
-                        setAssessmentsDropdownOpen(false);
-                      }}>
-                        <FiPlay />
-                        Try Sample
-                      </DropdownItem>
-                    )}
                     <DropdownItem onClick={() => {
                       navigate('/genai-readiness');
                       setAssessmentsDropdownOpen(false);
@@ -843,23 +960,20 @@ const GlobalNav = () => {
                       Gen AI Readiness Assessment
                     </DropdownItem>
 
-                    {/* Dynamically Promoted Custom Assessment Types */}
-                    {promotedTypes.map((type) => (
-                      <DropdownItem 
-                        key={type.id || type.typeKey}
-                        onClick={() => {
-                          navigate(`/assessments/ai-generator`);
-                          setAssessmentsDropdownOpen(false);
-                        }}
-                      >
-                        <FiAward style={{ color: type.color || '#818cf8' }} />
-                        {type.title}
-                      </DropdownItem>
-                    ))}
-
                     <DropdownDivider />
                     <DropdownItem 
                       style={{ color: '#8b5cf6', fontWeight: '700' }}
+                      onClick={() => {
+                        navigate('/assessments/custom-hub');
+                        setAssessmentsDropdownOpen(false);
+                      }}
+                    >
+                      <FiLayers style={{ color: '#8b5cf6' }} />
+                      📋 Assessment Catalog & Templates
+                    </DropdownItem>
+
+                    <DropdownItem 
+                      style={{ color: '#a855f7', fontWeight: '600' }}
                       onClick={() => {
                         navigate('/assessments/ai-generator');
                         setAssessmentsDropdownOpen(false);
@@ -868,6 +982,20 @@ const GlobalNav = () => {
                       <HiSparkles style={{ color: '#a855f7' }} />
                       ✨ AI Assessment Generator
                     </DropdownItem>
+
+                    {/* Dynamically Promoted Custom Assessment Types */}
+                    {promotedTypes.filter(t => t.isPromoted).map((type) => (
+                      <DropdownItem 
+                        key={type.id || type.typeKey}
+                        onClick={() => {
+                          navigate(`/assessments/run/${type.typeKey}`);
+                          setAssessmentsDropdownOpen(false);
+                        }}
+                      >
+                        <FiAward style={{ color: type.color || '#818cf8' }} />
+                        {type.title}
+                      </DropdownItem>
+                    ))}
 
                     <DropdownDivider />
                     <DropdownItem onClick={() => {
@@ -883,13 +1011,6 @@ const GlobalNav = () => {
                     }}>
                       <FiList />
                       All Assessments
-                    </DropdownItem>
-                    <DropdownItem onClick={() => {
-                      navigate('/assessments/custom-hub');
-                      setAssessmentsDropdownOpen(false);
-                    }}>
-                      <FiLayers />
-                      Assessment Types & Portfolio
                     </DropdownItem>
                     {currentUser.role === 'admin' && !currentUser.testMode && (
                       <DropdownItem onClick={() => {
@@ -1087,10 +1208,48 @@ const GlobalNav = () => {
                 <SecondaryCTAButton onClick={() => handleExploreAsGuest('/dashboard')}>
                   Dashboard
                 </SecondaryCTAButton>
-                <SecondaryCTAButton onClick={handleTrySample}>
-                  <FiPlay size={14} />
-                  Try Sample
-                </SecondaryCTAButton>
+
+                {/* Try Sample Dropdown (Guest View) */}
+                <TrySampleDropdownContainer 
+                  className="dropdown-container"
+                  onMouseEnter={() => setTrySampleDropdownOpen(true)}
+                  onMouseLeave={() => setTrySampleDropdownOpen(false)}
+                >
+                  <SecondaryCTAButton onClick={() => setTrySampleDropdownOpen(!trySampleDropdownOpen)}>
+                    <FiPlay size={14} />
+                    Try Sample
+                    <FiChevronDown size={14} className="chevron" style={{ marginLeft: '-2px', transform: trySampleDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                  </SecondaryCTAButton>
+                  
+                  <TrySampleMenu $isOpen={trySampleDropdownOpen}>
+                    <TrySampleHeader>Select Sample Assessment</TrySampleHeader>
+                    <TrySampleOption onClick={handleTrySampleCore}>
+                      <strong><FiBarChart2 style={{ color: '#ff6b35' }} /> Enterprise Data & AI Maturity</strong>
+                      <span>ConnectPlus Telecom • 6-Pillar Full Framework</span>
+                    </TrySampleOption>
+                    <TrySampleOption onClick={handleTrySampleGenAI}>
+                      <strong><FiCpu style={{ color: '#3b82f6' }} /> Gen AI Enterprise Readiness</strong>
+                      <span>Global Retail Cloud AI • 6 Dimensions</span>
+                    </TrySampleOption>
+                    {promotedTypes.map((type) => (
+                      <TrySampleOption 
+                        key={type.id || type.typeKey} 
+                        onClick={() => handleTrySampleDynamic(type.typeKey, type.title)}
+                      >
+                        <strong>
+                          <FiAward style={{ color: type.color || '#8b5cf6' }} /> 
+                          {type.title}
+                        </strong>
+                        <span>{type.subtitle || 'Autopopulated sample evaluation with AI report'}</span>
+                      </TrySampleOption>
+                    ))}
+                    <DropdownDivider />
+                    <TrySampleOption onClick={() => { setTrySampleDropdownOpen(false); navigate('/assessments/custom-hub'); }}>
+                      <strong style={{ color: '#8b5cf6' }}><FiLayers /> Browse All Assessment Templates →</strong>
+                    </TrySampleOption>
+                  </TrySampleMenu>
+                </TrySampleDropdownContainer>
+
                 <SecondaryCTAButton onClick={() => handleExploreAsGuest('/start')}>
                   <FiUser size={14} />
                   Explore as Guest
@@ -1122,13 +1281,13 @@ const GlobalNav = () => {
         
         {currentUser ? (
           <>
+            <MobileSecondaryCTAButton onClick={() => handleNavigate('/assessments/custom-hub')}>
+              <FiLayers size={16} style={{ color: '#818cf8' }} />
+              Assessment Catalog & Templates
+            </MobileSecondaryCTAButton>
             <MobileSecondaryCTAButton onClick={() => handleNavigate('/assessments/ai-generator')}>
               <HiSparkles size={16} style={{ color: '#c084fc' }} />
               AI Assessment Generator
-            </MobileSecondaryCTAButton>
-            <MobileSecondaryCTAButton onClick={() => handleNavigate('/assessments/custom-hub')}>
-              <FiLayers size={16} />
-              Assessment Types & Portfolio
             </MobileSecondaryCTAButton>
             <MobileSecondaryCTAButton onClick={() => handleNavigate('/my-assessments')}>
               <FiFileText size={16} />
@@ -1143,10 +1302,22 @@ const GlobalNav = () => {
                 <MobileSecondaryCTAButton onClick={() => handleNavigate('/insights-dashboard')}>
                   Dashboard
                 </MobileSecondaryCTAButton>
-                <MobileSecondaryCTAButton onClick={handleTrySample}>
+                <MobileSecondaryCTAButton onClick={() => setMobileTrySampleOpen(!mobileTrySampleOpen)}>
                   <FiPlay size={16} />
-                  Try Sample
+                  Try Sample Assessments
+                  <FiChevronDown size={14} style={{ marginLeft: 'auto' }} />
                 </MobileSecondaryCTAButton>
+                {mobileTrySampleOpen && (
+                  <div style={{ background: '#f8fafc', padding: '8px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <MobileSubLink onClick={handleTrySampleCore}>• Enterprise Data & AI Maturity (ConnectPlus)</MobileSubLink>
+                    <MobileSubLink onClick={handleTrySampleGenAI}>• Gen AI Readiness (Global Retail)</MobileSubLink>
+                    {promotedTypes.map(t => (
+                      <MobileSubLink key={t.typeKey} onClick={() => handleTrySampleDynamic(t.typeKey, t.title)}>
+                        • {t.title}
+                      </MobileSubLink>
+                    ))}
+                  </div>
+                )}
               </>
             )}
             {(currentUser.role === 'admin' || currentUser.role === 'author') && (
@@ -1183,10 +1354,22 @@ const GlobalNav = () => {
             }}>
               Dashboard
             </MobileSecondaryCTAButton>
-            <MobileSecondaryCTAButton onClick={handleTrySample}>
+            <MobileSecondaryCTAButton onClick={() => setMobileTrySampleOpen(!mobileTrySampleOpen)}>
               <FiPlay size={16} />
-              Try Sample
+              Try Sample Assessments
+              <FiChevronDown size={14} style={{ marginLeft: 'auto' }} />
             </MobileSecondaryCTAButton>
+            {mobileTrySampleOpen && (
+              <div style={{ background: '#f8fafc', padding: '8px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <MobileSubLink onClick={handleTrySampleCore}>• Enterprise Data & AI Maturity (ConnectPlus)</MobileSubLink>
+                <MobileSubLink onClick={handleTrySampleGenAI}>• Gen AI Readiness (Global Retail)</MobileSubLink>
+                {promotedTypes.map(t => (
+                  <MobileSubLink key={t.typeKey} onClick={() => handleTrySampleDynamic(t.typeKey, t.title)}>
+                    • {t.title}
+                  </MobileSubLink>
+                ))}
+              </div>
+            )}
             <MobileSecondaryCTAButton onClick={() => {
               closeMobileMenu();
               handleExploreAsGuest('/start');

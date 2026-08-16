@@ -19,11 +19,11 @@ class DynamicAssessmentService {
   }
 
   /**
-   * Fetch all assessment types (templates)
+   * Fetch all assessment types (templates) with optional status filter
    */
-  async getAssessmentTypes(promotedOnly = false) {
+  async getAssessmentTypes(promotedOnly = false, status = null) {
     const response = await axios.get('/api/dynamic-assessments/types', {
-      params: { promotedOnly }
+      params: { promotedOnly, status }
     });
     return response.data?.types || [];
   }
@@ -45,6 +45,14 @@ class DynamicAssessmentService {
   }
 
   /**
+   * Update assessment type
+   */
+  async updateAssessmentType(id, updates) {
+    const response = await axios.put(`/api/dynamic-assessments/types/${id}`, updates);
+    return response.data;
+  }
+
+  /**
    * Toggle promotion status for an assessment type
    */
   async togglePromotion(id, isPromoted) {
@@ -60,6 +68,22 @@ class DynamicAssessmentService {
   async deleteAssessmentType(id) {
     const response = await axios.delete(`/api/dynamic-assessments/types/${id}`);
     return response.data;
+  }
+
+  /**
+   * Generate instant realistic sample assessment instance for an assessment type
+   */
+  async generateSampleForType(typeKey) {
+    const response = await axios.post(`/api/dynamic-assessments/types/${typeKey}/sample`);
+    return response.data;
+  }
+
+  /**
+   * Fetch sample assessment suite for "Try Sample" dropdown
+   */
+  async getSamplesList() {
+    const response = await axios.get('/api/dynamic-assessments/samples-list');
+    return response.data?.samples || [];
   }
 
   /**
@@ -97,6 +121,14 @@ class DynamicAssessmentService {
   }
 
   /**
+   * Delete dynamic assessment instance
+   */
+  async deleteInstance(id) {
+    const response = await axios.delete(`/api/dynamic-assessments/instances/${id}`);
+    return response.data;
+  }
+
+  /**
    * Trigger AI Executive Report Generation with Gemini 3.7
    */
   async generateReport(id) {
@@ -129,4 +161,5 @@ class DynamicAssessmentService {
   }
 }
 
-export default new DynamicAssessmentService();
+const dynamicAssessmentService = new DynamicAssessmentService();
+export default dynamicAssessmentService;

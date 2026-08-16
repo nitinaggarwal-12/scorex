@@ -562,6 +562,26 @@ const DynamicAssessmentGenerator = () => {
     }
   };
 
+  const handleTrySample = async () => {
+    if (!generatedFramework) return;
+    try {
+      toast.loading(`Spinning up sample for "${generatedFramework.title}"...`, { id: 'sample-run' });
+      const result = await dynamicAssessmentService.generateSampleForType(generatedFramework.typeKey);
+      toast.success('Sample assessment loaded!', { id: 'sample-run' });
+      navigate(`/assessments/run/instance/${result.instanceId}`);
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to generate sample assessment', { id: 'sample-run' });
+    }
+  };
+
+  const handleOpenStartModal = () => {
+    if (!customerName) setCustomerName('Enterprise Client Corp');
+    if (!useCase && generatedFramework) setUseCase(`${generatedFramework.title} Initiative`);
+    if (!contactEmail) setContactEmail('lead.evaluator@enterprise.com');
+    setIsModalOpen(true);
+  };
+
   return (
     <Container>
       <ContentWrapper>
@@ -634,6 +654,18 @@ const DynamicAssessmentGenerator = () => {
             transition={{ duration: 0.4 }}
           >
             <FrameworkPreview>
+              <div style={{ background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '12px', padding: '12px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+                <span style={{ color: '#6ee7b7', fontSize: '0.9rem', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                  ✓ Framework automatically saved to Assessment Catalog & Templates registry.
+                </span>
+                <button
+                  onClick={() => navigate('/assessments/custom-hub')}
+                  style={{ background: 'none', border: 'none', color: '#38bdf8', fontSize: '0.88rem', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                >
+                  View All Templates →
+                </button>
+              </div>
+
               <FrameworkHeader>
                 <FrameworkInfo>
                   <Badge style={{ background: 'rgba(56, 189, 248, 0.2)', borderColor: 'rgba(56, 189, 248, 0.4)', color: '#38bdf8' }}>
@@ -644,11 +676,14 @@ const DynamicAssessmentGenerator = () => {
                 </FrameworkInfo>
 
                 <ActionsGroup>
+                  <SecondaryButton onClick={handleTrySample}>
+                    🧪 Try Sample
+                  </SecondaryButton>
                   <SecondaryButton onClick={handlePromoteAsType}>
                     <FiAward />
-                    Promote to Assessment Type
+                    Pin to Nav Menu
                   </SecondaryButton>
-                  <PrimaryButton onClick={() => setIsModalOpen(true)}>
+                  <PrimaryButton onClick={handleOpenStartModal}>
                     <FiPlay />
                     Start Assessment Now
                   </PrimaryButton>

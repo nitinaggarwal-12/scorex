@@ -8,7 +8,7 @@ const dynamicEngine = require('../services/dynamicAssessmentEngine');
  * Powered by Google Gemini (gemini-3.7-flash)
  */
 
-// 1. AI-generate assessment framework from natural language prompt
+// 1. AI-generate assessment framework from natural language prompt and AUTO-PERSIST as template
 router.post('/generate-framework', async (req, res) => {
   try {
     const { prompt, industry, targetAudience, focusAreas } = req.body;
@@ -22,9 +22,27 @@ router.post('/generate-framework', async (req, res) => {
       focusAreas
     });
 
+    // Auto-persist into template registry as a draft
+    const savedType = await customAssessmentRepo.saveAssessmentType({
+      typeKey: framework.typeKey,
+      title: framework.title,
+      subtitle: framework.subtitle || (industry ? `Tailored for ${industry}` : ''),
+      description: framework.description,
+      icon: framework.icon || 'FiAward',
+      badge: framework.badge || 'AI Generated',
+      color: framework.color || '#8b5cf6',
+      framework,
+      status: 'draft',
+      isPublished: true,
+      isPromoted: false,
+      createdBy: req.body.createdBy || 'ai-generator'
+    });
+
     res.json({
       success: true,
-      framework
+      framework,
+      type: savedType,
+      message: 'Assessment framework generated and saved to Templates Catalog.'
     });
   } catch (error) {
     console.error('Error generating framework from prompt:', error);
@@ -35,11 +53,12 @@ router.post('/generate-framework', async (req, res) => {
   }
 });
 
-// 2. Assessment Types (Templates in the Registry)
+// 2. Assessment Types & Templates (Registry)
 router.get('/types', async (req, res) => {
   try {
     const promotedOnly = req.query.promotedOnly === 'true';
-    const types = await customAssessmentRepo.getAllAssessmentTypes(promotedOnly);
+    const status = req.query.status || null; // 'production' | 'draft'
+    const types = await customAssessmentRepo.getAllAssessmentTypes(promotedOnly, status);
     res.json({
       success: true,
       types
@@ -77,12 +96,31 @@ router.post('/types', async (req, res) => {
     const saved = await customAssessmentRepo.saveAssessmentType(typeData);
     res.json({
       success: true,
-      message: 'Assessment type saved and promoted successfully',
+      message: 'Assessment template saved successfully',
       type: saved
     });
   } catch (error) {
     console.error('Error saving assessment type:', error);
     res.status(500).json({ success: false, error: 'Failed to save assessment type' });
+  }
+});
+
+router.put('/types/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+    const updated = await customAssessmentRepo.updateAssessmentType(id, updates);
+    if (!updated) {
+      return res.status(404).json({ success: false, error: 'Assessment type not found' });
+    }
+    res.json({
+      success: true,
+      message: 'Assessment template updated successfully',
+      type: updated
+    });
+  } catch (error) {
+    console.error('Error updating assessment type:', error);
+    res.status(500).json({ success: false, error: 'Failed to update assessment type' });
   }
 });
 
@@ -96,7 +134,7 @@ router.put('/types/:id/promote', async (req, res) => {
     }
     res.json({
       success: true,
-      message: isPromoted !== false ? 'Assessment type promoted to navigation' : 'Assessment type unpromoted',
+      message: isPromoted !== false ? 'Assessment promoted to navigation' : 'Assessment unpromoted from navigation',
       type: updated
     });
   } catch (error) {
@@ -109,14 +147,142 @@ router.delete('/types/:id', async (req, res) => {
   try {
     const { id } = req.params;
     await customAssessmentRepo.deleteAssessmentType(id);
-    res.json({ success: true, message: 'Assessment type deleted successfully' });
+    res.json({ success: true, message: 'Assessment template deleted successfully' });
   } catch (error) {
     console.error('Error deleting assessment type:', error);
     res.status(500).json({ success: false, error: 'Failed to delete assessment type' });
   }
 });
 
-// 3. Dynamic Assessment Instances
+// 3. One-Click Sample Generation for Any Assessment Type
+router.post('/types/:typeKey/sample', async (req, res) => {
+  try {
+    const { typeKey } = req.params;
+    const type = await customAssessmentRepo.findAssessmentTypeByKey(typeKey);
+    if (!type || !type.framework) {
+      return res.status(404).json({ success: false, error: 'Assessment framework not found' });
+    }
+
+    const framework = type.framework;
+    const dimensions = framework.dimensions || [];
+
+    // Pre-populate realistic responses
+    const sampleResponses = {};
+    const sampleComments = [
+      'Current setup relies on manual pipelines and partial scripting with high operational overhead.',
+      'Architecture modernization initiative approved by leadership for current fiscal year.',
+      'Team is evaluating Gemini Enterprise on Vertex AI for long context and token caching.',
+      'Infosec requires automated VPC Service Controls and Customer-Managed Encryption Keys.'
+    ];
+
+    dimensions.forEach((dim, dIdx) => {
+      (dim.questions || []).forEach((q, qIdx) => {
+        // Distribute scores realistically between 2 and 4
+        const score = ((dIdx + qIdx) % 3) + 2;
+        sampleResponses[q.id] = score;
+        sampleResponses[`${q.id}_current_state`] = score;
+        sampleResponses[`${q.id}_future_state`] = Math.min(5, score + 2);
+        
+        if (q.technicalPainPoints && q.technicalPainPoints.length > 0) {
+          sampleResponses[`${q.id}_technical_pain`] = [q.technicalPainPoints[0]];
+        }
+        if (q.businessPainPoints && q.businessPainPoints.length > 0) {
+          sampleResponses[`${q.id}_business_pain`] = [q.businessPainPoints[0]];
+        }
+        sampleResponses[`${q.id}_comment`] = sampleComments[(dIdx + qIdx) % sampleComments.length];
+      });
+    });
+
+    const sampleCustomers = [
+      { name: 'Apex Health Systems', useCase: 'Clinical AI Assistant & Vertex AI Migration' },
+      { name: 'Quantum FinTech Global', useCase: 'Zero Trust Multi-Cloud & FinOps Architecture' },
+      { name: 'Nova Retail Group', useCase: 'Enterprise GenAI Customer Search & Multimodal Analytics' },
+      { name: 'ConnectPlus Telecom', useCase: 'Cloud Network AI & Cost Optimization' }
+    ];
+    const pickedCust = sampleCustomers[Math.floor(Math.random() * sampleCustomers.length)];
+
+    const calculated = dynamicEngine.calculateScores(sampleResponses, framework);
+
+    const instance = await customAssessmentRepo.createInstance({
+      typeKey: type.typeKey,
+      customerName: pickedCust.name,
+      useCase: pickedCust.useCase,
+      contactEmail: 'lead.architect@enterprise.com',
+      frameworkSnapshot: framework,
+      responses: sampleResponses,
+      scores: calculated.dimensionScores,
+      totalScore: calculated.overallScore,
+      maxScore: calculated.maxScore,
+      maturityLevel: calculated.maturityLevel,
+      status: 'in_progress'
+    });
+
+    res.json({
+      success: true,
+      message: 'Sample assessment instance generated successfully',
+      instanceId: instance.id,
+      instance,
+      type
+    });
+  } catch (error) {
+    console.error('Error creating sample assessment:', error);
+    res.status(500).json({ success: false, error: 'Failed to create sample assessment' });
+  }
+});
+
+// 4. Samples Suite List for "Try Sample" Navbar Popover
+router.get('/samples-list', async (req, res) => {
+  try {
+    const customTypes = await customAssessmentRepo.getAllAssessmentTypes(false);
+    
+    const suite = [
+      {
+        id: 'sample_core_data_ai',
+        category: 'core',
+        title: 'Enterprise Data & AI Maturity Assessment',
+        subtitle: 'Comprehensive 6-Pillar Lakehouse & ML Framework',
+        customer: 'ConnectPlus Telecom',
+        initiative: 'Unified Data Platform Modernization',
+        badge: 'Core Platform',
+        color: '#ff6b35',
+        typeKey: 'core'
+      },
+      {
+        id: 'sample_genai_readiness',
+        category: 'genai',
+        title: 'Generative AI Enterprise Readiness Assessment',
+        subtitle: 'Governance, Infrastructure & Agentic AI Readiness',
+        customer: 'Global Retail Cloud AI',
+        initiative: 'Enterprise Customer Service GenAI Assistant',
+        badge: 'Gen AI',
+        color: '#3b82f6',
+        typeKey: 'genai_readiness'
+      },
+      ...customTypes.map(t => ({
+        id: `sample_${t.typeKey}`,
+        category: 'custom',
+        title: t.title,
+        subtitle: t.subtitle || t.description?.substring(0, 70) + '...',
+        customer: 'NovaHealth Technologies',
+        initiative: t.framework?.targetRole || 'Enterprise Modernization',
+        badge: t.badge || 'AI Framework',
+        color: t.color || '#8b5cf6',
+        typeKey: t.typeKey,
+        status: t.status || (t.isPromoted ? 'production' : 'draft')
+      }))
+    ];
+
+    res.json({
+      success: true,
+      samples: suite
+    });
+  } catch (error) {
+    console.error('Error fetching samples list:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch samples list' });
+  }
+});
+
+// 5. Dynamic Assessment Instances (CRUD)
 router.post('/instances', async (req, res) => {
   try {
     const { customerName, useCase, contactEmail, typeKey, frameworkSnapshot, responses } = req.body;
@@ -125,7 +291,6 @@ router.post('/instances', async (req, res) => {
       return res.status(400).json({ success: false, error: 'Customer / Organization name is required' });
     }
 
-    // Resolve framework snapshot
     let framework = frameworkSnapshot;
     if (!framework && typeKey) {
       const type = await customAssessmentRepo.findAssessmentTypeByKey(typeKey);
@@ -183,7 +348,7 @@ router.get('/instances', async (req, res) => {
 router.get('/instances/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const instance = await customAssessmentRepo.findInstanceById(id);
+    const instance = await customAssessmentRepo.getInstanceById(id);
     if (!instance) {
       return res.status(404).json({ success: false, error: 'Assessment instance not found' });
     }
@@ -200,28 +365,27 @@ router.get('/instances/:id', async (req, res) => {
 router.put('/instances/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { responses, customerName, useCase, contactEmail, status } = req.body;
+    const { responses, status, customerName, useCase, contactEmail } = req.body;
 
-    const instance = await customAssessmentRepo.findInstanceById(id);
-    if (!instance) {
+    const current = await customAssessmentRepo.getInstanceById(id);
+    if (!current) {
       return res.status(404).json({ success: false, error: 'Assessment instance not found' });
     }
 
-    const framework = instance.frameworkSnapshot || {};
-    const updatedResponses = responses || instance.responses || {};
+    const updatedResponses = responses !== undefined ? responses : current.responses;
+    const framework = current.frameworkSnapshot;
     const calculated = dynamicEngine.calculateScores(updatedResponses, framework);
 
     const updated = await customAssessmentRepo.updateInstance(id, {
-      customerName: customerName || instance.customerName,
-      useCase: useCase !== undefined ? useCase : instance.useCase,
-      contactEmail: contactEmail || instance.contactEmail,
       responses: updatedResponses,
       scores: calculated.dimensionScores,
       totalScore: calculated.overallScore,
       maxScore: calculated.maxScore,
       maturityLevel: calculated.maturityLevel,
-      status: status || instance.status,
-      completedAt: status === 'completed' ? new Date().toISOString() : instance.completedAt
+      status: status || current.status,
+      customerName: customerName || current.customerName,
+      useCase: useCase !== undefined ? useCase : current.useCase,
+      contactEmail: contactEmail !== undefined ? contactEmail : current.contactEmail
     });
 
     res.json({
@@ -235,28 +399,45 @@ router.put('/instances/:id', async (req, res) => {
   }
 });
 
-// 4. Generate AI Executive Report with Gemini 3.7
+router.delete('/instances/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await customAssessmentRepo.deleteInstance(id);
+    res.json({ success: true, message: 'Assessment instance deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting assessment instance:', error);
+    res.status(500).json({ success: false, error: 'Failed to delete assessment instance' });
+  }
+});
+
+// 6. Executive AI Report Generation
 router.post('/instances/:id/generate-report', async (req, res) => {
   try {
     const { id } = req.params;
-    const instance = await customAssessmentRepo.findInstanceById(id);
+    const instance = await customAssessmentRepo.getInstanceById(id);
     if (!instance) {
       return res.status(404).json({ success: false, error: 'Assessment instance not found' });
     }
 
-    const framework = instance.frameworkSnapshot || {};
-    const aiReport = await dynamicEngine.generateDynamicReport(instance, framework);
+    const calculated = dynamicEngine.calculateScores(instance.responses, instance.frameworkSnapshot);
 
-    const calculated = dynamicEngine.calculateScores(instance.responses, framework);
+    const aiReport = await dynamicEngine.generateExecutiveReport(
+      instance.frameworkSnapshot,
+      instance.responses,
+      calculated,
+      {
+        customerName: instance.customerName,
+        useCase: instance.useCase,
+        industry: req.body.industry
+      }
+    );
 
     const updated = await customAssessmentRepo.updateInstance(id, {
       aiReport,
       scores: calculated.dimensionScores,
       totalScore: calculated.overallScore,
-      maxScore: calculated.maxScore,
       maturityLevel: calculated.maturityLevel,
-      status: 'completed',
-      completedAt: new Date().toISOString()
+      status: 'completed'
     });
 
     res.json({
@@ -265,81 +446,11 @@ router.post('/instances/:id/generate-report', async (req, res) => {
       instance: updated
     });
   } catch (error) {
-    console.error('Error generating AI report for dynamic assessment:', error);
+    console.error('Error generating dynamic executive report:', error);
     res.status(500).json({
       success: false,
-      error: error.message || 'Failed to generate AI executive report'
+      error: error.message || 'Failed to generate dynamic executive report'
     });
-  }
-});
-
-// 5. One-Click Promote Instance's Framework to Official Assessment Type
-router.post('/instances/:id/promote-as-type', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { title, subtitle, icon, badge, color } = req.body;
-
-    const instance = await customAssessmentRepo.findInstanceById(id);
-    if (!instance) {
-      return res.status(404).json({ success: false, error: 'Assessment instance not found' });
-    }
-
-    const framework = instance.frameworkSnapshot || {};
-    const customTitle = title || framework.title || 'Custom Assessment';
-    const typeKey = (framework.typeKey || customTitle).toLowerCase().replace(/[^a-z0-9]/g, '_');
-
-    const savedType = await customAssessmentRepo.saveAssessmentType({
-      typeKey,
-      title: customTitle,
-      subtitle: subtitle || framework.subtitle || '',
-      description: framework.description || '',
-      icon: icon || framework.icon || 'FiAward',
-      badge: badge || framework.badge || 'Promoted',
-      color: color || framework.color || '#6366f1',
-      framework,
-      isPublished: true,
-      isPromoted: true,
-      createdBy: instance.createdBy || 'user'
-    });
-
-    res.json({
-      success: true,
-      message: `"${savedType.title}" promoted successfully to Assessments menu!`,
-      type: savedType
-    });
-  } catch (error) {
-    console.error('Error promoting assessment instance to type:', error);
-    res.status(500).json({ success: false, error: 'Failed to promote assessment type' });
-  }
-});
-
-// 6. Customers Overview (Multi-Assessment Portfolio per customer)
-router.get('/customers', async (req, res) => {
-  try {
-    const customers = await customAssessmentRepo.getAllCustomersWithAssessments();
-    res.json({
-      success: true,
-      customers
-    });
-  } catch (error) {
-    console.error('Error fetching customers with assessments:', error);
-    res.status(500).json({ success: false, error: 'Failed to fetch customer assessment overview' });
-  }
-});
-
-// 7. Get All Assessments for a Specific Customer (Unified View)
-router.get('/customer/:customerName', async (req, res) => {
-  try {
-    const { customerName } = req.params;
-    const instances = await customAssessmentRepo.getAllInstances({ customerName });
-    res.json({
-      success: true,
-      customerName,
-      assessments: instances
-    });
-  } catch (error) {
-    console.error('Error fetching customer assessments:', error);
-    res.status(500).json({ success: false, error: 'Failed to fetch customer assessments' });
   }
 });
 

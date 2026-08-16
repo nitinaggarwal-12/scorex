@@ -365,6 +365,24 @@ function App() {
           />
 
           <Route 
+            path="/assessments/templates" 
+            element={
+              <ProtectedRoute>
+                <DynamicAssessmentHub />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/assessment-templates" 
+            element={
+              <ProtectedRoute>
+                <DynamicAssessmentHub />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
             path="/assessments/run/:typeKey" 
             element={
               <ProtectedRoute>
