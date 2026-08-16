@@ -170,7 +170,7 @@ databricks-maturity-assessment/
 2. **Configure Environment**: Set environment variables
 3. **Deploy**: Automatic deployment on push
 
-Live URL: https://web-production-76e27.up.railway.app/
+Live URL: https://scorex.up.railway.app/
 
 ### Manual Deployment
 
