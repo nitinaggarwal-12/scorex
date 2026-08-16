@@ -429,14 +429,25 @@ const NavigationPanel = ({ framework, currentAssessment, onAssessmentUpdate }) =
     }
     
     if (currentAssessment) {
-      // Calculate progress for each pillar
+      // Calculate progress for each pillar dynamically
       const progress = {};
+      const responses = currentAssessment.responses || {};
       framework?.assessmentAreas?.forEach(pillar => {
-        const totalDimensions = pillar.dimensions?.length || 0;
-        const completedDimensions = 0; // TODO: Calculate based on responses
+        const dimensions = pillar.dimensions || [];
+        const totalDimensions = dimensions.length;
+        let completedCount = 0;
+
+        dimensions.forEach(dim => {
+          const questions = dim.questions || [];
+          if (questions.length > 0) {
+            const hasAnyAnswer = questions.some(q => responses[q.id] !== undefined && responses[q.id] !== null);
+            if (hasAnyAnswer) completedCount++;
+          }
+        });
+
         progress[pillar.id] = {
-          completed: currentAssessment.completedCategories?.includes(pillar.id) || false,
-          progress: totalDimensions > 0 ? `${completedDimensions}/${totalDimensions}` : '0/0'
+          completed: currentAssessment.completedCategories?.includes(pillar.id) || (totalDimensions > 0 && completedCount === totalDimensions),
+          progress: totalDimensions > 0 ? `${completedCount}/${totalDimensions}` : '0/0'
         };
       });
       setPillarProgress(progress);
