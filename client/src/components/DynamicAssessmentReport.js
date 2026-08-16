@@ -27,6 +27,7 @@ import LoadingSpinner from './LoadingSpinner';
 import ScenarioSimulator from './ScenarioSimulator';
 import FinancialImpactCard from './FinancialImpactCard';
 import ArchitectureComparisonDiagram from './ArchitectureComparisonDiagram';
+import MultiPersonaViews from './MultiPersonaViews';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -578,6 +579,13 @@ const DynamicAssessmentReport = () => {
 
         {/* Architectural Evolution Blueprint: Current vs Target */}
         <ArchitectureComparisonDiagram
+          currentScore={scores.overallScore || 2.5}
+          targetScore={4.5}
+        />
+
+        {/* Multi-Persona Executive Transformation Blueprints */}
+        <MultiPersonaViews
+          assessmentName={framework?.title || 'Enterprise Data Platform'}
           currentScore={scores.overallScore || 2.5}
           targetScore={4.5}
         />

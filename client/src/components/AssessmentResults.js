@@ -12,6 +12,7 @@ import AssessmentHeader from './AssessmentHeader';
 import ScenarioSimulator from './ScenarioSimulator';
 import FinancialImpactCard from './FinancialImpactCard';
 import ArchitectureComparisonDiagram from './ArchitectureComparisonDiagram';
+import MultiPersonaViews from './MultiPersonaViews';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, RadialLinearScale, PointElement, LineElement, Filler);
 
@@ -2127,6 +2128,15 @@ const AssessmentResults = ({ currentAssessment, framework }) => {
         {/* Architectural Evolution Blueprint: Current vs Target */}
         {hasData && (
           <ArchitectureComparisonDiagram
+            currentScore={overallCurrentScore}
+            targetScore={overallFutureScore}
+          />
+        )}
+
+        {/* Multi-Persona Executive Transformation Blueprints */}
+        {hasData && (
+          <MultiPersonaViews
+            assessmentName={results.assessmentInfo?.assessmentName || 'Enterprise Data Platform'}
             currentScore={overallCurrentScore}
             targetScore={overallFutureScore}
           />
