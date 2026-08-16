@@ -11,6 +11,7 @@ import LoadingSpinner from './LoadingSpinner';
 import AssessmentHeader from './AssessmentHeader';
 import ScenarioSimulator from './ScenarioSimulator';
 import FinancialImpactCard from './FinancialImpactCard';
+import ArchitectureComparisonDiagram from './ArchitectureComparisonDiagram';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, RadialLinearScale, PointElement, LineElement, Filler);
 
@@ -2120,6 +2121,14 @@ const AssessmentResults = ({ currentAssessment, framework }) => {
             pillarScores={results.categoryDetails || {}}
             overallCurrent={overallCurrentScore}
             overallTarget={overallFutureScore}
+          />
+        )}
+
+        {/* Architectural Evolution Blueprint: Current vs Target */}
+        {hasData && (
+          <ArchitectureComparisonDiagram
+            currentScore={overallCurrentScore}
+            targetScore={overallFutureScore}
           />
         )}
 

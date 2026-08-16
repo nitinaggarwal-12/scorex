@@ -26,6 +26,7 @@ import dynamicAssessmentService from '../services/dynamicAssessmentService';
 import LoadingSpinner from './LoadingSpinner';
 import ScenarioSimulator from './ScenarioSimulator';
 import FinancialImpactCard from './FinancialImpactCard';
+import ArchitectureComparisonDiagram from './ArchitectureComparisonDiagram';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -573,6 +574,12 @@ const DynamicAssessmentReport = () => {
           pillarScores={scores.dimensionScores || {}}
           overallCurrent={scores.overallScore || 2.5}
           overallTarget={4.0}
+        />
+
+        {/* Architectural Evolution Blueprint: Current vs Target */}
+        <ArchitectureComparisonDiagram
+          currentScore={scores.overallScore || 2.5}
+          targetScore={4.5}
         />
 
         {/* Two Column Section: Executive Summary & Dimension Scores */}
