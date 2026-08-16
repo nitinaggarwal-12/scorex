@@ -6,6 +6,7 @@ const assignmentRepository = require('../db/assignmentRepository');
 const userRepository = require('../db/userRepository');
 const notificationRepository = require('../db/notificationRepository');
 const assessmentRepository = require('../db/assessmentRepository');
+const emailService = require('../services/emailService');
 const { requireAuth, requireAuthorOrAdmin, requireAdmin } = require('../middleware/auth');
 const nodemailer = require('nodemailer');
 
@@ -115,7 +116,12 @@ router.post('/assign', requireAuthorOrAdmin, async (req, res) => {
         });
         
         console.log('[Assignment] Created new consumer:', consumer.email);
-        // TODO: Send welcome email with temporary password
+        await emailService.sendWelcomeConsumerEmail({
+          toEmail: consumer.email,
+          firstName: consumer.first_name || req.body.firstName || '',
+          tempPassword,
+          organizationName: organizationName || req.body.organization || 'Your Organization'
+        });
       }
       
       // Get existing assessment from PostgreSQL
@@ -146,7 +152,12 @@ router.post('/assign', requireAuthorOrAdmin, async (req, res) => {
         });
         
         console.log('[Assignment] Created new consumer:', consumer.email);
-        // TODO: Send welcome email with temporary password
+        await emailService.sendWelcomeConsumerEmail({
+          toEmail: consumer.email,
+          firstName: consumer.first_name || req.body.firstName || '',
+          tempPassword,
+          organizationName: organizationName || req.body.organization || 'Your Organization'
+        });
       }
       
       // Create assessment record in PostgreSQL only

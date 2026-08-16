@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db/connection');
+const emailService = require('../services/emailService');
 
 // Get all question assignments (admin view)
 router.get('/', async (req, res) => {
@@ -354,7 +355,18 @@ router.post('/:id/remind', async (req, res) => {
       return res.status(404).json({ error: 'Question assignment not found or already completed' });
     }
     
-    // TODO: Send actual email reminder
+    const row = result.rows[0];
+    
+    // Dispatch transactional reminder email
+    if (row.assigned_to_email) {
+      await emailService.sendQuestionReminderEmail({
+        toEmail: row.assigned_to_email,
+        recipientName: row.assigned_to_name || 'Assessor',
+        questionText: row.question_text || row.topic || 'Assigned capability evaluation',
+        pillarName: row.pillar_name || row.category_id || 'Platform Architecture',
+        dueDate: row.due_date ? new Date(row.due_date).toLocaleDateString() : 'Immediate'
+      });
+    }
     
     res.json(result.rows[0]);
   } catch (error) {
