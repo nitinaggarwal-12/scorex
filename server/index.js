@@ -466,7 +466,7 @@ app.post('/api/assessment/start', requireAuth, async (req, res) => {
 });
 
 // Get raw assessment data (for Excel export, etc.)
-app.get('/api/assessment/:id', async (req, res) => {
+app.get('/api/assessment/:id', requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
     let assessment = null;
@@ -506,7 +506,7 @@ app.get('/api/assessment/:id', async (req, res) => {
 });
 
 // Get assessment status
-app.get('/api/assessment/:id/status', async (req, res) => {
+app.get('/api/assessment/:id/status', requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
     const assessmentRepo = require('./db/assessmentRepository');
@@ -554,7 +554,7 @@ app.get('/api/assessment/:id/status', async (req, res) => {
 });
 
 // Get questions for a specific assessment area
-app.get('/api/assessment/:id/category/:categoryId', async (req, res) => {
+app.get('/api/assessment/:id/category/:categoryId', requireAuth, async (req, res) => {
   try {
     const { id, categoryId } = req.params;
     const assessmentRepo = require('./db/assessmentRepository');
@@ -1080,7 +1080,7 @@ app.post('/api/assessment/:id/submit', async (req, res) => {
 });
 
 // Generate adaptive assessment results (NEW - uses all inputs)
-app.get('/api/assessment/:id/adaptive-results', async (req, res) => {
+app.get('/api/assessment/:id/adaptive-results', requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
     const assessmentRepo = require('./db/assessmentRepository');
@@ -2903,7 +2903,7 @@ app.delete('/api/assessment/:id', async (req, res) => {
 });
 
 // Get pillar-specific ADAPTIVE results (uses all inputs + latest features)
-app.get('/api/assessment/:id/pillar/:pillarId/results', async (req, res) => {
+app.get('/api/assessment/:id/pillar/:pillarId/results', requireAuth, async (req, res) => {
   try {
     // CRITICAL: Prevent caching of dynamic pillar results
     res.set({
@@ -3268,7 +3268,7 @@ app.post('/api/assessment/generate-sample', requireAuth, async (req, res) => {
 // ============================================
 
 // Get audit trail for an assessment
-app.get('/api/assessment/:id/audit-trail', async (req, res) => {
+app.get('/api/assessment/:id/audit-trail', requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
     const { limit = 100, offset = 0 } = req.query;

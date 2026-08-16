@@ -14,6 +14,7 @@ import FinancialImpactCard from './FinancialImpactCard';
 import ArchitectureComparisonDiagram from './ArchitectureComparisonDiagram';
 import MultiPersonaViews from './MultiPersonaViews';
 import BacklogExporterCard from './BacklogExporterCard';
+import IaCBlueprintCard from './IaCBlueprintCard';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, RadialLinearScale, PointElement, LineElement, Filler);
 
@@ -2149,6 +2150,15 @@ const AssessmentResults = ({ currentAssessment, framework }) => {
             assessmentName={results.assessmentInfo?.assessmentName || 'Enterprise Data Platform'}
             recommendations={results.painPointRecommendations || []}
             prioritizedActions={results.prioritizedActions || []}
+          />
+        )}
+
+        {/* 1-Click Infrastructure-as-Code (IaC) Cloud Deployer */}
+        {hasData && (
+          <IaCBlueprintCard
+            organizationName={results.assessmentInfo?.organizationName || 'Enterprise Data Platform'}
+            currentScore={overallCurrentScore}
+            targetScore={overallFutureScore}
           />
         )}
 

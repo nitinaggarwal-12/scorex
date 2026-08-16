@@ -41,6 +41,7 @@ import FinancialImpactCard from './FinancialImpactCard';
 import ArchitectureComparisonDiagram from './ArchitectureComparisonDiagram';
 import MultiPersonaViews from './MultiPersonaViews';
 import BacklogExporterCard from './BacklogExporterCard';
+import IaCBlueprintCard from './IaCBlueprintCard';
 
 // =======================
 // STYLED COMPONENTS
@@ -3708,6 +3709,13 @@ const AssessmentResultsNew = () => {
           {/* 1-Click Transformation Backlog Exporter */}
           <BacklogExporterCard
             assessmentName={resultsData?.assessmentInfo?.organizationName || 'Enterprise Platform'}
+          />
+
+          {/* 1-Click Infrastructure-as-Code (IaC) Cloud Deployer */}
+          <IaCBlueprintCard
+            organizationName={resultsData?.assessmentInfo?.organizationName || 'Enterprise Platform'}
+            currentScore={parseFloat(currentMaturity) || 2.5}
+            targetScore={parseFloat(targetMaturity) || 4.0}
           />
 
           {/* Maturity Roadmap Visualization */}

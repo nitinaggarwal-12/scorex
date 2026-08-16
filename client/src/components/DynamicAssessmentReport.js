@@ -29,6 +29,7 @@ import FinancialImpactCard from './FinancialImpactCard';
 import ArchitectureComparisonDiagram from './ArchitectureComparisonDiagram';
 import MultiPersonaViews from './MultiPersonaViews';
 import BacklogExporterCard from './BacklogExporterCard';
+import IaCBlueprintCard from './IaCBlueprintCard';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -595,6 +596,13 @@ const DynamicAssessmentReport = () => {
         <BacklogExporterCard
           assessmentName={framework?.title || 'Enterprise Data & AI Maturity Assessment'}
           recommendations={report.prioritizedRecommendations || []}
+        />
+
+        {/* 1-Click Infrastructure-as-Code (IaC) Cloud Deployer */}
+        <IaCBlueprintCard
+          organizationName={instance?.customerName || framework?.title || 'Enterprise Platform'}
+          currentScore={scores.overallScore || 2.5}
+          targetScore={4.5}
         />
 
         {/* Two Column Section: Executive Summary & Dimension Scores */}
