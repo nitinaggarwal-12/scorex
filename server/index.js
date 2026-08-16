@@ -172,7 +172,7 @@ app.get('/status', async (req, res) => {
     
     res.json({
       success: true,
-      message: 'Databricks Maturity Assessment API is running',
+      message: 'ScoreX Enterprise Data & AI Maturity Assessment API is running',
       environment: process.env.NODE_ENV,
       timestamp: new Date().toISOString(),
       storage: {
@@ -2468,7 +2468,7 @@ app.get('/api/health', async (req, res) => {
   res.json({
     status: 'ok',
     success: true,
-    message: 'Databricks Maturity Assessment API is running',
+    message: 'ScoreX Enterprise Data & AI Maturity Assessment API is running',
     timestamp: new Date().toISOString(),
     version: '1.0.0'
   });
