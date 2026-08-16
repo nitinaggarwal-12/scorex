@@ -2,50 +2,50 @@
  * ScoreX - Enterprise Data & AI Maturity Assessment Application
  * Version: 2.2.0 - Added floating slideshow buttons and version history - Nov 17, 2025
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { createGlobalStyle } from 'styled-components';
 
-// Components
+// Eagerly loaded core shell components & services
 import GlobalNav from './components/GlobalNav';
-import HomePage from './components/HomePageNew';
-import AssessmentStart from './components/AssessmentStart';
-import AssessmentQuestion from './components/AssessmentQuestion';
-import AssessmentResults from './components/AssessmentResultsNew';
-import AssessmentManagement from './components/AssessmentsListNew';
-import AssessmentDashboard from './components/AssessmentDashboard';
-import Dashboard from './components/DashboardNew';
 import LoadingSpinner from './components/LoadingSpinner';
-import ExecutiveCommandCenter from './components/ExecutiveCommandCenter';
-import ExecutiveSummary from './components/ExecutiveSummaryNew';
-import AssessmentHistory from './components/AssessmentHistory';
-import DeepDive from './components/DeepDive';
-import IndustryBenchmarkingReport from './components/IndustryBenchmarkingReport';
-import MyAssessments from './components/MyAssessments';
-import UserManagement from './components/UserManagement';
-import AssignAssessmentMulti from './components/AssignAssessmentMulti';
-import AuthorAssignments from './components/AuthorAssignments';
-import UserDetails from './components/UserDetails';
-import AssessmentDetails from './components/AssessmentDetails';
-import FeedbackForm from './components/FeedbackForm';
-import FeedbackList from './components/FeedbackList';
-import QuestionManager from './components/QuestionManager';
-import QuestionAssignmentManager from './components/QuestionAssignmentManager';
 import ChatWidget from './components/ChatWidget';
-import UserGuide from './components/UserGuide';
-import PitchDeck from './components/PitchDeck';
-import GenAIReadiness from './components/GenAIReadiness';
-import GenAIReadinessReport from './components/GenAIReadinessReport';
-import GenAIReadinessList from './components/GenAIReadinessList';
-import DynamicAssessmentGenerator from './components/DynamicAssessmentGenerator';
-import DynamicAssessmentRunner from './components/DynamicAssessmentRunner';
-import DynamicAssessmentReport from './components/DynamicAssessmentReport';
-import DynamicAssessmentHub from './components/DynamicAssessmentHub';
-
-// Services
 import * as assessmentService from './services/assessmentService';
 import authService from './services/authService';
+
+// Lazily loaded page components for optimal bundle splitting
+const HomePage = lazy(() => import('./components/HomePageNew'));
+const AssessmentStart = lazy(() => import('./components/AssessmentStart'));
+const AssessmentQuestion = lazy(() => import('./components/AssessmentQuestion'));
+const AssessmentResults = lazy(() => import('./components/AssessmentResultsNew'));
+const AssessmentManagement = lazy(() => import('./components/AssessmentsListNew'));
+const AssessmentDashboard = lazy(() => import('./components/AssessmentDashboard'));
+const Dashboard = lazy(() => import('./components/DashboardNew'));
+const ExecutiveCommandCenter = lazy(() => import('./components/ExecutiveCommandCenter'));
+const ExecutiveSummary = lazy(() => import('./components/ExecutiveSummaryNew'));
+const AssessmentHistory = lazy(() => import('./components/AssessmentHistory'));
+const DeepDive = lazy(() => import('./components/DeepDive'));
+const IndustryBenchmarkingReport = lazy(() => import('./components/IndustryBenchmarkingReport'));
+const MyAssessments = lazy(() => import('./components/MyAssessments'));
+const UserManagement = lazy(() => import('./components/UserManagement'));
+const AssignAssessmentMulti = lazy(() => import('./components/AssignAssessmentMulti'));
+const AuthorAssignments = lazy(() => import('./components/AuthorAssignments'));
+const UserDetails = lazy(() => import('./components/UserDetails'));
+const AssessmentDetails = lazy(() => import('./components/AssessmentDetails'));
+const FeedbackForm = lazy(() => import('./components/FeedbackForm'));
+const FeedbackList = lazy(() => import('./components/FeedbackList'));
+const QuestionManager = lazy(() => import('./components/QuestionManager'));
+const QuestionAssignmentManager = lazy(() => import('./components/QuestionAssignmentManager'));
+const UserGuide = lazy(() => import('./components/UserGuide'));
+const PitchDeck = lazy(() => import('./components/PitchDeck'));
+const GenAIReadiness = lazy(() => import('./components/GenAIReadiness'));
+const GenAIReadinessReport = lazy(() => import('./components/GenAIReadinessReport'));
+const GenAIReadinessList = lazy(() => import('./components/GenAIReadinessList'));
+const DynamicAssessmentGenerator = lazy(() => import('./components/DynamicAssessmentGenerator'));
+const DynamicAssessmentRunner = lazy(() => import('./components/DynamicAssessmentRunner'));
+const DynamicAssessmentReport = lazy(() => import('./components/DynamicAssessmentReport'));
+const DynamicAssessmentHub = lazy(() => import('./components/DynamicAssessmentHub'));
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -291,11 +291,12 @@ function App() {
         <div className="App">
           <GlobalNav />
         
-        <Routes>
-          <Route 
-            path="/" 
-            element={<HomePage />} 
-          />
+        <Suspense fallback={<LoadingSpinner message="Loading..." />}>
+          <Routes>
+            <Route 
+              path="/" 
+              element={<HomePage />} 
+            />
           
           <Route 
             path="/insights-dashboard" 
@@ -646,6 +647,7 @@ function App() {
             element={<Navigate to="/" replace />} 
           />
         </Routes>
+        </Suspense>
 
         <ChatWidget />
 
