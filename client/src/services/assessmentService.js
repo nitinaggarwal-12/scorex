@@ -151,6 +151,22 @@ export const submitBulkResponses = async (assessmentId, responses, completedCate
 };
 
 /**
+ * Save / prefill full assessment responses in bulk
+ */
+export const saveAssessmentResponses = async (assessmentId, responses) => {
+  try {
+    const response = await api.post(`/assessment/${assessmentId}/bulk-submit`, {
+      responses,
+      status: 'in_progress'
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error saving assessment responses:', error);
+    throw error;
+  }
+};
+
+/**
  * Get assessment results and recommendations
  */
 export const getAssessmentResults = async (assessmentId, forceRefresh = false) => {

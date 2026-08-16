@@ -17,12 +17,41 @@ import {
   FiEdit3,
   FiLayers,
   FiMenu,
-  FiX
+  FiX,
+  FiZap
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import dynamicAssessmentService from '../services/dynamicAssessmentService';
 import LoadingSpinner from './LoadingSpinner';
+
+const PrefillButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(168, 85, 247, 0.12));
+  color: #6366f1;
+  border: 1.5px solid rgba(99, 102, 241, 0.35);
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  }
+
+  svg {
+    font-size: 1rem;
+    color: currentColor;
+  }
+`;
 
 const Container = styled.div`
   min-height: 100vh;
@@ -831,6 +860,50 @@ const DynamicAssessmentRunner = () => {
     autoSave(updated);
   };
 
+  const handleAutoPrefillAll = async () => {
+    if (!framework || !framework.dimensions) return;
+
+    const sampleComments = [
+      'Current workflow has significant manual interventions; planned modernization approved for next quarter.',
+      'Team is currently evaluating managed cloud solutions to reduce operational overhead and simplify tooling.',
+      'Identified architectural bottleneck during recent quarterly peak load and compliance evaluation.',
+      'Security and compliance standards require automated policy enforcement, audit telemetry, and VPC controls.',
+      'Active cross-functional initiative underway to unify metadata, governance, and CI/CD deployment pipelines.'
+    ];
+
+    const prefilled = { ...responses };
+
+    framework.dimensions.forEach((dim, dIdx) => {
+      (dim.questions || []).forEach((q, qIdx) => {
+        const score = ((dIdx + qIdx) % 3) + 2; // Realistically distribute 2 to 4
+        const futureScore = Math.min(5, score + 2); // Future target 4 to 5
+
+        prefilled[q.id] = score;
+        prefilled[`${q.id}_current_state`] = score;
+        prefilled[`${q.id}_future_state`] = futureScore;
+
+        if (q.technicalPainPoints && q.technicalPainPoints.length > 0) {
+          prefilled[`${q.id}_technical_pain`] = [q.technicalPainPoints[qIdx % q.technicalPainPoints.length]];
+          prefilled[`${q.id}_pain_points`] = prefilled[`${q.id}_technical_pain`];
+        }
+        if (q.businessPainPoints && q.businessPainPoints.length > 0) {
+          prefilled[`${q.id}_business_pain`] = [q.businessPainPoints[qIdx % q.businessPainPoints.length]];
+        }
+        prefilled[`${q.id}_comment`] = sampleComments[(dIdx + qIdx) % sampleComments.length];
+      });
+    });
+
+    setResponses(prefilled);
+    toast.success('✨ All questions prefilled with realistic enterprise responses & pain points!');
+
+    if (instance?.id) {
+      await dynamicAssessmentService.updateInstance(instance.id, {
+        responses: prefilled
+      });
+      setSavedStatus('saved');
+    }
+  };
+
   const handleFinishAndGenerateReport = async () => {
     if (!instance?.id) return;
     setIsSubmitting(true);
@@ -1016,6 +1089,10 @@ const DynamicAssessmentRunner = () => {
             </MobileDimensionDrawerButton>
 
             <TopNavFilters>
+              <PrefillButton onClick={handleAutoPrefillAll} title="Autopopulate all questions with realistic responses & pain points">
+                <FiZap /> Auto-Prefill Responses
+              </PrefillButton>
+
               <FilterPillGroup>
                 <FilterPill $active={true}>All {questions.length}</FilterPill>
                 <FilterPill $active={false}>Done {questions.filter(q => responses[q.id] !== undefined).length}</FilterPill>

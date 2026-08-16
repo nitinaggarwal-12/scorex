@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 import './GenAIReadiness.css';
 
 const GenAIReadiness = () => {
@@ -67,20 +68,23 @@ const GenAIReadiness = () => {
     if (!framework) return;
     
     if (!customerName || !customerName.trim()) {
-      setCustomerName('Merck');
+      setCustomerName('Global Retail Enterprise');
     }
+    setShowNameModal(false);
     
     const prefilled = {};
-    framework.dimensions.forEach(dimension => {
-      dimension.questions.forEach(question => {
+    framework.dimensions.forEach((dimension, dIdx) => {
+      dimension.questions.forEach((question, qIdx) => {
         if (question.options && question.options.length > 0) {
-          const randomIndex = Math.floor(Math.random() * question.options.length);
-          prefilled[question.id] = question.options[randomIndex].value;
+          // Logical realistic enterprise score distribution (scores 2-4)
+          const targetIndex = Math.min(question.options.length - 1, ((dIdx + qIdx) % 3) + 1);
+          prefilled[question.id] = question.options[targetIndex].value;
         }
       });
     });
     
     setResponses(prefilled);
+    toast.success('✨ GenAI Readiness assessment prefilled with realistic enterprise responses!');
   };
 
   const calculateScore = () => {

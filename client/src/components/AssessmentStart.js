@@ -2,8 +2,31 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { FiMail, FiArrowRight, FiFileText, FiEdit3, FiBriefcase, FiLayers } from 'react-icons/fi';
+import { FiMail, FiArrowRight, FiFileText, FiEdit3, FiBriefcase, FiLayers, FiZap } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+
+const AutofillButton = styled.button`
+  background: none;
+  border: 1px dashed #6366f1;
+  color: #6366f1;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: all 0.2s ease;
+  align-self: center;
+
+  &:hover {
+    background: rgba(99, 102, 241, 0.08);
+    border-color: #4f46e5;
+    color: #4f46e5;
+  }
+`;
 
 const StartContainer = styled.div`
   min-height: calc(100vh - 80px);
@@ -347,6 +370,18 @@ const AssessmentStart = ({ onStart }) => {
     }
   };
 
+  const handlePrefillForm = () => {
+    setFormData({
+      assessmentName: 'Enterprise Data & AI Acceleration Review',
+      assessmentDescription: 'Comprehensive maturity evaluation covering Lakehouse platform governance, ETL pipelines, automated ML deployments, and Generative AI readiness.',
+      contactEmail: 'lead.architect@enterprise-corp.com',
+      industry: 'Technology',
+      selectedPillars: PILLARS.map(p => p.id)
+    });
+    setErrors({});
+    toast.success('✨ Form filled with realistic enterprise details!');
+  };
+
   return (
     <StartContainer>
       <FormCard
@@ -359,6 +394,12 @@ const AssessmentStart = ({ onStart }) => {
           Begin your enterprise data & AI maturity assessment journey. We'll guide you through 
           evaluating your current capabilities and future goals.
         </FormSubtitle>
+
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <AutofillButton type="button" onClick={handlePrefillForm}>
+            <FiZap /> Autofill Sample Details
+          </AutofillButton>
+        </div>
 
         <Form onSubmit={handleSubmit}>
           <FormGroup>
