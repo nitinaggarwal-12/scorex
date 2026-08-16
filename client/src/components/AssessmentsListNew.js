@@ -18,6 +18,7 @@ import {
 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import * as assessmentService from '../services/assessmentService';
+import dynamicAssessmentService from '../services/dynamicAssessmentService';
 import excelService from '../services/excelService';
 import { exportAssessmentToExcel } from '../services/excelExportService';
 
@@ -639,11 +640,37 @@ const AssessmentsListNew = () => {
   const fetchAssessments = async () => {
     try {
       setLoading(true);
-      const data = await assessmentService.getAssessments();
-      setAssessments(Array.isArray(data) ? data : []);
+      const [classicData, dynamicInstances] = await Promise.allSettled([
+        assessmentService.getAssessments(),
+        dynamicAssessmentService.getInstances()
+      ]);
+
+      const classicList = classicData.status === 'fulfilled' && Array.isArray(classicData.value) 
+        ? classicData.value 
+        : [];
+
+      const dynamicList = dynamicInstances.status === 'fulfilled' && Array.isArray(dynamicInstances.value)
+        ? dynamicInstances.value.map(inst => ({
+            id: inst.id,
+            assessmentId: inst.id,
+            isDynamic: true,
+            assessment_name: `${inst.customerName || 'Enterprise'} - ${inst.frameworkSnapshot?.title || 'Custom AI Assessment'}`,
+            organization_name: inst.customerName || 'Enterprise Organization',
+            industry: inst.frameworkSnapshot?.badge || 'FinOps & Cloud',
+            status: inst.status === 'completed' ? 'submitted' : 'in_progress',
+            completedCategories: inst.status === 'completed' ? ['ai_framework'] : [],
+            progress: inst.status === 'completed' ? 100 : 50,
+            created_at: inst.createdAt,
+            updated_at: inst.updatedAt || inst.createdAt,
+            scores: inst.scores,
+            maturity_level: inst.maturityLevel,
+            typeKey: inst.typeKey
+          }))
+        : [];
+
+      setAssessments([...dynamicList, ...classicList]);
     } catch (error) {
       console.error('Error fetching assessments:', error);
-      
       setAssessments([]);
     } finally {
       setLoading(false);
@@ -719,24 +746,30 @@ const AssessmentsListNew = () => {
     }
   };
 
-  const handleDeleteAssessment = async (assessmentId, assessmentName, event) => {
+  const handleDeleteAssessment = async (assessment, assessmentName, event) => {
     event.stopPropagation();
+    const assessmentId = typeof assessment === 'object' ? (assessment.id || assessment.assessmentId) : assessment;
+    const isDynamic = typeof assessment === 'object' && assessment.isDynamic;
+    const name = assessmentName || (typeof assessment === 'object' ? assessment.assessment_name : 'this assessment');
     
     // Confirm deletion
-    if (!window.confirm(`Are you sure you want to delete "${assessmentName}"? This action cannot be undone.`)) {
+    if (!window.confirm(`Are you sure you want to delete "${name}"? This action cannot be undone.`)) {
       return;
     }
     
     try {
       toast.loading('Deleting assessment...', { id: 'delete' });
-      await assessmentService.deleteAssessment(assessmentId);
-      
-      
+      if (isDynamic) {
+        await dynamicAssessmentService.deleteInstance(assessmentId);
+      } else {
+        await assessmentService.deleteAssessment(assessmentId);
+      }
+      toast.success('Assessment deleted successfully', { id: 'delete' });
       // Refresh the assessments list
       await fetchAssessments();
     } catch (error) {
       console.error('Error deleting assessment:', error);
-      
+      toast.error('Failed to delete assessment', { id: 'delete' });
     }
   };
 
@@ -1194,8 +1227,16 @@ const AssessmentsListNew = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
                   onClick={() => {
-                    console.log(`[AssessmentsListNew] Card clicked, navigating to: /assessment/${assessmentId}/platform_governance`);
-                    navigate(`/assessment/${assessmentId}/platform_governance`);
+                    if (assessment.isDynamic) {
+                      if (assessment.status === 'submitted' || assessment.progress === 100) {
+                        navigate(`/assessments/report/${assessmentId}`);
+                      } else {
+                        navigate(`/assessments/run/instance/${assessmentId}`);
+                      }
+                    } else {
+                      console.log(`[AssessmentsListNew] Card clicked, navigating to: /assessment/${assessmentId}/platform_governance`);
+                      navigate(`/assessment/${assessmentId}/platform_governance`);
+                    }
                   }}
                 >
                   <div className="header">
@@ -1257,12 +1298,14 @@ const AssessmentsListNew = () => {
                       <ActionButton
                         onClick={(e) => {
                           e.stopPropagation();
-                          // Navigate to first selected pillar, or platform_governance as fallback
+                          if (assessment.isDynamic) {
+                            navigate(`/assessments/run/instance/${assessmentId}`);
+                            return;
+                          }
                           const selectedPillars = assessment.selected_pillars;
                           const targetPillar = (selectedPillars && selectedPillars.length > 0) 
                             ? selectedPillars[0] 
                             : 'platform_governance';
-                          console.log(`[AssessmentsListNew] Edit clicked, navigating to: /assessment/${assessmentId}/${targetPillar}`);
                           navigate(`/assessment/${assessmentId}/${targetPillar}`);
                         }}
                         title="Edit assessment"
@@ -1291,7 +1334,7 @@ const AssessmentsListNew = () => {
                         <FiCopy />
                       </ActionButton>
                       <ActionButton
-                        onClick={(e) => handleDeleteAssessment(assessmentId, assessment.assessment_name, e)}
+                        onClick={(e) => handleDeleteAssessment(assessment, assessment.assessment_name, e)}
                         title="Delete this assessment"
                         style={{ color: '#ef4444' }}
                       >
@@ -1305,8 +1348,11 @@ const AssessmentsListNew = () => {
                           if (progress === 0 || status === 'not_started') {
                             return;
                           }
-                          console.log(`[AssessmentsListNew] View Report clicked, navigating to: /results/${assessmentId}`);
-                          navigate(`/results/${assessmentId}`);
+                          if (assessment.isDynamic) {
+                            navigate(`/assessments/report/${assessmentId}`);
+                          } else {
+                            navigate(`/results/${assessmentId}`);
+                          }
                         }}
                         title={progress === 0 || status === 'not_started' ? 'Complete at least one pillar to view report' : 'View assessment report'}
                       >
