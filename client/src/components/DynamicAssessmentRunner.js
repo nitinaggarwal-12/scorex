@@ -777,6 +777,22 @@ const DynamicAssessmentRunner = () => {
         const type = await dynamicAssessmentService.getAssessmentTypeByKey(typeKey);
         if (type) {
           setFramework(type.framework);
+          // Auto-provision an active instance for this run session
+          try {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const newInst = await dynamicAssessmentService.createInstance({
+              typeKey: type.typeKey || typeKey,
+              customerName: user.organization || 'Enterprise Organization',
+              useCase: type.title || 'Enterprise Architecture Modernization',
+              frameworkSnapshot: type.framework,
+              responses: {}
+            });
+            if (newInst) {
+              setInstance(newInst);
+            }
+          } catch (createErr) {
+            console.warn('Instance auto-provisioning deferred to submission:', createErr);
+          }
         }
       }
     } catch (err) {
@@ -905,23 +921,44 @@ const DynamicAssessmentRunner = () => {
   };
 
   const handleFinishAndGenerateReport = async () => {
-    if (!instance?.id) return;
     setIsSubmitting(true);
     try {
       toast.loading('Generating executive report with Gemini 3.7...', { id: 'report-gen' });
-      await dynamicAssessmentService.updateInstance(instance.id, {
-        responses,
-        status: 'completed'
-      });
+      
+      let targetInstance = instance;
+      if (!targetInstance?.id) {
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        targetInstance = await dynamicAssessmentService.createInstance({
+          typeKey: typeKey || framework?.typeKey || 'custom',
+          customerName: user.organization || 'Enterprise Organization',
+          useCase: framework?.title || 'Enterprise Architecture Modernization',
+          frameworkSnapshot: framework,
+          responses: responses
+        });
+        if (targetInstance) {
+          setInstance(targetInstance);
+        }
+      } else {
+        await dynamicAssessmentService.updateInstance(targetInstance.id, {
+          responses,
+          status: 'completed'
+        });
+      }
 
-      const reportResult = await dynamicAssessmentService.generateReport(instance.id);
-      if (reportResult.success) {
+      if (!targetInstance?.id) {
+        throw new Error('Could not initialize assessment session');
+      }
+
+      const reportResult = await dynamicAssessmentService.generateReport(targetInstance.id);
+      if (reportResult && (reportResult.success || reportResult.report || reportResult.aiReport)) {
         toast.success('Executive report generated successfully!', { id: 'report-gen' });
-        navigate(`/assessments/report/${instance.id}`);
+        navigate(`/assessments/report/${targetInstance.id}`);
+      } else {
+        throw new Error(reportResult?.error || 'Failed to generate report');
       }
     } catch (err) {
-      console.error(err);
-      toast.error(err.response?.data?.error || 'Failed to generate report', { id: 'report-gen' });
+      console.error('Error generating executive report:', err);
+      toast.error(err.response?.data?.error || err.message || 'Failed to generate report', { id: 'report-gen' });
     } finally {
       setIsSubmitting(false);
     }
