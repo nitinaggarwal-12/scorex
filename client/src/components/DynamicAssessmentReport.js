@@ -28,6 +28,7 @@ import ScenarioSimulator from './ScenarioSimulator';
 import FinancialImpactCard from './FinancialImpactCard';
 import ArchitectureComparisonDiagram from './ArchitectureComparisonDiagram';
 import MultiPersonaViews from './MultiPersonaViews';
+import BacklogExporterCard from './BacklogExporterCard';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -588,6 +589,12 @@ const DynamicAssessmentReport = () => {
           assessmentName={framework?.title || 'Enterprise Data Platform'}
           currentScore={scores.overallScore || 2.5}
           targetScore={4.5}
+        />
+
+        {/* 1-Click Transformation Backlog Exporter */}
+        <BacklogExporterCard
+          assessmentName={framework?.title || 'Enterprise Data & AI Maturity Assessment'}
+          recommendations={report.prioritizedRecommendations || []}
         />
 
         {/* Two Column Section: Executive Summary & Dimension Scores */}

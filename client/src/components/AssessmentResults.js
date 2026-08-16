@@ -13,6 +13,7 @@ import ScenarioSimulator from './ScenarioSimulator';
 import FinancialImpactCard from './FinancialImpactCard';
 import ArchitectureComparisonDiagram from './ArchitectureComparisonDiagram';
 import MultiPersonaViews from './MultiPersonaViews';
+import BacklogExporterCard from './BacklogExporterCard';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, RadialLinearScale, PointElement, LineElement, Filler);
 
@@ -2139,6 +2140,15 @@ const AssessmentResults = ({ currentAssessment, framework }) => {
             assessmentName={results.assessmentInfo?.assessmentName || 'Enterprise Data Platform'}
             currentScore={overallCurrentScore}
             targetScore={overallFutureScore}
+          />
+        )}
+
+        {/* 1-Click Transformation Backlog Exporter */}
+        {hasData && (
+          <BacklogExporterCard
+            assessmentName={results.assessmentInfo?.assessmentName || 'Enterprise Data Platform'}
+            recommendations={results.painPointRecommendations || []}
+            prioritizedActions={results.prioritizedActions || []}
           />
         )}
 
