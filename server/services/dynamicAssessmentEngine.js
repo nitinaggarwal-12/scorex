@@ -171,6 +171,24 @@ Output a strictly valid JSON object with the following schema:
 
   /**
    * AI-generate an executive report for a completed dynamic assessment
+   * Accepts both (instance, framework) and (framework, responses, scores, options) signatures
+   */
+  async generateExecutiveReport(frameworkOrInstance, responsesOrFramework, scoresOrOptions, options = {}) {
+    // Detect if called as generateExecutiveReport(framework, responses, scores, options)
+    if (responsesOrFramework && (responsesOrFramework.dimensions || frameworkOrInstance.dimensions)) {
+      let framework = frameworkOrInstance.dimensions ? frameworkOrInstance : responsesOrFramework;
+      let instance = {
+        customerName: options.customerName || scoresOrOptions?.customerName || 'Enterprise Organization',
+        useCase: options.useCase || scoresOrOptions?.useCase || framework.title || 'Enterprise Modernization',
+        responses: typeof responsesOrFramework === 'object' && !responsesOrFramework.dimensions ? responsesOrFramework : (frameworkOrInstance.responses || {})
+      };
+      return this.generateDynamicReport(instance, framework);
+    }
+    return this.generateDynamicReport(frameworkOrInstance, responsesOrFramework);
+  }
+
+  /**
+   * Main report synthesis engine
    */
   async generateDynamicReport(instance, framework) {
     console.log(`🤖 Generating executive report for "${instance.customerName}" (${framework.title}) with Gemini 3.7...`);

@@ -443,6 +443,7 @@ router.post('/instances/:id/generate-report', async (req, res) => {
     res.json({
       success: true,
       aiReport,
+      report: aiReport,
       instance: updated
     });
   } catch (error) {
