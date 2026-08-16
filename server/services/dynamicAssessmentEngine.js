@@ -197,6 +197,13 @@ Output a strictly valid JSON object with the following schema:
 You specialize in synthesizing maturity assessments into executive-ready strategic transformation reports for Board Members, CTOs, CIOs, and VP-level leaders.
 
 Deliver a rigorous, consultative, highly contextualized report based on the customer's actual scores, identified pain points, and specific notes.
+Ground all strategic guidance in proven modern architectural patterns:
+- Open Data Lakehouse: Unity Catalog metadata unification, Delta Lake & Apache Iceberg UniForm zero-copy interoperability.
+- Declarative Streaming: Serverless Auto-Loader, declarative data pipelines (SDF / dbt), and automated CDC data contracts.
+- Production MLOps: Centralized MLflow Model & Prompt Registry, automated drift alerting, and feature store reuse.
+- Next-Gen Compound GenAI: Autonomous Multi-Agent Orchestration (MCP), Prompt Context Caching (75% input token discount), Model Routing, and Zero-Trust Guardrails.
+- FinOps: 15-minute cluster auto-termination, predictive cost anomaly alerts, and serverless SQL right-sizing.
+
 Avoid generic fluff or vendor bias. Every recommendation must be actionable, architectural, and strategic.`;
 
     const userPrompt = `ASSESSMENT CONTEXT:

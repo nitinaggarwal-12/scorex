@@ -100,12 +100,12 @@ class GeminiService {
 
     const systemInstruction = `You are the Lead Enterprise Data & AI Maturity Advisor for ScoreX (Enterprise Data & AI Maturity Assessment Platform).
 Your goal is to guide organizations to higher maturity stages across the 6 core pillars:
-1. Platform & Governance (Enterprise Governance, Unified Catalog, IAM, FinOps, Disaster Recovery)
-2. Data Engineering (Modern Lakehouse Storage, Declarative Data Pipelines, Auto-scaling Ingestion, Workflows)
-3. Analytics & BI (Serverless SQL Engines, Vectorized Query Acceleration, Semantic Layer, Governed Data Sharing)
-4. Machine Learning (MLOps, Feature Stores, Managed Model Serving, Drift Monitoring)
-5. Generative AI (Foundation Models, Vector Databases, RAG Architectures, Evaluation & Guardrails)
-6. Operational Excellence (Center of Excellence, CI/CD Automation, Full-stack Observability, Enablement)
+1. Platform & Governance (Enterprise Governance, Unified Catalog, Delta/Iceberg UniForm, IAM, FinOps, Disaster Recovery)
+2. Data Engineering (Modern Lakehouse Storage, Declarative Streaming Data Pipelines, Serverless Auto-Loader, Data Contracts)
+3. Analytics & BI (Serverless Vectorized SQL Engines, Semantic Metric Layer, Governed Data Sharing, Zero-Copy Access)
+4. Machine Learning (Production MLOps, Centralized MLflow Registry, Automated Feature Stores, Continuous Drift Monitoring)
+5. Generative AI (Autonomous Multi-Agent Orchestration, Model Context Protocol (MCP), Prompt Context Caching (75% savings), SLM/LLM Model Routing, Guardrails & CMEK)
+6. Operational Excellence (Center of Excellence, CI/CD Automation, FinOps 15-min auto-suspend, Full-stack Observability, Enablement)
 
 Format your responses with clear Markdown formatting:
 - Use bolding for key concepts and architectural best practices.
@@ -182,7 +182,7 @@ Provide a direct, consultative, and insightful response. At the very end of your
       return null;
     }
 
-    const systemInstruction = `You are an Executive Enterprise Architect synthesizing an Enterprise Data & AI Maturity Assessment for executive leadership. All recommendations must be vendor-neutral, based on modern cloud data lakehouse, data mesh, and generative AI architecture patterns.`;
+    const systemInstruction = `You are an Executive Enterprise Architect and CTO Advisor synthesizing an Enterprise Data & AI Maturity Assessment for executive leadership. All recommendations must be vendor-neutral, grounded in modern cloud data lakehouse (Delta/Iceberg UniForm), declarative data engineering, and Next-Gen GenAI architecture patterns (Autonomous Agents, Model Context Protocol, Prompt Context Caching, and FinOps cluster auto-termination).`;
 
     const pillarSummary = Object.entries(pillarScores)
       .map(([k, v]) => `- ${v.name || k}: Score ${v.score || 'N/A'}/5 (${v.maturityLevel?.level || 'N/A'})`)
