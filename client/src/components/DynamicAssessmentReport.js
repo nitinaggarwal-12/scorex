@@ -25,6 +25,7 @@ import toast from 'react-hot-toast';
 import dynamicAssessmentService from '../services/dynamicAssessmentService';
 import LoadingSpinner from './LoadingSpinner';
 import ScenarioSimulator from './ScenarioSimulator';
+import FinancialImpactCard from './FinancialImpactCard';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -566,6 +567,13 @@ const DynamicAssessmentReport = () => {
             </ScoreSection>
           </HeroHeader>
         </HeroCard>
+
+        {/* Quantified Financial & TCO Impact Engine */}
+        <FinancialImpactCard
+          pillarScores={scores.dimensionScores || {}}
+          overallCurrent={scores.overallScore || 2.5}
+          overallTarget={4.0}
+        />
 
         {/* Two Column Section: Executive Summary & Dimension Scores */}
         <TwoColGrid>

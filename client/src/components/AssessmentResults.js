@@ -7,10 +7,10 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 import { Bar, Radar } from 'react-chartjs-2';
 import toast from 'react-hot-toast';
 import * as assessmentService from '../services/assessmentService';
-import { generateProfessionalReport } from '../services/pdfExportService';
 import LoadingSpinner from './LoadingSpinner';
 import AssessmentHeader from './AssessmentHeader';
 import ScenarioSimulator from './ScenarioSimulator';
+import FinancialImpactCard from './FinancialImpactCard';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, RadialLinearScale, PointElement, LineElement, Filler);
 
@@ -2114,6 +2114,14 @@ const AssessmentResults = ({ currentAssessment, framework }) => {
           </div>
         </HeaderSection>
 
+        {/* Quantified Financial & TCO Impact Engine */}
+        {hasData && (
+          <FinancialImpactCard
+            pillarScores={results.categoryDetails || {}}
+            overallCurrent={overallCurrentScore}
+            overallTarget={overallFutureScore}
+          />
+        )}
 
         {/* 2. PILLAR ASSESSMENT CARDS - Good/Bad/Recommendations */}
         {hasData && results.prioritizedActions?.length > 0 && (
