@@ -27,7 +27,8 @@ import {
   FiLock,
   FiMail,
   FiHome,
-  FiArrowLeft
+  FiArrowLeft,
+  FiSliders
 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import html2canvas from 'html2canvas';
@@ -35,6 +36,11 @@ import jsPDF from 'jspdf';
 import * as assessmentService from '../services/assessmentService';
 import { exportAssessmentToExcel } from '../services/excelExportService';
 import Footer from './Footer';
+import ScenarioSimulator from './ScenarioSimulator';
+import FinancialImpactCard from './FinancialImpactCard';
+import ArchitectureComparisonDiagram from './ArchitectureComparisonDiagram';
+import MultiPersonaViews from './MultiPersonaViews';
+import BacklogExporterCard from './BacklogExporterCard';
 
 // =======================
 // STYLED COMPONENTS
@@ -1856,6 +1862,8 @@ const AssessmentResultsNew = () => {
   const [framework, setFramework] = useState(null);
   const [benchmarkData, setBenchmarkData] = useState(null);
   const [benchmarkLoading, setBenchmarkLoading] = useState(false);
+  const [showSimulator, setShowSimulator] = useState(false);
+  const [simulatedTargets, setSimulatedTargets] = useState(null);
   
   // Slideshow mode state
   const [presentationMode, setPresentationMode] = useState(false);
@@ -3499,6 +3507,15 @@ const AssessmentResultsNew = () => {
               {/* Primary Group - Purple + Green */}
               <ButtonGroup>
                 <ActionButton
+                  onClick={() => setShowSimulator(!showSimulator)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  style={{ background: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)' }}
+                >
+                  <FiSliders size={16} />
+                  {showSimulator ? 'Close Simulator' : 'What-If Simulator'}
+                </ActionButton>
+                <ActionButton
                   onClick={() => navigate(`/executive/${assessmentId}`)}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -3629,6 +3646,70 @@ const AssessmentResultsNew = () => {
 
         {/* Body */}
         <ReportBody>
+          {/* Interactive What-If Scenario Simulator */}
+          <AnimatePresence>
+            {showSimulator && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                style={{ marginBottom: '24px' }}
+              >
+                <ScenarioSimulator
+                  dimensions={(pillars || []).map(p => {
+                    const pScore = resultsData?.categoryDetails?.[p.id] || {};
+                    return {
+                      id: p.id,
+                      name: p.name,
+                      icon: p.icon,
+                      currentScore: pScore.currentScore || 2.0,
+                      targetScore: pScore.futureScore || pScore.currentScore || 4.0
+                    };
+                  })}
+                  onScenarioChange={(simTargets) => setSimulatedTargets(simTargets)}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Quantified Financial Impact & Dollar-at-Risk Engine */}
+          <FinancialImpactCard
+            pillarScores={(() => {
+              const obj = {};
+              if (resultsData?.categoryDetails) {
+                Object.entries(resultsData.categoryDetails).forEach(([k, v]) => {
+                  obj[k] = {
+                    name: v.name || k,
+                    currentScore: v.currentScore || 0,
+                    targetScore: v.futureScore || v.currentScore || 0
+                  };
+                });
+              }
+              return obj;
+            })()}
+            overallCurrent={parseFloat(currentMaturity) || 2.5}
+            overallTarget={parseFloat(targetMaturity) || 4.0}
+          />
+
+          {/* Architectural Evolution Blueprint: Current vs Target */}
+          <ArchitectureComparisonDiagram
+            currentScore={parseFloat(currentMaturity) || 2.5}
+            targetScore={parseFloat(targetMaturity) || 4.0}
+          />
+
+          {/* Multi-Persona Executive Transformation Blueprints */}
+          <MultiPersonaViews
+            assessmentName={resultsData?.assessmentInfo?.organizationName || 'Enterprise Platform'}
+            currentScore={parseFloat(currentMaturity) || 2.5}
+            targetScore={parseFloat(targetMaturity) || 4.0}
+          />
+
+          {/* 1-Click Transformation Backlog Exporter */}
+          <BacklogExporterCard
+            assessmentName={resultsData?.assessmentInfo?.organizationName || 'Enterprise Platform'}
+          />
+
           {/* Maturity Roadmap Visualization */}
           <SectionCard
             initial={{ opacity: 0, y: 20 }}

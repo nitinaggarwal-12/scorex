@@ -18,6 +18,7 @@ import AssessmentDashboard from './components/AssessmentDashboard';
 import Dashboard from './components/DashboardNew';
 import LoadingSpinner from './components/LoadingSpinner';
 import ExecutiveCommandCenter from './components/ExecutiveCommandCenter';
+import ExecutiveSummary from './components/ExecutiveSummaryNew';
 import AssessmentHistory from './components/AssessmentHistory';
 import DeepDive from './components/DeepDive';
 import IndustryBenchmarkingReport from './components/IndustryBenchmarkingReport';
@@ -468,6 +469,18 @@ function App() {
               </ProtectedRoute>
             } 
           />
+
+          <Route 
+            path="/executive-summary/:assessmentId" 
+            element={
+              <ProtectedRoute>
+                <ExecutiveSummary 
+                  currentAssessment={currentAssessment}
+                  framework={assessmentFramework}
+                />
+              </ProtectedRoute>
+            } 
+          />
           
           <Route 
             path="/executive/:assessmentId" 
@@ -477,9 +490,36 @@ function App() {
               </ProtectedRoute>
             } 
           />
+
+          <Route 
+            path="/executive-dashboard" 
+            element={
+              <ProtectedRoute>
+                <ExecutiveCommandCenter />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/executive-dashboard/:assessmentId" 
+            element={
+              <ProtectedRoute>
+                <ExecutiveCommandCenter />
+              </ProtectedRoute>
+            } 
+          />
           
           <Route 
             path="/benchmarks/:assessmentId" 
+            element={
+              <ProtectedRoute>
+                <IndustryBenchmarkingReport />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/industry-benchmarks" 
             element={
               <ProtectedRoute>
                 <IndustryBenchmarkingReport />
