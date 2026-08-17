@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const crypto = require('crypto');
 const customAssessmentRepo = require('../db/customAssessmentRepository');
 const dynamicEngine = require('../services/dynamicAssessmentEngine');
+const notificationService = require('../services/notificationService');
 
 /**
  * Dynamic Assessment Routes
@@ -670,6 +672,11 @@ router.post('/instances/:id/generate-report', aiRateLimiter(15, 60000), async (r
       status: 'completed'
     });
 
+    // Asynchronously dispatch completion webhook without delaying API response
+    notificationService.dispatchAssessmentCompletionWebhook(instance, calculated, aiReport).catch(err => {
+      console.warn('Webhook dispatch failed:', err.message);
+    });
+
     res.json({
       success: true,
       aiReport,
@@ -730,6 +737,104 @@ router.post('/instances/:id/generate-diagrams', aiRateLimiter(15, 60000), async 
       success: false,
       error: error.message || 'Failed to generate architecture diagrams'
     });
+  }
+});
+
+// 8. Generate Secure Shareable Read-Only Public Link Token
+router.post('/instances/:id/share-link', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const instance = await customAssessmentRepo.getInstanceById(id);
+    if (!instance) {
+      return res.status(404).json({ success: false, error: 'Assessment instance not found' });
+    }
+
+    let shareToken = instance.shareToken;
+    if (!shareToken) {
+      shareToken = crypto.randomBytes(16).toString('hex');
+      await customAssessmentRepo.updateInstance(id, { shareToken });
+    }
+
+    res.json({
+      success: true,
+      shareToken,
+      shareUrl: `/assessments/public-report/${shareToken}`
+    });
+  } catch (error) {
+    console.error('Error generating share link:', error);
+    res.status(500).json({ success: false, error: 'Failed to generate share link' });
+  }
+});
+
+// 9. Public Read-Only Report Access via Token (No login required)
+router.get('/public/report/:token', async (req, res) => {
+  try {
+    const { token } = req.params;
+    const allInstances = await customAssessmentRepo.getAllInstances();
+    const instance = allInstances.find(i => i.shareToken === token);
+    if (!instance) {
+      return res.status(404).json({ success: false, error: 'Public assessment report not found or link has expired' });
+    }
+
+    const calculated = dynamicEngine.calculateScores(instance.responses, instance.frameworkSnapshot);
+
+    res.json({
+      success: true,
+      instance,
+      report: instance.aiReport || {
+        executiveSummary: 'Assessment completed. Review detailed scores and roadmap below.',
+        prioritizedRecommendations: []
+      },
+      calculatedScores: calculated,
+      scores: calculated,
+      framework: instance.frameworkSnapshot
+    });
+  } catch (error) {
+    console.error('Error fetching public report:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch public report' });
+  }
+});
+
+// 10. Fork Assessment Template into Custom Variant
+router.post('/types/:id/fork', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { newTitle } = req.body;
+    const original = await customAssessmentRepo.getAssessmentTypeById(id);
+    if (!original) {
+      return res.status(404).json({ success: false, error: 'Original assessment template not found' });
+    }
+
+    const newTypeKey = `${original.typeKey}_variant_${Date.now().toString(36)}`;
+    const title = newTitle || `${original.title} (Custom Variant)`;
+
+    const forkedType = await customAssessmentRepo.saveAssessmentType({
+      typeKey: newTypeKey,
+      title,
+      subtitle: original.subtitle || '',
+      description: original.description || '',
+      icon: original.icon || 'FiAward',
+      badge: original.badge || 'Custom Variant',
+      color: original.color || '#6366f1',
+      framework: {
+        ...original.framework,
+        typeKey: newTypeKey,
+        title
+      },
+      status: 'draft',
+      isPublished: true,
+      isPromoted: false,
+      createdBy: req.body.createdBy || 'catalog-fork'
+    });
+
+    res.json({
+      success: true,
+      type: forkedType,
+      message: `Template successfully forked as "${title}"`
+    });
+  } catch (error) {
+    console.error('Error forking assessment type:', error);
+    res.status(500).json({ success: false, error: 'Failed to fork assessment type' });
   }
 });
 

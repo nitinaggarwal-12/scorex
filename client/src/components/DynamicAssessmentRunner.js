@@ -769,6 +769,15 @@ const DynamicAssessmentRunner = () => {
   const [showAddEvidence, setShowAddEvidence] = useState(false);
   const [evidenceUrl, setEvidenceUrl] = useState('');
   const [evidenceLabel, setEvidenceLabel] = useState('');
+  const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem('scorex_runner_theme') === 'dark');
+
+  const toggleThemeMode = () => {
+    setIsDarkMode(prev => {
+      const next = !prev;
+      localStorage.setItem('scorex_runner_theme', next ? 'dark' : 'light');
+      return next;
+    });
+  };
 
   const draftKey = `scorex_draft_${id || typeKey || 'custom'}`;
 
@@ -1564,6 +1573,26 @@ const DynamicAssessmentRunner = () => {
                   <FiFileText /> View Report
                 </button>
               )}
+
+              <button
+                onClick={toggleThemeMode}
+                style={{
+                  background: isDarkMode ? '#1e293b' : '#f1f5f9',
+                  border: isDarkMode ? '1px solid #475569' : '1px solid #cbd5e1',
+                  color: isDarkMode ? '#f8fafc' : '#475569',
+                  borderRadius: '8px',
+                  padding: '6px 12px',
+                  fontSize: '0.8rem',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+                title="Toggle Dark / Light Mode"
+              >
+                {isDarkMode ? '☀️ Light' : '🌙 Dark'}
+              </button>
 
               <AutoSaveBadge>
                 <FiCheckCircle /> {savedStatus === 'saving' ? 'Saving...' : 'Saved'}

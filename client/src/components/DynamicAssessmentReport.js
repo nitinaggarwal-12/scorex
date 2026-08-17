@@ -430,7 +430,7 @@ const PriorityBadge = styled.span`
 `;
 
 const DynamicAssessmentReport = () => {
-  const { id } = useParams();
+  const { id, token } = useParams();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
@@ -444,32 +444,43 @@ const DynamicAssessmentReport = () => {
 
   useEffect(() => {
     loadReport();
-  }, [id]);
+  }, [id, token]);
 
   const loadReport = async () => {
     setLoading(true);
     setLoadError(null);
     try {
-      const inst = await dynamicAssessmentService.getInstance(id);
-      if (inst && inst.frameworkSnapshot) {
-        setInstance(inst);
-        setFramework(inst.frameworkSnapshot);
-        if (inst.aiReport) {
-          setReport(inst.aiReport);
+      if (token) {
+        const publicData = await dynamicAssessmentService.getPublicReport(token);
+        if (publicData && publicData.instance) {
+          setInstance(publicData.instance);
+          setFramework(publicData.framework || publicData.instance.frameworkSnapshot);
+          setReport(publicData.report || publicData.instance.aiReport);
         } else {
-          try {
-            const genRes = await dynamicAssessmentService.generateReport(id);
-            if (genRes && genRes.report) {
-              setReport(genRes.report);
-            } else {
-              setLoadError('Report could not be generated for this assessment.');
-            }
-          } catch (genErr) {
-            setLoadError('Report generation failed. Please re-run the assessment.');
-          }
+          setLoadError('Public assessment report not found or link has expired.');
         }
-      } else {
-        setLoadError('Assessment report was not found or has expired.');
+      } else if (id) {
+        const inst = await dynamicAssessmentService.getInstance(id);
+        if (inst && inst.frameworkSnapshot) {
+          setInstance(inst);
+          setFramework(inst.frameworkSnapshot);
+          if (inst.aiReport) {
+            setReport(inst.aiReport);
+          } else {
+            try {
+              const genRes = await dynamicAssessmentService.generateReport(id);
+              if (genRes && genRes.report) {
+                setReport(genRes.report);
+              } else {
+                setLoadError('Report could not be generated for this assessment.');
+              }
+            } catch (genErr) {
+              setLoadError('Report generation failed. Please re-run the assessment.');
+            }
+          }
+        } else {
+          setLoadError('Assessment report was not found or has expired.');
+        }
       }
     } catch (err) {
       console.error(err);
@@ -497,6 +508,24 @@ const DynamicAssessmentReport = () => {
     } catch (err) {
       console.error(err);
       toast.error('Failed to promote assessment type', { id: 'promote-type' });
+    }
+  };
+
+  const handleShareLink = async () => {
+    if (!instance?.id) return;
+    try {
+      toast.loading('Generating public share link...', { id: 'share-link' });
+      const res = await dynamicAssessmentService.getShareLink(instance.id);
+      if (res && res.shareToken) {
+        const fullUrl = `${window.location.origin}/assessments/public-report/${res.shareToken}`;
+        await navigator.clipboard.writeText(fullUrl);
+        toast.success('🔗 Public report link copied to clipboard!', { id: 'share-link', duration: 4000 });
+      } else {
+        toast.error('Failed to generate share link', { id: 'share-link' });
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to generate share link', { id: 'share-link' });
     }
   };
 
@@ -619,6 +648,14 @@ const DynamicAssessmentReport = () => {
               onClick={() => setShowSimulator(!showSimulator)}
             >
               <FiSliders /> {showSimulator ? 'Hide What-If Simulator' : '🎛️ What-If Scenario Simulator'}
+            </button>
+
+            <button 
+              style={{ background: 'rgba(168, 85, 247, 0.15)', border: '1px solid rgba(168, 85, 247, 0.4)', color: '#c084fc', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
+              onClick={handleShareLink}
+              title="Copy secure read-only public report link for C-suite stakeholders"
+            >
+              <FiShare2 /> 🔗 Share Link
             </button>
 
             <button 

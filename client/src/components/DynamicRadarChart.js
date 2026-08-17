@@ -209,12 +209,23 @@ const DimScores = styled.div`
   }
 `;
 
+const BENCHMARK_PROFILES = {
+  global: { name: 'Global Enterprise Avg', score: 3.2, color: '#6366f1' },
+  fintech: { name: 'FinTech & Banking', score: 4.1, color: '#0ea5e9' },
+  healthcare: { name: 'Healthcare & Life Sciences', score: 3.8, color: '#10b981' },
+  digital_native: { name: 'Digital Native & AI SaaS', score: 4.5, color: '#8b5cf6' },
+  retail: { name: 'Retail & eCommerce', score: 3.5, color: '#f59e0b' }
+};
+
 const DynamicRadarChart = ({ dimensions = [], dimensionScores = {}, responses = {} }) => {
   const [hoveredIdx, setHoveredIdx] = useState(null);
+  const [selectedBenchmark, setSelectedBenchmark] = useState('global');
 
   if (!dimensions || dimensions.length < 3) {
     return null;
   }
+
+  const currentBenchmark = BENCHMARK_PROFILES[selectedBenchmark] || BENCHMARK_PROFILES.global;
 
   const size = 420;
   const center = size / 2;
@@ -251,8 +262,8 @@ const DynamicRadarChart = ({ dimensions = [], dimensionScores = {}, responses = 
   });
   const targetPath = targetPoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x},${p.y}`).join(' ') + ' Z';
 
-  // Industry Benchmark Points (Level 3.6 avg)
-  const benchmarkPoints = dimensions.map((_, idx) => getCoordinates(3.6, idx));
+  // Dynamic Benchmark Points
+  const benchmarkPoints = dimensions.map((_, idx) => getCoordinates(currentBenchmark.score, idx));
   const benchmarkPath = benchmarkPoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x},${p.y}`).join(' ') + ' Z';
 
   return (
@@ -272,17 +283,44 @@ const DynamicRadarChart = ({ dimensions = [], dimensionScores = {}, responses = 
           </div>
         </TitleBlock>
 
-        <LegendRow>
-          <LegendItem $color="#ef4444" $bg="rgba(239, 68, 68, 0.3)">
-            <span className="dot" /> Baseline State
-          </LegendItem>
-          <LegendItem $color="#10b981" $bg="rgba(16, 185, 129, 0.3)">
-            <span className="dot" /> Desired Target State
-          </LegendItem>
-          <LegendItem $color="#6366f1" $bg="transparent">
-            <span className="dot" style={{ borderStyle: 'dashed' }} /> Industry Benchmark (3.6)
-          </LegendItem>
-        </LegendRow>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: '600' }}>Benchmark:</span>
+            <select
+              value={selectedBenchmark}
+              onChange={(e) => setSelectedBenchmark(e.target.value)}
+              style={{
+                background: 'rgba(30, 41, 59, 0.8)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                color: '#f8fafc',
+                borderRadius: '8px',
+                padding: '5px 10px',
+                fontSize: '0.8rem',
+                fontWeight: '600',
+                outline: 'none',
+                cursor: 'pointer'
+              }}
+            >
+              {Object.entries(BENCHMARK_PROFILES).map(([key, prof]) => (
+                <option key={key} value={key} style={{ background: '#1e293b', color: '#f8fafc' }}>
+                  {prof.name} ({prof.score})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <LegendRow>
+            <LegendItem $color="#ef4444" $bg="rgba(239, 68, 68, 0.3)">
+              <span className="dot" /> Baseline
+            </LegendItem>
+            <LegendItem $color="#10b981" $bg="rgba(16, 185, 129, 0.3)">
+              <span className="dot" /> Target
+            </LegendItem>
+            <LegendItem $color={currentBenchmark.color} $bg="transparent">
+              <span className="dot" style={{ borderStyle: 'dashed', borderColor: currentBenchmark.color }} /> Benchmark ({currentBenchmark.score})
+            </LegendItem>
+          </LegendRow>
+        </div>
       </Header>
 
       <Grid>
@@ -365,10 +403,10 @@ const DynamicRadarChart = ({ dimensions = [], dimensionScores = {}, responses = 
             <path
               d={benchmarkPath}
               fill="none"
-              stroke="#6366f1"
+              stroke={currentBenchmark.color}
               strokeWidth="1.5"
               strokeDasharray="4 4"
-              opacity="0.8"
+              opacity="0.85"
             />
 
             {/* Baseline Polygon */}

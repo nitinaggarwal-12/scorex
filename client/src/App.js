@@ -410,6 +410,11 @@ function App() {
               </ProtectedRoute>
             } 
           />
+
+          <Route 
+            path="/assessments/public-report/:token" 
+            element={<DynamicAssessmentReport />} 
+          />
           
           <Route 
             path="/dashboard" 

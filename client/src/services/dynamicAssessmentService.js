@@ -196,6 +196,30 @@ class DynamicAssessmentService {
     const response = await axios.get(`/api/dynamic-assessments/customer/${encodeURIComponent(customerName)}`);
     return response.data?.assessments || [];
   }
+
+  /**
+   * Generate or retrieve shareable public token for assessment
+   */
+  async getShareLink(id) {
+    const response = await axios.post(`/api/dynamic-assessments/instances/${id}/share-link`);
+    return response.data;
+  }
+
+  /**
+   * Fetch public report data using share token without login
+   */
+  async getPublicReport(token) {
+    const response = await axios.get(`/api/dynamic-assessments/public/report/${token}`);
+    return response.data;
+  }
+
+  /**
+   * Fork assessment template as custom variant
+   */
+  async forkAssessmentType(id, newTitle) {
+    const response = await axios.post(`/api/dynamic-assessments/types/${id}/fork`, { newTitle });
+    return response.data;
+  }
 }
 
 const dynamicAssessmentService = new DynamicAssessmentService();
