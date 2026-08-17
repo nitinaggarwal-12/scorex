@@ -34,6 +34,7 @@ import IaCBlueprintCard from './IaCBlueprintCard';
 import DynamicRadarChart from './DynamicRadarChart';
 import { exportDynamicAssessmentToExcel } from '../services/excelExportService';
 import { generateDynamicPDFReport } from '../services/pdfExportService';
+import { exportAssessmentToJSON, exportAssessmentToCSV } from '../services/dataExportService';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -687,7 +688,35 @@ const DynamicAssessmentReport = () => {
                 }
               }}
             >
-              <FiDownload /> 📊 Export Excel
+              <FiDownload /> 📊 Excel
+            </button>
+
+            <button 
+              style={{ background: 'rgba(245, 158, 11, 0.15)', border: '1px solid rgba(245, 158, 11, 0.4)', color: '#fbbf24', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
+              onClick={() => {
+                const res = exportAssessmentToCSV(instance, report);
+                if (res?.success) {
+                  toast.success('📑 Flattened CSV exported successfully!');
+                } else {
+                  toast.error('Failed to export CSV');
+                }
+              }}
+            >
+              <FiDownload /> 📑 CSV
+            </button>
+
+            <button 
+              style={{ background: 'rgba(56, 189, 248, 0.15)', border: '1px solid rgba(56, 189, 248, 0.4)', color: '#38bdf8', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
+              onClick={() => {
+                const res = exportAssessmentToJSON(instance, report);
+                if (res?.success) {
+                  toast.success('📦 Raw JSON export saved!');
+                } else {
+                  toast.error('Failed to export JSON');
+                }
+              }}
+            >
+              <FiDownload /> 📦 JSON
             </button>
 
             <button 

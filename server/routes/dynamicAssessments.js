@@ -838,4 +838,175 @@ router.post('/types/:id/fork', async (req, res) => {
   }
 });
 
+// 11. Side-by-Side Assessment Comparison & Progress Delta Engine
+router.get('/compare', async (req, res) => {
+  try {
+    const { baseId, targetId } = req.query;
+    if (!baseId || !targetId) {
+      return res.status(400).json({ success: false, error: 'Both baseId and targetId query parameters are required' });
+    }
+
+    const [baseInstance, targetInstance] = await Promise.all([
+      customAssessmentRepo.getInstanceById(baseId),
+      customAssessmentRepo.getInstanceById(targetId)
+    ]);
+
+    if (!baseInstance || !targetInstance) {
+      return res.status(404).json({ success: false, error: 'One or both assessment instances could not be found' });
+    }
+
+    const baseCalculated = dynamicEngine.calculateScores(baseInstance.responses, baseInstance.frameworkSnapshot);
+    const targetCalculated = dynamicEngine.calculateScores(targetInstance.responses, targetInstance.frameworkSnapshot);
+
+    const overallDelta = Number((targetCalculated.overallScore - baseCalculated.overallScore).toFixed(2));
+
+    const dimensions = targetInstance.frameworkSnapshot?.dimensions || baseInstance.frameworkSnapshot?.dimensions || [];
+    const dimensionDeltas = dimensions.map(dim => {
+      const bScore = baseCalculated.dimensionScores?.[dim.id]?.score || 0;
+      const tScore = targetCalculated.dimensionScores?.[dim.id]?.score || 0;
+      const delta = Number((tScore - bScore).toFixed(2));
+      return {
+        id: dim.id,
+        name: dim.name,
+        baseScore: bScore,
+        targetScore: tScore,
+        delta,
+        status: delta > 0 ? 'improved' : delta < 0 ? 'regressed' : 'unchanged'
+      };
+    });
+
+    res.json({
+      success: true,
+      base: {
+        instance: baseInstance,
+        scores: baseCalculated
+      },
+      target: {
+        instance: targetInstance,
+        scores: targetCalculated
+      },
+      comparison: {
+        overallDelta,
+        dimensionDeltas,
+        isPositiveGrowth: overallDelta >= 0
+      }
+    });
+  } catch (error) {
+    console.error('Error comparing assessments:', error);
+    res.status(500).json({ success: false, error: 'Failed to compare assessments' });
+  }
+});
+
+// 12. AI Dimension Question Suggestion Assistant for Custom Builder
+router.post('/suggest-questions', aiRateLimiter(15, 60000), async (req, res) => {
+  try {
+    const { dimensionName, dimensionDescription, industry, targetRole } = req.body;
+    if (!dimensionName) {
+      return res.status(400).json({ success: false, error: 'Dimension name is required' });
+    }
+
+    const prompt = `You are a Principal Enterprise Cloud & AI Architect.
+Generate 3 high-impact, audit-grade evaluation questions for an assessment framework dimension:
+Dimension Name: "${dimensionName}"
+Dimension Description: "${dimensionDescription || 'Evaluate technical maturity and operational posture.'}"
+Target Industry: "${industry || 'Cross-Industry Enterprise'}"
+Target Role: "${targetRole || 'Enterprise Architects, Tech Leads'}"
+
+For each question, return JSON conforming strictly to:
+{
+  "questions": [
+    {
+      "id": "q_suggested_1",
+      "text": "Clear, direct architectural question text?",
+      "guidance": "Explicit guidance on what artifacts, metrics, and processes to evaluate.",
+      "options": [
+        { "value": 1, "score": 1, "label": "Stage 1 Explore definition..." },
+        { "value": 2, "score": 2, "label": "Stage 2 Experiment definition..." },
+        { "value": 3, "score": 3, "label": "Stage 3 Formalize definition..." },
+        { "value": 4, "score": 4, "label": "Stage 4 Optimize definition..." },
+        { "value": 5, "score": 5, "label": "Stage 5 Transform definition..." }
+      ],
+      "technicalPainPoints": [
+        "Technical bottleneck 1",
+        "Technical bottleneck 2",
+        "Technical bottleneck 3"
+      ],
+      "businessPainPoints": [
+        "Business/financial risk 1",
+        "Business/financial risk 2"
+      ]
+    }
+  ]
+}
+Return valid JSON only.`;
+
+    const response = await dynamicEngine.geminiService.generateJSON(prompt);
+    res.json({
+      success: true,
+      questions: response.questions || []
+    });
+  } catch (error) {
+    console.error('Error suggesting questions:', error);
+    res.status(500).json({ success: false, error: 'Failed to suggest questions with AI' });
+  }
+});
+
+// 13. Customer Multi-Assessment Portfolio Executive Rollup
+router.get('/customer/:customerName/portfolio-rollup', async (req, res) => {
+  try {
+    const { customerName } = req.params;
+    const allInstances = await customAssessmentRepo.getAllInstances();
+    const customerInstances = allInstances.filter(
+      i => (i.customerName || '').toLowerCase() === customerName.toLowerCase()
+    );
+
+    if (customerInstances.length === 0) {
+      return res.json({
+        success: true,
+        customerName,
+        totalAssessments: 0,
+        averageMaturity: 0,
+        portfolioRollup: []
+      });
+    }
+
+    let totalScoreSum = 0;
+    let completedCount = 0;
+    const portfolio = customerInstances.map(inst => {
+      const calculated = dynamicEngine.calculateScores(inst.responses, inst.frameworkSnapshot);
+      if (inst.status === 'completed') {
+        completedCount++;
+        totalScoreSum += calculated.overallScore;
+      }
+      return {
+        id: inst.id,
+        title: inst.frameworkSnapshot?.title || inst.useCase || 'Assessment',
+        customerName: inst.customerName,
+        useCase: inst.useCase,
+        status: inst.status,
+        overallScore: calculated.overallScore,
+        maturityLevel: calculated.maturityLevel,
+        dimensionScores: calculated.dimensionScores,
+        updatedAt: inst.updatedAt || inst.createdAt
+      };
+    });
+
+    const averageMaturity = completedCount > 0 
+      ? Number((totalScoreSum / completedCount).toFixed(2)) 
+      : 0;
+
+    res.json({
+      success: true,
+      customerName,
+      totalAssessments: customerInstances.length,
+      completedAssessments: completedCount,
+      averageMaturity,
+      portfolio
+    });
+  } catch (error) {
+    console.error('Error computing portfolio rollup:', error);
+    res.status(500).json({ success: false, error: 'Failed to compute portfolio rollup' });
+  }
+});
+
 module.exports = router;

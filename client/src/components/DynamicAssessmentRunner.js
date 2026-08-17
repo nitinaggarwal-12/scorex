@@ -770,6 +770,7 @@ const DynamicAssessmentRunner = () => {
   const [evidenceUrl, setEvidenceUrl] = useState('');
   const [evidenceLabel, setEvidenceLabel] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem('scorex_runner_theme') === 'dark');
+  const [showShortcutsModal, setShowShortcutsModal] = useState(false);
 
   const toggleThemeMode = () => {
     setIsDarkMode(prev => {
@@ -1138,14 +1139,10 @@ const DynamicAssessmentRunner = () => {
     }
   };
 
-  if (loading || !framework) {
-    return <LoadingSpinner message="Loading assessment framework..." />;
-  }
-
-  const dimensions = framework.dimensions || [];
-  const currentDim = dimensions[activeDimIdx] || dimensions[0];
+  const dimensions = framework?.dimensions || [];
+  const currentDim = dimensions[activeDimIdx] || dimensions[0] || {};
   const questions = currentDim.questions || [];
-  const currentQ = questions[activeQIdx] || questions[0];
+  const currentQ = questions[activeQIdx] || questions[0] || null;
 
   const totalQuestions = dimensions.reduce((sum, d) => sum + (d.questions?.length || 0), 0);
   const totalAnswered = Object.keys(responses).filter(k => !k.includes('_')).length;
@@ -1154,16 +1151,16 @@ const DynamicAssessmentRunner = () => {
 
   const isCurrentQAnswered = (qId) => responses[qId] !== undefined;
 
-  const nextQuestion = () => {
+  const nextQuestion = useCallback(() => {
     if (activeQIdx < questions.length - 1) {
       setActiveQIdx(prev => prev + 1);
     } else if (activeDimIdx < dimensions.length - 1) {
       setActiveDimIdx(prev => prev + 1);
       setActiveQIdx(0);
     }
-  };
+  }, [activeQIdx, activeDimIdx, questions.length, dimensions.length]);
 
-  const prevQuestion = () => {
+  const prevQuestion = useCallback(() => {
     if (activeQIdx > 0) {
       setActiveQIdx(prev => prev - 1);
     } else if (activeDimIdx > 0) {
@@ -1171,9 +1168,54 @@ const DynamicAssessmentRunner = () => {
       const prevDimQuestions = dimensions[activeDimIdx - 1]?.questions || [];
       setActiveQIdx(Math.max(0, prevDimQuestions.length - 1));
     }
-  };
+  }, [activeQIdx, activeDimIdx, dimensions]);
 
   const isLastQuestion = activeDimIdx === dimensions.length - 1 && activeQIdx === questions.length - 1;
+
+  // Keyboard Shortcuts Navigation & Rapid Scoring
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (['INPUT', 'TEXTAREA'].includes(e.target?.tagName) || e.target?.isContentEditable) {
+        return;
+      }
+
+      if (e.key === '?') {
+        e.preventDefault();
+        setShowShortcutsModal(prev => !prev);
+        return;
+      }
+
+      if (e.key === 'ArrowRight' || e.key === 'j') {
+        e.preventDefault();
+        nextQuestion();
+        return;
+      }
+
+      if (e.key === 'ArrowLeft' || e.key === 'k') {
+        e.preventDefault();
+        prevQuestion();
+        return;
+      }
+
+      if (['1', '2', '3', '4', '5'].includes(e.key) && currentQ) {
+        const score = parseInt(e.key, 10);
+        if (e.shiftKey) {
+          handleSelectFutureState(currentQ.id, score);
+          toast(`Future State: Level ${score}`, { id: 'kb-shortcut', duration: 1200 });
+        } else {
+          handleSelectCurrentState(currentQ.id, score);
+          toast(`Current State: Level ${score}`, { id: 'kb-shortcut', duration: 1200 });
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentQ, nextQuestion, prevQuestion, handleSelectCurrentState, handleSelectFutureState]);
+
+  if (loading || !framework) {
+    return <LoadingSpinner message="Loading assessment framework..." />;
+  }
 
   const filteredDimensions = dimensions.map((dim, dIdx) => {
     const dimQuestions = dim.questions || [];
@@ -1575,6 +1617,26 @@ const DynamicAssessmentRunner = () => {
               )}
 
               <button
+                onClick={() => setShowShortcutsModal(true)}
+                style={{
+                  background: isDarkMode ? '#1e293b' : '#f1f5f9',
+                  border: isDarkMode ? '1px solid #475569' : '1px solid #cbd5e1',
+                  color: isDarkMode ? '#f8fafc' : '#475569',
+                  borderRadius: '8px',
+                  padding: '6px 12px',
+                  fontSize: '0.8rem',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+                title="Keyboard Shortcuts Cheat Sheet (?)"
+              >
+                ⌨️ Shortcuts
+              </button>
+
+              <button
                 onClick={toggleThemeMode}
                 style={{
                   background: isDarkMode ? '#1e293b' : '#f1f5f9',
@@ -1843,6 +1905,65 @@ const DynamicAssessmentRunner = () => {
           </div>
         </StickyBottomBar>
       </MainContentWrapper>
+
+      {/* Keyboard Shortcuts Modal */}
+      <AnimatePresence>
+        {showShortcutsModal && (
+          <MobileDrawerOverlay onClick={() => setShowShortcutsModal(false)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1200 }}>
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                background: '#1e293b',
+                border: '1px solid rgba(255,255,255,0.15)',
+                borderRadius: '20px',
+                padding: '28px 32px',
+                maxWidth: '480px',
+                width: '90%',
+                boxShadow: '0 25px 50px rgba(0,0,0,0.5)',
+                color: '#ffffff'
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  ⌨️ Keyboard Shortcuts
+                </h3>
+                <button
+                  onClick={() => setShowShortcutsModal(false)}
+                  style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '1.2rem', padding: 0 }}
+                >
+                  <FiX />
+                </button>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.9rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '8px' }}>
+                  <span style={{ color: '#cbd5e1' }}>Select Current State</span>
+                  <kbd style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', padding: '3px 8px', fontWeight: 700, color: '#38bdf8' }}>1 - 5</kbd>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '8px' }}>
+                  <span style={{ color: '#cbd5e1' }}>Select Future Vision</span>
+                  <kbd style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', padding: '3px 8px', fontWeight: 700, color: '#a855f7' }}>Shift + 1 - 5</kbd>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '8px' }}>
+                  <span style={{ color: '#cbd5e1' }}>Next Question</span>
+                  <kbd style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', padding: '3px 8px', fontWeight: 700, color: '#34d399' }}>→ or J</kbd>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '8px' }}>
+                  <span style={{ color: '#cbd5e1' }}>Previous Question</span>
+                  <kbd style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', padding: '3px 8px', fontWeight: 700, color: '#f59e0b' }}>← or K</kbd>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#cbd5e1' }}>Toggle this Help Modal</span>
+                  <kbd style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', padding: '3px 8px', fontWeight: 700, color: '#f8fafc' }}>?</kbd>
+                </div>
+              </div>
+            </motion.div>
+          </MobileDrawerOverlay>
+        )}
+      </AnimatePresence>
     </Container>
   );
 };

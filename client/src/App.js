@@ -46,6 +46,8 @@ const DynamicAssessmentGenerator = lazy(() => import('./components/DynamicAssess
 const DynamicAssessmentRunner = lazy(() => import('./components/DynamicAssessmentRunner'));
 const DynamicAssessmentReport = lazy(() => import('./components/DynamicAssessmentReport'));
 const DynamicAssessmentHub = lazy(() => import('./components/DynamicAssessmentHub'));
+const AssessmentComparisonView = lazy(() => import('./components/AssessmentComparisonView'));
+const CustomerPortfolioDashboard = lazy(() => import('./components/CustomerPortfolioDashboard'));
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -414,6 +416,24 @@ function App() {
           <Route 
             path="/assessments/public-report/:token" 
             element={<DynamicAssessmentReport />} 
+          />
+
+          <Route 
+            path="/assessments/compare" 
+            element={
+              <ProtectedRoute>
+                <AssessmentComparisonView />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/customer-portfolio/:customerName" 
+            element={
+              <ProtectedRoute>
+                <CustomerPortfolioDashboard />
+              </ProtectedRoute>
+            } 
           />
           
           <Route 

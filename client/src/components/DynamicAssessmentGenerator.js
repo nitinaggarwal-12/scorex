@@ -649,6 +649,33 @@ const DynamicAssessmentGenerator = () => {
     }
   };
 
+  const handleSuggestQuestionsForDim = async (dimIdx, dim) => {
+    try {
+      toast.loading(`AI drafting more questions for "${dim.name}"...`, { id: `ai-q-${dimIdx}` });
+      const res = await dynamicAssessmentService.suggestDimensionQuestions(
+        dim.name,
+        dim.description,
+        industry,
+        targetAudience
+      );
+
+      if (res && res.questions && res.questions.length > 0) {
+        setGeneratedFramework(prev => {
+          const next = JSON.parse(JSON.stringify(prev));
+          const currentQs = next.dimensions[dimIdx].questions || [];
+          next.dimensions[dimIdx].questions = [...currentQs, ...res.questions];
+          return next;
+        });
+        toast.success(`✨ Added ${res.questions.length} AI-generated questions to ${dim.name}!`, { id: `ai-q-${dimIdx}` });
+      } else {
+        toast.error('No additional questions generated', { id: `ai-q-${dimIdx}` });
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to suggest questions', { id: `ai-q-${dimIdx}` });
+    }
+  };
+
   const handleTrySample = async () => {
     if (!generatedFramework) return;
     try {
@@ -865,6 +892,27 @@ const DynamicAssessmentGenerator = () => {
                         </QuestionItem>
                       ))}
                     </QuestionList>
+
+                    <div style={{ marginTop: '14px', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                      <button
+                        onClick={() => handleSuggestQuestionsForDim(idx, dim)}
+                        style={{
+                          background: 'rgba(99, 102, 241, 0.15)',
+                          border: '1px solid rgba(139, 92, 246, 0.4)',
+                          color: '#c084fc',
+                          borderRadius: '8px',
+                          padding: '6px 12px',
+                          fontSize: '0.78rem',
+                          fontWeight: '700',
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px'
+                        }}
+                      >
+                        <HiSparkles /> AI Suggest More Questions
+                      </button>
+                    </div>
                   </DimensionCard>
                 ))}
               </DimensionsGrid>

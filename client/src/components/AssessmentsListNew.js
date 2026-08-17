@@ -14,7 +14,8 @@ import {
   FiChevronDown,
   FiCopy,
   FiTrash2,
-  FiAlertTriangle
+  FiAlertTriangle,
+  FiTrendingUp
 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import * as assessmentService from '../services/assessmentService';
@@ -1543,6 +1544,17 @@ const AssessmentsListNew = () => {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {selectedIds.size >= 2 && (
+                <BatchActionButton
+                  $primary
+                  onClick={() => {
+                    const ids = Array.from(selectedIds);
+                    navigate(`/assessments/compare?base=${ids[0]}&target=${ids[1]}`);
+                  }}
+                >
+                  <FiTrendingUp size={14} /> Compare Selected (2)
+                </BatchActionButton>
+              )}
               <BatchActionButton onClick={handleBatchClone}>
                 <FiCopy size={14} /> Batch Clone ({selectedIds.size})
               </BatchActionButton>

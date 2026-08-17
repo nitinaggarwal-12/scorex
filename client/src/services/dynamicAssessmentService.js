@@ -220,6 +220,37 @@ class DynamicAssessmentService {
     const response = await axios.post(`/api/dynamic-assessments/types/${id}/fork`, { newTitle });
     return response.data;
   }
+
+  /**
+   * Compare two assessments side-by-side with dimensional deltas
+   */
+  async compareAssessments(baseId, targetId) {
+    const response = await axios.get('/api/dynamic-assessments/compare', {
+      params: { baseId, targetId }
+    });
+    return response.data;
+  }
+
+  /**
+   * AI-suggest evaluation questions for a custom dimension
+   */
+  async suggestDimensionQuestions(dimensionName, dimensionDescription, industry = '', targetRole = '') {
+    const response = await axios.post('/api/dynamic-assessments/suggest-questions', {
+      dimensionName,
+      dimensionDescription,
+      industry,
+      targetRole
+    });
+    return response.data;
+  }
+
+  /**
+   * Get Customer Multi-Assessment Portfolio Rollup
+   */
+  async getCustomerPortfolioRollup(customerName) {
+    const response = await axios.get(`/api/dynamic-assessments/customer/${encodeURIComponent(customerName)}/portfolio-rollup`);
+    return response.data;
+  }
 }
 
 const dynamicAssessmentService = new DynamicAssessmentService();
