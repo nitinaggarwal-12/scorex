@@ -67,24 +67,35 @@ const GenAIReadiness = () => {
   const handlePrefill = () => {
     if (!framework) return;
     
+    const enterpriseNames = [
+      'Apex Financial AI Group',
+      'Nova Omnichannel Retail',
+      'ConnectPlus Telecom Networks',
+      'Quantum Health Systems',
+      'Global Supply Chain AI'
+    ];
+
     if (!customerName || !customerName.trim()) {
-      setCustomerName('Global Retail Enterprise');
+      const picked = enterpriseNames[Math.floor(Math.random() * enterpriseNames.length)];
+      setCustomerName(picked);
     }
     setShowNameModal(false);
     
+    const seed = Date.now();
     const prefilled = {};
     framework.dimensions.forEach((dimension, dIdx) => {
       dimension.questions.forEach((question, qIdx) => {
         if (question.options && question.options.length > 0) {
-          // Logical realistic enterprise score distribution (scores 2-4)
-          const targetIndex = Math.min(question.options.length - 1, ((dIdx + qIdx) % 3) + 1);
+          // Dynamic varied score distribution between 2 and 4
+          const offset = Math.abs((seed + dIdx * 7 + qIdx * 11) % 3) + 1;
+          const targetIndex = Math.max(0, Math.min(question.options.length - 1, offset));
           prefilled[question.id] = question.options[targetIndex].value;
         }
       });
     });
     
     setResponses(prefilled);
-    toast.success('✨ GenAI Readiness assessment prefilled with realistic enterprise responses!');
+    toast.success('✨ GenAI Readiness assessment prefilled with dynamic enterprise responses!');
   };
 
   const calculateScore = () => {

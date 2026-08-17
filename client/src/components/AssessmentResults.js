@@ -2705,7 +2705,7 @@ const AssessmentResults = ({ currentAssessment, framework }) => {
                   <br/>
                   • https://google.com (extracts Google logo)
                   <br/>
-                  • https://databricks.com (extracts Databricks logo)
+                  • https://cloud.google.com (extracts Google Cloud logo)
                   <br/>
                   • https://company.com/logo.png (direct image link)
                 </div>
