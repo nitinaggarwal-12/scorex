@@ -13,9 +13,12 @@ import {
   FiGrid, 
   FiEye,
   FiRepeat,
-  FiBox
+  FiBox,
+  FiDownload,
+  FiExternalLink
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
+import toast from 'react-hot-toast';
 
 const DiagramContainer = styled(motion.div)`
   background: white;
@@ -76,6 +79,13 @@ const Subtitle = styled.p`
   margin: 0;
 `;
 
+const ActionGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+`;
+
 const ViewToggle = styled.div`
   display: flex;
   background: #f1f5f9;
@@ -101,6 +111,27 @@ const ViewBtn = styled.button`
 
   &:hover {
     color: #1e293b;
+  }
+`;
+
+const DrawioBtn = styled.button`
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 6px rgba(249, 115, 22, 0.3);
+  transition: all 0.2s;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
   }
 `;
 
@@ -214,6 +245,15 @@ const LayerCard = styled.div`
   }
 `;
 
+const TopologyVisualBox = styled.div`
+  background: #0f172a;
+  border-radius: 14px;
+  padding: 24px;
+  color: white;
+  margin-bottom: 20px;
+  overflow-x: auto;
+`;
+
 const StrategicBenefitsFooter = styled.div`
   margin-top: 20px;
   background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
@@ -256,7 +296,7 @@ const StrategicBenefitsFooter = styled.div`
 `;
 
 const ArchitectureComparisonDiagram = ({ currentScore = 2.6, targetScore = 4.5 }) => {
-  const [viewMode, setViewMode] = useState('both'); // 'both', 'current', 'target'
+  const [viewMode, setViewMode] = useState('both'); // 'both', 'topology', 'current', 'target'
 
   const currentLayers = [
     {
@@ -336,6 +376,85 @@ const ArchitectureComparisonDiagram = ({ currentScore = 2.6, targetScore = 4.5 }
     }
   ];
 
+  const generateDrawioXml = () => {
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="${new Date().toISOString()}" agent="ScoreX Enterprise Architecture Engine" version="24.0.0" type="device">
+  <diagram id="scorex-arch" name="ScoreX Current vs Target Architecture">
+    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" background="#0f172a" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- CURRENT STATE CONTAINER -->
+        <mxCell id="cur_box" value="CURRENT LEGACY ARCHITECTURE (Maturity Level ${currentScore}/5)" style="swimlane;startSize=30;fillColor=#1e1b4b;strokeColor=#ef4444;strokeWidth=2;fontColor=#f87171;fontSize=13;fontStyle=1;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="720" height="780" as="geometry" />
+        </mxCell>
+        <mxCell id="cur_1" value="1. Ingestion: Brittle Batch Scripts (Cron/SFTP)&#xa;• Point-to-point batch extracts&#xa;• High pipeline failure rate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#fda4af;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="cur_box">
+          <mxGeometry x="30" y="50" width="660" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="cur_2" value="2. Storage: Siloed Databases + Unmanaged S3/GCS&#xa;• Fragmented ACL permissions&#xa;• No centralized metadata or data lineage" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#fda4af;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="cur_box">
+          <mxGeometry x="30" y="170" width="660" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="cur_3" value="3. Compute: Static VM Clusters &amp; Unmanaged Spark&#xa;• 24/7 idle cluster costs&#xa;• Manual capacity provisioning" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#fda4af;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="cur_box">
+          <mxGeometry x="30" y="290" width="660" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="cur_4" value="4. AI &amp; MLOps: Siloed Notebooks&#xa;• No centralized model registry&#xa;• Manual deployment scripts &amp; drift blindspots" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#fda4af;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="cur_box">
+          <mxGeometry x="30" y="410" width="660" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="cur_5" value="5. GenAI: Unguarded Public API Calls&#xa;• Full prompt token redundancy&#xa;• No PII redacting or CMEK perimeters" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#fda4af;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="cur_box">
+          <mxGeometry x="30" y="530" width="660" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="cur_6" value="6. Serving: Heavy BI Backlog&#xa;• Stale daily data warehouse copies&#xa;• 14-day turnaround on custom analytics" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#fda4af;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="cur_box">
+          <mxGeometry x="30" y="650" width="660" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- TARGET STATE CONTAINER -->
+        <mxCell id="tgt_box" value="TARGET MODERN LAKEHOUSE &amp; AGENT MESH (Target Level ${targetScore}/5)" style="swimlane;startSize=30;fillColor=#064e3b;strokeColor=#10b981;strokeWidth=2;fontColor=#6ee7b7;fontSize=13;fontStyle=1;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="840" y="40" width="720" height="780" as="geometry" />
+        </mxCell>
+        <mxCell id="tgt_1" value="1. Declarative Real-Time Ingestion (CDC + Auto-Loader)&#xa;✓ Sub-second streaming data capture&#xa;✓ Automated schema evolution &amp; SDF pipelines" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#022c22;strokeColor=#10b981;fontColor=#a7f3d0;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="tgt_box">
+          <mxGeometry x="30" y="50" width="660" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="tgt_2" value="2. Unified Unity Catalog Lakehouse &amp; UniForm&#xa;✓ Delta Lake / Iceberg open table formats&#xa;✓ Automated row/column masking &amp; end-to-end lineage" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#022c22;strokeColor=#10b981;fontColor=#a7f3d0;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="tgt_box">
+          <mxGeometry x="30" y="170" width="660" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="tgt_3" value="3. Serverless Vectorized FinOps Engine&#xa;✓ Instant auto-suspend cluster switches (15 min)&#xa;✓ 35% to 50% compute TCO savings" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#022c22;strokeColor=#10b981;fontColor=#a7f3d0;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="tgt_box">
+          <mxGeometry x="30" y="290" width="660" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="tgt_4" value="4. Production MLflow &amp; Prompt Registry&#xa;✓ Automated CI/CD model verification&#xa;✓ Real-time concept drift &amp; feature store" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#022c22;strokeColor=#10b981;fontColor=#a7f3d0;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="tgt_box">
+          <mxGeometry x="30" y="410" width="660" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="tgt_5" value="5. Autonomous Multi-Agent Mesh &amp; MCP Protocol&#xa;✓ 75% prompt context caching discount&#xa;✓ Zero-trust AI guardrails &amp; VPC service perimeters" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#022c22;strokeColor=#10b981;fontColor=#a7f3d0;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="tgt_box">
+          <mxGeometry x="30" y="530" width="660" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="tgt_6" value="6. Self-Service Unified Semantic Metric Layer&#xa;✓ Direct zero-copy BI queries&#xa;✓ Sub-second dashboard refresh speeds" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#022c22;strokeColor=#10b981;fontColor=#a7f3d0;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="tgt_box">
+          <mxGeometry x="30" y="650" width="660" height="90" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>`;
+  };
+
+  const handleExportDrawio = () => {
+    try {
+      const xml = generateDrawioXml();
+      const blob = new Blob([xml], { type: 'application/xml;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'ScoreX_Architecture_Current_vs_Target.drawio');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      toast.success('Downloaded ScoreX Architecture .drawio XML diagram!');
+    } catch (e) {
+      console.error(e);
+      toast.error('Failed to export Draw.io XML');
+    }
+  };
+
   return (
     <DiagramContainer
       initial={{ opacity: 0, y: 15 }}
@@ -350,93 +469,211 @@ const ArchitectureComparisonDiagram = ({ currentScore = 2.6, targetScore = 4.5 }
           <div>
             <Title>Architectural Evolution Blueprint: Current vs. Target State</Title>
             <Subtitle>
-              Side-by-side comparison of your baseline legacy stack against the modern Lakehouse & Agentic Mesh target architecture.
+              Side-by-side comparison and visual dataflow topology of your legacy stack vs modern Lakehouse & Agentic Mesh.
             </Subtitle>
           </div>
         </TitleBlock>
 
-        <ViewToggle>
-          <ViewBtn $active={viewMode === 'both'} onClick={() => setViewMode('both')}>
-            <FiLayers /> Side-by-Side
-          </ViewBtn>
-          <ViewBtn $active={viewMode === 'current'} onClick={() => setViewMode('current')}>
-            <FiAlertTriangle /> Current State Only
-          </ViewBtn>
-          <ViewBtn $active={viewMode === 'target'} onClick={() => setViewMode('target')}>
-            <FiCheckCircle /> Target State Only
-          </ViewBtn>
-        </ViewToggle>
+        <ActionGroup>
+          <ViewToggle>
+            <ViewBtn $active={viewMode === 'both'} onClick={() => setViewMode('both')}>
+              <FiLayers /> Side-by-Side Cards
+            </ViewBtn>
+            <ViewBtn $active={viewMode === 'topology'} onClick={() => setViewMode('topology')}>
+              <FiEye /> 🎨 Visual Topology Graph
+            </ViewBtn>
+            <ViewBtn $active={viewMode === 'current'} onClick={() => setViewMode('current')}>
+              <FiAlertTriangle /> Current Only
+            </ViewBtn>
+            <ViewBtn $active={viewMode === 'target'} onClick={() => setViewMode('target')}>
+              <FiCheckCircle /> Target Only
+            </ViewBtn>
+          </ViewToggle>
+
+          <DrawioBtn onClick={handleExportDrawio} title="Download architecture diagram for Draw.io / diagrams.net">
+            <FiDownload /> 📥 Export Draw.io XML
+          </DrawioBtn>
+        </ActionGroup>
       </Header>
 
-      <ComparisonGrid $mode={viewMode}>
-        {/* CURRENT STATE */}
-        {(viewMode === 'both' || viewMode === 'current') && (
-          <ArchColumn $isTarget={false}>
-            <ColHeader $isTarget={false}>
-              <div className="title-group">
-                <FiAlertTriangle /> Current State Architecture
-              </div>
-              <div className="badge">
-                Maturity Index: Level {currentScore} (Developing)
-              </div>
-            </ColHeader>
+      {/* 1. INTERACTIVE VISUAL TOPOLOGY GRAPH */}
+      {viewMode === 'topology' && (
+        <TopologyVisualBox>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid #334155', paddingBottom: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ fontSize: '1.1rem', fontWeight: 800, color: '#38bdf8' }}>
+                End-to-End Enterprise Data & AI Pipeline Topology
+              </span>
+              <span style={{ fontSize: '0.75rem', background: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', padding: '3px 8px', borderRadius: '6px', fontWeight: 700 }}>
+                Interactive Dataflow
+              </span>
+            </div>
+            <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+              Current State (Level {currentScore}) ➔ Target Modern Lakehouse (Level {targetScore})
+            </div>
+          </div>
 
-            <LayerStack>
-              {currentLayers.map((layer, idx) => (
-                <LayerCard key={idx} $isTarget={false}>
-                  <div className="layer-top">
-                    <div className="layer-name">
-                      {layer.icon} {layer.name}
-                    </div>
-                    <div className="layer-tag">{layer.tag}</div>
-                  </div>
-                  <div className="layer-items">
-                    {layer.items.map((item, itemIdx) => (
-                      <div className="item-pill" key={itemIdx}>
-                        • {item}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', position: 'relative' }}>
+            {/* Step 1: Sources & Ingestion */}
+            <div style={{ background: 'rgba(30, 41, 59, 0.8)', border: '1.5px solid #3b82f6', borderRadius: '12px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#60a5fa' }}>1. INGESTION</span>
+                <span style={{ fontSize: '0.7rem', color: '#f87171', background: 'rgba(239, 68, 68, 0.15)', padding: '2px 6px', borderRadius: '4px' }}>Cron Batch</span>
+              </div>
+              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#f8fafc' }}>
+                Streaming CDC & Auto-Loader
+              </div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                Sub-second data capture replacing brittle Python cron scripts.
+              </div>
+              <div style={{ marginTop: 'auto', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '6px', padding: '4px 8px', fontSize: '0.72rem', color: '#34d399', fontWeight: 600 }}>
+                ✓ Zero pipeline lag
+              </div>
+            </div>
+
+            {/* Step 2: Storage & Governance */}
+            <div style={{ background: 'rgba(30, 41, 59, 0.8)', border: '1.5px solid #8b5cf6', borderRadius: '12px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#a78bfa' }}>2. LAKEHOUSE</span>
+                <span style={{ fontSize: '0.7rem', color: '#f87171', background: 'rgba(239, 68, 68, 0.15)', padding: '2px 6px', borderRadius: '4px' }}>Siloed Lakes</span>
+              </div>
+              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#f8fafc' }}>
+                Unity Catalog & UniForm
+              </div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                Delta Lake + Iceberg with row/column data governance.
+              </div>
+              <div style={{ marginTop: 'auto', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '6px', padding: '4px 8px', fontSize: '0.72rem', color: '#34d399', fontWeight: 600 }}>
+                ✓ Single governance plane
+              </div>
+            </div>
+
+            {/* Step 3: Compute */}
+            <div style={{ background: 'rgba(30, 41, 59, 0.8)', border: '1.5px solid #10b981', borderRadius: '12px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#34d399' }}>3. COMPUTE</span>
+                <span style={{ fontSize: '0.7rem', color: '#f87171', background: 'rgba(239, 68, 68, 0.15)', padding: '2px 6px', borderRadius: '4px' }}>Static VMs</span>
+              </div>
+              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#f8fafc' }}>
+                Serverless FinOps Engine
+              </div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                Auto-terminating Photon compute with 15-minute kill switches.
+              </div>
+              <div style={{ marginTop: 'auto', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '6px', padding: '4px 8px', fontSize: '0.72rem', color: '#34d399', fontWeight: 600 }}>
+                ✓ 35% compute savings
+              </div>
+            </div>
+
+            {/* Step 4: AI & Agent Mesh */}
+            <div style={{ background: 'rgba(30, 41, 59, 0.8)', border: '1.5px solid #f59e0b', borderRadius: '12px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#fbbf24' }}>4. AGENT MESH</span>
+                <span style={{ fontSize: '0.7rem', color: '#f87171', background: 'rgba(239, 68, 68, 0.15)', padding: '2px 6px', borderRadius: '4px' }}>Unguarded</span>
+              </div>
+              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#f8fafc' }}>
+                Multi-Agent (MCP) & Cache
+              </div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                Autonomous tool calling with 75% prompt context caching.
+              </div>
+              <div style={{ marginTop: 'auto', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '6px', padding: '4px 8px', fontSize: '0.72rem', color: '#34d399', fontWeight: 600 }}>
+                ✓ Zero-Trust AI Guardrails
+              </div>
+            </div>
+
+            {/* Step 5: BI & Analytics */}
+            <div style={{ background: 'rgba(30, 41, 59, 0.8)', border: '1.5px solid #ec4899', borderRadius: '12px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#f472b6' }}>5. SERVING</span>
+                <span style={{ fontSize: '0.7rem', color: '#f87171', background: 'rgba(239, 68, 68, 0.15)', padding: '2px 6px', borderRadius: '4px' }}>SQL Backlog</span>
+              </div>
+              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#f8fafc' }}>
+                Semantic Metric Layer
+              </div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                Direct zero-copy BI queries with sub-second dashboard refreshes.
+              </div>
+              <div style={{ marginTop: 'auto', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '6px', padding: '4px 8px', fontSize: '0.72rem', color: '#34d399', fontWeight: 600 }}>
+                ✓ Self-service analytics
+              </div>
+            </div>
+          </div>
+        </TopologyVisualBox>
+      )}
+
+      {/* 2. SIDE-BY-SIDE OR FOCUSED TIER CARDS */}
+      {viewMode !== 'topology' && (
+        <ComparisonGrid $mode={viewMode}>
+          {/* CURRENT STATE */}
+          {(viewMode === 'both' || viewMode === 'current') && (
+            <ArchColumn $isTarget={false}>
+              <ColHeader $isTarget={false}>
+                <div className="title-group">
+                  <FiAlertTriangle /> Current State Architecture
+                </div>
+                <div className="badge">
+                  Maturity Index: Level {currentScore} (Developing)
+                </div>
+              </ColHeader>
+
+              <LayerStack>
+                {currentLayers.map((layer, idx) => (
+                  <LayerCard key={idx} $isTarget={false}>
+                    <div className="layer-top">
+                      <div className="layer-name">
+                        {layer.icon} {layer.name}
                       </div>
-                    ))}
-                  </div>
-                </LayerCard>
-              ))}
-            </LayerStack>
-          </ArchColumn>
-        )}
-
-        {/* TARGET STATE */}
-        {(viewMode === 'both' || viewMode === 'target') && (
-          <ArchColumn $isTarget={true}>
-            <ColHeader $isTarget={true}>
-              <div className="title-group">
-                <FiCheckCircle /> Target Modern Lakehouse & Agentic Mesh
-              </div>
-              <div className="badge">
-                Target Index: Level {targetScore} (Optimized)
-              </div>
-            </ColHeader>
-
-            <LayerStack>
-              {targetLayers.map((layer, idx) => (
-                <LayerCard key={idx} $isTarget={true}>
-                  <div className="layer-top">
-                    <div className="layer-name">
-                      {layer.icon} {layer.name}
+                      <div className="layer-tag">{layer.tag}</div>
                     </div>
-                    <div className="layer-tag">{layer.tag}</div>
-                  </div>
-                  <div className="layer-items">
-                    {layer.items.map((item, itemIdx) => (
-                      <div className="item-pill" key={itemIdx}>
-                        ✓ {item}
+                    <div className="layer-items">
+                      {layer.items.map((item, itemIdx) => (
+                        <div className="item-pill" key={itemIdx}>
+                          • {item}
+                        </div>
+                      ))}
+                    </div>
+                  </LayerCard>
+                ))}
+              </LayerStack>
+            </ArchColumn>
+          )}
+
+          {/* TARGET STATE */}
+          {(viewMode === 'both' || viewMode === 'target') && (
+            <ArchColumn $isTarget={true}>
+              <ColHeader $isTarget={true}>
+                <div className="title-group">
+                  <FiCheckCircle /> Target Modern Lakehouse & Agentic Mesh
+                </div>
+                <div className="badge">
+                  Target Index: Level {targetScore} (Optimized)
+                </div>
+              </ColHeader>
+
+              <LayerStack>
+                {targetLayers.map((layer, idx) => (
+                  <LayerCard key={idx} $isTarget={true}>
+                    <div className="layer-top">
+                      <div className="layer-name">
+                        {layer.icon} {layer.name}
                       </div>
-                    ))}
-                  </div>
-                </LayerCard>
-              ))}
-            </LayerStack>
-          </ArchColumn>
-        )}
-      </ComparisonGrid>
+                      <div className="layer-tag">{layer.tag}</div>
+                    </div>
+                    <div className="layer-items">
+                      {layer.items.map((item, itemIdx) => (
+                        <div className="item-pill" key={itemIdx}>
+                          ✓ {item}
+                        </div>
+                      ))}
+                    </div>
+                  </LayerCard>
+                ))}
+              </LayerStack>
+            </ArchColumn>
+          )}
+        </ComparisonGrid>
+      )}
 
       {/* Strategic Value Summary Banner */}
       <StrategicBenefitsFooter>

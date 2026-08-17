@@ -18,7 +18,8 @@ import {
   FiList,
   FiTarget,
   FiCheck,
-  FiSliders
+  FiSliders,
+  FiEdit3
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
@@ -573,24 +574,34 @@ const DynamicAssessmentReport = () => {
     <Container>
       <Wrapper>
         {/* Navigation back & action controls */}
-        <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-          <button 
-            style={{ background: 'transparent', border: 'none', color: '#94a3b8', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.95rem' }}
-            onClick={() => navigate('/assessments')}
-          >
-            <FiArrowLeft /> Back to Assessments
-          </button>
+        <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <button 
+              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: '#94a3b8', padding: '9px 16px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: '600', transition: 'all 0.2s ease' }}
+              onClick={() => navigate('/assessments')}
+            >
+              <FiArrowLeft /> Back to Assessments Hub
+            </button>
+
+            <button 
+              style={{ background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2))', border: '1.5px solid rgba(139, 92, 246, 0.5)', color: '#c084fc', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: '700', transition: 'all 0.2s ease', boxShadow: '0 4px 14px rgba(99, 102, 241, 0.25)' }}
+              onClick={() => navigate(`/assessments/run/instance/${id}`)}
+              title="Go back to modify your answers, add operational notes, or refine ratings"
+            >
+              <FiEdit3 /> ✏️ Edit Responses / Go Back to Questions
+            </button>
+          </div>
 
           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
             <button 
-              style={{ background: showSimulator ? '#4f46e5' : 'rgba(99, 102, 241, 0.25)', border: '1px solid rgba(139, 92, 246, 0.5)', color: '#c084fc', padding: '8px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
+              style={{ background: showSimulator ? '#4f46e5' : 'rgba(99, 102, 241, 0.25)', border: '1px solid rgba(139, 92, 246, 0.5)', color: '#c084fc', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
               onClick={() => setShowSimulator(!showSimulator)}
             >
               <FiSliders /> {showSimulator ? 'Hide What-If Simulator' : '🎛️ What-If Scenario Simulator'}
             </button>
 
             <button 
-              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#fff', padding: '8px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#fff', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '600' }}
               onClick={() => window.print()}
             >
               <FiDownload /> Export / Print Report

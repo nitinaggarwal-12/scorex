@@ -1230,10 +1230,35 @@ const DynamicAssessmentRunner = () => {
                 <FiZap /> Auto-Prefill Responses
               </PrefillButton>
 
-              <FilterPillGroup>
-                <FilterPill $active={true}>All {questions.length}</FilterPill>
-                <FilterPill $active={false}>Done {questions.filter(q => responses[q.id] !== undefined).length}</FilterPill>
-              </FilterPillGroup>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                <div style={{
+                  background: '#f8fafc',
+                  border: '1px solid #cbd5e1',
+                  borderRadius: '8px',
+                  padding: '5px 12px',
+                  fontSize: '0.8rem',
+                  fontWeight: '600',
+                  color: '#475569',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}>
+                  <span>Dimension {activeDimIdx + 1} of {dimensions.length}:</span>
+                  <strong style={{ color: '#0f172a' }}>{questions.filter(q => responses[q.id] !== undefined).length} of {questions.length} Qs</strong>
+                </div>
+
+                <div style={{
+                  background: totalAnswered === totalQuestions ? 'rgba(16, 185, 129, 0.12)' : '#eff6ff',
+                  border: totalAnswered === totalQuestions ? '1px solid #10b981' : '1px solid #bfdbfe',
+                  borderRadius: '8px',
+                  padding: '5px 12px',
+                  fontSize: '0.8rem',
+                  fontWeight: '700',
+                  color: totalAnswered === totalQuestions ? '#059669' : '#2563eb'
+                }}>
+                  Overall: {totalAnswered}/{totalQuestions} Total ({Math.round((totalAnswered / Math.max(1, totalQuestions)) * 100)}%)
+                </div>
+              </div>
 
               <QuestionNumberScrollWrap>
                 {questions.map((q, idx) => (
@@ -1242,11 +1267,35 @@ const DynamicAssessmentRunner = () => {
                     $current={idx === activeQIdx}
                     $answered={isCurrentQAnswered(q.id)}
                     onClick={() => setActiveQIdx(idx)}
+                    title={`Question ${idx + 1} of Dimension ${activeDimIdx + 1}`}
+                    style={{ minWidth: '40px', borderRadius: '10px', fontSize: '0.82rem', fontWeight: 700 }}
                   >
-                    {idx + 1}
+                    Q{idx + 1}
                   </QuestionCircle>
                 ))}
               </QuestionNumberScrollWrap>
+
+              {instance?.id && (
+                <button
+                  onClick={() => navigate(`/assessments/report/${instance.id}`)}
+                  style={{
+                    background: 'rgba(99, 102, 241, 0.1)',
+                    border: '1px solid rgba(99, 102, 241, 0.3)',
+                    color: '#6366f1',
+                    borderRadius: '8px',
+                    padding: '6px 12px',
+                    fontSize: '0.8rem',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                  title="View executive report for this assessment"
+                >
+                  <FiFileText /> View Report
+                </button>
+              )}
 
               <AutoSaveBadge>
                 <FiCheckCircle /> {savedStatus === 'saving' ? 'Saving...' : 'Saved'}
