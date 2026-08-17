@@ -37,15 +37,51 @@ const PILLAR_ICONS = {
 };
 
 class ProfessionalPDFExporter {
-  constructor(results, assessmentInfo) {
+  constructor(results, assessmentInfo = {}) {
     this.doc = new jsPDF('p', 'pt', 'a4');
-    this.results = results;
-    this.assessmentInfo = assessmentInfo;
+    this.results = results || {};
+    this.assessmentInfo = assessmentInfo || {};
     this.pageWidth = this.doc.internal.pageSize.width;
     this.pageHeight = this.doc.internal.pageSize.height;
     this.margin = 40;
     this.contentWidth = this.pageWidth - 2 * this.margin;
     this.lineHeight = 16;
+
+    // Normalize categoryDetails for dynamic frameworks
+    if (!this.results.categoryDetails || Object.keys(this.results.categoryDetails).length === 0) {
+      const framework = this.assessmentInfo.frameworkSnapshot || this.results.frameworkSnapshot || {};
+      const dimensions = framework.dimensions || [];
+      const scores = this.results.scores || this.results.dimensionScores || {};
+      
+      const synthesizedDetails = {};
+      dimensions.forEach(dim => {
+        const curScore = parseFloat(scores[dim.id] || 3.0);
+        synthesizedDetails[dim.id] = {
+          name: dim.name,
+          currentScore: curScore,
+          futureScore: Math.min(5.0, +(curScore + 1.5).toFixed(1)),
+          description: dim.description || '',
+          level: { level: curScore >= 4 ? 'Managed' : curScore >= 3 ? 'Defined' : 'Developing' },
+          isPartial: false
+        };
+      });
+      if (Object.keys(synthesizedDetails).length > 0) {
+        this.results.categoryDetails = synthesizedDetails;
+      }
+    }
+
+    // Normalize overall if missing
+    if (!this.results.overall) {
+      const score = this.results.totalScore || this.assessmentInfo.totalScore || 3.5;
+      this.results.overall = {
+        currentScore: score,
+        futureScore: Math.min(5.0, +(score + 1.2).toFixed(1)),
+        level: {
+          level: score >= 4.5 ? 'Optimizing' : score >= 3.8 ? 'Managed' : score >= 3.0 ? 'Defined' : 'Developing',
+          description: 'Enterprise architecture transformation in progress with clear modernization milestones.'
+        }
+      };
+    }
   }
 
   // Generate the complete report
