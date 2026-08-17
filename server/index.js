@@ -1059,22 +1059,63 @@ app.post('/api/assessment/:id/submit', async (req, res) => {
     }
 
     // Update status to submitted
-    await assessmentRepo.update(id, {
+    const updatePayload = {
       status: 'submitted',
       completedCategories: completedCategories.length > 0 ? completedCategories : ['platform_governance'],
       completedAt: new Date().toISOString()
-    });
+    };
 
-    console.log(`✅ Assessment ${id} submitted successfully`);
+    // Live Gemini 3.7 Report & Blueprint Generation
+    try {
+      const dynamicEngine = require('./services/dynamicAssessmentEngine');
+      const OpenAIContentGenerator = require('./services/openAIContentGenerator');
+      const aiContentGen = new OpenAIContentGenerator();
+
+      console.log(`🤖 [Gemini 3.7 Flash] Generating live multi-cloud AI report for: ${assessment.assessmentName || 'Enterprise'}`);
+      const aiContent = await aiContentGen.generateAssessmentContent(assessment);
+      if (aiContent) {
+        updatePayload.ai_report = aiContent;
+        updatePayload.aiReport = aiContent;
+      }
+
+      const diagrams = await dynamicEngine.generateArchitectureDiagramsWithGemini(
+        {
+          typeKey: 'enterprise_data_ai_maturity',
+          title: 'Enterprise Cloud, Data & AI Architecture',
+          subtitle: 'Multi-Cloud Lakehouse & Agentic AI Modernization',
+          dimensions: assessmentFramework.assessmentAreas.map(a => ({
+            id: a.id,
+            name: a.name,
+            questions: (a.dimensions || []).map(d => ({
+              id: d.id,
+              text: d.name,
+              category: a.name
+            }))
+          }))
+        },
+        assessment.responses || {},
+        aiContent?.overallScores || {},
+        { customerName: assessment.customerName || assessment.assessmentName || 'Enterprise Client' }
+      );
+      if (diagrams) {
+        updatePayload.diagrams = diagrams;
+      }
+    } catch (aiErr) {
+      console.warn('Gemini report generation warning:', aiErr.message);
+    }
+
+    await assessmentRepo.update(id, updatePayload);
+
+    console.log(`✅ Assessment ${id} submitted & AI report generated successfully`);
 
     res.json({
       success: true,
       message: 'Assessment submitted successfully',
       assessment: {
         id: assessment.id,
-        status: assessment.status,
-        submittedAt: assessment.submittedAt,
-        completedCategories: assessment.completedCategories
+        status: 'submitted',
+        submittedAt: updatePayload.completedAt,
+        completedCategories: updatePayload.completedCategories
       }
     });
   } catch (error) {

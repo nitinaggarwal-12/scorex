@@ -1937,39 +1937,40 @@ const AssessmentQuestion = ({ framework, currentAssessment, onUpdateStatus }) =>
     console.log('[AssessmentQuestion] Submitting assessment and generating report:', assessmentId);
     setShowCompletionDialog(false);
     setIsSubmittingReport(true);
-    setSubmissionProgress(0);
-    
-    // Authentic progress messages (same as NavigationPanel)
-    const progressSteps = [
-      { progress: 10, message: 'Analyzing assessment responses...' },
-      { progress: 25, message: 'Calculating maturity scores...' },
-      { progress: 40, message: 'Generating recommendations...' },
-      { progress: 55, message: 'Mapping platform capabilities...' },
-      { progress: 70, message: 'Building strategic roadmap...' },
-      { progress: 85, message: 'Calculating business impact...' },
-      { progress: 95, message: 'Finalizing report...' },
-      { progress: 100, message: 'Assessment complete!' }
-    ];
+    setSubmissionProgress(25);
+    setSubmissionMessage('Analyzing responses & multi-cloud architecture posture...');
 
+    let stepTimer = null;
     try {
-      // Submit assessment to API
+      stepTimer = setInterval(() => {
+        setSubmissionProgress(prev => {
+          if (prev < 50) {
+            setSubmissionMessage('Synthesizing strategic C-Suite & Engineering roadmap with Gemini 3.7...');
+            return prev + 15;
+          } else if (prev < 80) {
+            setSubmissionMessage('Compiling current vs target state Draw.io architecture diagrams...');
+            return prev + 15;
+          } else if (prev < 95) {
+            setSubmissionMessage('Finalizing multi-cloud TCO & dollar-at-risk financial unlocks...');
+            return prev + 5;
+          }
+          return prev;
+        });
+      }, 600);
+
+      // Submit assessment to API (triggers live AI synthesis)
       await assessmentService.submitAssessment(assessmentId);
-      
-      // Animate progress
-      for (const step of progressSteps) {
-        await new Promise(resolve => setTimeout(resolve, 1250)); // 10 seconds total / 8 steps
-        setSubmissionProgress(step.progress);
-        setSubmissionMessage(step.message);
-      }
-      
-      // Small delay before navigation
-      await new Promise(resolve => setTimeout(resolve, 500));
+      clearInterval(stepTimer);
+
+      setSubmissionProgress(100);
+      setSubmissionMessage('Enterprise architecture report ready!');
+      await new Promise(resolve => setTimeout(resolve, 350));
       
       // Navigate to results
       navigate(`/results/${assessmentId}`);
     } catch (error) {
+      if (stepTimer) clearInterval(stepTimer);
       console.error('Error submitting assessment:', error);
-      
       setIsSubmittingReport(false);
     }
   };

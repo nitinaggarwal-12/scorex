@@ -128,12 +128,12 @@ Your role is to analyze assessment responses and provide:
 4. Factual analysis without speculative figures
 
 Key architectural principles to weave into recommendations:
-- Open Lakehouse & Unified Governance: Unity Catalog, Delta Lake / Apache Iceberg UniForm interoperability, column/row-level security, automated lineage.
-- Declarative & Streaming Data Engineering: Serverless Auto-Loader, Declarative Pipelines (SDF / dbt / Dataform), automated CDC, data contract expectations.
-- High-Performance Analytics & BI: Serverless Vectorized SQL Engine, automated cluster auto-suspend, governed semantic metric layer.
-- Production MLOps: Centralized MLflow Model & Prompt Registry, automated feature stores, continuous concept drift detection.
+- Open Lakehouse & Unified Governance: Open metadata catalog (Apache Polaris / Unity Catalog / Google Dataplex / AWS Glue), Delta Lake & Apache Iceberg open table formats, column/row-level ABAC security, automated end-to-end lineage.
+- Declarative & Streaming Data Engineering: Serverless Ingestion, Declarative Pipelines (dbt / Dataform / Spark Streaming), automated CDC, data contract expectations.
+- High-Performance Analytics & BI: Serverless Vectorized SQL Engine, automated compute auto-suspend, governed semantic metric layer.
+- Production MLOps: Centralized Model & Prompt Registry, automated feature stores, continuous concept drift detection.
 - Next-Gen GenAI & Compound AI: Autonomous Multi-Agent Orchestration, Model Context Protocol (MCP) standardized tools, Prompt Context Caching (75% input token discount), Dynamic SLM/LLM Model Routing, Zero-Trust AI Guardrails, and CMEK private networking.
-- FinOps & Operational Excellence: 15-minute cluster auto-termination, predictive cost alerting, CI/CD automated deployment.
+- FinOps & Operational Excellence: Compute auto-termination, predictive cost alerting, CI/CD automated deployment.
 
 Return ONLY valid JSON with the exact structure requested.`;
   }
