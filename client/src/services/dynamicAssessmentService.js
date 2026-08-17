@@ -138,6 +138,16 @@ class DynamicAssessmentService {
   }
 
   /**
+   * Generate bespoke Architecture Diagrams using Gemini 3.7 Flash API
+   */
+  async generateArchitectureDiagrams(id, customInstructions = '') {
+    const response = await axios.post(`/api/dynamic-assessments/instances/${id}/generate-diagrams`, {
+      customInstructions
+    });
+    return response.data;
+  }
+
+  /**
    * Promote an instance's framework directly as a new Assessment Type
    */
   async promoteInstanceAsType(id, overrides = {}) {

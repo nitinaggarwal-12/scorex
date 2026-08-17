@@ -678,8 +678,13 @@ const DynamicAssessmentReport = () => {
 
         {/* Architectural Evolution Blueprint: Current vs Target */}
         <ArchitectureComparisonDiagram
+          instanceId={instance?.id}
+          initialDiagrams={report?.architectureDiagrams}
           currentScore={scores.overallScore || 2.5}
           targetScore={4.5}
+          customerName={instance?.customerName}
+          useCase={instance?.useCase}
+          framework={framework}
         />
 
         {/* Multi-Persona Executive Transformation Blueprints */}

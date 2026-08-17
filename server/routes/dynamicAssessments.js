@@ -456,4 +456,52 @@ router.post('/instances/:id/generate-report', async (req, res) => {
   }
 });
 
+// 7. Bespoke Architecture Diagrams Generation via Gemini 3.7 Flash
+router.post('/instances/:id/generate-diagrams', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { customInstructions } = req.body;
+
+    const instance = await customAssessmentRepo.getInstanceById(id);
+    if (!instance) {
+      return res.status(404).json({ success: false, error: 'Assessment instance not found' });
+    }
+
+    const calculated = dynamicEngine.calculateScores(instance.responses, instance.frameworkSnapshot);
+
+    const diagrams = await dynamicEngine.generateArchitectureDiagramsWithGemini(
+      instance.frameworkSnapshot,
+      instance.responses,
+      calculated,
+      {
+        customerName: instance.customerName,
+        useCase: instance.useCase,
+        industry: req.body.industry
+      },
+      customInstructions
+    );
+
+    // Persist diagrams into instance report metadata
+    const currentReport = instance.aiReport || {};
+    currentReport.architectureDiagrams = diagrams;
+
+    const updated = await customAssessmentRepo.updateInstance(id, {
+      aiReport: currentReport
+    });
+
+    res.json({
+      success: true,
+      diagrams,
+      instance: updated,
+      message: 'Bespoke architecture diagrams generated with Gemini 3.7 Flash'
+    });
+  } catch (error) {
+    console.error('Error generating bespoke architecture diagrams:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to generate architecture diagrams'
+    });
+  }
+});
+
 module.exports = router;
