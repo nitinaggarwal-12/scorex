@@ -48,6 +48,7 @@ const DynamicAssessmentReport = lazy(() => import('./components/DynamicAssessmen
 const DynamicAssessmentHub = lazy(() => import('./components/DynamicAssessmentHub'));
 const AssessmentComparisonView = lazy(() => import('./components/AssessmentComparisonView'));
 const CustomerPortfolioDashboard = lazy(() => import('./components/CustomerPortfolioDashboard'));
+const CommandPalette = lazy(() => import('./components/CommandPalette'));
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -675,6 +676,9 @@ function App() {
         </Suspense>
 
         <ChatWidget />
+        <Suspense fallback={null}>
+          <CommandPalette />
+        </Suspense>
 
         <Toaster 
           position="top-right"

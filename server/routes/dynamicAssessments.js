@@ -740,10 +740,11 @@ router.post('/instances/:id/generate-diagrams', aiRateLimiter(15, 60000), async 
   }
 });
 
-// 8. Generate Secure Shareable Read-Only Public Link Token
+// 8. Generate Secure Shareable Read-Only Public Link Token (with optional Passcode protection)
 router.post('/instances/:id/share-link', async (req, res) => {
   try {
     const { id } = req.params;
+    const { passcode } = req.body || {};
     const instance = await customAssessmentRepo.getInstanceById(id);
     if (!instance) {
       return res.status(404).json({ success: false, error: 'Assessment instance not found' });
@@ -752,12 +753,19 @@ router.post('/instances/:id/share-link', async (req, res) => {
     let shareToken = instance.shareToken;
     if (!shareToken) {
       shareToken = crypto.randomBytes(16).toString('hex');
-      await customAssessmentRepo.updateInstance(id, { shareToken });
     }
+
+    const updatePayload = { shareToken };
+    if (passcode !== undefined) {
+      updatePayload.sharePasscode = passcode ? String(passcode).trim() : null;
+    }
+
+    await customAssessmentRepo.updateInstance(id, updatePayload);
 
     res.json({
       success: true,
       shareToken,
+      isPasscodeProtected: !!updatePayload.sharePasscode,
       shareUrl: `/assessments/public-report/${shareToken}`
     });
   } catch (error) {
@@ -766,14 +774,25 @@ router.post('/instances/:id/share-link', async (req, res) => {
   }
 });
 
-// 9. Public Read-Only Report Access via Token (No login required)
+// 9. Public Read-Only Report Access via Token (No login required, optional Passcode verification)
 router.get('/public/report/:token', async (req, res) => {
   try {
     const { token } = req.params;
+    const passcodeAttempt = req.headers['x-report-passcode'] || req.query.passcode;
+
     const allInstances = await customAssessmentRepo.getAllInstances();
     const instance = allInstances.find(i => i.shareToken === token);
     if (!instance) {
       return res.status(404).json({ success: false, error: 'Public assessment report not found or link has expired' });
+    }
+
+    if (instance.sharePasscode && instance.sharePasscode !== passcodeAttempt) {
+      return res.status(401).json({
+        success: false,
+        isProtected: true,
+        customerName: instance.customerName || 'Organization',
+        error: 'Passcode required to view confidential assessment report'
+      });
     }
 
     const calculated = dynamicEngine.calculateScores(instance.responses, instance.frameworkSnapshot);

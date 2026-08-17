@@ -32,6 +32,8 @@ import MultiPersonaViews from './MultiPersonaViews';
 import BacklogExporterCard from './BacklogExporterCard';
 import IaCBlueprintCard from './IaCBlueprintCard';
 import DynamicRadarChart from './DynamicRadarChart';
+import ExecutiveHeatmapMatrix from './ExecutiveHeatmapMatrix';
+import AudioBriefingPlayer from './AudioBriefingPlayer';
 import { exportDynamicAssessmentToExcel } from '../services/excelExportService';
 import { generateDynamicPDFReport } from '../services/pdfExportService';
 import { exportAssessmentToJSON, exportAssessmentToCSV } from '../services/dataExportService';
@@ -761,6 +763,9 @@ const DynamicAssessmentReport = () => {
           </PromoteBtn>
         </PromoteBanner>
 
+        {/* AI Voice / Audio Narrative Briefing */}
+        <AudioBriefingPlayer instance={instance} report={report} />
+
         {/* Hero Card */}
         <HeroCard>
           <HeroHeader>
@@ -790,6 +795,13 @@ const DynamicAssessmentReport = () => {
 
         {/* Multi-Axis Polar Radar & Dimensional Gap Topology */}
         <DynamicRadarChart
+          dimensions={framework?.dimensions || []}
+          dimensionScores={scores.dimensionScores || {}}
+          responses={instance.responses || {}}
+        />
+
+        {/* Executive Capability vs Operational Risk Heatmap Matrix */}
+        <ExecutiveHeatmapMatrix
           dimensions={framework?.dimensions || []}
           dimensionScores={scores.dimensionScores || {}}
           responses={instance.responses || {}}
