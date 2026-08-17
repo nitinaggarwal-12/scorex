@@ -979,29 +979,6 @@ const GlobalNav = () => {
                       Gen AI Readiness Assessment
                     </DropdownItem>
 
-                    <DropdownDivider />
-                    <DropdownItem 
-                      style={{ color: '#8b5cf6', fontWeight: '700' }}
-                      onClick={() => {
-                        navigate('/assessments/custom-hub');
-                        setAssessmentsDropdownOpen(false);
-                      }}
-                    >
-                      <FiLayers style={{ color: '#8b5cf6' }} />
-                      📋 Assessment Catalog & Templates
-                    </DropdownItem>
-
-                    <DropdownItem 
-                      style={{ color: '#a855f7', fontWeight: '600' }}
-                      onClick={() => {
-                        navigate('/assessments/ai-generator');
-                        setAssessmentsDropdownOpen(false);
-                      }}
-                    >
-                      <HiSparkles style={{ color: '#a855f7' }} />
-                      ✨ AI Assessment Generator
-                    </DropdownItem>
-
                     {/* Dynamically Promoted Custom Assessment Types */}
                     {promotedTypes.filter(t => t.isPromoted).map((type) => (
                       <DropdownItem 
@@ -1031,6 +1008,30 @@ const GlobalNav = () => {
                       <FiList />
                       All Assessments
                     </DropdownItem>
+
+                    <DropdownDivider />
+                    <DropdownItem 
+                      style={{ color: '#8b5cf6', fontWeight: '700' }}
+                      onClick={() => {
+                        navigate('/assessments/custom-hub');
+                        setAssessmentsDropdownOpen(false);
+                      }}
+                    >
+                      <FiLayers style={{ color: '#8b5cf6' }} />
+                      📋 Assessment Catalog & Templates
+                    </DropdownItem>
+
+                    <DropdownItem 
+                      style={{ color: '#a855f7', fontWeight: '600' }}
+                      onClick={() => {
+                        navigate('/assessments/ai-generator');
+                        setAssessmentsDropdownOpen(false);
+                      }}
+                    >
+                      <HiSparkles style={{ color: '#a855f7' }} />
+                      ✨ AI Assessment Generator
+                    </DropdownItem>
+
                     {currentUser.role === 'admin' && !currentUser.testMode && (
                       <DropdownItem onClick={() => {
                         navigate('/admin/questions');
@@ -1307,29 +1308,6 @@ const GlobalNav = () => {
                       Gen AI Readiness Assessment
                     </DropdownItem>
 
-                    <DropdownDivider />
-                    <DropdownItem 
-                      style={{ color: '#8b5cf6', fontWeight: '700' }}
-                      onClick={() => {
-                        navigate('/assessments/custom-hub');
-                        setAssessmentsDropdownOpen(false);
-                      }}
-                    >
-                      <FiLayers style={{ color: '#8b5cf6' }} />
-                      📋 Assessment Catalog & Templates
-                    </DropdownItem>
-
-                    <DropdownItem 
-                      style={{ color: '#a855f7', fontWeight: '600' }}
-                      onClick={() => {
-                        navigate('/assessments/ai-generator');
-                        setAssessmentsDropdownOpen(false);
-                      }}
-                    >
-                      <HiSparkles style={{ color: '#a855f7' }} />
-                      ✨ AI Assessment Generator
-                    </DropdownItem>
-
                     {/* Dynamically Promoted Custom Assessment Types */}
                     {promotedTypes.filter(t => t.isPromoted).map((type) => (
                       <DropdownItem 
@@ -1351,6 +1329,29 @@ const GlobalNav = () => {
                     }}>
                       <FiList />
                       All Assessments
+                    </DropdownItem>
+
+                    <DropdownDivider />
+                    <DropdownItem 
+                      style={{ color: '#8b5cf6', fontWeight: '700' }}
+                      onClick={() => {
+                        navigate('/assessments/custom-hub');
+                        setAssessmentsDropdownOpen(false);
+                      }}
+                    >
+                      <FiLayers style={{ color: '#8b5cf6' }} />
+                      📋 Assessment Catalog & Templates
+                    </DropdownItem>
+
+                    <DropdownItem 
+                      style={{ color: '#a855f7', fontWeight: '600' }}
+                      onClick={() => {
+                        navigate('/assessments/ai-generator');
+                        setAssessmentsDropdownOpen(false);
+                      }}
+                    >
+                      <HiSparkles style={{ color: '#a855f7' }} />
+                      ✨ AI Assessment Generator
                     </DropdownItem>
                   </DropdownMenu>
                 </DropdownContainer>
