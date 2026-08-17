@@ -42,6 +42,24 @@ const Container = styled.div`
   @media (max-width: 768px) {
     padding: 92px 16px 40px;
   }
+
+  /* 🖨️ EXECUTIVE PRINT & PDF STYLES */
+  @media print {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    padding: 0 !important;
+    min-height: auto !important;
+
+    .no-print {
+      display: none !important;
+    }
+
+    * {
+      color-adjust: exact !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+  }
 `;
 
 const Wrapper = styled.div`
@@ -574,7 +592,7 @@ const DynamicAssessmentReport = () => {
     <Container>
       <Wrapper>
         {/* Navigation back & action controls */}
-        <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+        <div className="no-print" style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
             <button 
               style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: '#94a3b8', padding: '9px 16px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: '600', transition: 'all 0.2s ease' }}

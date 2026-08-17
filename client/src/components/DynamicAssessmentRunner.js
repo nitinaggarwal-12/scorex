@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -809,7 +809,18 @@ const DynamicAssessmentRunner = () => {
     }
   };
 
-  const autoSave = useCallback(async (updatedResponses) => {
+  const debounceTimerRef = useRef(null);
+
+  // Clean up debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
+
+  const performAutoSave = useCallback(async (updatedResponses) => {
     if (!instance?.id) return;
     setSavedStatus('saving');
     try {
@@ -823,6 +834,16 @@ const DynamicAssessmentRunner = () => {
     }
   }, [instance]);
 
+  const debouncedAutoSave = useCallback((updatedResponses) => {
+    setSavedStatus('saving');
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    debounceTimerRef.current = setTimeout(() => {
+      performAutoSave(updatedResponses);
+    }, 450);
+  }, [performAutoSave]);
+
   const handleSelectCurrentState = (qId, score) => {
     const updated = {
       ...responses,
@@ -830,7 +851,7 @@ const DynamicAssessmentRunner = () => {
       [`${qId}_current_state`]: score
     };
     setResponses(updated);
-    autoSave(updated);
+    performAutoSave(updated);
   };
 
   const handleSelectFutureState = (qId, score) => {
@@ -839,7 +860,7 @@ const DynamicAssessmentRunner = () => {
       [`${qId}_future_state`]: score
     };
     setResponses(updated);
-    autoSave(updated);
+    performAutoSave(updated);
   };
 
   const handleToggleTechnicalPain = (qId, pain) => {
@@ -855,7 +876,7 @@ const DynamicAssessmentRunner = () => {
       [`${qId}_pain_points`]: updatedList
     };
     setResponses(updated);
-    autoSave(updated);
+    performAutoSave(updated);
   };
 
   const handleToggleBusinessPain = (qId, pain) => {
@@ -870,7 +891,7 @@ const DynamicAssessmentRunner = () => {
       [key]: updatedList
     };
     setResponses(updated);
-    autoSave(updated);
+    performAutoSave(updated);
   };
 
   const handleNotesChange = (qId, text) => {
@@ -879,7 +900,7 @@ const DynamicAssessmentRunner = () => {
       [`${qId}_comment`]: text
     };
     setResponses(updated);
-    autoSave(updated);
+    debouncedAutoSave(updated);
   };
 
   const handleAutoPrefillAll = async () => {
