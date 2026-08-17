@@ -599,7 +599,7 @@ const getSampleRisks = () => {
       financialImpact: '$5M-$20M',
       description: 'Lack of centralized governance increases risk of data breaches, regulatory fines, and compliance violations.',
       mitigation: [
-        'Deploy Unity Catalog for centralized governance',
+        'Deploy centralized metadata catalog and ABAC governance',
         'Implement audit logging and access controls',
         'Establish data classification policies',
         'Conduct regular compliance audits'
@@ -718,7 +718,7 @@ const getRisks = (results) => {
           financialImpact: '$5M-$20M',
           description: 'Lack of centralized governance increases risk of data breaches, regulatory fines, and compliance violations.',
           mitigation: [
-            'Deploy Unity Catalog for centralized governance',
+            'Deploy centralized metadata catalog and ABAC governance',
             'Implement audit logging and access controls',
             'Establish data classification policies',
             'Conduct regular compliance audits'

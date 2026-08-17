@@ -227,6 +227,7 @@ const BreakdownCard = styled.div`
 
 const FinancialImpactCard = ({ 
   pillarScores = {}, 
+  framework = null,
   overallCurrent = 2.5, 
   overallTarget = 4.0 
 }) => {
@@ -242,77 +243,71 @@ const FinancialImpactCard = ({
   const currentScale = scaleMultipliers[scale];
   const m = currentScale.base;
 
-  // Calculate pillar gap deltas
-  const getGap = (pillarKey, defaultCurrent = 2.5, defaultTarget = 4.0) => {
-    const p = pillarScores[pillarKey];
-    if (!p) return Math.max(0.5, defaultTarget - defaultCurrent);
-    const curr = typeof p === 'object' ? (p.current || p.currentScore || defaultCurrent) : defaultCurrent;
-    const tgt = typeof p === 'object' ? (p.future || p.targetScore || p.futureScore || defaultTarget) : defaultTarget;
-    return Math.max(0.2, tgt - curr);
-  };
+  // Extract dimensions dynamically from framework or pillarScores keys
+  const dimensionsList = (framework?.dimensions && framework.dimensions.length > 0)
+    ? framework.dimensions
+    : (Object.keys(pillarScores).length > 0
+        ? Object.keys(pillarScores).map(k => {
+            const p = pillarScores[k];
+            return {
+              id: k,
+              name: (typeof p === 'object' && p.name) ? p.name : k.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+              description: (typeof p === 'object' && p.description) ? p.description : ''
+            };
+          })
+        : [
+            { id: 'governance', name: 'Platform & Zero-Trust Governance', description: 'Centralized cataloging, ABAC access control, and compliance auditing.' },
+            { id: 'data_engineering', name: 'Data Engineering & CDC Streaming', description: 'Serverless declarative pipelines and real-time event ingestion.' },
+            { id: 'analytics_bi', name: 'Analytics & Sub-Second BI Acceleration', description: 'In-memory caching and self-service semantic data layers.' },
+            { id: 'ai_ml', name: 'Enterprise AI, LLMs & Agentic Mesh', description: 'Prompt context caching (75% discount), model routing, and vector search.' },
+            { id: 'finops', name: 'FinOps & Infrastructure Automation', description: 'Compute slot autoscaling, budget limiters, and idle resource elimination.' }
+          ]
+      );
 
-  const platformGap = getGap('platform_governance', 2.8, 4.0);
-  const dataEngGap = getGap('data_engineering', 3.0, 4.5);
-  const biGap = getGap('analytics_bi', 2.4, 4.0);
-  const mlGap = getGap('machine_learning', 2.6, 4.2);
-  const genaiGap = getGap('generative_ai', 1.8, 4.0);
-  const opsGap = getGap('operational_excellence', 2.9, 4.5);
+  // Calculate gaps dynamically per dimension
+  const dimensionCalculations = dimensionsList.map((dim, idx) => {
+    const p = pillarScores[dim.id] || pillarScores[dim.name];
+    let curr = 2.5;
+    let tgt = 4.2;
 
-  // Financial Value Calculations
-  const savingsPlatform = Math.round(platformGap * 110000 * m);
-  const savingsDataEng = Math.round(dataEngGap * 165000 * m);
-  const savingsBI = Math.round(biGap * 95000 * m);
-  const savingsML = Math.round(mlGap * 140000 * m);
-  const savingsGenAI = Math.round(genaiGap * 135000 * m);
-  const savingsOps = Math.round(opsGap * 90000 * m);
+    if (p) {
+      if (typeof p === 'number') {
+        curr = p;
+      } else if (typeof p === 'object') {
+        curr = p.score || p.current || p.currentScore || 2.5;
+        tgt = p.future || p.targetScore || p.futureScore || Math.min(5, curr + 1.8);
+      }
+    } else {
+      curr = typeof overallCurrent === 'number' ? overallCurrent : 2.5;
+      tgt = typeof overallTarget === 'number' ? overallTarget : 4.2;
+    }
 
-  const totalAnnualSavings = savingsPlatform + savingsDataEng + savingsBI + savingsML + savingsGenAI + savingsOps;
+    const gap = Math.max(0.2, tgt - curr);
+    const weightFactor = 105000 + ((idx * 31) % 4) * 20000;
+    const savings = Math.round(gap * weightFactor * m);
+
+    return {
+      id: dim.id,
+      name: dim.name,
+      current: curr,
+      target: tgt,
+      gap,
+      savings,
+      desc: dim.description || `Optimizing ${dim.name} baseline efficiency and architecture automation.`,
+      driver: `Efficiency delta: +${Math.round(gap * 28)}% • Automated governance & cost control`
+    };
+  });
+
+  const totalAnnualSavings = dimensionCalculations.reduce((acc, d) => acc + d.savings, 0) || Math.round(350000 * m);
   const threeYearValue = totalAnnualSavings * 3;
-
-  // Dollar at Risk
-  const totalGap = (platformGap + dataEngGap + biGap + mlGap + genaiGap + opsGap) / 6;
-  const dollarAtRiskMitigated = Math.round(totalGap * 380000 * m);
-  const paybackMonths = Math.max(2.5, (5.2 - totalGap * 1.1)).toFixed(1);
+  const avgGap = dimensionCalculations.length > 0
+    ? dimensionCalculations.reduce((acc, d) => acc + d.gap, 0) / dimensionCalculations.length
+    : 1.5;
+  const dollarAtRiskMitigated = Math.round(avgGap * 360000 * m);
+  const paybackMonths = Math.max(2.2, (5.2 - avgGap * 1.0)).toFixed(1);
   const roiMultiple = Math.round((threeYearValue / (totalAnnualSavings * 0.75)) * 100);
 
-  const breakdownDrivers = [
-    {
-      name: 'Platform & Governance',
-      amount: savingsPlatform,
-      desc: 'Unity Catalog metadata unification & automated compliance audit trails.',
-      driver: 'Audit cycle time: -65% • Sprawl elimination'
-    },
-    {
-      name: 'Data Engineering',
-      amount: savingsDataEng,
-      desc: 'Declarative pipelines & serverless vectorized SQL right-sizing.',
-      driver: 'Pipeline failures: -80% • Compute efficiency: +45%'
-    },
-    {
-      name: 'Analytics & BI',
-      amount: savingsBI,
-      desc: 'Self-service semantic layer eliminating manual analyst query bottlenecks.',
-      driver: 'Time-to-insight: 14 days ➔ 4 hours'
-    },
-    {
-      name: 'Machine Learning & MLOps',
-      amount: savingsML,
-      desc: 'Centralized model registry & zero-downtime inference endpoints.',
-      driver: 'Time-to-production: 4 months ➔ 2 weeks'
-    },
-    {
-      name: 'Generative AI & LLMs',
-      amount: savingsGenAI,
-      desc: 'Token arbitrage, context caching (75% savings), and model routing.',
-      driver: 'Token cost optimization: up to 70%'
-    },
-    {
-      name: 'Operational Excellence',
-      amount: savingsOps,
-      desc: 'FinOps automated cluster kill-switches & predictive cost alerts.',
-      driver: 'Idle compute waste: -90%'
-    }
-  ];
+  const breakdownDrivers = dimensionCalculations;
 
   return (
     <Container

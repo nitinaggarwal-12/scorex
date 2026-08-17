@@ -672,6 +672,7 @@ const DynamicAssessmentReport = () => {
         {/* Quantified Financial & TCO Impact Engine */}
         <FinancialImpactCard
           pillarScores={scores.dimensionScores || {}}
+          framework={framework}
           overallCurrent={scores.overallScore || 2.5}
           overallTarget={4.0}
         />
@@ -692,12 +693,15 @@ const DynamicAssessmentReport = () => {
           assessmentName={framework?.title || 'Enterprise Data Platform'}
           currentScore={scores.overallScore || 2.5}
           targetScore={4.5}
+          aiReport={report}
+          framework={framework}
+          scores={scores}
         />
 
         {/* 1-Click Transformation Backlog Exporter */}
         <BacklogExporterCard
           assessmentName={framework?.title || 'Enterprise Data & AI Maturity Assessment'}
-          recommendations={report.prioritizedRecommendations || []}
+          recommendations={report.prioritizedRecommendations || report.prioritizedActions || []}
         />
 
         {/* 1-Click Infrastructure-as-Code (IaC) Cloud Deployer */}

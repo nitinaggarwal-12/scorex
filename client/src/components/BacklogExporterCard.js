@@ -196,39 +196,68 @@ const BacklogExporterCard = ({
   const [copiedMd, setCopiedMd] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
 
-  // Generate standardized Epics & User Stories
-  const backlogEpics = [
-    {
-      id: 'EPIC-1',
-      title: 'Unified Lakehouse Storage & Governance Migration',
-      pillar: 'Platform & Governance',
-      stories: [
-        { key: 'STORY-101', title: 'Provision Unity Catalog metastore and map IAM role delegations', priority: 'Highest', sprint: 'Sprint 1' },
-        { key: 'STORY-102', title: 'Configure dynamic column/row masking for PII compliance', priority: 'High', sprint: 'Sprint 2' },
-        { key: 'STORY-103', title: 'Adopt Delta Lake / Iceberg UniForm for zero-copy data sharing', priority: 'High', sprint: 'Sprint 3' }
-      ]
-    },
-    {
-      id: 'EPIC-2',
-      title: 'Declarative Streaming Pipelines & Serverless Ingestion',
-      pillar: 'Data Engineering',
-      stories: [
-        { key: 'STORY-201', title: 'Migrate batch scripts to Serverless Auto-Loader for S3/GCS', priority: 'Highest', sprint: 'Sprint 2' },
-        { key: 'STORY-202', title: 'Implement declarative data pipelines with expectations & contracts', priority: 'High', sprint: 'Sprint 4' },
-        { key: 'STORY-203', title: 'Configure automated dead-letter queues and retry handlers', priority: 'Medium', sprint: 'Sprint 5' }
-      ]
-    },
-    {
-      id: 'EPIC-3',
-      title: 'Production MLOps & Compound GenAI Agent Infrastructure',
-      pillar: 'Generative AI & MLOps',
-      stories: [
-        { key: 'STORY-301', title: 'Deploy MLflow Central Model & Prompt Registry', priority: 'High', sprint: 'Sprint 3' },
-        { key: 'STORY-302', title: 'Implement Model Context Protocol (MCP) tool integration', priority: 'Highest', sprint: 'Sprint 6' },
-        { key: 'STORY-303', title: 'Configure Prompt Context Caching for 75% token cost reduction', priority: 'High', sprint: 'Sprint 7' }
-      ]
-    }
-  ];
+  const rawRecs = recommendations.length > 0 ? recommendations : prioritizedActions;
+
+  // Generate standardized Epics & User Stories dynamically from AI recommendations
+  const backlogEpics = rawRecs.length > 0
+    ? rawRecs.map((rec, idx) => {
+        const pillar = rec.dimension || rec.pillar || `Strategic Pillar ${idx + 1}`;
+        const stories = (rec.actionSteps && rec.actionSteps.length > 0)
+          ? rec.actionSteps.map((step, sIdx) => ({
+              key: `STORY-${idx + 1}0${sIdx + 1}`,
+              title: typeof step === 'string' ? step : (step.title || step.text || `Execute implementation task ${sIdx + 1}`),
+              priority: sIdx === 0 ? 'Highest' : (rec.priority === 'Critical' ? 'Highest' : 'High'),
+              sprint: `Sprint ${Math.floor(idx * 1.5) + sIdx + 1}`
+            }))
+          : [
+              { key: `STORY-${idx + 1}01`, title: `Architecture review & baseline scoping for ${rec.title}`, priority: 'Highest', sprint: `Sprint ${idx * 2 + 1}` },
+              { key: `STORY-${idx + 1}02`, title: `Pilot rollout & security perimeter validation for ${rec.title}`, priority: 'High', sprint: `Sprint ${idx * 2 + 2}` },
+              { key: `STORY-${idx + 1}03`, title: `Production cutover & telemetry verification for ${rec.title}`, priority: 'Medium', sprint: `Sprint ${idx * 2 + 3}` }
+            ];
+
+        return {
+          id: `EPIC-${idx + 1}`,
+          title: rec.title,
+          pillar,
+          whyItMatters: rec.whyItMatters || 'Strategic transformation initiative.',
+          stories
+        };
+      })
+    : [
+        {
+          id: 'EPIC-1',
+          title: 'Centralized Metadata & Zero-Trust Governance Migration',
+          pillar: 'Governance & Security',
+          whyItMatters: 'Eliminate compliance blind spots and establish unified ABAC data access controls.',
+          stories: [
+            { key: 'STORY-101', title: 'Provision Centralized Cloud Metastore with IAM role delegations', priority: 'Highest', sprint: 'Sprint 1' },
+            { key: 'STORY-102', title: 'Configure dynamic column/row masking and VPC Service Controls', priority: 'High', sprint: 'Sprint 2' },
+            { key: 'STORY-103', title: 'Adopt Apache Iceberg / BigLake open formats for zero-egress data sharing', priority: 'High', sprint: 'Sprint 3' }
+          ]
+        },
+        {
+          id: 'EPIC-2',
+          title: 'Declarative Streaming Pipelines & Real-Time Ingestion',
+          pillar: 'Data Engineering',
+          whyItMatters: 'Offload transactional databases and guarantee sub-second data freshness.',
+          stories: [
+            { key: 'STORY-201', title: 'Deploy serverless Change Data Capture (CDC) streaming pipelines', priority: 'Highest', sprint: 'Sprint 2' },
+            { key: 'STORY-202', title: 'Implement declarative Dataform / dbt models with data contract assertions', priority: 'High', sprint: 'Sprint 4' },
+            { key: 'STORY-203', title: 'Configure automated dead-letter queues and retry handlers', priority: 'Medium', sprint: 'Sprint 5' }
+          ]
+        },
+        {
+          id: 'EPIC-3',
+          title: 'Enterprise GenAI Architecture & Agentic Mesh',
+          pillar: 'Generative AI & LLMs',
+          whyItMatters: 'Deploy secure generative AI with 75% token cost optimization.',
+          stories: [
+            { key: 'STORY-301', title: 'Deploy Gemini Prompt Context Caching for large static contexts', priority: 'Highest', sprint: 'Sprint 3' },
+            { key: 'STORY-302', title: 'Standardize agent workflows on Model Context Protocol (MCP)', priority: 'High', sprint: 'Sprint 6' },
+            { key: 'STORY-303', title: 'Implement dynamic multi-model routing and real-time guardrails', priority: 'High', sprint: 'Sprint 7' }
+          ]
+        }
+      ];
 
   // Download Jira CSV
   const handleDownloadJiraCSV = () => {

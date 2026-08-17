@@ -327,11 +327,75 @@ const PlaybookCard = styled.div`
 `;
 
 const MultiPersonaViews = ({ 
-  assessmentName = 'Enterprise Data Platform', 
+  assessmentName = 'Enterprise Cloud, Data & AI Platform', 
   currentScore = 2.6, 
-  targetScore = 4.5 
+  targetScore = 4.5,
+  aiReport = null,
+  framework = null,
+  scores = null
 }) => {
   const [activePersona, setActivePersona] = useState('board'); // 'board', 'vp', 'architect'
+
+  // Extract dynamic values from live AI report
+  const roadmap = aiReport?.transformationRoadmap || {};
+  const recs = aiReport?.prioritizedRecommendations || aiReport?.prioritizedActions || [];
+  const strengths = aiReport?.keyStrengths || [];
+  const constraints = aiReport?.criticalConstraints || [];
+
+  const curr = typeof currentScore === 'number' ? currentScore : 2.5;
+  const tgt = typeof targetScore === 'number' ? targetScore : 4.2;
+  const gap = Math.max(0.5, tgt - curr);
+
+  // Dynamic Board Metrics
+  const quartileBefore = curr < 2.5 ? 'Bottom 40%' : curr < 3.5 ? 'Mid 50%' : 'Top 25%';
+  const quartileAfter = tgt >= 4.0 ? 'Top 10% (Leader)' : 'Top 25% (Advanced)';
+  const calculatedRiskAvoidance = `$${Math.round(gap * 360000).toLocaleString()}`;
+  const calculatedPayback = `${Math.max(2.2, (5.4 - gap * 0.9)).toFixed(1)} Months`;
+
+  // Dynamic Phase 1, 2, 3 data
+  const phase1 = roadmap.phase1 || {
+    title: 'Phase 1: Foundation & FinOps Governance',
+    timeline: 'Months 0–3',
+    focus: 'Establish centralized metadata governance, VPC network perimeters, and compute autoscaling guardrails.',
+    milestones: [
+      recs[0]?.actionSteps?.[0] || 'Deploy Centralized Metadata Catalog with ABAC IAM Roles',
+      recs[0]?.actionSteps?.[1] || 'Configure Serverless Autoscaling & Cost Limiters',
+      'Enforce VPC Service Controls & CMEK Encryption'
+    ]
+  };
+
+  const phase2 = roadmap.phase2 || {
+    title: 'Phase 2: Open Lakehouse & Pipeline Scale',
+    timeline: 'Months 3–6',
+    focus: 'Unify storage with Apache Iceberg / BigLake, transition legacy batch to real-time CDC streaming, and automate CI/CD.',
+    milestones: [
+      recs[1]?.actionSteps?.[0] || 'Standardize on Open Table Formats (Apache Iceberg / Delta)',
+      recs[1]?.actionSteps?.[1] || 'Deploy Declarative Dataform/dbt Pipelines with Git CI/CD',
+      'Automate Real-Time Change Data Capture (CDC)'
+    ]
+  };
+
+  const phase3 = roadmap.phase3 || {
+    title: 'Phase 3: Autonomous Agent Mesh & Production AI',
+    timeline: 'Months 6–12',
+    focus: 'Operationalize Vertex AI Gemini Agentic Mesh with Model Context Protocol (MCP) and Prompt Context Caching.',
+    milestones: [
+      recs[2]?.actionSteps?.[0] || 'Enable Gemini Prompt Context Caching (75% Input Discount)',
+      recs[2]?.actionSteps?.[1] || 'Deploy Model Context Protocol (MCP) Multi-Agent Mesh',
+      'In-Database Real-Time Machine Learning & Vector Search'
+    ]
+  };
+
+  // Top Board Decisions
+  const boardDecisions = recs.length >= 3 ? [
+    { title: recs[0].title || 'Authorize Centralized Cloud Lakehouse Governance', desc: recs[0].whyItMatters || 'Eliminate compliance blind spots and unify access control across business units.' },
+    { title: recs[1].title || 'Approve Serverless Autoscaling & Storage Migration', desc: recs[1].whyItMatters || 'Capture 40-50% compute cost savings by shifting from static clusters to serverless reservations.' },
+    { title: recs[2].title || 'Fund Enterprise GenAI & Agentic Mesh Deployment', desc: recs[2].whyItMatters || 'Establish enterprise prompt caching, model routing, and zero-trust guardrails.' }
+  ] : [
+    { title: 'Authorize Unified Lakehouse Governance & Open Storage', desc: 'Mandate open table formats (Apache Iceberg) and centralized ABAC cataloging across all teams.' },
+    { title: 'Approve Serverless Reservation Slot Migration', desc: 'Shift from static over-provisioned VMs to serverless autoscaling compute with 15-min auto-suspend.' },
+    { title: 'Fund Enterprise GenAI Agentic Infrastructure', desc: 'Establish enterprise prompt caching (75% savings), model routing, and zero-trust guardrails.' }
+  ];
 
   return (
     <Container
@@ -387,20 +451,20 @@ const MultiPersonaViews = ({
             <BoardCardGrid>
               <BoardMetricBox>
                 <div className="label">Competitive Quartile Positioning</div>
-                <div className="value" style={{ color: '#0284c7' }}>Top 35% ➔ Top 10%</div>
-                <div className="desc">Advancing to Target State elevates market position into industry top decile.</div>
+                <div className="value" style={{ color: '#0284c7' }}>{quartileBefore} ➔ {quartileAfter}</div>
+                <div className="desc">Advancing from score {curr.toFixed(1)} to {tgt.toFixed(1)} elevates technical capability into the industry upper tier.</div>
               </BoardMetricBox>
 
               <BoardMetricBox>
                 <div className="label">Total Risk Exposure Avoidance</div>
-                <div className="value" style={{ color: '#16a34a' }}>$840,000</div>
-                <div className="desc">Direct mitigation of GDPR/HIPAA compliance fines and revenue-impacting outages.</div>
+                <div className="value" style={{ color: '#16a34a' }}>{calculatedRiskAvoidance}</div>
+                <div className="desc">Direct mitigation of GDPR/HIPAA compliance fines, security audit failures, and pipeline outages.</div>
               </BoardMetricBox>
 
               <BoardMetricBox>
                 <div className="label">Capital Payback Horizon</div>
-                <div className="value" style={{ color: '#9333ea' }}>3.8 Months</div>
-                <div className="desc">Rapid capital recovery driven by serverless compute optimization and automation.</div>
+                <div className="value" style={{ color: '#9333ea' }}>{calculatedPayback}</div>
+                <div className="desc">Rapid capital recovery driven by serverless compute right-sizing and automated prompt context caching.</div>
               </BoardMetricBox>
             </BoardCardGrid>
 
@@ -408,24 +472,14 @@ const MultiPersonaViews = ({
               <h3>
                 <FiTarget color="#0284c7" /> Top 3 Board-Level Strategic Investment Decisions
               </h3>
-              <DecisionItem>
-                <div className="num">1</div>
-                <div className="text">
-                  <strong>Authorize Unified Lakehouse Governance:</strong> Mandate Unity Catalog across all business units to eliminate security blind spots and enable secure data democratization.
-                </div>
-              </DecisionItem>
-              <DecisionItem>
-                <div className="num">2</div>
-                <div className="text">
-                  <strong>Approve Serverless Vectorized Migration:</strong> Shift from static over-provisioned VMs to serverless compute with auto-termination, immediately capturing 35-45% compute cost savings.
-                </div>
-              </DecisionItem>
-              <DecisionItem>
-                <div className="num">3</div>
-                <div className="text">
-                  <strong>Fund Enterprise GenAI Agent Infrastructure:</strong> Establish enterprise prompt caching, model routing, and zero-trust guardrails to de-risk GenAI rollouts.
-                </div>
-              </DecisionItem>
+              {boardDecisions.map((dec, idx) => (
+                <DecisionItem key={idx}>
+                  <div className="num">{idx + 1}</div>
+                  <div className="text">
+                    <strong>{dec.title}:</strong> {dec.desc}
+                  </div>
+                </DecisionItem>
+              ))}
             </DecisionsList>
           </ContentPanel>
         )}
@@ -443,75 +497,63 @@ const MultiPersonaViews = ({
               <PhaseCard $active={true}>
                 <div className="top">
                   <div className="title-group">
-                    <FiClock color="#0284c7" /> Phase 1: Governance & Serverless Foundation
+                    <FiClock color="#0284c7" /> {phase1.title || 'Phase 1: Foundation & Governance'}
                   </div>
                   <div className="timeline-badge">
-                    <FiClock /> Sprints 1–6 (Months 0–3)
+                    <FiClock /> {phase1.timeline || 'Months 0–3'}
                   </div>
                 </div>
                 <p style={{ fontSize: '0.82rem', color: '#64748b', margin: '0 0 10px 0' }}>
-                  Core Objectives: Establish Unity Catalog Metastore, unify IAM permission boundaries, deploy serverless compute clusters with 15-min auto-suspend.
+                  {phase1.focus}
                 </p>
                 <div className="milestones">
-                  <div className="milestone-item">
-                    <FiCheckCircle color="#10b981" /> Unity Catalog Deployed
-                  </div>
-                  <div className="milestone-item">
-                    <FiCheckCircle color="#10b981" /> Serverless SQL Clusters Active
-                  </div>
-                  <div className="milestone-item">
-                    <FiCheckCircle color="#10b981" /> FinOps Tagging Policy Enforced
-                  </div>
+                  {(phase1.milestones || []).slice(0, 3).map((m, mIdx) => (
+                    <div key={mIdx} className="milestone-item">
+                      <FiCheckCircle color="#10b981" /> {m}
+                    </div>
+                  ))}
                 </div>
               </PhaseCard>
 
               <PhaseCard $active={false}>
                 <div className="top">
                   <div className="title-group">
-                    <FiCpu color="#6366f1" /> Phase 2: Declarative Pipelines & MLOps Scale
+                    <FiCpu color="#6366f1" /> {phase2.title || 'Phase 2: Open Lakehouse & Pipeline Scale'}
                   </div>
                   <div className="timeline-badge" style={{ background: '#f5f3ff', color: '#6d28d9' }}>
-                    <FiClock /> Sprints 7–12 (Months 3–6)
+                    <FiClock /> {phase2.timeline || 'Months 3–6'}
                   </div>
                 </div>
                 <p style={{ fontSize: '0.82rem', color: '#64748b', margin: '0 0 10px 0' }}>
-                  Core Objectives: Convert brittle legacy ETL jobs into declarative streaming pipelines (SDF / dbt), establish central MLflow Model Registry, automate CI/CD.
+                  {phase2.focus}
                 </p>
                 <div className="milestones">
-                  <div className="milestone-item">
-                    <FiCheckCircle color="#10b981" /> Declarative Pipelines Live
-                  </div>
-                  <div className="milestone-item">
-                    <FiCheckCircle color="#10b981" /> MLflow Production Registry
-                  </div>
-                  <div className="milestone-item">
-                    <FiCheckCircle color="#10b981" /> Data Quality SLA Alerts
-                  </div>
+                  {(phase2.milestones || []).slice(0, 3).map((m, mIdx) => (
+                    <div key={mIdx} className="milestone-item">
+                      <FiCheckCircle color="#10b981" /> {m}
+                    </div>
+                  ))}
                 </div>
               </PhaseCard>
 
               <PhaseCard $active={false}>
                 <div className="top">
                   <div className="title-group">
-                    <HiSparkles color="#ec4899" /> Phase 3: Autonomous Agent Mesh & Continuous Value
+                    <HiSparkles color="#ec4899" /> {phase3.title || 'Phase 3: Autonomous Agent Mesh & AI Integration'}
                   </div>
                   <div className="timeline-badge" style={{ background: '#fdf2f8', color: '#be185d' }}>
-                    <FiClock /> Sprints 13–24 (Months 6–12)
+                    <FiClock /> {phase3.timeline || 'Months 6–12'}
                   </div>
                 </div>
                 <p style={{ fontSize: '0.82rem', color: '#64748b', margin: '0 0 10px 0' }}>
-                  Core Objectives: Deploy Model Context Protocol (MCP) multi-agent workflows, enable prompt context caching (75% discount), launch real-time semantic metric layer.
+                  {phase3.focus}
                 </p>
                 <div className="milestones">
-                  <div className="milestone-item">
-                    <FiCheckCircle color="#10b981" /> Multi-Agent MCP Workflows
-                  </div>
-                  <div className="milestone-item">
-                    <FiCheckCircle color="#10b981" /> Prompt Context Caching
-                  </div>
-                  <div className="milestone-item">
-                    <FiCheckCircle color="#10b981" /> Self-Service Semantic Layer
-                  </div>
+                  {(phase3.milestones || []).slice(0, 3).map((m, mIdx) => (
+                    <div key={mIdx} className="milestone-item">
+                      <FiCheckCircle color="#10b981" /> {m}
+                    </div>
+                  ))}
                 </div>
               </PhaseCard>
             </GanttPhases>
@@ -530,40 +572,40 @@ const MultiPersonaViews = ({
             <PlaybookGrid>
               <PlaybookCard>
                 <div className="title">
-                  <FiLock color="#10b981" /> Security, IAM & Governance Checklist
+                  <FiLock color="#10b981" /> Security, IAM & Zero-Trust Checklist
                 </div>
                 <div className="checklist">
                   <div className="check-row">
-                    <FiCheckSquare /> Provision Unity Catalog metastore with IAM role delegation.
+                    <FiCheckSquare /> Provision centralized cloud metadata catalog with fine-grained IAM role delegation.
                   </div>
                   <div className="check-row">
                     <FiCheckSquare /> Implement dynamic column-level masking and row-level filtering for PII data.
                   </div>
                   <div className="check-row">
-                    <FiCheckSquare /> Enable Customer-Managed Encryption Keys (CMEK) and Private Service Connect (PSC).
+                    <FiCheckSquare /> Enable Customer-Managed Encryption Keys (CMEK) and VPC Service Controls (VPC-SC).
                   </div>
                   <div className="check-row">
-                    <FiCheckSquare /> Set up automated tag-based access control (ABAC) across all catalogs.
+                    <FiCheckSquare /> Set up automated tag-based access control (ABAC) and data classification policies.
                   </div>
                 </div>
               </PlaybookCard>
 
               <PlaybookCard>
                 <div className="title">
-                  <FiCpu color="#3b82f6" /> Declarative Data Engineering Best Practices
+                  <FiCpu color="#3b82f6" /> Declarative Data Engineering & CDC Architecture
                 </div>
                 <div className="checklist">
                   <div className="check-row">
-                    <FiCheckSquare /> Replace ad-hoc batch loops with Auto Loader file ingestion from cloud buckets.
+                    <FiCheckSquare /> Standardize on open table formats (Apache Iceberg / Delta UniForm) for zero-copy querying.
                   </div>
                   <div className="check-row">
-                    <FiCheckSquare /> Adopt Delta Lake / Iceberg UniForm for zero-copy cross-engine interoperability.
+                    <FiCheckSquare /> Replace legacy batch polling with real-time log-based Change Data Capture (CDC).
                   </div>
                   <div className="check-row">
-                    <FiCheckSquare /> Enforce declarative expectation constraints (`EXPECT x IS NOT NULL ON VIOLATION DROP`).
+                    <FiCheckSquare /> Enforce declarative data quality contracts and schema drift alerting.
                   </div>
                   <div className="check-row">
-                    <FiCheckSquare /> Configure automated dead-letter queues and retry handlers on streaming stages.
+                    <FiCheckSquare /> Deploy version-controlled Dataform / dbt pipelines with automated Git CI/CD testing.
                   </div>
                 </div>
               </PlaybookCard>
@@ -574,36 +616,36 @@ const MultiPersonaViews = ({
                 </div>
                 <div className="checklist">
                   <div className="check-row">
-                    <FiCheckSquare /> Standardize tool calling schemas on Model Context Protocol (MCP).
+                    <FiCheckSquare /> Standardize agent tool calling schemas on Model Context Protocol (MCP).
                   </div>
                   <div className="check-row">
-                    <FiCheckSquare /> Implement Prompt Context Caching for large static reference documents (75% cost savings).
+                    <FiCheckSquare /> Implement Gemini Prompt Context Caching for large static reference documents (75% cost reduction).
                   </div>
                   <div className="check-row">
-                    <FiCheckSquare /> Build dynamic model router (route simple queries to Flash models, complex to Pro).
+                    <FiCheckSquare /> Build dynamic model router (route simple queries to Flash models, complex to Pro/Thinking).
                   </div>
                   <div className="check-row">
-                    <FiCheckSquare /> Add real-time LLM output toxicity and jailbreak detection guardrails.
+                    <FiCheckSquare /> Add real-time LLM input/output toxicity, jailbreak, and prompt injection guardrails.
                   </div>
                 </div>
               </PlaybookCard>
 
               <PlaybookCard>
                 <div className="title">
-                  <FiDollarSign color="#f59e0b" /> FinOps & Infrastructure Automation
+                  <FiDollarSign color="#f59e0b" /> FinOps & Infrastructure Optimization
                 </div>
                 <div className="checklist">
                   <div className="check-row">
-                    <FiCheckSquare /> Configure 15-minute auto-termination timeout on all interactive developer clusters.
+                    <FiCheckSquare /> Configure 15-minute auto-termination timeout on all interactive developer compute clusters.
                   </div>
                   <div className="check-row">
-                    <FiCheckSquare /> Migrate analytical SQL workloads to Serverless SQL Warehouses.
+                    <FiCheckSquare /> Migrate analytical SQL workloads to Serverless BigQuery Editions reservation slot pools.
                   </div>
                   <div className="check-row">
-                    <FiCheckSquare /> Set up cost-center budget alerts with automated notification webhooks.
+                    <FiCheckSquare /> Set up FOCUS 1.0 multi-tenant cost attribution and automated budget alerting webhooks.
                   </div>
                   <div className="check-row">
-                    <FiCheckSquare /> Run weekly automated cluster right-sizing and spot instance utilization audits.
+                    <FiCheckSquare /> Run weekly automated compute right-sizing and spot instance utilization audits.
                   </div>
                 </div>
               </PlaybookCard>

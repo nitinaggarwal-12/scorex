@@ -355,31 +355,44 @@ resource "azurerm_storage_account" "lakehouse_adls" {
   lifecycle { prevent_destroy = true }
 }`
     },
-    databricks: {
-      name: 'Databricks (Multi-Cloud)',
-      icon: '🧱',
-      requiredRole: 'Metastore Admin & Workspace Admin',
-      launchText: '🚀 Deploy Unity Catalog & SQL',
-      launchUrl: `https://accounts.cloud.databricks.com`,
-      terraformCode: `# ScoreX Auto-Generated Terraform: Databricks Unity Catalog & Serverless SQL
+    open_lakehouse: {
+      name: 'Open Lakehouse (Iceberg & Polaris)',
+      icon: '🧊',
+      requiredRole: 'Lakehouse Admin & Cloud Storage Admin',
+      launchText: '🚀 Deploy Open Lakehouse & Catalog',
+      launchUrl: `https://github.com/apache/polaris`,
+      terraformCode: `# ScoreX Auto-Generated Terraform: Open Lakehouse (Apache Iceberg & Apache Polaris)
 terraform {
+  required_version = ">= 1.5.0"
   required_providers {
-    databricks = { source = "databricks/databricks", version = "~> 1.30.0" }
+    google = { source = "hashicorp/google", version = "~> 5.0" }
   }
 }
 
-# Unity Catalog Schema
-resource "databricks_catalog" "sandbox" {
-  name    = "scorex_catalog"
-  comment = "Governed unified lakehouse catalog for ${organizationName}"
+# 1. Universal Apache Iceberg Object Storage
+resource "google_storage_bucket" "iceberg_lakehouse" {
+  name                        = "${derivedBucket}-iceberg"
+  location                    = "US"
+  uniform_bucket_level_access = true
+  versioning { enabled = true }
 }
 
-# FinOps 15-Minute Auto-Suspend Serverless SQL Warehouse
-resource "databricks_sql_endpoint" "serverless_warehouse" {
-  name                      = "Serverless-Analytics-Warehouse"
-  cluster_size              = "2X-Small"
-  auto_stop_mins            = 15
-  enable_serverless_compute = true
+# 2. Apache Polaris / BigLake Universal Metastore
+resource "google_bigquery_dataset" "biglake_catalog" {
+  dataset_id = "governed_lakehouse"
+  location   = "US"
+  description = "Universal Apache Iceberg catalog with column-level ABAC governance for ${organizationName}"
+}
+
+# 3. BigQuery Editions Reservation Autoscaling Pool (FinOps)
+resource "google_bigquery_reservation" "analytics_slots" {
+  name              = "prod-analytics-slots"
+  location          = "US"
+  slot_capacity     = 100
+  edition           = "ENTERPRISE"
+  autoscale {
+    max_slots       = 800
+  }
 }`
     }
   };
