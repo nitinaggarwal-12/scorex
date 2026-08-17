@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 const ViewerContainer = styled.div`
@@ -12,6 +12,54 @@ const ViewerContainer = styled.div`
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
 `;
 
+export function sanitizeDrawioXmlAttributes(xml) {
+  if (!xml) return xml;
+  
+  // 1. Clean broken attribute & tag closing artifacts (e.g. /="geometry"/>, as="geometry"/&gt;, etc.)
+  let cleaned = xml
+    .replace(/\/&gt;/g, '/>')
+    .replace(/\/&amp;gt;/g, '/>')
+    .replace(/\/="[^"]*"/g, '')
+    .replace(/\bas="geometry"\s*as="geometry"/g, 'as="geometry"')
+    .replace(/\/+\s*\/>/g, '/>')
+    .replace(/\/\s*>/g, '/>');
+
+  // 2. Convert non-ASCII unicode characters/emojis into safe numeric HTML entities
+  cleaned = cleaned.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]|[^\x00-\x7F]/gu, function(char) {
+    const code = char.codePointAt(0);
+    return code ? '&#' + code + ';' : '';
+  });
+
+  // Clean invalid surrogate entities
+  cleaned = cleaned.replace(/&#(?:5[5-6][0-9]{3}|57[0-2][0-9]{2}|573[0-3][0-9]|5734[0-3]);/g, '');
+
+  // 3. Escape raw unescaped ampersands (e.g. "FinOps & AI" -> "FinOps &amp; AI")
+  cleaned = cleaned.replace(/&(?!(amp|lt|gt|quot|apos|#[0-9]+|#x[0-9a-fA-F]+);)/g, '&amp;');
+
+  // 4. Fix unescaped raw '<' and inner double quotes inside value attributes
+  cleaned = cleaned.replace(/\bvalue="([\s\S]*?)"(?=\s+[a-zA-Z_:][a-zA-Z0-9_:-]*=|\s*\/?>)/g, function(match, valContent) {
+    const sanitized = valContent
+      .replace(/&quot;/g, "'")
+      .replace(/"/g, "'")
+      .replace(/<(\/?[a-zA-Z0-9]+(?:\s+[^>]*)?)>/g, '&lt;$1&gt;')
+      .replace(/<([0-9]+)/g, '&lt;$1')
+      .replace(/<(?![a-zA-Z0-9/])/g, '&lt;');
+    return 'value="' + sanitized + '"';
+  });
+
+  return cleaned;
+}
+
+export function getCleanGraphXml(xmlStr) {
+  if (!xmlStr) return '';
+  const sIdx = xmlStr.indexOf('<mxGraphModel');
+  const eIdx = xmlStr.lastIndexOf('</mxGraphModel>');
+  if (sIdx !== -1 && eIdx !== -1) {
+    return xmlStr.substring(sIdx, eIdx + 15);
+  }
+  return xmlStr;
+}
+
 export default function DiagramViewer({
   xml,
   title = 'Enterprise Architecture Blueprint',
@@ -21,10 +69,38 @@ export default function DiagramViewer({
   height = '560px',
   isTarget = false
 }) {
+  const [origin, setOrigin] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setOrigin(window.location.origin);
+    }
+  }, []);
+
   const bgColor = theme === 'dark' ? '#0b0f19' : '#ffffff';
   const cardBg = theme === 'dark' ? '#1e293b' : '#f8fafc';
   const textColor = theme === 'dark' ? '#f8fafc' : '#0f172a';
   const borderColor = theme === 'dark' ? 'rgba(51, 65, 85, 0.6)' : 'rgba(226, 232, 240, 0.9)';
+
+  const sanitizedXml = useMemo(() => {
+    return getCleanGraphXml(sanitizeDrawioXmlAttributes(xml || ''));
+  }, [xml]);
+
+  const scriptUrl = origin ? `${origin}/viewer-static.min.js` : '/viewer-static.min.js';
+
+  const configObjJson = useMemo(() => {
+    return JSON.stringify({
+      xml: sanitizedXml,
+      lightbox: false,
+      nav: true,
+      resize: true,
+      toolbar: 'zoom layers',
+      border: 12,
+      transparent: true,
+      fit: true,
+      'max-scale': 2.0
+    });
+  }, [sanitizedXml]);
 
   const iframeHtml = useMemo(() => {
     return `<!DOCTYPE html>
@@ -102,6 +178,12 @@ export default function DiagramViewer({
       max-width: 100% !important;
       margin: 0 auto !important;
     }
+    foreignObject, foreignObject div, foreignObject span, foreignObject b, foreignObject p {
+      box-sizing: border-box !important;
+      word-break: break-word !important;
+      overflow-wrap: break-word !important;
+      line-height: 1.25 !important;
+    }
     .geEditor {
       background-color: transparent !important;
     }
@@ -132,7 +214,6 @@ export default function DiagramViewer({
   </div>
 
   <script type="text/javascript">
-    // Safe Latin1 & UTF-8 btoa / atob wrappers
     if (typeof window.btoa === 'function') {
       const _origBtoa = window.btoa.bind(window);
       window.btoa = function(str) {
@@ -150,31 +231,24 @@ export default function DiagramViewer({
       };
     }
 
-    function getCleanGraphXml(xmlStr) {
-      if (!xmlStr) return '';
-      var sIdx = xmlStr.indexOf('<mxGraphModel');
-      var eIdx = xmlStr.lastIndexOf('</mxGraphModel>');
-      if (sIdx !== -1 && eIdx !== -1) {
-        return xmlStr.substring(sIdx, eIdx + 15);
-      }
-      return xmlStr;
+    if (typeof window.atob === 'function') {
+      const _origAtob = window.atob.bind(window);
+      window.atob = function(b64) {
+        try {
+          return _origAtob(b64);
+        } catch (e) {
+          try {
+            return decodeURIComponent(Array.prototype.map.call(_origAtob(b64), function(c) {
+              return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+          } catch (e2) {
+            return _origAtob(b64);
+          }
+        }
+      };
     }
 
-    const rawXml = ${JSON.stringify(xml || '')};
-    const cleanXml = getCleanGraphXml(rawXml);
-
-    const configObj = {
-      xml: cleanXml,
-      lightbox: false,
-      nav: true,
-      resize: true,
-      toolbar: 'zoom layers',
-      border: 12,
-      transparent: true,
-      fit: true,
-      'max-scale': 2.0
-    };
-
+    const configObj = ${configObjJson};
     const container = document.getElementById('diagram-container');
     if (container) {
       container.setAttribute('data-mxgraph', JSON.stringify(configObj));
@@ -185,7 +259,7 @@ export default function DiagramViewer({
       const script = document.createElement('script');
       script.id = 'mxgraph-script-element';
       script.type = 'text/javascript';
-      script.src = '/viewer-static.min.js';
+      script.src = '${scriptUrl}';
       script.onerror = function() {
         const fallbackScript = document.createElement('script');
         fallbackScript.src = 'https://viewer.diagrams.net/js/viewer-static.min.js';
@@ -195,14 +269,14 @@ export default function DiagramViewer({
     }
 
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
-      setTimeout(loadViewerScript, 30);
+      setTimeout(loadViewerScript, 40);
     } else {
       window.addEventListener('load', loadViewerScript);
     }
   </script>
 </body>
 </html>`;
-  }, [xml, title, subtitle, badge, isTarget, theme, bgColor, cardBg, textColor, borderColor]);
+  }, [configObjJson, title, subtitle, badge, isTarget, scriptUrl, bgColor, cardBg, textColor, borderColor]);
 
   return (
     <ViewerContainer $height={height} $theme={theme} $borderColor={isTarget ? '#10b981' : '#f87171'}>
@@ -210,7 +284,6 @@ export default function DiagramViewer({
         srcDoc={iframeHtml}
         style={{ width: '100%', height: '100%', border: 'none', background: 'transparent' }}
         title={title}
-        sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
       />
     </ViewerContainer>
   );
