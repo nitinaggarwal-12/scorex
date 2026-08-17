@@ -37,7 +37,7 @@ import AudioBriefingPlayer from './AudioBriefingPlayer';
 import PresentationModeModal from './PresentationModeModal';
 import { exportDynamicAssessmentToExcel } from '../services/excelExportService';
 import { generateDynamicPDFReport } from '../services/pdfExportService';
-import { exportAssessmentToJSON, exportAssessmentToCSV } from '../services/dataExportService';
+import { exportAssessmentToJSON, exportAssessmentToCSV, exportCompleteDeliverablesBundle } from '../services/dataExportService';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -789,6 +789,18 @@ const DynamicAssessmentReport = () => {
               }}
             >
               <FiDownload /> 📦 JSON
+            </button>
+
+            <button 
+              style={{ background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(168, 85, 247, 0.2))', border: '1.5px solid rgba(236, 72, 153, 0.5)', color: '#f472b6', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700', boxShadow: '0 4px 14px rgba(236, 72, 153, 0.25)' }}
+              onClick={async () => {
+                toast.loading('Generating all deliverables (PDF + Excel + CSV + JSON + Architecture XMLs)...', { id: 'bundle-export' });
+                await exportCompleteDeliverablesBundle(instance, report, { exportDynamicAssessmentToExcel, generateDynamicPDFReport });
+                toast.success('🗂️ Complete Deliverables Package exported successfully!', { id: 'bundle-export', duration: 4000 });
+              }}
+              title="Download 1-click complete package: Executive PDF, Multi-sheet Excel, CSV Matrix, Raw JSON, and Draw.io XMLs"
+            >
+              <FiDownload /> 🗂️ All Deliverables Bundle
             </button>
 
             <button 

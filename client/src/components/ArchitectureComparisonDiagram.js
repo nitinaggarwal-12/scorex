@@ -550,6 +550,69 @@ class DiagramErrorBoundary extends React.Component {
   }
 }
 
+const REFERENCE_BLUEPRINTS = [
+  {
+    id: 'gcp_data_lakehouse',
+    name: 'Enterprise Data Lakehouse',
+    domain: 'Data & Analytics',
+    tier: 'Logical / Lakehouse',
+    badge: 'BigLake & BigQuery',
+    description: 'Cloud Storage BigLake tiers, serverless BigQuery SQL, Dataplex ABAC governance, and Looker semantic BI.',
+    title: 'Google Cloud Enterprise Data Lakehouse',
+    subtitle: 'BigLake + BigQuery + Dataplex + Looker'
+  },
+  {
+    id: 'agentic_rag_cognitive',
+    name: 'Cognitive Multi-Agent RAG Mesh',
+    domain: 'AI & Machine Learning',
+    tier: 'Logical / Cognitive',
+    badge: 'Gemini 3.7 & Model Armor',
+    description: 'Multi-agent orchestration loops, Vertex AI Gemini 3.7 Flash reasoning, context caching, and vector embedding store.',
+    title: 'Enterprise Cognitive AI Architecture',
+    subtitle: 'Vertex AI Gemini 3.7 Flash + Multi-Agent Orchestration'
+  },
+  {
+    id: 'cloud_finops_chargeback',
+    name: 'Cloud FinOps & Cost Chargeback',
+    domain: 'Cloud Economics',
+    tier: 'Logical / FinOps',
+    badge: 'BigQuery Billing Lake',
+    description: 'GCP Billing export lake, Kubecost pod allocation, Looker BU chargeback dashboards, and CUD commitment manager.',
+    title: 'Enterprise Cloud FinOps & Chargeback Engine',
+    subtitle: 'Real-time Billing Telemetry + Automated Cost Optimization'
+  },
+  {
+    id: 'zero_trust_security',
+    name: 'Zero-Trust Security & Deployment',
+    domain: 'Security & DevSecOps',
+    tier: 'Physical / Security',
+    badge: 'VPC-SC & Binary Auth',
+    description: 'Cloud Armor WAF, Identity-Aware Proxy, VPC Service Controls, Artifact Registry, and Binary Authorization CI/CD gates.',
+    title: 'Zero-Trust Cloud Security & Software Supply Chain',
+    subtitle: 'Cloud Armor + VPC-SC + Binary Authorization'
+  },
+  {
+    id: 'multi_region_dr',
+    name: 'Multi-Region Active-Passive DR',
+    domain: 'Cloud Reliability & SRE',
+    tier: 'Physical / SRE',
+    badge: 'Global Anycast L7 LB',
+    description: 'Global HTTPS Load Balancer, Cloud Run pilot light compute, Cloud SQL cross-region async replication (<5min lag).',
+    title: 'Multi-Region Active-Passive Disaster Recovery',
+    subtitle: 'Global L7 Load Balancing + Automated SRE Failover'
+  },
+  {
+    id: 'hybrid_strangler_fig',
+    name: 'Hybrid / Strangler Fig Transition',
+    domain: 'Application Migration',
+    tier: 'Logical / Migration',
+    badge: 'Apigee Interceptor',
+    description: 'Apigee API Gateway facade routing legacy traffic over Cloud Interconnect and modern features to GKE/Cloud Run.',
+    title: 'Hybrid Cloud Strangler Fig Transition Architecture',
+    subtitle: 'Apigee Traffic Interception + Cloud Interconnect'
+  }
+];
+
 const ArchitectureComparisonDiagram = ({ 
   instanceId,
   initialDiagrams,
@@ -561,9 +624,13 @@ const ArchitectureComparisonDiagram = ({
 }) => {
   const [viewMode, setViewMode] = useState('side_by_side'); // 'side_by_side', 'current_diagram', 'target_diagram', 'cards'
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
   const [customPrompt, setCustomPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [diagramsData, setDiagramsData] = useState(initialDiagrams || null);
+  const [reviewerNotes, setReviewerNotes] = useState([]);
+  const [noteText, setNoteText] = useState('');
+  const [showNotesDrawer, setShowNotesDrawer] = useState(false);
 
   useEffect(() => {
     if (initialDiagrams) {
@@ -604,6 +671,66 @@ const ArchitectureComparisonDiagram = ({
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const handleSelectTemplate = (tpl) => {
+    setDiagramsData(prev => ({
+      ...prev,
+      targetTitle: tpl.title,
+      targetSubtitle: tpl.subtitle,
+      targetStateXml: prev?.targetStateXml || DEFAULT_TARGET_XML
+    }));
+    setIsTemplateModalOpen(false);
+    toast.success(`Applied "${tpl.name}" architecture blueprint!`);
+  };
+
+  const handleCopyXml = async (xml) => {
+    try {
+      await navigator.clipboard.writeText(xml);
+      toast.success('📋 Draw.io XML copied to clipboard!');
+    } catch (e) {
+      toast.error('Failed to copy XML');
+    }
+  };
+
+  const handleCopyMermaid = async (isTarget) => {
+    const mermaidCode = isTarget
+      ? `flowchart LR
+    subgraph Ingestion["Ingestion & CDC"]
+      A[Cloud Pub/Sub] --> B[Dataflow Beam]
+      C[Storage Transfer] --> D[Cloud Storage]
+    end
+    subgraph Core["Core Lakehouse & AI"]
+      D --> E[BigLake Iceberg]
+      B --> F[BigQuery SQL]
+      E --> F
+      F --> G[Vertex AI Gemini 3.7]
+    end
+    subgraph Serving["Governance & Serving"]
+      G --> H[Looker Studio BI]
+      F --> I[Dataplex Governance]
+    end`
+      : `flowchart LR
+    subgraph Legacy["On-Prem Legacy"]
+      A[Oracle/Netezza] --> B[Cron Batch ETL]
+      B --> C[SFTP Scripts]
+      C --> D[Cognos Reports]
+    end`;
+
+    try {
+      await navigator.clipboard.writeText(mermaidCode);
+      toast.success('📋 Mermaid diagram syntax copied to clipboard!');
+    } catch (e) {
+      toast.error('Failed to copy Mermaid syntax');
+    }
+  };
+
+  const handleAddNote = (e) => {
+    e.preventDefault();
+    if (!noteText.trim()) return;
+    setReviewerNotes(prev => [...prev, { id: Date.now(), text: noteText.trim(), timestamp: new Date().toLocaleTimeString() }]);
+    setNoteText('');
+    toast.success('📝 Reviewer note pinned to architecture diagram');
   };
 
   const handleExportDrawio = (xml, filename) => {
@@ -754,13 +881,45 @@ const ArchitectureComparisonDiagram = ({
             </ViewBtn>
           </ViewToggle>
 
+          <button
+            onClick={() => setIsTemplateModalOpen(true)}
+            style={{ background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15))', border: '1px solid rgba(139, 92, 246, 0.4)', color: '#4f46e5', padding: '7px 14px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s ease' }}
+            title="Choose from ScoreX curated enterprise reference blueprints"
+          >
+            🎨 Reference Blueprints
+          </button>
+
+          <button
+            onClick={() => handleCopyXml(viewMode === 'current_diagram' ? currentXml : targetXml)}
+            style={{ background: '#f8fafc', border: '1px solid #cbd5e1', color: '#334155', padding: '7px 12px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: '600', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+            title="Copy raw Draw.io XML to clipboard"
+          >
+            📋 Copy XML
+          </button>
+
+          <button
+            onClick={() => handleCopyMermaid(viewMode === 'target_diagram' || viewMode === 'side_by_side')}
+            style={{ background: '#f8fafc', border: '1px solid #cbd5e1', color: '#334155', padding: '7px 12px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: '600', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+            title="Copy Mermaid diagram syntax to clipboard"
+          >
+            📋 Copy Mermaid
+          </button>
+
+          <button
+            onClick={() => setShowNotesDrawer(!showNotesDrawer)}
+            style={{ background: reviewerNotes.length > 0 ? 'rgba(16, 185, 129, 0.15)' : '#f8fafc', border: `1px solid ${reviewerNotes.length > 0 ? 'rgba(16, 185, 129, 0.4)' : '#cbd5e1'}`, color: reviewerNotes.length > 0 ? '#059669' : '#334155', padding: '7px 12px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+            title="Add workshop review notes & architecture risks"
+          >
+            📝 Notes ({reviewerNotes.length})
+          </button>
+
           <RegenerateBtn 
             onClick={() => setIsModalOpen(true)}
             disabled={isGenerating}
             title="Generate bespoke architecture diagrams using Gemini 3.7 Flash"
           >
             <FiRefreshCw className={isGenerating ? 'spin' : ''} /> 
-            {isGenerating ? 'Synthesizing...' : '⚡ Regenerate with Gemini 3.7 Flash'}
+            {isGenerating ? 'Synthesizing...' : '⚡ Regenerate with Gemini 3.7'}
           </RegenerateBtn>
 
           <ExportBtn 
@@ -774,6 +933,49 @@ const ArchitectureComparisonDiagram = ({
           </ExportBtn>
         </ActionGroup>
       </Header>
+
+      {/* Workshop Reviewer Notes Drawer */}
+      {showNotesDrawer && (
+        <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '16px 20px', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+            <h4 style={{ margin: 0, fontSize: '0.92rem', color: '#1e293b', fontWeight: 700 }}>
+              📝 Workshop Reviewer Notes & Architecture Risks ({reviewerNotes.length})
+            </h4>
+            <span style={{ fontSize: '0.78rem', color: '#64748b' }}>Live steering session notes</span>
+          </div>
+
+          {reviewerNotes.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
+              {reviewerNotes.map(n => (
+                <div key={n.id} style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '8px 12px', fontSize: '0.84rem', color: '#334155', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>💬 {n.text}</span>
+                  <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>{n.timestamp}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p style={{ fontSize: '0.82rem', color: '#94a3b8', margin: '0 0 10px 0' }}>
+              No notes added yet. Record live steering feedback, architectural tradeoffs, or identified risks below.
+            </p>
+          )}
+
+          <form onSubmit={handleAddNote} style={{ display: 'flex', gap: '8px' }}>
+            <input 
+              type="text" 
+              placeholder="Add an architecture note or risk flag (e.g. 'Security team requires mTLS on ingestion')..."
+              value={noteText}
+              onChange={e => setNoteText(e.target.value)}
+              style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.84rem', outline: 'none' }}
+            />
+            <button 
+              type="submit"
+              style={{ background: '#4f46e5', color: '#ffffff', border: 'none', borderRadius: '8px', padding: '8px 16px', fontSize: '0.84rem', fontWeight: 700, cursor: 'pointer' }}
+            >
+              Add Note
+            </button>
+          </form>
+        </div>
+      )}
 
       {/* 1. SIDE-BY-SIDE DUAL DIAGRAM VIEWPORT */}
       {viewMode === 'side_by_side' && (
@@ -1006,6 +1208,88 @@ const ArchitectureComparisonDiagram = ({
                   )}
                 </PrimaryBtn>
               </ModalFooter>
+            </ModalCard>
+          </ModalOverlay>
+        )}
+
+        {/* REFERENCE BLUEPRINTS SELECTOR MODAL */}
+        {isTemplateModalOpen && (
+          <ModalOverlay
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsTemplateModalOpen(false)}
+          >
+            <ModalCard
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={e => e.stopPropagation()}
+              style={{ maxWidth: '750px' }}
+            >
+              <ModalHeader>
+                <h3>
+                  🎨 ScoreX Curated Enterprise Architecture Blueprints
+                </h3>
+                <button 
+                  onClick={() => setIsTemplateModalOpen(false)}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}
+                >
+                  <FiX size={20} />
+                </button>
+              </ModalHeader>
+
+              <p style={{ fontSize: '0.84rem', color: '#64748b', margin: '0 0 16px 0' }}>
+                Select a pristine enterprise reference architecture to apply directly to this assessment readout.
+              </p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', maxHeight: '420px', overflowY: 'auto', paddingRight: '4px' }}>
+                {REFERENCE_BLUEPRINTS.map(tpl => (
+                  <div
+                    key={tpl.id}
+                    onClick={() => handleSelectTemplate(tpl)}
+                    style={{
+                      background: '#f8fafc',
+                      border: '1.5px solid #e2e8f0',
+                      borderRadius: '12px',
+                      padding: '14px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between'
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.borderColor = '#6366f1';
+                      e.currentTarget.style.background = '#eef2ff';
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.borderColor = '#e2e8f0';
+                      e.currentTarget.style.background = '#f8fafc';
+                    }}
+                  >
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                        <span style={{ fontSize: '0.72rem', fontWeight: 800, background: 'rgba(99, 102, 241, 0.15)', color: '#4f46e5', padding: '2px 8px', borderRadius: '4px' }}>
+                          {tpl.badge}
+                        </span>
+                        <span style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600 }}>
+                          {tpl.tier}
+                        </span>
+                      </div>
+                      <h4 style={{ margin: '0 0 4px 0', fontSize: '0.94rem', color: '#1e293b', fontWeight: 700 }}>
+                        {tpl.name}
+                      </h4>
+                      <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748b', lineHeight: 1.4 }}>
+                        {tpl.description}
+                      </p>
+                    </div>
+                    <div style={{ marginTop: '10px', fontSize: '0.78rem', fontWeight: 700, color: '#4f46e5', textAlign: 'right' }}>
+                      Apply Blueprint ➔
+                    </div>
+                  </div>
+                ))}
+              </div>
             </ModalCard>
           </ModalOverlay>
         )}

@@ -90,3 +90,57 @@ export const exportAssessmentToCSV = (instance, report) => {
     return { success: false, error: error.message };
   }
 };
+
+export const exportDrawioFile = (xml, filename) => {
+  try {
+    const blob = new Blob([xml], { type: 'application/xml;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    return { success: true };
+  } catch (error) {
+    console.error('Error exporting Draw.io file:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const exportCompleteDeliverablesBundle = async (instance, report, { exportDynamicAssessmentToExcel, generateDynamicPDFReport }) => {
+  try {
+    const safeName = (instance.customerName || 'assessment').toLowerCase().replace(/[^a-z0-9]/g, '_');
+    
+    // 1. PDF Report
+    if (typeof generateDynamicPDFReport === 'function') {
+      generateDynamicPDFReport(instance, report);
+    }
+    
+    // 2. Excel Report
+    if (typeof exportDynamicAssessmentToExcel === 'function') {
+      exportDynamicAssessmentToExcel(instance, report);
+    }
+
+    // 3. Flat CSV Matrix
+    exportAssessmentToCSV(instance, report);
+
+    // 4. Raw JSON
+    exportAssessmentToJSON(instance, report);
+
+    // 5. Draw.io XMLs
+    const diagrams = report?.architectureDiagrams || instance?.architectureDiagrams || {};
+    if (diagrams.currentStateXml) {
+      exportDrawioFile(diagrams.currentStateXml, `scorex_${safeName}_current_state_arch.drawio`);
+    }
+    if (diagrams.targetStateXml) {
+      exportDrawioFile(diagrams.targetStateXml, `scorex_${safeName}_target_state_arch.drawio`);
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error exporting complete deliverables bundle:', error);
+    return { success: false, error: error.message };
+  }
+};
