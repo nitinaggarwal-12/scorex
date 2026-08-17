@@ -412,6 +412,7 @@ const DynamicAssessmentReport = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
   const [instance, setInstance] = useState(null);
   const [report, setReport] = useState(null);
   const [framework, setFramework] = useState(null);
@@ -425,16 +426,32 @@ const DynamicAssessmentReport = () => {
 
   const loadReport = async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const inst = await dynamicAssessmentService.getInstance(id);
-      if (inst) {
+      if (inst && inst.frameworkSnapshot) {
         setInstance(inst);
         setFramework(inst.frameworkSnapshot);
-        setReport(inst.aiReport);
+        if (inst.aiReport) {
+          setReport(inst.aiReport);
+        } else {
+          try {
+            const genRes = await dynamicAssessmentService.generateReport(id);
+            if (genRes && genRes.report) {
+              setReport(genRes.report);
+            } else {
+              setLoadError('Report could not be generated for this assessment.');
+            }
+          } catch (genErr) {
+            setLoadError('Report generation failed. Please re-run the assessment.');
+          }
+        }
+      } else {
+        setLoadError('Assessment report was not found or has expired.');
       }
     } catch (err) {
       console.error(err);
-      toast.error('Failed to load assessment report');
+      setLoadError(err.response?.data?.error || 'Failed to load assessment report. The session may have expired.');
     } finally {
       setLoading(false);
     }
@@ -461,8 +478,77 @@ const DynamicAssessmentReport = () => {
     }
   };
 
-  if (loading || !instance || !report) {
+  if (loading) {
     return <LoadingSpinner message="Loading executive AI report..." />;
+  }
+
+  if (loadError || !instance || !report) {
+    return (
+      <Container style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Wrapper style={{ maxWidth: '680px', textAlign: 'center' }}>
+          <div style={{ background: 'rgba(30, 41, 59, 0.7)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '24px', padding: '40px 32px', backdropFilter: 'blur(16px)', boxShadow: '0 20px 50px rgba(0,0,0,0.4)' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '18px', background: 'rgba(239, 68, 68, 0.15)', border: '1.5px solid rgba(239, 68, 68, 0.4)', color: '#f87171', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '2rem' }}>
+              <FiAlertTriangle />
+            </div>
+            <h2 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#ffffff', marginBottom: '12px' }}>
+              Assessment Report Not Found
+            </h2>
+            <p style={{ color: '#94a3b8', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '28px' }}>
+              {loadError || 'This assessment report is no longer available or was generated in a previous session.'}
+              <br />
+              You can launch an instant pre-calculated sample report or run a new assessment.
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '24px', textAlign: 'left' }}>
+              <button 
+                onClick={async () => {
+                  try {
+                    toast.loading('Generating sample FinOps report...', { id: 'sample-gen' });
+                    const res = await dynamicAssessmentService.generateSampleInstance('finops_cloud_cost_optimization');
+                    await dynamicAssessmentService.generateReport(res.instanceId);
+                    toast.dismiss('sample-gen');
+                    navigate(`/assessments/report/${res.instanceId}`);
+                  } catch (e) {
+                    navigate('/assessments/run/finops_cloud_cost_optimization');
+                  }
+                }}
+                style={{ background: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '14px', padding: '16px', color: '#ffffff', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '4px' }}
+              >
+                <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#38bdf8' }}>💰 FinOps Sample Report</span>
+                <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Instant 1-Click Launch</span>
+              </button>
+
+              <button 
+                onClick={async () => {
+                  try {
+                    toast.loading('Generating sample Gemini report...', { id: 'sample-gen' });
+                    const res = await dynamicAssessmentService.generateSampleInstance('openai_to_gemini_enterprise_migration');
+                    await dynamicAssessmentService.generateReport(res.instanceId);
+                    toast.dismiss('sample-gen');
+                    navigate(`/assessments/report/${res.instanceId}`);
+                  } catch (e) {
+                    navigate('/assessments/run/openai_to_gemini_enterprise_migration');
+                  }
+                }}
+                style={{ background: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '14px', padding: '16px', color: '#ffffff', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '4px' }}
+              >
+                <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#a855f7' }}>🤖 OpenAI to Gemini Report</span>
+                <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Instant 1-Click Launch</span>
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+              <button
+                onClick={() => navigate('/assessments')}
+                style={{ background: 'linear-gradient(135deg, #6366f1, #a855f7)', color: '#ffffff', border: 'none', borderRadius: '12px', padding: '12px 24px', fontWeight: 700, cursor: 'pointer' }}
+              >
+                View All Assessments Hub
+              </button>
+            </div>
+          </div>
+        </Wrapper>
+      </Container>
+    );
   }
 
   const scores = report.calculatedScores || {
