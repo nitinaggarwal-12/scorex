@@ -311,59 +311,59 @@ const CURRENT_STATE_DRAWIO_XML = `<mxfile host="embed.diagrams.net">
         </mxCell>
 
         <!-- STAGE 1: INGESTION -->
-        <mxCell id="stage1_box" value="&lt;b style=&quot;color:#f87171;&quot;&gt;STAGE 1: INGESTION&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Brittle Batch &amp;amp; SFTP&lt;/span&gt;" style="swimlane;fillColor=#1e293b;strokeColor=#f43f5e;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1">
+        <mxCell id="stage1_box" value="&lt;b style=&quot;color:#f87171;font-size:12px;&quot;&gt;STAGE 1: INGESTION&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#cbd5e1;&quot;&gt;Brittle Batch &amp;amp; SFTP&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#1e293b;strokeColor=#f43f5e;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1">
           <mxGeometry x="40" y="100" width="280" height="660" as="geometry"/>
         </mxCell>
         <mxCell id="s1_card1" value="&lt;b style=&quot;color:#fda4af;font-size:12px;&quot;&gt;Legacy OLTP &amp;amp; Files&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94a3b8;&quot;&gt;Postgres, MySQL, SFTP&lt;br&gt;Point-to-point unmanaged exports&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage1_box">
-          <mxGeometry x="20" y="50" width="240" height="80" as="geometry"/>
+          <mxGeometry x="20" y="60" width="240" height="80" as="geometry"/>
         </mxCell>
         <mxCell id="s1_card2" value="&lt;b style=&quot;color:#fda4af;font-size:12px;&quot;&gt;Cron Batch Scripts&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94a3b8;&quot;&gt;Python/Bash cron jobs&lt;br&gt;24-hour latency, no dead-letter queue&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage1_box">
-          <mxGeometry x="20" y="150" width="240" height="80" as="geometry"/>
+          <mxGeometry x="20" y="160" width="240" height="80" as="geometry"/>
         </mxCell>
         <mxCell id="s1_warn" value="&lt;b style=&quot;color:#ef4444;&quot;&gt;⚠️ 38% Failure Rate&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#fca5a5;&quot;&gt;Silent schema breakages halt nightly ETL runs&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#450a0a;strokeColor=#ef4444;fontColor=#ffffff;align=center;" vertex="1" parent="stage1_box">
-          <mxGeometry x="20" y="250" width="240" height="60" as="geometry"/>
+          <mxGeometry x="20" y="260" width="240" height="60" as="geometry"/>
         </mxCell>
 
         <!-- STAGE 2: STORAGE & GOVERNANCE -->
-        <mxCell id="stage2_box" value="&lt;b style=&quot;color:#f87171;&quot;&gt;STAGE 2: DATA SILOS&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Split Warehouse + Lakes&lt;/span&gt;" style="swimlane;fillColor=#1e293b;strokeColor=#f43f5e;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1">
+        <mxCell id="stage2_box" value="&lt;b style=&quot;color:#f87171;font-size:12px;&quot;&gt;STAGE 2: DATA SILOS&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#cbd5e1;&quot;&gt;Split Warehouse + Lakes&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#1e293b;strokeColor=#f43f5e;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1">
           <mxGeometry x="380" y="100" width="280" height="660" as="geometry"/>
         </mxCell>
         <mxCell id="s2_card1" value="&lt;b style=&quot;color:#fda4af;font-size:12px;&quot;&gt;Unmanaged S3/GCS&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94a3b8;&quot;&gt;Raw CSV / JSON dumps&lt;br&gt;Fragmented bucket ACLs, no lineage&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage2_box">
-          <mxGeometry x="20" y="50" width="240" height="80" as="geometry"/>
+          <mxGeometry x="20" y="60" width="240" height="80" as="geometry"/>
         </mxCell>
         <mxCell id="s2_card2" value="&lt;b style=&quot;color:#fda4af;font-size:12px;&quot;&gt;Isolated Data Warehouse&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94a3b8;&quot;&gt;Proprietary SQL Warehouse&lt;br&gt;Duplicate data copies &amp;amp; sync lag&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage2_box">
-          <mxGeometry x="20" y="150" width="240" height="80" as="geometry"/>
+          <mxGeometry x="20" y="160" width="240" height="80" as="geometry"/>
         </mxCell>
         <mxCell id="s2_warn" value="&lt;b style=&quot;color:#ef4444;&quot;&gt;⚠️ Manual IAM Spreadsheets&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#fca5a5;&quot;&gt;No automated row/column masking&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#450a0a;strokeColor=#ef4444;fontColor=#ffffff;align=center;" vertex="1" parent="stage2_box">
-          <mxGeometry x="20" y="250" width="240" height="60" as="geometry"/>
+          <mxGeometry x="20" y="260" width="240" height="60" as="geometry"/>
         </mxCell>
 
         <!-- STAGE 3: COMPUTE & PROCESSING -->
-        <mxCell id="stage3_box" value="&lt;b style=&quot;color:#f87171;&quot;&gt;STAGE 3: COMPUTE &amp;amp; MLOps&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Over-Provisioned Clusters&lt;/span&gt;" style="swimlane;fillColor=#1e293b;strokeColor=#f43f5e;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1">
+        <mxCell id="stage3_box" value="&lt;b style=&quot;color:#f87171;font-size:12px;&quot;&gt;STAGE 3: COMPUTE &amp;amp; MLOps&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#cbd5e1;&quot;&gt;Over-Provisioned Clusters&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#1e293b;strokeColor=#f43f5e;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1">
           <mxGeometry x="720" y="100" width="280" height="660" as="geometry"/>
         </mxCell>
         <mxCell id="s3_card1" value="&lt;b style=&quot;color:#fda4af;font-size:12px;&quot;&gt;Static 24/7 Spark VMs&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94a3b8;&quot;&gt;Always-on oversized clusters&lt;br&gt;Lack of automated auto-termination&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage3_box">
-          <mxGeometry x="20" y="50" width="240" height="80" as="geometry"/>
+          <mxGeometry x="20" y="60" width="240" height="80" as="geometry"/>
         </mxCell>
         <mxCell id="s3_card2" value="&lt;b style=&quot;color:#fda4af;font-size:12px;&quot;&gt;Disconnected Notebooks&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94a3b8;&quot;&gt;Ad-hoc local Jupyter environments&lt;br&gt;No centralized model registry&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage3_box">
-          <mxGeometry x="20" y="150" width="240" height="80" as="geometry"/>
+          <mxGeometry x="20" y="160" width="240" height="80" as="geometry"/>
         </mxCell>
         <mxCell id="s3_warn" value="&lt;b style=&quot;color:#ef4444;&quot;&gt;⚠️ $480k Annual Idle Waste&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#fca5a5;&quot;&gt;Zero cluster FinOps kill switches&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#450a0a;strokeColor=#ef4444;fontColor=#ffffff;align=center;" vertex="1" parent="stage3_box">
-          <mxGeometry x="20" y="250" width="240" height="60" as="geometry"/>
+          <mxGeometry x="20" y="260" width="240" height="60" as="geometry"/>
         </mxCell>
 
         <!-- STAGE 4: GENAI & SERVING -->
-        <mxCell id="stage4_box" value="&lt;b style=&quot;color:#f87171;&quot;&gt;STAGE 4: SERVING &amp;amp; BI&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Unguarded LLMs &amp;amp; Heavy Backlog&lt;/span&gt;" style="swimlane;fillColor=#1e293b;strokeColor=#f43f5e;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1">
+        <mxCell id="stage4_box" value="&lt;b style=&quot;color:#f87171;font-size:12px;&quot;&gt;STAGE 4: SERVING &amp;amp; BI&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#cbd5e1;&quot;&gt;Unguarded LLMs &amp;amp; Heavy Backlog&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#1e293b;strokeColor=#f43f5e;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1">
           <mxGeometry x="1060" y="100" width="300" height="660" as="geometry"/>
         </mxCell>
         <mxCell id="s4_card1" value="&lt;b style=&quot;color:#fda4af;font-size:12px;&quot;&gt;Direct Unguarded LLM APIs&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94a3b8;&quot;&gt;No prompt caching (100% token spend)&lt;br&gt;No enterprise PII filters or guardrails&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage4_box">
-          <mxGeometry x="20" y="50" width="260" height="80" as="geometry"/>
+          <mxGeometry x="20" y="60" width="260" height="80" as="geometry"/>
         </mxCell>
         <mxCell id="s4_card2" value="&lt;b style=&quot;color:#fda4af;font-size:12px;&quot;&gt;Stale Daily BI Extracts&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94a3b8;&quot;&gt;Slow queries over legacy schemas&lt;br&gt;14-day turnaround on custom metrics&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage4_box">
-          <mxGeometry x="20" y="150" width="260" height="80" as="geometry"/>
+          <mxGeometry x="20" y="160" width="260" height="80" as="geometry"/>
         </mxCell>
         <mxCell id="s4_warn" value="&lt;b style=&quot;color:#ef4444;&quot;&gt;⚠️ 14-Day Delivery Lag&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#fca5a5;&quot;&gt;Analyst team overwhelmed by custom SQL&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#450a0a;strokeColor=#ef4444;fontColor=#ffffff;align=center;" vertex="1" parent="stage4_box">
-          <mxGeometry x="20" y="250" width="260" height="60" as="geometry"/>
+          <mxGeometry x="20" y="260" width="260" height="60" as="geometry"/>
         </mxCell>
 
         <!-- FLOW CONNECTORS -->
@@ -395,59 +395,59 @@ const TARGET_STATE_DRAWIO_XML = `<mxfile host="embed.diagrams.net">
         </mxCell>
 
         <!-- STAGE 1: STREAMING INGESTION -->
-        <mxCell id="stage1_box" value="&lt;b style=&quot;color:#34d399;&quot;&gt;STAGE 1: REAL-TIME INGESTION&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Declarative CDC &amp;amp; Auto-Loader&lt;/span&gt;" style="swimlane;fillColor=#022c22;strokeColor=#10b981;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1">
+        <mxCell id="stage1_box" value="&lt;b style=&quot;color:#34d399;font-size:12px;&quot;&gt;STAGE 1: REAL-TIME INGESTION&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#cbd5e1;&quot;&gt;Declarative CDC &amp;amp; Auto-Loader&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#022c22;strokeColor=#10b981;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1">
           <mxGeometry x="40" y="100" width="280" height="660" as="geometry"/>
         </mxCell>
         <mxCell id="s1_card1" value="&lt;b style=&quot;color:#6ee7b7;font-size:12px;&quot;&gt;Multi-Source Event Streams&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Kafka, Kinesis, Google Pub/Sub&lt;br&gt;Sub-second real-time event capture&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage1_box">
-          <mxGeometry x="20" y="50" width="240" height="80" as="geometry"/>
+          <mxGeometry x="20" y="60" width="240" height="80" as="geometry"/>
         </mxCell>
         <mxCell id="s1_card2" value="&lt;b style=&quot;color:#6ee7b7;font-size:12px;&quot;&gt;Serverless Auto-Loader&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Automated schema evolution&lt;br&gt;Declarative SDF / dbt transformation&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage1_box">
-          <mxGeometry x="20" y="150" width="240" height="80" as="geometry"/>
+          <mxGeometry x="20" y="160" width="240" height="80" as="geometry"/>
         </mxCell>
         <mxCell id="s1_val" value="&lt;b style=&quot;color:#10b981;&quot;&gt;✓ Zero Ingestion Latency&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#a7f3d0;&quot;&gt;Automated retry &amp;amp; dead-letter isolation&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#065f46;strokeColor=#10b981;fontColor=#ffffff;align=center;" vertex="1" parent="stage1_box">
-          <mxGeometry x="20" y="250" width="240" height="60" as="geometry"/>
+          <mxGeometry x="20" y="260" width="240" height="60" as="geometry"/>
         </mxCell>
 
         <!-- STAGE 2: UNITY CATALOG LAKEHOUSE -->
-        <mxCell id="stage2_box" value="&lt;b style=&quot;color:#34d399;&quot;&gt;STAGE 2: UNITY LAKEHOUSE&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Delta Lake &amp;amp; Iceberg UniForm&lt;/span&gt;" style="swimlane;fillColor=#022c22;strokeColor=#10b981;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1">
+        <mxCell id="stage2_box" value="&lt;b style=&quot;color:#34d399;font-size:12px;&quot;&gt;STAGE 2: UNITY LAKEHOUSE&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#cbd5e1;&quot;&gt;Delta Lake &amp;amp; Iceberg UniForm&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#022c22;strokeColor=#10b981;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1">
           <mxGeometry x="380" y="100" width="280" height="660" as="geometry"/>
         </mxCell>
         <mxCell id="s2_card1" value="&lt;b style=&quot;color:#6ee7b7;font-size:12px;&quot;&gt;Open Table Formats&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Delta Lake / Iceberg UniForm&lt;br&gt;Single source of truth, zero duplication&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage2_box">
-          <mxGeometry x="20" y="50" width="240" height="80" as="geometry"/>
+          <mxGeometry x="20" y="60" width="240" height="80" as="geometry"/>
         </mxCell>
         <mxCell id="s2_card2" value="&lt;b style=&quot;color:#6ee7b7;font-size:12px;&quot;&gt;Centralized Unity Catalog&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Row/column dynamic masking&lt;br&gt;Automated end-to-end audit lineage&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage2_box">
-          <mxGeometry x="20" y="150" width="240" height="80" as="geometry"/>
+          <mxGeometry x="20" y="160" width="240" height="80" as="geometry"/>
         </mxCell>
         <mxCell id="s2_val" value="&lt;b style=&quot;color:#10b981;&quot;&gt;✓ Unified Governance Plane&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#a7f3d0;&quot;&gt;Cross-cloud zero-copy data sharing&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#065f46;strokeColor=#10b981;fontColor=#ffffff;align=center;" vertex="1" parent="stage2_box">
-          <mxGeometry x="20" y="250" width="240" height="60" as="geometry"/>
+          <mxGeometry x="20" y="260" width="240" height="60" as="geometry"/>
         </mxCell>
 
         <!-- STAGE 3: SERVERLESS FINOPS & MLOPS -->
-        <mxCell id="stage3_box" value="&lt;b style=&quot;color:#34d399;&quot;&gt;STAGE 3: FINOPS &amp;amp; MLOps&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Serverless Vectorized Engine&lt;/span&gt;" style="swimlane;fillColor=#022c22;strokeColor=#10b981;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1">
+        <mxCell id="stage3_box" value="&lt;b style=&quot;color:#34d399;font-size:12px;&quot;&gt;STAGE 3: FINOPS &amp;amp; MLOps&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#cbd5e1;&quot;&gt;Serverless Vectorized Engine&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#022c22;strokeColor=#10b981;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1">
           <mxGeometry x="720" y="100" width="280" height="660" as="geometry"/>
         </mxCell>
         <mxCell id="s3_card1" value="&lt;b style=&quot;color:#6ee7b7;font-size:12px;&quot;&gt;Serverless Photon SQL&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Instant 15-min auto-suspend switches&lt;br&gt;35% to 50% compute TCO savings&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage3_box">
-          <mxGeometry x="20" y="50" width="240" height="80" as="geometry"/>
+          <mxGeometry x="20" y="60" width="240" height="80" as="geometry"/>
         </mxCell>
         <mxCell id="s3_card2" value="&lt;b style=&quot;color:#6ee7b7;font-size:12px;&quot;&gt;Production MLflow Registry&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Automated CI/CD model verification&lt;br&gt;Real-time concept drift &amp;amp; feature store&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage3_box">
-          <mxGeometry x="20" y="150" width="240" height="80" as="geometry"/>
+          <mxGeometry x="20" y="160" width="240" height="80" as="geometry"/>
         </mxCell>
         <mxCell id="s3_val" value="&lt;b style=&quot;color:#10b981;&quot;&gt;✓ Automated FinOps &amp;amp; CI/CD&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#a7f3d0;&quot;&gt;Zero idle spend &amp;amp; fully tracked models&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#065f46;strokeColor=#10b981;fontColor=#ffffff;align=center;" vertex="1" parent="stage3_box">
-          <mxGeometry x="20" y="250" width="240" height="60" as="geometry"/>
+          <mxGeometry x="20" y="260" width="240" height="60" as="geometry"/>
         </mxCell>
 
         <!-- STAGE 4: AGENT MESH & SEMANTIC SERVING -->
-        <mxCell id="stage4_box" value="&lt;b style=&quot;color:#34d399;&quot;&gt;STAGE 4: AI MESH &amp;amp; BI&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;MCP Protocol &amp;amp; Semantic Layer&lt;/span&gt;" style="swimlane;fillColor=#022c22;strokeColor=#10b981;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1">
+        <mxCell id="stage4_box" value="&lt;b style=&quot;color:#34d399;font-size:12px;&quot;&gt;STAGE 4: AI MESH &amp;amp; BI&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#cbd5e1;&quot;&gt;MCP Protocol &amp;amp; Semantic Layer&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#022c22;strokeColor=#10b981;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1">
           <mxGeometry x="1060" y="100" width="300" height="660" as="geometry"/>
         </mxCell>
         <mxCell id="s4_card1" value="&lt;b style=&quot;color:#6ee7b7;font-size:12px;&quot;&gt;Compound Multi-Agent Mesh&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;MCP protocol &amp;amp; 75% prompt context caching&lt;br&gt;Zero-Trust AI guardrails &amp;amp; CMEK isolation&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage4_box">
-          <mxGeometry x="20" y="50" width="260" height="80" as="geometry"/>
+          <mxGeometry x="20" y="60" width="260" height="80" as="geometry"/>
         </mxCell>
         <mxCell id="s4_card2" value="&lt;b style=&quot;color:#6ee7b7;font-size:12px;&quot;&gt;Self-Service Semantic BI Layer&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Direct zero-copy BI queries&lt;br&gt;Sub-second dashboard refresh speeds&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage4_box">
-          <mxGeometry x="20" y="150" width="260" height="80" as="geometry"/>
+          <mxGeometry x="20" y="160" width="260" height="80" as="geometry"/>
         </mxCell>
         <mxCell id="s4_val" value="&lt;b style=&quot;color:#10b981;&quot;&gt;✓ Real-Time Self-Service&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#a7f3d0;&quot;&gt;Instant answers for BI &amp;amp; autonomous agents&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#065f46;strokeColor=#10b981;fontColor=#ffffff;align=center;" vertex="1" parent="stage4_box">
-          <mxGeometry x="20" y="250" width="260" height="60" as="geometry"/>
+          <mxGeometry x="20" y="260" width="260" height="60" as="geometry"/>
         </mxCell>
 
         <!-- FLOW CONNECTORS -->
