@@ -200,16 +200,20 @@ class DynamicAssessmentService {
   /**
    * Generate or retrieve shareable public token for assessment
    */
-  async getShareLink(id) {
-    const response = await axios.post(`/api/dynamic-assessments/instances/${id}/share-link`);
+  async getShareLink(id, passcode = null) {
+    const response = await axios.post(`/api/dynamic-assessments/instances/${id}/share-link`, { passcode });
     return response.data;
   }
 
   /**
    * Fetch public report data using share token without login
    */
-  async getPublicReport(token) {
-    const response = await axios.get(`/api/dynamic-assessments/public/report/${token}`);
+  async getPublicReport(token, passcode = null) {
+    const headers = {};
+    if (passcode) {
+      headers['x-report-passcode'] = passcode;
+    }
+    const response = await axios.get(`/api/dynamic-assessments/public/report/${token}`, { headers });
     return response.data;
   }
 

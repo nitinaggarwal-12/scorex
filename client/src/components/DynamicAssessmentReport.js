@@ -34,6 +34,7 @@ import IaCBlueprintCard from './IaCBlueprintCard';
 import DynamicRadarChart from './DynamicRadarChart';
 import ExecutiveHeatmapMatrix from './ExecutiveHeatmapMatrix';
 import AudioBriefingPlayer from './AudioBriefingPlayer';
+import PresentationModeModal from './PresentationModeModal';
 import { exportDynamicAssessmentToExcel } from '../services/excelExportService';
 import { generateDynamicPDFReport } from '../services/pdfExportService';
 import { exportAssessmentToJSON, exportAssessmentToCSV } from '../services/dataExportService';
@@ -444,23 +445,38 @@ const DynamicAssessmentReport = () => {
   const [isPromoted, setIsPromoted] = useState(false);
   const [showSimulator, setShowSimulator] = useState(false);
   const [simulatedTargets, setSimulatedTargets] = useState(null);
+  const [isPresentationOpen, setIsPresentationOpen] = useState(false);
+  const [isPasscodeRequired, setIsPasscodeRequired] = useState(false);
+  const [enteredPasscode, setEnteredPasscode] = useState('');
 
   useEffect(() => {
     loadReport();
   }, [id, token]);
 
-  const loadReport = async () => {
+  const loadReport = async (overridePasscode = null) => {
     setLoading(true);
     setLoadError(null);
     try {
       if (token) {
-        const publicData = await dynamicAssessmentService.getPublicReport(token);
-        if (publicData && publicData.instance) {
-          setInstance(publicData.instance);
-          setFramework(publicData.framework || publicData.instance.frameworkSnapshot);
-          setReport(publicData.report || publicData.instance.aiReport);
-        } else {
-          setLoadError('Public assessment report not found or link has expired.');
+        try {
+          const publicData = await dynamicAssessmentService.getPublicReport(token, overridePasscode);
+          if (publicData && publicData.instance) {
+            setInstance(publicData.instance);
+            setFramework(publicData.framework || publicData.instance.frameworkSnapshot);
+            setReport(publicData.report || publicData.instance.aiReport);
+            setIsPasscodeRequired(false);
+          } else {
+            setLoadError('Public assessment report not found or link has expired.');
+          }
+        } catch (tokenErr) {
+          if (tokenErr.response?.data?.isProtected) {
+            setIsPasscodeRequired(true);
+            if (overridePasscode) {
+              toast.error('Incorrect passcode. Please try again.');
+            }
+            return;
+          }
+          throw tokenErr;
         }
       } else if (id) {
         const inst = await dynamicAssessmentService.getInstance(id);
@@ -491,6 +507,15 @@ const DynamicAssessmentReport = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleUnlockWithPasscode = async (e) => {
+    e.preventDefault();
+    if (!enteredPasscode.trim()) {
+      toast.error('Please enter the access PIN / Passcode');
+      return;
+    }
+    await loadReport(enteredPasscode.trim());
   };
 
   const handlePromoteFramework = async () => {
@@ -534,6 +559,43 @@ const DynamicAssessmentReport = () => {
 
   if (loading) {
     return <LoadingSpinner message="Loading executive AI report..." />;
+  }
+
+  if (isPasscodeRequired) {
+    return (
+      <Container style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Wrapper style={{ maxWidth: '480px', textAlign: 'center' }}>
+          <div style={{ background: 'rgba(15, 23, 42, 0.85)', border: '1px solid rgba(139, 92, 246, 0.4)', borderRadius: '24px', padding: '40px 32px', backdropFilter: 'blur(16px)', boxShadow: '0 25px 50px rgba(0,0,0,0.6)' }}>
+            <div style={{ width: '60px', height: '60px', borderRadius: '18px', background: 'linear-gradient(135deg, #6366f1, #a855f7)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontSize: '1.75rem' }}>
+              🔒
+            </div>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
+              Confidential Report
+            </h2>
+            <p style={{ color: '#94a3b8', fontSize: '0.88rem', marginBottom: '24px', lineHeight: '1.5' }}>
+              This architecture assessment readout is protected by the author. Enter the access PIN or passcode to view findings.
+            </p>
+
+            <form onSubmit={handleUnlockWithPasscode}>
+              <input 
+                type="password"
+                placeholder="Enter Access Passcode..."
+                value={enteredPasscode}
+                onChange={(e) => setEnteredPasscode(e.target.value)}
+                style={{ width: '100%', background: '#090d16', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '12px', padding: '12px 16px', color: '#fff', fontSize: '1.1rem', textAlign: 'center', letterSpacing: '0.25em', marginBottom: '16px', outline: 'none', boxSizing: 'border-box' }}
+                autoFocus
+              />
+              <button
+                type="submit"
+                style={{ width: '100%', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', border: 'none', borderRadius: '12px', padding: '12px', color: '#fff', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 4px 14px rgba(99, 102, 241, 0.4)' }}
+              >
+                Unlock Assessment Report
+              </button>
+            </form>
+          </div>
+        </Wrapper>
+      </Container>
+    );
   }
 
   if (loadError || !instance || !report) {
@@ -646,6 +708,14 @@ const DynamicAssessmentReport = () => {
           </div>
 
           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <button
+              style={{ background: 'linear-gradient(135deg, #ec4899, #8b5cf6)', border: 'none', color: '#ffffff', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700', boxShadow: '0 4px 14px rgba(236, 72, 153, 0.3)' }}
+              onClick={() => setIsPresentationOpen(true)}
+              title="Launch Fullscreen 16:9 Slide Deck for Executive Briefing"
+            >
+              📽️ Present Deck
+            </button>
+
             <button 
               style={{ background: showSimulator ? '#4f46e5' : 'rgba(99, 102, 241, 0.25)', border: '1px solid rgba(139, 92, 246, 0.5)', color: '#c084fc', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
               onClick={() => setShowSimulator(!showSimulator)}
@@ -986,6 +1056,15 @@ const DynamicAssessmentReport = () => {
             ))}
           </Card>
         )}
+
+        {/* Fullscreen 16:9 Presentation Deck Modal */}
+        <PresentationModeModal
+          isOpen={isPresentationOpen}
+          onClose={() => setIsPresentationOpen(false)}
+          instance={instance}
+          report={report}
+          framework={framework}
+        />
       </Wrapper>
     </Container>
   );
