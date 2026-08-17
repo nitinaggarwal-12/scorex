@@ -347,19 +347,28 @@ const DropdownButton = styled.button`
 
 const DropdownMenu = styled.div`
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 6px);
   right: 0;
   background: white;
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  min-width: 200px;
+  border-radius: 12px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.05);
+  min-width: 280px;
   padding: 8px 0;
   z-index: 1000;
   opacity: ${props => props.$isOpen ? 1 : 0};
   visibility: ${props => props.$isOpen ? 'visible' : 'hidden'};
-  transform: translateY(${props => props.$isOpen ? '0' : '-10px'});
-  transition: all 0.3s ease;
+  transform: translateY(${props => props.$isOpen ? '0' : '-8px'});
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: 0;
+    right: 0;
+    height: 12px;
+  }
 `;
 
 const DropdownItem = styled.button`
@@ -367,35 +376,36 @@ const DropdownItem = styled.button`
   align-items: center;
   gap: 12px;
   width: 100%;
-  padding: 12px 20px;
+  padding: 10px 18px;
   background: none;
   border: none;
   color: #374151;
-  font-size: 0.9375rem;
+  font-size: 0.9rem;
   font-weight: 500;
   text-align: left;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 
   &:hover {
-    background: #f3f4f6;
-    color: #3b82f6;
+    background: #f1f5f9;
+    color: #2563eb;
   }
 
   svg {
     font-size: 16px;
-    color: #6b7280;
+    color: #64748b;
+    flex-shrink: 0;
   }
 
   &:hover svg {
-    color: #3b82f6;
+    color: #2563eb;
   }
 `;
 
 const DropdownDivider = styled.div`
   height: 1px;
-  background: #e5e7eb;
-  margin: 8px 0;
+  background: #f1f5f9;
+  margin: 6px 0;
 `;
 
 const TrySampleDropdownContainer = styled.div`
@@ -405,7 +415,7 @@ const TrySampleDropdownContainer = styled.div`
 
 const TrySampleMenu = styled.div`
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 6px);
   left: 0;
   background: white;
   border: 1px solid #e2e8f0;
@@ -416,8 +426,17 @@ const TrySampleMenu = styled.div`
   z-index: 1000;
   opacity: ${props => props.$isOpen ? 1 : 0};
   visibility: ${props => props.$isOpen ? 'visible' : 'hidden'};
-  transform: translateY(${props => props.$isOpen ? '0' : '-10px'});
-  transition: all 0.25s ease;
+  transform: translateY(${props => props.$isOpen ? '0' : '-8px'});
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: 0;
+    right: 0;
+    height: 12px;
+  }
 `;
 
 const TrySampleHeader = styled.div`
@@ -930,12 +949,12 @@ const GlobalNav = () => {
                   </TrySampleMenu>
                 </TrySampleDropdownContainer>
 
-                <CTAButton onClick={() => navigate('/start')}>
-                  Start Assessment →
-                </CTAButton>
-
-                {/* Assessments Dropdown */}
-                <DropdownContainer className="dropdown-container">
+                {/* Assessments Dropdown with Hover Trigger */}
+                <DropdownContainer 
+                  className="dropdown-container"
+                  onMouseEnter={() => setAssessmentsDropdownOpen(true)}
+                  onMouseLeave={() => setAssessmentsDropdownOpen(false)}
+                >
                   <DropdownButton 
                     $isOpen={assessmentsDropdownOpen}
                     onClick={() => setAssessmentsDropdownOpen(!assessmentsDropdownOpen)}
@@ -1024,9 +1043,13 @@ const GlobalNav = () => {
                   </DropdownMenu>
                 </DropdownContainer>
 
-                {/* Assignments Dropdown (Admin/Author only) */}
+                {/* Assignments Dropdown (Admin/Author only) with Hover Trigger */}
                 {(currentUser.role === 'admin' || currentUser.role === 'author') && (
-                  <DropdownContainer className="dropdown-container">
+                  <DropdownContainer 
+                    className="dropdown-container"
+                    onMouseEnter={() => setAssignmentsDropdownOpen(true)}
+                    onMouseLeave={() => setAssignmentsDropdownOpen(false)}
+                  >
                     <DropdownButton 
                       $isOpen={assignmentsDropdownOpen}
                       onClick={() => setAssignmentsDropdownOpen(!assignmentsDropdownOpen)}
@@ -1072,8 +1095,12 @@ const GlobalNav = () => {
                   </DropdownContainer>
                 )}
 
-                {/* Admin/User Dropdown */}
-                <DropdownContainer className="dropdown-container">
+                {/* Admin/User Dropdown with Hover Trigger */}
+                <DropdownContainer 
+                  className="dropdown-container"
+                  onMouseEnter={() => setAdminDropdownOpen(true)}
+                  onMouseLeave={() => setAdminDropdownOpen(false)}
+                >
                   <DropdownButton 
                     $isOpen={adminDropdownOpen}
                     onClick={() => setAdminDropdownOpen(!adminDropdownOpen)}
@@ -1250,17 +1277,88 @@ const GlobalNav = () => {
                   </TrySampleMenu>
                 </TrySampleDropdownContainer>
 
-                <SecondaryCTAButton onClick={() => handleExploreAsGuest('/start')}>
-                  <FiUser size={14} />
-                  Explore as Guest
-                </SecondaryCTAButton>
+                {/* Assessments Hover Dropdown for Guests */}
+                <DropdownContainer 
+                  className="dropdown-container"
+                  onMouseEnter={() => setAssessmentsDropdownOpen(true)}
+                  onMouseLeave={() => setAssessmentsDropdownOpen(false)}
+                >
+                  <DropdownButton 
+                    $isOpen={assessmentsDropdownOpen}
+                    onClick={() => setAssessmentsDropdownOpen(!assessmentsDropdownOpen)}
+                  >
+                    <FiFileText size={14} />
+                    Assessments
+                    <FiChevronDown size={14} className="chevron" />
+                  </DropdownButton>
+                  <DropdownMenu $isOpen={assessmentsDropdownOpen}>
+                    <DropdownItem onClick={() => {
+                      handleExploreAsGuest('/start');
+                      setAssessmentsDropdownOpen(false);
+                    }}>
+                      <FiPlay />
+                      Data & AI Maturity Assessment
+                    </DropdownItem>
+                    <DropdownItem onClick={() => {
+                      handleExploreAsGuest('/genai-readiness');
+                      setAssessmentsDropdownOpen(false);
+                    }}>
+                      <FiCpu />
+                      Gen AI Readiness Assessment
+                    </DropdownItem>
+
+                    <DropdownDivider />
+                    <DropdownItem 
+                      style={{ color: '#8b5cf6', fontWeight: '700' }}
+                      onClick={() => {
+                        navigate('/assessments/custom-hub');
+                        setAssessmentsDropdownOpen(false);
+                      }}
+                    >
+                      <FiLayers style={{ color: '#8b5cf6' }} />
+                      📋 Assessment Catalog & Templates
+                    </DropdownItem>
+
+                    <DropdownItem 
+                      style={{ color: '#a855f7', fontWeight: '600' }}
+                      onClick={() => {
+                        navigate('/assessments/ai-generator');
+                        setAssessmentsDropdownOpen(false);
+                      }}
+                    >
+                      <HiSparkles style={{ color: '#a855f7' }} />
+                      ✨ AI Assessment Generator
+                    </DropdownItem>
+
+                    {/* Dynamically Promoted Custom Assessment Types */}
+                    {promotedTypes.filter(t => t.isPromoted).map((type) => (
+                      <DropdownItem 
+                        key={type.id || type.typeKey}
+                        onClick={() => {
+                          navigate(`/assessments/run/${type.typeKey}`);
+                          setAssessmentsDropdownOpen(false);
+                        }}
+                      >
+                        <FiAward style={{ color: type.color || '#818cf8' }} />
+                        {type.title}
+                      </DropdownItem>
+                    ))}
+
+                    <DropdownDivider />
+                    <DropdownItem onClick={() => {
+                      navigate('/assessments');
+                      setAssessmentsDropdownOpen(false);
+                    }}>
+                      <FiList />
+                      All Assessments
+                    </DropdownItem>
+                  </DropdownMenu>
+                </DropdownContainer>
+
                 <SecondaryCTAButton onClick={() => setShowLoginModal(true)}>
                   <FiLogIn size={14} />
                   Login
                 </SecondaryCTAButton>
-                <CTAButton onClick={() => handleExploreAsGuest('/start')}>
-                  Start Assessment →
-                </CTAButton>
               </>
             )}
           </ActionButtons>
@@ -1338,9 +1436,6 @@ const GlobalNav = () => {
                 </MobileSecondaryCTAButton>
               </>
             )}
-            <MobileCTAButton onClick={() => handleNavigate('/start')}>
-              Start Assessment →
-            </MobileCTAButton>
             <MobileSecondaryCTAButton onClick={handleLogout}>
               <FiLogOut size={16} />
               Logout ({currentUser.email})
@@ -1372,24 +1467,11 @@ const GlobalNav = () => {
             )}
             <MobileSecondaryCTAButton onClick={() => {
               closeMobileMenu();
-              handleExploreAsGuest('/start');
-            }}>
-              <FiUser size={16} />
-              Explore as Guest
-            </MobileSecondaryCTAButton>
-            <MobileSecondaryCTAButton onClick={() => {
-              closeMobileMenu();
               setShowLoginModal(true);
             }}>
               <FiLogIn size={16} />
               Login
             </MobileSecondaryCTAButton>
-            <MobileCTAButton onClick={() => {
-              closeMobileMenu();
-              handleExploreAsGuest('/start');
-            }}>
-              Start Assessment →
-            </MobileCTAButton>
           </>
         )}
       </MobileMenu>
