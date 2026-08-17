@@ -2134,89 +2134,67 @@ const ExecutiveCommandCenter = () => {
                           🎯 Top 3 Strategic Imperatives
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                          {/* Imperative 1 */}
-                          <div style={{
-                            background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                            borderRadius: '12px',
-                            padding: '28px',
-                            color: 'white'
-                          }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
-                              <div style={{
-                                width: '48px',
-                                height: '48px',
-                                background: 'rgba(255, 255, 255, 0.2)',
-                                borderRadius: '50%',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontSize: '1.5rem',
-                                fontWeight: 700
-                              }}>1</div>
-                              <div style={{ fontSize: '1.5rem', fontWeight: 700 }}>
-                                Implement Unity Catalog
-                              </div>
-                            </div>
-                            <div style={{ fontSize: '1.1rem', opacity: 0.95, lineHeight: '1.6', paddingLeft: '64px' }}>
-                              Centralize data governance and security • Reduce compliance risk • Enable fine-grained access control
-                            </div>
-                          </div>
+                          {(() => {
+                            const dynImperatives = (results?.recommendations && results.recommendations.length > 0)
+                              ? results.recommendations.slice(0, 3).map((r, i) => ({
+                                  title: r.title || r.name || `Strategic Initiative ${i + 1}`,
+                                  desc: r.whyItMatters || r.description || r.businessImpact || (Array.isArray(r.actions) ? r.actions.slice(0, 2).join(' • ') : 'Execute prioritized architecture transformation.')
+                                }))
+                              : (results?.prioritizedActions && results.prioritizedActions.length > 0)
+                              ? results.prioritizedActions.slice(0, 3).map((a, i) => ({
+                                  title: a.title || a.pillar || `Strategic Initiative ${i + 1}`,
+                                  desc: a.impact || a.description || 'Close critical maturity gap and accelerate technical capabilities.'
+                                }))
+                              : [
+                                  {
+                                    title: 'Establish Centralized Cloud Metadata & Zero-Trust Governance',
+                                    desc: 'Unify security perimeters, automate compliance audit trails, and enable fine-grained ABAC access control.'
+                                  },
+                                  {
+                                    title: 'Modernize to Declarative Pipelines & Real-Time CDC Streaming',
+                                    desc: 'Automate data pipeline quality contracts, eliminate batch polling locks, and accelerate ingestion.'
+                                  },
+                                  {
+                                    title: 'Deploy Enterprise GenAI Architecture & Prompt Context Caching',
+                                    desc: 'Enable Model Context Protocol (MCP) agent workflows, reduce token costs by 75%, and enforce safety guardrails.'
+                                  }
+                                ];
 
-                          {/* Imperative 2 */}
-                          <div style={{
-                            background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                            borderRadius: '12px',
-                            padding: '28px',
-                            color: 'white'
-                          }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
-                              <div style={{
-                                width: '48px',
-                                height: '48px',
-                                background: 'rgba(255, 255, 255, 0.2)',
-                                borderRadius: '50%',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontSize: '1.5rem',
-                                fontWeight: 700
-                              }}>2</div>
-                              <div style={{ fontSize: '1.5rem', fontWeight: 700 }}>
-                                Deploy Delta Live Tables
-                              </div>
-                            </div>
-                            <div style={{ fontSize: '1.1rem', opacity: 0.95, lineHeight: '1.6', paddingLeft: '64px' }}>
-                              Automate data pipeline quality • Reduce data delivery time • Improve data trust and reliability
-                            </div>
-                          </div>
+                            const gradients = [
+                              'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                              'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                              'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)'
+                            ];
 
-                          {/* Imperative 3 */}
-                          <div style={{
-                            background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                            borderRadius: '12px',
-                            padding: '28px',
-                            color: 'white'
-                          }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
-                              <div style={{
-                                width: '48px',
-                                height: '48px',
-                                background: 'rgba(255, 255, 255, 0.2)',
-                                borderRadius: '50%',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontSize: '1.5rem',
-                                fontWeight: 700
-                              }}>3</div>
-                              <div style={{ fontSize: '1.5rem', fontWeight: 700 }}>
-                                Establish MLOps Framework
+                            return dynImperatives.map((imp, idx) => (
+                              <div key={idx} style={{
+                                background: gradients[idx % gradients.length],
+                                borderRadius: '12px',
+                                padding: '28px',
+                                color: 'white'
+                              }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
+                                  <div style={{
+                                    width: '48px',
+                                    height: '48px',
+                                    background: 'rgba(255, 255, 255, 0.2)',
+                                    borderRadius: '50%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '1.5rem',
+                                    fontWeight: 700
+                                  }}>{idx + 1}</div>
+                                  <div style={{ fontSize: '1.5rem', fontWeight: 700 }}>
+                                    {imp.title}
+                                  </div>
+                                </div>
+                                <div style={{ fontSize: '1.1rem', opacity: 0.95, lineHeight: '1.6', paddingLeft: '64px' }}>
+                                  {imp.desc}
+                                </div>
                               </div>
-                            </div>
-                            <div style={{ fontSize: '1.1rem', opacity: 0.95, lineHeight: '1.6', paddingLeft: '64px' }}>
-                              Accelerate model deployment • Reduce time-to-production by 60-70% • Enable continuous ML improvement
-                            </div>
-                          </div>
+                            ));
+                          })()}
                         </div>
                       </div>
                     </div>

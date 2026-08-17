@@ -660,10 +660,10 @@ const GlobalNav = () => {
     const dimensionComments = {
       // PLATFORM & GOVERNANCE
       'environment_architecture': [
-        "Single workspace for all teams. No isolation between dev/prod. Need multi-workspace strategy with Unity Catalog for governance.",
+        "Single workspace for all teams. No isolation between dev/prod. Need multi-workspace strategy with centralized metadata catalog for governance.",
         "Workspaces created ad-hoc. Inconsistent naming. Want standardized workspace provisioning with Terraform and tagging for cost tracking.",
-        "Every team has own workspace. No standards. Need centralized architecture with Unity Catalog federation and workspace templates for consistency.",
-        "Dev and prod in same workspace. Security concern. Want separate workspaces with Unity Catalog catalog-level isolation and promotion workflows."
+        "Every team has own workspace. No standards. Need centralized architecture with catalog federation and workspace templates for consistency.",
+        "Dev and prod in same workspace. Security concern. Want separate workspaces with catalog-level isolation and promotion workflows."
       ],
       'identity_security': [
         "Manual user provisioning via cloud directory. No SCIM. Want automated sync and group-based unified catalog permissions with audit logs.",

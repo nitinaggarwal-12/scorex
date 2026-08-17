@@ -583,7 +583,7 @@ const SAMPLE_QUESTIONS = {
       category: 'Data Governance',
       maturity_level_1: 'No centralized data catalog or governance',
       maturity_level_2: 'Basic metadata management',
-      maturity_level_3: 'Enterprise data catalog with Unity Catalog',
+      maturity_level_3: 'Enterprise data catalog with automated governance',
       maturity_level_4: 'Automated data classification and lineage',
       maturity_level_5: 'AI-powered data discovery and policy enforcement'
     },

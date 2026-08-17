@@ -1041,7 +1041,7 @@ function getStrategicImperatives(results, categoryDetails) {
     
     // Customize based on pillar
     if (gap.id.includes('platform') || gap.id.includes('governance')) {
-      title = 'Deploy Unity Catalog for centralized governance';
+      title = 'Deploy centralized metadata catalog and ABAC governance';
       impact = 'Reduce compliance risk 60%';
       timeline = '4-6 weeks';
     } else if (gap.id.includes('data_engineering')) {

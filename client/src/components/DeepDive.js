@@ -2434,31 +2434,31 @@ Accelerate your journey toward platform maturity through actionable best practic
     {
       id: 'ep-2',
       time: 'H1 2026',
-      engagement: 'Unity Catalog, IaC, ABAC, Observability Workshops',
+      engagement: 'Centralized Metadata Catalog, IaC, ABAC & Observability Workshops',
       focusArea: 'Secure & Governed Foundation'
     },
     {
       id: 'ep-3',
       time: 'H2 2026',
-      engagement: 'DLT, Auto Loader, and DBSQL Serverless Enablement',
+      engagement: 'Declarative Pipelines, Real-Time CDC & Serverless SQL Acceleration',
       focusArea: 'Data Quality + Performance'
     },
     {
       id: 'ep-4',
       time: 'H1 2027',
-      engagement: 'MLflow, Model Serving, Feature Store Workshops',
+      engagement: 'Production MLOps, Model Serving & Feature Store Workshops',
       focusArea: 'Scalable ML Lifecycle'
     },
     {
       id: 'ep-5',
       time: 'H2 2027',
-      engagement: 'GenAI + AI Gateway Enablement',
+      engagement: 'Enterprise GenAI, Prompt Context Caching & Agentic AI Gateway',
       focusArea: 'AI-driven Applications'
     },
     {
       id: 'ep-6',
       time: 'Continuous',
-      engagement: 'CoE Enablement + FinOps Dashboards',
+      engagement: 'CoE Enablement + FinOps Slot Reservation Dashboards',
       focusArea: 'Operational Excellence'
     }
   ]);
@@ -2588,18 +2588,18 @@ Accelerate your journey toward platform maturity through actionable best practic
         },
         {
           stage: '2. Experiment',
-          description: 'Teams begin adopting Terraform or manual Unity Catalog setup but lack policy consistency. Introduce baseline access models and automated provisioning across dev/test/prod.',
-          tools: 'Unity Catalog QuickStart, Terraform Templates, Workspace Policies'
+          description: 'Teams begin adopting Terraform or manual cloud catalog setup but lack policy consistency. Introduce baseline access models and automated provisioning across dev/test/prod.',
+          tools: 'Cloud Catalog QuickStart, Terraform Templates, Workspace Policies'
         },
         {
           stage: '3. Formalize',
-          description: 'Central teams enforce access and lineage standards using ABAC and UC. Define clear ownership between platform and security.',
+          description: 'Central teams enforce access and lineage standards using ABAC and unified cataloging. Define clear ownership between platform and security.',
           tools: 'ABAC Policy Templates, Audit Dashboards, Monitoring Toolkit'
         },
         {
           stage: '4. Optimize',
           description: 'Environment provisioning and access control are fully automated via IaC. Policies standardized across business units with compliance automation.',
-          tools: 'Terraform + DAB Integration, FinOps Dashboard, Compliance-as-Code'
+          tools: 'Terraform + CI/CD Integration, FinOps Dashboard, Compliance-as-Code'
         },
         {
           stage: '5. Transform',
@@ -2616,23 +2616,23 @@ Accelerate your journey toward platform maturity through actionable best practic
       levels: [
         {
           stage: '1. Explore',
-          description: 'Data ingestion is manual and pipelines fail without alerting. Focus on simplifying ingestion using Auto Loader and declarative dataflows.',
-          tools: 'Auto Loader Workshop, Ingestion Best Practices'
+          description: 'Data ingestion is manual and pipelines fail without alerting. Focus on simplifying ingestion using declarative streaming dataflows.',
+          tools: 'Ingestion Workshop, Streaming Best Practices'
         },
         {
           stage: '2. Experiment',
-          description: 'Teams start using DLT for structured pipelines but lack orchestration. Introduce LakeFlow Connect for data movement and lineage.',
-          tools: 'DLT Templates, LakeFlow Connect Onboarding'
+          description: 'Teams start using declarative pipelines for structured tables but lack orchestration. Introduce CDC connectors for data movement and lineage.',
+          tools: 'Declarative Pipeline Templates, CDC Ingestion Onboarding'
         },
         {
           stage: '3. Formalize',
-          description: 'Pipelines now include expectations, lineage, and notifications. Standardize CDC patterns and implement monitoring.',
+          description: 'Pipelines now include data expectations, lineage, and notifications. Standardize CDC patterns and implement monitoring.',
           tools: 'Quality Expectations, Lineage View, Lakehouse Monitoring'
         },
         {
           stage: '4. Optimize',
           description: 'Pipelines are self-healing, version-controlled, and SLA-managed. Data quality continuously validated across environments.',
-          tools: 'DLT Advanced Toolkit, SLA Automation Scripts'
+          tools: 'Advanced Pipeline Toolkit, SLA Automation Scripts'
         },
         {
           stage: '5. Transform',
@@ -2649,17 +2649,17 @@ Accelerate your journey toward platform maturity through actionable best practic
       levels: [
         {
           stage: '1. Explore',
-          description: 'Dashboards reside in multiple tools with no single source of truth. Begin consolidating BI workloads onto DBSQL.',
-          tools: 'DBSQL QuickStart, BI Modernization Guide'
+          description: 'Dashboards reside in multiple tools with no single source of truth. Begin consolidating BI workloads onto serverless SQL.',
+          tools: 'Serverless SQL QuickStart, BI Modernization Guide'
         },
         {
           stage: '2. Experiment',
-          description: 'Teams create ad-hoc dashboards but lack tuning and access control. Introduce AI Functions and define performance SLAs.',
-          tools: 'AI BI Workshop, Performance Tuning Playbook'
+          description: 'Teams create ad-hoc dashboards but lack tuning and access control. Introduce SQL AI Functions and define performance SLAs.',
+          tools: 'SQL AI Workshop, Performance Tuning Playbook'
         },
         {
           stage: '3. Formalize',
-          description: 'Business units adopt shared semantic models via Unity Catalog. DBSQL dashboards are certified and automated for refresh.',
+          description: 'Business units adopt shared semantic models via centralized data catalog. BI dashboards are certified and automated for refresh.',
           tools: 'Certified Dashboards, Semantic Layer Templates'
         },
         {

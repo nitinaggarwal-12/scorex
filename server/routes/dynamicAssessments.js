@@ -317,18 +317,30 @@ router.get('/samples-list', async (req, res) => {
         color: '#3b82f6',
         typeKey: 'genai_readiness'
       },
-      ...customTypes.map(t => ({
-        id: `sample_${t.typeKey}`,
-        category: 'custom',
-        title: t.title,
-        subtitle: t.subtitle || t.description?.substring(0, 70) + '...',
-        customer: 'NovaHealth Technologies',
-        initiative: t.framework?.targetRole || 'Enterprise Modernization',
-        badge: t.badge || 'AI Framework',
-        color: t.color || '#8b5cf6',
-        typeKey: t.typeKey,
-        status: t.status || (t.isPromoted ? 'production' : 'draft')
-      }))
+      ...customTypes.map((t, idx) => {
+        const customerList = [
+          'Apex Financial Systems',
+          'Nova Retail Group',
+          'ConnectPlus Telecom',
+          'Quantum Health & AI',
+          'Global Logistics Cloud',
+          'AeroSpace Dynamics'
+        ];
+        const assignedCustomer = customerList[idx % customerList.length];
+
+        return {
+          id: `sample_${t.typeKey}`,
+          category: 'custom',
+          title: t.title,
+          subtitle: t.subtitle || (t.description ? t.description.substring(0, 70) + '...' : ''),
+          customer: assignedCustomer,
+          initiative: t.framework?.targetRole || t.subtitle || 'Enterprise Modernization',
+          badge: t.badge || 'AI Framework',
+          color: t.color || '#8b5cf6',
+          typeKey: t.typeKey,
+          status: t.status || (t.isPromoted ? 'production' : 'draft')
+        };
+      })
     ];
 
     res.json({
