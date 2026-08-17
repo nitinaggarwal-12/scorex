@@ -140,6 +140,22 @@ class DynamicAssessmentService {
   }
 
   /**
+   * Batch delete dynamic assessment instances
+   */
+  async batchDeleteInstances(ids) {
+    const response = await axios.post('/api/dynamic-assessments/instances/batch-delete', { ids });
+    return response.data;
+  }
+
+  /**
+   * Batch clone dynamic assessment instances
+   */
+  async batchCloneInstances(ids, suffix = 'Next Quarter') {
+    const response = await axios.post('/api/dynamic-assessments/instances/batch-clone', { ids, suffix });
+    return response.data;
+  }
+
+  /**
    * Trigger AI Executive Report Generation with Gemini 3.7
    */
   async generateReport(id) {

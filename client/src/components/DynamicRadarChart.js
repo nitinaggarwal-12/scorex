@@ -1,0 +1,458 @@
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { motion } from 'framer-motion';
+import { FiTarget } from 'react-icons/fi';
+
+const ChartCard = styled(motion.div)`
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  border-radius: 20px;
+  padding: 28px;
+  margin-bottom: 32px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+
+  @media (max-width: 768px) {
+    padding: 20px 16px;
+  }
+
+  @media print {
+    background: white !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid !important;
+  }
+`;
+
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+`;
+
+const TitleBlock = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin: 0 0 2px 0;
+
+    @media print {
+      color: #0f172a !important;
+    }
+  }
+
+  p {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin: 0;
+
+    @media print {
+      color: #475569 !important;
+    }
+  }
+`;
+
+const LegendRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+`;
+
+const LegendItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: ${props => props.$color || '#cbd5e1'};
+
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: ${props => props.$bg || props.$color};
+    border: 2px solid ${props => props.$color};
+  }
+
+  @media print {
+    color: #334155 !important;
+  }
+`;
+
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: center;
+
+  @media (max-width: 960px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const SvgContainer = styled.div`
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  justify-content: center;
+`;
+
+const TableWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const DimensionRow = styled.div`
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(30, 41, 59, 0.9);
+    border-color: rgba(99, 102, 241, 0.4);
+    transform: translateX(4px);
+  }
+
+  @media print {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+`;
+
+const DimLeft = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  .name {
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: #f1f5f9;
+
+    @media print {
+      color: #0f172a !important;
+    }
+  }
+
+  .desc {
+    font-size: 0.78rem;
+    color: #94a3b8;
+
+    @media print {
+      color: #64748b !important;
+    }
+  }
+`;
+
+const DimScores = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+
+  .baseline {
+    color: #f87171;
+    font-weight: 700;
+    font-size: 0.9rem;
+    background: rgba(239, 68, 68, 0.15);
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+
+  .arrow {
+    color: #94a3b8;
+    font-size: 0.8rem;
+  }
+
+  .target {
+    color: #34d399;
+    font-weight: 700;
+    font-size: 0.9rem;
+    background: rgba(16, 185, 129, 0.15);
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+
+  .delta {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #818cf8;
+  }
+`;
+
+const DynamicRadarChart = ({ dimensions = [], dimensionScores = {}, responses = {} }) => {
+  const [hoveredIdx, setHoveredIdx] = useState(null);
+
+  if (!dimensions || dimensions.length < 3) {
+    return null;
+  }
+
+  const size = 420;
+  const center = size / 2;
+  const radius = 150;
+  const totalAxes = dimensions.length;
+  const angleStep = (2 * Math.PI) / totalAxes;
+
+  // Compute coordinates
+  const getCoordinates = (value, index, maxVal = 5) => {
+    const angle = index * angleStep - Math.PI / 2;
+    const r = (value / maxVal) * radius;
+    return {
+      x: center + r * Math.cos(angle),
+      y: center + r * Math.sin(angle)
+    };
+  };
+
+  // Build grid rings (Level 1 to 5)
+  const rings = [1, 2, 3, 4, 5];
+
+  // Baseline Points
+  const baselinePoints = dimensions.map((dim, idx) => {
+    const dScore = dimensionScores[dim.id];
+    const score = dScore?.score !== undefined ? dScore.score : (parseFloat(responses[`${dim.id}_current`]) || 2.5);
+    return getCoordinates(Math.min(5, Math.max(0.5, score)), idx);
+  });
+  const baselinePath = baselinePoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x},${p.y}`).join(' ') + ' Z';
+
+  // Target Points
+  const targetPoints = dimensions.map((dim, idx) => {
+    const dScore = dimensionScores[dim.id];
+    const target = dScore?.targetScore !== undefined ? dScore.targetScore : (parseFloat(responses[`${dim.id}_target`]) || 4.2);
+    return getCoordinates(Math.min(5, Math.max(0.5, target)), idx);
+  });
+  const targetPath = targetPoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x},${p.y}`).join(' ') + ' Z';
+
+  // Industry Benchmark Points (Level 3.6 avg)
+  const benchmarkPoints = dimensions.map((_, idx) => getCoordinates(3.6, idx));
+  const benchmarkPath = benchmarkPoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x},${p.y}`).join(' ') + ' Z';
+
+  return (
+    <ChartCard
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
+      <Header>
+        <TitleBlock>
+          <div className="icon-wrap">
+            <FiTarget />
+          </div>
+          <div>
+            <h3>Dimensional Gap Radar & Target Topology</h3>
+            <p>Multi-axis polygon matrix tracking baseline capability vs desired target state</p>
+          </div>
+        </TitleBlock>
+
+        <LegendRow>
+          <LegendItem $color="#ef4444" $bg="rgba(239, 68, 68, 0.3)">
+            <span className="dot" /> Baseline State
+          </LegendItem>
+          <LegendItem $color="#10b981" $bg="rgba(16, 185, 129, 0.3)">
+            <span className="dot" /> Desired Target State
+          </LegendItem>
+          <LegendItem $color="#6366f1" $bg="transparent">
+            <span className="dot" style={{ borderStyle: 'dashed' }} /> Industry Benchmark (3.6)
+          </LegendItem>
+        </LegendRow>
+      </Header>
+
+      <Grid>
+        {/* SVG POLAR RADAR */}
+        <SvgContainer>
+          <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+            <defs>
+              <linearGradient id="baselineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#ef4444" stopOpacity="0.4" />
+                <stop offset="100%" stopColor="#f59e0b" stopOpacity="0.2" />
+              </linearGradient>
+              <linearGradient id="targetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#10b981" stopOpacity="0.45" />
+                <stop offset="100%" stopColor="#06b6d4" stopOpacity="0.2" />
+              </linearGradient>
+            </defs>
+
+            {/* Concentric Grid Rings */}
+            {rings.map((ring) => {
+              const r = (ring / 5) * radius;
+              return (
+                <g key={ring}>
+                  <circle
+                    cx={center}
+                    cy={center}
+                    r={r}
+                    fill="none"
+                    stroke="rgba(255, 255, 255, 0.08)"
+                    strokeWidth="1"
+                    strokeDasharray={ring === 5 ? 'none' : '2 2'}
+                  />
+                  <text
+                    x={center + 6}
+                    y={center - r + 12}
+                    fill="rgba(148, 163, 184, 0.6)"
+                    fontSize="9"
+                    fontWeight="600"
+                  >
+                    L{ring}
+                  </text>
+                </g>
+              );
+            })}
+
+            {/* Axis Lines & Labels */}
+            {dimensions.map((dim, idx) => {
+              const edgeCoord = getCoordinates(5, idx);
+              const labelCoord = getCoordinates(5.75, idx);
+              const isHovered = hoveredIdx === idx;
+
+              return (
+                <g key={dim.id || idx}>
+                  <line
+                    x1={center}
+                    y1={center}
+                    x2={edgeCoord.x}
+                    y2={edgeCoord.y}
+                    stroke="rgba(255, 255, 255, 0.12)"
+                    strokeWidth="1"
+                  />
+                  <text
+                    x={labelCoord.x}
+                    y={labelCoord.y}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    fill={isHovered ? '#60a5fa' : '#cbd5e1'}
+                    fontSize="10.5"
+                    fontWeight={isHovered ? '800' : '600'}
+                    style={{ cursor: 'pointer', transition: 'all 0.2s ease' }}
+                    onMouseEnter={() => setHoveredIdx(idx)}
+                    onMouseLeave={() => setHoveredIdx(null)}
+                  >
+                    {dim.name.length > 18 ? `${dim.name.substring(0, 16)}...` : dim.name}
+                  </text>
+                </g>
+              );
+            })}
+
+            {/* Benchmark Polygon */}
+            <path
+              d={benchmarkPath}
+              fill="none"
+              stroke="#6366f1"
+              strokeWidth="1.5"
+              strokeDasharray="4 4"
+              opacity="0.8"
+            />
+
+            {/* Baseline Polygon */}
+            <path
+              d={baselinePath}
+              fill="url(#baselineGrad)"
+              stroke="#ef4444"
+              strokeWidth="2.5"
+            />
+
+            {/* Target Polygon */}
+            <path
+              d={targetPath}
+              fill="url(#targetGrad)"
+              stroke="#10b981"
+              strokeWidth="2.5"
+            />
+
+            {/* Data Point Markers */}
+            {baselinePoints.map((p, idx) => (
+              <circle
+                key={`base-${idx}`}
+                cx={p.x}
+                cy={p.y}
+                r="4.5"
+                fill="#ef4444"
+                stroke="#ffffff"
+                strokeWidth="1.5"
+                onMouseEnter={() => setHoveredIdx(idx)}
+                onMouseLeave={() => setHoveredIdx(null)}
+              />
+            ))}
+
+            {targetPoints.map((p, idx) => (
+              <circle
+                key={`target-${idx}`}
+                cx={p.x}
+                cy={p.y}
+                r="5"
+                fill="#10b981"
+                stroke="#ffffff"
+                strokeWidth="1.5"
+                onMouseEnter={() => setHoveredIdx(idx)}
+                onMouseLeave={() => setHoveredIdx(null)}
+              />
+            ))}
+          </svg>
+        </SvgContainer>
+
+        {/* DIMENSIONAL GAP BREAKDOWN LIST */}
+        <TableWrap>
+          {dimensions.map((dim, idx) => {
+            const dScore = dimensionScores[dim.id];
+            const current = dScore?.score !== undefined ? dScore.score : (parseFloat(responses[`${dim.id}_current`]) || 2.5);
+            const target = dScore?.targetScore !== undefined ? dScore.targetScore : (parseFloat(responses[`${dim.id}_target`]) || 4.2);
+            const delta = (target - current).toFixed(1);
+
+            return (
+              <DimensionRow
+                key={dim.id || idx}
+                onMouseEnter={() => setHoveredIdx(idx)}
+                onMouseLeave={() => setHoveredIdx(null)}
+                style={{
+                  borderColor: hoveredIdx === idx ? 'rgba(99, 102, 241, 0.8)' : undefined,
+                  background: hoveredIdx === idx ? 'rgba(30, 41, 59, 0.95)' : undefined
+                }}
+              >
+                <DimLeft>
+                  <span className="name">{dim.name}</span>
+                  <span className="desc">{dim.description ? `${dim.description.substring(0, 55)}...` : 'Core capability dimension'}</span>
+                </DimLeft>
+                <DimScores>
+                  <span className="baseline" title="Current Baseline Level">L{current}</span>
+                  <span className="arrow">➔</span>
+                  <span className="target" title="Target State Level">L{target}</span>
+                  <span className="delta">+{delta}</span>
+                </DimScores>
+              </DimensionRow>
+            );
+          })}
+        </TableWrap>
+      </Grid>
+    </ChartCard>
+  );
+};
+
+export default DynamicRadarChart;

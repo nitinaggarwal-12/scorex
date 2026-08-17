@@ -515,6 +515,66 @@ router.delete('/instances/:id', async (req, res) => {
   }
 });
 
+// Batch Delete Assessment Instances
+router.post('/instances/batch-delete', async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ success: false, error: 'Array of assessment IDs required' });
+    }
+
+    await Promise.all(ids.map(id => customAssessmentRepo.deleteInstance(id)));
+    res.json({
+      success: true,
+      message: `Successfully deleted ${ids.length} assessment instance(s)`
+    });
+  } catch (error) {
+    console.error('Error batch deleting instances:', error);
+    res.status(500).json({ success: false, error: 'Failed to batch delete assessment instances' });
+  }
+});
+
+// Batch Clone Assessment Instances
+router.post('/instances/batch-clone', async (req, res) => {
+  try {
+    const { ids, suffix } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ success: false, error: 'Array of assessment IDs required' });
+    }
+
+    const cloned = await Promise.all(ids.map(async (id) => {
+      const source = await customAssessmentRepo.getInstanceById(id);
+      if (!source) return null;
+      const newUseCase = source.useCase 
+        ? `${source.useCase} (${suffix || 'Next Quarter'})` 
+        : `Quarterly Reassessment (${suffix || 'Next Quarter'})`;
+
+      return customAssessmentRepo.createInstance({
+        typeKey: source.typeKey,
+        customerName: source.customerName,
+        useCase: newUseCase,
+        contactEmail: source.contactEmail,
+        frameworkSnapshot: source.frameworkSnapshot,
+        responses: JSON.parse(JSON.stringify(source.responses || {})),
+        scores: source.scores,
+        totalScore: source.totalScore,
+        maxScore: source.maxScore,
+        maturityLevel: source.maturityLevel,
+        status: 'in_progress'
+      });
+    }));
+
+    res.json({
+      success: true,
+      message: `Successfully cloned ${cloned.filter(Boolean).length} assessment instance(s)`,
+      cloned: cloned.filter(Boolean)
+    });
+  } catch (error) {
+    console.error('Error batch cloning instances:', error);
+    res.status(500).json({ success: false, error: 'Failed to batch clone assessment instances' });
+  }
+});
+
 // Clone Assessment Instance (Quarterly Reassessment / Branching)
 router.post('/instances/:id/clone', async (req, res) => {
   try {

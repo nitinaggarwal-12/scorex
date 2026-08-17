@@ -571,6 +571,51 @@ const ActionButton = styled.button`
   }
 `;
 
+const FloatingBatchBar = styled(motion.div)`
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0f172a;
+  color: white;
+  border-radius: 16px;
+  padding: 12px 24px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 1000;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  @media (max-width: 768px) {
+    width: 92%;
+    flex-wrap: wrap;
+    padding: 10px 14px;
+    gap: 8px;
+    justify-content: center;
+  }
+`;
+
+const BatchActionButton = styled.button`
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 0.825rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  transition: all 0.2s ease;
+  background: ${props => props.$danger ? '#ef4444' : props.$primary ? '#3b82f6' : 'rgba(255, 255, 255, 0.12)'};
+  color: white;
+
+  &:hover {
+    transform: translateY(-1px);
+    background: ${props => props.$danger ? '#dc2626' : props.$primary ? '#2563eb' : 'rgba(255, 255, 255, 0.2)'};
+  }
+`;
+
 const EmptyState = styled.div`
   text-align: center;
   padding: 80px 20px;
@@ -631,6 +676,7 @@ const AssessmentsListNew = () => {
   const [completionRangeFilter, setCompletionRangeFilter] = useState('all');
   const [showDeleteAllConfirm, setShowDeleteAllConfirm] = useState(false);
   const [uploadingExcel, setUploadingExcel] = useState(null); // Track which assessment is being uploaded
+  const [selectedIds, setSelectedIds] = useState(new Set());
   const fileInputRef = React.useRef(null);
 
   useEffect(() => {
@@ -874,6 +920,97 @@ const AssessmentsListNew = () => {
     } finally {
       setUploadingExcel(null);
       e.target.value = ''; // Reset input
+    }
+  };
+
+  const handleToggleSelect = (id, event) => {
+    event.stopPropagation();
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const handleSelectAll = () => {
+    if (selectedIds.size === filteredAssessments.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredAssessments.map(a => a.id || a.assessmentId)));
+    }
+  };
+
+  const handleBatchDelete = async () => {
+    if (selectedIds.size === 0) return;
+    if (!window.confirm(`Are you sure you want to delete ${selectedIds.size} selected assessment(s)? This action cannot be undone.`)) {
+      return;
+    }
+    try {
+      toast.loading(`Deleting ${selectedIds.size} assessments...`, { id: 'batch-delete' });
+      const ids = Array.from(selectedIds);
+      const dynamicIds = [];
+      const classicIds = [];
+
+      assessments.forEach(a => {
+        const aId = a.id || a.assessmentId;
+        if (ids.includes(aId)) {
+          if (a.isDynamic) dynamicIds.push(aId);
+          else classicIds.push(aId);
+        }
+      });
+
+      if (dynamicIds.length > 0) {
+        await dynamicAssessmentService.batchDeleteInstances(dynamicIds);
+      }
+      if (classicIds.length > 0) {
+        await Promise.all(classicIds.map(id => assessmentService.deleteAssessment(id)));
+      }
+
+      toast.success(`Successfully deleted ${ids.length} assessment(s)`, { id: 'batch-delete' });
+      setSelectedIds(new Set());
+      await fetchAssessments();
+    } catch (err) {
+      console.error('Batch delete error:', err);
+      toast.error('Failed to batch delete assessments', { id: 'batch-delete' });
+    }
+  };
+
+  const handleBatchClone = async () => {
+    if (selectedIds.size === 0) return;
+    try {
+      toast.loading(`Cloning ${selectedIds.size} assessments...`, { id: 'batch-clone' });
+      const ids = Array.from(selectedIds);
+      const dynamicIds = [];
+      const classicItems = [];
+
+      assessments.forEach(a => {
+        const aId = a.id || a.assessmentId;
+        if (ids.includes(aId)) {
+          if (a.isDynamic) dynamicIds.push(aId);
+          else classicItems.push(a);
+        }
+      });
+
+      if (dynamicIds.length > 0) {
+        await dynamicAssessmentService.batchCloneInstances(dynamicIds, 'Quarterly Clone');
+      }
+      if (classicItems.length > 0) {
+        await Promise.all(classicItems.map(a => assessmentService.cloneAssessment(a.id || a.assessmentId, {
+          organizationName: a.organization_name,
+          contactEmail: a.contact_email,
+          industry: a.industry,
+          assessmentName: `${a.assessment_name} (Copy)`,
+          assessmentDescription: a.assessmentDescription
+        })));
+      }
+
+      toast.success(`Successfully cloned ${ids.length} assessment(s)!`, { id: 'batch-clone' });
+      setSelectedIds(new Set());
+      await fetchAssessments();
+    } catch (err) {
+      console.error('Batch clone error:', err);
+      toast.error('Failed to batch clone assessments', { id: 'batch-clone' });
     }
   };
 
@@ -1250,11 +1387,19 @@ const AssessmentsListNew = () => {
                     }
                   }}
                 >
-                  <div className="header">
-                    <div>
-                      <div className="title">
-                        {assessment.assessment_name || 'Untitled Assessment'}
-                      </div>
+                  <div className="header" style={{ position: 'relative' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.has(assessmentId)}
+                        onChange={(e) => handleToggleSelect(assessmentId, e)}
+                        onClick={(e) => e.stopPropagation()}
+                        style={{ width: '18px', height: '18px', marginTop: '4px', cursor: 'pointer', accentColor: '#3b82f6' }}
+                      />
+                      <div>
+                        <div className="title">
+                          {assessment.assessment_name || 'Untitled Assessment'}
+                        </div>
                       <div className="meta">
                         <div className="meta-item">
                           <span>🏢</span>
@@ -1288,6 +1433,7 @@ const AssessmentsListNew = () => {
                           <span>{formatDateTime(assessment.updated_at)}</span>
                         </div>
                       </div>
+                    </div>
                     </div>
                     <StatusBadge $status={status}>
                       {getStatusLabel(assessment)}
@@ -1375,6 +1521,36 @@ const AssessmentsListNew = () => {
               );
             })}
           </AssessmentsGrid>
+        )}
+
+        {/* Floating Batch Actions Toolbar */}
+        {selectedIds.size > 0 && (
+          <FloatingBatchBar
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 30 }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ fontWeight: 700, fontSize: '0.9rem', color: '#60a5fa' }}>
+                {selectedIds.size} selected
+              </span>
+              <button
+                onClick={handleSelectAll}
+                style={{ background: 'transparent', border: 'none', color: '#94a3b8', fontSize: '0.78rem', cursor: 'pointer', textDecoration: 'underline' }}
+              >
+                {selectedIds.size === filteredAssessments.length ? 'Deselect All' : 'Select All'}
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <BatchActionButton onClick={handleBatchClone}>
+                <FiCopy size={14} /> Batch Clone ({selectedIds.size})
+              </BatchActionButton>
+              <BatchActionButton $danger onClick={handleBatchDelete}>
+                <FiTrash2 size={14} /> Batch Delete ({selectedIds.size})
+              </BatchActionButton>
+            </div>
+          </FloatingBatchBar>
         )}
       </ContentContainer>
 

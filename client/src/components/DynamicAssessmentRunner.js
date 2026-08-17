@@ -759,6 +759,20 @@ const DynamicAssessmentRunner = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [savedStatus, setSavedStatus] = useState('saved');
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const [draftRestoredNotice, setDraftRestoredNotice] = useState(null);
+
+  const draftKey = `scorex_draft_${id || typeKey || 'custom'}`;
+
+  const saveLocalBackup = useCallback((data) => {
+    try {
+      localStorage.setItem(draftKey, JSON.stringify({
+        responses: data,
+        savedAt: new Date().toISOString()
+      }));
+    } catch (e) {
+      console.warn('LocalStorage backup error:', e);
+    }
+  }, [draftKey]);
 
   useEffect(() => {
     loadData();
@@ -768,12 +782,13 @@ const DynamicAssessmentRunner = () => {
     setLoading(true);
     setLoadError(null);
     try {
+      let loadedResponses = {};
       if (id) {
         const inst = await dynamicAssessmentService.getInstance(id);
         if (inst && inst.frameworkSnapshot && inst.frameworkSnapshot.dimensions) {
           setInstance(inst);
           setFramework(inst.frameworkSnapshot);
-          setResponses(inst.responses || {});
+          loadedResponses = inst.responses || {};
         } else {
           setLoadError('Assessment session was not found or has expired.');
         }
@@ -781,7 +796,6 @@ const DynamicAssessmentRunner = () => {
         const type = await dynamicAssessmentService.getAssessmentTypeByKey(typeKey);
         if (type && type.framework && type.framework.dimensions) {
           setFramework(type.framework);
-          // Auto-provision an active instance for this run session
           try {
             const user = JSON.parse(localStorage.getItem('user') || '{}');
             const newInst = await dynamicAssessmentService.createInstance({
@@ -793,6 +807,7 @@ const DynamicAssessmentRunner = () => {
             });
             if (newInst) {
               setInstance(newInst);
+              loadedResponses = newInst.responses || {};
             }
           } catch (createErr) {
             console.warn('Instance auto-provisioning deferred to submission:', createErr);
@@ -801,6 +816,25 @@ const DynamicAssessmentRunner = () => {
           setLoadError(`Assessment template "${typeKey}" was not found.`);
         }
       }
+
+      // Check for local offline draft
+      try {
+        const rawLocal = localStorage.getItem(draftKey);
+        if (rawLocal) {
+          const parsed = JSON.parse(rawLocal);
+          const localKeysCount = Object.keys(parsed.responses || {}).length;
+          const serverKeysCount = Object.keys(loadedResponses).length;
+          if (localKeysCount > serverKeysCount) {
+            setResponses(parsed.responses);
+            setDraftRestoredNotice(`✨ Restored ${localKeysCount} responses from local browser backup`);
+            return;
+          }
+        }
+      } catch (draftErr) {
+        console.warn('Local draft inspection failed:', draftErr);
+      }
+
+      setResponses(loadedResponses);
     } catch (err) {
       console.error(err);
       setLoadError(err.response?.data?.error || 'Failed to load assessment data. The session may have expired.');
@@ -821,6 +855,7 @@ const DynamicAssessmentRunner = () => {
   }, []);
 
   const performAutoSave = useCallback(async (updatedResponses) => {
+    saveLocalBackup(updatedResponses);
     if (!instance?.id) return;
     setSavedStatus('saving');
     try {
@@ -829,20 +864,21 @@ const DynamicAssessmentRunner = () => {
       });
       setSavedStatus('saved');
     } catch (err) {
-      console.warn('Autosave error:', err);
+      console.warn('Autosave buffered in local offline storage:', err);
       setSavedStatus('saved');
     }
-  }, [instance]);
+  }, [instance, saveLocalBackup]);
 
   const debouncedAutoSave = useCallback((updatedResponses) => {
     setSavedStatus('saving');
+    saveLocalBackup(updatedResponses);
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
     }
     debounceTimerRef.current = setTimeout(() => {
       performAutoSave(updatedResponses);
     }, 450);
-  }, [performAutoSave]);
+  }, [performAutoSave, saveLocalBackup]);
 
   const handleSelectCurrentState = (qId, score) => {
     const updated = {
@@ -1289,6 +1325,48 @@ const DynamicAssessmentRunner = () => {
       {/* 3. MAIN CONTENT WRAPPER */}
       <MainContentWrapper>
         <ScrollableBody>
+          {draftRestoredNotice && (
+            <div style={{
+              background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
+              border: '1px solid #93c5fd',
+              borderRadius: '12px',
+              padding: '12px 18px',
+              marginBottom: '16px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '12px',
+              color: '#1e40af',
+              fontSize: '0.85rem',
+              fontWeight: '600'
+            }}>
+              <span>{draftRestoredNotice}</span>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  onClick={() => {
+                    performAutoSave(responses);
+                    setDraftRestoredNotice(null);
+                    toast.success('Restored responses synchronized with cloud session');
+                  }}
+                  style={{ background: '#2563eb', color: '#fff', border: 'none', borderRadius: '6px', padding: '4px 10px', fontSize: '0.75rem', fontWeight: '700', cursor: 'pointer' }}
+                >
+                  Keep Restored
+                </button>
+                <button
+                  onClick={() => {
+                    localStorage.removeItem(draftKey);
+                    setDraftRestoredNotice(null);
+                    if (instance?.responses) setResponses(instance.responses);
+                    toast('Reverted to original cloud session');
+                  }}
+                  style={{ background: 'transparent', color: '#64748b', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '4px 10px', fontSize: '0.75rem', fontWeight: '600', cursor: 'pointer' }}
+                >
+                  Discard Draft
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Top Progress & Header Bar */}
           <TopHeaderBar>
             <HeaderTitleGroup>

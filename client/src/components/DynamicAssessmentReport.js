@@ -31,7 +31,9 @@ import ArchitectureComparisonDiagram from './ArchitectureComparisonDiagram';
 import MultiPersonaViews from './MultiPersonaViews';
 import BacklogExporterCard from './BacklogExporterCard';
 import IaCBlueprintCard from './IaCBlueprintCard';
+import DynamicRadarChart from './DynamicRadarChart';
 import { exportDynamicAssessmentToExcel } from '../services/excelExportService';
+import { generateDynamicPDFReport } from '../services/pdfExportService';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -620,6 +622,24 @@ const DynamicAssessmentReport = () => {
             </button>
 
             <button 
+              style={{ background: 'rgba(59, 130, 246, 0.15)', border: '1px solid rgba(59, 130, 246, 0.4)', color: '#60a5fa', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
+              onClick={() => {
+                try {
+                  const res = generateDynamicPDFReport(instance, report);
+                  if (res?.success) {
+                    toast.success('📄 Executive PDF downloaded successfully!');
+                  } else {
+                    toast.error(res?.error || 'Failed to generate PDF');
+                  }
+                } catch (e) {
+                  toast.error('Failed to generate PDF report');
+                }
+              }}
+            >
+              <FiFileText /> 📄 Executive PDF
+            </button>
+
+            <button 
               style={{ background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.4)', color: '#34d399', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
               onClick={() => {
                 try {
@@ -630,14 +650,14 @@ const DynamicAssessmentReport = () => {
                 }
               }}
             >
-              <FiDownload /> 📊 Export Excel Workbook
+              <FiDownload /> 📊 Export Excel
             </button>
 
             <button 
               style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#fff', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '600' }}
               onClick={() => window.print()}
             >
-              <FiDownload /> Export / Print Report
+              <FiDownload /> Print / Save
             </button>
           </div>
         </div>
@@ -701,6 +721,13 @@ const DynamicAssessmentReport = () => {
             </ScoreSection>
           </HeroHeader>
         </HeroCard>
+
+        {/* Multi-Axis Polar Radar & Dimensional Gap Topology */}
+        <DynamicRadarChart
+          dimensions={framework?.dimensions || []}
+          dimensionScores={scores.dimensionScores || {}}
+          responses={instance.responses || {}}
+        />
 
         {/* Quantified Financial & TCO Impact Engine */}
         <FinancialImpactCard
