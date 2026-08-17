@@ -544,3 +544,135 @@ export const exportCompletedPillarsToExcel = async (assessmentId, assessmentName
   }
 };
 
+/**
+ * Export dynamic assessment instance to formatted multi-sheet Excel workbook
+ */
+export const exportDynamicAssessmentToExcel = (instance, report) => {
+  try {
+    const workbook = XLSX.utils.book_new();
+    const framework = instance.frameworkSnapshot || {};
+    const aiReport = report?.aiReport || {};
+    const scores = report?.calculatedScores || {};
+    const customer = instance.customerName || 'Enterprise';
+    const title = framework.title || 'Dynamic Assessment';
+
+    // Sheet 1: Executive Overview
+    const overviewData = [
+      ['ScoreX Executive Assessment Overview'],
+      [''],
+      ['Field', 'Value'],
+      ['Customer / Organization', customer],
+      ['Assessment Framework', title],
+      ['Use Case / Scope', instance.useCase || 'Architecture Modernization'],
+      ['Overall Maturity Score', scores.overallScore ? `${scores.overallScore} / 5.0` : 'N/A'],
+      ['Maturity Level', scores.maturityLevel || 'Defined'],
+      ['Export Date', new Date().toLocaleString()],
+      ['AI Engine Model', report?.modelUsed || 'Gemini 3.7 Flash'],
+      [''],
+      ['Strategic Executive Narrative'],
+      ['Summary', aiReport.executiveSummary || 'N/A']
+    ];
+    const wsOverview = XLSX.utils.aoa_to_sheet(overviewData);
+    wsOverview['!cols'] = [{ wch: 30 }, { wch: 70 }];
+    XLSX.utils.book_append_sheet(workbook, wsOverview, 'Executive Overview');
+
+    // Sheet 2: Dimension Maturity Gaps
+    const dimData = [
+      ['Dimension', 'Baseline Score', 'Target Score', 'Maturity Gap', 'Risk Severity', 'Weight']
+    ];
+    (framework.dimensions || []).forEach(dim => {
+      const dScore = scores.dimensionScores?.[dim.id] || {};
+      const current = dScore.score || instance.responses?.[`${dim.id}_current`] || 2.5;
+      const target = dScore.targetScore || 4.0;
+      const gap = Number((target - current).toFixed(1));
+      const severity = gap >= 2.0 ? 'High' : (gap >= 1.0 ? 'Medium' : 'Low');
+      dimData.push([
+        dim.name,
+        current,
+        target,
+        gap,
+        severity,
+        dim.weight ? `${dim.weight * 100}%` : 'Equal'
+      ]);
+    });
+    const wsDim = XLSX.utils.aoa_to_sheet(dimData);
+    wsDim['!cols'] = [{ wch: 32 }, { wch: 16 }, { wch: 16 }, { wch: 16 }, { wch: 16 }, { wch: 12 }];
+    XLSX.utils.book_append_sheet(workbook, wsDim, 'Dimension Gaps');
+
+    // Sheet 3: Prioritized AI Recommendations
+    const recData = [
+      ['Priority', 'Recommendation Title', 'Pillar / Dimension', 'Why It Matters', 'Business Impact', 'Timeline', 'Actions']
+    ];
+    (aiReport.prioritizedRecommendations || []).forEach((rec, idx) => {
+      recData.push([
+        rec.priority || `P${idx + 1}`,
+        rec.title || 'Strategic Transformation Item',
+        rec.pillar || 'Platform',
+        rec.whyItMatters || rec.description || '',
+        rec.businessImpact || '',
+        rec.timeline || 'Phase 1',
+        Array.isArray(rec.actions) ? rec.actions.join('; ') : (rec.actions || '')
+      ]);
+    });
+    const wsRec = XLSX.utils.aoa_to_sheet(recData);
+    wsRec['!cols'] = [{ wch: 12 }, { wch: 36 }, { wch: 24 }, { wch: 40 }, { wch: 30 }, { wch: 16 }, { wch: 50 }];
+    XLSX.utils.book_append_sheet(workbook, wsRec, 'AI Recommendations');
+
+    // Sheet 4: Transformation Roadmap
+    const roadmapData = [
+      ['Phase', 'Phase Name', 'Timeline', 'Key Milestones / Deliverables']
+    ];
+    (aiReport.transformationRoadmap || []).forEach((phase, idx) => {
+      roadmapData.push([
+        `Phase ${idx + 1}`,
+        phase.phaseName || phase.name || `Horizon ${idx + 1}`,
+        phase.timeline || `${idx * 3 + 1}-${idx * 3 + 3} Months`,
+        Array.isArray(phase.milestones) ? phase.milestones.join('; ') : (phase.milestones || '')
+      ]);
+    });
+    const wsRoadmap = XLSX.utils.aoa_to_sheet(roadmapData);
+    wsRoadmap['!cols'] = [{ wch: 14 }, { wch: 30 }, { wch: 20 }, { wch: 60 }];
+    XLSX.utils.book_append_sheet(workbook, wsRoadmap, 'Transformation Roadmap');
+
+    // Sheet 5: Raw Question Responses & Operational Notes
+    const qData = [
+      ['Dimension', 'Question Prompt', 'Baseline Level', 'Target Level', 'Technical Pain Points', 'Business Pain Points', 'Architect Notes']
+    ];
+    (framework.dimensions || []).forEach(dim => {
+      (dim.questions || []).forEach(q => {
+        const curScore = instance.responses?.[q.id] || instance.responses?.[`${q.id}_current_state`] || 'N/A';
+        const futScore = instance.responses?.[`${q.id}_future_state`] || 'N/A';
+        const tp = Array.isArray(instance.responses?.[`${q.id}_technical_pain`]) 
+          ? instance.responses[`${q.id}_technical_pain`].join('; ') 
+          : '';
+        const bp = Array.isArray(instance.responses?.[`${q.id}_business_pain`]) 
+          ? instance.responses[`${q.id}_business_pain`].join('; ') 
+          : '';
+        const notes = instance.responses?.[`${q.id}_comment`] || '';
+
+        qData.push([
+          dim.name,
+          q.prompt || q.title || '',
+          curScore,
+          futScore,
+          tp,
+          bp,
+          notes
+        ]);
+      });
+    });
+    const wsQ = XLSX.utils.aoa_to_sheet(qData);
+    wsQ['!cols'] = [{ wch: 24 }, { wch: 45 }, { wch: 16 }, { wch: 16 }, { wch: 35 }, { wch: 35 }, { wch: 40 }];
+    XLSX.utils.book_append_sheet(workbook, wsQ, 'Detailed Responses');
+
+    // Generate file name & write
+    const timestamp = new Date().toISOString().split('T')[0];
+    const fileName = `${customer.replace(/[^a-z0-9]/gi, '_')}_${title.replace(/[^a-z0-9]/gi, '_')}_${timestamp}.xlsx`;
+    XLSX.writeFile(workbook, fileName);
+    return { success: true, fileName };
+  } catch (err) {
+    console.error('[Excel Export] Error generating dynamic workbook:', err);
+    throw err;
+  }
+};
+

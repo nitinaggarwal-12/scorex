@@ -1842,6 +1842,10 @@ class CustomAssessmentRepository {
       let query = 'SELECT * FROM dynamic_assessments WHERE 1=1';
       const params = [];
 
+      if (filters.search) {
+        params.push(`%${filters.search}%`);
+        query += ` AND (customer_name ILIKE $${params.length} OR use_case ILIKE $${params.length} OR type_key ILIKE $${params.length})`;
+      }
       if (filters.customerName) {
         params.push(`%${filters.customerName}%`);
         query += ` AND customer_name ILIKE $${params.length}`;
@@ -1850,17 +1854,66 @@ class CustomAssessmentRepository {
         params.push(filters.typeKey);
         query += ` AND type_key = $${params.length}`;
       }
+      if (filters.status && filters.status !== 'all') {
+        params.push(filters.status);
+        query += ` AND status = $${params.length}`;
+      }
       query += ' ORDER BY created_at DESC';
 
       const result = await db.query(query, params);
       let items = result.rows.map(r => this.mapRowToInstance(r));
       if (items.length === 0) {
         items = Object.values(instancesFileStore.getAll() || {});
+        if (filters.search) {
+          const s = filters.search.toLowerCase();
+          items = items.filter(i => 
+            (i.customerName || '').toLowerCase().includes(s) ||
+            (i.useCase || '').toLowerCase().includes(s) ||
+            (i.typeKey || '').toLowerCase().includes(s) ||
+            (i.frameworkSnapshot?.title || '').toLowerCase().includes(s)
+          );
+        }
+        if (filters.customerName) {
+          const needle = filters.customerName.toLowerCase();
+          items = items.filter(i => (i.customerName || '').toLowerCase().includes(needle));
+        }
+        if (filters.typeKey) {
+          items = items.filter(i => i.typeKey === filters.typeKey);
+        }
+        if (filters.status && filters.status !== 'all') {
+          items = items.filter(i => i.status === filters.status);
+        }
+        items.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
       }
+
+      const total = items.length;
+      const limit = filters.limit ? Math.min(Math.max(1, filters.limit), 200) : undefined;
+      const offset = filters.offset ? Math.max(0, filters.offset) : 0;
+
+      if (limit !== undefined) {
+        const paginatedItems = items.slice(offset, offset + limit);
+        return {
+          items: paginatedItems,
+          total,
+          limit,
+          offset,
+          hasMore: offset + limit < total
+        };
+      }
+
       return items;
     } catch (error) {
       console.warn('PostgreSQL getAllInstances fallback to file store:', error.message);
       let all = Object.values(instancesFileStore.getAll() || {});
+      if (filters.search) {
+        const s = filters.search.toLowerCase();
+        all = all.filter(i => 
+          (i.customerName || '').toLowerCase().includes(s) ||
+          (i.useCase || '').toLowerCase().includes(s) ||
+          (i.typeKey || '').toLowerCase().includes(s) ||
+          (i.frameworkSnapshot?.title || '').toLowerCase().includes(s)
+        );
+      }
       if (filters.customerName) {
         const needle = filters.customerName.toLowerCase();
         all = all.filter(i => (i.customerName || '').toLowerCase().includes(needle));
@@ -1868,6 +1921,25 @@ class CustomAssessmentRepository {
       if (filters.typeKey) {
         all = all.filter(i => i.typeKey === filters.typeKey);
       }
+      if (filters.status && filters.status !== 'all') {
+        all = all.filter(i => i.status === filters.status);
+      }
+      all.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+
+      const total = all.length;
+      const limit = filters.limit ? Math.min(Math.max(1, filters.limit), 200) : undefined;
+      const offset = filters.offset ? Math.max(0, filters.offset) : 0;
+
+      if (limit !== undefined) {
+        return {
+          items: all.slice(offset, offset + limit),
+          total,
+          limit,
+          offset,
+          hasMore: offset + limit < total
+        };
+      }
+
       return all;
     }
   }
@@ -1925,6 +1997,7 @@ class CustomAssessmentRepository {
       maturityLevel: row.maturity_level,
       status: row.status,
       aiReport: typeof row.ai_report === 'string' ? JSON.parse(row.ai_report) : (row.ai_report || null),
+      version: row.version ? parseInt(row.version, 10) : 1,
       createdBy: row.created_by,
       createdAt: row.created_at,
       updatedAt: row.updated_at,

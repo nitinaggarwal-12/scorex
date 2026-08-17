@@ -400,15 +400,35 @@ router.post('/instances', async (req, res) => {
 
 router.get('/instances', async (req, res) => {
   try {
-    const { customerName, typeKey, useCase } = req.query;
-    const instances = await customAssessmentRepo.getAllInstances({
+    const { customerName, typeKey, useCase, search, status, limit, offset, page } = req.query;
+    const parsedLimit = limit ? parseInt(limit, 10) : undefined;
+    const parsedOffset = offset ? parseInt(offset, 10) : (page && parsedLimit ? (parseInt(page, 10) - 1) * parsedLimit : 0);
+
+    const result = await customAssessmentRepo.getAllInstances({
       customerName,
       typeKey,
-      useCase
+      useCase,
+      search,
+      status,
+      limit: parsedLimit,
+      offset: parsedOffset
     });
+
+    if (Array.isArray(result)) {
+      return res.json({
+        success: true,
+        instances: result,
+        total: result.length
+      });
+    }
+
     res.json({
       success: true,
-      instances
+      instances: result.items || [],
+      total: result.total,
+      limit: result.limit,
+      offset: result.offset,
+      hasMore: result.hasMore
     });
   } catch (error) {
     console.error('Error fetching assessment instances:', error);
@@ -436,16 +456,28 @@ router.get('/instances/:id', async (req, res) => {
 router.put('/instances/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { responses, status, customerName, useCase, contactEmail } = req.body;
+    const { responses, status, customerName, useCase, contactEmail, expectedVersion } = req.body;
 
     const current = await customAssessmentRepo.getInstanceById(id);
     if (!current) {
       return res.status(404).json({ success: false, error: 'Assessment instance not found' });
     }
 
+    // Optimistic Concurrency Control
+    if (expectedVersion !== undefined && current.version !== undefined && current.version !== expectedVersion) {
+      return res.status(409).json({
+        success: false,
+        conflict: true,
+        message: 'Concurrent edit detected. Another architect or tab has updated this assessment.',
+        currentVersion: current.version,
+        serverInstance: current
+      });
+    }
+
     const updatedResponses = responses !== undefined ? responses : current.responses;
     const framework = current.frameworkSnapshot;
     const calculated = dynamicEngine.calculateScores(updatedResponses, framework);
+    const nextVersion = (current.version || 1) + 1;
 
     const updated = await customAssessmentRepo.updateInstance(id, {
       responses: updatedResponses,
@@ -456,13 +488,15 @@ router.put('/instances/:id', async (req, res) => {
       status: status || current.status,
       customerName: customerName || current.customerName,
       useCase: useCase !== undefined ? useCase : current.useCase,
-      contactEmail: contactEmail !== undefined ? contactEmail : current.contactEmail
+      contactEmail: contactEmail !== undefined ? contactEmail : current.contactEmail,
+      version: nextVersion
     });
 
     res.json({
       success: true,
       instance: updated,
-      scores: calculated
+      scores: calculated,
+      version: nextVersion
     });
   } catch (error) {
     console.error('Error updating assessment instance:', error);

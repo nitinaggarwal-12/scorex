@@ -972,9 +972,26 @@ const GlobalNav = () => {
                           navigate(`/assessments/run/${type.typeKey}`);
                           setAssessmentsDropdownOpen(false);
                         }}
+                        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                       >
-                        <FiAward style={{ color: type.color || '#818cf8' }} />
-                        {type.title}
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
+                          <FiAward style={{ color: type.color || '#818cf8', flexShrink: 0 }} />
+                          {type.title}
+                        </span>
+                        {type.badge && (
+                          <span style={{
+                            fontSize: '0.68rem',
+                            fontWeight: 700,
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            background: type.color ? `${type.color}20` : 'rgba(99, 102, 241, 0.15)',
+                            color: type.color || '#818cf8',
+                            border: `1px solid ${type.color ? `${type.color}40` : 'rgba(99, 102, 241, 0.3)'}`,
+                            whiteSpace: 'nowrap'
+                          }}>
+                            {type.badge}
+                          </span>
+                        )}
                       </DropdownItem>
                     ))}
 
@@ -1301,9 +1318,26 @@ const GlobalNav = () => {
                           navigate(`/assessments/run/${type.typeKey}`);
                           setAssessmentsDropdownOpen(false);
                         }}
+                        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                       >
-                        <FiAward style={{ color: type.color || '#818cf8' }} />
-                        {type.title}
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
+                          <FiAward style={{ color: type.color || '#818cf8', flexShrink: 0 }} />
+                          {type.title}
+                        </span>
+                        {type.badge && (
+                          <span style={{
+                            fontSize: '0.68rem',
+                            fontWeight: 700,
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            background: type.color ? `${type.color}20` : 'rgba(99, 102, 241, 0.15)',
+                            color: type.color || '#818cf8',
+                            border: `1px solid ${type.color ? `${type.color}40` : 'rgba(99, 102, 241, 0.3)'}`,
+                            whiteSpace: 'nowrap'
+                          }}>
+                            {type.badge}
+                          </span>
+                        )}
                       </DropdownItem>
                     ))}
 

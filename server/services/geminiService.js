@@ -46,9 +46,9 @@ class GeminiService {
   }
 
   /**
-   * Internal helper to generate content with automatic model fallback
+   * Internal helper to generate content with automatic exponential backoff retry and model fallback
    */
-  async _generateWithFallback(prompt, systemInstruction = '', temperature = 0.7, responseMimeType = null) {
+  async _generateWithFallback(prompt, systemInstruction = '', temperature = 0.7, responseMimeType = null, maxRetries = 2) {
     if (!this.isAvailable()) {
       throw new Error('Gemini API key is not configured. Please set GEMINI_API_KEY in your environment variables (or in your Railway project under Variables).');
     }
@@ -57,33 +57,46 @@ class GeminiService {
     let lastError = null;
 
     for (const model of modelsToTry) {
-      try {
-        const config = {
-          temperature
-        };
-        if (systemInstruction) {
-          config.systemInstruction = systemInstruction;
-        }
-        if (responseMimeType) {
-          config.responseMimeType = responseMimeType;
-        }
-
-        const response = await this.client.models.generateContent({
-          model,
-          contents: prompt,
-          config
-        });
-
-        if (response && response.text) {
-          return {
-            text: response.text,
-            modelUsed: model
+      for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+          const config = {
+            temperature
           };
+          if (systemInstruction) {
+            config.systemInstruction = systemInstruction;
+          }
+          if (responseMimeType) {
+            config.responseMimeType = responseMimeType;
+          }
+
+          const response = await this.client.models.generateContent({
+            model,
+            contents: prompt,
+            config
+          });
+
+          if (response && response.text) {
+            return {
+              text: response.text,
+              modelUsed: model
+            };
+          }
+        } catch (err) {
+          lastError = err;
+          const isRateLimit = err.message?.includes('429') || 
+                              err.message?.includes('RESOURCE_EXHAUSTED') || 
+                              err.message?.includes('503') ||
+                              err.message?.includes('Quota');
+
+          if (isRateLimit && attempt < maxRetries) {
+            const backoffMs = Math.pow(2, attempt) * 1000 + Math.random() * 500;
+            console.warn(`⏳ Rate limit hit on ${model}, retrying in ${Math.round(backoffMs)}ms (attempt ${attempt + 1}/${maxRetries})...`);
+            await new Promise(r => setTimeout(r, backoffMs));
+            continue;
+          }
+          console.warn(`⚠️ Gemini call failed for model ${model} (attempt ${attempt + 1}):`, err.message);
+          break; // Try next fallback model
         }
-      } catch (err) {
-        console.warn(`⚠️ Gemini call failed for model ${model}:`, err.message);
-        lastError = err;
-        // Continue loop to try fallback model
       }
     }
 

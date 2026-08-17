@@ -31,6 +31,7 @@ import ArchitectureComparisonDiagram from './ArchitectureComparisonDiagram';
 import MultiPersonaViews from './MultiPersonaViews';
 import BacklogExporterCard from './BacklogExporterCard';
 import IaCBlueprintCard from './IaCBlueprintCard';
+import { exportDynamicAssessmentToExcel } from '../services/excelExportService';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -616,6 +617,20 @@ const DynamicAssessmentReport = () => {
               onClick={() => setShowSimulator(!showSimulator)}
             >
               <FiSliders /> {showSimulator ? 'Hide What-If Simulator' : '🎛️ What-If Scenario Simulator'}
+            </button>
+
+            <button 
+              style={{ background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.4)', color: '#34d399', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
+              onClick={() => {
+                try {
+                  exportDynamicAssessmentToExcel(instance, report);
+                  toast.success('📊 Multi-sheet Excel workbook exported successfully!');
+                } catch (e) {
+                  toast.error('Failed to export Excel workbook');
+                }
+              }}
+            >
+              <FiDownload /> 📊 Export Excel Workbook
             </button>
 
             <button 

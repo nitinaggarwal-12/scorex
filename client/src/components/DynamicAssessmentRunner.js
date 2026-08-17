@@ -328,13 +328,13 @@ const DimensionIconCircle = styled.div`
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+  background: ${props => props.$color ? `linear-gradient(135deg, ${props.$color} 0%, #4f46e5 100%)` : 'linear-gradient(135deg, #ff6b35 0%, #f7931e 100%)'};
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.3rem;
-  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+  box-shadow: ${props => props.$color ? `0 4px 12px ${props.$color}40` : '0 4px 12px rgba(255, 107, 53, 0.3)'};
   flex-shrink: 0;
 
   @media (max-width: 640px) {
@@ -1292,7 +1292,7 @@ const DynamicAssessmentRunner = () => {
           {/* Top Progress & Header Bar */}
           <TopHeaderBar>
             <HeaderTitleGroup>
-              <DimensionIconCircle>
+              <DimensionIconCircle $color={framework?.color}>
                 <FiAward />
               </DimensionIconCircle>
               <div>
