@@ -81,17 +81,37 @@ export default function DiagramViewer({
       font-size: 11px;
       margin-left: 6px;
     }
-    #canvas-wrap {
+    .canvas-container {
       position: absolute;
       top: 48px;
       bottom: 0;
       left: 0;
       right: 0;
+      padding: 16px;
+      box-sizing: border-box;
       overflow: auto;
+    }
+    .mxgraph {
+      width: 100%;
+      min-height: 100%;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
-      padding: 15px;
+    }
+    .mxgraph > svg, .mxgraph > div {
+      max-width: 100% !important;
+      margin: 0 auto !important;
+    }
+    .geEditor {
+      background-color: transparent !important;
+    }
+    @keyframes flowPulse {
+      0% { stroke-dashoffset: 40; }
+      100% { stroke-dashoffset: 0; }
+    }
+    svg path[stroke-dasharray] {
+      animation: flowPulse 1.1s linear infinite !important;
+      stroke-width: 2.5px !important;
     }
   </style>
 </head>
@@ -103,17 +123,48 @@ export default function DiagramViewer({
       ${subtitle ? `<span class="diagram-sub">(${subtitle})</span>` : ''}
     </div>
     <div style="font-size: 11px; color: #64748b; font-weight: 600;">
-      🔍 Interactive Draw.io Viewer
+      🔍 Interactive Draw.io Viewport
     </div>
   </div>
 
-  <div id="canvas-wrap">
-    <div id="diagram-container" class="mxgraph" style="max-width: 100%; border:none;"></div>
+  <div class="canvas-container">
+    <div class="mxgraph" id="diagram-container"></div>
   </div>
 
-  <script>
+  <script type="text/javascript">
+    // Safe Latin1 & UTF-8 btoa / atob wrappers
+    if (typeof window.btoa === 'function') {
+      const _origBtoa = window.btoa.bind(window);
+      window.btoa = function(str) {
+        try {
+          return _origBtoa(str);
+        } catch (e) {
+          try {
+            return _origBtoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+              return String.fromCharCode(parseInt(p1, 16));
+            }));
+          } catch (e2) {
+            return _origBtoa(unescape(encodeURIComponent(str)));
+          }
+        }
+      };
+    }
+
+    function getCleanGraphXml(xmlStr) {
+      if (!xmlStr) return '';
+      var sIdx = xmlStr.indexOf('<mxGraphModel');
+      var eIdx = xmlStr.lastIndexOf('</mxGraphModel>');
+      if (sIdx !== -1 && eIdx !== -1) {
+        return xmlStr.substring(sIdx, eIdx + 15);
+      }
+      return xmlStr;
+    }
+
+    const rawXml = ${JSON.stringify(xml || '')};
+    const cleanXml = getCleanGraphXml(rawXml);
+
     const configObj = {
-      xml: ${JSON.stringify(xml || '')},
+      xml: cleanXml,
       lightbox: false,
       nav: true,
       resize: true,
@@ -121,7 +172,7 @@ export default function DiagramViewer({
       border: 12,
       transparent: true,
       fit: true,
-      'max-scale': 1.6
+      'max-scale': 2.0
     };
 
     const container = document.getElementById('diagram-container');
