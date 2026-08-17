@@ -885,38 +885,97 @@ const DynamicAssessmentRunner = () => {
   const handleAutoPrefillAll = async () => {
     if (!framework || !framework.dimensions) return;
 
+    // 4 Diverse Enterprise Archetype Profiles for realistic, varied prefilling
+    const enterpriseProfiles = [
+      {
+        name: 'Legacy Modernization Journey',
+        baseMin: 1,
+        baseMax: 3,
+        targetOffset: 2,
+        painPointIntensity: 2
+      },
+      {
+        name: 'Active Cloud Transformation',
+        baseMin: 2,
+        baseMax: 4,
+        targetOffset: 2,
+        painPointIntensity: 1
+      },
+      {
+        name: 'Security & Governance Priority',
+        baseMin: 2,
+        baseMax: 4,
+        targetOffset: 1,
+        painPointIntensity: 2
+      },
+      {
+        name: 'Scaling Optimization & AI Mesh',
+        baseMin: 3,
+        baseMax: 5,
+        targetOffset: 1,
+        painPointIntensity: 1
+      }
+    ];
+
+    // Pick a randomized profile each time prefill is clicked
+    const profile = enterpriseProfiles[Math.floor(Math.random() * enterpriseProfiles.length)];
+    const seed = Date.now();
+
     const sampleComments = [
-      'Current workflow has significant manual interventions; planned modernization approved for next quarter.',
-      'Team is currently evaluating managed cloud solutions to reduce operational overhead and simplify tooling.',
-      'Identified architectural bottleneck during recent quarterly peak load and compliance evaluation.',
-      'Security and compliance standards require automated policy enforcement, audit telemetry, and VPC controls.',
-      'Active cross-functional initiative underway to unify metadata, governance, and CI/CD deployment pipelines.'
+      'Current setup relies on manual pipelines and partial scripting with high operational overhead.',
+      'Architecture modernization initiative approved by leadership for current fiscal year.',
+      'Team is evaluating Google Cloud Vertex AI & Gemini Enterprise for prompt caching and long-context reasoning.',
+      'Security and compliance standards require automated VPC Service Controls and Customer-Managed Encryption Keys (CMEK).',
+      'Active cross-functional initiative underway to unify metadata, governance, and CI/CD deployment pipelines.',
+      'FinOps team flagged unpredictable monthly spend; implementing BigQuery Editions slot reservations.',
+      'Production workload undergoing active migration; focusing on real-time CDC and sub-second query latency.',
+      'CISO signed off on Zero-Trust AI Gateway architecture to unblock enterprise-wide production rollout.'
     ];
 
     const prefilled = { ...responses };
 
     framework.dimensions.forEach((dim, dIdx) => {
+      // Natural dimension variance based on seed
+      const dimVariance = ((seed + dIdx * 7) % 3) - 1; // -1, 0, or 1
+
       (dim.questions || []).forEach((q, qIdx) => {
-        const score = ((dIdx + qIdx) % 3) + 2; // Realistically distribute 2 to 4
-        const futureScore = Math.min(5, score + 2); // Future target 4 to 5
+        // Compute logically consistent score tailored to the chosen profile
+        const range = Math.max(1, profile.baseMax - profile.baseMin + 1);
+        const rawScore = profile.baseMin + Math.abs((seed + dIdx * 11 + qIdx * 13) % range) + dimVariance;
+        const score = Math.max(1, Math.min(5, rawScore));
+        const futureScore = Math.min(5, Math.max(score + 1, score + profile.targetOffset));
 
         prefilled[q.id] = score;
         prefilled[`${q.id}_current_state`] = score;
         prefilled[`${q.id}_future_state`] = futureScore;
 
+        // Select 1 to 2 distinct pain points dynamically
         if (q.technicalPainPoints && q.technicalPainPoints.length > 0) {
-          prefilled[`${q.id}_technical_pain`] = [q.technicalPainPoints[qIdx % q.technicalPainPoints.length]];
-          prefilled[`${q.id}_pain_points`] = prefilled[`${q.id}_technical_pain`];
+          const tpIdx = (seed + qIdx + dIdx) % q.technicalPainPoints.length;
+          const selectedTP = [q.technicalPainPoints[tpIdx]];
+          if (profile.painPointIntensity > 1 && q.technicalPainPoints.length > 1) {
+            selectedTP.push(q.technicalPainPoints[(tpIdx + 1) % q.technicalPainPoints.length]);
+          }
+          prefilled[`${q.id}_technical_pain`] = selectedTP;
+          prefilled[`${q.id}_pain_points`] = selectedTP;
         }
+
         if (q.businessPainPoints && q.businessPainPoints.length > 0) {
-          prefilled[`${q.id}_business_pain`] = [q.businessPainPoints[qIdx % q.businessPainPoints.length]];
+          const bpIdx = (seed + qIdx * 2 + dIdx) % q.businessPainPoints.length;
+          const selectedBP = [q.businessPainPoints[bpIdx]];
+          if (profile.painPointIntensity > 1 && q.businessPainPoints.length > 1) {
+            selectedBP.push(q.businessPainPoints[(bpIdx + 1) % q.businessPainPoints.length]);
+          }
+          prefilled[`${q.id}_business_pain`] = selectedBP;
         }
-        prefilled[`${q.id}_comment`] = sampleComments[(dIdx + qIdx) % sampleComments.length];
+
+        const commentIdx = (seed + dIdx * 3 + qIdx) % sampleComments.length;
+        prefilled[`${q.id}_comment`] = sampleComments[commentIdx];
       });
     });
 
     setResponses(prefilled);
-    toast.success('✨ All questions prefilled with realistic enterprise responses & pain points!');
+    toast.success(`✨ Prefilled with realistic '${profile.name}' enterprise responses & pain points!`);
 
     if (instance?.id) {
       await dynamicAssessmentService.updateInstance(instance.id, {
