@@ -8,8 +8,34 @@ const dynamicEngine = require('../services/dynamicAssessmentEngine');
  * Powered by Google Gemini (gemini-3.7-flash)
  */
 
+// In-Memory Sliding-Window Rate Limiter for Gemini AI Endpoints
+const aiRateLimitStore = new Map(); // ip -> Array of timestamps
+
+const aiRateLimiter = (maxRequests = 15, windowMs = 60000) => {
+  return (req, res, next) => {
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown-ip';
+    const now = Date.now();
+    const timestamps = (aiRateLimitStore.get(ip) || []).filter(ts => now - ts < windowMs);
+
+    if (timestamps.length >= maxRequests) {
+      const oldest = timestamps[0];
+      const retryAfterSec = Math.ceil((windowMs - (now - oldest)) / 1000);
+      res.setHeader('Retry-After', retryAfterSec);
+      return res.status(429).json({
+        success: false,
+        error: `AI generation rate limit exceeded. Please retry in ${retryAfterSec} second(s).`,
+        retryAfter: retryAfterSec
+      });
+    }
+
+    timestamps.push(now);
+    aiRateLimitStore.set(ip, timestamps);
+    next();
+  };
+};
+
 // 1. AI-generate assessment framework from natural language prompt and AUTO-PERSIST as template
-router.post('/generate-framework', async (req, res) => {
+router.post('/generate-framework', aiRateLimiter(15, 60000), async (req, res) => {
   try {
     const { prompt, industry, targetAudience, focusAreas, tier } = req.body;
     if (!prompt || typeof prompt !== 'string' || !prompt.trim()) {
@@ -615,7 +641,7 @@ router.post('/instances/:id/clone', async (req, res) => {
 });
 
 // 6. Executive AI Report Generation
-router.post('/instances/:id/generate-report', async (req, res) => {
+router.post('/instances/:id/generate-report', aiRateLimiter(15, 60000), async (req, res) => {
   try {
     const { id } = req.params;
     const instance = await customAssessmentRepo.getInstanceById(id);
@@ -660,7 +686,7 @@ router.post('/instances/:id/generate-report', async (req, res) => {
 });
 
 // 7. Bespoke Architecture Diagrams Generation via Gemini 3.7 Flash
-router.post('/instances/:id/generate-diagrams', async (req, res) => {
+router.post('/instances/:id/generate-diagrams', aiRateLimiter(15, 60000), async (req, res) => {
   try {
     const { id } = req.params;
     const { customInstructions } = req.body;

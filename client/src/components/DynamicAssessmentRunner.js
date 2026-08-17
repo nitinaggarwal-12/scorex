@@ -18,7 +18,12 @@ import {
   FiLayers,
   FiMenu,
   FiX,
-  FiZap
+  FiZap,
+  FiSearch,
+  FiLink,
+  FiPlus,
+  FiExternalLink,
+  FiTrash2
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
@@ -760,6 +765,10 @@ const DynamicAssessmentRunner = () => {
   const [savedStatus, setSavedStatus] = useState('saved');
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [draftRestoredNotice, setDraftRestoredNotice] = useState(null);
+  const [navSearchQuery, setNavSearchQuery] = useState('');
+  const [showAddEvidence, setShowAddEvidence] = useState(false);
+  const [evidenceUrl, setEvidenceUrl] = useState('');
+  const [evidenceLabel, setEvidenceLabel] = useState('');
 
   const draftKey = `scorex_draft_${id || typeKey || 'custom'}`;
 
@@ -939,6 +948,40 @@ const DynamicAssessmentRunner = () => {
     debouncedAutoSave(updated);
   };
 
+  const handleAddEvidenceLink = (qId) => {
+    if (!evidenceUrl.trim()) return;
+    const key = `${qId}_evidence_links`;
+    const current = responses[key] || [];
+    const newEntry = {
+      url: evidenceUrl.trim().startsWith('http') ? evidenceUrl.trim() : `https://${evidenceUrl.trim()}`,
+      label: evidenceLabel.trim() || evidenceUrl.trim(),
+      addedAt: new Date().toISOString()
+    };
+    const updatedList = [...current, newEntry];
+    const updated = {
+      ...responses,
+      [key]: updatedList
+    };
+    setResponses(updated);
+    performAutoSave(updated);
+    setEvidenceUrl('');
+    setEvidenceLabel('');
+    setShowAddEvidence(false);
+    toast.success('Architecture evidence link attached');
+  };
+
+  const handleRemoveEvidenceLink = (qId, linkIdx) => {
+    const key = `${qId}_evidence_links`;
+    const current = responses[key] || [];
+    const updatedList = current.filter((_, idx) => idx !== linkIdx);
+    const updated = {
+      ...responses,
+      [key]: updatedList
+    };
+    setResponses(updated);
+    performAutoSave(updated);
+  };
+
   const handleAutoPrefillAll = async () => {
     if (!framework || !framework.dimensions) return;
 
@@ -1097,6 +1140,8 @@ const DynamicAssessmentRunner = () => {
 
   const totalQuestions = dimensions.reduce((sum, d) => sum + (d.questions?.length || 0), 0);
   const totalAnswered = Object.keys(responses).filter(k => !k.includes('_')).length;
+  const unansweredCount = Math.max(0, totalQuestions - totalAnswered);
+  const estimatedMinutesRemaining = Math.max(1, Math.round(unansweredCount * 1.2));
 
   const isCurrentQAnswered = (qId) => responses[qId] !== undefined;
 
@@ -1121,6 +1166,18 @@ const DynamicAssessmentRunner = () => {
 
   const isLastQuestion = activeDimIdx === dimensions.length - 1 && activeQIdx === questions.length - 1;
 
+  const filteredDimensions = dimensions.map((dim, dIdx) => {
+    const dimQuestions = dim.questions || [];
+    if (!navSearchQuery.trim()) return { dim, dIdx, questions: dimQuestions };
+    const query = navSearchQuery.toLowerCase();
+    const dimMatches = dim.name.toLowerCase().includes(query) || (dim.description || '').toLowerCase().includes(query);
+    const matchingQuestions = dimQuestions.filter(q => q.text.toLowerCase().includes(query) || (q.guidance || '').toLowerCase().includes(query));
+    if (dimMatches || matchingQuestions.length > 0) {
+      return { dim, dIdx, questions: matchingQuestions.length > 0 ? matchingQuestions : dimQuestions };
+    }
+    return null;
+  }).filter(Boolean);
+
   const renderNavContent = () => (
     <>
       <SidebarHeader>
@@ -1137,11 +1194,46 @@ const DynamicAssessmentRunner = () => {
         </OrgMeta>
       </SidebarHeader>
 
+      <div style={{ padding: '0 16px 12px' }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          background: '#f1f5f9',
+          borderRadius: '8px',
+          padding: '6px 10px',
+          border: '1px solid #cbd5e1'
+        }}>
+          <FiSearch size={14} color="#64748b" />
+          <input
+            type="text"
+            placeholder="Filter questions..."
+            value={navSearchQuery}
+            onChange={(e) => setNavSearchQuery(e.target.value)}
+            style={{
+              border: 'none',
+              background: 'transparent',
+              fontSize: '0.8rem',
+              outline: 'none',
+              width: '100%',
+              color: '#1e293b'
+            }}
+          />
+          {navSearchQuery && (
+            <button
+              onClick={() => setNavSearchQuery('')}
+              style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: '#94a3b8', padding: 0 }}
+            >
+              <FiX size={12} />
+            </button>
+          )}
+        </div>
+      </div>
+
       <SidebarNavList>
-        {dimensions.map((dim, dIdx) => {
-          const dimQuestions = dim.questions || [];
-          const dimAnswered = dimQuestions.filter(q => responses[q.id] !== undefined).length;
-          const isCompleted = dimAnswered === dimQuestions.length && dimQuestions.length > 0;
+        {filteredDimensions.map(({ dim, dIdx, questions: dimQuestions }) => {
+          const dimAnswered = (dim.questions || []).filter(q => responses[q.id] !== undefined).length;
+          const isCompleted = dimAnswered === (dim.questions || []).length && (dim.questions || []).length > 0;
           const isDimActive = dIdx === activeDimIdx;
 
           return (
@@ -1153,7 +1245,7 @@ const DynamicAssessmentRunner = () => {
               }}>
                 <DimNavLeft>
                   <StatusDot $completed={isCompleted}>
-                    {isCompleted ? '✓' : `${dimAnswered}/${dimQuestions.length}`}
+                    {isCompleted ? '✓' : `${dimAnswered}/${(dim.questions || []).length}`}
                   </StatusDot>
                   <DimNavName $active={isDimActive}>{dim.name}</DimNavName>
                 </DimNavLeft>
@@ -1163,7 +1255,9 @@ const DynamicAssessmentRunner = () => {
               {isDimActive && (
                 <QuestionsSubList>
                   {dimQuestions.map((q, qSubIdx) => {
-                    const isQActive = qSubIdx === activeQIdx;
+                    const originalIdx = (dim.questions || []).findIndex(origQ => origQ.id === q.id);
+                    const actualIdx = originalIdx >= 0 ? originalIdx : qSubIdx;
+                    const isQActive = actualIdx === activeQIdx;
                     const isQAnswered = responses[q.id] !== undefined;
 
                     return (
@@ -1171,14 +1265,14 @@ const DynamicAssessmentRunner = () => {
                         key={q.id || qSubIdx}
                         $active={isQActive}
                         onClick={() => {
-                          setActiveQIdx(qSubIdx);
+                          setActiveQIdx(actualIdx);
                           setIsMobileDrawerOpen(false);
                         }}
                       >
                         <span style={{ color: isQAnswered ? '#10b981' : '#94a3b8' }}>
                           {isQAnswered ? '●' : '○'}
                         </span>
-                        <span>Q{qSubIdx + 1}: {q.text.substring(0, 24)}...</span>
+                        <span>Q{actualIdx + 1}: {q.text.substring(0, 24)}...</span>
                       </QuestionSubItem>
                     );
                   })}
@@ -1416,6 +1510,22 @@ const DynamicAssessmentRunner = () => {
                 }}>
                   Overall: {totalAnswered}/{totalQuestions} Total ({Math.round((totalAnswered / Math.max(1, totalQuestions)) * 100)}%)
                 </div>
+
+                <div style={{
+                  background: '#fef3c7',
+                  border: '1px solid #fde68a',
+                  borderRadius: '8px',
+                  padding: '5px 12px',
+                  fontSize: '0.8rem',
+                  fontWeight: '700',
+                  color: '#b45309',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}>
+                  <FiClock size={13} />
+                  <span>{unansweredCount === 0 ? '✨ Complete!' : `~${estimatedMinutesRemaining} mins left`}</span>
+                </div>
               </div>
 
               <QuestionNumberScrollWrap>
@@ -1602,6 +1712,82 @@ const DynamicAssessmentRunner = () => {
                     value={responses[`${currentQ.id}_comment`] || ''}
                     onChange={(e) => handleNotesChange(currentQ.id, e.target.value)}
                   />
+
+                  {/* Architecture Evidence & Artifact Links */}
+                  <div style={{ marginTop: '12px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                      <span style={{ fontSize: '0.75rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        Evidence Links
+                      </span>
+                      <button
+                        onClick={() => setShowAddEvidence(!showAddEvidence)}
+                        style={{ background: 'transparent', border: 'none', color: '#2563eb', fontSize: '0.75rem', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '3px' }}
+                      >
+                        <FiPlus size={12} /> {showAddEvidence ? 'Cancel' : 'Add Link'}
+                      </button>
+                    </div>
+
+                    {showAddEvidence && (
+                      <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '8px', marginBottom: '8px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <input
+                          type="text"
+                          placeholder="Label (e.g. GitHub RFC, Confluence)"
+                          value={evidenceLabel}
+                          onChange={(e) => setEvidenceLabel(e.target.value)}
+                          style={{ fontSize: '0.75rem', padding: '4px 8px', borderRadius: '4px', border: '1px solid #cbd5e1' }}
+                        />
+                        <div style={{ display: 'flex', gap: '4px' }}>
+                          <input
+                            type="text"
+                            placeholder="URL (https://...)"
+                            value={evidenceUrl}
+                            onChange={(e) => setEvidenceUrl(e.target.value)}
+                            style={{ fontSize: '0.75rem', padding: '4px 8px', borderRadius: '4px', border: '1px solid #cbd5e1', flex: 1 }}
+                          />
+                          <button
+                            onClick={() => handleAddEvidenceLink(currentQ.id)}
+                            style={{ background: '#2563eb', color: '#fff', border: 'none', borderRadius: '4px', padding: '4px 10px', fontSize: '0.75rem', fontWeight: '700', cursor: 'pointer' }}
+                          >
+                            Save
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                      {(responses[`${currentQ.id}_evidence_links`] || []).map((link, lIdx) => (
+                        <span
+                          key={lIdx}
+                          style={{
+                            background: '#eff6ff',
+                            border: '1px solid #bfdbfe',
+                            borderRadius: '6px',
+                            padding: '3px 8px',
+                            fontSize: '0.72rem',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            color: '#1d4ed8'
+                          }}
+                        >
+                          <FiLink size={10} />
+                          <a
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: '#1d4ed8', textDecoration: 'none', fontWeight: '600', maxWidth: '110px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                          >
+                            {link.label}
+                          </a>
+                          <FiTrash2
+                            size={10}
+                            style={{ cursor: 'pointer', color: '#94a3b8', marginLeft: '2px' }}
+                            onClick={() => handleRemoveEvidenceLink(currentQ.id, lIdx)}
+                          />
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </PerspectiveColumn>
               </PerspectivesGrid>
             </QuestionContainerCard>
