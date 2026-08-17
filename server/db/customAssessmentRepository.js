@@ -883,6 +883,7 @@ const STARTER_PRODUCTION_TEMPLATES = [
 class CustomAssessmentRepository {
   constructor() {
     this.ensureStarterTemplates();
+    this.ensureStarterInstances();
   }
 
   ensureStarterTemplates() {
@@ -893,6 +894,66 @@ class CustomAssessmentRepository {
       console.log('✅ Synchronized 10-question production assessment starter templates in registry.');
     } catch (e) {
       console.warn('Could not seed starter templates:', e.message);
+    }
+  }
+
+  ensureStarterInstances() {
+    try {
+      const existing = instancesFileStore.getAll();
+      if (!existing || Object.keys(existing).length === 0) {
+        const dynamicEngine = require('../services/dynamicAssessmentEngine');
+        STARTER_PRODUCTION_TEMPLATES.forEach(tpl => {
+          const instanceId = `inst_${tpl.typeKey}_demo`;
+          const framework = tpl.framework;
+          const dimensions = framework.dimensions || [];
+          const sampleResponses = {};
+          
+          dimensions.forEach((dim, dIdx) => {
+            (dim.questions || []).forEach((q, qIdx) => {
+              const score = ((dIdx + qIdx) % 3) + 2;
+              sampleResponses[q.id] = score;
+              sampleResponses[`${q.id}_current_state`] = score;
+              sampleResponses[`${q.id}_future_state`] = Math.min(5, score + 2);
+              if (q.technicalPainPoints && q.technicalPainPoints.length > 0) {
+                sampleResponses[`${q.id}_technical_pain`] = [q.technicalPainPoints[0]];
+              }
+              if (q.businessPainPoints && q.businessPainPoints.length > 0) {
+                sampleResponses[`${q.id}_business_pain`] = [q.businessPainPoints[0]];
+              }
+              sampleResponses[`${q.id}_comment`] = 'Production baseline verified during architectural audit.';
+            });
+          });
+
+          const calculated = dynamicEngine.calculateScores(sampleResponses, framework);
+          const customerNames = {
+            cloud_security_zero_trust_architecture: 'ConnectPlus Telecom',
+            finops_cloud_cost_optimization: 'Nova Retail Group',
+            openai_to_gemini_enterprise_migration: 'Quantum FinTech Global'
+          };
+
+          const instance = {
+            id: instanceId,
+            typeKey: tpl.typeKey,
+            customerName: customerNames[tpl.typeKey] || 'Enterprise Modernization Partner',
+            useCase: tpl.subtitle || 'Zero Trust & Cloud Modernization Initiative',
+            contactEmail: 'lead-architect@enterprise.org',
+            frameworkSnapshot: framework,
+            responses: sampleResponses,
+            scores: calculated.dimensionScores,
+            totalScore: calculated.overallScore,
+            maxScore: calculated.maxScore,
+            maturityLevel: calculated.maturityLevel,
+            status: 'completed',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
+
+          instancesFileStore.set(instanceId, instance);
+        });
+        console.log('✅ Seeded production starter assessment instances for fresh deployments.');
+      }
+    } catch (e) {
+      console.warn('Could not seed starter instances:', e.message);
     }
   }
 
