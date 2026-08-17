@@ -51,8 +51,8 @@ const CloseButton = styled.button`
 
 const SidePanel = styled.div`
   width: 50%;
-  background: ${props => props.$isDatabricks ? 
-    'linear-gradient(135deg, #FF3621 0%, #E02A1A 100%)' : 
+  background: ${props => props.$isAdmin ? 
+    'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)' : 
     'linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)'};
   padding: 60px 40px;
   display: flex;
@@ -169,8 +169,8 @@ const Input = styled.input`
   
   &:focus {
     outline: none;
-    border-color: ${props => props.$isDatabricks ? '#FF3621' : '#2563eb'};
-    box-shadow: 0 0 0 3px ${props => props.$isDatabricks ? 'rgba(255, 54, 33, 0.1)' : 'rgba(37, 99, 235, 0.1)'};
+    border-color: ${props => props.$isAdmin ? '#6366f1' : '#2563eb'};
+    box-shadow: 0 0 0 3px ${props => props.$isAdmin ? 'rgba(99, 102, 241, 0.15)' : 'rgba(37, 99, 235, 0.15)'};
   }
   
   &::placeholder {
@@ -179,8 +179,8 @@ const Input = styled.input`
 `;
 
 const SubmitButton = styled.button`
-  background: ${props => props.$isDatabricks ? 
-    'linear-gradient(135deg, #FF3621 0%, #E02A1A 100%)' : 
+  background: ${props => props.$isAdmin ? 
+    'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)' : 
     'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)'};
   color: white;
   padding: 14px 24px;
@@ -194,8 +194,8 @@ const SubmitButton = styled.button`
   
   &:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 16px ${props => props.$isDatabricks ? 
-      'rgba(255, 54, 33, 0.3)' : 
+    box-shadow: 0 8px 16px ${props => props.$isAdmin ? 
+      'rgba(99, 102, 241, 0.3)' : 
       'rgba(37, 99, 235, 0.3)'};
   }
   
@@ -215,13 +215,13 @@ const ErrorMessage = styled.div`
 `;
 
 const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
-  const [view, setView] = useState('databricks'); // 'databricks' or 'customer'
+  const [view, setView] = useState('admin'); // 'admin' or 'customer'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const isDatabricks = view === 'databricks';
+  const isAdmin = view === 'admin';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -234,13 +234,13 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
       // Check if role matches the selected view
       const role = result.user.role;
       
-      if (isDatabricks && role === 'consumer') {
+      if (isAdmin && role === 'consumer') {
         setError('Participant accounts should use the Participant login');
         setIsLoading(false);
         return;
       }
       
-      if (!isDatabricks && (role === 'admin' || role === 'author')) {
+      if (!isAdmin && (role === 'admin' || role === 'author')) {
         setError('Admin and Author team members should use the Admin login');
         setIsLoading(false);
         return;
@@ -276,12 +276,12 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
               <FiX />
             </CloseButton>
 
-            <SidePanel $isDatabricks={isDatabricks}>
+            <SidePanel $isAdmin={isAdmin}>
               <SidePanelTitle>
-                {isDatabricks ? 'Admin & Author Portal' : 'Participant Portal'}
+                {isAdmin ? 'Admin & Author Portal' : 'Participant Portal'}
               </SidePanelTitle>
               <SidePanelSubtitle>
-                {isDatabricks 
+                {isAdmin 
                   ? 'Access authoring and administration tools to manage organization assessments and deliver insights.'
                   : 'Complete your assigned assessments and view your maturity reports once released by your administrator.'
                 }
@@ -292,14 +292,14 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
               <ViewSelector>
                 <ViewButton
                   type="button"
-                  $active={isDatabricks}
-                  onClick={() => setView('databricks')}
+                  $active={isAdmin}
+                  onClick={() => setView('admin')}
                 >
                   Admin / Author
                 </ViewButton>
                 <ViewButton
                   type="button"
-                  $active={!isDatabricks}
+                  $active={!isAdmin}
                   onClick={() => setView('customer')}
                 >
                   Participant
@@ -308,7 +308,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
 
               <Title>Sign In</Title>
               <Subtitle>
-                {isDatabricks 
+                {isAdmin 
                   ? 'Sign in to your Admin / Author account'
                   : 'Sign in to access your assessments'
                 }
@@ -330,7 +330,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      $isDatabricks={isDatabricks}
+                      $isAdmin={isAdmin}
                     />
                   </InputWrapper>
                 </InputGroup>
@@ -348,7 +348,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      $isDatabricks={isDatabricks}
+                      $isAdmin={isAdmin}
                     />
                   </InputWrapper>
                 </InputGroup>
@@ -356,7 +356,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                 <SubmitButton 
                   type="submit" 
                   disabled={isLoading}
-                  $isDatabricks={isDatabricks}
+                  $isAdmin={isAdmin}
                 >
                   {isLoading ? 'Signing in...' : 'Sign In'}
                 </SubmitButton>

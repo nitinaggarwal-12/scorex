@@ -40,21 +40,6 @@ const NavContainer = styled.div`
   }
 `;
 
-const DatabricksLogo = styled.img`
-  height: 32px;
-  width: auto;
-  cursor: pointer;
-  transition: opacity 0.2s ease;
-
-  &:hover {
-    opacity: 0.85;
-  }
-
-  @media (max-width: 768px) {
-    height: 28px;
-  }
-`;
-
 const TopNav = styled.div`
   display: flex;
   align-items: center;

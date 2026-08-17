@@ -2739,7 +2739,7 @@ app.get('/api/assessments', requireAuth, async (req, res) => {
         contact_name: '',
         contact_role: '',
         industry: a.industry || 'Technology',
-        assessment_name: a.assessmentName || a.assessment_name || 'Databricks Assessment',
+        assessment_name: a.assessmentName || a.assessment_name || 'Enterprise Cloud, Data & AI Assessment',
         assessment_description: a.assessmentDescription || '',
         status: a.status || 'completed',
         started_at: a.startedAt || a.started_at || new Date().toISOString(),
@@ -3577,7 +3577,7 @@ if (process.env.VERCEL !== '1') {
   
   // Start listening immediately on 0.0.0.0 to guarantee instant port binding
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Databricks Maturity Assessment API running on port ${PORT}`);
+    console.log(`🚀 ScoreX Enterprise Cloud, Data & AI Assessment API running on port ${PORT}`);
     console.log(`📊 Assessment framework loaded with ${assessmentFramework.assessmentAreas.length} areas`);
     console.log(`🔗 API Health Check: http://localhost:${PORT}/api/health`);
     

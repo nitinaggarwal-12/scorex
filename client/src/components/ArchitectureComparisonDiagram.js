@@ -899,8 +899,8 @@ const ArchitectureComparisonDiagram = ({
                 <PromptChip onClick={() => setCustomPrompt('Emphasize Snowflake, dbt Data Mesh, and Fivetran CDC pipelines.')}>
                   ❄️ Snowflake & dbt Mesh
                 </PromptChip>
-                <PromptChip onClick={() => setCustomPrompt('Focus on Databricks Unity Catalog, Delta Lake, and MLflow CI/CD.')}>
-                  🧱 Databricks Unity Lakehouse
+                <PromptChip onClick={() => setCustomPrompt('Focus on Open Lakehouse with Apache Iceberg, Apache Polaris catalog, and Spark streaming CI/CD.')}>
+                  🧱 Open Lakehouse (Iceberg & Polaris)
                 </PromptChip>
                 <PromptChip onClick={() => setCustomPrompt('Highlight Kubernetes (EKS/GKE) OpenCost FinOps and Spark auto-termination.')}>
                   🚀 Cloud FinOps & Kubernetes
@@ -911,7 +911,7 @@ const ArchitectureComparisonDiagram = ({
               </PromptChips>
 
               <PromptTextarea
-                placeholder="e.g. Focus on AWS EKS with Databricks and Vertex AI Agentic Mesh, addressing our 24-hour batch latency and unmanaged cluster idle spend..."
+                placeholder="e.g. Focus on AWS EKS / GCP GKE with Open Lakehouse and Vertex AI Agentic Mesh, addressing our 24-hour batch latency and unmanaged cluster idle spend..."
                 value={customPrompt}
                 onChange={e => setCustomPrompt(e.target.value)}
               />
