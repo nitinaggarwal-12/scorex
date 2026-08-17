@@ -872,6 +872,559 @@ const STARTER_PRODUCTION_TEMPLATES = [
         { level: 5, name: 'Optimizing', label: 'Optimizing / Continuous Autonomous Defense', scoreMin: 4.6, scoreMax: 5, color: '#8b5cf6', description: 'Zero standing privileges, confidential computing enclaves, AI threat graph hunting, and self-healing cloud security mesh.' }
       ]
     }
+  },
+  {
+    id: 'tpl_ciso_ai_security',
+    typeKey: 'ciso_enterprise_ai_security_shadow_gateway',
+    title: 'CISO Enterprise AI Security & Shadow Gateway Assessment',
+    subtitle: 'Zero-Trust AI Posture, Real-Time DLP & Regulatory Guardrails',
+    description: 'Comprehensive evaluation of enterprise AI security posture, shadow AI containment, real-time PII/PHI masking, attribute-based access control (ABAC), Model Armor, and audit logging to unblock enterprise GenAI adoption.',
+    icon: 'HiShieldCheck',
+    badge: 'Security & CISO',
+    color: '#0ea5e9',
+    status: 'production',
+    isPublished: true,
+    isPromoted: true,
+    createdBy: 'system',
+    framework: {
+      typeKey: 'ciso_enterprise_ai_security_shadow_gateway',
+      title: 'CISO Enterprise AI Security & Shadow Gateway Assessment',
+      subtitle: 'Zero-Trust AI Posture, Real-Time DLP & Regulatory Guardrails',
+      description: 'Audit shadow AI exposure, centralized AI gateway architecture (Apigee + Model Armor), real-time DLP data masking, customer-managed encryption (CMEK/EKM), and immutable audit trails for EU AI Act / HIPAA / NIST compliance.',
+      icon: 'HiShieldCheck',
+      badge: 'Security & CISO',
+      color: '#0ea5e9',
+      targetRole: 'CISOs, Chief Risk Officers, Data Protection Officers, Security Architects',
+      estimatedMinutes: 15,
+      dimensions: [
+        {
+          id: 'ciso_dim_01',
+          name: 'Shadow AI Discovery & Perimeter Defense',
+          description: 'Evaluates visibility into unmanaged AI consumption, network perimeter controls, and private VPC isolation.',
+          weight: 1.0,
+          questions: [
+            {
+              id: 'ciso_01',
+              text: 'How does your organization discover, monitor, and govern employee and developer traffic to external AI endpoints?',
+              guidance: 'Evaluate visibility into shadow AI web usage vs centralized enterprise AI gateway interception.',
+              options: [
+                { value: 1, score: 1, label: 'Zero visibility; employees freely paste company data and code into consumer AI web platforms without controls.' },
+                { value: 2, score: 2, label: 'CASB firewall domain blocking of popular AI URLs; no approved enterprise AI alternative provided to staff.' },
+                { value: 3, score: 3, label: 'Approved corporate web sandbox available, but application API keys and developer tools remain unmonitored.' },
+                { value: 4, score: 4, label: 'Centralized Enterprise AI Gateway (Apigee / Vertex) capturing 100% of internal developer and application AI traffic.' },
+                { value: 5, score: 5, label: 'Automated shadow AI discovery across CI/CD and GitHub with dynamic token auto-revocation and continuous perimeter posture enforcement.' }
+              ],
+              technicalPainPoints: [
+                'Unmanaged third-party browser extensions capturing proprietary code and prompts',
+                'Hardcoded public OpenAI/Anthropic API keys leaked in code repositories',
+                'Lack of visibility into which departments are sending data to external LLMs'
+              ],
+              businessPainPoints: [
+                'Catastrophic corporate IP and source code leakage to third-party public models',
+                'CISO blanket-blocking AI domains causing productivity loss and employee friction',
+                'Severe regulatory non-compliance with data residency mandates'
+              ]
+            },
+            {
+              id: 'ciso_02',
+              text: 'How are AI inference workloads isolated at the network and infrastructure level?',
+              guidance: 'Evaluate public internet API calls vs private VPC Service Controls (VPC-SC) perimeters.',
+              options: [
+                { value: 1, score: 1, label: 'Inference traffic routed over public internet using shared multi-tenant SaaS endpoints.' },
+                { value: 2, score: 2, label: 'Standard commercial API endpoints with vendor no-training terms, but accessible via public DNS.' },
+                { value: 3, score: 3, label: 'Private IP interconnects configured with static firewall ingress rules and API gateway authentication.' },
+                { value: 4, score: 4, label: 'VPC Service Controls (VPC-SC) perimeter preventing data exfiltration, combined with Customer-Managed Encryption Keys (CMEK).' },
+                { value: 5, score: 5, label: 'Confidential Computing enclaves with hardware-level memory encryption and zero-trust mTLS verification per inference call.' }
+              ],
+              technicalPainPoints: [
+                'Data in transit exposed to interception over public internet routes',
+                'Inability to apply network perimeter boundaries around external SaaS LLMs',
+                'Complex firewall routing rules slowing down developer onboarding'
+              ],
+              businessPainPoints: [
+                'Failure to meet strict banking and defense sector network isolation standards',
+                'Subpoena and third-party data access risks on public cloud endpoints'
+              ]
+            }
+          ]
+        },
+        {
+          id: 'ciso_dim_02',
+          name: 'Real-Time DLP & Adversarial Defense',
+          description: 'Evaluates real-time PII/PHI redaction, prompt injection defense, and cryptographic key management.',
+          weight: 1.0,
+          questions: [
+            {
+              id: 'ciso_03',
+              text: 'How does your architecture prevent PII, PHI, financial records, or secrets from being transmitted to LLMs?',
+              guidance: 'Evaluate post-hoc manual auditing vs inline real-time Cloud Data Loss Prevention (DLP) de-identification.',
+              options: [
+                { value: 1, score: 1, label: 'No automated filtering; users and backend services transmit raw customer data, SSNs, and credentials.' },
+                { value: 2, score: 2, label: 'Basic client-side regex checks for emails and credit cards; easily bypassed by whitespace or formatting changes.' },
+                { value: 3, score: 3, label: 'Asynchronous batch auditing flagging sensitive data leaks in log files hours after transmission.' },
+                { value: 4, score: 4, label: 'Inline Cloud DLP streaming proxy de-identifying, masking, and tokenizing sensitive info before payloads reach models.' },
+                { value: 5, score: 5, label: 'Cryptographic surrogate tokenization allowing LLMs to reason over masked entities and securely re-hydrating in authorized responses.' }
+              ],
+              technicalPainPoints: [
+                'High false-positive rates in legacy regex sanitizers breaking legitimate application prompts',
+                'High latency added by sequential synchronous DLP inspection proxies',
+                'Unstructured PII inside uploaded PDF/image attachments bypassing text filters'
+              ],
+              businessPainPoints: [
+                'Multimillion-dollar GDPR, HIPAA, and PCI-DSS compliance fines from leaked customer records',
+                'Customer trust destruction following data leakage in AI-generated customer responses'
+              ]
+            },
+            {
+              id: 'ciso_04',
+              text: 'What defenses are deployed against direct and indirect prompt injection, jailbreaks, and adversarial attacks?',
+              guidance: 'Evaluate naive system prompt instructions vs dedicated Model Armor guardrails and embedding inspection.',
+              options: [
+                { value: 1, score: 1, label: 'Passive system instructions (e.g. "please do not reveal instructions"); zero adversarial filtering.' },
+                { value: 2, score: 2, label: 'Static keyword blacklists blocking known phrases like "ignore previous instructions".' },
+                { value: 3, score: 3, label: 'Secondary lightweight LLM classifier screening user prompts for malicious intent.' },
+                { value: 4, score: 4, label: 'Model Armor & SAIF guardrails inspecting both user inputs and ingested RAG vector embeddings for indirect injection.' },
+                { value: 5, score: 5, label: 'Real-time adaptive adversarial defense mesh with continuous red-teaming and automated zero-day signature distribution.' }
+              ],
+              technicalPainPoints: [
+                'Indirect prompt injection embedded inside third-party web pages or uploaded documents hijacking agent execution',
+                'Jailbreak attacks bypassing basic guardrails to extract backend database connection strings',
+                'Latency overhead of multi-pass LLM safety classifiers'
+              ],
+              businessPainPoints: [
+                'Unauthorized data manipulation and fraudulent transactions triggered via malicious prompts',
+                'Severe brand and PR crises caused by toxic or unaligned model outputs'
+              ]
+            },
+            {
+              id: 'ciso_05',
+              text: 'How are cryptographic keys managed for AI model storage, vector databases, and embeddings?',
+              guidance: 'Evaluate cloud provider default keys vs Customer-Managed Encryption Keys (CMEK) and External Key Management (Cloud EKM).',
+              options: [
+                { value: 1, score: 1, label: 'Default cloud provider managed keys; customer has no visibility or control over key rotation.' },
+                { value: 2, score: 2, label: 'Cloud KMS keys managed by customer inside the cloud platform, but without hardware root ownership.' },
+                { value: 3, score: 3, label: 'Customer-Managed Encryption Keys (CMEK) applied to model weights, vector databases, and prompt caches.' },
+                { value: 4, score: 4, label: 'External Key Management (Cloud EKM) storing cryptographic root keys in customer’s on-premises HSM.' },
+                { value: 5, score: 5, label: 'Key Access Justification (KAJ) requiring automated cryptographic sign-off per inference invocation with full air-gapped sovereignty.' }
+              ],
+              technicalPainPoints: [
+                'Complex key rotation procedures causing intermittent vector database downtime',
+                'Latency overhead when verifying external HSM keys on high-throughput inference calls',
+                'Fragmented key management policies across multi-cloud environments'
+              ],
+              businessPainPoints: [
+                'Inability to pass financial regulatory audits requiring sovereign cryptographic key ownership',
+                'Risk of cloud provider unauthorized data access under extraterritorial legal requests'
+              ]
+            }
+          ]
+        },
+        {
+          id: 'ciso_dim_03',
+          name: 'Access Control & Delegated Agent Permissions',
+          description: 'Evaluates pre-retrieval attribute-based access control (ABAC), fine-grained RAG filtering, and multi-agent tool scoping.',
+          weight: 1.0,
+          questions: [
+            {
+              id: 'ciso_06',
+              text: 'How is user authorization and document-level permissioning enforced in GenAI RAG pipelines?',
+              guidance: 'Evaluate shared vector databases vs pre-retrieval Attribute-Based Access Control (ABAC).',
+              options: [
+                { value: 1, score: 1, label: 'Unified global vector index; all users can retrieve and view all indexed company files and financial reports.' },
+                { value: 2, score: 2, label: 'Siloed vector databases per department with manual, error-prone synchronization.' },
+                { value: 3, score: 3, label: 'Post-retrieval filtering in application code, where unauthorized chunks are queried but discarded before display.' },
+                { value: 4, score: 4, label: 'Pre-retrieval Attribute-Based Access Control (ABAC) applying Dataplex / IAM user tags directly into vector query filters.' },
+                { value: 5, score: 5, label: 'Dynamic zero-trust authorization with automated classification inheritance and real-time security label enforcement in AI responses.' }
+              ],
+              technicalPainPoints: [
+                'Post-retrieval filtering leaking sensitive document existence through metadata',
+                'High indexing costs from duplicating shared enterprise documents into team-specific vector stores',
+                'ACL permission sync lag when employees change roles or leave the company'
+              ],
+              businessPainPoints: [
+                'Unauthorized employee access to executive salaries, M&A strategy, and board minutes via enterprise AI search',
+                'Major insider trading and confidentiality breach exposure'
+              ]
+            },
+            {
+              id: 'ciso_07',
+              text: 'How are permissions, credentials, and write privileges scoped for autonomous AI agents and tool integrations?',
+              guidance: 'Evaluate global service accounts vs scoped user-delegated tokens (Model Context Protocol / OAuth).',
+              options: [
+                { value: 1, score: 1, label: 'Global admin service accounts with unrestricted read/write access across corporate databases and APIs.' },
+                { value: 2, score: 2, label: 'Hardcoded API tokens in agent scripts; no human-in-the-loop validation for mutating actions.' },
+                { value: 3, score: 3, label: 'Read-only tool access by default, with manual human approval prompts required for any write operation.' },
+                { value: 4, score: 4, label: 'Scoped OAuth / MCP Tool Tokens executing with user’s down-scoped delegated permissions and automated policy boundaries.' },
+                { value: 5, score: 5, label: 'Autonomous multi-signature approval mesh with automated risk scoring and transactional rollback capabilities for all agent actions.' }
+              ],
+              technicalPainPoints: [
+                'Autonomous agents executing unintended database updates or deletions due to hallucinated parameters',
+                'Over-privileged service accounts violating least-privilege principles',
+                'Lack of granular auditing for multi-agent tool execution chains'
+              ],
+              businessPainPoints: [
+                'Catastrophic production data corruption or unauthorized fund transfers initiated by autonomous agents',
+                'Inability to assign legal liability for actions performed by AI agents'
+              ]
+            }
+          ]
+        },
+        {
+          id: 'ciso_dim_04',
+          name: 'Auditability, Lineage & Model Governance',
+          description: 'Evaluates immutable compliance audit trails, hallucination scoring, IP indemnification, and model lifecycle deprecation.',
+          weight: 1.0,
+          questions: [
+            {
+              id: 'ciso_08',
+              text: 'How are AI prompt interactions, responses, and model metadata logged for legal and regulatory compliance?',
+              guidance: 'Evaluate ephemeral logs vs immutable BigQuery compliance audit trails with cryptographic hashing.',
+              options: [
+                { value: 1, score: 1, label: 'Zero logging; no historical record of prompt inputs, generated outputs, or model versions.' },
+                { value: 2, score: 2, label: 'Standard application text logs purged after 14–30 days with no search or audit indexing.' },
+                { value: 3, score: 3, label: 'Centralized Cloud Logging capturing user ID, timestamp, and token counts (without full payload inspection).' },
+                { value: 4, score: 4, label: 'Immutable BigQuery Compliance Audit Trail recording cryptographically hashed prompts, outputs, model versions, and safety scores.' },
+                { value: 5, score: 5, label: 'Automated regulatory reporting engine continuously auditing interactions against EU AI Act, NIST AI RMF, and ISO 42001.' }
+              ],
+              technicalPainPoints: [
+                'Massive log storage costs when saving full prompt and response payloads across high-volume applications',
+                'Inability to execute fast forensic search across billions of historical AI interactions',
+                'Risk of audit logs themselves containing unmasked PII'
+              ],
+              businessPainPoints: [
+                'Inability to comply with legal e-discovery mandates or government regulatory inquiries',
+                'Uninsurable liability under upcoming EU AI Act high-risk system compliance deadlines'
+              ]
+            },
+            {
+              id: 'ciso_09',
+              text: 'How does your organization manage hallucination liability, factuality verification, and copyright risk?',
+              guidance: 'Evaluate unverified generative text vs Google Grounding Attribution and enterprise copyright indemnification.',
+              options: [
+                { value: 1, score: 1, label: 'Unverified model generation presented as absolute fact with no grounding citations or disclaimer.' },
+                { value: 2, score: 2, label: 'Generic prompt instructions asking the model to provide source URLs when possible.' },
+                { value: 3, score: 3, label: 'Grounded Search against internal documents displaying clickable reference links.' },
+                { value: 4, score: 4, label: 'Grounding Attribution Scoring rejecting responses below 90% confidence, backed by cloud vendor copyright indemnification.' },
+                { value: 5, score: 5, label: 'Real-time multi-source factual verification mesh with automated legal citation generation and continuous calibration.' }
+              ],
+              technicalPainPoints: [
+                'Model hallucinations generating plausible but completely fabricated regulatory or financial guidance',
+                'Broken citation links pointing to deleted or outdated source documents',
+                'Inability to mathematically quantify model confidence before returning text to end users'
+              ],
+              businessPainPoints: [
+                'Direct legal liability and financial loss from users acting on hallucinated AI advice',
+                'Copyright infringement lawsuits resulting from generative models reproducing training data verbatim'
+              ]
+            },
+            {
+              id: 'ciso_10',
+              text: 'How are model versions, deprecation schedules, and model registry lifecycles governed across the enterprise?',
+              guidance: 'Evaluate unpinned model tags vs formal 90-day deprecation governance with automated regression benchmarking.',
+              options: [
+                { value: 1, score: 1, label: 'Relying on generic ":latest" model endpoints that change unexpectedly and break production behavior.' },
+                { value: 2, score: 2, label: 'Model versions pinned in application code, but tracked manually in static documentation.' },
+                { value: 3, score: 3, label: 'Centralized Model Registry tracking active production endpoints and registered downstream consumers.' },
+                { value: 4, score: 4, label: 'Formal model lifecycle governance with automated regression benchmarking and 90-day deprecation migration windows.' },
+                { value: 5, score: 5, label: 'Continuous shadow deployment comparing candidate model versions against live traffic before automated zero-downtime promotion.' }
+              ],
+              technicalPainPoints: [
+                'Upstream model vendor deprecations breaking production microservices with short notice',
+                'Subtle behavioral drifts in newer model iterations degrading downstream parsing accuracy',
+                'Lack of standardized staging environments for testing new model versions'
+              ],
+              businessPainPoints: [
+                'Critical production outages caused by unexpected model API deprecations',
+                'Prolonged engineering hold-ups when upgrading enterprise-wide AI systems'
+              ]
+            }
+          ]
+        }
+      ],
+      maturityLevels: [
+        { level: 1, name: 'Ad-hoc', label: 'Initial / High Risk', scoreMin: 1, scoreMax: 1.9, color: '#ef4444', description: 'Unmonitored shadow AI, public API keys, zero PII masking, and broad un-scoped agent access.' },
+        { level: 2, name: 'Developing', label: 'Developing / Reactive', scoreMin: 2, scoreMax: 2.9, color: '#f59e0b', description: 'Basic CASB blocking and regex filters, but static secrets, un-audited RAG stores, and manual triage.' },
+        { level: 3, name: 'Defined', label: 'Defined / Standardized', scoreMin: 3, scoreMax: 3.7, color: '#3b82f6', description: 'Enterprise AI Gateway, approved sandbox, RBAC document permissions, and centralized logging in place.' },
+        { level: 4, name: 'Managed', label: 'Managed / Zero-Trust AI', scoreMin: 3.8, scoreMax: 4.5, color: '#10b981', description: 'VPC-SC perimeter, inline Cloud DLP redaction, Model Armor guardrails, ABAC vector permissions, and CMEK/EKM.' },
+        { level: 5, name: 'Optimizing', label: 'Optimizing / Continuous Autonomous Governance', scoreMin: 4.6, scoreMax: 5, color: '#8b5cf6', description: 'Confidential computing enclaves, surrogate tokenization, automated EU AI Act compliance auditing, and self-healing security mesh.' }
+      ]
+    }
+  },
+  {
+    id: 'tpl_edw_lakehouse_bigquery',
+    typeKey: 'edw_lakehouse_to_bigquery_modernization',
+    title: 'Snowflake / Teradata / Databricks to BigQuery Lakehouse Modernization',
+    subtitle: 'Open Storage (Iceberg), Predictable Slots & Zero-Egress Analytics',
+    description: 'Comprehensive 10-question evaluation for modernizing legacy data warehouses (Teradata, Netezza, Snowflake, Databricks) to BigQuery + BigLake open lakehouse architecture with predictable Editions pricing and unified Dataplex governance.',
+    icon: 'HiDatabase',
+    badge: 'Lakehouse Modernization',
+    color: '#2563eb',
+    status: 'production',
+    isPublished: true,
+    isPromoted: true,
+    createdBy: 'system',
+    framework: {
+      typeKey: 'edw_lakehouse_to_bigquery_modernization',
+      title: 'Snowflake / Teradata / Databricks to BigQuery Lakehouse Modernization',
+      subtitle: 'Open Storage (Iceberg), Predictable Slots & Zero-Egress Analytics',
+      description: 'Assess table format standardization (Apache Iceberg / Delta), multi-cloud zero-egress querying (BigQuery Omni), BigQuery Editions reservation capacity, Dataplex catalog lineage, streaming CDC, and in-database ML.',
+      icon: 'HiDatabase',
+      badge: 'Lakehouse Modernization',
+      color: '#2563eb',
+      targetRole: 'Chief Data Officers, Enterprise Data Architects, Heads of Data Platform, VP of Infrastructure',
+      estimatedMinutes: 15,
+      dimensions: [
+        {
+          id: 'edw_dim_01',
+          name: 'Open Storage & Multi-Cloud Federation',
+          description: 'Evaluates open table format adoption (Apache Iceberg/Delta), multi-cloud zero-egress querying, and storage decoupling.',
+          weight: 1.0,
+          questions: [
+            {
+              id: 'edw_01',
+              text: 'How are enterprise analytical tables formatted, stored, and shared across compute engines?',
+              guidance: 'Evaluate proprietary warehouse formats vs universal open table formats (Apache Iceberg / Delta UniForm / BigLake).',
+              options: [
+                { value: 1, score: 1, label: 'Proprietary vendor storage formats locked inside a single data warehouse; duplicate copies exported as raw CSVs for other teams.' },
+                { value: 2, score: 2, label: 'Siloed Parquet files in object storage alongside proprietary warehouse tables without unified cataloging.' },
+                { value: 3, score: 3, label: 'Standardized on a single table format (Delta or Iceberg), but locked to a specific compute engine.' },
+                { value: 4, score: 4, label: 'Universal Open Lakehouse (Apache Iceberg / Delta UniForm) queried zero-copy by BigQuery, Spark, and Trino simultaneously.' },
+                { value: 5, score: 5, label: 'Autonomous storage tiering with automated compaction, vacuuming, and cross-cloud zero-copy data sharing via BigLake.' }
+              ],
+              technicalPainPoints: [
+                'Double storage costs and pipeline overhead from maintaining duplicate copies in warehouse and data lake',
+                'Vendor lock-in preventing modern AI engines from directly querying analytical tables',
+                'Slow partition scanning and file listing overhead on petabyte-scale datasets'
+              ],
+              businessPainPoints: [
+                'Exorbitant storage egress and proprietary warehouse licensing fees',
+                'Inability to support cross-functional BI and ML initiatives from a single source of truth'
+              ]
+            },
+            {
+              id: 'edw_02',
+              text: 'How does your platform query and analyze data distributed across multiple cloud providers (AWS, Azure, GCP)?',
+              guidance: 'Evaluate expensive cross-cloud batch replication vs BigQuery Omni in-place federated execution.',
+              options: [
+                { value: 1, score: 1, label: 'Heavy daily cross-cloud batch data transfers incurring massive egress fees and latency.' },
+                { value: 2, score: 2, label: 'Ad-hoc manual exports between AWS S3, Azure Blob, and GCP buckets when cross-cloud analysis is requested.' },
+                { value: 3, score: 3, label: 'Scheduled ETL replication pipelines syncing key operational tables across clouds.' },
+                { value: 4, score: 4, label: 'BigQuery Omni & BigLake executing distributed SQL queries in-place directly where data resides in AWS/Azure without egress.' },
+                { value: 5, score: 5, label: 'Intelligent multi-cloud query planner pushing compute to remote storage regions and returning only aggregated result sets.' }
+              ],
+              technicalPainPoints: [
+                'High cloud data egress bills and delayed sync schedules causing stale cross-cloud reporting',
+                'Brittle cross-cloud replication scripts failing on network blips',
+                'Complex credential management across cloud boundaries'
+              ],
+              businessPainPoints: [
+                'Hundreds of thousands spent annually on cloud egress fees',
+                'Delayed executive decision-making due to 24-hour cross-cloud data sync lags'
+              ]
+            }
+          ]
+        },
+        {
+          id: 'edw_dim_02',
+          name: 'SQL Analytics Engine & Reservation FinOps',
+          description: 'Evaluates compute autoscaling predictability, BigQuery Editions slot reservations, and semantic layer acceleration.',
+          weight: 1.0,
+          questions: [
+            {
+              id: 'edw_03',
+              text: 'How are data warehouse compute costs, concurrency scaling, and budget predictability managed?',
+              guidance: 'Evaluate unpredictable credit consumption vs BigQuery Editions baseline slot reservations with dynamic autoscaling.',
+              options: [
+                { value: 1, score: 1, label: 'Uncapped auto-scaling virtual warehouses burning volatile credits when unoptimized queries run.' },
+                { value: 2, score: 2, label: 'Fixed warehouse sizes with manual resizing; frequent end-of-month budget overruns.' },
+                { value: 3, score: 3, label: 'Departmental spend caps and auto-suspend timers (e.g. 5 mins) configured per warehouse cluster.' },
+                { value: 4, score: 4, label: 'BigQuery Editions (Standard/Enterprise/Enterprise Plus) with committed baseline reservations and burst autoscaling.' },
+                { value: 5, score: 5, label: 'Autonomous slot sharing across business units with predictive budget scaling and dynamic queue prioritization.' }
+              ],
+              technicalPainPoints: [
+                'Rogue Cartesian join queries burning thousands of dollars in compute credits overnight',
+                'Rigid cluster sizing forcing over-provisioning for peak morning hours',
+                'Query queueing and timeouts under high user concurrency'
+              ],
+              businessPainPoints: [
+                'Unpredictable monthly cloud data warehouse invoices blowing CFO budgets',
+                'Inability to accurately forecast annual data platform expansion costs'
+              ]
+            },
+            {
+              id: 'edw_04',
+              text: 'How does your analytical architecture handle executive BI dashboard concurrency and sub-second query latency?',
+              guidance: 'Evaluate extract cubes vs governed in-memory BI acceleration (Looker / BigQuery BI Engine).',
+              options: [
+                { value: 1, score: 1, label: 'Long-running batch queries block interactive dashboards; executive reports take 30+ seconds to load.' },
+                { value: 2, score: 2, label: 'Heavy reliance on periodic BI extracts and duplicate caching servers requiring constant maintenance.' },
+                { value: 3, score: 3, label: 'Materialized database views refreshed on hourly schedules to support dashboard queries.' },
+                { value: 4, score: 4, label: 'Governed Semantic Layer with BigQuery BI Engine delivering sub-second in-memory SQL acceleration without extracts.' },
+                { value: 5, score: 5, label: 'Conversational BI powered by Gemini querying the unified semantic layer with natural language and sub-second visual rendering.' }
+              ],
+              technicalPainPoints: [
+                'Dashboard refresh timeouts during Monday morning peak executive traffic',
+                'Stale extracts causing discrepancy between operational database and BI dashboards',
+                'High memory cache costs on standalone BI servers'
+              ],
+              businessPainPoints: [
+                'Slow executive adoption due to sluggish dashboard performance',
+                'Conflicting business metric definitions between Finance and Sales reports'
+              ]
+            }
+          ]
+        },
+        {
+          id: 'edw_dim_03',
+          name: 'Data Governance, Lineage & Data Quality',
+          description: 'Evaluates automated metadata cataloging, end-to-end data lineage, and automated data contracts via Dataplex.',
+          weight: 1.0,
+          questions: [
+            {
+              id: 'edw_05',
+              text: 'How is data asset discovery, metadata tagging, and end-to-end column-level lineage managed across the data platform?',
+              guidance: 'Evaluate manual wiki documentation vs automated Dataplex cataloging and pipeline lineage.',
+              options: [
+                { value: 1, score: 1, label: 'Tribal knowledge; no centralized documentation of tables, schema definitions, or data owners.' },
+                { value: 2, score: 2, label: 'Static data dictionaries in spreadsheets or Confluence updated manually once a quarter.' },
+                { value: 3, score: 3, label: 'Standalone metadata catalog requiring data engineers to manually register and document new tables.' },
+                { value: 4, score: 4, label: 'Automated Dataplex Catalog and column-level lineage tracing data transformations from ingestion to BI dashboards.' },
+                { value: 5, score: 5, label: 'Active metadata governance with automated data health scoring and automated impact analysis for proposed schema changes.' }
+              ],
+              technicalPainPoints: [
+                'Engineers spending days trying to trace which upstream pipeline broke a downstream financial metric',
+                'Proliferation of duplicate and zombie tables across development environments',
+                'Lack of column-level lineage for sensitive compliance audits'
+              ],
+              businessPainPoints: [
+                'Slow data discovery preventing analysts from building new revenue-generating reports',
+                'Failure to satisfy regulatory data lineage requirements under BCBS 239 / GDPR'
+              ]
+            },
+            {
+              id: 'edw_06',
+              text: 'How does your platform enforce data quality rules, detect schema drift, and prevent silent data corruption?',
+              guidance: 'Evaluate end-user bug reports vs automated Dataplex data quality contracts and anomaly alerts.',
+              options: [
+                { value: 1, score: 1, label: 'No automated tests; data quality issues are discovered only after corrupted numbers reach executive dashboards.' },
+                { value: 2, score: 2, label: 'Basic row count assertions executed manually before monthly financial closes.' },
+                { value: 3, score: 3, label: 'dbt / SQL test assertions validating primary key uniqueness and null constraints during scheduled runs.' },
+                { value: 4, score: 4, label: 'Automated Data Contracts & Dataplex Quality Rules blocking non-conforming data at the ingestion boundary.' },
+                { value: 5, score: 5, label: 'AI-driven statistical profiling detecting subtle data distribution shifts and auto-quarantining anomalous batches.' }
+              ],
+              technicalPainPoints: [
+                'Silent data corruption corrupting historical records without triggering pipeline errors',
+                'Upstream schema migrations dropping columns and breaking all downstream dbt models',
+                'High engineering burden maintaining thousands of custom SQL data validation scripts'
+              ],
+              businessPainPoints: [
+                'Executive loss of trust in corporate analytics after publishing incorrect public financial figures',
+                'Costly business errors resulting from automated algorithms acting on corrupted data'
+              ]
+            }
+          ]
+        },
+        {
+          id: 'edw_dim_04',
+          name: 'Modern ELT, Real-Time CDC & In-Database AI',
+          description: 'Evaluates declarative pipeline orchestration (Dataform/dbt), sub-second streaming CDC ingestion, and BigQuery ML AI integration.',
+          weight: 1.0,
+          questions: [
+            {
+              id: 'edw_07',
+              text: 'How are data transformation pipelines (ELT) engineered, version-controlled, and deployed?',
+              guidance: 'Evaluate monolithic stored procedures vs declarative Dataform/dbt pipelines with Git CI/CD.',
+              options: [
+                { value: 1, score: 1, label: 'Monolithic, 5,000-line stored procedures with no version control, testing, or rollback mechanisms.' },
+                { value: 2, score: 2, label: 'SQL scripts version-controlled in Git, but executed via manual cron jobs and unmonitored scripts.' },
+                { value: 3, score: 3, label: 'Orchestrated dbt / Dataform pipelines with staging environments and automated branch testing.' },
+                { value: 4, score: 4, label: 'Serverless declarative pipelines with incremental materialized tables and automated CI/CD deployment.' },
+                { value: 5, score: 5, label: 'Autonomous self-optimizing pipelines with dynamic resource allocation, automated query refactoring, and auto-healing retries.' }
+              ],
+              technicalPainPoints: [
+                'Fragile legacy stored procedures that take weeks to safely modify or debug',
+                'Long pipeline execution windows causing morning SLAs to be missed consistently',
+                'Lack of staging and rollback environments for database schema updates'
+              ],
+              businessPainPoints: [
+                'Massive technical debt slowing down the launch of new business analytics features',
+                'High onboarding costs for new data engineers trying to understand undocumented SQL pipelines'
+              ]
+            },
+            {
+              id: 'edw_08',
+              text: 'How is operational transactional data (Postgres, Oracle, SQL Server, SAP) ingested into the analytical lakehouse?',
+              guidance: 'Evaluate batch nightly dumps vs real-time Change Data Capture (CDC) streaming via BigQuery Storage Write API.',
+              options: [
+                { value: 1, score: 1, label: 'Nightly full database dumps placing heavy read locks and performance penalties on production OLTP databases.' },
+                { value: 2, score: 2, label: 'Timestamp-based polling queries running every 4 hours with high duplicate record risks.' },
+                { value: 3, score: 3, label: 'Log-based CDC streaming into staging tables with hourly SQL merge operations.' },
+                { value: 4, score: 4, label: 'Sub-second real-time streaming ingestion using BigQuery Storage Write API applying CDC mutations in real time.' },
+                { value: 5, score: 5, label: 'Unified real-time event mesh seamlessly powering operational dashboards, fraud detection, and transactional microservices.' }
+              ],
+              technicalPainPoints: [
+                'Production transactional database performance degradation caused by heavy analytical ETL queries',
+                'Complex out-of-order CDC event handling causing data synchronization discrepancies',
+                'High streaming ingestion costs on legacy warehouse architectures'
+              ],
+              businessPainPoints: [
+                'Operations and fraud teams operating with 24-hour old stale data',
+                'Lost revenue opportunities from inability to trigger real-time customer interventions'
+              ]
+            },
+            {
+              id: 'edw_09',
+              text: 'How are machine learning models and generative AI functions integrated into your data warehouse workflow?',
+              guidance: 'Evaluate exporting data to local notebooks vs in-database SQL AI functions (BigQuery ML + Gemini).',
+              options: [
+                { value: 1, score: 1, label: 'Data scientists export massive CSVs to local machines; zero operational ML or AI in the data warehouse.' },
+                { value: 2, score: 2, label: 'Custom Python ETL jobs copying warehouse data to external ML platforms; complex separate deployment infrastructure.' },
+                { value: 3, score: 3, label: 'Batch scoring pipelines running Python models externally and loading prediction tables back into the warehouse overnight.' },
+                { value: 4, score: 4, label: 'Direct SQL AI Functions (BigQuery ML + Gemini) executing text embeddings, classification, and forecasting inside SQL queries.' },
+                { value: 5, score: 5, label: 'Continuous real-time ML inference and vector search executed directly inside the SQL engine with automated model drift monitoring.' }
+              ],
+              technicalPainPoints: [
+                '6-month cycle time to take a trained ML model from Jupyter notebook to production database scoring',
+                'Complex ETL infrastructure required just to calculate vector embeddings for text columns',
+                'High network egress latency and costs when moving data to external AI services'
+              ],
+              businessPainPoints: [
+                'Missed AI business value due to long model deployment bottlenecks',
+                'High overhead and specialized headcount required to maintain standalone ML infrastructure'
+              ]
+            },
+            {
+              id: 'edw_10',
+              text: 'What automated migration tooling, SQL translation, and validation mechanisms are used for database modernization?',
+              guidance: 'Evaluate manual line-by-line SQL rewrites vs BigQuery Migration Service automated translation and validation.',
+              options: [
+                { value: 1, score: 1, label: 'Fully manual line-by-line SQL and stored procedure rewrites by developers; high error rate.' },
+                { value: 2, score: 2, label: 'Basic regex find-and-replace scripts for syntax differences, followed by extensive manual debugging.' },
+                { value: 3, score: 3, label: 'Third-party migration consulting tools with semi-automated SQL dialect conversion.' },
+                { value: 4, score: 4, label: 'BigQuery Migration Service with automated SQL dialect translation, schema mapping, and automated data comparison validation.' },
+                { value: 5, score: 5, label: 'Autonomous AI-accelerated migration pipeline with automatic query performance optimization and zero-downtime dual-run validation.' }
+              ],
+              technicalPainPoints: [
+                'Thousands of proprietary Teradata/Snowflake SQL dialect nuances breaking during migration',
+                'Lack of automated tools to verify data consistency between legacy and new warehouse tables',
+                'Prolonged dual-run periods with high operational overhead'
+              ],
+              businessPainPoints: [
+                'Multi-year migration timelines causing project fatigue and executive budget re-evaluations',
+                'Fear of business disruption delaying the transition away from expensive legacy vendors'
+              ]
+            }
+          ]
+        }
+      ],
+      maturityLevels: [
+        { level: 1, name: 'Ad-hoc', label: 'Legacy / Siloed', scoreMin: 1, scoreMax: 1.9, color: '#ef4444', description: 'Locked in proprietary formats, volatile compute costs, no automated catalog, and manual stored procedures.' },
+        { level: 2, name: 'Developing', label: 'Developing / Fragmented', scoreMin: 2, scoreMax: 2.9, color: '#f59e0b', description: 'Partial Parquet files, basic spend alerts, static metadata sheets, and batch nightly ETL dumps.' },
+        { level: 3, name: 'Defined', label: 'Defined / Standardized', scoreMin: 3, scoreMax: 3.7, color: '#3b82f6', description: 'Single table format, departmental warehouse caps, standalone catalog, and orchestrated dbt pipelines.' },
+        { level: 4, name: 'Managed', label: 'Managed / Modern Lakehouse', scoreMin: 3.8, scoreMax: 4.5, color: '#10b981', description: 'Universal Iceberg/BigLake, BigQuery Editions slot reservations, automated Dataplex lineage, and BigQuery ML.' },
+        { level: 5, name: 'Optimizing', label: 'Optimizing / Autonomous Data Mesh', scoreMin: 4.6, scoreMax: 5, color: '#8b5cf6', description: 'Multi-cloud zero-egress Omni, conversational Looker BI, real-time CDC storage write API, and self-healing data mesh.' }
+      ]
+    }
   }
 ];
 
