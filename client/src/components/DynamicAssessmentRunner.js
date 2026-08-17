@@ -285,15 +285,15 @@ const ScrollableBody = styled.div`
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 24px 32px 120px;
+  padding: 24px 32px 140px;
   -webkit-overflow-scrolling: touch;
 
   @media (max-width: 1024px) {
-    padding: 20px 20px 110px;
+    padding: 20px 20px 150px;
   }
 
   @media (max-width: 640px) {
-    padding: 14px 12px 100px;
+    padding: 14px 12px 160px;
   }
 `;
 

@@ -481,6 +481,45 @@ router.delete('/instances/:id', async (req, res) => {
   }
 });
 
+// Clone Assessment Instance (Quarterly Reassessment / Branching)
+router.post('/instances/:id/clone', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { suffix } = req.body;
+    const source = await customAssessmentRepo.getInstanceById(id);
+    if (!source) {
+      return res.status(404).json({ success: false, error: 'Source assessment instance not found' });
+    }
+
+    const newUseCase = source.useCase 
+      ? `${source.useCase} (${suffix || 'Next Quarter'})` 
+      : `Quarterly Reassessment (${suffix || 'Next Quarter'})`;
+
+    const clonedInstance = await customAssessmentRepo.createInstance({
+      typeKey: source.typeKey,
+      customerName: source.customerName,
+      useCase: newUseCase,
+      contactEmail: source.contactEmail,
+      frameworkSnapshot: source.frameworkSnapshot,
+      responses: JSON.parse(JSON.stringify(source.responses || {})),
+      scores: source.scores,
+      totalScore: source.totalScore,
+      maxScore: source.maxScore,
+      maturityLevel: source.maturityLevel,
+      status: 'in_progress'
+    });
+
+    res.json({
+      success: true,
+      message: 'Assessment cloned successfully',
+      instance: clonedInstance
+    });
+  } catch (error) {
+    console.error('Error cloning assessment instance:', error);
+    res.status(500).json({ success: false, error: 'Failed to clone assessment instance' });
+  }
+});
+
 // 6. Executive AI Report Generation
 router.post('/instances/:id/generate-report', async (req, res) => {
   try {

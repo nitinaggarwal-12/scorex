@@ -5,6 +5,8 @@ class DataStore {
   constructor(filePath) {
     this.filePath = filePath;
     this.data = new Map();
+    this._writePromise = Promise.resolve();
+    this._pendingSave = false;
     this.loadData();
   }
 
@@ -34,7 +36,6 @@ class DataStore {
           const jsonData = JSON.parse(backupData);
           this.data = new Map(Object.entries(jsonData));
           console.log(`✅ Restored ${this.data.size} assessments from backup`);
-          // Save the restored data to main file
           this.saveData();
           return;
         } catch (backupError) {
@@ -47,40 +48,35 @@ class DataStore {
   }
 
   saveData() {
-    try {
-      const jsonData = Object.fromEntries(this.data);
-      const dirPath = path.dirname(this.filePath);
-      
-      // Create directory if it doesn't exist
-      if (!fs.existsSync(dirPath)) {
-        console.log(`📁 Creating data directory: ${dirPath}`);
-        fs.mkdirSync(dirPath, { recursive: true });
-      }
-      
-      // Create backup of existing file before overwriting
-      if (fs.existsSync(this.filePath)) {
-        const backupPath = this.filePath + '.backup';
+    if (this._pendingSave) return;
+    this._pendingSave = true;
+
+    // Queue write asynchronously to avoid blocking Node.js event loop
+    this._writePromise = this._writePromise.then(async () => {
+      this._pendingSave = false;
+      try {
+        const jsonData = Object.fromEntries(this.data);
+        const dirPath = path.dirname(this.filePath);
+        
+        await fs.promises.mkdir(dirPath, { recursive: true });
+        
+        // Backup existing file asynchronously
         try {
-          fs.copyFileSync(this.filePath, backupPath);
+          if (fs.existsSync(this.filePath)) {
+            await fs.promises.copyFile(this.filePath, this.filePath + '.backup');
+          }
         } catch (backupError) {
           console.warn('⚠️  Failed to create backup:', backupError.message);
         }
+        
+        // Atomic write via temporary file
+        const tempPath = this.filePath + '.tmp';
+        await fs.promises.writeFile(tempPath, JSON.stringify(jsonData, null, 2), 'utf8');
+        await fs.promises.rename(tempPath, this.filePath);
+      } catch (error) {
+        console.error('❌ CRITICAL: Error saving data asynchronously to disk:', error);
       }
-      
-      // Write to temporary file first, then rename (atomic operation)
-      const tempPath = this.filePath + '.tmp';
-      fs.writeFileSync(tempPath, JSON.stringify(jsonData, null, 2), 'utf8');
-      fs.renameSync(tempPath, this.filePath);
-      
-      console.log(`💾 Saved ${this.data.size} assessments to disk successfully`);
-    } catch (error) {
-      console.error('❌ CRITICAL: Error saving data to disk:', error);
-      console.error('❌ File path:', this.filePath);
-      console.error('❌ Directory writable:', this.isDirectoryWritable(path.dirname(this.filePath)));
-      
-      // Alert but don't crash - data is still in memory
-      console.error('⚠️  DATA IS ONLY IN MEMORY - WILL BE LOST ON RESTART!');
-    }
+    });
   }
 
   isDirectoryWritable(dirPath) {

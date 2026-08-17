@@ -130,6 +130,16 @@ class DynamicAssessmentService {
   }
 
   /**
+   * Clone dynamic assessment instance for quarterly reassessment
+   */
+  async cloneInstance(id, suffix = 'Next Quarter') {
+    const response = await axios.post(`/api/dynamic-assessments/instances/${id}/clone`, {
+      suffix
+    });
+    return response.data;
+  }
+
+  /**
    * Trigger AI Executive Report Generation with Gemini 3.7
    */
   async generateReport(id) {

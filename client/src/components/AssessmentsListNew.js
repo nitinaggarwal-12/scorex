@@ -650,22 +650,36 @@ const AssessmentsListNew = () => {
         : [];
 
       const dynamicList = dynamicInstances.status === 'fulfilled' && Array.isArray(dynamicInstances.value)
-        ? dynamicInstances.value.map(inst => ({
-            id: inst.id,
-            assessmentId: inst.id,
-            isDynamic: true,
-            assessment_name: `${inst.customerName || 'Enterprise'} - ${inst.frameworkSnapshot?.title || 'Custom AI Assessment'}`,
-            organization_name: inst.customerName || 'Enterprise Organization',
-            industry: inst.frameworkSnapshot?.badge || 'FinOps & Cloud',
-            status: inst.status === 'completed' ? 'submitted' : 'in_progress',
-            completedCategories: inst.status === 'completed' ? ['ai_framework'] : [],
-            progress: inst.status === 'completed' ? 100 : 50,
-            created_at: inst.createdAt,
-            updated_at: inst.updatedAt || inst.createdAt,
-            scores: inst.scores,
-            maturity_level: inst.maturityLevel,
-            typeKey: inst.typeKey
-          }))
+        ? dynamicInstances.value.map(inst => {
+            const dims = inst.frameworkSnapshot?.dimensions || [];
+            const totalQuestions = dims.reduce((acc, d) => acc + (d.questions?.length || 0), 0);
+            const answeredCount = Object.keys(inst.responses || {}).filter(k => !k.includes('_')).length;
+            const progressPct = totalQuestions > 0 
+              ? Math.min(100, Math.round((answeredCount / totalQuestions) * 100))
+              : (inst.status === 'completed' ? 100 : 0);
+            const completedDims = dims.filter(d => {
+              const qCount = d.questions?.length || 0;
+              const ansInDim = (d.questions || []).filter(q => inst.responses?.[q.id] !== undefined).length;
+              return qCount > 0 && ansInDim === qCount;
+            }).map(d => d.name || d.id);
+
+            return {
+              id: inst.id,
+              assessmentId: inst.id,
+              isDynamic: true,
+              assessment_name: `${inst.customerName || 'Enterprise'} - ${inst.frameworkSnapshot?.title || 'Custom Assessment'}`,
+              organization_name: inst.customerName || 'Enterprise Organization',
+              industry: inst.frameworkSnapshot?.badge || 'Cloud & AI',
+              status: inst.status === 'completed' ? 'submitted' : (progressPct > 0 ? 'in_progress' : 'draft'),
+              completedCategories: completedDims,
+              progress: inst.status === 'completed' ? 100 : progressPct,
+              created_at: inst.createdAt,
+              updated_at: inst.updatedAt || inst.createdAt,
+              scores: inst.scores,
+              maturity_level: inst.maturityLevel,
+              typeKey: inst.typeKey
+            };
+          })
         : [];
 
       setAssessments([...dynamicList, ...classicList]);
@@ -683,13 +697,11 @@ const AssessmentsListNew = () => {
       const result = await assessmentService.deleteAllAssessments();
       
       if (result && result.success) {
-        
         setShowDeleteAllConfirm(false);
         await fetchAssessments(); // Refresh the list
       }
     } catch (error) {
       console.error('Error deleting all assessments:', error);
-      
     }
   };
 
@@ -699,13 +711,11 @@ const AssessmentsListNew = () => {
       const result = await assessmentService.generateSampleAssessment(level);
       
       if (result && result.id) {
-        
         await fetchAssessments();
         navigate(`/results/${result.id}`);
       }
     } catch (error) {
       console.error('Error generating sample:', error);
-      
     }
   };
 
@@ -714,10 +724,8 @@ const AssessmentsListNew = () => {
     try {
       toast.loading('Exporting assessment...', { id: 'export' });
       await exportAssessmentToExcel(assessmentId, assessmentName);
-      
     } catch (error) {
       console.error('Error exporting:', error);
-      
     }
   };
 
@@ -726,23 +734,26 @@ const AssessmentsListNew = () => {
     try {
       toast.loading('Cloning assessment...', { id: 'clone' });
       
-      // Clone with new name
-      const clonedData = {
-        organizationName: assessment.organization_name,
-        contactEmail: assessment.contact_email,
-        industry: assessment.industry,
-        assessmentName: `${assessment.assessment_name} (Copy)`,
-        assessmentDescription: assessment.assessmentDescription
-      };
-      
-      const result = await assessmentService.cloneAssessment(assessment.id || assessment.assessmentId, clonedData);
-      
+      if (assessment.isDynamic) {
+        await dynamicAssessmentService.cloneInstance(assessment.id || assessment.assessmentId, 'Next Quarter');
+        toast.success('Assessment cloned for next quarter review!', { id: 'clone' });
+      } else {
+        const clonedData = {
+          organizationName: assessment.organization_name,
+          contactEmail: assessment.contact_email,
+          industry: assessment.industry,
+          assessmentName: `${assessment.assessment_name} (Copy)`,
+          assessmentDescription: assessment.assessmentDescription
+        };
+        await assessmentService.cloneAssessment(assessment.id || assessment.assessmentId, clonedData);
+        toast.success('Assessment cloned successfully!', { id: 'clone' });
+      }
       
       // Refresh the assessments list
       await fetchAssessments();
     } catch (error) {
       console.error('Error cloning assessment:', error);
-      
+      toast.error('Failed to clone assessment', { id: 'clone' });
     }
   };
 
