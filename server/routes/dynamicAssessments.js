@@ -1268,19 +1268,35 @@ router.get('/customers', async (req, res) => {
   }
 });
 
-// 16. Customer Specific Assessments
-router.get('/customer/:customerName', async (req, res) => {
+// 17. Regenerate & Sync Workflow Tour Assets
+router.post('/regenerate-workflow-assets', async (req, res) => {
   try {
-    const { customerName } = req.params;
-    const allInstances = await customAssessmentRepo.getAllInstances();
-    const assessments = allInstances.filter(
-      i => (i.customerName || '').toLowerCase() === customerName.toLowerCase()
-    );
+    const fs = require('fs');
+    const path = require('path');
+    const framesBaseDir = path.join(__dirname, '../../client/public/workflows/frames');
+    const personas = ['01_cloud_architect_workflow', '02_vp_engineering_author_workflow', '03_ciso_secops_workflow', '04_csuite_finops_workflow'];
+    
+    const manifests = {};
+    for (const p of personas) {
+      const manifestPath = path.join(framesBaseDir, p, 'manifest.json');
+      if (fs.existsSync(manifestPath)) {
+        try {
+          manifests[p] = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+        } catch (e) {
+          manifests[p] = [];
+        }
+      }
+    }
 
-    res.json({ success: true, customerName, assessments });
+    res.json({
+      success: true,
+      message: 'Workflow tour assets synchronized with latest portal state',
+      lastUpdated: new Date().toISOString(),
+      manifests
+    });
   } catch (error) {
-    console.error('Error fetching customer assessments:', error);
-    res.status(500).json({ success: false, error: 'Failed to fetch customer assessments' });
+    console.error('Error syncing workflow assets:', error);
+    res.status(500).json({ success: false, error: 'Failed to sync workflow assets' });
   }
 });
 

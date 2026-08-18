@@ -2,42 +2,42 @@
   {
     "index": 1,
     "frameSrc": "/workflows/frames/02_vp_engineering_author_workflow/frame_01.png",
-    "title": "AI Assessment Generator",
+    "title": "1. AI Assessment Generator",
     "description": "Describe any custom architecture, technology stack, or business discipline in natural language.",
     "targetAction": "Route: /assessments/ai-generator"
   },
   {
     "index": 2,
     "frameSrc": "/workflows/frames/02_vp_engineering_author_workflow/frame_02.png",
-    "title": "Prompt Architecture & Depth Selection",
+    "title": "2. Prompt Architecture & Depth Selection",
     "description": "Choose diagnostic depth tier (Tier 1 Rapid, Tier 2 Deep-Dive, or Tier 3 Enterprise Audit).",
     "targetAction": "Set Tier 2 (10-14 Questions) + Input Prompt"
   },
   {
     "index": 3,
     "frameSrc": "/workflows/frames/02_vp_engineering_author_workflow/frame_03.png",
-    "title": "Collaborative Question Manager",
+    "title": "3. Collaborative Question Manager",
     "description": "Manage custom questions, adjust weighting, and define maturity level 1-5 criteria.",
     "targetAction": "Route: /admin/questions"
   },
   {
     "index": 4,
     "frameSrc": "/workflows/frames/02_vp_engineering_author_workflow/frame_04.png",
-    "title": "Edit Scoring Criteria & Pain Points",
+    "title": "4. Edit Scoring Criteria & Pain Points",
     "description": "Fine-tune question text, add bespoke enterprise pain points, and adjust recommendations.",
     "targetAction": "Modal: Edit Question Details"
   },
   {
     "index": 5,
     "frameSrc": "/workflows/frames/02_vp_engineering_author_workflow/frame_05.png",
-    "title": "Semantic Version Increments",
-    "description": "Publishing edits automatically increments framework versions (v2.0 -> v2.1) to preserve audit trails.",
+    "title": "5. Semantic Version Increments (v2.0 -> v2.1)",
+    "description": "Publishing edits automatically increments framework versions to preserve audit trails.",
     "targetAction": "Inspect Framework Versioning Badges"
   },
   {
     "index": 6,
     "frameSrc": "/workflows/frames/02_vp_engineering_author_workflow/frame_06.png",
-    "title": "Stakeholder Feedback Collection",
+    "title": "6. Stakeholder Feedback Collection",
     "description": "Collect multi-stakeholder ratings, usability scores, and qualitative review comments.",
     "targetAction": "Route: /feedback"
   }

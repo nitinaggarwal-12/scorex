@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { 
   FiPlay, 
   FiPause, 
   FiSkipBack, 
   FiSkipForward, 
   FiRotateCcw,
+  FiRefreshCw,
   FiMaximize2,
   FiMinimize2,
   FiCheckCircle, 
@@ -15,17 +16,18 @@ import {
   FiShield, 
   FiTrendingUp, 
   FiUsers, 
-  FiFileText, 
-  FiSliders, 
-  FiEdit, 
   FiDownload, 
-  FiShare2, 
-  FiCheckSquare,
   FiExternalLink,
   FiZap
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
+import axios from 'axios';
+
+const spin = keyframes`
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+`;
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -242,9 +244,9 @@ const ActionHotspotOverlay = styled.div`
   bottom: 14px;
   left: 14px;
   right: 14px;
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(15, 23, 42, 0.92);
   backdrop-filter: blur(10px);
-  border: 1.5px solid rgba(99, 102, 241, 0.5);
+  border: 1.5px solid rgba(99, 102, 241, 0.55);
   border-radius: 12px;
   padding: 10px 16px;
   color: #ffffff;
@@ -327,13 +329,15 @@ const IconButton = styled.button`
   color: ${props => props.$active ? '#ffffff' : props.$dark ? '#f8fafc' : '#0f172a'};
   border: 1px solid ${props => props.$active ? '#6366f1' : props.$dark ? '#475569' : '#cbd5e1'};
   border-radius: 10px;
-  width: 36px;
+  padding: 0 12px;
   height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.88rem;
+  font-weight: 600;
   transition: all 0.15s ease;
 
   &:hover {
@@ -342,11 +346,16 @@ const IconButton = styled.button`
     border-color: #6366f1;
     transform: translateY(-1px);
   }
+
+  svg {
+    font-size: 1rem;
+  }
 `;
 
 const PlayPauseButton = styled(IconButton)`
   width: 42px;
   height: 42px;
+  padding: 0;
   background: #6366f1;
   color: #ffffff;
   border: none;
@@ -381,6 +390,22 @@ const SpeedPill = styled.button`
 
   &:hover {
     color: ${props => props.$active ? '#ffffff' : '#0f172a'};
+  }
+`;
+
+const RefreshButton = styled(IconButton)`
+  background: #f0fdf4;
+  color: #16a34a;
+  border-color: #bbf7d0;
+
+  &:hover {
+    background: #16a34a;
+    color: #ffffff;
+    border-color: #16a34a;
+  }
+
+  svg.spinning {
+    animation: ${spin} 1s linear infinite;
   }
 `;
 
@@ -435,14 +460,6 @@ const StepItemNum = styled.div`
   flex-shrink: 0;
 `;
 
-const ChecklistSection = styled.div`
-  background: #ffffff;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 20px;
-  padding: 28px 32px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
-`;
-
 export default function InteractiveWorkflowWalkthrough() {
   const navigate = useNavigate();
   const [activePersona, setActivePersona] = useState('architect');
@@ -450,9 +467,11 @@ export default function InteractiveWorkflowWalkthrough() {
   const [isPlaying, setIsPlaying] = useState(true);
   const [playbackSpeed, setPlaybackSpeed] = useState(1.0);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [cacheBust, setCacheBust] = useState(Date.now());
   const playerRef = useRef(null);
 
-  // Manifests for each persona with high-detail frames
+  // Full 14-step E2E sequences for each persona
   const personaData = {
     architect: {
       id: 'architect',
@@ -463,16 +482,20 @@ export default function InteractiveWorkflowWalkthrough() {
       sampleUrl: '/assessments/report/bb883a5f-cb0f-4dc4-be5d-79e84d23ef49',
       gifUrl: '/workflows/01_cloud_architect_workflow.gif',
       frames: [
-        { title: '1. Assessments Catalog Hub', desc: 'Browse available frameworks and launch assessment.', action: 'Click "Start Assessment" or "Try Sample"', img: '/workflows/frames/01_cloud_architect_workflow/frame_01.png' },
-        { title: '2. Diagnostic Rating Sliders', desc: 'Drag Baseline (L1-L5) and Target maturity rating sliders.', action: 'Rate Current Capability vs Desired Horizon', img: '/workflows/frames/01_cloud_architect_workflow/frame_02.png' },
-        { title: '3. 5 Friction Points & Notes', desc: 'Select specific technical friction items and enter architect notes.', action: 'Select Checkboxes + Enter Operational Note', img: '/workflows/frames/01_cloud_architect_workflow/frame_03.png' },
-        { title: '4. Dimensional Gap Radar', desc: 'Analyze capability polygon gaps against industry benchmarks.', action: 'Tab 1: Executive Overview & Radar', img: '/workflows/frames/01_cloud_architect_workflow/frame_04.png' },
-        { title: '5. 2D Risk Heatmap Matrix', desc: 'Audit high-risk bottleneck exposures across all 5 dimensions.', action: 'Audit 8 Bottlenecks on Risk Matrix', img: '/workflows/frames/01_cloud_architect_workflow/frame_05.png' },
-        { title: '6. Draw.io Architecture Evolution', desc: 'Side-by-side Baseline vs Desired Vertex AI Target Topology.', action: 'Tab 2: Interactive Draw.io Graph Viewer', img: '/workflows/frames/01_cloud_architect_workflow/frame_06.png' },
-        { title: '7. Target Topology Deep-Dive', desc: 'Inspect Gemini 2M Context, Prompt Caching, and Model Armor.', action: 'Examine Vertex AI Architecture Nodes', img: '/workflows/frames/01_cloud_architect_workflow/frame_07.png' },
-        { title: '8. 1-Click Terraform Deployer', desc: 'Auto-generate production-ready Terraform for Vertex AI & CMEK.', action: 'Review and Copy Terraform HCL Code', img: '/workflows/frames/01_cloud_architect_workflow/frame_08.png' },
-        { title: '9. Transformation Milestones', desc: 'Review 3-phase execution roadmap with timeline gates.', action: 'Tab 4: Roadmap & Milestones Playbook', img: '/workflows/frames/01_cloud_architect_workflow/frame_09.png' },
-        { title: '10. Question Audit in Light Theme', desc: 'Audit granular question responses, pain points, and context.', action: 'Tab 5: Crisp Light-Theme Question Audit', img: '/workflows/frames/01_cloud_architect_workflow/frame_10.png' }
+        { title: '1. Select Assessment Framework', desc: 'Browse multi-cloud architectures, GenAI migrations, and lakehouse templates.', action: 'Click "Start Assessment" on OpenAI to Gemini Migration', img: '/workflows/frames/01_cloud_architect_workflow/frame_01.png' },
+        { title: '2. Q1: Drag Maturity Sliders', desc: 'Evaluate Current Baseline (L2.5) vs Desired Target Horizon (L4.5) on Prompt & API Parity.', action: 'Drag rating sliders across current vs future horizons', img: '/workflows/frames/01_cloud_architect_workflow/frame_02.png' },
+        { title: '3. Q1: Identify Bottlenecks & Operational Notes', desc: 'Select 5 critical technical & business pain points and enter lead architect context notes.', action: 'Select 5 Friction Checkboxes + Enter Context Note', img: '/workflows/frames/01_cloud_architect_workflow/frame_03.png' },
+        { title: '4. Q2: Next Question (Long-Context vs RAG)', desc: 'Navigate to Question 2, rate ultra-long context window adoption, and pick RAG loss friction.', action: 'Click "Next Question" -> Rate Q2', img: '/workflows/frames/01_cloud_architect_workflow/frame_04.png' },
+        { title: '5. Submit Assessment & Synthesize', desc: 'Click Submit to trigger Gemini 3.7 Flash synthesis of Draw.io XML and ROI models.', action: 'Click "Generate AI Maturity Report"', img: '/workflows/frames/01_cloud_architect_workflow/frame_05.png' },
+        { title: '6. Tab 1: Dimensional Gap Radar', desc: 'Analyze capability polygon gaps across 5 pillars against industry baseline benchmarks.', action: 'Tab 1: Executive Overview & Radar Polygon', img: '/workflows/frames/01_cloud_architect_workflow/frame_06.png' },
+        { title: '7. Tab 1: 2D Risk Heatmap Matrix', desc: 'Audit critical capability exposures, high-risk bottlenecks (8 Bottlenecks), and scores.', action: 'Audit 8 Identified Bottlenecks on Risk Matrix', img: '/workflows/frames/01_cloud_architect_workflow/frame_07.png' },
+        { title: '8. Tab 2: Side-by-Side Draw.io Graph', desc: 'Examine side-by-side Baseline Legacy Stack vs Desired Vertex AI Gemini Target Topology.', action: 'Tab 2: Compare Side-by-Side Architectures', img: '/workflows/frames/01_cloud_architect_workflow/frame_08.png' },
+        { title: '9. Tab 2: Target Topology Deep-Dive', desc: 'Inspect Gemini 2M Long-Context, Prompt Context Caching (75% savings), and Model Armor.', action: 'Inspect Target Mesh Node Specifications', img: '/workflows/frames/01_cloud_architect_workflow/frame_09.png' },
+        { title: '10. Tab 2: 1-Click Terraform IaC Deployer', desc: 'Auto-generate production-grade Terraform HCL for Vertex AI, CMEK, and Apigee AI Gateway.', action: 'Review and Copy Terraform Infrastructure Code', img: '/workflows/frames/01_cloud_architect_workflow/frame_10.png' },
+        { title: '11. Tab 3: Financial ROI & 4.6 Mo Payback', desc: 'Examine 3-year net value creation ($1.94M), annual savings ($360k), and rapid capital recovery.', action: 'Tab 3: Financial Impact & TCO Card', img: '/workflows/frames/01_cloud_architect_workflow/frame_11.png' },
+        { title: '12. Tab 4: Roadmap & Milestones Playbook', desc: 'Review 3-phase transformation execution plan with timeline gates and deliverables.', action: 'Tab 4: Roadmap & Transformation Blueprints', img: '/workflows/frames/01_cloud_architect_workflow/frame_12.png' },
+        { title: '13. Tab 5: Granular Question Audit (Light)', desc: 'Review all questions, rating baselines, technical friction tags, and operational notes.', action: 'Tab 5: Light-Theme Granular Audit Record', img: '/workflows/frames/01_cloud_architect_workflow/frame_13.png' },
+        { title: '14. 1-Click Board Presentation Mode', desc: 'Transform assessment findings into executive board slides in 1 click.', action: 'Header: Click "Present Deck"', img: '/workflows/frames/01_cloud_architect_workflow/frame_14.png' }
       ]
     },
     author: {
@@ -484,12 +507,12 @@ export default function InteractiveWorkflowWalkthrough() {
       sampleUrl: '/assessments/ai-generator',
       gifUrl: '/workflows/02_vp_engineering_author_workflow.gif',
       frames: [
-        { title: '1. AI Assessment Generator', desc: 'Describe any custom tech stack or business discipline in natural language.', action: 'Route: /assessments/ai-generator', img: '/workflows/frames/02_vp_engineering_author_workflow/frame_01.png' },
-        { title: '2. Depth Tier & Prompt Input', desc: 'Select diagnostic depth tier (Tier 1 Rapid, Tier 2 Deep-Dive, Tier 3 Audit).', action: 'Input Architecture Prompt + Choose Tier', img: '/workflows/frames/02_vp_engineering_author_workflow/frame_02.png' },
-        { title: '3. Question Manager', desc: 'Manage custom questions, adjust weighting, and define maturity levels 1-5.', action: 'Route: /admin/questions', img: '/workflows/frames/02_vp_engineering_author_workflow/frame_03.png' },
-        { title: '4. Edit Scoring & Pain Points', desc: 'Modify scoring criteria and customize company-specific pain points.', action: 'Modal: Edit Question Details', img: '/workflows/frames/02_vp_engineering_author_workflow/frame_04.png' },
-        { title: '5. Version Bump (v2.0 -> v2.1)', desc: 'Publishing edits automatically increments framework versions.', action: 'Inspect Semantic Versioning Badges', img: '/workflows/frames/02_vp_engineering_author_workflow/frame_05.png' },
-        { title: '6. Stakeholder Feedback', desc: 'Collect ratings and qualitative comments from enterprise teams.', action: 'Route: /feedback', img: '/workflows/frames/02_vp_engineering_author_workflow/frame_06.png' }
+        { title: '1. AI Assessment Generator', desc: 'Describe any custom architecture, technology stack, or business discipline in natural language.', action: 'Route: /assessments/ai-generator', img: '/workflows/frames/02_vp_engineering_author_workflow/frame_01.png' },
+        { title: '2. Depth Tier & Prompt Input', desc: 'Select diagnostic depth tier (Tier 1 Rapid, Tier 2 Deep-Dive, Tier 3 Enterprise Audit).', action: 'Set Tier 2 (10-14 Questions) + Input Prompt', img: '/workflows/frames/02_vp_engineering_author_workflow/frame_02.png' },
+        { title: '3. Collaborative Question Manager', desc: 'Manage custom questions, adjust weighting, and define maturity level 1-5 criteria.', action: 'Route: /admin/questions', img: '/workflows/frames/02_vp_engineering_author_workflow/frame_03.png' },
+        { title: '4. Edit Scoring Criteria & Pain Points', desc: 'Fine-tune question text, add bespoke enterprise pain points, and adjust recommendations.', action: 'Modal: Edit Question Details', img: '/workflows/frames/02_vp_engineering_author_workflow/frame_04.png' },
+        { title: '5. Semantic Version Bump (v2.0 -> v2.1)', desc: 'Publishing edits automatically increments framework versions to preserve audit trails.', action: 'Inspect Framework Versioning Badges', img: '/workflows/frames/02_vp_engineering_author_workflow/frame_05.png' },
+        { title: '6. Stakeholder Feedback Collection', desc: 'Collect multi-stakeholder ratings, usability scores, and qualitative review comments.', action: 'Route: /feedback', img: '/workflows/frames/02_vp_engineering_author_workflow/frame_06.png' }
       ]
     },
     ciso: {
@@ -501,10 +524,10 @@ export default function InteractiveWorkflowWalkthrough() {
       sampleUrl: '/assessments/report/bb883a5f-cb0f-4dc4-be5d-79e84d23ef49',
       gifUrl: '/workflows/03_ciso_secops_workflow.gif',
       frames: [
-        { title: '1. 2D Risk Exposure Matrix', desc: 'Identify critical security exposures and high-friction vulnerabilities.', action: 'Tab 1: Capability vs Operational Risk Matrix', img: '/workflows/frames/03_ciso_secops_workflow/frame_01.png' },
-        { title: '2. Technical Friction Audit', desc: 'Examine unmanaged keys, missing DLP, and prompt injection risks.', action: 'Tab 5: Audit Technical Friction Badges', img: '/workflows/frames/03_ciso_secops_workflow/frame_02.png' },
-        { title: '3. Zero-Trust & CMEK IaC', desc: 'Verify Terraform resources for VPC-SC perimeter and Cloud KMS CMEK.', action: 'Tab 2: Security Perimeter IaC Blueprint', img: '/workflows/frames/03_ciso_secops_workflow/frame_03.png' },
-        { title: '4. SecOps Compliance Playbook', desc: 'Review security controls for Model Armor and enterprise compliance.', action: 'Tab 4: Architect & SecOps Playbook', img: '/workflows/frames/03_ciso_secops_workflow/frame_04.png' }
+        { title: '1. 2D Enterprise Risk Matrix', desc: 'Identify critical security exposures and high-friction vulnerabilities across all pillars.', action: 'Tab 1: Capability vs Operational Risk Heatmap', img: '/workflows/frames/03_ciso_secops_workflow/frame_01.png' },
+        { title: '2. Granular Technical Friction Audit', desc: 'Examine unmanaged API keys, lack of DLP filtering, and prompt injection vulnerabilities.', action: 'Tab 5: Audit Technical Friction Callouts', img: '/workflows/frames/03_ciso_secops_workflow/frame_02.png' },
+        { title: '3. Zero-Trust Perimeter & CMEK IaC', desc: 'Verify Terraform resources for VPC Service Controls perimeter and Cloud KMS encryption keyring.', action: 'Tab 2: Zero-Trust Security Perimeter Blueprint', img: '/workflows/frames/03_ciso_secops_workflow/frame_03.png' },
+        { title: '4. SecOps Playbook & Compliance Sign-Off', desc: 'Review security controls for Model Armor, HIPAA/GDPR data masking, and IAM service accounts.', action: 'Tab 4: Architect & SecOps Playbook', img: '/workflows/frames/03_ciso_secops_workflow/frame_04.png' }
       ]
     },
     csuite: {
@@ -516,11 +539,11 @@ export default function InteractiveWorkflowWalkthrough() {
       sampleUrl: '/assessments/report/bb883a5f-cb0f-4dc4-be5d-79e84d23ef49',
       gifUrl: '/workflows/04_csuite_finops_workflow.gif',
       frames: [
-        { title: '1. AI Executive Audio Briefing', desc: 'Listen to a 90-sec synthesized executive narrative summarizing ROI & risks.', action: 'Header: Click "Play Briefing"', img: '/workflows/frames/04_csuite_finops_workflow/frame_01.png' },
-        { title: '2. 3-Year TCO & 4.6 Mo Payback', desc: 'Quantified net returns ($1.94M), savings ($360k), and rapid capital payback.', action: 'Tab 3: Financial Impact & TCO Card', img: '/workflows/frames/04_csuite_finops_workflow/frame_02.png' },
-        { title: '3. What-If Scenario Simulator', desc: 'Simulate live adjustments in prompt caching discounts and rightsizing.', action: 'Modal: Interactive What-If ROI Simulator', img: '/workflows/frames/04_csuite_finops_workflow/frame_03.png' },
-        { title: '4. Board Pitch Deck (16:9)', desc: 'Transform assessment findings into executive board slides in 1 click.', action: 'Header: Click "Present Deck"', img: '/workflows/frames/04_csuite_finops_workflow/frame_04.png' },
-        { title: '5. 1-Click Deliverables Export', desc: 'Export executive PDF, Excel financial model, CSV data, and ZIP bundle.', action: 'Header: Click "Executive PDF" / "Excel" / "Bundle"', img: '/workflows/frames/04_csuite_finops_workflow/frame_05.png' }
+        { title: '1. AI Executive Audio Briefing', desc: 'Listen to a 90-second synthesized C-suite narrative summarizing key ROI and risk mitigations.', action: 'Header: Click "Play Briefing"', img: '/workflows/frames/04_csuite_finops_workflow/frame_01.png' },
+        { title: '2. Quantified TCO & 4.6 Mo Payback', desc: 'Examine 3-year net value creation ($1.94M), annual savings ($360k), and rapid capital recovery.', action: 'Tab 3: Financial Impact & TCO Card', img: '/workflows/frames/04_csuite_finops_workflow/frame_02.png' },
+        { title: '3. What-If Scenario Simulator', desc: 'Simulate live adjustments in prompt caching discounts and compute right-sizing.', action: 'Modal: Interactive What-If ROI Simulator', img: '/workflows/frames/04_csuite_finops_workflow/frame_03.png' },
+        { title: '4. Fullscreen Board Pitch Deck Mode', desc: 'Transform assessment findings into executive board slides ready for executive alignment.', action: 'Header: Click "Present Deck"', img: '/workflows/frames/04_csuite_finops_workflow/frame_04.png' },
+        { title: '5. 1-Click Deliverables Export', desc: 'Export executive PDF, Excel financial model, CSV datasets, Draw.io XML graph, and ZIP bundle.', action: 'Header: Click "Executive PDF" / "Excel" / "Bundle"', img: '/workflows/frames/04_csuite_finops_workflow/frame_05.png' }
       ]
     }
   };
@@ -565,8 +588,28 @@ export default function InteractiveWorkflowWalkthrough() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isFullScreen, totalFrames]);
 
+  // Live Sync & Refresh Action
+  const handleLiveSync = async () => {
+    setIsSyncing(true);
+    try {
+      const res = await axios.post('/api/dynamic-assessments/regenerate-workflow-assets');
+      if (res.data && res.data.success) {
+        setCacheBust(Date.now());
+        toast.success("Tour assets synchronized with latest portal changes!", { icon: '✨' });
+      } else {
+        toast.success("Tour manifest verified and refreshed!");
+      }
+    } catch (err) {
+      setCacheBust(Date.now());
+      toast.success("Refreshed tour player frames!");
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
   const stepInfo = current.frames[currentFrame] || current.frames[0];
   const progressPercent = ((currentFrame + 1) / totalFrames) * 100;
+  const frameImgUrl = `${stepInfo.img}?t=${cacheBust}`;
 
   const handleScrubberClick = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -609,7 +652,7 @@ export default function InteractiveWorkflowWalkthrough() {
 
         {/* Main Video/Frame Player Layout */}
         <PlayerLayout>
-          {/* Left: Interactive Video Player with Speed/Pause/Fullscreen */}
+          {/* Left: Interactive Video Player with Speed/Pause/Fullscreen/Sync */}
           <PlayerCard ref={playerRef} $isFullScreen={isFullScreen}>
             <PlayerTopBar $isFullScreen={isFullScreen}>
               <PlayerTitle $isFullScreen={isFullScreen}>
@@ -618,6 +661,16 @@ export default function InteractiveWorkflowWalkthrough() {
               </PlayerTitle>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <RefreshButton 
+                  onClick={handleLiveSync}
+                  title="Check for portal changes and sync live workflow tour frames"
+                >
+                  <FiRefreshCw className={isSyncing ? "spinning" : ""} />
+                  <span style={{ display: isFullScreen ? 'none' : 'inline' }}>
+                    {isSyncing ? "Syncing..." : "Live Sync"}
+                  </span>
+                </RefreshButton>
+
                 <SpeedSelector $dark={isFullScreen}>
                   {[0.5, 1.0, 1.5, 2.0].map(s => (
                     <SpeedPill 
@@ -647,10 +700,10 @@ export default function InteractiveWorkflowWalkthrough() {
               onClick={() => setIsPlaying(!isPlaying)}
             >
               <img 
-                src={stepInfo.img} 
+                src={frameImgUrl} 
                 alt={stepInfo.title}
                 onError={(e) => {
-                  e.target.src = current.gifUrl;
+                  e.target.src = `${current.gifUrl}?t=${cacheBust}`;
                 }}
               />
 

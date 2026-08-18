@@ -2,71 +2,99 @@
   {
     "index": 1,
     "frameSrc": "/workflows/frames/01_cloud_architect_workflow/frame_01.png",
-    "title": "Assessments Catalog Hub",
-    "description": "Browse multi-cloud architectures, GenAI migrations, and lakehouse blueprints.",
-    "targetAction": "Click \"Start Assessment\" or \"Try Sample\""
+    "title": "1. Select Assessment Framework",
+    "description": "Browse multi-cloud architectures, GenAI migrations, and lakehouse templates.",
+    "targetAction": "Click \"Start Assessment\" on OpenAI to Gemini Migration"
   },
   {
     "index": 2,
     "frameSrc": "/workflows/frames/01_cloud_architect_workflow/frame_02.png",
-    "title": "Interactive Diagnostic Question",
-    "description": "Move Baseline and Target sliders from Level 1 to 5 to evaluate technical capabilities.",
+    "title": "2. Q1: Drag Maturity Sliders",
+    "description": "Evaluate Current Baseline (L2.5) vs Desired Target Horizon (L4.5) on Prompt & API Parity.",
     "targetAction": "Drag rating sliders across current vs future horizons"
   },
   {
     "index": 3,
     "frameSrc": "/workflows/frames/01_cloud_architect_workflow/frame_03.png",
-    "title": "Identify Pain Points & Architect Notes",
-    "description": "Select specific technical friction bottlenecks and enter operational environment context.",
+    "title": "3. Q1: Identify Bottlenecks & Operational Notes",
+    "description": "Select 5 critical technical & business pain points and enter lead architect context notes.",
     "targetAction": "Select 5 Friction Checkboxes + Enter Context Note"
   },
   {
     "index": 4,
     "frameSrc": "/workflows/frames/01_cloud_architect_workflow/frame_04.png",
-    "title": "Dimensional Gap Radar",
-    "description": "Analyze dimensional maturity gaps across 5 pillars against industry baseline benchmarks.",
-    "targetAction": "Tab 1: Executive Overview & Radar Polygon"
+    "title": "4. Q2: Next Question (Long-Context vs RAG)",
+    "description": "Navigate to Question 2, rate ultra-long context window adoption, and pick RAG loss friction.",
+    "targetAction": "Click \"Next Question\" -> Rate Q2"
   },
   {
     "index": 5,
     "frameSrc": "/workflows/frames/01_cloud_architect_workflow/frame_05.png",
-    "title": "2D Capability vs. Risk Matrix",
-    "description": "Audit critical capability exposures, high-risk bottlenecks, and dimension health scores.",
-    "targetAction": "Audit 8 Identified Bottlenecks on Matrix"
+    "title": "5. Submit Assessment & Synthesize",
+    "description": "Click Submit to trigger Gemini 3.7 Flash synthesis of Draw.io XML and ROI models.",
+    "targetAction": "Click \"Generate AI Maturity Report\""
   },
   {
     "index": 6,
     "frameSrc": "/workflows/frames/01_cloud_architect_workflow/frame_06.png",
-    "title": "Draw.io Architecture Evolution",
-    "description": "Examine side-by-side Baseline Legacy Stack vs Desired Vertex AI Gemini Target Topology.",
-    "targetAction": "Tab 2: Compare Side-by-Side Architectures"
+    "title": "6. Tab 1: Dimensional Gap Radar",
+    "description": "Analyze capability polygon gaps across 5 pillars against industry baseline benchmarks.",
+    "targetAction": "Tab 1: Executive Overview & Radar Polygon"
   },
   {
     "index": 7,
     "frameSrc": "/workflows/frames/01_cloud_architect_workflow/frame_07.png",
-    "title": "Target State Graph Deep-Dive",
-    "description": "Inspect Gemini 2M Long-Context, Prompt Context Caching (75% savings), and Model Armor.",
-    "targetAction": "Inspect Target Mesh Node Specifications"
+    "title": "7. Tab 1: 2D Risk Heatmap Matrix",
+    "description": "Audit critical capability exposures, high-risk bottlenecks (8 Bottlenecks), and scores.",
+    "targetAction": "Audit 8 Identified Bottlenecks on Risk Matrix"
   },
   {
     "index": 8,
     "frameSrc": "/workflows/frames/01_cloud_architect_workflow/frame_08.png",
-    "title": "1-Click Terraform IaC Deployer",
-    "description": "Auto-generate production-grade Terraform HCL for Vertex AI, CMEK, and Apigee AI Gateway.",
-    "targetAction": "Review and Copy Terraform Infrastructure Code"
+    "title": "8. Tab 2: Side-by-Side Draw.io Graph",
+    "description": "Examine side-by-side Baseline Legacy Stack vs Desired Vertex AI Gemini Target Topology.",
+    "targetAction": "Tab 2: Compare Side-by-Side Architectures"
   },
   {
     "index": 9,
     "frameSrc": "/workflows/frames/01_cloud_architect_workflow/frame_09.png",
-    "title": "Engineering Roadmap & Milestones",
-    "description": "Review 3-phase transformation execution plan with timeline gates and deliverables.",
-    "targetAction": "Tab 4: Roadmap & Transformation Blueprints"
+    "title": "9. Tab 2: Target Topology Deep-Dive",
+    "description": "Inspect Gemini 2M Long-Context, Prompt Context Caching (75% savings), and Model Armor.",
+    "targetAction": "Inspect Target Mesh Node Specifications"
   },
   {
     "index": 10,
     "frameSrc": "/workflows/frames/01_cloud_architect_workflow/frame_10.png",
-    "title": "Granular Question & Friction Audit",
+    "title": "10. Tab 2: 1-Click Terraform IaC Deployer",
+    "description": "Auto-generate production-grade Terraform HCL for Vertex AI, CMEK, and Apigee AI Gateway.",
+    "targetAction": "Review and Copy Terraform Infrastructure Code"
+  },
+  {
+    "index": 11,
+    "frameSrc": "/workflows/frames/01_cloud_architect_workflow/frame_11.png",
+    "title": "11. Tab 3: Financial ROI & 4.6 Mo Payback",
+    "description": "Examine 3-year net value creation ($1.94M), annual savings ($360k), and rapid capital recovery.",
+    "targetAction": "Tab 3: Financial Impact & TCO Card"
+  },
+  {
+    "index": 12,
+    "frameSrc": "/workflows/frames/01_cloud_architect_workflow/frame_12.png",
+    "title": "12. Tab 4: Roadmap & Milestones Playbook",
+    "description": "Review 3-phase transformation execution plan with timeline gates and deliverables.",
+    "targetAction": "Tab 4: Roadmap & Transformation Blueprints"
+  },
+  {
+    "index": 13,
+    "frameSrc": "/workflows/frames/01_cloud_architect_workflow/frame_13.png",
+    "title": "13. Tab 5: Granular Question Audit (Light)",
     "description": "Review all questions, rating baselines, technical friction tags, and operational notes.",
     "targetAction": "Tab 5: Light-Theme Granular Audit Record"
+  },
+  {
+    "index": 14,
+    "frameSrc": "/workflows/frames/01_cloud_architect_workflow/frame_14.png",
+    "title": "14. 1-Click Board Presentation Mode",
+    "description": "Transform assessment findings into executive board slides in 1 click.",
+    "targetAction": "Header: Click \"Present Deck\""
   }
 ]
