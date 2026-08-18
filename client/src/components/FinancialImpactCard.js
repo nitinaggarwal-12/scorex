@@ -306,10 +306,11 @@ const FinancialImpactCard = ({
   const dollarAtRiskMitigated = Math.round(avgGap * 360000 * m);
 
   // Dynamic implementation cost and net ROI grounded in actual gap severity and scale
-  const implementationCost = Math.round(totalAnnualSavings * (0.32 + (avgGap / 5.0) * 0.42));
-  const netThreeYearBenefit = Math.max(100000, threeYearValue - implementationCost);
-  const roiMultiple = Math.max(160, Math.round((netThreeYearBenefit / implementationCost) * 100));
-  const paybackMonths = Math.max(2.1, Math.min(16.0, Number(((implementationCost / totalAnnualSavings) * 12).toFixed(1)))).toFixed(1);
+  const implementationCost = Math.round(totalAnnualSavings * (0.28 + (avgGap / 5.0) * 0.40));
+  const netThreeYearBenefit = Math.max(50000, threeYearValue - implementationCost);
+  const calculatedRoi = Math.round((netThreeYearBenefit / Math.max(1, implementationCost)) * 100);
+  const roiMultiple = avgGap > 1.2 ? Math.max(120, calculatedRoi) : Math.max(35, calculatedRoi);
+  const paybackMonths = Math.max(2.1, Math.min(18.0, Number(((implementationCost / Math.max(1, totalAnnualSavings)) * 12).toFixed(1)))).toFixed(1);
 
   const breakdownDrivers = dimensionCalculations;
 
@@ -327,7 +328,7 @@ const FinancialImpactCard = ({
           <div>
             <Title>Quantified TCO & Dollar-at-Risk Financial Impact</Title>
             <Subtitle>
-              Projected ROI, cost avoidance, and operational value grounded in your specific maturity gaps.
+              Projected ROI, cost avoidance, and operational value dynamically calculated from your maturity gap ({avgGap.toFixed(1)}/5.0).
             </Subtitle>
           </div>
         </TitleBlock>

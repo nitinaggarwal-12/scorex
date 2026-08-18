@@ -3480,23 +3480,6 @@ const AssessmentResultsNew = () => {
         
         {/* Header - Always show */}
         <ReportHeader>
-          {/* Floating Start Slideshow Button */}
-          {!presentationMode && (
-            <FloatingSlideshowButton
-              onClick={() => { 
-                setPresentationMode(true); 
-                setCurrentSlide(0); 
-                document.body.style.overflow = 'hidden'; 
-              }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              title="View Maturity Report in presentation slideshow mode"
-            >
-              <FiMonitor size={18} />
-              Slideshow
-            </FloatingSlideshowButton>
-          )}
-          
           <HeaderTop>
             <TitleSection>
               <h1>Enterprise Data & AI Maturity Report</h1>
@@ -3505,8 +3488,22 @@ const AssessmentResultsNew = () => {
               </div>
             </TitleSection>
             <ActionButtons>
-              {/* Primary Group - Purple + Green */}
+              {/* Primary Group - Presentation + Simulator + Command Center */}
               <ButtonGroup>
+                <ActionButton
+                  onClick={() => { 
+                    setPresentationMode(true); 
+                    setCurrentSlide(0); 
+                    document.body.style.overflow = 'hidden'; 
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)' }}
+                  title="Open presentation slideshow mode"
+                >
+                  <FiMonitor size={16} />
+                  Presentation Mode
+                </ActionButton>
                 <ActionButton
                   onClick={() => setShowSimulator(!showSimulator)}
                   whileHover={{ scale: 1.02 }}
@@ -5517,7 +5514,7 @@ const AssessmentResultsNew = () => {
                     )}
                     {data.databricksSource && (
                       <div style={{ marginTop: '12px', paddingTop: '8px', borderTop: '1px solid #e5e7eb', fontSize: '0.7rem', color: '#9ca3af', fontStyle: 'italic' }}>
-                        Source: {data.databricksSource}
+                        Source: Enterprise Cloud & AI Architecture Reference Framework
                       </div>
                     )}
                   </PillarColumn>

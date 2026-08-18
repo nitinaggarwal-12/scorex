@@ -880,10 +880,26 @@ const GlobalNav = () => {
           {/* Desktop Navigation */}
           <TopNav>
             <NavLink onClick={handleLogoClick}>Home</NavLink>
+            <NavLink 
+              onClick={() => handleNavigate('/assessments/custom-hub')}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                color: '#7c3aed',
+                fontWeight: '700',
+                background: 'rgba(124, 58, 237, 0.08)',
+                padding: '6px 12px',
+                borderRadius: '8px'
+              }}
+            >
+              <HiSparkles size={16} style={{ color: '#8b5cf6' }} />
+              AI Assessment Hub
+            </NavLink>
+            <NavLink onClick={() => handleNavigate('/start')}>6-Pillar Benchmark</NavLink>
             <NavLink onClick={() => handleNavigate('/deep-dive')}>Deep Dive</NavLink>
             <NavLink onClick={() => handleNavigate('/pitch-deck')}>Pitch Deck</NavLink>
             <NavLink onClick={() => handleNavigate('/user-guide')}>User Guide</NavLink>
-            <NavLink onClick={() => navigate('/workflow-walkthrough')}>Workflow Demo</NavLink>
           </TopNav>
 
           <ActionButtons>

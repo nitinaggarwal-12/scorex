@@ -1272,10 +1272,6 @@ const UserGuide = () => {
 
   return (
     <PageContainer>
-      <FloatingSlideshowButton onClick={() => setShowSlideshow(true)}>
-        <FiMonitor /> Slideshow
-      </FloatingSlideshowButton>
-
       <ContentWrapper>
         {/* User Roles */}
         <Section>
