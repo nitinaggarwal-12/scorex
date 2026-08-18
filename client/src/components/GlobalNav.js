@@ -911,10 +911,6 @@ const GlobalNav = () => {
                       <strong><FiBarChart2 style={{ color: '#ff6b35' }} /> Enterprise Data & AI Maturity</strong>
                       <span>ConnectPlus Telecom • 6-Pillar Full Framework</span>
                     </TrySampleOption>
-                    <TrySampleOption onClick={handleTrySampleGenAI}>
-                      <strong><FiCpu style={{ color: '#3b82f6' }} /> Gen AI Enterprise Readiness</strong>
-                      <span>Global Retail Cloud AI • 6 Dimensions</span>
-                    </TrySampleOption>
                     {promotedTypes.map((type) => (
                       <TrySampleOption 
                         key={type.id || type.typeKey} 
@@ -1256,10 +1252,6 @@ const GlobalNav = () => {
                     <TrySampleOption onClick={handleTrySampleCore}>
                       <strong><FiBarChart2 style={{ color: '#ff6b35' }} /> Enterprise Data & AI Maturity</strong>
                       <span>ConnectPlus Telecom • 6-Pillar Full Framework</span>
-                    </TrySampleOption>
-                    <TrySampleOption onClick={handleTrySampleGenAI}>
-                      <strong><FiCpu style={{ color: '#3b82f6' }} /> Gen AI Enterprise Readiness</strong>
-                      <span>Global Retail Cloud AI • 6 Dimensions</span>
                     </TrySampleOption>
                     {promotedTypes.map((type) => (
                       <TrySampleOption 

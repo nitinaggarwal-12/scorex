@@ -599,554 +599,297 @@ const STARTER_PRODUCTION_TEMPLATES = [
     }
   },
   {
-    id: 'f337cd53-dcc4-45e9-9650-4c96e05fa7e7',
-    typeKey: 'cloud_security_zero_trust_architecture',
-    title: 'Cloud Security & Zero Trust Architecture Readiness',
-    subtitle: 'Enterprise Security Architecture & Compliance Framework',
-    description: 'Evaluates enterprise maturity across Identity Governance (IAM/PAM), Network Micro-Segmentation, Data Protection/CMEK, DevSecOps/CSPM, and Automated SIEM/SOAR Incident Response.',
-    icon: 'FiLock',
-    badge: 'Security',
-    color: '#06b6d4',
-    status: 'production',
+    id: "tpl_enterprise_ai_zero_trust_security",
+    typeKey: "enterprise_ai_zero_trust_security",
+    title: "Enterprise AI & Zero-Trust Security Assessment",
+    subtitle: "CISO Posture, Real-Time DLP, Shadow AI Gateway & Zero-Trust Mesh",
+    description: "Comprehensive executive evaluation across Shadow AI Gateway governance, Real-Time DLP & PII masking, Workload Identity (IAM/PAM), Model Armor prompt defense, and SIEM/SOAR compliance for EU AI Act, HIPAA & NIST.",
+    icon: "HiShieldCheck",
+    badge: "CISO & Zero-Trust",
+    color: "#0ea5e9",
+    status: "production",
     isPublished: true,
     isPromoted: true,
-    createdBy: 'system',
+    createdBy: "system",
     createdAt: new Date().toISOString(),
     framework: {
-      typeKey: 'cloud_security_zero_trust_architecture',
-      title: 'Cloud Security & Zero Trust Architecture Readiness',
-      subtitle: 'Enterprise Security Architecture & Compliance Framework',
-      description: 'Evaluates enterprise maturity across Identity Governance (IAM/PAM), Network Micro-Segmentation, Data Protection/CMEK, DevSecOps/CSPM, and Automated SIEM/SOAR Incident Response.',
-      icon: 'FiLock',
-      badge: 'Security',
-      color: '#06b6d4',
-      targetRole: 'Security Architects, CISOs, Cloud SecOps Leads',
+      typeKey: "enterprise_ai_zero_trust_security",
+      title: "Enterprise AI & Zero-Trust Security Assessment",
+      subtitle: "CISO Posture, Real-Time DLP, Shadow AI Gateway & Zero-Trust Mesh",
+      description: "Audit shadow AI exposure, centralized AI gateway architecture (Apigee + Model Armor), real-time DLP data masking, customer-managed encryption (CMEK/EKM), workload identity federation, and immutable audit trails for EU AI Act / HIPAA / NIST compliance.",
+      icon: "HiShieldCheck",
+      badge: "CISO & Zero-Trust",
+      color: "#0ea5e9",
+      targetRole: "CISOs, Chief Risk Officers, Data Protection Officers, Security Architects",
       estimatedMinutes: 15,
       dimensions: [
         {
-          id: 'sec_dim_01',
-          name: 'Identity Governance & Privileged Access (IAM/PAM)',
-          description: 'Maturity of centralized IdP, adaptive MFA, just-in-time PAM elevation, and service account key rotation.',
+          id: "sec_dim_01",
+          name: "Shadow AI Discovery & Perimeter Gateway Defense",
+          description: "Evaluates visibility into unmanaged AI consumption, centralized API gateways (Apigee / Vertex), and private VPC Service Controls isolation.",
           weight: 1.0,
           questions: [
             {
-              id: 'sec_01',
-              text: 'How are user and service identities authenticated, authorized, and governed across your multi-cloud estate?',
-              guidance: 'Evaluate centralized SSO/IdP federation, conditional access, and passwordless authentication enforcement.',
+              id: "sec_ai_01",
+              text: "How does your organization discover, monitor, and govern employee and application traffic to external AI models?",
+              guidance: "Evaluate visibility into unapproved AI web usage, developer keys, and centralized enterprise AI gateway interception.",
               options: [
-                { value: 1, score: 1, label: 'Siloed IAM per cloud account with long-lived static API keys and no centralized MFA enforcement.' },
-                { value: 2, score: 2, label: 'Centralized SSO for human users, but unmanaged service account credentials and static secret sprawl in Git.' },
-                { value: 3, score: 3, label: 'Mandatory adaptive MFA, centralized SCIM provisioning, and automated 90-day secret rotation.' },
-                { value: 4, score: 4, label: 'Ephemeral Workload Identity Federation (OIDC) eliminating all static keys; risk-based conditional access.' },
-                { value: 5, score: 5, label: 'Continuous adaptive Zero Trust authorization with AI anomaly detection, real-time token revocation, and passwordless biometric authentication.' }
+                { value: 1, score: 1, label: "Zero visibility: Employees freely paste proprietary code and data into consumer AI platforms without controls." },
+                { value: 2, score: 2, label: "Basic CASB domain blocking of AI URLs without approved enterprise AI alternatives for staff." },
+                { value: 3, score: 3, label: "Approved corporate AI chat sandbox available, but application API keys and developer CLI tools remain unmonitored." },
+                { value: 4, score: 4, label: "Centralized Enterprise AI Gateway capturing 100% of internal developer and application AI traffic with rate limiting." },
+                { value: 5, score: 5, label: "Automated shadow AI discovery across CI/CD and Git, dynamic token auto-revocation, and VPC-SC private perimeter isolation." }
               ],
               technicalPainPoints: [
-                'Static credential leakage in developer repositories and CI/CD logs',
-                'Lack of unified visibility into multi-cloud service account permissions'
+                "Unmanaged browser extensions and CLI tools capturing internal source code and prompts",
+                "Hardcoded public OpenAI/Anthropic API keys leaked in code repositories",
+                "Lack of visibility into which departments are transmitting data to external LLMs"
               ],
               businessPainPoints: [
-                'High vulnerability to credential compromise and unauthorized account takeover',
-                'Compliance audit penalties across SOX, HIPAA, and ISO 27001'
+                "Risk of intellectual property leaks and trade secret exposure",
+                "Compliance violations under EU AI Act and GDPR Article 28",
+                "Unpredictable, unmetered AI spending across shadow department subscriptions"
               ]
             },
             {
-              id: 'sec_02',
-              text: 'What mechanisms control and audit privileged administrative access (PAM) to production environments?',
-              guidance: 'Evaluate standing administrative privileges vs Just-in-Time (JIT) ephemeral role activation.',
+              id: "sec_ai_02",
+              text: "What network isolation and egress controls protect sensitive enterprise GenAI workloads from data exfiltration?",
+              guidance: "Review private connectivity (Private Service Connect / VPC Service Controls) and zero-egress architecture.",
               options: [
-                { value: 1, score: 1, label: 'Permanent standing administrator privileges assigned directly to personal accounts.' },
-                { value: 2, score: 2, label: 'Shared root/admin credentials managed in password managers with manual approval tickets.' },
-                { value: 3, score: 3, label: 'Role-based access control (RBAC) with time-bound break-glass procedures for production changes.' },
-                { value: 4, score: 4, label: 'Just-in-Time (JIT) elevation requiring dual peer approval, automatic expiration, and session recording.' },
-                { value: 5, score: 5, label: 'Zero standing privileges (ZSP) architecture where infrastructure is entirely immutable and admin sessions are mathematically impossible.' }
+                { value: 1, score: 1, label: "Public internet API calls with static API keys transmitted over public DNS." },
+                { value: 2, score: 2, label: "TLS encryption over public endpoints with IP allowlisting but no perimeter isolation." },
+                { value: 3, score: 3, label: "Private VPC peering with basic egress firewalls for internal model deployments." },
+                { value: 4, score: 4, label: "Private Service Connect (PSC) and VPC Service Controls blocking all unauthorized data exfiltration paths." },
+                { value: 5, score: 5, label: "Confidential Computing enclaves with memory encryption, zero-egress perimeter mesh, and automated boundary verification." }
               ],
               technicalPainPoints: [
-                'Excessive standing privileges across legacy engineering teams',
-                'Audit log gaps during urgent production break-glass incidents'
+                "Exposure of model APIs to public internet probing and DDoS attacks",
+                "Inability to prove data residency and VPC containment to auditors",
+                "Complex firewall maintenance across heterogeneous cloud networks"
               ],
               businessPainPoints: [
-                'Internal insider threat exposure and catastrophic unauthorized infrastructure modifications',
-                'Inability to pass SOC 2 Type II strict access control criteria'
+                "Disqualification from government and highly regulated enterprise RFPs",
+                "High cyber insurance premiums due to lack of zero-trust network segmentation",
+                "Reputational fallout from potential data exfiltration breaches"
               ]
             }
           ]
         },
         {
-          id: 'sec_dim_02',
-          name: 'Network Micro-Segmentation & Boundary Defense',
-          description: 'Zero Trust network topology, VPC service controls, mutual TLS (mTLS), and ingress/egress filtering.',
+          id: "sec_dim_02",
+          name: "Real-Time Data Loss Prevention (DLP) & PII/PHI Tokenization",
+          description: "Maturity of automated inspection, dynamic masking, surrogate tokenization, and customer-managed encryption (CMEK/EKM).",
           weight: 1.0,
           questions: [
             {
-              id: 'sec_03',
-              text: 'How is network traffic segmented and inspected between microservices and data tiers?',
-              guidance: 'Evaluate flat VPC networks vs service mesh micro-segmentation and VPC Service Controls.',
+              id: "sec_dlp_01",
+              text: "How are sensitive customer data, PII, PHI, and credentials sanitized before being ingested into LLM prompts or RAG stores?",
+              guidance: "Assess automated Cloud DLP inspection, cryptographic tokenization, and real-time masking proxies.",
               options: [
-                { value: 1, score: 1, label: 'Flat network architecture where internal systems trust all internal IP traffic without inspection.' },
-                { value: 2, score: 2, label: 'Basic subnet isolation and security groups with open internal ports and broad CIDR ranges.' },
-                { value: 3, score: 3, label: 'Strict Layer 4 network policies and private VPC peering with no public IP exposure on databases.' },
-                { value: 4, score: 4, label: 'Service mesh with mutual TLS (mTLS) cryptographic encryption and Layer 7 micro-segmentation policies.' },
-                { value: 5, score: 5, label: 'Hardware-enforced confidential computing perimeters (e.g. VPC Service Controls, Private Service Connect) preventing data exfiltration even under compromised credentials.' }
+                { value: 1, score: 1, label: "No automated sanitization; raw data including PII/PHI is sent directly to model inference endpoints." },
+                { value: 2, score: 2, label: "Basic regex-based client-side masking for emails and phone numbers with frequent false negatives." },
+                { value: 3, score: 3, label: "Automated Cloud DLP scanning on batch training data and pre-indexed vector stores." },
+                { value: 4, score: 4, label: "Real-time proxy-level DLP inspection with dynamic surrogate tokenization and reversibility under strict RBAC." },
+                { value: 5, score: 5, label: "Autonomous zero-knowledge DLP mesh with homomorphic encryption, policy-driven masking, and continuous compliance scoring." }
               ],
               technicalPainPoints: [
-                'Lateral movement risk if a single edge container or VM is breached',
-                'Complex firewall rule drift causing unexpected production connectivity outages'
+                "Accidental leakage of customer SSNs, API secrets, and health records into LLM training weights or RAG caches",
+                "High latency from synchronous inspection proxies slowing down streaming responses",
+                "Difficulty maintaining custom regex rule sets across international character sets"
               ],
               businessPainPoints: [
-                'Exposure to major multi-tenant data spills and lateral ransomware propagation',
-                'Customer contract breach for sensitive enterprise client data isolation'
+                "Severe regulatory fines under HIPAA, GDPR, and California Privacy Rights Act (CPRA)",
+                "Legal liability if customer data is surfaced to unauthorized prompt sessions",
+                "Loss of enterprise customer trust and brand damage"
               ]
             },
             {
-              id: 'sec_04',
-              text: 'How are outbound internet traffic and API calls restricted from production data workloads?',
-              guidance: 'Evaluate egress proxies, DNS security, and data exfiltration guardrails.',
+              id: "sec_dlp_02",
+              text: "What cryptographic key management controls protect vector database embeddings, prompts, and cached artifacts?",
+              guidance: "Evaluate Default Google-managed keys vs Customer-Managed Encryption Keys (CMEK) and External Key Management (Cloud EKM).",
               options: [
-                { value: 1, score: 1, label: 'Unrestricted direct internet access from all backend servers and database nodes.' },
-                { value: 2, score: 2, label: 'NAT gateways with basic port blocking but unmonitored HTTP/HTTPS egress destinations.' },
-                { value: 3, score: 3, label: 'Centralized egress firewall with domain allowlisting and DNS sinkholing for known malicious hosts.' },
-                { value: 4, score: 4, label: 'Deep Packet Inspection (DPI) with automated Data Loss Prevention (DLP) inline proxies blocking sensitive exfiltration.' },
-                { value: 5, score: 5, label: 'Air-gapped private endpoints exclusively; zero internet gateway attachment with cryptographic egress attestation.' }
+                { value: 1, score: 1, label: "Default cloud-provider managed encryption with shared keys and no visibility into key access." },
+                { value: 2, score: 2, label: "Static customer-managed keys without automated rotation or granular access logging." },
+                { value: 3, score: 3, label: "CMEK via Cloud KMS enabled for major storage buckets and databases with annual rotation." },
+                { value: 4, score: 4, label: "Universal CMEK across all GenAI assets (Vertex AI, Vector Search, BigQuery, Prompt Caching) with automated rotation." },
+                { value: 5, score: 5, label: "External Key Management (Cloud EKM) with Hardware Security Modules (HSM) and Key Access Justifications (KAJ)." }
               ],
               technicalPainPoints: [
-                'Unmonitored outbound traffic enabling covert command-and-control communication',
-                'Risk of developers streaming proprietary training data to unauthorized external SaaS APIs'
+                "Cryptographic blind spots where vector embeddings remain unencrypted by customer keys",
+                "Inability to cryptographically shred specific tenant data upon contract termination",
+                "Operational complexity managing HSM key lifecycle and failover"
               ],
               businessPainPoints: [
-                'Catastrophic IP theft and regulatory disclosure liabilities under GDPR/CCPA',
-                'Massive forensic investigation costs following undetected exfiltration'
+                "Inability to satisfy sovereign cloud and data localization mandates",
+                "Failure to meet banking and defense grade zero-trust encryption standards",
+                "Risk of cloud provider subpoena access without customer knowledge"
               ]
             }
           ]
         },
         {
-          id: 'sec_dim_03',
-          name: 'Data Protection, Encryption & Key Management (CMEK)',
-          description: 'Cryptographic data protection at rest and in transit, Customer-Managed Encryption Keys (CMEK), and tokenization.',
+          id: "sec_dim_03",
+          name: "Identity Governance, Zero Standing Privilege & Workload Federation (IAM/PAM)",
+          description: "Maturity of Workload Identity Federation, ephemeral just-in-time access, and eliminating static service account keys.",
           weight: 1.0,
           questions: [
             {
-              id: 'sec_05',
-              text: 'How is data encrypted and classified across databases, object storage, and streaming pipelines?',
-              guidance: 'Evaluate default cloud-managed keys vs Customer-Managed Encryption Keys (CMEK) and Hardware Security Modules (HSM).',
+              id: "sec_iam_01",
+              text: "How are user and machine identities authenticated and authorized across your hybrid multi-cloud estate?",
+              guidance: "Evaluate Workload Identity Federation (OIDC), elimination of static JSON keys, and attribute-based access control (ABAC).",
               options: [
-                { value: 1, score: 1, label: 'Unencrypted object stores and plaintext data in transit over internal HTTP endpoints.' },
-                { value: 2, score: 2, label: 'Default cloud-provider encryption at rest; TLS 1.2+ for external traffic but internal plaintext.' },
-                { value: 3, score: 3, label: 'Enforced TLS 1.3 across all tiers; centralized KMS key management with automated annual rotation.' },
-                { value: 4, score: 4, label: 'Customer-Managed Encryption Keys (CMEK) with FIPS 140-3 Level 3 Cloud HSM and automated field-level column encryption.' },
-                { value: 5, score: 5, label: 'Confidential Space / Enclave computing with hardware-encrypted memory and zero-knowledge format-preserving tokenization.' }
+                { value: 1, score: 1, label: "Static service account keys stored on local disks, CI/CD runners, and unmanaged Git repos." },
+                { value: 2, score: 2, label: "Centralized SSO for employees, but machine credentials rely on static JSON keys with manual rotation." },
+                { value: 3, score: 3, label: "Short-lived credentials via Workload Identity Federation for major CI/CD pipelines; 90-day key rotations." },
+                { value: 4, score: 4, label: "100% elimination of downloadable service account keys via OIDC federation, adaptive MFA, and ABAC policies." },
+                { value: 5, score: 5, label: "Zero standing privileges with just-in-time (JIT) ephemeral token minting and AI-driven continuous behavioral anomaly revocation." }
               ],
               technicalPainPoints: [
-                'Key management operational complexity and risk of accidental data lockout',
-                'Lack of automated discovery for unencrypted PII/PHI stored in legacy data lakes'
+                "Credential leakage from static service account key files in developer workstations",
+                "Over-privileged service accounts granting broad cloud admin rights",
+                "Complex manual audit reconciliation across multiple cloud IAM consoles"
               ],
               businessPainPoints: [
-                'Failure to meet sovereign banking and healthcare data residency regulations',
-                'Loss of institutional trust and multi-million dollar regulatory fines'
+                "Account takeover vulnerabilities enabling supply chain attacks",
+                "Delayed SOC2 / ISO 27001 audit approvals due to persistent admin privileges",
+                "Excessive IT overhead managing and rotating static credentials"
               ]
             },
             {
-              id: 'sec_06',
-              text: 'What controls prevent unauthorized copying or downloading of sensitive datasets?',
-              guidance: 'Evaluate DLP scanning, data masking, and dynamic pseudonymization.',
+              id: "sec_iam_02",
+              text: "To what extent is Privileged Access Management (PAM) enforced for production infrastructure and AI model deployments?",
+              guidance: "Evaluate Just-In-Time (JIT) elevation, peer approval workflows, and immutable session recording.",
               options: [
-                { value: 1, score: 1, label: 'Developers and analysts have direct raw CSV/Parquet export permissions to local workstations.' },
-                { value: 2, score: 2, label: 'Written security policies prohibiting data export, but no technical enforcement or monitoring.' },
-                { value: 3, score: 3, label: 'Dynamic data masking for PII fields and role-based download blocking in BI reporting tools.' },
-                { value: 4, score: 4, label: 'Automated sensitive data classification engine (DLP) blocking downloads and alerting on abnormal bulk query volumes.' },
-                { value: 5, score: 5, label: 'Clean room analytics environment with differential privacy where raw data never leaves secure VPC enclaves.' }
+                { value: 1, score: 1, label: "Permanent admin roles assigned to engineers with unmonitored production access." },
+                { value: 2, score: 2, label: "Shared privileged credentials stored in password vaults with manual checkout." },
+                { value: 3, score: 3, label: "Role-based access with dual-custody approval for high-risk production changes." },
+                { value: 4, score: 4, label: "Automated JIT access elevation expiring in <4 hours with comprehensive session auditing." },
+                { value: 5, score: 5, label: "Context-aware ephemeral PAM with automated blast radius containment and continuous telemetry verification." }
               ],
               technicalPainPoints: [
-                'PII leakage into developer dev/test environments and unmanaged staging buckets',
-                'Lack of automated lineage tracking for derived sensitive data exports'
+                "Standing administrator access exposing production databases to insider threat",
+                "Lack of session recording during emergency production hotfixes",
+                "Friction in emergency access causing extended MTTR"
               ],
               businessPainPoints: [
-                'Insider data theft leading to public breach scandals',
-                'Inability to serve regulated healthcare and government enterprise clients'
+                "Insider data theft liabilities and non-compliance with Sarbanes-Oxley (SOX)",
+                "Failure to satisfy cyber insurance requirements for privileged access controls",
+                "Operational bottlenecks from slow manual access request queues"
               ]
             }
           ]
         },
         {
-          id: 'sec_dim_04',
-          name: 'DevSecOps, CSPM & Infrastructure Posture',
-          description: 'Automated SAST/DAST/SCA scanning, Cloud Security Posture Management (CSPM), and policy-as-code guardrails.',
+          id: "sec_dim_04",
+          name: "Model Armor, Prompt Injection Defense & Runtime Safety",
+          description: "Defenses against adversarial prompt injection, jailbreaking, insecure output handling, model hallucinations, and Model Armor integration.",
           weight: 1.0,
           questions: [
             {
-              id: 'sec_07',
-              text: 'How are infrastructure drift and security misconfigurations detected and remediated across cloud accounts?',
-              guidance: 'Evaluate periodic manual audits vs continuous Cloud Security Posture Management (CSPM) and auto-remediation.',
+              id: "sec_armor_01",
+              text: "What automated defenses protect your GenAI applications against indirect prompt injection, jailbreaks, and system prompt exfiltration?",
+              guidance: "Evaluate runtime safety filters, Google Cloud Model Armor, Llama Guard, and heuristic input sanitization.",
               options: [
-                { value: 1, score: 1, label: 'Manual infrastructure provisioning in cloud web consoles with no misconfiguration auditing.' },
-                { value: 2, score: 2, label: 'Basic Terraform/CloudFormation usage, but manual quarterly reviews for open security groups or public buckets.' },
-                { value: 3, score: 3, label: 'Automated CSPM scanning with daily alert notifications sent to infrastructure engineering channels.' },
-                { value: 4, score: 4, label: 'Real-time CSPM with automated policy-as-code guardrails blocking non-compliant PRs before deployment.' },
-                { value: 5, score: 5, label: 'Autonomous self-healing security mesh that instantly auto-remediates drift (e.g. auto-closing public S3 buckets within 5 seconds).' }
+                { value: 1, score: 1, label: "Zero defensive guardrails; raw user prompts are concatenated directly into LLM context without validation." },
+                { value: 2, score: 2, label: "Static system prompt instructions pleading with the model not to reveal instructions or execute malicious commands." },
+                { value: 3, score: 3, label: "Basic blocklists for forbidden keywords and standard safety threshold filters (Hate, Harassment, Sexual)." },
+                { value: 4, score: 4, label: "Dedicated Model Armor / Guardrails inspection layer evaluating semantic intent, prompt injection heuristics, and jailbreak patterns." },
+                { value: 5, score: 5, label: "Multi-layer adversarial defense with dynamic red-teaming, Model Armor real-time scoring, sandboxed agent execution, and automated quarantine." }
               ],
               technicalPainPoints: [
-                'Alert fatigue from hundreds of low-severity CSPM warnings without prioritization',
-                'Shadow IT cloud accounts created outside standard Terraform pipelines'
+                "Prompt injection allowing malicious actors to bypass business logic and extract confidential system instructions",
+                "Indirect prompt injection through poisoned website data or user-uploaded PDFs",
+                "Inability to dynamically update safety filters without modifying application code"
               ],
               businessPainPoints: [
-                'Accidental public bucket exposure leading to immediate cyber extortion and data leaks',
-                'Extremely long Mean Time to Remediate (MTTR) critical infrastructure flaws'
+                "Brand reputation damage from AI producing toxic, offensive, or politically biased responses",
+                "Unauthorized transactional execution triggered by adversarial inputs (e.g. fraudulent refunds)",
+                "Legal liability for copyright infringement or defamatory output"
               ]
             },
             {
-              id: 'sec_08',
-              text: 'How are container images, dependencies, and application source code secured throughout CI/CD?',
-              guidance: 'Evaluate Software Bill of Materials (SBOM), container vulnerability scanning, and signed artifact attestation.',
+              id: "sec_armor_02",
+              text: "How does your architecture validate, sanitize, and verify the safety of LLM-generated code, SQL queries, and tool execution payloads?",
+              guidance: "Assess insecure output handling, sandboxed code execution, and parameter validation before downstream execution.",
               options: [
-                { value: 1, score: 1, label: 'No automated scanning; developers deploy third-party public container images directly to production.' },
-                { value: 2, score: 2, label: 'Basic npm audit / pip check in local terminals, but no automated CI/CD gating.' },
-                { value: 3, score: 3, label: 'Automated SAST and container image scanning in CI/CD failing builds on Critical CVEs.' },
-                { value: 4, score: 4, label: 'Cryptographic container image signing (Cosign/Sigstore) and mandatory SBOM generation for all deployed artifacts.' },
-                { value: 5, score: 5, label: 'Zero-trust software supply chain (SLSA Level 3+) with admission controllers rejecting any unsigned or unverified binary.' }
+                { value: 1, score: 1, label: "Unsanitized model output executed directly in databases or terminal shells with full privileges." },
+                { value: 2, score: 2, label: "Basic string regex checks before running model-generated SQL or code." },
+                { value: 3, score: 3, label: "Read-only database replicas and restricted execution scopes for model-generated queries." },
+                { value: 4, score: 4, label: "Strict OpenAPI JSON Schema validation and sandboxed isolated container execution for all generated code." },
+                { value: 5, score: 5, label: "Zero-trust tool execution mesh with signed AST verification, deterministic capability tokens, and real-time execution sandboxing." }
               ],
               technicalPainPoints: [
-                'Vulnerable open-source dependencies introducing zero-day exploits into production workloads',
-                'Slow deployment pipelines delayed by false-positive security scanner alerts'
+                "SQL injection vulnerabilities introduced by unparameterized model-generated queries",
+                "Remote code execution (RCE) via unsanitized Python scripts generated by LLM agents",
+                "Denial of Service from uncontrolled infinite loops in agentic execution chains"
               ],
               businessPainPoints: [
-                'Software supply chain attack vulnerability (SolarWinds/Log4j style vectors)',
-                'Loss of security certifications required by tier-1 enterprise customers'
+                "Catastrophic database corruption or accidental drop of production tables",
+                "Breach of confidentiality from model querying restricted financial tables",
+                "Infrastructure cost runaways from malicious compute consumption"
               ]
             }
           ]
         },
         {
-          id: 'sec_dim_05',
-          name: 'SIEM, Threat Detection & Automated SOAR Response',
-          description: 'Centralized security telemetry, behavioral anomaly detection, and Security Orchestration, Automation & Response (SOAR).',
+          id: "sec_dim_05",
+          name: "Continuous SIEM/SOAR Ingestion, Audit Trails & Regulatory Compliance",
+          description: "End-to-end immutability of AI audit logs, Cloud Audit Logs to BigQuery/Chronicle SIEM integration, and alignment with EU AI Act, NIST AI RMF & HIPAA.",
           weight: 1.0,
           questions: [
             {
-              id: 'sec_09',
-              text: 'How is security telemetry ingested, correlated, and analyzed across multi-cloud environments?',
-              guidance: 'Evaluate siloed log files vs centralized cloud-native SIEM with behavioral analytics.',
+              id: "sec_audit_01",
+              text: "How are prompt inputs, model responses, tool calls, and user context logged and ingested into enterprise security platforms?",
+              guidance: "Review Cloud Audit Logs, BigQuery log sinks, Chronicle SIEM ingestion, and tamper-proof log immutability.",
               options: [
-                { value: 1, score: 1, label: 'Fragmented logs stored in separate cloud consoles with no centralized correlation or search capability.' },
-                { value: 2, score: 2, label: 'CloudTrail / Audit logs archived to cold object storage, but only queried during retrospective post-mortems.' },
-                { value: 3, score: 3, label: 'Centralized SIEM streaming all VPC flow logs, IAM audit trails, and application events with rule-based alerting.' },
-                { value: 4, score: 4, label: 'Next-Gen SIEM with Machine Learning User and Entity Behavior Analytics (UEBA) detecting compromised credentials in real-time.' },
-                { value: 5, score: 5, label: 'Unified Threat Intelligence Lakehouse aggregating petabyte-scale security telemetry with sub-second AI graph threat hunting.' }
+                { value: 1, score: 1, label: "No centralized logging; ephemeral console outputs lost upon container restart." },
+                { value: 2, score: 2, label: "Application-level log files written to local disks with manual ad-hoc log querying." },
+                { value: 3, score: 3, label: "Centralized Cloud Logging stream with basic 30-day retention for system errors." },
+                { value: 4, score: 4, label: "Automated export of Cloud Audit Logs and AI gateway telemetry into BigQuery and Chronicle SIEM for real-time threat hunting." },
+                { value: 5, score: 5, label: "Cryptographically verifiable, immutable audit ledger with AI threat graph detection, automated SOAR incident response, and instant regulatory report generation." }
               ],
               technicalPainPoints: [
-                'High log ingestion costs and query timeouts during critical active incident triage',
-                'Inability to correlate multi-cloud identity events with underlying network flow anomalies'
+                "Inability to reconstruct forensic timelines after a suspected security incident",
+                "Log volume spikes overwhelming traditional SIEM parsers and inflating storage bills",
+                "Lack of correlation between end-user identity and downstream model API calls"
               ],
               businessPainPoints: [
-                'Excessive breach dwell time (industry avg 200+ days) allowing attackers full undetected lateral movement',
-                'Severe regulatory non-compliance for mandatory 72-hour incident disclosure windows'
+                "Inability to satisfy regulatory disclosure mandates within 72 hours of an incident",
+                "Failure to prove compliance with EU AI Act Article 12 (record-keeping)",
+                "Legal discovery costs during intellectual property litigation"
               ]
             },
             {
-              id: 'sec_10',
-              text: 'What automated incident response (SOAR) capabilities exist when active threats are detected?',
-              guidance: 'Evaluate manual human triage vs automated playbooks (e.g. isolating compromised pods, revoking user sessions).',
+              id: "sec_audit_02",
+              text: "What formal governance frameworks and continuous compliance audits validate your enterprise AI and Cloud security posture?",
+              guidance: "Assess alignment with NIST AI RMF, ISO/IEC 42001, EU AI Act, SOC2 Type II, and CSPM posture management.",
               options: [
-                { value: 1, score: 1, label: 'Fully manual on-call paging with no standardized runbooks or response scripts.' },
-                { value: 2, score: 2, label: 'Documented PDF runbooks requiring manual engineer console logins to block compromised IPs or accounts.' },
-                { value: 3, score: 3, label: 'Semi-automated response scripts triggered by on-call engineers via Slack / Microsoft Teams ChatOps.' },
-                { value: 4, score: 4, label: 'Automated SOAR playbooks that instantly quarantine compromised containers, revoke IAM tokens, and capture forensic snapshots.' },
-                { value: 5, score: 5, label: 'Autonomous AI-orchestrated defense mesh that dynamically alters network routing, rotates credentials, and traps attackers in deception environments.' }
+                { value: 1, score: 1, label: "No formal security governance framework; ad-hoc checklist before major releases." },
+                { value: 2, score: 2, label: "Annual manual third-party penetration testing and static policy documents." },
+                { value: 3, score: 3, label: "SOC2 Type II and ISO 27001 certifications maintained with automated CSPM posture scanning." },
+                { value: 4, score: 4, label: "NIST AI RMF and EU AI Act compliance program with automated continuous posture assessment via Security Command Center." },
+                { value: 5, score: 5, label: "Continuous autonomous compliance guardrails with automated policy-as-code remediation, certified ISO 42001, and executive transparency reporting." }
               ],
               technicalPainPoints: [
-                'Human response delays during off-hours allowing ransomware to encrypt entire storage tiers',
-                'Risk of automated response scripts accidentally breaking critical customer-facing production services'
+                "Manual evidence collection consuming hundreds of engineering hours before each audit",
+                "Policy drift between cloud infrastructure configurations and written governance rules",
+                "Siloed compliance tooling unable to assess emerging AI risk vectors"
               ],
               businessPainPoints: [
-                'Catastrophic operational downtime and business interruption during cybersecurity attacks',
-                'Immense brand reputational damage from slow containment'
+                "Blocked enterprise sales deals due to missing ISO 42001 / NIST AI compliance badges",
+                "Regulatory fines up to €35M or 7% of global annual turnover under EU AI Act",
+                "Loss of executive board confidence in technology risk management"
               ]
             }
           ]
         }
       ],
       maturityLevels: [
-        { level: 1, name: 'Ad-hoc', label: 'Initial / Perimeter-Only', scoreMin: 1, scoreMax: 1.9, color: '#ef4444', description: 'Legacy perimeter mindset with flat internal networks, unmanaged keys, and manual reactive responses.' },
-        { level: 2, name: 'Developing', label: 'Developing / Emerging', scoreMin: 2, scoreMax: 2.9, color: '#f59e0b', description: 'Basic SSO and scanning in place, but static secret sprawl, manual PAM, and fragmented security logging.' },
-        { level: 3, name: 'Defined', label: 'Defined / Standardized', scoreMin: 3, scoreMax: 3.7, color: '#3b82f6', description: 'Enforced adaptive MFA, centralized KMS encryption, daily CSPM posture checks, and 24/7 SIEM monitoring.' },
-        { level: 4, name: 'Managed', label: 'Managed / Automated Zero Trust', scoreMin: 3.8, scoreMax: 4.5, color: '#10b981', description: 'Just-in-Time elevation, mTLS micro-segmentation, CMEK, signed container supply chains, and automated SOAR playbooks.' },
-        { level: 5, name: 'Optimizing', label: 'Optimizing / Continuous Autonomous Defense', scoreMin: 4.6, scoreMax: 5, color: '#8b5cf6', description: 'Zero standing privileges, confidential computing enclaves, AI threat graph hunting, and self-healing cloud security mesh.' }
-      ]
-    }
-  },
-  {
-    id: 'tpl_ciso_ai_security',
-    typeKey: 'ciso_enterprise_ai_security_shadow_gateway',
-    title: 'CISO Enterprise AI Security & Shadow Gateway Assessment',
-    subtitle: 'Zero-Trust AI Posture, Real-Time DLP & Regulatory Guardrails',
-    description: 'Comprehensive evaluation of enterprise AI security posture, shadow AI containment, real-time PII/PHI masking, attribute-based access control (ABAC), Model Armor, and audit logging to unblock enterprise GenAI adoption.',
-    icon: 'HiShieldCheck',
-    badge: 'Security & CISO',
-    color: '#0ea5e9',
-    status: 'production',
-    isPublished: true,
-    isPromoted: true,
-    createdBy: 'system',
-    framework: {
-      typeKey: 'ciso_enterprise_ai_security_shadow_gateway',
-      title: 'CISO Enterprise AI Security & Shadow Gateway Assessment',
-      subtitle: 'Zero-Trust AI Posture, Real-Time DLP & Regulatory Guardrails',
-      description: 'Audit shadow AI exposure, centralized AI gateway architecture (Apigee + Model Armor), real-time DLP data masking, customer-managed encryption (CMEK/EKM), and immutable audit trails for EU AI Act / HIPAA / NIST compliance.',
-      icon: 'HiShieldCheck',
-      badge: 'Security & CISO',
-      color: '#0ea5e9',
-      targetRole: 'CISOs, Chief Risk Officers, Data Protection Officers, Security Architects',
-      estimatedMinutes: 15,
-      dimensions: [
-        {
-          id: 'ciso_dim_01',
-          name: 'Shadow AI Discovery & Perimeter Defense',
-          description: 'Evaluates visibility into unmanaged AI consumption, network perimeter controls, and private VPC isolation.',
-          weight: 1.0,
-          questions: [
-            {
-              id: 'ciso_01',
-              text: 'How does your organization discover, monitor, and govern employee and developer traffic to external AI endpoints?',
-              guidance: 'Evaluate visibility into shadow AI web usage vs centralized enterprise AI gateway interception.',
-              options: [
-                { value: 1, score: 1, label: 'Zero visibility; employees freely paste company data and code into consumer AI web platforms without controls.' },
-                { value: 2, score: 2, label: 'CASB firewall domain blocking of popular AI URLs; no approved enterprise AI alternative provided to staff.' },
-                { value: 3, score: 3, label: 'Approved corporate web sandbox available, but application API keys and developer tools remain unmonitored.' },
-                { value: 4, score: 4, label: 'Centralized Enterprise AI Gateway (Apigee / Vertex) capturing 100% of internal developer and application AI traffic.' },
-                { value: 5, score: 5, label: 'Automated shadow AI discovery across CI/CD and GitHub with dynamic token auto-revocation and continuous perimeter posture enforcement.' }
-              ],
-              technicalPainPoints: [
-                'Unmanaged third-party browser extensions capturing proprietary code and prompts',
-                'Hardcoded public OpenAI/Anthropic API keys leaked in code repositories',
-                'Lack of visibility into which departments are sending data to external LLMs'
-              ],
-              businessPainPoints: [
-                'Catastrophic corporate IP and source code leakage to third-party public models',
-                'CISO blanket-blocking AI domains causing productivity loss and employee friction',
-                'Severe regulatory non-compliance with data residency mandates'
-              ]
-            },
-            {
-              id: 'ciso_02',
-              text: 'How are AI inference workloads isolated at the network and infrastructure level?',
-              guidance: 'Evaluate public internet API calls vs private VPC Service Controls (VPC-SC) perimeters.',
-              options: [
-                { value: 1, score: 1, label: 'Inference traffic routed over public internet using shared multi-tenant SaaS endpoints.' },
-                { value: 2, score: 2, label: 'Standard commercial API endpoints with vendor no-training terms, but accessible via public DNS.' },
-                { value: 3, score: 3, label: 'Private IP interconnects configured with static firewall ingress rules and API gateway authentication.' },
-                { value: 4, score: 4, label: 'VPC Service Controls (VPC-SC) perimeter preventing data exfiltration, combined with Customer-Managed Encryption Keys (CMEK).' },
-                { value: 5, score: 5, label: 'Confidential Computing enclaves with hardware-level memory encryption and zero-trust mTLS verification per inference call.' }
-              ],
-              technicalPainPoints: [
-                'Data in transit exposed to interception over public internet routes',
-                'Inability to apply network perimeter boundaries around external SaaS LLMs',
-                'Complex firewall routing rules slowing down developer onboarding'
-              ],
-              businessPainPoints: [
-                'Failure to meet strict banking and defense sector network isolation standards',
-                'Subpoena and third-party data access risks on public cloud endpoints'
-              ]
-            }
-          ]
-        },
-        {
-          id: 'ciso_dim_02',
-          name: 'Real-Time DLP & Adversarial Defense',
-          description: 'Evaluates real-time PII/PHI redaction, prompt injection defense, and cryptographic key management.',
-          weight: 1.0,
-          questions: [
-            {
-              id: 'ciso_03',
-              text: 'How does your architecture prevent PII, PHI, financial records, or secrets from being transmitted to LLMs?',
-              guidance: 'Evaluate post-hoc manual auditing vs inline real-time Cloud Data Loss Prevention (DLP) de-identification.',
-              options: [
-                { value: 1, score: 1, label: 'No automated filtering; users and backend services transmit raw customer data, SSNs, and credentials.' },
-                { value: 2, score: 2, label: 'Basic client-side regex checks for emails and credit cards; easily bypassed by whitespace or formatting changes.' },
-                { value: 3, score: 3, label: 'Asynchronous batch auditing flagging sensitive data leaks in log files hours after transmission.' },
-                { value: 4, score: 4, label: 'Inline Cloud DLP streaming proxy de-identifying, masking, and tokenizing sensitive info before payloads reach models.' },
-                { value: 5, score: 5, label: 'Cryptographic surrogate tokenization allowing LLMs to reason over masked entities and securely re-hydrating in authorized responses.' }
-              ],
-              technicalPainPoints: [
-                'High false-positive rates in legacy regex sanitizers breaking legitimate application prompts',
-                'High latency added by sequential synchronous DLP inspection proxies',
-                'Unstructured PII inside uploaded PDF/image attachments bypassing text filters'
-              ],
-              businessPainPoints: [
-                'Multimillion-dollar GDPR, HIPAA, and PCI-DSS compliance fines from leaked customer records',
-                'Customer trust destruction following data leakage in AI-generated customer responses'
-              ]
-            },
-            {
-              id: 'ciso_04',
-              text: 'What defenses are deployed against direct and indirect prompt injection, jailbreaks, and adversarial attacks?',
-              guidance: 'Evaluate naive system prompt instructions vs dedicated Model Armor guardrails and embedding inspection.',
-              options: [
-                { value: 1, score: 1, label: 'Passive system instructions (e.g. "please do not reveal instructions"); zero adversarial filtering.' },
-                { value: 2, score: 2, label: 'Static keyword blacklists blocking known phrases like "ignore previous instructions".' },
-                { value: 3, score: 3, label: 'Secondary lightweight LLM classifier screening user prompts for malicious intent.' },
-                { value: 4, score: 4, label: 'Model Armor & SAIF guardrails inspecting both user inputs and ingested RAG vector embeddings for indirect injection.' },
-                { value: 5, score: 5, label: 'Real-time adaptive adversarial defense mesh with continuous red-teaming and automated zero-day signature distribution.' }
-              ],
-              technicalPainPoints: [
-                'Indirect prompt injection embedded inside third-party web pages or uploaded documents hijacking agent execution',
-                'Jailbreak attacks bypassing basic guardrails to extract backend database connection strings',
-                'Latency overhead of multi-pass LLM safety classifiers'
-              ],
-              businessPainPoints: [
-                'Unauthorized data manipulation and fraudulent transactions triggered via malicious prompts',
-                'Severe brand and PR crises caused by toxic or unaligned model outputs'
-              ]
-            },
-            {
-              id: 'ciso_05',
-              text: 'How are cryptographic keys managed for AI model storage, vector databases, and embeddings?',
-              guidance: 'Evaluate cloud provider default keys vs Customer-Managed Encryption Keys (CMEK) and External Key Management (Cloud EKM).',
-              options: [
-                { value: 1, score: 1, label: 'Default cloud provider managed keys; customer has no visibility or control over key rotation.' },
-                { value: 2, score: 2, label: 'Cloud KMS keys managed by customer inside the cloud platform, but without hardware root ownership.' },
-                { value: 3, score: 3, label: 'Customer-Managed Encryption Keys (CMEK) applied to model weights, vector databases, and prompt caches.' },
-                { value: 4, score: 4, label: 'External Key Management (Cloud EKM) storing cryptographic root keys in customer’s on-premises HSM.' },
-                { value: 5, score: 5, label: 'Key Access Justification (KAJ) requiring automated cryptographic sign-off per inference invocation with full air-gapped sovereignty.' }
-              ],
-              technicalPainPoints: [
-                'Complex key rotation procedures causing intermittent vector database downtime',
-                'Latency overhead when verifying external HSM keys on high-throughput inference calls',
-                'Fragmented key management policies across multi-cloud environments'
-              ],
-              businessPainPoints: [
-                'Inability to pass financial regulatory audits requiring sovereign cryptographic key ownership',
-                'Risk of cloud provider unauthorized data access under extraterritorial legal requests'
-              ]
-            }
-          ]
-        },
-        {
-          id: 'ciso_dim_03',
-          name: 'Access Control & Delegated Agent Permissions',
-          description: 'Evaluates pre-retrieval attribute-based access control (ABAC), fine-grained RAG filtering, and multi-agent tool scoping.',
-          weight: 1.0,
-          questions: [
-            {
-              id: 'ciso_06',
-              text: 'How is user authorization and document-level permissioning enforced in GenAI RAG pipelines?',
-              guidance: 'Evaluate shared vector databases vs pre-retrieval Attribute-Based Access Control (ABAC).',
-              options: [
-                { value: 1, score: 1, label: 'Unified global vector index; all users can retrieve and view all indexed company files and financial reports.' },
-                { value: 2, score: 2, label: 'Siloed vector databases per department with manual, error-prone synchronization.' },
-                { value: 3, score: 3, label: 'Post-retrieval filtering in application code, where unauthorized chunks are queried but discarded before display.' },
-                { value: 4, score: 4, label: 'Pre-retrieval Attribute-Based Access Control (ABAC) applying Dataplex / IAM user tags directly into vector query filters.' },
-                { value: 5, score: 5, label: 'Dynamic zero-trust authorization with automated classification inheritance and real-time security label enforcement in AI responses.' }
-              ],
-              technicalPainPoints: [
-                'Post-retrieval filtering leaking sensitive document existence through metadata',
-                'High indexing costs from duplicating shared enterprise documents into team-specific vector stores',
-                'ACL permission sync lag when employees change roles or leave the company'
-              ],
-              businessPainPoints: [
-                'Unauthorized employee access to executive salaries, M&A strategy, and board minutes via enterprise AI search',
-                'Major insider trading and confidentiality breach exposure'
-              ]
-            },
-            {
-              id: 'ciso_07',
-              text: 'How are permissions, credentials, and write privileges scoped for autonomous AI agents and tool integrations?',
-              guidance: 'Evaluate global service accounts vs scoped user-delegated tokens (Model Context Protocol / OAuth).',
-              options: [
-                { value: 1, score: 1, label: 'Global admin service accounts with unrestricted read/write access across corporate databases and APIs.' },
-                { value: 2, score: 2, label: 'Hardcoded API tokens in agent scripts; no human-in-the-loop validation for mutating actions.' },
-                { value: 3, score: 3, label: 'Read-only tool access by default, with manual human approval prompts required for any write operation.' },
-                { value: 4, score: 4, label: 'Scoped OAuth / MCP Tool Tokens executing with user’s down-scoped delegated permissions and automated policy boundaries.' },
-                { value: 5, score: 5, label: 'Autonomous multi-signature approval mesh with automated risk scoring and transactional rollback capabilities for all agent actions.' }
-              ],
-              technicalPainPoints: [
-                'Autonomous agents executing unintended database updates or deletions due to hallucinated parameters',
-                'Over-privileged service accounts violating least-privilege principles',
-                'Lack of granular auditing for multi-agent tool execution chains'
-              ],
-              businessPainPoints: [
-                'Catastrophic production data corruption or unauthorized fund transfers initiated by autonomous agents',
-                'Inability to assign legal liability for actions performed by AI agents'
-              ]
-            }
-          ]
-        },
-        {
-          id: 'ciso_dim_04',
-          name: 'Auditability, Lineage & Model Governance',
-          description: 'Evaluates immutable compliance audit trails, hallucination scoring, IP indemnification, and model lifecycle deprecation.',
-          weight: 1.0,
-          questions: [
-            {
-              id: 'ciso_08',
-              text: 'How are AI prompt interactions, responses, and model metadata logged for legal and regulatory compliance?',
-              guidance: 'Evaluate ephemeral logs vs immutable BigQuery compliance audit trails with cryptographic hashing.',
-              options: [
-                { value: 1, score: 1, label: 'Zero logging; no historical record of prompt inputs, generated outputs, or model versions.' },
-                { value: 2, score: 2, label: 'Standard application text logs purged after 14–30 days with no search or audit indexing.' },
-                { value: 3, score: 3, label: 'Centralized Cloud Logging capturing user ID, timestamp, and token counts (without full payload inspection).' },
-                { value: 4, score: 4, label: 'Immutable BigQuery Compliance Audit Trail recording cryptographically hashed prompts, outputs, model versions, and safety scores.' },
-                { value: 5, score: 5, label: 'Automated regulatory reporting engine continuously auditing interactions against EU AI Act, NIST AI RMF, and ISO 42001.' }
-              ],
-              technicalPainPoints: [
-                'Massive log storage costs when saving full prompt and response payloads across high-volume applications',
-                'Inability to execute fast forensic search across billions of historical AI interactions',
-                'Risk of audit logs themselves containing unmasked PII'
-              ],
-              businessPainPoints: [
-                'Inability to comply with legal e-discovery mandates or government regulatory inquiries',
-                'Uninsurable liability under upcoming EU AI Act high-risk system compliance deadlines'
-              ]
-            },
-            {
-              id: 'ciso_09',
-              text: 'How does your organization manage hallucination liability, factuality verification, and copyright risk?',
-              guidance: 'Evaluate unverified generative text vs Google Grounding Attribution and enterprise copyright indemnification.',
-              options: [
-                { value: 1, score: 1, label: 'Unverified model generation presented as absolute fact with no grounding citations or disclaimer.' },
-                { value: 2, score: 2, label: 'Generic prompt instructions asking the model to provide source URLs when possible.' },
-                { value: 3, score: 3, label: 'Grounded Search against internal documents displaying clickable reference links.' },
-                { value: 4, score: 4, label: 'Grounding Attribution Scoring rejecting responses below 90% confidence, backed by cloud vendor copyright indemnification.' },
-                { value: 5, score: 5, label: 'Real-time multi-source factual verification mesh with automated legal citation generation and continuous calibration.' }
-              ],
-              technicalPainPoints: [
-                'Model hallucinations generating plausible but completely fabricated regulatory or financial guidance',
-                'Broken citation links pointing to deleted or outdated source documents',
-                'Inability to mathematically quantify model confidence before returning text to end users'
-              ],
-              businessPainPoints: [
-                'Direct legal liability and financial loss from users acting on hallucinated AI advice',
-                'Copyright infringement lawsuits resulting from generative models reproducing training data verbatim'
-              ]
-            },
-            {
-              id: 'ciso_10',
-              text: 'How are model versions, deprecation schedules, and model registry lifecycles governed across the enterprise?',
-              guidance: 'Evaluate unpinned model tags vs formal 90-day deprecation governance with automated regression benchmarking.',
-              options: [
-                { value: 1, score: 1, label: 'Relying on generic ":latest" model endpoints that change unexpectedly and break production behavior.' },
-                { value: 2, score: 2, label: 'Model versions pinned in application code, but tracked manually in static documentation.' },
-                { value: 3, score: 3, label: 'Centralized Model Registry tracking active production endpoints and registered downstream consumers.' },
-                { value: 4, score: 4, label: 'Formal model lifecycle governance with automated regression benchmarking and 90-day deprecation migration windows.' },
-                { value: 5, score: 5, label: 'Continuous shadow deployment comparing candidate model versions against live traffic before automated zero-downtime promotion.' }
-              ],
-              technicalPainPoints: [
-                'Upstream model vendor deprecations breaking production microservices with short notice',
-                'Subtle behavioral drifts in newer model iterations degrading downstream parsing accuracy',
-                'Lack of standardized staging environments for testing new model versions'
-              ],
-              businessPainPoints: [
-                'Critical production outages caused by unexpected model API deprecations',
-                'Prolonged engineering hold-ups when upgrading enterprise-wide AI systems'
-              ]
-            }
-          ]
-        }
-      ],
-      maturityLevels: [
-        { level: 1, name: 'Ad-hoc', label: 'Initial / High Risk', scoreMin: 1, scoreMax: 1.9, color: '#ef4444', description: 'Unmonitored shadow AI, public API keys, zero PII masking, and broad un-scoped agent access.' },
-        { level: 2, name: 'Developing', label: 'Developing / Reactive', scoreMin: 2, scoreMax: 2.9, color: '#f59e0b', description: 'Basic CASB blocking and regex filters, but static secrets, un-audited RAG stores, and manual triage.' },
-        { level: 3, name: 'Defined', label: 'Defined / Standardized', scoreMin: 3, scoreMax: 3.7, color: '#3b82f6', description: 'Enterprise AI Gateway, approved sandbox, RBAC document permissions, and centralized logging in place.' },
-        { level: 4, name: 'Managed', label: 'Managed / Zero-Trust AI', scoreMin: 3.8, scoreMax: 4.5, color: '#10b981', description: 'VPC-SC perimeter, inline Cloud DLP redaction, Model Armor guardrails, ABAC vector permissions, and CMEK/EKM.' },
-        { level: 5, name: 'Optimizing', label: 'Optimizing / Continuous Autonomous Governance', scoreMin: 4.6, scoreMax: 5, color: '#8b5cf6', description: 'Confidential computing enclaves, surrogate tokenization, automated EU AI Act compliance auditing, and self-healing security mesh.' }
+        { level: 1, name: "Exposed", label: "Initial / Exposed", scoreMin: 1, scoreMax: 1.9, color: "#ef4444", description: "Zero visibility into shadow AI, static credentials, unencrypted data exfiltration paths, and high breach exposure." },
+        { level: 2, name: "Fragmented", label: "Developing / Fragmented", scoreMin: 2, scoreMax: 2.9, color: "#f59e0b", description: "Basic URL filtering, static SSO, partial regex masking, and manual incident investigation." },
+        { level: 3, name: "Governed", label: "Defined / Governed", scoreMin: 3, scoreMax: 3.7, color: "#3b82f6", description: "Centralized AI Gateway, Cloud DLP on batch data, Workload Identity Federation, and 24/7 SIEM monitoring." },
+        { level: 4, name: "Zero-Trust", label: "Managed / Zero-Trust AI Posture", scoreMin: 3.8, scoreMax: 4.5, color: "#10b981", description: "Model Armor runtime defense, real-time surrogate tokenization, VPC Service Controls, universal CMEK, and automated SOAR playbooks." },
+        { level: 5, name: "Continuous Defense", label: "Optimizing / Continuous Autonomous Defense", scoreMin: 4.6, scoreMax: 5, color: "#8b5cf6", description: "Zero standing privileges, confidential computing enclaves, AI threat graph hunting, self-healing cloud security mesh, and certified ISO 42001 compliance." }
       ]
     }
   },
@@ -1441,10 +1184,15 @@ class CustomAssessmentRepository {
 
   ensureStarterTemplates() {
     try {
+      // Prune legacy/redundant assessment keys
+      typesFileStore.delete('cloud_security_zero_trust_architecture');
+      typesFileStore.delete('cloud_security___zero_trust_architecture_readiness');
+      typesFileStore.delete('ciso_enterprise_ai_security_shadow_gateway');
+
       STARTER_PRODUCTION_TEMPLATES.forEach(tpl => {
         typesFileStore.set(tpl.typeKey, tpl);
       });
-      console.log('✅ Synchronized 10-question production assessment starter templates in registry.');
+      console.log('✅ Synchronized 4 golden production assessment starter templates in registry.');
     } catch (e) {
       console.warn('Could not seed starter templates:', e.message);
     }
@@ -1479,9 +1227,10 @@ class CustomAssessmentRepository {
 
           const calculated = dynamicEngine.calculateScores(sampleResponses, framework);
           const customerNames = {
-            cloud_security_zero_trust_architecture: 'ConnectPlus Telecom',
+            enterprise_ai_zero_trust_security: 'Apex Health & FinTech Global',
             finops_cloud_cost_optimization: 'Nova Retail Group',
-            openai_to_gemini_enterprise_migration: 'Quantum FinTech Global'
+            openai_to_gemini_enterprise_migration: 'Quantum FinTech Global',
+            edw_lakehouse_to_bigquery_modernization: 'Global Logistics Alliance'
           };
 
           const instance = {
