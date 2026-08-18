@@ -186,7 +186,7 @@ Output a strictly valid JSON object with the following schema:
           ? responses[`${q.id}_future_state`] 
           : responses[`${q.id}_target`];
         if (targetVal !== undefined && targetVal !== null && !isNaN(Number(targetVal))) {
-          const tScore = Number(targetVal);
+          const tScore = Math.max(score, Number(targetVal));
           dimTargetSum += tScore;
           dimTargetCount++;
           totalTargetSum += tScore;
@@ -195,9 +195,8 @@ Output a strictly valid JSON object with the following schema:
       });
 
       const avgScore = dimCount > 0 ? parseFloat((dimSum / dimCount).toFixed(2)) : 0;
-      const avgTargetScore = dimTargetCount > 0 
-        ? parseFloat((dimTargetSum / dimTargetCount).toFixed(2)) 
-        : Math.min(5.0, parseFloat((avgScore + 1.2).toFixed(2)));
+      const rawAvgTarget = dimTargetCount > 0 ? (dimTargetSum / dimTargetCount) : (avgScore + 1.2);
+      const avgTargetScore = parseFloat(Math.min(5.0, Math.max(avgScore, rawAvgTarget)).toFixed(2));
       const gap = parseFloat(Math.max(0, avgTargetScore - avgScore).toFixed(2));
 
       dimensionScores[dim.id] = {
@@ -215,9 +214,8 @@ Output a strictly valid JSON object with the following schema:
     });
 
     const overallScore = totalQuestionsCount > 0 ? parseFloat((totalScoreSum / totalQuestionsCount).toFixed(2)) : 0;
-    const overallTarget = totalTargetCount > 0 
-      ? parseFloat((totalTargetSum / totalTargetCount).toFixed(2)) 
-      : Math.min(5.0, parseFloat((overallScore + 1.2).toFixed(2)));
+    const rawOverallTarget = totalTargetCount > 0 ? (totalTargetSum / totalTargetCount) : (overallScore + 1.2);
+    const overallTarget = parseFloat(Math.min(5.0, Math.max(overallScore, rawOverallTarget)).toFixed(2));
     const overallGap = parseFloat(Math.max(0, overallTarget - overallScore).toFixed(2));
     const maxScore = 5.0;
 
@@ -419,7 +417,7 @@ Generate a comprehensive JSON executive report matching this schema:
       }
 
       if (parsed) {
-        parsed.architectureDiagrams = this._generateDeterministicDiagramsFallback(framework, metadata, scores);
+        parsed.architectureDiagrams = this._generateDeterministicDiagramsFallback(framework, instance, scores);
         parsed.generatedAt = new Date().toISOString();
         parsed.modelUsed = result.modelUsed;
         parsed.calculatedScores = scores;

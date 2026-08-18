@@ -824,9 +824,11 @@ const DynamicAssessmentRunner = () => {
               frameworkSnapshot: type.framework,
               responses: {}
             });
-            if (newInst) {
+            if (newInst && newInst.id) {
               setInstance(newInst);
               loadedResponses = newInst.responses || {};
+              // Ensure every assessment run has a unique URL ID in address bar
+              navigate(`/assessments/run/instance/${newInst.id}`, { replace: true });
             }
           } catch (createErr) {
             console.warn('Instance auto-provisioning deferred to submission:', createErr);
@@ -900,16 +902,36 @@ const DynamicAssessmentRunner = () => {
   }, [performAutoSave, saveLocalBackup]);
 
   const handleSelectCurrentState = (qId, score) => {
+    const currentFuture = responses[`${qId}_future_state`];
+    // If future state was previously lower than the new current score, auto-bump it to at least current score
+    const newFuture = currentFuture !== undefined ? Math.max(score, Number(currentFuture)) : Math.min(5, score + 1);
+
     const updated = {
       ...responses,
       [qId]: score,
-      [`${qId}_current_state`]: score
+      [`${qId}_current_state`]: score,
+      [`${qId}_future_state`]: newFuture
     };
     setResponses(updated);
     performAutoSave(updated);
   };
 
   const handleSelectFutureState = (qId, score) => {
+    const currentBaseline = responses[qId] !== undefined 
+      ? Number(responses[qId]) 
+      : responses[`${qId}_current_state`] !== undefined 
+        ? Number(responses[`${qId}_current_state`]) 
+        : null;
+
+    if (currentBaseline !== null && score < currentBaseline) {
+      toast.error(`Target Future State (${score}/5.0) cannot be lower than Current Baseline (${currentBaseline}/5.0)`, {
+        icon: "⚠️",
+        duration: 3000,
+        position: "top-center"
+      });
+      return;
+    }
+
     const updated = {
       ...responses,
       [`${qId}_future_state`]: score
