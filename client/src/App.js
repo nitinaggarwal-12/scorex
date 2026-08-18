@@ -14,41 +14,58 @@ import ChatWidget from './components/ChatWidget';
 import * as assessmentService from './services/assessmentService';
 import authService from './services/authService';
 
+// Helper to auto-recover from stale code-split chunk hashes across hot deploys
+const lazyWithRetry = (componentImport) =>
+  lazy(async () => {
+    const hasRefreshed = window.sessionStorage.getItem('chunk_retry_refreshed');
+    try {
+      return await componentImport();
+    } catch (error) {
+      if (!hasRefreshed) {
+        window.sessionStorage.setItem('chunk_retry_refreshed', 'true');
+        window.location.reload();
+        return;
+      }
+      window.sessionStorage.removeItem('chunk_retry_refreshed');
+      throw error;
+    }
+  });
+
 // Lazily loaded page components for optimal bundle splitting
-const HomePage = lazy(() => import('./components/HomePageNew'));
-const AssessmentStart = lazy(() => import('./components/AssessmentStart'));
-const AssessmentQuestion = lazy(() => import('./components/AssessmentQuestion'));
-const AssessmentResults = lazy(() => import('./components/AssessmentResultsNew'));
-const AssessmentManagement = lazy(() => import('./components/AssessmentsListNew'));
-const AssessmentDashboard = lazy(() => import('./components/AssessmentDashboard'));
-const Dashboard = lazy(() => import('./components/DashboardNew'));
-const ExecutiveCommandCenter = lazy(() => import('./components/ExecutiveCommandCenter'));
-const ExecutiveSummary = lazy(() => import('./components/ExecutiveSummaryNew'));
-const AssessmentHistory = lazy(() => import('./components/AssessmentHistory'));
-const DeepDive = lazy(() => import('./components/DeepDive'));
-const IndustryBenchmarkingReport = lazy(() => import('./components/IndustryBenchmarkingReport'));
-const MyAssessments = lazy(() => import('./components/MyAssessments'));
-const UserManagement = lazy(() => import('./components/UserManagement'));
-const AssignAssessmentMulti = lazy(() => import('./components/AssignAssessmentMulti'));
-const AuthorAssignments = lazy(() => import('./components/AuthorAssignments'));
-const UserDetails = lazy(() => import('./components/UserDetails'));
-const AssessmentDetails = lazy(() => import('./components/AssessmentDetails'));
-const FeedbackForm = lazy(() => import('./components/FeedbackForm'));
-const FeedbackList = lazy(() => import('./components/FeedbackList'));
-const QuestionManager = lazy(() => import('./components/QuestionManager'));
-const QuestionAssignmentManager = lazy(() => import('./components/QuestionAssignmentManager'));
-const UserGuide = lazy(() => import('./components/UserGuide'));
-const PitchDeck = lazy(() => import('./components/PitchDeck'));
-const GenAIReadiness = lazy(() => import('./components/GenAIReadiness'));
-const GenAIReadinessReport = lazy(() => import('./components/GenAIReadinessReport'));
-const GenAIReadinessList = lazy(() => import('./components/GenAIReadinessList'));
-const DynamicAssessmentGenerator = lazy(() => import('./components/DynamicAssessmentGenerator'));
-const DynamicAssessmentRunner = lazy(() => import('./components/DynamicAssessmentRunner'));
-const DynamicAssessmentReport = lazy(() => import('./components/DynamicAssessmentReport'));
-const DynamicAssessmentHub = lazy(() => import('./components/DynamicAssessmentHub'));
-const AssessmentComparisonView = lazy(() => import('./components/AssessmentComparisonView'));
-const CustomerPortfolioDashboard = lazy(() => import('./components/CustomerPortfolioDashboard'));
-const CommandPalette = lazy(() => import('./components/CommandPalette'));
+const HomePage = lazyWithRetry(() => import('./components/HomePageNew'));
+const AssessmentStart = lazyWithRetry(() => import('./components/AssessmentStart'));
+const AssessmentQuestion = lazyWithRetry(() => import('./components/AssessmentQuestion'));
+const AssessmentResults = lazyWithRetry(() => import('./components/AssessmentResultsNew'));
+const AssessmentManagement = lazyWithRetry(() => import('./components/AssessmentsListNew'));
+const AssessmentDashboard = lazyWithRetry(() => import('./components/AssessmentDashboard'));
+const Dashboard = lazyWithRetry(() => import('./components/DashboardNew'));
+const ExecutiveCommandCenter = lazyWithRetry(() => import('./components/ExecutiveCommandCenter'));
+const ExecutiveSummary = lazyWithRetry(() => import('./components/ExecutiveSummaryNew'));
+const AssessmentHistory = lazyWithRetry(() => import('./components/AssessmentHistory'));
+const DeepDive = lazyWithRetry(() => import('./components/DeepDive'));
+const IndustryBenchmarkingReport = lazyWithRetry(() => import('./components/IndustryBenchmarkingReport'));
+const MyAssessments = lazyWithRetry(() => import('./components/MyAssessments'));
+const UserManagement = lazyWithRetry(() => import('./components/UserManagement'));
+const AssignAssessmentMulti = lazyWithRetry(() => import('./components/AssignAssessmentMulti'));
+const AuthorAssignments = lazyWithRetry(() => import('./components/AuthorAssignments'));
+const UserDetails = lazyWithRetry(() => import('./components/UserDetails'));
+const AssessmentDetails = lazyWithRetry(() => import('./components/AssessmentDetails'));
+const FeedbackForm = lazyWithRetry(() => import('./components/FeedbackForm'));
+const FeedbackList = lazyWithRetry(() => import('./components/FeedbackList'));
+const QuestionManager = lazyWithRetry(() => import('./components/QuestionManager'));
+const QuestionAssignmentManager = lazyWithRetry(() => import('./components/QuestionAssignmentManager'));
+const UserGuide = lazyWithRetry(() => import('./components/UserGuide'));
+const PitchDeck = lazyWithRetry(() => import('./components/PitchDeck'));
+const GenAIReadiness = lazyWithRetry(() => import('./components/GenAIReadiness'));
+const GenAIReadinessReport = lazyWithRetry(() => import('./components/GenAIReadinessReport'));
+const GenAIReadinessList = lazyWithRetry(() => import('./components/GenAIReadinessList'));
+const DynamicAssessmentGenerator = lazyWithRetry(() => import('./components/DynamicAssessmentGenerator'));
+const DynamicAssessmentRunner = lazyWithRetry(() => import('./components/DynamicAssessmentRunner'));
+const DynamicAssessmentReport = lazyWithRetry(() => import('./components/DynamicAssessmentReport'));
+const DynamicAssessmentHub = lazyWithRetry(() => import('./components/DynamicAssessmentHub'));
+const AssessmentComparisonView = lazyWithRetry(() => import('./components/AssessmentComparisonView'));
+const CustomerPortfolioDashboard = lazyWithRetry(() => import('./components/CustomerPortfolioDashboard'));
+const CommandPalette = lazyWithRetry(() => import('./components/CommandPalette'));
 
 // Protected Route Component with Frictionless Auto-Guest Provisioning
 const ProtectedRoute = ({ children }) => {

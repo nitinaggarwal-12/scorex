@@ -36,8 +36,8 @@ import LoadingSpinner from './LoadingSpinner';
 
 const HubContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #0b0f19 0%, #111827 50%, #171b30 100%);
-  color: #f3f4f6;
+  background: #f8fafc;
+  color: #0f172a;
   padding: 108px 36px 60px;
   box-sizing: border-box;
 
@@ -70,7 +70,7 @@ const HeaderSection = styled.div`
 const HeaderTitle = styled.h1`
   font-size: 2.4rem;
   font-weight: 800;
-  color: #ffffff;
+  color: #0f172a;
   margin-bottom: 8px;
   letter-spacing: -0.02em;
 
@@ -80,7 +80,7 @@ const HeaderTitle = styled.h1`
 `;
 
 const HeaderSubtitle = styled.p`
-  color: #94a3b8;
+  color: #475569;
   font-size: 1.05rem;
   line-height: 1.5;
 `;

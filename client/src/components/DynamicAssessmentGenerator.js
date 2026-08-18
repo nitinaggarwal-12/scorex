@@ -27,8 +27,8 @@ import dynamicAssessmentService from '../services/dynamicAssessmentService';
 
 const Container = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #0b0f19 0%, #111827 50%, #1e1e38 100%);
-  color: #f3f4f6;
+  background: #f8fafc;
+  color: #0f172a;
   padding: 108px 36px 60px;
   box-sizing: border-box;
 
@@ -65,9 +65,7 @@ const Badge = styled.span`
 const Title = styled.h1`
   font-size: 2.75rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #0f172a;
   margin-bottom: 12px;
   letter-spacing: -0.02em;
 
@@ -78,19 +76,18 @@ const Title = styled.h1`
 
 const Subtitle = styled.p`
   font-size: 1.125rem;
-  color: #94a3b8;
+  color: #475569;
   max-width: 750px;
   margin: 0 auto;
   line-height: 1.6;
 `;
 
 const PromptCard = styled.div`
-  background: rgba(30, 41, 59, 0.7);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
   border-radius: 24px;
   padding: 36px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
   margin-bottom: 40px;
 
   @media (max-width: 768px) {
@@ -103,11 +100,11 @@ const PromptCard = styled.div`
 const TextArea = styled.textarea`
   width: 100%;
   min-height: 120px;
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(99, 102, 241, 0.3);
+  background: #f8fafc;
+  border: 1.5px solid #cbd5e1;
   border-radius: 16px;
   padding: 18px;
-  color: #f8fafc;
+  color: #0f172a;
   font-size: 1rem;
   line-height: 1.6;
   resize: vertical;
@@ -117,12 +114,13 @@ const TextArea = styled.textarea`
 
   &:focus {
     outline: none;
-    border-color: #818cf8;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+    border-color: #6366f1;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
   }
 
   &::placeholder {
-    color: #64748b;
+    color: #94a3b8;
   }
 `;
 
@@ -142,26 +140,27 @@ const PresetChip = styled.button`
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
   border-radius: 12px;
   padding: 12px 14px;
-  color: #cbd5e1;
+  color: #334155;
   font-size: 0.875rem;
+  font-weight: 600;
   text-align: left;
   cursor: pointer;
   transition: all 0.2s ease;
   min-height: 48px;
 
   &:hover {
-    background: rgba(99, 102, 241, 0.15);
-    border-color: rgba(99, 102, 241, 0.4);
-    color: #ffffff;
+    background: #eef2ff;
+    border-color: #6366f1;
+    color: #4f46e5;
     transform: translateY(-2px);
   }
 
   svg {
-    color: #818cf8;
+    color: #6366f1;
     font-size: 1.1rem;
     flex-shrink: 0;
   }
@@ -193,11 +192,11 @@ const MetaInputs = styled.div`
 `;
 
 const Input = styled.input`
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #f8fafc;
+  border: 1.5px solid #cbd5e1;
   border-radius: 10px;
   padding: 12px 16px;
-  color: #f8fafc;
+  color: #0f172a;
   font-size: 0.9rem;
   box-sizing: border-box;
   flex: 1;
@@ -205,7 +204,12 @@ const Input = styled.input`
 
   &:focus {
     outline: none;
-    border-color: #818cf8;
+    border-color: #6366f1;
+    background: #ffffff;
+  }
+
+  &::placeholder {
+    color: #94a3b8;
   }
 
   @media (max-width: 768px) {
@@ -219,10 +223,10 @@ const TierSection = styled.div`
 
 const TierSectionLabel = styled.div`
   font-size: 0.85rem;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #94a3b8;
+  color: #475569;
   margin-bottom: 12px;
   display: flex;
   align-items: center;
@@ -240,18 +244,18 @@ const TierSelectorGrid = styled.div`
 `;
 
 const TierCard = styled.div`
-  background: ${props => props.$selected ? 'rgba(99, 102, 241, 0.15)' : 'rgba(15, 23, 42, 0.6)'};
-  border: 1.5px solid ${props => props.$selected ? '#818cf8' : 'rgba(255, 255, 255, 0.08)'};
+  background: ${props => props.$selected ? '#eef2ff' : '#f8fafc'};
+  border: 2px solid ${props => props.$selected ? '#6366f1' : '#e2e8f0'};
   border-radius: 14px;
   padding: 16px 18px;
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
-  box-shadow: ${props => props.$selected ? '0 8px 24px rgba(99, 102, 241, 0.25)' : 'none'};
+  box-shadow: ${props => props.$selected ? '0 4px 14px rgba(99, 102, 241, 0.18)' : 'none'};
 
   &:hover {
-    border-color: ${props => props.$selected ? '#818cf8' : 'rgba(255, 255, 255, 0.2)'};
-    background: ${props => props.$selected ? 'rgba(99, 102, 241, 0.2)' : 'rgba(15, 23, 42, 0.8)'};
+    border-color: #6366f1;
+    background: ${props => props.$selected ? '#eef2ff' : '#ffffff'};
     transform: translateY(-2px);
   }
 `;
@@ -266,7 +270,7 @@ const TierHeader = styled.div`
 const TierTitle = styled.div`
   font-size: 0.95rem;
   font-weight: 700;
-  color: ${props => props.$selected ? '#ffffff' : '#e2e8f0'};
+  color: ${props => props.$selected ? '#4f46e5' : '#0f172a'};
   display: flex;
   align-items: center;
   gap: 8px;
@@ -284,7 +288,7 @@ const TierBadge = styled.span`
 
 const TierDesc = styled.div`
   font-size: 0.82rem;
-  color: #94a3b8;
+  color: #475569;
   line-height: 1.45;
   margin-bottom: 10px;
 `;
@@ -331,11 +335,11 @@ const GenerateButton = styled.button`
 `;
 
 const FrameworkPreview = styled.div`
-  background: rgba(30, 41, 59, 0.6);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
   border-radius: 24px;
   padding: 36px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
   margin-bottom: 40px;
 
   @media (max-width: 768px) {

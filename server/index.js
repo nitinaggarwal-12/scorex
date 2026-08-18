@@ -3561,6 +3561,9 @@ if (fs.existsSync(buildPath)) {
     if (req.path.startsWith('/api/')) {
       return res.status(404).json({ success: false, message: 'API endpoint not found' });
     }
+    if (req.path.startsWith('/static/')) {
+      return res.status(404).send('Static asset not found');
+    }
     const indexPath = path.join(buildPath, 'index.html');
     res.sendFile(indexPath, (err) => {
       if (err) {
