@@ -14,22 +14,121 @@ import ChatWidget from './components/ChatWidget';
 import * as assessmentService from './services/assessmentService';
 import authService from './services/authService';
 
-// Helper to auto-recover from stale code-split chunk hashes across hot deploys
+// Bulletproof code-split chunk loader with auto-recovery from stale cache hashes across hot deploys
 const lazyWithRetry = (componentImport) =>
-  lazy(async () => {
-    const hasRefreshed = window.sessionStorage.getItem('chunk_retry_refreshed');
-    try {
-      return await componentImport();
-    } catch (error) {
-      if (!hasRefreshed) {
-        window.sessionStorage.setItem('chunk_retry_refreshed', 'true');
-        window.location.reload();
-        return;
+  lazy(() =>
+    new Promise((resolve, reject) => {
+      const retryKey = 'scorex_chunk_retry_' + window.location.pathname;
+      const hasRetried = window.sessionStorage.getItem(retryKey);
+
+      componentImport()
+        .then((module) => {
+          window.sessionStorage.removeItem(retryKey);
+          resolve(module);
+        })
+        .catch((error) => {
+          const isChunkError =
+            error?.name === 'ChunkLoadError' ||
+            (error?.message && (
+              error.message.includes('Loading chunk') ||
+              error.message.includes('Failed to fetch dynamically imported module') ||
+              error.message.includes('Unexpected token')
+            ));
+
+          if (isChunkError && !hasRetried) {
+            console.warn('⚠️ Stale code chunk hash detected after deployment. Auto-reloading latest version...', error);
+            window.sessionStorage.setItem(retryKey, 'true');
+            window.location.reload(true);
+            resolve({ default: () => <LoadingSpinner message="Syncing latest application version..." /> });
+          } else {
+            console.error('Failed to load page module:', error);
+            reject(error);
+          }
+        });
+    })
+  );
+
+// Global Error Boundary to gracefully recover from runtime / chunk loading failures
+class ChunkErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    const isChunkError =
+      error?.name === 'ChunkLoadError' ||
+      (error?.message && (
+        error.message.includes('Loading chunk') ||
+        error.message.includes('Failed to fetch dynamically imported module') ||
+        error.message.includes('Unexpected token')
+      ));
+
+    if (isChunkError) {
+      const reloadKey = 'eb_chunk_reload';
+      if (!window.sessionStorage.getItem(reloadKey)) {
+        window.sessionStorage.setItem(reloadKey, 'true');
+        window.location.reload(true);
       }
-      window.sessionStorage.removeItem('chunk_retry_refreshed');
-      throw error;
     }
-  });
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{
+          minHeight: '80vh',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '40px 20px',
+          textAlign: 'center',
+          fontFamily: 'Inter, system-ui, sans-serif'
+        }}>
+          <div style={{
+            background: '#ffffff',
+            border: '1.5px solid #e2e8f0',
+            borderRadius: '16px',
+            padding: '32px 40px',
+            maxWidth: '520px',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.05)'
+          }}>
+            <h2 style={{ fontSize: '1.4rem', color: '#0f172a', margin: '0 0 10px', fontWeight: 800 }}>
+              Updating Application
+            </h2>
+            <p style={{ fontSize: '0.92rem', color: '#64748b', margin: '0 0 20px', lineHeight: 1.5 }}>
+              A new version of ScoreX was recently deployed. Click below to refresh and load the latest release.
+            </p>
+            <button
+              onClick={() => {
+                window.sessionStorage.clear();
+                window.location.reload(true);
+              }}
+              style={{
+                background: '#4f46e5',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '10px',
+                padding: '12px 24px',
+                fontSize: '0.92rem',
+                fontWeight: 700,
+                cursor: 'pointer'
+              }}
+            >
+              🔄 Reload Latest Version
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 // Lazily loaded page components for optimal bundle splitting
 const HomePage = lazyWithRetry(() => import('./components/HomePageNew'));
@@ -325,6 +424,7 @@ function App() {
         <div className="App">
           <GlobalNav />
         
+        <ChunkErrorBoundary>
         <Suspense fallback={<LoadingSpinner message="Loading..." />}>
           <Routes>
             <Route 
@@ -717,6 +817,7 @@ function App() {
           />
         </Routes>
         </Suspense>
+        </ChunkErrorBoundary>
 
         <ChatWidget />
         <Suspense fallback={null}>

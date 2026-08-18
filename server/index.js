@@ -3562,8 +3562,17 @@ const buildPath = path.join(__dirname, '../client/build');
 if (fs.existsSync(buildPath)) {
   app.use(express.static(buildPath, {
     setHeaders: (res, filePath) => {
-      if (filePath.endsWith('.json')) {
+      if (filePath.endsWith('.html') || filePath.endsWith('index.html')) {
+        // Never cache HTML so browsers immediately fetch new JS/CSS chunk hashes on deploy
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+      } else if (filePath.includes('/static/')) {
+        // Hashed bundle assets can be safely cached
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      } else if (filePath.endsWith('.json')) {
         res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Cache-Control', 'no-cache');
       }
     }
   }));
@@ -3572,10 +3581,10 @@ if (fs.existsSync(buildPath)) {
     if (req.path.startsWith('/api/')) {
       return res.status(404).json({ success: false, message: 'API endpoint not found' });
     }
-    if (req.path.startsWith('/static/')) {
-      return res.status(404).send('Static asset not found');
-    }
     const indexPath = path.join(buildPath, 'index.html');
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
     res.sendFile(indexPath, (err) => {
       if (err) {
         console.error('Error serving index.html:', err);
