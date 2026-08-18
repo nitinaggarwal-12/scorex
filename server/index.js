@@ -16,6 +16,7 @@ const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
+const fs = require('fs');
 
 const assessmentFramework = require('./data/assessmentFramework');
 const RecommendationEngine = require('./services/recommendationEngine');
@@ -44,6 +45,17 @@ app.use(fileUpload({
 }));
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
+
+// High-priority root & API health check endpoints for Railway / Docker / Cloud Run
+app.get(['/health', '/healthz', '/api/health'], (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    success: true,
+    message: 'ScoreX Enterprise API is live and healthy',
+    timestamp: new Date().toISOString(),
+    version: '2.5.0'
+  });
+});
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -126,7 +138,6 @@ console.log(`📁 Data directory: ${dataDir}`);
 console.log(`📄 Data file path: ${dataFilePath}`);
 
 // Validate storage is writable on startup
-const fs = require('fs');
 try {
   if (!fs.existsSync(dataDir)) {
     console.log(`📁 Creating data directory: ${dataDir}`);
