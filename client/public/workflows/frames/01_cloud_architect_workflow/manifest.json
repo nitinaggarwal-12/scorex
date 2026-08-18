@@ -1,0 +1,72 @@
+[
+  {
+    "index": 1,
+    "frameSrc": "/workflows/frames/01_cloud_architect_workflow/frame_01.png",
+    "title": "Assessments Catalog Hub",
+    "description": "Browse multi-cloud architectures, GenAI migrations, and lakehouse blueprints.",
+    "targetAction": "Click \"Start Assessment\" or \"Try Sample\""
+  },
+  {
+    "index": 2,
+    "frameSrc": "/workflows/frames/01_cloud_architect_workflow/frame_02.png",
+    "title": "Interactive Diagnostic Question",
+    "description": "Move Baseline and Target sliders from Level 1 to 5 to evaluate technical capabilities.",
+    "targetAction": "Drag rating sliders across current vs future horizons"
+  },
+  {
+    "index": 3,
+    "frameSrc": "/workflows/frames/01_cloud_architect_workflow/frame_03.png",
+    "title": "Identify Pain Points & Architect Notes",
+    "description": "Select specific technical friction bottlenecks and enter operational environment context.",
+    "targetAction": "Select 5 Friction Checkboxes + Enter Context Note"
+  },
+  {
+    "index": 4,
+    "frameSrc": "/workflows/frames/01_cloud_architect_workflow/frame_04.png",
+    "title": "Dimensional Gap Radar",
+    "description": "Analyze dimensional maturity gaps across 5 pillars against industry baseline benchmarks.",
+    "targetAction": "Tab 1: Executive Overview & Radar Polygon"
+  },
+  {
+    "index": 5,
+    "frameSrc": "/workflows/frames/01_cloud_architect_workflow/frame_05.png",
+    "title": "2D Capability vs. Risk Matrix",
+    "description": "Audit critical capability exposures, high-risk bottlenecks, and dimension health scores.",
+    "targetAction": "Audit 8 Identified Bottlenecks on Matrix"
+  },
+  {
+    "index": 6,
+    "frameSrc": "/workflows/frames/01_cloud_architect_workflow/frame_06.png",
+    "title": "Draw.io Architecture Evolution",
+    "description": "Examine side-by-side Baseline Legacy Stack vs Desired Vertex AI Gemini Target Topology.",
+    "targetAction": "Tab 2: Compare Side-by-Side Architectures"
+  },
+  {
+    "index": 7,
+    "frameSrc": "/workflows/frames/01_cloud_architect_workflow/frame_07.png",
+    "title": "Target State Graph Deep-Dive",
+    "description": "Inspect Gemini 2M Long-Context, Prompt Context Caching (75% savings), and Model Armor.",
+    "targetAction": "Inspect Target Mesh Node Specifications"
+  },
+  {
+    "index": 8,
+    "frameSrc": "/workflows/frames/01_cloud_architect_workflow/frame_08.png",
+    "title": "1-Click Terraform IaC Deployer",
+    "description": "Auto-generate production-grade Terraform HCL for Vertex AI, CMEK, and Apigee AI Gateway.",
+    "targetAction": "Review and Copy Terraform Infrastructure Code"
+  },
+  {
+    "index": 9,
+    "frameSrc": "/workflows/frames/01_cloud_architect_workflow/frame_09.png",
+    "title": "Engineering Roadmap & Milestones",
+    "description": "Review 3-phase transformation execution plan with timeline gates and deliverables.",
+    "targetAction": "Tab 4: Roadmap & Transformation Blueprints"
+  },
+  {
+    "index": 10,
+    "frameSrc": "/workflows/frames/01_cloud_architect_workflow/frame_10.png",
+    "title": "Granular Question & Friction Audit",
+    "description": "Review all questions, rating baselines, technical friction tags, and operational notes.",
+    "targetAction": "Tab 5: Light-Theme Granular Audit Record"
+  }
+]

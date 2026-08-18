@@ -1,0 +1,37 @@
+[
+  {
+    "index": 1,
+    "frameSrc": "/workflows/frames/04_csuite_finops_workflow/frame_01.png",
+    "title": "AI Executive Audio Briefing",
+    "description": "Listen to a 90-second synthesized C-suite narrative summarizing key ROI and risk mitigations.",
+    "targetAction": "Header: Click \"Play Briefing\""
+  },
+  {
+    "index": 2,
+    "frameSrc": "/workflows/frames/04_csuite_finops_workflow/frame_02.png",
+    "title": "Quantified TCO & 4.6 Mo Payback",
+    "description": "Examine 3-year net value creation ($1.94M), annual savings ($360k), and rapid capital recovery.",
+    "targetAction": "Tab 3: Financial Impact & TCO Card"
+  },
+  {
+    "index": 3,
+    "frameSrc": "/workflows/frames/04_csuite_finops_workflow/frame_03.png",
+    "title": "What-If Scenario Simulator",
+    "description": "Simulate live adjustments in prompt caching discounts and compute right-sizing.",
+    "targetAction": "Modal: Interactive What-If ROI Simulator"
+  },
+  {
+    "index": 4,
+    "frameSrc": "/workflows/frames/04_csuite_finops_workflow/frame_04.png",
+    "title": "Fullscreen Board Pitch Deck Mode",
+    "description": "Transform assessment findings into executive board slides ready for executive alignment.",
+    "targetAction": "Header: Click \"Present Deck\""
+  },
+  {
+    "index": 5,
+    "frameSrc": "/workflows/frames/04_csuite_finops_workflow/frame_05.png",
+    "title": "1-Click Deliverables Export",
+    "description": "Export executive PDF, Excel financial model, CSV datasets, Draw.io XML graph, and ZIP bundle.",
+    "targetAction": "Header: Click \"Executive PDF\" / \"Excel\" / \"Bundle\""
+  }
+]

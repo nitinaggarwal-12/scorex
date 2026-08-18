@@ -1,0 +1,30 @@
+[
+  {
+    "index": 1,
+    "frameSrc": "/workflows/frames/03_ciso_secops_workflow/frame_01.png",
+    "title": "2D Enterprise Risk Matrix",
+    "description": "Identify critical security exposures and high-friction vulnerabilities across all pillars.",
+    "targetAction": "Tab 1: Capability vs Operational Risk Heatmap"
+  },
+  {
+    "index": 2,
+    "frameSrc": "/workflows/frames/03_ciso_secops_workflow/frame_02.png",
+    "title": "Granular Technical Friction Audit",
+    "description": "Examine unmanaged API keys, lack of DLP filtering, and prompt injection vulnerabilities.",
+    "targetAction": "Tab 5: Audit Technical Friction Callouts"
+  },
+  {
+    "index": 3,
+    "frameSrc": "/workflows/frames/03_ciso_secops_workflow/frame_03.png",
+    "title": "Zero-Trust Perimeter & CMEK IaC",
+    "description": "Verify Terraform resources for VPC Service Controls perimeter and Cloud KMS encryption keyring.",
+    "targetAction": "Tab 2: Zero-Trust Security Perimeter Blueprint"
+  },
+  {
+    "index": 4,
+    "frameSrc": "/workflows/frames/03_ciso_secops_workflow/frame_04.png",
+    "title": "SecOps Playbook & Compliance Sign-Off",
+    "description": "Review security controls for Model Armor, HIPAA/GDPR data masking, and IAM service accounts.",
+    "targetAction": "Tab 4: Architect & SecOps Playbook"
+  }
+]
