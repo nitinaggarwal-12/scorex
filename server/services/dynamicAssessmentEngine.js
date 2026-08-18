@@ -681,70 +681,303 @@ Generate a strictly valid JSON response matching this schema:
   }
 
   _generateDeterministicDiagramsFallback(framework, metadata = {}, scores = {}) {
-    const cust = metadata.customerName || 'Enterprise Client';
+    const cust = metadata.customerName || "Enterprise Client";
     const lvl = scores.overallScore || 2.6;
     const tgt = 4.5;
-    const title = framework.title || '';
-    const isFinOps = /finops|cost|billing|spend/i.test(title);
-    const isGenAI = /genai|generative|llm|agent/i.test(title);
+    const key = (framework.typeKey || "").toLowerCase();
+    const title = (framework.title || "").toLowerCase();
 
-    let targetTitle = `Desired Future State: Modern Open Lakehouse & Agentic Mesh (${cust})`;
-    let targetSubtitle = `Target Maturity Level ${tgt}/5.0 (Optimized) • Sub-Second Streaming • Apache Iceberg • Serverless FinOps`;
-    let s2Title = 'STAGE 2: OPEN LAKEHOUSE';
-    let s2Sub = 'Apache Iceberg & Open Table Formats';
-    let s2Card1Title = 'Open Table Formats';
-    let s2Card1Sub = 'Apache Iceberg / Delta Lake<br>Single source of truth, zero lock-in';
-    let s2Card2Title = 'Centralized Metadata & Lineage';
-    let s2Card2Sub = 'Apache Polaris / OpenMetadata<br>Row/column masking & end-to-end lineage';
-    let s3Title = 'STAGE 3: SERVERLESS FINOPS';
-    let s3Sub = 'Autoscaling Vectorized Engine';
-    let s3Card1Title = 'Serverless Vectorized SQL';
-    let s3Card1Sub = 'Instant 15-min auto-suspend switches<br>35% to 50% compute TCO savings';
+    const isGenAI = key.includes("openai") || key.includes("gemini") || title.includes("gemini") || title.includes("openai") || title.includes("genai");
+    const isSecurity = key.includes("security") || key.includes("zero_trust") || key.includes("ciso") || title.includes("security") || title.includes("zero trust");
+    const isLakehouse = key.includes("lakehouse") || key.includes("bigquery") || key.includes("edw") || key.includes("snowflake") || title.includes("lakehouse") || title.includes("bigquery") || title.includes("snowflake");
+    const isFinOps = key.includes("finops") || key.includes("cost") || key.includes("billing") || title.includes("finops") || title.includes("cost");
 
-    if (isFinOps) {
-      targetTitle = `Desired Future State: Governed FinOps Cloud Billing & Kubernetes Mesh (${cust})`;
-      targetSubtitle = `Target Maturity Level ${tgt}/5.0 (Optimized) • FOCUS 1.0 Export • OpenCost Attribution • Auto-Suspend`;
-      s2Title = 'STAGE 2: BILLING FABRIC';
-      s2Sub = 'FOCUS 1.0 Unified Cloud Billing';
-      s2Card1Title = 'Multi-Cloud Billing Ingestion';
-      s2Card1Sub = 'FOCUS 1.0 normalized billing export<br>Zero untagged resource leakage';
-      s2Card2Title = 'Cost Allocation & Attribution';
-      s2Card2Sub = 'OpenCost / Kubecost pod-level metrics<br>Automated cost center chargeback';
-      s3Title = 'STAGE 3: COMPUTE FINOPS';
-      s3Sub = 'Autopilot & Right-Sizing';
-      s3Card1Title = 'Autopilot Cluster Autoscaling';
-      s3Card1Sub = '10-minute scale-to-zero kill switches<br>40% immediate compute bill reduction';
-    } else if (isGenAI) {
-      targetTitle = `Desired Future State: Enterprise Compound GenAI & Multi-Agent Mesh (${cust})`;
-      targetSubtitle = `Target Maturity Level ${tgt}/5.0 (Optimized) • MCP Tool Protocol • Prompt Caching • Guardrails`;
-      s2Title = 'STAGE 2: KNOWLEDGE PLANE';
-      s2Sub = 'Vector Embeddings & Enterprise RAG';
-      s2Card1Title = 'High-Throughput Vector Store';
-      s2Card1Sub = 'Sub-second cosine similarity search<br>Hybrid dense & sparse BM25 indexing';
-      s2Card2Title = 'Enterprise Grounding & Factuality';
-      s2Card2Sub = 'Automated hallucination guardrails<br>Real-time citation fact-checking';
-      s3Title = 'STAGE 3: AGENT RUNTIME';
-      s3Sub = 'Model Routing & Caching';
-      s3Card1Title = 'Prompt Context Caching Engine';
-      s3Card1Sub = '75% input token discount on repeated schemas<br>Intelligent latency-optimized model router';
+    let currentTitle = "Current Baseline Architecture: Fragmented & Siloed (" + cust + ")";
+    let currentSubtitle = "Maturity Level " + lvl + "/5.0 (Developing) • Brittle Cron Batch • Data Silos • Static VM Costs";
+    let curReasoning = "Fragmented legacy pipelines and batch cron jobs cause high failure rates, unmonitored infrastructure spend, and delayed business analytics.";
+    
+    let curL1Title = "STAGE 1: INGESTION"; let curL1Sub = "Brittle Batch & SFTP";
+    let curC1_1T = "Legacy OLTP & Files"; let curC1_1S = "Postgres, MySQL, SFTP<br>Point-to-point unmanaged exports";
+    let curC1_2T = "Cron Batch Scripts"; let curC1_2S = "Python/Bash cron jobs<br>24-hour latency, no dead-letter queue";
+    let curWarn1T = "⚠️ 38% Failure Rate"; let curWarn1S = "Silent schema breakages halt nightly ETL runs";
+
+    let curL2Title = "STAGE 2: DATA SILOS"; let curL2Sub = "Split Warehouse + Lakes";
+    let curC2_1T = "Unmanaged Cloud Buckets"; let curC2_1S = "Raw CSV / JSON dumps<br>Fragmented bucket ACLs, no lineage";
+    let curC2_2T = "Isolated Data Warehouse"; let curC2_2S = "Proprietary SQL Warehouse<br>Duplicate data copies & sync lag";
+    let curWarn2T = "⚠️ Manual IAM Spreadsheets"; let curWarn2S = "No automated row/column masking";
+
+    let curL3Title = "STAGE 3: COMPUTE & MLOps"; let curL3Sub = "Over-Provisioned Clusters";
+    let curC3_1T = "Static 24/7 Compute VMs"; let curC3_1S = "Always-on oversized clusters<br>Lack of automated auto-termination";
+    let curC3_2T = "Disconnected Notebooks"; let curC3_2S = "Ad-hoc local Jupyter environments<br>No centralized model registry";
+    let curWarn3T = "⚠️ $480k Annual Idle Waste"; let curWarn3S = "Zero cluster FinOps kill switches";
+
+    let curL4Title = "STAGE 4: SERVING & BI"; let curL4Sub = "Unguarded LLMs & Heavy Backlog";
+    let curC4_1T = "Direct Unguarded LLM APIs"; let curC4_1S = "No prompt caching (100% token spend)<br>No enterprise PII filters or guardrails";
+    let curC4_2T = "Stale Daily BI Extracts"; let curC4_2S = "Slow queries over legacy schemas<br>14-day turnaround on custom metrics";
+    let curWarn4T = "⚠️ 14-Day Delivery Lag"; let curWarn4S = "Analyst team overwhelmed by custom SQL";
+
+    let targetTitle = "Desired Future State: Modern Open Lakehouse & Agentic Mesh (" + cust + ")";
+    let targetSubtitle = "Target Maturity Level " + tgt + "/5.0 (Optimized) • Sub-Second Streaming • Apache Iceberg • Serverless FinOps";
+    let tgtL1Title = "STAGE 1: REAL-TIME INGESTION"; let tgtL1Sub = "Declarative Streaming & CDC";
+    let tgtC1_1T = "Multi-Source Event Streams"; let tgtC1_1S = "Kafka, Kinesis, Google Pub/Sub<br>Sub-second real-time event capture";
+    let tgtC1_2T = "Serverless Auto-Loader / CDC"; let tgtC1_2S = "Automated schema evolution<br>Declarative data transformations";
+    let tgtVal1T = "✓ Zero Ingestion Latency"; let tgtVal1S = "Automated retry & dead-letter isolation";
+
+    let tgtL2Title = "STAGE 2: OPEN LAKEHOUSE"; let tgtL2Sub = "Apache Iceberg & Open Formats";
+    let tgtC2_1T = "Open Table Formats"; let tgtC2_1S = "Apache Iceberg / BigLake<br>Single source of truth, zero lock-in";
+    let tgtC2_2T = "Centralized Metadata & Lineage"; let tgtC2_2S = "Dataplex Universal Catalog<br>Row/column masking & end-to-end lineage";
+    let tgtVal2T = "✓ Unified Governance Plane"; let tgtVal2S = "Cross-cloud zero-copy data sharing";
+
+    let tgtL3Title = "STAGE 3: SERVERLESS FINOPS"; let tgtL3Sub = "Autoscaling Vectorized Engine";
+    let tgtC3_1T = "Serverless Vectorized SQL"; let tgtC3_1S = "Instant 15-min auto-suspend switches<br>35% to 50% compute TCO savings";
+    let tgtC3_2T = "Production MLOps Registry"; let tgtC3_2S = "Automated CI/CD model verification<br>Real-time concept drift & feature store";
+    let tgtVal3T = "✓ Automated FinOps & CI/CD"; let tgtVal3S = "Zero idle spend & fully tracked models";
+
+    let tgtL4Title = "STAGE 4: AI MESH & BI"; let tgtL4Sub = "MCP Protocol & Semantic Layer";
+    let tgtC4_1T = "Compound Multi-Agent Mesh"; let tgtC4_1S = "MCP protocol & 75% prompt context caching<br>Zero-Trust AI guardrails & CMEK isolation";
+    let tgtC4_2T = "Self-Service Semantic BI Layer"; let tgtC4_2S = "Looker Semantic Model<br>Sub-second dashboard refresh speeds";
+    let tgtVal4T = "✓ Real-Time Self-Service"; let tgtVal4S = "Instant answers for BI & autonomous agents";
+
+    let transformations = [
+      "Shift from 24h cron batch scripts to sub-second streaming CDC data contracts",
+      "Consolidate siloed relational databases into an open table format Lakehouse (Apache Iceberg)",
+      "Replace static 24/7 VMs with serverless autoscaling compute engines (15-min auto-suspend)",
+      "Deploy Compound Multi-Agent Mesh with Model Context Protocol (MCP) & 75% prompt context caching"
+    ];
+
+    if (isGenAI) {
+      currentTitle = "Current Baseline Architecture: Brittle OpenAI Endpoints & Token Inefficiency (" + cust + ")";
+      currentSubtitle = "Maturity Level " + lvl + "/5.0 (Developing) • 8k Chunked RAG Loss • 100% Token Inefficiency • Prompt Injection Risk";
+      curReasoning = "Direct un-cached OpenAI and Azure endpoints cause exorbitant token bills, 8k context chunking loss, high latency, and vulnerability to indirect prompt injection.";
+
+      curL1Title = "STAGE 1: CONSUMER APPS"; curL1Sub = "Public API Calls & Git Keys";
+      curC1_1T = "Direct OpenAI API Calls"; curC1_1S = "Public internet endpoints<br>Hardcoded developer keys in local repos";
+      curC1_2T = "Unmanaged Developer Chat"; curC1_2S = "Public LLM web interfaces<br>Proprietary code pasted without DLP masking";
+      curWarn1T = "⚠️ Severe Data Leakage Risk"; curWarn1S = "Zero perimeter isolation or API key rotation";
+
+      curL2Title = "STAGE 2: FRAGMENTED RAG"; curL2Sub = "8k Chunking & High Latency";
+      curC2_1T = "Static Vector Database"; curC2_1S = "Ad-hoc open source vector store<br>Missing enterprise RBAC document filters";
+      curC2_2T = "Lossy Text Chunking (8k)"; curC2_2S = "Splitting 500-page docs into snippets<br>High semantic loss & hallucination rate";
+      curWarn2T = "⚠️ 42% Hallucination Rate"; curWarn2S = "Models lack full-document reasoning memory";
+
+      curL3Title = "STAGE 3: INFERENCE ENGINE"; curL3Sub = "100% Token Costs (No Cache)";
+      curC3_1T = "Raw Prompt Ingestion"; curC3_1S = "Resending 50k schema tokens on every query<br>100% full input token billing";
+      curC3_2T = "Single-Model Bottleneck"; curC3_2S = "Forcing all queries to GPT-4o<br>5.2s median latency on simple lookups";
+      curWarn3T = "⚠️ $620k Annual LLM Bill"; curWarn3S = "Zero prompt context caching or tiered routing";
+
+      curL4Title = "STAGE 4: EXECUTION PLANE"; curL4Sub = "Unguarded Agent Tools";
+      curC4_1T = "Direct Tool Invocation"; curC4_1S = "Unsanitized LLM output directly executing SQL<br>No runtime code sandboxing";
+      curC4_2T = "Zero Model Guardrails"; curC4_2S = "Basic regex keyword filters<br>Vulnerable to jailbreaks & prompt injection";
+      curWarn4T = "⚠️ Prompt Injection Vulnerable"; curWarn4S = "Malicious inputs can extract system prompts";
+
+      targetTitle = "Desired Future State: Enterprise Gemini Compound AI & Agentic Mesh (" + cust + ")";
+      targetSubtitle = "Target Maturity Level " + tgt + "/5.0 (Optimized) • 2M Context Working Memory • 75% Prompt Caching • Model Armor";
+
+      tgtL1Title = "STAGE 1: ENTERPRISE GATEWAY"; tgtL1Sub = "Vertex AI Gateway & VPC-SC";
+      tgtC1_1T = "Centralized Model Gateway"; tgtC1_1S = "Apigee + Vertex AI Gateway<br>Automated rate limiting & token quotas";
+      tgtC1_2T = "Private Service Connect"; tgtC1_2S = "Zero public internet egress<br>Private VPC perimeter isolation";
+      tgtVal1T = "✓ Zero Data Exfiltration"; tgtVal1S = "Private zero-trust enterprise perimeter";
+
+      tgtL2Title = "STAGE 2: KNOWLEDGE PLANE"; tgtL2Sub = "2M Multimodal Working Memory";
+      tgtC2_1T = "Google Gemini 2.5 / 3.7 Pro"; tgtC2_1S = "2,000,000 Token Native Context Window<br>Directly ingest entire codebase & archives";
+      tgtC2_2T = "Vertex Search Grounding"; tgtC2_2S = "Enterprise factuality citations<br>Live BigQuery & enterprise doc grounding";
+      tgtVal2T = "✓ Zero Chunking Loss"; tgtVal2S = "Sub-second multi-document synthesis";
+
+      tgtL3Title = "STAGE 3: INFERENCE FABRIC"; tgtL3Sub = "75% Prompt Context Caching";
+      tgtC3_1T = "Prompt Context Caching"; tgtC3_1S = "Cached enterprise schemas & system instructions<br>75% input token discount ($0.31/1M tokens)";
+      tgtC3_2T = "Intelligent Model Router"; tgtC3_2S = "Gemini Flash for high-speed routing<br>Gemini Pro for complex multi-step reasoning";
+      tgtVal3T = "✓ 75% GenAI Cost Reduction"; tgtVal3S = "Sub-800ms median latency turnaround";
+
+      tgtL4Title = "STAGE 4: AGENT MESH & SAFETY"; tgtL4Sub = "Model Armor & MCP Protocol";
+      tgtC4_1T = "Google Cloud Model Armor"; tgtC4_1S = "Real-time prompt injection & jailbreak defense<br>Automated PII tokenization & audit logging";
+      tgtC4_2T = "Model Context Protocol (MCP)"; tgtC4_2S = "Sandboxed autonomous agent mesh<br>Signed AST tool execution & CMEK encryption";
+      tgtVal4T = "✓ Zero-Trust Agent Defense"; tgtVal4S = "Enterprise-grade safety & HIPAA/EU AI compliance";
+
+      transformations = [
+        "Migrate from public OpenAI APIs to Vertex AI Gemini Gateway with VPC Service Controls perimeter",
+        "Replace lossy 8k vector chunking with Gemini 2M Token Native Long-Context Working Memory",
+        "Activate Vertex AI Prompt Context Caching to slash input token costs by 75%",
+        "Deploy Google Cloud Model Armor and Model Context Protocol (MCP) for sandboxed agent defense"
+      ];
+    } else if (isSecurity) {
+      currentTitle = "Current Baseline Architecture: Shadow AI Exposure & Static Key Sprawl (" + cust + ")";
+      currentSubtitle = "Maturity Level " + lvl + "/5.0 (Developing) • Unmonitored Shadow AI • Static JSON Keys • Raw PII in Prompts";
+      curReasoning = "Unmanaged employee and application access to external AI platforms, static service account keys, lack of real-time DLP, and siloed log storage expose the enterprise to data exfiltration and regulatory penalties.";
+
+      curL1Title = "STAGE 1: SHADOW AI & EGRESS"; curL1Sub = "Unmonitored Web Usage";
+      curC1_1T = "Unmanaged AI Traffic"; curC1_1S = "Employees using personal LLM accounts<br>Source code & customer PII pasted into web chats";
+      curC1_2T = "Public Internet Egress"; curC1_2S = "Open internet routing for model calls<br>Zero VPC perimeter or egress firewalls";
+      curWarn1T = "⚠️ Uncontrolled IP Leakage"; curWarn1S = "Proprietary IP transmitted to public model servers";
+
+      curL2Title = "STAGE 2: DATA & ENCRYPTION"; curL2Sub = "Raw PII & Default Keys";
+      curC2_1T = "Unsanitized Prompts"; curC2_1S = "Raw customer SSNs, credit cards & PHI<br>Zero automated DLP inspection before inference";
+      curC2_2T = "Provider-Managed Keys"; curC2_2S = "Default cloud encryption keys<br>No customer key control (CMEK) or shredding";
+      curWarn2T = "⚠️ Regulatory Non-Compliance"; curWarn2S = "Severe penalties under EU AI Act, GDPR & HIPAA";
+
+      curL3Title = "STAGE 3: IAM & PRIVILEGE"; curL3Sub = "Static JSON Service Accounts";
+      curC3_1T = "Static Service Account Keys"; curC3_1S = "Downloadable JSON keys on dev laptops<br>Zero automated 90-day rotation";
+      curC3_2T = "Standing Admin Rights"; curC3_2S = "Permanent superuser access for 25+ engineers<br>No peer review or emergency break-glass";
+      curWarn3T = "⚠️ Broad Breach Blast Radius"; curWarn3S = "Compromised laptop yields full cloud admin rights";
+
+      curL4Title = "STAGE 4: SECOPS & AUDIT"; curL4Sub = "Siloed Logs & Manual Audits";
+      curC4_1T = "Fragmented Local Logs"; curC4_1S = "Application logs stored on ephemeral disks<br>No centralized SIEM correlation";
+      curC4_2T = "Manual Incident Triage"; curC4_2S = "On-call engineers executing manual shell scripts<br>MTTR > 4.5 hours during incidents";
+      curWarn4T = "⚠️ 14-Day Audit Prep Drag"; curWarn4S = "Engineering hours wasted on manual SOC2 screenshots";
+
+      targetTitle = "Desired Future State: Enterprise AI & Zero-Trust Defense Mesh (" + cust + ")";
+      targetSubtitle = "Target Maturity Level " + tgt + "/5.0 (Optimized) • Apigee AI Gateway • Real-Time Cloud DLP • Ephemeral OIDC • Chronicle SIEM";
+
+      tgtL1Title = "STAGE 1: ENTERPRISE GATEWAY"; tgtL1Sub = "Apigee Gateway & VPC-SC";
+      tgtC1_1T = "Centralized AI Gateway"; tgtC1_1S = "Apigee Enterprise AI Gateway<br>100% interception of developer & app AI calls";
+      tgtC1_2T = "VPC Service Controls"; tgtC1_2S = "Cryptographic perimeter defense<br>Blocking unauthorized data exfiltration";
+      tgtVal1T = "✓ 100% Shadow AI Containment"; tgtVal1S = "Zero unauthorized AI traffic across enterprise";
+
+      tgtL2Title = "STAGE 2: DATA PROTECTION"; tgtL2Sub = "Real-Time DLP & Cloud EKM";
+      tgtC2_1T = "Real-Time Cloud DLP Mesh"; tgtC2_1S = "Dynamic PII/PHI surrogate tokenization<br>Reversible masking under strict RBAC";
+      tgtC2_2T = "Customer-Managed EKM / CMEK"; tgtC2_2S = "Cloud KMS FIPS 140-3 HSM keys<br>Key Access Justifications (KAJ) audit logging";
+      tgtVal2T = "✓ Cryptographic Key Control"; tgtVal2S = "Instant cryptographic tenant data shredding";
+
+      tgtL3Title = "STAGE 3: ZERO-TRUST IAM"; tgtL3Sub = "Workload Federation (OIDC)";
+      tgtC3_1T = "Workload Identity Federation"; tgtC3_1S = "100% elimination of static JSON keys<br>Short-lived OIDC tokens for CI/CD & apps";
+      tgtC3_2T = "Just-in-Time PAM Elevation"; tgtC3_2S = "Automated ephemeral elevation (<4h)<br>Full session recording & peer approval";
+      tgtVal3T = "✓ Zero Standing Privileges"; tgtVal3S = "Elimination of persistent credential attack surface";
+
+      tgtL4Title = "STAGE 4: SECOPS & SOAR"; tgtL4Sub = "Chronicle SIEM & Model Armor";
+      tgtC4_1T = "Google Security Operations"; tgtC4_1S = "Chronicle SIEM ingesting 100% of audit logs<br>Sub-second threat hunting across petabytes";
+      tgtC4_2T = "Automated SOAR Playbooks"; tgtC4_2S = "Sub-2 minute automated token revocation<br>Continuous ISO 42001 & NIST compliance";
+      tgtVal4T = "✓ Autonomous Threat Response"; tgtVal4S = "Sub-2 minute automated incident containment";
+
+      transformations = [
+        "Deploy Apigee Enterprise AI Gateway and VPC Service Controls to contain 100% of shadow AI traffic",
+        "Implement Real-Time Cloud DLP dynamic surrogate tokenization and Cloud EKM hardware encryption",
+        "Eliminate all static service account keys via Workload Identity Federation (OIDC) and Just-in-Time PAM",
+        "Stream Cloud Audit Logs to Google Security Operations (Chronicle SIEM) with automated SOAR playbooks"
+      ];
+    } else if (isLakehouse) {
+      currentTitle = "Current Baseline Architecture: Siloed Proprietary Warehouse & Egress Friction (" + cust + ")";
+      currentSubtitle = "Maturity Level " + lvl + "/5.0 (Developing) • Proprietary Lock-In • 40% Compute Spikes • Heavy Egress Fees";
+      curReasoning = "Legacy proprietary data warehouses (Teradata/Snowflake/Databricks) cause unmanaged compute credit volatility, expensive multi-cloud data copying, duplicate storage formats, and delayed analytics delivery.";
+
+      curL1Title = "STAGE 1: PIPELINE BOTTLENECKS"; curL1Sub = "Proprietary Connectors & Sync Lag";
+      curC1_1T = "Point-to-Point Connectors"; curC1_1S = "Proprietary closed ETL pipelines<br>Frequent connector failures on schema changes";
+      curC1_2T = "Multi-Cloud Egress Copies"; curC1_2S = "Duplicate data copies transferred across clouds<br>Expensive cross-region egress fees";
+      curWarn1T = "⚠️ $280k Annual Egress Bill"; curWarn1S = "Unnecessary inter-cloud data transfer costs";
+
+      curL2Title = "STAGE 2: PROPRIETARY STORAGE"; curL2Sub = "Vendor Format Lock-In";
+      curC2_1T = "Proprietary Table Formats"; curC2_1S = "Closed-source data format encapsulation<br>Inability to query storage with external tools";
+      curC2_2T = "Fragmented Object Silos"; curC2_2S = "Siloed data lakes across multiple cloud buckets<br>No unified catalog or column-level lineage";
+      curWarn2T = "⚠️ Double Storage Spend"; curWarn2S = "Multiple redundant copies of data sets";
+
+      curL3Title = "STAGE 3: COMPUTE VOLATILITY"; curL3Sub = "Unpredictable Credit Spikes";
+      curC3_1T = "Volatile Credit Pricing"; curC3_1S = "Auto-resume compute spikes during morning BI runs<br>40% unbudgeted monthly cost surges";
+      curC3_2T = "Separate ML Infrastructure"; curC3_2S = "Exporting data to external clusters for model training<br>Slow iterative data science cycles";
+      curWarn3T = "⚠️ Compute Budget Overruns"; curWarn3S = "Unmanaged warehouse sizing and credit burns";
+
+      curL4Title = "STAGE 4: SERVING & LINEAGE"; curL4Sub = "Siloed BI & Missing Governance";
+      curC4_1T = "Disconnected BI Extracts"; curC4_1S = "Daily extract caches refreshing over 3 hours<br>Stale reporting numbers during board meetings";
+      curC4_2T = "Manual Catalog Maintenance"; curC4_2S = "Ad-hoc documentation in Confluence<br>Inability to trace downstream data lineage";
+      curWarn4T = "⚠️ 14-Day Delivery Latency"; curWarn4S = "Data engineering team overwhelmed by pipeline fixes";
+
+      targetTitle = "Desired Future State: Open BigQuery BigLake Lakehouse & Omni Mesh (" + cust + ")";
+      targetSubtitle = "Target Maturity Level " + tgt + "/5.0 (Optimized) • Apache Iceberg • BigQuery Editions • Dataplex Lineage • Zero-Egress";
+
+      tgtL1Title = "STAGE 1: REAL-TIME INGESTION"; tgtL1Sub = "Serverless CDC & Auto-Loader";
+      tgtC1_1T = "Cloud Pub/Sub & Dataflow"; tgtC1_1S = "Sub-second Apache Beam streaming pipeline<br>Automated dead-letter queue & retry";
+      tgtC1_2T = "BigQuery Storage Write API"; tgtC1_2S = "High-throughput streaming ingestion<br>Exactly-once delivery semantics";
+      tgtVal1T = "✓ Sub-Second Data Freshness"; tgtVal1S = "Real-time data availability for BI & AI";
+
+      tgtL2Title = "STAGE 2: OPEN STORAGE"; tgtL2Sub = "BigLake & Apache Iceberg";
+      tgtC2_1T = "BigLake Open Table Format"; tgtC2_1S = "Apache Iceberg standard format in Cloud Storage<br>Single copy of data, zero vendor lock-in";
+      tgtC2_2T = "Universal Dataplex Catalog"; tgtC2_2S = "Unified metadata, fine-grained access control<br>Automated end-to-end data lineage";
+      tgtVal2T = "✓ Zero Vendor Format Lock-In"; tgtVal2S = "Open table storage accessible across all engines";
+
+      tgtL3Title = "STAGE 3: PREDICTABLE COMPUTE"; tgtL3Sub = "BigQuery Editions & ML";
+      tgtC3_1T = "BigQuery Editions Reservations"; tgtC3_1S = "Predictable autoscaling slot capacity<br>Baseline + burst slots with zero budget surprises";
+      tgtC3_2T = "In-Database BigQuery ML"; tgtC3_2S = "Execute SQL ML & Gemini Multimodal models<br>Zero data movement for inference";
+      tgtVal3T = "✓ 45% TCO Reduction"; tgtVal3S = "Predictable capacity slots with zero egress waste";
+
+      tgtL4Title = "STAGE 4: ZERO-EGRESS SERVING"; tgtL4Sub = "BigQuery Omni & Looker";
+      tgtC4_1T = "BigQuery Omni Multi-Cloud"; tgtC4_1S = "Query AWS S3 & Azure Blob storage in-place<br>Zero cross-cloud egress transfer fees";
+      tgtC4_2T = "Looker Enterprise Semantic Layer"; tgtC4_2S = "Single source of truth metrics<br>Direct sub-second query execution";
+      tgtVal4T = "✓ Zero-Egress Analytics"; tgtVal4S = "Query multi-cloud lakes without data movement";
+
+      transformations = [
+        "Migrate proprietary warehouse tables to BigLake Open Table Format (Apache Iceberg) in Cloud Storage",
+        "Adopt BigQuery Editions with autoscaling slot reservations for 45% predictable compute TCO savings",
+        "Deploy BigQuery Omni to execute zero-egress queries across AWS S3 and Azure Blob storage in-place",
+        "Implement Dataplex Universal Catalog for centralized governance, column masking, and end-to-end lineage"
+      ];
+    } else if (isFinOps) {
+      currentTitle = "Current Baseline Architecture: Unallocated Cloud Spend & Idle VMs (" + cust + ")";
+      currentSubtitle = "Maturity Level " + lvl + "/5.0 (Developing) • Siloed Billing CSVs • 40% Untagged Assets • $540k Idle Waste";
+      curReasoning = "Lack of unified multi-cloud billing standards, manual spreadsheet chargeback, over-provisioned 24/7 static virtual machines, and poor commitment coverage create substantial cloud waste.";
+
+      curL1Title = "STAGE 1: BILLING CHAOS"; curL1Sub = "Siloed CSV Invoices & Missing Tags";
+      curC1_1T = "Fragmented Cloud Invoices"; curC1_1S = "Separate AWS, GCP, Azure billing downloads<br>Manual reconciliation delayed by 20 days";
+      curC1_2T = "Untagged Cloud Resources"; curC1_2S = "40% of compute & storage resources missing tags<br>Inability to determine owner cost centers";
+      curWarn1T = "⚠️ 40% Untagged Resources"; curWarn1S = "Unallocated cloud spend leaking into overhead";
+
+      curL2Title = "STAGE 2: MANUAL ALLOCATION"; curL2Sub = "Excel Spreadsheets & Friction";
+      curC2_1T = "Manual Excel Chargeback"; curC2_1S = "Complex macro spreadsheets prone to errors<br>Frequent disputes between engineering & finance";
+      curC2_2T = "Zero Container Visibility"; curC2_2S = "Shared Kubernetes clusters billed as single lumps<br>No pod or namespace-level attribution";
+      curWarn2T = "⚠️ Delayed Cost Feedback"; curWarn2S = "Teams learn about overspending 30 days after occurrence";
+
+      curL3Title = "STAGE 3: COMPUTE WASTE"; curL3Sub = "Static 24/7 Over-Provisioning";
+      curC3_1T = "Always-On Dev/Test VMs"; curC3_1S = "Oversized clusters running 24/7 over weekends<br>Zero automated scale-to-zero kill switches";
+      curC3_2T = "Orphaned Storage Volumes"; curC3_2S = "Unattached persistent disks & snapshots<br>Silent storage bill accumulation";
+      curWarn3T = "⚠️ $540k Annual Idle Waste"; curWarn3S = "Static infrastructure running with <15% CPU utilization";
+
+      curL4Title = "STAGE 4: PROCUREMENT DRAG"; curL4Sub = "On-Demand Billing Rates";
+      curC4_1T = "Unmanaged On-Demand Rates"; curC4_1S = "Paying 100% full list price on dynamic workloads<br>Lack of automated commitment modeling";
+      curC4_2T = "Low Commitment Coverage"; curC4_2S = "<30% Committed Use Discount (CUD) coverage<br>Reluctance to commit due to fear of lock-in";
+      curWarn4T = "⚠️ 35% Price Premium"; curWarn4S = "Missing committed use discount savings";
+
+      targetTitle = "Desired Future State: Governed FinOps Cloud Billing & Kubernetes Mesh (" + cust + ")";
+      targetSubtitle = "Target Maturity Level " + tgt + "/5.0 (Optimized) • FOCUS 1.0 Export • OpenCost Attribution • 15-min Auto-Suspend";
+
+      tgtL1Title = "STAGE 1: FOCUS 1.0 FABRIC"; tgtL1Sub = "Normalized Multi-Cloud Billing";
+      tgtC1_1T = "FOCUS 1.0 Ingestion Pipeline"; tgtC1_1S = "Automated export of normalized billing data<br>Direct daily streaming to BigQuery data warehouse";
+      tgtC1_2T = "Automated Tagging Policy"; tgtC1_2S = "Terraform CI/CD automated resource tagging<br>100% cost attribution across all projects";
+      tgtVal1T = "✓ 100% Ingestion Coverage"; tgtVal1S = "Single unified billing schema across all clouds";
+
+      tgtL2Title = "STAGE 2: UNIT ECONOMICS"; tgtL2Sub = "OpenCost & Pod-Level Metrics";
+      tgtC2_1T = "OpenCost / Kubecost Engine"; tgtC2_1S = "Real-time pod and namespace cost attribution<br>Direct allocation of shared cluster resources";
+      tgtC2_2T = "Automated Chargeback Portals"; tgtC2_2S = "Self-service cost dashboards for squad leads<br>Unit cost metrics per customer transaction";
+      tgtVal2T = "✓ 100% Cost Transparency"; tgtVal2S = "Engineering teams accountable for unit economics";
+
+      tgtL3Title = "STAGE 3: COMPUTE FINOPS"; tgtL3Sub = "GKE Autopilot & Auto-Suspend";
+      tgtC3_1T = "GKE Autopilot Dynamic Scaling"; tgtC3_1S = "Pod-level billing without paying for unused nodes<br>Instant 15-min auto-suspend switches";
+      tgtC3_2T = "Automated Resource Rightsizer"; tgtC3_2S = "Continuous machine learning rightsizing engine<br>Automated pruning of orphaned storage disks";
+      tgtVal3T = "✓ 45% Compute Bill Reduction"; tgtVal3S = "Zero idle spend on unutilized compute capacity";
+
+      tgtL4Title = "STAGE 4: PROCUREMENT AI"; tgtL4Sub = "Automated CUD & Anomaly Alerting";
+      tgtC4_1T = "Automated CUD Rebalancing"; tgtC4_1S = "Flexible 1-year and 3-year commitment planner<br>Achieving 85%+ commitment discount coverage";
+      tgtC4_2T = "Real-Time Anomaly Detection"; tgtC4_2S = "AI-driven hourly spending anomaly triggers<br>Automated Slack / PagerDuty escalation";
+      tgtVal4T = "✓ 35% Unit Cost Savings"; tgtVal4S = "Maximum discount tiers with automated protection";
+
+      transformations = [
+        "Adopt FOCUS 1.0 open billing standard with automated daily export into BigQuery",
+        "Deploy OpenCost for granular container and namespace unit economics cost attribution",
+        "Migrate workloads to GKE Autopilot with automated 15-minute scale-to-zero kill switches",
+        "Implement automated Committed Use Discount (CUD) rebalancing to achieve 85%+ coverage"
+      ];
     }
 
+    const currentXml = `<mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="850" background="#0f172a" math="0" shadow="0"><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="title" value="&lt;b style=&quot;font-size:15px;color:#f87171;&quot;&gt;⚠️ ${currentTitle.toUpperCase()}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10.5px;color:#94a3b8;&quot;&gt;${currentSubtitle}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e1b4b;strokeColor=#ef4444;strokeWidth=2;fontColor=#ffffff;align=center;shadow=1;" vertex="1" parent="1"><mxGeometry x="40" y="20" width="1320" height="60" as="geometry"/></mxCell><mxCell id="stage1_box" value="&lt;b style=&quot;color:#f87171;font-size:11px;&quot;&gt;${curL1Title}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9px;color:#cbd5e1;&quot;&gt;${curL1Sub}&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#1e293b;strokeColor=#f43f5e;fontColor=#ffffff;fontSize=11;fontStyle=1;rounded=1;" vertex="1" parent="1"><mxGeometry x="40" y="100" width="280" height="660" as="geometry"/></mxCell><mxCell id="s1_card1" value="&lt;b style=&quot;color:#fda4af;font-size:10.5px;&quot;&gt;${curC1_1T}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8.5px;color:#cbd5e1;&quot;&gt;${curC1_1S}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage1_box"><mxGeometry x="20" y="60" width="240" height="85" as="geometry"/></mxCell><mxCell id="s1_card2" value="&lt;b style=&quot;color:#fda4af;font-size:10.5px;&quot;&gt;${curC1_2T}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8.5px;color:#cbd5e1;&quot;&gt;${curC1_2S}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage1_box"><mxGeometry x="20" y="160" width="240" height="85" as="geometry"/></mxCell><mxCell id="s1_warn" value="&lt;b style=&quot;color:#ef4444;font-size:9.5px;&quot;&gt;${curWarn1T}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8px;color:#fca5a5;&quot;&gt;${curWarn1S}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#450a0a;strokeColor=#ef4444;fontColor=#ffffff;align=center;" vertex="1" parent="stage1_box"><mxGeometry x="20" y="260" width="240" height="55" as="geometry"/></mxCell><mxCell id="stage2_box" value="&lt;b style=&quot;color:#f87171;font-size:11px;&quot;&gt;${curL2Title}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9px;color:#cbd5e1;&quot;&gt;${curL2Sub}&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#1e293b;strokeColor=#f43f5e;fontColor=#ffffff;fontSize=11;fontStyle=1;rounded=1;" vertex="1" parent="1"><mxGeometry x="380" y="100" width="280" height="660" as="geometry"/></mxCell><mxCell id="s2_card1" value="&lt;b style=&quot;color:#fda4af;font-size:10.5px;&quot;&gt;${curC2_1T}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8.5px;color:#cbd5e1;&quot;&gt;${curC2_1S}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage2_box"><mxGeometry x="20" y="60" width="240" height="85" as="geometry"/></mxCell><mxCell id="s2_card2" value="&lt;b style=&quot;color:#fda4af;font-size:10.5px;&quot;&gt;${curC2_2T}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8.5px;color:#cbd5e1;&quot;&gt;${curC2_2S}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage2_box"><mxGeometry x="20" y="160" width="240" height="85" as="geometry"/></mxCell><mxCell id="s2_warn" value="&lt;b style=&quot;color:#ef4444;font-size:9.5px;&quot;&gt;${curWarn2T}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8px;color:#fca5a5;&quot;&gt;${curWarn2S}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#450a0a;strokeColor=#ef4444;fontColor=#ffffff;align=center;" vertex="1" parent="stage2_box"><mxGeometry x="20" y="260" width="240" height="55" as="geometry"/></mxCell><mxCell id="stage3_box" value="&lt;b style=&quot;color:#f87171;font-size:11px;&quot;&gt;${curL3Title}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9px;color:#cbd5e1;&quot;&gt;${curL3Sub}&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#1e293b;strokeColor=#f43f5e;fontColor=#ffffff;fontSize=11;fontStyle=1;rounded=1;" vertex="1" parent="1"><mxGeometry x="720" y="100" width="280" height="660" as="geometry"/></mxCell><mxCell id="s3_card1" value="&lt;b style=&quot;color:#fda4af;font-size:10.5px;&quot;&gt;${curC3_1T}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8.5px;color:#cbd5e1;&quot;&gt;${curC3_1S}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage3_box"><mxGeometry x="20" y="60" width="240" height="85" as="geometry"/></mxCell><mxCell id="s3_card2" value="&lt;b style=&quot;color:#fda4af;font-size:10.5px;&quot;&gt;${curC3_2T}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8.5px;color:#cbd5e1;&quot;&gt;${curC3_2S}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage3_box"><mxGeometry x="20" y="160" width="240" height="85" as="geometry"/></mxCell><mxCell id="s3_warn" value="&lt;b style=&quot;color:#ef4444;font-size:9.5px;&quot;&gt;${curWarn3T}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8px;color:#fca5a5;&quot;&gt;${curWarn3S}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#450a0a;strokeColor=#ef4444;fontColor=#ffffff;align=center;" vertex="1" parent="stage3_box"><mxGeometry x="20" y="260" width="240" height="55" as="geometry"/></mxCell><mxCell id="stage4_box" value="&lt;b style=&quot;color:#f87171;font-size:11px;&quot;&gt;${curL4Title}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9px;color:#cbd5e1;&quot;&gt;${curL4Sub}&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#1e293b;strokeColor=#f43f5e;fontColor=#ffffff;fontSize=11;fontStyle=1;rounded=1;" vertex="1" parent="1"><mxGeometry x="1060" y="100" width="300" height="660" as="geometry"/></mxCell><mxCell id="s4_card1" value="&lt;b style=&quot;color:#fda4af;font-size:10.5px;&quot;&gt;${curC4_1T}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8.5px;color:#cbd5e1;&quot;&gt;${curC4_1S}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage4_box"><mxGeometry x="20" y="60" width="260" height="85" as="geometry"/></mxCell><mxCell id="s4_card2" value="&lt;b style=&quot;color:#fda4af;font-size:10.5px;&quot;&gt;${curC4_2T}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8.5px;color:#cbd5e1;&quot;&gt;${curC4_2S}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage4_box"><mxGeometry x="20" y="160" width="260" height="85" as="geometry"/></mxCell><mxCell id="s4_warn" value="&lt;b style=&quot;color:#ef4444;font-size:9.5px;&quot;&gt;${curWarn4T}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8px;color:#fca5a5;&quot;&gt;${curWarn4S}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#450a0a;strokeColor=#ef4444;fontColor=#ffffff;align=center;" vertex="1" parent="stage4_box"><mxGeometry x="20" y="260" width="260" height="55" as="geometry"/></mxCell><mxCell id="flow1" value="Data Friction" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=2;strokeColor=#ef4444;dashed=1;fontColor=#fca5a5;fontSize=9;" edge="1" parent="1" source="s1_card2" target="s2_card1"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="flow2" value="Unmanaged ETL" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=2;strokeColor=#ef4444;dashed=1;fontColor=#fca5a5;fontSize=9;" edge="1" parent="1" source="s2_card2" target="s3_card1"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="flow3" value="Manual Queries" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=2;strokeColor=#ef4444;dashed=1;fontColor=#fca5a5;fontSize=9;" edge="1" parent="1" source="s3_card1" target="s4_card1"><mxGeometry relative="1" as="geometry"/></mxCell></root></mxGraphModel>`;
+
+    const targetXml = `<mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="850" background="#0f172a" math="0" shadow="0"><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="title" value="&lt;b style=&quot;font-size:15px;color:#34d399;&quot;&gt;✨ ${targetTitle.toUpperCase()}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10.5px;color:#94a3b8;&quot;&gt;${targetSubtitle}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;strokeWidth=2;fontColor=#ffffff;align=center;shadow=1;" vertex="1" parent="1"><mxGeometry x="40" y="20" width="1320" height="60" as="geometry"/></mxCell><mxCell id="stage1_box" value="&lt;b style=&quot;color:#34d399;font-size:11px;&quot;&gt;${tgtL1Title}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9px;color:#cbd5e1;&quot;&gt;${tgtL1Sub}&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#022c22;strokeColor=#10b981;fontColor=#ffffff;fontSize=11;fontStyle=1;rounded=1;" vertex="1" parent="1"><mxGeometry x="40" y="100" width="280" height="660" as="geometry"/></mxCell><mxCell id="s1_card1" value="&lt;b style=&quot;color:#6ee7b7;font-size:10.5px;&quot;&gt;${tgtC1_1T}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8.5px;color:#cbd5e1;&quot;&gt;${tgtC1_1S}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage1_box"><mxGeometry x="20" y="60" width="240" height="85" as="geometry"/></mxCell><mxCell id="s1_card2" value="&lt;b style=&quot;color:#6ee7b7;font-size:10.5px;&quot;&gt;${tgtC1_2T}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8.5px;color:#cbd5e1;&quot;&gt;${tgtC1_2S}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage1_box"><mxGeometry x="20" y="160" width="240" height="85" as="geometry"/></mxCell><mxCell id="s1_val" value="&lt;b style=&quot;color:#10b981;font-size:9.5px;&quot;&gt;${tgtVal1T}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8px;color:#a7f3d0;&quot;&gt;${tgtVal1S}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#065f46;strokeColor=#10b981;fontColor=#ffffff;align=center;" vertex="1" parent="stage1_box"><mxGeometry x="20" y="260" width="240" height="55" as="geometry"/></mxCell><mxCell id="stage2_box" value="&lt;b style=&quot;color:#34d399;font-size:11px;&quot;&gt;${tgtL2Title}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9px;color:#cbd5e1;&quot;&gt;${tgtL2Sub}&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#022c22;strokeColor=#10b981;fontColor=#ffffff;fontSize=11;fontStyle=1;rounded=1;" vertex="1" parent="1"><mxGeometry x="380" y="100" width="280" height="660" as="geometry"/></mxCell><mxCell id="s2_card1" value="&lt;b style=&quot;color:#6ee7b7;font-size:10.5px;&quot;&gt;${tgtC2_1T}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8.5px;color:#cbd5e1;&quot;&gt;${tgtC2_1S}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage2_box"><mxGeometry x="20" y="60" width="240" height="85" as="geometry"/></mxCell><mxCell id="s2_card2" value="&lt;b style=&quot;color:#6ee7b7;font-size:10.5px;&quot;&gt;${tgtC2_2T}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8.5px;color:#cbd5e1;&quot;&gt;${tgtC2_2S}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage2_box"><mxGeometry x="20" y="160" width="240" height="85" as="geometry"/></mxCell><mxCell id="s2_val" value="&lt;b style=&quot;color:#10b981;font-size:9.5px;&quot;&gt;${tgtVal2T}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8px;color:#a7f3d0;&quot;&gt;${tgtVal2S}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#065f46;strokeColor=#10b981;fontColor=#ffffff;align=center;" vertex="1" parent="stage2_box"><mxGeometry x="20" y="260" width="240" height="55" as="geometry"/></mxCell><mxCell id="stage3_box" value="&lt;b style=&quot;color:#34d399;font-size:11px;&quot;&gt;${tgtL3Title}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9px;color:#cbd5e1;&quot;&gt;${tgtL3Sub}&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#022c22;strokeColor=#10b981;fontColor=#ffffff;fontSize=11;fontStyle=1;rounded=1;" vertex="1" parent="1"><mxGeometry x="720" y="100" width="280" height="660" as="geometry"/></mxCell><mxCell id="s3_card1" value="&lt;b style=&quot;color:#6ee7b7;font-size:10.5px;&quot;&gt;${tgtC3_1T}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8.5px;color:#cbd5e1;&quot;&gt;${tgtC3_1S}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage3_box"><mxGeometry x="20" y="60" width="240" height="85" as="geometry"/></mxCell><mxCell id="s3_card2" value="&lt;b style=&quot;color:#6ee7b7;font-size:10.5px;&quot;&gt;${tgtC3_2T}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8.5px;color:#cbd5e1;&quot;&gt;${tgtC3_2S}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage3_box"><mxGeometry x="20" y="160" width="240" height="85" as="geometry"/></mxCell><mxCell id="s3_val" value="&lt;b style=&quot;color:#10b981;font-size:9.5px;&quot;&gt;${tgtVal3T}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8px;color:#a7f3d0;&quot;&gt;${tgtVal3S}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#065f46;strokeColor=#10b981;fontColor=#ffffff;align=center;" vertex="1" parent="stage3_box"><mxGeometry x="20" y="260" width="240" height="55" as="geometry"/></mxCell><mxCell id="stage4_box" value="&lt;b style=&quot;color:#34d399;font-size:11px;&quot;&gt;${tgtL4Title}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9px;color:#cbd5e1;&quot;&gt;${tgtL4Sub}&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#022c22;strokeColor=#10b981;fontColor=#ffffff;fontSize=11;fontStyle=1;rounded=1;" vertex="1" parent="1"><mxGeometry x="1060" y="100" width="300" height="660" as="geometry"/></mxCell><mxCell id="s4_card1" value="&lt;b style=&quot;color:#6ee7b7;font-size:10.5px;&quot;&gt;${tgtC4_1T}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8.5px;color:#cbd5e1;&quot;&gt;${tgtC4_1S}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage4_box"><mxGeometry x="20" y="60" width="260" height="85" as="geometry"/></mxCell><mxCell id="s4_card2" value="&lt;b style=&quot;color:#6ee7b7;font-size:10.5px;&quot;&gt;${tgtC4_2T}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8.5px;color:#cbd5e1;&quot;&gt;${tgtC4_2S}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage4_box"><mxGeometry x="20" y="160" width="260" height="85" as="geometry"/></mxCell><mxCell id="s4_val" value="&lt;b style=&quot;color:#10b981;font-size:9.5px;&quot;&gt;${tgtVal4T}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8px;color:#a7f3d0;&quot;&gt;${tgtVal4S}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#065f46;strokeColor=#10b981;fontColor=#ffffff;align=center;" vertex="1" parent="stage4_box"><mxGeometry x="20" y="260" width="260" height="55" as="geometry"/></mxCell><mxCell id="flow1" value="Streaming CDC" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=2.5;strokeColor=#10b981;fontColor=#6ee7b7;fontSize=9;" edge="1" parent="1" source="s1_card2" target="s2_card1"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="flow2" value="Zero-Copy Engine" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=2.5;strokeColor=#10b981;fontColor=#6ee7b7;fontSize=9;" edge="1" parent="1" source="s2_card2" target="s3_card1"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="flow3" value="MCP Autonomous Mesh" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=2.5;strokeColor=#10b981;fontColor=#6ee7b7;fontSize=9;" edge="1" parent="1" source="s3_card1" target="s4_card1"><mxGeometry relative="1" as="geometry"/></mxCell></root></mxGraphModel>`;
+
     return {
-      reasoning: `Comprehensive architectural transformation blueprint for ${cust}, migrating from legacy fragmented data stores and batch scripts to a modern, governed, domain-accurate open architecture.`,
-      currentTitle: `Current Baseline Architecture: Fragmented & Siloed (${cust})`,
-      currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • Brittle Cron Batch • Data Silos • Static VM Costs`,
+      reasoning: curReasoning,
+      currentTitle: currentTitle,
+      currentSubtitle: currentSubtitle,
       targetTitle: targetTitle,
       targetSubtitle: targetSubtitle,
-      currentStateXml: `<mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="850" background="#0f172a" math="0" shadow="0"><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="title" value="&lt;b style=&quot;font-size:16px;color:#f87171;&quot;&gt;⚠️ CURRENT BASELINE ARCHITECTURE: FRAGMENTED &amp;amp; SILOED&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94a3b8;&quot;&gt;Maturity Level: ${lvl} (Developing) • Brittle Cron Batch • Data Silos • Static VM Costs • 14-day BI Backlog&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e1b4b;strokeColor=#ef4444;strokeWidth=2;fontColor=#ffffff;align=center;shadow=1;" vertex="1" parent="1"><mxGeometry x="40" y="20" width="1320" height="60" as="geometry"/></mxCell><mxCell id="stage1_box" value="&lt;b style=&quot;color:#f87171;font-size:12px;&quot;&gt;STAGE 1: INGESTION&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#cbd5e1;&quot;&gt;Brittle Batch &amp;amp; SFTP&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#1e293b;strokeColor=#f43f5e;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1"><mxGeometry x="40" y="100" width="280" height="660" as="geometry"/></mxCell><mxCell id="s1_card1" value="&lt;b style=&quot;color:#fda4af;font-size:12px;&quot;&gt;Legacy OLTP &amp;amp; Files&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94a3b8;&quot;&gt;Postgres, MySQL, SFTP&lt;br&gt;Point-to-point unmanaged exports&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage1_box"><mxGeometry x="20" y="60" width="240" height="80" as="geometry"/></mxCell><mxCell id="s1_card2" value="&lt;b style=&quot;color:#fda4af;font-size:12px;&quot;&gt;Cron Batch Scripts&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94a3b8;&quot;&gt;Python/Bash cron jobs&lt;br&gt;24-hour latency, no dead-letter queue&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage1_box"><mxGeometry x="20" y="160" width="240" height="80" as="geometry"/></mxCell><mxCell id="s1_warn" value="&lt;b style=&quot;color:#ef4444;&quot;&gt;⚠️ 38% Failure Rate&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#fca5a5;&quot;&gt;Silent schema breakages halt nightly ETL runs&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#450a0a;strokeColor=#ef4444;fontColor=#ffffff;align=center;" vertex="1" parent="stage1_box"><mxGeometry x="20" y="260" width="240" height="60" as="geometry"/></mxCell><mxCell id="stage2_box" value="&lt;b style=&quot;color:#f87171;font-size:12px;&quot;&gt;STAGE 2: DATA SILOS&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#cbd5e1;&quot;&gt;Split Warehouse + Lakes&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#1e293b;strokeColor=#f43f5e;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1"><mxGeometry x="380" y="100" width="280" height="660" as="geometry"/></mxCell><mxCell id="s2_card1" value="&lt;b style=&quot;color:#fda4af;font-size:12px;&quot;&gt;Unmanaged Cloud Buckets&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94a3b8;&quot;&gt;Raw CSV / JSON dumps&lt;br&gt;Fragmented bucket ACLs, no lineage&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage2_box"><mxGeometry x="20" y="60" width="240" height="80" as="geometry"/></mxCell><mxCell id="s2_card2" value="&lt;b style=&quot;color:#fda4af;font-size:12px;&quot;&gt;Isolated Data Warehouse&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94a3b8;&quot;&gt;Proprietary SQL Warehouse&lt;br&gt;Duplicate data copies &amp;amp; sync lag&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage2_box"><mxGeometry x="20" y="160" width="240" height="80" as="geometry"/></mxCell><mxCell id="s2_warn" value="&lt;b style=&quot;color:#ef4444;&quot;&gt;⚠️ Manual IAM Spreadsheets&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#fca5a5;&quot;&gt;No automated row/column masking&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#450a0a;strokeColor=#ef4444;fontColor=#ffffff;align=center;" vertex="1" parent="stage2_box"><mxGeometry x="20" y="260" width="240" height="60" as="geometry"/></mxCell><mxCell id="stage3_box" value="&lt;b style=&quot;color:#f87171;font-size:12px;&quot;&gt;STAGE 3: COMPUTE &amp;amp; MLOps&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#cbd5e1;&quot;&gt;Over-Provisioned Clusters&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#1e293b;strokeColor=#f43f5e;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1"><mxGeometry x="720" y="100" width="280" height="660" as="geometry"/></mxCell><mxCell id="s3_card1" value="&lt;b style=&quot;color:#fda4af;font-size:12px;&quot;&gt;Static 24/7 Compute VMs&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94a3b8;&quot;&gt;Always-on oversized clusters&lt;br&gt;Lack of automated auto-termination&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage3_box"><mxGeometry x="20" y="60" width="240" height="80" as="geometry"/></mxCell><mxCell id="s3_card2" value="&lt;b style=&quot;color:#fda4af;font-size:12px;&quot;&gt;Disconnected Notebooks&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94a3b8;&quot;&gt;Ad-hoc local Jupyter environments&lt;br&gt;No centralized model registry&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage3_box"><mxGeometry x="20" y="160" width="240" height="80" as="geometry"/></mxCell><mxCell id="s3_warn" value="&lt;b style=&quot;color:#ef4444;&quot;&gt;⚠️ $480k Annual Idle Waste&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#fca5a5;&quot;&gt;Zero cluster FinOps kill switches&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#450a0a;strokeColor=#ef4444;fontColor=#ffffff;align=center;" vertex="1" parent="stage3_box"><mxGeometry x="20" y="260" width="240" height="60" as="geometry"/></mxCell><mxCell id="stage4_box" value="&lt;b style=&quot;color:#f87171;font-size:12px;&quot;&gt;STAGE 4: SERVING &amp;amp; BI&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#cbd5e1;&quot;&gt;Unguarded LLMs &amp;amp; Heavy Backlog&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#1e293b;strokeColor=#f43f5e;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1"><mxGeometry x="1060" y="100" width="300" height="660" as="geometry"/></mxCell><mxCell id="s4_card1" value="&lt;b style=&quot;color:#fda4af;font-size:12px;&quot;&gt;Direct Unguarded LLM APIs&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94a3b8;&quot;&gt;No prompt caching (100% token spend)&lt;br&gt;No enterprise PII filters or guardrails&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage4_box"><mxGeometry x="20" y="60" width="260" height="80" as="geometry"/></mxCell><mxCell id="s4_card2" value="&lt;b style=&quot;color:#fda4af;font-size:12px;&quot;&gt;Stale Daily BI Extracts&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94a3b8;&quot;&gt;Slow queries over legacy schemas&lt;br&gt;14-day turnaround on custom metrics&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage4_box"><mxGeometry x="20" y="160" width="260" height="80" as="geometry"/></mxCell><mxCell id="s4_warn" value="&lt;b style=&quot;color:#ef4444;&quot;&gt;⚠️ 14-Day Delivery Lag&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#fca5a5;&quot;&gt;Analyst team overwhelmed by custom SQL&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#450a0a;strokeColor=#ef4444;fontColor=#ffffff;align=center;" vertex="1" parent="stage4_box"><mxGeometry x="20" y="260" width="260" height="60" as="geometry"/></mxCell><mxCell id="flow1" value="Nightly Batch (24h)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=2;strokeColor=#ef4444;dashed=1;fontColor=#fca5a5;fontSize=10;" edge="1" parent="1" source="s1_card2" target="s2_card1"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="flow2" value="ETL Extract" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=2;strokeColor=#ef4444;dashed=1;fontColor=#fca5a5;fontSize=10;" edge="1" parent="1" source="s2_card2" target="s3_card1"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="flow3" value="Ad-hoc SQL" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=2;strokeColor=#ef4444;dashed=1;fontColor=#fca5a5;fontSize=10;" edge="1" parent="1" source="s3_card1" target="s4_card2"><mxGeometry relative="1" as="geometry"/></mxCell></root></mxGraphModel>`,
-      targetStateXml: `<mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="850" background="#0f172a" math="0" shadow="0"><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="title" value="&lt;b style=&quot;font-size:16px;color:#34d399;&quot;&gt;✨ ${targetTitle.toUpperCase()}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94a3b8;&quot;&gt;${targetSubtitle}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;strokeWidth=2;fontColor=#ffffff;align=center;shadow=1;" vertex="1" parent="1"><mxGeometry x="40" y="20" width="1320" height="60" as="geometry"/></mxCell><mxCell id="stage1_box" value="&lt;b style=&quot;color:#34d399;font-size:12px;&quot;&gt;STAGE 1: REAL-TIME INGESTION&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#cbd5e1;&quot;&gt;Declarative Streaming &amp;amp; CDC&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#022c22;strokeColor=#10b981;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1"><mxGeometry x="40" y="100" width="280" height="660" as="geometry"/></mxCell><mxCell id="s1_card1" value="&lt;b style=&quot;color:#6ee7b7;font-size:12px;&quot;&gt;Multi-Source Event Streams&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Kafka, Kinesis, Google Pub/Sub&lt;br&gt;Sub-second real-time event capture&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage1_box"><mxGeometry x="20" y="60" width="240" height="80" as="geometry"/></mxCell><mxCell id="s1_card2" value="&lt;b style=&quot;color:#6ee7b7;font-size:12px;&quot;&gt;Serverless Auto-Loader / CDC&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Automated schema evolution&lt;br&gt;Declarative data transformations&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage1_box"><mxGeometry x="20" y="160" width="240" height="80" as="geometry"/></mxCell><mxCell id="s1_val" value="&lt;b style=&quot;color:#10b981;&quot;&gt;✓ Zero Ingestion Latency&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#a7f3d0;&quot;&gt;Automated retry &amp;amp; dead-letter isolation&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#065f46;strokeColor=#10b981;fontColor=#ffffff;align=center;" vertex="1" parent="stage1_box"><mxGeometry x="20" y="260" width="240" height="60" as="geometry"/></mxCell><mxCell id="stage2_box" value="&lt;b style=&quot;color:#34d399;font-size:12px;&quot;&gt;${s2Title}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#cbd5e1;&quot;&gt;${s2Sub}&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#022c22;strokeColor=#10b981;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1"><mxGeometry x="380" y="100" width="280" height="660" as="geometry"/></mxCell><mxCell id="s2_card1" value="&lt;b style=&quot;color:#6ee7b7;font-size:12px;&quot;&gt;${s2Card1Title}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;${s2Card1Sub}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage2_box"><mxGeometry x="20" y="60" width="240" height="80" as="geometry"/></mxCell><mxCell id="s2_card2" value="&lt;b style=&quot;color:#6ee7b7;font-size:12px;&quot;&gt;${s2Card2Title}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;${s2Card2Sub}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage2_box"><mxGeometry x="20" y="160" width="240" height="80" as="geometry"/></mxCell><mxCell id="s2_val" value="&lt;b style=&quot;color:#10b981;&quot;&gt;✓ Unified Governance Plane&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#a7f3d0;&quot;&gt;Cross-cloud zero-copy data sharing&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#065f46;strokeColor=#10b981;fontColor=#ffffff;align=center;" vertex="1" parent="stage2_box"><mxGeometry x="20" y="260" width="240" height="60" as="geometry"/></mxCell><mxCell id="stage3_box" value="&lt;b style=&quot;color:#34d399;font-size:12px;&quot;&gt;${s3Title}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#cbd5e1;&quot;&gt;${s3Sub}&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#022c22;strokeColor=#10b981;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1"><mxGeometry x="720" y="100" width="280" height="660" as="geometry"/></mxCell><mxCell id="s3_card1" value="&lt;b style=&quot;color:#6ee7b7;font-size:12px;&quot;&gt;${s3Card1Title}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;${s3Card1Sub}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage3_box"><mxGeometry x="20" y="60" width="240" height="80" as="geometry"/></mxCell><mxCell id="s3_card2" value="&lt;b style=&quot;color:#6ee7b7;font-size:12px;&quot;&gt;Production MLOps Registry&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Automated CI/CD model verification&lt;br&gt;Real-time concept drift &amp;amp; feature store&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage3_box"><mxGeometry x="20" y="160" width="240" height="80" as="geometry"/></mxCell><mxCell id="s3_val" value="&lt;b style=&quot;color:#10b981;&quot;&gt;✓ Automated FinOps &amp;amp; CI/CD&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#a7f3d0;&quot;&gt;Zero idle spend &amp;amp; fully tracked models&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#065f46;strokeColor=#10b981;fontColor=#ffffff;align=center;" vertex="1" parent="stage3_box"><mxGeometry x="20" y="260" width="240" height="60" as="geometry"/></mxCell><mxCell id="stage4_box" value="&lt;b style=&quot;color:#34d399;font-size:12px;&quot;&gt;STAGE 4: AI MESH &amp;amp; BI&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#cbd5e1;&quot;&gt;MCP Protocol &amp;amp; Semantic Layer&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#022c22;strokeColor=#10b981;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1"><mxGeometry x="1060" y="100" width="300" height="660" as="geometry"/></mxCell><mxCell id="s4_card1" value="&lt;b style=&quot;color:#6ee7b7;font-size:12px;&quot;&gt;Compound Multi-Agent Mesh&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;MCP protocol &amp;amp; 75% prompt context caching&lt;br&gt;Zero-Trust AI guardrails &amp;amp; CMEK isolation&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage4_box"><mxGeometry x="20" y="60" width="260" height="80" as="geometry"/></mxCell><mxCell id="s4_card2" value="&lt;b style=&quot;color:#6ee7b7;font-size:12px;&quot;&gt;Self-Service Semantic BI Layer&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Direct zero-copy BI queries&lt;br&gt;Sub-second dashboard refresh speeds&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage4_box"><mxGeometry x="20" y="160" width="260" height="80" as="geometry"/></mxCell><mxCell id="s4_val" value="&lt;b style=&quot;color:#10b981;&quot;&gt;✓ Real-Time Self-Service&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#a7f3d0;&quot;&gt;Instant answers for BI &amp;amp; autonomous agents&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#065f46;strokeColor=#10b981;fontColor=#ffffff;align=center;" vertex="1" parent="stage4_box"><mxGeometry x="20" y="260" width="260" height="60" as="geometry"/></mxCell><mxCell id="flow1" value="Streaming CDC" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=2.5;strokeColor=#10b981;fontColor=#6ee7b7;fontSize=10;" edge="1" parent="1" source="s1_card2" target="s2_card1"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="flow2" value="Zero-Copy Engine" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=2.5;strokeColor=#10b981;fontColor=#6ee7b7;fontSize=10;" edge="1" parent="1" source="s2_card2" target="s3_card1"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="flow3" value="MCP Autonomous Mesh" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=2.5;strokeColor=#10b981;fontColor=#6ee7b7;fontSize=10;" edge="1" parent="1" source="s3_card1" target="s4_card1"><mxGeometry relative="1" as="geometry"/></mxCell></root></mxGraphModel>`,
-      keyTransformations: [
-        'Shift from 24h cron batch scripts to sub-second streaming CDC data contracts',
-        'Consolidate siloed relational databases into an open table format Lakehouse (Apache Iceberg)',
-        'Replace static 24/7 VMs with serverless autoscaling compute engines (15-min auto-suspend)',
-        'Deploy Compound Multi-Agent Mesh with Model Context Protocol (MCP) & 75% prompt context caching'
-      ],
+      currentStateXml: currentXml,
+      targetStateXml: targetXml,
+      keyTransformations: transformations,
       generatedAt: new Date().toISOString(),
-      modelUsed: 'rule-based-deterministic-synthesis'
+      modelUsed: "rule-based-deterministic-synthesis"
     };
   }
 

@@ -36,6 +36,15 @@ const aiRateLimiter = (maxRequests = 15, windowMs = 60000) => {
   };
 };
 
+// Sanitize instance objects to ensure sharePasscode is never leaked in public responses
+const sanitizeInstance = (inst) => {
+  if (!inst) return inst;
+  const sanitized = { ...inst };
+  sanitized.isPasscodeProtected = Boolean(sanitized.sharePasscode);
+  delete sanitized.sharePasscode;
+  return sanitized;
+};
+
 // 1. AI-generate assessment framework from natural language prompt and AUTO-PERSIST as template
 router.post('/generate-framework', aiRateLimiter(15, 60000), async (req, res) => {
   try {
@@ -418,22 +427,13 @@ router.post('/instances', async (req, res) => {
 
     res.json({
       success: true,
-      instance
+      instance: sanitizeInstance(instance)
     });
   } catch (error) {
     console.error('Error creating assessment instance:', error);
     res.status(500).json({ success: false, error: 'Failed to create assessment instance' });
   }
 });
-
-// Sanitize instance objects to ensure sharePasscode is never leaked in public responses
-const sanitizeInstance = (inst) => {
-  if (!inst) return inst;
-  const sanitized = { ...inst };
-  sanitized.isPasscodeProtected = Boolean(sanitized.sharePasscode);
-  delete sanitized.sharePasscode;
-  return sanitized;
-};
 
 router.get('/instances', async (req, res) => {
   try {
@@ -507,7 +507,7 @@ router.put('/instances/:id', async (req, res) => {
         conflict: true,
         message: 'Concurrent edit detected. Another architect or tab has updated this assessment.',
         currentVersion: current.version,
-        serverInstance: current
+        serverInstance: sanitizeInstance(current)
       });
     }
 
@@ -531,7 +531,7 @@ router.put('/instances/:id', async (req, res) => {
 
     res.json({
       success: true,
-      instance: updated,
+      instance: sanitizeInstance(updated),
       scores: calculated,
       version: nextVersion
     });
@@ -604,7 +604,7 @@ router.post('/instances/batch-clone', async (req, res) => {
     res.json({
       success: true,
       message: `Successfully cloned ${cloned.filter(Boolean).length} assessment instance(s)`,
-      cloned: cloned.filter(Boolean)
+      cloned: cloned.filter(Boolean).map(sanitizeInstance)
     });
   } catch (error) {
     console.error('Error batch cloning instances:', error);
@@ -643,7 +643,7 @@ router.post('/instances/:id/clone', async (req, res) => {
     res.json({
       success: true,
       message: 'Assessment cloned successfully',
-      instance: clonedInstance
+      instance: sanitizeInstance(clonedInstance)
     });
   } catch (error) {
     console.error('Error cloning assessment instance:', error);
@@ -690,7 +690,7 @@ router.post('/instances/:id/generate-report', aiRateLimiter(15, 60000), async (r
       success: true,
       aiReport,
       report: aiReport,
-      instance: updated
+      instance: sanitizeInstance(updated)
     });
   } catch (error) {
     console.error('Error generating dynamic executive report:', error);
@@ -737,7 +737,7 @@ router.post('/instances/:id/generate-diagrams', aiRateLimiter(15, 60000), async 
     res.json({
       success: true,
       diagrams,
-      instance: updated,
+      instance: sanitizeInstance(updated),
       message: 'Bespoke architecture diagrams generated with Gemini 3.7 Flash'
     });
   } catch (error) {
@@ -1000,11 +1000,11 @@ router.get('/compare', async (req, res) => {
     res.json({
       success: true,
       base: {
-        instance: baseInstance,
+        instance: sanitizeInstance(baseInstance),
         scores: baseCalculated
       },
       target: {
-        instance: targetInstance,
+        instance: sanitizeInstance(targetInstance),
         scores: targetCalculated
       },
       comparison: {

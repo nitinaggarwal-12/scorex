@@ -250,6 +250,48 @@ const LevelBadge = styled.div`
   margin-bottom: 4px;
 `;
 
+
+const ExecutiveTabContainer = styled.div`
+  display: flex;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.85);
+  padding: 6px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 28px;
+  overflow-x: auto;
+  backdrop-filter: blur(16px);
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+
+  @media (max-width: 768px) {
+    border-radius: 12px;
+    padding: 4px;
+  }
+`;
+
+const ExecutiveTabButton = styled.button`
+  background: ${props => props.$isActive ? "linear-gradient(135deg, #6366f1, #8b5cf6)" : "transparent"};
+  color: ${props => props.$isActive ? "#ffffff" : "#94a3b8"};
+  border: none;
+  border-radius: 12px;
+  padding: 10px 18px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  box-shadow: ${props => props.$isActive ? "0 4px 14px rgba(99, 102, 241, 0.35)" : "none"};
+
+  &:hover {
+    color: #ffffff;
+    background: ${props => props.$isActive ? "linear-gradient(135deg, #6366f1, #8b5cf6)" : "rgba(255, 255, 255, 0.06)"};
+  }
+`;
+
 const TwoColGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -449,6 +491,7 @@ const DynamicAssessmentReport = () => {
   const [isPresentationOpen, setIsPresentationOpen] = useState(false);
   const [isPasscodeRequired, setIsPasscodeRequired] = useState(false);
   const [enteredPasscode, setEnteredPasscode] = useState('');
+  const [activeExecutiveTab, setActiveExecutiveTab] = useState('overview');
 
   useEffect(() => {
     loadReport();
@@ -871,7 +914,7 @@ const DynamicAssessmentReport = () => {
           </PromoteBtn>
         </PromoteBanner>
 
-        {/* AI Voice / Audio Narrative Briefing */}
+                {/* AI Voice / Audio Narrative Briefing */}
         <AudioBriefingPlayer instance={instance} report={report} />
 
         {/* Hero Card */}
@@ -879,7 +922,7 @@ const DynamicAssessmentReport = () => {
           <HeroHeader>
             <div>
               <HeroBadge>
-                <FiAward /> {framework?.badge || 'Maturity Assessment'}
+                <FiAward /> {framework?.badge || "Maturity Assessment"}
               </HeroBadge>
               <HeroTitle>{framework?.title}</HeroTitle>
               <HeroMeta>
@@ -893,210 +936,356 @@ const DynamicAssessmentReport = () => {
             <ScoreSection>
               <div>
                 <LevelBadge>{scores.maturityLevel} Stage</LevelBadge>
-                <div style={{ color: '#94a3b8', fontSize: '0.85rem' }}>Overall Maturity Index</div>
+                <div style={{ color: "#94a3b8", fontSize: "0.85rem" }}>Overall Maturity Index</div>
               </div>
               <ScoreBig>{scores.overallScore}</ScoreBig>
-              <div style={{ color: '#64748b', fontSize: '1.2rem', fontWeight: '700' }}>/ 5.0</div>
+              <div style={{ color: "#64748b", fontSize: "1.2rem", fontWeight: "700" }}>/ 5.0</div>
             </ScoreSection>
           </HeroHeader>
         </HeroCard>
 
-        {/* Multi-Axis Polar Radar & Dimensional Gap Topology */}
-        <DynamicRadarChart
-          dimensions={framework?.dimensions || []}
-          dimensionScores={simulatedDimensionScores}
-          responses={instance.responses || {}}
-        />
+        {/* Executive Segmented Tab Navigation */}
+        <ExecutiveTabContainer className="no-print">
+          <ExecutiveTabButton 
+            $isActive={activeExecutiveTab === "overview"} 
+            onClick={() => setActiveExecutiveTab("overview")}
+          >
+            📊 Executive Overview & Radar
+          </ExecutiveTabButton>
+          <ExecutiveTabButton 
+            $isActive={activeExecutiveTab === "architecture"} 
+            onClick={() => setActiveExecutiveTab("architecture")}
+          >
+            🏛️ Architecture Evolution (Current vs Target)
+          </ExecutiveTabButton>
+          <ExecutiveTabButton 
+            $isActive={activeExecutiveTab === "financial"} 
+            onClick={() => setActiveExecutiveTab("financial")}
+          >
+            💰 Financial Impact & TCO
+          </ExecutiveTabButton>
+          <ExecutiveTabButton 
+            $isActive={activeExecutiveTab === "roadmap"} 
+            onClick={() => setActiveExecutiveTab("roadmap")}
+          >
+            🚀 Roadmap & Persona Blueprints
+          </ExecutiveTabButton>
+          <ExecutiveTabButton 
+            $isActive={activeExecutiveTab === "audit"} 
+            onClick={() => setActiveExecutiveTab("audit")}
+          >
+            📋 Question Responses Audit
+          </ExecutiveTabButton>
+          <ExecutiveTabButton 
+            $isActive={activeExecutiveTab === "all"} 
+            onClick={() => setActiveExecutiveTab("all")}
+            title="Display all executive sections in a single unified dossier view"
+          >
+            📑 Full Dossier (All Sections)
+          </ExecutiveTabButton>
+        </ExecutiveTabContainer>
 
-        {/* Executive Capability vs Operational Risk Heatmap Matrix */}
-        <ExecutiveHeatmapMatrix
-          dimensions={framework?.dimensions || []}
-          dimensionScores={simulatedDimensionScores}
-          responses={instance.responses || {}}
-        />
+        {/* ========================================================================= */}
+        {/* TAB 1: EXECUTIVE OVERVIEW & RADAR                                         */}
+        {/* ========================================================================= */}
+        {(activeExecutiveTab === "overview" || activeExecutiveTab === "all") && (
+          <div>
+            {/* Multi-Axis Polar Radar & Dimensional Gap Topology */}
+            <DynamicRadarChart
+              dimensions={framework?.dimensions || []}
+              dimensionScores={simulatedDimensionScores}
+              responses={instance.responses || {}}
+            />
 
-        {/* Industry Peer Benchmarking & Percentile Distribution Matrix */}
-        <IndustryPeerBenchmarkingCard
-          instanceId={instance?.id}
-          defaultIndustry={framework?.badge || 'Retail & E-Commerce'}
-        />
+            {/* Executive Capability vs Operational Risk Heatmap Matrix */}
+            <ExecutiveHeatmapMatrix
+              dimensions={framework?.dimensions || []}
+              dimensionScores={simulatedDimensionScores}
+              responses={instance.responses || {}}
+            />
 
-        {/* Quantified Financial & TCO Impact Engine */}
-        <FinancialImpactCard
-          pillarScores={simulatedDimensionScores}
-          framework={framework}
-          overallCurrent={scores.overallScore || 2.5}
-          overallTarget={simulatedOverallTarget}
-        />
+            {/* Two Column Section: Executive Summary & Dimension Scores */}
+            <TwoColGrid>
+              {/* Executive Summary */}
+              <Card>
+                <CardTitle>
+                  <FiFileText color="#38bdf8" /> Executive Summary
+                </CardTitle>
+                <ExecutiveSummaryText>
+                  {typeof report.executiveSummary === "string" 
+                    ? report.executiveSummary.split("\n\n").map((p, idx) => (
+                        <p key={idx}>{p}</p>
+                      ))
+                    : <p>Assessment evaluation completed successfully.</p>
+                  }
+                </ExecutiveSummaryText>
+              </Card>
 
-        {/* Architectural Evolution Blueprint: Current vs Target */}
-        <ArchitectureComparisonDiagram
-          instanceId={instance?.id}
-          initialDiagrams={report?.architectureDiagrams}
-          currentScore={scores.overallScore || 2.5}
-          targetScore={simulatedOverallTarget}
-          customerName={instance?.customerName}
-          useCase={instance?.useCase}
-          framework={framework}
-        />
+              {/* Dimension Maturity Breakdown */}
+              <Card>
+                <CardTitle>
+                  <FiLayers color="#818cf8" /> Dimension Maturity Breakdown
+                </CardTitle>
+                {Object.values(scores.dimensionScores || {}).map((dim, idx) => (
+                  <DimensionBarRow key={dim.id || idx}>
+                    <DimHeader>
+                      <span>{dim.name}</span>
+                      <span style={{ color: "#38bdf8" }}>{dim.score} / 5.0 ({dim.percentage}%)</span>
+                    </DimHeader>
+                    <ProgressBarTrack>
+                      <ProgressBarFill $pct={dim.percentage} />
+                    </ProgressBarTrack>
+                  </DimensionBarRow>
+                ))}
+              </Card>
+            </TwoColGrid>
 
-        {/* Multi-Persona Executive Transformation Blueprints */}
-        <MultiPersonaViews
-          assessmentName={framework?.title || 'Enterprise Data Platform'}
-          currentScore={scores.overallScore || 2.5}
-          targetScore={simulatedOverallTarget}
-          aiReport={report}
-          framework={framework}
-          scores={{ ...scores, dimensionScores: simulatedDimensionScores, targetScore: simulatedOverallTarget }}
-        />
+            {/* Strengths & Constraints */}
+            <TwoColGrid>
+              {/* Strengths */}
+              <Card>
+                <CardTitle>
+                  <FiCheckCircle color="#10b981" /> Identified Core Strengths
+                </CardTitle>
+                {(report.keyStrengths || []).map((str, idx) => (
+                  <CalloutBox key={idx} $type="strength">
+                    <FiCheckCircle />
+                    <div>{str}</div>
+                  </CalloutBox>
+                ))}
+              </Card>
 
-        {/* 1-Click Transformation Backlog Exporter */}
-        <BacklogExporterCard
-          assessmentName={framework?.title || 'Enterprise Data & AI Maturity Assessment'}
-          recommendations={report.prioritizedRecommendations || report.prioritizedActions || []}
-        />
-
-        {/* 1-Click Infrastructure-as-Code (IaC) Cloud Deployer */}
-        <IaCBlueprintCard
-          organizationName={instance?.customerName || framework?.title || 'Enterprise Platform'}
-          currentScore={scores.overallScore || 2.5}
-          targetScore={4.5}
-        />
-
-        {/* Two Column Section: Executive Summary & Dimension Scores */}
-        <TwoColGrid>
-          {/* Executive Summary */}
-          <Card>
-            <CardTitle>
-              <FiFileText color="#38bdf8" /> Executive Summary
-            </CardTitle>
-            <ExecutiveSummaryText>
-              {typeof report.executiveSummary === 'string' 
-                ? report.executiveSummary.split('\n\n').map((p, idx) => (
-                    <p key={idx}>{p}</p>
-                  ))
-                : <p>Assessment evaluation completed successfully.</p>
-              }
-            </ExecutiveSummaryText>
-          </Card>
-
-          {/* Dimension Maturity Breakdown */}
-          <Card>
-            <CardTitle>
-              <FiLayers color="#818cf8" /> Dimension Maturity Breakdown
-            </CardTitle>
-            {Object.values(scores.dimensionScores || {}).map((dim, idx) => (
-              <DimensionBarRow key={dim.id || idx}>
-                <DimHeader>
-                  <span>{dim.name}</span>
-                  <span style={{ color: '#38bdf8' }}>{dim.score} / 5.0 ({dim.percentage}%)</span>
-                </DimHeader>
-                <ProgressBarTrack>
-                  <ProgressBarFill $pct={dim.percentage} />
-                </ProgressBarTrack>
-              </DimensionBarRow>
-            ))}
-          </Card>
-        </TwoColGrid>
-
-        {/* Strengths & Constraints */}
-        <TwoColGrid>
-          {/* Strengths */}
-          <Card>
-            <CardTitle>
-              <FiCheckCircle color="#10b981" /> Identified Core Strengths
-            </CardTitle>
-            {(report.keyStrengths || []).map((str, idx) => (
-              <CalloutBox key={idx} $type="strength">
-                <FiCheckCircle />
-                <div>{str}</div>
-              </CalloutBox>
-            ))}
-          </Card>
-
-          {/* Constraints & Gaps */}
-          <Card>
-            <CardTitle>
-              <FiAlertTriangle color="#ef4444" /> Critical Bottlenecks & Gaps
-            </CardTitle>
-            {(report.criticalConstraints || []).map((con, idx) => (
-              <CalloutBox key={idx} $type="constraint">
-                <FiAlertTriangle />
-                <div>{con}</div>
-              </CalloutBox>
-            ))}
-          </Card>
-        </TwoColGrid>
-
-        {/* Strategic Transformation Roadmap */}
-        {report.transformationRoadmap && (
-          <Card style={{ marginBottom: '32px' }}>
-            <CardTitle>
-              <FiTrendingUp color="#38bdf8" /> Strategic Transformation Roadmap
-            </CardTitle>
-
-            <RoadmapGrid>
-              {['phase1', 'phase2', 'phase3'].map((pKey) => {
-                const phase = report.transformationRoadmap[pKey];
-                if (!phase) return null;
-                return (
-                  <RoadmapCard key={pKey}>
-                    <RoadmapPhase>{phase.title}</RoadmapPhase>
-                    <RoadmapTimeline>{phase.timeline}</RoadmapTimeline>
-                    <p style={{ fontSize: '0.875rem', color: '#94a3b8', marginBottom: '16px' }}>{phase.focus}</p>
-
-                    <MilestoneList>
-                      {(phase.milestones || []).map((m, mIdx) => (
-                        <MilestoneItem key={mIdx}>
-                          <FiCheck size={16} />
-                          <span>{m}</span>
-                        </MilestoneItem>
-                      ))}
-                    </MilestoneList>
-                  </RoadmapCard>
-                );
-              })}
-            </RoadmapGrid>
-          </Card>
+              {/* Constraints & Gaps */}
+              <Card>
+                <CardTitle>
+                  <FiAlertTriangle color="#ef4444" /> Critical Bottlenecks & Gaps
+                </CardTitle>
+                {(report.criticalConstraints || []).map((con, idx) => (
+                  <CalloutBox key={idx} $type="constraint">
+                    <FiAlertTriangle />
+                    <div>{con}</div>
+                  </CalloutBox>
+                ))}
+              </Card>
+            </TwoColGrid>
+          </div>
         )}
 
-        {/* Prioritized Recommendations */}
-        {report.prioritizedRecommendations && report.prioritizedRecommendations.length > 0 && (
-          <Card>
+        {/* ========================================================================= */}
+        {/* TAB 2: ARCHITECTURE EVOLUTION (CURRENT VS TARGET)                         */}
+        {/* ========================================================================= */}
+        {(activeExecutiveTab === "architecture" || activeExecutiveTab === "all") && (
+          <div>
+            {/* Architectural Evolution Blueprint: Current vs Target */}
+            <ArchitectureComparisonDiagram
+              instanceId={instance?.id}
+              initialDiagrams={report?.architectureDiagrams}
+              currentScore={scores.overallScore || 2.5}
+              targetScore={simulatedOverallTarget}
+              customerName={instance?.customerName}
+              useCase={instance?.useCase}
+              framework={framework}
+            />
+
+            {/* 1-Click Infrastructure-as-Code (IaC) Cloud Deployer */}
+            <IaCBlueprintCard
+              organizationName={instance?.customerName || framework?.title || "Enterprise Platform"}
+              currentScore={scores.overallScore || 2.5}
+              targetScore={4.5}
+            />
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* TAB 3: FINANCIAL IMPACT & TCO                                             */}
+        {/* ========================================================================= */}
+        {(activeExecutiveTab === "financial" || activeExecutiveTab === "all") && (
+          <div>
+            {/* Quantified Financial & TCO Impact Engine */}
+            <FinancialImpactCard
+              pillarScores={simulatedDimensionScores}
+              framework={framework}
+              overallCurrent={scores.overallScore || 2.5}
+              overallTarget={simulatedOverallTarget}
+            />
+
+            {/* Industry Peer Benchmarking & Percentile Distribution Matrix */}
+            <IndustryPeerBenchmarkingCard
+              instanceId={instance?.id}
+              defaultIndustry={framework?.badge || "Retail & E-Commerce"}
+            />
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* TAB 4: ROADMAP & PERSONA BLUEPRINTS                                      */}
+        {/* ========================================================================= */}
+        {(activeExecutiveTab === "roadmap" || activeExecutiveTab === "all") && (
+          <div>
+            {/* Multi-Persona Executive Transformation Blueprints */}
+            <MultiPersonaViews
+              assessmentName={framework?.title || "Enterprise Data Platform"}
+              currentScore={scores.overallScore || 2.5}
+              targetScore={simulatedOverallTarget}
+              aiReport={report}
+              framework={framework}
+              scores={{ ...scores, dimensionScores: simulatedDimensionScores, targetScore: simulatedOverallTarget }}
+            />
+
+            {/* 1-Click Transformation Backlog Exporter */}
+            <BacklogExporterCard
+              assessmentName={framework?.title || "Enterprise Data & AI Maturity Assessment"}
+              recommendations={report.prioritizedRecommendations || report.prioritizedActions || []}
+            />
+
+            {/* Strategic Transformation Roadmap */}
+            {report.transformationRoadmap && (
+              <Card style={{ marginBottom: "32px" }}>
+                <CardTitle>
+                  <FiTrendingUp color="#38bdf8" /> Strategic Transformation Roadmap
+                </CardTitle>
+
+                <RoadmapGrid>
+                  {["phase1", "phase2", "phase3"].map((pKey) => {
+                    const phase = report.transformationRoadmap[pKey];
+                    if (!phase) return null;
+                    return (
+                      <RoadmapCard key={pKey}>
+                        <RoadmapPhase>{phase.title}</RoadmapPhase>
+                        <RoadmapTimeline>{phase.timeline}</RoadmapTimeline>
+                        <p style={{ fontSize: "0.875rem", color: "#94a3b8", marginBottom: "16px" }}>{phase.focus}</p>
+
+                        <MilestoneList>
+                          {(phase.milestones || []).map((m, mIdx) => (
+                            <MilestoneItem key={mIdx}>
+                              <FiCheck size={16} />
+                              <span>{m}</span>
+                            </MilestoneItem>
+                          ))}
+                        </MilestoneList>
+                      </RoadmapCard>
+                    );
+                  })}
+                </RoadmapGrid>
+              </Card>
+            )}
+
+            {/* Prioritized Recommendations */}
+            {report.prioritizedRecommendations && report.prioritizedRecommendations.length > 0 && (
+              <Card style={{ marginBottom: "32px" }}>
+                <CardTitle>
+                  <FiTarget color="#10b981" /> Prioritized High-Impact Action Plan
+                </CardTitle>
+
+                {report.prioritizedRecommendations.map((rec, idx) => (
+                  <RecommendationCard key={rec.id || idx}>
+                    <RecHeader>
+                      <RecTitle>{rec.title}</RecTitle>
+                      <PriorityBadge $priority={rec.priority}>{rec.priority || "High"} Priority</PriorityBadge>
+                    </RecHeader>
+
+                    <p style={{ color: "#cbd5e1", fontSize: "0.95rem", marginBottom: "14px" }}>
+                      <strong>Strategic Rationale:</strong> {rec.whyItMatters}
+                    </p>
+
+                    {rec.actionSteps && rec.actionSteps.length > 0 && (
+                      <div style={{ marginBottom: "12px" }}>
+                        <div style={{ fontSize: "0.85rem", fontWeight: "700", color: "#94a3b8", marginBottom: "6px" }}>
+                          Recommended Action Steps:
+                        </div>
+                        <ul style={{ paddingLeft: "20px", color: "#cbd5e1", fontSize: "0.9rem", margin: 0 }}>
+                          {rec.actionSteps.map((step, sIdx) => (
+                            <li key={sIdx} style={{ marginBottom: "4px" }}>{step}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {rec.expectedImpact && (
+                      <div style={{ fontSize: "0.85rem", color: "#38bdf8", marginTop: "10px" }}>
+                        ⚡ <strong>Expected Impact:</strong> {rec.expectedImpact}
+                      </div>
+                    )}
+                  </RecommendationCard>
+                ))}
+              </Card>
+            )}
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* TAB 5: QUESTION RESPONSES AUDIT DOSSIER                                   */}
+        {/* ========================================================================= */}
+        {(activeExecutiveTab === "audit" || activeExecutiveTab === "all") && (
+          <Card style={{ marginBottom: "32px" }}>
             <CardTitle>
-              <FiTarget color="#10b981" /> Prioritized High-Impact Action Plan
+              <FiCheckCircle color="#38bdf8" /> Granular Question Audit & Operational Context
             </CardTitle>
+            <p style={{ color: "#94a3b8", fontSize: "0.92rem", marginBottom: "24px" }}>
+              Complete record of dimensional question responses, baseline ratings, target horizons, identified technical/business pain points, and lead architect audit notes.
+            </p>
 
-            {report.prioritizedRecommendations.map((rec, idx) => (
-              <RecommendationCard key={rec.id || idx}>
-                <RecHeader>
-                  <RecTitle>{rec.title}</RecTitle>
-                  <PriorityBadge $priority={rec.priority}>{rec.priority || 'High'} Priority</PriorityBadge>
-                </RecHeader>
+            {(framework?.dimensions || []).map((dim, dIdx) => (
+              <div key={dim.id || dIdx} style={{ background: "rgba(15, 23, 42, 0.6)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "16px", padding: "24px", marginBottom: "20px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", borderBottom: "1px solid rgba(255,255,255,0.08)", paddingBottom: "12px" }}>
+                  <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#ffffff", margin: 0 }}>
+                    {dim.name}
+                  </h3>
+                  <span style={{ background: "rgba(56, 189, 248, 0.15)", color: "#38bdf8", padding: "4px 12px", borderRadius: "9999px", fontSize: "0.85rem", fontWeight: 700 }}>
+                    Dimension Score: {scores.dimensionScores?.[dim.id]?.score || 2.5} / 5.0
+                  </span>
+                </div>
 
-                <p style={{ color: '#cbd5e1', fontSize: '0.95rem', marginBottom: '14px' }}>
-                  <strong>Strategic Rationale:</strong> {rec.whyItMatters}
-                </p>
+                {(dim.questions || []).map((q, qIdx) => {
+                  const val = instance.responses?.[q.id] || instance.responses?.[q.id + "_current_state"] || 2;
+                  const futureVal = instance.responses?.[q.id + "_future_state"] || 4;
+                  const selectedOpt = (q.options || []).find(o => o.value === val || o.score === val);
+                  const comment = instance.responses?.[q.id + "_comment"];
+                  const techPain = instance.responses?.[q.id + "_technical_pain"] || [];
+                  const bizPain = instance.responses?.[q.id + "_business_pain"] || [];
 
-                {rec.actionSteps && rec.actionSteps.length > 0 && (
-                  <div style={{ marginBottom: '12px' }}>
-                    <div style={{ fontSize: '0.85rem', fontWeight: '700', color: '#94a3b8', marginBottom: '6px' }}>
-                      Recommended Action Steps:
+                  return (
+                    <div key={q.id || qIdx} style={{ background: "rgba(30, 41, 59, 0.4)", borderRadius: "12px", padding: "16px", marginBottom: "14px", border: "1px solid rgba(255,255,255,0.05)" }}>
+                      <div style={{ fontSize: "0.95rem", fontWeight: 600, color: "#e2e8f0", marginBottom: "8px" }}>
+                        Q{qIdx + 1}: {q.text}
+                      </div>
+                      
+                      <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", marginBottom: "10px" }}>
+                        <span style={{ fontSize: "0.85rem", color: "#f87171", background: "rgba(239, 68, 68, 0.12)", padding: "3px 10px", borderRadius: "8px" }}>
+                          Current Baseline: <strong>{val}/5.0</strong>
+                        </span>
+                        <span style={{ fontSize: "0.85rem", color: "#34d399", background: "rgba(16, 185, 129, 0.12)", padding: "3px 10px", borderRadius: "8px" }}>
+                          Target Horizon: <strong>{futureVal}/5.0</strong>
+                        </span>
+                      </div>
+
+                      {selectedOpt && (
+                        <div style={{ fontSize: "0.88rem", color: "#cbd5e1", marginBottom: "8px", lineHeight: "1.4" }}>
+                          <strong>Evaluated State:</strong> {selectedOpt.label}
+                        </div>
+                      )}
+
+                      {techPain.length > 0 && (
+                        <div style={{ fontSize: "0.84rem", color: "#fca5a5", marginBottom: "4px" }}>
+                          ⚠️ <strong>Technical Friction:</strong> {techPain.join("; ")}
+                        </div>
+                      )}
+
+                      {bizPain.length > 0 && (
+                        <div style={{ fontSize: "0.84rem", color: "#fcd34d", marginBottom: "4px" }}>
+                          💼 <strong>Business Risk:</strong> {bizPain.join("; ")}
+                        </div>
+                      )}
+
+                      {comment && (
+                        <div style={{ fontSize: "0.84rem", color: "#94a3b8", fontStyle: "italic", marginTop: "6px" }}>
+                          📝 <strong>Architect Notes:</strong> "{comment}"
+                        </div>
+                      )}
                     </div>
-                    <ul style={{ paddingLeft: '20px', color: '#cbd5e1', fontSize: '0.9rem', margin: 0 }}>
-                      {rec.actionSteps.map((step, sIdx) => (
-                        <li key={sIdx} style={{ marginBottom: '4px' }}>{step}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {rec.expectedImpact && (
-                  <div style={{ fontSize: '0.85rem', color: '#38bdf8', marginTop: '10px' }}>
-                    ⚡ <strong>Expected Impact:</strong> {rec.expectedImpact}
-                  </div>
-                )}
-              </RecommendationCard>
+                  );
+                })}
+              </div>
             ))}
           </Card>
         )}

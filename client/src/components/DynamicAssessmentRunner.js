@@ -1140,9 +1140,11 @@ const DynamicAssessmentRunner = () => {
   };
 
   const dimensions = framework?.dimensions || [];
-  const currentDim = dimensions[activeDimIdx] || dimensions[0] || {};
+  const safeDimIdx = Math.min(Math.max(0, activeDimIdx), Math.max(0, dimensions.length - 1));
+  const currentDim = dimensions[safeDimIdx] || dimensions[0] || {};
   const questions = currentDim.questions || [];
-  const currentQ = questions[activeQIdx] || questions[0] || null;
+  const safeQIdx = Math.min(Math.max(0, activeQIdx), Math.max(0, questions.length - 1));
+  const currentQ = questions[safeQIdx] || questions[0] || null;
 
   const totalQuestions = dimensions.reduce((sum, d) => sum + (d.questions?.length || 0), 0);
   const totalAnswered = Object.keys(responses).filter(k => !k.includes('_')).length;
@@ -1152,25 +1154,25 @@ const DynamicAssessmentRunner = () => {
   const isCurrentQAnswered = (qId) => responses[qId] !== undefined;
 
   const nextQuestion = useCallback(() => {
-    if (activeQIdx < questions.length - 1) {
-      setActiveQIdx(prev => prev + 1);
-    } else if (activeDimIdx < dimensions.length - 1) {
-      setActiveDimIdx(prev => prev + 1);
+    if (safeQIdx < questions.length - 1) {
+      setActiveQIdx(safeQIdx + 1);
+    } else if (safeDimIdx < dimensions.length - 1) {
+      setActiveDimIdx(safeDimIdx + 1);
       setActiveQIdx(0);
     }
-  }, [activeQIdx, activeDimIdx, questions.length, dimensions.length]);
+  }, [safeQIdx, safeDimIdx, questions.length, dimensions.length]);
 
   const prevQuestion = useCallback(() => {
-    if (activeQIdx > 0) {
-      setActiveQIdx(prev => prev - 1);
-    } else if (activeDimIdx > 0) {
-      setActiveDimIdx(prev => prev - 1);
-      const prevDimQuestions = dimensions[activeDimIdx - 1]?.questions || [];
+    if (safeQIdx > 0) {
+      setActiveQIdx(safeQIdx - 1);
+    } else if (safeDimIdx > 0) {
+      setActiveDimIdx(safeDimIdx - 1);
+      const prevDimQuestions = dimensions[safeDimIdx - 1]?.questions || [];
       setActiveQIdx(Math.max(0, prevDimQuestions.length - 1));
     }
-  }, [activeQIdx, activeDimIdx, dimensions]);
+  }, [safeQIdx, safeDimIdx, dimensions]);
 
-  const isLastQuestion = activeDimIdx === dimensions.length - 1 && activeQIdx === questions.length - 1;
+  const isLastQuestion = safeDimIdx === dimensions.length - 1 && safeQIdx === questions.length - 1;
 
   // Keyboard Shortcuts Navigation & Rapid Scoring
   useEffect(() => {
