@@ -128,9 +128,14 @@ const AudioBriefingPlayer = ({ instance, report }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1.0);
   const utteranceRef = useRef(null);
+  const keepAliveTimerRef = useRef(null);
 
   useEffect(() => {
     return () => {
+      if (keepAliveTimerRef.current) {
+        clearInterval(keepAliveTimerRef.current);
+        keepAliveTimerRef.current = null;
+      }
       if (window.speechSynthesis) {
         window.speechSynthesis.cancel();
       }
@@ -161,6 +166,14 @@ const AudioBriefingPlayer = ({ instance, report }) => {
     return script;
   };
 
+  const cleanupSpeech = () => {
+    if (keepAliveTimerRef.current) {
+      clearInterval(keepAliveTimerRef.current);
+      keepAliveTimerRef.current = null;
+    }
+    setIsPlaying(false);
+  };
+
   const handlePlayToggle = () => {
     if (!('speechSynthesis' in window)) {
       toast.error('Audio speech synthesis is not supported in this browser.');
@@ -189,14 +202,26 @@ const AudioBriefingPlayer = ({ instance, report }) => {
         }
 
         utterance.onend = () => {
-          setIsPlaying(false);
+          cleanupSpeech();
         };
 
         utterance.onerror = () => {
-          setIsPlaying(false);
+          cleanupSpeech();
         };
 
         utteranceRef.current = utterance;
+
+        if (keepAliveTimerRef.current) {
+          clearInterval(keepAliveTimerRef.current);
+        }
+        // Chromium keep-alive interval to prevent 15-second speech cutoff
+        keepAliveTimerRef.current = setInterval(() => {
+          if (window.speechSynthesis && window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+            window.speechSynthesis.pause();
+            window.speechSynthesis.resume();
+          }
+        }, 10000);
+
         window.speechSynthesis.speak(utterance);
         setIsPlaying(true);
         toast('🎙️ Executive AI Audio Briefing playing...', { id: 'audio-play', icon: '🎧' });
@@ -207,8 +232,8 @@ const AudioBriefingPlayer = ({ instance, report }) => {
   const handleStop = () => {
     if (window.speechSynthesis) {
       window.speechSynthesis.cancel();
-      setIsPlaying(false);
     }
+    cleanupSpeech();
   };
 
   const cycleRate = () => {

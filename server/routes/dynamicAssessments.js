@@ -426,6 +426,15 @@ router.post('/instances', async (req, res) => {
   }
 });
 
+// Sanitize instance objects to ensure sharePasscode is never leaked in public responses
+const sanitizeInstance = (inst) => {
+  if (!inst) return inst;
+  const sanitized = { ...inst };
+  sanitized.isPasscodeProtected = Boolean(sanitized.sharePasscode);
+  delete sanitized.sharePasscode;
+  return sanitized;
+};
+
 router.get('/instances', async (req, res) => {
   try {
     const { customerName, typeKey, useCase, search, status, limit, offset, page } = req.query;
@@ -445,14 +454,14 @@ router.get('/instances', async (req, res) => {
     if (Array.isArray(result)) {
       return res.json({
         success: true,
-        instances: result,
+        instances: result.map(sanitizeInstance),
         total: result.length
       });
     }
 
     res.json({
       success: true,
-      instances: result.items || [],
+      instances: (result.items || []).map(sanitizeInstance),
       total: result.total,
       limit: result.limit,
       offset: result.offset,
@@ -473,7 +482,7 @@ router.get('/instances/:id', async (req, res) => {
     }
     res.json({
       success: true,
-      instance
+      instance: sanitizeInstance(instance)
     });
   } catch (error) {
     console.error('Error fetching assessment instance:', error);
@@ -799,7 +808,7 @@ router.get('/public/report/:token', async (req, res) => {
 
     res.json({
       success: true,
-      instance,
+      instance: sanitizeInstance(instance),
       report: instance.aiReport || {
         executiveSummary: 'Assessment completed. Review detailed scores and roadmap below.',
         prioritizedRecommendations: []

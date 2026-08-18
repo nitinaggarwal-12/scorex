@@ -544,7 +544,8 @@ class ProfessionalPDFExporter {
 
       let techPainCount = 0;
       (dim.questions || []).forEach(q => {
-        const pains = responses[`${q.id}_tech_pain`] || [];
+        const rawPains = responses[`${q.id}_technical_pain`] || responses[`${q.id}_pain_points`] || responses[`${q.id}_tech_pain`] || [];
+        const pains = Array.isArray(rawPains) ? rawPains : (rawPains ? [rawPains] : []);
         techPainCount += pains.length;
       });
 

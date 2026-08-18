@@ -251,6 +251,9 @@ const AssessmentComparisonView = () => {
     return <LoadingSpinner message="Calculating quarter-over-quarter maturity progression..." />;
   }
 
+  const hasEnoughAssessments = allAssessments && allAssessments.length >= 2;
+  const isSameAssessment = baseId && targetId && baseId === targetId;
+
   const baseInst = comparisonData?.base?.instance;
   const targetInst = comparisonData?.target?.instance;
   const baseScores = comparisonData?.base?.scores;
@@ -299,33 +302,56 @@ const AssessmentComparisonView = () => {
             </p>
           </div>
 
-          <SelectorRow>
-            <AssessmentSelectBox>
-              <label>1. Baseline Assessment (Period A)</label>
-              <select value={baseId} onChange={(e) => setBaseId(e.target.value)}>
-                {allAssessments.map(a => (
-                  <option key={a.id} value={a.id}>
-                    {a.customerName || 'Org'} — {a.useCase || a.frameworkSnapshot?.title} ({new Date(a.createdAt).toLocaleDateString()})
-                  </option>
-                ))}
-              </select>
-            </AssessmentSelectBox>
+          {hasEnoughAssessments ? (
+            <SelectorRow>
+              <AssessmentSelectBox>
+                <label>1. Baseline Assessment (Period A)</label>
+                <select value={baseId} onChange={(e) => setBaseId(e.target.value)}>
+                  {allAssessments.map(a => (
+                    <option key={a.id} value={a.id}>
+                      {a.customerName || 'Org'} — {a.useCase || a.frameworkSnapshot?.title} ({new Date(a.createdAt).toLocaleDateString()})
+                    </option>
+                  ))}
+                </select>
+              </AssessmentSelectBox>
 
-            <div style={{ textAlign: 'center', color: '#64748b' }}>
-              <FiArrowRight size={24} />
+              <div style={{ textAlign: 'center', color: '#64748b' }}>
+                <FiArrowRight size={24} />
+              </div>
+
+              <AssessmentSelectBox>
+                <label>2. Target Assessment (Period B)</label>
+                <select value={targetId} onChange={(e) => setTargetId(e.target.value)}>
+                  {allAssessments.map(a => (
+                    <option key={a.id} value={a.id}>
+                      {a.customerName || 'Org'} — {a.useCase || a.frameworkSnapshot?.title} ({new Date(a.createdAt).toLocaleDateString()})
+                    </option>
+                  ))}
+                </select>
+              </AssessmentSelectBox>
+            </SelectorRow>
+          ) : (
+            <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '12px', padding: '20px', textAlign: 'center', margin: '20px 0' }}>
+              <h3 style={{ color: '#f87171', margin: '0 0 8px 0', fontSize: '1.1rem' }}>
+                ⚠️ At least two completed assessments are required for comparison
+              </h3>
+              <p style={{ color: '#cbd5e1', fontSize: '0.85rem', margin: '0 0 16px 0' }}>
+                Create or run another assessment instance to compare progress across time periods or architecture domains.
+              </p>
+              <button
+                onClick={() => navigate('/assessments')}
+                style={{ background: '#6366f1', color: '#fff', border: 'none', padding: '9px 18px', borderRadius: '8px', fontWeight: '700', cursor: 'pointer' }}
+              >
+                Go to Assessments Hub
+              </button>
             </div>
+          )}
 
-            <AssessmentSelectBox>
-              <label>2. Target Assessment (Period B)</label>
-              <select value={targetId} onChange={(e) => setTargetId(e.target.value)}>
-                {allAssessments.map(a => (
-                  <option key={a.id} value={a.id}>
-                    {a.customerName || 'Org'} — {a.useCase || a.frameworkSnapshot?.title} ({new Date(a.createdAt).toLocaleDateString()})
-                  </option>
-                ))}
-              </select>
-            </AssessmentSelectBox>
-          </SelectorRow>
+          {isSameAssessment && hasEnoughAssessments && (
+            <div style={{ background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.3)', borderRadius: '10px', padding: '12px 16px', color: '#fbbf24', fontSize: '0.85rem', marginBottom: '16px' }}>
+              ℹ️ You have selected the same assessment for both Baseline and Target. Please select two distinct assessments to compute delta progress.
+            </div>
+          )}
 
           {comparison && (
             <DeltaSummaryGrid>

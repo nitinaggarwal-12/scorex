@@ -18,8 +18,7 @@ class GeminiService {
     if (process.env.GEMINI_API_KEY) return process.env.GEMINI_API_KEY;
     if (process.env.GOOGLE_API_KEY) return process.env.GOOGLE_API_KEY;
     if (process.env.GOOGLE_GEMINI_API_KEY) return process.env.GOOGLE_GEMINI_API_KEY;
-    // Default key fallback for production cloud deployment
-    return Buffer.from('QVEuQWI4Uk42SWIxMkw5UXVuMGtmeUZWem1hZ1UyelZpTGJFWHBRVG9CMWt2TTJVQmhEdGc=', 'base64').toString('utf8');
+    return null;
   }
 
   initClient() {
