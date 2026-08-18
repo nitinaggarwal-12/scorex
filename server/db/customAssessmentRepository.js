@@ -1,10 +1,15 @@
 const db = require('./connection');
 const DataStore = require('../utils/dataStore');
+const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 
-const typesFileStore = new DataStore(path.join(__dirname, '../../data/custom_assessment_types.json'));
-const instancesFileStore = new DataStore(path.join(__dirname, '../../data/dynamic_assessments.json'));
+const baseDataDir = process.env.DATA_DIR || 
+  (fs.existsSync(path.join(__dirname, '../../data')) ? path.join(__dirname, '../../data') : 
+   (fs.existsSync(path.join(__dirname, '../data')) ? path.join(__dirname, '../data') : path.join(__dirname, '../../data')));
+
+const typesFileStore = new DataStore(path.join(baseDataDir, 'custom_assessment_types.json'));
+const instancesFileStore = new DataStore(path.join(baseDataDir, 'dynamic_assessments.json'));
 
 /**
  * Built-in Production Ready Starter Templates
@@ -3314,6 +3319,14 @@ class CustomAssessmentRepository {
         completedAt: updateData.status === 'completed' ? (current.completedAt || new Date().toISOString()) : current.completedAt
       };
 
+      if (updateData.architectureDiagrams) {
+        updated.architectureDiagrams = updateData.architectureDiagrams;
+        if (!updated.aiReport) updated.aiReport = {};
+        updated.aiReport.architectureDiagrams = updateData.architectureDiagrams;
+        if (!updated.executiveReport) updated.executiveReport = {};
+        updated.executiveReport.architectureDiagrams = updateData.architectureDiagrams;
+      }
+
       const query = `
         UPDATE dynamic_assessments
         SET responses = $1, scores = $2, total_score = $3, max_score = $4,
@@ -3348,6 +3361,13 @@ class CustomAssessmentRepository {
       const item = instancesFileStore.get(id);
       if (item) {
         const updated = { ...item, ...updateData, updatedAt: new Date().toISOString() };
+        if (updateData.architectureDiagrams) {
+          updated.architectureDiagrams = updateData.architectureDiagrams;
+          if (!updated.aiReport) updated.aiReport = {};
+          updated.aiReport.architectureDiagrams = updateData.architectureDiagrams;
+          if (!updated.executiveReport) updated.executiveReport = {};
+          updated.executiveReport.architectureDiagrams = updateData.architectureDiagrams;
+        }
         if (updateData.status === 'completed' && !updated.completedAt) {
           updated.completedAt = new Date().toISOString();
         }
@@ -3504,6 +3524,8 @@ class CustomAssessmentRepository {
 
   mapRowToInstance(row) {
     if (!row) return null;
+    const aiReport = typeof row.ai_report === 'string' ? JSON.parse(row.ai_report) : (row.ai_report || null);
+    const diagrams = aiReport?.architectureDiagrams || row.architecture_diagrams || null;
     return {
       id: row.id,
       typeKey: row.type_key,
@@ -3517,7 +3539,9 @@ class CustomAssessmentRepository {
       maxScore: parseFloat(row.max_score || 5.0),
       maturityLevel: row.maturity_level,
       status: row.status,
-      aiReport: typeof row.ai_report === 'string' ? JSON.parse(row.ai_report) : (row.ai_report || null),
+      aiReport,
+      architectureDiagrams: diagrams,
+      executiveReport: aiReport,
       version: row.version ? parseInt(row.version, 10) : 1,
       createdBy: row.created_by,
       createdAt: row.created_at,

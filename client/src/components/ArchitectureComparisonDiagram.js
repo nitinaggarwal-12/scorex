@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -699,6 +699,15 @@ const ArchitectureComparisonDiagram = ({
   const [showNotesDrawer, setShowNotesDrawer] = useState(false);
   const drawioIframeRef = useRef(null);
 
+  const persistDiagramsToBackend = useCallback(async (updatedData) => {
+    if (!instanceId) return;
+    try {
+      await dynamicAssessmentService.updateArchitectureDiagrams(instanceId, updatedData);
+    } catch (err) {
+      console.warn('[ArchitectureComparisonDiagram] Auto-persist notice:', err.message);
+    }
+  }, [instanceId]);
+
   const handleOpenVisualDrawio = (target = 'target') => {
     setXmlTargetState(target);
     setIsVisualDrawioOpen(true);
@@ -730,11 +739,14 @@ const ArchitectureComparisonDiagram = ({
             const nextVerNum = (versionHistory.length + 1);
             const newVer = `v1.${nextVerNum}`;
             
-            setDiagramsData(prev => ({
-              ...prev,
+            const nextDiagrams = {
+              ...diagramsData,
               [xmlTargetState === 'current' ? 'currentStateXml' : 'targetStateXml']: msg.xml,
               generatedAt: new Date().toISOString()
-            }));
+            };
+
+            setDiagramsData(nextDiagrams);
+            persistDiagramsToBackend(nextDiagrams);
 
             setVersionHistory(prev => [
               {
@@ -747,7 +759,7 @@ const ArchitectureComparisonDiagram = ({
               ...prev
             ]);
 
-            toast.success(`💾 Saved changes to ${xmlTargetState === 'current' ? 'Current' : 'Target'} Architecture (${newVer})!`, { icon: '🎨' });
+            toast.success(`💾 Saved & synchronized ${xmlTargetState === 'current' ? 'Current' : 'Target'} Architecture (${newVer})!`, { icon: '🎨' });
           }
         } else if (msg.event === 'exit') {
           setIsVisualDrawioOpen(false);
@@ -759,7 +771,7 @@ const ArchitectureComparisonDiagram = ({
 
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
-  }, [xmlTargetState, diagramsData, versionHistory]);
+  }, [xmlTargetState, diagramsData, versionHistory, persistDiagramsToBackend]);
 
   const handleOpenXmlEditor = (target = 'target') => {
     setXmlTargetState(target);
@@ -778,11 +790,14 @@ const ArchitectureComparisonDiagram = ({
     const nextVerNum = (versionHistory.length + 1);
     const newVer = `v1.${nextVerNum}`;
     
-    setDiagramsData(prev => ({
-      ...prev,
+    const nextDiagrams = {
+      ...diagramsData,
       [xmlTargetState === 'current' ? 'currentStateXml' : 'targetStateXml']: rawXmlDraft,
       generatedAt: new Date().toISOString()
-    }));
+    };
+
+    setDiagramsData(nextDiagrams);
+    persistDiagramsToBackend(nextDiagrams);
 
     setVersionHistory(prev => [
       {
@@ -796,7 +811,7 @@ const ArchitectureComparisonDiagram = ({
     ]);
 
     setIsXmlEditorOpen(false);
-    toast.success(`✅ Applied custom manual XML edits (${newVer})!`);
+    toast.success(`✅ Applied and saved manual XML edits (${newVer})!`);
   };
 
   const currentXml = diagramsData?.currentStateXml || DEFAULT_CURRENT_XML;
@@ -820,6 +835,7 @@ const ArchitectureComparisonDiagram = ({
       const res = await dynamicAssessmentService.generateArchitectureDiagrams(instanceId, customPrompt);
       if (res.success && res.diagrams) {
         setDiagramsData(res.diagrams);
+        persistDiagramsToBackend(res.diagrams);
         toast.success(`✨ Architecture diagrams regenerated with ${res.diagrams.modelUsed || 'Gemini 3.7 Flash'}!`, { id: toastId });
         setIsModalOpen(false);
         setCustomPrompt('');
@@ -836,14 +852,17 @@ const ArchitectureComparisonDiagram = ({
 
   const handleSelectTemplate = (tpl) => {
     const xml = tpl.builder ? tpl.builder() : DEFAULT_TARGET_XML;
-    setDiagramsData(prev => ({
-      ...prev,
+    const nextDiagrams = {
+      ...diagramsData,
       targetTitle: tpl.title,
       targetSubtitle: tpl.subtitle,
-      targetStateXml: xml
-    }));
+      targetStateXml: xml,
+      generatedAt: new Date().toISOString()
+    };
+    setDiagramsData(nextDiagrams);
+    persistDiagramsToBackend(nextDiagrams);
     setIsTemplateModalOpen(false);
-    toast.success(`Applied "${tpl.name}" architecture blueprint!`, { icon: '🏛️' });
+    toast.success(`Applied & saved "${tpl.name}" architecture blueprint!`, { icon: '🏛️' });
   };
 
   const handleCopyXml = async (xml) => {

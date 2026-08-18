@@ -122,6 +122,16 @@ class DynamicAssessmentService {
   }
 
   /**
+   * Update and persist Architecture Diagrams (Draw.io XML) for an assessment instance
+   */
+  async updateArchitectureDiagrams(id, architectureDiagrams) {
+    const response = await axios.put(`/api/dynamic-assessments/instances/${id}/diagrams`, {
+      architectureDiagrams
+    });
+    return response.data;
+  }
+
+  /**
    * Delete dynamic assessment instance
    */
   async deleteInstance(id) {

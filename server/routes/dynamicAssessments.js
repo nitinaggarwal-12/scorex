@@ -514,7 +514,7 @@ router.get('/instances/:id', async (req, res) => {
 router.put('/instances/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { responses, status, customerName, useCase, contactEmail, expectedVersion } = req.body;
+    const { responses, status, customerName, useCase, contactEmail, expectedVersion, architectureDiagrams, aiReport } = req.body;
 
     const current = await customAssessmentRepo.getInstanceById(id);
     if (!current) {
@@ -537,7 +537,7 @@ router.put('/instances/:id', async (req, res) => {
     const calculated = dynamicEngine.calculateScores(updatedResponses, framework);
     const nextVersion = (current.version || 1) + 1;
 
-    const updated = await customAssessmentRepo.updateInstance(id, {
+    const updatePayload = {
       responses: updatedResponses,
       scores: calculated.dimensionScores,
       totalScore: calculated.overallScore,
@@ -548,7 +548,16 @@ router.put('/instances/:id', async (req, res) => {
       useCase: useCase !== undefined ? useCase : current.useCase,
       contactEmail: contactEmail !== undefined ? contactEmail : current.contactEmail,
       version: nextVersion
-    });
+    };
+
+    if (architectureDiagrams) {
+      updatePayload.architectureDiagrams = architectureDiagrams;
+    }
+    if (aiReport) {
+      updatePayload.aiReport = aiReport;
+    }
+
+    const updated = await customAssessmentRepo.updateInstance(id, updatePayload);
 
     res.json({
       success: true,
@@ -559,6 +568,35 @@ router.put('/instances/:id', async (req, res) => {
   } catch (error) {
     console.error('Error updating assessment instance:', error);
     res.status(500).json({ success: false, error: 'Failed to update assessment instance' });
+  }
+});
+
+router.put('/instances/:id/diagrams', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { architectureDiagrams } = req.body;
+
+    if (!architectureDiagrams) {
+      return res.status(400).json({ success: false, error: 'architectureDiagrams payload required' });
+    }
+
+    const current = await customAssessmentRepo.getInstanceById(id);
+    if (!current) {
+      return res.status(404).json({ success: false, error: 'Assessment instance not found' });
+    }
+
+    const updated = await customAssessmentRepo.updateInstance(id, {
+      architectureDiagrams
+    });
+
+    res.json({
+      success: true,
+      message: 'Architecture diagrams successfully persisted',
+      architectureDiagrams: updated.architectureDiagrams || architectureDiagrams
+    });
+  } catch (error) {
+    console.error('Error updating architecture diagrams:', error);
+    res.status(500).json({ success: false, error: 'Failed to update architecture diagrams' });
   }
 });
 

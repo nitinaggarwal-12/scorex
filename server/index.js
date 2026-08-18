@@ -131,8 +131,8 @@ app.post('/api/admin/release-results/:assessmentId', requireAuth, requireAdmin, 
 // Use Railway volume path if available, otherwise fallback to local path
 console.log('🔍 DEBUG: Checking DATA_DIR environment variable...');
 console.log('🔍 DEBUG: process.env.DATA_DIR =', process.env.DATA_DIR);
-console.log('🔍 DEBUG: __dirname =', __dirname);
-const dataDir = process.env.DATA_DIR || path.join(__dirname, 'data');
+const defaultDataDir = fs.existsSync(path.join(__dirname, '..', 'data')) ? path.join(__dirname, '..', 'data') : path.join(__dirname, 'data');
+const dataDir = process.env.DATA_DIR || defaultDataDir;
 const dataFilePath = path.join(dataDir, 'assessments.json');
 console.log(`📁 Data directory: ${dataDir}`);
 console.log(`📄 Data file path: ${dataFilePath}`);
