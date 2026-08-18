@@ -552,64 +552,74 @@ class DiagramErrorBoundary extends React.Component {
 
 const REFERENCE_BLUEPRINTS = [
   {
-    id: 'gcp_data_lakehouse',
-    name: 'Enterprise Data Lakehouse',
-    domain: 'Data & Analytics',
-    tier: 'Logical / Lakehouse',
-    badge: 'BigLake & BigQuery',
-    description: 'Cloud Storage BigLake tiers, serverless BigQuery SQL, Dataplex ABAC governance, and Looker semantic BI.',
-    title: 'Google Cloud Enterprise Data Lakehouse',
-    subtitle: 'BigLake + BigQuery + Dataplex + Looker'
+    id: 'core_data_ai_maturity',
+    name: '1. Core Enterprise Data & AI Mesh',
+    domain: 'Core Diagnostic',
+    tier: 'P3-APP-C-01 Panoramic',
+    badge: 'BigLake & Vertex AI',
+    description: 'Panoramic Medallion Lakehouse on BigQuery, Vertex AI Agentic Mesh, Zero-Trust Landing Zone, and Looker semantic BI.',
+    title: 'GCP Unified Enterprise Data & AI Platform',
+    subtitle: 'P3-APP-C-01 Panoramic Architecture Blueprint'
   },
   {
-    id: 'agentic_rag_cognitive',
-    name: 'Cognitive Multi-Agent RAG Mesh',
-    domain: 'AI & Machine Learning',
-    tier: 'Logical / Cognitive',
-    badge: 'Gemini 3.7 & Model Armor',
-    description: 'Multi-agent orchestration loops, Vertex AI Gemini 3.7 Flash reasoning, context caching, and vector embedding store.',
-    title: 'Enterprise Cognitive AI Architecture',
-    subtitle: 'Vertex AI Gemini 3.7 Flash + Multi-Agent Orchestration'
+    id: 'openai_to_gemini',
+    name: '2. OpenAI to Gemini Migration Mesh',
+    domain: 'Model Migration',
+    tier: 'P4-AI-P-04 GKE Autopilot',
+    badge: 'Gemini 2M & Apigee',
+    description: 'Apigee AI Gateway, Gemini 2M Context Caching (75% discount), Model Armor real-time shield, and sandboxed MCP tool microservices.',
+    title: 'Google Vertex AI & Gemini Enterprise Mesh',
+    subtitle: 'Apigee AI Gateway + 2M Context Caching + Model Armor'
   },
   {
     id: 'cloud_finops_chargeback',
-    name: 'Cloud FinOps & Cost Chargeback',
+    name: '3. Cloud FinOps & Chargeback Model',
     domain: 'Cloud Economics',
-    tier: 'Logical / FinOps',
-    badge: 'BigQuery Billing Lake',
-    description: 'GCP Billing export lake, Kubecost pod allocation, Looker BU chargeback dashboards, and CUD commitment manager.',
+    tier: 'P2-GOV-C-01 / P5-AI-L-05',
+    badge: 'FOCUS 1.0 BigQuery',
+    description: 'Daily FOCUS 1.0 BigQuery billing export, OpenCost pod attribution, GKE Autopilot scale-to-zero, and 85%+ CUD coverage.',
     title: 'Enterprise Cloud FinOps & Chargeback Engine',
-    subtitle: 'Real-time Billing Telemetry + Automated Cost Optimization'
+    subtitle: 'P2-GOV-C-01 Multi-Tenant Cost Attribution & Quota Governor'
+  },
+  {
+    id: 'agentic_mesh_mcp',
+    name: '4. Autonomous Multi-Agent Mesh (MCP)',
+    domain: 'Agentic AI',
+    tier: 'P3-AI-L-03 / ARCH-MCP-06',
+    badge: 'MCP Tool Gateway',
+    description: 'Gemini 3.7 Super-Orchestrator Hub, Model Context Protocol (MCP) tool gateway, Tangential ReAct ring, and HITL approval gates.',
+    title: 'Hub-and-Spoke Multi-Agent Mesh & MCP Gateway',
+    subtitle: 'P3-AI-L-03 Agent Bus + ARCH-MCP-06 Standardized Tools'
+  },
+  {
+    id: 'edw_bigquery_lakehouse',
+    name: '5. EDW to BigQuery Lakehouse Modernization',
+    domain: 'Data Modernization',
+    tier: 'P3-DAT-L-04 / P4-DAT-P-13',
+    badge: 'BigLake Iceberg',
+    description: 'Datastream CDC, BigLake open Apache Iceberg tables, Dataplex ABAC governance, and BigQuery Editions autoscaling slots.',
+    title: 'Google BigQuery & BigLake Modern Fabric',
+    subtitle: 'P3-DAT-L-04 Medallion Fabric + P4-DAT-P-13 Streaming'
   },
   {
     id: 'zero_trust_security',
-    name: 'Zero-Trust Security & Deployment',
-    domain: 'Security & DevSecOps',
-    tier: 'Physical / Security',
-    badge: 'VPC-SC & Binary Auth',
-    description: 'Cloud Armor WAF, Identity-Aware Proxy, VPC Service Controls, Artifact Registry, and Binary Authorization CI/CD gates.',
-    title: 'Zero-Trust Cloud Security & Software Supply Chain',
-    subtitle: 'Cloud Armor + VPC-SC + Binary Authorization'
+    name: '6. Enterprise AI & Zero-Trust Security',
+    domain: 'Security & TRiSM',
+    tier: 'P4-SEC-P-01 / P4-GOV-L-07',
+    badge: 'VPC-SC & Model Armor',
+    description: 'Cloud Armor WAF, Identity-Aware Proxy (IAP), Real-Time Cloud DLP surrogate masking, Cloud KMS HSM CMEK, and Binary Authorization.',
+    title: 'Zero-Trust Secure AI Deployment & TRiSM Shield',
+    subtitle: 'P4-SEC-P-01 Secure Topology + P4-GOV-L-07 TRiSM Shield'
   },
   {
-    id: 'multi_region_dr',
-    name: 'Multi-Region Active-Passive DR',
-    domain: 'Cloud Reliability & SRE',
-    tier: 'Physical / SRE',
-    badge: 'Global Anycast L7 LB',
-    description: 'Global HTTPS Load Balancer, Cloud Run pilot light compute, Cloud SQL cross-region async replication (<5min lag).',
-    title: 'Multi-Region Active-Passive Disaster Recovery',
-    subtitle: 'Global L7 Load Balancing + Automated SRE Failover'
-  },
-  {
-    id: 'hybrid_strangler_fig',
-    name: 'Hybrid / Strangler Fig Transition',
-    domain: 'Application Migration',
-    tier: 'Logical / Migration',
-    badge: 'Apigee Interceptor',
-    description: 'Apigee API Gateway facade routing legacy traffic over Cloud Interconnect and modern features to GKE/Cloud Run.',
-    title: 'Hybrid Cloud Strangler Fig Transition Architecture',
-    subtitle: 'Apigee Traffic Interception + Cloud Interconnect'
+    id: 'genai_evaluation_platform',
+    name: '7. GenAI Platform & Evaluation Suite',
+    domain: 'GenAI Readiness',
+    tier: 'P4-GOV-L-06 Evaluation',
+    badge: 'Vertex Model Eval',
+    description: 'Enterprise Agent Registry, Vertex AI Vector Search multimodal grounding, automated Model Evaluation benchmarks, and RLHF feedback loops.',
+    title: 'Closed-Loop GenAI Platform & Evaluation Suite',
+    subtitle: 'P4-GOV-L-06 Safety, Factuality & Latency Benchmarks'
   }
 ];
 

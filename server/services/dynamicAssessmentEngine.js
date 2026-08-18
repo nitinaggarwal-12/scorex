@@ -714,72 +714,74 @@ Generate a strictly valid JSON response matching this schema:
     const has42Microservices = combinedContext.toLowerCase().includes('microservices') || combinedContext.includes('42');
     const hasSpendNote = combinedContext.includes('$') || combinedContext.toLowerCase().includes('spend') || combinedContext.includes('185');
 
-    const isGenAI = key.includes("openai") || key.includes("gemini") || title.includes("gemini") || title.includes("openai") || title.includes("genai");
+    const isAgenticMesh = key.includes("agentic") || key.includes("mcp") || key.includes("banking") || title.includes("agentic") || title.includes("multi-agent") || title.includes("mcp");
+    const isGenAIReadiness = (key.includes("genai") || title.includes("genai")) && !key.includes("openai") && !key.includes("mesh");
+    const isOpenAI = key.includes("openai") || (key.includes("gemini") && key.includes("migration")) || title.includes("openai");
     const isSecurity = key.includes("security") || key.includes("zero_trust") || key.includes("ciso") || title.includes("security") || title.includes("zero trust");
-    const isLakehouse = key.includes("lakehouse") || key.includes("bigquery") || key.includes("edw") || key.includes("snowflake") || title.includes("lakehouse") || title.includes("bigquery") || title.includes("snowflake");
+    const isLakehouse = key.includes("lakehouse") || key.includes("bigquery") || key.includes("edw") || key.includes("snowflake") || key.includes("teradata") || title.includes("lakehouse") || title.includes("bigquery") || title.includes("snowflake");
     const isFinOps = key.includes("finops") || key.includes("cost") || key.includes("billing") || title.includes("finops") || title.includes("cost");
 
-    let currentTitle = "Current Baseline: Fragmented Legacy Silos (" + cust + ")";
-    let currentSubtitle = "Maturity Level " + lvl + "/5.0 (Developing) • Brittle Cron Batch • Data Silos • Static VM Costs";
-    let curReasoning = "Fragmented legacy pipelines and batch cron jobs cause high failure rates, unmonitored infrastructure spend, and delayed business analytics.";
+    let currentTitle = "Current Baseline: Legacy Data Silos & Fragile Dependencies (" + cust + ")";
+    let currentSubtitle = "Maturity Level " + lvl + "/5.0 (Developing) • P1-APP-L-01 Silo Dependency • 24-48h Batch Lag • Static VM Costs";
+    let curReasoning = "Fragmented legacy pipelines, on-prem databases (Oracle/SQL Server/Hadoop), and unmanaged cron jobs cause high failure rates, unmonitored infrastructure spend, and delayed business analytics.";
     
-    let curL1Title = "STAGE 1: INGESTION"; let curL1Sub = "Brittle Batch & SFTP";
-    let curC1_1T = "Legacy OLTP & Files"; let curC1_1S = "Postgres, MySQL, SFTP<br>Point-to-point unmanaged exports";
-    let curC1_2T = "Cron Batch Scripts"; let curC1_2S = "Python/Bash cron jobs<br>24-hour latency, no dead-letter queue";
+    let curL1Title = "STAGE 1: LEGACY INGESTION"; let curL1Sub = "Brittle Batch & Point-to-Point SFTP";
+    let curC1_1T = "Legacy OLTP & Mainframe"; let curC1_1S = "Oracle 11g RAC, IBM Mainframe, SQL Server<br>Point-to-point unmanaged exports & raw files";
+    let curC1_2T = "Cron Batch Scripts"; let curC1_2S = "Python/Bash cron jobs (P1-APP-L-01)<br>24-hour batch latency, no dead-letter queue";
     let curWarn1T = "⚠️ 38% Failure Rate"; let curWarn1S = "Silent schema breakages halt nightly ETL runs";
 
-    let curL2Title = "STAGE 2: DATA SILOS"; let curL2Sub = "Split Warehouse + Lakes";
-    let curC2_1T = "Unmanaged Cloud Buckets"; let curC2_1S = "Raw CSV / JSON dumps<br>Fragmented bucket ACLs, no lineage";
-    let curC2_2T = "Isolated Data Warehouse"; let curC2_2S = "Proprietary SQL Warehouse<br>Duplicate data copies & sync lag";
-    let curWarn2T = "⚠️ Manual IAM Spreadsheets"; let curWarn2S = "No automated row/column masking";
+    let curL2Title = "STAGE 2: DATA SILOS"; let curL2Sub = "Split Warehouse & Storage Sprawl";
+    let curC2_1T = "Unmanaged Cloud Buckets"; let curC2_1S = "Raw CSV / JSON dumps in disjoint buckets<br>Fragmented bucket ACLs, zero automated lineage";
+    let curC2_2T = "Isolated Data Warehouse"; let curC2_2S = "Proprietary SQL Warehouse Silo<br>Duplicate data copies & heavy synchronization lag";
+    let curWarn2T = "⚠️ Manual IAM Spreadsheets"; let curWarn2S = "No automated row/column data masking";
 
-    let curL3Title = "STAGE 3: COMPUTE & MLOps"; let curL3Sub = "Over-Provisioned Clusters";
-    let curC3_1T = "Static 24/7 Compute VMs"; let curC3_1S = "Always-on oversized clusters<br>Lack of automated auto-termination";
-    let curC3_2T = "Disconnected Notebooks"; let curC3_2S = "Ad-hoc local Jupyter environments<br>No centralized model registry";
-    let curWarn3T = "⚠️ $480k Annual Idle Waste"; let curWarn3S = "Zero cluster FinOps kill switches";
+    let curL3Title = "STAGE 3: COMPUTE & MLOps"; let curL3Sub = "Over-Provisioned Clusters & Shadow IT";
+    let curC3_1T = "Static 24/7 Compute VMs"; let curC3_1S = "Always-on oversized cluster nodes<br>Lack of automated 15-min auto-suspend policies";
+    let curC3_2T = "Disconnected Notebooks"; let curC3_2S = "Ad-hoc local Jupyter environments<br>No centralized model registry or drift alerts";
+    let curWarn3T = "⚠️ $480k Annual Idle Waste"; curWarn3S = "Zero cluster FinOps kill switches";
 
-    let curL4Title = "STAGE 4: SERVING & BI"; let curL4Sub = "Unguarded LLMs & Heavy Backlog";
-    let curC4_1T = "Direct Unguarded LLM APIs"; let curC4_1S = "No prompt caching (100% token spend)<br>No enterprise PII filters or guardrails";
-    let curC4_2T = "Stale Daily BI Extracts"; let curC4_2S = "Slow queries over legacy schemas<br>14-day turnaround on custom metrics";
-    let curWarn4T = "⚠️ 14-Day Delivery Lag"; let curWarn4S = "Analyst team overwhelmed by custom SQL";
+    let curL4Title = "STAGE 4: SERVING & BI"; let curL4Sub = "Unguarded LLMs & Stale BI Backlog";
+    let curC4_1T = "Direct Unguarded LLM APIs"; let curC4_1S = "No prompt caching (100% token cost paid)<br>No enterprise PII filters or Model Armor";
+    let curC4_2T = "Stale Daily BI Extracts"; let curC4_2S = "Slow queries over legacy schemas (P1-GOV-C-04)<br>14-day turnaround on custom metrics";
+    let curWarn4T = "⚠️ 14-Day Delivery Lag"; curWarn4S = "Analyst team overwhelmed by custom SQL";
 
     let curFoundTitle = "⚠️ FRAGMENTED PERIMETER & COMPLIANCE (CROSS-CUTTING TECHNICAL DEBT)";
     let curFoundSub = "Siloed IAM Accounts • Public Egress Endpoints • Hardcoded Keys • 14-Day Manual SOC2 Audit Prep";
 
-    let targetTitle = "Target State: Modern Open Lakehouse & Agentic Mesh (" + cust + ")";
-    let targetSubtitle = "Target Maturity Level " + tgt + "/5.0 (Optimized) • Sub-Second Streaming • Apache Iceberg • Serverless FinOps";
-    let tgtL1Title = "STAGE 1: REAL-TIME INGESTION"; let tgtL1Sub = "Declarative Streaming & CDC";
-    let tgtC1_1T = "Multi-Source Event Streams"; let tgtC1_1S = "Kafka, Kinesis, Google Pub/Sub<br>Sub-second real-time event capture";
-    let tgtC1_2T = "Serverless Auto-Loader / CDC"; let tgtC1_2S = "Automated schema evolution<br>Declarative data transformations";
-    let tgtVal1T = "✓ Zero Ingestion Latency"; let tgtVal1S = "Automated retry & dead-letter isolation";
+    let targetTitle = "Target State: Unified Medallion Lakehouse & AI Mesh (" + cust + ")";
+    let targetSubtitle = "Target Maturity Level " + tgt + "/5.0 (Optimized) • P3-APP-C-01 Panoramic View • BigLake Iceberg • Serverless FinOps";
+    let tgtL1Title = "STAGE 1: REAL-TIME INGESTION"; tgtL1Sub = "Declarative Streaming & CDC";
+    let tgtC1_1T = "Multi-Source Event Streams"; tgtC1_1S = "Google Cloud Pub/Sub + Managed Kafka<br>Sub-second real-time event capture";
+    let tgtC1_2T = "Serverless Dataflow / CDC"; tgtC1_2S = "Automated schema evolution contracts<br>Declarative data transformations & DLQ";
+    let tgtVal1T = "✓ Zero Ingestion Latency"; tgtVal1S = "Automated retry & dead-letter isolation";
 
-    let tgtL2Title = "STAGE 2: OPEN LAKEHOUSE"; let tgtL2Sub = "Apache Iceberg & Open Formats";
-    let tgtC2_1T = "Open Table Formats"; let tgtC2_1S = "Apache Iceberg / BigLake<br>Single source of truth, zero lock-in";
-    let tgtC2_2T = "Centralized Metadata & Lineage"; let tgtC2_2S = "Dataplex Universal Catalog<br>Row/column masking & end-to-end lineage";
-    let tgtVal2T = "✓ Unified Governance Plane"; let tgtVal2S = "Cross-cloud zero-copy data sharing";
+    let tgtL2Title = "STAGE 2: BIGLAKE LAKEHOUSE"; tgtL2Sub = "P3-DAT-L-04 Medallion Fabric";
+    let tgtC2_1T = "Open Table Formats"; tgtC2_1S = "Apache Iceberg / BigLake Medallion<br>Bronze Raw, Silver Refined, Gold BI tables";
+    let tgtC2_2T = "Centralized Metadata & Lineage"; tgtC2_2S = "Dataplex Universal Catalog<br>Automated row/column masking & ABAC policies";
+    let tgtVal2T = "✓ Unified Governance Plane"; tgtVal2S = "Cross-cloud zero-copy data sharing";
 
-    let tgtL3Title = "STAGE 3: SERVERLESS FINOPS"; let tgtL3Sub = "Autoscaling Vectorized Engine";
-    let tgtC3_1T = "Serverless Vectorized SQL"; let tgtC3_1S = "Instant 15-min auto-suspend switches<br>35% to 50% compute TCO savings";
-    let tgtC3_2T = "Production MLOps Registry"; let tgtC3_2S = "Automated CI/CD model verification<br>Real-time concept drift & feature store";
-    let tgtVal3T = "✓ Automated FinOps & CI/CD"; let tgtVal3S = "Zero idle spend & fully tracked models";
+    let tgtL3Title = "STAGE 3: SERVERLESS FINOPS"; tgtL3Sub = "Autoscaling Vectorized Engine";
+    let tgtC3_1T = "BigQuery Editions (Baseline Slots)"; tgtC3_1S = "Dynamic autoscaling slot commitments<br>35% to 50% compute TCO savings";
+    let tgtC3_2T = "Vertex AI Model Registry"; tgtC3_2S = "Automated CI/CD model verification<br>Real-time concept drift & feature store";
+    let tgtVal3T = "✓ Automated FinOps & CI/CD"; tgtVal3S = "Zero idle spend & fully tracked models";
 
-    let tgtL4Title = "STAGE 4: AI MESH & BI"; let tgtL4Sub = "MCP Protocol & Semantic Layer";
-    let tgtC4_1T = "Compound Multi-Agent Mesh"; let tgtC4_1S = "MCP protocol & 75% prompt context caching<br>Zero-Trust AI guardrails & CMEK isolation";
-    let tgtC4_2T = "Self-Service Semantic BI Layer"; let tgtC4_2S = "Looker Semantic Model<br>Sub-second dashboard refresh speeds";
-    let tgtVal4T = "✓ Real-Time Self-Service"; let tgtVal4S = "Instant answers for BI & autonomous agents";
+    let tgtL4Title = "STAGE 4: AI MESH & BI"; tgtL4Sub = "P3-AI-L-03 Agent Mesh & Looker";
+    let tgtC4_1T = "Compound Multi-Agent Mesh"; tgtC4_1S = "MCP protocol & 75% prompt context caching<br>Zero-Trust AI guardrails & CMEK isolation";
+    let tgtC4_2T = "Self-Service Semantic BI Layer"; tgtC4_2S = "Looker Semantic Model<br>Sub-second dashboard refresh speeds";
+    let tgtVal4T = "✓ Real-Time Self-Service"; tgtVal4S = "Instant answers for BI & autonomous agents";
 
-    let tgtFoundTitle = "🛡️ UNIFIED GOVERNANCE & SECURITY FOUNDATION (CROSS-CUTTING CONTROLS)";
-    let tgtFoundSub = "Dataplex Universal Catalog • VPC Service Controls • Customer-Managed CMEK • Chronicle SIEM";
+    let tgtFoundTitle = "🛡️ P4-SEC-P-02 ZERO-TRUST LANDING ZONE & SHARED VPC NETWORK FABRIC";
+    let tgtFoundSub = "Dataplex Universal Catalog • VPC Service Controls • Cloud KMS HSM CMEK • Chronicle SIEM";
 
     let transformations = [
-      "Shift from 24h cron batch scripts to sub-second streaming CDC data contracts",
-      "Consolidate siloed relational databases into an open table format Lakehouse (Apache Iceberg)",
-      "Replace static 24/7 VMs with serverless autoscaling compute engines (15-min auto-suspend)",
-      "Deploy Compound Multi-Agent Mesh with Model Context Protocol (MCP) & 75% prompt context caching"
+      "Shift from 24h cron batch scripts to sub-second streaming CDC data contracts (P1-GOV-C-04)",
+      "Consolidate siloed relational databases into an open table format Lakehouse (Apache Iceberg / P3-DAT-L-04)",
+      "Replace static 24/7 VMs with BigQuery Editions autoscaling slots and serverless FinOps compute",
+      "Deploy Compound Multi-Agent Mesh (P3-AI-L-03) with Model Context Protocol (MCP) & 75% prompt context caching"
     ];
 
-    if (isGenAI) {
-      currentTitle = "Current Baseline: Brittle OpenAI Endpoints & High Token Costs (" + cust + ")";
+    if (isOpenAI) {
+      currentTitle = "Current Baseline: Unmanaged OpenAI Public API Wrapper (" + cust + ")";
       currentSubtitle = "Maturity Level " + lvl + "/5.0 (Developing) • 8k Chunked RAG Loss • 100% Token Inefficiency • Prompt Injection Risk";
       curReasoning = "Direct un-cached OpenAI and Azure endpoints cause exorbitant token bills, 8k context chunking loss, high latency, and vulnerability to indirect prompt injection.";
 
@@ -826,7 +828,7 @@ Generate a strictly valid JSON response matching this schema:
       tgtC3_2T = "Dynamic Model Cascading"; tgtC3_2S = "Flash for high-volume triage (90%)<br>Pro for complex multi-step reasoning (10%)";
       tgtVal3T = "✓ 68% GenAI TCO Savings"; tgtVal3S = "$420k annualized API cost reduction";
 
-      tgtL4Title = "STAGE 4: MCP AGENTIC MESH"; tgtL4Sub = "Model Context Protocol & Armor";
+      tgtL4Title = "STAGE 4: MCP AGENTIC MESH"; tgtL4Sub = "P4-AI-P-04 GKE Agent Platform";
       tgtC4_1T = "Model Context Protocol (MCP)"; tgtC4_1S = "Standardized open protocol tool calling<br>Decoupled backend tool microservices";
       tgtC4_2T = "Google Cloud Model Armor"; tgtC4_2S = "Real-time prompt injection sanitization<br>Automated jailbreak & toxicity shielding";
       tgtVal4T = "✓ Enterprise Sandboxed Agents"; tgtVal4S = "Autonomous execution with strict guardrails";
@@ -838,11 +840,71 @@ Generate a strictly valid JSON response matching this schema:
         "Migrate brittle OpenAI API calls to Apigee Enterprise AI Gateway with VPC Service Controls",
         "Replace 8k lossy RAG chunking with Vertex AI Gemini 2M native long-context processing",
         "Enable Vertex AI Prompt Context Caching for 75% input token discount and sub-200ms latency",
-        "Deploy Google Cloud Model Armor and Model Context Protocol (MCP) for sandboxed agent defense"
+        "Deploy Google Cloud Model Armor and Model Context Protocol (MCP) on GKE Autopilot (P4-AI-P-04)"
+      ];
+    } else if (isAgenticMesh) {
+      currentTitle = "Current Baseline: Siloed Single-Threaded Chatbots (" + cust + ")";
+      currentSubtitle = "Maturity Level " + lvl + "/5.0 (Developing) • Hardcoded Scripts • No Tool Registry • Ephemeral State Loss";
+      curReasoning = "Disconnected standalone chatbots lack agent-to-agent delegation, standardized tool protocols, persistent state, and deterministic human-in-the-loop review gates.";
+
+      curL1Title = "STAGE 1: STANDALONE CHATBOTS"; curL1Sub = "Single-Threaded Prompt Scripts";
+      curC1_1T = "Isolated Chat Interfaces"; curC1_1S = "Standalone bot apps with hardcoded prompts<br>Inability to delegate tasks across domains";
+      curC1_2T = "Manual Human Bridging"; curC1_2S = "Employees copy-pasting answers across apps<br>Zero autonomous cross-system orchestration";
+      curWarn1T = "⚠️ Zero Cross-Domain Delegation"; curWarn1S = "High manual labor & disjointed user experience";
+
+      curL2Title = "STAGE 2: BRITTLE TOOL CALLS"; curL2Sub = "Custom REST Glue Code";
+      curC2_1T = "Ad-Hoc REST Wrappers"; curC2_1S = "Hardcoded JSON parsing and unversioned APIs<br>Frequent breakages when backend tools update";
+      curC2_2T = "Missing Schema Discovery"; curC2_2S = "No dynamic tool registry or capability catalog<br>Agents unable to discover new enterprise tools";
+      curWarn2T = "⚠️ 34% Tool Execution Failure"; curWarn2S = "Unhandled schema drift & missing retry semantics";
+
+      curL3Title = "STAGE 3: STATE & LATENCY"; curL3Sub = "Ephemeral Memory & Runaway Loops";
+      curC3_1T = "Ephemeral Chat Memory"; curC3_1S = "Full conversation history resent in every call<br>Memory bloat & context limit truncation";
+      curC3_2T = "Unmonitored Agent Loops"; curC3_2S = "Runaway ReAct execution without step limits<br>Spike in compute costs & request timeouts";
+      curWarn3T = "⚠️ Runaway Execution Risk"; curWarn3S = "Zero deterministic budget caps or loop circuit breakers";
+
+      curL4Title = "STAGE 4: UNGUARDED ACTIONS"; curL4Sub = "Lack of HITL & Audit Lineage";
+      curC4_1T = "Direct Database Mutations"; curC4_1S = "Agents executing direct SQL write queries<br>No human-in-the-loop approval on high-value ops";
+      curC4_2T = "Missing Agent Telemetry"; curC4_2S = "No trace of agent thought steps or decision lineage<br>Impossible to audit regulatory compliance";
+      curWarn4T = "⚠️ Severe Operational Risk"; curWarn4S = "Unsupervised financial transactions & data mutations";
+
+      curFoundTitle = "⚠️ UNGOVERNED MULTI-AGENT RUNTIME: Ephemeral Memory, No MCP Protocol, Missing HITL";
+      curFoundSub = "Single Point of Failure • Uncontrolled Loop Cascades • Zero Traceability • No Workload Isolation";
+
+      targetTitle = "Target State: Autonomous Agentic Mesh & MCP Architecture (" + cust + ")";
+      targetSubtitle = "Target Maturity Level " + tgt + "/5.0 (Optimized) • P3-AI-L-03 Hub & Spoke • ARCH-MCP-06 Gateway • ReAct Ring";
+
+      tgtL1Title = "STAGE 1: SUPER-ORCHESTRATOR"; tgtL1Sub = "P3-AI-L-03 Central Gemini Hub";
+      tgtC1_1T = "Gemini 3.7 Orchestrator Hub"; tgtC1_1S = "Autonomous intent routing & task decomposition<br>Delegates to specialized Domain Spokes";
+      tgtC1_2T = "Agent-to-Agent (A2A) Bus"; tgtC1_2S = "Google Cloud Pub/Sub agent communication bus<br>Sub-second asynchronous task delegation";
+      tgtVal1T = "✓ Unified Multi-Agent Mesh"; tgtVal1S = "Autonomous coordination across 10+ domains";
+
+      tgtL2Title = "STAGE 2: MCP TOOL GATEWAY"; tgtL2Sub = "ARCH-MCP-06 Standardized Tools";
+      tgtC2_1T = "Model Context Protocol (MCP)"; tgtC2_1S = "Open standard MCP tool servers<br>Dynamic discovery, versioning & sandboxing";
+      tgtC2_2T = "Tangential ReAct Reasoning"; tgtC2_2S = "Thought ➔ Action ➔ Observation ➔ Synthesis<br>Sub-500ms TTFT with structured JSON outputs";
+      tgtVal2T = "✓ Standardized Tool Calling"; tgtVal2S = "Zero-friction tool integration with strict validation";
+
+      tgtL3Title = "STAGE 3: DOMAIN SPOKES"; tgtL3Sub = "Specialized Sandboxed Subagents";
+      tgtC3_1T = "Domain-Specific Agent Spokes"; tgtC3_1S = "SQL Agent, SecOps Agent, FinOps Agent<br>Running in gVisor sandboxed GKE Autopilot pods";
+      tgtC3_2T = "Stateful Session Cache"; tgtC3_2S = "Memorystore for Redis session persistence<br>Long-term knowledge graph grounding";
+      tgtVal3T = "✓ Scalable Micro-Agents"; tgtVal3S = "Independent domain agent scaling & isolation";
+
+      tgtL4Title = "STAGE 4: HITL & GOVERNANCE"; tgtL4Sub = "P3-APP-L-10 Sequence & Approval";
+      tgtC4_1T = "Human-in-the-Loop Gateway"; tgtC4_1S = "Automated escalation for low-confidence decisions<br>Signed cryptographic approvals for financial ops";
+      tgtC4_2T = "BigQuery Agent Telemetry"; tgtC4_2S = "100% full-trace logging of reasoning & actions<br>Continuous safety evaluation & regression checks";
+      tgtVal4T = "✓ High-Assurance AI Ops"; tgtVal4S = "100% auditability under EU AI Act & Banking Regs";
+
+      tgtFoundTitle = "🛡️ AGENTIC ZERO-TRUST PERIMETER: Model Armor • VPC-SC • Binary Authorization Container Signing";
+      tgtFoundSub = "GKE Autopilot gVisor Sandboxes • Cloud KMS HSM Attestation • Real-Time Kill Switches • Chronicle SIEM";
+
+      transformations = [
+        "Deploy Central Gemini 3.7 Super-Orchestrator Hub with Pub/Sub Agent-to-Agent communication (P3-AI-L-03)",
+        "Adopt Model Context Protocol (MCP) Gateway (ARCH-MCP-06) for standardized, versioned tool execution",
+        "Implement Tangential ReAct Reasoning Ring (P3-AI-L-02) with Redis state persistence and GKE sandboxes",
+        "Integrate Human-in-the-Loop approval gates (P3-APP-L-10) and full BigQuery telemetry for audit compliance"
       ];
     } else if (isSecurity) {
       currentTitle = "Current Baseline: Shadow AI Exposure & Static Key Sprawl (" + cust + ")";
-      currentSubtitle = "Maturity Level " + lvl + "/5.0 (Developing) • Unmonitored Shadow AI • Static JSON Keys • Raw PII in Prompts";
+      currentSubtitle = "Maturity Level " + lvl + "/5.0 (Developing) • ARCH-SEC-04 STRIDE Threat Surface • Static JSON Keys • Raw PII in Prompts";
       curReasoning = "Unmanaged employee and application access to external AI platforms, static service account keys, lack of real-time DLP, and siloed log storage expose the enterprise to data exfiltration and regulatory penalties.";
 
       curL1Title = "STAGE 1: SHADOW AI & EGRESS"; curL1Sub = "Unmonitored Web Usage";
@@ -868,41 +930,41 @@ Generate a strictly valid JSON response matching this schema:
       curFoundTitle = "⚠️ UNMANAGED CREDENTIAL & LOG PLANE: Ephemeral Disks, No Central SIEM, Standing IAM";
       curFoundSub = "Static Credentials on Laptops • Unencrypted Transit • Missing Real-Time DLP • Manual Incident Triage";
 
-      targetTitle = "Target State: Enterprise AI & Zero-Trust Defense Mesh (" + cust + ")";
-      targetSubtitle = "Target Maturity Level " + tgt + "/5.0 (Optimized) • Apigee AI Gateway • Real-Time Cloud DLP • Ephemeral OIDC • Chronicle SIEM";
+      targetTitle = "Target State: Zero-Trust Secure AI Deployment & TRiSM Shield (" + cust + ")";
+      targetSubtitle = "Target Maturity Level " + tgt + "/5.0 (Optimized) • P4-SEC-P-01 Secure Topology • P4-GOV-L-07 TRiSM • P3-SEC-L-07 IAP";
 
-      tgtL1Title = "STAGE 1: ENTERPRISE GATEWAY"; tgtL1Sub = "Apigee Gateway & VPC-SC";
-      tgtC1_1T = "Centralized AI Gateway"; tgtC1_1S = "Apigee Enterprise AI Gateway<br>100% interception of developer & app AI calls";
-      tgtC1_2T = "VPC Service Controls"; tgtC1_2S = "Cryptographic perimeter defense<br>Blocking unauthorized data exfiltration";
+      tgtL1Title = "STAGE 1: ENTERPRISE GATEWAY"; tgtL1Sub = "P3-SEC-L-07 IAP & VPC-SC";
+      tgtC1_1T = "Centralized AI Gateway"; tgtC1_1S = "Apigee Enterprise AI Gateway + Cloud Armor<br>100% interception of developer & app AI calls";
+      tgtC1_2T = "VPC Service Controls"; tgtC1_2S = "Cryptographic perimeter defense (P4-SEC-P-02)<br>Blocking unauthorized data exfiltration";
       tgtVal1T = "✓ 100% Shadow AI Containment"; tgtVal1S = "Zero unauthorized AI traffic across enterprise";
 
-      tgtL2Title = "STAGE 2: DATA PROTECTION"; tgtL2Sub = "Real-Time DLP & Cloud EKM";
+      tgtL2Title = "STAGE 2: DATA PROTECTION"; tgtL2Sub = "P4-GOV-L-07 TRiSM Shield & CMEK";
       tgtC2_1T = "Real-Time Cloud DLP Mesh"; tgtC2_1S = "Dynamic PII/PHI surrogate tokenization<br>Reversible masking under strict RBAC";
       tgtC2_2T = "Customer-Managed EKM / CMEK"; tgtC2_2S = "Cloud KMS FIPS 140-3 HSM keys<br>Key Access Justifications (KAJ) audit logging";
       tgtVal2T = "✓ Cryptographic Key Control"; tgtVal2S = "Instant cryptographic tenant data shredding";
 
-      tgtL3Title = "STAGE 3: ZERO-TRUST IAM"; tgtL3Sub = "Workload Federation (OIDC)";
+      tgtL3Title = "STAGE 3: ZERO-TRUST IAM"; tgtL3Sub = "P4-SEC-P-01 Workload Federation";
       tgtC3_1T = "Workload Identity Federation"; tgtC3_1S = "100% elimination of static JSON keys<br>Short-lived OIDC tokens for CI/CD & apps";
-      tgtC3_2T = "Just-in-Time PAM Elevation"; tgtC3_2S = "Automated ephemeral elevation (<4h)<br>Full session recording & peer approval";
+      tgtC3_2T = "Just-in-Time PAM Elevation"; tgtC3_2S = "Automated ephemeral elevation (<4h)<br>Binary Authorization signed container deployment";
       tgtVal3T = "✓ Zero Standing Privileges"; tgtVal3S = "Elimination of persistent credential attack surface";
 
       tgtL4Title = "STAGE 4: SECOPS & SOAR"; tgtL4Sub = "Chronicle SIEM & Model Armor";
       tgtC4_1T = "Google Security Operations"; tgtC4_1S = "Chronicle SIEM ingesting 100% of audit logs<br>Sub-second threat hunting across petabytes";
-      tgtC4_2T = "Automated SOAR Playbooks"; tgtC4_2S = "Sub-2 minute automated token revocation<br>Continuous ISO 42001 & NIST compliance";
+      tgtC4_2T = "Constitutional AI & Kill-Switch"; tgtC4_2S = "Model Armor real-time prompt injection filter<br>Automated kill-switch and token revocation";
       tgtVal4T = "✓ Autonomous Threat Response"; tgtVal4S = "Sub-2 minute automated incident containment";
 
       tgtFoundTitle = "🛡️ SECURE ENTERPRISE BOUNDARY: Cloud KMS CMEK • Workload Identity Federation • Chronicle SIEM";
       tgtFoundSub = "Apigee Enterprise AI Gateway • Cloud DLP Dynamic Masking • VPC Service Controls • JIT PAM Approval";
 
       transformations = [
-        "Deploy Apigee Enterprise AI Gateway and VPC Service Controls to contain 100% of shadow AI traffic",
-        "Implement Real-Time Cloud DLP dynamic surrogate tokenization and Cloud EKM hardware encryption",
-        "Eliminate all static service account keys via Workload Identity Federation (OIDC) and Just-in-Time PAM",
+        "Deploy Apigee Enterprise AI Gateway and VPC Service Controls to contain 100% of shadow AI traffic (P3-SEC-L-07)",
+        "Implement Real-Time Cloud DLP dynamic surrogate tokenization and Model Armor TRiSM Shield (P4-GOV-L-07)",
+        "Eliminate all static service account keys via Workload Identity Federation and Binary Authorization (P4-SEC-P-01)",
         "Stream Cloud Audit Logs to Google Security Operations (Chronicle SIEM) with automated SOAR playbooks"
       ];
     } else if (isLakehouse) {
       currentTitle = "Current Baseline: Siloed Proprietary EDW & Egress Friction (" + cust + ")";
-      currentSubtitle = "Maturity Level " + lvl + "/5.0 (Developing) • Proprietary Lock-In • 40% Compute Spikes • Heavy Egress Fees";
+      currentSubtitle = "Maturity Level " + lvl + "/5.0 (Developing) • Snowflake/Teradata Lock-In • 40% Compute Spikes • Heavy Egress";
       curReasoning = "Legacy proprietary data warehouses (Teradata/Snowflake/Databricks) cause unmanaged compute credit volatility, expensive multi-cloud data copying, duplicate storage formats, and delayed analytics delivery.";
 
       curL1Title = "STAGE 1: BATCH INGESTION"; curL1Sub = "Brittle Point-to-Point Pipelines";
@@ -928,15 +990,15 @@ Generate a strictly valid JSON response matching this schema:
       curFoundTitle = "⚠️ SILOED STORAGE & GOVERNANCE: Proprietary Lock-In, Fragmented Access Control, Multi-Cloud Egress";
       curFoundSub = "No Universal Catalog • Incompatible Cross-Engine Formats • Manual Spreadsheet ACLs • High Licensing";
 
-      targetTitle = "Target State: Google BigQuery & BigLake Modern Fabric (" + cust + ")";
-      targetSubtitle = "Target Maturity Level " + tgt + "/5.0 (Optimized) • BigLake Apache Iceberg • BigQuery Editions • Dataplex Governance";
+      targetTitle = "Target State: Open BigLake Medallion Lakehouse & Streaming Mesh (" + cust + ")";
+      targetSubtitle = "Target Maturity Level " + tgt + "/5.0 (Optimized) • P3-DAT-L-04 Medallion Fabric • P4-DAT-P-13 Streaming • Dataplex";
 
-      tgtL1Title = "STAGE 1: STREAMING & CDC"; tgtL1Sub = "Serverless Cloud Dataflow";
+      tgtL1Title = "STAGE 1: STREAMING & CDC"; tgtL1Sub = "P4-DAT-P-13 Serverless Dataflow";
       tgtC1_1T = "Datastream Serverless CDC"; tgtC1_1S = "Real-time MySQL/Postgres/Oracle replication<br>Sub-second change capture into BigQuery";
       tgtC1_2T = "BigQuery Storage Write API"; tgtC1_2S = "High-throughput streaming ingestion<br>Exactly-once delivery semantics";
       tgtVal1T = "✓ Sub-Second Ingestion"; tgtVal1S = "Real-time data availability for downstream analytics";
 
-      tgtL2Title = "STAGE 2: OPEN BIGLAKE"; tgtL2Sub = "Apache Iceberg & Delta Lake";
+      tgtL2Title = "STAGE 2: OPEN BIGLAKE"; tgtL2Sub = "P3-DAT-L-04 Apache Iceberg";
       tgtC2_1T = "BigLake Open Table Formats"; tgtC2_1S = "Apache Iceberg & Delta Lake storage<br>Query directly on Cloud Storage without copying";
       tgtC2_2T = "Dataplex Universal Catalog"; tgtC2_2S = "Unified metadata, automated data profiling<br>Attribute-based access control (ABAC)";
       tgtVal2T = "✓ Zero Vendor Lock-In"; tgtVal2S = "Single copy of data queryable by any open engine";
@@ -955,14 +1017,14 @@ Generate a strictly valid JSON response matching this schema:
       tgtFoundSub = "Dataplex Data Quality Rules • Column-Level Encryption (CMEK) • IAM ABAC Policies • Chronicle SIEM";
 
       transformations = [
-        "Replace legacy batch ETL with Datastream CDC and BigQuery Storage Write API for real-time replication",
-        "Adopt BigLake Apache Iceberg open table formats to eliminate proprietary data lock-in and egress fees",
+        "Replace legacy batch ETL with Datastream CDC and BigQuery Storage Write API for real-time replication (P4-DAT-P-13)",
+        "Adopt BigLake Apache Iceberg open table formats (P3-DAT-L-04) to eliminate proprietary data lock-in and egress fees",
         "Consolidate compute on BigQuery Editions autoscaling slots and BigQuery Omni for cross-cloud querying",
         "Deploy Looker Semantic Layer and BigQuery Studio with Gemini AI assistance for self-service analytics"
       ];
     } else if (isFinOps) {
       currentTitle = "Current Baseline: Uncontrolled Multi-Cloud Spend & Idle Waste (" + cust + ")";
-      currentSubtitle = "Maturity Level " + lvl + "/5.0 (Developing) • 40% Untagged Resources • Static 24/7 Clusters • No Unit Economics";
+      currentSubtitle = "Maturity Level " + lvl + "/5.0 (Developing) • P2-GOV-C-01 Waste Breakdown • 40% Untagged Resources • Static 24/7 Clusters";
       curReasoning = "Lack of standardized billing exports, missing resource tagging, over-provisioned static compute clusters, and uncoordinated cloud commitments result in significant financial waste and missed savings.";
 
       curL1Title = "STAGE 1: UNTAGGED ASSETS"; curL1Sub = "Missing Cost Attribution";
@@ -988,8 +1050,8 @@ Generate a strictly valid JSON response matching this schema:
       curFoundTitle = "⚠️ MANUAL SPREADSHEET CHARGEBACK: 8-Day Financial Lag, No Unit Economics, Untagged Assets";
       curFoundSub = "No Automated Quota Caps • Unmonitored Billing Invoices • Zero Developer Accountability • List Prices";
 
-      targetTitle = "Target State: Continuous Cloud FinOps & Unit Economics Fabric (" + cust + ")";
-      targetSubtitle = "Target Maturity Level " + tgt + "/5.0 (Optimized) • FOCUS 1.0 Standard • OpenCost Pod Attribution • 85%+ CUD Coverage";
+      targetTitle = "Target State: Automated FinOps Chargeback & Capacity Governor (" + cust + ")";
+      targetSubtitle = "Target Maturity Level " + tgt + "/5.0 (Optimized) • P2-GOV-C-01 FinOps Model • P5-AI-L-05 Quota Governor • 85%+ CUDs";
 
       tgtL1Title = "STAGE 1: FOCUS 1.0 BILLING"; tgtL1Sub = "Unified BigQuery Billing Lake";
       tgtC1_1T = "Automated Billing Export"; tgtC1_1S = "Daily export of GCP and AWS billing to BigQuery<br>FOCUS 1.0 open cost schema normalization";
@@ -1001,7 +1063,7 @@ Generate a strictly valid JSON response matching this schema:
       tgtC2_2T = "Automated Chargeback Portals"; tgtC2_2S = "Self-service cost dashboards for squad leads<br>Unit cost metrics per customer transaction";
       tgtVal2T = "✓ 100% Cost Transparency"; tgtVal2S = "Engineering teams accountable for unit economics";
 
-      tgtL3Title = "STAGE 3: COMPUTE FINOPS"; tgtL3Sub = "GKE Autopilot & Auto-Suspend";
+      tgtL3Title = "STAGE 3: COMPUTE FINOPS"; tgtL3Sub = "P5-AI-L-05 Quota & Auto-Suspend";
       tgtC3_1T = "GKE Autopilot Dynamic Scaling"; tgtC3_1S = "Pod-level billing without paying for unused nodes<br>Instant 15-min auto-suspend switches";
       tgtC3_2T = "Automated Resource Rightsizer"; tgtC3_2S = "Continuous machine learning rightsizing engine<br>Automated pruning of orphaned storage disks";
       tgtVal3T = "✓ 45% Compute Bill Reduction"; tgtVal3S = "Zero idle spend on unutilized compute capacity";
@@ -1015,10 +1077,70 @@ Generate a strictly valid JSON response matching this schema:
       tgtFoundSub = "FOCUS 1.0 BigQuery Schema • OpenCost Kubernetes Metric Exporter • Looker Executive Dashboards";
 
       transformations = [
-        "Adopt FOCUS 1.0 open billing standard with automated daily export into BigQuery",
+        "Adopt FOCUS 1.0 open billing standard with automated daily export into BigQuery (P2-GOV-C-01)",
         "Deploy OpenCost for granular container and namespace unit economics cost attribution",
-        "Migrate workloads to GKE Autopilot with automated 15-minute scale-to-zero kill switches",
-        "Implement automated Committed Use Discount (CUD) rebalancing to achieve 85%+ coverage"
+        "Migrate workloads to GKE Autopilot with automated 15-minute scale-to-zero kill switches (P5-AI-L-05)",
+        "Implement automated Committed Use Discount (CUD) rebalancing to achieve 85%+ coverage and 4.6-month ROI payback"
+      ];
+    } else if (isGenAIReadiness) {
+      currentTitle = "Current Baseline: Fragmented Departmental AI Sandboxes (" + cust + ")";
+      currentSubtitle = "Maturity Level " + lvl + "/5.0 (Developing) • Isolated POCs • 28% Hallucinations • Unversioned Prompts";
+      curReasoning = "Ad-hoc generative AI proof-of-concepts running in isolated departmental silos without unified model evaluation, prompt regression testing, grounding, or responsible AI governance.";
+
+      curL1Title = "STAGE 1: AD-HOC EXPERIMENTS"; curL1Sub = "Disconnected Team Sandboxes";
+      curC1_1T = "Isolated POC Apps"; curC1_1S = "Departmental prototypes with unmanaged API keys<br>No centralized prompt or model registry";
+      curC1_2T = "Manual Prompt Crafting"; curC1_2S = "Unversioned prompt strings scattered across git repos<br>Zero systematic prompt regression testing";
+      curWarn1T = "⚠️ Fragmented POC Sprawl"; curWarn1S = "High duplicate effort and zero enterprise reuse";
+
+      curL2Title = "STAGE 2: NAIVE CHUNKING"; curL2Sub = "Lossy Vector Retrieval";
+      curC2_1T = "Naive Text Chunking"; curC2_1S = "Splitting complex enterprise PDFs into fixed 500-token chunks<br>Missing tables, charts, and cross-section context";
+      curC2_2T = "Uncalibrated Vector Search"; curC2_2S = "Cosine similarity returning irrelevant noise<br>High LLM hallucination and factual inconsistency";
+      curWarn2T = "⚠️ 28% Hallucination Rate"; curWarn2S = "Critical business errors in generative outputs";
+
+      curL3Title = "STAGE 3: EVALUATION VOID"; curL3Sub = "Missing Quality Benchmarks";
+      curC3_1T = "Vibe-Based Manual Evals"; curC3_1S = "Engineers manually reviewing 5 sample outputs<br>No automated quantitative scoring for safety/grounding";
+      curC3_2T = "Zero Cost Profiling"; curC3_2S = "No visibility into latency p95 or per-task token cost<br>Unpredictable OPEX when scaling to production";
+      curWarn3T = "⚠️ Blind Production Rollouts"; curWarn3S = "Deploying un-evaluated models to enterprise users";
+
+      curL4Title = "STAGE 4: UNGOVERNED OUTPUTS"; curL4Sub = "Lack of Guardrails & Ethics";
+      curC4_1T = "Unguarded Model Serving"; curC4_1S = "Direct LLM responses sent to end customers<br>No automated jailbreak detection or toxicity filters";
+      curC4_2T = "Missing Compliance Audit"; curC4_2S = "No permanent record of prompts or model outputs<br>Inability to pass ISO 42001 or EU AI Act audits";
+      curWarn4T = "⚠️ Severe Regulatory Exposure"; curWarn4S = "Non-compliant with enterprise Responsible AI standards";
+
+      curFoundTitle = "⚠️ UNGOVERNED AI EXPERIMENTATION PLANE: No Registry, Manual Evals, Blind Scaling";
+      curFoundSub = "Unversioned Prompts • Missing Safety Guardrails • Isolated Silos • Zero Latency/Cost SLAs";
+
+      targetTitle = "Target State: Enterprise GenAI Platform & Evaluation Suite (" + cust + ")";
+      targetSubtitle = "Target Maturity Level " + tgt + "/5.0 (Optimized) • P4-GOV-L-06 Evaluation Platform • Vertex AI Vector Search • Model Armor";
+
+      tgtL1Title = "STAGE 1: AGENT REGISTRY"; tgtL1Sub = "P4-GOV-L-06 Central Platform";
+      tgtC1_1T = "Enterprise Agent Registry"; tgtC1_1S = "Centralized catalog of versioned models & prompts<br>Standardized metadata, owners, and access policies";
+      tgtC1_2T = "Vertex AI Studio Hub"; tgtC1_2S = "Unified collaborative prompt workbench<br>Automated prompt template versioning & CI/CD";
+      tgtVal1T = "✓ Unified GenAI Hub"; tgtVal1S = "100% visibility & governance across all enterprise AI";
+
+      tgtL2Title = "STAGE 2: GROUNDED RAG"; tgtL2Sub = "Multimodal Vector Search";
+      tgtC2_1T = "Vertex AI Vector Search"; tgtC2_1S = "Scalable trillion-vector index with sub-10ms latency<br>Hybrid semantic + lexical dense retrieval";
+      tgtC2_2T = "Gemini Multimodal Grounding"; tgtC2_2S = "Direct extraction of diagrams, tables & audio<br>Grounding with Enterprise Knowledge Graph";
+      tgtVal2T = "✓ 99.2% Factuality Precision"; tgtVal2S = "Elimination of hallucinations with verifiable citations";
+
+      tgtL3Title = "STAGE 3: AUTOMATED EVALS"; tgtL3Sub = "Continuous Safety & Quality Benchmarks";
+      tgtC3_1T = "Vertex AI Model Evaluation"; tgtC3_1S = "Automated scoring on Safety, Factuality & Latency<br>Golden dataset automated regression testing";
+      tgtC3_2T = "RLHF / RLAIF Optimization"; tgtC3_2S = "Continuous alignment feedback loop<br>Dynamic model routing (Flash vs Pro) for optimal cost";
+      tgtVal3T = "✓ Continuous Quality Assurance"; tgtVal3S = "Automated pass/fail quality gates before deployment";
+
+      tgtL4Title = "STAGE 4: ENTERPRISE SHIELD"; tgtL4Sub = "Model Armor & Compliance Cockpit";
+      tgtC4_1T = "Google Cloud Model Armor"; tgtC4_1S = "Real-time sanitization of prompts and responses<br>Protection against prompt injection & jailbreaks";
+      tgtC4_2T = "Responsible AI Dashboard"; tgtC4_2S = "Executive audit cockpit for EU AI Act & ISO 42001<br>Permanent immutable audit trail in BigQuery";
+      tgtVal4T = "✓ 100% Compliant AI Workflows"; tgtVal4S = "Enterprise-grade safety, privacy & regulatory alignment";
+
+      tgtFoundTitle = "🛡️ ENTERPRISE RESPONSIBLE AI FOUNDATION: VPC-SC • Cloud KMS CMEK • Model Armor • Chronicle SIEM";
+      tgtFoundSub = "Continuous Evaluation Suite • Model Armor Real-Time Shield • ISO 42001 & EU AI Act Compliance Engine";
+
+      transformations = [
+        "Consolidate ad-hoc POCs into the Enterprise Agent Registry and Vertex AI Studio Hub (P4-GOV-L-06)",
+        "Upgrade naive text chunking to Vertex AI Vector Search and Multimodal Grounding (P3-AI-L-02)",
+        "Implement Automated Vertex AI Model Evaluation with continuous golden dataset quality gates",
+        "Deploy Google Cloud Model Armor and Responsible AI Governance Dashboard for EU AI Act compliance"
       ];
     }
 
