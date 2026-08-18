@@ -33,6 +33,7 @@ import BacklogExporterCard from './BacklogExporterCard';
 import IaCBlueprintCard from './IaCBlueprintCard';
 import DynamicRadarChart from './DynamicRadarChart';
 import ExecutiveHeatmapMatrix from './ExecutiveHeatmapMatrix';
+import IndustryPeerBenchmarkingCard from './IndustryPeerBenchmarkingCard';
 import AudioBriefingPlayer from './AudioBriefingPlayer';
 import PresentationModeModal from './PresentationModeModal';
 import { exportDynamicAssessmentToExcel } from '../services/excelExportService';
@@ -887,6 +888,12 @@ const DynamicAssessmentReport = () => {
           dimensions={framework?.dimensions || []}
           dimensionScores={scores.dimensionScores || {}}
           responses={instance.responses || {}}
+        />
+
+        {/* Industry Peer Benchmarking & Percentile Distribution Matrix */}
+        <IndustryPeerBenchmarkingCard
+          instanceId={instance?.id}
+          defaultIndustry={framework?.badge || 'Retail & E-Commerce'}
         />
 
         {/* Quantified Financial & TCO Impact Engine */}

@@ -255,6 +255,16 @@ class DynamicAssessmentService {
     const response = await axios.get(`/api/dynamic-assessments/customer/${encodeURIComponent(customerName)}/portfolio-rollup`);
     return response.data;
   }
+
+  /**
+   * Get Industry Benchmarking Comparison for an assessment instance
+   */
+  async getBenchmarks(instanceId, industry = 'Retail & E-Commerce') {
+    const response = await axios.get(`/api/dynamic-assessments/instances/${instanceId}/benchmarks`, {
+      params: { industry }
+    });
+    return response.data;
+  }
 }
 
 const dynamicAssessmentService = new DynamicAssessmentService();
