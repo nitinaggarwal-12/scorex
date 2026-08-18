@@ -902,9 +902,21 @@ const DynamicAssessmentRunner = () => {
   }, [performAutoSave, saveLocalBackup]);
 
   const handleSelectCurrentState = (qId, score) => {
+    if (score >= 5) {
+      toast.error("Current baseline state cannot be Level 5 (Transform) because Future Target State must be strictly higher.", {
+        icon: "⚠️",
+        duration: 3500,
+        position: "top-center"
+      });
+      return;
+    }
+
     const currentFuture = responses[`${qId}_future_state`];
-    // If future state was previously lower than the new current score, auto-bump it to at least current score
-    const newFuture = currentFuture !== undefined ? Math.max(score, Number(currentFuture)) : Math.min(5, score + 1);
+    // Strict rule: Future state MUST be strictly higher than Current State (Future >= Current + 1)
+    const minRequiredFuture = Math.min(5, score + 1);
+    const newFuture = (currentFuture !== undefined && Number(currentFuture) > score) 
+      ? Number(currentFuture) 
+      : minRequiredFuture;
 
     const updated = {
       ...responses,
@@ -923,10 +935,10 @@ const DynamicAssessmentRunner = () => {
         ? Number(responses[`${qId}_current_state`]) 
         : null;
 
-    if (currentBaseline !== null && score < currentBaseline) {
-      toast.error(`Target Future State (${score}/5.0) cannot be lower than Current Baseline (${currentBaseline}/5.0)`, {
+    if (currentBaseline !== null && score <= currentBaseline) {
+      toast.error(`Target Future State (${score}/5.0) must be strictly higher than Current Baseline (${currentBaseline}/5.0)`, {
         icon: "⚠️",
-        duration: 3000,
+        duration: 3500,
         position: "top-center"
       });
       return;
@@ -1043,7 +1055,7 @@ const DynamicAssessmentRunner = () => {
       {
         name: 'Scaling Optimization & AI Mesh',
         baseMin: 3,
-        baseMax: 5,
+        baseMax: 4,
         targetOffset: 1,
         painPointIntensity: 1
       }
@@ -1074,7 +1086,7 @@ const DynamicAssessmentRunner = () => {
         // Compute logically consistent score tailored to the chosen profile
         const range = Math.max(1, profile.baseMax - profile.baseMin + 1);
         const rawScore = profile.baseMin + Math.abs((seed + dIdx * 11 + qIdx * 13) % range) + dimVariance;
-        const score = Math.max(1, Math.min(5, rawScore));
+        const score = Math.max(1, Math.min(4, rawScore));
         const futureScore = Math.min(5, Math.max(score + 1, score + profile.targetOffset));
 
         prefilled[q.id] = score;
@@ -1744,17 +1756,27 @@ const DynamicAssessmentRunner = () => {
                     {(currentQ.options || []).map((opt) => {
                       const score = Number(opt.score || opt.value);
                       const isSelected = Number(responses[`${currentQ.id}_future_state`]) === score;
+                      const currentBaseline = responses[currentQ.id] !== undefined 
+                        ? Number(responses[currentQ.id]) 
+                        : responses[`${currentQ.id}_current_state`] !== undefined 
+                          ? Number(responses[`${currentQ.id}_current_state`]) 
+                          : null;
+                      const isNotStrictlyHigher = currentBaseline !== null && score <= currentBaseline;
 
                       return (
                         <MaturityOptionCard
                           key={score}
                           $selected={isSelected}
-                          onClick={() => handleSelectFutureState(currentQ.id, score)}
+                          $disabled={isNotStrictlyHigher}
+                          disabled={isNotStrictlyHigher}
+                          title={isNotStrictlyHigher ? `Target horizon must be strictly higher than Current Baseline (${currentBaseline}/5.0)` : ""}
+                          onClick={() => !isNotStrictlyHigher && handleSelectFutureState(currentQ.id, score)}
                         >
-                          <OptionStageTag $selected={isSelected}>
+                          <OptionStageTag $selected={isSelected} style={isNotStrictlyHigher ? { color: "#94a3b8" } : {}}>
                             {score}. {score === 1 ? 'Explore' : score === 2 ? 'Experiment' : score === 3 ? 'Formalize' : score === 4 ? 'Optimize' : 'Transform'}
+                            {isNotStrictlyHigher && <span style={{ marginLeft: "6px", fontSize: "0.7rem", color: "#ef4444" }}>🔒 Must be &gt; Baseline</span>}
                           </OptionStageTag>
-                          <OptionText $selected={isSelected}>
+                          <OptionText $selected={isSelected} style={isNotStrictlyHigher ? { color: "#94a3b8" } : {}}>
                             {opt.label}
                           </OptionText>
                         </MaturityOptionCard>
@@ -1770,10 +1792,11 @@ const DynamicAssessmentRunner = () => {
                   </PerspectiveHeader>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     {(currentQ.technicalPainPoints || [
-                      "Inconsistent environment configurations",
-                      "Manual provisioning & fragmented scripting",
-                      "Lack of automated validation & telemetry",
-                      "Deployment consistency and latency bottlenecks"
+                      "Inconsistent environment configurations and configuration drift",
+                      "Manual provisioning & fragmented operational scripting",
+                      "Lack of automated validation & telemetry guardrails",
+                      "Deployment consistency and latency bottlenecks across clouds",
+                      "Missing centralized observability and distributed error tracing"
                     ]).map((pain, pIdx) => {
                       const checked = (responses[`${currentQ.id}_technical_pain`] || []).includes(pain);
                       return (
@@ -1797,10 +1820,11 @@ const DynamicAssessmentRunner = () => {
                   </PerspectiveHeader>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     {(currentQ.businessPainPoints || [
-                      "Slow time-to-market for strategic features",
-                      "High operational & compute overhead costs",
-                      "Engineering bottlenecks and resource conflicts",
-                      "Compliance risks from inconsistent environments"
+                      "Slow time-to-market for strategic enterprise capabilities",
+                      "High operational & compute overhead inflating infrastructure TCO",
+                      "Engineering bottlenecks and cross-team resource conflicts",
+                      "Compliance and governance audit risks from inconsistent policies",
+                      "Difficulty measuring ROI and business value delivery to executives"
                     ]).map((pain, pIdx) => {
                       const checked = (responses[`${currentQ.id}_business_pain`] || []).includes(pain);
                       return (

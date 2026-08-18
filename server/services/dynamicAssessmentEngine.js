@@ -63,7 +63,7 @@ Rules for Question & Option Design:
    - Score 3: Standardized / Documented / Consistent baseline
    - Score 4: Advanced / Automated / Integrated / Governed
    - Score 5: Optimized / Continuous improvement / AI-augmented / Industry leading
-3. Include 2-4 realistic Technical Pain Points and 2-4 Business Pain Points per question.
+3. MANDATORY REQUIREMENT: Provide EXACTLY 5 distinct, high-impact, realistic Technical Pain Points and EXACTLY 5 distinct, high-impact Business Pain Points for EVERY single question without exception.
 4. Keep all terminology open, vendor-neutral, and aligned with modern industry best practices.`;
 
     const userPrompt = `DESIGN AN ASSESSMENT FRAMEWORK FOR:
@@ -173,20 +173,21 @@ Output a strictly valid JSON object with the following schema:
       (dim.questions || []).forEach(q => {
         // Current score
         const val = responses[q.id] !== undefined ? responses[q.id] : responses[`${q.id}_current_state`];
-        if (val !== undefined && val !== null && !isNaN(Number(val))) {
-          const score = Number(val);
-          dimSum += score;
+        const currentScore = (val !== undefined && val !== null && !isNaN(Number(val))) ? Number(val) : 0;
+        if (currentScore > 0) {
+          dimSum += currentScore;
           dimCount++;
-          totalScoreSum += score;
+          totalScoreSum += currentScore;
           totalQuestionsCount++;
         }
 
-        // Future target score
+        // Future target score - strictly higher than current baseline
         const targetVal = responses[`${q.id}_future_state`] !== undefined 
           ? responses[`${q.id}_future_state`] 
           : responses[`${q.id}_target`];
         if (targetVal !== undefined && targetVal !== null && !isNaN(Number(targetVal))) {
-          const tScore = Math.max(score, Number(targetVal));
+          const minTarget = currentScore > 0 ? Math.min(5, currentScore + 1) : 1;
+          const tScore = Math.min(5, Math.max(minTarget, Number(targetVal)));
           dimTargetSum += tScore;
           dimTargetCount++;
           totalTargetSum += tScore;

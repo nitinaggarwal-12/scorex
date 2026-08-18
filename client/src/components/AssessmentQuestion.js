@@ -1571,8 +1571,8 @@ const AssessmentQuestion = ({ framework, currentAssessment, onUpdateStatus }) =>
         const currentNum = typeof currentStateValue === 'string' ? parseInt(currentStateValue, 10) : currentStateValue;
         const futureNum = typeof value === 'string' ? parseInt(value, 10) : value;
         
-        if (futureNum < currentNum) {
-          toast.error('Future state cannot be lower than current state', {
+        if (futureNum <= currentNum) {
+          toast.error('Future state must be strictly higher than current state', {
             icon: '⚠️',
             duration: 3000,
             position: 'top-center'
@@ -1591,8 +1591,8 @@ const AssessmentQuestion = ({ framework, currentAssessment, onUpdateStatus }) =>
         const futureNum = typeof futureStateValue === 'string' ? parseInt(futureStateValue, 10) : futureStateValue;
         const currentNum = typeof value === 'string' ? parseInt(value, 10) : value;
         
-        if (currentNum > futureNum) {
-          toast.error('Current state cannot be higher than future state', {
+        if (currentNum >= futureNum) {
+          toast.error('Current state must be strictly lower than future state', {
             icon: '⚠️',
             duration: 3000,
             position: 'top-center'
