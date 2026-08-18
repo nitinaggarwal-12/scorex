@@ -674,6 +674,31 @@ const DynamicAssessmentReport = () => {
     dimensionScores: instance.scores || {}
   };
 
+  // Compute simulated dimension scores and overall target inline
+  let simulatedDimensionScores = scores.dimensionScores || {};
+  let simulatedOverallTarget = scores.overallTarget || scores.targetScore || 4.2;
+
+  if (simulatedTargets && Object.keys(simulatedTargets).length > 0) {
+    simulatedDimensionScores = { ...(scores.dimensionScores || {}) };
+    Object.entries(simulatedTargets).forEach(([dimId, targetVal]) => {
+      if (simulatedDimensionScores[dimId]) {
+        const cur = simulatedDimensionScores[dimId].score !== undefined ? simulatedDimensionScores[dimId].score : (simulatedDimensionScores[dimId].currentScore || 2.5);
+        simulatedDimensionScores[dimId] = {
+          ...simulatedDimensionScores[dimId],
+          targetScore: Number(targetVal),
+          futureScore: Number(targetVal),
+          gap: Math.max(0, +(Number(targetVal) - cur).toFixed(1))
+        };
+      }
+    });
+
+    const values = Object.values(simulatedTargets);
+    if (values.length > 0) {
+      const avg = values.reduce((sum, v) => sum + Number(v), 0) / values.length;
+      simulatedOverallTarget = parseFloat(avg.toFixed(1));
+    }
+  }
+
   const dimensionScoresForSimulator = {};
   if (framework && framework.dimensions) {
     framework.dimensions.forEach(dim => {
@@ -879,14 +904,14 @@ const DynamicAssessmentReport = () => {
         {/* Multi-Axis Polar Radar & Dimensional Gap Topology */}
         <DynamicRadarChart
           dimensions={framework?.dimensions || []}
-          dimensionScores={scores.dimensionScores || {}}
+          dimensionScores={simulatedDimensionScores}
           responses={instance.responses || {}}
         />
 
         {/* Executive Capability vs Operational Risk Heatmap Matrix */}
         <ExecutiveHeatmapMatrix
           dimensions={framework?.dimensions || []}
-          dimensionScores={scores.dimensionScores || {}}
+          dimensionScores={simulatedDimensionScores}
           responses={instance.responses || {}}
         />
 
@@ -898,10 +923,10 @@ const DynamicAssessmentReport = () => {
 
         {/* Quantified Financial & TCO Impact Engine */}
         <FinancialImpactCard
-          pillarScores={scores.dimensionScores || {}}
+          pillarScores={simulatedDimensionScores}
           framework={framework}
           overallCurrent={scores.overallScore || 2.5}
-          overallTarget={4.0}
+          overallTarget={simulatedOverallTarget}
         />
 
         {/* Architectural Evolution Blueprint: Current vs Target */}
@@ -909,7 +934,7 @@ const DynamicAssessmentReport = () => {
           instanceId={instance?.id}
           initialDiagrams={report?.architectureDiagrams}
           currentScore={scores.overallScore || 2.5}
-          targetScore={4.5}
+          targetScore={simulatedOverallTarget}
           customerName={instance?.customerName}
           useCase={instance?.useCase}
           framework={framework}
@@ -919,10 +944,10 @@ const DynamicAssessmentReport = () => {
         <MultiPersonaViews
           assessmentName={framework?.title || 'Enterprise Data Platform'}
           currentScore={scores.overallScore || 2.5}
-          targetScore={4.5}
+          targetScore={simulatedOverallTarget}
           aiReport={report}
           framework={framework}
-          scores={scores}
+          scores={{ ...scores, dimensionScores: simulatedDimensionScores, targetScore: simulatedOverallTarget }}
         />
 
         {/* 1-Click Transformation Backlog Exporter */}

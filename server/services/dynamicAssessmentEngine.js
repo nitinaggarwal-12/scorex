@@ -136,9 +136,16 @@ Output a strictly valid JSON object with the following schema:
       throw new Error('Failed to generate a valid assessment framework');
     }
 
-    // Ensure slug key is valid
+    // Ensure slug key is deterministic, sanitized RFC 3986, and valid
     if (!parsed.typeKey) {
-      parsed.typeKey = (parsed.title || 'custom_assessment').toLowerCase().replace(/[^a-z0-9]/g, '_');
+      const baseSlug = (parsed.title || 'custom_assessment')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '')
+        .slice(0, 48);
+      parsed.typeKey = baseSlug || `custom_${Date.now()}`;
+    } else {
+      parsed.typeKey = parsed.typeKey.toLowerCase().replace(/[^a-z0-9_]+/g, '_').slice(0, 48);
     }
 
     console.log(`✅ Dynamic framework generated successfully: "${parsed.title}" (${parsed.dimensions.length} dimensions)`);
@@ -153,12 +160,17 @@ Output a strictly valid JSON object with the following schema:
     const dimensionScores = {};
     let totalScoreSum = 0;
     let totalQuestionsCount = 0;
+    let totalTargetSum = 0;
+    let totalTargetCount = 0;
 
     dimensions.forEach(dim => {
       let dimSum = 0;
       let dimCount = 0;
+      let dimTargetSum = 0;
+      let dimTargetCount = 0;
 
       (dim.questions || []).forEach(q => {
+        // Current score
         const val = responses[q.id] !== undefined ? responses[q.id] : responses[`${q.id}_current_state`];
         if (val !== undefined && val !== null && !isNaN(Number(val))) {
           const score = Number(val);
@@ -167,13 +179,34 @@ Output a strictly valid JSON object with the following schema:
           totalScoreSum += score;
           totalQuestionsCount++;
         }
+
+        // Future target score
+        const targetVal = responses[`${q.id}_future_state`] !== undefined 
+          ? responses[`${q.id}_future_state`] 
+          : responses[`${q.id}_target`];
+        if (targetVal !== undefined && targetVal !== null && !isNaN(Number(targetVal))) {
+          const tScore = Number(targetVal);
+          dimTargetSum += tScore;
+          dimTargetCount++;
+          totalTargetSum += tScore;
+          totalTargetCount++;
+        }
       });
 
       const avgScore = dimCount > 0 ? parseFloat((dimSum / dimCount).toFixed(2)) : 0;
+      const avgTargetScore = dimTargetCount > 0 
+        ? parseFloat((dimTargetSum / dimTargetCount).toFixed(2)) 
+        : Math.min(5.0, parseFloat((avgScore + 1.2).toFixed(2)));
+      const gap = parseFloat(Math.max(0, avgTargetScore - avgScore).toFixed(2));
+
       dimensionScores[dim.id] = {
         id: dim.id,
         name: dim.name,
         score: avgScore,
+        currentScore: avgScore,
+        targetScore: avgTargetScore,
+        futureScore: avgTargetScore,
+        gap,
         answeredCount: dimCount,
         totalQuestions: (dim.questions || []).length,
         percentage: Math.round((avgScore / 5) * 100)
@@ -181,6 +214,10 @@ Output a strictly valid JSON object with the following schema:
     });
 
     const overallScore = totalQuestionsCount > 0 ? parseFloat((totalScoreSum / totalQuestionsCount).toFixed(2)) : 0;
+    const overallTarget = totalTargetCount > 0 
+      ? parseFloat((totalTargetSum / totalTargetCount).toFixed(2)) 
+      : Math.min(5.0, parseFloat((overallScore + 1.2).toFixed(2)));
+    const overallGap = parseFloat(Math.max(0, overallTarget - overallScore).toFixed(2));
     const maxScore = 5.0;
 
     // Match maturity level
@@ -192,6 +229,11 @@ Output a strictly valid JSON object with the following schema:
 
     return {
       overallScore,
+      currentScore: overallScore,
+      targetScore: overallTarget,
+      overallTarget,
+      overallGap,
+      gap: overallGap,
       maxScore,
       percentage: Math.round((overallScore / maxScore) * 100),
       maturityLevel: matchedLevel ? matchedLevel.name : (overallScore >= 4 ? 'Optimizing' : overallScore >= 3 ? 'Defined' : overallScore >= 2 ? 'Developing' : 'Initial'),
@@ -418,13 +460,57 @@ Generate a comprehensive JSON executive report matching this schema:
           'Establishment of an Enterprise Center of Excellence for production MLOps and Prompt Context Caching'
         ]
       },
+      keyStrengths: [
+        `Established baseline operational capability in core ${framework.title || 'Data & AI'} architecture`,
+        'Demonstrated organizational commitment to enterprise data platform modernization',
+        'Initial governance controls in place with clear roadmap trajectory towards autonomous AI scale'
+      ],
+      criticalConstraints: selectedPainPoints.length > 0 
+        ? selectedPainPoints.slice(0, 4) 
+        : [
+          'Manual pipeline orchestration creating operational latency bottlenecks',
+          'Siloed metadata visibility impeding cross-functional compliance auditing',
+          'Cloud infrastructure compute spend lack of real-time auto-termination policies'
+        ],
+      transformationRoadmap: {
+        phase1: {
+          title: 'Phase 1: Foundation, Unified Governance & FinOps Quick Wins',
+          timeline: '1–3 Months',
+          focus: 'Eliminate security vulnerabilities and stop cloud spend leakage',
+          milestones: [
+            'Deploy unified Unity Catalog / Cloud Metastore and map IAM role delegations',
+            'Configure 15-minute auto-termination policies on all development SQL warehouses',
+            'Enable automated Delta Lake / Apache Iceberg UniForm for zero-copy sharing'
+          ]
+        },
+        phase2: {
+          title: 'Phase 2: Modernization, Declarative Streaming & MLOps Registry',
+          timeline: '3–6 Months',
+          focus: 'Automate data movement and centralize production ML model deployments',
+          milestones: [
+            'Migrate batch pipelines to Serverless Auto-Loader with schema evolution',
+            'Deploy centralized MLflow Model and Prompt Registry with automated evaluation gates',
+            'Implement declarative data pipelines (SDF / dbt) with automated data quality expectations'
+          ]
+        },
+        phase3: {
+          title: 'Phase 3: Autonomous Multi-Agent Mesh & Continuous FinOps Optimization',
+          timeline: '6–12 Months',
+          focus: 'Scale Compound GenAI systems with enterprise-grade latency and cost control',
+          milestones: [
+            'Implement Model Context Protocol (MCP) standardized tool calling across agents',
+            'Configure Prompt Context Caching for 75% input token discount on repeated schemas',
+            'Deploy self-service semantic metric layer for sub-second executive BI query acceleration'
+          ]
+        }
+      },
       strategicRoadmap: {
         phase1: {
           title: 'Phase 1: Foundation, Unified Governance & FinOps Quick Wins',
           timeline: '1–3 Months',
           focus: 'Eliminate security vulnerabilities and stop cloud spend leakage',
           milestones: [
-            'Deploy unified Unity Catalog metastore and map IAM role delegations',
+            'Deploy unified Unity Catalog / Cloud Metastore and map IAM role delegations',
             'Configure 15-minute auto-termination policies on all development SQL warehouses',
             'Enable automated Delta Lake / Apache Iceberg UniForm for zero-copy sharing'
           ]

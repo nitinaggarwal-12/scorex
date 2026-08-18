@@ -628,12 +628,20 @@ const DynamicAssessmentGenerator = () => {
 
     setIsStarting(true);
     try {
+      const safeTypeKey = (generatedFramework?.typeKey || generatedFramework?.title || 'custom_assessment')
+        .toLowerCase()
+        .replace(/[^a-z0-9_]+/g, '_')
+        .replace(/^_+|_+$/g, '') || `custom_${Date.now()}`;
+
       const instance = await dynamicAssessmentService.createInstance({
         customerName: customerName.trim(),
-        useCase: useCase.trim(),
+        useCase: useCase.trim() || generatedFramework?.title || 'Enterprise Architecture Assessment',
         contactEmail: contactEmail.trim(),
-        typeKey: generatedFramework.typeKey,
-        frameworkSnapshot: generatedFramework
+        typeKey: safeTypeKey,
+        frameworkSnapshot: {
+          ...generatedFramework,
+          typeKey: safeTypeKey
+        }
       });
 
       if (instance && instance.id) {

@@ -259,32 +259,36 @@ const BacklogExporterCard = ({
         }
       ];
 
-  // RFC 4180 Compliant CSV field escaper
+  // RFC 4180 Compliant & OWASP CSV Injection Sanitizer
   const escapeCsv = (val) => {
     if (val === null || val === undefined) return '""';
-    const str = String(val);
+    let str = String(val).trim();
+    // Neutralize dangerous formula prefixes (=, +, -, @, \t, \r)
+    if (/^[=+\-@\t\r]/.test(str)) {
+      str = `'${str}`;
+    }
     return `"${str.replace(/"/g, '""')}"`;
   };
 
   // Download Jira CSV
   const handleDownloadJiraCSV = () => {
-    const headers = ['Issue Type', 'Issue Key', 'Summary', 'Description', 'Priority', 'Component', 'Sprint'];
+    const headers = ['Issue Type', 'Issue Key', 'Summary', 'Description', 'Priority', 'Component', 'Sprint'].map(escapeCsv);
     const rows = [];
 
     backlogEpics.forEach(epic => {
       rows.push([
-        'Epic',
+        escapeCsv('Epic'),
         escapeCsv(epic.id),
         escapeCsv(epic.title),
         escapeCsv(`Strategic transformation epic for ${epic.pillar}`),
-        'High',
+        escapeCsv('High'),
         escapeCsv(epic.pillar),
-        'Phase 1'
+        escapeCsv('Phase 1')
       ]);
 
       epic.stories.forEach(story => {
         rows.push([
-          'Story',
+          escapeCsv('Story'),
           escapeCsv(story.key),
           escapeCsv(story.title),
           escapeCsv('Acceptance criteria: Must verify implementation and testing with architecture governance.'),
