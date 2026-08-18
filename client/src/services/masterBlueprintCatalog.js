@@ -9076,11 +9076,179 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
   };
 }
 
+/**
+ * Generate bespoke, domain-aware Mermaid.js diagram syntax matching the assessment domain
+ */
+function getMermaidDiagram(framework = {}, isTarget = true) {
+  const key = (framework.typeKey || "").toLowerCase();
+  const title = (framework.title || "").toLowerCase();
+
+  const isAgenticMesh = key.includes("agentic") || key.includes("mcp") || key.includes("banking") || title.includes("agentic") || title.includes("multi-agent") || title.includes("mcp");
+  const isGenAIReadiness = (key.includes("genai") || title.includes("genai")) && !key.includes("openai") && !key.includes("mesh");
+  const isOpenAI = key.includes("openai") || (key.includes("gemini") && key.includes("migration")) || title.includes("openai");
+  const isSecurity = key.includes("security") || key.includes("zero_trust") || key.includes("ciso") || title.includes("security") || title.includes("zero trust");
+  const isLakehouse = key.includes("lakehouse") || key.includes("bigquery") || key.includes("edw") || key.includes("snowflake") || key.includes("teradata") || title.includes("lakehouse") || title.includes("bigquery") || title.includes("snowflake");
+  const isFinOps = key.includes("finops") || key.includes("cost") || key.includes("billing") || title.includes("finops") || title.includes("cost");
+
+  if (isOpenAI) {
+    return isTarget
+      ? `flowchart LR
+    subgraph Client["Client Application Layer"]
+      App[Enterprise Apps]
+      Web[Web Portal]
+    end
+    subgraph Gateway["Apigee AI Gateway & Security"]
+      WAF[Cloud Armor WAF] --> Proxy[Apigee Reverse Proxy]
+      Proxy --> Shield[Model Armor TRiSM Shield]
+    end
+    subgraph Vertex["Google Vertex AI & Gemini Enterprise"]
+      Shield --> Gemini[Gemini 2.5 / 3.7 Flash Engine]
+      Gemini --> Cache[(2M Context Caching - 75% Discount)]
+      Gemini --> MCP[Sandboxed MCP Tool Microservices]
+    end
+    App --> WAF
+    Web --> WAF`
+      : `flowchart LR
+    subgraph Legacy["Legacy Fragile OpenAI Stack"]
+      App[Application Backend] --> Key[Hardcoded OpenAI API Key]
+      Key --> PublicAPI[Public OpenAI / Azure Endpoints]
+      PublicAPI --> FullToken[100% Full Price Tokens - No Cache]
+      PublicAPI --> FragileRAG[8k Chunk Fragmented RAG]
+    end`;
+  }
+
+  if (isFinOps) {
+    return isTarget
+      ? `flowchart LR
+    subgraph Ingestion["FOCUS 1.0 Real-Time Ingestion"]
+      Billing[Google Cloud Billing Export] --> BQ[(BigQuery FOCUS 1.0 Lakehouse)]
+      GKE[OpenCost / Kubecost Pod Attribution] --> BQ
+      Tokens[Vertex AI Token Metering Logs] --> BQ
+    end
+    subgraph Governance["FinOps Governance Engine"]
+      BQ --> CI[Terraform Mandatory Tag Linter]
+      BQ --> Anomaly[BigQuery ML 15-min Anomaly Alerts]
+      BQ --> Quotas[Automated Budget Quotas]
+    end
+    subgraph Chargeback["Departmental P&L Transparency"]
+      Governance --> Invoices[Looker Studio BU Chargeback Invoices]
+      Governance --> CUD[1-3 Year Flexible CUD Optimizer]
+    end`
+      : `flowchart LR
+    subgraph Waste["Unmonitored Cloud Waste"]
+      VMs[Static 24/7 Over-provisioned VMs] --> Bill[Opaque Monthly Cloud Bill]
+      Ghost[Untagged Ghost Storage Disks] --> Bill
+      Runaway[Uncapped Model Experiments] --> Bill
+    end`;
+  }
+
+  if (isAgenticMesh) {
+    return isTarget
+      ? `flowchart LR
+    subgraph Orchestrator["Super-Orchestrator Hub"]
+      Hub[Gemini 3.7 Flash Super-Orchestrator]
+    end
+    subgraph Mesh["Compound Agentic Mesh Bus"]
+      Hub --> A1[Customer Support Sub-Agent]
+      Hub --> A2[Fulfillment & ERP Sub-Agent]
+      Hub --> A3[Knowledge RAG Sub-Agent]
+    end
+    subgraph MCP["Model Context Protocol Gateway"]
+      A1 --> MCPGateway[MCP Tool Gateway]
+      A2 --> MCPGateway
+      A3 --> MCPGateway
+      MCPGateway --> BQ[(BigQuery / BigLake Data)]
+      MCPGateway --> ERP[(SAP ECC / S4HANA)]
+      MCPGateway --> HITL{Human-in-the-Loop Approval}
+    end`
+      : `flowchart LR
+    subgraph Siloed["Fragmented Single-Threaded Chatbots"]
+      Bot1[Hardcoded Chatbot 1] --> API1[Brittle Endpoint]
+      Bot2[Isolated Script 2] --> API2[Ad-hoc Script]
+      Bot1 --> Fail[Zero Tool Sharing & Fragile State]
+    end`;
+  }
+
+  if (isLakehouse) {
+    return isTarget
+      ? `flowchart LR
+    subgraph Ingestion["Real-Time Declarative Ingestion"]
+      Sources[Oracle / SAP / Postgres / Kafka] --> DS[Datastream CDC]
+      DS --> GCS[(Cloud Storage Raw Landing)]
+    end
+    subgraph Lakehouse["Google BigLake Open Table Fabric"]
+      GCS --> Iceberg[(BigLake Apache Iceberg Tables)]
+      Iceberg --> Dataplex[Dataplex ABAC & Column Masking]
+      Iceberg --> BQ[BigQuery Vectorized SQL Engine]
+    end
+    subgraph Serving["BI & Agentic AI Mesh"]
+      BQ --> Looker[Looker Semantic BI Layer]
+      BQ --> Vertex[Vertex AI Grounding Vector Search]
+    end`
+      : `flowchart LR
+    subgraph Legacy["Legacy On-Prem EDW"]
+      DB[Oracle RAC / Teradata] --> Cron[Brittle Cron Batch ETL - 24h Lag]
+      Cron --> Silo[(Departmental Data Marts)]
+      Silo --> Report[Stale Daily Reports]
+    end`;
+  }
+
+  if (isSecurity) {
+    return isTarget
+      ? `flowchart LR
+    subgraph Edge["Zero-Trust Perimeter"]
+      Users[Authorized Identities] --> IAP[Identity-Aware Proxy]
+      IAP --> WAF[Cloud Armor WAF & DDoS Shield]
+    end
+    subgraph Perimeter["VPC Service Controls Perimeter"]
+      WAF --> GKE[Private GKE Autopilot Cluster]
+      GKE --> DLP[Cloud DLP Real-Time PII Masking]
+      GKE --> KMS[Cloud KMS HSM CMEK Keys]
+    end
+    subgraph TRiSM["AI Safety & Audit Plane"]
+      GKE --> ModelArmor[Model Armor TRiSM Shield]
+      GKE --> Audit[(Immutable WORM Audit Logs)]
+    end`
+      : `flowchart LR
+    subgraph Vulnerable["Exposed Legacy Perimeter"]
+      Public[Public Endpoints] --> Direct[Direct Server Access]
+      Direct --> Plaintext[Plaintext PII Storage]
+      Direct --> Manual[Manual 14-Day Audit Triage]
+    end`;
+  }
+
+  // Default General Data & AI
+  return isTarget
+    ? `flowchart LR
+    subgraph Ingestion["Ingestion & CDC"]
+      A[Cloud Pub/Sub] --> B[Dataflow Beam]
+      C[Storage Transfer] --> D[Cloud Storage]
+    end
+    subgraph Core["Core Lakehouse & AI"]
+      D --> E[BigLake Apache Iceberg]
+      B --> F[BigQuery Serverless SQL]
+      E --> F
+      F --> G[Vertex AI Gemini 3.7]
+    end
+    subgraph Serving["Governance & Serving"]
+      G --> H[Looker Studio BI]
+      F --> I[Dataplex Governance]
+    end`
+    : `flowchart LR
+    subgraph Legacy["On-Prem Legacy Silos"]
+      A[Oracle/Netezza] --> B[Cron Batch ETL]
+      B --> C[SFTP Scripts]
+      C --> D[Cognos Reports]
+    end`;
+}
+
 export default {
   getMasterArchitectureDiagrams,
+  getMermaidDiagram
 };
 export {
   getMasterArchitectureDiagrams,
+  getMermaidDiagram,
   buildLegacyDataDependencyMapXml,
   buildAsIsToBeProcessFlowXml,
   buildPristineFinopsXml,

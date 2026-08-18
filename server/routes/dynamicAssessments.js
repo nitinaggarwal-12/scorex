@@ -600,9 +600,21 @@ router.put('/instances/:id/diagrams', async (req, res) => {
   }
 });
 
+const PROTECTED_DEMO_INSTANCE_IDS = new Set([
+  'inst_openai_to_gemini_enterprise_migration_demo',
+  'inst_finops_cloud_cost_optimization_demo',
+  'inst_agentic_ai_mesh_mcp_banking_readiness_demo',
+  'inst_edw_lakehouse_to_bigquery_modernization_demo',
+  'inst_enterprise_ai_zero_trust_security_demo',
+  'inst_enterprise_data_ai_maturity_demo'
+]);
+
 router.delete('/instances/:id', async (req, res) => {
   try {
     const { id } = req.params;
+    if (PROTECTED_DEMO_INSTANCE_IDS.has(id)) {
+      return res.status(403).json({ success: false, error: 'Protected production showcase demo instance cannot be deleted' });
+    }
     await customAssessmentRepo.deleteInstance(id);
     res.json({ success: true, message: 'Assessment instance deleted successfully' });
   } catch (error) {
@@ -619,10 +631,15 @@ router.post('/instances/batch-delete', async (req, res) => {
       return res.status(400).json({ success: false, error: 'Array of assessment IDs required' });
     }
 
-    await Promise.all(ids.map(id => customAssessmentRepo.deleteInstance(id)));
+    const deletableIds = ids.filter(id => !PROTECTED_DEMO_INSTANCE_IDS.has(id));
+    if (deletableIds.length === 0) {
+      return res.status(403).json({ success: false, error: 'Selected instances are protected production demo showcases and cannot be deleted' });
+    }
+
+    await Promise.all(deletableIds.map(id => customAssessmentRepo.deleteInstance(id)));
     res.json({
       success: true,
-      message: `Successfully deleted ${ids.length} assessment instance(s)`
+      message: `Successfully deleted ${deletableIds.length} assessment instance(s)`
     });
   } catch (error) {
     console.error('Error batch deleting instances:', error);

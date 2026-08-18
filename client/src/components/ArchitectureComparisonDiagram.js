@@ -25,6 +25,7 @@ import DiagramViewer, { sanitizeDrawioXmlAttributes } from './DiagramViewer';
 import dynamicAssessmentService from '../services/dynamicAssessmentService';
 import masterBlueprintCatalog, {
   getMasterArchitectureDiagrams,
+  getMermaidDiagram,
   buildLegacyDataDependencyMapXml,
   buildCompleteWellArchitectedGcpDrMasterXml,
   buildPristineFinopsXml,
@@ -875,32 +876,11 @@ const ArchitectureComparisonDiagram = ({
   };
 
   const handleCopyMermaid = async (isTarget) => {
-    const mermaidCode = isTarget
-      ? `flowchart LR
-    subgraph Ingestion["Ingestion & CDC"]
-      A[Cloud Pub/Sub] --> B[Dataflow Beam]
-      C[Storage Transfer] --> D[Cloud Storage]
-    end
-    subgraph Core["Core Lakehouse & AI"]
-      D --> E[BigLake Iceberg]
-      B --> F[BigQuery SQL]
-      E --> F
-      F --> G[Vertex AI Gemini 3.7]
-    end
-    subgraph Serving["Governance & Serving"]
-      G --> H[Looker Studio BI]
-      F --> I[Dataplex Governance]
-    end`
-      : `flowchart LR
-    subgraph Legacy["On-Prem Legacy"]
-      A[Oracle/Netezza] --> B[Cron Batch ETL]
-      B --> C[SFTP Scripts]
-      C --> D[Cognos Reports]
-    end`;
+    const mermaidCode = getMermaidDiagram(framework, isTarget);
 
     try {
       await navigator.clipboard.writeText(mermaidCode);
-      toast.success('📋 Mermaid diagram syntax copied to clipboard!');
+      toast.success(`📋 Copied ${isTarget ? 'Target State' : 'Current Baseline'} Mermaid syntax!`, { icon: '📊' });
     } catch (e) {
       toast.error('Failed to copy Mermaid syntax');
     }
