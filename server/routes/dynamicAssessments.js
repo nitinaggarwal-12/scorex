@@ -3,6 +3,7 @@ const router = express.Router();
 const crypto = require('crypto');
 const customAssessmentRepo = require('../db/customAssessmentRepository');
 const dynamicEngine = require('../services/dynamicAssessmentEngine');
+const masterBlueprintCatalog = require('../services/masterBlueprintCatalog');
 const notificationService = require('../services/notificationService');
 
 /**
@@ -480,6 +481,26 @@ router.get('/instances/:id', async (req, res) => {
     if (!instance) {
       return res.status(404).json({ success: false, error: 'Assessment instance not found' });
     }
+
+    // Ensure authentic PromptCanvas master blueprints are attached
+    const fw = instance.frameworkSnapshot || {};
+    const metadata = {
+      customerName: instance.customerName || 'Enterprise Client',
+      useCase: instance.useCase || 'Platform Modernization'
+    };
+    const scores = {
+      overallScore: instance.totalScore || 2.8,
+      targetScore: 4.5
+    };
+
+    const existingDiags = instance.architectureDiagrams || instance.executiveReport?.architectureDiagrams;
+    if (!existingDiags || !existingDiags.currentStateXml || existingDiags.currentStateXml.includes('stage1_box')) {
+      const blueprints = masterBlueprintCatalog.getMasterArchitectureDiagrams(fw, metadata, scores);
+      instance.architectureDiagrams = blueprints;
+      if (!instance.executiveReport) instance.executiveReport = {};
+      instance.executiveReport.architectureDiagrams = blueprints;
+    }
+
     res.json({
       success: true,
       instance: sanitizeInstance(instance)

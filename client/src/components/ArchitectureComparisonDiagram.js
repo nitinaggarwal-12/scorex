@@ -23,6 +23,17 @@ import { SiGooglecloud } from 'react-icons/si';
 import toast from 'react-hot-toast';
 import DiagramViewer, { sanitizeDrawioXmlAttributes } from './DiagramViewer';
 import dynamicAssessmentService from '../services/dynamicAssessmentService';
+import masterBlueprintCatalog, {
+  getMasterArchitectureDiagrams,
+  buildLegacyDataDependencyMapXml,
+  buildCompleteWellArchitectedGcpDrMasterXml,
+  buildPristineFinopsXml,
+  buildDataLakehouseXml,
+  buildHubAndSpokeAgentConfigXml,
+  buildSecureDeploymentTopologyXml,
+  buildEvalSafetyXml,
+  buildEnterpriseAgentRuntimeXml
+} from '../services/masterBlueprintCatalog';
 
 const DiagramContainer = styled(motion.div)`
   background: white;
@@ -477,12 +488,11 @@ const StrategicBenefitsFooter = styled.div`
   }
 `;
 
-// DEFAULT BASELINE DRAW.IO XML
-const DEFAULT_CURRENT_XML = `<mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="850" background="#0f172a" math="0" shadow="0"><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="title" value="&lt;b style=&quot;font-size:16px;color:#f87171;&quot;&gt;⚠️ CURRENT BASELINE ARCHITECTURE: FRAGMENTED &amp;amp; SILOED&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94a3b8;&quot;&gt;Maturity Level: 2.6 (Developing) • Brittle Cron Batch • Data Silos • Static VM Costs • 14-day BI Backlog&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e1b4b;strokeColor=#ef4444;strokeWidth=2;fontColor=#ffffff;align=center;shadow=1;" vertex="1" parent="1"><mxGeometry x="40" y="20" width="1320" height="60" as="geometry"/></mxCell><mxCell id="stage1_box" value="&lt;b style=&quot;color:#f87171;font-size:12px;&quot;&gt;STAGE 1: INGESTION&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#cbd5e1;&quot;&gt;Brittle Batch &amp;amp; SFTP&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#1e293b;strokeColor=#f43f5e;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1"><mxGeometry x="40" y="100" width="280" height="660" as="geometry"/></mxCell><mxCell id="s1_card1" value="&lt;b style=&quot;color:#fda4af;font-size:12px;&quot;&gt;Legacy OLTP &amp;amp; Files&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94a3b8;&quot;&gt;Postgres, MySQL, SFTP&lt;br&gt;Point-to-point unmanaged exports&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage1_box"><mxGeometry x="20" y="60" width="240" height="80" as="geometry"/></mxCell><mxCell id="s1_card2" value="&lt;b style=&quot;color:#fda4af;font-size:12px;&quot;&gt;Cron Batch Scripts&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94a3b8;&quot;&gt;Python/Bash cron jobs&lt;br&gt;24-hour latency, no dead-letter queue&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage1_box"><mxGeometry x="20" y="160" width="240" height="80" as="geometry"/></mxCell><mxCell id="s1_warn" value="&lt;b style=&quot;color:#ef4444;&quot;&gt;⚠️ 38% Failure Rate&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#fca5a5;&quot;&gt;Silent schema breakages halt nightly ETL runs&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#450a0a;strokeColor=#ef4444;fontColor=#ffffff;align=center;" vertex="1" parent="stage1_box"><mxGeometry x="20" y="260" width="240" height="60" as="geometry"/></mxCell><mxCell id="stage2_box" value="&lt;b style=&quot;color:#f87171;font-size:12px;&quot;&gt;STAGE 2: DATA SILOS&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#cbd5e1;&quot;&gt;Split Warehouse + Lakes&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#1e293b;strokeColor=#f43f5e;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1"><mxGeometry x="380" y="100" width="280" height="660" as="geometry"/></mxCell><mxCell id="s2_card1" value="&lt;b style=&quot;color:#fda4af;font-size:12px;&quot;&gt;Unmanaged S3/GCS&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94a3b8;&quot;&gt;Raw CSV / JSON dumps&lt;br&gt;Fragmented bucket ACLs, no lineage&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage2_box"><mxGeometry x="20" y="60" width="240" height="80" as="geometry"/></mxCell><mxCell id="s2_card2" value="&lt;b style=&quot;color:#fda4af;font-size:12px;&quot;&gt;Isolated Data Warehouse&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94a3b8;&quot;&gt;Proprietary SQL Warehouse&lt;br&gt;Duplicate data copies &amp;amp; sync lag&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage2_box"><mxGeometry x="20" y="160" width="240" height="80" as="geometry"/></mxCell><mxCell id="s2_warn" value="&lt;b style=&quot;color:#ef4444;&quot;&gt;⚠️ Manual IAM Spreadsheets&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#fca5a5;&quot;&gt;No automated row/column masking&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#450a0a;strokeColor=#ef4444;fontColor=#ffffff;align=center;" vertex="1" parent="stage2_box"><mxGeometry x="20" y="260" width="240" height="60" as="geometry"/></mxCell><mxCell id="stage3_box" value="&lt;b style=&quot;color:#f87171;font-size:12px;&quot;&gt;STAGE 3: COMPUTE &amp;amp; MLOps&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#cbd5e1;&quot;&gt;Over-Provisioned Clusters&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#1e293b;strokeColor=#f43f5e;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1"><mxGeometry x="720" y="100" width="280" height="660" as="geometry"/></mxCell><mxCell id="s3_card1" value="&lt;b style=&quot;color:#fda4af;font-size:12px;&quot;&gt;Static 24/7 Spark VMs&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94a3b8;&quot;&gt;Always-on oversized clusters&lt;br&gt;Lack of automated auto-termination&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage3_box"><mxGeometry x="20" y="60" width="240" height="80" as="geometry"/></mxCell><mxCell id="s3_card2" value="&lt;b style=&quot;color:#fda4af;font-size:12px;&quot;&gt;Disconnected Notebooks&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94a3b8;&quot;&gt;Ad-hoc local Jupyter environments&lt;br&gt;No centralized model registry&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage3_box"><mxGeometry x="20" y="160" width="240" height="80" as="geometry"/></mxCell><mxCell id="s3_warn" value="&lt;b style=&quot;color:#ef4444;&quot;&gt;⚠️ $480k Annual Idle Waste&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#fca5a5;&quot;&gt;Zero cluster FinOps kill switches&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#450a0a;strokeColor=#ef4444;fontColor=#ffffff;align=center;" vertex="1" parent="stage3_box"><mxGeometry x="20" y="260" width="240" height="60" as="geometry"/></mxCell><mxCell id="stage4_box" value="&lt;b style=&quot;color:#f87171;font-size:12px;&quot;&gt;STAGE 4: SERVING &amp;amp; BI&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#cbd5e1;&quot;&gt;Unguarded LLMs &amp;amp; Heavy Backlog&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#1e293b;strokeColor=#f43f5e;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1"><mxGeometry x="1060" y="100" width="300" height="660" as="geometry"/></mxCell><mxCell id="s4_card1" value="&lt;b style=&quot;color:#fda4af;font-size:12px;&quot;&gt;Direct Unguarded LLM APIs&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94a3b8;&quot;&gt;No prompt caching (100% token spend)&lt;br&gt;No enterprise PII filters or guardrails&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage4_box"><mxGeometry x="20" y="60" width="260" height="80" as="geometry"/></mxCell><mxCell id="s4_card2" value="&lt;b style=&quot;color:#fda4af;font-size:12px;&quot;&gt;Stale Daily BI Extracts&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94a3b8;&quot;&gt;Slow queries over legacy schemas&lt;br&gt;14-day turnaround on custom metrics&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#311018;strokeColor=#f43f5e;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage4_box"><mxGeometry x="20" y="160" width="260" height="80" as="geometry"/></mxCell><mxCell id="s4_warn" value="&lt;b style=&quot;color:#ef4444;&quot;&gt;⚠️ 14-Day Delivery Lag&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#fca5a5;&quot;&gt;Analyst team overwhelmed by custom SQL&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#450a0a;strokeColor=#ef4444;fontColor=#ffffff;align=center;" vertex="1" parent="stage4_box"><mxGeometry x="20" y="260" width="260" height="60" as="geometry"/></mxCell><mxCell id="flow1" value="Nightly Batch (24h)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=2;strokeColor=#ef4444;dashed=1;fontColor=#fca5a5;fontSize=10;" edge="1" parent="1" source="s1_card2" target="s2_card1"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="flow2" value="ETL Extract" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=2;strokeColor=#ef4444;dashed=1;fontColor=#fca5a5;fontSize=10;" edge="1" parent="1" source="s2_card2" target="s3_card1"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="flow3" value="Ad-hoc SQL" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=2;strokeColor=#ef4444;dashed=1;fontColor=#fca5a5;fontSize=10;" edge="1" parent="1" source="s3_card1" target="s4_card2"><mxGeometry relative="1" as="geometry"/></mxCell></root></mxGraphModel>`;
+// DEFAULT BASELINE DRAW.IO XML (PromptCanvas P1-APP-L-01 Legacy Map)
+const DEFAULT_CURRENT_XML = buildLegacyDataDependencyMapXml();
 
-// DEFAULT TARGET STATE DRAW.IO XML
-// DEFAULT TARGET STATE DRAW.IO XML
-const DEFAULT_TARGET_XML = `<mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="850" background="#0f172a" math="0" shadow="0"><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="title" value="&lt;b style=&quot;font-size:16px;color:#34d399;&quot;&gt;✨ DESIRED FUTURE STATE ARCHITECTURE: MODERN OPEN LAKEHOUSE &amp;amp; AGENTIC MESH&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94a3b8;&quot;&gt;Target Maturity: Level 4.5 (Optimized) • Sub-Second Streaming • Open Table Formats (Apache Iceberg) • Serverless FinOps • MCP Agent Mesh&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;strokeWidth=2;fontColor=#ffffff;align=center;shadow=1;" vertex="1" parent="1"><mxGeometry x="40" y="20" width="1320" height="60" as="geometry"/></mxCell><mxCell id="stage1_box" value="&lt;b style=&quot;color:#34d399;font-size:12px;&quot;&gt;STAGE 1: REAL-TIME INGESTION&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#cbd5e1;&quot;&gt;Declarative Streaming &amp;amp; CDC&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#022c22;strokeColor=#10b981;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1"><mxGeometry x="40" y="100" width="280" height="660" as="geometry"/></mxCell><mxCell id="s1_card1" value="&lt;b style=&quot;color:#6ee7b7;font-size:12px;&quot;&gt;Multi-Source Event Streams&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Kafka, Kinesis, Google Pub/Sub&lt;br&gt;Sub-second real-time event capture&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage1_box"><mxGeometry x="20" y="60" width="240" height="80" as="geometry"/></mxCell><mxCell id="s1_card2" value="&lt;b style=&quot;color:#6ee7b7;font-size:12px;&quot;&gt;Serverless Auto-Loader / CDC&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Automated schema evolution&lt;br&gt;Declarative data transformations&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage1_box"><mxGeometry x="20" y="160" width="240" height="80" as="geometry"/></mxCell><mxCell id="s1_val" value="&lt;b style=&quot;color:#10b981;&quot;&gt;✓ Zero Ingestion Latency&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#a7f3d0;&quot;&gt;Automated retry &amp;amp; dead-letter isolation&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#065f46;strokeColor=#10b981;fontColor=#ffffff;align=center;" vertex="1" parent="stage1_box"><mxGeometry x="20" y="260" width="240" height="60" as="geometry"/></mxCell><mxCell id="stage2_box" value="&lt;b style=&quot;color:#34d399;font-size:12px;&quot;&gt;STAGE 2: OPEN LAKEHOUSE&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#cbd5e1;&quot;&gt;Apache Iceberg &amp;amp; Open Catalog&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#022c22;strokeColor=#10b981;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1"><mxGeometry x="380" y="100" width="280" height="660" as="geometry"/></mxCell><mxCell id="s2_card1" value="&lt;b style=&quot;color:#6ee7b7;font-size:12px;&quot;&gt;Open Table Formats&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Apache Iceberg / Delta Lake&lt;br&gt;Single source of truth, zero lock-in&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage2_box"><mxGeometry x="20" y="60" width="240" height="80" as="geometry"/></mxCell><mxCell id="s2_card2" value="&lt;b style=&quot;color:#6ee7b7;font-size:12px;&quot;&gt;Centralized Metadata &amp;amp; Governance&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Row/column dynamic masking&lt;br&gt;Automated end-to-end audit lineage&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage2_box"><mxGeometry x="20" y="160" width="240" height="80" as="geometry"/></mxCell><mxCell id="s2_val" value="&lt;b style=&quot;color:#10b981;&quot;&gt;✓ Unified Governance Plane&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#a7f3d0;&quot;&gt;Cross-cloud zero-copy data sharing&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#065f46;strokeColor=#10b981;fontColor=#ffffff;align=center;" vertex="1" parent="stage2_box"><mxGeometry x="20" y="260" width="240" height="60" as="geometry"/></mxCell><mxCell id="stage3_box" value="&lt;b style=&quot;color:#34d399;font-size:12px;&quot;&gt;STAGE 3: FINOPS &amp;amp; MLOps&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#cbd5e1;&quot;&gt;Autoscaling Serverless Compute&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#022c22;strokeColor=#10b981;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1"><mxGeometry x="720" y="100" width="280" height="660" as="geometry"/></mxCell><mxCell id="s3_card1" value="&lt;b style=&quot;color:#6ee7b7;font-size:12px;&quot;&gt;Serverless Vectorized SQL&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Instant 15-min auto-suspend switches&lt;br&gt;35% to 50% compute TCO savings&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage3_box"><mxGeometry x="20" y="60" width="240" height="80" as="geometry"/></mxCell><mxCell id="s3_card2" value="&lt;b style=&quot;color:#6ee7b7;font-size:12px;&quot;&gt;Production MLOps Registry&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Automated CI/CD model verification&lt;br&gt;Real-time concept drift &amp;amp; feature store&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage3_box"><mxGeometry x="20" y="160" width="240" height="80" as="geometry"/></mxCell><mxCell id="s3_val" value="&lt;b style=&quot;color:#10b981;&quot;&gt;✓ Automated FinOps &amp;amp; CI/CD&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#a7f3d0;&quot;&gt;Zero idle spend &amp;amp; fully tracked models&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#065f46;strokeColor=#10b981;fontColor=#ffffff;align=center;" vertex="1" parent="stage3_box"><mxGeometry x="20" y="260" width="240" height="60" as="geometry"/></mxCell><mxCell id="stage4_box" value="&lt;b style=&quot;color:#34d399;font-size:12px;&quot;&gt;STAGE 4: AI MESH &amp;amp; BI&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#cbd5e1;&quot;&gt;MCP Protocol &amp;amp; Semantic Layer&lt;/span&gt;" style="swimlane;html=1;startSize=44;fillColor=#022c22;strokeColor=#10b981;fontColor=#ffffff;fontSize=12;fontStyle=1;rounded=1;" vertex="1" parent="1"><mxGeometry x="1060" y="100" width="300" height="660" as="geometry"/></mxCell><mxCell id="s4_card1" value="&lt;b style=&quot;color:#6ee7b7;font-size:12px;&quot;&gt;Compound Multi-Agent Mesh&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;MCP protocol &amp;amp; 75% prompt context caching&lt;br&gt;Zero-Trust AI guardrails &amp;amp; CMEK isolation&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage4_box"><mxGeometry x="20" y="60" width="260" height="80" as="geometry"/></mxCell><mxCell id="s4_card2" value="&lt;b style=&quot;color:#6ee7b7;font-size:12px;&quot;&gt;Self-Service Semantic BI Layer&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#cbd5e1;&quot;&gt;Direct zero-copy BI queries&lt;br&gt;Sub-second dashboard refresh speeds&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;align=left;spacingLeft=10;" vertex="1" parent="stage4_box"><mxGeometry x="20" y="160" width="260" height="80" as="geometry"/></mxCell><mxCell id="s4_val" value="&lt;b style=&quot;color:#10b981;&quot;&gt;✓ Real-Time Self-Service&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#a7f3d0;&quot;&gt;Instant answers for BI &amp;amp; autonomous agents&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#065f46;strokeColor=#10b981;fontColor=#ffffff;align=center;" vertex="1" parent="stage4_box"><mxGeometry x="20" y="260" width="260" height="60" as="geometry"/></mxCell><mxCell id="flow1" value="Streaming CDC" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=2.5;strokeColor=#10b981;fontColor=#6ee7b7;fontSize=10;" edge="1" parent="1" source="s1_card2" target="s2_card1"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="flow2" value="Zero-Copy Engine" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=2.5;strokeColor=#10b981;fontColor=#6ee7b7;fontSize=10;" edge="1" parent="1" source="s2_card2" target="s3_card1"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="flow3" value="MCP Autonomous Mesh" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=2.5;strokeColor=#10b981;fontColor=#6ee7b7;fontSize=10;" edge="1" parent="1" source="s3_card1" target="s4_card1"><mxGeometry relative="1" as="geometry"/></mxCell></root></mxGraphModel>`;
+// DEFAULT TARGET STATE DRAW.IO XML (PromptCanvas P3-APP-C-01 Panoramic Master)
+const DEFAULT_TARGET_XML = buildCompleteWellArchitectedGcpDrMasterXml();
 
 // Robust React Error Boundary for XML Graph Model rendering
 class DiagramErrorBoundary extends React.Component {
@@ -559,7 +569,8 @@ const REFERENCE_BLUEPRINTS = [
     badge: 'BigLake & Vertex AI',
     description: 'Panoramic Medallion Lakehouse on BigQuery, Vertex AI Agentic Mesh, Zero-Trust Landing Zone, and Looker semantic BI.',
     title: 'GCP Unified Enterprise Data & AI Platform',
-    subtitle: 'P3-APP-C-01 Panoramic Architecture Blueprint'
+    subtitle: 'P3-APP-C-01 Panoramic Architecture Blueprint',
+    builder: buildCompleteWellArchitectedGcpDrMasterXml
   },
   {
     id: 'openai_to_gemini',
@@ -569,7 +580,8 @@ const REFERENCE_BLUEPRINTS = [
     badge: 'Gemini 2M & Apigee',
     description: 'Apigee AI Gateway, Gemini 2M Context Caching (75% discount), Model Armor real-time shield, and sandboxed MCP tool microservices.',
     title: 'Google Vertex AI & Gemini Enterprise Mesh',
-    subtitle: 'Apigee AI Gateway + 2M Context Caching + Model Armor'
+    subtitle: 'Apigee AI Gateway + 2M Context Caching + Model Armor',
+    builder: buildEnterpriseAgentRuntimeXml
   },
   {
     id: 'cloud_finops_chargeback',
@@ -579,7 +591,8 @@ const REFERENCE_BLUEPRINTS = [
     badge: 'FOCUS 1.0 BigQuery',
     description: 'Daily FOCUS 1.0 BigQuery billing export, OpenCost pod attribution, GKE Autopilot scale-to-zero, and 85%+ CUD coverage.',
     title: 'Enterprise Cloud FinOps & Chargeback Engine',
-    subtitle: 'P2-GOV-C-01 Multi-Tenant Cost Attribution & Quota Governor'
+    subtitle: 'P2-GOV-C-01 Multi-Tenant Cost Attribution & Quota Governor',
+    builder: buildPristineFinopsXml
   },
   {
     id: 'agentic_mesh_mcp',
@@ -589,7 +602,8 @@ const REFERENCE_BLUEPRINTS = [
     badge: 'MCP Tool Gateway',
     description: 'Gemini 3.7 Super-Orchestrator Hub, Model Context Protocol (MCP) tool gateway, Tangential ReAct ring, and HITL approval gates.',
     title: 'Hub-and-Spoke Multi-Agent Mesh & MCP Gateway',
-    subtitle: 'P3-AI-L-03 Agent Bus + ARCH-MCP-06 Standardized Tools'
+    subtitle: 'P3-AI-L-03 Agent Bus + ARCH-MCP-06 Standardized Tools',
+    builder: buildHubAndSpokeAgentConfigXml
   },
   {
     id: 'edw_bigquery_lakehouse',
@@ -599,7 +613,8 @@ const REFERENCE_BLUEPRINTS = [
     badge: 'BigLake Iceberg',
     description: 'Datastream CDC, BigLake open Apache Iceberg tables, Dataplex ABAC governance, and BigQuery Editions autoscaling slots.',
     title: 'Google BigQuery & BigLake Modern Fabric',
-    subtitle: 'P3-DAT-L-04 Medallion Fabric + P4-DAT-P-13 Streaming'
+    subtitle: 'P3-DAT-L-04 Medallion Fabric + P4-DAT-P-13 Streaming',
+    builder: buildDataLakehouseXml
   },
   {
     id: 'zero_trust_security',
@@ -609,7 +624,8 @@ const REFERENCE_BLUEPRINTS = [
     badge: 'VPC-SC & Model Armor',
     description: 'Cloud Armor WAF, Identity-Aware Proxy (IAP), Real-Time Cloud DLP surrogate masking, Cloud KMS HSM CMEK, and Binary Authorization.',
     title: 'Zero-Trust Secure AI Deployment & TRiSM Shield',
-    subtitle: 'P4-SEC-P-01 Secure Topology + P4-GOV-L-07 TRiSM Shield'
+    subtitle: 'P4-SEC-P-01 Secure Topology + P4-GOV-L-07 TRiSM Shield',
+    builder: buildSecureDeploymentTopologyXml
   },
   {
     id: 'genai_evaluation_platform',
@@ -619,7 +635,8 @@ const REFERENCE_BLUEPRINTS = [
     badge: 'Vertex Model Eval',
     description: 'Enterprise Agent Registry, Vertex AI Vector Search multimodal grounding, automated Model Evaluation benchmarks, and RLHF feedback loops.',
     title: 'Closed-Loop GenAI Platform & Evaluation Suite',
-    subtitle: 'P4-GOV-L-06 Safety, Factuality & Latency Benchmarks'
+    subtitle: 'P4-GOV-L-06 Safety, Factuality & Latency Benchmarks',
+    builder: buildEvalSafetyXml
   }
 ];
 
@@ -649,7 +666,31 @@ const ArchitectureComparisonDiagram = ({
   const [rawXmlDraft, setRawXmlDraft] = useState('');
   const [customPrompt, setCustomPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [diagramsData, setDiagramsData] = useState(initialDiagrams || null);
+
+  // Derive authentic PromptCanvas default diagrams for the current assessment framework
+  const defaultBlueprintData = React.useMemo(() => {
+    return getMasterArchitectureDiagrams(
+      framework,
+      { customerName, useCase },
+      { overallScore: currentScore, targetScore }
+    );
+  }, [framework, customerName, useCase, currentScore, targetScore]);
+
+  const [diagramsData, setDiagramsData] = useState(() => {
+    if (initialDiagrams && initialDiagrams.currentStateXml && !initialDiagrams.currentStateXml.includes('stage1_box')) {
+      return initialDiagrams;
+    }
+    return defaultBlueprintData;
+  });
+
+  useEffect(() => {
+    if (initialDiagrams && initialDiagrams.currentStateXml && !initialDiagrams.currentStateXml.includes('stage1_box')) {
+      setDiagramsData(initialDiagrams);
+    } else {
+      setDiagramsData(defaultBlueprintData);
+    }
+  }, [initialDiagrams, defaultBlueprintData]);
+
   const [versionHistory, setVersionHistory] = useState([
     { id: 'v1.0', version: 'v1.0', label: 'Initial AI Synthesis', timestamp: new Date().toLocaleTimeString(), target: 'target' }
   ]);
@@ -758,12 +799,6 @@ const ArchitectureComparisonDiagram = ({
     toast.success(`✅ Applied custom manual XML edits (${newVer})!`);
   };
 
-  useEffect(() => {
-    if (initialDiagrams) {
-      setDiagramsData(initialDiagrams);
-    }
-  }, [initialDiagrams]);
-
   const currentXml = diagramsData?.currentStateXml || DEFAULT_CURRENT_XML;
   const targetXml = diagramsData?.targetStateXml || DEFAULT_TARGET_XML;
   const currentTitle = diagramsData?.currentTitle || 'Current Baseline Architecture';
@@ -800,14 +835,15 @@ const ArchitectureComparisonDiagram = ({
   };
 
   const handleSelectTemplate = (tpl) => {
+    const xml = tpl.builder ? tpl.builder() : DEFAULT_TARGET_XML;
     setDiagramsData(prev => ({
       ...prev,
       targetTitle: tpl.title,
       targetSubtitle: tpl.subtitle,
-      targetStateXml: prev?.targetStateXml || DEFAULT_TARGET_XML
+      targetStateXml: xml
     }));
     setIsTemplateModalOpen(false);
-    toast.success(`Applied "${tpl.name}" architecture blueprint!`);
+    toast.success(`Applied "${tpl.name}" architecture blueprint!`, { icon: '🏛️' });
   };
 
   const handleCopyXml = async (xml) => {

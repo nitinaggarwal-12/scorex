@@ -52,9 +52,17 @@ export function sanitizeDrawioXmlAttributes(xml) {
 
 export function getCleanGraphXml(xmlStr) {
   if (!xmlStr) return '';
+  const trimmed = xmlStr.trim();
+  if (trimmed.includes('<mxfile')) {
+    const s = trimmed.indexOf('<mxfile');
+    const e = trimmed.lastIndexOf('</mxfile>');
+    if (s !== -1 && e !== -1) {
+      return trimmed.substring(s, e + 9);
+    }
+  }
   const sIdx = xmlStr.indexOf('<mxGraphModel');
   const eIdx = xmlStr.lastIndexOf('</mxGraphModel>');
-  if (sIdx !== -1 && eIdx !== -1) {
+  if (sIdx !== -1 && eIdx !== -1 && !trimmed.includes('<diagram')) {
     return xmlStr.substring(sIdx, eIdx + 15);
   }
   return xmlStr;
