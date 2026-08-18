@@ -625,6 +625,11 @@ export class ExecutivePDFExporter {
     // Split-Screen Architecture Cards
     const colW = (this.contentWidth - 14) / 2;
     const cardH = 260;
+    const diagrams = this.assessmentInfo?.architectureDiagrams || this.results?.architectureDiagrams || this.assessmentInfo?.aiReport?.architectureDiagrams || {};
+    const curTitle = diagrams.currentTitle || 'CURRENT BASELINE (AS-IS ARCHITECTURE)';
+    const curSub = diagrams.currentSubtitle || 'Blueprint Ref: P1-APP-L-01 (Legacy Dependency Map)';
+    const tgtTitle = diagrams.targetTitle || 'TARGET CLOUD-NATIVE (TO-BE ARCHITECTURE)';
+    const tgtSub = diagrams.targetSubtitle || 'Blueprint Ref: P3-APP-C-01 & P3-DAT-L-04 (BigLake Fabric)';
 
     // LEFT CARD: AS-IS CURRENT STATE
     this.doc.setFillColor('#FFF5F5');
@@ -638,15 +643,15 @@ export class ExecutivePDFExporter {
     this.doc.rect(this.margin, yPos + 22, colW, 6, 'F'); // square bottom corners
 
     this.doc.setFont('helvetica', 'bold');
-    this.doc.setFontSize(9.5);
+    this.doc.setFontSize(8.5);
     this.doc.setTextColor(COLORS.white);
-    this.doc.text('CURRENT BASELINE (AS-IS ARCHITECTURE)', this.margin + 12, yPos + 18);
+    this.doc.text(curTitle.length > 42 ? curTitle.substring(0, 40) + '...' : curTitle, this.margin + 12, yPos + 18);
 
     let curY = yPos + 42;
     this.doc.setFont('helvetica', 'bold');
-    this.doc.setFontSize(9);
+    this.doc.setFontSize(8);
     this.doc.setTextColor('#991B1B');
-    this.doc.text('Blueprint Ref: P1-APP-L-01 (Legacy Dependency Map)', this.margin + 12, curY);
+    this.doc.text(curSub.length > 55 ? curSub.substring(0, 53) + '...' : curSub, this.margin + 12, curY);
 
     curY += 16;
     this.doc.setFont('helvetica', 'normal');
@@ -688,15 +693,15 @@ export class ExecutivePDFExporter {
     this.doc.rect(rightX, yPos + 22, colW, 6, 'F');
 
     this.doc.setFont('helvetica', 'bold');
-    this.doc.setFontSize(9.5);
+    this.doc.setFontSize(8.5);
     this.doc.setTextColor(COLORS.white);
-    this.doc.text('TARGET CLOUD-NATIVE (TO-BE ARCHITECTURE)', rightX + 12, yPos + 18);
+    this.doc.text(tgtTitle.length > 42 ? tgtTitle.substring(0, 40) + '...' : tgtTitle, rightX + 12, yPos + 18);
 
     let tgtY = yPos + 42;
     this.doc.setFont('helvetica', 'bold');
-    this.doc.setFontSize(9);
+    this.doc.setFontSize(8);
     this.doc.setTextColor('#065F46');
-    this.doc.text('Blueprint Ref: P3-APP-C-01 & P3-DAT-L-04 (BigLake Fabric)', rightX + 12, tgtY);
+    this.doc.text(tgtSub.length > 55 ? tgtSub.substring(0, 53) + '...' : tgtSub, rightX + 12, tgtY);
 
     tgtY += 16;
     this.doc.setFont('helvetica', 'normal');

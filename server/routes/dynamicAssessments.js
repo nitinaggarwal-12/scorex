@@ -662,6 +662,9 @@ router.post('/instances/batch-clone', async (req, res) => {
         ? `${source.useCase} (${suffix || 'Next Quarter'})` 
         : `Quarterly Reassessment (${suffix || 'Next Quarter'})`;
 
+      const diagrams = source.architectureDiagrams || source.aiReport?.architectureDiagrams || null;
+      const aiReport = source.aiReport ? JSON.parse(JSON.stringify(source.aiReport)) : null;
+
       return customAssessmentRepo.createInstance({
         typeKey: source.typeKey,
         customerName: source.customerName,
@@ -673,7 +676,9 @@ router.post('/instances/batch-clone', async (req, res) => {
         totalScore: source.totalScore,
         maxScore: source.maxScore,
         maturityLevel: source.maturityLevel,
-        status: 'in_progress'
+        status: 'in_progress',
+        architectureDiagrams: diagrams,
+        aiReport: aiReport
       });
     }));
 
@@ -702,6 +707,9 @@ router.post('/instances/:id/clone', async (req, res) => {
       ? `${source.useCase} (${suffix || 'Next Quarter'})` 
       : `Quarterly Reassessment (${suffix || 'Next Quarter'})`;
 
+    const diagrams = source.architectureDiagrams || source.aiReport?.architectureDiagrams || null;
+    const aiReport = source.aiReport ? JSON.parse(JSON.stringify(source.aiReport)) : null;
+
     const clonedInstance = await customAssessmentRepo.createInstance({
       typeKey: source.typeKey,
       customerName: source.customerName,
@@ -713,7 +721,9 @@ router.post('/instances/:id/clone', async (req, res) => {
       totalScore: source.totalScore,
       maxScore: source.maxScore,
       maturityLevel: source.maturityLevel,
-      status: 'in_progress'
+      status: 'in_progress',
+      architectureDiagrams: diagrams,
+      aiReport: aiReport
     });
 
     res.json({
@@ -748,6 +758,11 @@ router.post('/instances/:id/generate-report', aiRateLimiter(15, 60000), async (r
         industry: req.body.industry
       }
     );
+
+    // Preserve custom Draw.io architecture diagrams if existing
+    if (instance.architectureDiagrams && (!aiReport.architectureDiagrams || !aiReport.architectureDiagrams.currentStateXml)) {
+      aiReport.architectureDiagrams = instance.architectureDiagrams;
+    }
 
     const updated = await customAssessmentRepo.updateInstance(id, {
       aiReport,

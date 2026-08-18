@@ -3232,6 +3232,13 @@ class CustomAssessmentRepository {
 
   async createInstance(instanceData) {
     const id = instanceData.id || uuidv4();
+    let aiReport = instanceData.aiReport || null;
+    let architectureDiagrams = instanceData.architectureDiagrams || aiReport?.architectureDiagrams || null;
+    if (architectureDiagrams) {
+      if (!aiReport) aiReport = {};
+      aiReport.architectureDiagrams = architectureDiagrams;
+    }
+
     const formatted = {
       id,
       typeKey: instanceData.typeKey || instanceData.type_key || 'custom',
@@ -3245,7 +3252,9 @@ class CustomAssessmentRepository {
       maxScore: parseFloat(instanceData.maxScore || 5.0),
       maturityLevel: instanceData.maturityLevel || 'Initial',
       status: instanceData.status || 'in_progress',
-      aiReport: instanceData.aiReport || null,
+      aiReport,
+      architectureDiagrams,
+      executiveReport: aiReport,
       createdBy: instanceData.createdBy || 'system',
       createdAt: instanceData.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
