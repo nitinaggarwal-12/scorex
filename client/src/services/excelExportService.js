@@ -114,7 +114,6 @@ function addMetadataSheet(workbook, assessment) {
  * Add summary sheet with overall maturity scores
  */
 function addSummarySheet(workbook, assessment) {
-  const responses = assessment.responses || {};
   const completedCategories = assessment.completedCategories || [];
   
   const summaryData = [
@@ -249,7 +248,7 @@ function addPillarSheet(workbook, assessment, pillar) {
     ];
     
     // Sanitize sheet name (max 31 chars, no special characters)
-    const sheetName = pillar.name.substring(0, 31).replace(/[:\\/?*\[\]]/g, '_');
+    const sheetName = pillar.name.substring(0, 31).replace(/[:\\/?*[\]]/g, '_');
     
     XLSX.utils.book_append_sheet(workbook, ws, sheetName);
   }

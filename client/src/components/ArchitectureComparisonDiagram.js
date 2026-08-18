@@ -641,6 +641,21 @@ const REFERENCE_BLUEPRINTS = [
   }
 ];
 
+const formatAuditTimestamp = (date = new Date()) => {
+  try {
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    }).format(date instanceof Date ? date : new Date(date));
+  } catch (e) {
+    return new Date().toLocaleTimeString();
+  }
+};
+
 const ArchitectureComparisonDiagram = ({ 
   instanceId,
   initialDiagrams,
@@ -693,9 +708,27 @@ const ArchitectureComparisonDiagram = ({
   }, [initialDiagrams, defaultBlueprintData]);
 
   const [versionHistory, setVersionHistory] = useState([
-    { id: 'v1.0', version: 'v1.0', label: 'Initial AI Synthesis', timestamp: new Date().toLocaleTimeString(), target: 'target' }
+    { id: 'v1.0', version: 'v1.0', label: 'Initial AI Synthesis', timestamp: formatAuditTimestamp(), target: 'target' }
   ]);
-  const [reviewerNotes, setReviewerNotes] = useState([]);
+
+  const notesStorageKey = instanceId ? `scorex_arch_notes_${instanceId}` : 'scorex_arch_notes_default';
+  const [reviewerNotes, setReviewerNotes] = useState(() => {
+    try {
+      const saved = localStorage.getItem(notesStorageKey);
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(notesStorageKey, JSON.stringify(reviewerNotes));
+    } catch (e) {
+      // LocalStorage error fallback
+    }
+  }, [reviewerNotes, notesStorageKey]);
+
   const [noteText, setNoteText] = useState('');
   const [showNotesDrawer, setShowNotesDrawer] = useState(false);
   const drawioIframeRef = useRef(null);
@@ -754,7 +787,7 @@ const ArchitectureComparisonDiagram = ({
                 id: newVer,
                 version: newVer,
                 label: `Visual Draw.io Edit (${xmlTargetState === 'current' ? 'Current' : 'Target'})`,
-                timestamp: new Date().toLocaleTimeString(),
+                timestamp: formatAuditTimestamp(),
                 target: xmlTargetState
               },
               ...prev
@@ -805,7 +838,7 @@ const ArchitectureComparisonDiagram = ({
         id: newVer,
         version: newVer,
         label: `Raw XML Tweak (${xmlTargetState === 'current' ? 'Current' : 'Target'})`,
-        timestamp: new Date().toLocaleTimeString(),
+        timestamp: formatAuditTimestamp(),
         target: xmlTargetState
       },
       ...prev
@@ -889,9 +922,17 @@ const ArchitectureComparisonDiagram = ({
   const handleAddNote = (e) => {
     e.preventDefault();
     if (!noteText.trim()) return;
-    setReviewerNotes(prev => [...prev, { id: Date.now(), text: noteText.trim(), timestamp: new Date().toLocaleTimeString() }]);
+    setReviewerNotes(prev => [
+      { id: Date.now(), text: noteText.trim(), timestamp: formatAuditTimestamp() },
+      ...prev
+    ]);
     setNoteText('');
     toast.success('📝 Reviewer note pinned to architecture diagram');
+  };
+
+  const handleDeleteNote = (noteId) => {
+    setReviewerNotes(prev => prev.filter(n => n.id !== noteId));
+    toast.success('🗑️ Reviewer note removed');
   };
 
   const handleExportDrawio = (xml, filename) => {

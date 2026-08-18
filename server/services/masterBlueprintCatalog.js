@@ -9217,6 +9217,32 @@ function getMermaidDiagram(framework = {}, isTarget = true) {
     end`;
   }
 
+  if (isGenAIReadiness) {
+    return isTarget
+      ? `flowchart LR
+    subgraph Registry["Enterprise Agent & Model Registry"]
+      Dev[Developer CI/CD] --> ModelGarden[Vertex AI Model Garden]
+      ModelGarden --> Prompts[Prompt Registry & Versioning]
+    end
+    subgraph Eval["Automated LLM Evaluation Plane"]
+      Prompts --> EvalSuite[Vertex AI GenAI Evaluation Service]
+      EvalSuite --> Safety[Safety & Toxicity Benchmarks]
+      EvalSuite --> Factuality[ROUGE & Factuality Scoring]
+      EvalSuite --> Latency[Latency & Cost Profiler]
+    end
+    subgraph Serving["Production AI Mesh"]
+      EvalSuite --> Gate{P4-GOV-L-06 Quality Gate}
+      Gate -->|Passed| Prod[Production Model Endpoint]
+      Gate -->|Failed| Alert[CI/CD Regression Alert]
+    end`
+      : `flowchart LR
+    subgraph Silos["Ad-Hoc Unanchored POCs"]
+      POC[Departmental POCs] --> Manual[Manual Spot-Checking]
+      Manual --> Unknown[Unknown Hallucination Rate]
+      Unknown --> Risk[Production Launch Blocked]
+    end`;
+  }
+
   // Default General Data & AI
   return isTarget
     ? `flowchart LR

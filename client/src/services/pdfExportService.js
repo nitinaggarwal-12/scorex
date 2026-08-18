@@ -1038,9 +1038,9 @@ export class ExecutivePDFExporter {
 
       // Score Pill on Right
       this.doc.setFont('helvetica', 'bold');
-      this.doc.setFontSize(8.5);
+      this.doc.setFontSize(8);
       this.doc.setTextColor(COLORS.primary);
-      this.doc.text(`Baseline: ${cur}/5.0`, this.pageWidth - this.margin - 130, yPos + 16);
+      this.doc.text(`Baseline: ${cur}/5.0 (${tier})`, this.pageWidth - this.margin - 145, yPos + 16);
 
       this.doc.setTextColor(COLORS.success);
       this.doc.text(`Target: ${tgt}/5.0`, this.pageWidth - this.margin - 55, yPos + 16);
@@ -1369,4 +1369,5 @@ export const generateDynamicPDFReport = (instance, report) => {
   }
 };
 
-export default { generateProfessionalReport, generateDynamicPDFReport };
+const pdfExportService = { generateProfessionalReport, generateDynamicPDFReport };
+export default pdfExportService;
