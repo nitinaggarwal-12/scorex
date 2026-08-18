@@ -988,7 +988,7 @@ const ArchitectureComparisonDiagram = ({
                 subtitle={currentSubtitle}
                 badge="Current State"
                 theme="dark"
-                height="580px"
+                height="480px"
                 isTarget={false}
               />
             </DiagramErrorBoundary>
@@ -1001,7 +1001,7 @@ const ArchitectureComparisonDiagram = ({
                 subtitle={targetSubtitle}
                 badge="Desired Future State"
                 theme="dark"
-                height="580px"
+                height="480px"
                 isTarget={true}
               />
             </DiagramErrorBoundary>
