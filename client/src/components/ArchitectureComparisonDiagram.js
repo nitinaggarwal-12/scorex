@@ -625,12 +625,38 @@ const ArchitectureComparisonDiagram = ({
   const [viewMode, setViewMode] = useState('side_by_side'); // 'side_by_side', 'current_diagram', 'target_diagram', 'cards'
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
+  const [isXmlEditorOpen, setIsXmlEditorOpen] = useState(false);
+  const [xmlTargetState, setXmlTargetState] = useState('target'); // 'current' | 'target'
+  const [rawXmlDraft, setRawXmlDraft] = useState('');
   const [customPrompt, setCustomPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [diagramsData, setDiagramsData] = useState(initialDiagrams || null);
   const [reviewerNotes, setReviewerNotes] = useState([]);
   const [noteText, setNoteText] = useState('');
   const [showNotesDrawer, setShowNotesDrawer] = useState(false);
+
+  const handleOpenXmlEditor = (target = 'target') => {
+    setXmlTargetState(target);
+    const xmlToEdit = target === 'current' 
+      ? (diagramsData?.currentStateXml || currentXml)
+      : (diagramsData?.targetStateXml || targetXml);
+    setRawXmlDraft(xmlToEdit);
+    setIsXmlEditorOpen(true);
+  };
+
+  const handleApplyXmlDraft = () => {
+    if (!rawXmlDraft || !rawXmlDraft.includes('<mxGraphModel')) {
+      toast.error('Invalid Draw.io XML. Must contain valid <mxGraphModel> root element.');
+      return;
+    }
+    setDiagramsData(prev => ({
+      ...prev,
+      [xmlTargetState === 'current' ? 'currentStateXml' : 'targetStateXml']: rawXmlDraft,
+      generatedAt: new Date().toISOString()
+    }));
+    setIsXmlEditorOpen(false);
+    toast.success(`✅ Applied custom manual XML edits to ${xmlTargetState === 'current' ? 'Current Baseline' : 'Target State'} diagram!`);
+  };
 
   useEffect(() => {
     if (initialDiagrams) {
@@ -921,6 +947,14 @@ const ArchitectureComparisonDiagram = ({
             <FiRefreshCw className={isGenerating ? 'spin' : ''} /> 
             {isGenerating ? 'Synthesizing...' : '⚡ Regenerate with Gemini 3.7'}
           </RegenerateBtn>
+
+          <button
+            onClick={() => handleOpenXmlEditor(viewMode === 'current_diagram' ? 'current' : 'target')}
+            style={{ background: '#f8fafc', border: '1px solid #cbd5e1', color: '#334155', padding: '7px 12px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+            title="Edit or paste raw Draw.io XML code directly into the diagram canvas"
+          >
+            ✏️ Edit XML / Tweak
+          </button>
 
           <ExportBtn 
             onClick={() => handleExportDrawio(
@@ -1289,6 +1323,144 @@ const ArchitectureComparisonDiagram = ({
                     </div>
                   </div>
                 ))}
+              </div>
+            </ModalCard>
+          </ModalOverlay>
+        )}
+
+        {/* ✏️ Direct Manual XML & Visual Editor Modal */}
+        {isXmlEditorOpen && (
+          <ModalOverlay
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsXmlEditorOpen(false)}
+          >
+            <ModalCard
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={e => e.stopPropagation()}
+              style={{ maxWidth: '820px', width: '92vw' }}
+            >
+              <ModalHeader>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span style={{ fontSize: '1.25rem' }}>✏️</span>
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: '1.1rem', color: '#0f172a', fontWeight: 800 }}>
+                      Manual Diagram XML Editor
+                    </h3>
+                    <span style={{ fontSize: '0.78rem', color: '#64748b' }}>
+                      Editing {xmlTargetState === 'current' ? 'Current Baseline Architecture' : 'Desired Future State Architecture'}
+                    </span>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setIsXmlEditorOpen(false)}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}
+                >
+                  <FiX size={20} />
+                </button>
+              </ModalHeader>
+
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                <button
+                  onClick={() => {
+                    setXmlTargetState('current');
+                    setRawXmlDraft(diagramsData?.currentStateXml || currentXml);
+                  }}
+                  style={{
+                    background: xmlTargetState === 'current' ? '#eef2ff' : '#f8fafc',
+                    color: xmlTargetState === 'current' ? '#4f46e5' : '#475569',
+                    border: `1.5px solid ${xmlTargetState === 'current' ? '#6366f1' : '#cbd5e1'}`,
+                    borderRadius: '8px',
+                    padding: '6px 12px',
+                    fontSize: '0.82rem',
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}
+                >
+                  Current State XML
+                </button>
+                <button
+                  onClick={() => {
+                    setXmlTargetState('target');
+                    setRawXmlDraft(diagramsData?.targetStateXml || targetXml);
+                  }}
+                  style={{
+                    background: xmlTargetState === 'target' ? '#eef2ff' : '#f8fafc',
+                    color: xmlTargetState === 'target' ? '#4f46e5' : '#475569',
+                    border: `1.5px solid ${xmlTargetState === 'target' ? '#6366f1' : '#cbd5e1'}`,
+                    borderRadius: '8px',
+                    padding: '6px 12px',
+                    fontSize: '0.82rem',
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}
+                >
+                  Target State XML
+                </button>
+                <a
+                  href="https://app.diagrams.net"
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    marginLeft: 'auto',
+                    background: '#f1f5f9',
+                    color: '#334155',
+                    border: '1px solid #cbd5e1',
+                    borderRadius: '8px',
+                    padding: '6px 12px',
+                    fontSize: '0.82rem',
+                    fontWeight: 700,
+                    textDecoration: 'none',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                >
+                  🌐 Open in Draw.io Web ↗
+                </a>
+              </div>
+
+              <textarea
+                value={rawXmlDraft}
+                onChange={e => setRawXmlDraft(e.target.value)}
+                spellCheck={false}
+                style={{
+                  width: '100%',
+                  height: '320px',
+                  fontFamily: 'monospace',
+                  fontSize: '0.82rem',
+                  padding: '12px',
+                  borderRadius: '8px',
+                  border: '1.5px solid #cbd5e1',
+                  background: '#0f172a',
+                  color: '#f8fafc',
+                  boxSizing: 'border-box',
+                  resize: 'vertical',
+                  lineHeight: '1.4'
+                }}
+              />
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '14px' }}>
+                <span style={{ fontSize: '0.78rem', color: '#64748b' }}>
+                  Paste or edit any valid Draw.io &lt;mxGraphModel&gt; XML structure.
+                </span>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button
+                    onClick={() => setIsXmlEditorOpen(false)}
+                    style={{ background: '#f1f5f9', border: '1px solid #cbd5e1', color: '#475569', padding: '8px 16px', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleApplyXmlDraft}
+                    style={{ background: '#4f46e5', border: 'none', color: '#ffffff', padding: '8px 18px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 12px rgba(79, 70, 229, 0.3)' }}
+                  >
+                    Apply Changes to Canvas
+                  </button>
+                </div>
               </div>
             </ModalCard>
           </ModalOverlay>
