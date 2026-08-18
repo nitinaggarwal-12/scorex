@@ -825,13 +825,79 @@ const DynamicAssessmentRunner = () => {
     try {
       let loadedResponses = {};
       if (id) {
-        const inst = await dynamicAssessmentService.getInstance(id);
-        if (inst && inst.frameworkSnapshot && inst.frameworkSnapshot.dimensions) {
-          setInstance(inst);
-          setFramework(inst.frameworkSnapshot);
-          loadedResponses = inst.responses || {};
-        } else {
-          setLoadError('Assessment session was not found or has expired.');
+        try {
+          const inst = await dynamicAssessmentService.getInstance(id);
+          if (inst && inst.frameworkSnapshot && inst.frameworkSnapshot.dimensions) {
+            setInstance(inst);
+            setFramework(inst.frameworkSnapshot);
+            loadedResponses = inst.responses || {};
+          } else {
+            throw new Error('Assessment session framework is missing or corrupt.');
+          }
+        } catch (fetchErr) {
+          console.warn(`[DynamicAssessmentRunner] Instance ${id} not found on server (${fetchErr.message}). Checking recovery paths...`);
+          
+          // Path 1: Check localStorage for cached draft
+          let recoveredFromLocal = false;
+          try {
+            const rawDraft = localStorage.getItem(draftKey) || localStorage.getItem(`scorex_draft_${id}`);
+            if (rawDraft) {
+              const parsed = JSON.parse(rawDraft);
+              if (parsed.framework && parsed.framework.dimensions && parsed.framework.dimensions.length > 0) {
+                setFramework(parsed.framework);
+                setResponses(parsed.responses || {});
+                setDraftRestoredNotice(`✨ Restored from local browser backup (${Object.keys(parsed.responses || {}).length} responses)`);
+                recoveredFromLocal = true;
+                
+                // Auto-provision server instance in background so subsequent saves succeed
+                const user = JSON.parse(localStorage.getItem('user') || '{}');
+                dynamicAssessmentService.createInstance({
+                  typeKey: parsed.framework.typeKey || 'custom',
+                  customerName: user.organization || 'Enterprise Organization',
+                  useCase: parsed.framework.title || 'Enterprise Architecture Modernization',
+                  frameworkSnapshot: parsed.framework,
+                  responses: parsed.responses || {}
+                }).then(newInst => {
+                  if (newInst?.id) {
+                    setInstance(newInst);
+                    navigate(`/assessments/run/instance/${newInst.id}`, { replace: true });
+                  }
+                }).catch(e => console.warn('Background recovery instance creation:', e.message));
+                return;
+              }
+            }
+          } catch (storageErr) {
+            console.warn('Local draft inspection error:', storageErr);
+          }
+
+          // Path 2: Check if id is actually a typeKey (e.g. user pasted typeKey into instance URL)
+          try {
+            const types = await dynamicAssessmentService.getAssessmentTypes();
+            const matchedType = (types || []).find(t => t.typeKey === id || t.id === id);
+            if (matchedType && matchedType.framework && matchedType.framework.dimensions) {
+              setFramework(matchedType.framework);
+              const user = JSON.parse(localStorage.getItem('user') || '{}');
+              const newInst = await dynamicAssessmentService.createInstance({
+                typeKey: matchedType.typeKey,
+                customerName: user.organization || 'Enterprise Organization',
+                useCase: matchedType.title || 'Enterprise Architecture Modernization',
+                frameworkSnapshot: matchedType.framework,
+                responses: {}
+              });
+              if (newInst?.id) {
+                setInstance(newInst);
+                navigate(`/assessments/run/instance/${newInst.id}`, { replace: true });
+                return;
+              }
+            }
+          } catch (typeCheckErr) {
+            console.warn('Type match check failed:', typeCheckErr);
+          }
+
+          if (!recoveredFromLocal) {
+            setLoadError(fetchErr.response?.data?.error || 'Assessment session was not found on the server or has expired.');
+            return;
+          }
         }
       } else if (typeKey) {
         const type = await dynamicAssessmentService.getAssessmentTypeByKey(typeKey);
