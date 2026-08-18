@@ -391,13 +391,31 @@ const AssessmentComparisonView = () => {
         </HeroCard>
 
         {/* Dynamic Polar Radar Comparison */}
-        {targetInst?.frameworkSnapshot?.dimensions && (
-          <DynamicRadarChart
-            dimensions={targetInst.frameworkSnapshot.dimensions}
-            dimensionScores={targetScores?.dimensionScores || {}}
-            responses={baseInst?.responses || {}}
-          />
-        )}
+        {targetInst?.frameworkSnapshot?.dimensions && (() => {
+          const comparisonRadarScores = {};
+          targetInst.frameworkSnapshot.dimensions.forEach(dim => {
+            const bScore = baseScores?.dimensionScores?.[dim.id]?.score ?? (parseFloat(baseInst?.responses?.[dim.id]) || 2.5);
+            const tScore = targetScores?.dimensionScores?.[dim.id]?.score ?? (parseFloat(targetInst?.responses?.[dim.id]) || 4.0);
+            comparisonRadarScores[dim.id] = {
+              score: bScore,
+              currentScore: bScore,
+              targetScore: tScore,
+              futureScore: tScore,
+              name: dim.name
+            };
+          });
+
+          return (
+            <DynamicRadarChart
+              dimensions={targetInst.frameworkSnapshot.dimensions}
+              dimensionScores={comparisonRadarScores}
+              baselineLabel="Baseline (Period A)"
+              targetLabel="Target (Period B)"
+              title="Quarter-over-Quarter Polar Comparison Radar"
+              subtitle="Comparing Baseline Assessment (Period A) vs Target Assessment (Period B)"
+            />
+          );
+        })()}
 
         {/* Dimension Breakdown Matrix */}
         {comparison?.dimensionDeltas && (

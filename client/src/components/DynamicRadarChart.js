@@ -217,7 +217,15 @@ const BENCHMARK_PROFILES = {
   retail: { name: 'Retail & eCommerce', score: 3.5, color: '#f59e0b' }
 };
 
-const DynamicRadarChart = ({ dimensions = [], dimensionScores = {}, responses = {} }) => {
+const DynamicRadarChart = ({ 
+  dimensions = [], 
+  dimensionScores = {}, 
+  responses = {},
+  baselineLabel = 'Baseline',
+  targetLabel = 'Target',
+  title = 'Dimensional Gap Radar & Target Topology',
+  subtitle = 'Multi-axis polygon matrix tracking baseline capability vs desired target state'
+}) => {
   const [hoveredIdx, setHoveredIdx] = useState(null);
   const [selectedBenchmark, setSelectedBenchmark] = useState('global');
 
@@ -249,7 +257,7 @@ const DynamicRadarChart = ({ dimensions = [], dimensionScores = {}, responses = 
   // Baseline Points
   const baselinePoints = dimensions.map((dim, idx) => {
     const dScore = dimensionScores[dim.id];
-    const score = dScore?.score !== undefined ? dScore.score : (parseFloat(responses[`${dim.id}_current`]) || 2.5);
+    const score = dScore?.score !== undefined ? dScore.score : (dScore?.currentScore !== undefined ? dScore.currentScore : (parseFloat(responses[`${dim.id}_current`]) || 2.5));
     return getCoordinates(Math.min(5, Math.max(0.5, score)), idx);
   });
   const baselinePath = baselinePoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x},${p.y}`).join(' ') + ' Z';
@@ -257,7 +265,7 @@ const DynamicRadarChart = ({ dimensions = [], dimensionScores = {}, responses = 
   // Target Points
   const targetPoints = dimensions.map((dim, idx) => {
     const dScore = dimensionScores[dim.id];
-    const target = dScore?.targetScore !== undefined ? dScore.targetScore : (parseFloat(responses[`${dim.id}_target`]) || 4.2);
+    const target = dScore?.targetScore !== undefined ? dScore.targetScore : (dScore?.futureScore !== undefined ? dScore.futureScore : (parseFloat(responses[`${dim.id}_target`]) || 4.2));
     return getCoordinates(Math.min(5, Math.max(0.5, target)), idx);
   });
   const targetPath = targetPoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x},${p.y}`).join(' ') + ' Z';
@@ -278,8 +286,8 @@ const DynamicRadarChart = ({ dimensions = [], dimensionScores = {}, responses = 
             <FiTarget />
           </div>
           <div>
-            <h3>Dimensional Gap Radar & Target Topology</h3>
-            <p>Multi-axis polygon matrix tracking baseline capability vs desired target state</p>
+            <h3>{title}</h3>
+            <p>{subtitle}</p>
           </div>
         </TitleBlock>
 
@@ -311,10 +319,10 @@ const DynamicRadarChart = ({ dimensions = [], dimensionScores = {}, responses = 
 
           <LegendRow>
             <LegendItem $color="#ef4444" $bg="rgba(239, 68, 68, 0.3)">
-              <span className="dot" /> Baseline
+              <span className="dot" /> {baselineLabel}
             </LegendItem>
             <LegendItem $color="#10b981" $bg="rgba(16, 185, 129, 0.3)">
-              <span className="dot" /> Target
+              <span className="dot" /> {targetLabel}
             </LegendItem>
             <LegendItem $color={currentBenchmark.color} $bg="transparent">
               <span className="dot" style={{ borderStyle: 'dashed', borderColor: currentBenchmark.color }} /> Benchmark ({currentBenchmark.score})

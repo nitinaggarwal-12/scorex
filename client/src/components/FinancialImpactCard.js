@@ -304,8 +304,12 @@ const FinancialImpactCard = ({
     ? dimensionCalculations.reduce((acc, d) => acc + d.gap, 0) / dimensionCalculations.length
     : 1.5;
   const dollarAtRiskMitigated = Math.round(avgGap * 360000 * m);
-  const paybackMonths = Math.max(2.2, (5.2 - avgGap * 1.0)).toFixed(1);
-  const roiMultiple = Math.round((threeYearValue / (totalAnnualSavings * 0.75)) * 100);
+
+  // Dynamic implementation cost and net ROI grounded in actual gap severity and scale
+  const implementationCost = Math.round(totalAnnualSavings * (0.32 + (avgGap / 5.0) * 0.42));
+  const netThreeYearBenefit = Math.max(100000, threeYearValue - implementationCost);
+  const roiMultiple = Math.max(160, Math.round((netThreeYearBenefit / implementationCost) * 100));
+  const paybackMonths = Math.max(2.1, Math.min(16.0, Number(((implementationCost / totalAnnualSavings) * 12).toFixed(1)))).toFixed(1);
 
   const breakdownDrivers = dimensionCalculations;
 

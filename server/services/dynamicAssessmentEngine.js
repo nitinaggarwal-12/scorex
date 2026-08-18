@@ -8,6 +8,7 @@ const geminiService = require('./geminiService');
 class DynamicAssessmentEngine {
   constructor() {
     this.gemini = geminiService;
+    this.geminiService = geminiService;
   }
 
   /**

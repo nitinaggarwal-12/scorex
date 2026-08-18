@@ -1247,15 +1247,19 @@ export const generateProfessionalReport = (results, assessmentInfo) => {
 export const generateDynamicPDFReport = (instance, report) => {
   try {
     const framework = instance?.frameworkSnapshot || {};
-    const aiReport = report?.aiReport || {};
-    const scores = report?.calculatedScores || {};
+    const aiReport = report?.aiReport || report || {};
+    const scores = report?.calculatedScores || report?.scores || {
+      overallScore: instance?.totalScore || 3.0,
+      maturityLevel: instance?.maturityLevel || 'Defined',
+      dimensionScores: instance?.scores || {}
+    };
     const dimensions = framework.dimensions || [];
 
     const categoryDetails = {};
     dimensions.forEach(dim => {
       const dScore = scores.dimensionScores?.[dim.id] || {};
-      const curScore = dScore.score || instance.responses?.[`${dim.id}_current`] || 2.8;
-      const futScore = dScore.targetScore || 4.5;
+      const curScore = typeof dScore.score === 'number' ? dScore.score : (parseFloat(instance.responses?.[`${dim.id}_current`]) || 2.8);
+      const futScore = typeof dScore.targetScore === 'number' ? dScore.targetScore : 4.5;
       categoryDetails[dim.id] = {
         name: dim.name,
         currentScore: curScore,
@@ -1264,8 +1268,8 @@ export const generateDynamicPDFReport = (instance, report) => {
         level: {
           level: curScore >= 4 ? 'Optimizing' : curScore >= 3 ? 'Defined' : 'Developing'
         },
-        strengths: [`Standardized baseline architecture established for ${dim.name}`],
-        challenges: [`Operational friction and latency bottlenecks identified in current pipeline`],
+        strengths: [`Standardized baseline capability established for ${dim.name}`],
+        challenges: [`Operational friction and legacy bottlenecks identified in current pipeline`],
         recommendations: [
           {
             title: `Modernize ${dim.name} Architecture`,
@@ -1275,26 +1279,27 @@ export const generateDynamicPDFReport = (instance, report) => {
       };
     });
 
-    const recommendations = (aiReport.prioritizedRecommendations || []).map((rec, idx) => ({
+    const rawRecs = aiReport.prioritizedRecommendations || aiReport.prioritizedActions || [];
+    const recommendations = rawRecs.map((rec, idx) => ({
       title: rec.title || `Strategic Recommendation ${idx + 1}`,
-      pillar: rec.pillar || 'Platform',
+      pillar: rec.dimension || rec.pillar || 'Platform',
       description: rec.whyItMatters || rec.description || '',
-      impact: rec.businessImpact || 'Accelerates time-to-value and reduces cloud TCO',
+      impact: rec.expectedImpact || rec.businessImpact || 'Accelerates time-to-value and reduces cloud TCO',
       priority: rec.priority || (idx < 2 ? 'High' : 'Medium')
     }));
 
     const results = {
       overall: {
-        currentScore: scores.overallScore || 3.0,
+        currentScore: scores.overallScore || instance?.totalScore || 3.0,
         futureScore: 4.5,
         level: {
-          level: scores.maturityLevel || 'Defined',
+          level: scores.maturityLevel || instance?.maturityLevel || 'Defined',
           description: aiReport.executiveSummary || 'Architecture transformation roadmap synthesized with Gemini 3.7 Flash.'
         }
       },
       categoryDetails,
-      architectureDiagrams: aiReport.architectureDiagrams || instance.architectureDiagrams || {},
-      responses: instance.responses || {},
+      architectureDiagrams: aiReport.architectureDiagrams || instance?.architectureDiagrams || {},
+      responses: instance?.responses || {},
       recommendations: recommendations.length > 0 ? recommendations : [
         {
           title: 'Establish Enterprise Data & AI Foundation',
@@ -1307,14 +1312,14 @@ export const generateDynamicPDFReport = (instance, report) => {
     };
 
     const assessmentInfo = {
-      organizationName: instance.customerName || 'Enterprise Organization',
+      organizationName: instance?.customerName || 'Enterprise Organization',
       assessmentName: framework.title || 'Dynamic Architecture Assessment',
       industry: framework.badge || 'Cloud & AI Modernization',
-      createdAt: instance.completedAt || instance.createdAt || new Date().toISOString(),
-      updatedAt: instance.updatedAt || new Date().toISOString(),
+      createdAt: instance?.completedAt || instance?.createdAt || new Date().toISOString(),
+      updatedAt: instance?.updatedAt || new Date().toISOString(),
       frameworkSnapshot: framework,
       aiReport: aiReport,
-      responses: instance.responses || {}
+      responses: instance?.responses || {}
     };
 
     return generateProfessionalReport(results, assessmentInfo);

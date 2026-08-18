@@ -9,7 +9,7 @@
     "editorEmail": "sarah.johnson@automationfirst.com",
     "createdAt": "2025-11-03T21:08:59.595Z",
     "lastModified": "2025-11-03T21:08:59.595Z",
-    "updatedAt": "2025-11-03T21:09:26.013Z",
+    "updatedAt": "2026-08-17T20:53:37.573Z",
     "status": "submitted",
     "responses": {
       "env_standardization_current_state": 3,
@@ -784,7 +784,8 @@
         "changes": "Sample assessment created"
       }
     ],
-    "submittedAt": "2025-11-03T21:09:26.013Z"
+    "submittedAt": "2025-11-03T21:09:26.013Z",
+    "completedAt": "2026-08-17T20:53:37.573Z"
   },
   "3d1fe9be-18a0-4c2b-b665-078fe9e8a29d": {
     "id": "3d1fe9be-18a0-4c2b-b665-078fe9e8a29d",
@@ -7834,8 +7835,8 @@
     "editorEmail": "jane.doe@quantumanalytics.com",
     "createdAt": "2025-11-12T00:28:51.065Z",
     "lastModified": "2025-11-12T00:28:51.065Z",
-    "updatedAt": "2025-11-12T00:28:51.065Z",
-    "status": "completed",
+    "updatedAt": "2025-11-12T00:28:55.490Z",
+    "status": "submitted",
     "responses": {
       "env_standardization_current_state": 2,
       "env_standardization_future_state": 3,
@@ -8571,6 +8572,782 @@
         "editorEmail": "sample-generator@databricks.com",
         "changes": "Sample assessment created"
       }
-    ]
+    ],
+    "submittedAt": "2025-11-12T00:28:55.490Z"
+  },
+  "774d1b75-2f1a-448a-8939-341a973a3146": {
+    "id": "774d1b75-2f1a-448a-8939-341a973a3146",
+    "assessmentName": "SmartFactory Systems - Comprehensive Technical Review",
+    "assessmentDescription": "GenAI readiness and ML platform evaluation",
+    "organizationName": "SmartFactory Systems",
+    "contactEmail": "platform-team@smartfactory.com",
+    "industry": "Technology & Software",
+    "status": "completed",
+    "progress": 100,
+    "currentCategory": "",
+    "completedCategories": [
+      "platform_governance",
+      "data_engineering",
+      "analytics_bi",
+      "machine_learning",
+      "generative_ai",
+      "operational_excellence"
+    ],
+    "responses": {
+      "env_standardization_current_state": 3,
+      "env_standardization_future_state": 4,
+      "env_standardization_technical_pain": [
+        "inconsistent_configs",
+        "manual_provisioning",
+        "poor_isolation",
+        "deployment_issues",
+        "resource_conflicts"
+      ],
+      "env_standardization_business_pain": [
+        "slow_deployment",
+        "team_bottlenecks"
+      ],
+      "scaling_effectiveness_current_state": 3,
+      "scaling_effectiveness_future_state": 5,
+      "scaling_effectiveness_technical_pain": [
+        "resource_contention",
+        "performance_degradation",
+        "complex_scaling"
+      ],
+      "scaling_effectiveness_business_pain": [
+        "team_blocking",
+        "project_delays",
+        "high_costs",
+        "competitive_disadvantage"
+      ],
+      "scaling_effectiveness_comment": "Currently on shared service accounts which lacks modern capabilities. 200+ manual policies managed through manual processes and scripts. no lineage tracking preventing us from adopting GenAI and advanced analytics. Migration planning underway.",
+      "auth_consistency_current_state": 2,
+      "auth_consistency_future_state": 4,
+      "auth_consistency_technical_pain": [
+        "auth_complexity",
+        "access_management",
+        "security_gaps",
+        "integration_issues"
+      ],
+      "auth_consistency_business_pain": [
+        "security_breaches",
+        "user_frustration"
+      ],
+      "auth_consistency_comment": "Maintaining 30+ workspaces across fragmented custom Python scripts infrastructure. Daily cost overruns requiring manual intervention. Team morale low due to technical debt. Executive mandate to modernize platform.",
+      "security_controls_current_state": 2,
+      "security_controls_future_state": 3,
+      "security_controls_technical_pain": [
+        "data_exposure",
+        "over_privileged",
+        "encryption_gaps",
+        "monitoring_blind_spots"
+      ],
+      "security_controls_business_pain": [
+        "regulatory_risk",
+        "audit_failures",
+        "business_disruption"
+      ],
+      "security_controls_comment": "Currently on Azure DevOps which lacks modern capabilities. 20+ environments managed through manual processes and scripts. audit failures preventing us from adopting GenAI and advanced analytics. Migration planning underway.",
+      "governance_centralization_current_state": 1,
+      "governance_centralization_future_state": 3,
+      "governance_centralization_technical_pain": [
+        "policy_gaps",
+        "lineage_tracking",
+        "metadata_management"
+      ],
+      "governance_centralization_business_pain": [
+        "operational_inefficiency"
+      ],
+      "governance_centralization_comment": "Maintaining 30+ workspaces across fragmented manual Excel spreadsheets infrastructure. Daily cost overruns requiring manual intervention. Team morale low due to technical debt. Executive mandate to modernize platform.",
+      "compliance_management_current_state": 2,
+      "compliance_management_future_state": 4,
+      "compliance_management_business_pain": [
+        "audit_failures",
+        "regulatory_penalties",
+        "business_risk",
+        "reputation_damage"
+      ],
+      "compliance_management_comment": "Technical debt accumulating with legacy IAM. We have 200+ manual policies that nobody wants to touch. security gaps becoming existential risk. Board asking why we can't do real-time analytics like competitors.",
+      "visibility_comprehensiveness_current_state": 2,
+      "visibility_comprehensiveness_future_state": 4,
+      "visibility_comprehensiveness_technical_pain": [
+        "monitoring_gaps",
+        "metric_correlation",
+        "performance_impact",
+        "tool_fragmentation"
+      ],
+      "visibility_comprehensiveness_business_pain": [
+        "slow_issue_resolution",
+        "user_impact",
+        "resource_waste",
+        "sla_breaches"
+      ],
+      "visibility_comprehensiveness_comment": "Technical debt accumulating with legacy IAM. We have 30+ workspaces that nobody wants to touch. audit failures becoming existential risk. Board asking why we can't do real-time analytics like competitors.",
+      "proactive_monitoring_current_state": 2,
+      "proactive_monitoring_future_state": 3,
+      "proactive_monitoring_technical_pain": [
+        "late_detection",
+        "manual_response",
+        "alert_fatigue"
+      ],
+      "proactive_monitoring_business_pain": [
+        "service_disruption",
+        "customer_impact",
+        "operational_costs"
+      ],
+      "cost_tracking_current_state": 2,
+      "cost_tracking_future_state": 3,
+      "cost_tracking_technical_pain": [
+        "cost_attribution",
+        "usage_visibility",
+        "reporting_complexity",
+        "tagging_inconsistency",
+        "tool_limitations"
+      ],
+      "cost_tracking_business_pain": [
+        "budget_overruns",
+        "cost_surprises"
+      ],
+      "cost_tracking_comment": "Current setup: manual Excel spreadsheets + custom Python scripts with 500+ users. no lineage tracking causing SLA breaches and business impact. CTO pushing for unified platform - architecture modernization POC approved for Q1 2026.",
+      "optimization_practices_current_state": 1,
+      "optimization_practices_future_state": 2,
+      "optimization_practices_technical_pain": [
+        "optimization_complexity",
+        "resource_rightsizing",
+        "performance_impact"
+      ],
+      "optimization_practices_business_pain": [
+        "team_conflicts",
+        "roi_unclear"
+      ],
+      "optimization_practices_comment": "Current setup: shared service accounts + manual Excel spreadsheets with 30+ workspaces. no lineage tracking causing SLA breaches and business impact. CTO pushing for unified platform - architecture modernization POC approved for Q1 2026.",
+      "ingestion_automation_current_state": 3,
+      "ingestion_automation_future_state": 4,
+      "ingestion_automation_technical_pain": [
+        "complex_integrations",
+        "data_format_issues",
+        "pipeline_maintenance"
+      ],
+      "ingestion_automation_business_pain": [
+        "data_delays"
+      ],
+      "ingestion_resilience_current_state": 1,
+      "ingestion_resilience_future_state": 3,
+      "ingestion_resilience_technical_pain": [
+        "manual_fixes",
+        "data_loss_risk"
+      ],
+      "ingestion_resilience_business_pain": [
+        "sla_breaches",
+        "trust_issues"
+      ],
+      "ingestion_resilience_comment": "Current setup: Glue jobs + Informatica PowerCenter with 80+ SSIS packages. high maintenance burden causing SLA breaches and business impact. CTO pushing for unified platform - architecture modernization POC approved for Q1 2026.",
+      "lakehouse_structure_current_state": 2,
+      "lakehouse_structure_future_state": 4,
+      "lakehouse_structure_technical_pain": [
+        "duplicate_data",
+        "performance_issues"
+      ],
+      "lakehouse_structure_business_pain": [
+        "data_discovery",
+        "inconsistent_metrics"
+      ],
+      "lakehouse_structure_comment": "Stuck on Stitch managing 300+ DBT models. Critical issues: no monitoring, high TCO ($200K+ annually), vendor limitations. Business approved migration to modern Lakehouse - targeting 50% cost reduction.",
+      "architecture_adaptability_current_state": 3,
+      "architecture_adaptability_future_state": 4,
+      "architecture_adaptability_technical_pain": [
+        "integration_effort",
+        "scalability_constraints"
+      ],
+      "architecture_adaptability_comment": "Currently using stored procedures to handle this. We maintain 20+ source systems which is becoming unmanageable. Major pain points: $200K+ annual licensing, blocking our ability to innovate. Team spends 50%+ time on maintenance vs building new capabilities.",
+      "orchestration_reliability_current_state": 2,
+      "orchestration_reliability_future_state": 4,
+      "orchestration_reliability_technical_pain": [
+        "dependency_failures",
+        "retry_logic",
+        "monitoring_gaps"
+      ],
+      "orchestration_reliability_business_pain": [
+        "data_freshness",
+        "operational_costs",
+        "pipeline_failures",
+        "team_frustration"
+      ],
+      "orchestration_reliability_comment": "Stuck on Glue jobs managing 300+ DBT models. Critical issues: no monitoring, high TCO ($200K+ annually), vendor limitations. Business approved migration to modern Lakehouse - targeting 50% cost reduction.",
+      "pipeline_lifecycle_current_state": 1,
+      "pipeline_lifecycle_future_state": 3,
+      "pipeline_lifecycle_technical_pain": [
+        "environment_drift"
+      ],
+      "pipeline_lifecycle_business_pain": [
+        "production_incidents",
+        "slow_releases"
+      ],
+      "pipeline_lifecycle_comment": "Running outdated Azure Data Factory with 20+ source systems. System performance degrading - experiencing $200K+ annual licensing weekly. Maintenance window growing, business getting frustrated. Evaluating modern open architecture for 10x improvement.",
+      "quality_validation_current_state": 2,
+      "quality_validation_future_state": 4,
+      "quality_validation_technical_pain": [
+        "quality_rules",
+        "reconciliation_complexity",
+        "recovery_procedures"
+      ],
+      "quality_validation_business_pain": [
+        "trust_erosion",
+        "compliance_violations",
+        "operational_overhead"
+      ],
+      "quality_validation_comment": "Currently using stored procedures to handle this. We maintain 80+ SSIS packages which is becoming unmanageable. Major pain points: schema drift issues, blocking our ability to innovate. Team spends 50%+ time on maintenance vs building new capabilities.",
+      "quality_monitoring_current_state": 2,
+      "quality_monitoring_future_state": 3,
+      "quality_monitoring_technical_pain": [
+        "alert_noise",
+        "metric_visibility",
+        "stakeholder_communication",
+        "trend_analysis"
+      ],
+      "quality_monitoring_business_pain": [
+        "reputation_damage"
+      ],
+      "performance_optimization_current_state": 2,
+      "performance_optimization_future_state": 3,
+      "performance_optimization_technical_pain": [
+        "slow_pipelines",
+        "parallelization_gaps",
+        "resource_inefficiency",
+        "bottlenecks",
+        "optimization_difficulty"
+      ],
+      "performance_optimization_business_pain": [
+        "user_experience",
+        "scalability_limits"
+      ],
+      "scalability_demand_current_state": 3,
+      "scalability_demand_future_state": 5,
+      "scalability_demand_technical_pain": [
+        "manual_scaling",
+        "over_provisioning",
+        "scaling_delays",
+        "configuration_complexity"
+      ],
+      "scalability_demand_business_pain": [
+        "cost_inefficiency",
+        "capacity_planning"
+      ],
+      "scalability_demand_comment": "Running outdated DBT with 20+ source systems. System performance degrading - experiencing $200K+ annual licensing weekly. Maintenance window growing, business getting frustrated. Evaluating modern open architecture for 10x improvement.",
+      "performance_consistency_current_state": 3,
+      "performance_consistency_future_state": 4,
+      "performance_consistency_technical_pain": [
+        "inconsistent_performance",
+        "optimization_difficulty",
+        "monitoring_gaps"
+      ],
+      "performance_consistency_business_pain": [
+        "user_frustration",
+        "delayed_insights",
+        "report_timeouts"
+      ],
+      "performance_consistency_comment": "Currently using Oracle to handle this. We maintain 100+ Tableau dashboards which is becoming unmanageable. Major pain points: data silos, blocking our ability to innovate. Team spends 50%+ time on maintenance vs building new capabilities.",
+      "optimization_approach_current_state": 3,
+      "optimization_approach_future_state": 5,
+      "optimization_approach_technical_pain": [
+        "indexing_gaps",
+        "knowledge_gaps"
+      ],
+      "optimization_approach_business_pain": [
+        "optimization_delays",
+        "reactive_approach"
+      ],
+      "optimization_approach_comment": "Current setup: Excel reports + Snowflake with 50+ data marts. dashboard sprawl causing SLA breaches and business impact. CTO pushing for unified platform - architecture modernization POC approved for Q1 2026.",
+      "metrics_consistency_current_state": 2,
+      "metrics_consistency_future_state": 3,
+      "metrics_consistency_technical_pain": [
+        "no_shared_layer",
+        "version_confusion",
+        "documentation_gaps"
+      ],
+      "metrics_consistency_business_pain": [
+        "decision_delays"
+      ],
+      "metrics_consistency_comment": "Painful fragmentation: Tableau for ingestion, separate warehouse for storage, Looker for transformation. $40K monthly Snowflake costs scattered across tools. inconsistent metrics due to lack of integration. Need unified modern data & AI platform.",
+      "data_discovery_current_state": 2,
+      "data_discovery_future_state": 4,
+      "data_discovery_technical_pain": [
+        "poor_discoverability",
+        "catalog_gaps",
+        "unclear_lineage",
+        "access_complexity"
+      ],
+      "data_discovery_business_pain": [
+        "analyst_inefficiency"
+      ],
+      "dashboard_integration_current_state": 1,
+      "dashboard_integration_future_state": 2,
+      "dashboard_integration_technical_pain": [
+        "integration_complexity",
+        "performance_issues",
+        "data_extracts",
+        "refresh_delays",
+        "limited_interactivity"
+      ],
+      "dashboard_integration_business_pain": [
+        "stale_dashboards",
+        "reporting_delays"
+      ],
+      "dashboard_integration_comment": "Current setup: Snowflake + SQL Server with 30+ data sources. manual refreshes causing SLA breaches and business impact. CTO pushing for unified platform - architecture modernization POC approved for Q1 2026.",
+      "reporting_governance_current_state": 3,
+      "reporting_governance_future_state": 4,
+      "reporting_governance_technical_pain": [
+        "version_control",
+        "audit_trails"
+      ],
+      "reporting_governance_business_pain": [
+        "compliance_gaps",
+        "maintenance_burden"
+      ],
+      "reporting_governance_comment": "Stuck on Qlik managing 100+ Tableau dashboards. Critical issues: manual refreshes, high TCO ($200K+ annually), vendor limitations. Business approved migration to modern Lakehouse - targeting 50% cost reduction.",
+      "user_empowerment_current_state": 3,
+      "user_empowerment_future_state": 4,
+      "user_empowerment_technical_pain": [
+        "tool_complexity",
+        "access_barriers",
+        "support_burden"
+      ],
+      "user_empowerment_business_pain": [
+        "slow_decisions",
+        "low_data_literacy",
+        "missed_opportunities",
+        "user_frustration"
+      ],
+      "user_empowerment_comment": "Painful fragmentation: Redshift for ingestion, separate warehouse for storage, SQL Server for transformation. 200+ Power BI reports scattered across tools. poor performance due to lack of integration. Need unified modern data & AI platform.",
+      "governed_autonomy_current_state": 2,
+      "governed_autonomy_future_state": 3,
+      "governed_autonomy_technical_pain": [
+        "security_gaps",
+        "wild_west_access",
+        "audit_challenges",
+        "policy_enforcement"
+      ],
+      "governed_autonomy_business_pain": [
+        "compliance_risk",
+        "data_misuse"
+      ],
+      "governed_autonomy_comment": "Multi-vendor cost spiral: Tableau ($120K/year), data warehouse ($40K/month), Snowflake licenses ($80K/year). Total: $600K+ annually. Plus 30+ data sources and manual refreshes. ROI case for architecture consolidation approved.",
+      "external_sharing_current_state": 1,
+      "external_sharing_future_state": 2,
+      "external_sharing_technical_pain": [
+        "sharing_complexity",
+        "security_concerns",
+        "access_provisioning"
+      ],
+      "external_sharing_business_pain": [
+        "partner_friction",
+        "revenue_impact",
+        "competitive_disadvantage"
+      ],
+      "external_sharing_comment": "Painful fragmentation: Qlik for ingestion, separate warehouse for storage, Power BI for transformation. 10TB Snowflake warehouse scattered across tools. exploding costs due to lack of integration. Need unified modern data & AI platform.",
+      "cross_domain_analytics_current_state": 3,
+      "cross_domain_analytics_future_state": 4,
+      "cross_domain_analytics_technical_pain": [
+        "data_silos",
+        "integration_complexity",
+        "schema_conflicts",
+        "governance_gaps"
+      ],
+      "cross_domain_analytics_business_pain": [
+        "limited_insights",
+        "integration_delays",
+        "strategic_limitations"
+      ],
+      "cross_domain_analytics_comment": "Currently on SQL Server which lacks modern capabilities. $40K monthly Snowflake costs managed through manual processes and scripts. dashboard sprawl preventing us from adopting GenAI and advanced analytics. Migration planning underway.",
+      "experiment_tracking_current_state": 3,
+      "experiment_tracking_future_state": 4,
+      "experiment_tracking_technical_pain": [
+        "manual_logging",
+        "comparison_difficulty"
+      ],
+      "experiment_tracking_business_pain": [
+        "wasted_effort",
+        "knowledge_loss"
+      ],
+      "experiment_tracking_comment": "Stuck on Azure ML managing 100+ untracked experiments. Critical issues: manual deployment, high TCO ($200K+ annually), vendor limitations. Business approved migration to modern Lakehouse - targeting 50% cost reduction.",
+      "model_reproducibility_current_state": 2,
+      "model_reproducibility_future_state": 3,
+      "model_reproducibility_technical_pain": [
+        "dependency_issues",
+        "data_versioning",
+        "model_packaging"
+      ],
+      "model_reproducibility_business_pain": [
+        "production_failures",
+        "trust_issues",
+        "compliance_risk",
+        "rollback_complexity"
+      ],
+      "model_reproducibility_comment": "We rely on on-prem Python and Excel models for this today. Managing 30+ scattered Jupyter notebooks manually with significant slow iteration cycles. Looking to modernize - current licensing costs $150K/year plus operational overhead.",
+      "deployment_automation_current_state": 2,
+      "deployment_automation_future_state": 4,
+      "deployment_automation_technical_pain": [
+        "environment_inconsistency",
+        "rollback_difficulty",
+        "testing_gaps"
+      ],
+      "deployment_automation_business_pain": [
+        "slow_time_to_value",
+        "resource_intensive",
+        "innovation_bottleneck"
+      ],
+      "deployment_automation_comment": "Current setup: custom Flask APIs + R scripts with 15+ model versions. no experiment tracking causing SLA breaches and business impact. CTO pushing for unified platform - architecture modernization POC approved for Q1 2026.",
+      "model_monitoring_current_state": 3,
+      "model_monitoring_future_state": 4,
+      "model_monitoring_technical_pain": [
+        "no_monitoring",
+        "manual_retraining",
+        "performance_tracking"
+      ],
+      "model_monitoring_business_pain": [
+        "silent_failures",
+        "customer_impact",
+        "trust_erosion"
+      ],
+      "model_monitoring_comment": "Multi-vendor cost spiral: Azure ML ($120K/year), data warehouse ($40K/month), Jupyter notebooks licenses ($80K/year). Total: $600K+ annually. Plus 30+ scattered Jupyter notebooks and siloed work. ROI case for architecture consolidation approved.",
+      "feature_store_current_state": 1,
+      "feature_store_future_state": 2,
+      "feature_store_technical_pain": [
+        "no_feature_store",
+        "duplicate_features",
+        "consistency_issues",
+        "discovery_difficulty",
+        "versioning_gaps"
+      ],
+      "feature_store_business_pain": [
+        "wasted_effort",
+        "limited_collaboration",
+        "quality_issues"
+      ],
+      "data_prep_current_state": 2,
+      "data_prep_future_state": 4,
+      "data_prep_technical_pain": [
+        "manual_processes",
+        "pipeline_fragility",
+        "quality_gaps"
+      ],
+      "data_prep_business_pain": [
+        "model_failures",
+        "resource_waste"
+      ],
+      "ml_ownership_current_state": 1,
+      "ml_ownership_future_state": 2,
+      "ml_ownership_technical_pain": [
+        "unclear_ownership",
+        "review_inconsistency",
+        "change_tracking"
+      ],
+      "ml_ownership_business_pain": [
+        "quality_issues",
+        "compliance_failures",
+        "incident_response"
+      ],
+      "ml_ownership_comment": "Painful fragmentation: Excel models for ingestion, separate warehouse for storage, SAS for transformation. 50+ ML models scattered across tools. manual deployment due to lack of integration. Need unified modern data & AI platform.",
+      "ml_compliance_current_state": 3,
+      "ml_compliance_future_state": 5,
+      "ml_compliance_technical_pain": [
+        "no_lineage",
+        "audit_gaps",
+        "bias_detection",
+        "explainability_gaps"
+      ],
+      "ml_compliance_business_pain": [
+        "regulatory_risk",
+        "reputation_damage",
+        "legal_exposure"
+      ],
+      "production_delivery_current_state": 3,
+      "production_delivery_future_state": 5,
+      "production_delivery_technical_pain": [
+        "pilot_to_prod_gap",
+        "deployment_barriers",
+        "infrastructure_gaps",
+        "integration_complexity",
+        "performance_issues"
+      ],
+      "production_delivery_business_pain": [
+        "failed_pilots",
+        "value_realization"
+      ],
+      "production_delivery_comment": "Currently using Jupyter notebooks to handle this. We maintain 30+ scattered Jupyter notebooks which is becoming unmanageable. Major pain points: zero monitoring, blocking our ability to innovate. Team spends 50%+ time on maintenance vs building new capabilities.",
+      "ml_scalability_current_state": 2,
+      "ml_scalability_future_state": 4,
+      "ml_scalability_technical_pain": [
+        "custom_solutions",
+        "knowledge_silos"
+      ],
+      "ml_scalability_business_pain": [
+        "missed_opportunities"
+      ],
+      "ml_scalability_comment": "Current setup: Jupyter notebooks + Azure ML with 20+ SageMaker endpoints. model drift undetected causing SLA breaches and business impact. CTO pushing for unified platform - architecture modernization POC approved for Q1 2026.",
+      "genai_vision_current_state": 3,
+      "genai_vision_future_state": 4,
+      "genai_vision_technical_pain": [
+        "no_strategy",
+        "disconnected_efforts",
+        "skills_gaps"
+      ],
+      "genai_vision_business_pain": [
+        "competitive_pressure"
+      ],
+      "use_case_definition_current_state": 1,
+      "use_case_definition_future_state": 3,
+      "use_case_definition_technical_pain": [
+        "vague_requirements",
+        "data_readiness",
+        "poc_challenges",
+        "evaluation_gaps"
+      ],
+      "use_case_definition_business_pain": [
+        "resource_waste",
+        "stakeholder_confusion"
+      ],
+      "use_case_definition_comment": "Legacy AWS Bedrock environment is hurting productivity. We have 20+ prompt templates with constant security vulnerabilities. Our data engineering team wastes 60% of time troubleshooting instead of delivering value. Need to consolidate and modernize our architecture.",
+      "knowledge_sources_current_state": 3,
+      "knowledge_sources_future_state": 5,
+      "knowledge_sources_technical_pain": [
+        "data_quality",
+        "chunking_challenges"
+      ],
+      "knowledge_sources_business_pain": [
+        "poor_relevance",
+        "data_prep_delays",
+        "business_impact"
+      ],
+      "knowledge_sources_comment": "We rely on Pinecone and Azure OpenAI for this today. Managing 20+ prompt templates manually with significant no evaluation framework. Looking to modernize - current licensing costs $150K/year plus operational overhead.",
+      "knowledge_governance_current_state": 3,
+      "knowledge_governance_future_state": 5,
+      "knowledge_governance_technical_pain": [
+        "ungoverned_sources",
+        "access_control",
+        "lineage_gaps"
+      ],
+      "knowledge_governance_business_pain": [
+        "output_quality",
+        "compliance_risk",
+        "reputation_risk"
+      ],
+      "application_capability_current_state": 2,
+      "application_capability_future_state": 3,
+      "application_capability_technical_pain": [
+        "no_infrastructure",
+        "integration_complexity"
+      ],
+      "application_capability_business_pain": [
+        "slow_development",
+        "reliability_issues",
+        "cost_overruns",
+        "competitive_lag"
+      ],
+      "application_capability_comment": "Current setup: Hugging Face + custom LLM wrappers with $10K+ monthly LLM costs. siloed experiments causing SLA breaches and business impact. CTO pushing for unified platform - architecture modernization POC approved for Q1 2026.",
+      "integration_patterns_current_state": 2,
+      "integration_patterns_future_state": 4,
+      "integration_patterns_technical_pain": [
+        "no_standards",
+        "custom_solutions",
+        "error_handling",
+        "monitoring_gaps"
+      ],
+      "integration_patterns_business_pain": [
+        "scaling_challenges",
+        "security_incidents"
+      ],
+      "integration_patterns_comment": "We rely on Azure OpenAI and OpenAI API for this today. Managing 50+ unmanaged API keys manually with significant zero ROI tracking. Looking to modernize - current licensing costs $150K/year plus operational overhead.",
+      "output_validation_current_state": 2,
+      "output_validation_future_state": 3,
+      "output_validation_technical_pain": [
+        "no_validation",
+        "manual_review",
+        "quality_metrics"
+      ],
+      "output_validation_business_pain": [
+        "output_quality",
+        "business_risk",
+        "reputation_damage"
+      ],
+      "output_validation_comment": "Multi-vendor cost spiral: Pinecone ($120K/year), data warehouse ($40K/month), AWS Bedrock licenses ($80K/year). Total: $600K+ annually. Plus 20+ prompt templates and compliance gaps. ROI case for architecture consolidation approved.",
+      "genai_monitoring_current_state": 2,
+      "genai_monitoring_future_state": 4,
+      "genai_monitoring_technical_pain": [
+        "no_monitoring",
+        "content_safety"
+      ],
+      "genai_monitoring_business_pain": [
+        "silent_degradation",
+        "user_complaints",
+        "brand_risk",
+        "reactive_approach"
+      ],
+      "genai_monitoring_comment": "Operations bottleneck with LangChain - managing 20+ prompt templates. security vulnerabilities limiting our competitive advantage. Cannot support real-time use cases or ML workloads with current architecture.",
+      "ethical_guardrails_current_state": 2,
+      "ethical_guardrails_future_state": 3,
+      "ethical_guardrails_technical_pain": [
+        "no_guardrails",
+        "pii_detection",
+        "content_filtering",
+        "bias_detection"
+      ],
+      "ethical_guardrails_business_pain": [
+        "ethical_concerns",
+        "legal_exposure"
+      ],
+      "ethical_guardrails_comment": "Currently on LangChain which lacks modern capabilities. $10K+ monthly LLM costs managed through manual processes and scripts. no governance preventing us from adopting GenAI and advanced analytics. Migration planning underway.",
+      "genai_transparency_current_state": 2,
+      "genai_transparency_future_state": 3,
+      "genai_transparency_technical_pain": [
+        "no_logging",
+        "lineage_gaps",
+        "audit_trails",
+        "explainability"
+      ],
+      "genai_transparency_business_pain": [
+        "debugging_difficulty",
+        "trust_deficit",
+        "regulatory_risk"
+      ],
+      "genai_transparency_comment": "Technical debt accumulating with Azure OpenAI. We have 10+ GenAI pilots that nobody wants to touch. hallucinations becoming existential risk. Board asking why we can't do real-time analytics like competitors.",
+      "coe_structure_current_state": 3,
+      "coe_structure_future_state": 4,
+      "coe_structure_technical_pain": [
+        "unclear_charter",
+        "standards_gaps",
+        "adoption_challenges"
+      ],
+      "coe_structure_business_pain": [
+        "knowledge_silos",
+        "slow_adoption",
+        "innovation_barriers"
+      ],
+      "coe_effectiveness_current_state": 2,
+      "coe_effectiveness_future_state": 4,
+      "coe_effectiveness_technical_pain": [
+        "low_influence",
+        "feedback_loops"
+      ],
+      "coe_effectiveness_business_pain": [
+        "governance_gaps"
+      ],
+      "coe_effectiveness_comment": "Current setup: PagerDuty + CloudWatch with 50+ false alerts weekly. hidden costs causing SLA breaches and business impact. CTO pushing for unified platform - architecture modernization POC approved for Q1 2026.",
+      "collaboration_strength_current_state": 2,
+      "collaboration_strength_future_state": 4,
+      "collaboration_strength_technical_pain": [
+        "learning_barriers"
+      ],
+      "collaboration_strength_business_pain": [
+        "duplicate_work",
+        "innovation_lag",
+        "onboarding_friction"
+      ],
+      "collaboration_strength_comment": "Currently on email alerts which lacks modern capabilities. 20+ monitoring dashboards managed through manual processes and scripts. alert fatigue preventing us from adopting GenAI and advanced analytics. Migration planning underway.",
+      "asset_exchange_current_state": 2,
+      "asset_exchange_future_state": 3,
+      "asset_exchange_technical_pain": [
+        "no_asset_catalog",
+        "quality_standards",
+        "documentation_gaps"
+      ],
+      "asset_exchange_business_pain": [
+        "low_reuse",
+        "velocity_impact"
+      ],
+      "asset_exchange_comment": "Technical debt accumulating with email alerts. We have 100GB+ logs daily that nobody wants to touch. 2+ hour MTTR becoming existential risk. Board asking why we can't do real-time analytics like competitors.",
+      "training_programs_current_state": 3,
+      "training_programs_future_state": 5,
+      "training_programs_technical_pain": [
+        "outdated_content",
+        "limited_coverage",
+        "access_barriers"
+      ],
+      "training_programs_business_pain": [
+        "skills_gaps",
+        "slow_adoption",
+        "underutilization",
+        "employee_frustration"
+      ],
+      "training_programs_comment": "Operations bottleneck with PagerDuty - managing 30+ on-call engineers. siloed metrics limiting our competitive advantage. Cannot support real-time use cases or ML workloads with current architecture.",
+      "continuous_learning_current_state": 2,
+      "continuous_learning_future_state": 3,
+      "continuous_learning_technical_pain": [
+        "communication_gaps",
+        "demo_gaps",
+        "feedback_loops",
+        "resource_constraints"
+      ],
+      "continuous_learning_business_pain": [
+        "stale_practices",
+        "innovation_barriers"
+      ],
+      "continuous_learning_comment": "Operations bottleneck with Excel cost tracking - managing 30+ on-call engineers. hidden costs limiting our competitive advantage. Cannot support real-time use cases or ML workloads with current architecture.",
+      "value_linkage_current_state": 2,
+      "value_linkage_future_state": 4,
+      "value_linkage_technical_pain": [
+        "attribution_gaps",
+        "metric_gaps",
+        "reporting_complexity",
+        "data_quality"
+      ],
+      "value_linkage_business_pain": [
+        "roi_unclear",
+        "optimization_challenges",
+        "stakeholder_skepticism"
+      ],
+      "value_linkage_comment": "We rely on CloudWatch and New Relic for this today. Managing 30+ on-call engineers manually with significant siloed metrics. Looking to modernize - current licensing costs $150K/year plus operational overhead.",
+      "value_reviews_current_state": 2,
+      "value_reviews_future_state": 4,
+      "value_reviews_technical_pain": [
+        "no_reviews",
+        "manual_analysis",
+        "action_gaps"
+      ],
+      "value_reviews_business_pain": [
+        "wasted_spend",
+        "reactive_approach",
+        "budget_overruns",
+        "accountability_gaps"
+      ],
+      "value_reviews_comment": "Technical debt accumulating with New Relic. We have $50K+ monthly cloud spend that nobody wants to touch. alert fatigue becoming existential risk. Board asking why we can't do real-time analytics like competitors.",
+      "innovation_adoption_current_state": 2,
+      "innovation_adoption_future_state": 4,
+      "innovation_adoption_technical_pain": [
+        "no_evaluation",
+        "risk_aversion",
+        "testing_barriers",
+        "adoption_delays"
+      ],
+      "innovation_adoption_business_pain": [
+        "efficiency_gaps"
+      ],
+      "continuous_improvement_current_state": 2,
+      "continuous_improvement_future_state": 4,
+      "continuous_improvement_technical_pain": [
+        "no_feedback_loop",
+        "learning_capture",
+        "retrospective_gaps",
+        "roadmap_disconnect"
+      ],
+      "continuous_improvement_business_pain": [
+        "repeated_mistakes",
+        "value_leakage",
+        "culture_impact"
+      ],
+      "continuous_improvement_comment": "Painful fragmentation: CloudWatch for ingestion, separate warehouse for storage, Excel cost tracking for transformation. 10+ disconnected tools scattered across tools. alert fatigue due to lack of integration. Need unified modern data & AI platform."
+    },
+    "editHistory": [
+      {
+        "timestamp": "2026-08-16T23:06:25.842Z",
+        "editorEmail": "admin@scorex-platform.com",
+        "changes": "Sample assessment created"
+      }
+    ],
+    "startedAt": "2026-08-16T23:06:25.843Z",
+    "selectedPillars": [],
+    "userId": "user_21503603",
+    "createdAt": "2026-08-16T23:06:25.843Z",
+    "updatedAt": "2026-08-16T23:06:25.843Z"
   }
 }

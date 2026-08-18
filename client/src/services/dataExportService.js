@@ -40,50 +40,74 @@ export const exportAssessmentToJSON = (instance, report) => {
 
 export const exportAssessmentToCSV = (instance, report) => {
   try {
-    const framework = instance.frameworkSnapshot || {};
+    const framework = instance?.frameworkSnapshot || {};
     const dimensions = framework.dimensions || [];
-    const responses = instance.responses || {};
+    const responses = instance?.responses || {};
+
+    const escapeCsv = (val) => {
+      if (val === null || val === undefined) return '""';
+      let str = String(val).trim();
+      if (/^[=+\-@\t\r]/.test(str)) {
+        str = `'${str}`;
+      }
+      return `"${str.replace(/"/g, '""')}"`;
+    };
 
     const rows = [
-      ['Customer', instance.customerName || 'Organization'],
-      ['Framework', framework.title || 'Architecture Assessment'],
-      ['Overall Score', `${instance.totalScore || '0.0'} / 5.0`],
-      ['Maturity Stage', instance.maturityLevel || 'Defined'],
-      ['Exported At', new Date().toLocaleString()],
+      [escapeCsv('Customer'), escapeCsv(instance?.customerName || 'Organization')],
+      [escapeCsv('Framework'), escapeCsv(framework.title || 'Architecture Assessment')],
+      [escapeCsv('Overall Score'), escapeCsv(`${instance?.totalScore || report?.overallScore || '0.0'} / 5.0`)],
+      [escapeCsv('Maturity Stage'), escapeCsv(instance?.maturityLevel || report?.maturityLevel || 'Defined')],
+      [escapeCsv('Exported At'), escapeCsv(new Date().toLocaleString())],
       [],
-      ['Dimension', 'Question ID', 'Question Text', 'Current State Score', 'Target State Score', 'Technical Pain Points', 'Business Pain Points', 'Operational Notes']
+      [
+        escapeCsv('Dimension'),
+        escapeCsv('Question ID'),
+        escapeCsv('Question Text'),
+        escapeCsv('Current State Score'),
+        escapeCsv('Target State Score'),
+        escapeCsv('Technical Pain Points'),
+        escapeCsv('Business Pain Points'),
+        escapeCsv('Operational Notes')
+      ]
     ];
 
     dimensions.forEach(dim => {
       (dim.questions || []).forEach(q => {
         const currentScore = responses[q.id] !== undefined ? responses[q.id] : 'Not Answered';
         const targetScore = responses[`${q.id}_future_state`] !== undefined ? responses[`${q.id}_future_state`] : 'N/A';
-        const techPains = (responses[`${q.id}_tech_pain`] || []).join('; ');
-        const bizPains = (responses[`${q.id}_business_pain`] || []).join('; ');
-        const notes = (responses[`${q.id}_comment`] || '').replace(/"/g, '""');
+        const tp = Array.isArray(responses[`${q.id}_technical_pain`]) 
+          ? responses[`${q.id}_technical_pain`].join('; ') 
+          : (Array.isArray(responses[`${q.id}_tech_pain`]) ? responses[`${q.id}_tech_pain`].join('; ') : '');
+        const bp = Array.isArray(responses[`${q.id}_business_pain`]) 
+          ? responses[`${q.id}_business_pain`].join('; ') 
+          : '';
+        const notes = responses[`${q.id}_comment`] || '';
 
         rows.push([
-          `"${dim.name.replace(/"/g, '""')}"`,
-          `"${q.id}"`,
-          `"${q.text.replace(/"/g, '""')}"`,
-          currentScore,
-          targetScore,
-          `"${techPains.replace(/"/g, '""')}"`,
-          `"${bizPains.replace(/"/g, '""')}"`,
-          `"${notes}"`
+          escapeCsv(dim.name),
+          escapeCsv(q.id),
+          escapeCsv(q.text || q.prompt || q.title || ''),
+          escapeCsv(currentScore),
+          escapeCsv(targetScore),
+          escapeCsv(tp),
+          escapeCsv(bp),
+          escapeCsv(notes)
         ]);
       });
     });
 
-    const csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
-    const encodedUri = encodeURI(csvContent);
+    const csvContent = rows.map(r => r.join(",")).join("\r\n");
+    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    const safeName = (instance.customerName || 'assessment').toLowerCase().replace(/[^a-z0-9]/g, '_');
+    link.setAttribute("href", url);
+    const safeName = (instance?.customerName || 'assessment').toLowerCase().replace(/[^a-z0-9]/g, '_');
     link.setAttribute("download", `scorex_${safeName}_matrix.csv`);
     document.body.appendChild(link);
     link.click();
-    link.remove();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
     return { success: true };
   } catch (error) {
     console.error('Error exporting to CSV:', error);

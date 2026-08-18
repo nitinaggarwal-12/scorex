@@ -142,13 +142,28 @@ const AudioBriefingPlayer = ({ instance, report }) => {
     };
   }, []);
 
+  const stripMarkdownForSpeech = (text) => {
+    if (!text) return '';
+    return String(text)
+      .replace(/#{1,6}\s+/g, '') // remove markdown headings
+      .replace(/\*\*(.*?)\*\*/g, '$1') // remove bold
+      .replace(/\*(.*?)\*/g, '$1') // remove italics
+      .replace(/`{1,3}[^`]*`{1,3}/g, '') // remove code blocks
+      .replace(/\[(.*?)\]\(.*?\)/g, '$1') // remove links
+      .replace(/^[-*+]\s+/gm, '') // remove bullet points
+      .replace(/>\s+/g, '') // remove blockquotes
+      .replace(/[|\\~_]/g, ' ') // remove special markdown chars
+      .replace(/\s+/g, ' ') // normalize whitespace
+      .trim();
+  };
+
   const generateSpeechScript = () => {
     const customer = instance?.customerName || 'your organization';
     const framework = instance?.frameworkSnapshot?.title || 'Architecture Assessment';
     const score = report?.overallScore || instance?.totalScore || 3.0;
     const stage = report?.maturityLevel || instance?.maturityLevel || 'Defined';
-    const summary = report?.executiveSummary || 'Your architecture shows strong baseline capabilities with clear modernization opportunities.';
-    const recommendations = (report?.prioritizedRecommendations || []).slice(0, 3);
+    const summary = stripMarkdownForSpeech(report?.executiveSummary || 'Your architecture shows strong baseline capabilities with clear modernization opportunities.');
+    const recommendations = (report?.prioritizedRecommendations || report?.prioritizedActions || []).slice(0, 3);
 
     let script = `Executive Audio Briefing for ${customer}. `;
     script += `This is your executive summary for the ${framework}. `;
@@ -158,7 +173,8 @@ const AudioBriefingPlayer = ({ instance, report }) => {
     if (recommendations.length > 0) {
       script += `Here are the top strategic recommendations: `;
       recommendations.forEach((rec, idx) => {
-        script += `Priority ${idx + 1}: ${rec.title || rec.recommendation || rec.action}. `;
+        const title = stripMarkdownForSpeech(rec.title || rec.recommendation || rec.action || 'Strategic initiative');
+        script += `Priority ${idx + 1}: ${title}. `;
       });
     }
 

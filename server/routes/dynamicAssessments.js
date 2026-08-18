@@ -1062,10 +1062,69 @@ For each question, return JSON conforming strictly to:
 }
 Return valid JSON only.`;
 
-    const response = await dynamicEngine.geminiService.generateJSON(prompt);
+    let questions = [];
+    try {
+      if (dynamicEngine.gemini && typeof dynamicEngine.gemini.generateJSON === 'function') {
+        const response = await dynamicEngine.gemini.generateJSON(prompt);
+        if (response && Array.isArray(response.questions) && response.questions.length > 0) {
+          questions = response.questions;
+        }
+      }
+    } catch (aiErr) {
+      console.warn('⚠️ AI suggest questions failed, using deterministic fallback:', aiErr.message);
+    }
+
+    // Deterministic fallback if Gemini is offline or returned empty
+    if (questions.length === 0) {
+      const slug = dimensionName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+      questions = [
+        {
+          id: `q_${slug}_1`,
+          text: `How mature and standardized is your organization's approach to ${dimensionName}?`,
+          guidance: `Evaluate the formalization, automation, and continuous observability of ${dimensionName}.`,
+          options: [
+            { value: 1, score: 1, label: `Ad-hoc / Manual: No formal standards or tooling established for ${dimensionName}.` },
+            { value: 2, score: 2, label: `Experimenting: Departmental pilots with fragmented point solutions and siloed operations.` },
+            { value: 3, score: 3, label: `Formalized: Standardized baseline platform with defined SLA and governance controls.` },
+            { value: 4, score: 4, label: `Optimized: Automated CI/CD, proactive telemetry, and policy-as-code enforcement.` },
+            { value: 5, score: 5, label: `Transformational: Autonomous self-healing, real-time optimization, and industry-leading innovation.` }
+          ],
+          technicalPainPoints: [
+            `Lack of unified architectural standards for ${dimensionName}`,
+            `High operational overhead and manual intervention`,
+            `Limited end-to-end telemetry and compliance visibility`
+          ],
+          businessPainPoints: [
+            `Increased time-to-market for modern digital initiatives`,
+            `Unpredictable cloud spend and operational risk exposure`
+          ]
+        },
+        {
+          id: `q_${slug}_2`,
+          text: `To what extent are security, compliance, and governance controls embedded into ${dimensionName}?`,
+          guidance: `Assess role-based access control (RBAC/ABAC), data encryption, audit trails, and automated policy verification.`,
+          options: [
+            { value: 1, score: 1, label: 'Uncontrolled: Security is an afterthought with broad permissions and unencrypted data.' },
+            { value: 2, score: 2, label: 'Reactive: Static access rules with periodic manual audit reviews.' },
+            { value: 3, score: 3, label: 'Governed: Centralized IAM, automated encryption at rest and in transit, and role delegations.' },
+            { value: 4, score: 4, label: 'Zero-Trust: Attribute-based access control, dynamic column/row masking, and continuous posture evaluation.' },
+            { value: 5, score: 5, label: 'Continuous Autonomous Compliance: Real-time DLP, automated anomaly quarantine, and certified regulatory compliance.' }
+          ],
+          technicalPainPoints: [
+            `Over-privileged access credentials and compliance blind spots`,
+            `Complex audit reconciliation across multiple cloud environments`
+          ],
+          businessPainPoints: [
+            `Regulatory exposure and breach liabilities (GDPR / HIPAA / PCI-DSS)`,
+            `Slow security review bottlenecks blocking developer velocity`
+          ]
+        }
+      ];
+    }
+
     res.json({
       success: true,
-      questions: response.questions || []
+      questions
     });
   } catch (error) {
     console.error('Error suggesting questions:', error);
@@ -1128,6 +1187,100 @@ router.get('/customer/:customerName/portfolio-rollup', async (req, res) => {
   } catch (error) {
     console.error('Error computing portfolio rollup:', error);
     res.status(500).json({ success: false, error: 'Failed to compute portfolio rollup' });
+  }
+});
+
+// 14. Promote Assessment Instance directly as Reusable Assessment Type in Navbar Catalog
+router.post('/instances/:id/promote-as-type', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, badge, color, subtitle, description } = req.body || {};
+
+    const instance = await customAssessmentRepo.getInstanceById(id);
+    if (!instance) {
+      return res.status(404).json({ success: false, error: 'Assessment instance not found' });
+    }
+
+    const framework = instance.frameworkSnapshot || {};
+    const typeKey = `${framework.typeKey || 'custom'}_promoted_${Date.now().toString(36)}`;
+
+    const savedType = await customAssessmentRepo.saveAssessmentType({
+      typeKey,
+      title: title || framework.title || 'Promoted Architecture Assessment',
+      subtitle: subtitle || framework.subtitle || (instance.customerName ? `Tailored from ${instance.customerName} engagement` : 'Enterprise Framework'),
+      description: description || framework.description || 'Promoted enterprise architecture assessment template.',
+      icon: framework.icon || 'FiAward',
+      badge: badge || framework.badge || 'Promoted',
+      color: color || framework.color || '#6366f1',
+      framework,
+      status: 'production',
+      isPublished: true,
+      isPromoted: true,
+      createdBy: instance.customerName || 'executive-admin'
+    });
+
+    res.json({
+      success: true,
+      type: savedType,
+      message: `"${savedType.title}" successfully promoted as an official Assessment Type!`
+    });
+  } catch (error) {
+    console.error('Error promoting instance as type:', error);
+    res.status(500).json({ success: false, error: 'Failed to promote assessment instance as type' });
+  }
+});
+
+// 15. Customer List & Grouping Overview
+router.get('/customers', async (req, res) => {
+  try {
+    const allInstances = await customAssessmentRepo.getAllInstances();
+    const customerMap = new Map();
+
+    allInstances.forEach(inst => {
+      const name = (inst.customerName || 'Enterprise Organization').trim();
+      if (!customerMap.has(name.toLowerCase())) {
+        customerMap.set(name.toLowerCase(), {
+          customerName: name,
+          assessmentCount: 0,
+          completedCount: 0,
+          latestAssessmentDate: inst.updatedAt || inst.createdAt,
+          industries: new Set()
+        });
+      }
+      const entry = customerMap.get(name.toLowerCase());
+      entry.assessmentCount += 1;
+      if (inst.status === 'completed') entry.completedCount += 1;
+      if (inst.industry) entry.industries.add(inst.industry);
+      if (new Date(inst.updatedAt || inst.createdAt) > new Date(entry.latestAssessmentDate)) {
+        entry.latestAssessmentDate = inst.updatedAt || inst.createdAt;
+      }
+    });
+
+    const customers = Array.from(customerMap.values()).map(c => ({
+      ...c,
+      industries: Array.from(c.industries)
+    }));
+
+    res.json({ success: true, customers });
+  } catch (error) {
+    console.error('Error fetching customers:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch customers' });
+  }
+});
+
+// 16. Customer Specific Assessments
+router.get('/customer/:customerName', async (req, res) => {
+  try {
+    const { customerName } = req.params;
+    const allInstances = await customAssessmentRepo.getAllInstances();
+    const assessments = allInstances.filter(
+      i => (i.customerName || '').toLowerCase() === customerName.toLowerCase()
+    );
+
+    res.json({ success: true, customerName, assessments });
+  } catch (error) {
+    console.error('Error fetching customer assessments:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch customer assessments' });
   }
 });
 

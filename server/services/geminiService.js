@@ -478,6 +478,35 @@ Return ONLY valid JSON.`;
     }
     return null;
   }
+
+  /**
+   * Generic structured JSON generation with Gemini
+   */
+  async generateJSON(prompt, systemInstruction = '', temperature = 0.4) {
+    if (!this.isAvailable()) {
+      return null;
+    }
+
+    try {
+      const result = await this._generateWithFallback(
+        prompt + '\n\nIMPORTANT: Output ONLY pure valid JSON.',
+        systemInstruction,
+        temperature,
+        'application/json'
+      );
+      if (result && result.text) {
+        try {
+          return JSON.parse(result.text);
+        } catch (e) {
+          const jsonMatch = result.text.match(/\{[\s\S]*\}/);
+          if (jsonMatch) return JSON.parse(jsonMatch[0]);
+        }
+      }
+    } catch (err) {
+      console.warn('⚠️ Gemini generateJSON notice:', err.message);
+    }
+    return null;
+  }
 }
 
 module.exports = new GeminiService();
