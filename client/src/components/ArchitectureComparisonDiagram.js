@@ -630,9 +630,17 @@ const ArchitectureComparisonDiagram = ({
   targetScore = 4.5,
   customerName = 'Enterprise Client',
   useCase = 'Platform Modernization',
-  framework = {}
+  framework = {},
+  theme = 'light'
 }) => {
   const [viewMode, setViewMode] = useState('side_by_side'); // 'side_by_side', 'current_diagram', 'target_diagram', 'cards'
+  const [diagramTheme, setDiagramTheme] = useState(theme || 'light'); // 'light' | 'dark'
+
+  useEffect(() => {
+    if (theme) {
+      setDiagramTheme(theme);
+    }
+  }, [theme]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
   const [isXmlEditorOpen, setIsXmlEditorOpen] = useState(false);
@@ -1049,6 +1057,26 @@ const ArchitectureComparisonDiagram = ({
           </button>
 
           <button
+            onClick={() => setDiagramTheme(prev => prev === 'light' ? 'dark' : 'light')}
+            style={{ 
+              background: diagramTheme === 'light' ? '#f8fafc' : '#0f172a', 
+              border: '1px solid #cbd5e1', 
+              color: diagramTheme === 'light' ? '#334155' : '#38bdf8', 
+              padding: '7px 12px', 
+              borderRadius: '8px', 
+              fontSize: '0.82rem', 
+              fontWeight: '700', 
+              cursor: 'pointer', 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '5px' 
+            }}
+            title={`Switch to ${diagramTheme === 'light' ? 'Dark' : 'Light'} Mode`}
+          >
+            {diagramTheme === 'light' ? '☀️ Light' : '🌙 Dark'}
+          </button>
+
+          <button
             onClick={() => handleOpenXmlEditor(viewMode === 'current_diagram' ? 'current' : 'target')}
             style={{ background: '#f8fafc', border: '1px solid #cbd5e1', color: '#334155', padding: '7px 12px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
             title="Edit or paste raw Draw.io XML code directly into the diagram canvas"
@@ -1121,7 +1149,7 @@ const ArchitectureComparisonDiagram = ({
                 title={currentTitle}
                 subtitle={currentSubtitle}
                 badge="Current State"
-                theme="dark"
+                theme={diagramTheme}
                 height="480px"
                 isTarget={false}
               />
@@ -1134,7 +1162,7 @@ const ArchitectureComparisonDiagram = ({
                 title={targetTitle}
                 subtitle={targetSubtitle}
                 badge="Desired Future State"
-                theme="dark"
+                theme={diagramTheme}
                 height="480px"
                 isTarget={true}
               />
@@ -1152,7 +1180,7 @@ const ArchitectureComparisonDiagram = ({
               title={currentTitle}
               subtitle={currentSubtitle}
               badge="Current State"
-              theme="dark"
+              theme={diagramTheme}
               height="650px"
               isTarget={false}
             />
@@ -1169,7 +1197,7 @@ const ArchitectureComparisonDiagram = ({
               title={targetTitle}
               subtitle={targetSubtitle}
               badge="Desired Future State"
-              theme="dark"
+              theme={diagramTheme}
               height="650px"
               isTarget={true}
             />

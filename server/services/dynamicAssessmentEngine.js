@@ -738,37 +738,37 @@ Generate a strictly valid JSON response matching this schema:
     let curL3Title = "STAGE 3: COMPUTE & MLOps"; let curL3Sub = "Over-Provisioned Clusters & Shadow IT";
     let curC3_1T = "Static 24/7 Compute VMs"; let curC3_1S = "Always-on oversized cluster nodes<br>Lack of automated 15-min auto-suspend policies";
     let curC3_2T = "Disconnected Notebooks"; let curC3_2S = "Ad-hoc local Jupyter environments<br>No centralized model registry or drift alerts";
-    let curWarn3T = "⚠️ $480k Annual Idle Waste"; curWarn3S = "Zero cluster FinOps kill switches";
+    let curWarn3T = "⚠️ $480k Annual Idle Waste"; let curWarn3S = "Zero cluster FinOps kill switches";
 
     let curL4Title = "STAGE 4: SERVING & BI"; let curL4Sub = "Unguarded LLMs & Stale BI Backlog";
     let curC4_1T = "Direct Unguarded LLM APIs"; let curC4_1S = "No prompt caching (100% token cost paid)<br>No enterprise PII filters or Model Armor";
     let curC4_2T = "Stale Daily BI Extracts"; let curC4_2S = "Slow queries over legacy schemas (P1-GOV-C-04)<br>14-day turnaround on custom metrics";
-    let curWarn4T = "⚠️ 14-Day Delivery Lag"; curWarn4S = "Analyst team overwhelmed by custom SQL";
+    let curWarn4T = "⚠️ 14-Day Delivery Lag"; let curWarn4S = "Analyst team overwhelmed by custom SQL";
 
     let curFoundTitle = "⚠️ FRAGMENTED PERIMETER & COMPLIANCE (CROSS-CUTTING TECHNICAL DEBT)";
     let curFoundSub = "Siloed IAM Accounts • Public Egress Endpoints • Hardcoded Keys • 14-Day Manual SOC2 Audit Prep";
 
     let targetTitle = "Target State: Unified Medallion Lakehouse & AI Mesh (" + cust + ")";
     let targetSubtitle = "Target Maturity Level " + tgt + "/5.0 (Optimized) • P3-APP-C-01 Panoramic View • BigLake Iceberg • Serverless FinOps";
-    let tgtL1Title = "STAGE 1: REAL-TIME INGESTION"; tgtL1Sub = "Declarative Streaming & CDC";
-    let tgtC1_1T = "Multi-Source Event Streams"; tgtC1_1S = "Google Cloud Pub/Sub + Managed Kafka<br>Sub-second real-time event capture";
-    let tgtC1_2T = "Serverless Dataflow / CDC"; tgtC1_2S = "Automated schema evolution contracts<br>Declarative data transformations & DLQ";
-    let tgtVal1T = "✓ Zero Ingestion Latency"; tgtVal1S = "Automated retry & dead-letter isolation";
+    let tgtL1Title = "STAGE 1: REAL-TIME INGESTION"; let tgtL1Sub = "Declarative Streaming & CDC";
+    let tgtC1_1T = "Multi-Source Event Streams"; let tgtC1_1S = "Google Cloud Pub/Sub + Managed Kafka<br>Sub-second real-time event capture";
+    let tgtC1_2T = "Serverless Dataflow / CDC"; let tgtC1_2S = "Automated schema evolution contracts<br>Declarative data transformations & DLQ";
+    let tgtVal1T = "✓ Zero Ingestion Latency"; let tgtVal1S = "Automated retry & dead-letter isolation";
 
-    let tgtL2Title = "STAGE 2: BIGLAKE LAKEHOUSE"; tgtL2Sub = "P3-DAT-L-04 Medallion Fabric";
-    let tgtC2_1T = "Open Table Formats"; tgtC2_1S = "Apache Iceberg / BigLake Medallion<br>Bronze Raw, Silver Refined, Gold BI tables";
-    let tgtC2_2T = "Centralized Metadata & Lineage"; tgtC2_2S = "Dataplex Universal Catalog<br>Automated row/column masking & ABAC policies";
-    let tgtVal2T = "✓ Unified Governance Plane"; tgtVal2S = "Cross-cloud zero-copy data sharing";
+    let tgtL2Title = "STAGE 2: BIGLAKE LAKEHOUSE"; let tgtL2Sub = "P3-DAT-L-04 Medallion Fabric";
+    let tgtC2_1T = "Open Table Formats"; let tgtC2_1S = "Apache Iceberg / BigLake Medallion<br>Bronze Raw, Silver Refined, Gold BI tables";
+    let tgtC2_2T = "Centralized Metadata & Lineage"; let tgtC2_2S = "Dataplex Universal Catalog<br>Automated row/column masking & ABAC policies";
+    let tgtVal2T = "✓ Unified Governance Plane"; let tgtVal2S = "Cross-cloud zero-copy data sharing";
 
-    let tgtL3Title = "STAGE 3: SERVERLESS FINOPS"; tgtL3Sub = "Autoscaling Vectorized Engine";
-    let tgtC3_1T = "BigQuery Editions (Baseline Slots)"; tgtC3_1S = "Dynamic autoscaling slot commitments<br>35% to 50% compute TCO savings";
-    let tgtC3_2T = "Vertex AI Model Registry"; tgtC3_2S = "Automated CI/CD model verification<br>Real-time concept drift & feature store";
-    let tgtVal3T = "✓ Automated FinOps & CI/CD"; tgtVal3S = "Zero idle spend & fully tracked models";
+    let tgtL3Title = "STAGE 3: SERVERLESS FINOPS"; let tgtL3Sub = "Autoscaling Vectorized Engine";
+    let tgtC3_1T = "BigQuery Editions (Baseline Slots)"; let tgtC3_1S = "Dynamic autoscaling slot commitments<br>35% to 50% compute TCO savings";
+    let tgtC3_2T = "Vertex AI Model Registry"; let tgtC3_2S = "Automated CI/CD model verification<br>Real-time concept drift & feature store";
+    let tgtVal3T = "✓ Automated FinOps & CI/CD"; let tgtVal3S = "Zero idle spend & fully tracked models";
 
-    let tgtL4Title = "STAGE 4: AI MESH & BI"; tgtL4Sub = "P3-AI-L-03 Agent Mesh & Looker";
-    let tgtC4_1T = "Compound Multi-Agent Mesh"; tgtC4_1S = "MCP protocol & 75% prompt context caching<br>Zero-Trust AI guardrails & CMEK isolation";
-    let tgtC4_2T = "Self-Service Semantic BI Layer"; tgtC4_2S = "Looker Semantic Model<br>Sub-second dashboard refresh speeds";
-    let tgtVal4T = "✓ Real-Time Self-Service"; tgtVal4S = "Instant answers for BI & autonomous agents";
+    let tgtL4Title = "STAGE 4: AI MESH & BI"; let tgtL4Sub = "P3-AI-L-03 Agent Mesh & Looker";
+    let tgtC4_1T = "Compound Multi-Agent Mesh"; let tgtC4_1S = "MCP protocol & 75% prompt context caching<br>Zero-Trust AI guardrails & CMEK isolation";
+    let tgtC4_2T = "Self-Service Semantic BI Layer"; let tgtC4_2S = "Looker Semantic Model<br>Sub-second dashboard refresh speeds";
+    let tgtVal4T = "✓ Real-Time Self-Service"; let tgtVal4S = "Instant answers for BI & autonomous agents";
 
     let tgtFoundTitle = "🛡️ P4-SEC-P-02 ZERO-TRUST LANDING ZONE & SHARED VPC NETWORK FABRIC";
     let tgtFoundSub = "Dataplex Universal Catalog • VPC Service Controls • Cloud KMS HSM CMEK • Chronicle SIEM";

@@ -60,12 +60,40 @@ export function getCleanGraphXml(xmlStr) {
   return xmlStr;
 }
 
+export function adaptXmlForTheme(xmlStr, theme = 'light') {
+  if (!xmlStr) return '';
+  if (theme === 'dark') return xmlStr;
+
+  // Convert dark theme background & fills to high-contrast enterprise light theme
+  return xmlStr
+    .replace(/background="#0f172a"/g, 'background="#ffffff"')
+    .replace(/background="#0b0f19"/g, 'background="#ffffff"')
+    .replace(/background="#1e293b"/g, 'background="#ffffff"')
+    .replace(/fillColor=#1e1b4b/g, 'fillColor=#f8fafc')
+    .replace(/fillColor=#1e293b/g, 'fillColor=#f8fafc')
+    .replace(/fillColor=#311018/g, 'fillColor=#fff1f2')
+    .replace(/fillColor=#450a0a/g, 'fillColor=#fee2e2')
+    .replace(/fillColor=#022c22/g, 'fillColor=#f0fdf4')
+    .replace(/fillColor=#064e3b/g, 'fillColor=#ecfdf5')
+    .replace(/fillColor=#065f46/g, 'fillColor=#d1fae5')
+    .replace(/fontColor=#ffffff/g, 'fontColor=#0f172a')
+    .replace(/color:#ffffff/g, 'color:#0f172a')
+    .replace(/color:#cbd5e1/g, 'color:#475569')
+    .replace(/color:#fda4af/g, 'color:#991b1b')
+    .replace(/color:#fca5a5/g, 'color:#b91c1c')
+    .replace(/color:#6ee7b7/g, 'color:#065f46')
+    .replace(/color:#a7f3d0/g, 'color:#047857')
+    .replace(/color:#f87171/g, 'color:#dc2626')
+    .replace(/color:#34d399/g, 'color:#059669')
+    .replace(/color:#94a3b8/g, 'color:#64748b');
+}
+
 export default function DiagramViewer({
   xml,
   title = 'Enterprise Architecture Blueprint',
   subtitle,
   badge = 'Architecture',
-  theme = 'dark',
+  theme = 'light',
   height = '560px',
   isTarget = false
 }) {
@@ -83,8 +111,9 @@ export default function DiagramViewer({
   const borderColor = theme === 'dark' ? 'rgba(51, 65, 85, 0.6)' : 'rgba(226, 232, 240, 0.9)';
 
   const sanitizedXml = useMemo(() => {
-    return getCleanGraphXml(sanitizeDrawioXmlAttributes(xml || ''));
-  }, [xml]);
+    const rawSanitized = getCleanGraphXml(sanitizeDrawioXmlAttributes(xml || ''));
+    return adaptXmlForTheme(rawSanitized, theme);
+  }, [xml, theme]);
 
   const scriptUrl = origin ? `${origin}/viewer-static.min.js` : '/viewer-static.min.js';
 
