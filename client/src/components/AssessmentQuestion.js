@@ -73,14 +73,14 @@ const ScrollableContent = styled.div`
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 20px;
+  padding: 8px 18px 75px;
 `;
 
 const ProgressSection = styled.div`
   background: white;
   border-radius: 12px;
-  padding: 16px 20px;
-  margin-bottom: 16px;
+  padding: 12px 18px;
+  margin-bottom: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
 `;
@@ -2317,20 +2317,21 @@ const AssessmentQuestion = ({ framework, currentAssessment, onUpdateStatus }) =>
                   </OptionGroup>
                 </PerspectiveColumn>
               ))}
-
-              <CommentSection>
-                <CommentHeader>
-                  {currentQuestion?.commentBox?.label}
-                </CommentHeader>
-                <CommentInputWrapper>
-                  <CommentTextarea
-                    placeholder={currentQuestion?.commentBox?.placeholder}
-                    value={responses[`${currentQuestion?.id}_comment`] || ''}
-                    onChange={(e) => handleCommentChange(currentQuestion?.id, e.target.value)}
-                  />
-                </CommentInputWrapper>
-              </CommentSection>
             </PerspectivesGrid>
+
+            {/* Horizontally Stretched Full-Width Bottom Notes */}
+            <CommentSection>
+              <CommentHeader>
+                📝 {currentQuestion?.commentBox?.label || 'Operational Context & Architecture Notes'} <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: '400' }}>(Appended to Gemini AI Analysis)</span>
+              </CommentHeader>
+              <CommentInputWrapper>
+                <CommentTextarea
+                  placeholder={currentQuestion?.commentBox?.placeholder || 'Enter notes or specific details for this capability...'}
+                  value={responses[`${currentQuestion?.id}_comment`] || ''}
+                  onChange={(e) => handleCommentChange(currentQuestion?.id, e.target.value)}
+                />
+              </CommentInputWrapper>
+            </CommentSection>
           </QuestionCard>
 
         </AnimatePresence>

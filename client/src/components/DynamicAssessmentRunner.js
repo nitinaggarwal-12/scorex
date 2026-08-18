@@ -290,7 +290,7 @@ const ScrollableBody = styled.div`
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 24px 32px 140px;
+  padding: 8px 18px 75px;
   -webkit-overflow-scrolling: touch;
 
   @media (max-width: 1024px) {
@@ -305,9 +305,9 @@ const ScrollableBody = styled.div`
 /* Progress & Header Bar */
 const TopHeaderBar = styled.div`
   background: white;
-  border-radius: 16px;
-  padding: 18px 24px;
-  margin-bottom: 20px;
+  border-radius: 12px;
+  padding: 6px 14px;
+  margin-bottom: 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
   display: flex;
   align-items: center;
@@ -330,9 +330,9 @@ const HeaderTitleGroup = styled.div`
 `;
 
 const DimensionIconCircle = styled.div`
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
   background: ${props => props.$color ? `linear-gradient(135deg, ${props.$color} 0%, #4f46e5 100%)` : 'linear-gradient(135deg, #ff6b35 0%, #f7931e 100%)'};
   color: white;
   display: flex;
@@ -473,9 +473,9 @@ const AutoSaveBadge = styled.div`
    ========================================================= */
 const QuestionContainerCard = styled(motion.div)`
   background: white;
-  border-radius: 20px;
-  padding: 32px 28px;
-  margin-bottom: 24px;
+  border-radius: 14px;
+  padding: 12px 16px;
+  margin-bottom: 8px;
   box-shadow: 0 6px 30px rgba(0, 0, 0, 0.06);
 
   @media (max-width: 768px) {
@@ -486,8 +486,8 @@ const QuestionContainerCard = styled(motion.div)`
 
 const QuestionTitleArea = styled.div`
   text-align: center;
-  max-width: 900px;
-  margin: 0 auto 28px;
+  max-width: 1000px;
+  margin: 0 auto 12px;
 
   @media (max-width: 768px) {
     text-align: left;
@@ -505,11 +505,11 @@ const QuestionNumberTag = styled.div`
 `;
 
 const QuestionPromptText = styled.h2`
-  font-size: 1.35rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: #1e293b;
-  line-height: 1.4;
-  margin-bottom: 12px;
+  line-height: 1.25;
+  margin-bottom: 4px;
 
   @media (max-width: 640px) {
     font-size: 1.15rem;
@@ -517,80 +517,86 @@ const QuestionPromptText = styled.h2`
 `;
 
 const QuestionGuidance = styled.div`
-  font-size: 0.875rem;
+  font-size: 0.76rem;
   color: #64748b;
   background: #f8fafc;
   border-left: 3px solid #ff6b35;
-  padding: 10px 14px;
-  border-radius: 6px;
+  padding: 4px 8px;
+  border-radius: 4px;
   display: inline-block;
   text-align: left;
-  line-height: 1.45;
+  line-height: 1.25;
 `;
 
-/* Responsive Multi-Viewport Grid */
+/* Responsive Multi-Viewport 4-Column Grid with Equal Height */
 const PerspectivesGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 12px;
+  align-items: stretch;
 
-  @media (max-width: 1400px) {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
-  }
-
-  @media (max-width: 992px) {
+  @media (max-width: 1280px) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
+    gap: 14px;
   }
 
   @media (max-width: 640px) {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 14px;
   }
 `;
 
 const PerspectiveColumn = styled.div`
   display: flex;
   flex-direction: column;
+  height: 100%;
   min-width: 0;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px;
+  box-sizing: border-box;
 `;
 
 const PerspectiveHeader = styled.div`
-  font-size: 0.925rem;
+  font-size: 0.86rem;
   font-weight: 700;
   color: #1e293b;
   text-align: center;
-  padding: 10px 12px;
-  background: #f8fafc;
-  border-radius: 10px;
-  margin-bottom: 12px;
+  padding: 6px 10px;
+  background: #ffffff;
+  border-radius: 8px;
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  border: 1px solid #f1f5f9;
+  border: 1px solid #e2e8f0;
 `;
 
 const OptionsStack = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   flex: 1;
+  justify-content: space-between;
 `;
 
 const MaturityOptionCard = styled.button`
   background: ${props => props.$selected ? '#fff7ed' : '#ffffff'};
   border: 2px solid ${props => props.$selected ? '#ff6b35' : '#e2e8f0'};
-  border-radius: 12px;
-  padding: 12px 12px;
+  border-radius: 8px;
+  padding: 5px 8px;
   text-align: left;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  min-height: 48px;
+  justify-content: center;
+  gap: 1px;
+  flex: 1;
+  min-height: 40px;
   box-shadow: ${props => props.$selected ? '0 4px 12px rgba(255, 107, 53, 0.15)' : 'none'};
 
   &:hover {
@@ -600,16 +606,16 @@ const MaturityOptionCard = styled.button`
 `;
 
 const OptionStageTag = styled.span`
-  font-size: 0.725rem;
+  font-size: 0.66rem;
   font-weight: 800;
   color: ${props => props.$selected ? '#ff6b35' : '#64748b'};
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
 `;
 
 const OptionText = styled.span`
-  font-size: 0.825rem;
-  line-height: 1.4;
+  font-size: 0.72rem;
+  line-height: 1.18;
   color: ${props => props.$selected ? '#1e293b' : '#475569'};
   font-weight: ${props => props.$selected ? '600' : '400'};
 `;
@@ -618,29 +624,35 @@ const OptionText = styled.span`
 const PainCheckboxCard = styled.label`
   background: ${props => props.$checked ? '#fef2f2' : '#ffffff'};
   border: 1.5px solid ${props => props.$checked ? '#ef4444' : '#e2e8f0'};
-  border-radius: 10px;
-  padding: 10px 12px;
-  margin-bottom: 8px;
+  border-radius: 8px;
+  padding: 5px 8px;
+  margin-bottom: 4px;
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
+  align-items: center;
+  gap: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-height: 44px;
+  flex: 1;
+  min-height: 40px;
+  box-sizing: border-box;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 
   input {
-    margin-top: 3px;
+    margin: 0;
     accent-color: #ef4444;
     cursor: pointer;
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
     flex-shrink: 0;
   }
 
   span {
-    font-size: 0.825rem;
+    font-size: 0.72rem;
     color: ${props => props.$checked ? '#991b1b' : '#334155'};
-    line-height: 1.35;
+    line-height: 1.18;
     font-weight: ${props => props.$checked ? '600' : '400'};
   }
 
@@ -649,18 +661,28 @@ const PainCheckboxCard = styled.label`
   }
 `;
 
-/* Notes Textarea */
+/* Horizontal Full-Width Bottom Notes Section */
+const HorizontalNotesSection = styled.div`
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 6px 10px;
+  margin-top: 6px;
+  width: 100%;
+  box-sizing: border-box;
+`;
+
 const NotesArea = styled.textarea`
   width: 100%;
-  flex: 1;
-  min-height: 220px;
+  min-height: 38px;
+  height: 38px;
   border: 1.5px solid #cbd5e1;
-  border-radius: 12px;
-  padding: 12px;
+  border-radius: 6px;
+  padding: 6px 10px;
   font-family: inherit;
-  font-size: 0.875rem;
+  font-size: 0.78rem;
   color: #1e293b;
-  line-height: 1.5;
+  line-height: 1.4;
   resize: vertical;
   background: #ffffff;
   box-sizing: border-box;
@@ -686,7 +708,7 @@ const StickyBottomBar = styled.div`
   right: 0;
   background: white;
   border-top: 1px solid #e2e8f0;
-  padding: 14px 28px;
+  padding: 8px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1790,7 +1812,7 @@ const DynamicAssessmentRunner = () => {
                   <PerspectiveHeader>
                     <span>Technical Pain Points</span>
                   </PerspectiveHeader>
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between', gap: '6px' }}>
                     {(currentQ.technicalPainPoints || [
                       "Inconsistent environment configurations and configuration drift",
                       "Manual provisioning & fragmented operational scripting",
@@ -1818,7 +1840,7 @@ const DynamicAssessmentRunner = () => {
                   <PerspectiveHeader>
                     <span>Business Pain Points</span>
                   </PerspectiveHeader>
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between', gap: '6px' }}>
                     {(currentQ.businessPainPoints || [
                       "Slow time-to-market for strategic enterprise capabilities",
                       "High operational & compute overhead inflating infrastructure TCO",
@@ -1840,40 +1862,39 @@ const DynamicAssessmentRunner = () => {
                     })}
                   </div>
                 </PerspectiveColumn>
+              </PerspectivesGrid>
 
-                {/* Column 5: Context Notes */}
-                <PerspectiveColumn>
-                  <PerspectiveHeader>
-                    <span>Notes</span>
-                  </PerspectiveHeader>
+              {/* Full-Width Horizontally Stretched Operational Notes & Evidence Links */}
+              <HorizontalNotesSection>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                  <span style={{ fontSize: '0.82rem', fontWeight: '700', color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    📝 Operational Context, Architecture Details & Evidence Links <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: '400' }}>(Appended to Gemini AI executive dossier)</span>
+                  </span>
+                  <button
+                    onClick={() => setShowAddEvidence(!showAddEvidence)}
+                    style={{ background: '#eff6ff', border: '1px solid #bfdbfe', color: '#2563eb', fontSize: '0.75rem', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '3px 10px', borderRadius: '6px' }}
+                  >
+                    <FiPlus size={12} /> {showAddEvidence ? 'Cancel' : '+ Add Evidence Link'}
+                  </button>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto', gap: '12px', alignItems: 'start' }}>
                   <NotesArea
                     placeholder="Enter current setup context, operational notes, and specific architecture details for the AI executive report..."
                     value={responses[`${currentQ.id}_comment`] || ''}
                     onChange={(e) => handleNotesChange(currentQ.id, e.target.value)}
                   />
 
-                  {/* Architecture Evidence & Artifact Links */}
-                  <div style={{ marginTop: '12px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                      <span style={{ fontSize: '0.75rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                        Evidence Links
-                      </span>
-                      <button
-                        onClick={() => setShowAddEvidence(!showAddEvidence)}
-                        style={{ background: 'transparent', border: 'none', color: '#2563eb', fontSize: '0.75rem', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '3px' }}
-                      >
-                        <FiPlus size={12} /> {showAddEvidence ? 'Cancel' : 'Add Link'}
-                      </button>
-                    </div>
-
+                  {/* Architecture Evidence & Artifact Links Box */}
+                  <div style={{ minWidth: '260px', maxWidth: '380px' }}>
                     {showAddEvidence && (
-                      <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '8px', marginBottom: '8px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '6px', marginBottom: '6px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                         <input
                           type="text"
                           placeholder="Label (e.g. GitHub RFC, Confluence)"
                           value={evidenceLabel}
                           onChange={(e) => setEvidenceLabel(e.target.value)}
-                          style={{ fontSize: '0.75rem', padding: '4px 8px', borderRadius: '4px', border: '1px solid #cbd5e1' }}
+                          style={{ fontSize: '0.75rem', padding: '4px 6px', borderRadius: '4px', border: '1px solid #cbd5e1' }}
                         />
                         <div style={{ display: 'flex', gap: '4px' }}>
                           <input
@@ -1881,11 +1902,11 @@ const DynamicAssessmentRunner = () => {
                             placeholder="URL (https://...)"
                             value={evidenceUrl}
                             onChange={(e) => setEvidenceUrl(e.target.value)}
-                            style={{ fontSize: '0.75rem', padding: '4px 8px', borderRadius: '4px', border: '1px solid #cbd5e1', flex: 1 }}
+                            style={{ fontSize: '0.75rem', padding: '4px 6px', borderRadius: '4px', border: '1px solid #cbd5e1', flex: 1 }}
                           />
                           <button
                             onClick={() => handleAddEvidenceLink(currentQ.id)}
-                            style={{ background: '#2563eb', color: '#fff', border: 'none', borderRadius: '4px', padding: '4px 10px', fontSize: '0.75rem', fontWeight: '700', cursor: 'pointer' }}
+                            style={{ background: '#2563eb', color: '#fff', border: 'none', borderRadius: '4px', padding: '4px 8px', fontSize: '0.75rem', fontWeight: '700', cursor: 'pointer' }}
                           >
                             Save
                           </button>
@@ -1893,7 +1914,7 @@ const DynamicAssessmentRunner = () => {
                       </div>
                     )}
 
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', maxHeight: '54px', overflowY: 'auto' }}>
                       {(responses[`${currentQ.id}_evidence_links`] || []).map((link, lIdx) => (
                         <span
                           key={lIdx}
@@ -1901,11 +1922,11 @@ const DynamicAssessmentRunner = () => {
                             background: '#eff6ff',
                             border: '1px solid #bfdbfe',
                             borderRadius: '6px',
-                            padding: '3px 8px',
+                            padding: '2px 6px',
                             fontSize: '0.72rem',
                             display: 'inline-flex',
                             alignItems: 'center',
-                            gap: '5px',
+                            gap: '4px',
                             color: '#1d4ed8'
                           }}
                         >
@@ -1914,21 +1935,25 @@ const DynamicAssessmentRunner = () => {
                             href={link.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            style={{ color: '#1d4ed8', textDecoration: 'none', fontWeight: '600', maxWidth: '110px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                            style={{ color: '#1d4ed8', textDecoration: 'none', fontWeight: '600', maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                           >
                             {link.label}
                           </a>
-                          <FiTrash2
-                            size={10}
-                            style={{ cursor: 'pointer', color: '#94a3b8', marginLeft: '2px' }}
+                          <button
                             onClick={() => handleRemoveEvidenceLink(currentQ.id, lIdx)}
-                          />
+                            style={{ background: 'transparent', border: 'none', color: '#93c5fd', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}
+                          >
+                            <FiX size={11} />
+                          </button>
                         </span>
                       ))}
+                      {(!responses[`${currentQ.id}_evidence_links`] || responses[`${currentQ.id}_evidence_links`].length === 0) && !showAddEvidence && (
+                        <span style={{ fontSize: '0.72rem', color: '#94a3b8', fontStyle: 'italic', padding: '4px 0' }}>No evidence links added yet</span>
+                      )}
                     </div>
                   </div>
-                </PerspectiveColumn>
-              </PerspectivesGrid>
+                </div>
+              </HorizontalNotesSection>
             </QuestionContainerCard>
           )}
         </ScrollableBody>
