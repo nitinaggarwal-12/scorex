@@ -15,97 +15,137 @@ import {
   FiAward,
   FiChevronDown,
   FiChevronUp,
-  FiFileText
+  FiFileText,
+  FiBookOpen,
+  FiCompass,
+  FiSun,
+  FiFilm,
+  FiRadio,
+  FiSkipForward,
+  FiSkipBack
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 
 const wave = keyframes`
   0%, 100% { height: 4px; }
-  50% { height: 26px; }
+  50% { height: 28px; }
 `;
 
 const pulseGlow = keyframes`
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.05); }
+  0%, 100% { opacity: 0.7; transform: scale(1); filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.4)); }
+  50% { opacity: 1; transform: scale(1.06); filter: drop-shadow(0 0 16px rgba(245, 158, 11, 0.7)); }
 `;
 
-// Emotional Theme Color Palettes
-const EMOTION_THEMES = {
+const shimmer = keyframes`
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+`;
+
+// Emotional & Storytelling Style Themes
+const STORY_THEMES = {
+  storyteller: {
+    name: 'Master Storyteller',
+    icon: '🎬',
+    tagline: 'Cinematic 5-Act Narrative Arc',
+    color: '#d97706',
+    gradient: 'linear-gradient(135deg, #f59e0b 0%, #b45309 50%, #78350f 100%)',
+    bg: 'rgba(245, 158, 11, 0.09)',
+    border: 'rgba(245, 158, 11, 0.35)',
+    glow: 'rgba(245, 158, 11, 0.25)',
+    accent: '#fbbf24',
+    pitch: 1.0,
+    rate: 0.94,
+    volume: 1.0
+  },
+  keynote: {
+    name: 'Visionary Keynote',
+    icon: '🌌',
+    tagline: 'Steve Jobs / TED Odyssey',
+    color: '#10b981',
+    gradient: 'linear-gradient(135deg, #10b981 0%, #047857 100%)',
+    bg: 'rgba(16, 185, 129, 0.09)',
+    border: 'rgba(16, 185, 129, 0.35)',
+    glow: 'rgba(16, 185, 129, 0.25)',
+    accent: '#34d399',
+    pitch: 1.06,
+    rate: 1.02,
+    volume: 1.0
+  },
+  thriller: {
+    name: 'Investigative Drama',
+    icon: '🕵️',
+    tagline: 'High-Stakes Risk & Revelation',
+    color: '#ef4444',
+    gradient: 'linear-gradient(135deg, #ef4444 0%, #991b1b 100%)',
+    bg: 'rgba(239, 68, 68, 0.09)',
+    border: 'rgba(239, 68, 68, 0.35)',
+    glow: 'rgba(239, 68, 68, 0.25)',
+    accent: '#f87171',
+    pitch: 0.91,
+    rate: 0.96,
+    volume: 1.0
+  },
+  fireside: {
+    name: 'Fireside Journey',
+    icon: '☕',
+    tagline: 'Intimate Founder-to-Founder',
+    color: '#8b5cf6',
+    gradient: 'linear-gradient(135deg, #8b5cf6 0%, #5b21b6 100%)',
+    bg: 'rgba(139, 92, 246, 0.09)',
+    border: 'rgba(139, 92, 246, 0.35)',
+    glow: 'rgba(139, 92, 246, 0.25)',
+    accent: '#a78bfa',
+    pitch: 0.97,
+    rate: 0.92,
+    volume: 1.0
+  },
   executive: {
     name: 'Executive Gravitas',
     icon: '👔',
-    badge: 'Authoritative & Measured',
-    color: '#6366f1',
-    gradient: 'linear-gradient(135deg, #6366f1 0%, #4338ca 100%)',
-    bg: 'rgba(99, 102, 241, 0.08)',
-    border: 'rgba(99, 102, 241, 0.25)',
+    tagline: 'Authoritative Board Briefing',
+    color: '#3b82f6',
+    gradient: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+    bg: 'rgba(59, 130, 246, 0.09)',
+    border: 'rgba(59, 130, 246, 0.35)',
+    glow: 'rgba(59, 130, 246, 0.25)',
+    accent: '#60a5fa',
     pitch: 0.95,
     rate: 0.96,
-    volume: 1.0,
-    accent: '#818cf8'
-  },
-  visionary: {
-    name: 'Visionary & Inspiring',
-    icon: '⚡',
-    badge: 'High Energy & Impact',
-    color: '#10b981',
-    gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-    bg: 'rgba(16, 185, 129, 0.08)',
-    border: 'rgba(16, 185, 129, 0.25)',
-    pitch: 1.08,
-    rate: 1.04,
-    volume: 1.0,
-    accent: '#34d399'
-  },
-  urgency: {
-    name: 'Risk & Urgency',
-    icon: '🛡️',
-    badge: 'Direct & Compelling',
-    color: '#ef4444',
-    gradient: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-    bg: 'rgba(239, 68, 68, 0.08)',
-    border: 'rgba(239, 68, 68, 0.25)',
-    pitch: 0.92,
-    rate: 0.98,
-    volume: 1.0,
-    accent: '#f87171'
-  },
-  analytical: {
-    name: 'Analytical Pragmatist',
-    icon: '🔬',
-    badge: 'Crystal Clear & Precise',
-    color: '#8b5cf6',
-    gradient: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
-    bg: 'rgba(139, 92, 246, 0.08)',
-    border: 'rgba(139, 92, 246, 0.25)',
-    pitch: 1.0,
-    rate: 1.0,
-    volume: 1.0,
-    accent: '#a78bfa'
+    volume: 1.0
   }
 };
 
-const VOICE_PERSONAS = [
-  { id: 'rachel', name: 'Rachel', title: 'Strategic Advisory Director', gender: 'female', accents: ['Google US English', 'Samantha', 'Victoria', 'Karen'] },
-  { id: 'adam', name: 'Adam', title: 'Principal Enterprise Architect', gender: 'male', accents: ['Google UK English Male', 'Daniel', 'Alex', 'Fred'] },
-  { id: 'elena', name: 'Elena', title: 'FinOps & Governance Specialist', gender: 'female', accents: ['Google UK English Female', 'Moira', 'Tessa', 'Fiona'] },
-  { id: 'marcus', name: 'Marcus', title: 'Cloud Transformation Catalyst', gender: 'male', accents: ['Google US English', 'Arthur', 'Oliver', 'Bruce'] }
+const STORY_PERSONAS = [
+  { id: 'jonathan', name: 'Sir Jonathan', title: 'Cinematic Documentary Narrator', gender: 'male', vibe: 'Warm, deep & theatrical', accents: ['Daniel', 'Google UK English Male', 'Oliver', 'George'] },
+  { id: 'victoria', name: 'Victoria', title: 'MasterClass & Odyssey Storyteller', gender: 'female', vibe: 'Magnetic, eloquent & expressive', accents: ['Samantha', 'Google UK English Female', 'Karen', 'Victoria'] },
+  { id: 'david', name: 'David', title: 'Visionary Tech Orator', gender: 'male', vibe: 'Inspiring, resonant & punchy', accents: ['Google US English', 'Alex', 'Fred', 'Arthur'] },
+  { id: 'maya', name: 'Maya', title: 'NPR & Investigative Novelist', gender: 'female', vibe: 'Curious, lively & poignant', accents: ['Tessa', 'Moira', 'Fiona', 'Google US English'] }
 ];
 
 const PlayerContainer = styled(motion.div)`
   background: ${props => props.$theme === 'dark' 
-    ? 'linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(30, 41, 59, 0.92) 100%)' 
-    : 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)'};
-  border: 1.5px solid ${props => props.$activeBorder || '#e2e8f0'};
-  border-radius: 20px;
-  padding: 22px 28px;
+    ? 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(26, 20, 48, 0.95) 100%)' 
+    : 'linear-gradient(135deg, #ffffff 0%, #fffbeb 40%, #fdf4ff 100%)'};
+  border: 1.5px solid ${props => props.$activeBorder || '#f59e0b'};
+  border-radius: 24px;
+  padding: 24px 28px;
   margin-bottom: 28px;
-  box-shadow: 0 10px 30px -10px ${props => props.$theme === 'dark' ? 'rgba(0,0,0,0.5)' : 'rgba(99, 102, 241, 0.12)'};
-  backdrop-filter: blur(16px);
+  box-shadow: 0 16px 40px -12px ${props => props.$activeGlow || 'rgba(245, 158, 11, 0.2)'};
+  backdrop-filter: blur(20px);
   position: relative;
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: ${props => props.$gradient || 'linear-gradient(90deg, #f59e0b, #ec4899, #8b5cf6)'};
+  }
 
   @media print {
     display: none !important;
@@ -118,7 +158,6 @@ const TopRow = styled.div`
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 16px;
-  margin-bottom: ${props => props.$hasTranscript ? '18px' : '0'};
 `;
 
 const InfoSection = styled.div`
@@ -127,68 +166,73 @@ const InfoSection = styled.div`
   gap: 16px;
 
   .icon-wrap {
-    width: 46px;
-    height: 46px;
-    border-radius: 14px;
-    background: ${props => props.$gradient || 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)'};
+    width: 50px;
+    height: 50px;
+    border-radius: 16px;
+    background: ${props => props.$gradient || 'linear-gradient(135deg, #f59e0b 0%, #b45309 100%)'};
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.35rem;
+    font-size: 1.5rem;
     flex-shrink: 0;
-    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
-    animation: ${props => props.$isPlaying ? css`${pulseGlow} 2s infinite ease-in-out` : 'none'};
+    box-shadow: 0 6px 18px ${props => props.$activeGlow || 'rgba(245, 158, 11, 0.35)'};
+    animation: ${props => props.$isPlaying ? css`${pulseGlow} 2.5s infinite ease-in-out` : 'none'};
   }
 
   .text {
     h4 {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       font-weight: 800;
       color: ${props => props.$theme === 'dark' ? '#ffffff' : '#0f172a'};
-      margin: 0 0 3px 0;
+      margin: 0 0 4px 0;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+      flex-wrap: wrap;
     }
     p {
-      font-size: 0.84rem;
-      color: ${props => props.$theme === 'dark' ? '#94a3b8' : '#64748b'};
+      font-size: 0.86rem;
+      color: ${props => props.$theme === 'dark' ? '#cbd5e1' : '#64748b'};
       margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
   }
 `;
 
 const EmotionTag = styled.span`
   font-size: 0.72rem;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 6px;
-  background: ${props => props.$bg || 'rgba(99, 102, 241, 0.12)'};
-  color: ${props => props.$color || '#6366f1'};
-  border: 1px solid ${props => props.$border || 'rgba(99, 102, 241, 0.25)'};
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: ${props => props.$bg || 'rgba(245, 158, 11, 0.12)'};
+  color: ${props => props.$color || '#d97706'};
+  border: 1px solid ${props => props.$border || 'rgba(245, 158, 11, 0.3)'};
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
+  letter-spacing: 0.02em;
 `;
 
 const WaveContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 3.5px;
-  height: 32px;
-  padding: 0 12px;
+  gap: 4px;
+  height: 36px;
+  padding: 0 14px;
 `;
 
 const WaveBar = styled.div`
-  width: 3.5px;
-  background: ${props => props.$gradient || 'linear-gradient(180deg, #6366f1 0%, #38bdf8 100%)'};
+  width: 4px;
+  background: ${props => props.$gradient || 'linear-gradient(180deg, #f59e0b 0%, #ec4899 100%)'};
   border-radius: 4px;
-  animation: ${wave} 1.2s ease-in-out infinite;
+  animation: ${wave} 1.3s ease-in-out infinite;
   animation-delay: ${props => props.$delay}s;
   animation-play-state: ${props => props.$playing ? 'running' : 'paused'};
-  height: ${props => props.$playing ? `${props.$height || 20}px` : '4px'};
-  transition: height 0.2s ease;
+  height: ${props => props.$playing ? `${props.$height || 22}px` : '4px'};
+  transition: height 0.25s ease;
 `;
 
 const ControlsGroup = styled.div`
@@ -199,35 +243,31 @@ const ControlsGroup = styled.div`
 `;
 
 const PlayButton = styled(motion.button)`
-  background: ${props => props.$gradient || 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)'};
+  background: ${props => props.$gradient || 'linear-gradient(135deg, #f59e0b 0%, #b45309 100%)'};
   border: none;
   color: white;
-  padding: 10px 20px;
-  border-radius: 12px;
-  font-size: 0.9rem;
-  font-weight: 700;
+  padding: 11px 22px;
+  border-radius: 14px;
+  font-size: 0.92rem;
+  font-weight: 800;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
-  transition: all 0.2s ease;
-
-  &:hover {
-    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
-  }
+  box-shadow: 0 6px 20px ${props => props.$activeGlow || 'rgba(245, 158, 11, 0.4)'};
+  transition: all 0.25s ease;
 `;
 
 const SecondaryControl = styled.button`
   background: ${props => props.$active 
     ? (props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.18)' : '#e2e8f0') 
-    : (props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.06)' : '#f1f5f9')};
-  border: 1px solid ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.12)' : '#cbd5e1'};
+    : (props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.06)' : '#f8fafc')};
+  border: 1px solid ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.14)' : '#cbd5e1'};
   color: ${props => props.$theme === 'dark' ? '#f1f5f9' : '#334155'};
-  padding: 8px 14px;
-  border-radius: 10px;
+  padding: 9px 15px;
+  border-radius: 12px;
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -235,118 +275,187 @@ const SecondaryControl = styled.button`
   transition: all 0.2s ease;
 
   &:hover {
-    background: ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.14)' : '#e2e8f0'};
+    background: ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.15)' : '#e2e8f0'};
     color: ${props => props.$theme === 'dark' ? '#ffffff' : '#0f172a'};
+    transform: translateY(-1px);
   }
 `;
 
-// Expanded Settings Bar (ElevenLabs Style Emotion & Voice Controls)
+// Chapter / Story-Beat Progression Timeline
+const ChapterBar = styled.div`
+  margin-top: 18px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+`;
+
+const ChapterPill = styled.button`
+  flex: 1;
+  min-width: 140px;
+  background: ${props => props.$active 
+    ? (props.$gradient || 'linear-gradient(135deg, #f59e0b 0%, #b45309 100%)') 
+    : (props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.6)' : '#ffffff')};
+  border: 1px solid ${props => props.$active 
+    ? 'transparent' 
+    : (props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : '#e2e8f0')};
+  border-radius: 12px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+  box-shadow: ${props => props.$active ? '0 4px 14px rgba(245, 158, 11, 0.3)' : 'none'};
+
+  .act-label {
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: ${props => props.$active ? '#ffffff' : (props.$theme === 'dark' ? '#94a3b8' : '#64748b')};
+  }
+
+  .act-title {
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: ${props => props.$active ? '#ffffff' : (props.$theme === 'dark' ? '#f1f5f9' : '#1e293b')};
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+    border-color: ${props => props.$active ? 'transparent' : '#f59e0b'};
+  }
+`;
+
+// Live Cinematic Story Teleprompter
+const StoryTeleprompter = styled(motion.div)`
+  margin-top: 16px;
+  padding: 16px 20px;
+  border-radius: 16px;
+  background: ${props => props.$theme === 'dark' ? 'rgba(2, 6, 23, 0.75)' : 'rgba(255, 251, 235, 0.85)'};
+  border-left: 5px solid ${props => props.$activeColor || '#f59e0b'};
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  .quote-symbol {
+    font-size: 2rem;
+    line-height: 1;
+    color: ${props => props.$activeColor || '#f59e0b'};
+    opacity: 0.6;
+    font-family: Georgia, serif;
+    flex-shrink: 0;
+  }
+
+  .text-content {
+    font-size: 0.92rem;
+    font-style: italic;
+    color: ${props => props.$theme === 'dark' ? '#f8fafc' : '#1e293b'};
+    line-height: 1.6;
+    font-weight: 500;
+    flex-grow: 1;
+  }
+
+  .chapter-badge {
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 8px;
+    background: ${props => props.$activeColor ? `${props.$activeColor}25` : 'rgba(245, 158, 11, 0.15)'};
+    color: ${props => props.$activeColor || '#d97706'};
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+`;
+
+// Expanded Settings Panel
 const SettingsPanel = styled(motion.div)`
   border-top: 1px solid ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.08)' : '#e2e8f0'};
   padding-top: 18px;
-  margin-top: 16px;
+  margin-top: 18px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.2fr 1fr;
   gap: 16px;
 
-  @media (max-width: 860px) {
+  @media (max-width: 900px) {
     grid-template-columns: 1fr;
   }
 `;
 
 const ControlCard = styled.div`
-  background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.5)' : '#f8fafc'};
-  border: 1px solid ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.06)' : '#e2e8f0'};
-  border-radius: 12px;
-  padding: 12px 16px;
+  background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.5)' : '#ffffff'};
+  border: 1px solid ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.08)' : '#e2e8f0'};
+  border-radius: 16px;
+  padding: 14px 18px;
 
   .label {
-    font-size: 0.76rem;
-    font-weight: 700;
+    font-size: 0.78rem;
+    font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: ${props => props.$theme === 'dark' ? '#94a3b8' : '#64748b'};
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
   }
 
   .options-grid {
     display: flex;
-    gap: 6px;
+    gap: 8px;
     flex-wrap: wrap;
   }
 `;
 
 const OptionPill = styled.button`
   background: ${props => props.$active 
-    ? (props.$gradient || 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)') 
-    : (props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.04)' : '#ffffff')};
+    ? (props.$gradient || 'linear-gradient(135deg, #f59e0b 0%, #b45309 100%)') 
+    : (props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.04)' : '#f8fafc')};
   color: ${props => props.$active ? '#ffffff' : (props.$theme === 'dark' ? '#cbd5e1' : '#475569')};
-  border: 1px solid ${props => props.$active ? 'transparent' : (props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : '#cbd5e1')};
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 0.78rem;
-  font-weight: ${props => props.$active ? '700' : '500'};
+  border: 1px solid ${props => props.$active ? 'transparent' : (props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.12)' : '#cbd5e1')};
+  padding: 7px 14px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: ${props => props.$active ? '800' : '600'};
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: ${props => props.$active ? 'transparent' : '#94a3b8'};
+    border-color: ${props => props.$active ? 'transparent' : '#f59e0b'};
     transform: translateY(-1px);
-  }
-`;
-
-// Live Teleprompter / Transcript Ticker (ElevenLabs Style)
-const Teleprompter = styled(motion.div)`
-  margin-top: 16px;
-  padding: 14px 18px;
-  border-radius: 12px;
-  background: ${props => props.$theme === 'dark' ? 'rgba(2, 6, 23, 0.6)' : 'rgba(241, 245, 249, 0.8)'};
-  border-left: 4px solid ${props => props.$activeColor || '#6366f1'};
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-
-  .text-content {
-    font-size: 0.88rem;
-    color: ${props => props.$theme === 'dark' ? '#e2e8f0' : '#1e293b'};
-    line-height: 1.5;
-    font-weight: 500;
-  }
-
-  .segment-pill {
-    font-size: 0.68rem;
-    font-weight: 800;
-    padding: 3px 8px;
-    border-radius: 6px;
-    background: ${props => props.$activeColor ? `${props.$activeColor}25` : 'rgba(99, 102, 241, 0.15)'};
-    color: ${props => props.$activeColor || '#6366f1'};
-    white-space: nowrap;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
   }
 `;
 
 const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1.0);
-  const [selectedEmotion, setSelectedEmotion] = useState('executive');
-  const [selectedVoice, setSelectedVoice] = useState('rachel');
+  const [selectedStyle, setSelectedStyle] = useState('storyteller');
+  const [selectedPersona, setSelectedPersona] = useState('jonathan');
   const [showSettings, setShowSettings] = useState(false);
-  const [currentSegmentIdx, setCurrentSegmentIdx] = useState(0);
-  const [segmentsList, setSegmentsList] = useState([]);
+  const [currentChapterIdx, setCurrentChapterIdx] = useState(0);
+  const [chaptersList, setChaptersList] = useState([]);
 
   const utteranceRef = useRef(null);
   const keepAliveTimerRef = useRef(null);
   const isPlayingRef = useRef(false);
 
-  const activeTheme = EMOTION_THEMES[selectedEmotion] || EMOTION_THEMES.executive;
+  const activeTheme = STORY_THEMES[selectedStyle] || STORY_THEMES.storyteller;
 
   useEffect(() => {
     return () => {
@@ -370,74 +479,74 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   };
 
   /**
-   * ElevenLabs-Style Multi-Beat Emotional Script Engine
-   * Breaks the executive summary into 5 dramatic narrative beats with customized pitch/cadence.
+   * 🎬 The Master Storyteller Narrative Engine:
+   * Translates the audit data into a captivating 5-Act Hero's Journey Odyssey.
    */
-  const buildEmotiveSegments = () => {
+  const buildStoryChapters = () => {
     const customer = instance?.customerName || 'your organization';
     const framework = instance?.frameworkSnapshot?.title || instance?.useCase || 'Architecture Assessment';
     const score = report?.overallScore || instance?.totalScore || 3.0;
     const stage = report?.maturityLevel || instance?.maturityLevel || 'Defined';
-    const summary = stripMarkdownForSpeech(report?.executiveSummary || 'Your architecture shows strong baseline capabilities with clear modernization opportunities.');
+    const summary = stripMarkdownForSpeech(report?.executiveSummary || 'Your architecture exhibits robust core foundations with immediate high-impact modernization frontiers.');
     const recommendations = (report?.prioritizedRecommendations || report?.prioritizedActions || []).slice(0, 3);
 
-    const segments = [];
+    const chapters = [];
 
-    // Beat 1: Hook & Executive Greeting (Warm, authoritative)
-    segments.push({
-      beat: 'Executive Hook',
-      emotion: 'executive',
-      pitchMod: 0.0,
-      rateMod: 0.0,
-      text: `Good morning. Welcome to your executive audio briefing for ${customer}. Today, we present your comprehensive modernization findings for the ${framework}.`
+    // Act I: The Landscape & The Status Quo (Atmospheric, Scene-Setting)
+    chapters.push({
+      act: 'Act I',
+      chapterTitle: 'The Landscape',
+      pitchMod: -0.04,
+      rateMod: -0.06,
+      text: `Picture this... In an era where data velocity defines market dominance, the leadership at ${customer} embarked on a vital journey: to evaluate the true architectural frontiers of the ${framework}.`
     });
 
-    // Beat 2: The Score & Capability Baseline (Objective & grounded)
-    segments.push({
-      beat: 'Maturity Verdict',
-      emotion: 'analytical',
-      pitchMod: -0.05,
-      rateMod: -0.02,
-      text: `Your overall architectural maturity is evaluated at ${score} out of 5.0, placing the enterprise firmly at the ${stage} stage. ${summary}`
-    });
-
-    // Beat 3: Urgency & High-Exposure Risks (Direct, grave inflection)
-    segments.push({
-      beat: 'Critical Risk Alarm',
-      emotion: 'urgency',
+    // Act II: The Hidden Nemesis & The Conflict (Suspenseful, Whispered Urgency)
+    chapters.push({
+      act: 'Act II',
+      chapterTitle: 'The Conflict',
       pitchMod: -0.08,
-      rateMod: +0.02,
-      text: `Attention on high exposure areas: Unmonitored legacy ETL batch scripts, lack of centralized data contracts, and unmanaged AI prompt token burn represent immediate operational and FinOps friction.`
+      rateMod: -0.02,
+      text: `Beneath the surface of daily operations, subtle frictions were quietly mounting... Fragile legacy batch scripts, unmonitored AI prompt token burn, and fragmented silos were silently placing engineering velocity at risk.`
     });
 
-    // Beat 4: Target State Vision & Multi-Cloud Advantage (High energy, visionary)
-    segments.push({
-      beat: 'Target State Vision',
-      emotion: 'visionary',
-      pitchMod: +0.08,
-      rateMod: +0.04,
-      text: `The target cloud-native architecture unlocks Google Vertex AI Gemini 3.7 with Context Caching, delivering an estimated seventy-five percent reduction in input token costs, paired with sub-second analytical queries on BigLake!`
+    // Act III: The Moment of Clarity (Dramatic Epiphany)
+    chapters.push({
+      act: 'Act III',
+      chapterTitle: 'The Epiphany',
+      pitchMod: +0.02,
+      rateMod: 0.0,
+      text: `Then came the turning point... Our comprehensive audit evaluated your overall maturity at ${score} out of 5.0, firmly placing the organization at the ${stage} stage. ${summary}`
     });
 
-    // Beat 5: Actionable Roadmap & Executive Close (Decisive punch)
+    // Act IV: The Triumphant Awakening (Soaring Target State Vision)
+    chapters.push({
+      act: 'Act IV',
+      chapterTitle: 'The Awakening',
+      pitchMod: +0.10,
+      rateMod: +0.05,
+      text: `Imagine what happens next... The target state unlocks Google Vertex AI Gemini 3.7 with Context Caching, shattering latency and slashing token costs by an astonishing seventy-five percent, paired with the unifying power of BigLake!`
+    });
+
+    // Act V: The Heroic Horizon (Call to Adventure & Action)
     if (recommendations.length > 0) {
-      let recText = `Here is your prioritized execution roadmap: `;
+      let recText = `The path forward is clear... `;
       recommendations.forEach((rec, idx) => {
         const title = stripMarkdownForSpeech(rec.title || rec.recommendation || rec.action || 'Strategic Modernization Wave');
-        recText += `Priority ${idx + 1}... ${title}. `;
+        recText += `First, Chapter ${idx + 1}... ${title}... `;
       });
-      recText += `Phase One implementation begins immediately. Thank you for utilizing ScoreX Enterprise AI.`;
-      
-      segments.push({
-        beat: 'Roadmap & Close',
-        emotion: 'executive',
-        pitchMod: +0.02,
-        rateMod: 0.0,
+      recText += `The blueprint is illuminated. The horizon is yours to claim. Chapter One begins today.`;
+
+      chapters.push({
+        act: 'Act V',
+        chapterTitle: 'The Horizon',
+        pitchMod: -0.02,
+        rateMod: -0.03,
         text: recText
       });
     }
 
-    return segments;
+    return chapters;
   };
 
   const stopAudioPlayback = () => {
@@ -452,28 +561,27 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
     isPlayingRef.current = false;
   };
 
-  const playSegment = (segments, index) => {
-    if (!isPlayingRef.current || index >= segments.length) {
+  const playChapter = (chapters, index) => {
+    if (!isPlayingRef.current || index >= chapters.length) {
       stopAudioPlayback();
-      setCurrentSegmentIdx(0);
+      setCurrentChapterIdx(0);
       return;
     }
 
-    setCurrentSegmentIdx(index);
-    const seg = segments[index];
-    const utterance = new SpeechSynthesisUtterance(seg.text);
+    setCurrentChapterIdx(index);
+    const chap = chapters[index];
+    const utterance = new SpeechSynthesisUtterance(chap.text);
 
-    // Apply ElevenLabs-style emotional prosody calculation
-    const baseTheme = EMOTION_THEMES[selectedEmotion] || EMOTION_THEMES.executive;
-    utterance.pitch = Math.max(0.6, Math.min(1.8, (baseTheme.pitch || 1.0) + (seg.pitchMod || 0)));
-    utterance.rate = Math.max(0.7, Math.min(1.6, (playbackRate * (baseTheme.rate || 1.0)) + (seg.rateMod || 0)));
+    // Apply Storyteller emotional prosody modulation
+    const baseTheme = STORY_THEMES[selectedStyle] || STORY_THEMES.storyteller;
+    utterance.pitch = Math.max(0.6, Math.min(1.8, (baseTheme.pitch || 1.0) + (chap.pitchMod || 0)));
+    utterance.rate = Math.max(0.7, Math.min(1.6, (playbackRate * (baseTheme.rate || 1.0)) + (chap.rateMod || 0)));
     utterance.volume = baseTheme.volume || 1.0;
 
-    // Resolve voice actor persona
+    // Resolve theatrical voice persona
     const voices = window.speechSynthesis.getVoices();
-    const persona = VOICE_PERSONAS.find(p => p.id === selectedVoice) || VOICE_PERSONAS[0];
+    const persona = STORY_PERSONAS.find(p => p.id === selectedPersona) || STORY_PERSONAS[0];
     
-    // Find matching high-quality voice
     let matchedVoice = null;
     for (const accentName of persona.accents) {
       matchedVoice = voices.find(v => v.name.toLowerCase().includes(accentName.toLowerCase()) && v.lang.startsWith('en'));
@@ -487,17 +595,17 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
     }
 
     utterance.onend = () => {
-      // Pause naturally between dramatic beats (250ms)
+      // Dramatic pause between chapters (400ms for theatrical absorption)
       setTimeout(() => {
-        playSegment(segments, index + 1);
-      }, 250);
+        playChapter(chapters, index + 1);
+      }, 400);
     };
 
     utterance.onerror = (e) => {
-      console.warn('Speech synthesis segment note:', e);
+      console.warn('Speech synthesis chapter transition:', e);
       setTimeout(() => {
-        playSegment(segments, index + 1);
-      }, 200);
+        playChapter(chapters, index + 1);
+      }, 250);
     };
 
     utteranceRef.current = utterance;
@@ -522,15 +630,14 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
       } else {
         window.speechSynthesis.cancel();
 
-        const segments = buildEmotiveSegments();
-        setSegmentsList(segments);
+        const chapters = buildStoryChapters();
+        setChaptersList(chapters);
         setIsPlaying(true);
         isPlayingRef.current = true;
 
         if (keepAliveTimerRef.current) {
           clearInterval(keepAliveTimerRef.current);
         }
-        // Chromium keep-alive interval
         keepAliveTimerRef.current = setInterval(() => {
           if (window.speechSynthesis && window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
             window.speechSynthesis.pause();
@@ -538,63 +645,78 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
           }
         }, 10000);
 
-        playSegment(segments, 0);
-        toast.success(`🎙️ Voiced by ${VOICE_PERSONAS.find(p => p.id === selectedVoice)?.name} • Tone: ${activeTheme.name}`, { id: 'audio-play', icon: activeTheme.icon });
+        playChapter(chapters, 0);
+        const personaName = STORY_PERSONAS.find(p => p.id === selectedPersona)?.name;
+        toast.success(`🎬 Storytelling by ${personaName} • Arc: ${activeTheme.name}`, { id: 'story-play', icon: activeTheme.icon });
       }
     }
   };
 
+  const jumpToChapter = (idx) => {
+    const chapters = buildStoryChapters();
+    setChaptersList(chapters);
+    window.speechSynthesis.cancel();
+    setIsPlaying(true);
+    isPlayingRef.current = true;
+    playChapter(chapters, idx);
+  };
+
   const cycleRate = () => {
-    const rates = [1.0, 1.25, 1.5];
+    const rates = [0.9, 1.0, 1.2, 1.4];
     const nextRate = rates[(rates.indexOf(playbackRate) + 1) % rates.length];
     setPlaybackRate(nextRate);
     if (isPlaying) {
       stopAudioPlayback();
-      toast(`Playback speed set to ${nextRate}x. Restart briefing to apply.`, { id: 'audio-speed' });
+      toast(`Storytelling tempo set to ${nextRate}x. Restart to apply.`, { id: 'story-speed' });
     }
   };
 
-  const currentSegment = segmentsList[currentSegmentIdx] || {
-    beat: 'Executive Briefing',
-    text: '90-second synthesized C-suite narrative, risk analysis & strategic action items.'
+  const currentChapter = chaptersList[currentChapterIdx] || {
+    act: 'Master Storyteller',
+    chapterTitle: 'The Architectural Odyssey',
+    text: 'A cinematic 5-act narrative transforming technical metrics into an inspiring C-suite transformation story.'
   };
+
+  const activeChapters = chaptersList.length > 0 ? chaptersList : buildStoryChapters();
 
   return (
     <PlayerContainer 
       $theme={theme}
       $activeBorder={activeTheme.border}
-      initial={{ opacity: 0, y: 10 }}
+      $activeGlow={activeTheme.glow}
+      $gradient={activeTheme.gradient}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.4 }}
     >
-      <TopRow $hasTranscript={isPlaying}>
-        <InfoSection $theme={theme} $gradient={activeTheme.gradient} $isPlaying={isPlaying}>
+      <TopRow>
+        <InfoSection $theme={theme} $gradient={activeTheme.gradient} $activeGlow={activeTheme.glow} $isPlaying={isPlaying}>
           <div className="icon-wrap">
-            <FiVolume2 />
+            <FiFilm />
           </div>
           <div className="text">
             <h4>
-              AI Executive Audio Briefing
+              Cinematic Audio Briefing & Storytelling
               <EmotionTag $bg={activeTheme.bg} $color={activeTheme.color} $border={activeTheme.border}>
                 {activeTheme.icon} {activeTheme.name}
               </EmotionTag>
-              <EmotionTag $bg="rgba(124, 58, 237, 0.1)" $color="#7c3aed" $border="rgba(124, 58, 237, 0.25)">
-                <HiSparkles size={11} /> ElevenLabs Engine
+              <EmotionTag $bg="rgba(245, 158, 11, 0.12)" $color="#d97706" $border="rgba(245, 158, 11, 0.3)">
+                <HiSparkles size={12} /> 5-Act Narrative Arc
               </EmotionTag>
             </h4>
-            <p>Emotive C-suite narration voiced by <strong>{VOICE_PERSONAS.find(p => p.id === selectedVoice)?.name}</strong> ({VOICE_PERSONAS.find(p => p.id === selectedVoice)?.title})</p>
+            <p>Narrated by <strong>{STORY_PERSONAS.find(p => p.id === selectedPersona)?.name}</strong> — <em>"{STORY_PERSONAS.find(p => p.id === selectedPersona)?.vibe}"</em></p>
           </div>
         </InfoSection>
 
-        {/* 20-Bar Dynamic Animated Waveform */}
+        {/* 22-Bar Theatrical Animated Waveform */}
         <WaveContainer>
           {[
-            12, 22, 16, 28, 14, 24, 18, 30, 20, 15,
-            26, 12, 24, 18, 28, 14, 22, 16, 20, 10
+            10, 22, 16, 30, 14, 26, 18, 32, 22, 16,
+            28, 12, 26, 20, 32, 14, 24, 18, 22, 12, 26, 8
           ].map((barHeight, idx) => (
             <WaveBar 
               key={idx} 
-              $delay={idx * 0.06} 
+              $delay={idx * 0.05} 
               $playing={isPlaying}
               $height={barHeight}
               $gradient={activeTheme.gradient}
@@ -603,11 +725,11 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
         </WaveContainer>
 
         <ControlsGroup>
-          <SecondaryControl $theme={theme} onClick={() => setShowSettings(!showSettings)} $active={showSettings} title="Voice persona and emotion settings">
-            <FiSliders size={13} /> {showSettings ? 'Hide Controls' : 'Emotions & Voice'}
+          <SecondaryControl $theme={theme} onClick={() => setShowSettings(!showSettings)} $active={showSettings} title="Storytelling Arc & Narrator Casting">
+            <FiSliders size={13} /> {showSettings ? 'Hide Narrator' : 'Story Style & Voices'}
           </SecondaryControl>
 
-          <SecondaryControl $theme={theme} onClick={cycleRate} title="Change speech playback speed">
+          <SecondaryControl $theme={theme} onClick={cycleRate} title="Change speech tempo">
             <FiFastForward size={13} /> {playbackRate}x
           </SecondaryControl>
 
@@ -617,38 +739,57 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
 
           <PlayButton 
             $gradient={activeTheme.gradient}
+            $activeGlow={activeTheme.glow}
             onClick={handlePlayToggle}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
           >
             {isPlaying ? <FiPause size={16} /> : <FiPlay size={16} />}
-            {isPlaying ? 'Pause Briefing' : 'Play Briefing'}
+            {isPlaying ? 'Pause Story' : 'Begin Story'}
           </PlayButton>
         </ControlsGroup>
       </TopRow>
 
-      {/* Live ElevenLabs-Style Teleprompter Ticker when playing */}
+      {/* 5-Act Chapter Progression Timeline */}
+      <ChapterBar>
+        {activeChapters.map((chap, idx) => (
+          <ChapterPill
+            key={idx}
+            $theme={theme}
+            $active={isPlaying && currentChapterIdx === idx}
+            $gradient={activeTheme.gradient}
+            onClick={() => jumpToChapter(idx)}
+            title={`Jump to ${chap.act}: ${chap.chapterTitle}`}
+          >
+            <span className="act-label">{chap.act}</span>
+            <span className="act-title">{chap.chapterTitle}</span>
+          </ChapterPill>
+        ))}
+      </ChapterBar>
+
+      {/* Live Theatrical Teleprompter */}
       <AnimatePresence>
         {isPlaying && (
-          <Teleprompter 
+          <StoryTeleprompter 
             $theme={theme}
             $activeColor={activeTheme.color}
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.35 }}
           >
+            <div className="quote-symbol">“</div>
             <div className="text-content">
-              "{currentSegment.text}"
+              {currentChapter.text}
             </div>
-            <div className="segment-pill">
-              {currentSegment.beat}
+            <div className="chapter-badge">
+              {currentChapter.act}: {currentChapter.chapterTitle}
             </div>
-          </Teleprompter>
+          </StoryTeleprompter>
         )}
       </AnimatePresence>
 
-      {/* Expanded Emotion & Voice Actor Tuning Panel */}
+      {/* Expanded Story Style & Voice Casting Drawer */}
       <AnimatePresence>
         {showSettings && (
           <SettingsPanel 
@@ -658,58 +799,59 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
           >
-            {/* 1. Emotion & Inflection Presets */}
+            {/* 1. Storytelling Style & Narrative Arc */}
             <ControlCard $theme={theme}>
               <div className="label">
-                <FiActivity size={12} />
-                ElevenLabs Emotion & Inflection Style
+                <FiFilm size={13} />
+                Narrative Arc & Emotional Delivery
               </div>
               <div className="options-grid">
-                {Object.entries(EMOTION_THEMES).map(([key, item]) => (
+                {Object.entries(STORY_THEMES).map(([key, item]) => (
                   <OptionPill
                     key={key}
                     $theme={theme}
-                    $active={selectedEmotion === key}
+                    $active={selectedStyle === key}
                     $gradient={item.gradient}
                     onClick={() => {
-                      setSelectedEmotion(key);
+                      setSelectedStyle(key);
                       if (isPlaying) {
                         stopAudioPlayback();
-                        toast.success(`Tone changed to ${item.name}. Restart briefing to hear new inflection.`, { icon: item.icon });
+                        toast.success(`Storytelling style set to ${item.name}. Click Begin Story to experience.`, { icon: item.icon });
                       }
                     }}
                   >
                     <span>{item.icon}</span>
                     <span>{item.name}</span>
+                    <span style={{ fontSize: '0.68rem', opacity: 0.8 }}>({item.tagline.split(' ')[0]})</span>
                   </OptionPill>
                 ))}
               </div>
             </ControlCard>
 
-            {/* 2. Voice Persona Actors */}
+            {/* 2. Master Storyteller Voice Casting */}
             <ControlCard $theme={theme}>
               <div className="label">
-                <FiUser size={12} />
-                Narrator Persona & Accent
+                <FiUser size={13} />
+                Master Storyteller Voice Casting
               </div>
               <div className="options-grid">
-                {VOICE_PERSONAS.map((persona) => (
+                {STORY_PERSONAS.map((persona) => (
                   <OptionPill
                     key={persona.id}
                     $theme={theme}
-                    $active={selectedVoice === persona.id}
+                    $active={selectedPersona === persona.id}
                     $gradient={activeTheme.gradient}
                     onClick={() => {
-                      setSelectedVoice(persona.id);
+                      setSelectedPersona(persona.id);
                       if (isPlaying) {
                         stopAudioPlayback();
-                        toast.success(`Voice narrator set to ${persona.name}. Restart briefing to apply.`, { icon: '🎙️' });
+                        toast.success(`Narrator cast: ${persona.name}. Restart story to apply.`, { icon: '🎙️' });
                       }
                     }}
                   >
-                    <span>{persona.gender === 'female' ? '👩‍💼' : '👨‍💼'}</span>
+                    <span>{persona.gender === 'female' ? '👩‍💼' : '🎙️'}</span>
                     <span>{persona.name}</span>
-                    <span style={{ fontSize: '0.68rem', opacity: 0.8 }}>({persona.title.split(' ')[0]})</span>
+                    <span style={{ fontSize: '0.68rem', opacity: 0.85 }}>({persona.title.split(' ')[0]})</span>
                   </OptionPill>
                 ))}
               </div>
