@@ -66,6 +66,7 @@ const DynamicAssessmentHub = lazyWithRetry(() => import('./components/DynamicAss
 const AssessmentComparisonView = lazyWithRetry(() => import('./components/AssessmentComparisonView'));
 const CustomerPortfolioDashboard = lazyWithRetry(() => import('./components/CustomerPortfolioDashboard'));
 const CommandPalette = lazyWithRetry(() => import('./components/CommandPalette'));
+const InteractiveWorkflowWalkthrough = lazyWithRetry(() => import('./components/InteractiveWorkflowWalkthrough'));
 
 // Protected Route Component with Frictionless Auto-Guest Provisioning
 const ProtectedRoute = ({ children }) => {
@@ -688,6 +689,18 @@ function App() {
             }
           />
           
+          <Route 
+            path="/workflow-walkthrough" 
+            element={<InteractiveWorkflowWalkthrough />}
+          />
+          <Route 
+            path="/workflow-demo" 
+            element={<InteractiveWorkflowWalkthrough />}
+          />
+          <Route 
+            path="/interactive-tours" 
+            element={<InteractiveWorkflowWalkthrough />}
+          />
           <Route 
             path="/user-guide" 
             element={<UserGuide />}
