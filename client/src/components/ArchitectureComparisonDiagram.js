@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -21,7 +21,7 @@ import {
 import { HiSparkles } from 'react-icons/hi';
 import { SiGooglecloud } from 'react-icons/si';
 import toast from 'react-hot-toast';
-import DiagramViewer from './DiagramViewer';
+import DiagramViewer, { sanitizeDrawioXmlAttributes } from './DiagramViewer';
 import dynamicAssessmentService from '../services/dynamicAssessmentService';
 
 const DiagramContainer = styled(motion.div)`
@@ -626,14 +626,81 @@ const ArchitectureComparisonDiagram = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
   const [isXmlEditorOpen, setIsXmlEditorOpen] = useState(false);
+  const [isVisualDrawioOpen, setIsVisualDrawioOpen] = useState(false);
   const [xmlTargetState, setXmlTargetState] = useState('target'); // 'current' | 'target'
   const [rawXmlDraft, setRawXmlDraft] = useState('');
   const [customPrompt, setCustomPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [diagramsData, setDiagramsData] = useState(initialDiagrams || null);
+  const [versionHistory, setVersionHistory] = useState([
+    { id: 'v1.0', version: 'v1.0', label: 'Initial AI Synthesis', timestamp: new Date().toLocaleTimeString(), target: 'target' }
+  ]);
   const [reviewerNotes, setReviewerNotes] = useState([]);
   const [noteText, setNoteText] = useState('');
   const [showNotesDrawer, setShowNotesDrawer] = useState(false);
+  const drawioIframeRef = useRef(null);
+
+  const handleOpenVisualDrawio = (target = 'target') => {
+    setXmlTargetState(target);
+    setIsVisualDrawioOpen(true);
+  };
+
+  // Listen to Draw.io embed iframe postMessage protocol
+  useEffect(() => {
+    const handleMessage = (e) => {
+      if (!e.data || typeof e.data !== 'string') return;
+      
+      try {
+        const msg = JSON.parse(e.data);
+        if (msg.event === 'init') {
+          // Send active XML to Draw.io
+          const xmlToSend = xmlTargetState === 'current'
+            ? (diagramsData?.currentStateXml || currentXml)
+            : (diagramsData?.targetStateXml || targetXml);
+
+          if (drawioIframeRef.current && drawioIframeRef.current.contentWindow) {
+            drawioIframeRef.current.contentWindow.postMessage(JSON.stringify({
+              action: 'load',
+              autosave: 1,
+              xml: sanitizeDrawioXmlAttributes(xmlToSend),
+              title: `ScoreX ${xmlTargetState === 'current' ? 'Current Baseline' : 'Target Future'} Architecture`
+            }), '*');
+          }
+        } else if (msg.event === 'save' || msg.event === 'autosave') {
+          if (msg.xml) {
+            const nextVerNum = (versionHistory.length + 1);
+            const newVer = `v1.${nextVerNum}`;
+            
+            setDiagramsData(prev => ({
+              ...prev,
+              [xmlTargetState === 'current' ? 'currentStateXml' : 'targetStateXml']: msg.xml,
+              generatedAt: new Date().toISOString()
+            }));
+
+            setVersionHistory(prev => [
+              {
+                id: newVer,
+                version: newVer,
+                label: `Visual Draw.io Edit (${xmlTargetState === 'current' ? 'Current' : 'Target'})`,
+                timestamp: new Date().toLocaleTimeString(),
+                target: xmlTargetState
+              },
+              ...prev
+            ]);
+
+            toast.success(`💾 Saved changes to ${xmlTargetState === 'current' ? 'Current' : 'Target'} Architecture (${newVer})!`, { icon: '🎨' });
+          }
+        } else if (msg.event === 'exit') {
+          setIsVisualDrawioOpen(false);
+        }
+      } catch (err) {
+        // Not a JSON postMessage
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [xmlTargetState, diagramsData, versionHistory]);
 
   const handleOpenXmlEditor = (target = 'target') => {
     setXmlTargetState(target);
@@ -649,13 +716,28 @@ const ArchitectureComparisonDiagram = ({
       toast.error('Invalid Draw.io XML. Must contain valid <mxGraphModel> root element.');
       return;
     }
+    const nextVerNum = (versionHistory.length + 1);
+    const newVer = `v1.${nextVerNum}`;
+    
     setDiagramsData(prev => ({
       ...prev,
       [xmlTargetState === 'current' ? 'currentStateXml' : 'targetStateXml']: rawXmlDraft,
       generatedAt: new Date().toISOString()
     }));
+
+    setVersionHistory(prev => [
+      {
+        id: newVer,
+        version: newVer,
+        label: `Raw XML Tweak (${xmlTargetState === 'current' ? 'Current' : 'Target'})`,
+        timestamp: new Date().toLocaleTimeString(),
+        target: xmlTargetState
+      },
+      ...prev
+    ]);
+
     setIsXmlEditorOpen(false);
-    toast.success(`✅ Applied custom manual XML edits to ${xmlTargetState === 'current' ? 'Current Baseline' : 'Target State'} diagram!`);
+    toast.success(`✅ Applied custom manual XML edits (${newVer})!`);
   };
 
   useEffect(() => {
@@ -947,6 +1029,14 @@ const ArchitectureComparisonDiagram = ({
             <FiRefreshCw className={isGenerating ? 'spin' : ''} /> 
             {isGenerating ? 'Synthesizing...' : '⚡ Regenerate with Gemini 3.7'}
           </RegenerateBtn>
+
+          <button
+            onClick={() => handleOpenVisualDrawio(viewMode === 'current_diagram' ? 'current' : 'target')}
+            style={{ background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)', border: 'none', color: '#ffffff', padding: '7px 14px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', boxShadow: '0 2px 8px rgba(2, 132, 199, 0.3)' }}
+            title="Open full-featured interactive Draw.io visual canvas inside ScoreX"
+          >
+            🎨 Visual Draw.io Editor
+          </button>
 
           <button
             onClick={() => handleOpenXmlEditor(viewMode === 'current_diagram' ? 'current' : 'target')}
@@ -1461,6 +1551,102 @@ const ArchitectureComparisonDiagram = ({
                     Apply Changes to Canvas
                   </button>
                 </div>
+              </div>
+            </ModalCard>
+          </ModalOverlay>
+        )}
+
+        {/* 🎨 Full-Screen Embedded Interactive Draw.io Visual Editor Modal */}
+        {isVisualDrawioOpen && (
+          <ModalOverlay
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsVisualDrawioOpen(false)}
+            style={{ zIndex: 99999 }}
+          >
+            <ModalCard
+              initial={{ scale: 0.98, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.98, opacity: 0 }}
+              onClick={e => e.stopPropagation()}
+              style={{ maxWidth: '96vw', width: '96vw', height: '92vh', maxHeight: '92vh', padding: '16px', display: 'flex', flexDirection: 'column' }}
+            >
+              <ModalHeader style={{ paddingBottom: '10px', borderBottom: '1px solid #e2e8f0', marginBottom: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#0284c7', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>
+                    🎨
+                  </div>
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: '1.05rem', color: '#0f172a', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      Interactive Visual Draw.io Canvas
+                      <span style={{ fontSize: '0.72rem', background: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: '9999px', fontWeight: 700 }}>
+                        {versionHistory[0]?.version || 'v1.0'} Active
+                      </span>
+                    </h3>
+                    <span style={{ fontSize: '0.76rem', color: '#64748b' }}>
+                      Editing {xmlTargetState === 'current' ? 'Current Baseline' : 'Desired Future State'} • Drag & Drop GCP shapes • Auto-saves directly to ScoreX assessment
+                    </span>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <button
+                    onClick={() => {
+                      const nextTarget = xmlTargetState === 'current' ? 'target' : 'current';
+                      setXmlTargetState(nextTarget);
+                      const nextXml = nextTarget === 'current'
+                        ? (diagramsData?.currentStateXml || currentXml)
+                        : (diagramsData?.targetStateXml || targetXml);
+                      if (drawioIframeRef.current && drawioIframeRef.current.contentWindow) {
+                        drawioIframeRef.current.contentWindow.postMessage(JSON.stringify({
+                          action: 'load',
+                          autosave: 1,
+                          xml: nextXml,
+                          title: `ScoreX ${nextTarget === 'current' ? 'Current Baseline' : 'Target Future'} Architecture`
+                        }), '*');
+                      }
+                    }}
+                    style={{
+                      background: '#f1f5f9',
+                      border: '1px solid #cbd5e1',
+                      borderRadius: '8px',
+                      padding: '6px 12px',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      color: '#0f172a'
+                    }}
+                  >
+                    Switch to {xmlTargetState === 'current' ? 'Target State ➔' : 'Current State ➔'}
+                  </button>
+
+                  <button
+                    onClick={() => setIsVisualDrawioOpen(false)}
+                    style={{
+                      background: '#4f46e5',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '6px 14px',
+                      fontSize: '0.8rem',
+                      fontWeight: 700,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Done & Close
+                  </button>
+                </div>
+              </ModalHeader>
+
+              {/* Draw.io Embed Iframe with live JSON protocol */}
+              <div style={{ flex: 1, width: '100%', position: 'relative', borderRadius: '8px', overflow: 'hidden', border: '1px solid #cbd5e1' }}>
+                <iframe
+                  ref={drawioIframeRef}
+                  src="https://embed.diagrams.net/?embed=1&ui=kennedy&dark=0&spin=1&proto=json&pv=0"
+                  title="ScoreX Draw.io Canvas Editor"
+                  style={{ width: '100%', height: '100%', border: 'none' }}
+                />
               </div>
             </ModalCard>
           </ModalOverlay>
