@@ -10,8 +10,8 @@ const wave = keyframes`
 `;
 
 const PlayerCard = styled(motion.div)`
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(168, 85, 247, 0.15) 100%);
-  border: 1px solid rgba(139, 92, 246, 0.35);
+  background: ${props => props.$theme === 'dark' ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(168, 85, 247, 0.15) 100%)' : 'linear-gradient(135deg, #eef2ff 0%, #f5f3ff 100%)'};
+  border: ${props => props.$theme === 'dark' ? '1px solid rgba(139, 92, 246, 0.35)' : '1px solid #c7d2fe'};
   backdrop-filter: blur(16px);
   border-radius: 18px;
   padding: 20px 24px;
@@ -50,12 +50,12 @@ const InfoSection = styled.div`
     h4 {
       font-size: 1.05rem;
       font-weight: 700;
-      color: #ffffff;
+      color: ${props => props.$theme === 'dark' ? '#ffffff' : '#1e1b4b'};
       margin: 0 0 2px 0;
     }
     p {
       font-size: 0.82rem;
-      color: #cbd5e1;
+      color: ${props => props.$theme === 'dark' ? '#cbd5e1' : '#4338ca'};
       margin: 0;
     }
   }
@@ -124,7 +124,7 @@ const SecondaryControl = styled.button`
   }
 `;
 
-const AudioBriefingPlayer = ({ instance, report }) => {
+const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1.0);
   const utteranceRef = useRef(null);
@@ -263,12 +263,12 @@ const AudioBriefingPlayer = ({ instance, report }) => {
   };
 
   return (
-    <PlayerCard
+    <PlayerCard $theme={theme}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <InfoSection>
+      <InfoSection $theme={theme}>
         <div className="icon-wrap">
           <FiVolume2 />
         </div>
@@ -285,7 +285,7 @@ const AudioBriefingPlayer = ({ instance, report }) => {
       </WaveContainer>
 
       <ControlsGroup>
-        <SecondaryControl onClick={cycleRate} title="Change speech playback speed">
+        <SecondaryControl $theme={theme} onClick={cycleRate} title="Change speech playback speed">
           <FiFastForward size={13} /> {playbackRate}x
         </SecondaryControl>
 

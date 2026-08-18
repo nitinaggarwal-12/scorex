@@ -25,6 +25,7 @@ import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import dynamicAssessmentService from '../services/dynamicAssessmentService';
 import LoadingSpinner from './LoadingSpinner';
+import AIGenerationProgressModal from './AIGenerationProgressModal';
 import ScenarioSimulator from './ScenarioSimulator';
 import FinancialImpactCard from './FinancialImpactCard';
 import ArchitectureComparisonDiagram from './ArchitectureComparisonDiagram';
@@ -42,8 +43,8 @@ import { exportAssessmentToJSON, exportAssessmentToCSV, exportCompleteDeliverabl
 
 const Container = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #0b0f19 0%, #111827 50%, #171b30 100%);
-  color: #f3f4f6;
+  background: ${props => props.$theme === 'dark' ? 'linear-gradient(135deg, #0b0f19 0%, #111827 50%, #171b30 100%)' : '#f8fafc'};
+  color: ${props => props.$theme === 'dark' ? '#f3f4f6' : '#0f172a'};
   padding: 108px 36px 60px;
   box-sizing: border-box;
 
@@ -142,9 +143,10 @@ const PromoteBtn = styled.button`
 `;
 
 const HeroCard = styled.div`
-  background: rgba(30, 41, 59, 0.7);
+  background: ${props => props.$theme === 'dark' ? 'rgba(30, 41, 59, 0.7)' : '#ffffff'};
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: ${props => props.$theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid #e2e8f0'};
+  box-shadow: ${props => props.$theme === 'dark' ? '0 20px 40px rgba(0, 0, 0, 0.3)' : '0 4px 20px rgba(0, 0, 0, 0.05)'};
   border-radius: 24px;
   padding: 40px;
   margin-bottom: 32px;
@@ -171,9 +173,9 @@ const HeroHeader = styled.div`
 `;
 
 const HeroBadge = styled.span`
-  background: rgba(56, 189, 248, 0.15);
-  border: 1px solid rgba(56, 189, 248, 0.3);
-  color: #38bdf8;
+  background: ${props => props.$theme === 'dark' ? 'rgba(56, 189, 248, 0.15)' : '#e0f2fe'};
+  border: ${props => props.$theme === 'dark' ? '1px solid rgba(56, 189, 248, 0.3)' : '1px solid #7dd3fc'};
+  color: ${props => props.$theme === 'dark' ? '#38bdf8' : '#0284c7'};
   padding: 6px 16px;
   border-radius: 9999px;
   font-size: 0.85rem;
@@ -187,7 +189,7 @@ const HeroBadge = styled.span`
 const HeroTitle = styled.h1`
   font-size: 2.4rem;
   font-weight: 800;
-  color: #ffffff;
+  color: ${props => props.$theme === 'dark' ? '#ffffff' : '#0f172a'};
   margin-bottom: 8px;
 
   @media (max-width: 768px) {
@@ -198,7 +200,7 @@ const HeroTitle = styled.h1`
 const HeroMeta = styled.div`
   display: flex;
   gap: 20px;
-  color: #94a3b8;
+  color: ${props => props.$theme === 'dark' ? '#94a3b8' : '#475569'};
   font-size: 0.95rem;
   flex-wrap: wrap;
 
@@ -209,7 +211,7 @@ const HeroMeta = styled.div`
   }
 
   strong {
-    color: #e2e8f0;
+    color: ${props => props.$theme === 'dark' ? '#e2e8f0' : '#0f172a'};
   }
 `;
 
@@ -217,8 +219,8 @@ const ScoreSection = styled.div`
   display: flex;
   align-items: center;
   gap: 24px;
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.6)' : '#f1f5f9'};
+  border: ${props => props.$theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid #cbd5e1'};
   border-radius: 20px;
   padding: 24px 32px;
 
@@ -246,7 +248,7 @@ const ScoreBig = styled.div`
 const LevelBadge = styled.div`
   font-size: 1.1rem;
   font-weight: 700;
-  color: #38bdf8;
+  color: ${props => props.$theme === 'dark' ? '#38bdf8' : '#0369a1'};
   margin-bottom: 4px;
 `;
 
@@ -254,10 +256,10 @@ const LevelBadge = styled.div`
 const ExecutiveTabContainer = styled.div`
   display: flex;
   gap: 8px;
-  background: rgba(15, 23, 42, 0.85);
+  background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.85)' : '#e2e8f0'};
   padding: 6px;
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: ${props => props.$theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid #cbd5e1'};
   margin-bottom: 28px;
   overflow-x: auto;
   backdrop-filter: blur(16px);
@@ -271,8 +273,9 @@ const ExecutiveTabContainer = styled.div`
 `;
 
 const ExecutiveTabButton = styled.button`
-  background: ${props => props.$isActive ? "linear-gradient(135deg, #6366f1, #8b5cf6)" : "transparent"};
-  color: ${props => props.$isActive ? "#ffffff" : "#94a3b8"};
+  background: ${props => props.$isActive ? (props.$theme === "dark" ? "linear-gradient(135deg, #6366f1, #8b5cf6)" : "#ffffff") : "transparent"};
+  color: ${props => props.$isActive ? (props.$theme === "dark" ? "#ffffff" : "#1e1b4b") : (props.$theme === "dark" ? "#94a3b8" : "#475569")};
+  box-shadow: ${props => props.$isActive ? (props.$theme === "dark" ? "0 4px 14px rgba(99, 102, 241, 0.35)" : "0 2px 8px rgba(0,0,0,0.08)") : "none"};
   border: none;
   border-radius: 12px;
   padding: 10px 18px;
@@ -305,9 +308,10 @@ const TwoColGrid = styled.div`
 `;
 
 const Card = styled.div`
-  background: rgba(30, 41, 59, 0.6);
+  background: ${props => props.$theme === 'dark' ? 'rgba(30, 41, 59, 0.6)' : '#ffffff'};
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: ${props => props.$theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid #e2e8f0'};
+  box-shadow: ${props => props.$theme === 'dark' ? 'none' : '0 4px 20px rgba(0,0,0,0.05)'};
   border-radius: 24px;
   padding: 32px;
 
@@ -320,7 +324,7 @@ const Card = styled.div`
 const CardTitle = styled.h2`
   font-size: 1.4rem;
   font-weight: 700;
-  color: #ffffff;
+  color: ${props => props.$theme === 'dark' ? '#ffffff' : '#0f172a'};
   margin-bottom: 20px;
   display: flex;
   align-items: center;
@@ -328,9 +332,16 @@ const CardTitle = styled.h2`
 `;
 
 const ExecutiveSummaryText = styled.div`
-  color: #cbd5e1;
-  font-size: 1.05rem;
+  color: ${props => props.$theme === 'dark' ? '#cbd5e1' : '#1e293b'};
+  font-size: 1.02rem;
   line-height: 1.7;
+
+  strong {
+    color: ${props => props.$theme === 'dark' ? '#ffffff' : '#0f172a'};
+    background: ${props => props.$theme === 'dark' ? 'rgba(99, 102, 241, 0.2)' : '#eef2ff'};
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
 
   p {
     margin-bottom: 16px;
@@ -346,14 +357,14 @@ const DimHeader = styled.div`
   justify-content: space-between;
   margin-bottom: 6px;
   font-size: 0.95rem;
-  font-weight: 600;
-  color: #e2e8f0;
+  font-weight: 700;
+  color: ${props => props.$theme === 'dark' ? '#e2e8f0' : '#0f172a'};
 `;
 
 const ProgressBarTrack = styled.div`
   width: 100%;
   height: 10px;
-  background: rgba(15, 23, 42, 0.7);
+  background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.7)' : '#e2e8f0'};
   border-radius: 9999px;
   overflow: hidden;
 `;
@@ -367,12 +378,13 @@ const ProgressBarFill = styled.div`
 `;
 
 const CalloutBox = styled.div`
-  background: ${props => props.$type === 'strength' ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)'};
-  border: 1px solid ${props => props.$type === 'strength' ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'};
+  background: ${props => props.$theme === 'dark' ? (props.$type === 'strength' ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)') : (props.$type === 'strength' ? '#f0fdf4' : '#fef2f2')};
+  border: 1px solid ${props => props.$theme === 'dark' ? (props.$type === 'strength' ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)') : (props.$type === 'strength' ? '#86efac' : '#fca5a5')};
   border-radius: 14px;
   padding: 16px 20px;
   margin-bottom: 12px;
-  color: ${props => props.$type === 'strength' ? '#6ee7b7' : '#fca5a5'};
+  color: ${props => props.$theme === 'dark' ? (props.$type === 'strength' ? '#6ee7b7' : '#fca5a5') : (props.$type === 'strength' ? '#166534' : '#991b1b')};
+  font-weight: ${props => props.$theme === 'dark' ? 'normal' : '600'};
   display: flex;
   align-items: flex-start;
   gap: 12px;
@@ -492,6 +504,7 @@ const DynamicAssessmentReport = () => {
   const [isPasscodeRequired, setIsPasscodeRequired] = useState(false);
   const [enteredPasscode, setEnteredPasscode] = useState('');
   const [activeExecutiveTab, setActiveExecutiveTab] = useState('overview');
+  const [theme, setTheme] = useState('light');
 
   useEffect(() => {
     loadReport();
@@ -602,7 +615,7 @@ const DynamicAssessmentReport = () => {
   };
 
   if (loading) {
-    return <LoadingSpinner message="Loading executive AI report..." />;
+    return <AIGenerationProgressModal customerName={instance?.customerName || "Enterprise Organization"} />;
   }
 
   if (isPasscodeRequired) {
@@ -755,7 +768,7 @@ const DynamicAssessmentReport = () => {
   }
 
   return (
-    <Container>
+    <Container $theme={theme}>
       <Wrapper>
         {/* Navigation back & action controls */}
         <div className="no-print" style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
@@ -777,6 +790,26 @@ const DynamicAssessmentReport = () => {
           </div>
 
           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            
+            <button 
+              style={{ 
+                background: theme === 'light' ? '#ffffff' : 'rgba(255, 255, 255, 0.1)', 
+                border: theme === 'light' ? '1.5px solid #cbd5e1' : '1px solid rgba(255, 255, 255, 0.2)', 
+                color: theme === 'light' ? '#0f172a' : '#ffffff', 
+                padding: '9px 16px', 
+                borderRadius: '10px', 
+                display: 'inline-flex', 
+                alignItems: 'center', 
+                gap: '6px', 
+                cursor: 'pointer', 
+                fontWeight: '700',
+                boxShadow: theme === 'light' ? '0 2px 6px rgba(0,0,0,0.05)' : 'none'
+              }}
+              onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+              title="Toggle between Crisp Light Theme and Dark Mode"
+            >
+              {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
+            </button>
             <button
               style={{ background: 'linear-gradient(135deg, #ec4899, #8b5cf6)', border: 'none', color: '#ffffff', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700', boxShadow: '0 4px 14px rgba(236, 72, 153, 0.3)' }}
               onClick={() => setIsPresentationOpen(true)}
@@ -873,10 +906,22 @@ const DynamicAssessmentReport = () => {
             </button>
 
             <button 
-              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#fff', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '600' }}
+              style={{ 
+                background: theme === 'light' ? '#ffffff' : 'rgba(255,255,255,0.08)', 
+                border: theme === 'light' ? '1.5px solid #cbd5e1' : '1px solid rgba(255,255,255,0.15)', 
+                color: theme === 'light' ? '#0f172a' : '#fff', 
+                padding: '9px 18px', 
+                borderRadius: '10px', 
+                display: 'inline-flex', 
+                alignItems: 'center', 
+                gap: '8px', 
+                cursor: 'pointer', 
+                fontWeight: '700',
+                boxShadow: theme === 'light' ? '0 2px 6px rgba(0,0,0,0.05)' : 'none'
+              }}
               onClick={() => window.print()}
             >
-              <FiDownload /> Print / Save
+              <FiDownload /> 🖨️ Print / Save
             </button>
           </div>
         </div>
@@ -893,6 +938,7 @@ const DynamicAssessmentReport = () => {
         </AnimatePresence>
 
         {/* Promote to Assessment Type Banner */}
+        {!isPromoted && !framework?.isPromoted && !['openai_to_gemini_enterprise_migration', 'finops_cloud_cost_optimization', 'enterprise_ai_zero_trust_security', 'edw_lakehouse_to_bigquery_modernization', 'agentic_ai_mesh_mcp_banking_readiness'].includes(framework?.typeKey) && (
         <PromoteBanner>
           <PromoteInfo>
             <SparkleIconWrap>
@@ -913,19 +959,20 @@ const DynamicAssessmentReport = () => {
             {isPromoted ? 'Promoted to Navbar' : 'Promote as Assessment Type'}
           </PromoteBtn>
         </PromoteBanner>
+        )}
 
                 {/* AI Voice / Audio Narrative Briefing */}
-        <AudioBriefingPlayer instance={instance} report={report} />
+        <AudioBriefingPlayer instance={instance} report={report} theme={theme} />
 
         {/* Hero Card */}
-        <HeroCard>
+        <HeroCard $theme={theme}>
           <HeroHeader>
             <div>
-              <HeroBadge>
+              <HeroBadge $theme={theme}>
                 <FiAward /> {framework?.badge || "Maturity Assessment"}
               </HeroBadge>
-              <HeroTitle>{framework?.title}</HeroTitle>
-              <HeroMeta>
+              <HeroTitle $theme={theme}>{framework?.title}</HeroTitle>
+              <HeroMeta $theme={theme}>
                 <span><FiUser /> Customer: <strong>{instance.customerName}</strong></span>
                 {instance.useCase && <span><FiTarget /> Initiative: <strong>{instance.useCase}</strong></span>}
                 <span><FiCalendar /> Completed: <strong>{new Date(instance.completedAt || instance.createdAt).toLocaleDateString()}</strong></span>
@@ -933,9 +980,9 @@ const DynamicAssessmentReport = () => {
               </HeroMeta>
             </div>
 
-            <ScoreSection>
+            <ScoreSection $theme={theme}>
               <div>
-                <LevelBadge>{scores.maturityLevel} Stage</LevelBadge>
+                <LevelBadge $theme={theme}>{scores.maturityLevel} Stage</LevelBadge>
                 <div style={{ color: "#94a3b8", fontSize: "0.85rem" }}>Overall Maturity Index</div>
               </div>
               <ScoreBig>{scores.overallScore}</ScoreBig>
@@ -945,38 +992,38 @@ const DynamicAssessmentReport = () => {
         </HeroCard>
 
         {/* Executive Segmented Tab Navigation */}
-        <ExecutiveTabContainer className="no-print">
-          <ExecutiveTabButton 
+        <ExecutiveTabContainer $theme={theme} className="no-print">
+          <ExecutiveTabButton $theme={theme} 
             $isActive={activeExecutiveTab === "overview"} 
             onClick={() => setActiveExecutiveTab("overview")}
           >
             📊 Executive Overview & Radar
           </ExecutiveTabButton>
-          <ExecutiveTabButton 
+          <ExecutiveTabButton $theme={theme} 
             $isActive={activeExecutiveTab === "architecture"} 
             onClick={() => setActiveExecutiveTab("architecture")}
           >
             🏛️ Architecture Evolution (Current vs Target)
           </ExecutiveTabButton>
-          <ExecutiveTabButton 
+          <ExecutiveTabButton $theme={theme} 
             $isActive={activeExecutiveTab === "financial"} 
             onClick={() => setActiveExecutiveTab("financial")}
           >
             💰 Financial Impact & TCO
           </ExecutiveTabButton>
-          <ExecutiveTabButton 
+          <ExecutiveTabButton $theme={theme} 
             $isActive={activeExecutiveTab === "roadmap"} 
             onClick={() => setActiveExecutiveTab("roadmap")}
           >
             🚀 Roadmap & Persona Blueprints
           </ExecutiveTabButton>
-          <ExecutiveTabButton 
+          <ExecutiveTabButton $theme={theme} 
             $isActive={activeExecutiveTab === "audit"} 
             onClick={() => setActiveExecutiveTab("audit")}
           >
             📋 Question Responses Audit
           </ExecutiveTabButton>
-          <ExecutiveTabButton 
+          <ExecutiveTabButton $theme={theme} 
             $isActive={activeExecutiveTab === "all"} 
             onClick={() => setActiveExecutiveTab("all")}
             title="Display all executive sections in a single unified dossier view"
@@ -991,14 +1038,14 @@ const DynamicAssessmentReport = () => {
         {(activeExecutiveTab === "overview" || activeExecutiveTab === "all") && (
           <div>
             {/* Multi-Axis Polar Radar & Dimensional Gap Topology */}
-            <DynamicRadarChart
+            <DynamicRadarChart theme={theme}
               dimensions={framework?.dimensions || []}
               dimensionScores={simulatedDimensionScores}
               responses={instance.responses || {}}
             />
 
             {/* Executive Capability vs Operational Risk Heatmap Matrix */}
-            <ExecutiveHeatmapMatrix
+            <ExecutiveHeatmapMatrix theme={theme}
               dimensions={framework?.dimensions || []}
               dimensionScores={simulatedDimensionScores}
               responses={instance.responses || {}}
@@ -1007,11 +1054,11 @@ const DynamicAssessmentReport = () => {
             {/* Two Column Section: Executive Summary & Dimension Scores */}
             <TwoColGrid>
               {/* Executive Summary */}
-              <Card>
-                <CardTitle>
+              <Card $theme={theme}>
+                <CardTitle $theme={theme}>
                   <FiFileText color="#38bdf8" /> Executive Summary
                 </CardTitle>
-                <ExecutiveSummaryText>
+                <ExecutiveSummaryText $theme={theme}>
                   {typeof report.executiveSummary === "string" 
                     ? report.executiveSummary.split("\n\n").map((p, idx) => (
                         <p key={idx}>{p}</p>
@@ -1022,17 +1069,17 @@ const DynamicAssessmentReport = () => {
               </Card>
 
               {/* Dimension Maturity Breakdown */}
-              <Card>
-                <CardTitle>
+              <Card $theme={theme}>
+                <CardTitle $theme={theme}>
                   <FiLayers color="#818cf8" /> Dimension Maturity Breakdown
                 </CardTitle>
                 {Object.values(scores.dimensionScores || {}).map((dim, idx) => (
                   <DimensionBarRow key={dim.id || idx}>
-                    <DimHeader>
+                    <DimHeader $theme={theme}>
                       <span>{dim.name}</span>
                       <span style={{ color: "#38bdf8" }}>{dim.score} / 5.0 ({dim.percentage}%)</span>
                     </DimHeader>
-                    <ProgressBarTrack>
+                    <ProgressBarTrack $theme={theme}>
                       <ProgressBarFill $pct={dim.percentage} />
                     </ProgressBarTrack>
                   </DimensionBarRow>
@@ -1043,12 +1090,12 @@ const DynamicAssessmentReport = () => {
             {/* Strengths & Constraints */}
             <TwoColGrid>
               {/* Strengths */}
-              <Card>
-                <CardTitle>
+              <Card $theme={theme}>
+                <CardTitle $theme={theme}>
                   <FiCheckCircle color="#10b981" /> Identified Core Strengths
                 </CardTitle>
                 {(report.keyStrengths || []).map((str, idx) => (
-                  <CalloutBox key={idx} $type="strength">
+                  <CalloutBox $theme={theme} key={idx} $type="strength">
                     <FiCheckCircle />
                     <div>{str}</div>
                   </CalloutBox>
@@ -1056,12 +1103,12 @@ const DynamicAssessmentReport = () => {
               </Card>
 
               {/* Constraints & Gaps */}
-              <Card>
-                <CardTitle>
+              <Card $theme={theme}>
+                <CardTitle $theme={theme}>
                   <FiAlertTriangle color="#ef4444" /> Critical Bottlenecks & Gaps
                 </CardTitle>
                 {(report.criticalConstraints || []).map((con, idx) => (
-                  <CalloutBox key={idx} $type="constraint">
+                  <CalloutBox $theme={theme} key={idx} $type="constraint">
                     <FiAlertTriangle />
                     <div>{con}</div>
                   </CalloutBox>
@@ -1077,7 +1124,7 @@ const DynamicAssessmentReport = () => {
         {(activeExecutiveTab === "architecture" || activeExecutiveTab === "all") && (
           <div>
             {/* Architectural Evolution Blueprint: Current vs Target */}
-            <ArchitectureComparisonDiagram
+            <ArchitectureComparisonDiagram theme={theme}
               instanceId={instance?.id}
               initialDiagrams={report?.architectureDiagrams}
               currentScore={scores.overallScore || 2.5}
@@ -1102,7 +1149,7 @@ const DynamicAssessmentReport = () => {
         {(activeExecutiveTab === "financial" || activeExecutiveTab === "all") && (
           <div>
             {/* Quantified Financial & TCO Impact Engine */}
-            <FinancialImpactCard
+            <FinancialImpactCard theme={theme}
               pillarScores={simulatedDimensionScores}
               framework={framework}
               overallCurrent={scores.overallScore || 2.5}
@@ -1110,7 +1157,7 @@ const DynamicAssessmentReport = () => {
             />
 
             {/* Industry Peer Benchmarking & Percentile Distribution Matrix */}
-            <IndustryPeerBenchmarkingCard
+            <IndustryPeerBenchmarkingCard theme={theme}
               instanceId={instance?.id}
               defaultIndustry={framework?.badge || "Retail & E-Commerce"}
             />
@@ -1123,7 +1170,7 @@ const DynamicAssessmentReport = () => {
         {(activeExecutiveTab === "roadmap" || activeExecutiveTab === "all") && (
           <div>
             {/* Multi-Persona Executive Transformation Blueprints */}
-            <MultiPersonaViews
+            <MultiPersonaViews theme={theme}
               assessmentName={framework?.title || "Enterprise Data Platform"}
               currentScore={scores.overallScore || 2.5}
               targetScore={simulatedOverallTarget}
@@ -1141,7 +1188,7 @@ const DynamicAssessmentReport = () => {
             {/* Strategic Transformation Roadmap */}
             {report.transformationRoadmap && (
               <Card style={{ marginBottom: "32px" }}>
-                <CardTitle>
+                <CardTitle $theme={theme}>
                   <FiTrendingUp color="#38bdf8" /> Strategic Transformation Roadmap
                 </CardTitle>
 
@@ -1173,7 +1220,7 @@ const DynamicAssessmentReport = () => {
             {/* Prioritized Recommendations */}
             {report.prioritizedRecommendations && report.prioritizedRecommendations.length > 0 && (
               <Card style={{ marginBottom: "32px" }}>
-                <CardTitle>
+                <CardTitle $theme={theme}>
                   <FiTarget color="#10b981" /> Prioritized High-Impact Action Plan
                 </CardTitle>
 
@@ -1218,7 +1265,7 @@ const DynamicAssessmentReport = () => {
         {/* ========================================================================= */}
         {(activeExecutiveTab === "audit" || activeExecutiveTab === "all") && (
           <Card style={{ marginBottom: "32px" }}>
-            <CardTitle>
+            <CardTitle $theme={theme}>
               <FiCheckCircle color="#38bdf8" /> Granular Question Audit & Operational Context
             </CardTitle>
             <p style={{ color: "#94a3b8", fontSize: "0.92rem", marginBottom: "24px" }}>

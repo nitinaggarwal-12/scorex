@@ -4,13 +4,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FiGrid, FiAlertTriangle, FiCheckCircle, FiInfo, FiLayers } from 'react-icons/fi';
 
 const MatrixCard = styled(motion.div)`
-  background: rgba(15, 23, 42, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.75)' : '#ffffff'};
+  border: ${props => props.$theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid #e2e8f0'};
   backdrop-filter: blur(16px);
   border-radius: 20px;
   padding: 28px;
   margin-bottom: 32px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: ${props => props.$theme === 'dark' ? '0 10px 30px rgba(0, 0, 0, 0.3)' : '0 4px 20px rgba(0, 0, 0, 0.05)'};
 
   @media print {
     background: white !important;
@@ -49,7 +49,7 @@ const TitleBlock = styled.div`
   h3 {
     font-size: 1.25rem;
     font-weight: 700;
-    color: #f8fafc;
+    color: theme === "dark" ? "#f8fafc" : "#0f172a";
     margin: 0 0 2px 0;
 
     @media print {
@@ -59,7 +59,7 @@ const TitleBlock = styled.div`
 
   p {
     font-size: 0.85rem;
-    color: #94a3b8;
+    color: ${props => props.$theme === 'dark' ? '#94a3b8' : '#475569'};
     margin: 0;
 
     @media print {
@@ -75,8 +75,9 @@ const HeatmapGrid = styled.div`
 `;
 
 const HeatmapCell = styled.div`
-  background: ${props => props.$bgColor || 'rgba(30, 41, 59, 0.6)'};
-  border: 1px solid ${props => props.$borderColor || 'rgba(255, 255, 255, 0.1)'};
+  background: ${props => props.$theme === 'dark' ? (props.$bgColor || 'rgba(30, 41, 59, 0.6)') : '#ffffff'};
+  border: ${props => props.$theme === 'dark' ? (props.$borderColor || 'rgba(255, 255, 255, 0.1)') : '1.5px solid #e2e8f0'};
+  box-shadow: ${props => props.$theme === 'dark' ? 'none' : '0 2px 8px rgba(0,0,0,0.04)'};
   border-radius: 14px;
   padding: 18px;
   display: flex;
@@ -107,7 +108,7 @@ const SeverityPill = styled.span`
   border: 1px solid ${props => props.$border};
 `;
 
-const ExecutiveHeatmapMatrix = ({ dimensions = [], dimensionScores = {}, responses = {} }) => {
+const ExecutiveHeatmapMatrix = ({ dimensions = [], dimensionScores = {}, responses = {}, theme = "light" }) => {
   const [selectedDimension, setSelectedDimension] = useState(null);
 
   if (!dimensions || dimensions.length === 0) {
@@ -167,13 +168,13 @@ const ExecutiveHeatmapMatrix = ({ dimensions = [], dimensionScores = {}, respons
   };
 
   return (
-    <MatrixCard
+    <MatrixCard $theme={theme}
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
       <Header>
-        <TitleBlock>
+        <TitleBlock $theme={theme}>
           <div className="icon-wrap">
             <FiGrid />
           </div>
@@ -189,7 +190,7 @@ const ExecutiveHeatmapMatrix = ({ dimensions = [], dimensionScores = {}, respons
           const profile = getDimensionRiskProfile(dim);
 
           return (
-            <HeatmapCell
+            <HeatmapCell $theme={theme}
               key={dim.id}
               $bgColor={profile.cellBg}
               $borderColor={profile.riskBorder}
@@ -209,19 +210,19 @@ const ExecutiveHeatmapMatrix = ({ dimensions = [], dimensionScores = {}, respons
                   </span>
                 </div>
 
-                <h4 style={{ fontSize: '1rem', fontWeight: 700, margin: '0 0 6px 0', color: '#ffffff' }}>
+                <h4 style={{ fontSize: '1rem', fontWeight: 700, margin: '0 0 6px 0', color: theme === "dark" ? "#ffffff" : "#0f172a" }}>
                   {dim.name}
                 </h4>
-                <p style={{ fontSize: '0.8rem', color: '#94a3b8', margin: '0 0 14px 0', lineHeight: 1.4 }}>
+                <p style={{ fontSize: '0.8rem', color: theme === "dark" ? "#94a3b8" : "#475569", margin: '0 0 14px 0', lineHeight: 1.4 }}>
                   {dim.description?.length > 70 ? `${dim.description.substring(0, 70)}...` : dim.description}
                 </p>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.08)', fontSize: '0.78rem' }}>
-                <span style={{ color: '#cbd5e1' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px', borderTop: theme === "dark" ? "1px solid rgba(255,255,255,0.08)" : "1px solid #e2e8f0", fontSize: '0.78rem' }}>
+                <span style={{ color: theme === "dark" ? "#cbd5e1" : "#334155" }}>
                   Gap: <strong style={{ color: profile.gap > 1 ? '#f87171' : '#34d399' }}>+{profile.gap} pts</strong>
                 </span>
-                <span style={{ color: '#94a3b8' }}>
+                <span style={{ color: theme === "dark" ? "#94a3b8" : "#64748b" }}>
                   {profile.techPainCount} Bottlenecks
                 </span>
               </div>

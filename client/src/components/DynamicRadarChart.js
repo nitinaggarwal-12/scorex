@@ -4,13 +4,13 @@ import { motion } from 'framer-motion';
 import { FiTarget } from 'react-icons/fi';
 
 const ChartCard = styled(motion.div)`
-  background: rgba(15, 23, 42, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.75)' : '#ffffff'};
+  border: ${props => props.$theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid #e2e8f0'};
   backdrop-filter: blur(16px);
   border-radius: 20px;
   padding: 28px;
   margin-bottom: 32px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: ${props => props.$theme === 'dark' ? '0 10px 30px rgba(0, 0, 0, 0.3)' : '0 4px 20px rgba(0, 0, 0, 0.05)'};
 
   @media (max-width: 768px) {
     padding: 20px 16px;
@@ -53,7 +53,7 @@ const TitleBlock = styled.div`
   h3 {
     font-size: 1.25rem;
     font-weight: 700;
-    color: #f8fafc;
+    color: ${props => props.$theme === 'dark' ? '#f8fafc' : '#0f172a'};
     margin: 0 0 2px 0;
 
     @media print {
@@ -63,7 +63,7 @@ const TitleBlock = styled.div`
 
   p {
     font-size: 0.85rem;
-    color: #94a3b8;
+    color: ${props => props.$theme === 'dark' ? '#94a3b8' : '#475569'};
     margin: 0;
 
     @media print {
@@ -127,8 +127,8 @@ const TableWrap = styled.div`
 `;
 
 const DimensionRow = styled.div`
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: ${props => props.$theme === 'dark' ? 'rgba(30, 41, 59, 0.6)' : '#f8fafc'};
+  border: ${props => props.$theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid #e2e8f0'};
   border-radius: 12px;
   padding: 12px 16px;
   display: flex;
@@ -156,7 +156,7 @@ const DimLeft = styled.div`
   .name {
     font-weight: 700;
     font-size: 0.92rem;
-    color: #f1f5f9;
+    color: ${props => props.$theme === "dark" ? "#f1f5f9" : "#0f172a"};
 
     @media print {
       color: #0f172a !important;
@@ -165,7 +165,7 @@ const DimLeft = styled.div`
 
   .desc {
     font-size: 0.78rem;
-    color: #94a3b8;
+    color: ${props => props.$theme === 'dark' ? '#94a3b8' : '#475569'};
 
     @media print {
       color: #64748b !important;
@@ -224,7 +224,8 @@ const DynamicRadarChart = ({
   baselineLabel = 'Baseline',
   targetLabel = 'Target',
   title = 'Dimensional Gap Radar & Target Topology',
-  subtitle = 'Multi-axis polygon matrix tracking baseline capability vs desired target state'
+  subtitle = 'Multi-axis polygon matrix tracking baseline capability vs desired target state',
+  theme = 'light'
 }) => {
   const [hoveredIdx, setHoveredIdx] = useState(null);
   const [selectedBenchmark, setSelectedBenchmark] = useState('global');
@@ -275,13 +276,13 @@ const DynamicRadarChart = ({
   const benchmarkPath = benchmarkPoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x},${p.y}`).join(' ') + ' Z';
 
   return (
-    <ChartCard
+    <ChartCard $theme={theme} $theme={theme}
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
       <Header>
-        <TitleBlock>
+        <TitleBlock $theme={theme}>
           <div className="icon-wrap">
             <FiTarget />
           </div>
@@ -356,14 +357,14 @@ const DynamicRadarChart = ({
                     cy={center}
                     r={r}
                     fill="none"
-                    stroke="rgba(255, 255, 255, 0.08)"
+                    stroke={theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "#e2e8f0"}
                     strokeWidth="1"
                     strokeDasharray={ring === 5 ? 'none' : '2 2'}
                   />
                   <text
                     x={center + 6}
                     y={center - r + 12}
-                    fill="rgba(148, 163, 184, 0.6)"
+                    fill={theme === "dark" ? "rgba(148, 163, 184, 0.6)" : "#64748b"}
                     fontSize="9"
                     fontWeight="600"
                   >
@@ -386,7 +387,7 @@ const DynamicRadarChart = ({
                     y1={center}
                     x2={edgeCoord.x}
                     y2={edgeCoord.y}
-                    stroke="rgba(255, 255, 255, 0.12)"
+                    stroke={theme === "dark" ? "rgba(255, 255, 255, 0.12)" : "#cbd5e1"}
                     strokeWidth="1"
                   />
                   <text

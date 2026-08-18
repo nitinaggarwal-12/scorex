@@ -1307,7 +1307,7 @@ const GlobalNav = () => {
                       <DropdownItem 
                         key={type.id || type.typeKey}
                         onClick={() => {
-                          navigate(`/assessments/run/${type.typeKey}`);
+                          handleExploreAsGuest(`/assessments/run/${type.typeKey}`);
                           setAssessmentsDropdownOpen(false);
                         }}
                         style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}

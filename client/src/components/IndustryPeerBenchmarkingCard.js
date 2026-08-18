@@ -16,14 +16,14 @@ import { HiSparkles } from "react-icons/hi";
 import dynamicAssessmentService from "../services/dynamicAssessmentService";
 
 const CardContainer = styled(motion.div)`
-  background: rgba(15, 23, 42, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.75)' : '#ffffff'};
+  border: ${props => props.$theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid #e2e8f0'};
   border-radius: 20px;
   padding: 32px;
   margin-bottom: 36px;
   backdrop-filter: blur(16px);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-  color: #f8fafc;
+  box-shadow: ${props => props.$theme === 'dark' ? '0 10px 40px rgba(0, 0, 0, 0.4)' : '0 4px 20px rgba(0, 0, 0, 0.05)'};
+  color: ${props => props.$theme === 'dark' ? '#f8fafc' : '#0f172a'};
 `;
 
 const HeaderRow = styled.div`
@@ -58,7 +58,7 @@ const TitleBlock = styled.div`
     margin: 0 0 4px 0;
     font-size: 1.35rem;
     font-weight: 800;
-    color: #ffffff;
+    color: ${props => props.$theme === 'dark' ? '#ffffff' : '#0f172a'};
     display: flex;
     align-items: center;
     gap: 10px;
@@ -68,7 +68,7 @@ const TitleBlock = styled.div`
   p {
     margin: 0;
     font-size: 0.86rem;
-    color: #94a3b8;
+    color: ${props => props.$theme === 'dark' ? '#94a3b8' : '#475569'};
   }
 `;
 
@@ -76,15 +76,15 @@ const IndustryTabs = styled.div`
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  background: rgba(30, 41, 59, 0.6);
+  background: ${props => props.$theme === 'dark' ? 'rgba(30, 41, 59, 0.6)' : '#f1f5f9'};
   padding: 4px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: ${props => props.$theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid #cbd5e1'};
 `;
 
 const IndustryTab = styled.button`
   background: ${props => props.$active ? "linear-gradient(135deg, #6366f1, #8b5cf6)" : "transparent"};
-  color: ${props => props.$active ? "#ffffff" : "#94a3b8"};
+  color: ${props => props.$active ? "#ffffff" : (props.$theme === 'dark' ? "#94a3b8" : "#475569")};
   border: none;
   padding: 6px 14px;
   border-radius: 8px;
@@ -199,7 +199,7 @@ const BellCurveVisual = styled.div`
       transform: translateX(-50%);
       font-size: 0.68rem;
       font-weight: 900;
-      color: #ffffff;
+      color: ${props => props.$theme === 'dark' ? '#ffffff' : '#0f172a'};
       background: #4f46e5;
       padding: 1px 6px;
       border-radius: 4px;
@@ -209,8 +209,8 @@ const BellCurveVisual = styled.div`
 `;
 
 const BenchmarkMatrixTable = styled.div`
-  background: rgba(30, 41, 59, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: ${props => props.$theme === 'dark' ? 'rgba(30, 41, 59, 0.4)' : '#ffffff'};
+  border: ${props => props.$theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid #e2e8f0'};
   border-radius: 16px;
   overflow: hidden;
   margin-bottom: 24px;
@@ -220,9 +220,11 @@ const TableHeader = styled.div`
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr 1.2fr;
   padding: 12px 18px;
-  background: rgba(15, 23, 42, 0.8);
+  background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.8)' : '#f8fafc'};
   font-size: 0.76rem;
   font-weight: 800;
+  color: ${props => props.$theme === 'dark' ? '#94a3b8' : '#475569'};
+  border-bottom: ${props => props.$theme === 'dark' ? 'none' : '1px solid #e2e8f0'};
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #94a3b8;
@@ -238,7 +240,8 @@ const TableRow = styled.div`
   grid-template-columns: 2fr 1fr 1fr 1fr 1.2fr;
   padding: 14px 18px;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: ${props => props.$theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid #f1f5f9'};
+  color: ${props => props.$theme === 'dark' ? '#f8fafc' : '#0f172a'};
   font-size: 0.88rem;
 
   &:last-child {
@@ -280,8 +283,8 @@ const StatusPill = styled.span`
 `;
 
 const InsightsBanner = styled.div`
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: ${props => props.$theme === 'dark' ? 'linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%)' : '#f8fafc'};
+  border: ${props => props.$theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid #e2e8f0'};
   border-radius: 14px;
   padding: 18px 22px;
   display: flex;
@@ -305,7 +308,7 @@ const InsightsBanner = styled.div`
     p {
       margin: 0;
       font-size: 0.84rem;
-      color: #cbd5e1;
+      color: ${props => props.$theme === 'dark' ? '#cbd5e1' : '#334155'};
       line-height: 1.5;
     }
   }
@@ -321,7 +324,7 @@ const INDUSTRIES = [
   "Global Cross-Industry"
 ];
 
-const IndustryPeerBenchmarkingCard = ({ instanceId, defaultIndustry = "Retail & E-Commerce" }) => {
+const IndustryPeerBenchmarkingCard = ({ instanceId, defaultIndustry = "Retail & E-Commerce", theme = "light" }) => {
   const [selectedIndustry, setSelectedIndustry] = useState(defaultIndustry);
   const [benchmarkData, setBenchmarkData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -357,13 +360,13 @@ const IndustryPeerBenchmarkingCard = ({ instanceId, defaultIndustry = "Retail & 
   } = benchmarkData;
 
   return (
-    <CardContainer
+    <CardContainer $theme={theme}
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
       <HeaderRow>
-        <TitleBlock>
+        <TitleBlock $theme={theme}>
           <div className="icon-wrap">
             <FiBarChart2 />
           </div>
@@ -380,7 +383,7 @@ const IndustryPeerBenchmarkingCard = ({ instanceId, defaultIndustry = "Retail & 
           </div>
         </TitleBlock>
 
-        <IndustryTabs>
+        <IndustryTabs $theme={theme}>
           {INDUSTRIES.map(ind => (
             <IndustryTab
               key={ind}
@@ -437,8 +440,8 @@ const IndustryPeerBenchmarkingCard = ({ instanceId, defaultIndustry = "Retail & 
       </HeroStatsGrid>
 
       {/* Dimension Breakdown Table */}
-      <BenchmarkMatrixTable>
-        <TableHeader>
+      <BenchmarkMatrixTable $theme={theme}>
+        <TableHeader $theme={theme}>
           <span>Architecture Dimension</span>
           <span>Your Score</span>
           <span>Industry Median</span>
@@ -447,17 +450,17 @@ const IndustryPeerBenchmarkingCard = ({ instanceId, defaultIndustry = "Retail & 
         </TableHeader>
 
         {dimensionBenchmarks.map(d => (
-          <TableRow key={d.dimensionId}>
-            <span style={{ fontWeight: 700, color: "#f8fafc" }}>
+          <TableRow $theme={theme} key={d.dimensionId}>
+            <span style={{ fontWeight: 700, color: theme === 'dark' ? '#f8fafc' : '#0f172a' }}>
               {d.dimensionName}
             </span>
-            <span style={{ fontWeight: 800, color: "#38bdf8" }}>
+            <span style={{ fontWeight: 800, color: theme === 'dark' ? '#38bdf8' : '#0284c7' }}>
               {d.customerScore} / 5.0
             </span>
-            <span style={{ color: "#94a3b8", fontWeight: 600 }}>
+            <span style={{ color: theme === 'dark' ? '#94a3b8' : '#334155', fontWeight: 600 }}>
               {d.industryMedian} / 5.0
             </span>
-            <span style={{ color: "#c084fc", fontWeight: 700 }}>
+            <span style={{ color: theme === 'dark' ? '#c084fc' : '#7c3aed', fontWeight: 700 }}>
               {d.top10Score} / 5.0
             </span>
             <div>
@@ -475,7 +478,7 @@ const IndustryPeerBenchmarkingCard = ({ instanceId, defaultIndustry = "Retail & 
 
       {/* Strategic Takeaway Banner */}
       {insights?.keyTakeaway && (
-        <InsightsBanner>
+        <InsightsBanner $theme={theme}>
           <div className="icon">
             <HiSparkles />
           </div>

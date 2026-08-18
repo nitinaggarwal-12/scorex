@@ -772,9 +772,51 @@ const HomePageNew = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
               >
-                Get a comprehensive assessment of your organization's technical maturity across 6 critical pillars. 
-                Receive personalized recommendations and a clear roadmap for success.
+                Evaluate your enterprise Data, Cloud & Generative AI architectural maturity with audit-grade precision. 
+                Receive instant C-level ROI models, 3-year TCO projections, and Google Cloud target state blueprints.
               </motion.p>
+
+              <div style={{ display: 'flex', gap: '14px', marginTop: '28px', flexWrap: 'wrap' }}>
+                <button 
+                  onClick={() => navigate('/assessments/run/openai_to_gemini_enterprise_migration')}
+                  style={{
+                    background: 'linear-gradient(135deg, #6366f1, #a855f7)',
+                    color: '#ffffff',
+                    fontWeight: 800,
+                    fontSize: '1.02rem',
+                    padding: '14px 28px',
+                    borderRadius: '12px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    boxShadow: '0 8px 24px rgba(99, 102, 241, 0.4)',
+                    transition: 'transform 0.2s ease'
+                  }}
+                >
+                  🚀 Launch 15-Min Assessment <FiArrowRight size={18} />
+                </button>
+                <button 
+                  onClick={() => navigate('/assessments/ai-generator')}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.12)',
+                    border: '1px solid rgba(255, 255, 255, 0.25)',
+                    color: '#ffffff',
+                    fontWeight: 700,
+                    fontSize: '0.98rem',
+                    padding: '14px 24px',
+                    borderRadius: '12px',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    backdropFilter: 'blur(8px)'
+                  }}
+                >
+                  ✨ Custom AI Generator
+                </button>
+              </div>
             </HeroText>
 
             <HeroSidebar>
@@ -842,7 +884,7 @@ const HomePageNew = () => {
 
         <Grid className="three-columns">
           <Card
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 1, y: 0 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
@@ -857,7 +899,7 @@ const HomePageNew = () => {
           </Card>
 
           <Card
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 1, y: 0 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -872,7 +914,7 @@ const HomePageNew = () => {
           </Card>
 
           <Card
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 1, y: 0 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -887,7 +929,7 @@ const HomePageNew = () => {
           </Card>
 
           <Card
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 1, y: 0 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.3 }}
@@ -902,7 +944,7 @@ const HomePageNew = () => {
           </Card>
 
           <Card
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 1, y: 0 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.4 }}
@@ -917,7 +959,7 @@ const HomePageNew = () => {
           </Card>
 
           <Card
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 1, y: 0 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.5 }}
@@ -942,7 +984,7 @@ const HomePageNew = () => {
 
         <Grid className="three-columns">
           <Card
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 1, y: 0 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
@@ -957,7 +999,7 @@ const HomePageNew = () => {
           </Card>
 
           <Card
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 1, y: 0 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -972,7 +1014,7 @@ const HomePageNew = () => {
           </Card>
 
           <Card
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 1, y: 0 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -997,7 +1039,7 @@ const HomePageNew = () => {
 
         <Grid className="three-columns">
           <PillarCard
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 1, y: 0 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
@@ -1023,7 +1065,7 @@ const HomePageNew = () => {
           </PillarCard>
 
           <PillarCard
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 1, y: 0 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -1049,7 +1091,7 @@ const HomePageNew = () => {
           </PillarCard>
 
           <PillarCard
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 1, y: 0 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -1075,7 +1117,7 @@ const HomePageNew = () => {
           </PillarCard>
 
           <PillarCard
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 1, y: 0 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.3 }}
@@ -1101,7 +1143,7 @@ const HomePageNew = () => {
           </PillarCard>
 
           <PillarCard
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 1, y: 0 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.4 }}
@@ -1127,7 +1169,7 @@ const HomePageNew = () => {
           </PillarCard>
 
           <PillarCard
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 1, y: 0 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.5 }}
