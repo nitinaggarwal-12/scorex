@@ -350,7 +350,10 @@ const MultiPersonaViews = ({
   const quartileBefore = curr < 2.5 ? 'Bottom 40%' : curr < 3.5 ? 'Mid 50%' : 'Top 25%';
   const quartileAfter = tgt >= 4.0 ? 'Top 10% (Leader)' : 'Top 25% (Advanced)';
   const calculatedRiskAvoidance = `$${Math.round(gap * 360000).toLocaleString()}`;
-  const calculatedPayback = `${Math.max(2.2, (5.4 - gap * 0.9)).toFixed(1)} Months`;
+  // Harmonized with FinancialImpactCard engine
+  const estSavings = Math.max(120000, Math.round(gap * 380000));
+  const implCost = Math.round(estSavings * 0.38);
+  const calculatedPayback = `${Math.max(2.1, Math.min(16.0, Number(((implCost / estSavings) * 12).toFixed(1)))).toFixed(1)} Months`;
 
   // Dynamic Phase 1, 2, 3 data
   const phase1 = roadmap.phase1 || {
@@ -386,11 +389,24 @@ const MultiPersonaViews = ({
     ]
   };
 
-  // Top Board Decisions
+  // Domain-specialized Top Board Decisions
+  const keyType = (framework?.typeKey || '').toLowerCase();
+  const isGenAIDomain = keyType.includes('openai') || keyType.includes('gemini') || keyType.includes('genai');
+  const isSecDomain = keyType.includes('security') || keyType.includes('zero_trust');
+  const isFinOpsDomain = keyType.includes('finops') || keyType.includes('cost');
+
   const boardDecisions = recs.length >= 3 ? [
-    { title: recs[0].title || 'Authorize Centralized Cloud Lakehouse Governance', desc: recs[0].whyItMatters || 'Eliminate compliance blind spots and unify access control across business units.' },
-    { title: recs[1].title || 'Approve Serverless Autoscaling & Storage Migration', desc: recs[1].whyItMatters || 'Capture 40-50% compute cost savings by shifting from static clusters to serverless reservations.' },
-    { title: recs[2].title || 'Fund Enterprise GenAI & Agentic Mesh Deployment', desc: recs[2].whyItMatters || 'Establish enterprise prompt caching, model routing, and zero-trust guardrails.' }
+    { title: recs[0].title || (isGenAIDomain ? 'Authorize Enterprise AI Gateway & Model Governance' : 'Authorize Centralized Cloud Governance'), desc: recs[0].whyItMatters || 'Eliminate vendor lock-in, unmonitored egress, and compliance blind spots.' },
+    { title: recs[1].title || (isGenAIDomain ? 'Approve Vertex AI Gemini Long-Context & Prompt Caching Migration' : 'Approve Serverless Compute & Storage Modernization'), desc: recs[1].whyItMatters || 'Capture 50-75% token cost reduction and eliminate brittle vector RAG chunking.' },
+    { title: recs[2].title || (isGenAIDomain ? 'Fund Model Armor & MCP Multi-Agent Mesh Deployment' : 'Fund Enterprise AI & Automation Deployment'), desc: recs[2].whyItMatters || 'Deploy standardized MCP agent contracts with real-time prompt injection defense.' }
+  ] : isGenAIDomain ? [
+    { title: 'Authorize Enterprise AI Gateway & CMEK Perimeter', desc: 'Decouple backend microservices from direct vendor SDKs and enforce VPC-SC and Cloud KMS CMEK encryption.' },
+    { title: 'Approve Gemini Long-Context & Prompt Context Caching', desc: 'Capture up to 75% input token discount and eliminate lossy 8k chunking via native 2M context windows.' },
+    { title: 'Fund Model Armor & MCP Multi-Agent Mesh Deployment', desc: 'Deploy standardized Model Context Protocol (MCP) agent contracts with automated CI/CD evaluation gates.' }
+  ] : isSecDomain ? [
+    { title: 'Mandate Elimination of Static Service Account Keys', desc: 'Enforce Workload Identity Federation (OIDC) and ephemeral JIT PAM privileges (<4h) across all cloud environments.' },
+    { title: 'Deploy Real-Time Cloud DLP & Customer-Managed KMS (CMEK)', desc: 'Automate PII surrogate tokenization and institute cryptographic tenant data shredding.' },
+    { title: 'Authorize Centralized Chronicle SIEM & Automated Incident Triage', desc: 'Correlate cloud audit logs across all regions to reduce mean-time-to-remediate (MTTR) under 15 minutes.' }
   ] : [
     { title: 'Authorize Unified Lakehouse Governance & Open Storage', desc: 'Mandate open table formats (Apache Iceberg) and centralized ABAC cataloging across all teams.' },
     { title: 'Approve Serverless Reservation Slot Migration', desc: 'Shift from static over-provisioned VMs to serverless autoscaling compute with 15-min auto-suspend.' },

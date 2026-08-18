@@ -121,12 +121,19 @@ const ExecutiveHeatmapMatrix = ({ dimensions = [], dimensionScores = {}, respons
     const target = dScore?.targetScore !== undefined ? dScore.targetScore : (parseFloat(responses[`${dim.id}_target`]) || 4.0);
     const gap = target - score;
 
-    // Count technical pain points in this dimension
+    // Count technical & business pain points in this dimension accurately
     let techPainCount = 0;
     (dim.questions || []).forEach(q => {
-      const pains = responses[`${q.id}_tech_pain`] || [];
-      techPainCount += pains.length;
+      const techPains = responses[`${q.id}_technical_pain`] || responses[`${q.id}_tech_pain`] || responses[`${q.id}_technical_pain_points`] || [];
+      const bizPains = responses[`${q.id}_business_pain`] || responses[`${q.id}_biz_pain`] || responses[`${q.id}_business_pain_points`] || [];
+      techPainCount += (Array.isArray(techPains) ? techPains.length : (techPains ? 1 : 0)) +
+                       (Array.isArray(bizPains) ? bizPains.length : (bizPains ? 1 : 0));
     });
+    // Check dimension level pain points
+    const dimTech = responses[`${dim.id}_technical_pain`] || responses[`${dim.id}_tech_pain`] || [];
+    const dimBiz = responses[`${dim.id}_business_pain`] || responses[`${dim.id}_biz_pain`] || [];
+    techPainCount += (Array.isArray(dimTech) ? dimTech.length : (dimTech ? 1 : 0)) +
+                     (Array.isArray(dimBiz) ? dimBiz.length : (dimBiz ? 1 : 0));
 
     let riskLevel = 'Low Risk';
     let riskColor = '#34d399';
@@ -205,7 +212,15 @@ const ExecutiveHeatmapMatrix = ({ dimensions = [], dimensionScores = {}, respons
                   >
                     <FiAlertTriangle size={11} /> {profile.riskLevel}
                   </SeverityPill>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#f8fafc' }}>
+                  <span style={{ 
+                    fontSize: '0.85rem', 
+                    fontWeight: 800, 
+                    color: theme === 'dark' ? '#f8fafc' : '#0f172a',
+                    background: theme === 'dark' ? 'rgba(255,255,255,0.08)' : '#f1f5f9',
+                    padding: '2px 8px',
+                    borderRadius: '6px',
+                    border: theme === 'dark' ? '1px solid rgba(255,255,255,0.1)' : '1px solid #e2e8f0'
+                  }}>
                     {profile.score} / 5.0
                   </span>
                 </div>

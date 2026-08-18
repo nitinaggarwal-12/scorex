@@ -227,7 +227,8 @@ const IaCBlueprintCard = ({
   organizationName = 'ConnectPlus Telecom', 
   assessmentName = 'Enterprise Data & AI Architecture',
   currentScore = 2.5,
-  targetScore = 4.5
+  targetScore = 4.5,
+  framework = null
 }) => {
   const [selectedCloud, setSelectedCloud] = useState('gcp');
   const [copiedSnippet, setCopiedSnippet] = useState(false);
@@ -239,8 +240,104 @@ const IaCBlueprintCard = ({
   const derivedProject = `${orgSlug}-lakehouse-prod`;
   const derivedBucket = `${orgSlug}-data-catalog-prod`;
 
+  const keyType = (framework?.typeKey || '').toLowerCase();
+  const isGenAI = keyType.includes('openai') || keyType.includes('gemini') || keyType.includes('genai');
+
   // Cloud configurations & 1-Click Launch URLs
-  const cloudConfigs = {
+  const cloudConfigs = isGenAI ? {
+    gcp: {
+      name: 'Google Cloud (Vertex AI + CMEK)',
+      icon: '🔵',
+      requiredRole: 'roles/aiplatform.admin & roles/cloudkms.admin',
+      launchText: '🚀 Launch in Google Cloud Shell',
+      launchUrl: `https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/nitinaggarwal-12/scorex.git&cloudshell_workspace=terraform/gcp-genai&cloudshell_tutorial=README.md`,
+      terraformCode: `# ScoreX Auto-Generated Terraform: Vertex AI & Gemini Enterprise Mesh
+terraform {
+  required_version = ">= 1.5.0"
+  backend "gcs" {
+    bucket = "${derivedBucket}-tfstate"
+    prefix = "scorex/genai-state"
+  }
+  required_providers {
+    google = { source = "hashicorp/google", version = "~> 5.0" }
+  }
+}
+
+provider "google" {
+  project = "${derivedProject}"
+  region  = "us-central1"
+}
+
+# 1. Customer-Managed KMS Key (CMEK) for LLM Ingestion & Cache
+resource "google_kms_key_ring" "ai_keyring" {
+  name     = "${orgSlug}-ai-keyring"
+  location = "us-central1"
+}
+
+resource "google_kms_crypto_key" "gemini_cmek" {
+  name            = "gemini-prompt-cache-key"
+  key_ring        = google_kms_key_ring.ai_keyring.id
+  rotation_period = "7776000s" # 90-day automated rotation
+}
+
+# 2. Vertex AI Endpoint with Prompt Context Caching & Zero-Trust Perimeter
+resource "google_vertex_ai_endpoint" "gemini_gateway" {
+  name         = "${orgSlug}-gemini-mesh-prod"
+  display_name = "ScoreX Gemini Enterprise Endpoint"
+  location     = "us-central1"
+  encryption_spec {
+    kms_key_name = google_kms_crypto_key.gemini_cmek.id
+  }
+}
+
+# 3. VPC Service Controls Ingress Perimeter
+resource "google_access_context_manager_service_perimeter" "genai_perimeter" {
+  parent = "accessPolicies/default"
+  name   = "accessPolicies/default/servicePerimeters/${orgSlug.replace(/-/g, '_')}_ai_perimeter"
+  title  = "${orgSlug} GenAI Zero-Trust Perimeter"
+  status {
+    restricted_services = [
+      "aiplatform.googleapis.com",
+      "cloudkms.googleapis.com"
+    ]
+  }
+}`
+    },
+    aws: {
+      name: 'Amazon Web Services (Bedrock Relay)',
+      icon: '🟠',
+      requiredRole: 'AmazonBedrockFullAccess & IAMFullAccess',
+      launchText: '🚀 Launch in AWS CloudFormation',
+      launchUrl: `https://console.aws.amazon.com/cloudformation/home#/stacks/create/review?stackName=ScoreX-GenAI-Gateway`,
+      terraformCode: `# ScoreX Auto-Generated Terraform: AWS Bedrock to Vertex Relay
+terraform {
+  required_version = ">= 1.5.0"
+}
+
+provider "aws" { region = "us-east-1" }
+
+resource "aws_kms_key" "bedrock_cmek" {
+  description             = "ScoreX CMEK Key for AI Payload Encryption"
+  deletion_window_in_days = 30
+  enable_key_rotation     = true
+}`
+    },
+    azure: {
+      name: 'Microsoft Azure (AI Relay)',
+      icon: '🔷',
+      requiredRole: 'Cognitive Services Contributor',
+      launchText: '🚀 Deploy to Azure Portal',
+      launchUrl: `https://portal.azure.com/#create/Microsoft.Template`,
+      terraformCode: `# ScoreX Auto-Generated Terraform: Azure AI Services Relay
+terraform {
+  required_version = ">= 1.5.0"
+}
+
+provider "azurerm" {
+  features {}
+}`
+    }
+  } : {
     gcp: {
       name: 'Google Cloud (GCP)',
       icon: '🔵',

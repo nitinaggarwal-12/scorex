@@ -1139,6 +1139,7 @@ const DynamicAssessmentReport = () => {
               organizationName={instance?.customerName || framework?.title || "Enterprise Platform"}
               currentScore={scores.overallScore || 2.5}
               targetScore={4.5}
+              framework={framework}
             />
           </div>
         )}
@@ -1264,21 +1265,36 @@ const DynamicAssessmentReport = () => {
         {/* TAB 5: QUESTION RESPONSES AUDIT DOSSIER                                   */}
         {/* ========================================================================= */}
         {(activeExecutiveTab === "audit" || activeExecutiveTab === "all") && (
-          <Card style={{ marginBottom: "32px" }}>
+          <Card $theme={theme} style={{ marginBottom: "32px" }}>
             <CardTitle $theme={theme}>
-              <FiCheckCircle color="#38bdf8" /> Granular Question Audit & Operational Context
+              <FiCheckCircle color="#0284c7" /> Granular Question Audit & Operational Context
             </CardTitle>
-            <p style={{ color: "#94a3b8", fontSize: "0.92rem", marginBottom: "24px" }}>
+            <p style={{ color: theme === 'dark' ? "#94a3b8" : "#64748b", fontSize: "0.92rem", marginBottom: "24px" }}>
               Complete record of dimensional question responses, baseline ratings, target horizons, identified technical/business pain points, and lead architect audit notes.
             </p>
 
             {(framework?.dimensions || []).map((dim, dIdx) => (
-              <div key={dim.id || dIdx} style={{ background: "rgba(15, 23, 42, 0.6)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "16px", padding: "24px", marginBottom: "20px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", borderBottom: "1px solid rgba(255,255,255,0.08)", paddingBottom: "12px" }}>
-                  <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#ffffff", margin: 0 }}>
+              <div key={dim.id || dIdx} style={{ 
+                background: theme === 'dark' ? "rgba(15, 23, 42, 0.6)" : "#ffffff", 
+                border: theme === 'dark' ? "1px solid rgba(255,255,255,0.08)" : "1.5px solid #e2e8f0", 
+                borderRadius: "16px", 
+                padding: "20px", 
+                marginBottom: "20px",
+                boxShadow: theme === 'dark' ? "none" : "0 2px 8px rgba(0,0,0,0.03)"
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", borderBottom: theme === 'dark' ? "1px solid rgba(255,255,255,0.08)" : "1px solid #f1f5f9", paddingBottom: "12px" }}>
+                  <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: theme === 'dark' ? "#ffffff" : "#0f172a", margin: 0 }}>
                     {dim.name}
                   </h3>
-                  <span style={{ background: "rgba(56, 189, 248, 0.15)", color: "#38bdf8", padding: "4px 12px", borderRadius: "9999px", fontSize: "0.85rem", fontWeight: 700 }}>
+                  <span style={{ 
+                    background: theme === 'dark' ? "rgba(56, 189, 248, 0.15)" : "#e0f2fe", 
+                    color: theme === 'dark' ? "#38bdf8" : "#0369a1", 
+                    border: theme === 'dark' ? "none" : "1px solid #bae6fd",
+                    padding: "4px 12px", 
+                    borderRadius: "9999px", 
+                    fontSize: "0.85rem", 
+                    fontWeight: 700 
+                  }}>
                     Dimension Score: {scores.dimensionScores?.[dim.id]?.score || 2.5} / 5.0
                   </span>
                 </div>
@@ -1292,40 +1308,46 @@ const DynamicAssessmentReport = () => {
                   const bizPain = instance.responses?.[q.id + "_business_pain"] || [];
 
                   return (
-                    <div key={q.id || qIdx} style={{ background: "rgba(30, 41, 59, 0.4)", borderRadius: "12px", padding: "16px", marginBottom: "14px", border: "1px solid rgba(255,255,255,0.05)" }}>
-                      <div style={{ fontSize: "0.95rem", fontWeight: 600, color: "#e2e8f0", marginBottom: "8px" }}>
+                    <div key={q.id || qIdx} style={{ 
+                      background: theme === 'dark' ? "rgba(30, 41, 59, 0.4)" : "#f8fafc", 
+                      borderRadius: "12px", 
+                      padding: "14px 16px", 
+                      marginBottom: "12px", 
+                      border: theme === 'dark' ? "1px solid rgba(255,255,255,0.05)" : "1px solid #e2e8f0" 
+                    }}>
+                      <div style={{ fontSize: "0.95rem", fontWeight: 700, color: theme === 'dark' ? "#e2e8f0" : "#1e293b", marginBottom: "8px" }}>
                         Q{qIdx + 1}: {q.text}
                       </div>
                       
-                      <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", marginBottom: "10px" }}>
-                        <span style={{ fontSize: "0.85rem", color: "#f87171", background: "rgba(239, 68, 68, 0.12)", padding: "3px 10px", borderRadius: "8px" }}>
+                      <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginBottom: "10px" }}>
+                        <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "#dc2626", background: "#fef2f2", border: "1px solid #fecaca", padding: "3px 10px", borderRadius: "6px" }}>
                           Current Baseline: <strong>{val}/5.0</strong>
                         </span>
-                        <span style={{ fontSize: "0.85rem", color: "#34d399", background: "rgba(16, 185, 129, 0.12)", padding: "3px 10px", borderRadius: "8px" }}>
+                        <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "#15803d", background: "#f0fdf4", border: "1px solid #bbf7d0", padding: "3px 10px", borderRadius: "6px" }}>
                           Target Horizon: <strong>{futureVal}/5.0</strong>
                         </span>
                       </div>
 
                       {selectedOpt && (
-                        <div style={{ fontSize: "0.88rem", color: "#cbd5e1", marginBottom: "8px", lineHeight: "1.4" }}>
-                          <strong>Evaluated State:</strong> {selectedOpt.label}
+                        <div style={{ fontSize: "0.86rem", color: theme === 'dark' ? "#cbd5e1" : "#334155", marginBottom: "8px", lineHeight: "1.4" }}>
+                          <strong style={{ color: theme === 'dark' ? '#ffffff' : '#0f172a' }}>Evaluated State:</strong> {selectedOpt.label}
                         </div>
                       )}
 
                       {techPain.length > 0 && (
-                        <div style={{ fontSize: "0.84rem", color: "#fca5a5", marginBottom: "4px" }}>
+                        <div style={{ fontSize: "0.82rem", color: "#b91c1c", background: "#fff1f2", border: "1px solid #ffe4e6", borderRadius: "6px", padding: "6px 10px", marginBottom: "6px", lineHeight: "1.35" }}>
                           ⚠️ <strong>Technical Friction:</strong> {techPain.join("; ")}
                         </div>
                       )}
 
                       {bizPain.length > 0 && (
-                        <div style={{ fontSize: "0.84rem", color: "#fcd34d", marginBottom: "4px" }}>
+                        <div style={{ fontSize: "0.82rem", color: "#b45309", background: "#fffbeb", border: "1px solid #fef3c7", borderRadius: "6px", padding: "6px 10px", marginBottom: "6px", lineHeight: "1.35" }}>
                           💼 <strong>Business Risk:</strong> {bizPain.join("; ")}
                         </div>
                       )}
 
                       {comment && (
-                        <div style={{ fontSize: "0.84rem", color: "#94a3b8", fontStyle: "italic", marginTop: "6px" }}>
+                        <div style={{ fontSize: "0.84rem", color: "#475569", background: "#f1f5f9", borderLeft: "3px solid #0ea5e9", borderRadius: "4px", padding: "6px 12px", marginTop: "8px" }}>
                           📝 <strong>Architect Notes:</strong> "{comment}"
                         </div>
                       )}
