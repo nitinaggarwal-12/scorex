@@ -88,15 +88,56 @@ const DocTab = styled.button`
 const PreviewBody = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding: 32px 40px;
-  max-width: 1440px;
+  padding: ${props => props.$isSlides ? '20px 32px' : '32px 40px'};
+  max-width: ${props => props.$isSlides ? '1600px' : '1440px'};
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
 
   @media (max-width: 768px) {
-    padding: 16px;
+    padding: 12px;
   }
+`;
+
+const SlideCanvas = styled.div`
+  background: linear-gradient(135deg, #090e1a 0%, #0f172a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+  width: 100%;
+  min-height: calc(100vh - 160px);
+  padding: 36px 48px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    padding: 20px 16px;
+    min-height: auto;
+  }
+`;
+
+const SlideHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+`;
+
+const SlideFooter = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.76rem;
+  color: #64748b;
 `;
 
 const CloudButton = styled.button`
@@ -232,11 +273,19 @@ export const UnifiedDocumentPreviewModal = ({
       if (e.key === "Escape") {
         e.preventDefault();
         onClose();
+      } else if (activeDocType === 'slides') {
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") {
+          e.preventDefault();
+          setCurrentSlide(prev => Math.min(5, prev + 1));
+        } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+          e.preventDefault();
+          setCurrentSlide(prev => Math.max(0, prev - 1));
+        }
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, activeDocType]);
 
   if (!isOpen) return null;
 
@@ -378,7 +427,16 @@ export const UnifiedDocumentPreviewModal = ({
 
   const currentConfig = DOC_CONFIGS[activeDocType] || DOC_CONFIGS.slides;
 
-  const handleOpenCloud = () => {
+  const handleOpenCloud = async () => {
+    if (activeDocType === 'slides') {
+      toast.loading('Preparing 16:9 Presentation deck for Google Slides...', { id: 'slides-prep' });
+      await exportAssessmentToPPTX(instance, report);
+      toast.dismiss('slides-prep');
+      window.open('https://slides.new', '_blank', 'noopener,noreferrer');
+      toast.success('📊 Deck downloaded & Google Slides opened! Drag & drop the downloaded .pptx file into Google Slides to edit.', { duration: 6000 });
+      return;
+    }
+
     if (currentConfig.cloudUrl) {
       window.open(currentConfig.cloudUrl, '_blank', 'noopener,noreferrer');
       toast.success(`Opened ${currentConfig.app} in a new tab!`, { id: 'open-cloud', icon: currentConfig.appIcon });
@@ -511,15 +569,23 @@ export const UnifiedDocumentPreviewModal = ({
         </TopDeckBar>
 
         {/* In-Browser Interactive Preview Body */}
-        <PreviewBody>
-          {/* 1. SLIDES PREVIEW */}
+        <PreviewBody $isSlides={activeDocType === 'slides'}>
+          {/* 1. SLIDES PREVIEW (FULL-PAGE 16:9 WIDESCREEN PRESENTATION) */}
           {activeDocType === 'slides' && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(30, 41, 59, 0.5)", padding: "10px 20px", borderRadius: "10px" }}>
-                <span style={{ fontSize: "0.88rem", color: "#cbd5e1", fontWeight: 700 }}>
-                  16:9 Executive Presentation Deck • Slide {currentSlide + 1} of 6
-                </span>
-                <div style={{ display: "flex", gap: "8px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px", width: "100%" }}>
+              {/* Slide Navigation Top Bar */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(30, 41, 59, 0.7)", padding: "12px 24px", borderRadius: "14px", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <span style={{ fontSize: "0.95rem", color: "#f8fafc", fontWeight: 800 }}>
+                    📊 16:9 Executive Presentation Deck
+                  </span>
+                  <span style={{ fontSize: "0.78rem", background: "rgba(99, 102, 241, 0.25)", color: "#a5b4fc", border: "1px solid rgba(165, 180, 252, 0.4)", padding: "2px 10px", borderRadius: "6px", fontWeight: 700 }}>
+                    Slide {currentSlide + 1} of 6
+                  </span>
+                </div>
+
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <span style={{ fontSize: "0.75rem", color: "#94a3b8", marginRight: "6px" }}>Use ← / → keys or buttons:</span>
                   <ActionButton 
                     disabled={currentSlide === 0}
                     onClick={() => setCurrentSlide(prev => Math.max(0, prev - 1))}
@@ -535,80 +601,240 @@ export const UnifiedDocumentPreviewModal = ({
                 </div>
               </div>
 
+              {/* SLIDE 0: TITLE COVER SLIDE */}
               {currentSlide === 0 && (
-                <div style={{ background: "#0b132b", border: "1px solid #1e293b", borderRadius: "16px", padding: "48px", textAlign: "center", minHeight: "450px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", gap: "16px" }}>
-                  <span style={{ fontSize: "0.85rem", background: "#1d4ed8", color: "#fff", padding: "4px 12px", borderRadius: "6px", fontWeight: 800 }}>
-                    SCOREX ENTERPRISE ADVISORY
-                  </span>
-                  <h1 style={{ fontSize: "2.4rem", margin: 0, color: "#ffffff", fontWeight: 900 }}>{framework?.title || 'Enterprise Modernization Assessment'}</h1>
-                  <h3 style={{ fontSize: "1.2rem", color: "#38bdf8", margin: 0 }}>Target Enterprise: {org}</h3>
-                  <div style={{ display: "flex", gap: "24px", marginTop: "20px" }}>
-                    <div style={{ background: "#162238", padding: "16px 28px", borderRadius: "12px", border: "1px solid #2a3b5c" }}>
-                      <div style={{ fontSize: "0.78rem", color: "#94a3b8" }}>OVERALL MATURITY</div>
-                      <div style={{ fontSize: "2rem", fontWeight: 800, color: "#34d399" }}>{overallScore} / 5.0</div>
-                    </div>
-                    <div style={{ background: "#162238", padding: "16px 28px", borderRadius: "12px", border: "1px solid #2a3b5c" }}>
-                      <div style={{ fontSize: "0.78rem", color: "#94a3b8" }}>PROJECTED 3-YR ROI</div>
-                      <div style={{ fontSize: "2rem", fontWeight: 800, color: "#60a5fa" }}>$2.3M - $4.2M</div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {currentSlide === 1 && (
-                <ExecutiveHeatmapMatrix
-                  dimensions={framework?.dimensions || []}
-                  dimensionScores={scores || {}}
-                  responses={instance?.responses || {}}
-                />
-              )}
-
-              {currentSlide === 2 && (
-                <DynamicRadarChart
-                  dimensions={framework?.dimensions || []}
-                  dimensionScores={scores || {}}
-                  responses={instance?.responses || {}}
-                />
-              )}
-
-              {currentSlide === 3 && (
-                <FinancialImpactCard
-                  pillarScores={scores || {}}
-                  framework={framework}
-                  overallCurrent={instance?.totalScore || 2.5}
-                  overallTarget={4.2}
-                />
-              )}
-
-              {currentSlide === 4 && (
-                <ArchitectureComparisonDiagram
-                  instanceId={instance?.id}
-                  initialDiagrams={report?.architectureDiagrams}
-                  currentScore={instance?.totalScore || 2.5}
-                  targetScore={4.5}
-                  customerName={org}
-                  useCase={instance?.useCase}
-                  framework={framework}
-                />
-              )}
-
-              {currentSlide === 5 && (
-                <div style={{ background: "rgba(30, 41, 59, 0.6)", borderRadius: "16px", padding: "32px", border: "1px solid rgba(255,255,255,0.1)" }}>
-                  <h2 style={{ fontSize: "1.5rem", color: "#ffffff", marginTop: 0 }}>High-Priority Transformation Roadmap</h2>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                    {recs.slice(0, 5).map((r, idx) => (
-                      <div key={idx} style={{ background: "#0f172a", padding: "16px 20px", borderRadius: "10px", border: "1px solid #334155", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <div>
-                          <h4 style={{ margin: "0 0 4px 0", color: "#ffffff" }}>{idx + 1}. {r.title || r.recommendation}</h4>
-                          <p style={{ margin: 0, fontSize: "0.85rem", color: "#94a3b8" }}>{r.whyItMatters || r.impact || r.description}</p>
-                        </div>
-                        <span style={{ fontSize: "0.78rem", background: "rgba(16, 185, 129, 0.2)", color: "#34d399", padding: "4px 10px", borderRadius: "6px", fontWeight: 700 }}>
-                          {r.timeline || 'Phase 1'}
+                <SlideCanvas>
+                  <SlideHeader>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                        <span style={{ background: '#1d4ed8', color: '#ffffff', fontSize: '0.72rem', fontWeight: 800, padding: '3px 10px', borderRadius: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                          ScoreX Executive Advisory
+                        </span>
+                        <span style={{ color: '#94a3b8', fontSize: '0.82rem', fontWeight: 600 }}>
+                          Strategic Cloud & AI Architecture Readout
                         </span>
                       </div>
-                    ))}
+                      <h1 style={{ fontSize: "2.6rem", margin: 0, color: "#ffffff", fontWeight: 900, lineHeight: 1.2 }}>
+                        {framework?.title || 'Enterprise Modernization Assessment'}
+                      </h1>
+                    </div>
+                    <span style={{ fontSize: "0.85rem", color: "#38bdf8", fontWeight: 800 }}>Slide 1 / 6</span>
+                  </SlideHeader>
+
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "28px", padding: "40px 0", textAlign: "center" }}>
+                    <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "rgba(56, 189, 248, 0.15)", border: "1px solid rgba(56, 189, 248, 0.3)", color: "#38bdf8", padding: "6px 18px", borderRadius: "20px", fontSize: "0.95rem", fontWeight: 700 }}>
+                      🏢 Target Enterprise: <strong>{org}</strong>
+                    </div>
+
+                    <p style={{ maxWidth: "800px", color: "#cbd5e1", fontSize: "1.1rem", lineHeight: 1.6, margin: 0 }}>
+                      Comprehensive maturity diagnostic and target state architecture advisory formulated by Google DeepMind Gemini advisory compiler.
+                    </p>
+
+                    <div style={{ display: "flex", gap: "24px", flexWrap: "wrap", justifyContent: "center" }}>
+                      <div style={{ background: "rgba(15, 23, 42, 0.85)", padding: "20px 36px", borderRadius: "16px", border: "1.5px solid rgba(16, 185, 129, 0.3)", boxShadow: "0 10px 25px rgba(0,0,0,0.3)" }}>
+                        <div style={{ fontSize: "0.8rem", color: "#94a3b8", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "4px" }}>
+                          Overall Maturity Index
+                        </div>
+                        <div style={{ fontSize: "2.8rem", fontWeight: 900, color: "#34d399" }}>
+                          {overallScore} <span style={{ fontSize: "1.2rem", color: "#64748b" }}>/ 5.0</span>
+                        </div>
+                        <div style={{ fontSize: "0.82rem", color: "#a7f3d0", fontWeight: 700 }}>{maturityStage} Stage</div>
+                      </div>
+
+                      <div style={{ background: "rgba(15, 23, 42, 0.85)", padding: "20px 36px", borderRadius: "16px", border: "1.5px solid rgba(59, 130, 246, 0.3)", boxShadow: "0 10px 25px rgba(0,0,0,0.3)" }}>
+                        <div style={{ fontSize: "0.8rem", color: "#94a3b8", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "4px" }}>
+                          Projected 3-Year Value / ROI
+                        </div>
+                        <div style={{ fontSize: "2.8rem", fontWeight: 900, color: "#60a5fa" }}>
+                          $2.3M - $4.2M
+                        </div>
+                        <div style={{ fontSize: "0.82rem", color: "#bfdbfe", fontWeight: 700 }}>35% - 50% TCO Arbitrage</div>
+                      </div>
+                    </div>
                   </div>
-                </div>
+
+                  <SlideFooter>
+                    <span>CONFIDENTIAL • Prepared for {org} Board & Executive Architecture Review</span>
+                    <span>ScoreX Engine • Google Cloud Enterprise Advisory</span>
+                  </SlideFooter>
+                </SlideCanvas>
+              )}
+
+              {/* SLIDE 1: HEATMAP MATRIX */}
+              {currentSlide === 1 && (
+                <SlideCanvas>
+                  <SlideHeader>
+                    <div>
+                      <div style={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: 600, marginBottom: '4px' }}>
+                        Executive Diagnostic Matrix
+                      </div>
+                      <h2 style={{ fontSize: "1.8rem", color: "#ffffff", fontWeight: 800, margin: 0 }}>
+                        Operational Capability vs Risk Heatmap
+                      </h2>
+                    </div>
+                    <span style={{ fontSize: "0.85rem", color: "#38bdf8", fontWeight: 800 }}>Slide 2 / 6</span>
+                  </SlideHeader>
+
+                  <div style={{ flex: 1, overflowY: "auto", margin: "10px 0" }}>
+                    <ExecutiveHeatmapMatrix
+                      theme="dark"
+                      dimensions={framework?.dimensions || []}
+                      dimensionScores={scores || {}}
+                      responses={instance?.responses || {}}
+                    />
+                  </div>
+
+                  <SlideFooter>
+                    <span>CONFIDENTIAL • Prepared for {org}</span>
+                    <span>Slide 2 of 6</span>
+                  </SlideFooter>
+                </SlideCanvas>
+              )}
+
+              {/* SLIDE 2: RADAR CHART */}
+              {currentSlide === 2 && (
+                <SlideCanvas>
+                  <SlideHeader>
+                    <div>
+                      <div style={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: 600, marginBottom: '4px' }}>
+                        5-Axis Capability Matrix
+                      </div>
+                      <h2 style={{ fontSize: "1.8rem", color: "#ffffff", fontWeight: 800, margin: 0 }}>
+                        Dimensional Gap Radar & Target Horizon Topology
+                      </h2>
+                    </div>
+                    <span style={{ fontSize: "0.85rem", color: "#38bdf8", fontWeight: 800 }}>Slide 3 / 6</span>
+                  </SlideHeader>
+
+                  <div style={{ flex: 1, overflowY: "auto", margin: "10px 0" }}>
+                    <DynamicRadarChart
+                      theme="dark"
+                      dimensions={framework?.dimensions || []}
+                      dimensionScores={scores || {}}
+                      responses={instance?.responses || {}}
+                    />
+                  </div>
+
+                  <SlideFooter>
+                    <span>CONFIDENTIAL • Prepared for {org}</span>
+                    <span>Slide 3 of 6</span>
+                  </SlideFooter>
+                </SlideCanvas>
+              )}
+
+              {/* SLIDE 3: FINANCIAL IMPACT */}
+              {currentSlide === 3 && (
+                <SlideCanvas>
+                  <SlideHeader>
+                    <div>
+                      <div style={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: 600, marginBottom: '4px' }}>
+                        FinOps & Business Realization
+                      </div>
+                      <h2 style={{ fontSize: "1.8rem", color: "#ffffff", fontWeight: 800, margin: 0 }}>
+                        Quantified 3-Year Financial Impact & TCO Reduction
+                      </h2>
+                    </div>
+                    <span style={{ fontSize: "0.85rem", color: "#38bdf8", fontWeight: 800 }}>Slide 4 / 6</span>
+                  </SlideHeader>
+
+                  <div style={{ flex: 1, overflowY: "auto", margin: "10px 0" }}>
+                    <FinancialImpactCard
+                      theme="dark"
+                      pillarScores={scores || {}}
+                      framework={framework}
+                      overallCurrent={instance?.totalScore || 2.5}
+                      overallTarget={4.2}
+                    />
+                  </div>
+
+                  <SlideFooter>
+                    <span>CONFIDENTIAL • Prepared for {org}</span>
+                    <span>Slide 4 of 6</span>
+                  </SlideFooter>
+                </SlideCanvas>
+              )}
+
+              {/* SLIDE 4: ARCHITECTURE BLUEPRINT */}
+              {currentSlide === 4 && (
+                <SlideCanvas>
+                  <SlideHeader>
+                    <div>
+                      <div style={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: 600, marginBottom: '4px' }}>
+                        Target Architecture Blueprint
+                      </div>
+                      <h2 style={{ fontSize: "1.8rem", color: "#ffffff", fontWeight: 800, margin: 0 }}>
+                        Cloud Architecture Evolution & Target Service Mesh
+                      </h2>
+                    </div>
+                    <span style={{ fontSize: "0.85rem", color: "#38bdf8", fontWeight: 800 }}>Slide 5 / 6</span>
+                  </SlideHeader>
+
+                  <div style={{ flex: 1, overflowY: "auto", margin: "10px 0" }}>
+                    <ArchitectureComparisonDiagram
+                      theme="dark"
+                      instanceId={instance?.id}
+                      initialDiagrams={report?.architectureDiagrams}
+                      currentScore={instance?.totalScore || 2.5}
+                      targetScore={4.5}
+                      customerName={org}
+                      useCase={instance?.useCase}
+                      framework={framework}
+                    />
+                  </div>
+
+                  <SlideFooter>
+                    <span>CONFIDENTIAL • Prepared for {org}</span>
+                    <span>Slide 5 of 6</span>
+                  </SlideFooter>
+                </SlideCanvas>
+              )}
+
+              {/* SLIDE 5: ROADMAP & ACTIONS */}
+              {currentSlide === 5 && (
+                <SlideCanvas>
+                  <SlideHeader>
+                    <div>
+                      <div style={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: 600, marginBottom: '4px' }}>
+                        Execution Strategy & Milestones
+                      </div>
+                      <h2 style={{ fontSize: "1.8rem", color: "#ffffff", fontWeight: 800, margin: 0 }}>
+                        Strategic Transformation Roadmap & Priority Actions
+                      </h2>
+                    </div>
+                    <span style={{ fontSize: "0.85rem", color: "#38bdf8", fontWeight: 800 }}>Slide 6 / 6</span>
+                  </SlideHeader>
+
+                  <div style={{ flex: 1, overflowY: "auto", margin: "10px 0", display: "flex", flexDirection: "column", gap: "16px" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "16px" }}>
+                      {recs.slice(0, 4).map((r, idx) => (
+                        <div key={idx} style={{ background: "rgba(15, 23, 42, 0.9)", padding: "20px", borderRadius: "14px", border: "1.5px solid rgba(255, 255, 255, 0.1)", display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "12px" }}>
+                          <div>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                              <span style={{ fontSize: "0.75rem", background: "rgba(99, 102, 241, 0.2)", color: "#a5b4fc", border: "1px solid rgba(165, 180, 252, 0.3)", padding: "2px 8px", borderRadius: "4px", fontWeight: 800 }}>
+                                INITIATIVE #{idx + 1}
+                              </span>
+                              <span style={{ fontSize: "0.76rem", background: "rgba(16, 185, 129, 0.2)", color: "#34d399", border: "1px solid rgba(52, 211, 153, 0.3)", padding: "2px 8px", borderRadius: "4px", fontWeight: 700 }}>
+                                {r.timeline || 'Phase 1'}
+                              </span>
+                            </div>
+                            <h4 style={{ margin: "0 0 6px 0", fontSize: "1.05rem", color: "#ffffff", fontWeight: 800 }}>{r.title || r.recommendation}</h4>
+                            <p style={{ margin: 0, fontSize: "0.85rem", color: "#94a3b8", lineHeight: 1.5 }}>{r.whyItMatters || r.impact || r.description}</p>
+                          </div>
+                          {r.impact && (
+                            <div style={{ fontSize: "0.8rem", color: "#38bdf8", fontWeight: 700, borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "8px" }}>
+                              ⚡ {r.impact}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <SlideFooter>
+                    <span>CONFIDENTIAL • Prepared for {org}</span>
+                    <span>Slide 6 of 6</span>
+                  </SlideFooter>
+                </SlideCanvas>
               )}
             </div>
           )}
