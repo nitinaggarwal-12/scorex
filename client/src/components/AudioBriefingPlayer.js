@@ -1165,6 +1165,82 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
     }
   };
 
+  /**
+   * 🎙️ In-App Voice Cloner with 3-Stage Spectral Denoising & Formant Convolver
+   */
+  const handleStartMicRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      recordedChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) recordedChunksRef.current.push(e.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(recordedChunksRef.current, { type: 'audio/mp3' });
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = async () => {
+          const base64Data = reader.result.split(',')[1];
+          toast.loading('Applying 3-stage spectral denoising & extracting vocal formants...', { id: 'clone-voice' });
+          try {
+            const res = await axios.post('/api/audio/clone-voice', {
+              audioBase64: base64Data,
+              voiceName: 'My Denoised Executive Voice',
+              customApiKey: elevenLabsKey || null
+            });
+            if (res.data && res.data.success) {
+              const vp = res.data.voiceProfile;
+              setCustomClonedVoiceId(vp.id);
+              setSelectedPersona(vp.id);
+              setClonedVoiceName(vp.name);
+              setActiveFormants(vp.formantProfile);
+
+              // Dynamically apply extracted F1, F2, F3 formants to Web Audio mastering rack
+              if (audioContextRef.current && vp.formantProfile) {
+                const now = audioContextRef.current.currentTime;
+                const fp = vp.formantProfile;
+                if (formantF1Ref.current) {
+                  formantF1Ref.current.frequency.setTargetAtTime(fp.f1Freq, now, 0.05);
+                  formantF1Ref.current.gain.setTargetAtTime(fp.f1Gain, now, 0.05);
+                }
+                if (formantF2Ref.current) {
+                  formantF2Ref.current.frequency.setTargetAtTime(fp.f2Freq, now, 0.05);
+                  formantF2Ref.current.gain.setTargetAtTime(fp.f2Gain, now, 0.05);
+                }
+                if (formantF3Ref.current) {
+                  formantF3Ref.current.frequency.setTargetAtTime(fp.f3Freq, now, 0.05);
+                  formantF3Ref.current.gain.setTargetAtTime(fp.f3Gain, now, 0.05);
+                }
+              }
+
+              toast.success(`Voice Cloned! Pitch: ${vp.formantProfile?.f0Pitch}Hz • Formants: F1: ${vp.formantProfile?.f1Freq}Hz | F2: ${vp.formantProfile?.f2Freq}Hz`, { id: 'clone-voice', icon: '🎙️' });
+            }
+          } catch (e) {
+            toast.error('Voice cloning failed: ' + e.message, { id: 'clone-voice' });
+          }
+        };
+        stream.getTracks().forEach(t => t.stop());
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+      toast('Recording voice sample... speak naturally for 10-15 seconds.', { icon: '🎙️' });
+    } catch (err) {
+      toast.error('Microphone access denied or not available.');
+    }
+  };
+
+  const handleStopMicRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
   const activeChapters = chaptersList.length > 0 ? chaptersList : buildStoryChapters();
   const currentChapter = activeChapters[currentChapterIdx] || activeChapters[0];
 
@@ -1361,7 +1437,38 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
               </button>
             </ControlCard>
 
-            {/* 3. Mathematical Emotion & Prosody Sliders */}
+            {/* 3. 3-Stage Denoising Mic Voice Cloner & Formant Calibration */}
+            <ControlCard $theme={theme}>
+              <div className="label">
+                <FiMic size={13} />
+                3-Stage Denoised Voice Cloner
+              </div>
+              <div style={{ padding: '12px', background: theme === 'dark' ? 'rgba(15, 23, 42, 0.6)' : '#ffffff', border: theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.1)', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <p style={{ fontSize: '0.75rem', margin: 0, color: theme === 'dark' ? '#cbd5e1' : '#64748b' }}>
+                  Record 10-15s voice note to extract vocal formants (F1, F2, F3) & calibrate your twin persona:
+                </p>
+                <button 
+                  style={{ padding: '9px 12px', borderRadius: '10px', border: 'none', fontSize: '0.8rem', fontWeight: '800', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px', background: isRecording ? '#ef4444' : '#10b981', color: 'white', transition: 'all 0.2s ease' }}
+                  onClick={isRecording ? handleStopMicRecording : handleStartMicRecording}
+                >
+                  <FiMic size={14} /> {isRecording ? 'Stop & Calibrate Formants' : 'Record 15s Voice Sample'}
+                </button>
+                {clonedVoiceName && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', color: '#10b981', fontSize: '0.72rem', fontWeight: '700' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <FiCheckCircle size={12} /> Active Cloned Voice: {clonedVoiceName}
+                    </div>
+                    {activeFormants && (
+                      <div style={{ opacity: 0.85, fontSize: '0.68rem', color: theme === 'dark' ? '#94a3b8' : '#64748b' }}>
+                        F0: {activeFormants.f0Pitch}Hz • F1: {activeFormants.f1Freq}Hz • F2: {activeFormants.f2Freq}Hz • F3: {activeFormants.f3Freq}Hz
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </ControlCard>
+
+            {/* 4. Mathematical Emotion & Prosody Sliders */}
             <ControlCard $theme={theme}>
               <div className="label">
                 <FiSliders size={13} />
