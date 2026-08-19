@@ -147,22 +147,68 @@ const PresentationModeModal = ({ isOpen, onClose, instance, report, framework })
       >
         <TopDeckBar>
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <span style={{ fontSize: "0.75rem", background: "#6366f1", color: "#fff", padding: "3px 8px", borderRadius: "6px", fontWeight: 700 }}>
-              SLIDE DECK
-            </span>
-            <span style={{ fontWeight: 700, fontSize: "0.95rem", color: "#cbd5e1" }}>
-              {instance?.customerName} • {framework?.title}
-            </span>
+            {/* Google Slides Icon */}
+            <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "#F59E0B", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 6px rgba(245, 158, 11, 0.4)" }}>
+              <span style={{ fontSize: "1.1rem" }}>📊</span>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <span style={{ fontWeight: 800, fontSize: "0.95rem", color: "#f8fafc" }}>
+                  {instance?.customerName || 'ScoreX'} - Executive Modernization Deck.pptx
+                </span>
+                <span style={{ fontSize: "0.68rem", background: "rgba(245, 158, 11, 0.2)", color: "#fbbf24", border: "1px solid rgba(245, 158, 11, 0.4)", padding: "1px 6px", borderRadius: "4px", fontWeight: 700 }}>
+                  PPTX / GOOGLE SLIDES
+                </span>
+              </div>
+              <span style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
+                {framework?.title || 'Enterprise Data & AI Architecture'} • Slide {currentSlide + 1} of {totalSlides}
+              </span>
+            </div>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            {/* 🌟 Gmail-style "Open with Google Slides" Action */}
+            <button
+              onClick={async () => {
+                toast.loading('Opening with Google Slides...', { id: 'open-slides' });
+                try {
+                  // Export PPTX first so user has immediate access
+                  await exportAssessmentToPPTX(instance, report);
+                  toast.success('Opening Google Slides in new tab! Use File > Import Slides to edit.', { id: 'open-slides', icon: '📊', duration: 5000 });
+                  window.open('https://slides.new', '_blank', 'noopener,noreferrer');
+                } catch (e) {
+                  window.open('https://slides.new', '_blank', 'noopener,noreferrer');
+                  toast.success('Opened Google Slides in new tab!', { id: 'open-slides' });
+                }
+              }}
+              style={{
+                background: "linear-gradient(135deg, #f59e0b, #d97706)",
+                border: "1px solid #fbbf24",
+                color: "#ffffff",
+                borderRadius: "10px",
+                padding: "8px 16px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                fontWeight: 800,
+                fontSize: "0.85rem",
+                boxShadow: "0 2px 10px rgba(245, 158, 11, 0.35)",
+                transition: "all 0.2s ease"
+              }}
+              title="Open directly in Google Slides (slides.new)"
+            >
+              <span>📊</span> Open with Google Slides
+            </button>
+
+            {/* Download PPTX */}
             <button
               onClick={async () => {
                 try {
-                  toast.loading('Generating editable 16:9 PowerPoint Presentation...', { id: 'pptx-modal-export' });
+                  toast.loading('Generating executive 16:9 PowerPoint Presentation...', { id: 'pptx-modal-export' });
                   const res = await exportAssessmentToPPTX(instance, report);
                   if (res?.success) {
-                    toast.success('📊 Editable PPTX (Google Slides) exported successfully!', { id: 'pptx-modal-export' });
+                    toast.success('📊 Executive PPTX exported successfully!', { id: 'pptx-modal-export' });
                   } else {
                     toast.error(res?.error || 'Failed to export PPTX', { id: 'pptx-modal-export' });
                   }
@@ -170,19 +216,44 @@ const PresentationModeModal = ({ isOpen, onClose, instance, report, framework })
                   toast.error('Failed to export PPTX presentation', { id: 'pptx-modal-export' });
                 }
               }}
-              style={{ background: "linear-gradient(135deg, #ec4899, #8b5cf6)", border: "none", color: "#ffffff", borderRadius: "8px", padding: "6px 14px", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", fontWeight: 700, fontSize: "0.85rem", boxShadow: "0 2px 8px rgba(236, 72, 153, 0.3)" }}
-              title="Download editable 16:9 PowerPoint / Google Slides deck for executive presentation"
+              style={{
+                background: "rgba(255, 255, 255, 0.08)",
+                border: "1px solid rgba(255, 255, 255, 0.15)",
+                color: "#ffffff",
+                borderRadius: "10px",
+                padding: "8px 14px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                fontWeight: 700,
+                fontSize: "0.82rem",
+                transition: "all 0.2s ease"
+              }}
+              title="Download local PowerPoint (.pptx) file"
             >
-              <FiDownload /> 📥 Download PPTX (Google Slides)
+              <FiDownload /> Download .pptx
             </button>
-            <span style={{ fontSize: "0.85rem", color: "#94a3b8", fontWeight: 600 }}>
-              Slide {currentSlide + 1} of {totalSlides}
-            </span>
+
+            {/* Close Preview */}
             <button
               onClick={onClose}
-              style={{ background: "rgba(239, 68, 68, 0.15)", border: "1px solid rgba(239, 68, 68, 0.3)", color: "#f87171", borderRadius: "8px", padding: "6px 12px", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", fontWeight: 700 }}
+              style={{
+                background: "rgba(239, 68, 68, 0.15)",
+                border: "1px solid rgba(239, 68, 68, 0.3)",
+                color: "#f87171",
+                borderRadius: "10px",
+                padding: "8px 12px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                fontWeight: 700,
+                fontSize: "0.82rem"
+              }}
+              title="Close Presentation Preview"
             >
-              <FiX /> Exit Presentation
+              <FiX size={16} />
             </button>
           </div>
         </TopDeckBar>
