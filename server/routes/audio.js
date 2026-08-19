@@ -90,6 +90,41 @@ router.post('/clone-voice', async (req, res) => {
   }
 });
 
+// GET /api/audio/voice-catalog - Get 1,500+ Procedural Voice Matrix Catalog
+router.get('/voice-catalog', (req, res) => {
+  try {
+    const catalog = audioNarrationService.getProceduralVoiceCatalog();
+    res.json({
+      success: true,
+      totalVoices: catalog.length,
+      accents: audioNarrationService.globalAccents,
+      archetypes: audioNarrationService.archetypes,
+      ageTiers: audioNarrationService.ageTiers,
+      bases: Object.keys(audioNarrationService.neuralBases),
+      sampleVoices: catalog.slice(0, 100)
+    });
+  } catch (err) {
+    console.error('⚠️ Error fetching procedural voice catalog:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/audio/custom-voice-design - "Prompt-to-Voice" Custom AI Voice Designer
+router.post('/custom-voice-design', async (req, res) => {
+  try {
+    const { prompt, name } = req.body;
+    if (!prompt) {
+      return res.status(400).json({ success: false, error: 'Voice description prompt is required' });
+    }
+
+    const voiceProfile = await audioNarrationService.designCustomVoiceFromPrompt(prompt, name);
+    res.json({ success: true, voiceProfile });
+  } catch (err) {
+    console.error('⚠️ Error designing custom voice from prompt:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // POST /api/audio/export-mp3 - Download Stitched 5-Act MP3 Broadcast
 router.post('/export-mp3', async (req, res) => {
   try {

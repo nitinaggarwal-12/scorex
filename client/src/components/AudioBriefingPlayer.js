@@ -30,15 +30,12 @@ import {
   FiUsers,
   FiUploadCloud,
   FiCheckCircle,
-  FiGlobe
+  FiGlobe,
+  FiFilter,
+  FiSearch
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
-
-const wave = keyframes`
-  0%, 100% { height: 4px; }
-  50% { height: 28px; }
-`;
 
 const pulseGlow = keyframes`
   0%, 100% { opacity: 0.7; transform: scale(1); filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.4)); }
@@ -119,7 +116,7 @@ const STORY_THEMES = {
   }
 };
 
-// 8 Diverse Global Voice Personas
+// 8 Curated Spotlight Personas
 const STORY_PERSONAS = [
   { id: 'jonathan', name: 'Sir Jonathan', title: 'DeepMind Documentary Baritone', gender: 'male', vibe: 'Warm, deep & theatrical (Charon)', googleVoice: 'Charon', accents: ['Daniel', 'Google UK English Male', 'Oliver', 'George'] },
   { id: 'victoria', name: 'Victoria', title: 'MasterClass Executive Narrator', gender: 'female', vibe: 'Magnetic, eloquent & expressive (Aoede)', googleVoice: 'Aoede', accents: ['Samantha', 'Google UK English Female', 'Karen', 'Victoria'] },
@@ -129,6 +126,52 @@ const STORY_PERSONAS = [
   { id: 'priya', name: 'Priya', title: 'Global Enterprise Transformation CTO', gender: 'female', vibe: 'Crisp, decisive & strategic (Aoede Global)', googleVoice: 'Aoede', accents: ['Veena', 'Google UK English Female', 'Samantha'] },
   { id: 'marcus', name: 'Marcus', title: 'Wall Street Managing Director', gender: 'male', vibe: 'Tier-1 Consulting Board Presence (Charon)', googleVoice: 'Charon', accents: ['Alex', 'Daniel', 'Google US English'] },
   { id: 'elena', name: 'Elena', title: 'AI Tech Founder & Lead', gender: 'female', vibe: 'High-energy, visionary tech passion (Kore)', googleVoice: 'Kore', accents: ['Victoria', 'Samantha', 'Karen'] }
+];
+
+// 25 Global Accents
+const GLOBAL_ACCENTS = [
+  { id: 'uk_rp', name: 'British Oxford (RP)', region: 'UK' },
+  { id: 'uk_cockney', name: 'London Modern', region: 'UK' },
+  { id: 'uk_scottish', name: 'Scottish Highlands', region: 'UK' },
+  { id: 'uk_irish', name: 'Irish Dublin', region: 'Europe' },
+  { id: 'us_standard', name: 'US General Broadcast', region: 'US' },
+  { id: 'us_texas', name: 'US Texas Drawl', region: 'US' },
+  { id: 'us_ny', name: 'US New York Metro', region: 'US' },
+  { id: 'us_silicon_valley', name: 'Silicon Valley Tech', region: 'US' },
+  { id: 'ca_toronto', name: 'Canadian Toronto', region: 'Americas' },
+  { id: 'au_sydney', name: 'Australian Sydney', region: 'Oceania' },
+  { id: 'in_bangalore', name: 'Indian Tech Executive', region: 'Asia' },
+  { id: 'sg_singapore', name: 'Singaporean Global', region: 'Asia' },
+  { id: 'za_joburg', name: 'South African', region: 'Africa' },
+  { id: 'fr_paris', name: 'French-Accented', region: 'Europe' },
+  { id: 'de_frankfurt', name: 'German-Accented', region: 'Europe' },
+  { id: 'it_milan', name: 'Italian-Accented', region: 'Europe' },
+  { id: 'es_madrid', name: 'Spanish-Accented', region: 'Europe' },
+  { id: 'latam_mexico', name: 'Latin American', region: 'Americas' },
+  { id: 'se_stockholm', name: 'Nordic Scandinavian', region: 'Europe' },
+  { id: 'jp_tokyo', name: 'Japanese-Accented', region: 'Asia' },
+  { id: 'br_saopaulo', name: 'Brazilian-Accented', region: 'Americas' },
+  { id: 'ng_lagos', name: 'Nigerian English', region: 'Africa' }
+];
+
+// 8 Archetypes
+const ARCHETYPES = [
+  { id: 'board_director', name: 'Board Director / Partner' },
+  { id: 'chief_architect', name: 'Chief Enterprise Architect' },
+  { id: 'startup_founder', name: 'Visionary Startup Founder' },
+  { id: 'keynote_orator', name: 'TED / Keynote Orator' },
+  { id: 'npr_investigative', name: 'NPR Investigative Host' },
+  { id: 'research_professor', name: 'Academic Senior Fellow' },
+  { id: 'cyber_auditor', name: 'Security & Risk Auditor' },
+  { id: 'executive_coach', name: 'Fireside Executive Mentor' }
+];
+
+// 4 Age Tiers
+const AGE_TIERS = [
+  { id: 'statesman', name: 'Senior Statesman (55+)' },
+  { id: 'mid_career', name: 'Executive Leader (35-50)' },
+  { id: 'rising_star', name: 'Rising Innovator (25-35)' },
+  { id: 'fireside', name: 'Reflective Mentor' }
 ];
 
 const PlayerContainer = styled(motion.div)`
@@ -385,7 +428,7 @@ const SettingsPanel = styled(motion.div)`
   border-radius: 18px;
   border: 1px solid ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)'};
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
 `;
 
@@ -406,6 +449,8 @@ const ControlCard = styled.div`
     display: flex;
     flex-direction: column;
     gap: 8px;
+    max-height: 240px;
+    overflow-y: auto;
   }
 `;
 
@@ -459,45 +504,59 @@ const SliderGroup = styled.div`
   }
 `;
 
-const ApiKeyInput = styled.input`
-  width: 100%;
-  padding: 8px 12px;
-  border-radius: 10px;
-  border: 1px solid ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)'};
-  background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.8)' : '#ffffff'};
-  color: ${props => props.$theme === 'dark' ? '#f8fafc' : '#0f172a'};
-  font-size: 0.8rem;
-  margin-top: 8px;
-  outline: none;
-
-  &:focus {
-    border-color: #f59e0b;
-  }
-`;
-
-const VoiceRecorderSection = styled.div`
-  margin-top: 10px;
-  padding: 12px;
-  background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.6)' : '#ffffff'};
-  border: 1px solid ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'};
-  border-radius: 12px;
+const DesignerInputArea = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
 
-  .rec-btn {
-    padding: 8px 12px;
-    border-radius: 8px;
+  textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)'};
+    background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.8)' : '#ffffff'};
+    color: ${props => props.$theme === 'dark' ? '#f8fafc' : '#0f172a'};
+    font-size: 0.82rem;
+    line-height: 1.4;
+    resize: vertical;
+    outline: none;
+
+    &:focus {
+      border-color: #f59e0b;
+    }
+  }
+
+  .design-btn {
+    padding: 9px 14px;
+    border-radius: 10px;
     border: none;
-    font-size: 0.8rem;
+    background: linear-gradient(135deg, #f59e0b 0%, #ec4899 100%);
+    color: white;
     font-weight: 800;
+    font-size: 0.82rem;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
-    background: ${props => props.$isRecording ? '#ef4444' : '#10b981'};
-    color: white;
+  }
+`;
+
+const FilterSelectRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+
+  select {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)'};
+    background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.8)' : '#ffffff'};
+    color: ${props => props.$theme === 'dark' ? '#f8fafc' : '#0f172a'};
+    font-size: 0.76rem;
+    font-weight: 600;
+    outline: none;
   }
 `;
 
@@ -512,7 +571,6 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   const [currentChapterIdx, setCurrentChapterIdx] = useState(0);
   const [chaptersList, setChaptersList] = useState([]);
   const [frequencyBars, setFrequencyBars] = useState(new Array(22).fill(4));
-  const [isPodcastMode, setIsPodcastMode] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [customClonedVoiceId, setCustomClonedVoiceId] = useState(null);
   const [clonedVoiceName, setClonedVoiceName] = useState(null);
@@ -521,6 +579,16 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   const [styleExaggeration, setStyleExaggeration] = useState(0.70);
   const [stability, setStability] = useState(0.65);
   const [breathDensity, setBreathDensity] = useState(0.50);
+
+  // 1,500+ Procedural Matrix Filters
+  const [accentFilter, setAccentFilter] = useState('uk_rp');
+  const [archetypeFilter, setArchetypeFilter] = useState('board_director');
+  const [ageFilter, setAgeFilter] = useState('statesman');
+  const [baseVoiceFilter, setBaseVoiceFilter] = useState('Charon');
+
+  // Prompt-to-Voice Custom Designer
+  const [promptToVoiceInput, setPromptToVoiceInput] = useState('');
+  const [isDesigningVoice, setIsDesigningVoice] = useState(false);
 
   const audioElementRef = useRef(null);
   const audioContextRef = useRef(null);
@@ -805,7 +873,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
 
     const voices = window.speechSynthesis.getVoices();
     const persona = STORY_PERSONAS.find(p => p.id === selectedPersona) || STORY_PERSONAS[0];
-    let matchedVoice = voices.find(v => persona.accents.some(acc => v.name.toLowerCase().includes(acc.toLowerCase())));
+    let matchedVoice = voices.find(v => (persona.accents || []).some(acc => v.name.toLowerCase().includes(acc.toLowerCase())));
     if (!matchedVoice) {
       matchedVoice = voices.find(v => (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Premium')) && v.lang.startsWith('en'));
     }
@@ -831,7 +899,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
       isPlayingRef.current = true;
       initWebAudioChain();
 
-      const personaName = clonedVoiceName || STORY_PERSONAS.find(p => p.id === selectedPersona)?.name || 'Jonathan';
+      const personaName = clonedVoiceName || (selectedPersona.startsWith('proc_') ? 'Procedural AI Voice' : STORY_PERSONAS.find(p => p.id === selectedPersona)?.name || 'Custom Voice');
       const engineLabel = selectedEngine === 'google' 
         ? 'Gemini DeepMind Studio Neural' 
         : (selectedEngine === 'elevenlabs' ? 'ElevenLabs Turbo v2.5' : 'Local Browser Engine');
@@ -859,6 +927,49 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
       audioElementRef.current.playbackRate = nextRate;
     }
     toast(`Storytelling tempo set to ${nextRate}x.`, { id: 'story-speed' });
+  };
+
+  /**
+   * 🎨 "Prompt-to-Voice" Custom Voice Designer Action
+   */
+  const handleDesignVoice = async () => {
+    if (!promptToVoiceInput.trim()) {
+      toast.error('Please enter a voice description (e.g. 50-year-old Scottish Architect...)');
+      return;
+    }
+
+    setIsDesigningVoice(true);
+    toast.loading('Synthesizing custom AI voice persona...', { id: 'design-voice' });
+
+    try {
+      const res = await axios.post('/api/audio/custom-voice-design', {
+        prompt: promptToVoiceInput.trim()
+      });
+
+      if (res.data && res.data.success) {
+        const vp = res.data.voiceProfile;
+        setSelectedPersona(vp.id);
+        setClonedVoiceName(vp.name);
+        setCustomClonedVoiceId(null);
+        toast.success(`AI Voice Created: "${vp.name}"!`, { id: 'design-voice', icon: '✨' });
+      }
+    } catch (err) {
+      toast.error('Voice design failed: ' + err.message, { id: 'design-voice' });
+    } finally {
+      setIsDesigningVoice(false);
+    }
+  };
+
+  /**
+   * 🌐 Apply Combinatorial Procedural Voice (1,500+ Combinations)
+   */
+  const handleApplyProceduralVoice = () => {
+    const procId = `proc_${baseVoiceFilter.toLowerCase()}_${accentFilter}_${archetypeFilter}_${ageFilter}`;
+    setSelectedPersona(procId);
+    setCustomClonedVoiceId(null);
+    setClonedVoiceName(null);
+    stopAudioPlayback();
+    toast.success(`Cast 1,500+ Matrix Voice: ${baseVoiceFilter} • ${accentFilter} • ${archetypeFilter}`, { icon: '🌐' });
   };
 
   /**
@@ -890,60 +1001,6 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
     }
   };
 
-  /**
-   * 🎙️ In-App Voice Cloner Recorder
-   */
-  const handleStartMicRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-      recordedChunksRef.current = [];
-
-      mediaRecorder.ondataavailable = (e) => {
-        if (e.data.size > 0) recordedChunksRef.current.push(e.data);
-      };
-
-      mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(recordedChunksRef.current, { type: 'audio/mp3' });
-        const reader = new FileReader();
-        reader.readAsDataURL(audioBlob);
-        reader.onloadend = async () => {
-          const base64Data = reader.result.split(',')[1];
-          toast.loading('Extracting vocal resonance & speaker timbre...', { id: 'clone-voice' });
-          try {
-            const res = await axios.post('/api/audio/clone-voice', {
-              audioBase64: base64Data,
-              voiceName: 'My Cloned Voice',
-              customApiKey: elevenLabsKey || null
-            });
-            if (res.data && res.data.success) {
-              setCustomClonedVoiceId(res.data.voiceProfile.remoteVoiceId);
-              setClonedVoiceName('My Cloned Voice');
-              toast.success('Voice calibrated! Now narrating in your custom voice.', { id: 'clone-voice' });
-            }
-          } catch (e) {
-            toast.error('Voice cloning calibration failed.', { id: 'clone-voice' });
-          }
-        };
-        stream.getTracks().forEach(t => t.stop());
-      };
-
-      mediaRecorder.start();
-      setIsRecording(true);
-      toast('Recording voice sample... speak for 10-15 seconds.', { icon: '🎙️' });
-    } catch (err) {
-      toast.error('Microphone access denied or not available.');
-    }
-  };
-
-  const handleStopMicRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
-    }
-  };
-
   const activeChapters = chaptersList.length > 0 ? chaptersList : buildStoryChapters();
   const currentChapter = activeChapters[currentChapterIdx] || activeChapters[0];
 
@@ -969,10 +1026,10 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
                 {activeTheme.icon} {activeTheme.name}
               </EmotionTag>
               <EmotionTag $bg="rgba(245, 158, 11, 0.12)" $color="#d97706" $border="rgba(245, 158, 11, 0.3)">
-                <HiSparkles size={12} /> {customClonedVoiceId ? 'Cloned Executive Voice' : (selectedEngine === 'google' ? 'Gemini DeepMind Studio' : '5-Act Narrative Arc')}
+                <HiSparkles size={12} /> {clonedVoiceName || (selectedPersona.startsWith('proc_') ? '1,500+ Matrix Voice' : 'Gemini DeepMind Studio')}
               </EmotionTag>
             </h4>
-            <p>Narrated by <strong>{clonedVoiceName || STORY_PERSONAS.find(p => p.id === selectedPersona)?.name}</strong> — <em>"{clonedVoiceName ? 'Custom Zero-Shot Clone' : STORY_PERSONAS.find(p => p.id === selectedPersona)?.vibe}"</em></p>
+            <p>Narrated by <strong>{clonedVoiceName || STORY_PERSONAS.find(p => p.id === selectedPersona)?.name || 'Procedural Voice'}</strong></p>
           </div>
         </InfoSection>
 
@@ -991,7 +1048,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
 
         <ControlsGroup>
           <SecondaryControl $theme={theme} onClick={() => setShowSettings(!showSettings)} $active={showSettings} title="Voice Engine, Studio Casting & Narrative Arc">
-            <FiSliders size={13} /> {showSettings ? 'Hide Studio' : 'Voice Studio & Engine'}
+            <FiSliders size={13} /> {showSettings ? 'Hide Studio' : '1,500+ Voice Studio & Engine'}
           </SecondaryControl>
 
           <SecondaryControl $theme={theme} onClick={cycleRate} title="Change speech tempo">
@@ -1058,7 +1115,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
         )}
       </AnimatePresence>
 
-      {/* Expanded Studio Casting & Voice Engine Drawer */}
+      {/* Expanded 1,500+ Voice Studio Casting & Voice Designer Drawer */}
       <AnimatePresence>
         {showSettings && (
           <SettingsPanel 
@@ -1068,61 +1125,68 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
           >
-            {/* 1. Synthesis Engine Selector */}
+            {/* 1. "Prompt-to-Voice" Custom AI Voice Designer */}
             <ControlCard $theme={theme}>
               <div className="label">
-                <FiCpu size={13} />
-                Neural Audio Synthesizer Engine
+                <HiSparkles size={14} color="#f59e0b" />
+                "Prompt-to-Voice" Custom AI Designer
               </div>
-              <div className="options-grid">
-                <OptionPill
-                  $theme={theme}
-                  $active={selectedEngine === 'google'}
-                  $gradient={activeTheme.gradient}
-                  onClick={() => {
-                    setSelectedEngine('google');
-                    stopAudioPlayback();
-                    toast.success('Switched to Gemini DeepMind Studio (Native Neural)', { icon: '🌌' });
-                  }}
-                >
-                  <span>🌌 Gemini DeepMind Studio</span>
-                  <span style={{ fontSize: '0.68rem', opacity: 0.85 }}>Native 24/48kHz</span>
-                </OptionPill>
-
-                <OptionPill
-                  $theme={theme}
-                  $active={selectedEngine === 'elevenlabs'}
-                  $gradient={activeTheme.gradient}
-                  onClick={() => {
-                    setSelectedEngine('elevenlabs');
-                    stopAudioPlayback();
-                    toast.success('Switched to ElevenLabs Multilingual v2', { icon: '🎙️' });
-                  }}
-                >
-                  <span>🎙️ ElevenLabs BYOK</span>
-                  <span style={{ fontSize: '0.68rem', opacity: 0.85 }}>Turbo v2.5 / Multilingual</span>
-                </OptionPill>
-
-                {selectedEngine === 'elevenlabs' && (
-                  <div>
-                    <label style={{ fontSize: '0.72rem', color: theme === 'dark' ? '#94a3b8' : '#64748b' }}>Custom ElevenLabs API Key (Optional):</label>
-                    <ApiKeyInput 
-                      $theme={theme}
-                      type="password"
-                      placeholder="sk_..."
-                      value={elevenLabsKey}
-                      onChange={(e) => setElevenLabsKey(e.target.value)}
-                    />
-                  </div>
-                )}
-              </div>
+              <DesignerInputArea $theme={theme}>
+                <textarea
+                  rows="3"
+                  placeholder="e.g. A 55-year-old French data science professor speaking fluent English with precise, warm academic articulation and deliberate pauses..."
+                  value={promptToVoiceInput}
+                  onChange={(e) => setPromptToVoiceInput(e.target.value)}
+                />
+                <button className="design-btn" onClick={handleDesignVoice} disabled={isDesigningVoice}>
+                  <HiSparkles size={13} /> {isDesigningVoice ? 'Generating Voice...' : 'Design & Cast Voice'}
+                </button>
+              </DesignerInputArea>
             </ControlCard>
 
-            {/* 2. Mathematical Emotion & Prosody Sliders */}
+            {/* 2. 1,500+ Procedural Combinatorial Matrix Explorer */}
+            <ControlCard $theme={theme}>
+              <div className="label">
+                <FiGlobe size={13} />
+                1,500+ Procedural Voice Matrix
+              </div>
+              <FilterSelectRow $theme={theme}>
+                <select value={accentFilter} onChange={(e) => setAccentFilter(e.target.value)}>
+                  {GLOBAL_ACCENTS.map(acc => (
+                    <option key={acc.id} value={acc.id}>{acc.name}</option>
+                  ))}
+                </select>
+                <select value={archetypeFilter} onChange={(e) => setArchetypeFilter(e.target.value)}>
+                  {ARCHETYPES.map(arch => (
+                    <option key={arch.id} value={arch.id}>{arch.name}</option>
+                  ))}
+                </select>
+                <select value={ageFilter} onChange={(e) => setAgeFilter(e.target.value)}>
+                  {AGE_TIERS.map(age => (
+                    <option key={age.id} value={age.id}>{age.name}</option>
+                  ))}
+                </select>
+                <select value={baseVoiceFilter} onChange={(e) => setBaseVoiceFilter(e.target.value)}>
+                  <option value="Charon">Charon (Baritone)</option>
+                  <option value="Aoede">Aoede (Soprano)</option>
+                  <option value="Puck">Puck (Tenor)</option>
+                  <option value="Kore">Kore (Alto)</option>
+                  <option value="Fenrir">Fenrir (Bass)</option>
+                </select>
+              </FilterSelectRow>
+              <button 
+                style={{ width: '100%', padding: '8px', borderRadius: '10px', border: '1px solid #f59e0b', background: 'rgba(245, 158, 11, 0.15)', color: '#d97706', fontWeight: '800', cursor: 'pointer', fontSize: '0.78rem' }}
+                onClick={handleApplyProceduralVoice}
+              >
+                Apply Matrix Combination
+              </button>
+            </ControlCard>
+
+            {/* 3. Mathematical Emotion & Prosody Sliders */}
             <ControlCard $theme={theme}>
               <div className="label">
                 <FiSliders size={13} />
-                Mathematical Emotion & Prosody Sliders
+                Mathematical Emotion Sliders
               </div>
               <SliderGroup $theme={theme}>
                 <div className="slider-row">
@@ -1172,42 +1236,18 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
               </SliderGroup>
             </ControlCard>
 
-            {/* 3. Instant Voice Cloner */}
+            {/* 4. Curated Spotlight Personas (8 Core) */}
             <ControlCard $theme={theme}>
               <div className="label">
-                <FiMic size={13} />
-                Instant Custom Voice Cloner
-              </div>
-              <VoiceRecorderSection $theme={theme} $isRecording={isRecording}>
-                <p style={{ fontSize: '0.76rem', margin: 0, color: theme === 'dark' ? '#cbd5e1' : '#64748b' }}>
-                  Clone your CEO or Lead Architect's voice in 15 seconds:
-                </p>
-                <button 
-                  className="rec-btn" 
-                  onClick={isRecording ? handleStopMicRecording : handleStartMicRecording}
-                >
-                  <FiMic size={13} /> {isRecording ? 'Stop & Calibrate Voice' : 'Record 15s Sample'}
-                </button>
-                {customClonedVoiceId && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#10b981', fontSize: '0.75rem', fontWeight: '700' }}>
-                    <FiCheckCircle size={13} /> Cloned Voice Active: {clonedVoiceName}
-                  </div>
-                )}
-              </VoiceRecorderSection>
-            </ControlCard>
-
-            {/* 4. Expanded 8-Voice Studio Master Persona Casting */}
-            <ControlCard $theme={theme}>
-              <div className="label">
-                <FiGlobe size={13} />
-                Studio Master Casting (8 Personas)
+                <FiUser size={13} />
+                Curated Executive Personas
               </div>
               <div className="options-grid">
                 {STORY_PERSONAS.map((persona) => (
                   <OptionPill
                     key={persona.id}
                     $theme={theme}
-                    $active={selectedPersona === persona.id && !customClonedVoiceId}
+                    $active={selectedPersona === persona.id && !clonedVoiceName}
                     $gradient={activeTheme.gradient}
                     onClick={() => {
                       setSelectedPersona(persona.id);
