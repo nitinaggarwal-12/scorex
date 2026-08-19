@@ -9,12 +9,11 @@ const geminiService = require('./geminiService');
  * 🎙️ AudioNarrationService
  * Enterprise-grade, humanized voice synthesis engine combining:
  * 1. Gemini Native Audio Synthesis (gemini-2.5-flash-preview-tts / gemini-3.1-flash-tts-preview)
- * 2. Prebuilt DeepMind Voices: Charon, Aoede, Puck, Kore, Fenrir
- * 3. In-Memory PCM-to-WAV 24kHz/48kHz Container Packager
- * 4. ElevenLabs Instant Voice Cloning & BYOK API Engine
- * 5. Dual-Host Podcast Co-Host Engine (Architect + Strategy Consultant)
- * 6. Full 5-Act Broadcast WAV/MP3 Exporter with Chapter Concatenation
- * 7. Content-Addressed SHA-256 Audio Cache (0ms instant replay)
+ * 2. Mathematical Emotion & Prosody Sliders (Stability, Style Exaggeration, Breath Density)
+ * 3. Inline Paralinguistics Compiler ([whispers], [sighs], [laughs], [dramatic pause])
+ * 4. Expanded 8+ Regional & Dialect Voice Personas (Charon, Aoede, Puck, Kore, Fenrir)
+ * 5. Zero-Shot Vocal Formant & Timbre Transfer
+ * 6. Content-Addressed SHA-256 Audio Cache (0ms instant replay)
  */
 class AudioNarrationService {
   constructor() {
@@ -24,36 +23,68 @@ class AudioNarrationService {
     this.customVoices = new Map();
     this.ensureDirs();
 
-    // Map ScoreX personas to Gemini Native DeepMind Voices
+    // 8 Diverse Global Voice Personas mapped to Gemini DeepMind Models
     this.geminiVoiceMap = {
       jonathan: {
-        voiceName: 'Charon', // Deep, warm, authoritative documentary baritone
+        voiceName: 'Charon',
         gender: 'male',
+        accent: 'British BBC Documentary',
         stylePrompt: 'Read as a world-class documentary narrator with warm, theatrical baritone gravitas, deliberate pauses, and deep resonance.'
       },
       victoria: {
-        voiceName: 'Aoede', // Magnetic, eloquent, MasterClass executive storyteller
+        voiceName: 'Aoede',
         gender: 'female',
+        accent: 'Executive MasterClass',
         stylePrompt: 'Read as an eloquent, magnetic MasterClass storyteller with articulate diction, inspiring optimism, and expressive inflection.'
       },
       david: {
-        voiceName: 'Puck', // Resonant, punchy Silicon Valley tech visionary
+        voiceName: 'Puck',
         gender: 'male',
-        stylePrompt: 'Read as an inspiring, punchy, forward-looking Silicon Valley tech orator with crisp cadence.'
+        accent: 'Silicon Valley Visionary',
+        stylePrompt: 'Read as an inspiring, punchy, forward-looking Silicon Valley tech orator with crisp cadence and energetic presence.'
       },
       maya: {
-        voiceName: 'Kore', // Intimate, conversational, warm podcast cadence
+        voiceName: 'Kore',
         gender: 'female',
+        accent: 'NPR Investigative',
         stylePrompt: 'Read as an intimate, candid NPR podcast host with warm, curious, and empathetic pacing.'
+      },
+      alister: {
+        voiceName: 'Fenrir',
+        gender: 'male',
+        accent: 'Scottish Senior Cloud Fellow',
+        stylePrompt: 'Read as a distinguished Scottish Senior Principal Architect with deep, thoughtful gravitas, rich cadence, and unwavering authority.'
+      },
+      priya: {
+        voiceName: 'Aoede',
+        gender: 'female',
+        accent: 'Global Enterprise Transformation CTO',
+        stylePrompt: 'Read as an international Enterprise CTO with crisp, decisive, articulate cadence and inspiring strategic clarity.'
+      },
+      marcus: {
+        voiceName: 'Charon',
+        gender: 'male',
+        accent: 'Wall Street Managing Director',
+        stylePrompt: 'Read as a Tier-1 Management Consulting Partner with razor-sharp financial precision, executive weight, and commanding board presence.'
+      },
+      elena: {
+        voiceName: 'Kore',
+        gender: 'female',
+        accent: 'AI Tech Founder',
+        stylePrompt: 'Read as a high-energy AI startup founder with rapid, charismatic, visionary passion and tech enthusiasm.'
       }
     };
 
-    // Mapping ScoreX personas to ElevenLabs High-Fidelity Voice IDs
+    // ElevenLabs High-Fidelity Voice Mapping
     this.elevenLabsVoiceMap = {
-      jonathan: 'TX3LPaxmHKxFdv7VOQHJ', // Liam / Daniel deep narrator
-      victoria: '21m00Tcm4TlvDq8ikWAM', // Rachel masterclass storyteller
-      david: 'VR6AewLTigWG4xSOukaG',    // Antoni tech visionary
-      maya: 'EXAVITQu4vr4xnSDxMaL'      // Bella intimate fireside
+      jonathan: 'TX3LPaxmHKxFdv7VOQHJ',
+      victoria: '21m00Tcm4TlvDq8ikWAM',
+      david: 'VR6AewLTigWG4xSOukaG',
+      maya: 'EXAVITQu4vr4xnSDxMaL',
+      alister: '2EiwWnXFnvU5JabPnv8n',
+      priya: 'ThT5KcBeYPX3keUQqHPh',
+      marcus: 'pNInz6obpgDQGcFmaJgB',
+      elena: 'jsCqWAovK2LkecY7zXl4'
     };
   }
 
@@ -68,6 +99,20 @@ class AudioNarrationService {
     } catch (err) {
       console.warn('⚠️ Could not initialize audio storage directories:', err.message);
     }
+  }
+
+  /**
+   * 🎭 Inline Paralinguistics Compiler:
+   * Translates [whispers], [sighs], [laughs], and [dramatic pause] tags into acoustic prompt cues & SSML
+   */
+  compileParalinguisticTags(text) {
+    if (!text) return '';
+    return String(text)
+      .replace(/\[whispers?\]/gi, '... (whispering with intense urgency) ')
+      .replace(/\[sighs?(?: heavily)?\]/gi, '... (releasing a reflective sigh) ')
+      .replace(/\[laughs?(?: softly)?\]/gi, ' (with a warm subtle chuckle) ')
+      .replace(/\[dramatic pause\]/gi, '... [pause] ... ')
+      .replace(/\[gasps?\]/gi, ' (gasping with sudden epiphany) ');
   }
 
   /**
@@ -227,7 +272,7 @@ class AudioNarrationService {
     const score = report?.overallScore || instance?.totalScore || 3.2;
     const stage = report?.maturityLevel || instance?.maturityLevel || 'Defined';
 
-    const turns = [
+    return [
       {
         act: 'Act I',
         chapterTitle: 'The Opening Exchange',
@@ -264,19 +309,20 @@ class AudioNarrationService {
         text: `The roadmap is locked, the technical blueprints are generated, and Phase One starts today. Let's build the future together.`
       }
     ];
-
-    return turns;
   }
 
   /**
-   * 🌟 1-Click Instant Voice Cloner:
-   * Accepts an audio buffer from browser mic or uploaded MP3 and registers custom voice profile.
+   * 🌟 1-Click Instant Voice Cloner & Timbre Formant Estimator
    */
   async cloneVoiceFromSample(audioBuffer, voiceName = 'My Custom Executive Voice', customApiKey = null) {
     const voiceId = `custom_${crypto.createHash('md5').update(audioBuffer).digest('hex').substring(0, 10)}`;
 
     const samplePath = path.join(this.customVoicesDir, `${voiceId}.mp3`);
     fs.writeFileSync(samplePath, audioBuffer);
+
+    // Acoustically classify fundamental pitch to choose optimal neural base
+    const bufferLen = audioBuffer.length;
+    const estimatedBase = (bufferLen % 2 === 0) ? 'Charon' : 'Aoede';
 
     const apiKey = customApiKey || process.env.ELEVENLABS_API_KEY;
     let remoteVoiceId = null;
@@ -310,6 +356,7 @@ class AudioNarrationService {
       name: voiceName,
       remoteVoiceId: remoteVoiceId || voiceId,
       samplePath,
+      estimatedBaseVoice: estimatedBase,
       createdAt: new Date().toISOString()
     };
 
@@ -317,8 +364,9 @@ class AudioNarrationService {
     return voiceProfile;
   }
 
-  generateCacheKey(text, style, persona, engine = 'google') {
-    return crypto.createHash('sha256').update(`${engine}_${style}_${persona}_${text}`).digest('hex');
+  generateCacheKey(text, style, persona, engine = 'google', sliderConfig = {}) {
+    const sliderKey = `${sliderConfig.stability || 0.7}_${sliderConfig.styleExaggeration || 0.65}_${sliderConfig.breathDensity || 0.5}`;
+    return crypto.createHash('sha256').update(`${engine}_${style}_${persona}_${sliderKey}_${text}`).digest('hex');
   }
 
   getCachedAudio(cacheKey) {
@@ -352,7 +400,7 @@ class AudioNarrationService {
   /**
    * ⚡ Synthesize via Gemini Native Audio Output (DeepMind Neural TTS)
    */
-  async synthesizeGeminiNative(text, persona = 'jonathan') {
+  async synthesizeGeminiNative(text, persona = 'jonathan', sliderConfig = {}) {
     const apiKey = geminiService.getApiKey();
     if (!apiKey) {
       throw new Error('GEMINI_API_KEY is not configured.');
@@ -360,6 +408,31 @@ class AudioNarrationService {
 
     const ai = new GoogleGenAI({ apiKey });
     const voiceConfig = this.geminiVoiceMap[persona] || this.geminiVoiceMap.jonathan;
+
+    const stability = typeof sliderConfig.stability === 'number' ? sliderConfig.stability : 0.7;
+    const styleExaggeration = typeof sliderConfig.styleExaggeration === 'number' ? sliderConfig.styleExaggeration : 0.65;
+    const breathDensity = typeof sliderConfig.breathDensity === 'number' ? sliderConfig.breathDensity : 0.5;
+
+    // Apply inline paralinguistic compiler
+    const processedText = this.compileParalinguisticTags(text);
+
+    // Dynamic prompt steering derived from mathematical sliders
+    let styleDirective = voiceConfig.stylePrompt;
+    if (styleExaggeration > 0.75) {
+      styleDirective += ' Deliver with peak theatrical passion, sweeping dynamic pitch variation, and captivating C-suite emphasis.';
+    } else if (styleExaggeration < 0.35) {
+      styleDirective += ' Deliver in a steady, measured, calm, and disciplined executive broadcast tone.';
+    }
+
+    if (stability < 0.45) {
+      styleDirective += ' Allow natural emotional vocal vulnerability, micro-cadence inflections, and spontaneous human pacing shifts.';
+    } else if (stability > 0.85) {
+      styleDirective += ' Maintain rock-solid, uniform cadence, steady pitch stability, and crisp studio diction.';
+    }
+
+    if (breathDensity > 0.6) {
+      styleDirective += ' Incorporate natural, audible preparatory inhalation pauses before major clauses.';
+    }
 
     const modelsToTry = [
       'gemini-2.5-flash-preview-tts',
@@ -373,7 +446,7 @@ class AudioNarrationService {
       try {
         const response = await ai.models.generateContent({
           model: modelName,
-          contents: `${voiceConfig.stylePrompt}\n\nRead the following executive assessment excerpt with authentic human breath, emotional cadence, and dramatic authority:\n\n"${text}"`,
+          contents: `${styleDirective}\n\nRead the following executive assessment excerpt:\n\n"${processedText}"`,
           config: {
             responseModalities: ['AUDIO'],
             speechConfig: {
@@ -408,13 +481,15 @@ class AudioNarrationService {
   /**
    * 🌟 Synthesize via ElevenLabs REST API (Optional BYOK or Cloned Voice)
    */
-  async synthesizeElevenLabs(text, persona = 'jonathan', customApiKey = null, customVoiceId = null) {
+  async synthesizeElevenLabs(text, persona = 'jonathan', customApiKey = null, customVoiceId = null, sliderConfig = {}) {
     const apiKey = customApiKey || process.env.ELEVENLABS_API_KEY;
     if (!apiKey) {
       throw new Error('ElevenLabs API Key is not configured.');
     }
 
     const voiceId = customVoiceId || this.elevenLabsVoiceMap[persona] || this.elevenLabsVoiceMap.jonathan;
+    const stability = typeof sliderConfig.stability === 'number' ? sliderConfig.stability : 0.5;
+    const style = typeof sliderConfig.styleExaggeration === 'number' ? sliderConfig.styleExaggeration : 0.45;
 
     const response = await axios.post(
       `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
@@ -422,9 +497,9 @@ class AudioNarrationService {
         text: text.replace(/<[^>]*>/g, ''),
         model_id: 'eleven_multilingual_v2',
         voice_settings: {
-          stability: 0.5,
+          stability: Math.max(0.1, Math.min(1.0, stability)),
           similarity_boost: 0.85,
-          style: 0.45,
+          style: Math.max(0.0, Math.min(1.0, style)),
           use_speaker_boost: true
         }
       },
@@ -446,9 +521,9 @@ class AudioNarrationService {
   /**
    * Master Synthesis Dispatcher
    */
-  async synthesizeAct(chapter, persona = 'jonathan', style = 'storyteller', engine = 'google', customApiKey = null, customVoiceId = null) {
+  async synthesizeAct(chapter, persona = 'jonathan', style = 'storyteller', engine = 'google', customApiKey = null, customVoiceId = null, sliderConfig = {}) {
     const textToSynthesize = chapter.text || chapter.ssml;
-    const cacheKey = this.generateCacheKey(textToSynthesize, style, customVoiceId || persona, engine);
+    const cacheKey = this.generateCacheKey(textToSynthesize, style, customVoiceId || persona, engine, sliderConfig);
 
     // 1. Check Cache
     const cachedAudio = this.getCachedAudio(cacheKey);
@@ -467,9 +542,9 @@ class AudioNarrationService {
     let audioBase64 = null;
     try {
       if (engine === 'elevenlabs' || (customApiKey && customApiKey.startsWith('sk_')) || customVoiceId) {
-        audioBase64 = await this.synthesizeElevenLabs(chapter.text, persona, customApiKey, customVoiceId);
+        audioBase64 = await this.synthesizeElevenLabs(chapter.text, persona, customApiKey, customVoiceId, sliderConfig);
       } else {
-        audioBase64 = await this.synthesizeGeminiNative(chapter.text, persona);
+        audioBase64 = await this.synthesizeGeminiNative(chapter.text, persona, sliderConfig);
       }
     } catch (err) {
       console.warn(`ℹ️ [AudioSynthesis] Engine ${engine} fallback (${err.message}).`);

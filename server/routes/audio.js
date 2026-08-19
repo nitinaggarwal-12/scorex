@@ -52,12 +52,12 @@ router.post('/podcast-script', async (req, res) => {
 // POST /api/audio/synthesize-act - Synthesize single act (for instant streaming)
 router.post('/synthesize-act', async (req, res) => {
   try {
-    const { chapter, persona, style, engine, customApiKey, customVoiceId } = req.body;
+    const { chapter, persona, style, engine, customApiKey, customVoiceId, sliderConfig } = req.body;
     if (!chapter) {
       return res.status(400).json({ success: false, error: 'Chapter payload is required' });
     }
 
-    const result = await audioNarrationService.synthesizeAct(chapter, persona, style, engine, customApiKey, customVoiceId);
+    const result = await audioNarrationService.synthesizeAct(chapter, persona, style, engine, customApiKey, customVoiceId, sliderConfig);
     res.json({ success: true, ...result });
   } catch (err) {
     console.error('⚠️ Error synthesizing audio act:', err);

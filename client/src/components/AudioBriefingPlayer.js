@@ -29,7 +29,8 @@ import {
   FiDownload,
   FiUsers,
   FiUploadCloud,
-  FiCheckCircle
+  FiCheckCircle,
+  FiGlobe
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
@@ -118,11 +119,16 @@ const STORY_THEMES = {
   }
 };
 
+// 8 Diverse Global Voice Personas
 const STORY_PERSONAS = [
-  { id: 'jonathan', name: 'Sir Jonathan', title: 'DeepMind Documentary Baritone', gender: 'male', vibe: 'Warm, deep & theatrical (Journey-D)', googleVoice: 'en-US-Journey-D', accents: ['Daniel', 'Google UK English Male', 'Oliver', 'George'] },
-  { id: 'victoria', name: 'Victoria', title: 'MasterClass Executive Narrator', gender: 'female', vibe: 'Magnetic, eloquent & expressive (Journey-F)', googleVoice: 'en-US-Journey-F', accents: ['Samantha', 'Google UK English Female', 'Karen', 'Victoria'] },
-  { id: 'david', name: 'David', title: 'Visionary Tech Orator', gender: 'male', vibe: 'Inspiring, resonant & punchy (Studio-Q)', googleVoice: 'en-US-Studio-Q', accents: ['Google US English', 'Alex', 'Fred', 'Arthur'] },
-  { id: 'maya', name: 'Maya', title: 'Intimate Fireside Novelist', gender: 'female', vibe: 'Curious, lively & poignant (Journey-O)', googleVoice: 'en-US-Journey-O', accents: ['Tessa', 'Moira', 'Fiona', 'Google US English'] }
+  { id: 'jonathan', name: 'Sir Jonathan', title: 'DeepMind Documentary Baritone', gender: 'male', vibe: 'Warm, deep & theatrical (Charon)', googleVoice: 'Charon', accents: ['Daniel', 'Google UK English Male', 'Oliver', 'George'] },
+  { id: 'victoria', name: 'Victoria', title: 'MasterClass Executive Narrator', gender: 'female', vibe: 'Magnetic, eloquent & expressive (Aoede)', googleVoice: 'Aoede', accents: ['Samantha', 'Google UK English Female', 'Karen', 'Victoria'] },
+  { id: 'david', name: 'David', title: 'Visionary Tech Orator', gender: 'male', vibe: 'Inspiring, resonant & punchy (Puck)', googleVoice: 'Puck', accents: ['Google US English', 'Alex', 'Fred', 'Arthur'] },
+  { id: 'maya', name: 'Maya', title: 'Intimate Fireside Novelist', gender: 'female', vibe: 'Curious, lively & poignant (Kore)', googleVoice: 'Kore', accents: ['Tessa', 'Moira', 'Fiona', 'Google US English'] },
+  { id: 'alister', name: 'Alister', title: 'Scottish Senior Cloud Fellow', gender: 'male', vibe: 'Distinguished, rich & thoughtful (Fenrir)', googleVoice: 'Fenrir', accents: ['Fiona', 'Oliver', 'Google UK English Male'] },
+  { id: 'priya', name: 'Priya', title: 'Global Enterprise Transformation CTO', gender: 'female', vibe: 'Crisp, decisive & strategic (Aoede Global)', googleVoice: 'Aoede', accents: ['Veena', 'Google UK English Female', 'Samantha'] },
+  { id: 'marcus', name: 'Marcus', title: 'Wall Street Managing Director', gender: 'male', vibe: 'Tier-1 Consulting Board Presence (Charon)', googleVoice: 'Charon', accents: ['Alex', 'Daniel', 'Google US English'] },
+  { id: 'elena', name: 'Elena', title: 'AI Tech Founder & Lead', gender: 'female', vibe: 'High-energy, visionary tech passion (Kore)', googleVoice: 'Kore', accents: ['Victoria', 'Samantha', 'Karen'] }
 ];
 
 const PlayerContainer = styled(motion.div)`
@@ -427,6 +433,32 @@ const OptionPill = styled.button`
   }
 `;
 
+const SliderGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .slider-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: ${props => props.$theme === 'dark' ? '#cbd5e1' : '#475569'};
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: #f59e0b;
+      cursor: pointer;
+    }
+  }
+`;
+
 const ApiKeyInput = styled.input`
   width: 100%;
   padding: 8px 12px;
@@ -485,6 +517,11 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   const [customClonedVoiceId, setCustomClonedVoiceId] = useState(null);
   const [clonedVoiceName, setClonedVoiceName] = useState(null);
 
+  // Mathematical Emotion & Prosody Sliders
+  const [styleExaggeration, setStyleExaggeration] = useState(0.70);
+  const [stability, setStability] = useState(0.65);
+  const [breathDensity, setBreathDensity] = useState(0.50);
+
   const audioElementRef = useRef(null);
   const audioContextRef = useRef(null);
   const sourceNodeRef = useRef(null);
@@ -531,7 +568,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
         const warmthFilter = ctx.createBiquadFilter();
         warmthFilter.type = 'lowshelf';
         warmthFilter.frequency.value = 180;
-        warmthFilter.gain.value = 2.5;
+        warmthFilter.gain.value = 2.5 + (styleExaggeration * 1.5);
         warmthFilterRef.current = warmthFilter;
 
         // 2. High-Shelf Breath / De-Esser Filter (4000Hz - 7500Hz)
@@ -687,7 +724,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   };
 
   /**
-   * ⚡ Play a single chapter using Google Cloud Journey / ElevenLabs Studio Audio
+   * ⚡ Play a single chapter using Google Gemini Native Audio / ElevenLabs Studio Audio
    */
   const playChapterStudio = async (chapters, index) => {
     if (!isPlayingRef.current || index >= chapters.length) {
@@ -708,12 +745,18 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
           style: selectedStyle,
           engine: selectedEngine,
           customApiKey: elevenLabsKey || null,
-          customVoiceId: customClonedVoiceId || null
-        }, { timeout: 15000 });
+          customVoiceId: customClonedVoiceId || null,
+          sliderConfig: {
+            styleExaggeration,
+            stability,
+            breathDensity
+          }
+        }, { timeout: 18000 });
 
         if (response.data && response.data.success && response.data.audioBase64) {
           initWebAudioChain();
-          const audioSrc = `data:audio/mpeg;base64,${response.data.audioBase64}`;
+          const mimePrefix = response.data.audioBase64.startsWith('UklGR') ? 'data:audio/wav;base64,' : 'data:audio/mpeg;base64,';
+          const audioSrc = `${mimePrefix}${response.data.audioBase64}`;
           
           if (!audioElementRef.current) {
             audioElementRef.current = new Audio();
@@ -790,7 +833,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
 
       const personaName = clonedVoiceName || STORY_PERSONAS.find(p => p.id === selectedPersona)?.name || 'Jonathan';
       const engineLabel = selectedEngine === 'google' 
-        ? 'Google Cloud Journey (DeepMind 48kHz)' 
+        ? 'Gemini DeepMind Studio Neural' 
         : (selectedEngine === 'elevenlabs' ? 'ElevenLabs Turbo v2.5' : 'Local Browser Engine');
 
       toast.success(`🎬 Narrated by ${personaName} • ${engineLabel}`, { id: 'story-play', icon: activeTheme.icon });
@@ -819,10 +862,10 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   };
 
   /**
-   * 📦 1-Click Download Full 5-Act Broadcast MP3
+   * 📦 1-Click Download Full 5-Act Broadcast MP3/WAV
    */
   const handleDownloadFullMp3 = async () => {
-    toast.loading('Assembling studio broadcast MP3...', { id: 'download-mp3' });
+    toast.loading('Assembling studio broadcast audio file...', { id: 'download-mp3' });
     try {
       const response = await axios.post('/api/audio/export-mp3', {
         instance,
@@ -833,17 +876,17 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
         customApiKey: elevenLabsKey || null
       }, { responseType: 'blob' });
 
-      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'audio/mpeg' }));
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'audio/wav' }));
       const link = document.createElement('a');
       link.href = url;
       const clientSlug = (instance?.customerName || 'ScoreX').replace(/[^a-zA-Z0-9_-]/g, '_');
-      link.setAttribute('download', `${clientSlug}_Executive_Briefing.mp3`);
+      link.setAttribute('download', `${clientSlug}_Executive_Briefing.wav`);
       document.body.appendChild(link);
       link.click();
       link.remove();
-      toast.success('Broadcast MP3 downloaded successfully!', { id: 'download-mp3' });
+      toast.success('Broadcast audio downloaded successfully!', { id: 'download-mp3' });
     } catch (err) {
-      toast.error('Failed to export audio briefing MP3.', { id: 'download-mp3' });
+      toast.error('Failed to export audio briefing file.', { id: 'download-mp3' });
     }
   };
 
@@ -877,7 +920,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
             if (res.data && res.data.success) {
               setCustomClonedVoiceId(res.data.voiceProfile.remoteVoiceId);
               setClonedVoiceName('My Cloned Voice');
-              toast.success('Voice cloned! Now narrating in your custom voice.', { id: 'clone-voice' });
+              toast.success('Voice calibrated! Now narrating in your custom voice.', { id: 'clone-voice' });
             }
           } catch (e) {
             toast.error('Voice cloning calibration failed.', { id: 'clone-voice' });
@@ -926,7 +969,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
                 {activeTheme.icon} {activeTheme.name}
               </EmotionTag>
               <EmotionTag $bg="rgba(245, 158, 11, 0.12)" $color="#d97706" $border="rgba(245, 158, 11, 0.3)">
-                <HiSparkles size={12} /> {customClonedVoiceId ? 'Cloned Executive Voice' : (selectedEngine === 'google' ? 'Google Journey Studio 48kHz' : '5-Act Narrative Arc')}
+                <HiSparkles size={12} /> {customClonedVoiceId ? 'Cloned Executive Voice' : (selectedEngine === 'google' ? 'Gemini DeepMind Studio' : '5-Act Narrative Arc')}
               </EmotionTag>
             </h4>
             <p>Narrated by <strong>{clonedVoiceName || STORY_PERSONAS.find(p => p.id === selectedPersona)?.name}</strong> — <em>"{clonedVoiceName ? 'Custom Zero-Shot Clone' : STORY_PERSONAS.find(p => p.id === selectedPersona)?.vibe}"</em></p>
@@ -955,8 +998,8 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
             <FiFastForward size={13} /> {playbackRate}x
           </SecondaryControl>
 
-          <SecondaryControl $theme={theme} onClick={handleDownloadFullMp3} title="Download Full Broadcast MP3">
-            <FiDownload size={13} /> MP3
+          <SecondaryControl $theme={theme} onClick={handleDownloadFullMp3} title="Download Full Broadcast Audio">
+            <FiDownload size={13} /> Audio
           </SecondaryControl>
 
           <SecondaryControl $theme={theme} onClick={stopAudioPlayback} title="Stop Audio">
@@ -1039,11 +1082,11 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
                   onClick={() => {
                     setSelectedEngine('google');
                     stopAudioPlayback();
-                    toast.success('Switched to Google Cloud Journey Studio (DeepMind 48kHz Neural)', { icon: '🌌' });
+                    toast.success('Switched to Gemini DeepMind Studio (Native Neural)', { icon: '🌌' });
                   }}
                 >
-                  <span>🌌 Google Cloud Journey</span>
-                  <span style={{ fontSize: '0.68rem', opacity: 0.85 }}>DeepMind Studio 48kHz</span>
+                  <span>🌌 Gemini DeepMind Studio</span>
+                  <span style={{ fontSize: '0.68rem', opacity: 0.85 }}>Native 24/48kHz</span>
                 </OptionPill>
 
                 <OptionPill
@@ -1075,7 +1118,61 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
               </div>
             </ControlCard>
 
-            {/* 2. Instant Voice Cloner */}
+            {/* 2. Mathematical Emotion & Prosody Sliders */}
+            <ControlCard $theme={theme}>
+              <div className="label">
+                <FiSliders size={13} />
+                Mathematical Emotion & Prosody Sliders
+              </div>
+              <SliderGroup $theme={theme}>
+                <div className="slider-row">
+                  <div className="slider-header">
+                    <span>Style Exaggeration</span>
+                    <span>{Math.round(styleExaggeration * 100)}%</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="0.1" 
+                    max="1.0" 
+                    step="0.05" 
+                    value={styleExaggeration} 
+                    onChange={(e) => setStyleExaggeration(parseFloat(e.target.value))} 
+                  />
+                </div>
+
+                <div className="slider-row">
+                  <div className="slider-header">
+                    <span>Vocal Stability</span>
+                    <span>{Math.round(stability * 100)}%</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="0.1" 
+                    max="1.0" 
+                    step="0.05" 
+                    value={stability} 
+                    onChange={(e) => setStability(parseFloat(e.target.value))} 
+                  />
+                </div>
+
+                <div className="slider-row">
+                  <div className="slider-header">
+                    <span>Breath Cadence</span>
+                    <span>{Math.round(breathDensity * 100)}%</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="0.1" 
+                    max="1.0" 
+                    step="0.05" 
+                    value={breathDensity} 
+                    onChange={(e) => setBreathDensity(parseFloat(e.target.value))} 
+                  />
+                </div>
+              </SliderGroup>
+            </ControlCard>
+
+            {/* 3. Instant Voice Cloner */}
             <ControlCard $theme={theme}>
               <div className="label">
                 <FiMic size={13} />
@@ -1099,37 +1196,11 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
               </VoiceRecorderSection>
             </ControlCard>
 
-            {/* 3. Storytelling Style & Narrative Arc */}
+            {/* 4. Expanded 8-Voice Studio Master Persona Casting */}
             <ControlCard $theme={theme}>
               <div className="label">
-                <FiFilm size={13} />
-                Narrative Arc & Emotional Delivery
-              </div>
-              <div className="options-grid">
-                {Object.entries(STORY_THEMES).map(([key, item]) => (
-                  <OptionPill
-                    key={key}
-                    $theme={theme}
-                    $active={selectedStyle === key}
-                    $gradient={item.gradient}
-                    onClick={() => {
-                      setSelectedStyle(key);
-                      stopAudioPlayback();
-                      toast.success(`Storytelling style: ${item.name}`, { icon: item.icon });
-                    }}
-                  >
-                    <span>{item.icon} {item.name}</span>
-                    <span style={{ fontSize: '0.68rem', opacity: 0.8 }}>({item.tagline.split(' ')[0]})</span>
-                  </OptionPill>
-                ))}
-              </div>
-            </ControlCard>
-
-            {/* 4. Master Storyteller Voice Casting */}
-            <ControlCard $theme={theme}>
-              <div className="label">
-                <FiUser size={13} />
-                Studio Master Voice Casting
+                <FiGlobe size={13} />
+                Studio Master Casting (8 Personas)
               </div>
               <div className="options-grid">
                 {STORY_PERSONAS.map((persona) => (
@@ -1143,7 +1214,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
                       setCustomClonedVoiceId(null);
                       setClonedVoiceName(null);
                       stopAudioPlayback();
-                      toast.success(`Voice Cast: ${persona.name} (${persona.googleVoice})`, { icon: '🎙️' });
+                      toast.success(`Voice Cast: ${persona.name} (${persona.title})`, { icon: '🎙️' });
                     }}
                   >
                     <span>🎙️ {persona.name}</span>
