@@ -38,8 +38,12 @@ const HubContainer = styled.div`
   min-height: 100vh;
   background: #f8fafc;
   color: #0f172a;
-  padding: 108px 36px 60px;
+  padding: 108px 48px 60px;
   box-sizing: border-box;
+
+  @media (max-width: 1024px) {
+    padding: 96px 24px 40px;
+  }
 
   @media (max-width: 768px) {
     padding: 92px 16px 40px;
@@ -47,7 +51,7 @@ const HubContainer = styled.div`
 `;
 
 const ContentWrapper = styled.div`
-  max-width: 1560px;
+  max-width: 1600px;
   margin: 0 auto;
   width: 100%;
 `;

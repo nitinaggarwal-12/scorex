@@ -122,8 +122,13 @@ const PageContainer = styled.div`
 
 const ReportContainer = styled.div`
   width: 100%;
-  padding: 0 40px;
-  margin: 0;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 48px;
+
+  @media (max-width: 1024px) {
+    padding: 0 24px;
+  }
 
   @media (max-width: 768px) {
     padding: 0 16px;

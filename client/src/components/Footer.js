@@ -18,16 +18,22 @@ const FooterContainer = styled.footer`
 `;
 
 const FooterContent = styled.div`
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   gap: 48px;
   margin-bottom: 48px;
+  padding: 0 48px;
+
+  @media (max-width: 1024px) {
+    padding: 0 32px;
+  }
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
     gap: 32px;
+    padding: 0 20px;
   }
 `;
 
@@ -130,13 +136,17 @@ const FooterCTA = styled.div`
 `;
 
 const FooterBottom = styled.div`
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
-  padding-top: 32px;
+  padding: 32px 48px 0;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   text-align: center;
   font-size: 0.875rem;
   color: rgba(255, 255, 255, 0.5);
+
+  @media (max-width: 768px) {
+    padding: 24px 20px 0;
+  }
 `;
 
 const Footer = () => {

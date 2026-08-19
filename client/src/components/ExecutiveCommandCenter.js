@@ -28,16 +28,22 @@ const PageContainer = styled.div`
 
 const PageHeader = styled.div`
   position: relative;
-  margin: 0 0 32px 0;
-  padding: 0 40px;
+  max-width: 1600px;
+  margin: 0 auto 32px auto;
+  padding: 0 48px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
 
+  @media (max-width: 1024px) {
+    padding: 0 24px;
+  }
+
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: flex-start;
+    padding: 0 16px;
   }
 `;
 
@@ -399,7 +405,13 @@ const FloatingSlideshowButton = styled.button`
 
 const ContentContainer = styled.div`
   width: 100%;
-  padding: 0 40px;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 48px;
+
+  @media (max-width: 1024px) {
+    padding: 0 24px;
+  }
 
   @media (max-width: 768px) {
     padding: 0 16px;

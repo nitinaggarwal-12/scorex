@@ -40,11 +40,15 @@ const PageContainer = styled.div`
 `;
 
 const ContentContainer = styled.div`
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 40px 24px;
+  padding: 40px 48px;
   position: relative;
   z-index: 1;
+
+  @media (max-width: 1024px) {
+    padding: 32px 24px;
+  }
 
   @media (max-width: 768px) {
     padding: 24px 16px;

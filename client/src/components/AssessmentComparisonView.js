@@ -18,8 +18,12 @@ const Container = styled.div`
   min-height: 100vh;
   background: linear-gradient(135deg, #0b0f19 0%, #111827 50%, #171b30 100%);
   color: #f8fafc;
-  padding: 100px 32px 80px;
+  padding: 108px 48px 80px;
   box-sizing: border-box;
+
+  @media (max-width: 1024px) {
+    padding: 96px 24px 60px;
+  }
 
   @media (max-width: 768px) {
     padding: 90px 16px 60px;
@@ -27,7 +31,7 @@ const Container = styled.div`
 `;
 
 const ContentWrap = styled.div`
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
 `;
 

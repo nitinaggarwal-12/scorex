@@ -52,9 +52,13 @@ const HeroGradientBG = styled.div`
 `;
 
 const HeroHeader = styled.header`
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 96px 24px;
+  padding: 96px 48px;
+
+  @media (max-width: 1024px) {
+    padding: 72px 32px;
+  }
 
   @media (max-width: 768px) {
     padding: 64px 20px;
@@ -78,8 +82,8 @@ const HeroContent = styled.div`
 
 const HeroText = styled.div`
   h1 {
-    font-size: 3.75rem;
-    font-weight: 800;
+    font-size: clamp(2.5rem, 5vw, 4.25rem);
+    font-weight: 850;
     color: white;
     line-height: 1.1;
     margin-bottom: 24px;
@@ -92,7 +96,7 @@ const HeroText = styled.div`
 
   p {
     font-size: 1.25rem;
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba(255, 255, 255, 0.9);
     line-height: 1.7;
     margin-bottom: 40px;
 
@@ -297,9 +301,13 @@ const BenefitsCard = styled.div`
 
 // Content Sections
 const Section = styled.section`
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 96px 24px;
+  padding: 96px 48px;
+
+  @media (max-width: 1024px) {
+    padding: 72px 32px;
+  }
 
   @media (max-width: 768px) {
     padding: 64px 20px;
@@ -550,16 +558,22 @@ const Footer = styled.footer`
 `;
 
 const FooterContent = styled.div`
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   gap: 48px;
   margin-bottom: 48px;
+  padding: 0 48px;
+
+  @media (max-width: 1024px) {
+    padding: 0 32px;
+  }
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
     gap: 32px;
+    padding: 0 20px;
   }
 `;
 

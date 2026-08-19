@@ -133,7 +133,7 @@ export const exportDrawioFile = (xml, filename) => {
   }
 };
 
-export const exportCompleteDeliverablesBundle = async (instance, report, { exportDynamicAssessmentToExcel, generateDynamicPDFReport }) => {
+export const exportCompleteDeliverablesBundle = async (instance, report, { exportDynamicAssessmentToExcel, generateDynamicPDFReport, exportAssessmentToPPTX }) => {
   try {
     const safeName = (instance.customerName || 'assessment').toLowerCase().replace(/[^a-z0-9]/g, '_');
     
@@ -141,19 +141,24 @@ export const exportCompleteDeliverablesBundle = async (instance, report, { expor
     if (typeof generateDynamicPDFReport === 'function') {
       generateDynamicPDFReport(instance, report);
     }
+
+    // 2. Editable PowerPoint / Google Slides Deck
+    if (typeof exportAssessmentToPPTX === 'function') {
+      await exportAssessmentToPPTX(instance, report);
+    }
     
-    // 2. Excel Report
+    // 3. Excel Report
     if (typeof exportDynamicAssessmentToExcel === 'function') {
       exportDynamicAssessmentToExcel(instance, report);
     }
 
-    // 3. Flat CSV Matrix
+    // 4. Flat CSV Matrix
     exportAssessmentToCSV(instance, report);
 
-    // 4. Raw JSON
+    // 5. Raw JSON
     exportAssessmentToJSON(instance, report);
 
-    // 5. Draw.io XMLs
+    // 6. Draw.io XMLs
     const diagrams = report?.architectureDiagrams || instance?.architectureDiagrams || {};
     if (diagrams.currentStateXml) {
       exportDrawioFile(diagrams.currentStateXml, `scorex_${safeName}_current_state_arch.drawio`);

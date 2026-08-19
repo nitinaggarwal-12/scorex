@@ -39,6 +39,7 @@ import AudioBriefingPlayer from './AudioBriefingPlayer';
 import PresentationModeModal from './PresentationModeModal';
 import { exportDynamicAssessmentToExcel } from '../services/excelExportService';
 import { generateDynamicPDFReport } from '../services/pdfExportService';
+import { exportAssessmentToPPTX } from '../services/pptxExportService';
 import { exportAssessmentToJSON, exportAssessmentToCSV, exportCompleteDeliverablesBundle } from '../services/dataExportService';
 
 const Container = styled.div`
@@ -852,6 +853,26 @@ const DynamicAssessmentReport = () => {
             </button>
 
             <button 
+              style={{ background: 'linear-gradient(135deg, rgba(217, 70, 239, 0.15), rgba(168, 85, 247, 0.15))', border: '1px solid rgba(217, 70, 239, 0.4)', color: '#e879f9', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
+              onClick={async () => {
+                try {
+                  toast.loading('Generating editable 16:9 PowerPoint Presentation...', { id: 'pptx-export' });
+                  const res = await exportAssessmentToPPTX(instance, report);
+                  if (res?.success) {
+                    toast.success('📊 Editable PPTX (Google Slides) exported successfully!', { id: 'pptx-export' });
+                  } else {
+                    toast.error(res?.error || 'Failed to export PPTX', { id: 'pptx-export' });
+                  }
+                } catch (e) {
+                  toast.error('Failed to export PPTX presentation', { id: 'pptx-export' });
+                }
+              }}
+              title="Download editable 16:9 PowerPoint / Google Slides deck for executive board meetings"
+            >
+              <FiDownload /> 📽️ Editable PPTX / Slides
+            </button>
+
+            <button 
               style={{ background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.4)', color: '#34d399', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
               onClick={() => {
                 try {
@@ -896,11 +917,11 @@ const DynamicAssessmentReport = () => {
             <button 
               style={{ background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(168, 85, 247, 0.2))', border: '1.5px solid rgba(236, 72, 153, 0.5)', color: '#f472b6', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700', boxShadow: '0 4px 14px rgba(236, 72, 153, 0.25)' }}
               onClick={async () => {
-                toast.loading('Generating all deliverables (PDF + Excel + CSV + JSON + Architecture XMLs)...', { id: 'bundle-export' });
-                await exportCompleteDeliverablesBundle(instance, report, { exportDynamicAssessmentToExcel, generateDynamicPDFReport });
+                toast.loading('Generating all deliverables (PDF + PPTX + Excel + CSV + JSON + Architecture XMLs)...', { id: 'bundle-export' });
+                await exportCompleteDeliverablesBundle(instance, report, { exportDynamicAssessmentToExcel, generateDynamicPDFReport, exportAssessmentToPPTX });
                 toast.success('🗂️ Complete Deliverables Package exported successfully!', { id: 'bundle-export', duration: 4000 });
               }}
-              title="Download 1-click complete package: Executive PDF, Multi-sheet Excel, CSV Matrix, Raw JSON, and Draw.io XMLs"
+              title="Download 1-click complete package: Executive PDF, Editable PPTX Deck, Multi-sheet Excel, CSV Matrix, Raw JSON, and Draw.io XMLs"
             >
               <FiDownload /> 🗂️ All Deliverables Bundle
             </button>

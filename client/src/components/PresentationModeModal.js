@@ -12,8 +12,11 @@ import {
   FiLayers,
   FiCheckCircle,
   FiBarChart2,
-  FiCpu
+  FiCpu,
+  FiDownload
 } from "react-icons/fi";
+import toast from "react-hot-toast";
+import { exportAssessmentToPPTX } from "../services/pptxExportService";
 import DynamicRadarChart from "./DynamicRadarChart";
 import ExecutiveHeatmapMatrix from "./ExecutiveHeatmapMatrix";
 import FinancialImpactCard from "./FinancialImpactCard";
@@ -152,7 +155,26 @@ const PresentationModeModal = ({ isOpen, onClose, instance, report, framework })
             </span>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+            <button
+              onClick={async () => {
+                try {
+                  toast.loading('Generating editable 16:9 PowerPoint Presentation...', { id: 'pptx-modal-export' });
+                  const res = await exportAssessmentToPPTX(instance, report);
+                  if (res?.success) {
+                    toast.success('📊 Editable PPTX (Google Slides) exported successfully!', { id: 'pptx-modal-export' });
+                  } else {
+                    toast.error(res?.error || 'Failed to export PPTX', { id: 'pptx-modal-export' });
+                  }
+                } catch (e) {
+                  toast.error('Failed to export PPTX presentation', { id: 'pptx-modal-export' });
+                }
+              }}
+              style={{ background: "linear-gradient(135deg, #ec4899, #8b5cf6)", border: "none", color: "#ffffff", borderRadius: "8px", padding: "6px 14px", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", fontWeight: 700, fontSize: "0.85rem", boxShadow: "0 2px 8px rgba(236, 72, 153, 0.3)" }}
+              title="Download editable 16:9 PowerPoint / Google Slides deck for executive presentation"
+            >
+              <FiDownload /> 📥 Download PPTX (Google Slides)
+            </button>
             <span style={{ fontSize: "0.85rem", color: "#94a3b8", fontWeight: 600 }}>
               Slide {currentSlide + 1} of {totalSlides}
             </span>

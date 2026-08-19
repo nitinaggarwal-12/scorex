@@ -16,11 +16,19 @@ const API_URL = (window.location.hostname === 'localhost' ? 'http://localhost:50
 const PageContainer = styled.div`
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 100px 20px 40px 20px;
+  padding: 108px 48px 40px 48px;
+
+  @media (max-width: 1024px) {
+    padding: 96px 24px 40px 24px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 92px 16px 24px 16px;
+  }
 `;
 
 const ContentWrapper = styled.div`
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
 `;
 

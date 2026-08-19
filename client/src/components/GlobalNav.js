@@ -16,11 +16,14 @@ const Nav = styled.nav`
   top: 0;
   left: 0;
   right: 0;
+  width: 100%;
   z-index: 1000;
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 16px 0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid #e2e8f0;
+  padding: 14px 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02);
 
   @media (max-width: 768px) {
     padding: 12px 0;
@@ -32,10 +35,16 @@ const NavContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 0 40px;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 48px;
+
+  @media (max-width: 1024px) {
+    padding: 0 24px;
+  }
 
   @media (max-width: 768px) {
-    padding: 0 24px;
+    padding: 0 20px;
     justify-content: space-between;
   }
 `;
@@ -1392,7 +1401,11 @@ const GlobalNav = () => {
           </ActionButtons>
 
         {/* Mobile Menu Button */}
-        <MobileMenuButton onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+        <MobileMenuButton 
+          aria-label="Toggle navigation menu"
+          data-testid="mobile-menu-btn"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
           {mobileMenuOpen ? <FiX /> : <FiMenu />}
         </MobileMenuButton>
       </NavContainer>
