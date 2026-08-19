@@ -124,22 +124,22 @@ const StatsGrid = styled.div`
 `;
 
 const StatCard = styled.div`
-  background: rgba(30, 41, 59, 0.5);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
   border-radius: 16px;
   padding: 20px 24px;
   display: flex;
   align-items: center;
   gap: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
 `;
 
 const StatIcon = styled.div`
   width: 48px;
   height: 48px;
   border-radius: 12px;
-  background: ${props => props.$bg || 'rgba(99, 102, 241, 0.15)'};
-  color: ${props => props.$color || '#818cf8'};
+  background: ${props => props.$bg || 'rgba(99, 102, 241, 0.12)'};
+  color: ${props => props.$color || '#4f46e5'};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -153,22 +153,22 @@ const StatInfo = styled.div`
 `;
 
 const StatValue = styled.div`
-  font-size: 1.6rem;
+  font-size: 1.75rem;
   font-weight: 800;
-  color: #ffffff;
+  color: #0f172a;
   line-height: 1.2;
 `;
 
 const StatLabel = styled.div`
   font-size: 0.85rem;
-  color: #94a3b8;
-  font-weight: 500;
+  color: #475569;
+  font-weight: 600;
 `;
 
 const TabBar = styled.div`
   display: flex;
   gap: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 2px solid #e2e8f0;
   padding-bottom: 16px;
   margin-bottom: 32px;
   overflow-x: auto;
@@ -176,12 +176,12 @@ const TabBar = styled.div`
 `;
 
 const Tab = styled.button`
-  background: ${props => props.$active ? 'rgba(99, 102, 241, 0.2)' : 'transparent'};
-  border: 1px solid ${props => props.$active ? '#818cf8' : 'transparent'};
-  color: ${props => props.$active ? '#ffffff' : '#94a3b8'};
+  background: ${props => props.$active ? '#4f46e5' : '#ffffff'};
+  border: 1.5px solid ${props => props.$active ? '#4f46e5' : '#e2e8f0'};
+  color: ${props => props.$active ? '#ffffff' : '#475569'};
   padding: 10px 20px;
   border-radius: 10px;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -190,9 +190,12 @@ const Tab = styled.button`
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  box-shadow: ${props => props.$active ? '0 4px 12px rgba(79, 70, 229, 0.25)' : '0 2px 4px rgba(0,0,0,0.02)'};
 
   &:hover {
-    color: #ffffff;
+    color: ${props => props.$active ? '#ffffff' : '#0f172a'};
+    background: ${props => props.$active ? '#4338ca' : '#f1f5f9'};
+    border-color: ${props => props.$active ? '#4338ca' : '#cbd5e1'};
   }
 `;
 
@@ -208,21 +211,20 @@ const Grid = styled.div`
 `;
 
 const TypeCard = styled.div`
-  background: rgba(30, 41, 59, 0.6);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
   border-radius: 20px;
   padding: 28px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: all 0.2s ease;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 
   &:hover {
     transform: translateY(-4px);
-    border-color: rgba(99, 102, 241, 0.4);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+    border-color: #6366f1;
+    box-shadow: 0 16px 36px rgba(99, 102, 241, 0.12);
   }
 
   @media (max-width: 768px) {
@@ -240,12 +242,13 @@ const CardTopRow = styled.div`
 `;
 
 const TypeBadge = styled.span`
-  background: ${props => props.$bg || 'rgba(99, 102, 241, 0.2)'};
-  color: ${props => props.$color || '#818cf8'};
+  background: ${props => props.$bg ? `${props.$bg}20` : '#eff6ff'};
+  color: ${props => props.$color || '#2563eb'};
+  border: 1px solid ${props => props.$color ? `${props.$color}40` : '#bfdbfe'};
   padding: 4px 12px;
   border-radius: 9999px;
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   display: inline-flex;
@@ -254,27 +257,27 @@ const TypeBadge = styled.span`
 `;
 
 const StatusTag = styled.span`
-  background: ${props => props.$status === 'production' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)'};
-  color: ${props => props.$status === 'production' ? '#10b981' : '#f59e0b'};
-  border: 1px solid ${props => props.$status === 'production' ? 'rgba(16, 185, 129, 0.3)' : 'rgba(245, 158, 11, 0.3)'};
+  background: ${props => props.$status === 'production' ? '#ecfdf5' : '#fffbeb'};
+  color: ${props => props.$status === 'production' ? '#059669' : '#d97706'};
+  border: 1px solid ${props => props.$status === 'production' ? '#a7f3d0' : '#fde68a'};
   padding: 3px 10px;
   border-radius: 8px;
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 800;
 `;
 
 const TypeTitle = styled.h3`
   font-size: 1.3rem;
-  font-weight: 700;
-  color: #ffffff;
+  font-weight: 800;
+  color: #0f172a;
   margin-bottom: 8px;
   line-height: 1.3;
 `;
 
 const TypeDesc = styled.p`
-  color: #94a3b8;
-  font-size: 0.9rem;
-  line-height: 1.5;
+  color: #334155;
+  font-size: 0.92rem;
+  line-height: 1.55;
   margin-bottom: 16px;
 `;
 
@@ -286,20 +289,21 @@ const MetaPillsRow = styled.div`
 `;
 
 const MetaPill = styled.span`
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
-  padding: 4px 10px;
-  font-size: 0.78rem;
-  color: #cbd5e1;
+  padding: 5px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #334155;
   display: inline-flex;
   align-items: center;
   gap: 5px;
 `;
 
 const DimensionsAccordion = styled.div`
-  background: rgba(15, 23, 42, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
   border-radius: 12px;
   padding: 12px 16px;
   margin-bottom: 20px;
@@ -308,9 +312,9 @@ const DimensionsAccordion = styled.div`
 const AccordionToggle = styled.button`
   background: none;
   border: none;
-  color: #818cf8;
-  font-size: 0.85rem;
-  font-weight: 600;
+  color: #4f46e5;
+  font-size: 0.88rem;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -319,7 +323,7 @@ const AccordionToggle = styled.button`
   padding: 0;
 
   &:hover {
-    color: #a5b4fc;
+    color: #4338ca;
   }
 `;
 
@@ -329,14 +333,15 @@ const DimensionList = styled.div`
   flex-direction: column;
   gap: 8px;
   font-size: 0.85rem;
-  color: #94a3b8;
+  color: #334155;
 `;
 
 const DimensionItem = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #cbd5e1;
+  color: #1e293b;
+  font-weight: 500;
 
   svg {
     color: #10b981;
@@ -349,7 +354,7 @@ const TypeFooter = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1.5px solid #e2e8f0;
   padding-top: 16px;
   margin-top: auto;
 `;
@@ -384,13 +389,13 @@ const LaunchBtn = styled.button`
 `;
 
 const SampleBtn = styled.button`
-  background: rgba(56, 189, 248, 0.15);
-  border: 1px solid rgba(56, 189, 248, 0.3);
-  color: #38bdf8;
+  background: #f0fdf4;
+  border: 1.5px solid #86efac;
+  color: #16a34a;
   border-radius: 10px;
   padding: 10px 16px;
   font-size: 0.88rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -400,8 +405,9 @@ const SampleBtn = styled.button`
   min-height: 40px;
 
   &:hover {
-    background: rgba(56, 189, 248, 0.25);
-    color: #ffffff;
+    background: #dcfce7;
+    color: #15803d;
+    border-color: #4ade80;
   }
 `;
 
@@ -459,7 +465,7 @@ const ModalOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
@@ -469,13 +475,14 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContent = styled.div`
-  background: #1e293b;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
   border-radius: 24px;
   padding: 36px;
   width: 100%;
   max-width: 540px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  color: #0f172a;
 
   @media (max-width: 640px) {
     padding: 24px 18px;
@@ -489,42 +496,43 @@ const FormGroup = styled.div`
 
 const Label = styled.label`
   display: block;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #94a3b8;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #334155;
   margin-bottom: 8px;
 `;
 
 const Input = styled.input`
   width: 100%;
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
   border-radius: 12px;
   padding: 12px 16px;
-  color: #ffffff;
+  color: #0f172a;
   font-size: 0.95rem;
   box-sizing: border-box;
 
   &:focus {
     outline: none;
-    border-color: #818cf8;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
   }
 `;
 
 const CustomerCard = styled.div`
-  background: rgba(30, 41, 59, 0.6);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
   border-radius: 20px;
   padding: 28px;
   margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 `;
 
 const CustomerHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1.5px solid #e2e8f0;
   padding-bottom: 16px;
   margin-bottom: 20px;
   flex-wrap: wrap;
@@ -532,8 +540,8 @@ const CustomerHeader = styled.div`
 `;
 
 const AssessmentRow = styled.div`
-  background: rgba(15, 23, 42, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
   border-radius: 12px;
   padding: 16px 20px;
   margin-bottom: 12px;
@@ -884,10 +892,10 @@ const DynamicAssessmentHub = () => {
         {activeTab === 'drafts' && (
           <>
             {draftTypes.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '60px 20px', background: 'rgba(30, 41, 59, 0.4)', borderRadius: '20px' }}>
+              <div style={{ textAlign: 'center', padding: '60px 20px', background: '#ffffff', border: '1.5px solid #e2e8f0', borderRadius: '20px', boxShadow: '0 4px 14px rgba(0,0,0,0.04)' }}>
                 <HiSparkles style={{ fontSize: '3rem', color: '#a855f7', marginBottom: '16px' }} />
-                <h3 style={{ fontSize: '1.4rem', color: '#ffffff', marginBottom: '8px' }}>No Draft Frameworks</h3>
-                <p style={{ color: '#94a3b8', maxWidth: '500px', margin: '0 auto 24px' }}>
+                <h3 style={{ fontSize: '1.4rem', color: '#0f172a', fontWeight: '800', marginBottom: '8px' }}>No Draft Frameworks</h3>
+                <p style={{ color: '#475569', maxWidth: '500px', margin: '0 auto 24px', fontSize: '0.95rem' }}>
                   Generate custom assessment frameworks for specific industries, customer migrations, or emerging technology stacks using Gemini 3.7.
                 </p>
                 <CreateBtn onClick={() => navigate('/assessments/ai-generator')}>
@@ -973,10 +981,10 @@ const DynamicAssessmentHub = () => {
         {activeTab === 'portfolio' && (
           <div>
             {Object.keys(customerMap).length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '60px 20px', background: 'rgba(30, 41, 59, 0.4)', borderRadius: '20px' }}>
-                <FiList style={{ fontSize: '3rem', color: '#38bdf8', marginBottom: '16px' }} />
-                <h3 style={{ fontSize: '1.4rem', color: '#ffffff', marginBottom: '8px' }}>No Customer Assessments Yet</h3>
-                <p style={{ color: '#94a3b8', maxWidth: '500px', margin: '0 auto 24px' }}>
+              <div style={{ textAlign: 'center', padding: '60px 20px', background: '#ffffff', border: '1.5px solid #e2e8f0', borderRadius: '20px', boxShadow: '0 4px 14px rgba(0,0,0,0.04)' }}>
+                <FiList style={{ fontSize: '3rem', color: '#0284c7', marginBottom: '16px' }} />
+                <h3 style={{ fontSize: '1.4rem', color: '#0f172a', fontWeight: '800', marginBottom: '8px' }}>No Customer Assessments Yet</h3>
+                <p style={{ color: '#475569', maxWidth: '500px', margin: '0 auto 24px', fontSize: '0.95rem' }}>
                   Launch a new evaluation with a client or try a sample assessment to see the interactive 5-column runner and executive report.
                 </p>
                 <CreateBtn onClick={() => setActiveTab('production')}>
@@ -988,10 +996,10 @@ const DynamicAssessmentHub = () => {
                 <CustomerCard key={customerName}>
                   <CustomerHeader>
                     <div>
-                      <h3 style={{ fontSize: '1.4rem', fontWeight: '700', color: '#ffffff', marginBottom: '4px' }}>
+                      <h3 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                         {customerName}
                       </h3>
-                      <span style={{ color: '#94a3b8', fontSize: '0.9rem' }}>
+                      <span style={{ color: '#475569', fontSize: '0.9rem', fontWeight: '600' }}>
                         {runs.length} Assessment{runs.length > 1 ? 's' : ''} in Portfolio
                       </span>
                     </div>
@@ -1000,16 +1008,16 @@ const DynamicAssessmentHub = () => {
                   {runs.map((run) => (
                     <AssessmentRow key={run.id}>
                       <div>
-                        <strong style={{ color: '#e2e8f0', fontSize: '1.05rem', display: 'block', marginBottom: '4px' }}>
+                        <strong style={{ color: '#0f172a', fontSize: '1.05rem', display: 'block', marginBottom: '4px', fontWeight: '700' }}>
                           {run.frameworkSnapshot?.title || run.typeKey}
                         </strong>
                         {run.useCase && (
-                          <span style={{ fontSize: '0.85rem', color: '#38bdf8', display: 'block', marginBottom: '4px' }}>
+                          <span style={{ fontSize: '0.85rem', color: '#0284c7', display: 'block', marginBottom: '4px', fontWeight: '600' }}>
                             Initiative: {run.useCase}
                           </span>
                         )}
-                        <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
-                          Created {new Date(run.createdAt).toLocaleDateString()} • Score: {run.totalScore ? `${run.totalScore.toFixed(1)} / 5.0` : 'In Progress'} • Level: {run.maturityLevel || 'In Progress'}
+                        <span style={{ fontSize: '0.82rem', color: '#475569', fontWeight: '500' }}>
+                          Created {new Date(run.createdAt).toLocaleDateString()} • Score: <strong style={{ color: '#0f172a' }}>{run.totalScore ? `${run.totalScore.toFixed(1)} / 5.0` : 'In Progress'}</strong> • Level: <strong style={{ color: '#4f46e5' }}>{run.maturityLevel || 'In Progress'}</strong>
                         </span>
                       </div>
 
@@ -1041,8 +1049,8 @@ const DynamicAssessmentHub = () => {
                 <FiPlay />
               </div>
               <div>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#ffffff', margin: 0 }}>Start New Assessment</h3>
-                <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>{startModalType.title}</span>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#0f172a', margin: 0 }}>Start New Assessment</h3>
+                <span style={{ fontSize: '0.85rem', color: '#475569', fontWeight: '600' }}>{startModalType.title}</span>
               </div>
             </div>
 
@@ -1082,7 +1090,7 @@ const DynamicAssessmentHub = () => {
                 <button
                   type="button"
                   onClick={() => setStartModalType(null)}
-                  style={{ flex: 1, padding: '12px', background: 'rgba(255, 255, 255, 0.08)', border: 'none', borderRadius: '12px', color: '#cbd5e1', fontWeight: '600', cursor: 'pointer' }}
+                  style={{ flex: 1, padding: '12px', background: '#f1f5f9', border: '1.5px solid #e2e8f0', borderRadius: '12px', color: '#334155', fontWeight: '700', cursor: 'pointer' }}
                 >
                   Cancel
                 </button>
