@@ -1308,14 +1308,21 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
         style: selectedStyle,
         persona: selectedPersona,
         engine: selectedEngine,
-        customApiKey: elevenLabsKey || null
+        customApiKey: elevenLabsKey || null,
+        customVoiceId: customClonedVoiceId || null,
+        sliderConfig: {
+          styleExaggeration,
+          stability,
+          breathDensity
+        },
+        language: selectedLanguage
       }, { responseType: 'blob' });
 
-      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'audio/wav' }));
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'audio/mpeg' }));
       const link = document.createElement('a');
       link.href = url;
       const clientSlug = (instance?.customerName || 'ScoreX').replace(/[^a-zA-Z0-9_-]/g, '_');
-      link.setAttribute('download', `${clientSlug}_Executive_Briefing.wav`);
+      link.setAttribute('download', `${clientSlug}_Executive_Briefing_${selectedLanguage}.mp3`);
       document.body.appendChild(link);
       link.click();
       link.remove();

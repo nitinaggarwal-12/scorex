@@ -771,12 +771,12 @@ class AudioNarrationService {
   /**
    * 📦 Stitched 5-Act Full Broadcast WAV/MP3 Generator (1-Click Download)
    */
-  async exportFullStitchedAudio(instance, report, style = 'storyteller', persona = 'jonathan', engine = 'google', customApiKey = null) {
+  async exportFullStitchedAudio(instance, report, style = 'storyteller', persona = 'jonathan', engine = 'google', customApiKey = null, customVoiceId = null, sliderConfig = {}, language = 'en') {
     const chapters = await this.buildDirectorScript(instance, report, style, persona);
     const audioBuffers = [];
 
     for (const chap of chapters) {
-      const res = await this.synthesizeAct(chap, persona, style, engine, customApiKey);
+      const res = await this.synthesizeAct(chap, persona, style, engine, customApiKey, customVoiceId, sliderConfig, language);
       if (res.audioBase64) {
         audioBuffers.push(Buffer.from(res.audioBase64, 'base64'));
       }

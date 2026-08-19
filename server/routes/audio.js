@@ -128,11 +128,11 @@ router.post('/custom-voice-design', async (req, res) => {
 // POST /api/audio/export-mp3 - Download Stitched 5-Act MP3 Broadcast
 router.post('/export-mp3', async (req, res) => {
   try {
-    const { instance, report, style, persona, engine, customApiKey } = req.body;
-    const mp3Buffer = await audioNarrationService.exportFullStitchedAudio(instance, report, style, persona, engine, customApiKey);
+    const { instance, report, style, persona, engine, customApiKey, customVoiceId, sliderConfig, language } = req.body;
+    const mp3Buffer = await audioNarrationService.exportFullStitchedAudio(instance, report, style, persona, engine, customApiKey, customVoiceId, sliderConfig, language || 'en');
 
     const customerName = (instance?.customerName || 'ScoreX').replace(/[^a-zA-Z0-9_-]/g, '_');
-    const filename = `${customerName}_Executive_Audio_Briefing.mp3`;
+    const filename = `${customerName}_Executive_Audio_Briefing_${language || 'en'}.mp3`;
 
     res.setHeader('Content-Type', 'audio/mpeg');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
