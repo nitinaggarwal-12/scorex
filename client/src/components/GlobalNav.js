@@ -49,17 +49,61 @@ const NavContainer = styled.div`
   }
 `;
 
+const BrandLogo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  margin-right: 8px;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+`;
+
+const LogoIcon = styled.div`
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 0.95rem;
+  box-shadow: 0 3px 10px rgba(59, 130, 246, 0.35);
+`;
+
+const LogoText = styled.span`
+  font-size: 1.18rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+
+  span {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+`;
+
 const TopNav = styled.div`
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 16px;
 
   @media (max-width: 1400px) {
-    gap: 20px;
+    gap: 12px;
   }
 
-  @media (max-width: 1200px) {
-    gap: 16px;
+  @media (max-width: 1100px) {
+    gap: 10px;
   }
 
   @media (max-width: 1024px) {
@@ -70,7 +114,7 @@ const TopNav = styled.div`
 const ActionButtons = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   
   @media (max-width: 1024px) {
     display: none;
@@ -222,27 +266,22 @@ const NavLink = styled.button`
 const SecondaryCTAButton = styled.button`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background: white;
   color: #3b82f6;
-  border: 2px solid #3b82f6;
-  padding: 10px 24px;
+  border: 1.5px solid #3b82f6;
+  padding: 8px 15px;
   border-radius: 8px;
   font-weight: 600;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   white-space: nowrap;
-
-  @media (max-width: 1200px) {
-    font-size: 0.875rem;
-    padding: 8px 20px;
-  }
 
   &:hover {
     background: #eff6ff;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.18);
   }
 
   &:active {
@@ -254,34 +293,29 @@ const SecondaryCTAButton = styled.button`
   }
 
   &:hover svg {
-    transform: scale(1.1);
+    transform: scale(1.08);
   }
 `;
 
 const CTAButton = styled.button`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background: linear-gradient(135deg, #3b82f6, #8b5cf6);
   color: white;
   border: none;
-  padding: 10px 24px;
+  padding: 8px 16px;
   border-radius: 8px;
   font-weight: 600;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
   white-space: nowrap;
 
-  @media (max-width: 1200px) {
-    font-size: 0.875rem;
-    padding: 8px 20px;
-  }
-
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
   }
 
   &:active {
@@ -293,7 +327,7 @@ const CTAButton = styled.button`
   }
 
   &:hover svg {
-    transform: translateX(3px);
+    transform: translateX(2px);
   }
 `;
 
@@ -305,28 +339,23 @@ const DropdownContainer = styled.div`
 const DropdownButton = styled.button`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background: white;
   color: #374151;
-  border: 2px solid #e5e7eb;
-  padding: 10px 20px;
+  border: 1.5px solid #e5e7eb;
+  padding: 8px 14px;
   border-radius: 8px;
   font-weight: 600;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   white-space: nowrap;
 
-  @media (max-width: 1200px) {
-    font-size: 0.875rem;
-    padding: 8px 16px;
-  }
-
   &:hover {
-    background: #f9fafb;
-    border-color: #d1d5db;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   }
 
   &:active {
@@ -334,9 +363,18 @@ const DropdownButton = styled.button`
   }
 
   svg.chevron {
-    transition: transform 0.3s ease;
+    transition: transform 0.25s ease;
     ${props => props.$isOpen && 'transform: rotate(180deg);'}
   }
+`;
+
+const DropdownHeader = styled.div`
+  padding: 8px 18px 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 `;
 
 const DropdownMenu = styled.div`
@@ -524,6 +562,7 @@ const GlobalNav = () => {
   const [assignmentsDropdownOpen, setAssignmentsDropdownOpen] = useState(false);
   const [adminDropdownOpen, setAdminDropdownOpen] = useState(false);
   const [trySampleDropdownOpen, setTrySampleDropdownOpen] = useState(false);
+  const [resourcesDropdownOpen, setResourcesDropdownOpen] = useState(false);
   const [mobileTrySampleOpen, setMobileTrySampleOpen] = useState(false);
   const [promotedTypes, setPromotedTypes] = useState([]);
 
@@ -556,6 +595,7 @@ const GlobalNav = () => {
         setAssignmentsDropdownOpen(false);
         setAdminDropdownOpen(false);
         setTrySampleDropdownOpen(false);
+        setResourcesDropdownOpen(false);
       }
     };
     document.addEventListener('click', handleClickOutside);
@@ -886,38 +926,71 @@ const GlobalNav = () => {
       
       <Nav>
         <NavContainer>
-          {/* Desktop Navigation */}
-          <TopNav>
-            <NavLink onClick={handleLogoClick}>Home</NavLink>
-            <NavLink 
-              onClick={() => handleNavigate('/assessments/custom-hub')}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                color: '#7c3aed',
-                fontWeight: '700',
-                background: 'rgba(124, 58, 237, 0.08)',
-                padding: '6px 12px',
-                borderRadius: '8px'
-              }}
-            >
-              <HiSparkles size={16} style={{ color: '#8b5cf6' }} />
-              AI Assessment Hub
-            </NavLink>
-            <NavLink onClick={() => handleNavigate('/start')}>6-Pillar Benchmark</NavLink>
-            <NavLink onClick={() => handleNavigate('/deep-dive')}>Deep Dive</NavLink>
-            <NavLink onClick={() => handleNavigate('/pitch-deck')}>Pitch Deck</NavLink>
-            <NavLink onClick={() => handleNavigate('/user-guide')}>User Guide</NavLink>
-          </TopNav>
+          {/* Brand Logo & Desktop Navigation */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            <BrandLogo onClick={handleLogoClick}>
+              <LogoIcon>⚡</LogoIcon>
+              <LogoText>Score<span>X</span></LogoText>
+            </BrandLogo>
+
+            <TopNav>
+              <NavLink onClick={handleLogoClick}>Home</NavLink>
+              <NavLink 
+                onClick={() => handleNavigate('/assessments/custom-hub')}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  color: '#7c3aed',
+                  fontWeight: '700',
+                  background: 'rgba(124, 58, 237, 0.08)',
+                  padding: '5px 11px',
+                  borderRadius: '8px'
+                }}
+              >
+                <HiSparkles size={15} style={{ color: '#8b5cf6' }} />
+                AI Assessment Hub
+              </NavLink>
+
+              <NavLink onClick={() => handleNavigate('/insights-dashboard')}>Dashboard</NavLink>
+
+              {/* 🧭 Consolidated Resources & Tools Dropdown */}
+              <DropdownContainer 
+                className="dropdown-container"
+                onMouseEnter={() => setResourcesDropdownOpen(true)}
+                onMouseLeave={() => setResourcesDropdownOpen(false)}
+              >
+                <NavLink 
+                  onClick={() => setResourcesDropdownOpen(!resourcesDropdownOpen)}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+                >
+                  Explore & Tools
+                  <FiChevronDown size={13} style={{ transform: resourcesDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                </NavLink>
+                <DropdownMenu $isOpen={resourcesDropdownOpen} style={{ minWidth: '240px', left: 0, right: 'auto' }}>
+                  <DropdownHeader>Core Frameworks</DropdownHeader>
+                  <DropdownItem onClick={() => { handleNavigate('/start'); setResourcesDropdownOpen(false); }}>
+                    <FiBarChart2 style={{ color: '#3b82f6' }} /> 6-Pillar Benchmark
+                  </DropdownItem>
+                  <DropdownItem onClick={() => { handleNavigate('/deep-dive'); setResourcesDropdownOpen(false); }}>
+                    <FiCpu style={{ color: '#8b5cf6' }} /> Deep Dive Diagnostics
+                  </DropdownItem>
+                  <DropdownDivider />
+                  <DropdownHeader>Executive & Guides</DropdownHeader>
+                  <DropdownItem onClick={() => { handleNavigate('/pitch-deck'); setResourcesDropdownOpen(false); }}>
+                    <FiMonitor style={{ color: '#f59e0b' }} /> Pitch Deck Mode
+                  </DropdownItem>
+                  <DropdownItem onClick={() => { handleNavigate('/user-guide'); setResourcesDropdownOpen(false); }}>
+                    <FiBook style={{ color: '#10b981' }} /> User Guide & Playbook
+                  </DropdownItem>
+                </DropdownMenu>
+              </DropdownContainer>
+            </TopNav>
+          </div>
 
           <ActionButtons>
             {currentUser ? (
               <>
-                <SecondaryCTAButton onClick={() => navigate('/insights-dashboard')}>
-                  Dashboard
-                </SecondaryCTAButton>
-
                 {/* Try Sample Dropdown */}
                 <TrySampleDropdownContainer 
                   className="dropdown-container"
