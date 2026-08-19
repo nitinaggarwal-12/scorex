@@ -29,11 +29,11 @@ const AutofillButton = styled.button`
 `;
 
 const StartContainer = styled.div`
-  min-height: calc(100vh - 80px);
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
+  padding: 100px 20px 60px;
 `;
 
 const FormCard = styled(motion.div)`

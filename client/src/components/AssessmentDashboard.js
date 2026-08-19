@@ -20,9 +20,9 @@ import * as assessmentService from '../services/assessmentService';
 import LoadingSpinner from './LoadingSpinner';
 
 const DashboardContainer = styled.div`
-  min-height: calc(100vh - 80px);
+  min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 40px 20px;
+  padding: 108px 24px 60px;
 `;
 
 const ContentWrapper = styled.div`
