@@ -793,7 +793,10 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
     ];
   };
 
+  const playTokenRef = useRef(0);
+
   const stopAudioPlayback = () => {
+    playTokenRef.current += 1;
     isPlayingRef.current = false;
     setIsPlaying(false);
 
@@ -804,6 +807,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
 
     if (currentSourceNodeRef.current) {
       try {
+        currentSourceNodeRef.current.onended = null;
         currentSourceNodeRef.current.stop();
         currentSourceNodeRef.current.disconnect();
       } catch (e) {}
@@ -820,10 +824,14 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   /**
    * ⚡ Play a single chapter using Google Gemini Native Audio / ElevenLabs Studio Audio
    */
-  const playChapterStudio = async (chapters, index) => {
-    if (!isPlayingRef.current || index >= chapters.length) {
-      stopAudioPlayback();
-      setCurrentChapterIdx(0);
+  const playChapterStudio = async (chapters, index, token = null) => {
+    const currentToken = token !== null ? token : ++playTokenRef.current;
+
+    if (!isPlayingRef.current || playTokenRef.current !== currentToken || index >= chapters.length) {
+      if (playTokenRef.current === currentToken) {
+        stopAudioPlayback();
+        setCurrentChapterIdx(0);
+      }
       return;
     }
 
@@ -847,17 +855,24 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
           }
         }, { timeout: 45000 });
 
+        // Guard against race conditions after async API call
+        if (!isPlayingRef.current || playTokenRef.current !== currentToken) {
+          return;
+        }
+
         if (response.data && response.data.success && response.data.audioBase64) {
           initWebAudioChain();
           const ctx = audioContextRef.current;
           
           if (ctx) {
-            // Stop any active buffer node
+            // Stop any previously active node
             if (currentSourceNodeRef.current) {
               try {
+                currentSourceNodeRef.current.onended = null;
                 currentSourceNodeRef.current.stop();
                 currentSourceNodeRef.current.disconnect();
               } catch (e) {}
+              currentSourceNodeRef.current = null;
             }
 
             // Convert base64 into binary array
@@ -870,11 +885,17 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
 
             // Decode directly using Web Audio
             const audioBuffer = await ctx.decodeAudioData(bytes.buffer.slice(0));
+
+            // Guard against race conditions after async audio decode
+            if (!isPlayingRef.current || playTokenRef.current !== currentToken) {
+              return;
+            }
+
             const sourceNode = ctx.createBufferSource();
             sourceNode.buffer = audioBuffer;
             sourceNode.playbackRate.value = playbackRate;
 
-            // Connect directly into the DSP rack (Warmth -> Breath -> Formants -> Compressor -> Analyser -> Out)
+            // Connect directly into the DSP rack
             if (warmthFilterRef.current) {
               sourceNode.connect(warmthFilterRef.current);
             } else {
@@ -882,9 +903,9 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
             }
 
             sourceNode.onended = () => {
-              if (isPlayingRef.current) {
+              if (isPlayingRef.current && playTokenRef.current === currentToken) {
                 setTimeout(() => {
-                  playChapterStudio(chapters, index + 1);
+                  playChapterStudio(chapters, index + 1, currentToken);
                 }, 350);
               }
             };
@@ -896,21 +917,27 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
           }
         }
       } catch (err) {
+        if (!isPlayingRef.current || playTokenRef.current !== currentToken) return;
         console.warn('Studio synthesis endpoint fallback to Web Speech:', err.message);
         toast('Using local neural speech synthesis fallback.', { icon: '🎙️' });
       }
     }
 
-    playChapterBrowserFallback(chapters, index);
+    playChapterBrowserFallback(chapters, index, currentToken);
   };
 
-  const playChapterBrowserFallback = (chapters, index) => {
-    if (!isPlayingRef.current || index >= chapters.length) {
-      stopAudioPlayback();
-      setCurrentChapterIdx(0);
+  const playChapterBrowserFallback = (chapters, index, token = null) => {
+    const currentToken = token !== null ? token : playTokenRef.current;
+
+    if (!isPlayingRef.current || playTokenRef.current !== currentToken || index >= chapters.length) {
+      if (playTokenRef.current === currentToken) {
+        stopAudioPlayback();
+        setCurrentChapterIdx(0);
+      }
       return;
     }
 
+    window.speechSynthesis.cancel();
     const chap = chapters[index];
     const utterance = new SpeechSynthesisUtterance(chap.text);
     const baseTheme = STORY_THEMES[selectedStyle] || STORY_THEMES.storyteller;
@@ -927,9 +954,11 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
     if (matchedVoice) utterance.voice = matchedVoice;
 
     utterance.onend = () => {
-      setTimeout(() => {
-        playChapterBrowserFallback(chapters, index + 1);
-      }, 400);
+      if (isPlayingRef.current && playTokenRef.current === currentToken) {
+        setTimeout(() => {
+          playChapterBrowserFallback(chapters, index + 1, currentToken);
+        }, 400);
+      }
     };
 
     window.speechSynthesis.speak(utterance);
@@ -940,6 +969,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
     if (isPlaying) {
       stopAudioPlayback();
     } else {
+      stopAudioPlayback();
       const chapters = buildStoryChapters();
       setChaptersList(chapters);
       setIsPlaying(true);
@@ -952,18 +982,20 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
         : (selectedEngine === 'elevenlabs' ? 'ElevenLabs Turbo v2.5' : 'Local Browser Engine');
 
       toast.success(`🎬 Narrated by ${personaName} • ${engineLabel}`, { id: 'story-play', icon: activeTheme.icon });
-      playChapterStudio(chapters, currentChapterIdx);
+      const newToken = ++playTokenRef.current;
+      playChapterStudio(chapters, currentChapterIdx, newToken);
     }
   };
 
   const jumpToChapter = (idx) => {
+    stopAudioPlayback();
     const chapters = buildStoryChapters();
     setChaptersList(chapters);
-    stopAudioPlayback();
     setIsPlaying(true);
     isPlayingRef.current = true;
     initWebAudioChain();
-    playChapterStudio(chapters, idx);
+    const newToken = ++playTokenRef.current;
+    playChapterStudio(chapters, idx, newToken);
   };
 
   const cycleRate = () => {
