@@ -770,7 +770,7 @@ const DynamicAssessmentReport = () => {
                 }}
                 style={{ background: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '14px', padding: '16px', color: '#ffffff', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '4px' }}
               >
-                <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#a855f7' }}>🤖 OpenAI to Gemini Report</span>
+                <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#a855f7' }}>🤖 Gemini Enterprise Migration Report</span>
                 <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Instant 1-Click Launch</span>
               </button>
             </div>

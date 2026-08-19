@@ -211,7 +211,7 @@ const CommandPalette = () => {
     },
     {
       id: 'gemini-sample',
-      title: 'Launch OpenAI to Gemini Enterprise Migration',
+      title: 'Launch Gemini Enterprise Migration',
       subtitle: 'Evaluates model latency, routing gateways & agent security',
       icon: FiCpu,
       action: () => navigate('/assessments/run/openai_to_gemini_enterprise_migration')
