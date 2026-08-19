@@ -618,6 +618,8 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
     };
   }, []);
 
+  const currentSourceNodeRef = useRef(null);
+
   /**
    * 🎛️ Initialize Web Audio DSP Mastering Chain (180Hz warmth + 3-Band Formant Convolver + Dynamics Compression + Morphing)
    */
@@ -628,15 +630,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
       const ctx = new AudioCtx();
       audioContextRef.current = ctx;
 
-      if (!audioElementRef.current) {
-        audioElementRef.current = new Audio();
-        audioElementRef.current.crossOrigin = 'anonymous';
-      }
-
       try {
-        const source = ctx.createMediaElementSource(audioElementRef.current);
-        sourceNodeRef.current = source;
-
         // 1. Low-Shelf Warmth EQ (180Hz)
         const warmthFilter = ctx.createBiquadFilter();
         warmthFilter.type = 'lowshelf';
@@ -688,8 +682,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
         analyser.fftSize = 64;
         analyserRef.current = analyser;
 
-        // Connect Chain: Source -> Warmth -> Breath -> F1 -> F2 -> F3 -> Compressor -> Analyser -> Out
-        source.connect(warmthFilter);
+        // Connect Chain: Warmth -> Breath -> F1 -> F2 -> F3 -> Compressor -> Analyser -> Out
         warmthFilter.connect(breathFilter);
         breathFilter.connect(f1Node);
         f1Node.connect(f2Node);
@@ -809,9 +802,12 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
       animFrameRef.current = null;
     }
 
-    if (audioElementRef.current) {
-      audioElementRef.current.pause();
-      audioElementRef.current.src = '';
+    if (currentSourceNodeRef.current) {
+      try {
+        currentSourceNodeRef.current.stop();
+        currentSourceNodeRef.current.disconnect();
+      } catch (e) {}
+      currentSourceNodeRef.current = null;
     }
 
     if (window.speechSynthesis) {
@@ -849,34 +845,55 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
             stability,
             breathDensity
           }
-        }, { timeout: 18000 });
+        }, { timeout: 45000 });
 
         if (response.data && response.data.success && response.data.audioBase64) {
           initWebAudioChain();
-          const mimePrefix = response.data.audioBase64.startsWith('UklGR') ? 'data:audio/wav;base64,' : 'data:audio/mpeg;base64,';
-          const audioSrc = `${mimePrefix}${response.data.audioBase64}`;
+          const ctx = audioContextRef.current;
           
-          if (!audioElementRef.current) {
-            audioElementRef.current = new Audio();
+          if (ctx) {
+            // Stop any active buffer node
+            if (currentSourceNodeRef.current) {
+              try {
+                currentSourceNodeRef.current.stop();
+                currentSourceNodeRef.current.disconnect();
+              } catch (e) {}
+            }
+
+            // Convert base64 into binary array
+            const binaryString = window.atob(response.data.audioBase64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+              bytes[i] = binaryString.charCodeAt(i);
+            }
+
+            // Decode directly using Web Audio
+            const audioBuffer = await ctx.decodeAudioData(bytes.buffer.slice(0));
+            const sourceNode = ctx.createBufferSource();
+            sourceNode.buffer = audioBuffer;
+            sourceNode.playbackRate.value = playbackRate;
+
+            // Connect directly into the DSP rack (Warmth -> Breath -> Formants -> Compressor -> Analyser -> Out)
+            if (warmthFilterRef.current) {
+              sourceNode.connect(warmthFilterRef.current);
+            } else {
+              sourceNode.connect(ctx.destination);
+            }
+
+            sourceNode.onended = () => {
+              if (isPlayingRef.current) {
+                setTimeout(() => {
+                  playChapterStudio(chapters, index + 1);
+                }, 350);
+              }
+            };
+
+            sourceNode.start(0);
+            currentSourceNodeRef.current = sourceNode;
+            startVisualizerLoop();
+            return;
           }
-
-          audioElementRef.current.src = audioSrc;
-          audioElementRef.current.playbackRate = playbackRate;
-
-          audioElementRef.current.onended = () => {
-            setTimeout(() => {
-              playChapterStudio(chapters, index + 1);
-            }, 350);
-          };
-
-          audioElementRef.current.onerror = (e) => {
-            console.warn('Audio element error, falling back to Web Speech:', e);
-            playChapterBrowserFallback(chapters, index);
-          };
-
-          await audioElementRef.current.play();
-          startVisualizerLoop();
-          return;
         }
       } catch (err) {
         console.warn('Studio synthesis endpoint fallback to Web Speech:', err.message);
