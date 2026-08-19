@@ -49,7 +49,7 @@ const TitleBlock = styled.div`
   h3 {
     font-size: 1.25rem;
     font-weight: 700;
-    color: theme === "dark" ? "#f8fafc" : "#0f172a";
+    color: ${props => props.$theme === 'dark' ? '#f8fafc' : '#0f172a'};
     margin: 0 0 2px 0;
 
     @media print {

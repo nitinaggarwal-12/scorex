@@ -473,25 +473,26 @@ const RoadmapGrid = styled.div`
 `;
 
 const RoadmapCard = styled.div`
-  background: rgba(15, 23, 42, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.7)' : '#ffffff'};
+  border: ${props => props.$theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.1)' : '1.5px solid #e2e8f0'};
   border-radius: 18px;
   padding: 24px;
+  box-shadow: ${props => props.$theme === 'dark' ? 'none' : '0 4px 14px rgba(0,0,0,0.04)'};
 `;
 
 const RoadmapPhase = styled.div`
   font-size: 0.8rem;
-  font-weight: 700;
-  color: #38bdf8;
+  font-weight: 800;
+  color: ${props => props.$theme === 'dark' ? '#38bdf8' : '#0284c7'};
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 6px;
 `;
 
 const RoadmapTimeline = styled.div`
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: #ffffff;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: ${props => props.$theme === 'dark' ? '#ffffff' : '#0f172a'};
   margin-bottom: 12px;
 `;
 
@@ -509,8 +510,9 @@ const MilestoneItem = styled.li`
   align-items: flex-start;
   gap: 10px;
   font-size: 0.9rem;
-  color: #cbd5e1;
-  line-height: 1.4;
+  color: ${props => props.$theme === 'dark' ? '#cbd5e1' : '#334155'};
+  line-height: 1.45;
+  font-weight: ${props => props.$theme === 'dark' ? 'normal' : '500'};
 
   svg {
     color: #10b981;
@@ -520,11 +522,12 @@ const MilestoneItem = styled.li`
 `;
 
 const RecommendationCard = styled.div`
-  background: rgba(15, 23, 42, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.7)' : '#ffffff'};
+  border: ${props => props.$theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.08)' : '1.5px solid #e2e8f0'};
   border-radius: 18px;
   padding: 24px;
   margin-bottom: 16px;
+  box-shadow: ${props => props.$theme === 'dark' ? 'none' : '0 4px 14px rgba(0,0,0,0.04)'};
 `;
 
 const RecHeader = styled.div`
@@ -537,8 +540,8 @@ const RecHeader = styled.div`
 
 const RecTitle = styled.h3`
   font-size: 1.15rem;
-  font-weight: 700;
-  color: #ffffff;
+  font-weight: 800;
+  color: ${props => props.$theme === 'dark' ? '#ffffff' : '#0f172a'};
 `;
 
 const PriorityBadge = styled.span`
@@ -1336,7 +1339,7 @@ const DynamicAssessmentReport = () => {
 
             {/* Strategic Transformation Roadmap */}
             {report.transformationRoadmap && (
-              <Card style={{ marginBottom: "32px" }}>
+              <Card $theme={theme} style={{ marginBottom: "32px" }}>
                 <CardTitle $theme={theme}>
                   <FiTrendingUp color="#38bdf8" /> Strategic Transformation Roadmap
                 </CardTitle>
@@ -1346,14 +1349,14 @@ const DynamicAssessmentReport = () => {
                     const phase = report.transformationRoadmap[pKey];
                     if (!phase) return null;
                     return (
-                      <RoadmapCard key={pKey}>
-                        <RoadmapPhase>{phase.title}</RoadmapPhase>
-                        <RoadmapTimeline>{phase.timeline}</RoadmapTimeline>
-                        <p style={{ fontSize: "0.875rem", color: "#94a3b8", marginBottom: "16px" }}>{phase.focus}</p>
+                      <RoadmapCard key={pKey} $theme={theme}>
+                        <RoadmapPhase $theme={theme}>{phase.title}</RoadmapPhase>
+                        <RoadmapTimeline $theme={theme}>{phase.timeline}</RoadmapTimeline>
+                        <p style={{ fontSize: "0.875rem", color: theme === 'dark' ? "#94a3b8" : "#475569", marginBottom: "16px", lineHeight: "1.5" }}>{phase.focus}</p>
 
                         <MilestoneList>
                           {(phase.milestones || []).map((m, mIdx) => (
-                            <MilestoneItem key={mIdx}>
+                            <MilestoneItem key={mIdx} $theme={theme}>
                               <FiCheck size={16} />
                               <span>{m}</span>
                             </MilestoneItem>
@@ -1368,28 +1371,28 @@ const DynamicAssessmentReport = () => {
 
             {/* Prioritized Recommendations */}
             {report.prioritizedRecommendations && report.prioritizedRecommendations.length > 0 && (
-              <Card style={{ marginBottom: "32px" }}>
+              <Card $theme={theme} style={{ marginBottom: "32px" }}>
                 <CardTitle $theme={theme}>
                   <FiTarget color="#10b981" /> Prioritized High-Impact Action Plan
                 </CardTitle>
 
                 {report.prioritizedRecommendations.map((rec, idx) => (
-                  <RecommendationCard key={rec.id || idx}>
+                  <RecommendationCard key={rec.id || idx} $theme={theme}>
                     <RecHeader>
-                      <RecTitle>{rec.title}</RecTitle>
+                      <RecTitle $theme={theme}>{rec.title}</RecTitle>
                       <PriorityBadge $priority={rec.priority}>{rec.priority || "High"} Priority</PriorityBadge>
                     </RecHeader>
 
-                    <p style={{ color: "#cbd5e1", fontSize: "0.95rem", marginBottom: "14px" }}>
-                      <strong>Strategic Rationale:</strong> {rec.whyItMatters}
+                    <p style={{ color: theme === 'dark' ? "#cbd5e1" : "#334155", fontSize: "0.95rem", marginBottom: "14px", lineHeight: "1.5" }}>
+                      <strong style={{ color: theme === 'dark' ? "#ffffff" : "#0f172a" }}>Strategic Rationale:</strong> {rec.whyItMatters}
                     </p>
 
                     {rec.actionSteps && rec.actionSteps.length > 0 && (
                       <div style={{ marginBottom: "12px" }}>
-                        <div style={{ fontSize: "0.85rem", fontWeight: "700", color: "#94a3b8", marginBottom: "6px" }}>
+                        <div style={{ fontSize: "0.85rem", fontWeight: "700", color: theme === 'dark' ? "#94a3b8" : "#1e293b", marginBottom: "6px" }}>
                           Recommended Action Steps:
                         </div>
-                        <ul style={{ paddingLeft: "20px", color: "#cbd5e1", fontSize: "0.9rem", margin: 0 }}>
+                        <ul style={{ paddingLeft: "20px", color: theme === 'dark' ? "#cbd5e1" : "#334155", fontSize: "0.9rem", margin: 0, lineHeight: "1.5" }}>
                           {rec.actionSteps.map((step, sIdx) => (
                             <li key={sIdx} style={{ marginBottom: "4px" }}>{step}</li>
                           ))}
@@ -1398,7 +1401,7 @@ const DynamicAssessmentReport = () => {
                     )}
 
                     {rec.expectedImpact && (
-                      <div style={{ fontSize: "0.85rem", color: "#38bdf8", marginTop: "10px" }}>
+                      <div style={{ fontSize: "0.85rem", color: theme === 'dark' ? "#38bdf8" : "#0284c7", marginTop: "10px", fontWeight: "600" }}>
                         ⚡ <strong>Expected Impact:</strong> {rec.expectedImpact}
                       </div>
                     )}

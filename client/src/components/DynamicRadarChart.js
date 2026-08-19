@@ -127,23 +127,24 @@ const TableWrap = styled.div`
 `;
 
 const DimensionRow = styled.div`
-  background: ${props => props.$theme === 'dark' ? 'rgba(30, 41, 59, 0.6)' : '#f8fafc'};
-  border: ${props => props.$theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid #e2e8f0'};
+  background: ${props => props.$theme === 'dark' ? 'rgba(30, 41, 59, 0.6)' : '#ffffff'};
+  border: ${props => props.$theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.08)' : '1.5px solid #e2e8f0'};
   border-radius: 12px;
   padding: 12px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   transition: all 0.2s ease;
+  box-shadow: ${props => props.$theme === 'dark' ? 'none' : '0 2px 6px rgba(0, 0, 0, 0.02)'};
 
   &:hover {
-    background: rgba(30, 41, 59, 0.9);
-    border-color: rgba(99, 102, 241, 0.4);
+    background: ${props => props.$theme === 'dark' ? 'rgba(30, 41, 59, 0.95)' : '#f8fafc'};
+    border-color: #6366f1;
     transform: translateX(4px);
   }
 
   @media print {
-    background: #f8fafc !important;
+    background: #ffffff !important;
     border: 1px solid #e2e8f0 !important;
   }
 `;
@@ -151,7 +152,7 @@ const DimensionRow = styled.div`
 const DimLeft = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
 
   .name {
     font-weight: 700;
@@ -164,11 +165,12 @@ const DimLeft = styled.div`
   }
 
   .desc {
-    font-size: 0.78rem;
-    color: ${props => props.$theme === 'dark' ? '#94a3b8' : '#475569'};
+    font-size: 0.8rem;
+    color: ${props => props.$theme === 'dark' ? '#94a3b8' : '#334155'};
+    line-height: 1.35;
 
     @media print {
-      color: #64748b !important;
+      color: #334155 !important;
     }
   }
 `;
@@ -180,32 +182,34 @@ const DimScores = styled.div`
   flex-shrink: 0;
 
   .baseline {
-    color: #f87171;
+    color: #dc2626;
     font-weight: 700;
     font-size: 0.9rem;
-    background: rgba(239, 68, 68, 0.15);
+    background: #fef2f2;
+    border: 1px solid #fecaca;
     padding: 3px 8px;
     border-radius: 6px;
   }
 
   .arrow {
-    color: #94a3b8;
+    color: #64748b;
     font-size: 0.8rem;
   }
 
   .target {
-    color: #34d399;
+    color: #15803d;
     font-weight: 700;
     font-size: 0.9rem;
-    background: rgba(16, 185, 129, 0.15);
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
     padding: 3px 8px;
     border-radius: 6px;
   }
 
   .delta {
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 800;
-    color: #818cf8;
+    color: #4f46e5;
   }
 `;
 
@@ -294,24 +298,24 @@ const DynamicRadarChart = ({
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: '600' }}>Benchmark:</span>
+            <span style={{ fontSize: '0.8rem', color: theme === 'dark' ? '#94a3b8' : '#475569', fontWeight: '700' }}>Benchmark:</span>
             <select
               value={selectedBenchmark}
               onChange={(e) => setSelectedBenchmark(e.target.value)}
               style={{
-                background: 'rgba(30, 41, 59, 0.8)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                color: '#f8fafc',
+                background: theme === 'dark' ? 'rgba(30, 41, 59, 0.8)' : '#ffffff',
+                border: theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.15)' : '1.5px solid #cbd5e1',
+                color: theme === 'dark' ? '#f8fafc' : '#0f172a',
                 borderRadius: '8px',
                 padding: '5px 10px',
                 fontSize: '0.8rem',
-                fontWeight: '600',
+                fontWeight: '700',
                 outline: 'none',
                 cursor: 'pointer'
               }}
             >
               {Object.entries(BENCHMARK_PROFILES).map(([key, prof]) => (
-                <option key={key} value={key} style={{ background: '#1e293b', color: '#f8fafc' }}>
+                <option key={key} value={key} style={{ background: theme === 'dark' ? '#1e293b' : '#ffffff', color: theme === 'dark' ? '#f8fafc' : '#0f172a' }}>
                   {prof.name} ({prof.score})
                 </option>
               ))}
@@ -319,10 +323,10 @@ const DynamicRadarChart = ({
           </div>
 
           <LegendRow>
-            <LegendItem $color="#ef4444" $bg="rgba(239, 68, 68, 0.3)">
+            <LegendItem $color="#dc2626" $bg="#fee2e2">
               <span className="dot" /> {baselineLabel}
             </LegendItem>
-            <LegendItem $color="#10b981" $bg="rgba(16, 185, 129, 0.3)">
+            <LegendItem $color="#16a34a" $bg="#dcfce7">
               <span className="dot" /> {targetLabel}
             </LegendItem>
             <LegendItem $color={currentBenchmark.color} $bg="transparent">
@@ -395,9 +399,9 @@ const DynamicRadarChart = ({
                     y={labelCoord.y}
                     textAnchor="middle"
                     dominantBaseline="central"
-                    fill={isHovered ? '#60a5fa' : '#cbd5e1'}
-                    fontSize="10.5"
-                    fontWeight={isHovered ? '800' : '600'}
+                    fill={isHovered ? (theme === 'dark' ? '#60a5fa' : '#2563eb') : (theme === 'dark' ? '#e2e8f0' : '#0f172a')}
+                    fontSize="11"
+                    fontWeight={isHovered ? '800' : '700'}
                     style={{ cursor: 'pointer', transition: 'all 0.2s ease' }}
                     onMouseEnter={() => setHoveredIdx(idx)}
                     onMouseLeave={() => setHoveredIdx(null)}
@@ -475,15 +479,16 @@ const DynamicRadarChart = ({
 
             return (
               <DimensionRow
+                $theme={theme}
                 key={dim.id || idx}
                 onMouseEnter={() => setHoveredIdx(idx)}
                 onMouseLeave={() => setHoveredIdx(null)}
                 style={{
-                  borderColor: hoveredIdx === idx ? 'rgba(99, 102, 241, 0.8)' : undefined,
-                  background: hoveredIdx === idx ? 'rgba(30, 41, 59, 0.95)' : undefined
+                  borderColor: hoveredIdx === idx ? '#6366f1' : undefined,
+                  background: hoveredIdx === idx ? (theme === 'dark' ? 'rgba(30, 41, 59, 0.95)' : '#eff6ff') : undefined
                 }}
               >
-                <DimLeft>
+                <DimLeft $theme={theme}>
                   <span className="name">{dim.name}</span>
                   <span className="desc">{dim.description ? `${dim.description.substring(0, 55)}...` : 'Core capability dimension'}</span>
                 </DimLeft>

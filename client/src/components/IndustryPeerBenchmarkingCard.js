@@ -146,22 +146,23 @@ const PercentileCard = styled.div`
 `;
 
 const DistributionContainer = styled.div`
-  background: rgba(30, 41, 59, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: ${props => props.$theme === 'dark' ? 'rgba(30, 41, 59, 0.5)' : '#ffffff'};
+  border: ${props => props.$theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.08)' : '1.5px solid #e2e8f0'};
   border-radius: 16px;
   padding: 24px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  box-shadow: ${props => props.$theme === 'dark' ? 'none' : '0 2px 8px rgba(0,0,0,0.02)'};
 `;
 
 const BellCurveVisual = styled.div`
   position: relative;
   margin: 20px 0 10px;
   height: 52px;
-  background: rgba(15, 23, 42, 0.6);
+  background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.6)' : '#f8fafc'};
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : '#cbd5e1'};
   overflow: hidden;
   display: flex;
 
@@ -172,14 +173,14 @@ const BellCurveVisual = styled.div`
     justify-content: center;
     font-size: 0.72rem;
     font-weight: 700;
-    border-right: 1px dashed rgba(255, 255, 255, 0.15);
+    border-right: 1px dashed ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.15)' : '#cbd5e1'};
     position: relative;
   }
 
-  .laggards { width: 25%; background: rgba(239, 68, 68, 0.12); color: #f87171; }
-  .median { width: 50%; background: rgba(59, 130, 246, 0.12); color: #60a5fa; }
-  .top-quartile { width: 15%; background: rgba(16, 185, 129, 0.12); color: #34d399; }
-  .leaders { width: 10%; background: rgba(168, 85, 247, 0.15); color: #c084fc; border-right: none; }
+  .laggards { width: 25%; background: rgba(239, 68, 68, 0.12); color: #dc2626; }
+  .median { width: 50%; background: rgba(59, 130, 246, 0.12); color: #2563eb; }
+  .top-quartile { width: 15%; background: rgba(16, 185, 129, 0.12); color: #16a34a; }
+  .leaders { width: 10%; background: rgba(168, 85, 247, 0.15); color: #7c3aed; border-right: none; }
 
   .user-pin {
     position: absolute;
@@ -199,7 +200,7 @@ const BellCurveVisual = styled.div`
       transform: translateX(-50%);
       font-size: 0.68rem;
       font-weight: 900;
-      color: ${props => props.$theme === 'dark' ? '#ffffff' : '#0f172a'};
+      color: #ffffff;
       background: #4f46e5;
       padding: 1px 6px;
       border-radius: 4px;
@@ -210,7 +211,7 @@ const BellCurveVisual = styled.div`
 
 const BenchmarkMatrixTable = styled.div`
   background: ${props => props.$theme === 'dark' ? 'rgba(30, 41, 59, 0.4)' : '#ffffff'};
-  border: ${props => props.$theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid #e2e8f0'};
+  border: ${props => props.$theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.08)' : '1.5px solid #e2e8f0'};
   border-radius: 16px;
   overflow: hidden;
   margin-bottom: 24px;
@@ -223,12 +224,10 @@ const TableHeader = styled.div`
   background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.8)' : '#f8fafc'};
   font-size: 0.76rem;
   font-weight: 800;
-  color: ${props => props.$theme === 'dark' ? '#94a3b8' : '#475569'};
-  border-bottom: ${props => props.$theme === 'dark' ? 'none' : '1px solid #e2e8f0'};
+  color: ${props => props.$theme === 'dark' ? '#94a3b8' : '#334155'};
+  border-bottom: 1.5px solid ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.08)' : '#e2e8f0'};
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #94a3b8;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr 1fr 1fr;
@@ -269,10 +268,10 @@ const StatusPill = styled.span`
     return "rgba(239, 68, 68, 0.2)";
   }};
   color: ${props => {
-    if (props.$status === "Industry Leader") return "#c084fc";
-    if (props.$status === "Above Median") return "#34d399";
-    if (props.$status === "Moderate Lag") return "#fbbf24";
-    return "#f87171";
+    if (props.$status === "Industry Leader") return "#9333ea";
+    if (props.$status === "Above Median") return "#16a34a";
+    if (props.$status === "Moderate Lag") return "#d97706";
+    return "#dc2626";
   }};
   border: 1px solid ${props => {
     if (props.$status === "Industry Leader") return "rgba(168, 85, 247, 0.4)";
@@ -284,7 +283,7 @@ const StatusPill = styled.span`
 
 const InsightsBanner = styled.div`
   background: ${props => props.$theme === 'dark' ? 'linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%)' : '#f8fafc'};
-  border: ${props => props.$theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid #e2e8f0'};
+  border: ${props => props.$theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.1)' : '1.5px solid #e2e8f0'};
   border-radius: 14px;
   padding: 18px 22px;
   display: flex;
@@ -302,8 +301,8 @@ const InsightsBanner = styled.div`
     h4 {
       margin: 0 0 4px 0;
       font-size: 0.92rem;
-      font-weight: 700;
-      color: #ffffff;
+      font-weight: 800;
+      color: ${props => props.$theme === 'dark' ? '#ffffff' : '#0f172a'};
     }
     p {
       margin: 0;
