@@ -37,10 +37,11 @@ import ExecutiveHeatmapMatrix from './ExecutiveHeatmapMatrix';
 import IndustryPeerBenchmarkingCard from './IndustryPeerBenchmarkingCard';
 import AudioBriefingPlayer from './AudioBriefingPlayer';
 import PresentationModeModal from './PresentationModeModal';
+import UnifiedDocumentPreviewModal from './UnifiedDocumentPreviewModal';
 import { exportDynamicAssessmentToExcel } from '../services/excelExportService';
 import { generateDynamicPDFReport } from '../services/pdfExportService';
 import { exportAssessmentToPPTX } from '../services/pptxExportService';
-import { exportAssessmentToJSON, exportAssessmentToCSV, exportCompleteDeliverablesBundle } from '../services/dataExportService';
+import { exportAssessmentToJSON, exportAssessmentToCSV, exportAssessmentToWord, exportCompleteDeliverablesBundle } from '../services/dataExportService';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -502,6 +503,7 @@ const DynamicAssessmentReport = () => {
   const [showSimulator, setShowSimulator] = useState(false);
   const [simulatedTargets, setSimulatedTargets] = useState(null);
   const [isPresentationOpen, setIsPresentationOpen] = useState(false);
+  const [previewDocState, setPreviewDocState] = useState({ isOpen: false, type: 'slides' });
   const [isPasscodeRequired, setIsPasscodeRequired] = useState(false);
   const [enteredPasscode, setEnteredPasscode] = useState('');
   const [activeExecutiveTab, setActiveExecutiveTab] = useState('overview');
@@ -812,116 +814,61 @@ const DynamicAssessmentReport = () => {
               {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
             </button>
             <button
-              style={{ background: 'linear-gradient(135deg, #ec4899, #8b5cf6)', border: 'none', color: '#ffffff', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700', boxShadow: '0 4px 14px rgba(236, 72, 153, 0.3)' }}
-              onClick={() => setIsPresentationOpen(true)}
-              title="Launch Fullscreen 16:9 Slide Deck for Executive Briefing"
+              style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', border: 'none', color: '#ffffff', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700', boxShadow: '0 4px 14px rgba(245, 158, 11, 0.3)' }}
+              onClick={() => setPreviewDocState({ isOpen: true, type: 'slides' })}
+              title="Preview & Open Executive Deck in Google Slides"
             >
-              📽️ Present Deck
+              📊 Slides
             </button>
 
             <button 
-              style={{ background: showSimulator ? '#4f46e5' : 'rgba(99, 102, 241, 0.25)', border: '1px solid rgba(139, 92, 246, 0.5)', color: '#c084fc', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
-              onClick={() => setShowSimulator(!showSimulator)}
+              style={{ background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15))', border: '1px solid rgba(16, 185, 129, 0.4)', color: '#34d399', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
+              onClick={() => setPreviewDocState({ isOpen: true, type: 'sheets' })}
+              title="Preview & Open in Google Sheets (Excel)"
             >
-              <FiSliders /> {showSimulator ? 'Hide What-If Simulator' : '🎛️ What-If Scenario Simulator'}
+              📈 Sheets (Excel)
             </button>
 
             <button 
-              style={{ background: 'rgba(168, 85, 247, 0.15)', border: '1px solid rgba(168, 85, 247, 0.4)', color: '#c084fc', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
-              onClick={handleShareLink}
-              title="Copy secure read-only public report link for C-suite stakeholders"
+              style={{ background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(29, 78, 216, 0.15))', border: '1px solid rgba(59, 130, 246, 0.4)', color: '#60a5fa', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
+              onClick={() => setPreviewDocState({ isOpen: true, type: 'docs' })}
+              title="Preview & Open in Google Docs (Word Memorandum)"
             >
-              <FiShare2 /> 🔗 Share Link
+              📝 Docs (Word)
             </button>
 
             <button 
-              style={{ background: 'rgba(59, 130, 246, 0.15)', border: '1px solid rgba(59, 130, 246, 0.4)', color: '#60a5fa', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
-              onClick={() => {
-                try {
-                  const res = generateDynamicPDFReport(instance, report);
-                  if (res?.success) {
-                    toast.success('📄 Executive PDF downloaded successfully!');
-                  } else {
-                    toast.error(res?.error || 'Failed to generate PDF');
-                  }
-                } catch (e) {
-                  toast.error('Failed to generate PDF report');
-                }
-              }}
+              style={{ background: 'rgba(239, 68, 68, 0.15)', border: '1px solid rgba(239, 68, 68, 0.4)', color: '#f87171', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
+              onClick={() => setPreviewDocState({ isOpen: true, type: 'pdf' })}
+              title="Preview & Print Executive PDF Report"
             >
-              <FiFileText /> 📄 Executive PDF
+              <FiFileText /> 📄 PDF Report
             </button>
 
             <button 
-              style={{ background: 'linear-gradient(135deg, rgba(217, 70, 239, 0.15), rgba(168, 85, 247, 0.15))', border: '1px solid rgba(217, 70, 239, 0.4)', color: '#e879f9', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
-              onClick={async () => {
-                try {
-                  toast.loading('Generating editable 16:9 PowerPoint Presentation...', { id: 'pptx-export' });
-                  const res = await exportAssessmentToPPTX(instance, report);
-                  if (res?.success) {
-                    toast.success('📊 Editable PPTX (Google Slides) exported successfully!', { id: 'pptx-export' });
-                  } else {
-                    toast.error(res?.error || 'Failed to export PPTX', { id: 'pptx-export' });
-                  }
-                } catch (e) {
-                  toast.error('Failed to export PPTX presentation', { id: 'pptx-export' });
-                }
-              }}
-              title="Download editable 16:9 PowerPoint / Google Slides deck for executive board meetings"
+              style={{ background: 'rgba(249, 115, 22, 0.15)', border: '1px solid rgba(249, 115, 22, 0.4)', color: '#fb923c', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
+              onClick={() => setPreviewDocState({ isOpen: true, type: 'drawio' })}
+              title="Preview & Open Cloud Architecture in Draw.io"
             >
-              <FiDownload /> 📽️ Editable PPTX / Slides
+              📐 Draw.io
             </button>
 
             <button 
-              style={{ background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.4)', color: '#34d399', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
-              onClick={() => {
-                try {
-                  exportDynamicAssessmentToExcel(instance, report);
-                  toast.success('📊 Multi-sheet Excel workbook exported successfully!');
-                } catch (e) {
-                  toast.error('Failed to export Excel workbook');
-                }
-              }}
+              style={{ background: 'rgba(14, 165, 233, 0.15)', border: '1px solid rgba(14, 165, 233, 0.4)', color: '#38bdf8', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
+              onClick={() => setPreviewDocState({ isOpen: true, type: 'csv' })}
+              title="Preview & Export Flat CSV Matrix"
             >
-              <FiDownload /> 📊 Excel
-            </button>
-
-            <button 
-              style={{ background: 'rgba(245, 158, 11, 0.15)', border: '1px solid rgba(245, 158, 11, 0.4)', color: '#fbbf24', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
-              onClick={() => {
-                const res = exportAssessmentToCSV(instance, report);
-                if (res?.success) {
-                  toast.success('📑 Flattened CSV exported successfully!');
-                } else {
-                  toast.error('Failed to export CSV');
-                }
-              }}
-            >
-              <FiDownload /> 📑 CSV
-            </button>
-
-            <button 
-              style={{ background: 'rgba(56, 189, 248, 0.15)', border: '1px solid rgba(56, 189, 248, 0.4)', color: '#38bdf8', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
-              onClick={() => {
-                const res = exportAssessmentToJSON(instance, report);
-                if (res?.success) {
-                  toast.success('📦 Raw JSON export saved!');
-                } else {
-                  toast.error('Failed to export JSON');
-                }
-              }}
-            >
-              <FiDownload /> 📦 JSON
+              📑 CSV
             </button>
 
             <button 
               style={{ background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(168, 85, 247, 0.2))', border: '1.5px solid rgba(236, 72, 153, 0.5)', color: '#f472b6', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700', boxShadow: '0 4px 14px rgba(236, 72, 153, 0.25)' }}
               onClick={async () => {
-                toast.loading('Generating all deliverables (PDF + PPTX + Excel + CSV + JSON + Architecture XMLs)...', { id: 'bundle-export' });
+                toast.loading('Generating complete deliverable bundle (Slides + Sheets + Docs + PDF + CSV + Draw.io)...', { id: 'bundle-export' });
                 await exportCompleteDeliverablesBundle(instance, report, { exportDynamicAssessmentToExcel, generateDynamicPDFReport, exportAssessmentToPPTX });
                 toast.success('🗂️ Complete Deliverables Package exported successfully!', { id: 'bundle-export', duration: 4000 });
               }}
-              title="Download 1-click complete package: Executive PDF, Editable PPTX Deck, Multi-sheet Excel, CSV Matrix, Raw JSON, and Draw.io XMLs"
+              title="Download 1-click complete package: PDF, PPTX Deck, Excel, Word Doc, CSV Matrix, Raw JSON, and Draw.io XMLs"
             >
               <FiDownload /> 🗂️ All Deliverables Bundle
             </button>
@@ -1384,6 +1331,16 @@ const DynamicAssessmentReport = () => {
         <PresentationModeModal
           isOpen={isPresentationOpen}
           onClose={() => setIsPresentationOpen(false)}
+          instance={instance}
+          report={report}
+          framework={framework}
+        />
+
+        {/* Gmail/Drive-Style Unified Document Preview & Cloud Hub */}
+        <UnifiedDocumentPreviewModal
+          isOpen={previewDocState.isOpen}
+          initialDocType={previewDocState.type}
+          onClose={() => setPreviewDocState(prev => ({ ...prev, isOpen: false }))}
           instance={instance}
           report={report}
           framework={framework}

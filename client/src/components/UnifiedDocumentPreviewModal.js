@@ -1,0 +1,900 @@
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  FiX, 
+  FiDownload, 
+  FiChevronLeft, 
+  FiChevronRight, 
+  FiCheckCircle, 
+  FiPrinter, 
+  FiCopy, 
+  FiExternalLink,
+  FiFileText,
+  FiLayers,
+  FiSearch
+} from "react-icons/fi";
+import toast from "react-hot-toast";
+import { exportAssessmentToPPTX } from "../services/pptxExportService";
+import { exportDynamicAssessmentToExcel } from "../services/excelExportService";
+import { 
+  exportAssessmentToCSV, 
+  exportAssessmentToJSON, 
+  exportAssessmentToWord, 
+  exportDrawioFile 
+} from "../services/dataExportService";
+import { generateDynamicPDFReport } from "../services/pdfExportService";
+import DynamicRadarChart from "./DynamicRadarChart";
+import ExecutiveHeatmapMatrix from "./ExecutiveHeatmapMatrix";
+import FinancialImpactCard from "./FinancialImpactCard";
+import ArchitectureComparisonDiagram from "./ArchitectureComparisonDiagram";
+
+const FullscreenOverlay = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #090d16;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  color: #f8fafc;
+  overflow: hidden;
+`;
+
+const TopDeckBar = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 28px;
+  background: rgba(15, 23, 42, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px);
+  gap: 16px;
+  flex-wrap: wrap;
+`;
+
+const DocTabsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(30, 41, 59, 0.7);
+  padding: 4px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+`;
+
+const DocTab = styled.button`
+  background: ${props => props.$active ? props.$accentColor || '#3b82f6' : 'transparent'};
+  color: ${props => props.$active ? '#ffffff' : '#94a3b8'};
+  border: none;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: #ffffff;
+    background: ${props => props.$active ? props.$accentColor || '#3b82f6' : 'rgba(255, 255, 255, 0.08)'};
+  }
+`;
+
+const PreviewBody = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px 40px;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+`;
+
+const CloudButton = styled.button`
+  background: ${props => props.$gradient || 'linear-gradient(135deg, #3b82f6, #1d4ed8)'};
+  border: 1px solid ${props => props.$borderColor || '#60a5fa'};
+  color: #ffffff;
+  border-radius: 10px;
+  padding: 7px 16px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 10px ${props => props.$shadowColor || 'rgba(59, 130, 246, 0.3)'};
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px ${props => props.$shadowColor || 'rgba(59, 130, 246, 0.4)'};
+  }
+`;
+
+const ActionButton = styled.button`
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border-radius: 10px;
+  padding: 7px 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+`;
+
+const SheetTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  background: #ffffff;
+  color: #0f172a;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+
+  th {
+    background: #0f172a;
+    color: #ffffff;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 0.03em;
+    border-bottom: 2px solid #1e293b;
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  tr:nth-child(even) td {
+    background: #f8fafc;
+  }
+
+  tr:hover td {
+    background: #f1f5f9;
+  }
+`;
+
+const DocumentPaper = styled.div`
+  background: #ffffff;
+  color: #0f172a;
+  padding: 48px 60px;
+  border-radius: 12px;
+  max-width: 960px;
+  margin: 0 auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  font-family: 'Calibri', 'Arial', sans-serif;
+  line-height: 1.6;
+
+  h1 {
+    font-size: 2rem;
+    color: #0b132b;
+    border-bottom: 3px solid #1d4ed8;
+    padding-bottom: 8px;
+    margin-bottom: 6px;
+  }
+
+  h2 {
+    font-size: 1.35rem;
+    color: #1d4ed8;
+    margin-top: 28px;
+    border-bottom: 1px solid #cbd5e1;
+    padding-bottom: 6px;
+  }
+
+  p {
+    font-size: 1rem;
+    color: #334155;
+  }
+`;
+
+export const UnifiedDocumentPreviewModal = ({ 
+  isOpen, 
+  onClose, 
+  initialDocType = 'slides', 
+  instance, 
+  report, 
+  framework 
+}) => {
+  const [activeDocType, setActiveDocType] = useState(initialDocType);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [activeSheetTab, setActiveSheetTab] = useState('summary');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    if (initialDocType) {
+      setActiveDocType(initialDocType);
+    }
+  }, [initialDocType, isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  const org = instance?.customerName || 'Organization';
+  const overallScore = instance?.totalScore || report?.overallScore || '3.0';
+  const maturityStage = instance?.maturityLevel || report?.maturityLevel || 'Defined';
+  const scores = instance?.scores || report?.dimensionScores || {};
+  const dimensions = framework?.dimensions || [];
+  const recs = report?.prioritizedRecommendations || report?.prioritizedActions || [];
+  const safeName = org.toLowerCase().replace(/[^a-z0-9]/g, '_');
+
+  const DOC_CONFIGS = {
+    slides: {
+      name: `${org} - Executive Architecture Deck.pptx`,
+      app: 'Google Slides',
+      appIcon: '📊',
+      badge: 'PPTX / GOOGLE SLIDES',
+      cloudUrl: 'https://slides.new',
+      gradient: 'linear-gradient(135deg, #f59e0b, #d97706)',
+      borderColor: '#fbbf24',
+      shadowColor: 'rgba(245, 158, 11, 0.35)',
+      tabColor: '#f59e0b',
+      downloadLabel: 'Download .pptx',
+      onDownload: async () => {
+        toast.loading('Generating 16:9 Executive PowerPoint Presentation...', { id: 'pptx-export' });
+        const res = await exportAssessmentToPPTX(instance, report);
+        if (res?.success) {
+          toast.success('📊 PPTX deck exported successfully!', { id: 'pptx-export' });
+        } else {
+          toast.error(res?.error || 'Failed to export PPTX', { id: 'pptx-export' });
+        }
+      }
+    },
+    sheets: {
+      name: `${org} - Maturity Scores & Analysis.xlsx`,
+      app: 'Google Sheets',
+      appIcon: '📈',
+      badge: 'XLSX / GOOGLE SHEETS',
+      cloudUrl: 'https://sheets.new',
+      gradient: 'linear-gradient(135deg, #10b981, #047857)',
+      borderColor: '#34d399',
+      shadowColor: 'rgba(16, 185, 129, 0.35)',
+      tabColor: '#10b981',
+      downloadLabel: 'Download .xlsx',
+      onDownload: () => {
+        try {
+          exportDynamicAssessmentToExcel(instance, report);
+          toast.success('📊 Multi-sheet Excel workbook exported!');
+        } catch (e) {
+          toast.error('Failed to export Excel workbook');
+        }
+      }
+    },
+    docs: {
+      name: `${org} - Executive Advisory Memo.docx`,
+      app: 'Google Docs',
+      appIcon: '📝',
+      badge: 'DOCX / GOOGLE DOCS',
+      cloudUrl: 'https://docs.new',
+      gradient: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+      borderColor: '#60a5fa',
+      shadowColor: 'rgba(59, 130, 246, 0.35)',
+      tabColor: '#3b82f6',
+      downloadLabel: 'Download .docx',
+      onDownload: () => {
+        const res = exportAssessmentToWord(instance, report);
+        if (res?.success) {
+          toast.success('📝 Executive Word memorandum exported!');
+        } else {
+          toast.error('Failed to export Word document');
+        }
+      }
+    },
+    pdf: {
+      name: `${org} - Board Advisory Report.pdf`,
+      app: 'Print / Web PDF',
+      appIcon: '📄',
+      badge: 'PDF EXECUTIVE REPORT',
+      cloudUrl: null,
+      gradient: 'linear-gradient(135deg, #ef4444, #b91c1c)',
+      borderColor: '#f87171',
+      shadowColor: 'rgba(239, 68, 68, 0.35)',
+      tabColor: '#ef4444',
+      downloadLabel: 'Download .pdf',
+      onDownload: () => {
+        try {
+          generateDynamicPDFReport(instance, report);
+          toast.success('📄 Executive PDF generated!');
+        } catch (e) {
+          toast.error('Failed to generate PDF report');
+        }
+      }
+    },
+    csv: {
+      name: `${org} - Flat Assessment Matrix.csv`,
+      app: 'Google Sheets (CSV)',
+      appIcon: '📑',
+      badge: 'CSV MATRIX',
+      cloudUrl: 'https://sheets.new',
+      gradient: 'linear-gradient(135deg, #0ea5e9, #0284c7)',
+      borderColor: '#38bdf8',
+      shadowColor: 'rgba(14, 165, 233, 0.35)',
+      tabColor: '#0ea5e9',
+      downloadLabel: 'Download .csv',
+      onDownload: () => {
+        const res = exportAssessmentToCSV(instance, report);
+        if (res?.success) {
+          toast.success('📑 Flat CSV matrix exported!');
+        } else {
+          toast.error('Failed to export CSV');
+        }
+      }
+    },
+    drawio: {
+      name: `${org} - Cloud Architecture.drawio`,
+      app: 'Draw.io / diagrams.net',
+      appIcon: '📐',
+      badge: 'DRAW.IO / ARCHITECTURE',
+      cloudUrl: 'https://app.diagrams.net',
+      gradient: 'linear-gradient(135deg, #f97316, #c2410c)',
+      borderColor: '#fb923c',
+      shadowColor: 'rgba(249, 115, 22, 0.35)',
+      tabColor: '#f97316',
+      downloadLabel: 'Download .drawio',
+      onDownload: () => {
+        const diagrams = report?.architectureDiagrams || instance?.architectureDiagrams || {};
+        if (diagrams.targetStateXml) {
+          exportDrawioFile(diagrams.targetStateXml, `scorex_${safeName}_target_state.drawio`);
+          toast.success('📐 Target architecture Draw.io XML exported!');
+        } else if (diagrams.currentStateXml) {
+          exportDrawioFile(diagrams.currentStateXml, `scorex_${safeName}_current_state.drawio`);
+          toast.success('📐 Current architecture Draw.io XML exported!');
+        } else {
+          toast.error('No Draw.io XML available for export');
+        }
+      }
+    }
+  };
+
+  const currentConfig = DOC_CONFIGS[activeDocType] || DOC_CONFIGS.slides;
+
+  const handleOpenCloud = async () => {
+    if (currentConfig.cloudUrl) {
+      toast.loading(`Opening ${currentConfig.app}...`, { id: 'open-cloud' });
+      if (currentConfig.onDownload) {
+        await currentConfig.onDownload();
+      }
+      window.open(currentConfig.cloudUrl, '_blank', 'noopener,noreferrer');
+      toast.success(`Opened ${currentConfig.app} in new tab!`, { id: 'open-cloud', icon: currentConfig.appIcon });
+    } else if (activeDocType === 'pdf') {
+      window.print();
+    }
+  };
+
+  return (
+    <AnimatePresence>
+      <FullscreenOverlay
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      >
+        {/* Top Gmail/Drive-Style Action Header */}
+        <TopDeckBar>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div style={{ 
+              width: "36px", 
+              height: "36px", 
+              borderRadius: "10px", 
+              background: currentConfig.tabColor || '#3b82f6', 
+              display: "flex", 
+              alignItems: "center", 
+              justifyContent: "center",
+              fontSize: "1.2rem",
+              boxShadow: `0 2px 8px ${currentConfig.shadowColor}`
+            }}>
+              <span>{currentConfig.appIcon}</span>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <span style={{ fontWeight: 800, fontSize: "0.95rem", color: "#f8fafc" }}>
+                  {currentConfig.name}
+                </span>
+                <span style={{ 
+                  fontSize: "0.68rem", 
+                  background: "rgba(255, 255, 255, 0.1)", 
+                  color: "#cbd5e1", 
+                  border: "1px solid rgba(255, 255, 255, 0.2)", 
+                  padding: "1px 6px", 
+                  borderRadius: "4px", 
+                  fontWeight: 700 
+                }}>
+                  {currentConfig.badge}
+                </span>
+              </div>
+              <span style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
+                {framework?.title || 'Architecture Advisory'} • Live In-Browser Preview & Cloud Bridge
+              </span>
+            </div>
+          </div>
+
+          {/* Doc Type Selector Tabs */}
+          <DocTabsContainer>
+            <DocTab 
+              $active={activeDocType === 'slides'} 
+              $accentColor="#f59e0b"
+              onClick={() => setActiveDocType('slides')}
+            >
+              📊 Google Slides
+            </DocTab>
+            <DocTab 
+              $active={activeDocType === 'sheets'} 
+              $accentColor="#10b981"
+              onClick={() => setActiveDocType('sheets')}
+            >
+              📈 Google Sheets (Excel)
+            </DocTab>
+            <DocTab 
+              $active={activeDocType === 'docs'} 
+              $accentColor="#3b82f6"
+              onClick={() => setActiveDocType('docs')}
+            >
+              📝 Google Docs (Word)
+            </DocTab>
+            <DocTab 
+              $active={activeDocType === 'pdf'} 
+              $accentColor="#ef4444"
+              onClick={() => setActiveDocType('pdf')}
+            >
+              📄 PDF Report
+            </DocTab>
+            <DocTab 
+              $active={activeDocType === 'csv'} 
+              $accentColor="#0ea5e9"
+              onClick={() => setActiveDocType('csv')}
+            >
+              📑 CSV
+            </DocTab>
+            <DocTab 
+              $active={activeDocType === 'drawio'} 
+              $accentColor="#f97316"
+              onClick={() => setActiveDocType('drawio')}
+            >
+              📐 Draw.io
+            </DocTab>
+          </DocTabsContainer>
+
+          {/* Right Cloud Actions */}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            {currentConfig.cloudUrl && (
+              <CloudButton
+                $gradient={currentConfig.gradient}
+                $borderColor={currentConfig.borderColor}
+                $shadowColor={currentConfig.shadowColor}
+                onClick={handleOpenCloud}
+                title={`Open and edit directly in ${currentConfig.app}`}
+              >
+                <span>{currentConfig.appIcon}</span> Open with {currentConfig.app}
+              </CloudButton>
+            )}
+
+            <ActionButton 
+              onClick={currentConfig.onDownload}
+              title={currentConfig.downloadLabel}
+            >
+              <FiDownload /> {currentConfig.downloadLabel}
+            </ActionButton>
+
+            <ActionButton
+              onClick={onClose}
+              style={{ background: "rgba(239, 68, 68, 0.15)", borderColor: "rgba(239, 68, 68, 0.3)", color: "#f87171" }}
+              title="Close Preview"
+            >
+              <FiX size={16} />
+            </ActionButton>
+          </div>
+        </TopDeckBar>
+
+        {/* In-Browser Interactive Preview Body */}
+        <PreviewBody>
+          {/* 1. SLIDES PREVIEW */}
+          {activeDocType === 'slides' && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(30, 41, 59, 0.5)", padding: "10px 20px", borderRadius: "10px" }}>
+                <span style={{ fontSize: "0.88rem", color: "#cbd5e1", fontWeight: 700 }}>
+                  16:9 Executive Presentation Deck • Slide {currentSlide + 1} of 6
+                </span>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <ActionButton 
+                    disabled={currentSlide === 0}
+                    onClick={() => setCurrentSlide(prev => Math.max(0, prev - 1))}
+                  >
+                    <FiChevronLeft /> Prev Slide
+                  </ActionButton>
+                  <ActionButton 
+                    disabled={currentSlide === 5}
+                    onClick={() => setCurrentSlide(prev => Math.min(5, prev + 1))}
+                  >
+                    Next Slide <FiChevronRight />
+                  </ActionButton>
+                </div>
+              </div>
+
+              {currentSlide === 0 && (
+                <div style={{ background: "#0b132b", border: "1px solid #1e293b", borderRadius: "16px", padding: "48px", textAlign: "center", minHeight: "450px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", gap: "16px" }}>
+                  <span style={{ fontSize: "0.85rem", background: "#1d4ed8", color: "#fff", padding: "4px 12px", borderRadius: "6px", fontWeight: 800 }}>
+                    SCOREX ENTERPRISE ADVISORY
+                  </span>
+                  <h1 style={{ fontSize: "2.4rem", margin: 0, color: "#ffffff", fontWeight: 900 }}>{framework?.title || 'Enterprise Modernization Assessment'}</h1>
+                  <h3 style={{ fontSize: "1.2rem", color: "#38bdf8", margin: 0 }}>Target Enterprise: {org}</h3>
+                  <div style={{ display: "flex", gap: "24px", marginTop: "20px" }}>
+                    <div style={{ background: "#162238", padding: "16px 28px", borderRadius: "12px", border: "1px solid #2a3b5c" }}>
+                      <div style={{ fontSize: "0.78rem", color: "#94a3b8" }}>OVERALL MATURITY</div>
+                      <div style={{ fontSize: "2rem", fontWeight: 800, color: "#34d399" }}>{overallScore} / 5.0</div>
+                    </div>
+                    <div style={{ background: "#162238", padding: "16px 28px", borderRadius: "12px", border: "1px solid #2a3b5c" }}>
+                      <div style={{ fontSize: "0.78rem", color: "#94a3b8" }}>PROJECTED 3-YR ROI</div>
+                      <div style={{ fontSize: "2rem", fontWeight: 800, color: "#60a5fa" }}>$2.3M - $4.2M</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {currentSlide === 1 && (
+                <ExecutiveHeatmapMatrix
+                  dimensions={framework?.dimensions || []}
+                  dimensionScores={scores || {}}
+                  responses={instance?.responses || {}}
+                />
+              )}
+
+              {currentSlide === 2 && (
+                <DynamicRadarChart
+                  dimensions={framework?.dimensions || []}
+                  dimensionScores={scores || {}}
+                  responses={instance?.responses || {}}
+                />
+              )}
+
+              {currentSlide === 3 && (
+                <FinancialImpactCard
+                  pillarScores={scores || {}}
+                  framework={framework}
+                  overallCurrent={instance?.totalScore || 2.5}
+                  overallTarget={4.2}
+                />
+              )}
+
+              {currentSlide === 4 && (
+                <ArchitectureComparisonDiagram
+                  instanceId={instance?.id}
+                  initialDiagrams={report?.architectureDiagrams}
+                  currentScore={instance?.totalScore || 2.5}
+                  targetScore={4.5}
+                  customerName={org}
+                  useCase={instance?.useCase}
+                  framework={framework}
+                />
+              )}
+
+              {currentSlide === 5 && (
+                <div style={{ background: "rgba(30, 41, 59, 0.6)", borderRadius: "16px", padding: "32px", border: "1px solid rgba(255,255,255,0.1)" }}>
+                  <h2 style={{ fontSize: "1.5rem", color: "#ffffff", marginTop: 0 }}>High-Priority Transformation Roadmap</h2>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                    {recs.slice(0, 5).map((r, idx) => (
+                      <div key={idx} style={{ background: "#0f172a", padding: "16px 20px", borderRadius: "10px", border: "1px solid #334155", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <div>
+                          <h4 style={{ margin: "0 0 4px 0", color: "#ffffff" }}>{idx + 1}. {r.title || r.recommendation}</h4>
+                          <p style={{ margin: 0, fontSize: "0.85rem", color: "#94a3b8" }}>{r.whyItMatters || r.impact || r.description}</p>
+                        </div>
+                        <span style={{ fontSize: "0.78rem", background: "rgba(16, 185, 129, 0.2)", color: "#34d399", padding: "4px 10px", borderRadius: "6px", fontWeight: 700 }}>
+                          {r.timeline || 'Phase 1'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 2. SHEETS / EXCEL PREVIEW */}
+          {activeDocType === 'sheets' && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <DocTab $active={activeSheetTab === 'summary'} $accentColor="#10b981" onClick={() => setActiveSheetTab('summary')}>
+                    📋 Sheet 1: Executive Summary
+                  </DocTab>
+                  <DocTab $active={activeSheetTab === 'scores'} $accentColor="#10b981" onClick={() => setActiveSheetTab('scores')}>
+                    📊 Sheet 2: Pillar Scoring Matrix
+                  </DocTab>
+                  <DocTab $active={activeSheetTab === 'roadmap'} $accentColor="#10b981" onClick={() => setActiveSheetTab('roadmap')}>
+                    🗺️ Sheet 3: Action Roadmap
+                  </DocTab>
+                </div>
+
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", background: "rgba(30, 41, 59, 0.7)", padding: "6px 12px", borderRadius: "8px" }}>
+                  <FiSearch color="#94a3b8" />
+                  <input
+                    type="text"
+                    placeholder="Search spreadsheet rows..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={{ background: "transparent", border: "none", color: "#fff", fontSize: "0.85rem", outline: "none" }}
+                  />
+                </div>
+              </div>
+
+              {activeSheetTab === 'summary' && (
+                <SheetTable>
+                  <thead>
+                    <tr>
+                      <th>METRIC / PROPERTY</th>
+                      <th>ASSESSMENT VALUE</th>
+                      <th>TARGET HORIZON</th>
+                      <th>GOVERNANCE STATUS</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>Target Organization</strong></td>
+                      <td>{org}</td>
+                      <td>Enterprise Grade</td>
+                      <td><span style={{ color: "#047857", fontWeight: 700 }}>VERIFIED</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Overall Cloud Maturity Index</strong></td>
+                      <td><strong>{overallScore} / 5.0</strong> ({maturityStage})</td>
+                      <td><strong>4.2 / 5.0</strong> (Optimized)</td>
+                      <td><span style={{ color: "#b45309", fontWeight: 700 }}>MODERNIZATION REQUIRED</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Projected 3-Year ROI Savings</strong></td>
+                      <td>$2,340,000 - $4,200,000</td>
+                      <td>35% - 50% TCO Cut</td>
+                      <td><span style={{ color: "#047857", fontWeight: 700 }}>FINANCIALLY MODELLED</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Assessed Architectural Pillars</strong></td>
+                      <td>{dimensions.length} Dimensions Assessed</td>
+                      <td>100% Coverage</td>
+                      <td><span style={{ color: "#047857", fontWeight: 700 }}>COMPLETE</span></td>
+                    </tr>
+                  </tbody>
+                </SheetTable>
+              )}
+
+              {activeSheetTab === 'scores' && (
+                <SheetTable>
+                  <thead>
+                    <tr>
+                      <th>ARCHITECTURAL DIMENSION</th>
+                      <th>CURRENT SCORE</th>
+                      <th>TARGET SCORE</th>
+                      <th>MATURITY GAP</th>
+                      <th>RISK TIER</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dimensions
+                      .filter(d => d.name.toLowerCase().includes(searchTerm.toLowerCase()))
+                      .map((dim, idx) => {
+                        const cur = Number(scores[dim.id] || scores[dim.name] || 2.8);
+                        const tgt = 4.2;
+                        const gap = (tgt - cur).toFixed(1);
+                        return (
+                          <tr key={idx}>
+                            <td><strong>{dim.name}</strong></td>
+                            <td style={{ color: "#1d4ed8", fontWeight: 700 }}>{cur.toFixed(1)} / 5.0</td>
+                            <td style={{ color: "#047857", fontWeight: 700 }}>{tgt.toFixed(1)} / 5.0</td>
+                            <td style={{ color: "#b91c1c", fontWeight: 700 }}>+{gap} pts</td>
+                            <td>
+                              <span style={{ 
+                                background: gap > 1.2 ? '#fee2e2' : '#fef3c7', 
+                                color: gap > 1.2 ? '#991b1b' : '#92400e', 
+                                padding: '3px 8px', 
+                                borderRadius: '4px', 
+                                fontWeight: 700,
+                                fontSize: '0.78rem' 
+                              }}>
+                                {gap > 1.2 ? 'HIGH RISK' : 'MEDIUM RISK'}
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                </SheetTable>
+              )}
+
+              {activeSheetTab === 'roadmap' && (
+                <SheetTable>
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>INITIATIVE / ACTION</th>
+                      <th>BUSINESS IMPACT</th>
+                      <th>TIMELINE / PHASE</th>
+                      <th>EFFORT</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {recs
+                      .filter(r => (r.title || r.recommendation || '').toLowerCase().includes(searchTerm.toLowerCase()))
+                      .map((r, idx) => (
+                        <tr key={idx}>
+                          <td><strong>{idx + 1}</strong></td>
+                          <td><strong>{r.title || r.recommendation}</strong></td>
+                          <td>{r.whyItMatters || r.impact || r.description}</td>
+                          <td>
+                            <span style={{ background: '#ecfdf5', color: '#047857', padding: '3px 8px', borderRadius: '4px', fontWeight: 700, fontSize: '0.78rem' }}>
+                              {r.timeline || 'Phase 1'}
+                            </span>
+                          </td>
+                          <td><strong>{r.effort || 'Medium'}</strong></td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </SheetTable>
+              )}
+            </div>
+          )}
+
+          {/* 3. DOCS / WORD PREVIEW */}
+          {activeDocType === 'docs' && (
+            <DocumentPaper>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
+                <div>
+                  <h1 style={{ margin: "0 0 6px 0" }}>ScoreX Executive Advisory Briefing</h1>
+                  <span style={{ color: "#64748b", fontSize: "0.95rem" }}>
+                    Google Cloud Enterprise Architecture & Modernization Strategy • {new Date().toLocaleDateString()}
+                  </span>
+                </div>
+                <ActionButton 
+                  onClick={() => {
+                    navigator.clipboard.writeText(`ScoreX Executive Report for ${org}\nOverall Score: ${overallScore}/5.0\nTarget ROI: $2.3M - $4.2M`);
+                    toast.success('📋 Executive summary copied to clipboard!');
+                  }}
+                  style={{ color: "#1e293b", borderColor: "#cbd5e1", background: "#f8fafc" }}
+                >
+                  <FiCopy /> Copy Text
+                </ActionButton>
+              </div>
+
+              <div style={{ background: "#f8fafc", border: "1px solid #cbd5e1", padding: "16px 20px", borderRadius: "8px", margin: "20px 0" }}>
+                <strong>Target Organization:</strong> {org}<br />
+                <strong>Initiative:</strong> {framework?.title || 'Data & AI Architecture Modernization'}<br />
+                <strong>Maturity Baseline:</strong> <span style={{ color: "#1d4ed8", fontWeight: 700 }}>{overallScore} / 5.0 ({maturityStage})</span><br />
+                <strong>Projected 3-Yr ROI:</strong> <span style={{ color: "#047857", fontWeight: 700 }}>$2.3M - $4.2M (35-50% TCO Savings)</span>
+              </div>
+
+              <h2>1. Executive Summary & Strategic Rationale</h2>
+              <p>
+                This memorandum establishes the formal modernization strategy for <strong>{org}</strong> on Google Cloud Platform. 
+                Based on diagnostic assessment across {dimensions.length} architectural dimensions, ScoreX has outlined prioritized migration 
+                actions to eliminate operational debt, implement streaming CDC with Datastream, and orchestrate scalable agentic AI mesh topologies.
+              </p>
+
+              <h2>2. Architectural Dimension Scores</h2>
+              <table style={{ width: "100%", borderCollapse: "collapse", margin: "16px 0", fontSize: "0.9rem" }}>
+                <thead>
+                  <tr style={{ background: "#0b132b", color: "#ffffff" }}>
+                    <th style={{ padding: "8px 12px", textAlign: "left" }}>Pillar</th>
+                    <th style={{ padding: "8px 12px", textAlign: "left" }}>Current Score</th>
+                    <th style={{ padding: "8px 12px", textAlign: "left" }}>Target Horizon</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dimensions.map((dim, idx) => (
+                    <tr key={idx} style={{ borderBottom: "1px solid #cbd5e1", background: idx % 2 === 0 ? '#ffffff' : '#f8fafc' }}>
+                      <td style={{ padding: "8px 12px" }}><strong>{dim.name}</strong></td>
+                      <td style={{ padding: "8px 12px", color: "#1d4ed8", fontWeight: 700 }}>{scores[dim.id] || scores[dim.name] || '2.8'} / 5.0</td>
+                      <td style={{ padding: "8px 12px", color: "#047857", fontWeight: 700 }}>4.2+ / 5.0</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              <h2>3. Priority Transformation Recommendations</h2>
+              {recs.slice(0, 5).map((r, idx) => (
+                <div key={idx} style={{ borderLeft: "4px solid #1d4ed8", padding: "8px 16px", margin: "12px 0", background: "#f8fafc" }}>
+                  <strong>{idx + 1}. {r.title || r.recommendation}</strong><br />
+                  <span style={{ fontSize: "0.9rem", color: "#64748b" }}>{r.whyItMatters || r.impact || r.description}</span><br />
+                  <span style={{ fontSize: "0.82rem", color: "#047857", fontWeight: 700 }}>Timeline: {r.timeline || 'Phase 1 (Days 0-30)'}</span>
+                </div>
+              ))}
+            </DocumentPaper>
+          )}
+
+          {/* 4. PDF REPORT PREVIEW */}
+          {activeDocType === 'pdf' && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(30, 41, 59, 0.5)", padding: "10px 20px", borderRadius: "10px" }}>
+                <span style={{ fontSize: "0.88rem", color: "#cbd5e1", fontWeight: 700 }}>
+                  Executive PDF Report Layout
+                </span>
+                <ActionButton onClick={() => window.print()}>
+                  <FiPrinter /> Print to PDF
+                </ActionButton>
+              </div>
+
+              <DynamicRadarChart
+                dimensions={framework?.dimensions || []}
+                dimensionScores={scores || {}}
+                responses={instance?.responses || {}}
+              />
+
+              <FinancialImpactCard
+                pillarScores={scores || {}}
+                framework={framework}
+                overallCurrent={instance?.totalScore || 2.5}
+                overallTarget={4.2}
+              />
+            </div>
+          )}
+
+          {/* 5. DRAW.IO ARCHITECTURE PREVIEW */}
+          {activeDocType === 'drawio' && (
+            <ArchitectureComparisonDiagram
+              instanceId={instance?.id}
+              initialDiagrams={report?.architectureDiagrams}
+              currentScore={instance?.totalScore || 2.5}
+              targetScore={4.5}
+              customerName={org}
+              useCase={instance?.useCase}
+              framework={framework}
+            />
+          )}
+
+          {/* 6. CSV MATRIX PREVIEW */}
+          {activeDocType === 'csv' && (
+            <SheetTable>
+              <thead>
+                <tr>
+                  <th>DIMENSION</th>
+                  <th>QUESTION ID</th>
+                  <th>CURRENT RESPONSE</th>
+                  <th>TARGET HORIZON</th>
+                  <th>TECHNICAL PAIN</th>
+                </tr>
+              </thead>
+              <tbody>
+                {dimensions.flatMap(d => (d.questions || []).map((q, qIdx) => (
+                  <tr key={`${d.id}-${q.id || qIdx}`}>
+                    <td><strong>{d.name}</strong></td>
+                    <td><code>{q.id}</code></td>
+                    <td style={{ color: "#1d4ed8", fontWeight: 700 }}>{instance?.responses?.[q.id] || 'Not Answered'}</td>
+                    <td style={{ color: "#047857", fontWeight: 700 }}>{instance?.responses?.[`${q.id}_future_state`] || 'N/A'}</td>
+                    <td>{Array.isArray(instance?.responses?.[`${q.id}_technical_pain`]) ? instance?.responses?.[`${q.id}_technical_pain`].join(', ') : 'None logged'}</td>
+                  </tr>
+                )))}
+              </tbody>
+            </SheetTable>
+          )}
+        </PreviewBody>
+      </FullscreenOverlay>
+    </AnimatePresence>
+  );
+};
+
+export default UnifiedDocumentPreviewModal;
