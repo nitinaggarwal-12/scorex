@@ -19,7 +19,8 @@ import {
   FiTarget,
   FiCheck,
   FiSliders,
-  FiEdit3
+  FiEdit3,
+  FiChevronDown
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
@@ -42,6 +43,66 @@ import { exportDynamicAssessmentToExcel } from '../services/excelExportService';
 import { generateDynamicPDFReport } from '../services/pdfExportService';
 import { exportAssessmentToPPTX } from '../services/pptxExportService';
 import { exportAssessmentToJSON, exportAssessmentToCSV, exportAssessmentToWord, exportCompleteDeliverablesBundle } from '../services/dataExportService';
+
+const DropdownWrapper = styled.div`
+  position: relative;
+  display: inline-block;
+`;
+
+const DropdownMenuCard = styled(motion.div)`
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 320px;
+  background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.96)' : '#ffffff'};
+  border: 1px solid ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.15)' : '#cbd5e1'};
+  border-radius: 14px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(20px);
+  padding: 8px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+`;
+
+const DropdownSectionHeader = styled.div`
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: ${props => props.$theme === 'dark' ? '#94a3b8' : '#64748b'};
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 8px 12px 4px;
+`;
+
+const DropdownItemBtn = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: ${props => props.$theme === 'dark' ? '#f1f5f9' : '#0f172a'};
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.08)' : '#f1f5f9'};
+    color: ${props => props.$accentColor || '#3b82f6'};
+    transform: translateX(3px);
+  }
+`;
+
+const DropdownDividerLine = styled.div`
+  height: 1px;
+  background: ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : '#e2e8f0'};
+  margin: 6px 4px;
+`;
 
 const Container = styled.div`
   min-height: 100vh;
@@ -504,6 +565,7 @@ const DynamicAssessmentReport = () => {
   const [simulatedTargets, setSimulatedTargets] = useState(null);
   const [isPresentationOpen, setIsPresentationOpen] = useState(false);
   const [previewDocState, setPreviewDocState] = useState({ isOpen: false, type: 'slides' });
+  const [isExportDropdownOpen, setIsExportDropdownOpen] = useState(false);
   const [isPasscodeRequired, setIsPasscodeRequired] = useState(false);
   const [enteredPasscode, setEnteredPasscode] = useState('');
   const [activeExecutiveTab, setActiveExecutiveTab] = useState('overview');
@@ -792,105 +854,171 @@ const DynamicAssessmentReport = () => {
             </button>
           </div>
 
-          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-            
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            {/* 1. Theme Toggle */}
             <button 
               style={{ 
-                background: theme === 'light' ? '#ffffff' : 'rgba(255, 255, 255, 0.1)', 
-                border: theme === 'light' ? '1.5px solid #cbd5e1' : '1px solid rgba(255, 255, 255, 0.2)', 
+                background: theme === 'light' ? '#ffffff' : 'rgba(255, 255, 255, 0.08)', 
+                border: theme === 'light' ? '1.5px solid #cbd5e1' : '1px solid rgba(255, 255, 255, 0.15)', 
                 color: theme === 'light' ? '#0f172a' : '#ffffff', 
-                padding: '9px 16px', 
+                padding: '8px 14px', 
                 borderRadius: '10px', 
                 display: 'inline-flex', 
                 alignItems: 'center', 
                 gap: '6px', 
                 cursor: 'pointer', 
                 fontWeight: '700',
+                fontSize: '0.85rem',
                 boxShadow: theme === 'light' ? '0 2px 6px rgba(0,0,0,0.05)' : 'none'
               }}
               onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-              title="Toggle between Crisp Light Theme and Dark Mode"
+              title="Toggle between Light and Dark Mode"
             >
-              {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
+              {theme === 'light' ? '🌙 Dark' : '☀️ Light'}
             </button>
+
+            {/* 2. Present Deck */}
             <button
-              style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', border: 'none', color: '#ffffff', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700', boxShadow: '0 4px 14px rgba(245, 158, 11, 0.3)' }}
+              style={{
+                background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                border: 'none',
+                color: '#ffffff',
+                padding: '8px 18px',
+                borderRadius: '10px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                cursor: 'pointer',
+                fontWeight: '800',
+                fontSize: '0.85rem',
+                boxShadow: '0 4px 14px rgba(245, 158, 11, 0.3)'
+              }}
               onClick={() => setPreviewDocState({ isOpen: true, type: 'slides' })}
-              title="Preview & Open Executive Deck in Google Slides"
+              title="Launch Fullscreen 16:9 Slide Deck for Executive Presentation"
             >
-              📊 Slides
+              <span>📊</span> Present Deck
             </button>
 
-            <button 
-              style={{ background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15))', border: '1px solid rgba(16, 185, 129, 0.4)', color: '#34d399', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
-              onClick={() => setPreviewDocState({ isOpen: true, type: 'sheets' })}
-              title="Preview & Open in Google Sheets (Excel)"
+            {/* 3. Consolidated Export & Cloud Hub Dropdown */}
+            <DropdownWrapper
+              onMouseEnter={() => setIsExportDropdownOpen(true)}
+              onMouseLeave={() => setIsExportDropdownOpen(false)}
             >
-              📈 Sheets (Excel)
-            </button>
+              <button
+                onClick={() => setIsExportDropdownOpen(prev => !prev)}
+                style={{
+                  background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                  border: 'none',
+                  color: '#ffffff',
+                  padding: '8px 18px',
+                  borderRadius: '10px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  cursor: 'pointer',
+                  fontWeight: '800',
+                  fontSize: '0.85rem',
+                  boxShadow: '0 4px 14px rgba(59, 130, 246, 0.3)'
+                }}
+                title="Open Cloud Editors & Download Deliverables"
+              >
+                <span>📑</span> Export & Cloud Hub <FiChevronDown size={14} style={{ transform: isExportDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+              </button>
 
-            <button 
-              style={{ background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(29, 78, 216, 0.15))', border: '1px solid rgba(59, 130, 246, 0.4)', color: '#60a5fa', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
-              onClick={() => setPreviewDocState({ isOpen: true, type: 'docs' })}
-              title="Preview & Open in Google Docs (Word Memorandum)"
-            >
-              📝 Docs (Word)
-            </button>
+              <AnimatePresence>
+                {isExportDropdownOpen && (
+                  <DropdownMenuCard
+                    $theme={theme}
+                    initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    <DropdownSectionHeader $theme={theme}>☁️ Google Workspace & Cloud Apps</DropdownSectionHeader>
+                    <DropdownItemBtn 
+                      $theme={theme} 
+                      $accentColor="#f59e0b"
+                      onClick={() => { setIsExportDropdownOpen(false); setPreviewDocState({ isOpen: true, type: 'slides' }); }}
+                    >
+                      <span style={{ fontSize: "1.1rem" }}>📊</span> Google Slides (16:9 Deck)
+                    </DropdownItemBtn>
+                    <DropdownItemBtn 
+                      $theme={theme} 
+                      $accentColor="#10b981"
+                      onClick={() => { setIsExportDropdownOpen(false); setPreviewDocState({ isOpen: true, type: 'sheets' }); }}
+                    >
+                      <span style={{ fontSize: "1.1rem" }}>📈</span> Google Sheets (Excel Matrix)
+                    </DropdownItemBtn>
+                    <DropdownItemBtn 
+                      $theme={theme} 
+                      $accentColor="#3b82f6"
+                      onClick={() => { setIsExportDropdownOpen(false); setPreviewDocState({ isOpen: true, type: 'docs' }); }}
+                    >
+                      <span style={{ fontSize: "1.1rem" }}>📝</span> Google Docs (Word Memo)
+                    </DropdownItemBtn>
+                    <DropdownItemBtn 
+                      $theme={theme} 
+                      $accentColor="#f97316"
+                      onClick={() => { setIsExportDropdownOpen(false); setPreviewDocState({ isOpen: true, type: 'drawio' }); }}
+                    >
+                      <span style={{ fontSize: "1.1rem" }}>📐</span> Draw.io (Cloud Architecture)
+                    </DropdownItemBtn>
 
-            <button 
-              style={{ background: 'rgba(239, 68, 68, 0.15)', border: '1px solid rgba(239, 68, 68, 0.4)', color: '#f87171', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
-              onClick={() => setPreviewDocState({ isOpen: true, type: 'pdf' })}
-              title="Preview & Print Executive PDF Report"
-            >
-              <FiFileText /> 📄 PDF Report
-            </button>
+                    <DropdownDividerLine $theme={theme} />
 
-            <button 
-              style={{ background: 'rgba(249, 115, 22, 0.15)', border: '1px solid rgba(249, 115, 22, 0.4)', color: '#fb923c', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
-              onClick={() => setPreviewDocState({ isOpen: true, type: 'drawio' })}
-              title="Preview & Open Cloud Architecture in Draw.io"
-            >
-              📐 Draw.io
-            </button>
+                    <DropdownSectionHeader $theme={theme}>📄 Standard Deliverables</DropdownSectionHeader>
+                    <DropdownItemBtn 
+                      $theme={theme} 
+                      $accentColor="#ef4444"
+                      onClick={() => { setIsExportDropdownOpen(false); setPreviewDocState({ isOpen: true, type: 'pdf' }); }}
+                    >
+                      <span style={{ fontSize: "1.1rem" }}>📄</span> Executive PDF Report
+                    </DropdownItemBtn>
+                    <DropdownItemBtn 
+                      $theme={theme} 
+                      $accentColor="#0ea5e9"
+                      onClick={() => { setIsExportDropdownOpen(false); setPreviewDocState({ isOpen: true, type: 'csv' }); }}
+                    >
+                      <span style={{ fontSize: "1.1rem" }}>📑</span> Flattened CSV Matrix
+                    </DropdownItemBtn>
+                    <DropdownItemBtn 
+                      $theme={theme} 
+                      $accentColor="#8b5cf6"
+                      onClick={() => {
+                        setIsExportDropdownOpen(false);
+                        const res = exportAssessmentToJSON(instance, report);
+                        if (res?.success) toast.success('📦 Raw JSON export saved!');
+                      }}
+                    >
+                      <span style={{ fontSize: "1.1rem" }}>📦</span> Raw JSON Payload
+                    </DropdownItemBtn>
 
-            <button 
-              style={{ background: 'rgba(14, 165, 233, 0.15)', border: '1px solid rgba(14, 165, 233, 0.4)', color: '#38bdf8', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700' }}
-              onClick={() => setPreviewDocState({ isOpen: true, type: 'csv' })}
-              title="Preview & Export Flat CSV Matrix"
-            >
-              📑 CSV
-            </button>
+                    <DropdownDividerLine $theme={theme} />
 
-            <button 
-              style={{ background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(168, 85, 247, 0.2))', border: '1.5px solid rgba(236, 72, 153, 0.5)', color: '#f472b6', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '700', boxShadow: '0 4px 14px rgba(236, 72, 153, 0.25)' }}
-              onClick={async () => {
-                toast.loading('Generating complete deliverable bundle (Slides + Sheets + Docs + PDF + CSV + Draw.io)...', { id: 'bundle-export' });
-                await exportCompleteDeliverablesBundle(instance, report, { exportDynamicAssessmentToExcel, generateDynamicPDFReport, exportAssessmentToPPTX });
-                toast.success('🗂️ Complete Deliverables Package exported successfully!', { id: 'bundle-export', duration: 4000 });
-              }}
-              title="Download 1-click complete package: PDF, PPTX Deck, Excel, Word Doc, CSV Matrix, Raw JSON, and Draw.io XMLs"
-            >
-              <FiDownload /> 🗂️ All Deliverables Bundle
-            </button>
+                    <DropdownItemBtn 
+                      $theme={theme} 
+                      $accentColor="#ec4899"
+                      style={{ background: theme === 'dark' ? 'rgba(236, 72, 153, 0.15)' : '#fdf2f8', fontWeight: 700 }}
+                      onClick={async () => {
+                        setIsExportDropdownOpen(false);
+                        toast.loading('Generating complete deliverable bundle...', { id: 'bundle-export' });
+                        await exportCompleteDeliverablesBundle(instance, report, { exportDynamicAssessmentToExcel, generateDynamicPDFReport, exportAssessmentToPPTX });
+                        toast.success('🗂️ All Deliverables Package exported!', { id: 'bundle-export', duration: 4000 });
+                      }}
+                    >
+                      <span style={{ fontSize: "1.1rem" }}>🗂️</span> 1-Click All Deliverables Bundle
+                    </DropdownItemBtn>
 
-            <button 
-              style={{ 
-                background: theme === 'light' ? '#ffffff' : 'rgba(255,255,255,0.08)', 
-                border: theme === 'light' ? '1.5px solid #cbd5e1' : '1px solid rgba(255,255,255,0.15)', 
-                color: theme === 'light' ? '#0f172a' : '#fff', 
-                padding: '9px 18px', 
-                borderRadius: '10px', 
-                display: 'inline-flex', 
-                alignItems: 'center', 
-                gap: '8px', 
-                cursor: 'pointer', 
-                fontWeight: '700',
-                boxShadow: theme === 'light' ? '0 2px 6px rgba(0,0,0,0.05)' : 'none'
-              }}
-              onClick={() => window.print()}
-            >
-              <FiDownload /> 🖨️ Print / Save
-            </button>
+                    <DropdownItemBtn 
+                      $theme={theme} 
+                      onClick={() => { setIsExportDropdownOpen(false); window.print(); }}
+                    >
+                      <span style={{ fontSize: "1.1rem" }}>🖨️</span> Print / Save Page
+                    </DropdownItemBtn>
+                  </DropdownMenuCard>
+                )}
+              </AnimatePresence>
+            </DropdownWrapper>
           </div>
         </div>
 
