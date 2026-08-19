@@ -410,11 +410,13 @@ const StoryTeleprompter = styled(motion.div)`
 
   .text-content {
     font-size: 0.96rem;
-    line-height: 1.6;
+    line-height: 1.7;
     color: ${props => props.$theme === 'dark' ? '#f8fafc' : '#1e293b'};
     font-weight: 500;
-    font-style: italic;
     padding-right: 150px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
   }
 
   .chapter-badge {
@@ -432,6 +434,34 @@ const StoryTeleprompter = styled(motion.div)`
     display: inline-flex;
     align-items: center;
     gap: 6px;
+  }
+`;
+
+const KaraokeWord = styled.span`
+  display: inline-block;
+  margin: 1px 2px;
+  padding: 1px 4px;
+  border-radius: 6px;
+  transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &.active {
+    background: ${props => props.$theme === 'dark' ? 'rgba(245, 158, 11, 0.38)' : 'rgba(245, 158, 11, 0.25)'};
+    color: ${props => props.$theme === 'dark' ? '#fbbf24' : '#b45309'};
+    font-weight: 800;
+    transform: scale(1.08);
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.45);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+  }
+
+  &.spoken {
+    color: ${props => props.$theme === 'dark' ? '#f1f5f9' : '#0f172a'};
+    opacity: 0.95;
+    font-weight: 600;
+  }
+
+  &.unspoken {
+    color: ${props => props.$theme === 'dark' ? '#64748b' : '#94a3b8'};
+    opacity: 0.55;
   }
 `;
 
@@ -741,8 +771,43 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
     }
   };
 
+  const [activeWordIdx, setActiveWordIdx] = useState(-1);
+  const chapterTimingsRef = useRef([]);
+  const chapterStartTimeRef = useRef(0);
+
   /**
-   * 📊 Real-time Web Audio Visualizer Animation Loop
+   * 🎤 Compute Punctuation-Weighted Word Alignment Timings
+   */
+  const computeWordTimings = (text, totalDuration) => {
+    if (!text || !totalDuration || totalDuration <= 0) return [];
+    const rawWords = text.split(/\s+/).filter(Boolean);
+    if (rawWords.length === 0) return [];
+
+    // Punctuation-aware weighting (commas +1.8, periods/exclamations +3.2)
+    const weights = rawWords.map(w => {
+      let weight = Math.pow(Math.max(w.length, 2), 0.75);
+      if (/[,:;]$/.test(w)) weight += 1.8;
+      if (/[.!?]$/.test(w) || /\.\.\.$/.test(w)) weight += 3.2;
+      return weight;
+    });
+
+    const totalWeight = weights.reduce((sum, val) => sum + val, 0);
+    let currentStart = 0;
+
+    return rawWords.map((word, idx) => {
+      const duration = (weights[idx] / totalWeight) * totalDuration;
+      const item = {
+        word,
+        start: currentStart,
+        end: currentStart + duration
+      };
+      currentStart += duration;
+      return item;
+    });
+  };
+
+  /**
+   * 📊 Real-time Web Audio Visualizer & Gold Karaoke Alignment Loop
    */
   const startVisualizerLoop = () => {
     const updateVisualizer = () => {
@@ -759,6 +824,18 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
           bars.push(height);
         }
         setFrequencyBars(bars);
+
+        // 🌟 Synchronize Word-by-Word Gold Karaoke Subtitles
+        if (chapterTimingsRef.current.length > 0 && audioContextRef.current) {
+          const elapsed = (audioContextRef.current.currentTime - chapterStartTimeRef.current) * playbackRate;
+          const timings = chapterTimingsRef.current;
+          const currentIdx = timings.findIndex(t => elapsed >= t.start && elapsed <= t.end);
+          if (currentIdx !== -1) {
+            setActiveWordIdx(currentIdx);
+          } else if (elapsed > timings[timings.length - 1]?.end) {
+            setActiveWordIdx(timings.length - 1);
+          }
+        }
       } else if (!isPlayingRef.current) {
         setFrequencyBars(new Array(22).fill(4));
         return;
@@ -816,6 +893,8 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
     isPlayingRef.current = false;
     setIsPlaying(false);
     setIsBuffering(false);
+    chapterTimingsRef.current = [];
+    setActiveWordIdx(-1);
 
     if (animFrameRef.current) {
       cancelAnimationFrame(animFrameRef.current);
@@ -992,6 +1071,12 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
           };
 
           sourceNode.start(0);
+          const duration = audioBuffer.duration;
+          chapterTimingsRef.current = computeWordTimings(chap.text, duration);
+          if (audioContextRef.current) {
+            chapterStartTimeRef.current = audioContextRef.current.currentTime;
+          }
+          setActiveWordIdx(0);
           setIsBuffering(false);
           currentSourceNodeRef.current = sourceNode;
           startVisualizerLoop();
@@ -1360,7 +1445,25 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
           >
             <div className="quote-symbol">“</div>
             <div className="text-content">
-              {currentChapter?.text}
+              {chapterTimingsRef.current && chapterTimingsRef.current.length > 0 ? (
+                chapterTimingsRef.current.map((item, idx) => {
+                  let statusClass = 'unspoken';
+                  if (idx < activeWordIdx) statusClass = 'spoken';
+                  else if (idx === activeWordIdx) statusClass = 'active';
+
+                  return (
+                    <KaraokeWord
+                      key={idx}
+                      $theme={theme}
+                      className={statusClass}
+                    >
+                      {item.word}
+                    </KaraokeWord>
+                  );
+                })
+              ) : (
+                currentChapter?.text
+              )}
             </div>
             <div className="chapter-badge">
               {isBuffering && <FiLoader className="spin-icon" size={11} />}
