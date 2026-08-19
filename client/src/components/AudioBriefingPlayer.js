@@ -602,6 +602,11 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   const animFrameRef = useRef(null);
   const isPlayingRef = useRef(false);
 
+  const formantF1Ref = useRef(null);
+  const formantF2Ref = useRef(null);
+  const formantF3Ref = useRef(null);
+  const [activeFormants, setActiveFormants] = useState(null);
+
   const activeTheme = STORY_THEMES[selectedStyle] || STORY_THEMES.storyteller;
 
   useEffect(() => {
@@ -614,7 +619,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   }, []);
 
   /**
-   * 🎛️ Initialize Web Audio DSP Mastering Chain (180Hz warmth + Dynamics Compression + Morphing)
+   * 🎛️ Initialize Web Audio DSP Mastering Chain (180Hz warmth + 3-Band Formant Convolver + Dynamics Compression + Morphing)
    */
   const initWebAudioChain = () => {
     if (!audioContextRef.current) {
@@ -647,7 +652,29 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
         breathFilter.gain.value = 0.0;
         breathFilterRef.current = breathFilter;
 
-        // 3. Broadcast Dynamics Compressor
+        // 3. 3-Band Formant Convolver Nodes (F1, F2, F3)
+        const f1Node = ctx.createBiquadFilter();
+        f1Node.type = 'peaking';
+        f1Node.frequency.value = 550;
+        f1Node.Q.value = 1.8;
+        f1Node.gain.value = 0.0;
+        formantF1Ref.current = f1Node;
+
+        const f2Node = ctx.createBiquadFilter();
+        f2Node.type = 'peaking';
+        f2Node.frequency.value = 1650;
+        f2Node.Q.value = 2.0;
+        f2Node.gain.value = 0.0;
+        formantF2Ref.current = f2Node;
+
+        const f3Node = ctx.createBiquadFilter();
+        f3Node.type = 'peaking';
+        f3Node.frequency.value = 2950;
+        f3Node.Q.value = 2.2;
+        f3Node.gain.value = 0.0;
+        formantF3Ref.current = f3Node;
+
+        // 4. Broadcast Dynamics Compressor
         const compressor = ctx.createDynamicsCompressor();
         compressor.threshold.setValueAtTime(-24, ctx.currentTime);
         compressor.knee.setValueAtTime(30, ctx.currentTime);
@@ -656,15 +683,18 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
         compressor.release.setValueAtTime(0.25, ctx.currentTime);
         compressorRef.current = compressor;
 
-        // 4. Analyser Node for Realtime 22-bar spectrum
+        // 5. Analyser Node for Realtime 22-bar spectrum
         const analyser = ctx.createAnalyser();
         analyser.fftSize = 64;
         analyserRef.current = analyser;
 
-        // Chain: Source -> Warmth -> Breath/DeEsser -> Compressor -> Analyser -> Out
+        // Connect Chain: Source -> Warmth -> Breath -> F1 -> F2 -> F3 -> Compressor -> Analyser -> Out
         source.connect(warmthFilter);
         warmthFilter.connect(breathFilter);
-        breathFilter.connect(compressor);
+        breathFilter.connect(f1Node);
+        f1Node.connect(f2Node);
+        f2Node.connect(f3Node);
+        f3Node.connect(compressor);
         compressor.connect(analyser);
         analyser.connect(ctx.destination);
       } catch (err) {
@@ -1236,7 +1266,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
               </SliderGroup>
             </ControlCard>
 
-            {/* 4. Curated Spotlight Personas (8 Core) */}
+            {/* 5. Curated Spotlight Personas (8 Core) */}
             <ControlCard $theme={theme}>
               <div className="label">
                 <FiUser size={13} />
