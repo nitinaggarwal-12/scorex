@@ -794,6 +794,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   };
 
   const playTokenRef = useRef(0);
+  const preloadedBuffersRef = useRef(new Map());
 
   const stopAudioPlayback = () => {
     playTokenRef.current += 1;
@@ -822,6 +823,52 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   };
 
   /**
+   * 🚀 Pre-fetch and decode the next act into browser RAM in the background
+   */
+  const prefetchActAudio = async (chapters, nextIdx, token) => {
+    if (!chapters || nextIdx >= chapters.length || playTokenRef.current !== token) return;
+    const nextChap = chapters[nextIdx];
+    const cacheKey = `${selectedEngine}_${selectedStyle}_${selectedPersona}_${nextIdx}`;
+
+    if (preloadedBuffersRef.current.has(cacheKey)) return;
+
+    try {
+      const response = await axios.post('/api/audio/synthesize-act', {
+        chapter: nextChap,
+        persona: selectedPersona,
+        style: selectedStyle,
+        engine: selectedEngine,
+        customApiKey: elevenLabsKey || null,
+        customVoiceId: customClonedVoiceId || null,
+        sliderConfig: {
+          styleExaggeration,
+          stability,
+          breathDensity
+        }
+      }, { timeout: 45000 });
+
+      if (response.data && response.data.success && response.data.audioBase64) {
+        initWebAudioChain();
+        const ctx = audioContextRef.current;
+        if (ctx) {
+          const binaryString = window.atob(response.data.audioBase64);
+          const len = binaryString.length;
+          const bytes = new Uint8Array(len);
+          for (let i = 0; i < len; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
+          const audioBuffer = await ctx.decodeAudioData(bytes.buffer.slice(0));
+          if (playTokenRef.current === token) {
+            preloadedBuffersRef.current.set(cacheKey, audioBuffer);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Background act prefetch ignored:', e.message);
+    }
+  };
+
+  /**
    * ⚡ Play a single chapter using Google Gemini Native Audio / ElevenLabs Studio Audio
    */
   const playChapterStudio = async (chapters, index, token = null) => {
@@ -838,83 +885,99 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
     setCurrentChapterIdx(index);
     applyActDSPMorphing(index);
     const chap = chapters[index];
+    const cacheKey = `${selectedEngine}_${selectedStyle}_${selectedPersona}_${index}`;
 
     if (selectedEngine !== 'browser') {
       try {
-        const response = await axios.post('/api/audio/synthesize-act', {
-          chapter: chap,
-          persona: selectedPersona,
-          style: selectedStyle,
-          engine: selectedEngine,
-          customApiKey: elevenLabsKey || null,
-          customVoiceId: customClonedVoiceId || null,
-          sliderConfig: {
-            styleExaggeration,
-            stability,
-            breathDensity
-          }
-        }, { timeout: 45000 });
+        initWebAudioChain();
+        const ctx = audioContextRef.current;
 
-        // Guard against race conditions after async API call
+        // Check if already pre-decoded in RAM
+        let audioBuffer = preloadedBuffersRef.current.get(cacheKey);
+
+        if (!audioBuffer) {
+          const response = await axios.post('/api/audio/synthesize-act', {
+            chapter: chap,
+            persona: selectedPersona,
+            style: selectedStyle,
+            engine: selectedEngine,
+            customApiKey: elevenLabsKey || null,
+            customVoiceId: customClonedVoiceId || null,
+            sliderConfig: {
+              styleExaggeration,
+              stability,
+              breathDensity
+            }
+          }, { timeout: 45000 });
+
+          // Guard against race conditions
+          if (!isPlayingRef.current || playTokenRef.current !== currentToken) {
+            return;
+          }
+
+          if (response.data && response.data.success && response.data.audioBase64) {
+            if (ctx) {
+              const binaryString = window.atob(response.data.audioBase64);
+              const len = binaryString.length;
+              const bytes = new Uint8Array(len);
+              for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+              }
+              audioBuffer = await ctx.decodeAudioData(bytes.buffer.slice(0));
+            }
+          }
+        }
+
+        // Guard check after audio decoding
         if (!isPlayingRef.current || playTokenRef.current !== currentToken) {
           return;
         }
 
-        if (response.data && response.data.success && response.data.audioBase64) {
-          initWebAudioChain();
-          const ctx = audioContextRef.current;
-          
-          if (ctx) {
-            // Stop any previously active node
-            if (currentSourceNodeRef.current) {
-              try {
-                currentSourceNodeRef.current.onended = null;
-                currentSourceNodeRef.current.stop();
-                currentSourceNodeRef.current.disconnect();
-              } catch (e) {}
+        if (ctx && audioBuffer) {
+          // Immediately stop & detach any previously playing node
+          if (currentSourceNodeRef.current) {
+            try {
+              currentSourceNodeRef.current.onended = null;
+              currentSourceNodeRef.current.stop();
+              currentSourceNodeRef.current.disconnect();
+            } catch (e) {}
+            currentSourceNodeRef.current = null;
+          }
+
+          const sourceNode = ctx.createBufferSource();
+          sourceNode.buffer = audioBuffer;
+          sourceNode.playbackRate.value = playbackRate;
+
+          // Connect to Mastering DSP rack
+          if (warmthFilterRef.current) {
+            sourceNode.connect(warmthFilterRef.current);
+          } else {
+            sourceNode.connect(ctx.destination);
+          }
+
+          // Trigger background pre-fetch for next chapter
+          if (index + 1 < chapters.length) {
+            prefetchActAudio(chapters, index + 1, currentToken);
+          }
+
+          sourceNode.onended = () => {
+            sourceNode.disconnect();
+            if (currentSourceNodeRef.current === sourceNode) {
               currentSourceNodeRef.current = null;
             }
-
-            // Convert base64 into binary array
-            const binaryString = window.atob(response.data.audioBase64);
-            const len = binaryString.length;
-            const bytes = new Uint8Array(len);
-            for (let i = 0; i < len; i++) {
-              bytes[i] = binaryString.charCodeAt(i);
-            }
-
-            // Decode directly using Web Audio
-            const audioBuffer = await ctx.decodeAudioData(bytes.buffer.slice(0));
-
-            // Guard against race conditions after async audio decode
-            if (!isPlayingRef.current || playTokenRef.current !== currentToken) {
-              return;
-            }
-
-            const sourceNode = ctx.createBufferSource();
-            sourceNode.buffer = audioBuffer;
-            sourceNode.playbackRate.value = playbackRate;
-
-            // Connect directly into the DSP rack
-            if (warmthFilterRef.current) {
-              sourceNode.connect(warmthFilterRef.current);
-            } else {
-              sourceNode.connect(ctx.destination);
-            }
-
-            sourceNode.onended = () => {
-              if (isPlayingRef.current && playTokenRef.current === currentToken) {
-                setTimeout(() => {
+            if (isPlayingRef.current && playTokenRef.current === currentToken) {
+              setTimeout(() => {
+                if (isPlayingRef.current && playTokenRef.current === currentToken) {
                   playChapterStudio(chapters, index + 1, currentToken);
-                }, 350);
-              }
-            };
+                }
+              }, 400); // 400ms theatrical breathing pause between Acts
+            }
+          };
 
-            sourceNode.start(0);
-            currentSourceNodeRef.current = sourceNode;
-            startVisualizerLoop();
-            return;
-          }
+          sourceNode.start(0);
+          currentSourceNodeRef.current = sourceNode;
+          startVisualizerLoop();
+          return;
         }
       } catch (err) {
         if (!isPlayingRef.current || playTokenRef.current !== currentToken) return;
@@ -956,7 +1019,9 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
     utterance.onend = () => {
       if (isPlayingRef.current && playTokenRef.current === currentToken) {
         setTimeout(() => {
-          playChapterBrowserFallback(chapters, index + 1, currentToken);
+          if (isPlayingRef.current && playTokenRef.current === currentToken) {
+            playChapterBrowserFallback(chapters, index + 1, currentToken);
+          }
         }, 400);
       }
     };
