@@ -673,6 +673,23 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   const [promptToVoiceInput, setPromptToVoiceInput] = useState('');
   const [isDesigningVoice, setIsDesigningVoice] = useState(false);
 
+  // Executive Voice Vault & 1-Click Sharing
+  const [savedVoices, setSavedVoices] = useState(() => {
+    try {
+      const local = localStorage.getItem('scorex_saved_voices');
+      return local ? JSON.parse(local) : [
+        { id: 'vault_ciso', name: 'Strategic CISO Auditor', type: 'Procedural Matrix', persona: 'proc_fenrir_uk_rp_cyber_auditor_statesman', date: 'Built-in' },
+        { id: 'vault_finops', name: 'Wall Street FinOps Director', type: 'Procedural Matrix', persona: 'proc_charon_us_ny_board_director_statesman', date: 'Built-in' },
+        { id: 'vault_french_cto', name: 'Parisian Cloud Architect', type: 'Procedural Matrix', persona: 'proc_aoede_fr_paris_chief_architect_mid_career', date: 'Built-in' }
+      ];
+    } catch (e) {
+      return [];
+    }
+  });
+  const [vaultNameInput, setVaultNameInput] = useState('');
+  const [importTokenInput, setImportTokenInput] = useState('');
+  const [showImportBox, setShowImportBox] = useState(false);
+
   const audioElementRef = useRef(null);
   const audioContextRef = useRef(null);
   const sourceNodeRef = useRef(null);
@@ -1392,6 +1409,86 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
     }
   };
 
+  /**
+   * 🏛️ Executive Voice Vault & 1-Click Sharing Actions
+   */
+  const handleSaveToVault = () => {
+    if (!vaultNameInput.trim()) {
+      toast.error('Please enter a name for this custom voice preset.');
+      return;
+    }
+    const newEntry = {
+      id: `vault_${Date.now()}`,
+      name: vaultNameInput.trim(),
+      type: clonedVoiceName ? 'Cloned Twin' : selectedPersona.startsWith('proc_') ? 'Procedural Matrix' : 'Custom Designed',
+      persona: selectedPersona,
+      clonedVoiceId: customClonedVoiceId || null,
+      clonedVoiceName: clonedVoiceName || null,
+      activeFormants: activeFormants || null,
+      sliderConfig: { styleExaggeration, stability, breathDensity },
+      language: selectedLanguage,
+      date: new Date().toLocaleDateString()
+    };
+    const updated = [newEntry, ...savedVoices];
+    setSavedVoices(updated);
+    try {
+      localStorage.setItem('scorex_saved_voices', JSON.stringify(updated));
+    } catch (e) {}
+    setVaultNameInput('');
+    toast.success(`Voice "${newEntry.name}" saved to Executive Vault!`, { icon: '🏛️' });
+  };
+
+  const handleCastVaultVoice = (v) => {
+    setSelectedPersona(v.persona);
+    setCustomClonedVoiceId(v.clonedVoiceId || null);
+    setClonedVoiceName(v.clonedVoiceName || null);
+    if (v.activeFormants) setActiveFormants(v.activeFormants);
+    if (v.sliderConfig) {
+      if (typeof v.sliderConfig.styleExaggeration === 'number') setStyleExaggeration(v.sliderConfig.styleExaggeration);
+      if (typeof v.sliderConfig.stability === 'number') setStability(v.sliderConfig.stability);
+      if (typeof v.sliderConfig.breathDensity === 'number') setBreathDensity(v.sliderConfig.breathDensity);
+    }
+    if (v.language) setSelectedLanguage(v.language);
+    stopAudioPlayback();
+    toast.success(`Cast Vault Persona: "${v.name}"!`, { icon: '🎙️' });
+  };
+
+  const handleDeleteVaultVoice = (id) => {
+    const updated = savedVoices.filter(v => v.id !== id);
+    setSavedVoices(updated);
+    try {
+      localStorage.setItem('scorex_saved_voices', JSON.stringify(updated));
+    } catch (e) {}
+    toast('Voice preset removed from vault.');
+  };
+
+  const handleShareVoiceToken = (v) => {
+    const token = btoa(unescape(encodeURIComponent(JSON.stringify(v))));
+    navigator.clipboard.writeText(token);
+    toast.success(`Voice Sharing Token copied! Send to colleagues to load "${v.name}".`, { icon: '📋' });
+  };
+
+  const handleImportVoiceToken = () => {
+    if (!importTokenInput.trim()) return;
+    try {
+      const decoded = JSON.parse(decodeURIComponent(escape(atob(importTokenInput.trim()))));
+      if (decoded.name && (decoded.persona || decoded.clonedVoiceId)) {
+        const newEntry = { ...decoded, id: `vault_${Date.now()}`, date: new Date().toLocaleDateString() };
+        const updated = [newEntry, ...savedVoices];
+        setSavedVoices(updated);
+        localStorage.setItem('scorex_saved_voices', JSON.stringify(updated));
+        setImportTokenInput('');
+        setShowImportBox(false);
+        handleCastVaultVoice(newEntry);
+        toast.success(`Imported & Cast Voice: "${newEntry.name}"!`, { icon: '✨' });
+      } else {
+        throw new Error('Invalid voice token structure.');
+      }
+    } catch (err) {
+      toast.error('Invalid voice token. Please check the copied token.');
+    }
+  };
+
   const activeChapters = chaptersList.length > 0 ? chaptersList : buildStoryChapters();
   const currentChapter = activeChapters[currentChapterIdx] || activeChapters[0];
 
@@ -1734,6 +1831,113 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
                     <span>🎙️ {persona.name}</span>
                     <span style={{ fontSize: '0.68rem', opacity: 0.8 }}>{persona.gender}</span>
                   </OptionPill>
+                ))}
+              </div>
+            </ControlCard>
+
+            {/* 6. Executive Voice Vault & 1-Click Persona Sharing */}
+            <ControlCard $theme={theme} style={{ gridColumn: '1 / -1' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                <div className="label" style={{ margin: 0 }}>
+                  <FiKey size={13} color="#f59e0b" />
+                  Executive Voice Vault & 1-Click Persona Sharing
+                </div>
+                <button 
+                  style={{ background: 'none', border: 'none', color: '#f59e0b', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                  onClick={() => setShowImportBox(!showImportBox)}
+                >
+                  <FiUploadCloud size={13} /> {showImportBox ? 'Close Import' : 'Import Shared Voice Token'}
+                </button>
+              </div>
+
+              {/* Import Box */}
+              {showImportBox && (
+                <div style={{ padding: '10px', background: theme === 'dark' ? 'rgba(0, 0, 0, 0.4)' : '#ffffff', borderRadius: '12px', marginBottom: '12px', display: 'flex', gap: '8px' }}>
+                  <input 
+                    type="text" 
+                    placeholder="Paste encoded voice token from a colleague..." 
+                    style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: theme === 'dark' ? '1px solid rgba(255,255,255,0.15)' : '1px solid rgba(0,0,0,0.15)', background: theme === 'dark' ? 'rgba(0,0,0,0.3)' : '#f8fafc', color: theme === 'dark' ? '#fff' : '#000', fontSize: '0.78rem' }}
+                    value={importTokenInput}
+                    onChange={(e) => setImportTokenInput(e.target.value)}
+                  />
+                  <button 
+                    style={{ padding: '8px 14px', borderRadius: '8px', border: 'none', background: '#f59e0b', color: '#fff', fontWeight: '800', fontSize: '0.78rem', cursor: 'pointer' }}
+                    onClick={handleImportVoiceToken}
+                  >
+                    Import & Cast
+                  </button>
+                </div>
+              )}
+
+              {/* Save Current Voice Bar */}
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
+                <input 
+                  type="text" 
+                  placeholder="Name this voice configuration (e.g. Boardroom CISO Tone)..." 
+                  style={{ flex: 1, padding: '8px 12px', borderRadius: '10px', border: theme === 'dark' ? '1px solid rgba(255,255,255,0.15)' : '1px solid rgba(0,0,0,0.12)', background: theme === 'dark' ? 'rgba(0,0,0,0.3)' : '#f8fafc', color: theme === 'dark' ? '#fff' : '#000', fontSize: '0.8rem' }}
+                  value={vaultNameInput}
+                  onChange={(e) => setVaultNameInput(e.target.value)}
+                />
+                <button 
+                  style={{ padding: '8px 16px', borderRadius: '10px', border: 'none', background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'white', fontWeight: '800', fontSize: '0.8rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                  onClick={handleSaveToVault}
+                >
+                  <FiKey size={13} /> Save Active Voice to Vault
+                </button>
+              </div>
+
+              {/* Vault Presets List */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '10px' }}>
+                {savedVoices.map((v) => (
+                  <div 
+                    key={v.id}
+                    style={{
+                      padding: '10px 14px',
+                      borderRadius: '12px',
+                      background: theme === 'dark' ? 'rgba(255, 255, 255, 0.04)' : '#ffffff',
+                      border: selectedPersona === v.persona && !clonedVoiceName ? '1.5px solid #f59e0b' : (theme === 'dark' ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.06)'),
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: '8px'
+                    }}
+                  >
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', cursor: 'pointer', flex: 1 }} onClick={() => handleCastVaultVoice(v)}>
+                      <div style={{ fontSize: '0.82rem', fontWeight: '800', color: theme === 'dark' ? '#f8fafc' : '#0f172a' }}>
+                        🎙️ {v.name}
+                      </div>
+                      <div style={{ fontSize: '0.68rem', color: theme === 'dark' ? '#94a3b8' : '#64748b', display: 'flex', gap: '6px' }}>
+                        <span>{v.type}</span>
+                        <span>•</span>
+                        <span>{v.date}</span>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <button 
+                        title="Cast Voice"
+                        style={{ padding: '5px 10px', borderRadius: '8px', border: '1px solid #f59e0b', background: 'rgba(245, 158, 11, 0.15)', color: '#d97706', fontSize: '0.72rem', fontWeight: '800', cursor: 'pointer' }}
+                        onClick={() => handleCastVaultVoice(v)}
+                      >
+                        Cast
+                      </button>
+                      <button 
+                        title="Copy Sharing Token"
+                        style={{ padding: '5px 8px', borderRadius: '8px', border: 'none', background: theme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)', color: theme === 'dark' ? '#cbd5e1' : '#64748b', fontSize: '0.72rem', cursor: 'pointer' }}
+                        onClick={() => handleShareVoiceToken(v)}
+                      >
+                        📋
+                      </button>
+                      {!v.id.startsWith('vault_ciso') && !v.id.startsWith('vault_finops') && !v.id.startsWith('vault_french') && (
+                        <button 
+                          title="Delete from Vault"
+                          style={{ padding: '5px 8px', borderRadius: '8px', border: 'none', background: 'rgba(239, 68, 68, 0.15)', color: '#ef4444', fontSize: '0.72rem', cursor: 'pointer' }}
+                          onClick={() => handleDeleteVaultVoice(v.id)}
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 ))}
               </div>
             </ControlCard>
