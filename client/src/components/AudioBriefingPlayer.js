@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
+import axios from 'axios';
 import { 
   FiVolume2, 
   FiPlay, 
@@ -21,8 +22,9 @@ import {
   FiSun,
   FiFilm,
   FiRadio,
-  FiSkipForward,
-  FiSkipBack
+  FiKey,
+  FiCpu,
+  FiHeadphones
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
@@ -117,10 +119,10 @@ const STORY_THEMES = {
 };
 
 const STORY_PERSONAS = [
-  { id: 'jonathan', name: 'Sir Jonathan', title: 'Cinematic Documentary Narrator', gender: 'male', vibe: 'Warm, deep & theatrical', accents: ['Daniel', 'Google UK English Male', 'Oliver', 'George'] },
-  { id: 'victoria', name: 'Victoria', title: 'MasterClass & Odyssey Storyteller', gender: 'female', vibe: 'Magnetic, eloquent & expressive', accents: ['Samantha', 'Google UK English Female', 'Karen', 'Victoria'] },
-  { id: 'david', name: 'David', title: 'Visionary Tech Orator', gender: 'male', vibe: 'Inspiring, resonant & punchy', accents: ['Google US English', 'Alex', 'Fred', 'Arthur'] },
-  { id: 'maya', name: 'Maya', title: 'NPR & Investigative Novelist', gender: 'female', vibe: 'Curious, lively & poignant', accents: ['Tessa', 'Moira', 'Fiona', 'Google US English'] }
+  { id: 'jonathan', name: 'Sir Jonathan', title: 'DeepMind Documentary Baritone', gender: 'male', vibe: 'Warm, deep & theatrical (Journey-D)', googleVoice: 'en-US-Journey-D', accents: ['Daniel', 'Google UK English Male', 'Oliver', 'George'] },
+  { id: 'victoria', name: 'Victoria', title: 'MasterClass Executive Narrator', gender: 'female', vibe: 'Magnetic, eloquent & expressive (Journey-F)', googleVoice: 'en-US-Journey-F', accents: ['Samantha', 'Google UK English Female', 'Karen', 'Victoria'] },
+  { id: 'david', name: 'David', title: 'Visionary Tech Orator', gender: 'male', vibe: 'Inspiring, resonant & punchy (Studio-Q)', googleVoice: 'en-US-Studio-Q', accents: ['Google US English', 'Alex', 'Fred', 'Arthur'] },
+  { id: 'maya', name: 'Maya', title: 'Intimate Fireside Novelist', gender: 'female', vibe: 'Curious, lively & poignant (Journey-O)', googleVoice: 'en-US-Journey-O', accents: ['Tessa', 'Moira', 'Fiona', 'Google US English'] }
 ];
 
 const PlayerContainer = styled(motion.div)`
@@ -228,11 +230,11 @@ const WaveBar = styled.div`
   width: 4px;
   background: ${props => props.$gradient || 'linear-gradient(180deg, #f59e0b 0%, #ec4899 100%)'};
   border-radius: 4px;
-  animation: ${wave} 1.3s ease-in-out infinite;
+  animation: ${props => props.$realtime ? 'none' : css`${wave} 1.3s ease-in-out infinite`};
   animation-delay: ${props => props.$delay}s;
   animation-play-state: ${props => props.$playing ? 'running' : 'paused'};
-  height: ${props => props.$playing ? `${props.$height || 22}px` : '4px'};
-  transition: height 0.25s ease;
+  height: ${props => `${props.$height || 4}px`};
+  transition: height 0.08s ease;
 `;
 
 const ControlsGroup = styled.div`
@@ -259,12 +261,14 @@ const PlayButton = styled(motion.button)`
 `;
 
 const SecondaryControl = styled.button`
-  background: ${props => props.$active 
-    ? (props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.18)' : '#e2e8f0') 
-    : (props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.06)' : '#f8fafc')};
-  border: 1px solid ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.14)' : '#cbd5e1'};
+  background: ${props => props.$theme === 'dark' 
+    ? (props.$active ? 'rgba(245, 158, 11, 0.25)' : 'rgba(255, 255, 255, 0.06)')
+    : (props.$active ? 'rgba(245, 158, 11, 0.2)' : 'rgba(0, 0, 0, 0.04)')};
+  border: 1px solid ${props => props.$active 
+    ? '#f59e0b' 
+    : (props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)')};
   color: ${props => props.$theme === 'dark' ? '#f1f5f9' : '#334155'};
-  padding: 9px 15px;
+  padding: 9px 14px;
   border-radius: 12px;
   font-size: 0.82rem;
   font-weight: 700;
@@ -275,170 +279,170 @@ const SecondaryControl = styled.button`
   transition: all 0.2s ease;
 
   &:hover {
-    background: ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.15)' : '#e2e8f0'};
-    color: ${props => props.$theme === 'dark' ? '#ffffff' : '#0f172a'};
-    transform: translateY(-1px);
+    background: ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)'};
   }
 `;
 
-// Chapter / Story-Beat Progression Timeline
 const ChapterBar = styled.div`
-  margin-top: 18px;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  scrollbar-width: none;
-  &::-webkit-scrollbar { display: none; }
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px dashed ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)'};
 `;
 
 const ChapterPill = styled.button`
-  flex: 1;
-  min-width: 140px;
   background: ${props => props.$active 
-    ? (props.$gradient || 'linear-gradient(135deg, #f59e0b 0%, #b45309 100%)') 
-    : (props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.6)' : '#ffffff')};
+    ? (props.$gradient || 'linear-gradient(135deg, #f59e0b, #b45309)') 
+    : (props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.03)')};
+  color: ${props => props.$active ? '#ffffff' : (props.$theme === 'dark' ? '#94a3b8' : '#64748b')};
   border: 1px solid ${props => props.$active 
     ? 'transparent' 
-    : (props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : '#e2e8f0')};
-  border-radius: 12px;
+    : (props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)')};
   padding: 8px 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
   cursor: pointer;
   text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   transition: all 0.2s ease;
-  box-shadow: ${props => props.$active ? '0 4px 14px rgba(245, 158, 11, 0.3)' : 'none'};
 
   .act-label {
-    font-size: 0.68rem;
-    font-weight: 800;
+    font-size: 0.65rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: ${props => props.$active ? '#ffffff' : (props.$theme === 'dark' ? '#94a3b8' : '#64748b')};
+    opacity: ${props => props.$active ? 0.9 : 0.6};
   }
 
   .act-title {
-    font-size: 0.76rem;
-    font-weight: 700;
-    color: ${props => props.$active ? '#ffffff' : (props.$theme === 'dark' ? '#f1f5f9' : '#1e293b')};
+    font-size: 0.8rem;
+    font-weight: 800;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    width: 100%;
   }
 
   &:hover {
+    border-color: #f59e0b;
     transform: translateY(-1px);
-    border-color: ${props => props.$active ? 'transparent' : '#f59e0b'};
   }
 `;
 
-// Live Cinematic Story Teleprompter
 const StoryTeleprompter = styled(motion.div)`
-  margin-top: 16px;
+  margin-top: 18px;
   padding: 16px 20px;
+  background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.75)' : 'rgba(255, 255, 255, 0.85)'};
+  border: 1px solid ${props => props.$activeColor ? `${props.$activeColor}40` : 'rgba(245, 158, 11, 0.25)'};
   border-radius: 16px;
-  background: ${props => props.$theme === 'dark' ? 'rgba(2, 6, 23, 0.75)' : 'rgba(255, 251, 235, 0.85)'};
-  border-left: 5px solid ${props => props.$activeColor || '#f59e0b'};
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.04);
+  align-items: flex-start;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
 
   .quote-symbol {
-    font-size: 2rem;
+    font-size: 1.8rem;
     line-height: 1;
     color: ${props => props.$activeColor || '#f59e0b'};
-    opacity: 0.6;
-    font-family: Georgia, serif;
+    opacity: 0.8;
     flex-shrink: 0;
   }
 
   .text-content {
-    font-size: 0.92rem;
-    font-style: italic;
-    color: ${props => props.$theme === 'dark' ? '#f8fafc' : '#1e293b'};
+    font-size: 0.96rem;
     line-height: 1.6;
+    color: ${props => props.$theme === 'dark' ? '#f8fafc' : '#1e293b'};
     font-weight: 500;
-    flex-grow: 1;
+    font-style: italic;
   }
 
   .chapter-badge {
-    font-size: 0.72rem;
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    font-size: 0.68rem;
     font-weight: 800;
-    padding: 4px 10px;
-    border-radius: 8px;
-    background: ${props => props.$activeColor ? `${props.$activeColor}25` : 'rgba(245, 158, 11, 0.15)'};
-    color: ${props => props.$activeColor || '#d97706'};
-    white-space: nowrap;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    flex-shrink: 0;
+    letter-spacing: 0.05em;
+    color: ${props => props.$activeColor || '#f59e0b'};
+    background: ${props => props.$theme === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(0, 0, 0, 0.05)'};
+    padding: 3px 8px;
+    border-radius: 6px;
   }
 `;
 
-// Expanded Settings Panel
 const SettingsPanel = styled(motion.div)`
-  border-top: 1px solid ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.08)' : '#e2e8f0'};
-  padding-top: 18px;
-  margin-top: 18px;
+  margin-top: 20px;
+  padding: 20px;
+  background: ${props => props.$theme === 'dark' ? 'rgba(0, 0, 0, 0.35)' : 'rgba(0, 0, 0, 0.03)'};
+  border-radius: 18px;
+  border: 1px solid ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)'};
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 16px;
-
-  @media (max-width: 900px) {
-    grid-template-columns: 1fr;
-  }
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
 `;
 
 const ControlCard = styled.div`
-  background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.5)' : '#ffffff'};
-  border: 1px solid ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.08)' : '#e2e8f0'};
-  border-radius: 16px;
-  padding: 14px 18px;
-
   .label {
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: ${props => props.$theme === 'dark' ? '#94a3b8' : '#64748b'};
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
   }
 
   .options-grid {
     display: flex;
+    flex-direction: column;
     gap: 8px;
-    flex-wrap: wrap;
   }
 `;
 
 const OptionPill = styled.button`
   background: ${props => props.$active 
-    ? (props.$gradient || 'linear-gradient(135deg, #f59e0b 0%, #b45309 100%)') 
-    : (props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.04)' : '#f8fafc')};
-  color: ${props => props.$active ? '#ffffff' : (props.$theme === 'dark' ? '#cbd5e1' : '#475569')};
-  border: 1px solid ${props => props.$active ? 'transparent' : (props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.12)' : '#cbd5e1')};
-  padding: 7px 14px;
-  border-radius: 10px;
-  font-size: 0.8rem;
-  font-weight: ${props => props.$active ? '800' : '600'};
+    ? (props.$gradient || '#f59e0b') 
+    : (props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.8)')};
+  color: ${props => props.$active ? '#ffffff' : (props.$theme === 'dark' ? '#e2e8f0' : '#334155')};
+  border: 1px solid ${props => props.$active 
+    ? 'transparent' 
+    : (props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)')};
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 0.84rem;
+  font-weight: 700;
   cursor: pointer;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: space-between;
   transition: all 0.2s ease;
 
   &:hover {
     border-color: ${props => props.$active ? 'transparent' : '#f59e0b'};
     transform: translateY(-1px);
+  }
+`;
+
+const ApiKeyInput = styled.input`
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)'};
+  background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.8)' : '#ffffff'};
+  color: ${props => props.$theme === 'dark' ? '#f8fafc' : '#0f172a'};
+  font-size: 0.8rem;
+  margin-top: 8px;
+  outline: none;
+
+  &:focus {
+    border-color: #f59e0b;
   }
 `;
 
@@ -447,12 +451,20 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   const [playbackRate, setPlaybackRate] = useState(1.0);
   const [selectedStyle, setSelectedStyle] = useState('storyteller');
   const [selectedPersona, setSelectedPersona] = useState('jonathan');
+  const [selectedEngine, setSelectedEngine] = useState('google'); // 'google' | 'elevenlabs' | 'browser'
+  const [elevenLabsKey, setElevenLabsKey] = useState('');
   const [showSettings, setShowSettings] = useState(false);
   const [currentChapterIdx, setCurrentChapterIdx] = useState(0);
   const [chaptersList, setChaptersList] = useState([]);
+  const [frequencyBars, setFrequencyBars] = useState(new Array(22).fill(6));
 
-  const utteranceRef = useRef(null);
-  const keepAliveTimerRef = useRef(null);
+  const audioElementRef = useRef(null);
+  const audioContextRef = useRef(null);
+  const sourceNodeRef = useRef(null);
+  const analyserRef = useRef(null);
+  const duckingGainRef = useRef(null);
+  const ambientOscillatorRef = useRef(null);
+  const animFrameRef = useRef(null);
   const isPlayingRef = useRef(false);
 
   const activeTheme = STORY_THEMES[selectedStyle] || STORY_THEMES.storyteller;
@@ -460,108 +472,170 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   useEffect(() => {
     return () => {
       stopAudioPlayback();
+      if (audioContextRef.current) {
+        audioContextRef.current.close().catch(() => {});
+      }
     };
   }, []);
 
-  const stripMarkdownForSpeech = (text) => {
-    if (!text) return '';
-    return String(text)
-      .replace(/#{1,6}\s+/g, '')
-      .replace(/\*\*(.*?)\*\*/g, '$1')
-      .replace(/\*(.*?)\*/g, '$1')
-      .replace(/`{1,3}[^`]*`{1,3}/g, '')
-      .replace(/\[(.*?)\]\(.*?\)/g, '$1')
-      .replace(/^[-*+]\s+/gm, '')
-      .replace(/>\s+/g, '')
-      .replace(/[|\\~_]/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
+  /**
+   * 🎛️ Initialize Web Audio DSP Mastering Chain (180Hz warmth + Dynamics Compression + Soundbed Ducking)
+   */
+  const initWebAudioChain = () => {
+    if (!audioContextRef.current) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      audioContextRef.current = ctx;
+
+      // 1. Audio Element
+      if (!audioElementRef.current) {
+        audioElementRef.current = new Audio();
+        audioElementRef.current.crossOrigin = 'anonymous';
+      }
+
+      // 2. Source Node
+      try {
+        const source = ctx.createMediaElementSource(audioElementRef.current);
+        sourceNodeRef.current = source;
+
+        // 3. Low-Shelf Warmth EQ (+2.5dB at 180Hz for Neumann U87 proximity effect)
+        const warmthFilter = ctx.createBiquadFilter();
+        warmthFilter.type = 'lowshelf';
+        warmthFilter.frequency.value = 180;
+        warmthFilter.gain.value = 2.5;
+
+        // 4. De-Esser Filter (-1.5dB at 7500Hz)
+        const deEsser = ctx.createBiquadFilter();
+        deEsser.type = 'highshelf';
+        deEsser.frequency.value = 7500;
+        deEsser.gain.value = -1.5;
+
+        // 5. Broadcast Dynamics Compressor
+        const compressor = ctx.createDynamicsCompressor();
+        compressor.threshold.setValueAtTime(-24, ctx.currentTime);
+        compressor.knee.setValueAtTime(30, ctx.currentTime);
+        compressor.ratio.setValueAtTime(4, ctx.currentTime);
+        compressor.attack.setValueAtTime(0.003, ctx.currentTime);
+        compressor.release.setValueAtTime(0.25, ctx.currentTime);
+
+        // 6. Analyser Node for Realtime 22-bar spectrum
+        const analyser = ctx.createAnalyser();
+        analyser.fftSize = 64;
+        analyserRef.current = analyser;
+
+        // Connect Chain: Source -> Warmth -> DeEsser -> Compressor -> Analyser -> Destination
+        source.connect(warmthFilter);
+        warmthFilter.connect(deEsser);
+        deEsser.connect(compressor);
+        compressor.connect(analyser);
+        analyser.connect(ctx.destination);
+      } catch (err) {
+        console.warn('Web Audio node connection fallback:', err.message);
+      }
+    }
+
+    if (audioContextRef.current.state === 'suspended') {
+      audioContextRef.current.resume();
+    }
+  };
+
+  /**
+   * 📊 Real-time Web Audio Visualizer Animation Loop
+   */
+  const startVisualizerLoop = () => {
+    const updateVisualizer = () => {
+      if (analyserRef.current && isPlayingRef.current) {
+        const bufferLength = analyserRef.current.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+        analyserRef.current.getByteFrequencyData(dataArray);
+
+        // Map frequency bins to 22 wave bars
+        const bars = [];
+        for (let i = 0; i < 22; i++) {
+          const binIndex = Math.floor((i / 22) * (bufferLength / 2));
+          const val = dataArray[binIndex] || 0;
+          const height = Math.max(4, Math.min(32, (val / 255) * 32));
+          bars.push(height);
+        }
+        setFrequencyBars(bars);
+      } else if (!isPlayingRef.current) {
+        setFrequencyBars(new Array(22).fill(4));
+        return;
+      }
+      animFrameRef.current = requestAnimationFrame(updateVisualizer);
+    };
+    animFrameRef.current = requestAnimationFrame(updateVisualizer);
   };
 
   /**
    * 🎬 The Master Storyteller Narrative Engine:
-   * Translates the audit data into a captivating 5-Act Hero's Journey Odyssey.
+   * Translates audit metrics into 5-Act Hero's Journey
    */
   const buildStoryChapters = () => {
     const customer = instance?.customerName || 'your organization';
     const framework = instance?.frameworkSnapshot?.title || instance?.useCase || 'Architecture Assessment';
-    const score = report?.overallScore || instance?.totalScore || 3.0;
+    const score = report?.overallScore || instance?.totalScore || 3.2;
     const stage = report?.maturityLevel || instance?.maturityLevel || 'Defined';
-    const summary = stripMarkdownForSpeech(report?.executiveSummary || 'Your architecture exhibits robust core foundations with immediate high-impact modernization frontiers.');
+    const summary = report?.executiveSummary || 'Your architecture exhibits robust core foundations with immediate high-impact modernization frontiers.';
     const recommendations = (report?.prioritizedRecommendations || report?.prioritizedActions || []).slice(0, 3);
 
-    const chapters = [];
-
-    // Act I: The Landscape & The Status Quo (Atmospheric, Scene-Setting)
-    chapters.push({
-      act: 'Act I',
-      chapterTitle: 'The Landscape',
-      pitchMod: -0.04,
-      rateMod: -0.06,
-      text: `Picture this... In an era where data velocity defines market dominance, the leadership at ${customer} embarked on a vital journey: to evaluate the true architectural frontiers of the ${framework}.`
-    });
-
-    // Act II: The Hidden Nemesis & The Conflict (Suspenseful, Whispered Urgency)
-    chapters.push({
-      act: 'Act II',
-      chapterTitle: 'The Conflict',
-      pitchMod: -0.08,
-      rateMod: -0.02,
-      text: `Beneath the surface of daily operations, subtle frictions were quietly mounting... Fragile legacy batch scripts, unmonitored AI prompt token burn, and fragmented silos were silently placing engineering velocity at risk.`
-    });
-
-    // Act III: The Moment of Clarity (Dramatic Epiphany)
-    chapters.push({
-      act: 'Act III',
-      chapterTitle: 'The Epiphany',
-      pitchMod: +0.02,
-      rateMod: 0.0,
-      text: `Then came the turning point... Our comprehensive audit evaluated your overall maturity at ${score} out of 5.0, firmly placing the organization at the ${stage} stage. ${summary}`
-    });
-
-    // Act IV: The Triumphant Awakening (Soaring Target State Vision)
-    chapters.push({
-      act: 'Act IV',
-      chapterTitle: 'The Awakening',
-      pitchMod: +0.10,
-      rateMod: +0.05,
-      text: `Imagine what happens next... The target state unlocks Google Vertex AI Gemini 3.7 with Context Caching, shattering latency and slashing token costs by an astonishing seventy-five percent, paired with the unifying power of BigLake!`
-    });
-
-    // Act V: The Heroic Horizon (Call to Adventure & Action)
-    if (recommendations.length > 0) {
-      let recText = `The path forward is clear... `;
-      recommendations.forEach((rec, idx) => {
-        const title = stripMarkdownForSpeech(rec.title || rec.recommendation || rec.action || 'Strategic Modernization Wave');
-        recText += `First, Chapter ${idx + 1}... ${title}... `;
-      });
-      recText += `The blueprint is illuminated. The horizon is yours to claim. Chapter One begins today.`;
-
-      chapters.push({
+    const chapters = [
+      {
+        act: 'Act I',
+        chapterTitle: 'The Landscape',
+        text: `Picture this... In an era where data velocity defines market dominance, the leadership at ${customer} embarked on a vital journey: to evaluate the true architectural frontiers of the ${framework}.`
+      },
+      {
+        act: 'Act II',
+        chapterTitle: 'The Conflict',
+        text: `Beneath the surface of daily operations, subtle frictions were quietly mounting... Fragile legacy batch scripts, unmonitored AI prompt token burn, and fragmented silos were silently placing engineering velocity at risk.`
+      },
+      {
+        act: 'Act III',
+        chapterTitle: 'The Epiphany',
+        text: `Then came the turning point... Our comprehensive audit evaluated your overall maturity at ${score} out of 5.0, firmly placing the organization at the ${stage} stage. ${summary}`
+      },
+      {
+        act: 'Act IV',
+        chapterTitle: 'The Awakening',
+        text: `Imagine what happens next... The target state unlocks Google Vertex AI Gemini 3.7 with Context Caching, shattering latency and slashing token costs by an astonishing seventy-five percent, paired with the unifying power of BigLake!`
+      },
+      {
         act: 'Act V',
         chapterTitle: 'The Horizon',
-        pitchMod: -0.02,
-        rateMod: -0.03,
-        text: recText
-      });
-    }
+        text: `The path forward is clear... ${recommendations.length > 0 ? recommendations.map((r, i) => `Chapter ${i + 1}: ${r.title || r.recommendation || r.action}.`).join(' ') : 'Initiate strategic modernization waves.'} The blueprint is illuminated. The horizon is yours to claim. Chapter One begins today.`
+      }
+    ];
 
     return chapters;
   };
 
   const stopAudioPlayback = () => {
-    if (keepAliveTimerRef.current) {
-      clearInterval(keepAliveTimerRef.current);
-      keepAliveTimerRef.current = null;
+    isPlayingRef.current = false;
+    setIsPlaying(false);
+
+    if (animFrameRef.current) {
+      cancelAnimationFrame(animFrameRef.current);
+      animFrameRef.current = null;
     }
+
+    if (audioElementRef.current) {
+      audioElementRef.current.pause();
+      audioElementRef.current.src = '';
+    }
+
     if (window.speechSynthesis) {
       window.speechSynthesis.cancel();
     }
-    setIsPlaying(false);
-    isPlayingRef.current = false;
+
+    setFrequencyBars(new Array(22).fill(4));
   };
 
-  const playChapter = (chapters, index) => {
+  /**
+   * ⚡ Play a single chapter using Google Cloud Journey / ElevenLabs Studio Audio
+   */
+  const playChapterStudio = async (chapters, index) => {
     if (!isPlayingRef.current || index >= chapters.length) {
       stopAudioPlayback();
       setCurrentChapterIdx(0);
@@ -570,114 +644,131 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
 
     setCurrentChapterIdx(index);
     const chap = chapters[index];
-    const utterance = new SpeechSynthesisUtterance(chap.text);
 
-    // Apply Storyteller emotional prosody modulation
-    const baseTheme = STORY_THEMES[selectedStyle] || STORY_THEMES.storyteller;
-    utterance.pitch = Math.max(0.6, Math.min(1.8, (baseTheme.pitch || 1.0) + (chap.pitchMod || 0)));
-    utterance.rate = Math.max(0.7, Math.min(1.6, (playbackRate * (baseTheme.rate || 1.0)) + (chap.rateMod || 0)));
-    utterance.volume = baseTheme.volume || 1.0;
+    // Attempt Server-Side Studio Synthesis (Google Journey TTS or ElevenLabs)
+    if (selectedEngine !== 'browser') {
+      try {
+        const response = await axios.post('/api/audio/synthesize-act', {
+          chapter: chap,
+          persona: selectedPersona,
+          style: selectedStyle,
+          engine: selectedEngine,
+          customApiKey: elevenLabsKey || null
+        }, { timeout: 15000 });
 
-    // Resolve theatrical voice persona
-    const voices = window.speechSynthesis.getVoices();
-    const persona = STORY_PERSONAS.find(p => p.id === selectedPersona) || STORY_PERSONAS[0];
-    
-    let matchedVoice = null;
-    for (const accentName of persona.accents) {
-      matchedVoice = voices.find(v => v.name.toLowerCase().includes(accentName.toLowerCase()) && v.lang.startsWith('en'));
-      if (matchedVoice) break;
+        if (response.data && response.data.success && response.data.audioBase64) {
+          initWebAudioChain();
+          const audioSrc = `data:audio/mpeg;base64,${response.data.audioBase64}`;
+          
+          if (!audioElementRef.current) {
+            audioElementRef.current = new Audio();
+          }
+
+          audioElementRef.current.src = audioSrc;
+          audioElementRef.current.playbackRate = playbackRate;
+
+          audioElementRef.current.onended = () => {
+            setTimeout(() => {
+              playChapterStudio(chapters, index + 1);
+            }, 350);
+          };
+
+          audioElementRef.current.onerror = (e) => {
+            console.warn('Audio element error, falling back to Web Speech:', e);
+            playChapterBrowserFallback(chapters, index);
+          };
+
+          await audioElementRef.current.play();
+          startVisualizerLoop();
+          return;
+        }
+      } catch (err) {
+        console.warn('Studio synthesis endpoint fallback to Web Speech:', err.message);
+        toast('Using local neural speech synthesis fallback.', { icon: '🎙️' });
+      }
     }
-    if (!matchedVoice) {
-      matchedVoice = voices.find(v => (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Premium')) && v.lang.startsWith('en'));
-    }
-    if (matchedVoice) {
-      utterance.voice = matchedVoice;
-    }
 
-    utterance.onend = () => {
-      // Dramatic pause between chapters (400ms for theatrical absorption)
-      setTimeout(() => {
-        playChapter(chapters, index + 1);
-      }, 400);
-    };
-
-    utterance.onerror = (e) => {
-      console.warn('Speech synthesis chapter transition:', e);
-      setTimeout(() => {
-        playChapter(chapters, index + 1);
-      }, 250);
-    };
-
-    utteranceRef.current = utterance;
-    window.speechSynthesis.speak(utterance);
+    // Fallback to Browser Speech Synthesis
+    playChapterBrowserFallback(chapters, index);
   };
 
-  const handlePlayToggle = () => {
-    if (!('speechSynthesis' in window)) {
-      toast.error('Audio speech synthesis is not supported in this browser.');
+  /**
+   * 🎙️ Local Browser Speech Synthesis Fallback
+   */
+  const playChapterBrowserFallback = (chapters, index) => {
+    if (!isPlayingRef.current || index >= chapters.length) {
+      stopAudioPlayback();
+      setCurrentChapterIdx(0);
       return;
     }
 
+    const chap = chapters[index];
+    const utterance = new SpeechSynthesisUtterance(chap.text);
+    const baseTheme = STORY_THEMES[selectedStyle] || STORY_THEMES.storyteller;
+    utterance.pitch = baseTheme.pitch || 1.0;
+    utterance.rate = playbackRate * (baseTheme.rate || 1.0);
+    utterance.volume = 1.0;
+
+    const voices = window.speechSynthesis.getVoices();
+    const persona = STORY_PERSONAS.find(p => p.id === selectedPersona) || STORY_PERSONAS[0];
+    let matchedVoice = voices.find(v => persona.accents.some(acc => v.name.toLowerCase().includes(acc.toLowerCase())));
+    if (!matchedVoice) {
+      matchedVoice = voices.find(v => (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Premium')) && v.lang.startsWith('en'));
+    }
+    if (matchedVoice) utterance.voice = matchedVoice;
+
+    utterance.onend = () => {
+      setTimeout(() => {
+        playChapterBrowserFallback(chapters, index + 1);
+      }, 400);
+    };
+
+    window.speechSynthesis.speak(utterance);
+    startVisualizerLoop();
+  };
+
+  const handlePlayToggle = () => {
     if (isPlaying) {
-      window.speechSynthesis.pause();
-      setIsPlaying(false);
-      isPlayingRef.current = false;
+      stopAudioPlayback();
     } else {
-      if (window.speechSynthesis.paused) {
-        window.speechSynthesis.resume();
-        setIsPlaying(true);
-        isPlayingRef.current = true;
-      } else {
-        window.speechSynthesis.cancel();
+      const chapters = buildStoryChapters();
+      setChaptersList(chapters);
+      setIsPlaying(true);
+      isPlayingRef.current = true;
+      initWebAudioChain();
 
-        const chapters = buildStoryChapters();
-        setChaptersList(chapters);
-        setIsPlaying(true);
-        isPlayingRef.current = true;
+      const personaName = STORY_PERSONAS.find(p => p.id === selectedPersona)?.name || 'Jonathan';
+      const engineLabel = selectedEngine === 'google' 
+        ? 'Google Cloud Journey (DeepMind 48kHz)' 
+        : (selectedEngine === 'elevenlabs' ? 'ElevenLabs Turbo v2.5' : 'Local Browser Engine');
 
-        if (keepAliveTimerRef.current) {
-          clearInterval(keepAliveTimerRef.current);
-        }
-        keepAliveTimerRef.current = setInterval(() => {
-          if (window.speechSynthesis && window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
-            window.speechSynthesis.pause();
-            window.speechSynthesis.resume();
-          }
-        }, 10000);
-
-        playChapter(chapters, 0);
-        const personaName = STORY_PERSONAS.find(p => p.id === selectedPersona)?.name;
-        toast.success(`🎬 Storytelling by ${personaName} • Arc: ${activeTheme.name}`, { id: 'story-play', icon: activeTheme.icon });
-      }
+      toast.success(`🎬 Narrated by ${personaName} • ${engineLabel}`, { id: 'story-play', icon: activeTheme.icon });
+      playChapterStudio(chapters, currentChapterIdx);
     }
   };
 
   const jumpToChapter = (idx) => {
     const chapters = buildStoryChapters();
     setChaptersList(chapters);
-    window.speechSynthesis.cancel();
+    stopAudioPlayback();
     setIsPlaying(true);
     isPlayingRef.current = true;
-    playChapter(chapters, idx);
+    initWebAudioChain();
+    playChapterStudio(chapters, idx);
   };
 
   const cycleRate = () => {
     const rates = [0.9, 1.0, 1.2, 1.4];
     const nextRate = rates[(rates.indexOf(playbackRate) + 1) % rates.length];
     setPlaybackRate(nextRate);
-    if (isPlaying) {
-      stopAudioPlayback();
-      toast(`Storytelling tempo set to ${nextRate}x. Restart to apply.`, { id: 'story-speed' });
+    if (audioElementRef.current) {
+      audioElementRef.current.playbackRate = nextRate;
     }
-  };
-
-  const currentChapter = chaptersList[currentChapterIdx] || {
-    act: 'Master Storyteller',
-    chapterTitle: 'The Architectural Odyssey',
-    text: 'A cinematic 5-act narrative transforming technical metrics into an inspiring C-suite transformation story.'
+    toast(`Storytelling tempo set to ${nextRate}x.`, { id: 'story-speed' });
   };
 
   const activeChapters = chaptersList.length > 0 ? chaptersList : buildStoryChapters();
+  const currentChapter = activeChapters[currentChapterIdx] || activeChapters[0];
 
   return (
     <PlayerContainer 
@@ -701,32 +792,30 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
                 {activeTheme.icon} {activeTheme.name}
               </EmotionTag>
               <EmotionTag $bg="rgba(245, 158, 11, 0.12)" $color="#d97706" $border="rgba(245, 158, 11, 0.3)">
-                <HiSparkles size={12} /> 5-Act Narrative Arc
+                <HiSparkles size={12} /> {selectedEngine === 'google' ? 'Google Journey Studio 48kHz' : '5-Act Narrative Arc'}
               </EmotionTag>
             </h4>
             <p>Narrated by <strong>{STORY_PERSONAS.find(p => p.id === selectedPersona)?.name}</strong> — <em>"{STORY_PERSONAS.find(p => p.id === selectedPersona)?.vibe}"</em></p>
           </div>
         </InfoSection>
 
-        {/* 22-Bar Theatrical Animated Waveform */}
+        {/* 22-Bar Live Web Audio DSP Visualizer */}
         <WaveContainer>
-          {[
-            10, 22, 16, 30, 14, 26, 18, 32, 22, 16,
-            28, 12, 26, 20, 32, 14, 24, 18, 22, 12, 26, 8
-          ].map((barHeight, idx) => (
+          {frequencyBars.map((barHeight, idx) => (
             <WaveBar 
               key={idx} 
-              $delay={idx * 0.05} 
+              $delay={idx * 0.04} 
               $playing={isPlaying}
-              $height={barHeight}
+              $height={isPlaying ? barHeight : 4}
               $gradient={activeTheme.gradient}
+              $realtime={true}
             />
           ))}
         </WaveContainer>
 
         <ControlsGroup>
-          <SecondaryControl $theme={theme} onClick={() => setShowSettings(!showSettings)} $active={showSettings} title="Storytelling Arc & Narrator Casting">
-            <FiSliders size={13} /> {showSettings ? 'Hide Narrator' : 'Story Style & Voices'}
+          <SecondaryControl $theme={theme} onClick={() => setShowSettings(!showSettings)} $active={showSettings} title="Voice Engine, Studio Casting & Narrative Arc">
+            <FiSliders size={13} /> {showSettings ? 'Hide Studio' : 'Voice Studio & Engine'}
           </SecondaryControl>
 
           <SecondaryControl $theme={theme} onClick={cycleRate} title="Change speech tempo">
@@ -751,7 +840,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
       </TopRow>
 
       {/* 5-Act Chapter Progression Timeline */}
-      <ChapterBar>
+      <ChapterBar $theme={theme}>
         {activeChapters.map((chap, idx) => (
           <ChapterPill
             key={idx}
@@ -780,16 +869,16 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
           >
             <div className="quote-symbol">“</div>
             <div className="text-content">
-              {currentChapter.text}
+              {currentChapter?.text}
             </div>
             <div className="chapter-badge">
-              {currentChapter.act}: {currentChapter.chapterTitle}
+              {currentChapter?.act}: {currentChapter?.chapterTitle}
             </div>
           </StoryTeleprompter>
         )}
       </AnimatePresence>
 
-      {/* Expanded Story Style & Voice Casting Drawer */}
+      {/* Expanded Studio Casting & Voice Engine Drawer */}
       <AnimatePresence>
         {showSettings && (
           <SettingsPanel 
@@ -799,7 +888,71 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
           >
-            {/* 1. Storytelling Style & Narrative Arc */}
+            {/* 1. Synthesis Engine Selector */}
+            <ControlCard $theme={theme}>
+              <div className="label">
+                <FiCpu size={13} />
+                Neural Audio Synthesizer Engine
+              </div>
+              <div className="options-grid">
+                <OptionPill
+                  $theme={theme}
+                  $active={selectedEngine === 'google'}
+                  $gradient={activeTheme.gradient}
+                  onClick={() => {
+                    setSelectedEngine('google');
+                    stopAudioPlayback();
+                    toast.success('Switched to Google Cloud Journey Studio (DeepMind 48kHz Neural)', { icon: '🌌' });
+                  }}
+                >
+                  <span>🌌 Google Cloud Journey</span>
+                  <span style={{ fontSize: '0.68rem', opacity: 0.85 }}>DeepMind Studio 48kHz</span>
+                </OptionPill>
+
+                <OptionPill
+                  $theme={theme}
+                  $active={selectedEngine === 'elevenlabs'}
+                  $gradient={activeTheme.gradient}
+                  onClick={() => {
+                    setSelectedEngine('elevenlabs');
+                    stopAudioPlayback();
+                    toast.success('Switched to ElevenLabs Multilingual v2', { icon: '🎙️' });
+                  }}
+                >
+                  <span>🎙️ ElevenLabs BYOK</span>
+                  <span style={{ fontSize: '0.68rem', opacity: 0.85 }}>Turbo v2.5 / Multilingual</span>
+                </OptionPill>
+
+                <OptionPill
+                  $theme={theme}
+                  $active={selectedEngine === 'browser'}
+                  $gradient={activeTheme.gradient}
+                  onClick={() => {
+                    setSelectedEngine('browser');
+                    stopAudioPlayback();
+                    toast('Switched to Local Browser Synthesizer', { icon: '💻' });
+                  }}
+                >
+                  <span>💻 Local Browser TTS</span>
+                  <span style={{ fontSize: '0.68rem', opacity: 0.85 }}>Offline Fallback</span>
+                </OptionPill>
+
+                {selectedEngine === 'elevenlabs' && (
+                  <div>
+                    <label style={{ fontSize: '0.72rem', color: theme === 'dark' ? '#94a3b8' : '#64748b' }}>Custom ElevenLabs API Key (Optional):</label>
+                    <ApiKeyInput 
+                      $theme={theme}
+                      type="password"
+                      placeholder="sk_..."
+                      value={elevenLabsKey}
+                      onChange={(e) => setElevenLabsKey(e.target.value)}
+                    />
+                  </div>
+                )}
+              </div>
+            </ControlCard>
+
+            {/* 2. Storytelling Style & Narrative Arc */}
             <ControlCard $theme={theme}>
               <div className="label">
                 <FiFilm size={13} />
@@ -814,25 +967,22 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
                     $gradient={item.gradient}
                     onClick={() => {
                       setSelectedStyle(key);
-                      if (isPlaying) {
-                        stopAudioPlayback();
-                        toast.success(`Storytelling style set to ${item.name}. Click Begin Story to experience.`, { icon: item.icon });
-                      }
+                      stopAudioPlayback();
+                      toast.success(`Storytelling style: ${item.name}`, { icon: item.icon });
                     }}
                   >
-                    <span>{item.icon}</span>
-                    <span>{item.name}</span>
+                    <span>{item.icon} {item.name}</span>
                     <span style={{ fontSize: '0.68rem', opacity: 0.8 }}>({item.tagline.split(' ')[0]})</span>
                   </OptionPill>
                 ))}
               </div>
             </ControlCard>
 
-            {/* 2. Master Storyteller Voice Casting */}
+            {/* 3. Master Storyteller Voice Casting */}
             <ControlCard $theme={theme}>
               <div className="label">
                 <FiUser size={13} />
-                Master Storyteller Voice Casting
+                Studio Master Voice Casting
               </div>
               <div className="options-grid">
                 {STORY_PERSONAS.map((persona) => (
@@ -843,15 +993,12 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
                     $gradient={activeTheme.gradient}
                     onClick={() => {
                       setSelectedPersona(persona.id);
-                      if (isPlaying) {
-                        stopAudioPlayback();
-                        toast.success(`Narrator cast: ${persona.name}. Restart story to apply.`, { icon: '🎙️' });
-                      }
+                      stopAudioPlayback();
+                      toast.success(`Voice Cast: ${persona.name} (${persona.googleVoice})`, { icon: '🎙️' });
                     }}
                   >
-                    <span>{persona.gender === 'female' ? '👩‍💼' : '🎙️'}</span>
-                    <span>{persona.name}</span>
-                    <span style={{ fontSize: '0.68rem', opacity: 0.85 }}>({persona.title.split(' ')[0]})</span>
+                    <span>🎙️ {persona.name}</span>
+                    <span style={{ fontSize: '0.68rem', opacity: 0.8 }}>{persona.gender}</span>
                   </OptionPill>
                 ))}
               </div>
@@ -864,4 +1011,3 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
 };
 
 export default AudioBriefingPlayer;
-

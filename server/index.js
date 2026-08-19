@@ -71,6 +71,7 @@ const dataCleanupRoutes = require('./routes/dataCleanup');
 const authorValidationRoutes = require('./routes/authorValidation');
 const genaiReadinessRoutes = require('./routes/genaiReadiness');
 const dynamicAssessmentsRoutes = require('./routes/dynamicAssessments');
+const audioRoutes = require('./routes/audio');
 const { requireAdmin } = require('./middleware/auth');
 
 // Mount routes
@@ -87,6 +88,7 @@ app.use('/api/question-assignments', questionAssignmentsRoutes);
 app.use('/api/data-cleanup', dataCleanupRoutes);
 app.use('/api/genai-readiness', genaiReadinessRoutes);
 app.use('/api/dynamic-assessments', dynamicAssessmentsRoutes);
+app.use('/api/audio', audioRoutes);
 
 // Admin endpoint to release/unrelease assessment results
 app.post('/api/admin/release-results/:assessmentId', requireAuth, requireAdmin, async (req, res) => {
