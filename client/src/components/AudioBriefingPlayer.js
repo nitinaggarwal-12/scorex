@@ -1501,6 +1501,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
 
   return (
     <PlayerContainer 
+      id="audio-briefing-player"
       $theme={theme}
       $activeBorder={activeTheme.border}
       $activeGlow={activeTheme.glow}

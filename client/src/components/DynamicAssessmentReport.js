@@ -877,7 +877,59 @@ const DynamicAssessmentReport = () => {
               {theme === 'light' ? '🌙 Dark' : '☀️ Light'}
             </button>
 
-            {/* 2. Present Deck */}
+            {/* 2. AI Voice Briefing Action */}
+            <button
+              style={{
+                background: 'linear-gradient(135deg, #7c3aed, #6d28d9)',
+                border: 'none',
+                color: '#ffffff',
+                padding: '8px 16px',
+                borderRadius: '10px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                cursor: 'pointer',
+                fontWeight: '800',
+                fontSize: '0.85rem',
+                boxShadow: '0 4px 14px rgba(124, 58, 237, 0.3)'
+              }}
+              onClick={() => {
+                const playerEl = document.getElementById('audio-briefing-player');
+                if (playerEl) {
+                  playerEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  playerEl.style.transform = 'scale(1.02)';
+                  setTimeout(() => { playerEl.style.transform = 'scale(1)'; }, 600);
+                }
+                toast('🎙️ DeepMind Emotional Audio Engine active! Use the player below to customize voices & language.', { icon: '🎙️' });
+              }}
+              title="Listen to DeepMind Neural Voice Briefing with 4,000+ Voices & 30+ Languages"
+            >
+              <span>🎙️</span> AI Voice Brief
+            </button>
+
+            {/* 3. What-If Simulator Action */}
+            <button
+              style={{
+                background: showSimulator ? 'linear-gradient(135deg, #10b981, #059669)' : (theme === 'light' ? '#f0fdf4' : 'rgba(16, 185, 129, 0.15)'),
+                border: showSimulator ? 'none' : '1.5px solid #10b981',
+                color: showSimulator ? '#ffffff' : '#10b981',
+                padding: '8px 16px',
+                borderRadius: '10px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                cursor: 'pointer',
+                fontWeight: '800',
+                fontSize: '0.85rem',
+                boxShadow: showSimulator ? '0 4px 14px rgba(16, 185, 129, 0.3)' : 'none'
+              }}
+              onClick={() => setShowSimulator(prev => !prev)}
+              title="Open Interactive What-If Score & FinOps ROI Simulator"
+            >
+              <span>🔮</span> {showSimulator ? 'Close Simulator' : 'What-If Simulator'}
+            </button>
+
+            {/* 4. Present Deck */}
             <button
               style={{
                 background: 'linear-gradient(135deg, #f59e0b, #d97706)',

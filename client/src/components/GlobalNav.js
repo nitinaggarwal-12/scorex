@@ -967,21 +967,56 @@ const GlobalNav = () => {
                   Explore & Tools
                   <FiChevronDown size={13} style={{ transform: resourcesDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
                 </NavLink>
-                <DropdownMenu $isOpen={resourcesDropdownOpen} style={{ minWidth: '240px', left: 0, right: 'auto' }}>
-                  <DropdownHeader>Core Frameworks</DropdownHeader>
+                <DropdownMenu $isOpen={resourcesDropdownOpen} style={{ minWidth: '320px', left: 0, right: 'auto', padding: '10px 0' }}>
+                  <DropdownHeader>⚡ Flagship AI Capabilities</DropdownHeader>
+                  <DropdownItem onClick={() => { handleNavigate('/assessments/custom-hub'); setResourcesDropdownOpen(false); }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', width: '100%' }}>
+                      <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', fontWeight: '700', color: '#7c3aed' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>🎙️ DeepMind Voice & Audio</span>
+                        <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(124,58,237,0.12)', color: '#7c3aed', fontWeight: 800 }}>4,000+ Voices</span>
+                      </span>
+                      <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Neural voice briefs, podcast casting & multilingual dubbing</span>
+                    </div>
+                  </DropdownItem>
+
+                  <DropdownItem onClick={() => { handleNavigate('/pitch-deck'); setResourcesDropdownOpen(false); }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', width: '100%' }}>
+                      <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', fontWeight: '700', color: '#d97706' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>🎬 Veo 2 Video & Storyboard</span>
+                        <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(245,158,11,0.12)', color: '#d97706', fontWeight: 800 }}>Veo 2</span>
+                      </span>
+                      <span style={{ fontSize: '0.75rem', color: '#64748b' }}>5-act executive video synthesis & architecture fly-throughs</span>
+                    </div>
+                  </DropdownItem>
+
+                  <DropdownItem onClick={() => { handleNavigate('/assessments/ai-generator'); setResourcesDropdownOpen(false); }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', width: '100%' }}>
+                      <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', fontWeight: '700', color: '#db2777' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>✨ Prompt-to-Assessment AI</span>
+                        <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(219,39,119,0.12)', color: '#db2777', fontWeight: 800 }}>GenAI</span>
+                      </span>
+                      <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Compile custom 60-question industry maturity frameworks</span>
+                    </div>
+                  </DropdownItem>
+
+                  <DropdownDivider />
+
+                  <DropdownHeader>🏛️ Diagnostic Frameworks & Hubs</DropdownHeader>
                   <DropdownItem onClick={() => { handleNavigate('/start'); setResourcesDropdownOpen(false); }}>
-                    <FiBarChart2 style={{ color: '#3b82f6' }} /> 6-Pillar Benchmark
+                    <FiBarChart2 style={{ color: '#3b82f6' }} /> 6-Pillar Benchmark Assessment
                   </DropdownItem>
                   <DropdownItem onClick={() => { handleNavigate('/deep-dive'); setResourcesDropdownOpen(false); }}>
-                    <FiCpu style={{ color: '#8b5cf6' }} /> Deep Dive Diagnostics
+                    <FiCpu style={{ color: '#8b5cf6' }} /> Deep Dive Diagnostic Engine
                   </DropdownItem>
+                  <DropdownItem onClick={() => { handleNavigate('/insights-dashboard'); setResourcesDropdownOpen(false); }}>
+                    <FiTrendingUp style={{ color: '#10b981' }} /> Executive Portfolio Dashboard
+                  </DropdownItem>
+
                   <DropdownDivider />
-                  <DropdownHeader>Executive & Guides</DropdownHeader>
-                  <DropdownItem onClick={() => { handleNavigate('/pitch-deck'); setResourcesDropdownOpen(false); }}>
-                    <FiMonitor style={{ color: '#f59e0b' }} /> Pitch Deck Mode
-                  </DropdownItem>
+
+                  <DropdownHeader>📖 Guidance & Documentation</DropdownHeader>
                   <DropdownItem onClick={() => { handleNavigate('/user-guide'); setResourcesDropdownOpen(false); }}>
-                    <FiBook style={{ color: '#10b981' }} /> User Guide & Playbook
+                    <FiBook style={{ color: '#6366f1' }} /> User Guide & Best Practices
                   </DropdownItem>
                 </DropdownMenu>
               </DropdownContainer>
