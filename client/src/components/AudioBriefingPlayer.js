@@ -24,7 +24,12 @@ import {
   FiRadio,
   FiKey,
   FiCpu,
-  FiHeadphones
+  FiHeadphones,
+  FiMic,
+  FiDownload,
+  FiUsers,
+  FiUploadCloud,
+  FiCheckCircle
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
@@ -37,11 +42,6 @@ const wave = keyframes`
 const pulseGlow = keyframes`
   0%, 100% { opacity: 0.7; transform: scale(1); filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.4)); }
   50% { opacity: 1; transform: scale(1.06); filter: drop-shadow(0 0 16px rgba(245, 158, 11, 0.7)); }
-`;
-
-const shimmer = keyframes`
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
 `;
 
 // Emotional & Storytelling Style Themes
@@ -230,9 +230,6 @@ const WaveBar = styled.div`
   width: 4px;
   background: ${props => props.$gradient || 'linear-gradient(180deg, #f59e0b 0%, #ec4899 100%)'};
   border-radius: 4px;
-  animation: ${props => props.$realtime ? 'none' : css`${wave} 1.3s ease-in-out infinite`};
-  animation-delay: ${props => props.$delay}s;
-  animation-play-state: ${props => props.$playing ? 'running' : 'paused'};
   height: ${props => `${props.$height || 4}px`};
   transition: height 0.08s ease;
 `;
@@ -446,6 +443,32 @@ const ApiKeyInput = styled.input`
   }
 `;
 
+const VoiceRecorderSection = styled.div`
+  margin-top: 10px;
+  padding: 12px;
+  background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.6)' : '#ffffff'};
+  border: 1px solid ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'};
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .rec-btn {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 0.8rem;
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: ${props => props.$isRecording ? '#ef4444' : '#10b981'};
+    color: white;
+  }
+`;
+
 const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1.0);
@@ -456,14 +479,21 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   const [showSettings, setShowSettings] = useState(false);
   const [currentChapterIdx, setCurrentChapterIdx] = useState(0);
   const [chaptersList, setChaptersList] = useState([]);
-  const [frequencyBars, setFrequencyBars] = useState(new Array(22).fill(6));
+  const [frequencyBars, setFrequencyBars] = useState(new Array(22).fill(4));
+  const [isPodcastMode, setIsPodcastMode] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [customClonedVoiceId, setCustomClonedVoiceId] = useState(null);
+  const [clonedVoiceName, setClonedVoiceName] = useState(null);
 
   const audioElementRef = useRef(null);
   const audioContextRef = useRef(null);
   const sourceNodeRef = useRef(null);
   const analyserRef = useRef(null);
-  const duckingGainRef = useRef(null);
-  const ambientOscillatorRef = useRef(null);
+  const warmthFilterRef = useRef(null);
+  const breathFilterRef = useRef(null);
+  const compressorRef = useRef(null);
+  const mediaRecorderRef = useRef(null);
+  const recordedChunksRef = useRef([]);
   const animFrameRef = useRef(null);
   const isPlayingRef = useRef(false);
 
@@ -479,7 +509,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   }, []);
 
   /**
-   * 🎛️ Initialize Web Audio DSP Mastering Chain (180Hz warmth + Dynamics Compression + Soundbed Ducking)
+   * 🎛️ Initialize Web Audio DSP Mastering Chain (180Hz warmth + Dynamics Compression + Morphing)
    */
   const initWebAudioChain = () => {
     if (!audioContextRef.current) {
@@ -488,46 +518,48 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
       const ctx = new AudioCtx();
       audioContextRef.current = ctx;
 
-      // 1. Audio Element
       if (!audioElementRef.current) {
         audioElementRef.current = new Audio();
         audioElementRef.current.crossOrigin = 'anonymous';
       }
 
-      // 2. Source Node
       try {
         const source = ctx.createMediaElementSource(audioElementRef.current);
         sourceNodeRef.current = source;
 
-        // 3. Low-Shelf Warmth EQ (+2.5dB at 180Hz for Neumann U87 proximity effect)
+        // 1. Low-Shelf Warmth EQ (180Hz)
         const warmthFilter = ctx.createBiquadFilter();
         warmthFilter.type = 'lowshelf';
         warmthFilter.frequency.value = 180;
         warmthFilter.gain.value = 2.5;
+        warmthFilterRef.current = warmthFilter;
 
-        // 4. De-Esser Filter (-1.5dB at 7500Hz)
-        const deEsser = ctx.createBiquadFilter();
-        deEsser.type = 'highshelf';
-        deEsser.frequency.value = 7500;
-        deEsser.gain.value = -1.5;
+        // 2. High-Shelf Breath / De-Esser Filter (4000Hz - 7500Hz)
+        const breathFilter = ctx.createBiquadFilter();
+        breathFilter.type = 'peaking';
+        breathFilter.frequency.value = 4000;
+        breathFilter.Q.value = 1.0;
+        breathFilter.gain.value = 0.0;
+        breathFilterRef.current = breathFilter;
 
-        // 5. Broadcast Dynamics Compressor
+        // 3. Broadcast Dynamics Compressor
         const compressor = ctx.createDynamicsCompressor();
         compressor.threshold.setValueAtTime(-24, ctx.currentTime);
         compressor.knee.setValueAtTime(30, ctx.currentTime);
         compressor.ratio.setValueAtTime(4, ctx.currentTime);
         compressor.attack.setValueAtTime(0.003, ctx.currentTime);
         compressor.release.setValueAtTime(0.25, ctx.currentTime);
+        compressorRef.current = compressor;
 
-        // 6. Analyser Node for Realtime 22-bar spectrum
+        // 4. Analyser Node for Realtime 22-bar spectrum
         const analyser = ctx.createAnalyser();
         analyser.fftSize = 64;
         analyserRef.current = analyser;
 
-        // Connect Chain: Source -> Warmth -> DeEsser -> Compressor -> Analyser -> Destination
+        // Chain: Source -> Warmth -> Breath/DeEsser -> Compressor -> Analyser -> Out
         source.connect(warmthFilter);
-        warmthFilter.connect(deEsser);
-        deEsser.connect(compressor);
+        warmthFilter.connect(breathFilter);
+        breathFilter.connect(compressor);
         compressor.connect(analyser);
         analyser.connect(ctx.destination);
       } catch (err) {
@@ -541,6 +573,32 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   };
 
   /**
+   * 🌊 Act-Specific Dynamic DSP Morphing (Exponential Crossfading)
+   */
+  const applyActDSPMorphing = (actIndex) => {
+    if (!audioContextRef.current || !warmthFilterRef.current || !breathFilterRef.current) return;
+    const ctx = audioContextRef.current;
+    const now = ctx.currentTime;
+
+    if (actIndex === 1) {
+      // Act II: Intimate Whisper ASMR Mode (Low cut, high breath turbulence)
+      warmthFilterRef.current.gain.setTargetAtTime(-4.0, now, 0.06);
+      breathFilterRef.current.gain.setTargetAtTime(4.5, now, 0.06);
+      if (compressorRef.current) compressorRef.current.threshold.setTargetAtTime(-30, now, 0.06);
+    } else if (actIndex === 3) {
+      // Act IV: Soaring Triumph Mode (Warmth expansion + presence boost)
+      warmthFilterRef.current.gain.setTargetAtTime(3.5, now, 0.06);
+      breathFilterRef.current.gain.setTargetAtTime(2.0, now, 0.06);
+      if (compressorRef.current) compressorRef.current.threshold.setTargetAtTime(-20, now, 0.06);
+    } else {
+      // Default Studio Balanced Master
+      warmthFilterRef.current.gain.setTargetAtTime(2.5, now, 0.06);
+      breathFilterRef.current.gain.setTargetAtTime(0.0, now, 0.06);
+      if (compressorRef.current) compressorRef.current.threshold.setTargetAtTime(-24, now, 0.06);
+    }
+  };
+
+  /**
    * 📊 Real-time Web Audio Visualizer Animation Loop
    */
   const startVisualizerLoop = () => {
@@ -550,7 +608,6 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
         const dataArray = new Uint8Array(bufferLength);
         analyserRef.current.getByteFrequencyData(dataArray);
 
-        // Map frequency bins to 22 wave bars
         const bars = [];
         for (let i = 0; i < 22; i++) {
           const binIndex = Math.floor((i / 22) * (bufferLength / 2));
@@ -569,8 +626,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   };
 
   /**
-   * 🎬 The Master Storyteller Narrative Engine:
-   * Translates audit metrics into 5-Act Hero's Journey
+   * 🎬 The Master Storyteller Narrative Engine
    */
   const buildStoryChapters = () => {
     const customer = instance?.customerName || 'your organization';
@@ -580,7 +636,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
     const summary = report?.executiveSummary || 'Your architecture exhibits robust core foundations with immediate high-impact modernization frontiers.';
     const recommendations = (report?.prioritizedRecommendations || report?.prioritizedActions || []).slice(0, 3);
 
-    const chapters = [
+    return [
       {
         act: 'Act I',
         chapterTitle: 'The Landscape',
@@ -607,8 +663,6 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
         text: `The path forward is clear... ${recommendations.length > 0 ? recommendations.map((r, i) => `Chapter ${i + 1}: ${r.title || r.recommendation || r.action}.`).join(' ') : 'Initiate strategic modernization waves.'} The blueprint is illuminated. The horizon is yours to claim. Chapter One begins today.`
       }
     ];
-
-    return chapters;
   };
 
   const stopAudioPlayback = () => {
@@ -643,9 +697,9 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
     }
 
     setCurrentChapterIdx(index);
+    applyActDSPMorphing(index);
     const chap = chapters[index];
 
-    // Attempt Server-Side Studio Synthesis (Google Journey TTS or ElevenLabs)
     if (selectedEngine !== 'browser') {
       try {
         const response = await axios.post('/api/audio/synthesize-act', {
@@ -653,7 +707,8 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
           persona: selectedPersona,
           style: selectedStyle,
           engine: selectedEngine,
-          customApiKey: elevenLabsKey || null
+          customApiKey: elevenLabsKey || null,
+          customVoiceId: customClonedVoiceId || null
         }, { timeout: 15000 });
 
         if (response.data && response.data.success && response.data.audioBase64) {
@@ -688,13 +743,9 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
       }
     }
 
-    // Fallback to Browser Speech Synthesis
     playChapterBrowserFallback(chapters, index);
   };
 
-  /**
-   * 🎙️ Local Browser Speech Synthesis Fallback
-   */
   const playChapterBrowserFallback = (chapters, index) => {
     if (!isPlayingRef.current || index >= chapters.length) {
       stopAudioPlayback();
@@ -737,7 +788,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
       isPlayingRef.current = true;
       initWebAudioChain();
 
-      const personaName = STORY_PERSONAS.find(p => p.id === selectedPersona)?.name || 'Jonathan';
+      const personaName = clonedVoiceName || STORY_PERSONAS.find(p => p.id === selectedPersona)?.name || 'Jonathan';
       const engineLabel = selectedEngine === 'google' 
         ? 'Google Cloud Journey (DeepMind 48kHz)' 
         : (selectedEngine === 'elevenlabs' ? 'ElevenLabs Turbo v2.5' : 'Local Browser Engine');
@@ -767,6 +818,89 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
     toast(`Storytelling tempo set to ${nextRate}x.`, { id: 'story-speed' });
   };
 
+  /**
+   * 📦 1-Click Download Full 5-Act Broadcast MP3
+   */
+  const handleDownloadFullMp3 = async () => {
+    toast.loading('Assembling studio broadcast MP3...', { id: 'download-mp3' });
+    try {
+      const response = await axios.post('/api/audio/export-mp3', {
+        instance,
+        report,
+        style: selectedStyle,
+        persona: selectedPersona,
+        engine: selectedEngine,
+        customApiKey: elevenLabsKey || null
+      }, { responseType: 'blob' });
+
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'audio/mpeg' }));
+      const link = document.createElement('a');
+      link.href = url;
+      const clientSlug = (instance?.customerName || 'ScoreX').replace(/[^a-zA-Z0-9_-]/g, '_');
+      link.setAttribute('download', `${clientSlug}_Executive_Briefing.mp3`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      toast.success('Broadcast MP3 downloaded successfully!', { id: 'download-mp3' });
+    } catch (err) {
+      toast.error('Failed to export audio briefing MP3.', { id: 'download-mp3' });
+    }
+  };
+
+  /**
+   * 🎙️ In-App Voice Cloner Recorder
+   */
+  const handleStartMicRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      recordedChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) recordedChunksRef.current.push(e.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(recordedChunksRef.current, { type: 'audio/mp3' });
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = async () => {
+          const base64Data = reader.result.split(',')[1];
+          toast.loading('Extracting vocal resonance & speaker timbre...', { id: 'clone-voice' });
+          try {
+            const res = await axios.post('/api/audio/clone-voice', {
+              audioBase64: base64Data,
+              voiceName: 'My Cloned Voice',
+              customApiKey: elevenLabsKey || null
+            });
+            if (res.data && res.data.success) {
+              setCustomClonedVoiceId(res.data.voiceProfile.remoteVoiceId);
+              setClonedVoiceName('My Cloned Voice');
+              toast.success('Voice cloned! Now narrating in your custom voice.', { id: 'clone-voice' });
+            }
+          } catch (e) {
+            toast.error('Voice cloning calibration failed.', { id: 'clone-voice' });
+          }
+        };
+        stream.getTracks().forEach(t => t.stop());
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+      toast('Recording voice sample... speak for 10-15 seconds.', { icon: '🎙️' });
+    } catch (err) {
+      toast.error('Microphone access denied or not available.');
+    }
+  };
+
+  const handleStopMicRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
   const activeChapters = chaptersList.length > 0 ? chaptersList : buildStoryChapters();
   const currentChapter = activeChapters[currentChapterIdx] || activeChapters[0];
 
@@ -792,10 +926,10 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
                 {activeTheme.icon} {activeTheme.name}
               </EmotionTag>
               <EmotionTag $bg="rgba(245, 158, 11, 0.12)" $color="#d97706" $border="rgba(245, 158, 11, 0.3)">
-                <HiSparkles size={12} /> {selectedEngine === 'google' ? 'Google Journey Studio 48kHz' : '5-Act Narrative Arc'}
+                <HiSparkles size={12} /> {customClonedVoiceId ? 'Cloned Executive Voice' : (selectedEngine === 'google' ? 'Google Journey Studio 48kHz' : '5-Act Narrative Arc')}
               </EmotionTag>
             </h4>
-            <p>Narrated by <strong>{STORY_PERSONAS.find(p => p.id === selectedPersona)?.name}</strong> — <em>"{STORY_PERSONAS.find(p => p.id === selectedPersona)?.vibe}"</em></p>
+            <p>Narrated by <strong>{clonedVoiceName || STORY_PERSONAS.find(p => p.id === selectedPersona)?.name}</strong> — <em>"{clonedVoiceName ? 'Custom Zero-Shot Clone' : STORY_PERSONAS.find(p => p.id === selectedPersona)?.vibe}"</em></p>
           </div>
         </InfoSection>
 
@@ -808,7 +942,6 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
               $playing={isPlaying}
               $height={isPlaying ? barHeight : 4}
               $gradient={activeTheme.gradient}
-              $realtime={true}
             />
           ))}
         </WaveContainer>
@@ -820,6 +953,10 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
 
           <SecondaryControl $theme={theme} onClick={cycleRate} title="Change speech tempo">
             <FiFastForward size={13} /> {playbackRate}x
+          </SecondaryControl>
+
+          <SecondaryControl $theme={theme} onClick={handleDownloadFullMp3} title="Download Full Broadcast MP3">
+            <FiDownload size={13} /> MP3
           </SecondaryControl>
 
           <SecondaryControl $theme={theme} onClick={stopAudioPlayback} title="Stop Audio">
@@ -923,20 +1060,6 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
                   <span style={{ fontSize: '0.68rem', opacity: 0.85 }}>Turbo v2.5 / Multilingual</span>
                 </OptionPill>
 
-                <OptionPill
-                  $theme={theme}
-                  $active={selectedEngine === 'browser'}
-                  $gradient={activeTheme.gradient}
-                  onClick={() => {
-                    setSelectedEngine('browser');
-                    stopAudioPlayback();
-                    toast('Switched to Local Browser Synthesizer', { icon: '💻' });
-                  }}
-                >
-                  <span>💻 Local Browser TTS</span>
-                  <span style={{ fontSize: '0.68rem', opacity: 0.85 }}>Offline Fallback</span>
-                </OptionPill>
-
                 {selectedEngine === 'elevenlabs' && (
                   <div>
                     <label style={{ fontSize: '0.72rem', color: theme === 'dark' ? '#94a3b8' : '#64748b' }}>Custom ElevenLabs API Key (Optional):</label>
@@ -952,7 +1075,31 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
               </div>
             </ControlCard>
 
-            {/* 2. Storytelling Style & Narrative Arc */}
+            {/* 2. Instant Voice Cloner */}
+            <ControlCard $theme={theme}>
+              <div className="label">
+                <FiMic size={13} />
+                Instant Custom Voice Cloner
+              </div>
+              <VoiceRecorderSection $theme={theme} $isRecording={isRecording}>
+                <p style={{ fontSize: '0.76rem', margin: 0, color: theme === 'dark' ? '#cbd5e1' : '#64748b' }}>
+                  Clone your CEO or Lead Architect's voice in 15 seconds:
+                </p>
+                <button 
+                  className="rec-btn" 
+                  onClick={isRecording ? handleStopMicRecording : handleStartMicRecording}
+                >
+                  <FiMic size={13} /> {isRecording ? 'Stop & Calibrate Voice' : 'Record 15s Sample'}
+                </button>
+                {customClonedVoiceId && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#10b981', fontSize: '0.75rem', fontWeight: '700' }}>
+                    <FiCheckCircle size={13} /> Cloned Voice Active: {clonedVoiceName}
+                  </div>
+                )}
+              </VoiceRecorderSection>
+            </ControlCard>
+
+            {/* 3. Storytelling Style & Narrative Arc */}
             <ControlCard $theme={theme}>
               <div className="label">
                 <FiFilm size={13} />
@@ -978,7 +1125,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
               </div>
             </ControlCard>
 
-            {/* 3. Master Storyteller Voice Casting */}
+            {/* 4. Master Storyteller Voice Casting */}
             <ControlCard $theme={theme}>
               <div className="label">
                 <FiUser size={13} />
@@ -989,10 +1136,12 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
                   <OptionPill
                     key={persona.id}
                     $theme={theme}
-                    $active={selectedPersona === persona.id}
+                    $active={selectedPersona === persona.id && !customClonedVoiceId}
                     $gradient={activeTheme.gradient}
                     onClick={() => {
                       setSelectedPersona(persona.id);
+                      setCustomClonedVoiceId(null);
+                      setClonedVoiceName(null);
                       stopAudioPlayback();
                       toast.success(`Voice Cast: ${persona.name} (${persona.googleVoice})`, { icon: '🎙️' });
                     }}

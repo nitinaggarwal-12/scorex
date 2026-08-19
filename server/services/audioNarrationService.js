@@ -9,14 +9,18 @@ const geminiService = require('./geminiService');
  * Enterprise-grade, humanized voice synthesis engine combining:
  * 1. Gemini Cinematic SSML Audio Director (Prosody, breath, pitch drift, metric naturalization)
  * 2. Google Cloud Journey & Studio TTS (DeepMind 48kHz Neural models)
- * 3. ElevenLabs BYOK API Engine (Optional studio clone support)
- * 4. Content-Addressed SHA-256 Audio Cache (0ms instant replay)
+ * 3. ElevenLabs Instant Voice Cloning & BYOK API Engine
+ * 4. Dual-Host Podcast Co-Host Engine (Architect + Strategy Consultant)
+ * 5. Full 5-Act Broadcast MP3 Exporter with Chapter Concatenation
+ * 6. Content-Addressed SHA-256 Audio Cache (0ms instant replay)
  */
 class AudioNarrationService {
   constructor() {
     this.cacheDir = path.join(__dirname, '../../data/audio_cache');
+    this.customVoicesDir = path.join(__dirname, '../../data/custom_voices');
     this.memoryCache = new Map();
-    this.ensureCacheDir();
+    this.customVoices = new Map();
+    this.ensureDirs();
 
     // Mapping ScoreX personas to Google Cloud Journey & Studio Neural Voices
     this.googleVoiceMap = {
@@ -63,13 +67,16 @@ class AudioNarrationService {
     };
   }
 
-  ensureCacheDir() {
+  ensureDirs() {
     try {
       if (!fs.existsSync(this.cacheDir)) {
         fs.mkdirSync(this.cacheDir, { recursive: true });
       }
+      if (!fs.existsSync(this.customVoicesDir)) {
+        fs.mkdirSync(this.customVoicesDir, { recursive: true });
+      }
     } catch (err) {
-      console.warn('⚠️ Could not initialize audio cache directory:', err.message);
+      console.warn('⚠️ Could not initialize audio storage directories:', err.message);
     }
   }
 
@@ -196,15 +203,112 @@ class AudioNarrationService {
   }
 
   /**
+   * 🎙️ Dual-Host Podcast Co-Host Dialogue Generator (NotebookLM / Boardroom Style)
+   */
+  async buildPodcastDialogueScript(instance, report) {
+    const customer = instance?.customerName || 'the organization';
+    const score = report?.overallScore || instance?.totalScore || 3.2;
+    const stage = report?.maturityLevel || instance?.maturityLevel || 'Defined';
+
+    const turns = [
+      {
+        act: 'Act I',
+        chapterTitle: 'The Opening Exchange',
+        speaker: 'Jonathan (Chief Architect)',
+        persona: 'jonathan',
+        text: `Welcome to the executive architectural briefing for ${customer}. Today, we're unpacking the complete data and A.I. maturity audit. Victoria, when you look across their foundational tier, what immediately jumps out?`
+      },
+      {
+        act: 'Act II',
+        chapterTitle: 'The Hidden Gaps',
+        speaker: 'Victoria (Strategy Partner)',
+        persona: 'victoria',
+        text: `Thanks Jonathan. What really stands out is the classic modernization paradox. Their engineering teams are shipping rapidly, but underneath, unmonitored prompt token burn and legacy batch silos are silently adding friction to the bottom line.`
+      },
+      {
+        act: 'Act III',
+        chapterTitle: 'The Audit Score',
+        speaker: 'Jonathan (Chief Architect)',
+        persona: 'jonathan',
+        text: `Precisely. Our assessment establishes their overall enterprise score at ${score} out of 5.0, squarely in the ${stage} tier. It proves the core data pipeline is solid, but the next horizon demands intelligent unified governance.`
+      },
+      {
+        act: 'Act IV',
+        chapterTitle: 'The Modernization Payoff',
+        speaker: 'Victoria (Strategy Partner)',
+        persona: 'victoria',
+        text: `And that's where the financial upside is massive. By modernizing to Google Vertex A.I. Gemini 3.7 with Context Caching and Big Lake, we project up to a seventy-five percent reduction in token costs and instant query latency.`
+      },
+      {
+        act: 'Act V',
+        chapterTitle: 'The Executive Call to Action',
+        speaker: 'Jonathan (Chief Architect)',
+        persona: 'jonathan',
+        text: `The roadmap is locked, the technical blueprints are generated, and Phase One starts today. Let's build the future together.`
+      }
+    ];
+
+    return turns;
+  }
+
+  /**
+   * 🌟 1-Click Instant Voice Cloner:
+   * Accepts an audio buffer from browser mic or uploaded MP3 and registers custom voice profile.
+   */
+  async cloneVoiceFromSample(audioBuffer, voiceName = 'My Custom Executive Voice', customApiKey = null) {
+    const voiceId = `custom_${crypto.createHash('md5').update(audioBuffer).digest('hex').substring(0, 10)}`;
+
+    // Save audio sample to local storage
+    const samplePath = path.join(this.customVoicesDir, `${voiceId}.mp3`);
+    fs.writeFileSync(samplePath, audioBuffer);
+
+    // If user provided ElevenLabs key, register with ElevenLabs Instant Voice Cloning API
+    const apiKey = customApiKey || process.env.ELEVENLABS_API_KEY;
+    let remoteVoiceId = null;
+
+    if (apiKey) {
+      try {
+        const FormData = require('form-data');
+        const form = new FormData();
+        form.append('name', voiceName);
+        form.append('files', fs.createReadStream(samplePath));
+        form.append('description', 'ScoreX Cloned Executive Voice');
+
+        const res = await axios.post('https://api.elevenlabs.io/v1/voices/add', form, {
+          headers: {
+            ...form.getHeaders(),
+            'xi-api-key': apiKey
+          },
+          timeout: 25000
+        });
+
+        if (res.data && res.data.voice_id) {
+          remoteVoiceId = res.data.voice_id;
+        }
+      } catch (err) {
+        console.warn('⚠️ ElevenLabs instant voice clone fallback to local profile:', err.response?.data || err.message);
+      }
+    }
+
+    const voiceProfile = {
+      id: voiceId,
+      name: voiceName,
+      remoteVoiceId: remoteVoiceId || voiceId,
+      samplePath,
+      createdAt: new Date().toISOString()
+    };
+
+    this.customVoices.set(voiceId, voiceProfile);
+    return voiceProfile;
+  }
+
+  /**
    * Helper: Generate a unique SHA-256 cache key
    */
   generateCacheKey(text, style, persona, engine = 'google') {
     return crypto.createHash('sha256').update(`${engine}_${style}_${persona}_${text}`).digest('hex');
   }
 
-  /**
-   * Check if synthesized audio exists in memory or disk cache
-   */
   getCachedAudio(cacheKey) {
     if (this.memoryCache.has(cacheKey)) {
       return this.memoryCache.get(cacheKey);
@@ -223,9 +327,6 @@ class AudioNarrationService {
     return null;
   }
 
-  /**
-   * Save synthesized audio to memory and disk cache
-   */
   setCachedAudio(cacheKey, audioBase64) {
     try {
       this.memoryCache.set(cacheKey, audioBase64);
@@ -279,7 +380,6 @@ class AudioNarrationService {
       }
       throw new Error('No audio content returned from Google TTS.');
     } catch (err) {
-      // If Journey voice is not available in region or gives 400 on specific tags, retry with studio fallback voice
       if (voiceConfig.fallback && voiceConfig.fallback !== voiceConfig.name) {
         console.warn(`⚠️ Google TTS Journey retry with fallback ${voiceConfig.fallback}:`, err.response?.data?.error?.message || err.message);
         requestBody.voice.name = voiceConfig.fallback;
@@ -297,20 +397,20 @@ class AudioNarrationService {
   }
 
   /**
-   * 🌟 Synthesize via ElevenLabs REST API (Optional BYOK)
+   * 🌟 Synthesize via ElevenLabs REST API (Optional BYOK or Cloned Voice)
    */
-  async synthesizeElevenLabs(text, persona = 'jonathan', customApiKey = null) {
+  async synthesizeElevenLabs(text, persona = 'jonathan', customApiKey = null, customVoiceId = null) {
     const apiKey = customApiKey || process.env.ELEVENLABS_API_KEY;
     if (!apiKey) {
       throw new Error('ElevenLabs API Key is not configured.');
     }
 
-    const voiceId = this.elevenLabsVoiceMap[persona] || this.elevenLabsVoiceMap.jonathan;
+    const voiceId = customVoiceId || this.elevenLabsVoiceMap[persona] || this.elevenLabsVoiceMap.jonathan;
 
     const response = await axios.post(
       `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
       {
-        text: text.replace(/<[^>]*>/g, ''), // Strip SSML tags for ElevenLabs
+        text: text.replace(/<[^>]*>/g, ''), // Strip SSML tags
         model_id: 'eleven_multilingual_v2',
         voice_settings: {
           stability: 0.5,
@@ -337,9 +437,9 @@ class AudioNarrationService {
   /**
    * Master Synthesis Dispatcher
    */
-  async synthesizeAct(chapter, persona = 'jonathan', style = 'storyteller', engine = 'google', customApiKey = null) {
+  async synthesizeAct(chapter, persona = 'jonathan', style = 'storyteller', engine = 'google', customApiKey = null, customVoiceId = null) {
     const textToSynthesize = chapter.ssml || chapter.text;
-    const cacheKey = this.generateCacheKey(textToSynthesize, style, persona, engine);
+    const cacheKey = this.generateCacheKey(textToSynthesize, style, customVoiceId || persona, engine);
 
     // 1. Check Cache
     const cachedAudio = this.getCachedAudio(cacheKey);
@@ -356,8 +456,8 @@ class AudioNarrationService {
 
     // 2. Synthesize via selected Engine
     let audioBase64 = null;
-    if (engine === 'elevenlabs' || (customApiKey && customApiKey.startsWith('sk_'))) {
-      audioBase64 = await this.synthesizeElevenLabs(chapter.text, persona, customApiKey);
+    if (engine === 'elevenlabs' || (customApiKey && customApiKey.startsWith('sk_')) || customVoiceId) {
+      audioBase64 = await this.synthesizeElevenLabs(chapter.text, persona, customApiKey, customVoiceId);
     } else {
       audioBase64 = await this.synthesizeGoogleTTS(chapter.ssml || chapter.text, persona);
     }
@@ -375,6 +475,24 @@ class AudioNarrationService {
       cached: false,
       engine
     };
+  }
+
+  /**
+   * 📦 Stitched 5-Act Full Broadcast MP3 Generator (1-Click Download)
+   */
+  async exportFullStitchedAudio(instance, report, style = 'storyteller', persona = 'jonathan', engine = 'google', customApiKey = null) {
+    const chapters = await this.buildDirectorScript(instance, report, style, persona);
+    const audioBuffers = [];
+
+    for (const chap of chapters) {
+      const res = await this.synthesizeAct(chap, persona, style, engine, customApiKey);
+      if (res.audioBase64) {
+        audioBuffers.push(Buffer.from(res.audioBase64, 'base64'));
+      }
+    }
+
+    // Concatenate contiguous MP3 buffers
+    return Buffer.concat(audioBuffers);
   }
 }
 
