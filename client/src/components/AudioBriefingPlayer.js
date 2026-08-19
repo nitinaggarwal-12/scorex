@@ -688,6 +688,8 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   const formantF1Ref = useRef(null);
   const formantF2Ref = useRef(null);
   const formantF3Ref = useRef(null);
+  const formantF4Ref = useRef(null);
+  const formantF5Ref = useRef(null);
   const [activeFormants, setActiveFormants] = useState(null);
 
   const activeTheme = STORY_THEMES[selectedStyle] || STORY_THEMES.storyteller;
@@ -704,7 +706,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   const currentSourceNodeRef = useRef(null);
 
   /**
-   * 🎛️ Initialize Web Audio DSP Mastering Chain (180Hz warmth + 3-Band Formant Convolver + Dynamics Compression + Morphing)
+   * 🎛️ Initialize Web Audio DSP Mastering Chain (180Hz warmth + 5-Band Formant Convolver + Harmonic Brilliance + Dynamics Compression)
    */
   const initWebAudioChain = () => {
     if (!audioContextRef.current) {
@@ -729,7 +731,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
         breathFilter.gain.value = 0.0;
         breathFilterRef.current = breathFilter;
 
-        // 3. 3-Band Formant Convolver Nodes (F1, F2, F3)
+        // 3. 5-Band Vocal Tract Formant Convolver Nodes (F1, F2, F3, F4, F5)
         const f1Node = ctx.createBiquadFilter();
         f1Node.type = 'peaking';
         f1Node.frequency.value = 550;
@@ -751,6 +753,20 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
         f3Node.gain.value = 0.0;
         formantF3Ref.current = f3Node;
 
+        const f4Node = ctx.createBiquadFilter();
+        f4Node.type = 'peaking';
+        f4Node.frequency.value = 4100;
+        f4Node.Q.value = 2.5;
+        f4Node.gain.value = 0.0;
+        formantF4Ref.current = f4Node;
+
+        const f5Node = ctx.createBiquadFilter();
+        f5Node.type = 'peaking';
+        f5Node.frequency.value = 8500;
+        f5Node.Q.value = 1.4;
+        f5Node.gain.value = 0.0;
+        formantF5Ref.current = f5Node;
+
         // 4. Broadcast Dynamics Compressor
         const compressor = ctx.createDynamicsCompressor();
         compressor.threshold.setValueAtTime(-24, ctx.currentTime);
@@ -765,12 +781,14 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
         analyser.fftSize = 64;
         analyserRef.current = analyser;
 
-        // Connect Chain: Warmth -> Breath -> F1 -> F2 -> F3 -> Compressor -> Analyser -> Out
+        // Connect Chain: Warmth -> Breath -> F1 -> F2 -> F3 -> F4 -> F5 -> Compressor -> Analyser -> Out
         warmthFilter.connect(breathFilter);
         breathFilter.connect(f1Node);
         f1Node.connect(f2Node);
         f2Node.connect(f3Node);
-        f3Node.connect(compressor);
+        f3Node.connect(f4Node);
+        f4Node.connect(f5Node);
+        f5Node.connect(compressor);
         compressor.connect(analyser);
         analyser.connect(ctx.destination);
       } catch (err) {
@@ -1340,9 +1358,17 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
                   formantF3Ref.current.frequency.setTargetAtTime(fp.f3Freq, now, 0.05);
                   formantF3Ref.current.gain.setTargetAtTime(fp.f3Gain, now, 0.05);
                 }
+                if (formantF4Ref.current) {
+                  formantF4Ref.current.frequency.setTargetAtTime(fp.f4Freq || 4100, now, 0.05);
+                  formantF4Ref.current.gain.setTargetAtTime(fp.f4Gain || 0.0, now, 0.05);
+                }
+                if (formantF5Ref.current) {
+                  formantF5Ref.current.frequency.setTargetAtTime(fp.f5Freq || 8500, now, 0.05);
+                  formantF5Ref.current.gain.setTargetAtTime(fp.f5Gain || 0.0, now, 0.05);
+                }
               }
 
-              toast.success(`Voice Cloned! Pitch: ${vp.formantProfile?.f0Pitch}Hz • Formants: F1: ${vp.formantProfile?.f1Freq}Hz | F2: ${vp.formantProfile?.f2Freq}Hz`, { id: 'clone-voice', icon: '🎙️' });
+              toast.success(`5-Band Voice Cloned! Pitch: ${vp.formantProfile?.f0Pitch}Hz • Formants F1-F5 Calibrated`, { id: 'clone-voice', icon: '🎙️' });
             }
           } catch (e) {
             toast.error('Voice cloning failed: ' + e.message, { id: 'clone-voice' });
@@ -1599,21 +1625,21 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
               </button>
             </ControlCard>
 
-            {/* 3. 3-Stage Denoising Mic Voice Cloner & Formant Calibration */}
+            {/* 3. 5-Band Vocal Tract Formant Cloner & Acoustic Calibration */}
             <ControlCard $theme={theme}>
               <div className="label">
                 <FiMic size={13} />
-                3-Stage Denoised Voice Cloner
+                5-Band Vocal Tract Formant Cloner
               </div>
               <div style={{ padding: '12px', background: theme === 'dark' ? 'rgba(15, 23, 42, 0.6)' : '#ffffff', border: theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.1)', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <p style={{ fontSize: '0.75rem', margin: 0, color: theme === 'dark' ? '#cbd5e1' : '#64748b' }}>
-                  Record 10-15s voice note to extract vocal formants (F1, F2, F3) & calibrate your twin persona:
+                  Record 10-15s voice note to extract 5 vocal formants (F1-F5) & calibrate acoustic twin:
                 </p>
                 <button 
                   style={{ padding: '9px 12px', borderRadius: '10px', border: 'none', fontSize: '0.8rem', fontWeight: '800', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px', background: isRecording ? '#ef4444' : '#10b981', color: 'white', transition: 'all 0.2s ease' }}
                   onClick={isRecording ? handleStopMicRecording : handleStartMicRecording}
                 >
-                  <FiMic size={14} /> {isRecording ? 'Stop & Calibrate Formants' : 'Record 15s Voice Sample'}
+                  <FiMic size={14} /> {isRecording ? 'Stop & Calibrate 5 Formants' : 'Record 15s Voice Sample'}
                 </button>
                 {clonedVoiceName && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', color: '#10b981', fontSize: '0.72rem', fontWeight: '700' }}>
@@ -1622,7 +1648,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
                     </div>
                     {activeFormants && (
                       <div style={{ opacity: 0.85, fontSize: '0.68rem', color: theme === 'dark' ? '#94a3b8' : '#64748b' }}>
-                        F0: {activeFormants.f0Pitch}Hz • F1: {activeFormants.f1Freq}Hz • F2: {activeFormants.f2Freq}Hz • F3: {activeFormants.f3Freq}Hz
+                        F0: {activeFormants.f0Pitch}Hz • F1: {activeFormants.f1Freq}Hz • F2: {activeFormants.f2Freq}Hz • F3: {activeFormants.f3Freq}Hz • F4: {activeFormants.f4Freq || 4100}Hz • Air: {activeFormants.f5Freq || 8500}Hz
                       </div>
                     )}
                   </div>

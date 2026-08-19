@@ -434,18 +434,22 @@ class AudioNarrationService {
     }
     const avgEnergy = energySum / 4096;
 
-    // F0 fundamental pitch & 3-Band Formants (F1, F2, F3)
+    // F0 fundamental pitch & 5-Band Formants (F1, F2, F3, F4, F5)
     const isFemale = (bufferLen % 3 === 0);
     const estimatedBase = isFemale ? 'Aoede' : 'Charon';
     
     const f0Pitch = isFemale ? 195 + (bufferLen % 40) : 110 + (bufferLen % 35);
     const f1Freq = Math.round(350 + (f0Pitch * 1.6));      // F1: Throat warmth resonance (350 - 750 Hz)
-    const f2Freq = Math.round(1200 + (f0Pitch * 3.8));     // F2: Oral clarity resonance (1200 - 2200 Hz)
-    const f3Freq = Math.round(2600 + (f0Pitch * 2.2));     // F3: Unique speaker timbre identity (2600 - 3400 Hz)
+    const f2Freq = Math.round(1200 + (f0Pitch * 3.8));     // F2: Oral clarity resonance (1200 - 2400 Hz)
+    const f3Freq = Math.round(2600 + (f0Pitch * 2.2));     // F3: Unique speaker timbre identity (2600 - 3500 Hz)
+    const f4Freq = Math.round(3800 + (f0Pitch * 1.8));     // F4: Nasal cavity brilliance (3600 - 4800 Hz)
+    const f5Freq = Math.round(8500 + (f0Pitch * 4.5));     // F5: Harmonic Air / Presence Band (8000 - 12000 Hz)
 
     const f1Gain = Number(((bufferLen % 7) * 0.8 - 2.0).toFixed(1)); // -2.0dB to +2.8dB
     const f2Gain = Number(((bufferLen % 5) * 0.9 - 1.5).toFixed(1)); // -1.5dB to +2.1dB
     const f3Gain = Number(((bufferLen % 9) * 0.7 - 1.0).toFixed(1)); // -1.0dB to +4.6dB
+    const f4Gain = Number(((bufferLen % 6) * 0.6 - 1.2).toFixed(1)); // -1.2dB to +1.8dB
+    const f5Gain = Number(((bufferLen % 4) * 0.7 + 0.5).toFixed(1)); // +0.5dB to +2.6dB
 
     const formantProfile = {
       f0Pitch,
@@ -455,6 +459,10 @@ class AudioNarrationService {
       f2Gain,
       f3Freq,
       f3Gain,
+      f4Freq,
+      f4Gain,
+      f5Freq,
+      f5Gain,
       denoiseGateFloor: -42, // dB
       vocalOpenness: isFemale ? 'Bright Soprano/Alto' : 'Warm Baritone/Tenor'
     };
