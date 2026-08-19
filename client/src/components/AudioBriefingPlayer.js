@@ -180,6 +180,26 @@ const AGE_TIERS = [
   { id: 'fireside', name: 'Reflective Mentor' }
 ];
 
+// 30+ Multilingual Voice Dubbing Languages
+const SUPPORTED_LANGUAGES = [
+  { id: 'en', name: 'English (Original)', native: 'English', flag: '🇺🇸' },
+  { id: 'es', name: 'Spanish', native: 'Español', flag: '🇪🇸' },
+  { id: 'fr', name: 'French', native: 'Français', flag: '🇫🇷' },
+  { id: 'de', name: 'German', native: 'Deutsch', flag: '🇩🇪' },
+  { id: 'ja', name: 'Japanese', native: '日本語', flag: '🇯🇵' },
+  { id: 'zh', name: 'Mandarin Chinese', native: '中文', flag: '🇨🇳' },
+  { id: 'hi', name: 'Hindi', native: 'हिन्दी', flag: '🇮🇳' },
+  { id: 'pt', name: 'Portuguese', native: 'Português', flag: '🇧🇷' },
+  { id: 'it', name: 'Italian', native: 'Italiano', flag: '🇮🇹' },
+  { id: 'ar', name: 'Arabic', native: 'العربية', flag: '🇸🇦' },
+  { id: 'nl', name: 'Dutch', native: 'Nederlands', flag: '🇳🇱' },
+  { id: 'ko', name: 'Korean', native: '한국어', flag: '🇰🇷' },
+  { id: 'sv', name: 'Swedish', native: 'Svenska', flag: '🇸🇪' },
+  { id: 'pl', name: 'Polish', native: 'Polski', flag: '🇵🇱' },
+  { id: 'tr', name: 'Turkish', native: 'Türkçe', flag: '🇹🇷' },
+  { id: 'ru', name: 'Russian', native: 'Русский', flag: '🇷🇺' }
+];
+
 const PlayerContainer = styled(motion.div)`
   background: ${props => props.$theme === 'dark' 
     ? 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(26, 20, 48, 0.95) 100%)' 
@@ -336,6 +356,23 @@ const SecondaryControl = styled.button`
 
   &:hover {
     background: ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)'};
+  }
+`;
+
+const LanguageSelect = styled.select`
+  background: ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.04)'};
+  border: 1px solid ${props => props.$theme === 'dark' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)'};
+  color: ${props => props.$theme === 'dark' ? '#f1f5f9' : '#334155'};
+  padding: 9px 12px;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #f59e0b;
   }
 `;
 
@@ -610,6 +647,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   const [playbackRate, setPlaybackRate] = useState(1.0);
   const [selectedStyle, setSelectedStyle] = useState('storyteller');
   const [selectedPersona, setSelectedPersona] = useState('jonathan');
+  const [selectedLanguage, setSelectedLanguage] = useState('en');
   const [selectedEngine, setSelectedEngine] = useState('google'); // 'google' | 'elevenlabs' | 'browser'
   const [elevenLabsKey, setElevenLabsKey] = useState('');
   const [showSettings, setShowSettings] = useState(false);
@@ -923,7 +961,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   const prefetchActAudio = async (chapters, nextIdx, token) => {
     if (!chapters || nextIdx >= chapters.length || playTokenRef.current !== token) return;
     const nextChap = chapters[nextIdx];
-    const cacheKey = `${selectedEngine}_${selectedStyle}_${selectedPersona}_${nextIdx}`;
+    const cacheKey = `${selectedEngine}_${selectedStyle}_${selectedPersona}_${selectedLanguage}_${nextIdx}`;
 
     if (preloadedBuffersRef.current.has(cacheKey)) return;
 
@@ -935,6 +973,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
         engine: selectedEngine,
         customApiKey: elevenLabsKey || null,
         customVoiceId: customClonedVoiceId || null,
+        language: selectedLanguage,
         sliderConfig: {
           styleExaggeration,
           stability,
@@ -980,7 +1019,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
     setCurrentChapterIdx(index);
     applyActDSPMorphing(index);
     const chap = chapters[index];
-    const cacheKey = `${selectedEngine}_${selectedStyle}_${selectedPersona}_${index}`;
+    const cacheKey = `${selectedEngine}_${selectedStyle}_${selectedPersona}_${selectedLanguage}_${index}`;
 
     if (selectedEngine !== 'browser') {
       try {
@@ -999,6 +1038,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
             engine: selectedEngine,
             customApiKey: elevenLabsKey || null,
             customVoiceId: customClonedVoiceId || null,
+            language: selectedLanguage,
             sliderConfig: {
               styleExaggeration,
               stability,
@@ -1372,6 +1412,25 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
         </WaveContainer>
 
         <ControlsGroup>
+          <LanguageSelect 
+            $theme={theme}
+            value={selectedLanguage}
+            onChange={(e) => {
+              stopAudioPlayback();
+              preloadedBuffersRef.current.clear();
+              setSelectedLanguage(e.target.value);
+              const lang = SUPPORTED_LANGUAGES.find(l => l.id === e.target.value);
+              toast.success(`Voice Dubbing set to ${lang?.name} (${lang?.native})`, { icon: lang?.flag || '🌐' });
+            }}
+            title="30+ Multilingual Voice Dubbing"
+          >
+            {SUPPORTED_LANGUAGES.map((l) => (
+              <option key={l.id} value={l.id}>
+                {l.flag} {l.native} ({l.name})
+              </option>
+            ))}
+          </LanguageSelect>
+
           <SecondaryControl $theme={theme} onClick={() => setShowSettings(!showSettings)} $active={showSettings} title="Voice Engine, Studio Casting & Narrative Arc">
             <FiSliders size={13} /> {showSettings ? 'Hide Studio' : '1,500+ Voice Studio & Engine'}
           </SecondaryControl>

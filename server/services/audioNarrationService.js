@@ -95,6 +95,26 @@ class AudioNarrationService {
       marcus: 'pNInz6obpgDQGcFmaJgB',
       elena: 'jsCqWAovK2LkecY7zXl4'
     };
+
+    // 30+ Multilingual Voice Dubbing Languages
+    this.supportedLanguages = [
+      { id: 'en', name: 'English (Original)', native: 'English', flag: '🇺🇸' },
+      { id: 'es', name: 'Spanish', native: 'Español', flag: '🇪🇸' },
+      { id: 'fr', name: 'French', native: 'Français', flag: '🇫🇷' },
+      { id: 'de', name: 'German', native: 'Deutsch', flag: '🇩🇪' },
+      { id: 'ja', name: 'Japanese', native: '日本語', flag: '🇯🇵' },
+      { id: 'zh', name: 'Mandarin Chinese', native: '中文', flag: '🇨🇳' },
+      { id: 'hi', name: 'Hindi', native: 'हिन्दी', flag: '🇮🇳' },
+      { id: 'pt', name: 'Portuguese', native: 'Português', flag: '🇧🇷' },
+      { id: 'it', name: 'Italian', native: 'Italiano', flag: '🇮🇹' },
+      { id: 'ar', name: 'Arabic', native: 'العربية', flag: '🇸🇦' },
+      { id: 'nl', name: 'Dutch', native: 'Nederlands', flag: '🇳🇱' },
+      { id: 'ko', name: 'Korean', native: '한국어', flag: '🇰🇷' },
+      { id: 'sv', name: 'Swedish', native: 'Svenska', flag: '🇸🇪' },
+      { id: 'pl', name: 'Polish', native: 'Polski', flag: '🇵🇱' },
+      { id: 'tr', name: 'Turkish', native: 'Türkçe', flag: '🇹🇷' },
+      { id: 'ru', name: 'Russian', native: 'Русский', flag: '🇷🇺' }
+    ];
   }
 
   ensureDirs() {
@@ -480,9 +500,9 @@ class AudioNarrationService {
     return voiceProfile;
   }
 
-  generateCacheKey(text, style, persona, engine = 'google', sliderConfig = {}) {
+  generateCacheKey(text, style, persona, engine = 'google', sliderConfig = {}, language = 'en') {
     const sliderKey = `${sliderConfig.stability || 0.7}_${sliderConfig.styleExaggeration || 0.65}_${sliderConfig.breathDensity || 0.5}`;
-    return crypto.createHash('sha256').update(`${engine}_${style}_${persona}_${sliderKey}_${text}`).digest('hex');
+    return crypto.createHash('sha256').update(`${engine}_${style}_${persona}_${sliderKey}_${language}_${text}`).digest('hex');
   }
 
   getCachedAudio(cacheKey) {
@@ -520,7 +540,7 @@ class AudioNarrationService {
    * 2. Designed Voice IDs (designed_...)
    * 3. Legacy Persona IDs (jonathan, victoria, etc.)
    */
-  async synthesizeGeminiNative(text, persona = 'jonathan', sliderConfig = {}) {
+  async synthesizeGeminiNative(text, persona = 'jonathan', sliderConfig = {}, language = 'en') {
     const apiKey = geminiService.getApiKey();
     if (!apiKey) {
       throw new Error('GEMINI_API_KEY is not configured.');
@@ -569,6 +589,13 @@ class AudioNarrationService {
     const styleExaggeration = typeof sliderConfig.styleExaggeration === 'number' ? sliderConfig.styleExaggeration : 0.65;
     const breathDensity = typeof sliderConfig.breathDensity === 'number' ? sliderConfig.breathDensity : 0.5;
 
+    // Multilingual Translation Directive
+    const langObj = this.supportedLanguages.find(l => l.id === language) || this.supportedLanguages[0];
+    let langDirective = '';
+    if (language && language !== 'en') {
+      langDirective = `Translate and fluently perform the narration in ${langObj.name} (${langObj.native}), ensuring high-craft executive eloquence and precise enterprise technical terminology.\n\n`;
+    }
+
     // Apply inline paralinguistic compiler
     const processedText = this.compileParalinguisticTags(text);
 
@@ -601,7 +628,7 @@ class AudioNarrationService {
       try {
         const response = await ai.models.generateContent({
           model: modelName,
-          contents: `${styleDirective}\n\nRead the following executive assessment excerpt with authentic human cadence and emotive pacing:\n\n"${processedText}"`,
+          contents: `${styleDirective}\n\n${langDirective}Read the following executive assessment excerpt with authentic human cadence and emotive pacing:\n\n"${processedText}"`,
           config: {
             responseModalities: ['AUDIO'],
             speechConfig: {
@@ -676,9 +703,9 @@ class AudioNarrationService {
   /**
    * Master Synthesis Dispatcher
    */
-  async synthesizeAct(chapter, persona = 'jonathan', style = 'storyteller', engine = 'google', customApiKey = null, customVoiceId = null, sliderConfig = {}) {
+  async synthesizeAct(chapter, persona = 'jonathan', style = 'storyteller', engine = 'google', customApiKey = null, customVoiceId = null, sliderConfig = {}, language = 'en') {
     const textToSynthesize = chapter.text || chapter.ssml;
-    const cacheKey = this.generateCacheKey(textToSynthesize, style, customVoiceId || persona, engine, sliderConfig);
+    const cacheKey = this.generateCacheKey(textToSynthesize, style, customVoiceId || persona, engine, sliderConfig, language);
 
     // 1. Check Cache
     const cachedAudio = this.getCachedAudio(cacheKey);
@@ -689,7 +716,8 @@ class AudioNarrationService {
         text: chapter.text,
         audioBase64: cachedAudio,
         cached: true,
-        engine
+        engine,
+        language
       };
     }
 
@@ -699,7 +727,7 @@ class AudioNarrationService {
       if (engine === 'elevenlabs' || (customApiKey && customApiKey.startsWith('sk_')) || customVoiceId) {
         audioBase64 = await this.synthesizeElevenLabs(chapter.text, persona, customApiKey, customVoiceId, sliderConfig);
       } else {
-        audioBase64 = await this.synthesizeGeminiNative(chapter.text, persona, sliderConfig);
+        audioBase64 = await this.synthesizeGeminiNative(chapter.text, persona, sliderConfig, language);
       }
     } catch (err) {
       console.warn(`ℹ️ [AudioSynthesis] Engine ${engine} fallback (${err.message}).`);
@@ -711,6 +739,7 @@ class AudioNarrationService {
         fallbackToBrowser: true,
         cached: false,
         engine,
+        language,
         message: err.message
       };
     }
@@ -726,7 +755,8 @@ class AudioNarrationService {
       text: chapter.text,
       audioBase64,
       cached: false,
-      engine
+      engine,
+      language
     };
   }
 
