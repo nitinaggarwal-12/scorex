@@ -318,20 +318,21 @@ const LevelBadge = styled.div`
 
 const ExecutiveTabContainer = styled.div`
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.85)' : '#e2e8f0'};
   padding: 6px;
   border-radius: 16px;
   border: ${props => props.$theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid #cbd5e1'};
   margin-bottom: 28px;
-  overflow-x: auto;
   backdrop-filter: blur(16px);
-  scrollbar-width: none;
-  &::-webkit-scrollbar { display: none; }
+  width: 100%;
+  box-sizing: border-box;
 
   @media (max-width: 768px) {
     border-radius: 12px;
     padding: 4px;
+    gap: 6px;
   }
 `;
 
@@ -341,20 +342,28 @@ const ExecutiveTabButton = styled.button`
   box-shadow: ${props => props.$isActive ? (props.$theme === "dark" ? "0 4px 14px rgba(99, 102, 241, 0.35)" : "0 2px 8px rgba(0,0,0,0.08)") : "none"};
   border: none;
   border-radius: 12px;
-  padding: 10px 18px;
-  font-size: 0.92rem;
+  padding: 10px 16px;
+  font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   white-space: nowrap;
   transition: all 0.2s ease;
-  box-shadow: ${props => props.$isActive ? "0 4px 14px rgba(99, 102, 241, 0.35)" : "none"};
+  flex: 1 1 auto;
+  justify-content: center;
+  min-width: 140px;
 
   &:hover {
-    color: #ffffff;
-    background: ${props => props.$isActive ? "linear-gradient(135deg, #6366f1, #8b5cf6)" : "rgba(255, 255, 255, 0.06)"};
+    color: ${props => props.$theme === 'dark' ? '#ffffff' : '#0f172a'};
+    background: ${props => props.$isActive ? (props.$theme === "dark" ? "linear-gradient(135deg, #6366f1, #8b5cf6)" : "#ffffff") : (props.$theme === "dark" ? "rgba(255, 255, 255, 0.06)" : "#f1f5f9")};
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.82rem;
+    padding: 8px 12px;
+    min-width: 120px;
   }
 `;
 
@@ -1148,38 +1157,38 @@ const DynamicAssessmentReport = () => {
             $isActive={activeExecutiveTab === "overview"} 
             onClick={() => setActiveExecutiveTab("overview")}
           >
-            📊 Executive Overview & Radar
+            📊 Overview & Radar
           </ExecutiveTabButton>
           <ExecutiveTabButton $theme={theme} 
             $isActive={activeExecutiveTab === "architecture"} 
             onClick={() => setActiveExecutiveTab("architecture")}
           >
-            🏛️ Architecture Evolution (Current vs Target)
+            🏛️ Target Architecture
           </ExecutiveTabButton>
           <ExecutiveTabButton $theme={theme} 
             $isActive={activeExecutiveTab === "financial"} 
             onClick={() => setActiveExecutiveTab("financial")}
           >
-            💰 Financial Impact & TCO
+            💰 Financial ROI & TCO
           </ExecutiveTabButton>
           <ExecutiveTabButton $theme={theme} 
             $isActive={activeExecutiveTab === "roadmap"} 
             onClick={() => setActiveExecutiveTab("roadmap")}
           >
-            🚀 Roadmap & Persona Blueprints
+            🚀 Roadmap & Blueprints
           </ExecutiveTabButton>
           <ExecutiveTabButton $theme={theme} 
             $isActive={activeExecutiveTab === "audit"} 
             onClick={() => setActiveExecutiveTab("audit")}
           >
-            📋 Question Responses Audit
+            📋 Question Audit
           </ExecutiveTabButton>
           <ExecutiveTabButton $theme={theme} 
             $isActive={activeExecutiveTab === "all"} 
             onClick={() => setActiveExecutiveTab("all")}
             title="Display all executive sections in a single unified dossier view"
           >
-            📑 Full Dossier (All Sections)
+            📑 Full Dossier
           </ExecutiveTabButton>
         </ExecutiveTabContainer>
 
