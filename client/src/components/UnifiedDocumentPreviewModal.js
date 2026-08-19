@@ -378,14 +378,10 @@ export const UnifiedDocumentPreviewModal = ({
 
   const currentConfig = DOC_CONFIGS[activeDocType] || DOC_CONFIGS.slides;
 
-  const handleOpenCloud = async () => {
+  const handleOpenCloud = () => {
     if (currentConfig.cloudUrl) {
-      toast.loading(`Opening ${currentConfig.app}...`, { id: 'open-cloud' });
-      if (currentConfig.onDownload) {
-        await currentConfig.onDownload();
-      }
       window.open(currentConfig.cloudUrl, '_blank', 'noopener,noreferrer');
-      toast.success(`Opened ${currentConfig.app} in new tab!`, { id: 'open-cloud', icon: currentConfig.appIcon });
+      toast.success(`Opened ${currentConfig.app} in a new tab!`, { id: 'open-cloud', icon: currentConfig.appIcon });
     } else if (activeDocType === 'pdf') {
       window.print();
     }

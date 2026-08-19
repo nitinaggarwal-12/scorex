@@ -169,17 +169,9 @@ const PresentationModeModal = ({ isOpen, onClose, instance, report, framework })
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             {/* 🌟 Gmail-style "Open with Google Slides" Action */}
             <button
-              onClick={async () => {
-                toast.loading('Opening with Google Slides...', { id: 'open-slides' });
-                try {
-                  // Export PPTX first so user has immediate access
-                  await exportAssessmentToPPTX(instance, report);
-                  toast.success('Opening Google Slides in new tab! Use File > Import Slides to edit.', { id: 'open-slides', icon: '📊', duration: 5000 });
-                  window.open('https://slides.new', '_blank', 'noopener,noreferrer');
-                } catch (e) {
-                  window.open('https://slides.new', '_blank', 'noopener,noreferrer');
-                  toast.success('Opened Google Slides in new tab!', { id: 'open-slides' });
-                }
+              onClick={() => {
+                window.open('https://slides.new', '_blank', 'noopener,noreferrer');
+                toast.success('Opened Google Slides in a new tab!', { id: 'open-slides', icon: '📊' });
               }}
               style={{
                 background: "linear-gradient(135deg, #f59e0b, #d97706)",
