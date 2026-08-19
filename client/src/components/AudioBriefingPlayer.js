@@ -32,10 +32,16 @@ import {
   FiCheckCircle,
   FiGlobe,
   FiFilter,
-  FiSearch
+  FiSearch,
+  FiLoader
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
+
+const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
 
 const pulseGlow = keyframes`
   0%, 100% { opacity: 0.7; transform: scale(1); filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.4)); }
@@ -304,6 +310,10 @@ const PlayButton = styled(motion.button)`
   gap: 8px;
   box-shadow: 0 6px 20px ${props => props.$activeGlow || 'rgba(245, 158, 11, 0.4)'};
   transition: all 0.25s ease;
+
+  .spin-icon {
+    animation: ${spin} 1s linear infinite;
+  }
 `;
 
 const SecondaryControl = styled.button`
@@ -404,6 +414,7 @@ const StoryTeleprompter = styled(motion.div)`
     color: ${props => props.$theme === 'dark' ? '#f8fafc' : '#1e293b'};
     font-weight: 500;
     font-style: italic;
+    padding-right: 150px;
   }
 
   .chapter-badge {
@@ -416,8 +427,11 @@ const StoryTeleprompter = styled(motion.div)`
     letter-spacing: 0.05em;
     color: ${props => props.$activeColor || '#f59e0b'};
     background: ${props => props.$theme === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(0, 0, 0, 0.05)'};
-    padding: 3px 8px;
+    padding: 4px 10px;
     border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
   }
 `;
 
@@ -562,6 +576,7 @@ const FilterSelectRow = styled.div`
 
 const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isBuffering, setIsBuffering] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1.0);
   const [selectedStyle, setSelectedStyle] = useState('storyteller');
   const [selectedPersona, setSelectedPersona] = useState('jonathan');
@@ -800,6 +815,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
     playTokenRef.current += 1;
     isPlayingRef.current = false;
     setIsPlaying(false);
+    setIsBuffering(false);
 
     if (animFrameRef.current) {
       cancelAnimationFrame(animFrameRef.current);
@@ -896,6 +912,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
         let audioBuffer = preloadedBuffersRef.current.get(cacheKey);
 
         if (!audioBuffer) {
+          setIsBuffering(true);
           const response = await axios.post('/api/audio/synthesize-act', {
             chapter: chap,
             persona: selectedPersona,
@@ -975,17 +992,20 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
           };
 
           sourceNode.start(0);
+          setIsBuffering(false);
           currentSourceNodeRef.current = sourceNode;
           startVisualizerLoop();
           return;
         }
       } catch (err) {
+        setIsBuffering(false);
         if (!isPlayingRef.current || playTokenRef.current !== currentToken) return;
         console.warn('Studio synthesis endpoint fallback to Web Speech:', err.message);
         toast('Using local neural speech synthesis fallback.', { icon: '🎙️' });
       }
     }
 
+    setIsBuffering(false);
     playChapterBrowserFallback(chapters, index, currentToken);
   };
 
@@ -1214,8 +1234,22 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
           >
-            {isPlaying ? <FiPause size={16} /> : <FiPlay size={16} />}
-            {isPlaying ? 'Pause Story' : 'Begin Story'}
+            {isBuffering ? (
+              <>
+                <FiLoader className="spin-icon" size={16} />
+                <span>Buffering Audio...</span>
+              </>
+            ) : isPlaying ? (
+              <>
+                <FiPause size={16} />
+                <span>Pause Story</span>
+              </>
+            ) : (
+              <>
+                <FiPlay size={16} />
+                <span>Begin Story</span>
+              </>
+            )}
           </PlayButton>
         </ControlsGroup>
       </TopRow>
@@ -1253,7 +1287,8 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
               {currentChapter?.text}
             </div>
             <div className="chapter-badge">
-              {currentChapter?.act}: {currentChapter?.chapterTitle}
+              {isBuffering && <FiLoader className="spin-icon" size={11} />}
+              <span>{isBuffering ? 'Buffering Act...' : `${currentChapter?.act}: ${currentChapter?.chapterTitle}`}</span>
             </div>
           </StoryTeleprompter>
         )}
