@@ -427,16 +427,7 @@ export const UnifiedDocumentPreviewModal = ({
 
   const currentConfig = DOC_CONFIGS[activeDocType] || DOC_CONFIGS.slides;
 
-  const handleOpenCloud = async () => {
-    if (activeDocType === 'slides') {
-      toast.loading('Preparing 16:9 Presentation deck for Google Slides...', { id: 'slides-prep' });
-      await exportAssessmentToPPTX(instance, report);
-      toast.dismiss('slides-prep');
-      window.open('https://slides.new', '_blank', 'noopener,noreferrer');
-      toast.success('📊 Deck downloaded & Google Slides opened! Drag & drop the downloaded .pptx file into Google Slides to edit.', { duration: 6000 });
-      return;
-    }
-
+  const handleOpenCloud = () => {
     if (currentConfig.cloudUrl) {
       window.open(currentConfig.cloudUrl, '_blank', 'noopener,noreferrer');
       toast.success(`Opened ${currentConfig.app} in a new tab!`, { id: 'open-cloud', icon: currentConfig.appIcon });
