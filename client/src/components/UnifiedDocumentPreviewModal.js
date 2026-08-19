@@ -140,6 +140,61 @@ const SlideFooter = styled.div`
   color: #64748b;
 `;
 
+const SlideViewerLayout = styled.div`
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
+
+  @media (max-width: 900px) {
+    flex-direction: column;
+  }
+`;
+
+const SlideThumbSidebar = styled.div`
+  width: 220px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 6px;
+
+  @media (max-width: 900px) {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+`;
+
+const SlideThumbItem = styled.div`
+  background: ${props => props.$active ? 'rgba(59, 130, 246, 0.18)' : 'rgba(15, 23, 42, 0.7)'};
+  border: ${props => props.$active ? '2px solid #3b82f6' : '1px solid rgba(255, 255, 255, 0.1)'};
+  border-radius: 12px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: ${props => props.$active ? '0 4px 14px rgba(59, 130, 246, 0.3)' : 'none'};
+
+  &:hover {
+    background: ${props => props.$active ? 'rgba(59, 130, 246, 0.22)' : 'rgba(30, 41, 59, 0.8)'};
+    border-color: ${props => props.$active ? '#60a5fa' : 'rgba(255, 255, 255, 0.2)'};
+  }
+
+  @media (max-width: 900px) {
+    min-width: 160px;
+    flex-shrink: 0;
+  }
+`;
+
+const SlideMainStage = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+`;
+
 const CloudButton = styled.button`
   background: ${props => props.$gradient || 'linear-gradient(135deg, #3b82f6, #1d4ed8)'};
   border: 1px solid ${props => props.$borderColor || '#60a5fa'};
@@ -296,6 +351,15 @@ export const UnifiedDocumentPreviewModal = ({
   const dimensions = framework?.dimensions || [];
   const recs = report?.prioritizedRecommendations || report?.prioritizedActions || [];
   const safeName = org.toLowerCase().replace(/[^a-z0-9]/g, '_');
+
+  const SLIDES_META = [
+    { title: "Executive Scope", icon: "📊", subtitle: "Strategic Readout", num: 1 },
+    { title: "Risk & Heatmap", icon: "🗺️", subtitle: "Diagnostic Matrix", num: 2 },
+    { title: "Dimensional Radar", icon: "🎯", subtitle: "5-Axis Topology", num: 3 },
+    { title: "Financial ROI & TCO", icon: "💰", subtitle: "3-Yr Savings Model", num: 4 },
+    { title: "Target Architecture", icon: "🏛️", subtitle: "Cloud Service Mesh", num: 5 },
+    { title: "Transformation Roadmap", icon: "🚀", subtitle: "Priority Milestones", num: 6 }
+  ];
 
   const DOC_CONFIGS = {
     slides: {
@@ -561,39 +625,68 @@ export const UnifiedDocumentPreviewModal = ({
 
         {/* In-Browser Interactive Preview Body */}
         <PreviewBody $isSlides={activeDocType === 'slides'}>
-          {/* 1. SLIDES PREVIEW (FULL-PAGE 16:9 WIDESCREEN PRESENTATION) */}
+          {/* 1. SLIDES PREVIEW (GMAIL / GOOGLE DRIVE STYLE ATTACHMENT VIEWER) */}
           {activeDocType === 'slides' && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "16px", width: "100%" }}>
-              {/* Slide Navigation Top Bar */}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(30, 41, 59, 0.7)", padding: "12px 24px", borderRadius: "14px", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                  <span style={{ fontSize: "0.95rem", color: "#f8fafc", fontWeight: 800 }}>
-                    📊 16:9 Executive Presentation Deck
-                  </span>
-                  <span style={{ fontSize: "0.78rem", background: "rgba(99, 102, 241, 0.25)", color: "#a5b4fc", border: "1px solid rgba(165, 180, 252, 0.4)", padding: "2px 10px", borderRadius: "6px", fontWeight: 700 }}>
-                    Slide {currentSlide + 1} of 6
-                  </span>
+            <SlideViewerLayout>
+              {/* Left Slide Thumbnail Sidebar (Gmail / Drive style) */}
+              <SlideThumbSidebar>
+                <div style={{ fontSize: "0.75rem", color: "#94a3b8", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.06em", padding: "2px 6px 8px" }}>
+                  Slides ({SLIDES_META.length})
+                </div>
+                {SLIDES_META.map((slide, idx) => (
+                  <SlideThumbItem
+                    key={idx}
+                    $active={currentSlide === idx}
+                    onClick={() => setCurrentSlide(idx)}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "4px" }}>
+                      <span style={{ fontSize: "0.68rem", background: currentSlide === idx ? "#3b82f6" : "rgba(255,255,255,0.1)", color: "#fff", padding: "1px 6px", borderRadius: "4px", fontWeight: 800 }}>
+                        Slide {slide.num}
+                      </span>
+                      <span style={{ fontSize: "0.95rem" }}>{slide.icon}</span>
+                    </div>
+                    <div style={{ fontSize: "0.82rem", fontWeight: 700, color: currentSlide === idx ? "#ffffff" : "#cbd5e1", lineHeight: 1.3 }}>
+                      {slide.title}
+                    </div>
+                    <div style={{ fontSize: "0.7rem", color: "#94a3b8", marginTop: "2px" }}>
+                      {slide.subtitle}
+                    </div>
+                  </SlideThumbItem>
+                ))}
+              </SlideThumbSidebar>
+
+              {/* Main Presentation Stage */}
+              <SlideMainStage>
+                {/* Slide Navigation Top Bar */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(30, 41, 59, 0.7)", padding: "10px 20px", borderRadius: "14px", border: "1px solid rgba(255, 255, 255, 0.1)", marginBottom: "16px", width: "100%", boxSizing: "border-box" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <span style={{ fontSize: "0.92rem", color: "#f8fafc", fontWeight: 800 }}>
+                      {SLIDES_META[currentSlide]?.icon} {SLIDES_META[currentSlide]?.title}
+                    </span>
+                    <span style={{ fontSize: "0.75rem", background: "rgba(99, 102, 241, 0.25)", color: "#a5b4fc", border: "1px solid rgba(165, 180, 252, 0.4)", padding: "2px 8px", borderRadius: "6px", fontWeight: 700 }}>
+                      Slide {currentSlide + 1} of {SLIDES_META.length}
+                    </span>
+                  </div>
+
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <span style={{ fontSize: "0.75rem", color: "#94a3b8", marginRight: "4px" }}>← / → keys:</span>
+                    <ActionButton 
+                      disabled={currentSlide === 0}
+                      onClick={() => setCurrentSlide(prev => Math.max(0, prev - 1))}
+                    >
+                      <FiChevronLeft /> Prev
+                    </ActionButton>
+                    <ActionButton 
+                      disabled={currentSlide === SLIDES_META.length - 1}
+                      onClick={() => setCurrentSlide(prev => Math.min(SLIDES_META.length - 1, prev + 1))}
+                    >
+                      Next <FiChevronRight />
+                    </ActionButton>
+                  </div>
                 </div>
 
-                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                  <span style={{ fontSize: "0.75rem", color: "#94a3b8", marginRight: "6px" }}>Use ← / → keys or buttons:</span>
-                  <ActionButton 
-                    disabled={currentSlide === 0}
-                    onClick={() => setCurrentSlide(prev => Math.max(0, prev - 1))}
-                  >
-                    <FiChevronLeft /> Prev Slide
-                  </ActionButton>
-                  <ActionButton 
-                    disabled={currentSlide === 5}
-                    onClick={() => setCurrentSlide(prev => Math.min(5, prev + 1))}
-                  >
-                    Next Slide <FiChevronRight />
-                  </ActionButton>
-                </div>
-              </div>
-
-              {/* SLIDE 0: TITLE COVER SLIDE */}
-              {currentSlide === 0 && (
+                {/* SLIDE 0: TITLE COVER SLIDE */}
+                {currentSlide === 0 && (
                 <SlideCanvas>
                   <SlideHeader>
                     <div>
@@ -827,7 +920,8 @@ export const UnifiedDocumentPreviewModal = ({
                   </SlideFooter>
                 </SlideCanvas>
               )}
-            </div>
+              </SlideMainStage>
+            </SlideViewerLayout>
           )}
 
           {/* 2. SHEETS / EXCEL PREVIEW */}
