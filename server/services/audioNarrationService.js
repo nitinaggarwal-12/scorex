@@ -456,10 +456,24 @@ class AudioNarrationService {
 
     // 2. Synthesize via selected Engine
     let audioBase64 = null;
-    if (engine === 'elevenlabs' || (customApiKey && customApiKey.startsWith('sk_')) || customVoiceId) {
-      audioBase64 = await this.synthesizeElevenLabs(chapter.text, persona, customApiKey, customVoiceId);
-    } else {
-      audioBase64 = await this.synthesizeGoogleTTS(chapter.ssml || chapter.text, persona);
+    try {
+      if (engine === 'elevenlabs' || (customApiKey && customApiKey.startsWith('sk_')) || customVoiceId) {
+        audioBase64 = await this.synthesizeElevenLabs(chapter.text, persona, customApiKey, customVoiceId);
+      } else {
+        audioBase64 = await this.synthesizeGoogleTTS(chapter.ssml || chapter.text, persona);
+      }
+    } catch (err) {
+      console.warn(`ℹ️ [AudioSynthesis] Engine ${engine} unavailable (${err.message}). Signaling client fallback.`);
+      return {
+        act: chapter.act,
+        chapterTitle: chapter.chapterTitle,
+        text: chapter.text,
+        audioBase64: null,
+        fallbackToBrowser: true,
+        cached: false,
+        engine,
+        message: err.message
+      };
     }
 
     // 3. Cache Result
@@ -489,6 +503,10 @@ class AudioNarrationService {
       if (res.audioBase64) {
         audioBuffers.push(Buffer.from(res.audioBase64, 'base64'));
       }
+    }
+
+    if (audioBuffers.length === 0) {
+      throw new Error('No audio could be synthesized for export. Please configure a GEMINI_API_KEY, GOOGLE_API_KEY, or ElevenLabs API Key.');
     }
 
     // Concatenate contiguous MP3 buffers
