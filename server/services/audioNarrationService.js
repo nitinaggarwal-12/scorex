@@ -2,17 +2,19 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { GoogleGenAI } = require('@google/genai');
 const geminiService = require('./geminiService');
 
 /**
  * 🎙️ AudioNarrationService
  * Enterprise-grade, humanized voice synthesis engine combining:
- * 1. Gemini Cinematic SSML Audio Director (Prosody, breath, pitch drift, metric naturalization)
- * 2. Google Cloud Journey & Studio TTS (DeepMind 48kHz Neural models)
- * 3. ElevenLabs Instant Voice Cloning & BYOK API Engine
- * 4. Dual-Host Podcast Co-Host Engine (Architect + Strategy Consultant)
- * 5. Full 5-Act Broadcast MP3 Exporter with Chapter Concatenation
- * 6. Content-Addressed SHA-256 Audio Cache (0ms instant replay)
+ * 1. Gemini Native Audio Synthesis (gemini-2.5-flash-preview-tts / gemini-3.1-flash-tts-preview)
+ * 2. Prebuilt DeepMind Voices: Charon, Aoede, Puck, Kore, Fenrir
+ * 3. In-Memory PCM-to-WAV 24kHz/48kHz Container Packager
+ * 4. ElevenLabs Instant Voice Cloning & BYOK API Engine
+ * 5. Dual-Host Podcast Co-Host Engine (Architect + Strategy Consultant)
+ * 6. Full 5-Act Broadcast WAV/MP3 Exporter with Chapter Concatenation
+ * 7. Content-Addressed SHA-256 Audio Cache (0ms instant replay)
  */
 class AudioNarrationService {
   constructor() {
@@ -22,39 +24,27 @@ class AudioNarrationService {
     this.customVoices = new Map();
     this.ensureDirs();
 
-    // Mapping ScoreX personas to Google Cloud Journey & Studio Neural Voices
-    this.googleVoiceMap = {
+    // Map ScoreX personas to Gemini Native DeepMind Voices
+    this.geminiVoiceMap = {
       jonathan: {
-        languageCode: 'en-US',
-        name: 'en-US-Journey-D', // Deep, warm, baritone documentary voice
-        ssmlGender: 'MALE',
-        fallback: 'en-US-Studio-Q',
-        pitch: -1.0,
-        speakingRate: 0.94
+        voiceName: 'Charon', // Deep, warm, authoritative documentary baritone
+        gender: 'male',
+        stylePrompt: 'Read as a world-class documentary narrator with warm, theatrical baritone gravitas, deliberate pauses, and deep resonance.'
       },
       victoria: {
-        languageCode: 'en-US',
-        name: 'en-US-Journey-F', // Magnetic, articulate, executive storytelling voice
-        ssmlGender: 'FEMALE',
-        fallback: 'en-US-Studio-O',
-        pitch: 0.0,
-        speakingRate: 0.98
+        voiceName: 'Aoede', // Magnetic, eloquent, MasterClass executive storyteller
+        gender: 'female',
+        stylePrompt: 'Read as an eloquent, magnetic MasterClass storyteller with articulate diction, inspiring optimism, and expressive inflection.'
       },
       david: {
-        languageCode: 'en-US',
-        name: 'en-US-Studio-Q', // Authoritative, crisp Silicon Valley tech orator
-        ssmlGender: 'MALE',
-        fallback: 'en-US-Neural2-J',
-        pitch: -0.5,
-        speakingRate: 0.96
+        voiceName: 'Puck', // Resonant, punchy Silicon Valley tech visionary
+        gender: 'male',
+        stylePrompt: 'Read as an inspiring, punchy, forward-looking Silicon Valley tech orator with crisp cadence.'
       },
       maya: {
-        languageCode: 'en-US',
-        name: 'en-US-Journey-O', // Intimate, conversational, warm podcast cadence
-        ssmlGender: 'FEMALE',
-        fallback: 'en-US-Neural2-F',
-        pitch: 0.5,
-        speakingRate: 0.95
+        voiceName: 'Kore', // Intimate, conversational, warm podcast cadence
+        gender: 'female',
+        stylePrompt: 'Read as an intimate, candid NPR podcast host with warm, curious, and empathetic pacing.'
       }
     };
 
@@ -113,6 +103,33 @@ class AudioNarrationService {
       .replace(/[|\\~_]/g, ' ')
       .replace(/\s+/g, ' ')
       .trim();
+  }
+
+  /**
+   * Helper: Wrap raw 24kHz 16-bit Mono Little-Endian PCM into standard RIFF WAV buffer
+   */
+  pcmToWav(pcmBuffer, sampleRate = 24000, numChannels = 1, bitsPerSample = 16) {
+    const byteRate = sampleRate * numChannels * (bitsPerSample / 8);
+    const blockAlign = numChannels * (bitsPerSample / 8);
+    const dataSize = pcmBuffer.length;
+    const buffer = Buffer.alloc(44 + dataSize);
+
+    buffer.write('RIFF', 0);
+    buffer.writeUInt32LE(36 + dataSize, 4);
+    buffer.write('WAVE', 8);
+    buffer.write('fmt ', 12);
+    buffer.writeUInt32LE(16, 16);
+    buffer.writeUInt16LE(1, 20); // PCM
+    buffer.writeUInt16LE(numChannels, 22);
+    buffer.writeUInt32LE(sampleRate, 24);
+    buffer.writeUInt32LE(byteRate, 28);
+    buffer.writeUInt16LE(blockAlign, 32);
+    buffer.writeUInt16LE(bitsPerSample, 34);
+    buffer.write('data', 36);
+    buffer.writeUInt32LE(dataSize, 40);
+
+    pcmBuffer.copy(buffer, 44);
+    return buffer;
   }
 
   /**
@@ -258,11 +275,9 @@ class AudioNarrationService {
   async cloneVoiceFromSample(audioBuffer, voiceName = 'My Custom Executive Voice', customApiKey = null) {
     const voiceId = `custom_${crypto.createHash('md5').update(audioBuffer).digest('hex').substring(0, 10)}`;
 
-    // Save audio sample to local storage
     const samplePath = path.join(this.customVoicesDir, `${voiceId}.mp3`);
     fs.writeFileSync(samplePath, audioBuffer);
 
-    // If user provided ElevenLabs key, register with ElevenLabs Instant Voice Cloning API
     const apiKey = customApiKey || process.env.ELEVENLABS_API_KEY;
     let remoteVoiceId = null;
 
@@ -302,9 +317,6 @@ class AudioNarrationService {
     return voiceProfile;
   }
 
-  /**
-   * Helper: Generate a unique SHA-256 cache key
-   */
   generateCacheKey(text, style, persona, engine = 'google') {
     return crypto.createHash('sha256').update(`${engine}_${style}_${persona}_${text}`).digest('hex');
   }
@@ -313,7 +325,7 @@ class AudioNarrationService {
     if (this.memoryCache.has(cacheKey)) {
       return this.memoryCache.get(cacheKey);
     }
-    const filePath = path.join(this.cacheDir, `${cacheKey}.mp3`);
+    const filePath = path.join(this.cacheDir, `${cacheKey}.wav`);
     if (fs.existsSync(filePath)) {
       try {
         const data = fs.readFileSync(filePath);
@@ -330,7 +342,7 @@ class AudioNarrationService {
   setCachedAudio(cacheKey, audioBase64) {
     try {
       this.memoryCache.set(cacheKey, audioBase64);
-      const filePath = path.join(this.cacheDir, `${cacheKey}.mp3`);
+      const filePath = path.join(this.cacheDir, `${cacheKey}.wav`);
       fs.writeFileSync(filePath, Buffer.from(audioBase64, 'base64'));
     } catch (e) {
       console.warn('Cache write error:', e.message);
@@ -338,62 +350,59 @@ class AudioNarrationService {
   }
 
   /**
-   * ⚡ Synthesize via Google Cloud Text-to-Speech (Journey & Studio Neural Voices)
+   * ⚡ Synthesize via Gemini Native Audio Output (DeepMind Neural TTS)
    */
-  async synthesizeGoogleTTS(ssmlOrText, persona = 'jonathan') {
+  async synthesizeGeminiNative(text, persona = 'jonathan') {
     const apiKey = geminiService.getApiKey();
     if (!apiKey) {
-      throw new Error('Google API Key (GEMINI_API_KEY or GOOGLE_API_KEY) is not configured.');
+      throw new Error('GEMINI_API_KEY is not configured.');
     }
 
-    const voiceConfig = this.googleVoiceMap[persona] || this.googleVoiceMap.jonathan;
-    const isSSML = ssmlOrText.trim().startsWith('<speak>');
+    const ai = new GoogleGenAI({ apiKey });
+    const voiceConfig = this.geminiVoiceMap[persona] || this.geminiVoiceMap.jonathan;
 
-    const requestBody = {
-      input: isSSML ? { ssml: ssmlOrText } : { text: ssmlOrText },
-      voice: {
-        languageCode: voiceConfig.languageCode,
-        name: voiceConfig.name,
-        ssmlGender: voiceConfig.ssmlGender
-      },
-      audioConfig: {
-        audioEncoding: 'MP3',
-        speakingRate: voiceConfig.speakingRate || 0.96,
-        pitch: voiceConfig.pitch || 0.0,
-        sampleRateHertz: 48000,
-        effectsProfileId: ['headphone-class-device']
-      }
-    };
+    const modelsToTry = [
+      'gemini-2.5-flash-preview-tts',
+      'gemini-3.1-flash-tts-preview',
+      'gemini-2.5-flash-native-audio-latest',
+      'gemini-2.5-flash'
+    ];
 
-    try {
-      const response = await axios.post(
-        `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`,
-        requestBody,
-        {
-          headers: { 'Content-Type': 'application/json' },
-          timeout: 15000
+    let lastError = null;
+    for (const modelName of modelsToTry) {
+      try {
+        const response = await ai.models.generateContent({
+          model: modelName,
+          contents: `${voiceConfig.stylePrompt}\n\nRead the following executive assessment excerpt with authentic human breath, emotional cadence, and dramatic authority:\n\n"${text}"`,
+          config: {
+            responseModalities: ['AUDIO'],
+            speechConfig: {
+              voiceConfig: {
+                prebuiltVoiceConfig: {
+                  voiceName: voiceConfig.voiceName
+                }
+              }
+            }
+          }
+        });
+
+        const parts = response.candidates?.[0]?.content?.parts;
+        if (parts) {
+          for (const part of parts) {
+            if (part.inlineData && part.inlineData.data) {
+              const rawPcm = Buffer.from(part.inlineData.data, 'base64');
+              const wavBuffer = this.pcmToWav(rawPcm, 24000, 1, 16);
+              return wavBuffer.toString('base64');
+            }
+          }
         }
-      );
-
-      if (response.data && response.data.audioContent) {
-        return response.data.audioContent; // Base64 MP3
+      } catch (err) {
+        lastError = err;
+        console.warn(`⚠️ Gemini audio model ${modelName} retry:`, err.message);
       }
-      throw new Error('No audio content returned from Google TTS.');
-    } catch (err) {
-      if (voiceConfig.fallback && voiceConfig.fallback !== voiceConfig.name) {
-        console.warn(`⚠️ Google TTS Journey retry with fallback ${voiceConfig.fallback}:`, err.response?.data?.error?.message || err.message);
-        requestBody.voice.name = voiceConfig.fallback;
-        const fallbackRes = await axios.post(
-          `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`,
-          requestBody,
-          { headers: { 'Content-Type': 'application/json' }, timeout: 15000 }
-        );
-        if (fallbackRes.data && fallbackRes.data.audioContent) {
-          return fallbackRes.data.audioContent;
-        }
-      }
-      throw err;
     }
+
+    throw lastError || new Error('No audio content returned from Gemini models.');
   }
 
   /**
@@ -410,7 +419,7 @@ class AudioNarrationService {
     const response = await axios.post(
       `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
       {
-        text: text.replace(/<[^>]*>/g, ''), // Strip SSML tags
+        text: text.replace(/<[^>]*>/g, ''),
         model_id: 'eleven_multilingual_v2',
         voice_settings: {
           stability: 0.5,
@@ -438,7 +447,7 @@ class AudioNarrationService {
    * Master Synthesis Dispatcher
    */
   async synthesizeAct(chapter, persona = 'jonathan', style = 'storyteller', engine = 'google', customApiKey = null, customVoiceId = null) {
-    const textToSynthesize = chapter.ssml || chapter.text;
+    const textToSynthesize = chapter.text || chapter.ssml;
     const cacheKey = this.generateCacheKey(textToSynthesize, style, customVoiceId || persona, engine);
 
     // 1. Check Cache
@@ -460,10 +469,10 @@ class AudioNarrationService {
       if (engine === 'elevenlabs' || (customApiKey && customApiKey.startsWith('sk_')) || customVoiceId) {
         audioBase64 = await this.synthesizeElevenLabs(chapter.text, persona, customApiKey, customVoiceId);
       } else {
-        audioBase64 = await this.synthesizeGoogleTTS(chapter.ssml || chapter.text, persona);
+        audioBase64 = await this.synthesizeGeminiNative(chapter.text, persona);
       }
     } catch (err) {
-      console.warn(`ℹ️ [AudioSynthesis] Engine ${engine} unavailable (${err.message}). Signaling client fallback.`);
+      console.warn(`ℹ️ [AudioSynthesis] Engine ${engine} fallback (${err.message}).`);
       return {
         act: chapter.act,
         chapterTitle: chapter.chapterTitle,
@@ -492,7 +501,7 @@ class AudioNarrationService {
   }
 
   /**
-   * 📦 Stitched 5-Act Full Broadcast MP3 Generator (1-Click Download)
+   * 📦 Stitched 5-Act Full Broadcast WAV/MP3 Generator (1-Click Download)
    */
   async exportFullStitchedAudio(instance, report, style = 'storyteller', persona = 'jonathan', engine = 'google', customApiKey = null) {
     const chapters = await this.buildDirectorScript(instance, report, style, persona);
@@ -506,10 +515,9 @@ class AudioNarrationService {
     }
 
     if (audioBuffers.length === 0) {
-      throw new Error('No audio could be synthesized for export. Please configure a GEMINI_API_KEY, GOOGLE_API_KEY, or ElevenLabs API Key.');
+      throw new Error('No audio could be synthesized for export. Please check API Key configuration.');
     }
 
-    // Concatenate contiguous MP3 buffers
     return Buffer.concat(audioBuffers);
   }
 }
