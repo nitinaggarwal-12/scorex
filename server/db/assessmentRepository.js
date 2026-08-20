@@ -4,6 +4,23 @@ const path = require('path');
 
 const fileStore = new DataStore(path.join(__dirname, '../../data/assessments.json'));
 
+function normalizeReleaseState(assessment) {
+  if (!assessment) return assessment;
+
+  const ownerId = assessment.userId || assessment.user_id || '';
+  const isDemoOwned = typeof ownerId === 'string' && ownerId.startsWith('demo_');
+
+  return {
+    ...assessment,
+    // Public visitors are provisioned as isolated demo identities. Their own assessments
+    // should be immediately viewable without an administrator release step. Registered
+    // users retain the persisted release workflow.
+    results_released: isDemoOwned ? true : Boolean(assessment.results_released),
+    results_released_by: assessment.results_released_by || null,
+    results_released_at: assessment.results_released_at || null
+  };
+}
+
 /**
  * Assessment Repository
  * Resilient dual-mode database operations for assessments:
@@ -63,11 +80,11 @@ class AssessmentRepository {
       ];
 
       const result = await db.query(query, values);
-      return this.mapRowToAssessment(result.rows[0]);
+      return normalizeReleaseState(this.mapRowToAssessment(result.rows[0]));
     } catch (error) {
       console.warn('PostgreSQL create failed, saving to file storage:', error.message);
       fileStore.set(formatted.id, formatted);
-      return formatted;
+      return normalizeReleaseState(formatted);
     }
   }
 
@@ -79,12 +96,12 @@ class AssessmentRepository {
       const query = 'SELECT * FROM assessments WHERE id = $1';
       const result = await db.query(query, [id]);
       if (result && result.rows && result.rows.length > 0) {
-        return this.mapRowToAssessment(result.rows[0]);
+        return normalizeReleaseState(this.mapRowToAssessment(result.rows[0]));
       }
     } catch (error) {
       // Fallback to file storage
     }
-    return fileStore.get(id) || null;
+    return normalizeReleaseState(fileStore.get(id) || null);
   }
 
   /**
@@ -95,13 +112,13 @@ class AssessmentRepository {
       const query = 'SELECT * FROM assessments ORDER BY updated_at DESC';
       const result = await db.query(query);
       if (result && result.rows) {
-        return result.rows.map(row => this.mapRowToAssessment(row));
+        return result.rows.map(row => normalizeReleaseState(this.mapRowToAssessment(row)));
       }
     } catch (error) {
       // Fallback to file storage
     }
     const all = fileStore.getAll() || {};
-    return Object.values(all);
+    return Object.values(all).map(normalizeReleaseState);
   }
 
   /**
@@ -112,13 +129,15 @@ class AssessmentRepository {
       const query = 'SELECT * FROM assessments WHERE contact_email = $1 ORDER BY updated_at DESC';
       const result = await db.query(query, [email]);
       if (result && result.rows) {
-        return result.rows.map(row => this.mapRowToAssessment(row));
+        return result.rows.map(row => normalizeReleaseState(this.mapRowToAssessment(row)));
       }
     } catch (error) {
       // Fallback to file storage
     }
     const all = fileStore.getAll() || {};
-    return Object.values(all).filter(a => a.contactEmail === email || a.contact_email === email);
+    return Object.values(all)
+      .filter(a => a.contactEmail === email || a.contact_email === email)
+      .map(normalizeReleaseState);
   }
 
   /**
@@ -165,14 +184,14 @@ class AssessmentRepository {
 
       const result = await db.query(query, values);
       if (result && result.rows && result.rows.length > 0) {
-        return this.mapRowToAssessment(result.rows[0]);
+        return normalizeReleaseState(this.mapRowToAssessment(result.rows[0]));
       }
     } catch (error) {
       // Fallback to file storage
     }
 
     fileStore.set(id, merged);
-    return merged;
+    return normalizeReleaseState(merged);
   }
 
   /**
@@ -214,14 +233,14 @@ class AssessmentRepository {
 
       const result = await db.query(query, values);
       if (result && result.rows && result.rows.length > 0) {
-        return this.mapRowToAssessment(result.rows[0]);
+        return normalizeReleaseState(this.mapRowToAssessment(result.rows[0]));
       }
     } catch (error) {
       // Fallback
     }
 
     fileStore.set(id, merged);
-    return merged;
+    return normalizeReleaseState(merged);
   }
 
   /**
@@ -347,7 +366,11 @@ class AssessmentRepository {
       completedAt: row.completed_at,
       updatedAt: row.updated_at,
       createdAt: row.created_at,
+      userId: row.user_id,
       user_id: row.user_id,
+      results_released: row.results_released,
+      results_released_by: row.results_released_by,
+      results_released_at: row.results_released_at,
       lastSaved: row.updated_at,
     };
   }
