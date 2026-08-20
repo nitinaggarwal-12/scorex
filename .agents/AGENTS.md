@@ -40,3 +40,11 @@
   3. **In-Browser Multi-Format Renderers**: 16:9 Slide Deck Carousel, multi-tab Excel spreadsheet grid with real-time search, executive memorandum formatter, and vector SVG architecture pan/zoom.
   4. **Explicit Geometry & Multi-Sheet Exporters**: PptxGenJS column layout safety (`colW`), ExcelJS multi-sheet workbooks, WordprocessingML `.docx` briefs, and 1-click All Deliverables Bundle packaging.
 
+---
+
+### `gemini-architecture-generation-engine`
+* **Mandate & Brain Rule**:
+  1. Whenever designing, redesigning, generating, or updating architecture diagrams, topologies, and blueprint PNGs, **ALWAYS** call the Gemini model (`gemini-3.1-pro-preview` / `gemini-2.5-flash`) with complete prompts, domain instructions, component topologies, and explicit data flow connection rules.
+  2. Synthesize, validate, and enrich the full architecture graph and Draw.io XML using the complete prompt context before rendering the final high-resolution PNG images.
+  3. Adhere strictly to the requested visual theme (Light Executive `#F8FAFC` or Deep Slate-Midnight `#0B111E`) with numbered data flow step labels on every connector.
+
