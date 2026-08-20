@@ -29,8 +29,12 @@ function rateLimit(req, res, next) {
   return next();
 }
 
-const isPrivileged = (user) => user?.role === 'admin' || user?.role === 'author';
+const isAdmin = (user) => user?.role === 'admin';
 const serverSessionId = (req) => req.auth?.sessionId || req.headers['x-session-id'];
+const ASSESSMENT_OWNER_FIELDS = [
+  'userId', 'user_id', 'createdBy', 'created_by', 'ownerId', 'owner_id',
+  'assignedAuthorId', 'assigned_author_id'
+];
 
 function rememberConversation(req, res, next) {
   const originalJson = res.json.bind(res);
@@ -46,17 +50,13 @@ function rememberConversation(req, res, next) {
 
 async function assessmentAllowed(req, assessmentId) {
   if (!assessmentId) return true;
-  if (isPrivileged(req.user)) return true;
+  if (isAdmin(req.user)) return true;
 
   let assessment = await assessmentRepository.findById(assessmentId);
   if (!assessment) assessment = await customAssessmentRepo.getInstanceById(assessmentId);
   if (!assessment) return false;
 
-  return canAccessResource(
-    req.user,
-    assessment,
-    ['userId', 'user_id', 'createdBy', 'created_by', 'ownerId', 'owner_id']
-  );
+  return canAccessResource(req.user, assessment, ASSESSMENT_OWNER_FIELDS);
 }
 
 async function conversationBelongsToSession(req, conversationId) {
