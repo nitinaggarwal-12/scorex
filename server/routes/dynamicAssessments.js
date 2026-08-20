@@ -8,13 +8,10 @@ const { requireAuth, canAccessResource } = require('../middleware/auth');
 /**
  * Security facade for the dynamic assessment subsystem.
  *
- * The legacy/core router intentionally remains feature-focused. This facade establishes
- * authorization invariants before a request can reach it:
- * - every request has an authenticated user or isolated demo session;
- * - demo/consumer users cannot mutate the shared template catalog;
- * - demo-generated frameworks are ephemeral and never auto-published;
- * - demo/consumer assessment instances are owned by their session/user identity;
- * - instance-level reads and writes enforce resource ownership server-side.
+ * Shared authoring capabilities are distinct from instance data access:
+ * - admin: global instance access + catalog administration;
+ * - author: catalog authoring + only instances they own/create;
+ * - consumer/demo: only their own isolated instances, with demo-safe mutations.
  */
 router.use(requireAuth);
 
@@ -39,7 +36,8 @@ function demoAiRateLimit(maxRequests = 8, windowMs = 60_000) {
   };
 }
 
-const isPrivileged = (user) => user?.role === 'admin' || user?.role === 'author';
+const isAdmin = (user) => user?.role === 'admin';
+const canAuthorCatalog = (user) => user?.role === 'admin' || user?.role === 'author';
 const isLimitedUser = (user) => user?.role === 'demo' || user?.role === 'consumer';
 
 function sanitizeInstance(instance) {
@@ -51,7 +49,7 @@ function sanitizeInstance(instance) {
 }
 
 function userOwnsInstance(user, instance) {
-  if (isPrivileged(user)) return true;
+  if (isAdmin(user)) return true;
   return canAccessResource(user, instance, ['createdBy', 'created_by', 'ownerId', 'owner_id', 'userId', 'user_id']);
 }
 
@@ -88,13 +86,13 @@ router.post('/generate-framework', demoAiRateLimit(), async (req, res, next) => 
   }
 });
 
-// Shared template catalog mutations are never available to demo/consumer roles.
+// Shared template catalog mutations are author/admin capabilities.
 router.use('/types', (req, res, next) => {
   const isRead = req.method === 'GET';
   const isDemoSample = req.method === 'POST' && /^\/[^/]+\/sample$/.test(req.path);
 
   if (isRead || isDemoSample) return next();
-  if (!isPrivileged(req.user)) {
+  if (!canAuthorCatalog(req.user)) {
     return res.status(403).json({ success: false, error: 'Author or admin access required' });
   }
   return next();
@@ -117,7 +115,7 @@ router.post('/types/:typeKey/sample', async (req, res, next) => {
 
     (framework.dimensions || []).forEach((dimension, dimensionIndex) => {
       (dimension.questions || []).forEach((question, questionIndex) => {
-        const score = 2 + ((seed + dimensionIndex * 7 + questionIndex * 11) % 3); // 2..4
+        const score = 2 + ((seed + dimensionIndex * 7 + questionIndex * 11) % 3);
         const target = Math.min(5, score + 1);
         responses[question.id] = score;
         responses[`${question.id}_current_state`] = score;
@@ -205,9 +203,9 @@ router.post('/instances', async (req, res) => {
   }
 });
 
-// Limited users can enumerate only their own instances. Authors/admins retain portfolio views.
+// Admin may enumerate all; every other role sees only its own instances.
 router.get('/instances', async (req, res, next) => {
-  if (isPrivileged(req.user)) return next();
+  if (isAdmin(req.user)) return next();
 
   try {
     const result = await customAssessmentRepo.getAllInstances({});
@@ -228,16 +226,16 @@ router.get('/instances', async (req, res, next) => {
   }
 });
 
-// Batch portfolio mutation is an author/admin capability only.
+// Global batch portfolio mutations are admin-only until per-ID ownership is implemented end-to-end.
 router.use('/instances/batch-delete', (req, res, next) => {
-  if (!isPrivileged(req.user)) {
-    return res.status(403).json({ success: false, error: 'Author or admin access required' });
+  if (!isAdmin(req.user)) {
+    return res.status(403).json({ success: false, error: 'Admin access required for batch deletion' });
   }
   return next();
 });
 router.use('/instances/batch-clone', (req, res, next) => {
-  if (!isPrivileged(req.user)) {
-    return res.status(403).json({ success: false, error: 'Author or admin access required' });
+  if (!isAdmin(req.user)) {
+    return res.status(403).json({ success: false, error: 'Admin access required for batch cloning' });
   }
   return next();
 });
@@ -246,7 +244,6 @@ router.use('/instances/batch-clone', (req, res, next) => {
 router.use('/instances/:id', async (req, res, next) => {
   const { id } = req.params;
 
-  // Reserved collection actions are handled by the explicit guards above.
   if (id === 'batch-delete' || id === 'batch-clone') return next();
 
   try {
@@ -278,14 +275,12 @@ router.use((req, res, next) => {
     return next();
   }
 
-  // /generate-framework, /types/:key/sample and /instances were already handled above.
   return res.status(403).json({
     success: false,
     error: 'This operation is not available in the isolated demo workspace'
   });
 });
 
-// Delegate the feature implementation only after security invariants have been established.
 router.use(coreRouter);
 
 module.exports = router;
