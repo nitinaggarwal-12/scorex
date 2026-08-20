@@ -32,7 +32,7 @@ jobs:
         run: npm install --ignore-scripts
 
       - name: Install client dependencies
-        run: npm install --ignore-scripts
+        run: npm install --ignore-scripts --include=dev
         working-directory: client
 
       - name: Validate server JavaScript syntax
@@ -45,5 +45,9 @@ jobs:
         run: CI=false npm run build
         working-directory: client
 
-      - name: Dependency audit - production critical/high
+      - name: Audit server production dependencies - high/critical
         run: npm audit --omit=dev --audit-level=high
+
+      - name: Audit browser production dependencies - high/critical
+        run: npm audit --omit=dev --audit-level=high
+        working-directory: client
