@@ -37,6 +37,29 @@
     "pg": "^8.16.3",
     "uuid": "^11.1.1"
   },
+  "overrides": {
+    "express": {
+      "path-to-regexp": "0.1.13"
+    },
+    "exceljs": {
+      "tmp": "0.2.6"
+    },
+    "cheerio": {
+      "undici": "7.29.0"
+    },
+    "glob": {
+      "minimatch": {
+        ".": "3.1.4",
+        "brace-expansion": "1.1.18"
+      }
+    },
+    "readdir-glob": {
+      "minimatch": {
+        ".": "5.1.8",
+        "brace-expansion": "2.1.4"
+      }
+    }
+  },
   "devDependencies": {
     "chalk": "^5.6.2",
     "concurrently": "^8.2.0",
