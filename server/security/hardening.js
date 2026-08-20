@@ -2,6 +2,8 @@ const axios = require('axios');
 const requestContext = require('./requestContext');
 const assessmentRepository = require('../db/assessmentRepository');
 const { requireAuth, canAccessResource } = require('../middleware/auth');
+const { validateRequest } = require('../contracts/runtimeContracts');
+const observability = require('../services/observabilityService');
 
 const originalAssessmentCreate = assessmentRepository.create.bind(assessmentRepository);
 let repositoryWrapped = false;
@@ -54,7 +56,7 @@ function setCorsHeaders(req, res) {
   res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Session-Id');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Session-Id, X-Request-Id');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
 }
 
@@ -142,7 +144,7 @@ async function handleSafeLogoFetch(req, res) {
     const base64 = Buffer.from(faviconResponse.data).toString('base64');
     res.json({ success: true, data: `data:${contentType};base64,${base64}` });
   } catch (error) {
-    console.warn('[Security] Safe logo fetch failed:', error.message);
+    observability.structuredLog('warn', 'safe_logo_fetch_failed', { errorClass: error.name || 'Error' });
     res.status(502).json({ success: false, message: 'Unable to retrieve a public logo for this domain' });
   }
 
@@ -188,7 +190,7 @@ async function handleOwnAssessmentList(req, res) {
     );
     res.json({ success: true, data: owned, assessments: owned, count: owned.length });
   } catch (error) {
-    console.error('[Security] Failed to list owned assessments:', error.message);
+    observability.structuredLog('error', 'owned_assessment_list_failed', { errorClass: error.name || 'Error' });
     res.status(500).json({ success: false, error: 'Failed to fetch assessments' });
   }
 
@@ -232,16 +234,68 @@ function isPublicApiPath(req) {
   return req.method === 'GET' && req.path === '/api/health';
 }
 
+function installRequestObservability(req, res) {
+  const id = observability.requestId(req.headers['x-request-id']);
+  const startedAt = process.hrtime.bigint();
+  req.requestId = id;
+  res.setHeader('X-Request-Id', id);
+
+  let recorded = false;
+  const record = () => {
+    if (recorded) return;
+    recorded = true;
+    const durationMs = Number(process.hrtime.bigint() - startedAt) / 1e6;
+    observability.recordRequest({ method: req.method, path: req.path, statusCode: res.statusCode, durationMs });
+    observability.structuredLog(res.statusCode >= 500 ? 'error' : res.statusCode >= 400 ? 'warn' : 'info', 'http_request', {
+      requestId: id,
+      method: req.method,
+      route: observability.routeKey(req.method, req.path),
+      statusCode: res.statusCode,
+      durationMs: Number(durationMs.toFixed(1)),
+      authType: req.auth?.type || 'unresolved',
+      role: req.user?.role || 'unresolved'
+    });
+  };
+  res.once('finish', record);
+  res.once('close', record);
+}
+
+function validateApiContract(req, res) {
+  if (!req.path.startsWith('/api/')) return true;
+  const result = validateRequest(req.method, req.path, req.body || {});
+  if (result.valid) {
+    req.contractId = result.contractId;
+    return true;
+  }
+  observability.structuredLog('warn', 'api_contract_rejected', {
+    requestId: req.requestId,
+    contractId: result.contractId,
+    errorCount: result.errors.length,
+    method: req.method,
+    route: observability.routeKey(req.method, req.path)
+  });
+  res.status(400).json({
+    success: false,
+    error: 'Invalid request',
+    contract: result.contractId,
+    details: result.errors,
+    requestId: req.requestId
+  });
+  return false;
+}
+
 function installSecurity(app) {
   wrapRepositoryOwnership();
   removePermissiveCors(app);
 
   insertBeforeFirstRoute(app, (req, res, next) => {
+    installRequestObservability(req, res);
+
     requestContext.run({ req }, async () => {
       try {
         const origin = req.headers.origin;
         if (origin && !allowedOrigin(req, origin)) {
-          return res.status(403).json({ success: false, error: 'Origin not allowed' });
+          return res.status(403).json({ success: false, error: 'Origin not allowed', requestId: req.requestId });
         }
 
         setCorsHeaders(req, res);
@@ -251,13 +305,21 @@ function installSecurity(app) {
           return res.status(200).json({
             success: true,
             status: 'ok',
-            service: 'scorex-api'
+            service: 'scorex-api',
+            requestId: req.requestId
           });
         }
+
+        if (!validateApiContract(req, res)) return;
 
         if (req.path.startsWith('/api/') && !isPublicApiPath(req)) {
           const authenticated = await authenticate(req, res);
           if (!authenticated) return;
+        }
+
+        if (req.path === '/api/observability/summary' && req.method === 'GET') {
+          if (!isAdmin(req.user)) return res.status(403).json({ success: false, error: 'Admin access required', requestId: req.requestId });
+          return res.json({ success: true, data: observability.snapshot(), requestId: req.requestId });
         }
 
         if (req.path === '/api/fetch-logo' && req.method === 'POST') {
@@ -266,7 +328,7 @@ function installSecurity(app) {
         }
 
         if (req.path === '/api/assessments/all' && req.method === 'DELETE' && !isAdmin(req.user)) {
-          return res.status(403).json({ success: false, error: 'Admin access required' });
+          return res.status(403).json({ success: false, error: 'Admin access required', requestId: req.requestId });
         }
 
         if (req.path === '/api/assessments' && req.method === 'GET') {
@@ -282,8 +344,13 @@ function installSecurity(app) {
 
         return next();
       } catch (error) {
-        console.error('[Security] Global hardening middleware failed:', error.message);
-        return res.status(500).json({ success: false, error: 'Security validation failed' });
+        observability.structuredLog('error', 'global_hardening_failed', {
+          requestId: req.requestId,
+          errorClass: error.name || 'Error',
+          method: req.method,
+          route: observability.routeKey(req.method, req.path)
+        });
+        return res.status(500).json({ success: false, error: 'Security validation failed', requestId: req.requestId });
       }
     });
   });
@@ -295,5 +362,7 @@ module.exports = {
   installSecurity,
   allowedOrigin,
   isAssessmentIdPath,
-  isPublicApiPath
+  isPublicApiPath,
+  validateApiContract,
+  installRequestObservability
 };
