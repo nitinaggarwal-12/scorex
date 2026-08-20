@@ -56,6 +56,18 @@ test('provenance policy is wired into server benchmark generation', () => {
   assert.match(gemini, /Never invent peer percentiles/i);
 });
 
+test('dynamic benchmark facade intercepts the legacy synthetic route before core router', () => {
+  const source = read('server/routes/dynamicAssessments.js');
+  const evidenceRoute = source.indexOf("router.get('/instances/:id/benchmarks'");
+  const coreMount = source.indexOf('router.use(coreRouter)');
+  assert.ok(evidenceRoute >= 0, 'evidence-first benchmark route must exist');
+  assert.ok(coreMount > evidenceRoute, 'evidence-first route must run before legacy core router');
+  assert.match(source, /percentile:\s*null/);
+  assert.match(source, /industryAverage:\s*null/);
+  assert.match(source, /topQuartile:\s*null/);
+  assert.match(source, /claimPolicy:\s*'provenance-v1'/);
+});
+
 test('unsourced fake benchmark fields are removed while assessment evidence is preserved', () => {
   const report = provenance.sanitizeBenchmarkReport({
     competitivePositioning: {
