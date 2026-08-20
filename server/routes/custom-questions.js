@@ -1,7 +1,38 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db/connection');
-const { v4: uuidv4 } = require('uuid');
+const { requireAuth, requireAuthorOrAdmin, canAccessResource } = require('../middleware/auth');
+
+// All custom-question APIs require an authenticated user or isolated demo session.
+router.use(requireAuth);
+
+// Framework mutation and assignment-management operations are author/admin capabilities.
+router.use((req, res, next) => {
+  const isMutation = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method);
+  const isSensitiveRead = req.method === 'GET' && (
+    req.path === '/stats/summary' ||
+    req.path.endsWith('/assignments')
+  );
+
+  if (isMutation || isSensitiveRead) {
+    return requireAuthorOrAdmin(req, res, next);
+  }
+  return next();
+});
+
+async function userCanReadAssessment(req, assessmentId) {
+  if (req.user.role === 'admin' || req.user.role === 'author') return true;
+
+  const result = await db.query(
+    `SELECT * FROM assessments
+     WHERE id::text = $1 OR assessment_id::text = $1
+     LIMIT 1`,
+    [String(assessmentId)]
+  );
+
+  if (result.rows.length === 0) return false;
+  return canAccessResource(req.user, result.rows[0]);
+}
 
 /**
  * GET /api/custom-questions
@@ -10,28 +41,30 @@ const { v4: uuidv4 } = require('uuid');
 router.get('/', async (req, res) => {
   try {
     const { includeInactive = 'false', pillar } = req.query;
-    
+    const privileged = req.user.role === 'admin' || req.user.role === 'author';
+
     let query = 'SELECT * FROM custom_questions';
     const conditions = [];
     const params = [];
-    
-    if (includeInactive !== 'true') {
+
+    // Demo/consumer users can never enumerate inactive authoring content.
+    if (includeInactive !== 'true' || !privileged) {
       conditions.push('is_active = true');
     }
-    
+
     if (pillar) {
       params.push(pillar);
       conditions.push(`(pillar = $${params.length} OR pillar = 'all')`);
     }
-    
+
     if (conditions.length > 0) {
       query += ' WHERE ' + conditions.join(' AND ');
     }
-    
+
     query += ' ORDER BY created_at DESC';
-    
+
     const result = await db.query(query, params);
-    
+
     res.json({
       success: true,
       questions: result.rows,
@@ -54,19 +87,24 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     const result = await db.query(
       'SELECT * FROM custom_questions WHERE id = $1',
       [id]
     );
-    
+
     if (result.rows.length === 0) {
       return res.status(404).json({
         success: false,
         error: 'Question not found'
       });
     }
-    
+
+    // Non-authoring roles may only read active questions.
+    if (!result.rows[0].is_active && req.user.role !== 'admin' && req.user.role !== 'author') {
+      return res.status(404).json({ success: false, error: 'Question not found' });
+    }
+
     res.json({
       success: true,
       question: result.rows[0]
@@ -98,26 +136,21 @@ router.post('/', async (req, res) => {
       maturity_level_4,
       maturity_level_5
     } = req.body;
-    
-    // Validate required fields
+
     if (!question_text || !pillar) {
       return res.status(400).json({
         success: false,
         error: 'Question text and pillar are required'
       });
     }
-    
-    // Validate weight
+
     if (weight < 0 || weight > 2) {
       return res.status(400).json({
         success: false,
         error: 'Weight must be between 0 and 2'
       });
     }
-    
-    // Get user ID from session (if available)
-    const userId = req.headers['x-user-id'] || null;
-    
+
     const result = await db.query(
       `INSERT INTO custom_questions (
         question_text, pillar, category, weight,
@@ -128,10 +161,10 @@ router.post('/', async (req, res) => {
       [
         question_text, pillar, category, weight,
         maturity_level_1, maturity_level_2, maturity_level_3, maturity_level_4, maturity_level_5,
-        userId
+        req.user.id
       ]
     );
-    
+
     res.status(201).json({
       success: true,
       question: result.rows[0],
@@ -166,12 +199,11 @@ router.put('/:id', async (req, res) => {
       maturity_level_5,
       is_active
     } = req.body;
-    
-    // Build dynamic update query
+
     const updates = [];
     const params = [];
     let paramCount = 1;
-    
+
     if (question_text !== undefined) {
       params.push(question_text);
       updates.push(`question_text = $${paramCount++}`);
@@ -218,31 +250,31 @@ router.put('/:id', async (req, res) => {
       params.push(is_active);
       updates.push(`is_active = $${paramCount++}`);
     }
-    
+
     if (updates.length === 0) {
       return res.status(400).json({
         success: false,
         error: 'No fields to update'
       });
     }
-    
+
     params.push(id);
     const query = `
-      UPDATE custom_questions 
+      UPDATE custom_questions
       SET ${updates.join(', ')}
       WHERE id = $${paramCount}
       RETURNING *
     `;
-    
+
     const result = await db.query(query, params);
-    
+
     if (result.rows.length === 0) {
       return res.status(404).json({
         success: false,
         error: 'Question not found'
       });
     }
-    
+
     res.json({
       success: true,
       question: result.rows[0],
@@ -266,28 +298,26 @@ router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const { hard = 'false' } = req.query;
-    
+
     let query, message;
-    
+
     if (hard === 'true') {
-      // Hard delete (permanent)
       query = 'DELETE FROM custom_questions WHERE id = $1 RETURNING id';
       message = 'Custom question permanently deleted';
     } else {
-      // Soft delete (deactivate)
       query = 'UPDATE custom_questions SET is_active = false WHERE id = $1 RETURNING *';
       message = 'Custom question deactivated';
     }
-    
+
     const result = await db.query(query, [id]);
-    
+
     if (result.rows.length === 0) {
       return res.status(404).json({
         success: false,
         error: 'Question not found'
       });
     }
-    
+
     res.json({
       success: true,
       message,
@@ -310,14 +340,14 @@ router.delete('/:id', async (req, res) => {
 router.get('/stats/summary', async (req, res) => {
   try {
     const result = await db.query(`
-      SELECT 
+      SELECT
         COUNT(*) as total,
         COUNT(*) FILTER (WHERE is_active = true) as active,
         COUNT(*) FILTER (WHERE is_active = false) as inactive,
         COUNT(DISTINCT pillar) as unique_pillars
       FROM custom_questions
     `);
-    
+
     res.json({
       success: true,
       stats: result.rows[0]
@@ -339,30 +369,27 @@ router.get('/stats/summary', async (req, res) => {
 router.post('/:questionId/assign', async (req, res) => {
   try {
     const { questionId } = req.params;
-    const { assessmentIds } = req.body; // Array of assessment IDs
-    const userId = req.headers['x-user-id'] || null;
-    
+    const { assessmentIds } = req.body;
+
     if (!assessmentIds || !Array.isArray(assessmentIds) || assessmentIds.length === 0) {
       return res.status(400).json({
         success: false,
         error: 'Assessment IDs array is required'
       });
     }
-    
-    // Verify question exists
+
     const questionResult = await db.query(
       'SELECT id FROM custom_questions WHERE id = $1',
       [questionId]
     );
-    
+
     if (questionResult.rows.length === 0) {
       return res.status(404).json({
         success: false,
         error: 'Custom question not found'
       });
     }
-    
-    // Insert assignments (ignore duplicates)
+
     const assignments = [];
     for (const assessmentId of assessmentIds) {
       try {
@@ -371,7 +398,7 @@ router.post('/:questionId/assign', async (req, res) => {
            VALUES ($1, $2, $3)
            ON CONFLICT (assessment_id, custom_question_id) DO NOTHING
            RETURNING *`,
-          [assessmentId, questionId, userId]
+          [assessmentId, questionId, req.user.id]
         );
         if (result.rows.length > 0) {
           assignments.push(result.rows[0]);
@@ -380,7 +407,7 @@ router.post('/:questionId/assign', async (req, res) => {
         console.error(`Error assigning to assessment ${assessmentId}:`, err);
       }
     }
-    
+
     res.json({
       success: true,
       message: `Question assigned to ${assignments.length} assessment(s)`,
@@ -403,21 +430,21 @@ router.post('/:questionId/assign', async (req, res) => {
 router.delete('/:questionId/assign/:assessmentId', async (req, res) => {
   try {
     const { questionId, assessmentId } = req.params;
-    
+
     const result = await db.query(
-      `DELETE FROM assessment_custom_questions 
+      `DELETE FROM assessment_custom_questions
        WHERE custom_question_id = $1 AND assessment_id = $2
        RETURNING *`,
       [questionId, assessmentId]
     );
-    
+
     if (result.rows.length === 0) {
       return res.status(404).json({
         success: false,
         error: 'Assignment not found'
       });
     }
-    
+
     res.json({
       success: true,
       message: 'Assignment removed successfully'
@@ -439,9 +466,9 @@ router.delete('/:questionId/assign/:assessmentId', async (req, res) => {
 router.get('/:questionId/assignments', async (req, res) => {
   try {
     const { questionId } = req.params;
-    
+
     const result = await db.query(
-      `SELECT 
+      `SELECT
         acq.*,
         a.assessment_name,
         a.organization_name,
@@ -453,7 +480,7 @@ router.get('/:questionId/assignments', async (req, res) => {
        ORDER BY acq.assigned_at DESC`,
       [questionId]
     );
-    
+
     res.json({
       success: true,
       assignments: result.rows,
@@ -470,35 +497,40 @@ router.get('/:questionId/assignments', async (req, res) => {
 });
 
 /**
- * GET /api/assessments/:assessmentId/custom-questions
+ * GET /api/custom-questions/assessments/:assessmentId/questions
  * Get all custom questions assigned to a specific assessment
  */
 router.get('/assessments/:assessmentId/questions', async (req, res) => {
   try {
     const { assessmentId } = req.params;
     const { pillar } = req.query;
-    
+
+    const allowed = await userCanReadAssessment(req, assessmentId);
+    if (!allowed) {
+      return res.status(403).json({ success: false, error: 'Access denied' });
+    }
+
     let query = `
-      SELECT 
+      SELECT
         cq.*,
         acq.assigned_at,
         acq.assigned_by
       FROM custom_questions cq
       JOIN assessment_custom_questions acq ON cq.id = acq.custom_question_id
-      WHERE acq.assessment_id = $1 AND cq.is_active = true
+      WHERE acq.assessment_id::text = $1 AND cq.is_active = true
     `;
-    
-    const params = [assessmentId];
-    
+
+    const params = [String(assessmentId)];
+
     if (pillar) {
       params.push(pillar);
       query += ` AND (cq.pillar = $${params.length} OR cq.pillar = 'all')`;
     }
-    
+
     query += ' ORDER BY acq.assigned_at ASC';
-    
+
     const result = await db.query(query, params);
-    
+
     res.json({
       success: true,
       questions: result.rows,
@@ -515,4 +547,3 @@ router.get('/assessments/:assessmentId/questions', async (req, res) => {
 });
 
 module.exports = router;
-
