@@ -4,8 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
-UI_PORT="${SCOREX_UI_PORT:-3001}"
-API_PORT="${SCOREX_API_PORT:-5001}"
+APP_PORT="${SCOREX_PORT:-5001}"
 
 if [[ ! -f .env && -f .env.template ]]; then
   cp .env.template .env
@@ -21,46 +20,40 @@ port_in_use() {
   fi
 }
 
-if port_in_use "$UI_PORT"; then
-  echo "ScoreX UI port $UI_PORT is already in use."
-  lsof -nP -iTCP:"$UI_PORT" -sTCP:LISTEN || true
-  echo "Set another port with SCOREX_UI_PORT=<port> npm run dev"
+if port_in_use "$APP_PORT"; then
+  echo "Port $APP_PORT is already in use:"
+  lsof -nP -iTCP:"$APP_PORT" -sTCP:LISTEN || true
+  echo
+  echo "If this is an older ScoreX process, stop it and run npm run dev again."
+  echo "Or use another port: SCOREX_PORT=5002 npm run dev"
   exit 1
 fi
 
-if port_in_use "$API_PORT"; then
-  echo "ScoreX API port $API_PORT is already in use."
-  lsof -nP -iTCP:"$API_PORT" -sTCP:LISTEN || true
-  echo "Set another port with SCOREX_API_PORT=<port> npm run dev"
-  exit 1
-fi
-
-export PORT="$API_PORT"
-export FRONTEND_URL="http://localhost:$UI_PORT"
-export ALLOWED_ORIGINS="http://localhost:$UI_PORT,http://127.0.0.1:$UI_PORT"
-export SCOREX_GIT_BRANCH="${SCOREX_GIT_BRANCH:-$(git branch --show-current 2>/dev/null || echo local)}"
-export SCOREX_GIT_COMMIT_SHA="${SCOREX_GIT_COMMIT_SHA:-$(git rev-parse HEAD 2>/dev/null || echo local)}"
-
-if [[ ! -x ./node_modules/.bin/concurrently ]]; then
-  echo "Root dependencies are not installed. Run: npm install"
-  exit 1
+if [[ ! -d ./node_modules ]]; then
+  echo "Installing ScoreX server dependencies..."
+  npm install
 fi
 
 if [[ ! -x ./client/node_modules/.bin/react-scripts ]]; then
-  echo "Client dependencies are not installed. Run: cd client && npm install --include=dev"
-  exit 1
+  echo "Installing ScoreX client dependencies..."
+  (cd client && npm install --include=dev)
 fi
 
-echo "Starting ScoreX"
-echo "  Branch: $SCOREX_GIT_BRANCH"
-echo "  UI:     http://localhost:$UI_PORT"
-echo "  API:    http://localhost:$API_PORT"
-echo "  Health: http://localhost:$API_PORT/api/health"
+export PORT="$APP_PORT"
+export FRONTEND_URL="http://localhost:$APP_PORT"
+export ALLOWED_ORIGINS="http://localhost:$APP_PORT,http://127.0.0.1:$APP_PORT"
+export SCOREX_GIT_BRANCH="${SCOREX_GIT_BRANCH:-$(git branch --show-current 2>/dev/null || echo local)}"
+export SCOREX_GIT_COMMIT_SHA="${SCOREX_GIT_COMMIT_SHA:-$(git rev-parse HEAD 2>/dev/null || echo local)}"
 
-echo
+printf '\nBuilding ScoreX Phase 1 client...\n'
+(cd client && CI=false npm run build)
 
-exec ./node_modules/.bin/concurrently \
-  --kill-others \
-  --names API,UI \
-  "PORT=$API_PORT npm run server" \
-  "cd client && PORT=$UI_PORT HOST=0.0.0.0 BROWSER=none npm start"
+printf '\nStarting ScoreX local preview\n'
+printf '  Branch: %s\n' "$SCOREX_GIT_BRANCH"
+printf '  App:    http://localhost:%s\n' "$APP_PORT"
+printf '  Health: http://localhost:%s/api/health\n' "$APP_PORT"
+printf '  Build:  http://localhost:%s/build-info\n\n' "$APP_PORT"
+
+# Serve the production React build and API from one Express process.
+# This avoids a second React dev-server port and keeps Prompt Canvas free on :3000.
+exec env NODE_ENV=development PORT="$APP_PORT" node server/index.js
