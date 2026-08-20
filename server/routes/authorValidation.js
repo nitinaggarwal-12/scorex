@@ -1,36 +1,49 @@
 const express = require('express');
 const router = express.Router();
-const { requireAuth, requireAuthorOrAdmin } = require('../middleware/auth');
+const { requireAuthorOrAdmin, requireAdmin } = require('../middleware/auth');
 const pool = require('../db/connection');
 
-// Get all consumer responses for an assessment (Author/Admin only)
-router.get('/consumer-responses/:assessmentId', requireAuthorOrAdmin, async (req, res) => {
-  const { assessmentId } = req.params;
-  
+router.use(requireAuthorOrAdmin);
+
+async function authorCanAccessAssessment(user, assessmentId) {
+  if (user.role === 'admin') return true;
+
+  const result = await pool.query(
+    `SELECT a.id
+     FROM assessments a
+     WHERE a.id = $1
+       AND (
+         a.assigned_author_id::text = $2
+         OR a.created_by::text = $2
+         OR EXISTS (
+           SELECT 1 FROM question_assignments qa
+           WHERE qa.assessment_id = a.id
+             AND LOWER(qa.assigned_by_email) = LOWER($3)
+         )
+       )
+     LIMIT 1`,
+    [assessmentId, String(user.id), user.email]
+  );
+  return result.rows.length > 0;
+}
+
+async function requireAssessmentAccess(req, res, next) {
+  const assessmentId = req.params.assessmentId;
   try {
-    // Verify author has access to this assessment
-    const assessmentCheck = await pool.query(
-      `SELECT id, assigned_author_id, created_by 
-       FROM assessments 
-       WHERE id = $1`,
-      [assessmentId]
-    );
-    
-    if (assessmentCheck.rows.length === 0) {
-      return res.status(404).json({ error: 'Assessment not found' });
-    }
-    
-    const assessment = assessmentCheck.rows[0];
-    const isAuthor = assessment.assigned_author_id === req.user.id || assessment.created_by === req.user.id;
-    const isAdmin = req.user.role === 'admin';
-    
-    if (!isAuthor && !isAdmin) {
-      return res.status(403).json({ error: 'You do not have access to this assessment' });
-    }
-    
-    // Get all question assignments and responses
+    const allowed = await authorCanAccessAssessment(req.user, assessmentId);
+    if (!allowed) return res.status(403).json({ error: 'You do not have access to this assessment' });
+    return next();
+  } catch (error) {
+    console.error('Author assessment authorization failed:', error.message);
+    return res.status(500).json({ error: 'Unable to validate assessment access' });
+  }
+}
+
+router.get('/consumer-responses/:assessmentId', requireAssessmentAccess, async (req, res) => {
+  const { assessmentId } = req.params;
+  try {
     const responsesQuery = await pool.query(
-      `SELECT 
+      `SELECT
         qa.id as assignment_id,
         qa.question_id,
         qa.assigned_to as consumer_id,
@@ -45,7 +58,7 @@ router.get('/consumer-responses/:assessmentId', requireAuthorOrAdmin, async (req
         u.first_name as consumer_first_name,
         u.last_name as consumer_last_name,
         u.email as consumer_email,
-        v.status as validator_first_name,
+        v.first_name as validator_first_name,
         v.last_name as validator_last_name
        FROM question_assignments qa
        LEFT JOIN users u ON qa.assigned_to = u.id
@@ -54,58 +67,58 @@ router.get('/consumer-responses/:assessmentId', requireAuthorOrAdmin, async (req
        ORDER BY qa.question_id, u.last_name`,
       [assessmentId]
     );
-    
-    res.json({
-      assessmentId,
-      responses: responsesQuery.rows
-    });
+
+    return res.json({ assessmentId, responses: responsesQuery.rows });
   } catch (error) {
-    console.error('Error fetching consumer responses:', error);
-    res.status(500).json({ error: 'Failed to fetch consumer responses' });
+    console.error('Error fetching consumer responses:', error.message);
+    return res.status(500).json({ error: 'Failed to fetch consumer responses' });
   }
 });
 
-// Validate a response (Author/Admin only)
-router.post('/validate-response', requireAuthorOrAdmin, async (req, res) => {
-  const { assignmentId, status, comments } = req.body;
-  
-  if (!['approved', 'needs_review', 'clarification_requested'].includes(status)) {
-    return res.status(400).json({ error: 'Invalid validation status' });
+router.post('/validate-response', async (req, res) => {
+  const { assignmentId, status } = req.body;
+  const comments = String(req.body.comments || '').slice(0, 4_000) || null;
+
+  if (!assignmentId || !['approved', 'needs_review', 'clarification_requested'].includes(status)) {
+    return res.status(400).json({ error: 'Valid assignmentId and validation status are required' });
   }
-  
+
   try {
+    const access = await pool.query(
+      `SELECT qa.assessment_id
+       FROM question_assignments qa
+       WHERE qa.id = $1`,
+      [assignmentId]
+    );
+    if (access.rows.length === 0) return res.status(404).json({ error: 'Assignment not found' });
+
+    if (!(await authorCanAccessAssessment(req.user, access.rows[0].assessment_id))) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
     const result = await pool.query(
-      `UPDATE question_assignments 
+      `UPDATE question_assignments
        SET validation_status = $1,
            validated_by = $2,
            validated_at = CURRENT_TIMESTAMP,
            validation_comments = $3
        WHERE id = $4
        RETURNING *`,
-      [status, req.user.id, comments || null, assignmentId]
+      [status, req.user.id, comments, assignmentId]
     );
-    
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Assignment not found' });
-    }
-    
-    res.json({
-      message: 'Response validated successfully',
-      assignment: result.rows[0]
-    });
+
+    return res.json({ message: 'Response validated successfully', assignment: result.rows[0] });
   } catch (error) {
-    console.error('Error validating response:', error);
-    res.status(500).json({ error: 'Failed to validate response' });
+    console.error('Error validating response:', error.message);
+    return res.status(500).json({ error: 'Failed to validate response' });
   }
 });
 
-// Get validation status for an assessment
-router.get('/validation-status/:assessmentId', requireAuthorOrAdmin, async (req, res) => {
+router.get('/validation-status/:assessmentId', requireAssessmentAccess, async (req, res) => {
   const { assessmentId } = req.params;
-  
   try {
     const statusQuery = await pool.query(
-      `SELECT 
+      `SELECT
         COUNT(*) FILTER (WHERE status = 'completed') as total_completed,
         COUNT(*) FILTER (WHERE validation_status = 'approved') as total_approved,
         COUNT(*) FILTER (WHERE validation_status = 'needs_review') as needs_review,
@@ -116,39 +129,35 @@ router.get('/validation-status/:assessmentId', requireAuthorOrAdmin, async (req,
        WHERE assessment_id = $1`,
       [assessmentId]
     );
-    
+
     const stats = statusQuery.rows[0];
-    const readyForSubmission = 
-      parseInt(stats.total_completed) === parseInt(stats.total_assignments) &&
-      parseInt(stats.total_approved) === parseInt(stats.total_assignments) &&
-      parseInt(stats.needs_review) === 0 &&
-      parseInt(stats.clarification_requested) === 0;
-    
-    res.json({
+    const total = parseInt(stats.total_assignments, 10) || 0;
+    const completed = parseInt(stats.total_completed, 10) || 0;
+    const approved = parseInt(stats.total_approved, 10) || 0;
+    const readyForSubmission = total > 0 && completed === total && approved === total &&
+      parseInt(stats.needs_review, 10) === 0 && parseInt(stats.clarification_requested, 10) === 0;
+
+    return res.json({
       ...stats,
       readyForSubmission,
-      completionPercentage: (parseInt(stats.total_completed) / parseInt(stats.total_assignments) * 100).toFixed(1),
-      validationPercentage: (parseInt(stats.total_approved) / parseInt(stats.total_assignments) * 100).toFixed(1)
+      completionPercentage: total ? ((completed / total) * 100).toFixed(1) : '0.0',
+      validationPercentage: total ? ((approved / total) * 100).toFixed(1) : '0.0'
     });
   } catch (error) {
-    console.error('Error fetching validation status:', error);
-    res.status(500).json({ error: 'Failed to fetch validation status' });
+    console.error('Error fetching validation status:', error.message);
+    return res.status(500).json({ error: 'Failed to fetch validation status' });
   }
 });
 
-// Submit assessment (Author/Admin only)
-router.post('/submit-assessment/:assessmentId', requireAuthorOrAdmin, async (req, res) => {
+router.post('/submit-assessment/:assessmentId', requireAssessmentAccess, async (req, res) => {
   const { assessmentId } = req.params;
-  const { submissionNotes } = req.body;
-  
+  const submissionNotes = String(req.body.submissionNotes || '').slice(0, 4_000) || null;
   const client = await pool.connect();
-  
+
   try {
     await client.query('BEGIN');
-    
-    // Check if assessment is ready for submission
     const statusCheck = await client.query(
-      `SELECT 
+      `SELECT
         COUNT(*) FILTER (WHERE status = 'completed') as total_completed,
         COUNT(*) FILTER (WHERE validation_status = 'approved') as total_approved,
         COUNT(*) as total_assignments
@@ -156,28 +165,20 @@ router.post('/submit-assessment/:assessmentId', requireAuthorOrAdmin, async (req
        WHERE assessment_id = $1`,
       [assessmentId]
     );
-    
+
     const stats = statusCheck.rows[0];
-    
-    if (parseInt(stats.total_completed) !== parseInt(stats.total_assignments)) {
+    const total = parseInt(stats.total_assignments, 10) || 0;
+    if (total === 0 || parseInt(stats.total_completed, 10) !== total) {
       await client.query('ROLLBACK');
-      return res.status(400).json({ 
-        error: 'Cannot submit: Not all questions are completed',
-        stats
-      });
+      return res.status(400).json({ error: 'Cannot submit: Not all questions are completed', stats });
     }
-    
-    if (parseInt(stats.total_approved) !== parseInt(stats.total_assignments)) {
+    if (parseInt(stats.total_approved, 10) !== total) {
       await client.query('ROLLBACK');
-      return res.status(400).json({ 
-        error: 'Cannot submit: Not all responses are validated',
-        stats
-      });
+      return res.status(400).json({ error: 'Cannot submit: Not all responses are validated', stats });
     }
-    
-    // Mark assessment as submitted and locked
+
     const submitResult = await client.query(
-      `UPDATE assessments 
+      `UPDATE assessments
        SET submitted_by = $1,
            submitted_at = CURRENT_TIMESTAMP,
            is_locked = true,
@@ -185,67 +186,67 @@ router.post('/submit-assessment/:assessmentId', requireAuthorOrAdmin, async (req
            status = 'submitted'
        WHERE id = $3
        RETURNING *`,
-      [req.user.id, submissionNotes || null, assessmentId]
+      [req.user.id, submissionNotes, assessmentId]
     );
-    
+
     if (submitResult.rows.length === 0) {
       await client.query('ROLLBACK');
       return res.status(404).json({ error: 'Assessment not found' });
     }
-    
+
     await client.query('COMMIT');
-    
-    res.json({
-      message: 'Assessment submitted successfully',
-      assessment: submitResult.rows[0]
-    });
+    return res.json({ message: 'Assessment submitted successfully', assessment: submitResult.rows[0] });
   } catch (error) {
-    await client.query('ROLLBACK');
-    console.error('Error submitting assessment:', error);
-    res.status(500).json({ error: 'Failed to submit assessment' });
+    await client.query('ROLLBACK').catch(() => {});
+    console.error('Error submitting assessment:', error.message);
+    return res.status(500).json({ error: 'Failed to submit assessment' });
   } finally {
     client.release();
   }
 });
 
-// Assign assessment to Author (Admin only)
-router.post('/assign-to-author', requireAuth, async (req, res) => {
+router.post('/assign-to-author', requireAdmin, async (req, res) => {
   const { assessmentId, authorId } = req.body;
-  
-  // Only admins can assign to authors
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({ error: 'Only admins can assign assessments to authors' });
-  }
-  
+  if (!assessmentId || !authorId) return res.status(400).json({ error: 'assessmentId and authorId are required' });
+
   try {
+    const authorCheck = await pool.query(
+      `SELECT id FROM users WHERE id = $1 AND role = 'author' AND is_active = true`,
+      [authorId]
+    );
+    if (authorCheck.rows.length === 0) return res.status(400).json({ error: 'Active author not found' });
+
     const result = await pool.query(
-      `UPDATE assessments 
+      `UPDATE assessments
        SET assigned_author_id = $1,
            author_assigned_at = CURRENT_TIMESTAMP
        WHERE id = $2
        RETURNING *`,
       [authorId, assessmentId]
     );
-    
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Assessment not found' });
-    }
-    
-    res.json({
-      message: 'Assessment assigned to author successfully',
-      assessment: result.rows[0]
-    });
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Assessment not found' });
+
+    return res.json({ message: 'Assessment assigned to author successfully', assessment: result.rows[0] });
   } catch (error) {
-    console.error('Error assigning to author:', error);
-    res.status(500).json({ error: 'Failed to assign assessment to author' });
+    console.error('Error assigning to author:', error.message);
+    return res.status(500).json({ error: 'Failed to assign assessment to author' });
   }
 });
 
-// Get assessments assigned to current author
-router.get('/my-author-assignments', requireAuthorOrAdmin, async (req, res) => {
+router.get('/my-author-assignments', async (req, res) => {
   try {
+    if (req.user.role === 'admin') {
+      const result = await pool.query(
+        `SELECT a.*, u.first_name as assigned_by_first_name, u.last_name as assigned_by_last_name
+         FROM assessments a
+         LEFT JOIN users u ON a.created_by = u.id
+         ORDER BY a.author_assigned_at DESC NULLS LAST, a.updated_at DESC`
+      );
+      return res.json({ assignments: result.rows });
+    }
+
     const result = await pool.query(
-      `SELECT 
+      `SELECT
         a.*,
         u.first_name as assigned_by_first_name,
         u.last_name as assigned_by_last_name,
@@ -255,20 +256,17 @@ router.get('/my-author-assignments', requireAuthorOrAdmin, async (req, res) => {
        FROM assessments a
        LEFT JOIN users u ON a.created_by = u.id
        LEFT JOIN question_assignments qa ON a.id = qa.assessment_id
-       WHERE a.assigned_author_id = $1
+       WHERE a.assigned_author_id::text = $1
        GROUP BY a.id, u.first_name, u.last_name
        ORDER BY a.author_assigned_at DESC`,
-      [req.user.id]
+      [String(req.user.id)]
     );
-    
-    res.json({
-      assignments: result.rows
-    });
+
+    return res.json({ assignments: result.rows });
   } catch (error) {
-    console.error('Error fetching author assignments:', error);
-    res.status(500).json({ error: 'Failed to fetch author assignments' });
+    console.error('Error fetching author assignments:', error.message);
+    return res.status(500).json({ error: 'Failed to fetch author assignments' });
   }
 });
 
 module.exports = router;
-
