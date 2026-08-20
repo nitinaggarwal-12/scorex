@@ -68,16 +68,19 @@ router.get('/my-assignments', (req, res, next) => {
   return next();
 });
 
-// Assessment-level assignment visibility is scoped to the assignee for limited roles.
+// Assessment-level visibility is role scoped: admin all, author own delegations, participant own work.
 router.get('/assessment/:assessmentId', async (req, res, next) => {
-  if (isPrivileged(req.user)) return next();
+  if (req.user.role === 'admin') return next();
 
   try {
-    const result = await db.query(`
-      SELECT * FROM question_assignments
-      WHERE assessment_id = $1 AND LOWER(assigned_to_email) = LOWER($2)
-      ORDER BY pillar, question_id
-    `, [req.params.assessmentId, req.user.email]);
+    const isAuthor = req.user.role === 'author';
+    const emailColumn = isAuthor ? 'assigned_by_email' : 'assigned_to_email';
+    const result = await db.query(
+      `SELECT * FROM question_assignments
+       WHERE assessment_id = $1 AND LOWER(${emailColumn}) = LOWER($2)
+       ORDER BY pillar, question_id`,
+      [req.params.assessmentId, req.user.email]
+    );
     return res.json(result.rows);
   } catch (error) {
     return res.status(500).json({ error: 'Failed to fetch assessment question assignments' });
@@ -91,7 +94,6 @@ router.post('/', (req, res, next) => {
   return next();
 });
 
-// Participant work can be edited by the assignee or the author/admin who assigned it.
 router.put('/:id', (req, res, next) => authorizeAssignment(req, res, next));
 router.post('/:id/follow-up', async (req, res, next) => {
   const row = await getAssignment(req.params.id).catch(() => null);
@@ -102,7 +104,6 @@ router.post('/:id/follow-up', async (req, res, next) => {
 });
 router.put('/:id/follow-up/:followUpIndex', (req, res, next) => authorizeAssignment(req, res, next));
 
-// Review and administrative actions belong to the assigning author or an admin.
 router.post('/:id/approve', async (req, res, next) => {
   const row = await getAssignment(req.params.id).catch(() => null);
   if (!row) return res.status(404).json({ error: 'Question assignment not found' });
@@ -120,9 +121,26 @@ router.post('/:id/reject', async (req, res, next) => {
 router.post('/:id/remind', (req, res, next) => authorizeAssignment(req, res, next, 'author'));
 router.delete('/:id', (req, res, next) => authorizeAssignment(req, res, next, 'author'));
 
-router.get('/stats/summary', (req, res, next) => {
-  if (!isPrivileged(req.user)) return res.status(403).json({ error: 'Author or admin access required' });
-  return next();
+router.get('/stats/summary', async (req, res, next) => {
+  if (req.user.role === 'admin') return next();
+  if (req.user.role !== 'author') return res.status(403).json({ error: 'Author or admin access required' });
+
+  try {
+    const result = await db.query(`
+      SELECT
+        COUNT(*) as total,
+        COUNT(*) FILTER (WHERE status = 'pending') as pending,
+        COUNT(*) FILTER (WHERE status = 'in_progress') as in_progress,
+        COUNT(*) FILTER (WHERE status = 'completed') as completed,
+        COUNT(*) FILTER (WHERE status = 'approved') as approved,
+        COUNT(*) FILTER (WHERE status = 'rejected') as rejected
+      FROM question_assignments
+      WHERE LOWER(assigned_by_email) = LOWER($1)
+    `, [req.user.email]);
+    return res.json(result.rows[0]);
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to fetch stats' });
+  }
 });
 
 router.use(coreRouter);
