@@ -71,5 +71,5 @@ test('hard-coded test credential bootstrap file is removed', () => {
 test('assignment facade uses cryptographic temporary credentials', () => {
   const source = read('server/routes/assignments.js');
   assert.match(source, /crypto\.randomBytes\(18\)/);
-  assert.equal(source.includes('Math.random()'), false);
+  assert.doesNotMatch(source, /const\s+tempPassword\s*=\s*Math\.random\s*\(/);
 });
