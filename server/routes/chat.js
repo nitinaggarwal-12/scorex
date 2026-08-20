@@ -9,6 +9,8 @@ const { requireAuth, canAccessResource } = require('../middleware/auth');
 router.use(requireAuth);
 
 const chatBuckets = new Map();
+const memoryConversationOwners = new Map(); // conversationId -> sessionId
+
 function rateLimit(req, res, next) {
   const key = req.user?.id || req.ip || 'unknown';
   const maxRequests = req.user?.role === 'demo' ? 20 : 60;
@@ -30,6 +32,18 @@ function rateLimit(req, res, next) {
 const isPrivileged = (user) => user?.role === 'admin' || user?.role === 'author';
 const serverSessionId = (req) => req.auth?.sessionId || req.headers['x-session-id'];
 
+function rememberConversation(req, res, next) {
+  const originalJson = res.json.bind(res);
+  res.json = (payload) => {
+    const conversationId = payload?.conversationId || payload?.conversation?.id;
+    if (conversationId) {
+      memoryConversationOwners.set(String(conversationId), String(serverSessionId(req)));
+    }
+    return originalJson(payload);
+  };
+  return next();
+}
+
 async function assessmentAllowed(req, assessmentId) {
   if (!assessmentId) return true;
   if (isPrivileged(req.user)) return true;
@@ -47,17 +61,19 @@ async function assessmentAllowed(req, assessmentId) {
 
 async function conversationBelongsToSession(req, conversationId) {
   if (!conversationId) return true;
+  const sessionId = String(serverSessionId(req));
+
   try {
     const result = await db.query(
       'SELECT id FROM chat_conversations WHERE id = $1 AND session_id = $2 LIMIT 1',
-      [conversationId, serverSessionId(req)]
+      [conversationId, sessionId]
     );
-    return result.rows.length > 0;
-  } catch (error) {
-    // When persistent chat storage is unavailable, the legacy core uses an in-memory UUID store.
-    // Do not expose history for caller-supplied IDs because that store has no separate ACL index.
-    return false;
+    if (result.rows.length > 0) return true;
+  } catch (_) {
+    // Persistent chat storage unavailable; fall through to the local ownership registry.
   }
+
+  return memoryConversationOwners.get(String(conversationId)) === sessionId;
 }
 
 router.post('/conversation/start', rateLimit, async (req, res, next) => {
@@ -68,7 +84,7 @@ router.post('/conversation/start', rateLimit, async (req, res, next) => {
 
   req.body.userEmail = req.user.email;
   req.body.sessionId = serverSessionId(req);
-  return next();
+  return rememberConversation(req, res, next);
 });
 
 router.post('/message', rateLimit, async (req, res, next) => {
@@ -89,7 +105,7 @@ router.post('/message', rateLimit, async (req, res, next) => {
   req.body.message = message;
   req.body.userEmail = req.user.email;
   req.body.sessionId = serverSessionId(req);
-  return next();
+  return rememberConversation(req, res, next);
 });
 
 router.get('/conversation/:conversationId/messages', async (req, res, next) => {
@@ -99,11 +115,26 @@ router.get('/conversation/:conversationId/messages', async (req, res, next) => {
 });
 
 router.get('/conversations', (req, res, next) => {
-  req.query = {
-    ...req.query,
-    sessionId: serverSessionId(req)
-  };
+  const sessionId = String(serverSessionId(req));
+  req.query = { ...req.query, sessionId };
   delete req.query.userEmail;
+
+  // The legacy in-memory fallback returns the whole process-local list. Filter the response
+  // against the ownership registry so a database outage never becomes a cross-session leak.
+  const originalJson = res.json.bind(res);
+  res.json = (payload) => {
+    if (Array.isArray(payload?.conversations)) {
+      payload = {
+        ...payload,
+        conversations: payload.conversations.filter((conversation) => {
+          if (String(conversation.session_id || '') === sessionId) return true;
+          return memoryConversationOwners.get(String(conversation.id)) === sessionId;
+        })
+      };
+    }
+    return originalJson(payload);
+  };
+
   return next();
 });
 
