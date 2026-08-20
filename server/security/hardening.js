@@ -77,10 +77,15 @@ function isAssessmentIdPath(pathname) {
 
 function authenticate(req, res) {
   return new Promise((resolve) => {
+    // A previous security layer or route middleware already established identity.
+    if (req.user && req.auth) {
+      resolve(true);
+      return;
+    }
+
     let resolved = false;
     const originalEnd = res.end;
 
-    // requireAuth normally calls next or terminates the response. Resolve false when it terminates.
     res.end = function patchedEnd(...args) {
       if (!resolved) {
         resolved = true;
@@ -106,9 +111,6 @@ function authenticate(req, res) {
 }
 
 async function handleSafeLogoFetch(req, res) {
-  const authenticated = await authenticate(req, res);
-  if (!authenticated) return true;
-
   const input = req.body?.url;
   if (!input || typeof input !== 'string') {
     res.status(400).json({ success: false, message: 'URL is required' });
@@ -128,8 +130,8 @@ async function handleSafeLogoFetch(req, res) {
     return true;
   }
 
-  // Do not fetch arbitrary user-controlled hosts from the ScoreX server. Retrieve a favicon
-  // through a fixed Google endpoint instead, eliminating the SSRF primitive in the legacy route.
+  // Do not fetch the caller-controlled host from the ScoreX server. Only send its public
+  // hostname to a fixed favicon service, eliminating private-IP / redirect SSRF primitives.
   try {
     const faviconResponse = await axios.get('https://www.google.com/s2/favicons', {
       params: { domain: parsed.hostname, sz: 256 },
@@ -151,9 +153,6 @@ async function handleSafeLogoFetch(req, res) {
 }
 
 async function enforceAssessmentAccess(req, res, id) {
-  const authenticated = await authenticate(req, res);
-  if (!authenticated) return false;
-
   if (isPrivileged(req.user)) return true;
 
   const assessment = await assessmentRepository.findById(id);
@@ -172,8 +171,6 @@ async function enforceAssessmentAccess(req, res, id) {
 }
 
 async function handleOwnAssessmentList(req, res) {
-  const authenticated = await authenticate(req, res);
-  if (!authenticated) return true;
   if (isPrivileged(req.user)) return false;
 
   try {
@@ -199,7 +196,6 @@ function wrapRepositoryOwnership() {
     const activeUser = store?.req?.user;
     const ownerId = assessment.userId || assessment.user_id || activeUser?.id || null;
 
-    // Never silently convert unowned records into a shared guest/admin identity.
     const secured = {
       ...assessment,
       userId: ownerId || 'system_unowned'
@@ -223,6 +219,11 @@ function insertBeforeFirstRoute(app, middleware) {
   stack.splice(firstRouteIndex >= 0 ? firstRouteIndex : 0, 0, layer);
 }
 
+function isPublicApiPath(req) {
+  if (req.method === 'POST' && req.path === '/api/auth/login') return true;
+  return req.method === 'GET' && req.path === '/api/health';
+}
+
 function installSecurity(app) {
   wrapRepositoryOwnership();
   removePermissiveCors(app);
@@ -238,6 +239,8 @@ function installSecurity(app) {
         setCorsHeaders(req, res);
         if (req.method === 'OPTIONS') return res.status(204).end();
 
+        // Public operational status never includes storage paths, environment configuration,
+        // provider keys, database state, or stack traces.
         if (req.path === '/status') {
           return res.status(200).json({
             success: true,
@@ -246,13 +249,18 @@ function installSecurity(app) {
           });
         }
 
+        // Defense-in-depth default: all API routes require a verified registered or isolated
+        // demo identity unless they are explicitly allowlisted here.
+        if (req.path.startsWith('/api/') && !isPublicApiPath(req)) {
+          const authenticated = await authenticate(req, res);
+          if (!authenticated) return;
+        }
+
         if (req.path === '/api/fetch-logo' && req.method === 'POST') {
           await handleSafeLogoFetch(req, res);
           return;
         }
 
-        // The collection endpoint previously relied on role-specific legacy behavior that did
-        // not understand the new demo role. Limited users now receive only their own resources.
         if (req.path === '/api/assessments' && req.method === 'GET') {
           const handled = await handleOwnAssessmentList(req, res);
           if (handled) return;
@@ -278,5 +286,6 @@ function installSecurity(app) {
 module.exports = {
   installSecurity,
   allowedOrigin,
-  isAssessmentIdPath
+  isAssessmentIdPath,
+  isPublicApiPath
 };
