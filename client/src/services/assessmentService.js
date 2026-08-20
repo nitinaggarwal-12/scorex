@@ -1,4 +1,5 @@
 import axios from 'axios';
+import authService from './authService';
 
 // Use relative URL in production (Railway), localhost in development
 const API_BASE_URL = process.env.REACT_APP_API_URL || 
@@ -13,17 +14,17 @@ const api = axios.create({
   },
 });
 
-// Request interceptor - Add session ID to all requests
+// Request interceptor - Add a registered or isolated-demo session ID to all requests.
 api.interceptors.request.use(
   (config) => {
-    console.log(`Making ${config.method?.toUpperCase()} request to ${config.url}`);
-    
-    // Add session ID from localStorage to headers (with guest fallback)
-    const sessionId = localStorage.getItem('sessionId') || 
-                      localStorage.getItem('scorex_auth_token') || 
-                      'guest_admin_session';
-    config.headers['x-session-id'] = sessionId;
-    
+    let sessionId = localStorage.getItem('sessionId');
+    if (!sessionId) {
+      authService.createGuestSession();
+      sessionId = localStorage.getItem('sessionId');
+    }
+    if (sessionId) {
+      config.headers['x-session-id'] = sessionId;
+    }
     return config;
   },
   (error) => {
@@ -42,7 +43,7 @@ api.interceptors.response.use(
     
     if (error.response) {
       // Server responded with error status
-      const message = error.response.data?.message || 'Server error occurred';
+      const message = error.response.data?.message || error.response.data?.error || 'Server error occurred';
       throw new Error(message);
     } else if (error.request) {
       // Request was made but no response received
@@ -497,7 +498,3 @@ export const fetchLogoFromURL = async (url) => {
 };
 
 export default api;
-
-
-
-

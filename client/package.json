@@ -3,28 +3,34 @@
   "version": "1.0.1",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.16.4",
-    "@testing-library/react": "^13.3.0",
-    "@testing-library/user-event": "^13.5.0",
-    "axios": "^1.4.0",
+    "axios": "^1.19.0",
     "chart.js": "^4.3.0",
     "framer-motion": "^10.12.0",
     "html2canvas": "^1.4.1",
-    "jspdf": "^3.0.3",
-    "jspdf-autotable": "^5.0.2",
-    "pptxgenjs": "^3.12.0",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.45.0",
     "react-hot-toast": "^2.4.1",
     "react-icons": "^4.10.1",
-    "react-quill": "^2.0.0",
-    "react-router-dom": "^6.3.0",
-    "react-scripts": "5.0.1",
+    "react-router-dom": "^7.18.2",
     "recharts": "^2.10.3",
-    "styled-components": "^6.0.0",
-    "xlsx": "^0.18.5"
+    "styled-components": "^6.5.2"
+  },
+  "overrides": {
+    "dompurify": "3.4.13",
+    "lodash": "4.18.1",
+    "nanoid": "3.3.18",
+    "postcss": "8.5.23"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.3.0",
+    "@testing-library/user-event": "^13.5.0",
+    "pptxgenjs": "3.12.0",
+    "react-scripts": "5.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -35,8 +41,7 @@
   },
   "eslintConfig": {
     "extends": [
-      "react-app",
-      "react-app/jest"
+      "react-app"
     ]
   },
   "browserslist": {

@@ -1,0 +1,391 @@
+const axios = require('axios');
+const requestContext = require('./requestContext');
+const assessmentRepository = require('../db/assessmentRepository');
+const { requireAuth, canAccessResource } = require('../middleware/auth');
+
+const originalAssessmentCreate = assessmentRepository.create.bind(assessmentRepository);
+let repositoryWrapped = false;
+
+function isAdmin(user) {
+  return user?.role === 'admin';
+}
+
+function sameOrigin(req, origin) {
+  try {
+    const url = new URL(origin);
+    const forwardedProto = String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim();
+    const protocol = forwardedProto || req.protocol || 'https';
+    const host = req.get('host');
+    return url.origin === `${protocol}://${host}`;
+  } catch (_) {
+    return false;
+  }
+}
+
+function allowedOrigin(req, origin) {
+  if (!origin) return true;
+  if (sameOrigin(req, origin)) return true;
+
+  const configured = new Set(
+    String(process.env.ALLOWED_ORIGINS || process.env.FRONTEND_URL || '')
+      .split(',')
+      .map((value) => value.trim())
+      .filter(Boolean)
+  );
+
+  if (configured.has(origin)) return true;
+
+  if (process.env.NODE_ENV !== 'production') {
+    try {
+      const hostname = new URL(origin).hostname;
+      if (hostname === 'localhost' || hostname === '127.0.0.1') return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  return false;
+}
+
+function setCorsHeaders(req, res) {
+  const origin = req.headers.origin;
+  if (!origin || !allowedOrigin(req, origin)) return;
+
+  res.setHeader('Access-Control-Allow-Origin', origin);
+  res.setHeader('Vary', 'Origin');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Session-Id');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+}
+
+function isAssessmentIdPath(pathname) {
+  const match = pathname.match(/^\/api\/(?:assessment|assessments)\/([^/]+)/);
+  if (!match) return null;
+
+  const reserved = new Set([
+    'framework',
+    'start',
+    'generate-sample',
+    'generate-multiple-samples',
+    'samples',
+    'bulk',
+    'compare'
+  ]);
+
+  return reserved.has(match[1]) ? null : match[1];
+}
+
+function authenticate(req, res) {
+  return new Promise((resolve) => {
+    if (req.user && req.auth) {
+      resolve(true);
+      return;
+    }
+
+    let resolved = false;
+    const originalEnd = res.end;
+
+    res.end = function patchedEnd(...args) {
+      if (!resolved) {
+        resolved = true;
+        resolve(false);
+      }
+      return originalEnd.apply(this, args);
+    };
+
+    Promise.resolve(requireAuth(req, res, () => {
+      if (!resolved) {
+        resolved = true;
+        res.end = originalEnd;
+        resolve(true);
+      }
+    })).catch(() => {
+      if (!resolved) {
+        resolved = true;
+        res.end = originalEnd;
+        resolve(false);
+      }
+    });
+  });
+}
+
+async function handleSafeLogoFetch(req, res) {
+  const input = req.body?.url;
+  if (!input || typeof input !== 'string') {
+    res.status(400).json({ success: false, message: 'URL is required' });
+    return true;
+  }
+
+  let parsed;
+  try {
+    parsed = new URL(input);
+  } catch (_) {
+    res.status(400).json({ success: false, message: 'Invalid URL format' });
+    return true;
+  }
+
+  if (!['http:', 'https:'].includes(parsed.protocol)) {
+    res.status(400).json({ success: false, message: 'Only HTTP(S) URLs are supported' });
+    return true;
+  }
+
+  try {
+    const faviconResponse = await axios.get('https://www.google.com/s2/favicons', {
+      params: { domain: parsed.hostname, sz: 256 },
+      responseType: 'arraybuffer',
+      timeout: 8_000,
+      maxRedirects: 2,
+      validateStatus: (status) => status >= 200 && status < 300
+    });
+
+    const contentType = faviconResponse.headers['content-type'] || 'image/png';
+    const base64 = Buffer.from(faviconResponse.data).toString('base64');
+    res.json({ success: true, data: `data:${contentType};base64,${base64}` });
+  } catch (error) {
+    console.warn('[Security] Safe logo fetch failed:', error.message);
+    res.status(502).json({ success: false, message: 'Unable to retrieve a public logo for this domain' });
+  }
+
+  return true;
+}
+
+const ASSESSMENT_OWNER_FIELDS = [
+  'userId',
+  'user_id',
+  'ownerId',
+  'owner_id',
+  'createdBy',
+  'created_by',
+  'assignedAuthorId',
+  'assigned_author_id'
+];
+
+async function enforceAssessmentAccess(req, res, id) {
+  if (isAdmin(req.user)) return true;
+
+  const assessment = await assessmentRepository.findById(id);
+  if (!assessment) {
+    res.status(404).json({ success: false, error: 'Assessment not found' });
+    return false;
+  }
+
+  if (!canAccessResource(req.user, assessment, ASSESSMENT_OWNER_FIELDS)) {
+    res.status(403).json({ success: false, error: 'Access denied' });
+    return false;
+  }
+
+  req.securityAssessment = assessment;
+  return true;
+}
+
+async function handleOwnAssessmentList(req, res) {
+  if (isAdmin(req.user)) return false;
+
+  try {
+    const assessments = await assessmentRepository.findAll();
+    const owned = assessments.filter((assessment) =>
+      canAccessResource(req.user, assessment, ASSESSMENT_OWNER_FIELDS)
+    );
+    res.json({ success: true, data: owned, assessments: owned, count: owned.length });
+  } catch (error) {
+    console.error('[Security] Failed to list owned assessments:', error.message);
+    res.status(500).json({ success: false, error: 'Failed to fetch assessments' });
+  }
+
+  return true;
+}
+
+function wrapRepositoryOwnership() {
+  if (repositoryWrapped) return;
+  repositoryWrapped = true;
+
+  assessmentRepository.create = async function secureCreate(assessment = {}) {
+    const store = requestContext.getStore();
+    const activeUser = store?.req?.user;
+    const ownerId = assessment.userId || assessment.user_id || activeUser?.id || null;
+
+    const secured = {
+      ...assessment,
+      userId: ownerId || 'system_unowned'
+    };
+    return originalAssessmentCreate(secured);
+  };
+}
+
+function removePermissiveCors(app) {
+  if (!app?._router?.stack) return;
+  app._router.stack = app._router.stack.filter((layer) => layer.handle?.name !== 'corsMiddleware');
+}
+
+function insertBeforeFirstRoute(app, middleware) {
+  app.use(middleware);
+  const stack = app._router?.stack;
+  if (!stack?.length) return;
+
+  const layer = stack.pop();
+  const firstRouteIndex = stack.findIndex((entry) => entry.route || entry.name === 'router');
+  stack.splice(firstRouteIndex >= 0 ? firstRouteIndex : 0, 0, layer);
+}
+
+function isPublicApiPath(req) {
+  if (req.method === 'POST' && req.path === '/api/auth/login') return true;
+  return req.method === 'GET' && req.path === '/api/health';
+}
+
+function requestOrigin(req) {
+  const forwardedProto = String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim();
+  const protocol = forwardedProto || req.protocol || 'https';
+  return `${protocol}://${req.get('host')}`;
+}
+
+function safeHttpUrl(value) {
+  if (!value || typeof value !== 'string') return null;
+  try {
+    const parsed = new URL(value.trim());
+    if (!['http:', 'https:'].includes(parsed.protocol)) return null;
+    return parsed.origin;
+  } catch (_) {
+    return null;
+  }
+}
+
+function getBuildInfo(req) {
+  const branch = process.env.RAILWAY_GIT_BRANCH || process.env.SCOREX_GIT_BRANCH || 'local';
+  const commit = process.env.RAILWAY_GIT_COMMIT_SHA || process.env.SCOREX_GIT_COMMIT_SHA || '';
+  const environment = process.env.RAILWAY_ENVIRONMENT_NAME || process.env.NODE_ENV || 'local';
+  const railwayDomain = safeHttpUrl(
+    process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : ''
+  );
+
+  return {
+    service: 'scorex',
+    branch,
+    commit: commit ? commit.slice(0, 8) : null,
+    environment,
+    url: railwayDomain || requestOrigin(req)
+  };
+}
+
+function parseConfiguredBuildTargets() {
+  const raw = String(process.env.SCOREX_BUILD_TARGETS || '').trim();
+  if (!raw) return [];
+
+  let parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch (_) {
+    console.warn('[BuildSwitcher] SCOREX_BUILD_TARGETS must be valid JSON');
+    return [];
+  }
+
+  if (!Array.isArray(parsed)) return [];
+
+  return parsed
+    .map((target) => {
+      const url = safeHttpUrl(target?.url);
+      const branch = String(target?.branch || '').trim();
+      if (!url || !branch) return null;
+      return {
+        label: String(target?.label || branch).trim().slice(0, 80),
+        branch: branch.slice(0, 160),
+        url
+      };
+    })
+    .filter(Boolean);
+}
+
+function getBuildTargets(req) {
+  const current = getBuildInfo(req);
+  const productionUrl = safeHttpUrl(process.env.SCOREX_MAIN_URL) || 'https://scorex.up.railway.app';
+  const targets = [
+    { label: 'Production', branch: 'main', url: productionUrl },
+    ...parseConfiguredBuildTargets(),
+    { label: current.branch === 'main' ? 'Production (current)' : 'Current preview', branch: current.branch, url: current.url }
+  ];
+
+  const seen = new Set();
+  return targets.filter((target) => {
+    const key = `${target.branch}|${target.url}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function installSecurity(app) {
+  wrapRepositoryOwnership();
+  removePermissiveCors(app);
+
+  insertBeforeFirstRoute(app, (req, res, next) => {
+    requestContext.run({ req }, async () => {
+      try {
+        const origin = req.headers.origin;
+        if (origin && !allowedOrigin(req, origin)) {
+          return res.status(403).json({ success: false, error: 'Origin not allowed' });
+        }
+
+        setCorsHeaders(req, res);
+        if (req.method === 'OPTIONS') return res.status(204).end();
+
+        if (req.path === '/status') {
+          return res.status(200).json({
+            success: true,
+            status: 'ok',
+            service: 'scorex-api'
+          });
+        }
+
+        // Safe, public deployment metadata used only by the landing-page build switcher.
+        // No secrets, Railway IDs, variables, or internal hostnames are returned.
+        if (req.method === 'GET' && req.path === '/build-info') {
+          return res.status(200).json(getBuildInfo(req));
+        }
+
+        if (req.method === 'GET' && req.path === '/build-targets') {
+          return res.status(200).json({ builds: getBuildTargets(req) });
+        }
+
+        if (req.path.startsWith('/api/') && !isPublicApiPath(req)) {
+          const authenticated = await authenticate(req, res);
+          if (!authenticated) return;
+        }
+
+        if (req.path === '/api/fetch-logo' && req.method === 'POST') {
+          await handleSafeLogoFetch(req, res);
+          return;
+        }
+
+        if (req.path === '/api/assessments/all' && req.method === 'DELETE' && !isAdmin(req.user)) {
+          return res.status(403).json({ success: false, error: 'Admin access required' });
+        }
+
+        if (req.path === '/api/assessments' && req.method === 'GET') {
+          const handled = await handleOwnAssessmentList(req, res);
+          if (handled) return;
+        }
+
+        const assessmentId = isAssessmentIdPath(req.path);
+        if (assessmentId) {
+          const allowed = await enforceAssessmentAccess(req, res, assessmentId);
+          if (!allowed) return;
+        }
+
+        return next();
+      } catch (error) {
+        console.error('[Security] Global hardening middleware failed:', error.message);
+        return res.status(500).json({ success: false, error: 'Security validation failed' });
+      }
+    });
+  });
+
+  return app;
+}
+
+module.exports = {
+  installSecurity,
+  allowedOrigin,
+  isAssessmentIdPath,
+  isPublicApiPath,
+  getBuildInfo,
+  getBuildTargets
+};

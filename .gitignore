@@ -4,10 +4,9 @@ node_modules/
 # Production build
 client/build/
 
-# Data files (contains assessment data)
-server/data/assessments.json
-data/*.json
+# Runtime data files (may contain assessment, auth, feedback, or customer PII)
 data/
+server/data/*.json
 
 # Environment variables & keys
 .env
@@ -34,4 +33,3 @@ Thumbs.db
 *.swp
 *.swo
 *~
-

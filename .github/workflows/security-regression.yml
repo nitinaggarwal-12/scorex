@@ -1,0 +1,53 @@
+name: ScoreX Security Regression
+
+on:
+  push:
+    branches:
+      - main
+      - 'hardening/**'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  security-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install server dependencies
+        run: npm install --ignore-scripts
+
+      - name: Install client dependencies
+        run: npm install --ignore-scripts --include=dev
+        working-directory: client
+
+      - name: Validate server JavaScript syntax
+        run: find server -name '*.js' -print0 | xargs -0 -n1 node --check
+
+      - name: Run security regression tests
+        run: node --test tests/security/*.test.js
+
+      - name: Build production client
+        run: CI=false npm run build
+        working-directory: client
+
+      - name: Audit server production dependencies - high/critical
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Audit browser production dependencies - high/critical
+        run: npm audit --omit=dev --audit-level=high
+        working-directory: client

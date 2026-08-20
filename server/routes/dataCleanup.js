@@ -1,6 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const { Pool } = require('pg');
+const { requireAdmin } = require('../middleware/auth');
+
+// Data cleanup can inspect and destructively mutate shared assessment data.
+// Every endpoint in this router is therefore admin-only.
+router.use(requireAdmin);
 
 // Create PostgreSQL connection pool
 const pool = new Pool({
@@ -264,20 +269,21 @@ router.get('/data-quality-stats', async (req, res) => {
 
     const result = await pool.query(statsQuery);
     const stats = result.rows[0];
+    const totalAssessments = parseInt(stats.total_assessments);
+    const corruptedAssessments = parseInt(stats.corrupted_assessments);
 
     res.json({
       success: true,
       stats: {
-        totalAssessments: parseInt(stats.total_assessments),
+        totalAssessments,
         completedAssessments: parseInt(stats.completed_assessments),
         inProgressAssessments: parseInt(stats.in_progress_assessments),
         assessmentsWithCompletedPillars: parseInt(stats.assessments_with_completed_pillars),
         assessmentsWithNoResponses: parseInt(stats.assessments_with_no_responses),
-        corruptedAssessments: parseInt(stats.corrupted_assessments),
-        dataQualityScore: Math.round(
-          ((parseInt(stats.total_assessments) - parseInt(stats.corrupted_assessments)) / 
-          parseInt(stats.total_assessments)) * 100
-        )
+        corruptedAssessments,
+        dataQualityScore: totalAssessments > 0
+          ? Math.round(((totalAssessments - corruptedAssessments) / totalAssessments) * 100)
+          : 100
       }
     });
 
@@ -292,4 +298,3 @@ router.get('/data-quality-stats', async (req, res) => {
 });
 
 module.exports = router;
-
