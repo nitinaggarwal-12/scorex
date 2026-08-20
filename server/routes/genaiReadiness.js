@@ -15,7 +15,7 @@ async function ensureOwnerColumn() {
   ownerColumnReady = true;
 }
 
-const isPrivileged = (user) => user?.role === 'admin' || user?.role === 'author';
+const isAdmin = (user) => user?.role === 'admin';
 
 async function loadAssessment(id) {
   await ensureOwnerColumn();
@@ -27,7 +27,7 @@ async function requireOwner(req, res, next) {
   try {
     const row = await loadAssessment(req.params.id);
     if (!row) return res.status(404).json({ error: 'Assessment not found' });
-    if (!isPrivileged(req.user) && String(row.owner_id || '') !== String(req.user.id)) {
+    if (!isAdmin(req.user) && String(row.owner_id || '') !== String(req.user.id)) {
       return res.status(403).json({ error: 'Access denied' });
     }
     req.genaiAssessmentSecurity = row;
@@ -70,13 +70,13 @@ router.post('/assessments', async (req, res) => {
   }
 });
 
-// Portfolio listing is owner-scoped for demo/consumer identities.
+// Admin can inspect the full portfolio; every other role receives only its own rows.
 router.get('/assessments', async (req, res) => {
   try {
     await ensureOwnerColumn();
     const params = [];
     let where = '';
-    if (!isPrivileged(req.user)) {
+    if (!isAdmin(req.user)) {
       params.push(req.user.id);
       where = 'WHERE owner_id = $1';
     }
@@ -104,7 +104,7 @@ router.get('/assessments', async (req, res) => {
   }
 });
 
-// All concrete-resource operations (read/update/delete/export/import) require ownership.
+// All concrete-resource operations (read/update/delete/export/import) require ownership unless admin.
 router.use('/assessments/:id', requireOwner);
 
 router.use(coreRouter);
