@@ -235,6 +235,63 @@ const ActionButton = styled.button`
   }
 `;
 
+const EditableInput = styled.input`
+  background: rgba(56, 189, 248, 0.08);
+  border: 1.5px dashed rgba(56, 189, 248, 0.5);
+  border-radius: 8px;
+  color: #ffffff;
+  padding: 6px 12px;
+  font-family: inherit;
+  font-size: ${props => props.$fontSize || '1rem'};
+  font-weight: ${props => props.$fontWeight || '600'};
+  width: ${props => props.$width || '100%'};
+  box-sizing: border-box;
+  outline: none;
+  transition: all 0.2s ease;
+
+  &:focus {
+    background: rgba(56, 189, 248, 0.15);
+    border-color: #38bdf8;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+  }
+`;
+
+const EditableTextArea = styled.textarea`
+  background: rgba(56, 189, 248, 0.08);
+  border: 1.5px dashed rgba(56, 189, 248, 0.5);
+  border-radius: 8px;
+  color: #cbd5e1;
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: ${props => props.$fontSize || '0.95rem'};
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+  resize: vertical;
+  min-height: ${props => props.$minHeight || '60px'};
+  line-height: 1.5;
+  transition: all 0.2s ease;
+
+  &:focus {
+    background: rgba(56, 189, 248, 0.15);
+    border-color: #38bdf8;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+  }
+`;
+
+const SpeakerNotesPane = styled.div`
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 14px 20px;
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+`;
+
 const SheetTable = styled.table`
   width: 100%;
   border-collapse: collapse;
@@ -352,6 +409,37 @@ export const UnifiedDocumentPreviewModal = ({
   const recs = report?.prioritizedRecommendations || report?.prioritizedActions || [];
   const safeName = org.toLowerCase().replace(/[^a-z0-9]/g, '_');
 
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [customDeckData, setCustomDeckData] = useState({
+    title: framework?.title || 'Enterprise Modernization Assessment',
+    customerName: org,
+    scopeBadge: 'ScoreX Executive Advisory',
+    scopeSubtitle: 'Strategic Cloud & AI Architecture Readout',
+    maturityScore: overallScore,
+    maturityStage: maturityStage,
+    roiEstimate: '$2.3M - $4.2M',
+    tcoArbitrage: '35% - 50% TCO Arbitrage',
+    executiveSummary: report?.executiveSummary || 'Comprehensive maturity diagnostic and target state architecture advisory formulated by Google DeepMind Gemini advisory compiler.',
+    speakerNotes: {
+      0: `Good morning everyone. Today we are presenting the strategic modernization assessment for ${org}. Our primary focus is accelerating target state cloud architecture while capturing $2.3M - $4.2M in projected 3-year value.`,
+      1: `On this diagnostic heatmap, we map current operational capability against organizational risk across each architectural dimension.`,
+      2: `This 5-axis polar radar visualizes the maturity gap between our baseline foundation and target cloud architecture.`,
+      3: `Here we detail the quantified financial model, demonstrating positive ROI realization with 35% - 50% TCO arbitrage.`,
+      4: `This blueprint outlines the target state service mesh, event streaming backbone, and enterprise governance boundary.`,
+      5: `Finally, our 3-phase execution roadmap prioritizes high-impact quick wins in Phase 1 leading into scale in Phase 2 & 3.`
+    },
+    recommendations: (recs && recs.length > 0 ? recs.slice(0, 4) : [
+      { title: "Establish Sovereign AI Mesh & MCP Gateway", impact: "Cuts API latency by 45% and eliminates shadow AI sprawl", timeline: "Phase 1 (0-3m)" },
+      { title: "BigLake Unified Iceberg Catalog Modernization", impact: "Zero-copy cross-cloud analytics with 60% query compute reduction", timeline: "Phase 1 (0-3m)" },
+      { title: "Automated FinOps Unit-Cost Anomaly Guardrails", impact: "Recovers $850K in unallocated cloud spend in year 1", timeline: "Phase 2 (3-6m)" },
+      { title: "Zero-Trust Identity Federation & VPC Service Controls", impact: "100% compliance with ISO 27001 and PCI-DSS data boundaries", timeline: "Phase 2 (3-6m)" }
+    ]).map((r, i) => ({
+      title: r.title || r.recommendation || `Initiative #${i + 1}`,
+      impact: r.whyItMatters || r.impact || r.description || "Strategic architectural capability",
+      timeline: r.timeline || `Phase ${(i % 3) + 1}`
+    }))
+  });
+
   const SLIDES_META = [
     { title: "Executive Scope", icon: "📊", subtitle: "Strategic Readout", num: 1 },
     { title: "Risk & Heatmap", icon: "🗺️", subtitle: "Diagnostic Matrix", num: 2 },
@@ -363,7 +451,7 @@ export const UnifiedDocumentPreviewModal = ({
 
   const DOC_CONFIGS = {
     slides: {
-      name: `${org} - Executive Architecture Deck.pptx`,
+      name: `${customDeckData.customerName || org} - Executive Architecture Deck.pptx`,
       app: 'Google Slides',
       appIcon: '📊',
       badge: 'PPTX / GOOGLE SLIDES',
@@ -594,6 +682,29 @@ export const UnifiedDocumentPreviewModal = ({
 
           {/* Right Cloud Actions */}
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            {activeDocType === 'slides' && (
+              <ActionButton
+                onClick={() => {
+                  setIsEditMode(prev => !prev);
+                  if (!isEditMode) {
+                    toast.success('✏️ Inline Slide Studio Active! Click any field or speaker note to edit.', { icon: '🎨' });
+                  } else {
+                    toast.success('💾 Slide changes saved!', { icon: '✅' });
+                  }
+                }}
+                style={{
+                  background: isEditMode ? 'linear-gradient(135deg, #10b981, #059669)' : 'rgba(99, 102, 241, 0.2)',
+                  borderColor: isEditMode ? '#34d399' : 'rgba(165, 180, 252, 0.4)',
+                  color: '#ffffff',
+                  fontWeight: 800,
+                  boxShadow: isEditMode ? '0 0 14px rgba(16, 185, 129, 0.4)' : 'none'
+                }}
+                title="Edit slide text, metrics, initiatives, and speaker notes directly inside the browser"
+              >
+                {isEditMode ? '💾 Save & Finish Editing' : '✏️ Edit Slides Inline'}
+              </ActionButton>
+            )}
+
             {currentConfig.cloudUrl && (
               <CloudButton
                 $gradient={currentConfig.gradient}
@@ -625,13 +736,20 @@ export const UnifiedDocumentPreviewModal = ({
 
         {/* In-Browser Interactive Preview Body */}
         <PreviewBody $isSlides={activeDocType === 'slides'}>
-          {/* 1. SLIDES PREVIEW (GMAIL / GOOGLE DRIVE STYLE ATTACHMENT VIEWER) */}
+          {/* 1. SLIDES PREVIEW (GMAIL / GOOGLE DRIVE STYLE ATTACHMENT VIEWER & INLINE STUDIO) */}
           {activeDocType === 'slides' && (
             <SlideViewerLayout>
               {/* Left Slide Thumbnail Sidebar (Gmail / Drive style) */}
               <SlideThumbSidebar>
-                <div style={{ fontSize: "0.75rem", color: "#94a3b8", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.06em", padding: "2px 6px 8px" }}>
-                  Slides ({SLIDES_META.length})
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "2px 6px 8px" }}>
+                  <span style={{ fontSize: "0.75rem", color: "#94a3b8", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                    Slides ({SLIDES_META.length})
+                  </span>
+                  {isEditMode && (
+                    <span style={{ fontSize: "0.68rem", background: "rgba(16, 185, 129, 0.2)", color: "#34d399", border: "1px solid rgba(52, 211, 153, 0.3)", padding: "1px 6px", borderRadius: "4px", fontWeight: 700 }}>
+                      EDITING
+                    </span>
+                  )}
                 </div>
                 {SLIDES_META.map((slide, idx) => (
                   <SlideThumbItem
@@ -658,7 +776,7 @@ export const UnifiedDocumentPreviewModal = ({
               {/* Main Presentation Stage */}
               <SlideMainStage>
                 {/* Slide Navigation Top Bar */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(30, 41, 59, 0.7)", padding: "10px 20px", borderRadius: "14px", border: "1px solid rgba(255, 255, 255, 0.1)", marginBottom: "16px", width: "100%", boxSizing: "border-box" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(30, 41, 59, 0.7)", padding: "10px 20px", borderRadius: "14px", border: "1px solid rgba(255, 255, 255, 0.1)", marginBottom: "16px", width: "100%", boxSizing: "border-box", flexWrap: "wrap", gap: "10px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                     <span style={{ fontSize: "0.92rem", color: "#f8fafc", fontWeight: 800 }}>
                       {SLIDES_META[currentSlide]?.icon} {SLIDES_META[currentSlide]?.title}
@@ -666,9 +784,24 @@ export const UnifiedDocumentPreviewModal = ({
                     <span style={{ fontSize: "0.75rem", background: "rgba(99, 102, 241, 0.25)", color: "#a5b4fc", border: "1px solid rgba(165, 180, 252, 0.4)", padding: "2px 8px", borderRadius: "6px", fontWeight: 700 }}>
                       Slide {currentSlide + 1} of {SLIDES_META.length}
                     </span>
+                    {isEditMode && (
+                      <span style={{ fontSize: "0.72rem", background: "rgba(56, 189, 248, 0.15)", color: "#38bdf8", border: "1px solid rgba(56, 189, 248, 0.3)", padding: "2px 8px", borderRadius: "6px", fontWeight: 700 }}>
+                        🎨 Live Inline Studio
+                      </span>
+                    )}
                   </div>
 
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <ActionButton
+                      onClick={() => setIsEditMode(prev => !prev)}
+                      style={{
+                        background: isEditMode ? '#059669' : 'rgba(255, 255, 255, 0.08)',
+                        color: '#fff',
+                        fontWeight: 700
+                      }}
+                    >
+                      {isEditMode ? '💾 Save Slide' : '✏️ Edit'}
+                    </ActionButton>
                     <span style={{ fontSize: "0.75rem", color: "#94a3b8", marginRight: "4px" }}>← / → keys:</span>
                     <ActionButton 
                       disabled={currentSlide === 0}
@@ -689,56 +822,119 @@ export const UnifiedDocumentPreviewModal = ({
                 {currentSlide === 0 && (
                 <SlideCanvas>
                   <SlideHeader>
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                    <div style={{ width: "100%" }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                         <span style={{ background: '#1d4ed8', color: '#ffffff', fontSize: '0.72rem', fontWeight: 800, padding: '3px 10px', borderRadius: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                           ScoreX Executive Advisory
                         </span>
-                        <span style={{ color: '#94a3b8', fontSize: '0.82rem', fontWeight: 600 }}>
-                          Strategic Cloud & AI Architecture Readout
-                        </span>
+                        {isEditMode ? (
+                          <EditableInput 
+                            value={customDeckData.scopeSubtitle} 
+                            onChange={e => setCustomDeckData(d => ({ ...d, scopeSubtitle: e.target.value }))}
+                            placeholder="Subtitle / Readout Scope"
+                            $fontSize="0.82rem"
+                            $width="320px"
+                          />
+                        ) : (
+                          <span style={{ color: '#94a3b8', fontSize: '0.82rem', fontWeight: 600 }}>
+                            {customDeckData.scopeSubtitle}
+                          </span>
+                        )}
                       </div>
-                      <h1 style={{ fontSize: "2.6rem", margin: 0, color: "#ffffff", fontWeight: 900, lineHeight: 1.2 }}>
-                        {framework?.title || 'Enterprise Modernization Assessment'}
-                      </h1>
+                      {isEditMode ? (
+                        <EditableInput 
+                          value={customDeckData.title} 
+                          onChange={e => setCustomDeckData(d => ({ ...d, title: e.target.value }))}
+                          placeholder="Assessment Presentation Title"
+                          $fontSize="1.8rem"
+                          $fontWeight="900"
+                        />
+                      ) : (
+                        <h1 style={{ fontSize: "2.5rem", margin: 0, color: "#ffffff", fontWeight: 900, lineHeight: 1.2 }}>
+                          {customDeckData.title}
+                        </h1>
+                      )}
                     </div>
                     <span style={{ fontSize: "0.85rem", color: "#38bdf8", fontWeight: 800 }}>Slide 1 / 6</span>
                   </SlideHeader>
 
-                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "28px", padding: "40px 0", textAlign: "center" }}>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "24px", padding: "30px 0", textAlign: "center" }}>
                     <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "rgba(56, 189, 248, 0.15)", border: "1px solid rgba(56, 189, 248, 0.3)", color: "#38bdf8", padding: "6px 18px", borderRadius: "20px", fontSize: "0.95rem", fontWeight: 700 }}>
-                      🏢 Target Enterprise: <strong>{org}</strong>
+                      🏢 Target Enterprise: {isEditMode ? (
+                        <EditableInput 
+                          value={customDeckData.customerName} 
+                          onChange={e => setCustomDeckData(d => ({ ...d, customerName: e.target.value }))}
+                          placeholder="Enterprise Name"
+                          $fontSize="0.95rem"
+                          $width="220px"
+                        />
+                      ) : (
+                        <strong>{customDeckData.customerName}</strong>
+                      )}
                     </div>
 
-                    <p style={{ maxWidth: "800px", color: "#cbd5e1", fontSize: "1.1rem", lineHeight: 1.6, margin: 0 }}>
-                      Comprehensive maturity diagnostic and target state architecture advisory formulated by Google DeepMind Gemini advisory compiler.
-                    </p>
+                    {isEditMode ? (
+                      <EditableTextArea 
+                        value={customDeckData.executiveSummary}
+                        onChange={e => setCustomDeckData(d => ({ ...d, executiveSummary: e.target.value }))}
+                        placeholder="Executive advisory briefing summary..."
+                        $fontSize="1rem"
+                        $minHeight="80px"
+                      />
+                    ) : (
+                      <p style={{ maxWidth: "800px", color: "#cbd5e1", fontSize: "1.05rem", lineHeight: 1.6, margin: 0 }}>
+                        {customDeckData.executiveSummary}
+                      </p>
+                    )}
 
                     <div style={{ display: "flex", gap: "24px", flexWrap: "wrap", justifyContent: "center" }}>
-                      <div style={{ background: "rgba(15, 23, 42, 0.85)", padding: "20px 36px", borderRadius: "16px", border: "1.5px solid rgba(16, 185, 129, 0.3)", boxShadow: "0 10px 25px rgba(0,0,0,0.3)" }}>
+                      <div style={{ background: "rgba(15, 23, 42, 0.85)", padding: "18px 32px", borderRadius: "16px", border: "1.5px solid rgba(16, 185, 129, 0.3)", boxShadow: "0 10px 25px rgba(0,0,0,0.3)" }}>
                         <div style={{ fontSize: "0.8rem", color: "#94a3b8", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "4px" }}>
                           Overall Maturity Index
                         </div>
-                        <div style={{ fontSize: "2.8rem", fontWeight: 900, color: "#34d399" }}>
-                          {overallScore} <span style={{ fontSize: "1.2rem", color: "#64748b" }}>/ 5.0</span>
-                        </div>
-                        <div style={{ fontSize: "0.82rem", color: "#a7f3d0", fontWeight: 700 }}>{maturityStage} Stage</div>
+                        {isEditMode ? (
+                          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                            <EditableInput 
+                              value={customDeckData.maturityScore} 
+                              onChange={e => setCustomDeckData(d => ({ ...d, maturityScore: e.target.value }))}
+                              $fontSize="1.8rem"
+                              $fontWeight="900"
+                              $width="100px"
+                            />
+                            <span style={{ fontSize: "1.2rem", color: "#64748b" }}>/ 5.0</span>
+                          </div>
+                        ) : (
+                          <div style={{ fontSize: "2.6rem", fontWeight: 900, color: "#34d399" }}>
+                            {customDeckData.maturityScore} <span style={{ fontSize: "1.2rem", color: "#64748b" }}>/ 5.0</span>
+                          </div>
+                        )}
+                        <div style={{ fontSize: "0.82rem", color: "#a7f3d0", fontWeight: 700 }}>{customDeckData.maturityStage} Stage</div>
                       </div>
 
-                      <div style={{ background: "rgba(15, 23, 42, 0.85)", padding: "20px 36px", borderRadius: "16px", border: "1.5px solid rgba(59, 130, 246, 0.3)", boxShadow: "0 10px 25px rgba(0,0,0,0.3)" }}>
+                      <div style={{ background: "rgba(15, 23, 42, 0.85)", padding: "18px 32px", borderRadius: "16px", border: "1.5px solid rgba(59, 130, 246, 0.3)", boxShadow: "0 10px 25px rgba(0,0,0,0.3)" }}>
                         <div style={{ fontSize: "0.8rem", color: "#94a3b8", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "4px" }}>
                           Projected 3-Year Value / ROI
                         </div>
-                        <div style={{ fontSize: "2.8rem", fontWeight: 900, color: "#60a5fa" }}>
-                          $2.3M - $4.2M
-                        </div>
-                        <div style={{ fontSize: "0.82rem", color: "#bfdbfe", fontWeight: 700 }}>35% - 50% TCO Arbitrage</div>
+                        {isEditMode ? (
+                          <EditableInput 
+                            value={customDeckData.roiEstimate} 
+                            onChange={e => setCustomDeckData(d => ({ ...d, roiEstimate: e.target.value }))}
+                            $fontSize="1.8rem"
+                            $fontWeight="900"
+                            $width="220px"
+                          />
+                        ) : (
+                          <div style={{ fontSize: "2.6rem", fontWeight: 900, color: "#60a5fa" }}>
+                            {customDeckData.roiEstimate}
+                          </div>
+                        )}
+                        <div style={{ fontSize: "0.82rem", color: "#bfdbfe", fontWeight: 700 }}>{customDeckData.tcoArbitrage}</div>
                       </div>
                     </div>
                   </div>
 
                   <SlideFooter>
-                    <span>CONFIDENTIAL • Prepared for {org} Board & Executive Architecture Review</span>
+                    <span>CONFIDENTIAL • Prepared for {customDeckData.customerName} Board & Executive Review</span>
                     <span>ScoreX Engine • Google Cloud Enterprise Advisory</span>
                   </SlideFooter>
                 </SlideCanvas>
@@ -769,7 +965,7 @@ export const UnifiedDocumentPreviewModal = ({
                   </div>
 
                   <SlideFooter>
-                    <span>CONFIDENTIAL • Prepared for {org}</span>
+                    <span>CONFIDENTIAL • Prepared for {customDeckData.customerName}</span>
                     <span>Slide 2 of 6</span>
                   </SlideFooter>
                 </SlideCanvas>
@@ -800,7 +996,7 @@ export const UnifiedDocumentPreviewModal = ({
                   </div>
 
                   <SlideFooter>
-                    <span>CONFIDENTIAL • Prepared for {org}</span>
+                    <span>CONFIDENTIAL • Prepared for {customDeckData.customerName}</span>
                     <span>Slide 3 of 6</span>
                   </SlideFooter>
                 </SlideCanvas>
@@ -832,7 +1028,7 @@ export const UnifiedDocumentPreviewModal = ({
                   </div>
 
                   <SlideFooter>
-                    <span>CONFIDENTIAL • Prepared for {org}</span>
+                    <span>CONFIDENTIAL • Prepared for {customDeckData.customerName}</span>
                     <span>Slide 4 of 6</span>
                   </SlideFooter>
                 </SlideCanvas>
@@ -860,14 +1056,14 @@ export const UnifiedDocumentPreviewModal = ({
                       initialDiagrams={report?.architectureDiagrams}
                       currentScore={instance?.totalScore || 2.5}
                       targetScore={4.5}
-                      customerName={org}
+                      customerName={customDeckData.customerName}
                       useCase={instance?.useCase}
                       framework={framework}
                     />
                   </div>
 
                   <SlideFooter>
-                    <span>CONFIDENTIAL • Prepared for {org}</span>
+                    <span>CONFIDENTIAL • Prepared for {customDeckData.customerName}</span>
                     <span>Slide 5 of 6</span>
                   </SlideFooter>
                 </SlideCanvas>
@@ -890,36 +1086,110 @@ export const UnifiedDocumentPreviewModal = ({
 
                   <div style={{ flex: 1, overflowY: "auto", margin: "10px 0", display: "flex", flexDirection: "column", gap: "16px" }}>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "16px" }}>
-                      {recs.slice(0, 4).map((r, idx) => (
+                      {customDeckData.recommendations.map((r, idx) => (
                         <div key={idx} style={{ background: "rgba(15, 23, 42, 0.9)", padding: "20px", borderRadius: "14px", border: "1.5px solid rgba(255, 255, 255, 0.1)", display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "12px" }}>
                           <div>
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
                               <span style={{ fontSize: "0.75rem", background: "rgba(99, 102, 241, 0.2)", color: "#a5b4fc", border: "1px solid rgba(165, 180, 252, 0.3)", padding: "2px 8px", borderRadius: "4px", fontWeight: 800 }}>
                                 INITIATIVE #{idx + 1}
                               </span>
-                              <span style={{ fontSize: "0.76rem", background: "rgba(16, 185, 129, 0.2)", color: "#34d399", border: "1px solid rgba(52, 211, 153, 0.3)", padding: "2px 8px", borderRadius: "4px", fontWeight: 700 }}>
-                                {r.timeline || 'Phase 1'}
-                              </span>
+                              {isEditMode ? (
+                                <EditableInput 
+                                  value={r.timeline}
+                                  onChange={e => {
+                                    const val = e.target.value;
+                                    setCustomDeckData(d => {
+                                      const newRecs = [...d.recommendations];
+                                      newRecs[idx] = { ...newRecs[idx], timeline: val };
+                                      return { ...d, recommendations: newRecs };
+                                    });
+                                  }}
+                                  placeholder="Timeline"
+                                  $fontSize="0.75rem"
+                                  $width="120px"
+                                />
+                              ) : (
+                                <span style={{ fontSize: "0.76rem", background: "rgba(16, 185, 129, 0.2)", color: "#34d399", border: "1px solid rgba(52, 211, 153, 0.3)", padding: "2px 8px", borderRadius: "4px", fontWeight: 700 }}>
+                                  {r.timeline || 'Phase 1'}
+                                </span>
+                              )}
                             </div>
-                            <h4 style={{ margin: "0 0 6px 0", fontSize: "1.05rem", color: "#ffffff", fontWeight: 800 }}>{r.title || r.recommendation}</h4>
-                            <p style={{ margin: 0, fontSize: "0.85rem", color: "#94a3b8", lineHeight: 1.5 }}>{r.whyItMatters || r.impact || r.description}</p>
+                            {isEditMode ? (
+                              <EditableInput 
+                                value={r.title}
+                                onChange={e => {
+                                  const val = e.target.value;
+                                  setCustomDeckData(d => {
+                                    const newRecs = [...d.recommendations];
+                                    newRecs[idx] = { ...newRecs[idx], title: val };
+                                    return { ...d, recommendations: newRecs };
+                                  });
+                                }}
+                                placeholder="Initiative Title"
+                                $fontSize="1rem"
+                                $fontWeight="800"
+                              />
+                            ) : (
+                              <h4 style={{ margin: "0 0 6px 0", fontSize: "1.05rem", color: "#ffffff", fontWeight: 800 }}>{r.title}</h4>
+                            )}
+                            {isEditMode ? (
+                              <EditableTextArea 
+                                value={r.impact}
+                                onChange={e => {
+                                  const val = e.target.value;
+                                  setCustomDeckData(d => {
+                                    const newRecs = [...d.recommendations];
+                                    newRecs[idx] = { ...newRecs[idx], impact: val };
+                                    return { ...d, recommendations: newRecs };
+                                  });
+                                }}
+                                placeholder="Impact & justification..."
+                                $fontSize="0.85rem"
+                                $minHeight="50px"
+                              />
+                            ) : (
+                              <p style={{ margin: 0, fontSize: "0.85rem", color: "#94a3b8", lineHeight: 1.5 }}>{r.impact}</p>
+                            )}
                           </div>
-                          {r.impact && (
-                            <div style={{ fontSize: "0.8rem", color: "#38bdf8", fontWeight: 700, borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "8px" }}>
-                              ⚡ {r.impact}
-                            </div>
-                          )}
                         </div>
                       ))}
                     </div>
                   </div>
 
                   <SlideFooter>
-                    <span>CONFIDENTIAL • Prepared for {org}</span>
+                    <span>CONFIDENTIAL • Prepared for {customDeckData.customerName}</span>
                     <span>Slide 6 of 6</span>
                   </SlideFooter>
                 </SlideCanvas>
               )}
+
+              {/* Presenter Speaker Notes Drawer */}
+              <SpeakerNotesPane>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <span style={{ fontSize: "1rem" }}>🎙️</span>
+                    <span style={{ fontSize: "0.85rem", fontWeight: 700, color: "#f8fafc" }}>
+                      Executive Speaker Notes (Slide {currentSlide + 1}: {SLIDES_META[currentSlide]?.title})
+                    </span>
+                  </div>
+                  <span style={{ fontSize: "0.72rem", color: "#94a3b8" }}>
+                    Presenter Talking Points
+                  </span>
+                </div>
+                <EditableTextArea
+                  value={customDeckData.speakerNotes[currentSlide] || ''}
+                  onChange={e => {
+                    const val = e.target.value;
+                    setCustomDeckData(d => ({
+                      ...d,
+                      speakerNotes: { ...d.speakerNotes, [currentSlide]: val }
+                    }));
+                  }}
+                  placeholder="Type executive presenter talking points for this slide..."
+                  $minHeight="55px"
+                  $fontSize="0.88rem"
+                />
+              </SpeakerNotesPane>
               </SlideMainStage>
             </SlideViewerLayout>
           )}
