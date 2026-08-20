@@ -30,15 +30,25 @@ function guestUserFromSession(sessionId) {
   };
 }
 
+function fileAuthAllowed() {
+  return process.env.ALLOW_FILE_AUTH === 'true' && process.env.NODE_ENV !== 'production';
+}
+
 /**
  * Authenticate a request.
  *
  * Security invariants:
- * - Missing, malformed, expired, or unverifiable sessions fail closed with 401.
+ * - Missing, malformed, expired, or unverifiable sessions fail closed.
  * - Demo access is explicit and least-privileged. A demo session can never become admin.
  * - Guest identity is stable for the life of the UUID session and can be used for resource ownership.
+ * - File-based identity fallback is opt-in and disabled in production.
  */
 async function requireAuth(req, res, next) {
+  // Global hardening may already have authenticated this request. Do not re-query the identity store.
+  if (req.user && req.auth) {
+    return next();
+  }
+
   const sessionId = getSessionId(req);
 
   if (!sessionId || sessionId === 'null' || sessionId === 'undefined') {
@@ -57,6 +67,11 @@ async function requireAuth(req, res, next) {
     try {
       session = await userRepository.verifySession(sessionId);
     } catch (dbError) {
+      if (!fileAuthAllowed()) {
+        console.warn('[Auth] Primary identity store unavailable:', dbError.message);
+        return res.status(503).json({ error: 'Authentication service temporarily unavailable' });
+      }
+
       if (!fileStoreInitialized) {
         await fileUserStore.initialize();
         fileStoreInitialized = true;
@@ -86,7 +101,6 @@ async function requireAuth(req, res, next) {
   }
 }
 
-// Middleware to check if user has a specific role. Use after requireAuth.
 function requireRole(...roles) {
   return (req, res, next) => {
     if (!req.user) {
@@ -112,10 +126,7 @@ function authenticateThenAuthorize(roles, errorMessage) {
   };
 }
 
-// Middleware to check if user is admin
 const requireAdmin = authenticateThenAuthorize(['admin'], 'Admin access required');
-
-// Middleware to check if user is author or admin
 const requireAuthorOrAdmin = authenticateThenAuthorize(
   ['author', 'admin'],
   'Author or admin access required'
