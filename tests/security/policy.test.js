@@ -37,10 +37,15 @@ test('feedback PII reads are admin-only', () => {
   assert.match(source, /router\.get\('\/:id', requireAdmin/);
 });
 
-test('production bootstrap installs global security hardening', () => {
+test('production bootstrap installs global security hardening and authenticates non-public API routes', () => {
   const source = read('server/index.js');
+  const hardening = read('server/security/hardening.js');
   assert.match(source, /installSecurity\(app\)/);
-  assert.match(read('server/security/hardening.js'), /all API routes require a verified registered or isolated/);
+  assert.match(hardening, /req\.path\.startsWith\('\/api\/'\)\s*&&\s*!isPublicApiPath\(req\)/);
+  assert.match(hardening, /const authenticated = await authenticate\(req, res\)/);
+  assert.match(hardening, /if \(!authenticated\) return/);
+  assert.match(hardening, /POST'\s*&&\s*req\.path === '\/api\/auth\/login'/);
+  assert.match(hardening, /GET'\s*&&\s*req\.path === '\/api\/health'/);
 });
 
 test('browser demo user is least privileged', () => {
