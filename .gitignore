@@ -4,11 +4,9 @@ node_modules/
 # Production build
 client/build/
 
-# Runtime data files (may contain assessment, auth, or feedback PII)
-server/data/assessments.json
-server/data/feedback.json
-data/*.json
+# Runtime data files (may contain assessment, auth, feedback, or customer PII)
 data/
+server/data/*.json
 
 # Environment variables & keys
 .env
