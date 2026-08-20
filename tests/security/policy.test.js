@@ -62,6 +62,15 @@ test('assessment API client cannot fall back to legacy admin guest tokens', () =
   assert.match(source, /authService\.createGuestSession\(\)/);
 });
 
+test('isolated demo assessments are immediately viewable while registered release state is preserved', () => {
+  const source = read('server/db/assessmentRepository.js');
+  assert.match(source, /ownerId\.startsWith\('demo_'\)/);
+  assert.match(source, /results_released:\s*isDemoOwned \? true : Boolean\(assessment\.results_released\)/);
+  assert.match(source, /results_released:\s*row\.results_released/);
+  assert.match(source, /results_released_by:\s*row\.results_released_by/);
+  assert.match(source, /results_released_at:\s*row\.results_released_at/);
+});
+
 test('browser Excel export no longer imports the vulnerable xlsx parser', () => {
   const source = read('client/src/services/excelExportService.js');
   assert.doesNotMatch(source, /from ['"]xlsx['"]/);
