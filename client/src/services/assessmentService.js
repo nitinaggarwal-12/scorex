@@ -1,7 +1,8 @@
 import axios from 'axios';
+import authService from './authService';
 
 // Use relative URL in production (Railway), localhost in development
-const API_BASE_URL = process.env.REACT_APP_API_URL || 
+const API_BASE_URL = process.env.REACT_APP_API_URL ||
   (window.location.hostname === 'localhost' ? 'http://localhost:5001/api' : '/api');
 
 // Create axios instance with default config
@@ -13,48 +14,41 @@ const api = axios.create({
   },
 });
 
-// Request interceptor - Add session ID to all requests
+// Request interceptor - Add a real or isolated-demo session ID to all requests.
 api.interceptors.request.use(
   (config) => {
-    console.log(`Making ${config.method?.toUpperCase()} request to ${config.url}`);
-    
-    // Add session ID from localStorage to headers (with guest fallback)
-    const sessionId = localStorage.getItem('sessionId') || 
-                      localStorage.getItem('scorex_auth_token') || 
-                      'guest_admin_session';
-    config.headers['x-session-id'] = sessionId;
-    
+    let sessionId = localStorage.getItem('sessionId');
+
+    if (!sessionId) {
+      authService.createGuestSession();
+      sessionId = localStorage.getItem('sessionId');
+    }
+
+    if (sessionId) {
+      config.headers['x-session-id'] = sessionId;
+    }
+
     return config;
   },
-  (error) => {
-    console.error('Request error:', error);
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 // Response interceptor
 api.interceptors.response.use(
-  (response) => {
-    return response.data;
-  },
+  (response) => response.data,
   (error) => {
-    console.error('Response error:', error);
-    
+    console.error('Assessment API request failed:', error.response?.status || error.message);
+
     if (error.response) {
-      // Server responded with error status
-      const message = error.response.data?.message || 'Server error occurred';
+      const message = error.response.data?.message || error.response.data?.error || 'Server error occurred';
       throw new Error(message);
-    } else if (error.request) {
-      // Request was made but no response received
-      throw new Error('No response from server. Please check your connection.');
-    } else {
-      // Something else happened
-      throw new Error(error.message || 'An unexpected error occurred');
     }
+    if (error.request) {
+      throw new Error('No response from server. Please check your connection.');
+    }
+    throw new Error(error.message || 'An unexpected error occurred');
   }
 );
-
-// Assessment Service Functions
 
 /**
  * Get the assessment framework with all categories and questions
@@ -62,7 +56,7 @@ api.interceptors.response.use(
 export const getAssessmentFramework = async () => {
   try {
     const response = await api.get('/assessment/framework');
-    return response.data;
+    return response?.data || response;
   } catch (error) {
     console.error('Error fetching assessment framework:', error);
     throw error;
@@ -75,7 +69,7 @@ export const getAssessmentFramework = async () => {
 export const startAssessment = async (organizationInfo) => {
   try {
     const response = await api.post('/assessment/start', organizationInfo);
-    return response.data;
+    return response?.data || response;
   } catch (error) {
     console.error('Error starting assessment:', error);
     throw error;
@@ -88,13 +82,7 @@ export const startAssessment = async (organizationInfo) => {
 export const getAssessmentStatus = async (assessmentId) => {
   try {
     const response = await api.get(`/assessment/${assessmentId}/status`);
-    // API interceptor already extracts response.data, so we get the actual data directly
-    // Backend returns { success: true, data: { ... } }
-    if (response.success && response.data) {
-      return response.data;
-    }
-    // Fallback for backwards compatibility
-    return response;
+    return response?.data || response;
   } catch (error) {
     console.error('Error fetching assessment status:', error);
     throw error;
@@ -102,16 +90,12 @@ export const getAssessmentStatus = async (assessmentId) => {
 };
 
 /**
- * Get questions for a specific category
+ * Get questions for a specific assessment category
  */
 export const getCategoryQuestions = async (assessmentId, categoryId) => {
   try {
     const response = await api.get(`/assessment/${assessmentId}/category/${categoryId}`);
-    // Axios interceptor already returns response.data, so 'response' is { success, data: { area, existingResponses } }
-    if (response && response.data) {
-      return response.data; // Return the inner 'data' object with area and existingResponses
-    }
-    return response;
+    return response?.data || response;
   } catch (error) {
     console.error('Error fetching category questions:', error);
     throw error;
@@ -119,72 +103,41 @@ export const getCategoryQuestions = async (assessmentId, categoryId) => {
 };
 
 /**
- * Submit responses for a category
+ * Save response for a question
  */
-export const submitCategoryResponses = async (assessmentId, categoryId, responses) => {
+export const saveResponse = async (assessmentId, categoryId, questionId, responseData) => {
   try {
-    const response = await api.post(`/assessment/${assessmentId}/category/${categoryId}/submit`, {
-      responses
-    });
-    return response.data;
+    const response = await api.post(
+      `/assessment/${assessmentId}/category/${categoryId}/question/${questionId}/response`,
+      responseData
+    );
+    return response?.data || response;
   } catch (error) {
-    console.error('Error submitting category responses:', error);
+    console.error('Error saving response:', error);
     throw error;
   }
 };
 
 /**
- * Submit all responses at once (bulk submission for sample assessments)
+ * Complete a category
  */
-export const submitBulkResponses = async (assessmentId, responses, completedCategories) => {
+export const completeCategory = async (assessmentId, categoryId) => {
   try {
-    const response = await api.post(`/assessment/${assessmentId}/bulk-submit`, {
-      responses,
-      completedCategories,
-      status: 'completed'
-    });
-    return response.data;
+    const response = await api.post(`/assessment/${assessmentId}/category/${categoryId}/complete`);
+    return response?.data || response;
   } catch (error) {
-    console.error('Error submitting bulk responses:', error);
+    console.error('Error completing category:', error);
     throw error;
   }
 };
 
 /**
- * Save / prefill full assessment responses in bulk
+ * Get assessment results
  */
-export const saveAssessmentResponses = async (assessmentId, responses) => {
+export const getAssessmentResults = async (assessmentId) => {
   try {
-    const response = await api.post(`/assessment/${assessmentId}/bulk-submit`, {
-      responses,
-      status: 'in_progress'
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error saving assessment responses:', error);
-    throw error;
-  }
-};
-
-/**
- * Get assessment results and recommendations
- */
-export const getAssessmentResults = async (assessmentId, forceRefresh = false) => {
-  try {
-    // Add cache-busting timestamp to force fresh fetch
-    const cacheBuster = Date.now();
-    const headers = forceRefresh ? {
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': '0'
-    } : {};
-    
-    const response = await api.get(`/assessment/${assessmentId}/results?_refresh=${forceRefresh ? 'true' : 'false'}&_=${cacheBuster}`, {
-      headers
-    });
-    // API interceptor already extracts response.data, so we get the actual data directly
-    // Backend returns { success: true, data: { ... } }
-    return response; // Return the full response (already has .data extracted by interceptor)
+    const response = await api.get(`/assessment/${assessmentId}/results`);
+    return response?.data || response;
   } catch (error) {
     console.error('Error fetching assessment results:', error);
     throw error;
@@ -192,137 +145,50 @@ export const getAssessmentResults = async (assessmentId, forceRefresh = false) =
 };
 
 /**
- * Auto-save progress for individual question responses
+ * Get raw assessment data
  */
-export const saveProgress = async (assessmentId, questionId, perspectiveId, value, comment, isSkipped, editorEmail) => {
+export const getAssessment = async (assessmentId) => {
   try {
-    // Note: axios interceptor already returns response.data, so 'data' IS the response body
-    const data = await api.post(`/assessment/${assessmentId}/save-progress`, {
-      questionId,
-      perspectiveId,
-      value,
-      comment,
-      isSkipped,
-      editorEmail
-    });
-    
-    // Backend returns { success: true, lastSaved: '...' }
-    return data || { success: true };
+    return await api.get(`/assessment/${assessmentId}`);
   } catch (error) {
-    console.error('Error saving progress:', error);
-    // Don't throw error for auto-save failures to avoid disrupting user experience
-    return { success: false, error: error.message };
+    console.error('Error fetching assessment:', error);
+    throw error;
   }
 };
 
 /**
- * Save individual question response (alias for saveProgress)
- */
-export const saveQuestionResponse = saveProgress;
-
-/**
- * Get all assessments for management
+ * Get all assessments
  */
 export const getAllAssessments = async () => {
   try {
     const response = await api.get('/assessments');
-    // Handle different response structures and ensure we always return an array
-    if (response && response.data) {
-      return Array.isArray(response.data) ? response.data : [];
-    }
-    return [];
+    return response?.assessments || response?.data || response || [];
   } catch (error) {
     console.error('Error fetching assessments:', error);
-    // Return empty array instead of throwing to prevent UI crash
-    return [];
-  }
-};
-
-/**
- * Alias for getAllAssessments (for backward compatibility)
- */
-export const getAssessments = getAllAssessments;
-
-/**
- * Save edited Executive Summary content
- */
-export const saveEditedExecutiveSummary = async (assessmentId, editedContent) => {
-  try {
-    console.log(`[saveEditedExecutiveSummary] Saving for assessment: ${assessmentId}`);
-    const data = await api.put(`/assessment/${assessmentId}/edited-executive-summary`, editedContent);
-    console.log(`[saveEditedExecutiveSummary] Saved successfully`);
-    return data;
-  } catch (error) {
-    console.error('Error saving edited executive summary:', error);
     throw error;
   }
 };
 
 /**
- * Clone an existing assessment
+ * Update assessment metadata
  */
-export const cloneAssessment = async (assessmentId, organizationData = {}) => {
+export const updateAssessment = async (assessmentId, updates) => {
   try {
-    const response = await api.post(`/assessment/${assessmentId}/clone`, organizationData);
-    return response.data.data;
+    const response = await api.put(`/assessment/${assessmentId}`, updates);
+    return response?.data || response;
   } catch (error) {
-    console.error('Error cloning assessment:', error);
+    console.error('Error updating assessment:', error);
     throw error;
   }
 };
 
 /**
- * Delete all assessments
- */
-export const deleteAllAssessments = async () => {
-  try {
-    console.log('[deleteAllAssessments] Deleting all assessments');
-    const response = await api.delete('/assessments/all');
-    console.log('[deleteAllAssessments] Response:', response);
-    return response;
-  } catch (error) {
-    console.error('[deleteAllAssessments] Error:', error);
-    throw error;
-  }
-};
-
-/**
- * Get dashboard statistics
- */
-export const getDashboardStats = async () => {
-  try {
-    console.log('[getDashboardStats] Fetching dashboard statistics');
-    const response = await api.get('/dashboard/stats');
-    console.log('[getDashboardStats] Response:', response);
-    return response;
-  } catch (error) {
-    console.error('[getDashboardStats] Error:', error);
-    throw error;
-  }
-};
-
-/**
- * Submit NPS feedback
- */
-export const submitNPSFeedback = async (assessmentId, feedbackData) => {
-  try {
-    console.log('[submitNPSFeedback] Submitting feedback for assessment:', assessmentId);
-    const response = await api.post(`/assessment/${assessmentId}/nps-feedback`, feedbackData);
-    console.log('[submitNPSFeedback] Response:', response);
-    return response;
-  } catch (error) {
-    console.error('[submitNPSFeedback] Error:', error);
-    throw error;
-  }
-};
-
-/**
- * Delete an assessment
+ * Delete assessment
  */
 export const deleteAssessment = async (assessmentId) => {
   try {
     const response = await api.delete(`/assessment/${assessmentId}`);
-    return response.data;
+    return response?.data || response;
   } catch (error) {
     console.error('Error deleting assessment:', error);
     throw error;
@@ -330,174 +196,42 @@ export const deleteAssessment = async (assessmentId) => {
 };
 
 /**
- * Update assessment metadata (name, email, etc.)
+ * Generate a sample assessment
  */
-export const updateAssessmentMetadata = async (assessmentId, metadata) => {
+export const generateSampleAssessment = async () => {
   try {
-    const response = await api.patch(`/assessment/${assessmentId}/metadata`, metadata);
-    return response;
+    const response = await api.post('/assessment/generate-sample');
+    return response?.data || response;
   } catch (error) {
-    console.error('Error updating assessment metadata:', error);
+    console.error('Error generating sample assessment:', error);
     throw error;
   }
 };
 
 /**
- * Generate a sample assessment with random data
+ * Generate multiple samples
  */
-export const generateSampleAssessment = async (completionLevel = 'full', specificPillars = null) => {
+export const generateMultipleSamples = async (count = 5) => {
   try {
-    console.log('[generateSampleAssessment] Generating with level:', completionLevel);
-    // Note: axios interceptor already returns response.data, so 'data' IS the response body
-    const data = await api.post('/assessment/generate-sample', {
-      completionLevel,
-      specificPillars
-    });
-    console.log('[generateSampleAssessment] Response:', data);
-    return data;
+    const response = await api.post('/assessment/generate-multiple-samples', { count });
+    return response?.data || response;
   } catch (error) {
-    console.error('❌ Failed to generate sample assessment:', error);
+    console.error('Error generating multiple samples:', error);
     throw error;
   }
 };
 
 /**
- * Submit assessment for final results
+ * Get all assessment types/templates exposed by the dynamic assessment catalog
  */
-export const submitAssessment = async (assessmentId) => {
+export const getAssessmentTypes = async () => {
   try {
-    console.log('[submitAssessment] Submitting assessment:', assessmentId);
-    const data = await api.post(`/assessment/${assessmentId}/submit`);
-    console.log('[submitAssessment] Response:', data);
-    return data;
+    const response = await api.get('/dynamic-assessments/types');
+    return response?.types || response?.data?.types || [];
   } catch (error) {
-    console.error('❌ Failed to submit assessment:', error);
-    throw error;
-  }
-};
-
-/**
- * Get industry benchmarking report
- */
-export const getBenchmarkReport = async (assessmentId) => {
-  try {
-    console.log(`[getBenchmarkReport] Fetching for assessment: ${assessmentId}`);
-    const response = await api.get(`/assessment/${assessmentId}/benchmark`);
-    // API interceptor already extracts response.data
-    if (response.success && response.data) {
-      return response.data;
-    }
-    return response;
-  } catch (error) {
-    console.error('Error fetching benchmark report:', error);
-    throw error;
-  }
-};
-
-/**
- * Health check
- */
-export const healthCheck = async () => {
-  try {
-    const response = await api.get('/health');
-    return response.data;
-  } catch (error) {
-    console.error('Health check failed:', error);
-    throw error;
-  }
-};
-
-// Utility functions
-
-/**
- * Calculate progress percentage
- */
-export const calculateProgress = (completedCategories, totalCategories) => {
-  if (!totalCategories || totalCategories === 0) return 0;
-  return Math.round((completedCategories / totalCategories) * 100);
-};
-
-/**
- * Format assessment duration
- */
-export const formatDuration = (startTime, endTime) => {
-  if (!startTime) return 'Unknown';
-  
-  const start = new Date(startTime);
-  const end = endTime ? new Date(endTime) : new Date();
-  const diffMs = end - start;
-  
-  const minutes = Math.floor(diffMs / 60000);
-  const hours = Math.floor(minutes / 60);
-  
-  if (hours > 0) {
-    return `${hours}h ${minutes % 60}m`;
-  } else {
-    return `${minutes}m`;
-  }
-};
-
-/**
- * Get maturity level color
- */
-export const getMaturityColor = (score) => {
-  const colors = {
-    1: '#ff4444',
-    2: '#ff8800',
-    3: '#ffaa00',
-    4: '#88cc00',
-    5: '#00cc44'
-  };
-  return colors[score] || '#cccccc';
-};
-
-/**
- * Get priority color
- */
-export const getPriorityColor = (priority) => {
-  const colors = {
-    'critical': '#ff4444',
-    'high': '#ff8800',
-    'medium': '#ffaa00',
-    'low': '#88cc00'
-  };
-  return colors[priority] || '#cccccc';
-};
-
-/**
- * Validate assessment responses
- */
-export const validateResponses = (questions, responses) => {
-  const errors = [];
-  
-  questions.forEach(question => {
-    const response = responses[question.id];
-    
-    if (!response) {
-      errors.push(`Response required for: ${question.question}`);
-    } else if (question.type === 'multiple_choice' && (!Array.isArray(response) || response.length === 0)) {
-      errors.push(`At least one option must be selected for: ${question.question}`);
-    }
-  });
-  
-  return errors;
-};
-
-/**
- * Fetch logo from external URL via backend proxy (bypasses CORS)
- */
-export const fetchLogoFromURL = async (url) => {
-  try {
-    const response = await api.post('/fetch-logo', { url });
-    return response;
-  } catch (error) {
-    console.error('Error fetching logo from URL:', error);
-    throw error;
+    console.error('Error fetching assessment types:', error);
+    return [];
   }
 };
 
 export default api;
-
-
-
-
