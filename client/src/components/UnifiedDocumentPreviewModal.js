@@ -399,8 +399,6 @@ export const UnifiedDocumentPreviewModal = ({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose, activeDocType]);
 
-  if (!isOpen) return null;
-
   const org = instance?.customerName || 'Organization';
   const overallScore = instance?.totalScore || report?.overallScore || '3.0';
   const maturityStage = instance?.maturityLevel || report?.maturityLevel || 'Defined';
@@ -439,6 +437,8 @@ export const UnifiedDocumentPreviewModal = ({
       timeline: r.timeline || `Phase ${(i % 3) + 1}`
     }))
   });
+
+  if (!isOpen) return null;
 
   const SLIDES_META = [
     { title: "Executive Scope", icon: "📊", subtitle: "Strategic Readout", num: 1 },
