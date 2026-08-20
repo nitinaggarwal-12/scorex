@@ -11,7 +11,6 @@ function createUuid() {
     return window.crypto.randomUUID();
   }
 
-  // RFC 4122 v4 fallback for older browsers.
   const bytes = new Uint8Array(16);
   window.crypto.getRandomValues(bytes);
   bytes[6] = (bytes[6] & 0x0f) | 0x40;
@@ -43,10 +42,40 @@ function buildDemoUser(existingUser = {}) {
   };
 }
 
-// Add axios interceptor to include session ID in all requests.
+function ensureBrowserDemoSession() {
+  let sessionId = localStorage.getItem('sessionId');
+
+  if (isGuestLikeSession(sessionId) && !SECURE_GUEST_SESSION_RE.test(sessionId || '')) {
+    localStorage.removeItem('sessionId');
+    localStorage.removeItem('user');
+    sessionId = null;
+  }
+
+  if (!sessionId) {
+    sessionId = `guest_${createUuid()}`;
+    const user = buildDemoUser();
+    localStorage.setItem('sessionId', sessionId);
+    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('scorex_guest_auth', 'true');
+    window.dispatchEvent(new CustomEvent('scorex-auth-changed', { detail: { user } }));
+  }
+
+  return sessionId;
+}
+
+// All browser API traffic gets a secure identity. Anonymous visitors receive a least-privileged
+// demo UUID, never an administrator identity. The server independently validates the UUID format.
 axios.interceptors.request.use(
   (config) => {
-    const sessionId = localStorage.getItem('sessionId');
+    const requestUrl = String(config.url || '');
+    const isApiRequest = requestUrl.startsWith('/api') || requestUrl.startsWith(API_URL);
+    const isLoginRequest = requestUrl.includes('/auth/login');
+
+    let sessionId = localStorage.getItem('sessionId');
+    if (isApiRequest && !isLoginRequest && !sessionId) {
+      sessionId = ensureBrowserDemoSession();
+    }
+
     if (sessionId) {
       config.headers['x-session-id'] = sessionId;
     }
@@ -95,6 +124,7 @@ class AuthService {
     localStorage.setItem('sessionId', normalizedSessionId);
     localStorage.setItem('user', JSON.stringify(normalizedUser));
     axios.defaults.headers.common['x-session-id'] = normalizedSessionId;
+    window.dispatchEvent(new CustomEvent('scorex-auth-changed', { detail: { user: normalizedUser } }));
 
     return { sessionId: normalizedSessionId, user: normalizedUser };
   }
@@ -107,7 +137,6 @@ class AuthService {
     return user;
   }
 
-  // Clear session
   clearSession() {
     this.sessionId = null;
     this.user = null;
@@ -115,13 +144,12 @@ class AuthService {
     localStorage.removeItem('user');
     localStorage.removeItem('scorex_guest_auth');
     delete axios.defaults.headers.common['x-session-id'];
+    window.dispatchEvent(new CustomEvent('scorex-auth-changed', { detail: { user: null } }));
   }
 
-  // Initialize axios headers if session exists
   initializeHeaders() {
     const sessionId = localStorage.getItem('sessionId');
 
-    // Remove legacy guest sessions that previously granted admin access.
     if (isGuestLikeSession(sessionId) && !SECURE_GUEST_SESSION_RE.test(sessionId || '')) {
       this.clearSession();
       return;
@@ -133,7 +161,6 @@ class AuthService {
     }
   }
 
-  // Login
   async login(email, password) {
     try {
       const response = await axios.post(`${API_URL}/auth/login`, { email, password });
@@ -148,10 +175,8 @@ class AuthService {
     }
   }
 
-  // Logout
   async logout() {
     try {
-      // Demo sessions are local-only and do not have a persisted server session to delete.
       if (!SECURE_GUEST_SESSION_RE.test(localStorage.getItem('sessionId') || '')) {
         await axios.post(`${API_URL}/auth/logout`);
       }
@@ -162,7 +187,6 @@ class AuthService {
     }
   }
 
-  // Get current user
   async getCurrentUser() {
     try {
       const response = await axios.get(`${API_URL}/auth/me`);
@@ -176,7 +200,6 @@ class AuthService {
     }
   }
 
-  // Register new user (author/admin only)
   async register(userData) {
     try {
       const response = await axios.post(`${API_URL}/auth/register`, userData);
@@ -186,12 +209,10 @@ class AuthService {
     }
   }
 
-  // Alias for backwards compatibility
   async registerUser(userData) {
     return this.register(userData);
   }
 
-  // Check if user is authenticated
   isAuthenticated() {
     const sessionId = localStorage.getItem('sessionId');
     const user = this.getUser();
@@ -203,22 +224,18 @@ class AuthService {
     return !!sessionId && !!user;
   }
 
-  // Get user role
   getRole() {
     return this.getUser()?.role || null;
   }
 
-  // Check if user is admin
   isAdmin() {
     return this.getUser()?.role === 'admin';
   }
 
-  // Check if user is author
   isAuthor() {
     return this.getUser()?.role === 'author';
   }
 
-  // Check if user is consumer
   isConsumer() {
     return this.getUser()?.role === 'consumer';
   }
@@ -227,12 +244,10 @@ class AuthService {
     return this.getUser()?.role === 'demo';
   }
 
-  // Check if user is author or admin
   isAuthorOrAdmin() {
     return this.isAdmin() || this.isAuthor();
   }
 
-  // Get current user
   getUser() {
     const sessionId = localStorage.getItem('sessionId');
     let user = this.readStoredUser();
@@ -246,7 +261,6 @@ class AuthService {
     return user;
   }
 
-  // Get all users (admin only)
   async getAllUsers(role = null) {
     try {
       const params = role ? { role } : {};
@@ -260,12 +274,10 @@ class AuthService {
     }
   }
 
-  // Alias for getAllUsers
   async getUsers(role = null) {
     return this.getAllUsers(role);
   }
 
-  // Get users by role
   async getUsersByRole(role) {
     try {
       const response = await axios.get(`${API_URL}/auth/users/role/${role}`);
@@ -278,7 +290,6 @@ class AuthService {
     }
   }
 
-  // Change password
   async changePassword(currentPassword, newPassword) {
     try {
       const response = await axios.post(`${API_URL}/auth/change-password`, {
@@ -295,7 +306,6 @@ class AuthService {
   }
 }
 
-// Export singleton instance
 const authService = new AuthService();
 authService.initializeHeaders();
 
