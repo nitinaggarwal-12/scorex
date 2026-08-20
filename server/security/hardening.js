@@ -6,8 +6,8 @@ const { requireAuth, canAccessResource } = require('../middleware/auth');
 const originalAssessmentCreate = assessmentRepository.create.bind(assessmentRepository);
 let repositoryWrapped = false;
 
-function isPrivileged(user) {
-  return user?.role === 'admin' || user?.role === 'author';
+function isAdmin(user) {
+  return user?.role === 'admin';
 }
 
 function sameOrigin(req, origin) {
@@ -77,7 +77,6 @@ function isAssessmentIdPath(pathname) {
 
 function authenticate(req, res) {
   return new Promise((resolve) => {
-    // A previous security layer or route middleware already established identity.
     if (req.user && req.auth) {
       resolve(true);
       return;
@@ -130,8 +129,6 @@ async function handleSafeLogoFetch(req, res) {
     return true;
   }
 
-  // Do not fetch the caller-controlled host from the ScoreX server. Only send its public
-  // hostname to a fixed favicon service, eliminating private-IP / redirect SSRF primitives.
   try {
     const faviconResponse = await axios.get('https://www.google.com/s2/favicons', {
       params: { domain: parsed.hostname, sz: 256 },
@@ -152,8 +149,19 @@ async function handleSafeLogoFetch(req, res) {
   return true;
 }
 
+const ASSESSMENT_OWNER_FIELDS = [
+  'userId',
+  'user_id',
+  'ownerId',
+  'owner_id',
+  'createdBy',
+  'created_by',
+  'assignedAuthorId',
+  'assigned_author_id'
+];
+
 async function enforceAssessmentAccess(req, res, id) {
-  if (isPrivileged(req.user)) return true;
+  if (isAdmin(req.user)) return true;
 
   const assessment = await assessmentRepository.findById(id);
   if (!assessment) {
@@ -161,7 +169,7 @@ async function enforceAssessmentAccess(req, res, id) {
     return false;
   }
 
-  if (!canAccessResource(req.user, assessment, ['userId', 'user_id', 'ownerId', 'owner_id', 'createdBy'])) {
+  if (!canAccessResource(req.user, assessment, ASSESSMENT_OWNER_FIELDS)) {
     res.status(403).json({ success: false, error: 'Access denied' });
     return false;
   }
@@ -171,14 +179,14 @@ async function enforceAssessmentAccess(req, res, id) {
 }
 
 async function handleOwnAssessmentList(req, res) {
-  if (isPrivileged(req.user)) return false;
+  if (isAdmin(req.user)) return false;
 
   try {
     const assessments = await assessmentRepository.findAll();
     const owned = assessments.filter((assessment) =>
-      canAccessResource(req.user, assessment, ['userId', 'user_id', 'ownerId', 'owner_id', 'createdBy'])
+      canAccessResource(req.user, assessment, ASSESSMENT_OWNER_FIELDS)
     );
-    res.json({ success: true, assessments: owned, count: owned.length });
+    res.json({ success: true, data: owned, assessments: owned, count: owned.length });
   } catch (error) {
     console.error('[Security] Failed to list owned assessments:', error.message);
     res.status(500).json({ success: false, error: 'Failed to fetch assessments' });
@@ -239,8 +247,6 @@ function installSecurity(app) {
         setCorsHeaders(req, res);
         if (req.method === 'OPTIONS') return res.status(204).end();
 
-        // Public operational status never includes storage paths, environment configuration,
-        // provider keys, database state, or stack traces.
         if (req.path === '/status') {
           return res.status(200).json({
             success: true,
@@ -249,8 +255,6 @@ function installSecurity(app) {
           });
         }
 
-        // Defense-in-depth default: all API routes require a verified registered or isolated
-        // demo identity unless they are explicitly allowlisted here.
         if (req.path.startsWith('/api/') && !isPublicApiPath(req)) {
           const authenticated = await authenticate(req, res);
           if (!authenticated) return;
@@ -259,6 +263,10 @@ function installSecurity(app) {
         if (req.path === '/api/fetch-logo' && req.method === 'POST') {
           await handleSafeLogoFetch(req, res);
           return;
+        }
+
+        if (req.path === '/api/assessments/all' && req.method === 'DELETE' && !isAdmin(req.user)) {
+          return res.status(403).json({ success: false, error: 'Admin access required' });
         }
 
         if (req.path === '/api/assessments' && req.method === 'GET') {
