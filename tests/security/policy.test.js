@@ -50,6 +50,25 @@ test('browser demo user is least privileged', () => {
   assert.match(source, /guest_\$\{createUuid\(\)\}/);
 });
 
+test('assessment API client cannot fall back to legacy admin guest tokens', () => {
+  const source = read('client/src/services/assessmentService.js');
+  assert.equal(source.includes('guest_admin_session'), false);
+  assert.equal(source.includes('admin_guest_'), false);
+  assert.match(source, /authService\.createGuestSession\(\)/);
+});
+
+test('browser Excel export no longer imports the vulnerable xlsx parser', () => {
+  const source = read('client/src/services/excelExportService.js');
+  assert.doesNotMatch(source, /from ['"]xlsx['"]/);
+  assert.doesNotMatch(source, /require\(['"]xlsx['"]\)/);
+  assert.match(source, /assessment-excel/);
+
+  const clientPackage = JSON.parse(read('client/package.json'));
+  const rootPackage = JSON.parse(read('package.json'));
+  assert.equal(clientPackage.dependencies?.xlsx, undefined);
+  assert.equal(rootPackage.dependencies?.xlsx, undefined);
+});
+
 test('runtime customer/auth JSON stores are not tracked', () => {
   const forbidden = [
     'data/users.json',
