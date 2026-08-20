@@ -1,740 +1,261 @@
-const OpenAI = require('openai');
+'use strict';
+
 const geminiService = require('./geminiService');
+const provenance = require('./provenanceService');
 
 /**
- * Generate Industry Benchmarking Report using Gemini (gemini-3.7-flash) or OpenAI
- * Professional-grade, vendor-neutral competitive intelligence and market analysis
+ * Evidence-first assessment positioning.
+ *
+ * This service intentionally does not maintain a synthetic industry benchmark table. External
+ * percentile/average/market claims are produced only when a caller provides a verified dataset
+ * with concrete source records. Without that evidence the report remains assessment-relative:
+ * current score, stated target, target gap, strengths, risks and qualitative industry context.
  */
 class IndustryBenchmarkingService {
-  
-  /**
-   * Get OpenAI client instance (lazy initialization)
-   */
-  getOpenAIClient() {
-    if (!this.openaiClient) {
-      if (!process.env.OPENAI_API_KEY) {
-        return null;
-      }
-      this.openaiClient = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY
-      });
-    }
-    return this.openaiClient;
-  }
-  
-  /**
-   * Generate comprehensive industry benchmarking report
-   * @param {string} industry - Industry name
-   * @param {object} assessment - Full assessment data
-   * @param {number} customerScore - Overall maturity score
-   * @param {object} pillarScores - Scores by pillar
-   * @param {array} painPoints - Identified pain points
-   * @returns {Promise<object>} Comprehensive benchmarking report
-   */
-  async generateComprehensiveBenchmarkReport(industry, assessment, customerScore, pillarScores, painPoints) {
-    console.log(`[IndustryBenchmarking] Generating professional benchmarking report for ${industry}`);
-    
-    // 🌟 1. Primary: Use Gemini 3.7 Flash if available
+  async generateComprehensiveBenchmarkReport(
+    industry,
+    assessment,
+    overallScore,
+    pillarScores,
+    painPoints = [],
+    options = {}
+  ) {
+    const context = {
+      industry: industry || assessment?.industry || 'Industry not specified',
+      assessment,
+      overallScore: provenance.asFiniteNumber(overallScore, 0),
+      pillarScores: pillarScores || {},
+      painPoints: Array.isArray(painPoints) ? painPoints : [],
+      externalSources: provenance.normalizeSources(options.externalSources || []),
+      externalBenchmarkVerified: options.externalBenchmarkVerified === true
+    };
+
+    let generated = null;
     if (geminiService.isAvailable()) {
       try {
-        console.log('[IndustryBenchmarking] Generating benchmark report using Gemini 3.7 Flash...');
-        const geminiReport = await geminiService.generateIndustryBenchmarkReport(
-          industry,
-          assessment,
-          customerScore,
-          pillarScores,
-          painPoints
-        );
-        
-        if (geminiReport && geminiReport.executiveSummary) {
-          console.log('✅ [IndustryBenchmarking] Gemini 3.7 Flash report generated successfully');
-          return this.enrichReportWithMetrics(geminiReport, industry, customerScore, pillarScores);
-        }
-      } catch (geminiError) {
-        console.warn('⚠️ [IndustryBenchmarking] Gemini report generation failed, attempting OpenAI fallback:', geminiError.message);
+        generated = await geminiService.generateIndustryBenchmarkReport(context);
+      } catch (error) {
+        console.warn('[BenchmarkProvenance] AI qualitative context unavailable:', error.message);
       }
     }
-    
-    // 🌟 2. Secondary fallback: OpenAI if configured
-    try {
-      const openai = this.getOpenAIClient();
-      
-      if (openai) {
-        console.log('[IndustryBenchmarking] Generating report using OpenAI fallback...');
-        const prompt = this.buildBenchmarkingPrompt(industry, assessment, customerScore, pillarScores, painPoints);
-        
-        const response = await openai.chat.completions.create({
-          model: 'gpt-4o-mini',
-          messages: [
-            {
-              role: 'system',
-              content: `You are a Senior Enterprise Data & AI Strategy Consultant with 20+ years of experience in 
-                       digital transformation consulting, data platform strategy, and competitive intelligence.
-                       
-                       Your reports are:
-                       - 100% vendor-neutral and architecture-focused
-                       - Executive-ready and board-level quality
-                       - Data-driven with specific metrics and percentiles
-                       - Action-oriented with clear recommendations
-                       - Professional, concise, and impactful
-                       
-                       CRITICAL: Return ONLY valid JSON matching the requested structure.`
-            },
-            {
-              role: 'user',
-              content: prompt
-            }
-          ],
-          temperature: 0.7,
-          max_tokens: 4000,
-          response_format: { type: "json_object" }
-        });
 
-        const benchmarkReport = JSON.parse(response.choices[0].message.content);
-        console.log('✅ [IndustryBenchmarking] OpenAI report generated successfully');
-        return this.enrichReportWithMetrics(benchmarkReport, industry, customerScore, pillarScores);
-      }
-    } catch (error) {
-      console.warn('⚠️ [IndustryBenchmarking] OpenAI fallback failed:', error.message);
-    }
-    
-    // 🌟 3. Default fallback: Statistically calibrated industry dataset
-    console.log('[IndustryBenchmarking] Using statistically calibrated fallback report');
-    return this.getFallbackReport(industry, customerScore, pillarScores);
+    const base = generated || this.getFallbackReport(
+      context.industry,
+      context.assessment,
+      context.overallScore,
+      context.pillarScores,
+      context.painPoints
+    );
+
+    return provenance.sanitizeBenchmarkReport(base, context);
   }
 
-  /**
-   * Build professional prompt for comprehensive benchmarking
-   */
-  buildBenchmarkingPrompt(industry, assessment, customerScore, pillarScores, painPoints) {
-    const pillarNames = {
-      'platform_governance': 'Platform & Governance',
-      'data_engineering': 'Data Engineering & Integration',
-      'analytics_bi': 'Analytics & BI',
-      'machine_learning': 'Machine Learning',
-      'generative_ai': 'Generative AI',
-      'operational_excellence': 'Operational Excellence'
-    };
+  buildBenchmarkingPrompt(industry, assessment, overallScore, pillarScores, painPoints = []) {
+    return `
+Create a qualitative assessment-positioning narrative for ${industry}.
 
-    const pillarDetails = Object.entries(pillarScores)
-      .map(([id, data]) => `- ${pillarNames[id]}: Current ${data.currentScore?.toFixed(1) || 'N/A'}, Target ${data.futureScore?.toFixed(1) || 'N/A'}, Gap ${data.gap?.toFixed(1) || 'N/A'}`)
-      .join('\n');
+TRUST POLICY — MANDATORY:
+- Use only the ScoreX assessment values explicitly provided below as quantitative facts.
+- Do not invent or estimate peer percentiles, industry averages, market shares, adoption rates,
+  sample sizes, confidence levels, analyst-research findings, financial savings, ROI or payback.
+- Do not attribute anything to an analyst/research firm unless a concrete source is supplied.
+- If an external statistic would normally be useful, state that a verified benchmark dataset is
+  required instead of supplying a number.
+- Recommendations may be qualitative. Financial impact must say that customer baseline data and
+  explicit assumptions are required.
 
-    const topPainPoints = painPoints?.slice(0, 5).map(p => `- ${p.label || p.value}`).join('\n') || 'Not specified';
+Assessment inputs:
+${JSON.stringify({
+      organization: assessment?.organizationName || assessment?.customerName || 'Organization',
+      industry,
+      overallScore,
+      pillarScores,
+      painPoints
+    }, null, 2)}
 
-    return `As a Senior Data Platform Strategy Consultant, create a comprehensive industry benchmarking report for a ${industry} organization.
-
-CLIENT PROFILE:
-- Industry: ${industry}
-- Organization: ${assessment.organizationName || 'Enterprise Client'}
-- Overall Data Platform Maturity: ${customerScore.toFixed(1)}/5.0
-- Assessment Date: ${new Date().toLocaleDateString()}
-
-DETAILED PILLAR SCORES:
-${pillarDetails}
-
-TOP BUSINESS CHALLENGES:
-${topPainPoints}
-
-DELIVERABLE: Generate a professional executive benchmarking report with the following structure:
-
-{
-  "executiveSummary": {
-    "headline": "<One powerful sentence summarizing competitive position>",
-    "keyFindings": [
-      "<3-4 critical findings that would matter to the Board/C-suite>",
-      "<Include specific percentiles and competitive gaps>",
-      "<Highlight both strengths and urgent priorities>"
-    ],
-    "marketContext": "<2-3 sentences on ${industry} market dynamics and data maturity trends>"
-  },
-  
-  "competitivePositioning": {
-    "overallRanking": {
-      "percentile": <5-95, realistic based on ${customerScore}>,
-      "tier": "<Market Leader|Fast Follower|Industry Average|Laggard>",
-      "peerGroup": "<Description of comparable ${industry} organizations>",
-      "versusBenchmark": "<Specific comparison vs ${industry} median and top quartile>"
-    },
-    "marketSegmentation": {
-      "leaders": {
-        "percentage": "<% of ${industry} orgs in this tier>",
-        "characteristics": ["<What defines leaders in ${industry}>"],
-        "typicalScore": "<Score range>"
-      },
-      "fastFollowers": {
-        "percentage": "<% in this tier>",
-        "characteristics": ["<What defines fast followers>"],
-        "typicalScore": "<Score range>"
-      },
-      "average": {
-        "percentage": "<% in this tier>",
-        "characteristics": ["<What defines average performers>"],
-        "typicalScore": "<Score range>"
-      },
-      "laggards": {
-        "percentage": "<% in this tier>",
-        "characteristics": ["<What defines laggards>"],
-        "typicalScore": "<Score range>"
-      }
-    }
-  },
-
-  "pillarAnalysis": {
-    "platform_governance": {
-      "industryAverage": <realistic avg for ${industry}>,
-      "industryMedian": <realistic median>,
-      "topQuartile": <75th percentile>,
-      "topDecile": <90th percentile>,
-      "customerScore": ${pillarScores.platform_governance?.currentScore || 3.0},
-      "percentileRank": <5-95>,
-      "competitiveGap": "<Quantify gap to industry leaders>",
-      "industryContext": "<Why this pillar matters specifically in ${industry}>",
-      "commonChallenges": ["<Top 3 challenges ${industry} orgs face in this pillar>"],
-      "leaderPractices": ["<What top ${industry} performers do differently>"],
-      "recommendedActions": ["<2-3 specific actions to close the gap>"]
-    },
-    "data_engineering": {
-      "industryAverage": <realistic avg>,
-      "industryMedian": <realistic median>,
-      "topQuartile": <75th percentile>,
-      "topDecile": <90th percentile>,
-      "customerScore": ${pillarScores.data_engineering?.currentScore || 3.0},
-      "percentileRank": <5-95>,
-      "competitiveGap": "<Quantify gap>",
-      "industryContext": "<${industry}-specific context>",
-      "commonChallenges": ["<Top challenges>"],
-      "leaderPractices": ["<Leader practices>"],
-      "recommendedActions": ["<Specific actions>"]
-    },
-    "analytics_bi": {
-      "industryAverage": <realistic avg>,
-      "industryMedian": <realistic median>,
-      "topQuartile": <75th percentile>,
-      "topDecile": <90th percentile>,
-      "customerScore": ${pillarScores.analytics_bi?.currentScore || 3.0},
-      "percentileRank": <5-95>,
-      "competitiveGap": "<Quantify gap>",
-      "industryContext": "<${industry}-specific context>",
-      "commonChallenges": ["<Top challenges>"],
-      "leaderPractices": ["<Leader practices>"],
-      "recommendedActions": ["<Specific actions>"]
-    },
-    "machine_learning": {
-      "industryAverage": <realistic avg>,
-      "industryMedian": <realistic median>,
-      "topQuartile": <75th percentile>,
-      "topDecile": <90th percentile>,
-      "customerScore": ${pillarScores.machine_learning?.currentScore || 3.0},
-      "percentileRank": <5-95>,
-      "competitiveGap": "<Quantify gap>",
-      "industryContext": "<${industry}-specific context>",
-      "commonChallenges": ["<Top challenges>"],
-      "leaderPractices": ["<Leader practices>"],
-      "recommendedActions": ["<Specific actions>"]
-    },
-    "generative_ai": {
-      "industryAverage": <realistic avg - should be LOW as emerging>,
-      "industryMedian": <realistic median>,
-      "topQuartile": <75th percentile>,
-      "topDecile": <90th percentile>,
-      "customerScore": ${pillarScores.generative_ai?.currentScore || 3.0},
-      "percentileRank": <5-95>,
-      "competitiveGap": "<Quantify gap>",
-      "industryContext": "<${industry}-specific GenAI opportunities>",
-      "commonChallenges": ["<Top challenges>"],
-      "leaderPractices": ["<Leader practices>"],
-      "recommendedActions": ["<Specific actions>"]
-    },
-    "operational_excellence": {
-      "industryAverage": <realistic avg>,
-      "industryMedian": <realistic median>,
-      "topQuartile": <75th percentile>,
-      "topDecile": <90th percentile>,
-      "customerScore": ${pillarScores.operational_excellence?.currentScore || 3.0},
-      "percentileRank": <5-95>,
-      "competitiveGap": "<Quantify gap>",
-      "industryContext": "<${industry}-specific context>",
-      "commonChallenges": ["<Top challenges>"],
-      "leaderPractices": ["<Leader practices>"],
-      "recommendedActions": ["<Specific actions>"]
-    }
-  },
-
-  "competitiveIntelligence": {
-    "strengths": [
-      {
-        "area": "<Pillar or capability where client excels>",
-        "evidence": "<Specific metric/percentile>",
-        "competitiveAdvantage": "<How this translates to business advantage in ${industry}>",
-        "recommendation": "<How to leverage this strength>"
-      }
-    ],
-    "vulnerabilities": [
-      {
-        "area": "<Pillar or capability where client lags>",
-        "evidence": "<Specific metric/percentile>",
-        "businessRisk": "<Potential business impact in ${industry}>",
-        "competitorAdvantage": "<How competitors might exploit this gap>",
-        "remediation": "<Urgent actions needed>"
-      }
-    ],
-    "whiteSpace": [
-      {
-        "opportunity": "<Emerging capability where ${industry} has low adoption>",
-        "marketReadiness": "<% of ${industry} orgs with this capability>",
-        "competitiveWindow": "<Timeframe to capture first-mover advantage>",
-        "potentialImpact": "<Business value of early adoption>"
-      }
-    ]
-  },
-
-  "industryTrends": {
-    "currentState": "<Overview of ${industry} data maturity landscape>",
-    "emergingPriorities": [
-      {
-        "trend": "<Key trend in ${industry}>",
-        "adoption": "<% of ${industry} orgs investing>",
-        "drivers": ["<Business drivers>"],
-        "implication": "<What this means for the client>"
-      }
-    ],
-    "investmentPatterns": {
-      "topPriorities": ["<Where ${industry} leaders are investing>"],
-      "averageInvestment": "<Typical % of IT budget on data platforms>",
-      "roi": "<Expected ROI for ${industry} data initiatives>"
-    },
-    "regulatoryImpact": "<${industry}-specific regulatory considerations affecting data platforms>"
-  },
-
-  "peerComparison": {
-    "similarOrganizations": [
-      {
-        "profile": "<Description of comparable ${industry} peer>",
-        "maturityLevel": "<Their typical score range>",
-        "differentiators": ["<What sets them apart>"],
-        "lessons": "<What client can learn>"
-      }
-    ],
-    "industryLeaders": [
-      {
-        "profile": "<Leading ${industry} organization archetype>",
-        "maturityLevel": "<Their score range>",
-        "keyCapabilities": ["<What makes them leaders>"],
-        "pathToLeadership": "<How they achieved leadership position>"
-      }
-    ]
-  },
-
-  "strategicRecommendations": {
-    "immediate": [
-      {
-        "action": "<Specific action item>",
-        "rationale": "<Why this is urgent based on competitive position>",
-        "impact": "<Expected business impact>",
-        "effort": "<High|Medium|Low>",
-        "timeframe": "<Weeks/months to execute>"
-      }
-    ],
-    "shortTerm": [
-      {
-        "action": "<3-6 month action>",
-        "rationale": "<Competitive rationale>",
-        "impact": "<Business impact>",
-        "effort": "<High|Medium|Low>",
-        "timeframe": "<Timeframe>"
-      }
-    ],
-    "longTerm": [
-      {
-        "action": "<6-12+ month strategic initiative>",
-        "rationale": "<Strategic rationale>",
-        "impact": "<Transformational impact>",
-        "effort": "<High|Medium|Low>",
-        "timeframe": "<Timeframe>"
-      }
-    ]
-  },
-
-  "businessImpact": {
-    "currentPosition": "<What their current ranking means for business outcomes>",
-    "riskOfInaction": "<Competitive and business risks if gaps aren't addressed>",
-    "opportunityFromImprovement": {
-      "moveToNextTier": {
-        "targetPercentile": <realistic target>,
-        "requiredActions": ["<Key actions>"],
-        "businessBenefits": ["<Specific business outcomes>"],
-        "timeframe": "<Realistic timeframe>",
-        "investment": "<Estimated investment required>"
-      },
-      "reachTopQuartile": {
-        "targetPercentile": 75,
-        "requiredActions": ["<Comprehensive actions>"],
-        "businessBenefits": ["<Transformational outcomes>"],
-        "timeframe": "<Realistic timeframe>",
-        "investment": "<Est. investment>"
-      }
-    }
-  },
-
-  "methodology": {
-    "dataSource": "Industry Benchmarking Database, Gartner Research, Forrester Wave Analysis",
-    "sampleSize": <realistic number 100-500>,
-    "industryScope": "${industry} organizations globally",
-    "assessmentCriteria": "Six-pillar data platform maturity framework",
-    "lastUpdated": "${new Date().toLocaleDateString()}",
-    "confidenceLevel": "95%"
-  }
-}
-
-CRITICAL REQUIREMENTS:
-1. Be highly specific to ${industry} (cite industry-specific challenges, regulations, competitors)
-2. Use realistic percentiles (not everyone is "top 10%")
-3. Provide actionable, specific recommendations (not generic advice)
-4. Include quantitative gaps (e.g., "0.8 points below top quartile")
-5. Consider ${industry} nuances (e.g., Life Sciences = regulatory heavy, FinServ = governance critical)
-6. Make it executive-ready (insights a CEO/Board would value)
-7. Return ONLY the JSON object`;
+Return JSON with: executiveSummary, competitiveIntelligence, industryTrends,
+strategicRecommendations. Preserve assessment numbers exactly; introduce no new quantitative claim.`;
   }
 
-  /**
-   * Enrich report with additional calculated metrics
-   */
-  enrichReportWithMetrics(report, industry, customerScore, pillarScores) {
-    return {
-      ...report,
-      
-      // Add metadata
-      metadata: {
-        generatedAt: new Date().toISOString(),
-        reportType: 'Industry Benchmarking Analysis',
-        industry: industry,
-        overallScore: customerScore,
-        reportVersion: '1.0'
-      },
-
-      // Calculate additional metrics
-      metrics: {
-        overallPercentile: report.competitivePositioning?.overallRanking?.percentile || 50,
-        pillarPercentiles: this.extractPillarPercentiles(report.pillarAnalysis),
-        strengthScore: this.calculateStrengthScore(report.pillarAnalysis),
-        vulnerabilityScore: this.calculateVulnerabilityScore(report.pillarAnalysis),
-        competitiveIndex: this.calculateCompetitiveIndex(report)
-      },
-
-      // Add visualizations data
-      visualizations: {
-        radarChart: this.generateRadarChartData(report.pillarAnalysis, pillarScores),
-        percentileDistribution: this.generatePercentileDistribution(report),
-        pillarComparison: this.generatePillarComparison(report.pillarAnalysis),
-        trendAnalysis: this.generateTrendData(report)
-      }
-    };
-  }
-
-  /**
-   * Extract pillar percentiles for quick access
-   */
-  extractPillarPercentiles(pillarAnalysis) {
-    const percentiles = {};
-    Object.entries(pillarAnalysis || {}).forEach(([pillarId, data]) => {
-      percentiles[pillarId] = data.percentileRank || 50;
+  enrichReportWithMetrics(report, overallScore, pillarScores, industry, assessment = null) {
+    return provenance.sanitizeBenchmarkReport(report, {
+      overallScore,
+      pillarScores,
+      industry,
+      assessment,
+      externalSources: [],
+      externalBenchmarkVerified: false
     });
-    return percentiles;
   }
 
-  /**
-   * Calculate overall strength score (0-100)
-   */
-  calculateStrengthScore(pillarAnalysis) {
-    const percentiles = Object.values(pillarAnalysis || {}).map(p => p.percentileRank || 50);
-    return Math.round(percentiles.reduce((sum, p) => sum + p, 0) / percentiles.length);
+  extractPillarPercentiles() {
+    // Kept for backward API compatibility. Percentiles are unavailable without peer data.
+    return {};
   }
 
-  /**
-   * Calculate vulnerability score (higher = more vulnerable)
-   */
-  calculateVulnerabilityScore(pillarAnalysis) {
-    const belowAverage = Object.values(pillarAnalysis || {})
-      .filter(p => (p.customerScore || 0) < (p.industryAverage || 3.0));
-    return Math.round((belowAverage.length / 6) * 100);
+  calculateStrengthScore(pillarAnalysis = {}) {
+    const scores = Object.values(pillarAnalysis)
+      .map((p) => provenance.asFiniteNumber(p?.customerScore ?? p?.score))
+      .filter((v) => v !== null);
+    if (!scores.length) return null;
+    return provenance.round((scores.reduce((sum, v) => sum + v, 0) / scores.length) / 5 * 100, 1);
   }
 
-  /**
-   * Calculate competitive index (0-100, higher = more competitive)
-   */
-  calculateCompetitiveIndex(report) {
-    const percentile = report.competitivePositioning?.overallRanking?.percentile || 50;
-    const strengthCount = report.competitiveIntelligence?.strengths?.length || 0;
-    const vulnerabilityCount = report.competitiveIntelligence?.vulnerabilities?.length || 0;
-    
-    const baseScore = percentile;
-    const strengthBonus = strengthCount * 5;
-    const vulnerabilityPenalty = vulnerabilityCount * 3;
-    
-    return Math.max(0, Math.min(100, Math.round(baseScore + strengthBonus - vulnerabilityPenalty)));
+  calculateVulnerabilityScore(pillarAnalysis = {}) {
+    const gaps = Object.values(pillarAnalysis)
+      .map((p) => provenance.asFiniteNumber(p?.gapToTarget))
+      .filter((v) => v !== null && v > 0);
+    if (!gaps.length) return 0;
+    return provenance.round(gaps.reduce((sum, v) => sum + v, 0) / gaps.length, 2);
   }
 
-  /**
-   * Generate radar chart data for visualization
-   */
-  generateRadarChartData(pillarAnalysis, pillarScores) {
-    return Object.entries(pillarAnalysis || {}).map(([pillarId, data]) => ({
-      pillar: this.getPillarDisplayName(pillarId),
-      customerScore: data.customerScore || 3.0,
-      industryAverage: data.industryAverage || 3.0,
-      topQuartile: data.topQuartile || 3.6,
-      percentile: data.percentileRank || 50
+  calculateCompetitiveIndex() {
+    // An empirical competitive index requires peer observations; never infer it from maturity alone.
+    return null;
+  }
+
+  generateRadarChartData(pillarAnalysis = {}) {
+    return Object.entries(pillarAnalysis).map(([pillarId, data]) => ({
+      pillar: data?.pillar || this.getPillarDisplayName(pillarId),
+      customerScore: provenance.asFiniteNumber(data?.customerScore ?? data?.score),
+      targetScore: provenance.asFiniteNumber(data?.targetScore),
+      industryAverage: null,
+      topQuartile: null
     }));
   }
 
-  /**
-   * Generate percentile distribution data
-   */
-  generatePercentileDistribution(report) {
-    const segmentation = report.competitivePositioning?.marketSegmentation || {};
-    return {
-      leaders: parseInt(segmentation.leaders?.percentage || '15'),
-      fastFollowers: parseInt(segmentation.fastFollowers?.percentage || '25'),
-      average: parseInt(segmentation.average?.percentage || '40'),
-      laggards: parseInt(segmentation.laggards?.percentage || '20')
-    };
+  generatePercentileDistribution() {
+    return null;
   }
 
-  /**
-   * Generate pillar comparison data
-   */
-  generatePillarComparison(pillarAnalysis) {
-    return Object.entries(pillarAnalysis || {}).map(([pillarId, data]) => ({
-      pillar: this.getPillarDisplayName(pillarId),
-      customer: data.customerScore || 3.0,
-      industry: data.industryAverage || 3.0,
-      gap: (data.customerScore || 3.0) - (data.industryAverage || 3.0),
-      percentile: data.percentileRank || 50
-    })).sort((a, b) => b.percentile - a.percentile);
+  generatePillarComparison(pillarAnalysis = {}) {
+    return this.generateRadarChartData(pillarAnalysis);
   }
 
-  /**
-   * Generate trend analysis data
-   */
-  generateTrendData(report) {
-    return {
-      emergingPriorities: report.industryTrends?.emergingPriorities || [],
-      investmentAreas: report.industryTrends?.investmentPatterns?.topPriorities || []
-    };
+  generateTrendData(assessment = null) {
+    const history = assessment?.scoreHistory || assessment?.history;
+    if (!Array.isArray(history)) return null;
+    return history
+      .filter((entry) => provenance.asFiniteNumber(entry?.score) !== null)
+      .map((entry) => ({
+        date: entry.date || entry.timestamp || null,
+        score: provenance.asFiniteNumber(entry.score),
+        type: 'assessment-derived'
+      }));
   }
 
-  /**
-   * Get display name for pillar
-   */
   getPillarDisplayName(pillarId) {
-    const names = {
-      'platform_governance': 'Platform & Governance',
-      'data_engineering': 'Data Engineering',
-      'analytics_bi': 'Analytics & BI',
-      'machine_learning': 'Machine Learning',
-      'generative_ai': 'Generative AI',
-      'operational_excellence': 'Operational Excellence'
-    };
-    return names[pillarId] || pillarId;
+    return String(pillarId || '')
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, (char) => char.toUpperCase());
   }
 
-  /**
-   * Fallback report if OpenAI fails
-   */
-  getFallbackReport(industry, customerScore, pillarScores) {
-    console.log('[IndustryBenchmarking] Using fallback report with realistic industry data');
-    console.log('[IndustryBenchmarking] Customer Score:', customerScore);
-    console.log('[IndustryBenchmarking] Pillar Scores:', JSON.stringify(pillarScores));
-    
-    // Industry-specific benchmarks based on Gartner/Forrester research
-    const industryBenchmarks = {
-      'Financial Services': { avg: 3.4, top10: 4.3, top25: 3.9, median: 3.2, regulatoryFocus: true },
-      'Life Sciences': { avg: 3.2, top10: 4.2, top25: 3.7, median: 3.0, regulatoryFocus: true },
-      'Technology': { avg: 3.6, top10: 4.5, top25: 4.0, median: 3.4, regulatoryFocus: false },
-      'Retail': { avg: 3.0, top10: 4.0, top25: 3.5, median: 2.8, regulatoryFocus: false },
-      'Healthcare': { avg: 2.9, top10: 3.9, top25: 3.4, median: 2.7, regulatoryFocus: true },
-      'Manufacturing': { avg: 2.8, top10: 3.8, top25: 3.3, median: 2.6, regulatoryFocus: false },
-      'default': { avg: 3.1, top10: 4.1, top25: 3.6, median: 2.9, regulatoryFocus: false }
-    };
-    
-    const benchmark = industryBenchmarks[industry] || industryBenchmarks['default'];
-    
-    // Calculate percentile based on customer score vs industry average
-    const percentile = Math.min(95, Math.max(5, Math.round(((customerScore - benchmark.median) / (benchmark.top10 - benchmark.median)) * 50 + 50)));
-    
-    // Determine tier
-    let tier, tierDescription;
-    if (customerScore >= benchmark.top10) {
-      tier = 'Market Leader';
-      tierDescription = 'Top 10%';
-    } else if (customerScore >= benchmark.top25) {
-      tier = 'Fast Follower';
-      tierDescription = 'Top 25%';
-    } else if (customerScore >= benchmark.avg) {
-      tier = 'Above Average';
-      tierDescription = 'Above Industry Average';
-    } else if (customerScore >= benchmark.median) {
-      tier = 'Industry Average';
-      tierDescription = 'Industry Median';
-    } else {
-      tier = 'Developing';
-      tierDescription = 'Below Median';
-    }
-    
-    // Generate pillar analysis with realistic industry data
-    const pillarAnalysis = {};
-    Object.entries(pillarScores).forEach(([pillarId, data]) => {
-      const currentScore = data.currentScore || 0;
-      // Add variation to industry averages by pillar
-      const pillarVariation = {
-        'platform_governance': benchmark.regulatoryFocus ? 0.2 : -0.1,
-        'data_engineering': 0.1,
-        'analytics_bi': 0.0,
-        'machine_learning': -0.2,
-        'generative_ai': -0.4,
-        'operational_excellence': 0.1
-      };
-      
-      const industryAvg = Math.max(1.0, Math.min(5.0, benchmark.avg + (pillarVariation[pillarId] || 0)));
-      const topQuartile = Math.min(5.0, industryAvg + 0.6);
-      const pillarPercentile = Math.round(((currentScore - (industryAvg - 0.4)) / (topQuartile - (industryAvg - 0.4))) * 100);
-      const cappedPercentile = Math.min(98, Math.max(2, pillarPercentile));
-      
-      pillarAnalysis[pillarId] = {
-        customerScore: currentScore,
-        industryAverage: Number(industryAvg.toFixed(2)),
-        topQuartile: Number(topQuartile.toFixed(2)),
-        percentileRank: cappedPercentile,
-        gap: Number((topQuartile - currentScore).toFixed(2)),
-        status: currentScore >= topQuartile ? 'Leading' : currentScore >= industryAvg ? 'Competitive' : 'Developing'
-      };
-    });
-    
+  getFallbackReport(industry, assessment, overallScore, pillarScores, painPoints = []) {
+    const pillarAnalysis = provenance.buildAssessmentPillarAnalysis(pillarScores || {});
+    const entries = Object.entries(pillarAnalysis);
+
+    const rankedByScore = [...entries]
+      .filter(([, p]) => p.customerScore !== null)
+      .sort((a, b) => b[1].customerScore - a[1].customerScore);
+    const rankedByGap = [...entries]
+      .filter(([, p]) => p.gapToTarget !== null)
+      .sort((a, b) => b[1].gapToTarget - a[1].gapToTarget);
+
+    const strengths = rankedByScore.slice(0, 3).map(([id, p]) => ({
+      pillar: p.pillar || this.getPillarDisplayName(id),
+      evidence: `Current ScoreX maturity score: ${p.customerScore?.toFixed?.(1) ?? p.customerScore}/5.0`,
+      implication: 'Relative strength within this assessment; this is not a peer-ranking claim.'
+    }));
+
+    const vulnerabilities = rankedByGap
+      .filter(([, p]) => p.gapToTarget > 0)
+      .slice(0, 3)
+      .map(([id, p]) => ({
+        pillar: p.pillar || this.getPillarDisplayName(id),
+        evidence: `${p.gapToTarget.toFixed(1)} point gap to the organization\'s stated target`,
+        implication: 'Prioritize discovery and delivery planning for this target-state gap.'
+      }));
+
+    const priorityPillars = rankedByGap
+      .filter(([, p]) => p.gapToTarget > 0)
+      .slice(0, 4)
+      .map(([id, p]) => p.pillar || this.getPillarDisplayName(id));
+
+    const orgName = assessment?.organizationName || assessment?.customerName || 'The organization';
+    const safePainPoints = (painPoints || []).slice(0, 5).map((p) => String(p).slice(0, 300));
+
     return {
       executiveSummary: {
-        headline: `Your organization ranks in the ${tierDescription} (${percentile}th percentile) of ${industry} organizations for data platform maturity`,
+        headline: `${orgName} has an assessment-derived maturity score of ${Number(overallScore || 0).toFixed(1)}/5.0.`,
         keyFindings: [
-          `Overall maturity score of ${customerScore.toFixed(1)}/5.0 positions you ${customerScore >= benchmark.avg ? 'above' : 'at'} the ${industry} industry average of ${benchmark.avg.toFixed(1)}`,
-          `${Object.values(pillarAnalysis).filter(p => p.status === 'Leading' || p.status === 'Competitive').length} of 6 pillars show competitive or leading performance`,
-          `Gap to industry leaders (${benchmark.top10.toFixed(1)}) is ${(benchmark.top10 - customerScore).toFixed(1)} maturity points`
+          strengths.length
+            ? `Highest assessed maturity areas: ${strengths.map((s) => s.pillar).join(', ')}.`
+            : 'No scored pillars were available to identify assessment-relative strengths.',
+          priorityPillars.length
+            ? `Largest gaps to stated targets: ${priorityPillars.join(', ')}.`
+            : 'No current-to-target pillar gaps were available.',
+          safePainPoints.length
+            ? `Assessment evidence includes ${safePainPoints.length} recorded pain-point signal(s) that should be validated during planning.`
+            : 'No explicit pain-point evidence was supplied for this report.'
         ],
-        marketContext: `${industry} organizations are investing heavily in data platforms. Industry leaders (top 10%) average ${benchmark.top10.toFixed(1)}/5.0 maturity, with ${benchmark.regulatoryFocus ? 'strong focus on governance and compliance' : 'emphasis on innovation and speed-to-market'}.`
+        marketContext: 'Qualitative industry context can support planning, but peer statistics require a verified external benchmark dataset.'
       },
       competitivePositioning: {
         overallRanking: {
-          percentile: percentile,
-          tier: tier,
-          peerGroup: `Mid-to-large ${industry} organizations`,
-          versusBenchmark: `${Math.abs(customerScore - benchmark.avg).toFixed(1)} points ${customerScore >= benchmark.avg ? 'above' : 'below'} industry average`
+          percentile: null,
+          tier: 'Assessment-only view',
+          peerGroup: 'Verified peer dataset not connected',
+          versusBenchmark: provenance.EXTERNAL_DATA_DISCLAIMER
         },
-        tierBreakdown: {
-          'Market Leaders (Top 10%)': `${benchmark.top10.toFixed(1)}+ maturity score`,
-          'Fast Followers (Top 25%)': `${benchmark.top25.toFixed(1)}-${benchmark.top10.toFixed(1)} maturity score`,
-          'Industry Average': `${benchmark.median.toFixed(1)}-${benchmark.top25.toFixed(1)} maturity score`,
-          'Developing': `Below ${benchmark.median.toFixed(1)} maturity score`,
-          'Your Position': `${customerScore.toFixed(1)} (${tier})`
-        }
+        tierBreakdown: null,
+        marketSegmentation: null
       },
-      pillarAnalysis: pillarAnalysis,
+      pillarAnalysis,
       competitiveIntelligence: {
-        strengths: Object.entries(pillarAnalysis)
-          .filter(([_, data]) => data.status === 'Leading')
-          .map(([pillarId, data]) => ({
-            area: this.getPillarDisplayName(pillarId),
-            evidence: `${data.percentileRank}th percentile (${data.customerScore.toFixed(1)}/5.0 vs ${data.industryAverage.toFixed(1)} industry average)`,
-            competitiveAdvantage: `Outperforming ${100 - data.percentileRank}% of ${industry} organizations in this capability`,
-            recommendation: `Leverage this strength to differentiate in the market and share best practices across other pillars`
-          })),
-        vulnerabilities: Object.entries(pillarAnalysis)
-          .filter(([_, data]) => data.status === 'Developing')
-          .map(([pillarId, data]) => ({
-            area: this.getPillarDisplayName(pillarId),
-            evidence: `${data.percentileRank}th percentile (${data.customerScore.toFixed(1)}/5.0 vs ${data.topQuartile.toFixed(1)} top quartile)`,
-            businessRisk: `${data.gap.toFixed(1)}-point gap to industry leaders creates competitive disadvantage in ${this.getPillarDisplayName(pillarId).toLowerCase()}`,
-            competitorAdvantage: `Competitors in top quartile can deliver ${this.getPillarDisplayName(pillarId).toLowerCase()} capabilities ${Math.round(data.gap * 20)}% faster`,
-            remediation: `Prioritize investments to close ${data.gap.toFixed(1)}-point gap within 6-9 months`
-          })),
-        whiteSpace: [
-          {
-            opportunity: 'Generative AI Integration',
-            marketReadiness: '33% of industry has production GenAI use cases',
-            competitiveWindow: '12-18 months before market saturation',
-            potentialImpact: 'Early adopters seeing 25-40% productivity gains in data engineering and analytics'
-          }
-        ]
+        strengths,
+        vulnerabilities,
+        whiteSpace: priorityPillars.map((pillar) => ({
+          area: pillar,
+          opportunity: 'Close the stated target-state gap and validate business value with customer baselines.'
+        }))
       },
       industryTrends: [
         {
-          trend: `${industry} leaders prioritize ${benchmark.regulatoryFocus ? 'governance and compliance automation' : 'GenAI and ML innovation'}`,
-          impact: 'High',
-          relevance: 'Critical for competitive positioning'
-        },
-        {
-          trend: 'Modern unified data & AI lakehouse platforms seeing 45% enterprise adoption growth',
-          impact: 'High',
-          relevance: 'Platform consolidation trend'
-        },
-        {
-          trend: 'GenAI adoption accelerating - 67% of leaders have production use cases',
-          impact: 'Very High',
-          relevance: 'New revenue streams and efficiency gains'
+          trend: `${industry} architecture priorities should be validated against current, cited sources before being represented as market facts.`,
+          implication: 'Treat external market context as qualitative until evidence is attached.'
         }
       ],
       strategicRecommendations: {
-        immediate: Object.entries(pillarAnalysis)
-          .filter(([_, data]) => data.status === 'Developing')
-          .slice(0, 2)
-          .map(([pillarId, data]) => ({
-            action: `Accelerate ${this.getPillarDisplayName(pillarId)} maturity`,
-            rationale: `Currently at ${data.percentileRank}th percentile with ${data.gap.toFixed(1)}-point gap to industry leaders - this represents a competitive vulnerability`,
-            impact: `Close ${Math.round(data.gap * 20)}% of capability gap, improve competitive position by ${Math.min(20, Math.round((data.topQuartile - data.customerScore) * 10))} percentile points`,
-            effort: data.gap > 1.5 ? 'High' : data.gap > 0.8 ? 'Medium' : 'Low',
-            timeframe: '0-3 months'
-          })),
-        shortTerm: Object.entries(pillarAnalysis)
-          .filter(([_, data]) => data.status === 'Competitive')
-          .slice(0, 2)
-          .map(([pillarId, data]) => ({
-            action: `Strengthen ${this.getPillarDisplayName(pillarId)} to reach top quartile`,
-            rationale: `Currently competitive but ${(data.topQuartile - data.customerScore).toFixed(1)} points from top quartile - opportunity to establish leadership`,
-            impact: `Move from ${data.percentileRank}th to ${Math.min(90, data.percentileRank + 15)}th percentile, establish competitive differentiation`,
-            effort: 'Medium',
-            timeframe: '3-6 months'
-          })),
-        longTerm: [
-          {
-            action: `Achieve Market Leader status (${benchmark.top10.toFixed(1)}+ overall maturity)`,
-            rationale: `Current ${customerScore.toFixed(1)}/5.0 score requires ${(benchmark.top10 - customerScore).toFixed(1)}-point improvement to reach top 10% tier`,
-            impact: `Transform competitive position from ${tier} to Market Leader, unlock ${Math.round((benchmark.top10 - customerScore) * 15)}% revenue growth potential`,
-            effort: 'High',
-            timeframe: '6-12 months'
-          },
-          {
-            action: 'Establish GenAI Center of Excellence',
-            rationale: 'Only 33% of industry has production GenAI - 12-18 month window for first-mover advantage',
-            impact: '25-40% productivity gains, new revenue streams, talent attraction advantage',
-            effort: 'High',
-            timeframe: '9-15 months'
-          }
-        ]
+        immediate: priorityPillars.slice(0, 2).map((pillar) => ({
+          action: `Validate target-state requirements and blockers for ${pillar}.`,
+          expectedImpact: 'Impact requires customer baseline and success metrics; no financial estimate is inferred.'
+        })),
+        shortTerm: priorityPillars.slice(2, 4).map((pillar) => ({
+          action: `Build an evidence-backed improvement plan for ${pillar}.`,
+          expectedImpact: 'Measure against the organization\'s stated target score and operational KPIs.'
+        })),
+        longTerm: [{
+          action: 'Connect a governed peer benchmark dataset if external competitive positioning is required.',
+          expectedImpact: 'Enables sourced peer comparisons without synthetic statistics.'
+        }]
+      },
+      businessImpact: {
+        status: 'baseline-required',
+        disclaimer: provenance.BASELINE_DISCLAIMER
       },
       methodology: {
-        dataSource: 'Gartner Data & Analytics Summit 2024, Forrester Wave Analysis, IDC MarketScape',
-        sampleSize: 284,
-        industryScope: `${industry} organizations with 1,000+ employees, global coverage`,
-        assessmentCriteria: 'Six-pillar data platform maturity framework (governance, engineering, analytics, ML, GenAI, operations)',
-        benchmarkingPeriod: 'Q3-Q4 2024',
-        lastUpdated: new Date().toLocaleDateString(),
-        confidenceLevel: '95%',
-        assumptions: [
-          `Industry average maturity for ${industry}: ${benchmark.avg.toFixed(1)}/5.0 (based on ${benchmark.regulatoryFocus ? 'regulated' : 'commercial'} industry norms)`,
-          `Top 10% threshold: ${benchmark.top10.toFixed(1)}/5.0 (market leaders with advanced capabilities)`,
-          `Top 25% threshold: ${benchmark.top25.toFixed(1)}/5.0 (fast followers with modern platforms)`,
-          `Industry median: ${benchmark.median.toFixed(1)}/5.0 (typical mid-market organization)`,
-          'Percentile calculated relative to peer group (similar size/industry)',
-          'Pillar-specific variations account for industry priorities (e.g., governance higher in regulated industries)'
-        ]
+        mode: 'assessment-relative',
+        dataSource: 'ScoreX assessment responses and scoring framework',
+        externalBenchmarkDataset: null,
+        sampleSize: null,
+        confidenceLevel: null,
+        disclaimer: provenance.EXTERNAL_DATA_DISCLAIMER,
+        claimPolicy: 'provenance-v1'
+      },
+      metadata: {
+        generatedAt: new Date().toISOString(),
+        claimPolicy: 'provenance-v1',
+        externalBenchmarkingAvailable: false
       }
     };
   }

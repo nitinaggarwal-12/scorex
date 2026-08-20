@@ -1,10 +1,12 @@
+'use strict';
+
 const { GoogleGenAI } = require('@google/genai');
+const provenance = require('./provenanceService');
 
 /**
- * Gemini AI Service
- * Powered by Google Gemini (gemini-3.7-flash with fallback to gemini-2.5-flash / gemini-3.1-pro)
- * Provides intelligent conversational chat, executive report generation, executive command center synthesis,
- * and industry benchmarking analytics — all 100% vendor-neutral.
+ * Gemini generation with evidence-first quantitative-claim rules.
+ * AI may synthesize narrative and recommendations, but it may not manufacture benchmark statistics,
+ * analyst-research provenance, savings, ROI, payback or market adoption numbers.
  */
 class GeminiService {
   constructor() {
@@ -15,86 +17,53 @@ class GeminiService {
   }
 
   getApiKey() {
-    if (process.env.GEMINI_API_KEY) return process.env.GEMINI_API_KEY;
-    if (process.env.GOOGLE_API_KEY) return process.env.GOOGLE_API_KEY;
-    if (process.env.GOOGLE_GEMINI_API_KEY) return process.env.GOOGLE_GEMINI_API_KEY;
-    return null;
+    return process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GOOGLE_GEMINI_API_KEY || null;
   }
 
   initClient() {
     const key = this.getApiKey();
-    if (key) {
-      try {
-        this.client = new GoogleGenAI({ apiKey: key });
-        console.log(`🤖 Gemini AI Service initialized with default model: ${this.primaryModel}`);
-        return this.client;
-      } catch (err) {
-        console.warn('⚠️ Failed to initialize GoogleGenAI client:', err.message);
-      }
-    } else {
-      console.log('ℹ️ GEMINI_API_KEY not configured. GeminiService in standby (fallback mode active).');
+    if (!key) return null;
+    try {
+      this.client = new GoogleGenAI({ apiKey: key });
+      console.log(`Gemini AI Service initialized with default model: ${this.primaryModel}`);
+      return this.client;
+    } catch (error) {
+      console.warn('Failed to initialize GoogleGenAI client:', error.message);
+      return null;
     }
-    return null;
   }
 
   isAvailable() {
-    if (!this.client && this.getApiKey()) {
-      this.initClient();
-    }
+    if (!this.client && this.getApiKey()) this.initClient();
     return Boolean(this.client);
   }
 
-  /**
-   * Internal helper to generate content with automatic exponential backoff retry and model fallback
-   */
   async _generateWithFallback(prompt, systemInstruction = '', temperature = 0.7, responseMimeType = null, maxRetries = 2) {
     if (!this.isAvailable()) {
-      throw new Error('Gemini API key is not configured. Please set GEMINI_API_KEY in your environment variables (or in your Railway project under Variables).');
+      throw new Error('Gemini API key is not configured');
     }
 
     const modelsToTry = [this.primaryModel, ...this.fallbackModels];
     let lastError = null;
 
     for (const model of modelsToTry) {
-      for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
         try {
-          const config = {
-            temperature
-          };
-          if (systemInstruction) {
-            config.systemInstruction = systemInstruction;
-          }
-          if (responseMimeType) {
-            config.responseMimeType = responseMimeType;
-          }
+          const config = { temperature };
+          if (systemInstruction) config.systemInstruction = systemInstruction;
+          if (responseMimeType) config.responseMimeType = responseMimeType;
 
-          const response = await this.client.models.generateContent({
-            model,
-            contents: prompt,
-            config
-          });
-
-          if (response && response.text) {
-            return {
-              text: response.text,
-              modelUsed: model
-            };
-          }
-        } catch (err) {
-          lastError = err;
-          const isRateLimit = err.message?.includes('429') || 
-                              err.message?.includes('RESOURCE_EXHAUSTED') || 
-                              err.message?.includes('503') ||
-                              err.message?.includes('Quota');
-
-          if (isRateLimit && attempt < maxRetries) {
-            const backoffMs = Math.pow(2, attempt) * 1000 + Math.random() * 500;
-            console.warn(`⏳ Rate limit hit on ${model}, retrying in ${Math.round(backoffMs)}ms (attempt ${attempt + 1}/${maxRetries})...`);
-            await new Promise(r => setTimeout(r, backoffMs));
+          const response = await this.client.models.generateContent({ model, contents: prompt, config });
+          if (response?.text) return { text: response.text, modelUsed: model };
+        } catch (error) {
+          lastError = error;
+          const isRetryable = /429|RESOURCE_EXHAUSTED|503|Quota/i.test(error.message || '');
+          if (isRetryable && attempt < maxRetries) {
+            const backoffMs = (2 ** attempt) * 1000 + Math.random() * 500;
+            await new Promise((resolve) => setTimeout(resolve, backoffMs));
             continue;
           }
-          console.warn(`⚠️ Gemini call failed for model ${model} (attempt ${attempt + 1}):`, err.message);
-          break; // Try next fallback model
+          break;
         }
       }
     }
@@ -102,412 +71,244 @@ class GeminiService {
     throw lastError || new Error('All Gemini models failed to generate content');
   }
 
-  /**
-   * Generate conversational response for the assessment chat
-   */
+  quantitativeTrustInstruction() {
+    return `
+QUANTITATIVE TRUST POLICY — MANDATORY:
+- Treat only numbers explicitly present in the supplied ScoreX assessment as quantitative facts.
+- Never invent peer percentiles, industry averages, medians, quartiles, market shares, adoption
+  rates, sample sizes, confidence levels, analyst-study findings, savings, revenue, ROI or payback.
+- Never attribute a claim to an analyst/research firm unless the prompt contains a concrete source
+  record for that claim.
+- If financial impact would be useful, say it requires customer baseline costs and explicit scenario
+  assumptions; do not estimate from maturity scores.
+- If peer comparison would be useful, say it requires a verified peer benchmark dataset.
+- Qualitative recommendations are allowed. Preserve assessment scores exactly.`;
+  }
+
   async generateChatResponse(userMessage, conversationHistory = [], context = {}, assessmentData = null) {
-    if (!this.isAvailable()) {
-      return null;
-    }
+    if (!this.isAvailable()) return null;
 
-    const systemInstruction = `You are the Lead Enterprise Data & AI Maturity Advisor for ScoreX (Enterprise Data & AI Maturity Assessment Platform).
-Your goal is to guide organizations to higher maturity stages across the 6 core pillars:
-1. Platform & Governance (Enterprise Governance, Unified Catalog, Delta/Iceberg UniForm, IAM, FinOps, Disaster Recovery)
-2. Data Engineering (Modern Lakehouse Storage, Declarative Streaming Data Pipelines, Serverless Auto-Loader, Data Contracts)
-3. Analytics & BI (Serverless Vectorized SQL Engines, Semantic Metric Layer, Governed Data Sharing, Zero-Copy Access)
-4. Machine Learning (Production MLOps, Centralized MLflow Registry, Automated Feature Stores, Continuous Drift Monitoring)
-5. Generative AI (Autonomous Multi-Agent Orchestration, Model Context Protocol (MCP), Prompt Context Caching (75% savings), SLM/LLM Model Routing, Guardrails & CMEK)
-6. Operational Excellence (Center of Excellence, CI/CD Automation, FinOps 15-min auto-suspend, Full-stack Observability, Enablement)
+    const systemInstruction = `You are the Lead Enterprise Data & AI Maturity Advisor for ScoreX.
+Provide concise, vendor-neutral architecture guidance across governance, data engineering, analytics,
+ML, generative AI and operational excellence. Discuss techniques such as unified metadata/catalogs,
+declarative pipelines, model lifecycle controls, agent orchestration, context caching where supported,
+guardrails, cost controls and workload-appropriate idle termination policies.
 
-Format your responses with clear Markdown formatting:
-- Use bolding for key concepts and architectural best practices.
-- Provide actionable, vendor-neutral, architecture-backed advice.
-- Keep responses concise (2-4 paragraphs max), engaging, and structured.`;
+${this.quantitativeTrustInstruction()}
 
-    let contextDetails = '';
-    if (assessmentData) {
-      contextDetails = `
-CURRENT ASSESSMENT CONTEXT:
-- Organization: ${assessmentData.organizationName || assessmentData.organization_name || 'Enterprise Client'}
-- Industry: ${assessmentData.industry || 'Technology'}
-- Assessment Status: ${assessmentData.status || 'In Progress'}
-- Progress: ${assessmentData.progress || 0}%
-`;
-    }
+Use clear Markdown. Keep the answer focused and actionable.`;
 
-    let historyText = '';
-    if (Array.isArray(conversationHistory) && conversationHistory.length > 0) {
-      historyText = conversationHistory
-        .slice(-6)
-        .map(m => `${m.role === 'user' ? 'User' : 'Advisor'}: ${m.content}`)
-        .join('\n');
-    }
+    const contextDetails = assessmentData ? {
+      organization: assessmentData.organizationName || assessmentData.organization_name || 'Enterprise Client',
+      industry: assessmentData.industry || 'Industry not specified',
+      status: assessmentData.status || 'In Progress',
+      progress: assessmentData.progress ?? null
+    } : null;
+
+    const historyText = Array.isArray(conversationHistory)
+      ? conversationHistory.slice(-6).map((m) => `${m.role === 'user' ? 'User' : 'Advisor'}: ${m.content}`).join('\n')
+      : '';
 
     const prompt = `
-${contextDetails}
+Assessment context: ${JSON.stringify(contextDetails)}
+Conversation history:\n${historyText || 'No prior messages.'}
+User question: ${JSON.stringify(String(userMessage || '').slice(0, 8_000))}
 
-CONVERSATION HISTORY:
-${historyText || 'No prior messages.'}
-
-User Question: "${userMessage}"
-
-Provide a direct, consultative, and insightful response. At the very end of your response, on a separate line prefixed with "SUGGESTED_QUESTIONS:", output exactly 3-4 comma-separated follow-up questions the user might want to ask next.`;
+Answer directly. At the end, on a separate line prefixed SUGGESTED_QUESTIONS:, provide 3-4 comma-separated follow-up questions.`;
 
     try {
-      const result = await this._generateWithFallback(prompt, systemInstruction, 0.7);
-      const fullText = result.text.trim();
-
-      let mainResponse = fullText;
-      let suggestedQuestions = [];
-
-      if (fullText.includes('SUGGESTED_QUESTIONS:')) {
-        const parts = fullText.split('SUGGESTED_QUESTIONS:');
-        mainResponse = parts[0].trim();
-        const rawQuestions = parts[1].trim();
-        suggestedQuestions = rawQuestions
-          .split(/,|\n/)
-          .map(q => q.replace(/^[-*\d.\s"]+|["\s]+$/g, '').trim())
-          .filter(q => q.length > 5)
-          .slice(0, 4);
-      }
+      const result = await this._generateWithFallback(prompt, systemInstruction, 0.6);
+      const fullText = String(result.text || '').trim();
+      const parts = fullText.split('SUGGESTED_QUESTIONS:');
+      const mainResponse = provenance.neutralizeGeneratedText(parts[0].trim(), {
+        externalSources: [],
+        allowAssessmentNumbers: true
+      });
+      const suggestedQuestions = (parts[1] || '')
+        .split(/,|\n/)
+        .map((q) => q.replace(/^[-*\d.\s"]+|["\s]+$/g, '').trim())
+        .filter((q) => q.length > 5)
+        .slice(0, 4);
 
       return {
         response: mainResponse,
-        suggestedQuestions: suggestedQuestions.length > 0 ? suggestedQuestions : [
-          "How do we implement a unified data catalog?",
-          "What is our biggest maturity gap?",
-          "Tell me about declarative data pipeline best practices"
+        suggestedQuestions: suggestedQuestions.length ? suggestedQuestions : [
+          'What is our biggest maturity gap?',
+          'What evidence should we collect next?',
+          'How should we prioritize the target-state roadmap?'
         ],
-        model: result.modelUsed
+        model: result.modelUsed,
+        claimPolicy: 'provenance-v1'
       };
     } catch (error) {
-      console.error('❌ Error generating Gemini chat response:', error.message);
+      console.warn('Gemini chat generation failed:', error.message);
       return null;
     }
   }
 
-  /**
-   * Generate Executive Summary and Strategic Recommendations for Reports
-   */
   async generateExecutiveReportSummary(assessment, overallScore, stage, pillarScores = {}) {
-    if (!this.isAvailable()) {
-      return null;
-    }
+    if (!this.isAvailable()) return null;
 
-    const systemInstruction = `You are an Executive Enterprise Architect and CTO Advisor synthesizing an Enterprise Data & AI Maturity Assessment for executive leadership. All recommendations must be vendor-neutral, grounded in modern cloud data lakehouse (Delta/Iceberg UniForm), declarative data engineering, and Next-Gen GenAI architecture patterns (Autonomous Agents, Model Context Protocol, Prompt Context Caching, and FinOps cluster auto-termination).`;
-
-    const pillarSummary = Object.entries(pillarScores)
-      .map(([k, v]) => `- ${v.name || k}: Score ${v.score || 'N/A'}/5 (${v.maturityLevel?.level || 'N/A'})`)
-      .join('\n');
+    const systemInstruction = `You are an executive enterprise architect synthesizing a ScoreX maturity assessment.
+Use only supplied assessment evidence as quantitative fact. Recommendations must be vendor-neutral.
+${this.quantitativeTrustInstruction()}`;
 
     const prompt = `
-Generate an executive-level assessment summary and strategic transformation roadmap for:
-- Organization: ${assessment.organizationName || assessment.organization_name || 'Client'}
-- Industry: ${assessment.industry || 'Enterprise'}
-- Overall Maturity Score: ${overallScore}/5
-- Current Stage: ${stage}
+Generate an executive-level assessment summary for:
+${JSON.stringify({
+      organization: assessment?.organizationName || assessment?.organization_name || 'Client',
+      industry: assessment?.industry || 'Industry not specified',
+      overallScore,
+      stage,
+      pillarScores
+    }, null, 2)}
 
-PILLAR PERFORMANCE:
-${pillarSummary}
-
-Please generate a structured JSON object with these exact keys:
+Return only JSON:
 {
-  "executiveSummary": "2-3 paragraph executive overview highlighting strengths, critical gaps, and strategic business impact",
-  "keyStrengths": ["3 key strengths with business rationale"],
-  "criticalGaps": ["3 highest-priority architectural/operational risks to address"],
+  "executiveSummary": "2-3 paragraph overview of assessment-derived strengths, gaps and priorities",
+  "keyStrengths": ["assessment-grounded strength"],
+  "criticalGaps": ["assessment-grounded gap"],
   "strategicRoadmap": [
-    { "phase": "Phase 1 (Months 1-3): Foundation & Governance", "actions": ["action 1", "action 2"] },
-    { "phase": "Phase 2 (Months 3-6): Modernization & Automation", "actions": ["action 1", "action 2"] },
-    { "phase": "Phase 3 (Months 6-12): Enterprise AI & Scale", "actions": ["action 1", "action 2"] }
+    {"phase":"Foundation","actions":["action"]},
+    {"phase":"Modernization","actions":["action"]},
+    {"phase":"Scale","actions":["action"]}
   ]
 }
-Return ONLY valid JSON.`;
+Do not introduce financial or peer-statistical claims.`;
 
-    try {
-      const result = await this._generateWithFallback(prompt, systemInstruction, 0.4);
-      const jsonMatch = result.text.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-    } catch (err) {
-      console.warn('⚠️ Gemini report generation failed, using fallback:', err.message);
-    }
-    return null;
+    const generated = await this.generateJSON(prompt, systemInstruction, 0.35);
+    return generated ? provenance.sanitizeGeneratedNarrative(generated, { allowAssessmentNumbers: true }) : null;
   }
 
-  /**
-   * Generate Executive Command Center Data
-   */
   async generateExecutiveCommandCenterData(assessment, customerScore, pillarScores, prioritizedActions = []) {
-    if (!this.isAvailable()) {
-      return null;
-    }
+    if (!this.isAvailable()) return null;
 
-    const systemInstruction = `You are a Principal Enterprise Strategist and Chief Architect synthesizing C-suite data for an Executive Command Center. Provide vendor-neutral, highly quantified, board-ready strategic imperatives, risk analysis, transformation roadmap, and ROI metrics.`;
-
-    const pillarDetails = Object.entries(pillarScores || {})
-      .map(([k, v]) => `- ${v.name || k}: Current ${v.score || v.currentScore || 0}/5.0 (Target: ${v.targetScore || v.futureScore || 5.0})`)
-      .join('\n');
+    const systemInstruction = `You are a principal enterprise strategist preparing board-ready ScoreX guidance.
+Quantify only from supplied assessment inputs. Financial/value statements require a user baseline and
+explicit assumptions. Peer claims require a verified peer dataset.
+${this.quantitativeTrustInstruction()}`;
 
     const prompt = `
-Generate executive command center strategic intelligence for:
-- Organization: ${assessment.organizationName || assessment.organization_name || 'Enterprise'}
-- Industry: ${assessment.industry || 'Enterprise'}
-- Overall Maturity Score: ${Number(customerScore).toFixed(1)}/5.0
+Create executive command-center intelligence from these inputs only:
+${JSON.stringify({
+      organization: assessment?.organizationName || assessment?.organization_name || 'Enterprise',
+      industry: assessment?.industry || 'Industry not specified',
+      customerScore,
+      pillarScores,
+      prioritizedActions
+    }, null, 2)}
 
-PILLAR SCORES:
-${pillarDetails}
-
-Generate a valid JSON object with the following structure:
+Return only JSON with:
 {
   "strategicImperatives": [
     {
-      "id": "imp-1",
-      "title": "<Strategic Imperative Title>",
-      "description": "<Executive narrative on why this matters>",
-      "targetPillar": "<Pillar Name>",
-      "priority": "Critical|High|Medium",
-      "estimatedImpact": "<Quantified impact e.g. 35% reduction in data latency>",
-      "timeline": "Q1-Q2 2026"
+      "id":"imp-1",
+      "title":"...",
+      "description":"...",
+      "targetPillar":"...",
+      "priority":"Critical|High|Medium",
+      "estimatedImpact":"Requires customer baseline and KPI definition before quantification",
+      "timeline":"Sequence recommendation, not a guaranteed delivery date"
     }
   ],
   "transformationRoadmap": [
     {
-      "phase": "Phase 1: Foundation & Governance Alignment",
-      "timeframe": "Months 1-3",
-      "keyMilestones": ["<Milestone 1>", "<Milestone 2>", "<Milestone 3>"],
-      "expectedROI": "<e.g. 20% infrastructure cost optimization>"
-    },
-    {
-      "phase": "Phase 2: Automated Pipelines & Analytics Modernization",
-      "timeframe": "Months 4-6",
-      "keyMilestones": ["<Milestone 1>", "<Milestone 2>", "<Milestone 3>"],
-      "expectedROI": "<e.g. 3x faster time-to-insight>"
-    },
-    {
-      "phase": "Phase 3: Governed Enterprise GenAI & Multi-Agent Scale",
-      "timeframe": "Months 7-12",
-      "keyMilestones": ["<Milestone 1>", "<Milestone 2>", "<Milestone 3>"],
-      "expectedROI": "<e.g. 40% analyst productivity gains>"
+      "phase":"Foundation|Modernization|Scale",
+      "timeframe":"Planning horizon",
+      "keyMilestones":["..."],
+      "expectedROI":"Requires customer baseline costs and explicit scenario assumptions"
     }
   ],
   "riskGovernanceScorecard": [
-    {
-      "category": "Data Security & Compliance",
-      "riskLevel": "Low|Medium|High",
-      "mitigation": "<Vendor-neutral architecture control>"
-    },
-    {
-      "category": "GenAI Model Safety & Hallucination",
-      "riskLevel": "Low|Medium|High",
-      "mitigation": "<Automated guardrails and evaluation frameworks>"
-    },
-    {
-      "category": "Cost & Resource Overruns (FinOps)",
-      "riskLevel": "Low|Medium|High",
-      "mitigation": "<Automated tagging, predictive budgeting, and cluster policies>"
-    }
+    {"category":"...","riskLevel":"Low|Medium|High","mitigation":"..."}
   ]
 }
-Return ONLY valid JSON.`;
+Do not introduce new percentages, dollar amounts, multipliers, ROI or market statistics.`;
 
-    try {
-      const result = await this._generateWithFallback(prompt, systemInstruction, 0.4);
-      const jsonMatch = result.text.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-    } catch (err) {
-      console.warn('⚠️ Gemini command center synthesis failed, using fallback:', err.message);
-    }
-    return null;
+    const generated = await this.generateJSON(prompt, systemInstruction, 0.35);
+    if (!generated) return null;
+    return provenance.sanitizeGeneratedNarrative(generated, { externalSources: [], allowAssessmentNumbers: true });
   }
 
-  /**
-   * Generate comprehensive Industry Benchmarking report
-   */
-  async generateIndustryBenchmarkReport(industry, assessment, customerScore, pillarScores, painPoints = []) {
-    if (!this.isAvailable()) {
-      return null;
+  async generateIndustryBenchmarkReport(...args) {
+    if (!this.isAvailable()) return null;
+
+    let context;
+    if (args.length === 1 && args[0] && typeof args[0] === 'object' && args[0].pillarScores) {
+      context = args[0];
+    } else {
+      const [industry, assessment, overallScore, pillarScores, painPoints = []] = args;
+      context = { industry, assessment, overallScore, pillarScores, painPoints };
     }
 
-    const systemInstruction = `You are a Senior Enterprise Strategy and Industry Benchmarking Consultant. Generate executive-ready, board-level, data-driven, and completely vendor-neutral competitive intelligence and market analysis. Return ONLY a valid JSON object matching the requested schema.`;
+    const externalSources = provenance.normalizeSources(context.externalSources || []);
+    const externalBenchmarkVerified = context.externalBenchmarkVerified === true && externalSources.length > 0;
 
-    const pillarDetails = Object.entries(pillarScores || {})
-      .map(([k, v]) => `- ${v.name || k}: Current ${v.score || v.currentScore || 0}/5.0 (Target: ${v.targetScore || v.futureScore || 5.0})`)
-      .join('\n');
-
-    const topPainPoints = Array.isArray(painPoints)
-      ? painPoints.slice(0, 5).map(p => `- ${p.label || p.value || p}`).join('\n')
-      : 'Standard industry operational challenges';
+    const systemInstruction = `You are an enterprise strategy advisor preparing assessment-relative positioning.
+${this.quantitativeTrustInstruction()}
+Return qualitative industry context only unless a verified source record is explicitly present.`;
 
     const prompt = `
-Create a comprehensive industry benchmarking report for a ${industry} organization.
+Create an assessment-positioning narrative from:
+${JSON.stringify({
+      industry: context.industry || context.assessment?.industry || 'Industry not specified',
+      organization: context.assessment?.organizationName || context.assessment?.organization_name || 'Enterprise',
+      overallScore: context.overallScore,
+      pillarScores: context.pillarScores || {},
+      painPoints: context.painPoints || [],
+      externalSources: externalBenchmarkVerified ? externalSources : []
+    }, null, 2)}
 
-CLIENT PROFILE:
-- Industry: ${industry}
-- Organization: ${assessment.organizationName || assessment.organization_name || 'Enterprise Client'}
-- Overall Data & AI Platform Maturity: ${Number(customerScore).toFixed(1)}/5.0
-- Assessment Date: ${new Date().toLocaleDateString()}
-
-DETAILED PILLAR SCORES:
-${pillarDetails}
-
-TOP BUSINESS CHALLENGES:
-${topPainPoints}
-
-DELIVERABLE: Generate a professional executive benchmarking report structured as a valid JSON object:
+Return only JSON:
 {
   "executiveSummary": {
-    "headline": "<One powerful sentence summarizing competitive position in ${industry}>",
-    "keyFindings": [
-      "<3-4 critical findings that matter to C-suite and Board>",
-      "<Include specific percentiles and competitive gaps>",
-      "<Highlight both architectural strengths and urgent modernization priorities>"
-    ],
-    "marketContext": "<2-3 sentences on ${industry} market dynamics and modern data & AI maturity trends>"
-  },
-  "competitivePositioning": {
-    "overallRanking": {
-      "percentile": <Number 5-95 based on ${customerScore}>,
-      "tier": "<Market Leader|Fast Follower|Industry Average|Developing>",
-      "peerGroup": "Mid-to-large ${industry} organizations",
-      "versusBenchmark": "<Comparison vs ${industry} median and top quartile>"
-    },
-    "tierBreakdown": {
-      "Market Leaders (Top 10%)": "4.2+ maturity score",
-      "Fast Followers (Top 25%)": "3.6-4.1 maturity score",
-      "Industry Average": "2.9-3.5 maturity score",
-      "Developing": "Below 2.9 maturity score",
-      "Your Position": "${Number(customerScore).toFixed(1)}"
-    }
+    "headline":"assessment-grounded statement",
+    "keyFindings":["assessment-grounded finding"],
+    "marketContext":"qualitative context; state that verified peer data is required for statistics"
   },
   "competitiveIntelligence": {
-    "strengths": [
-      {
-        "area": "<Pillar or Capability Area>",
-        "evidence": "<Percentile and score evidence>",
-        "competitiveAdvantage": "<Market advantage description>",
-        "recommendation": "<How to leverage this advantage>"
-      }
-    ],
-    "vulnerabilities": [
-      {
-        "area": "<Pillar or Capability Area>",
-        "evidence": "<Gap evidence>",
-        "businessRisk": "<Risk to organization>",
-        "competitorAdvantage": "<What competitors do faster>",
-        "remediation": "<Remediation step>"
-      }
-    ],
-    "whiteSpace": [
-      {
-        "opportunity": "Generative AI & Agentic Workflows",
-        "marketReadiness": "35% of industry peers in production",
-        "competitiveWindow": "12-18 months before market saturation",
-        "potentialImpact": "25-40% productivity acceleration across analytics and engineering"
-      }
-    ]
+    "strengths":[{"area":"...","evidence":"assessment score/gap only","recommendation":"..."}],
+    "vulnerabilities":[{"area":"...","evidence":"assessment score/gap only","remediation":"..."}],
+    "whiteSpace":[{"opportunity":"...","note":"validate business value with customer baselines"}]
   },
-  "industryTrends": [
-    {
-      "trend": "${industry} enterprises accelerating unified catalog and automated data governance",
-      "impact": "High",
-      "relevance": "Regulatory compliance and data democratization"
-    },
-    {
-      "trend": "Serverless query execution and declarative data pipelines lowering TCO by 30%",
-      "impact": "High",
-      "relevance": "Operational cost efficiency and elasticity"
-    },
-    {
-      "trend": "Enterprise GenAI moving from standalone chatbots to governed multi-agent systems",
-      "impact": "Very High",
-      "relevance": "Business workflow automation"
-    }
-  ],
+  "industryTrends":[{"trend":"qualitative trend hypothesis","impact":"Validate with current cited source","relevance":"..."}],
   "strategicRecommendations": {
-    "immediate": [
-      {
-        "action": "<High priority action for Months 0-3>",
-        "rationale": "<Strategic rationale>",
-        "impact": "<Quantified impact>",
-        "effort": "Medium|High",
-        "timeframe": "0-3 months"
-      }
-    ],
-    "shortTerm": [
-      {
-        "action": "<Strategic action for Months 3-6>",
-        "rationale": "<Strategic rationale>",
-        "impact": "<Quantified impact>",
-        "effort": "Medium",
-        "timeframe": "3-6 months"
-      }
-    ],
-    "longTerm": [
-      {
-        "action": "<Transformative action for Months 6-12>",
-        "rationale": "<Strategic rationale>",
-        "impact": "<Quantified impact>",
-        "effort": "High",
-        "timeframe": "6-12 months"
-      }
-    ]
-  },
-  "methodology": {
-    "dataSource": "ScoreX Global Industry Benchmarking Repository, Gartner Data & Analytics Research, Forrester Wave Analysis",
-    "sampleSize": 284,
-    "industryScope": "${industry} enterprises (global coverage)",
-    "assessmentCriteria": "Six-pillar vendor-neutral maturity framework (Platform & Governance, Data Engineering, Analytics & BI, Machine Learning, Generative AI, Operational Excellence)",
-    "benchmarkingPeriod": "2025-2026",
-    "lastUpdated": "${new Date().toLocaleDateString()}",
-    "confidenceLevel": "95%"
+    "immediate":[{"action":"...","rationale":"...","impact":"Requires baseline/KPI before quantification"}],
+    "shortTerm":[{"action":"...","rationale":"...","impact":"Requires baseline/KPI before quantification"}],
+    "longTerm":[{"action":"...","rationale":"...","impact":"Requires baseline/KPI before quantification"}]
   }
-}
-Return ONLY valid JSON.`;
+}`;
 
-    try {
-      const result = await this._generateWithFallback(prompt, systemInstruction, 0.4);
-      const jsonMatch = result.text.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-    } catch (err) {
-      console.warn('⚠️ Gemini industry benchmark generation failed, using fallback:', err.message);
-    }
-    return null;
+    const generated = await this.generateJSON(prompt, systemInstruction, 0.35);
+    if (!generated) return null;
+    return provenance.sanitizeBenchmarkReport(generated, {
+      ...context,
+      externalSources,
+      externalBenchmarkVerified
+    });
   }
 
-  /**
-   * Generic structured JSON generation with Gemini
-   */
   async generateJSON(prompt, systemInstruction = '', temperature = 0.4) {
-    if (!this.isAvailable()) {
-      return null;
-    }
-
+    if (!this.isAvailable()) return null;
     try {
       const result = await this._generateWithFallback(
-        prompt + '\n\nIMPORTANT: Output ONLY pure valid JSON.',
+        `${prompt}\n\nIMPORTANT: Output ONLY pure valid JSON.`,
         systemInstruction,
         temperature,
         'application/json'
       );
-      if (result && result.text) {
-        try {
-          return JSON.parse(result.text);
-        } catch (e) {
-          const jsonMatch = result.text.match(/\{[\s\S]*\}/);
-          if (jsonMatch) return JSON.parse(jsonMatch[0]);
-        }
+      if (!result?.text) return null;
+      try {
+        return JSON.parse(result.text);
+      } catch (_) {
+        const jsonMatch = result.text.match(/\{[\s\S]*\}/);
+        return jsonMatch ? JSON.parse(jsonMatch[0]) : null;
       }
-    } catch (err) {
-      console.warn('⚠️ Gemini generateJSON notice:', err.message);
+    } catch (error) {
+      console.warn('Gemini generateJSON notice:', error.message);
+      return null;
     }
-    return null;
   }
 }
 
 module.exports = new GeminiService();
-

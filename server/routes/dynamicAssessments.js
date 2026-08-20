@@ -3,6 +3,7 @@ const router = express.Router();
 const coreRouter = require('./dynamicAssessmentsCore');
 const customAssessmentRepo = require('../db/customAssessmentRepository');
 const dynamicEngine = require('../services/dynamicAssessmentEngine');
+const provenance = require('../services/provenanceService');
 const { requireAuth, canAccessResource } = require('../middleware/auth');
 
 /**
@@ -51,6 +52,61 @@ function sanitizeInstance(instance) {
 function userOwnsInstance(user, instance) {
   if (isAdmin(user)) return true;
   return canAccessResource(user, instance, ['createdBy', 'created_by', 'ownerId', 'owner_id', 'userId', 'user_id']);
+}
+
+function average(values = []) {
+  const valid = values.map((value) => Number(value)).filter(Number.isFinite);
+  if (!valid.length) return null;
+  return provenance.round(valid.reduce((sum, value) => sum + value, 0) / valid.length, 2);
+}
+
+function buildDimensionPositioning(instance) {
+  const framework = instance.frameworkSnapshot || {};
+  const responses = instance.responses || {};
+  const scores = instance.scores || {};
+
+  return (framework.dimensions || []).map((dimension) => {
+    const scoreRecord = scores[dimension.id];
+    const currentScore = provenance.asFiniteNumber(
+      typeof scoreRecord === 'object' ? (scoreRecord.score ?? scoreRecord.currentScore) : scoreRecord
+    );
+    const targetScore = average(
+      (dimension.questions || []).map((question) => responses[`${question.id}_future_state`])
+    );
+    const gapToTarget = currentScore !== null && targetScore !== null
+      ? provenance.round(targetScore - currentScore, 2)
+      : null;
+
+    let status = 'Target not supplied';
+    if (gapToTarget !== null) {
+      if (gapToTarget <= 0) status = 'At or above stated target';
+      else if (gapToTarget <= 0.5) status = 'Near stated target';
+      else if (gapToTarget <= 1.25) status = 'Moderate target gap';
+      else status = 'Priority target gap';
+    }
+
+    return {
+      dimensionId: dimension.id,
+      dimension: dimension.name || dimension.id,
+      currentScore,
+      targetScore,
+      gapToTarget,
+      status,
+      industryMedian: null,
+      industryAverage: null,
+      topQuartile: null,
+      top10: null,
+      percentileRank: null,
+      deltaVsMedian: null,
+      provenance: {
+        currentScore: provenance.assessmentClaim(currentScore, 'Current dimension maturity score'),
+        targetScore: targetScore === null
+          ? provenance.unverifiedClaim('Target dimension maturity score', 'Target not supplied')
+          : provenance.assessmentClaim(targetScore, 'Average stated future-state score'),
+        peerStatistics: provenance.unverifiedClaim('External peer benchmark')
+      }
+    };
+  });
 }
 
 // Demo/consumer framework generation is intentionally ephemeral: no shared catalog write.
@@ -262,6 +318,49 @@ router.use('/instances/:id', async (req, res, next) => {
     console.error('[DynamicSecurity] Ownership check failed:', error.message);
     return res.status(500).json({ success: false, error: 'Unable to validate assessment access' });
   }
+});
+
+// Evidence-first replacement for the legacy synthetic peer benchmark route.
+router.get('/instances/:id/benchmarks', (req, res) => {
+  const instance = req.dynamicAssessmentInstance;
+  const dimensions = buildDimensionPositioning(instance);
+  const currentScores = dimensions.map((dimension) => dimension.currentScore).filter(Number.isFinite);
+  const targetScores = dimensions.map((dimension) => dimension.targetScore).filter(Number.isFinite);
+  const overallCurrent = currentScores.length ? average(currentScores) : provenance.asFiniteNumber(instance.totalScore);
+  const overallTarget = targetScores.length ? average(targetScores) : null;
+  const gapToTarget = overallCurrent !== null && overallTarget !== null
+    ? provenance.round(overallTarget - overallCurrent, 2)
+    : null;
+
+  return res.json({
+    success: true,
+    reportType: 'assessment-positioning',
+    industry: req.query.industry || instance.frameworkSnapshot?.industry || 'Industry not specified',
+    percentile: null,
+    competitiveTier: 'Assessment-only view',
+    targetBench: null,
+    overallCurrent,
+    overallTarget,
+    gapToTarget,
+    dimensionBenchmarks: dimensions,
+    methodology: {
+      mode: 'assessment-relative',
+      dataSource: 'ScoreX assessment responses and scoring framework',
+      externalBenchmarkDataset: null,
+      sampleSize: null,
+      confidenceLevel: null,
+      disclaimer: provenance.EXTERNAL_DATA_DISCLAIMER,
+      claimPolicy: 'provenance-v1'
+    },
+    provenance: {
+      policy: 'provenance-v1',
+      overallCurrent: provenance.assessmentClaim(overallCurrent, 'Assessment maturity score'),
+      overallTarget: overallTarget === null
+        ? provenance.unverifiedClaim('Stated target maturity score', 'Target not supplied')
+        : provenance.assessmentClaim(overallTarget, 'Average stated target maturity score'),
+      peerStatistics: provenance.unverifiedClaim('External peer benchmark')
+    }
+  });
 });
 
 // Prevent limited roles from invoking unknown global mutation endpoints that could change shared state.
