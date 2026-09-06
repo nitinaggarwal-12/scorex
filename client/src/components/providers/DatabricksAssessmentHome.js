@@ -1,5 +1,6 @@
 import React from 'react';
 import ProviderHomeShell, {
+  PROVIDER_ACCENT,
   Section, SectionTitle, Card, CardTitle, CardBody, GapNotice
 } from './ProviderHomeShell';
 
@@ -15,7 +16,7 @@ export default function DatabricksAssessmentHome() {
     <ProviderHomeShell
       providerId="databricks"
       eyebrow="Databricks"
-      accent="#ff3621"
+      accent={PROVIDER_ACCENT}
       title="Databricks Assessment"
       lede={
         'Assess data and AI maturity and map the results to Databricks capabilities. '

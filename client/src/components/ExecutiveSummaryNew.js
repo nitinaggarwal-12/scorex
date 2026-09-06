@@ -630,10 +630,10 @@ const ExecutiveSummaryNew = () => {
           const constraintsSection = dynamicSummary.match(/## CRITICAL CONSTRAINTS([\s\S]*?)## TRANSFORMATION ROADMAP/)?.[1] || 
             'Your assessment identified specific challenges that limit platform capabilities, team productivity, and business agility.';
           
-          // Extract transformation roadmap from prioritizedActions with Databricks features
+          // Extract transformation roadmap from prioritizedActions with provider capabilities
           const transformationRoadmap = (data.prioritizedActions || []).map(action => {
             const pillarName = action.pillar || action.pillarId || action.area || 'Unknown';
-            const databricksFeatures = action.databricksFeatures || [];
+            const capabilities = action.capabilities || [];
             const quickWins = action.quickWins || action.specificRecommendations || [];
             
             return {
@@ -647,8 +647,8 @@ const ExecutiveSummaryNew = () => {
                 ? action.recommendations.slice(0, 3).map(r => typeof r === 'string' ? r : (r.title || r.name || r.action || ''))
                 : (action.actions && action.actions.length > 0)
                 ? action.actions.slice(0, 3).map(a => typeof a === 'string' ? a : (a.title || a.name || ''))
-                : databricksFeatures.slice(0, 3).map(f => f.name || f.title || f),
-              databricksFeatures: databricksFeatures,
+                : capabilities.slice(0, 3).map(f => f.name || f.title || f),
+              capabilities: capabilities,
               quickWins: quickWins
             };
           });
@@ -904,8 +904,8 @@ const ExecutiveSummaryNew = () => {
         ? action.recommendations.slice(0, 3).map(r => typeof r === 'string' ? r : (r.title || r.name || r.action || ''))
         : (action.actions && action.actions.length > 0)
         ? action.actions.slice(0, 3).map(a => typeof a === 'string' ? a : (a.title || a.name || ''))
-        : (action.databricksFeatures || []).slice(0, 3).map(f => f.name || f.title || f),
-      databricksFeatures: action.databricksFeatures || [],
+        : (action.capabilities || []).slice(0, 3).map(f => f.name || f.title || f),
+      capabilities: action.capabilities || [],
       quickWins: action.quickWins || []
     };
   });
@@ -1008,12 +1008,12 @@ const ExecutiveSummaryNew = () => {
                     // Re-extract dynamic content from fresh results
                     console.log('[ExecutiveSummaryNew] Re-initializing with fresh dynamic content');
                     
-                    // Extract transformation roadmap with Databricks features
+                    // Extract transformation roadmap with provider capabilities
                     const roadmapItems = [];
                     if (data.prioritizedActions && Array.isArray(data.prioritizedActions)) {
                       data.prioritizedActions.forEach((action) => {
                         const pillarName = action.pillar || action.pillarId || action.area || 'Unknown';
-                        const databricksFeatures = action.databricksFeatures || [];
+                        const capabilities = action.capabilities || [];
                         const quickWins = action.quickWins || action.specificRecommendations || [];
                         
                         roadmapItems.push({
@@ -1027,8 +1027,8 @@ const ExecutiveSummaryNew = () => {
                             ? action.recommendations.slice(0, 3).map(r => typeof r === 'string' ? r : (r.title || r.name || r.action || ''))
                             : (action.actions && action.actions.length > 0)
                             ? action.actions.slice(0, 3).map(a => typeof a === 'string' ? a : (a.title || a.name || ''))
-                            : databricksFeatures.slice(0, 3).map(f => f.name || f.title || f),
-                          databricksFeatures: databricksFeatures,
+                            : capabilities.slice(0, 3).map(f => f.name || f.title || f),
+                          capabilities: capabilities,
                           quickWins: quickWins
                         });
                       });

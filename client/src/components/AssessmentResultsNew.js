@@ -2089,11 +2089,11 @@ const AssessmentResultsNew = () => {
     const currentData = getPillarData(pillarId);
     console.log('[Edit] Fresh pillar data:', currentData);
     
-    // Format Databricks recommendations for editing
+    // Format capability recommendations for editing
     let recommendationsText = '';
-    if (currentData.databricksFeatures && currentData.databricksFeatures.length > 0) {
-      // If we have Databricks features, show them with their full details
-      recommendationsText = currentData.databricksFeatures.map(feature => {
+    if (currentData.capabilities && currentData.capabilities.length > 0) {
+      // If we have capabilities, show them with their full details
+      recommendationsText = currentData.capabilities.map(feature => {
         let text = `${feature.name}`;
         if (feature.description) {
           text += ` - ${feature.description}`;
@@ -3237,7 +3237,10 @@ const AssessmentResultsNew = () => {
       }));
     }
     
-    // Fallback to default if API doesn't return roadmap
+    // Fallback when the API returns no roadmap. These phases are generic
+    // sequencing, not derived from this customer's answers and not vendor-specific.
+    // Keep them vendor-neutral: naming a product here would put one vendor's SKUs
+    // into every other vendor's report.
     console.log('[AssessmentResultsNew] No API roadmap, using default phases');
     return [
       {
@@ -3245,7 +3248,7 @@ const AssessmentResultsNew = () => {
         title: 'Phase 1: Foundation (0–3 months)',
         ...phaseColors.phase1,
         items: customizations.phases.phase1 || [
-          'Implement Unity Catalog with initial RBAC roles',
+          'Establish centralized governance with role-based access control',
           'Establish data quality monitoring and observability',
           'Launch initial governance enablement sessions'
         ]
@@ -3255,8 +3258,8 @@ const AssessmentResultsNew = () => {
         title: 'Phase 2: Scale (3–6 months)',
         ...phaseColors.phase2,
         items: customizations.phases.phase2 || [
-          'Automate pipeline reliability tracking via DLT',
-          'Integrate ML flow metrics with centralized dashboards',
+          'Automate pipeline reliability tracking with declarative pipelines',
+          'Integrate model lifecycle metrics with centralized dashboards',
           'Deploy first GenAI-enabled use case under governance'
         ]
       },
@@ -3267,7 +3270,7 @@ const AssessmentResultsNew = () => {
         items: customizations.phases.phase3 || [
           'Formalize MLOps CI/CD for model deployment',
           'Expand GenAI use cases with RAG implementation',
-          'Align data mesh principles with Unity Catalog'
+          'Align data mesh principles with the central catalog'
         ]
       }
     ];
@@ -3307,17 +3310,19 @@ const AssessmentResultsNew = () => {
       : null;
     console.log(`[AssessmentResultsNew] prioritized for ${pillarId}:`, prioritized);
     if (prioritized) {
-      console.log(`[AssessmentResultsNew] Found prioritized data with databricksFeatures:`, prioritized.databricksFeatures?.length || 0);
+      console.log(`[AssessmentResultsNew] Found prioritized data with capabilities:`, prioritized.capabilities?.length || 0);
     }
 
     // FIX: Backend returns theGood/theBad in prioritizedActions array
     // prioritizedActions is the source of truth for pillar-specific good/bad/recommendations
-    // NEW: Also includes databricksFeatures, quickWins, specificRecommendations
-    const databricksFeatures = prioritized?.databricksFeatures || [];
+    // NEW: Also includes capabilities, quickWins, specificRecommendations
+    // Accept the legacy field so assessments persisted before the provider split
+    // keep rendering. Layout is identical either way; only the source differs.
+    const capabilities = prioritized?.capabilities || prioritized?.databricksFeatures || [];
     const actions = prioritized?.actions || [];
     
-    // Combine recommendations: prioritize databricksFeatures, then fall back to actions
-    const combinedRecommendations = databricksFeatures.length > 0 ? databricksFeatures : actions;
+    // Combine recommendations: prioritize capabilities, then fall back to actions
+    const combinedRecommendations = capabilities.length > 0 ? capabilities : actions;
     
     // Combine nextSteps: prioritize specificRecommendations, then fall back to generic nextSteps
     const specificRecs = prioritized?.specificRecommendations || [];
@@ -3329,23 +3334,23 @@ const AssessmentResultsNew = () => {
       theBad: prioritized?.theBad || [],    // Direct access from prioritizedActions
       recommendations: combinedRecommendations,  // Combined recommendations
       nextSteps: combinedNextSteps,  // Combined next steps
-      // NEW: Databricks-specific features
-      databricksFeatures: databricksFeatures,
+      // NEW: Provider capabilities
+      capabilities: capabilities,
       quickWins: prioritized?.quickWins || [],
       strategicMoves: prioritized?.strategicMoves || [],
       specificRecommendations: specificRecs,
       nextLevelFeatures: prioritized?.nextLevelFeatures || [],
-      databricksSource: prioritized?._source || null,
-      databricksDocsUrl: prioritized?._docsUrl || null
+      capabilitySource: prioritized?._source || null,
+      capabilityDocsUrl: prioritized?._docsUrl || null
     };
     
     console.log(`[AssessmentResultsNew] Final data for ${pillarId}:`, data);
-    console.log(`[AssessmentResultsNew] Databricks features for ${pillarId}:`, data.databricksFeatures?.length || 0);
+    console.log(`[AssessmentResultsNew] Capabilities for ${pillarId}:`, data.capabilities?.length || 0);
     console.log(`[AssessmentResultsNew] Recommendations for ${pillarId}:`, data.recommendations?.length || 0);
     console.log(`[AssessmentResultsNew] Sample recommendations:`, data.recommendations?.slice(0, 2));
     
     // Check if recommendations are personalized or generic
-    if (data.recommendations.length === 0 && data.databricksFeatures.length === 0) {
+    if (data.recommendations.length === 0 && data.capabilities.length === 0) {
       console.warn(`⚠️ [${pillarId}] NO RECOMMENDATIONS FOUND! This assessment may not have been fully completed or needs to be refreshed.`);
       console.warn(`⚠️ [${pillarId}] Click the green "Refresh" button to regenerate personalized recommendations based on your assessment data.`);
     } else if (data.recommendations.length > 0) {
@@ -4981,7 +4986,7 @@ const AssessmentResultsNew = () => {
                       </div>
                     </PillarTopRow>
 
-                    {/* Full Width: Databricks Recommendations */}
+                    {/* Full Width: Capability Recommendations */}
                     <PillarFullWidth style={{
                       background: customizations.cardColors[`features-${pillar.id}`]?.bg || '#ffffff',
                       border: `2px solid ${customizations.cardColors[`features-${pillar.id}`]?.border || '#e5e7eb'}`
@@ -5062,7 +5067,7 @@ const AssessmentResultsNew = () => {
                         </button>
                       </div>
                     </div>
-                    {data.databricksFeatures && data.databricksFeatures.length > 0 ? (
+                    {data.capabilities && data.capabilities.length > 0 ? (
                       <div>
                         {/* Features Grid */}
                         <div style={{ 
@@ -5071,7 +5076,7 @@ const AssessmentResultsNew = () => {
                           gap: '16px',
                           marginBottom: '20px'
                         }}>
-                          {data.databricksFeatures.slice(0, 8).map((feature, idx) => {
+                          {data.capabilities.slice(0, 8).map((feature, idx) => {
                             const featureKey = `${pillar.id}-feature-${idx}`;
                             const isEditing = editingFeature === featureKey;
                             const displayFeature = customizations.features[featureKey] !== undefined 
@@ -5426,7 +5431,7 @@ const AssessmentResultsNew = () => {
                                   ...editedContent,
                                   [`new-feature-${pillar.id}-name`]: e.target.value
                                 })}
-                                placeholder="Feature name (e.g., Unity Catalog)"
+                                placeholder="Capability name"
                                 style={{
                                   fontWeight: 700,
                                   fontSize: '0.95rem',
@@ -5517,7 +5522,7 @@ const AssessmentResultsNew = () => {
                         )}
                       </ul>
                     )}
-                    {data.databricksSource && (
+                    {data.capabilitySource && (
                       <div style={{ marginTop: '12px', paddingTop: '8px', borderTop: '1px solid #e5e7eb', fontSize: '0.7rem', color: '#9ca3af', fontStyle: 'italic' }}>
                         Source: Enterprise Cloud & AI Architecture Reference Framework
                       </div>
@@ -6607,7 +6612,7 @@ const AssessmentResultsNew = () => {
                       ...pillarDef,
                       score: score,
                       maturityLevel: getMaturityLevel(score),
-                      recommendations: pillarData?.databricksFeatures || pillarData?.recommendations || [],
+                      recommendations: pillarData?.capabilities || pillarData?.recommendations || [],
                       good: pillarData?.theGood || [],
                       bad: pillarData?.theBad || [],
                       nextSteps: pillarData?.specificRecommendations || pillarData?.nextSteps || []

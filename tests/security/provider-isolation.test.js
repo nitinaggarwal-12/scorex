@@ -68,9 +68,11 @@ test('covered pillars return capabilities that each cite a source', () => {
     const result = gcp.recommendationsForPillar(pillar, { painPoints: ['governance'] });
     assert.equal(result.covered, true);
     assert.ok(result.capabilities.length > 0);
+    // Capabilities are emitted through the shared shape, so the source surfaces
+    // as docs + releaseDate rather than a nested source object.
     for (const capability of result.capabilities) {
-      assert.match(capability.source.url, /^https:\/\/(docs\.)?cloud\.google\.com\//);
-      assert.match(capability.source.verifiedAt, /^\d{4}-\d{2}-\d{2}$/);
+      assert.match(capability.docs, /^https:\/\/(docs\.)?cloud\.google\.com\//);
+      assert.match(capability.releaseDate, /^\d{4}-\d{2}-\d{2}$/);
     }
   }
 });

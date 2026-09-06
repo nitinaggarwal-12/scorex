@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ProviderHomeShell, {
+  PROVIDER_ACCENT,
   Section, SectionTitle, Card, CardTitle, CardBody, FormerName, SourceLine, GapNotice
 } from './ProviderHomeShell';
 
@@ -32,7 +33,7 @@ export default function GcpAssessmentHome() {
     <ProviderHomeShell
       providerId="gcp"
       eyebrow="Google Cloud"
-      accent="#1a73e8"
+      accent={PROVIDER_ACCENT}
       title="Google Cloud Assessment"
       lede={
         'Assess data and AI maturity and map the results to Google Cloud capabilities. '

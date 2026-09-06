@@ -10,6 +10,13 @@ import styled from 'styled-components';
  * content lives in this file.
  */
 
+/**
+ * One accent for every vendor. The questionnaire and report are a single shared
+ * design; per-vendor colours would make two products out of one and would leak
+ * vendor identity into a layout that is meant to be identical everywhere.
+ */
+export const PROVIDER_ACCENT = '#334155';
+
 const Page = styled.div`
   max-width: 1080px;
   margin: 0 auto;

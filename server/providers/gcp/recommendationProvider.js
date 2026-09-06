@@ -9,6 +9,7 @@
 
 const catalog = require('./capabilityCatalog');
 const provenance = require('../../services/provenanceService');
+const { normalizeCapabilities } = require('../capabilityShape');
 
 const PROVIDER_ID = 'gcp';
 const DISPLAY_NAME = 'Google Cloud';
@@ -42,7 +43,9 @@ function recommendationsForPillar(pillarId, { painPoints = [] } = {}) {
     pillar: pillarId,
     provider: PROVIDER_ID,
     covered: true,
-    capabilities: ranked.map(({ entry, matchedPainPoints }) => ({
+    // Normalized through the shared shape so the report renders GCP and Databricks
+    // results with the same components and the same template.
+    capabilities: normalizeCapabilities(ranked.map(({ entry, matchedPainPoints }) => ({
       id: entry.id,
       name: entry.name,
       formerlyKnownAs: entry.formerlyKnownAs || [],
@@ -53,7 +56,7 @@ function recommendationsForPillar(pillarId, { painPoints = [] } = {}) {
       }),
       matchedPainPoints,
       source: { url: entry.sourceUrl, verifiedAt: entry.verifiedAt }
-    }))
+    })))
   };
 }
 
