@@ -200,3 +200,9 @@ const ROICalculator = () => {
 };
 
 export default ROICalculator;
+
+// NOTE: this component is not currently reachable from any route — nothing imports
+// it. It is retained because tests/security/provenance.test.js asserts its financial
+// output is labelled as a user-supplied scenario rather than a maturity-derived fact.
+// Either wire it into a route or retire the component and its assertion together;
+// leaving it unreachable but test-guarded hides which of the two was intended.

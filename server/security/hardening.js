@@ -234,85 +234,10 @@ function isPublicApiPath(req) {
   return req.method === 'GET' && req.path === '/api/health';
 }
 
-function requestOrigin(req) {
-  const forwardedProto = String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim();
-  const protocol = forwardedProto || req.protocol || 'https';
-  return `${protocol}://${req.get('host')}`;
-}
 
-function safeHttpUrl(value) {
-  if (!value || typeof value !== 'string') return null;
-  try {
-    const parsed = new URL(value.trim());
-    if (!['http:', 'https:'].includes(parsed.protocol)) return null;
-    return parsed.origin;
-  } catch (_) {
-    return null;
-  }
-}
 
-function getBuildInfo(req) {
-  const branch = process.env.RAILWAY_GIT_BRANCH || process.env.SCOREX_GIT_BRANCH || 'local';
-  const commit = process.env.RAILWAY_GIT_COMMIT_SHA || process.env.SCOREX_GIT_COMMIT_SHA || '';
-  const environment = process.env.RAILWAY_ENVIRONMENT_NAME || process.env.NODE_ENV || 'local';
-  const railwayDomain = safeHttpUrl(
-    process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : ''
-  );
 
-  return {
-    service: 'scorex',
-    branch,
-    commit: commit ? commit.slice(0, 8) : null,
-    environment,
-    url: railwayDomain || requestOrigin(req)
-  };
-}
 
-function parseConfiguredBuildTargets() {
-  const raw = String(process.env.SCOREX_BUILD_TARGETS || '').trim();
-  if (!raw) return [];
-
-  let parsed;
-  try {
-    parsed = JSON.parse(raw);
-  } catch (_) {
-    console.warn('[BuildSwitcher] SCOREX_BUILD_TARGETS must be valid JSON');
-    return [];
-  }
-
-  if (!Array.isArray(parsed)) return [];
-
-  return parsed
-    .map((target) => {
-      const url = safeHttpUrl(target?.url);
-      const branch = String(target?.branch || '').trim();
-      if (!url || !branch) return null;
-      return {
-        label: String(target?.label || branch).trim().slice(0, 80),
-        branch: branch.slice(0, 160),
-        url
-      };
-    })
-    .filter(Boolean);
-}
-
-function getBuildTargets(req) {
-  const current = getBuildInfo(req);
-  const productionUrl = safeHttpUrl(process.env.SCOREX_MAIN_URL) || 'https://scorex.up.railway.app';
-  const targets = [
-    { label: 'Production', branch: 'main', url: productionUrl },
-    ...parseConfiguredBuildTargets(),
-    { label: current.branch === 'main' ? 'Production (current)' : 'Current preview', branch: current.branch, url: current.url }
-  ];
-
-  const seen = new Set();
-  return targets.filter((target) => {
-    const key = `${target.branch}|${target.url}`;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
-}
 
 function installRequestObservability(req, res) {
   const id = observability.requestId(req.headers['x-request-id']);
@@ -390,16 +315,6 @@ function installSecurity(app) {
           });
         }
 
-        // Safe, public deployment metadata used only by the landing-page build switcher.
-        // No secrets, Railway IDs, variables, or internal hostnames are returned.
-        if (req.method === 'GET' && req.path === '/build-info') {
-          return res.status(200).json(getBuildInfo(req));
-        }
-
-        if (req.method === 'GET' && req.path === '/build-targets') {
-          return res.status(200).json({ builds: getBuildTargets(req) });
-        }
-
         if (!validateApiContract(req, res)) return;
 
         if (req.path.startsWith('/api/') && !isPublicApiPath(req)) {
@@ -453,8 +368,6 @@ module.exports = {
   allowedOrigin,
   isAssessmentIdPath,
   isPublicApiPath,
-  getBuildInfo,
-  getBuildTargets,
   validateApiContract,
   installRequestObservability
 };
