@@ -87,6 +87,7 @@ app.use('/api/question-edits', questionEditsRoutes);
 app.use('/api/question-assignments', questionAssignmentsRoutes);
 app.use('/api/data-cleanup', dataCleanupRoutes);
 app.use('/api/genai-readiness', genaiReadinessRoutes);
+app.use('/api/providers', require('./routes/providers'));
 app.use('/api/dynamic-assessments', dynamicAssessmentsRoutes);
 app.use('/api/audio', audioRoutes);
 

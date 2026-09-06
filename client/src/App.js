@@ -132,6 +132,11 @@ class ChunkErrorBoundary extends React.Component {
 
 // Lazily loaded page components for optimal bundle splitting
 const HomePage = lazyWithRetry(() => import('./components/HomePageNew'));
+
+// Provider-scoped assessment homes. These are separate offerings: a page for one
+// vendor must never render capability content belonging to the other.
+const GcpAssessmentHome = lazyWithRetry(() => import('./components/providers/GcpAssessmentHome'));
+const DatabricksAssessmentHome = lazyWithRetry(() => import('./components/providers/DatabricksAssessmentHome'));
 const AssessmentStart = lazyWithRetry(() => import('./components/AssessmentStart'));
 const AssessmentQuestion = lazyWithRetry(() => import('./components/AssessmentQuestion'));
 const AssessmentResults = lazyWithRetry(() => import('./components/AssessmentResultsNew'));
@@ -482,6 +487,24 @@ function App() {
             } 
           />
           
+          <Route
+            path="/assessments/gcp"
+            element={
+              <ProtectedRoute>
+                <GcpAssessmentHome />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/assessments/databricks"
+            element={
+              <ProtectedRoute>
+                <DatabricksAssessmentHome />
+              </ProtectedRoute>
+            }
+          />
+
           <Route 
             path="/assessments/ai-generator" 
             element={
