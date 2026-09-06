@@ -23,6 +23,8 @@
  * Treat verifiedAt older than ~90 days as stale and re-check before a customer session.
  */
 
+const taxonomy = require('../../data/painPointTaxonomy');
+
 const STALE_AFTER_DAYS = 90;
 
 /**
@@ -46,7 +48,7 @@ const CAPABILITIES = Object.freeze([
     summary:
       'Unified governance and cataloguing layer across the Google Cloud data estate. Holds business, '
       + 'technical and runtime metadata, and applies AI to surface relationships and semantics.',
-    addressesPainPoints: ['poor_isolation', 'inconsistent_configs', 'governance', 'siloed'],
+    addressesPainPoints: ['governance_policy_gap', 'lineage_metadata_gap', 'data_silos', 'access_friction'],
     sourceUrl: 'https://docs.cloud.google.com/dataplex/docs',
     verifiedAt: '2026-09-06'
   },
@@ -57,7 +59,7 @@ const CAPABILITIES = Object.freeze([
     summary:
       'Scans data to identify sensitive information, tracks lineage, and monitors data quality. '
       + 'Metadata is schema-driven rather than free-text tags, which supports programmatic governance at scale.',
-    addressesPainPoints: ['governance', 'quality'],
+    addressesPainPoints: ['governance_policy_gap', 'data_quality', 'regulatory_compliance_risk'],
     sourceUrl: 'https://docs.cloud.google.com/dataplex/docs/faq',
     verifiedAt: '2026-09-06'
   },
@@ -68,7 +70,7 @@ const CAPABILITIES = Object.freeze([
     summary:
       'Packages curated collections of assets as governed data products with access groups mapped to '
       + 'IAM roles, and contracts stating refresh cadence and thresholds.',
-    addressesPainPoints: ['siloed', 'governance'],
+    addressesPainPoints: ['data_silos', 'access_friction', 'governance_policy_gap'],
     sourceUrl: 'https://docs.cloud.google.com/dataplex/docs/data-products-overview',
     verifiedAt: '2026-09-06'
   },
@@ -80,7 +82,7 @@ const CAPABILITIES = Object.freeze([
     summary:
       'Unified platform to build, deploy, govern and optimize enterprise AI agents, covering the AI '
       + 'lifecycle from foundation model access through deployment and management.',
-    addressesPainPoints: ['model', 'deployment'],
+    addressesPainPoints: ['genai_readiness_gap', 'model_lifecycle_gap', 'deployment_friction'],
     sourceUrl: 'https://docs.cloud.google.com/gemini-enterprise-agent-platform/overview',
     verifiedAt: '2026-09-06'
   },
@@ -91,7 +93,7 @@ const CAPABILITIES = Object.freeze([
     summary:
       'Modular, model-agnostic framework for building agents capable of complex reasoning and tool use. '
       + 'Code-first path for teams that have outgrown low-code prototyping.',
-    addressesPainPoints: ['deployment'],
+    addressesPainPoints: ['engineering_practice_gap', 'deployment_friction'],
     sourceUrl: 'https://docs.cloud.google.com/gemini-enterprise-agent-platform/overview',
     verifiedAt: '2026-09-06'
   },
@@ -102,7 +104,7 @@ const CAPABILITIES = Object.freeze([
     summary:
       'Low-code visual canvas for designing, prototyping and managing agent reasoning loops and '
       + 'workflows without writing code.',
-    addressesPainPoints: ['deployment'],
+    addressesPainPoints: ['engineering_practice_gap', 'deployment_friction'],
     sourceUrl: 'https://docs.cloud.google.com/gemini-enterprise-agent-platform/overview',
     verifiedAt: '2026-09-06'
   },
@@ -113,7 +115,7 @@ const CAPABILITIES = Object.freeze([
     summary:
       'Secures agent interactions and enforces runtime policies, helping protect against threats and '
       + 'supporting compliant operation. Pairs with Agent Identity for granular agent permissions.',
-    addressesPainPoints: ['governance', 'model'],
+    addressesPainPoints: ['ai_safety_evaluation_gap', 'security_access_control'],
     sourceUrl: 'https://docs.cloud.google.com/gemini-enterprise-agent-platform/overview',
     verifiedAt: '2026-09-06'
   }
@@ -144,6 +146,14 @@ function validateCatalog(entries = CAPABILITIES) {
 
     if (entry?.verifiedAt && !ISO_DATE.test(entry.verifiedAt)) {
       errors.push(`${label}: verifiedAt must be an ISO date (YYYY-MM-DD)`);
+    }
+
+    // Catalogs key off canonical technical pains only. A business impact is a
+    // consequence, not something a product resolves.
+    for (const code of entry?.addressesPainPoints || []) {
+      if (!taxonomy.isCanonicalTechnical(code)) {
+        errors.push(`${label}: "${code}" is not a canonical technical pain`);
+      }
     }
   });
 
