@@ -1,7 +1,52 @@
-// Databricks Maturity Assessment Recommendation Engine
-// Analyzes assessment results and provides tailored recommendations
+// Maturity Assessment Recommendation Engine
+// Analyzes assessment results and provides tailored recommendations.
+//
+// Provenance policy: this engine contains hand-authored narrative fragments that
+// historically carried unsourced third-party statistics (ROI multiples, industry
+// averages, regulatory fine amounts). All customer-visible prose produced here is
+// routed through provenanceService before it leaves the class, so any quantitative
+// claim without a declared source is neutralized rather than shipped as fact.
 
 const assessmentFramework = require('../data/assessmentFramework');
+const provenance = require('./provenanceService');
+
+// Sanitize prose line by line. The summary is a single multi-paragraph string;
+// sanitizing it whole would collapse every supported statement into one disclaimer,
+// so each line is evaluated independently.
+function sanitizeProse(value) {
+  if (typeof value === 'string') {
+    if (!value.includes('\n')) {
+      return provenance.neutralizeGeneratedText(value, { allowAssessmentNumbers: true });
+    }
+    // Neutralized lines all collapse to one of two fixed disclaimers. Emitting one per
+    // stripped claim produces a wall of identical boilerplate, so each distinct disclaimer
+    // is kept once and later repeats are dropped along with their blank line.
+    const seenDisclaimers = new Set();
+    const out = [];
+    for (const line of value.split('\n')) {
+      if (!line.trim()) {
+        if (out.length && out[out.length - 1].trim() === '') continue;
+        out.push(line);
+        continue;
+      }
+      const cleaned = provenance.neutralizeGeneratedText(line, { allowAssessmentNumbers: true });
+      const wasNeutralized = cleaned !== line;
+      if (wasNeutralized) {
+        if (seenDisclaimers.has(cleaned)) continue;
+        seenDisclaimers.add(cleaned);
+      }
+      out.push(cleaned);
+    }
+    return out.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+  }
+  if (Array.isArray(value)) return value.map(sanitizeProse);
+  if (value && typeof value === 'object') {
+    const out = {};
+    for (const [k, v] of Object.entries(value)) out[k] = sanitizeProse(v);
+    return out;
+  }
+  return value;
+}
 
 class RecommendationEngine {
   constructor() {
@@ -507,7 +552,7 @@ class RecommendationEngine {
     // Generate prioritized action list
     recommendations.prioritizedActions = this.generatePrioritizedActions(areaScores, responses);
 
-    return recommendations;
+    return sanitizeProse(recommendations);
   }
 
   // Generate overall assessment summary
@@ -887,7 +932,7 @@ class RecommendationEngine {
       summary += `\n\n**⚠️ Assessment Incomplete:** ${pendingPillars.length} pillar${pendingPillars.length > 1 ? 's' : ''} not yet evaluated. Complete all 6 pillars to uncover cross-functional dependencies and optimization opportunities that may not be visible in isolated pillar analysis.`;
     }
 
-    return summary;
+    return sanitizeProse(summary);
   }
   
   // Helper function to format pain points list
