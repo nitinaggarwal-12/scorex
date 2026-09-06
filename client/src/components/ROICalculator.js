@@ -1,873 +1,202 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import {
-  FiDollarSign,
-  FiTrendingUp,
-  FiUsers,
-  FiDatabase,
-  FiCpu,
-  FiDownload,
-  FiRefreshCw,
-  FiInfo,
-  FiCheckCircle,
-  FiEdit2,
-  FiTrash2,
-  FiPlus
-} from 'react-icons/fi';
-import toast from 'react-hot-toast';
-// jsPDF import removed - Download Business Case feature removed
+import { FiAlertCircle, FiDollarSign, FiInfo, FiRefreshCw, FiTrendingUp } from 'react-icons/fi';
 
-// =====================
-// STYLED COMPONENTS
-// =====================
-
-const CalculatorContainer = styled.div`
+const Container = styled.div`
   background: white;
+  border: 1px solid #e2e8f0;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  padding: 40px;
-  margin-bottom: 40px;
-
-  @media (max-width: 768px) {
-    padding: 24px;
-  }
-
-  /* 🖨️ PRINT: Keep entire component together */
-  @media print {
-    page-break-inside: avoid !important;
-    break-inside: avoid-page !important;
-    page-break-before: auto !important;
-    page-break-after: auto !important;
-    margin-bottom: 20px !important;
-    padding: 24px !important;
-    box-shadow: none !important;
-    border: 1px solid #e2e8f0 !important;
-  }
+  padding: 32px;
+  margin-bottom: 36px;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, .06);
+  @media (max-width: 720px) { padding: 20px; }
 `;
 
-const CalculatorHeader = styled.div`
-  margin-bottom: 32px;
-`;
-
-const CalculatorTitle = styled.h2`
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin: 0 0 8px 0;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-`;
-
-const CalculatorSubtitle = styled.p`
-  font-size: 1rem;
-  color: #64748b;
-  margin: 0;
-`;
-
-const AssumptionsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
-  margin-bottom: 32px;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const AssumptionCard = styled.div`
-  background: #f8fafc;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 20px;
-  transition: all 0.3s ease;
-
-  &:hover {
-    border-color: #3b82f6;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
-  }
-`;
-
-const AssumptionLabel = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #475569;
-  margin-bottom: 12px;
-`;
-
-const SliderContainer = styled.div`
-  margin-bottom: 8px;
-`;
-
-const Slider = styled.input`
-  width: 100%;
-  height: 6px;
-  border-radius: 3px;
-  background: linear-gradient(
-    to right,
-    #3b82f6 0%,
-    #3b82f6 ${props => props.$percentage}%,
-    #e2e8f0 ${props => props.$percentage}%,
-    #e2e8f0 100%
-  );
-  outline: none;
-  -webkit-appearance: none;
-
-  &::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #3b82f6;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
-    transition: all 0.2s ease;
-
-    &:hover {
-      transform: scale(1.2);
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.6);
-    }
-  }
-
-  &::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #3b82f6;
-    cursor: pointer;
-    border: none;
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
-    transition: all 0.2s ease;
-
-    &:hover {
-      transform: scale(1.2);
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.6);
-    }
-  }
-`;
-
-const SliderValue = styled.div`
+const Header = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  font-size: 0.875rem;
-  color: #64748b;
-  margin-top: 8px;
-
-  .current-value {
-    font-weight: 700;
-    color: #3b82f6;
-    font-size: 1rem;
-  }
-`;
-
-const ScenarioTabs = styled.div`
-  display: flex;
-  gap: 12px;
-  margin-bottom: 32px;
-  border-bottom: 2px solid #e2e8f0;
-`;
-
-const ScenarioTab = styled.button`
-  padding: 12px 24px;
-  border: none;
-  background: none;
-  font-size: 0.938rem;
-  font-weight: 600;
-  color: ${props => props.$active ? '#3b82f6' : '#64748b'};
-  border-bottom: 3px solid ${props => props.$active ? '#3b82f6' : 'transparent'};
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-bottom: -2px;
-
-  &:hover {
-    color: #3b82f6;
-  }
-`;
-
-const ResultsSection = styled(motion.div)`
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 16px;
-  padding: 32px;
-  color: white;
-  margin-bottom: 24px;
-`;
-
-const ResultsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
-  margin-bottom: 24px;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const ResultCard = styled.div`
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-`;
-
-const ResultLabel = styled.div`
-  font-size: 0.875rem;
-  font-weight: 600;
-  opacity: 0.9;
-  margin-bottom: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-`;
-
-const ResultValue = styled(motion.div)`
-  font-size: 2rem;
-  font-weight: 700;
-  font-family: 'JetBrains Mono', monospace;
-  margin-bottom: 8px;
-
-  @media (max-width: 768px) {
-    font-size: 1.5rem;
-  }
-`;
-
-const ResultBreakdown = styled.div`
-  font-size: 0.813rem;
-  opacity: 0.85;
-  line-height: 1.6;
-`;
-
-const TotalROICard = styled.div`
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 24px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  text-align: center;
-`;
-
-const TotalROILabel = styled.div`
-  font-size: 1rem;
-  font-weight: 600;
-  opacity: 0.9;
-  margin-bottom: 12px;
-`;
-
-const TotalROIValue = styled(motion.div)`
-  font-size: 3rem;
-  font-weight: 700;
-  font-family: 'JetBrains Mono', monospace;
-  margin-bottom: 8px;
-
-  @media (max-width: 768px) {
-    font-size: 2rem;
-  }
-`;
-
-const TotalROISubtext = styled.div`
-  font-size: 0.938rem;
-  opacity: 0.9;
-`;
-
-const ActionButtons = styled.div`
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-  }
-`;
-
-const ActionButton = styled(motion.button)`
-  padding: 12px 24px;
-  border: 2px solid rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  color: white;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.938rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: white;
-  }
-`;
-
-const InfoBox = styled.div`
-  background: #eff6ff;
-  border-left: 4px solid #3b82f6;
-  border-radius: 8px;
-  padding: 16px;
-  margin-top: 24px;
-  display: flex;
-  gap: 12px;
+  gap: 16px;
   align-items: flex-start;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  h2 { margin: 0 0 6px; font-size: 1.5rem; color: #0f172a; }
+  p { margin: 0; color: #64748b; }
 `;
 
-const InfoText = styled.div`
-  font-size: 0.875rem;
-  color: #1e40af;
-  line-height: 1.6;
-`;
-
-// Interactive Elements for CRUD
-const AddBenefitButton = styled.button`
-  display: inline-flex;
+const ResetButton = styled.button`
+  border: 1px solid #cbd5e1;
+  background: white;
+  color: #475569;
+  border-radius: 9px;
+  padding: 9px 12px;
+  font-weight: 700;
+  display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  background: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 600;
+  gap: 7px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  opacity: 0;
-  margin-top: 16px;
-
-  ${CalculatorContainer}:hover & {
-    opacity: 1;
-  }
-
-  @media (max-width: 768px) {
-    opacity: 1;
-  }
-
-  &:hover {
-    background: #2563eb;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-  }
-
-  @media print {
-    display: none !important;
-  }
 `;
 
-const CustomBenefitsSection = styled.div`
+const Notice = styled.div`
+  display: flex;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #1e40af;
+  border-radius: 12px;
+  line-height: 1.5;
+  font-size: .86rem;
   margin-bottom: 24px;
 `;
 
-const CustomBenefitCard = styled(motion.div)`
-  position: relative;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  @media (max-width: 720px) { grid-template-columns: 1fr; }
+`;
+
+const Field = styled.label`
+  display: block;
+  padding: 15px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
-  padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  margin-bottom: 12px;
-
-  &:hover .benefit-actions {
-    opacity: 1;
-  }
-`;
-
-const BenefitActions = styled.div.attrs({ className: 'benefit-actions' })`
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  display: flex;
-  gap: 8px;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  z-index: 10;
-
-  @media (max-width: 768px) {
-    opacity: 1;
-  }
-
-  @media print {
-    display: none !important;
-  }
-`;
-
-const BenefitActionButton = styled.button`
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
-  border: none;
-  background: rgba(255, 255, 255, 0.95);
-  color: #64748b;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: #3b82f6;
-    color: white;
-    transform: scale(1.1);
-  }
-`;
-
-const ModalOverlay = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-`;
-
-const ModalContent = styled(motion.div)`
-  background: white;
-  border-radius: 16px;
-  padding: 32px;
-  max-width: 600px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-`;
-
-const ModalTitle = styled.h3`
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin: 0 0 24px 0;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-`;
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-`;
-
-const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const Label = styled.label`
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #475569;
+  span { display: block; font-size: .78rem; color: #475569; font-weight: 800; margin-bottom: 8px; }
+  small { color: #64748b; font-size: .72rem; }
 `;
 
 const Input = styled.input`
-  padding: 12px;
-  border: 2px solid #e2e8f0;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 11px;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
   font-size: 1rem;
-  transition: all 0.2s ease;
-
-  &:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-  }
+  margin-bottom: 5px;
+  &:focus { outline: 2px solid #bfdbfe; border-color: #3b82f6; }
 `;
 
-const TextArea = styled.textarea`
-  padding: 12px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 1rem;
-  min-height: 80px;
-  font-family: inherit;
-  resize: vertical;
-  transition: all 0.2s ease;
-
-  &:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-  }
+const Results = styled(motion.div)`
+  margin-top: 24px;
+  padding: 22px;
+  border-radius: 14px;
+  background: #0f172a;
+  color: white;
 `;
 
-const ButtonGroup = styled.div`
-  display: flex;
+const ResultGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
-  justify-content: flex-end;
-  margin-top: 8px;
+  @media (max-width: 720px) { grid-template-columns: 1fr; }
 `;
 
-const Button = styled.button`
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
-
-  ${props => props.$variant === 'primary' ? `
-    background: #3b82f6;
-    color: white;
-    &:hover {
-      background: #2563eb;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-    }
-  ` : `
-    background: #f1f5f9;
-    color: #64748b;
-    &:hover {
-      background: #e2e8f0;
-    }
-  `}
-
-  &:active {
-    transform: translateY(0);
-  }
+const Result = styled.div`
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.13);
+  border-radius: 10px;
+  padding: 15px;
+  .label { font-size: .7rem; opacity: .75; text-transform: uppercase; font-weight: 800; }
+  .value { font-size: 1.55rem; font-weight: 900; margin-top: 6px; }
+  .sub { font-size: .72rem; opacity: .72; margin-top: 4px; }
 `;
 
-// =====================
-// COMPONENT
-// =====================
+const Provenance = styled.div`
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,.14);
+  font-size: .78rem;
+  line-height: 1.55;
+  color: #cbd5e1;
+`;
 
-const ROICalculator = ({ results, assessment }) => {
-  const [scenario, setScenario] = useState('realistic');
-  const [assumptions, setAssumptions] = useState({
-    teamSize: 50,
-    dataVolumeTB: 100,
-    currentInfraCost: 500000,
-    avgEngineerSalary: 150000,
-    currentDataQualityIssues: 20
-  });
+const INITIAL = {
+  annualInfraCost: 0,
+  annualEngineeringPayroll: 0,
+  expectedInfraReductionPct: 0,
+  expectedProductivityRecapturePct: 0,
+  annualRevenueUplift: 0,
+  implementationCost: 0,
+  horizonYears: 3
+};
 
-  const [animatedValues, setAnimatedValues] = useState({
-    savings: 0,
-    revenue: 0,
-    totalValue: 0,
-    roi: 0
-  });
+const number = value => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
+};
 
-  // Calculate ROI based on assumptions and scenario
-  const calculateROI = () => {
-    const multipliers = {
-      conservative: { infra: 0.25, productivity: 0.20, quality: 0.15, revenue: 0.10 },
-      realistic: { infra: 0.40, productivity: 0.35, quality: 0.25, revenue: 0.20 },
-      optimistic: { infra: 0.60, productivity: 0.50, quality: 0.40, revenue: 0.35 }
-    };
+const formatMoney = value => new Intl.NumberFormat('en-US', {
+  style: 'currency', currency: 'USD', maximumFractionDigits: 0
+}).format(Number(value || 0));
 
-    const m = multipliers[scenario];
+const ROICalculator = () => {
+  const [inputs, setInputs] = useState(INITIAL);
 
-    // Infrastructure savings
-    const infraSavings = assumptions.currentInfraCost * m.infra;
+  const model = useMemo(() => {
+    const infraSavings = inputs.annualInfraCost * (inputs.expectedInfraReductionPct / 100);
+    const productivityValue = inputs.annualEngineeringPayroll * (inputs.expectedProductivityRecapturePct / 100);
+    const annualBenefit = infraSavings + productivityValue + inputs.annualRevenueUplift;
+    const totalBenefit = annualBenefit * inputs.horizonYears;
+    const netValue = totalBenefit - inputs.implementationCost;
+    const roiPct = inputs.implementationCost > 0
+      ? ((totalBenefit - inputs.implementationCost) / inputs.implementationCost) * 100
+      : null;
+    const paybackMonths = inputs.implementationCost > 0 && annualBenefit > 0
+      ? (inputs.implementationCost / annualBenefit) * 12
+      : null;
 
-    // Engineering productivity (time saved = cost saved)
-    const productivitySavings = (assumptions.teamSize * assumptions.avgEngineerSalary) * m.productivity;
+    return { infraSavings, productivityValue, annualBenefit, totalBenefit, netValue, roiPct, paybackMonths };
+  }, [inputs]);
 
-    // Data quality improvements (reduced rework, better decisions)
-    const qualitySavings = (assumptions.currentDataQualityIssues / 100) * 
-                          (assumptions.teamSize * assumptions.avgEngineerSalary * 0.3) * 
-                          m.quality;
-
-    const totalSavings = infraSavings + productivitySavings + qualitySavings;
-
-    // Revenue opportunities (new use cases enabled)
-    const genAIRevenue = assumptions.teamSize * 50000 * m.revenue; // $50K per engineer in GenAI value
-    const mlRevenue = assumptions.dataVolumeTB * 5000 * m.revenue; // $5K per TB in ML value
-    const dataMonetization = assumptions.dataVolumeTB * 2000 * m.revenue; // $2K per TB in data products
-
-    const totalRevenue = genAIRevenue + mlRevenue + dataMonetization;
-
-    // Modern platform investment (simplified)
-    const platformInvestment = 
-      (assumptions.dataVolumeTB * 3000) + // Storage + compute
-      (assumptions.teamSize * 10000); // Per-user licensing & infra
-
-    // 3-year value
-    const threeYearValue = (totalSavings + totalRevenue) * 3;
-    const threeYearInvestment = platformInvestment * 3;
-    const netROI = threeYearValue - threeYearInvestment;
-    const roiRatio = threeYearValue / threeYearInvestment;
-
-    return {
-      savings: totalSavings,
-      savingsBreakdown: {
-        infra: infraSavings,
-        productivity: productivitySavings,
-        quality: qualitySavings
-      },
-      revenue: totalRevenue,
-      revenueBreakdown: {
-        genAI: genAIRevenue,
-        ml: mlRevenue,
-        monetization: dataMonetization
-      },
-      threeYearValue,
-      investment: threeYearInvestment,
-      netROI,
-      roiRatio,
-      paybackMonths: Math.ceil((platformInvestment / (totalSavings + totalRevenue)) * 12)
-    };
-  };
-
-  const roi = calculateROI();
-
-  // Animate numbers when they change
-  useEffect(() => {
-    const duration = 1500;
-    const steps = 60;
-    const interval = duration / steps;
-
-    let currentStep = 0;
-    const timer = setInterval(() => {
-      currentStep++;
-      const progress = currentStep / steps;
-
-      setAnimatedValues({
-        savings: roi.savings * progress,
-        revenue: roi.revenue * progress,
-        totalValue: roi.threeYearValue * progress,
-        roi: roi.netROI * progress
-      });
-
-      if (currentStep >= steps) {
-        clearInterval(timer);
-        setAnimatedValues({
-          savings: roi.savings,
-          revenue: roi.revenue,
-          totalValue: roi.threeYearValue,
-          roi: roi.netROI
-        });
-      }
-    }, interval);
-
-    return () => clearInterval(timer);
-  }, [scenario, assumptions]);
-
-  const handleAssumptionChange = (key, value) => {
-    setAssumptions(prev => ({ ...prev, [key]: parseInt(value) }));
-  };
-
-  const handleReset = () => {
-    setAssumptions({
-      teamSize: 50,
-      dataVolumeTB: 100,
-      currentInfraCost: 500000,
-      avgEngineerSalary: 150000,
-      currentDataQualityIssues: 20
-    });
-    setScenario('realistic');
-    
-  };
-
-  const formatCurrency = (value) => {
-    if (value >= 1000000) {
-      return `$${(value / 1000000).toFixed(1)}M`;
-    }
-    return `$${(value / 1000).toFixed(0)}K`;
-  };
+  const setValue = (key, value) => setInputs(current => ({ ...current, [key]: number(value) }));
+  const anyBaseline = Object.entries(inputs).some(([key, value]) => key !== 'horizonYears' && Number(value) > 0);
 
   return (
-    <CalculatorContainer>
-      <CalculatorHeader>
-        <CalculatorTitle>
-          <FiDollarSign />
-          Interactive ROI Calculator
-        </CalculatorTitle>
-        <CalculatorSubtitle>
-          Customize assumptions to see your specific business case and ROI potential
-        </CalculatorSubtitle>
-      </CalculatorHeader>
+    <Container>
+      <Header>
+        <div>
+          <h2><FiDollarSign style={{ verticalAlign: 'middle', marginRight: 8 }} />Scenario Value Model</h2>
+          <p>Transparent arithmetic from customer-entered baselines — not a forecast or industry benchmark.</p>
+        </div>
+        <ResetButton onClick={() => setInputs(INITIAL)}><FiRefreshCw /> Reset</ResetButton>
+      </Header>
 
-      {/* Scenario Tabs */}
-      <ScenarioTabs>
-        <ScenarioTab 
-          $active={scenario === 'conservative'} 
-          onClick={() => setScenario('conservative')}
-        >
-          Conservative
-        </ScenarioTab>
-        <ScenarioTab 
-          $active={scenario === 'realistic'} 
-          onClick={() => setScenario('realistic')}
-        >
-          Realistic
-        </ScenarioTab>
-        <ScenarioTab 
-          $active={scenario === 'optimistic'} 
-          onClick={() => setScenario('optimistic')}
-        >
-          Optimistic
-        </ScenarioTab>
-      </ScenarioTabs>
+      <Notice>
+        <FiAlertCircle size={20} />
+        <div><strong>No default savings assumptions are applied.</strong> Enter your own cost baselines and expected improvement percentages. ScoreX does not infer dollars, ROI, or payback from maturity scores.</div>
+      </Notice>
 
-      {/* Assumptions */}
-      <AssumptionsGrid>
-        <AssumptionCard>
-          <AssumptionLabel>
-            <FiUsers />
-            Data & Engineering Team Size
-          </AssumptionLabel>
-          <SliderContainer>
-            <Slider
-              type="range"
-              min="10"
-              max="500"
-              step="10"
-              value={assumptions.teamSize}
-              onChange={(e) => handleAssumptionChange('teamSize', e.target.value)}
-              $percentage={(assumptions.teamSize - 10) / (500 - 10) * 100}
-            />
-          </SliderContainer>
-          <SliderValue>
-            <span className="current-value">{assumptions.teamSize} engineers</span>
-            <span>10 - 500</span>
-          </SliderValue>
-        </AssumptionCard>
+      <Grid>
+        <Field><span>Annual infrastructure cost ($)</span><Input type="number" min="0" value={inputs.annualInfraCost} onChange={e => setValue('annualInfraCost', e.target.value)} /><small>Customer-provided baseline.</small></Field>
+        <Field><span>Annual data/engineering payroll ($)</span><Input type="number" min="0" value={inputs.annualEngineeringPayroll} onChange={e => setValue('annualEngineeringPayroll', e.target.value)} /><small>Only the payroll scope relevant to this scenario.</small></Field>
+        <Field><span>Expected infrastructure reduction (%)</span><Input type="number" min="0" max="100" value={inputs.expectedInfraReductionPct} onChange={e => setValue('expectedInfraReductionPct', Math.min(100, number(e.target.value)))} /><small>User assumption; validate with workload benchmarks.</small></Field>
+        <Field><span>Expected productivity recapture (%)</span><Input type="number" min="0" max="100" value={inputs.expectedProductivityRecapturePct} onChange={e => setValue('expectedProductivityRecapturePct', Math.min(100, number(e.target.value)))} /><small>User assumption; define how recaptured time becomes value.</small></Field>
+        <Field><span>Annual revenue / value uplift ($)</span><Input type="number" min="0" value={inputs.annualRevenueUplift} onChange={e => setValue('annualRevenueUplift', e.target.value)} /><small>Optional customer assumption; ScoreX does not estimate it.</small></Field>
+        <Field><span>One-time implementation cost ($)</span><Input type="number" min="0" value={inputs.implementationCost} onChange={e => setValue('implementationCost', e.target.value)} /><small>Include services, migration, enablement, and change costs as applicable.</small></Field>
+        <Field><span>Model horizon (years)</span><Input type="number" min="1" max="10" value={inputs.horizonYears} onChange={e => setValue('horizonYears', Math.max(1, Math.min(10, number(e.target.value))))} /><small>Time horizon only; no growth/escalation is assumed.</small></Field>
+      </Grid>
 
-        <AssumptionCard>
-          <AssumptionLabel>
-            <FiDatabase />
-            Data Volume (TB)
-          </AssumptionLabel>
-          <SliderContainer>
-            <Slider
-              type="range"
-              min="10"
-              max="10000"
-              step="10"
-              value={assumptions.dataVolumeTB}
-              onChange={(e) => handleAssumptionChange('dataVolumeTB', e.target.value)}
-              $percentage={(assumptions.dataVolumeTB - 10) / (10000 - 10) * 100}
-            />
-          </SliderContainer>
-          <SliderValue>
-            <span className="current-value">{assumptions.dataVolumeTB} TB</span>
-            <span>10 - 10,000 TB</span>
-          </SliderValue>
-        </AssumptionCard>
-
-        <AssumptionCard>
-          <AssumptionLabel>
-            <FiCpu />
-            Current Infrastructure Cost (Annual)
-          </AssumptionLabel>
-          <SliderContainer>
-            <Slider
-              type="range"
-              min="100000"
-              max="10000000"
-              step="100000"
-              value={assumptions.currentInfraCost}
-              onChange={(e) => handleAssumptionChange('currentInfraCost', e.target.value)}
-              $percentage={(assumptions.currentInfraCost - 100000) / (10000000 - 100000) * 100}
-            />
-          </SliderContainer>
-          <SliderValue>
-            <span className="current-value">{formatCurrency(assumptions.currentInfraCost)}</span>
-            <span>$100K - $10M</span>
-          </SliderValue>
-        </AssumptionCard>
-
-        <AssumptionCard>
-          <AssumptionLabel>
-            <FiDollarSign />
-            Average Engineer Salary
-          </AssumptionLabel>
-          <SliderContainer>
-            <Slider
-              type="range"
-              min="80000"
-              max="300000"
-              step="10000"
-              value={assumptions.avgEngineerSalary}
-              onChange={(e) => handleAssumptionChange('avgEngineerSalary', e.target.value)}
-              $percentage={(assumptions.avgEngineerSalary - 80000) / (300000 - 80000) * 100}
-            />
-          </SliderContainer>
-          <SliderValue>
-            <span className="current-value">{formatCurrency(assumptions.avgEngineerSalary)}</span>
-            <span>$80K - $300K</span>
-          </SliderValue>
-        </AssumptionCard>
-      </AssumptionsGrid>
-
-      {/* Results */}
-      <ResultsSection
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <ResultsGrid>
-          <ResultCard>
-            <ResultLabel>Annual Savings</ResultLabel>
-            <ResultValue>
-              {formatCurrency(animatedValues.savings)}
-            </ResultValue>
-            <ResultBreakdown>
-              ├─ Infrastructure: {formatCurrency(roi.savingsBreakdown.infra)}<br />
-              ├─ Productivity: {formatCurrency(roi.savingsBreakdown.productivity)}<br />
-              └─ Data Quality: {formatCurrency(roi.savingsBreakdown.quality)}
-            </ResultBreakdown>
-          </ResultCard>
-
-          <ResultCard>
-            <ResultLabel>New Revenue Opportunities</ResultLabel>
-            <ResultValue>
-              {formatCurrency(animatedValues.revenue)}
-            </ResultValue>
-            <ResultBreakdown>
-              ├─ GenAI Applications: {formatCurrency(roi.revenueBreakdown.genAI)}<br />
-              ├─ ML Deployment: {formatCurrency(roi.revenueBreakdown.ml)}<br />
-              └─ Data Monetization: {formatCurrency(roi.revenueBreakdown.monetization)}
-            </ResultBreakdown>
-          </ResultCard>
-        </ResultsGrid>
-
-        <TotalROICard>
-          <TotalROILabel>3-YEAR NET ROI</TotalROILabel>
-          <TotalROIValue>
-            {formatCurrency(animatedValues.roi)}
-          </TotalROIValue>
-          <TotalROISubtext>
-            <FiCheckCircle style={{ display: 'inline', marginRight: '6px' }} />
-            {roi.roiRatio.toFixed(1)}x return on investment • {roi.paybackMonths} month payback
-          </TotalROISubtext>
-        </TotalROICard>
-
-        <ActionButtons>
-          <ActionButton
-            onClick={handleReset}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <FiRefreshCw />
-            Reset to Defaults
-          </ActionButton>
-        </ActionButtons>
-      </ResultsSection>
-
-      <InfoBox>
-        <FiInfo size={20} style={{ flexShrink: 0, marginTop: '2px' }} />
-        <InfoText>
-          <strong>How we calculate ROI:</strong> Based on industry benchmarks from Forrester Total Economic Impact studies and enterprise data architecture case studies. 
-          Actual results vary by organization. Conservative scenario uses lower-bound estimates, Realistic uses median values, and Optimistic uses upper-quartile results.
-        </InfoText>
-      </InfoBox>
-    </CalculatorContainer>
+      <Results initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        {!anyBaseline ? (
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}><FiInfo /> Enter baseline values to calculate a scenario.</div>
+        ) : (
+          <>
+            <ResultGrid>
+              <Result><div className="label">Annual modeled benefit</div><div className="value">{formatMoney(model.annualBenefit)}</div><div className="sub">Infra savings + productivity value + entered uplift</div></Result>
+              <Result><div className="label">Net value ({inputs.horizonYears} yrs)</div><div className="value">{formatMoney(model.netValue)}</div><div className="sub">Total modeled benefit minus implementation cost</div></Result>
+              <Result><div className="label">Scenario ROI</div><div className="value">{model.roiPct === null ? '—' : `${model.roiPct.toFixed(0)}%`}</div><div className="sub">Shown only when implementation cost is supplied</div></Result>
+              <Result><div className="label">Infra component</div><div className="value">{formatMoney(model.infraSavings)}</div><div className="sub">Baseline × entered reduction %</div></Result>
+              <Result><div className="label">Productivity component</div><div className="value">{formatMoney(model.productivityValue)}</div><div className="sub">Payroll × entered recapture %</div></Result>
+              <Result><div className="label">Scenario payback</div><div className="value">{model.paybackMonths === null ? '—' : `${model.paybackMonths.toFixed(1)} mo`}</div><div className="sub">Implementation cost ÷ annual modeled benefit</div></Result>
+            </ResultGrid>
+            <Provenance><FiTrendingUp style={{ verticalAlign: 'middle', marginRight: 6 }} /><strong>Provenance:</strong> baseline dollars and improvement percentages are customer/user-provided inputs; calculated outputs are scenario estimates. They are not measured savings, commitments, or external benchmarks.</Provenance>
+          </>
+        )}
+      </Results>
+    </Container>
   );
 };
 
 export default ROICalculator;
-
