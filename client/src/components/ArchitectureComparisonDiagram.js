@@ -711,6 +711,15 @@ const ArchitectureComparisonDiagram = ({
     return false;
   }, []);
 
+  const persistDiagramsToBackend = useCallback(async (updatedData) => {
+    if (!instanceId) return;
+    try {
+      await dynamicAssessmentService.updateArchitectureDiagrams(instanceId, updatedData);
+    } catch (err) {
+      console.warn('[ArchitectureComparisonDiagram] Auto-persist notice:', err.message);
+    }
+  }, [instanceId]);
+
   const [diagramsData, setDiagramsData] = useState(() => {
     if (initialDiagrams && !isOutdatedDiagram(initialDiagrams)) {
       return initialDiagrams;
@@ -754,15 +763,6 @@ const ArchitectureComparisonDiagram = ({
   const [noteText, setNoteText] = useState('');
   const [showNotesDrawer, setShowNotesDrawer] = useState(false);
   const drawioIframeRef = useRef(null);
-
-  const persistDiagramsToBackend = useCallback(async (updatedData) => {
-    if (!instanceId) return;
-    try {
-      await dynamicAssessmentService.updateArchitectureDiagrams(instanceId, updatedData);
-    } catch (err) {
-      console.warn('[ArchitectureComparisonDiagram] Auto-persist notice:', err.message);
-    }
-  }, [instanceId]);
 
   const handleOpenVisualDrawio = (target = 'target') => {
     setXmlTargetState(target);
@@ -1335,7 +1335,7 @@ const ArchitectureComparisonDiagram = ({
                   subtitle={currentSubtitle}
                   badge="Current State"
                   theme={diagramTheme}
-                  height="580px"
+                  height="740px"
                   isTarget={false}
                 />
               </DiagramErrorBoundary>
@@ -1373,7 +1373,7 @@ const ArchitectureComparisonDiagram = ({
                   subtitle={targetSubtitle}
                   badge="Desired Future State"
                   theme={diagramTheme}
-                  height="580px"
+                  height="740px"
                   isTarget={true}
                 />
               </DiagramErrorBoundary>
@@ -1392,7 +1392,7 @@ const ArchitectureComparisonDiagram = ({
               subtitle={currentSubtitle}
               badge="Current State"
               theme={diagramTheme}
-              height="650px"
+              height="780px"
               isTarget={false}
             />
           </DiagramErrorBoundary>
@@ -1409,10 +1409,122 @@ const ArchitectureComparisonDiagram = ({
               subtitle={targetSubtitle}
               badge="Desired Future State"
               theme={diagramTheme}
-              height="650px"
+              height="780px"
               isTarget={true}
             />
           </DiagramErrorBoundary>
+        </div>
+      )}
+
+      {/* 4. VISUAL PROCESS FLOW & PAIN POINT ARCHITECTURE MATRIX */}
+      {viewMode !== 'cards' && (
+        <div style={{
+          marginTop: '20px',
+          marginBottom: '24px',
+          background: '#0B111E',
+          borderRadius: '12px',
+          border: '1px solid #1E293B',
+          padding: '20px 24px',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.25)'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
+            <div>
+              <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#F8FAFC', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ color: '#EF4444' }}>🚨</span> End-to-End Process Flow &amp; Architectural Friction Sequence
+              </div>
+              <div style={{ fontSize: '0.8rem', color: '#94A3B8', marginTop: '3px' }}>
+                Correlated 5-step operational pipeline comparing legacy failure modes against Google Cloud target modernization
+              </div>
+            </div>
+            <div style={{
+              background: 'rgba(239, 68, 68, 0.12)',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              borderRadius: '20px',
+              padding: '4px 12px',
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              color: '#F87171'
+            }}>
+              5 Critical Bottlenecks Mapped
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px' }}>
+            {/* Step 1 */}
+            <div style={{ background: '#111827', borderRadius: '10px', border: '1px solid #1E293B', padding: '14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#94A3B8' }}>STEP 1</span>
+                <span style={{ background: '#450A0A', border: '1px solid #EF4444', color: '#FECACA', fontSize: '0.7rem', fontWeight: 800, padding: '2px 8px', borderRadius: '10px' }}>⚠️ PII &amp; Injection</span>
+              </div>
+              <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#F8FAFC', marginBottom: '6px' }}>Client Ingress &amp; Silos</div>
+              <div style={{ fontSize: '0.75rem', color: '#EF4444', marginBottom: '8px', lineHeight: '1.3' }}>
+                <b>Legacy Friction:</b> Isolated Python scripts, hardcoded API keys in client bundles, unmonitored prompt tampering.
+              </div>
+              <div style={{ fontSize: '0.75rem', color: '#10B981', lineHeight: '1.3' }}>
+                <b>Target Solution:</b> Cloud Run containerized ingress with Apigee Enterprise AI Gateway &amp; VPC-SC perimeter.
+              </div>
+            </div>
+
+            {/* Step 2 */}
+            <div style={{ background: '#111827', borderRadius: '10px', border: '1px solid #1E293B', padding: '14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#94A3B8' }}>STEP 2</span>
+                <span style={{ background: '#431407', border: '1px solid #F97316', color: '#FFEDD5', fontSize: '0.7rem', fontWeight: 800, padding: '2px 8px', borderRadius: '10px' }}>⚠️ 429 Throttling</span>
+              </div>
+              <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#F8FAFC', marginBottom: '6px' }}>Public API Gateway</div>
+              <div style={{ fontSize: '0.75rem', color: '#EF4444', marginBottom: '8px', lineHeight: '1.3' }}>
+                <b>Legacy Friction:</b> Direct public api.openai.com calls, lack rate limiting, 100% full-price tokens without caching.
+              </div>
+              <div style={{ fontSize: '0.75rem', color: '#10B981', lineHeight: '1.3' }}>
+                <b>Target Solution:</b> Vertex AI Prompt Context Caching (75% input token discount) + Apigee Rate Governor.
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div style={{ background: '#111827', borderRadius: '10px', border: '1px solid #1E293B', padding: '14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#94A3B8' }}>STEP 3</span>
+                <span style={{ background: '#450A0A', border: '1px solid #EF4444', color: '#FECACA', fontSize: '0.7rem', fontWeight: 800, padding: '2px 8px', borderRadius: '10px' }}>⚠️ Model Drift</span>
+              </div>
+              <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#F8FAFC', marginBottom: '6px' }}>Unsandboxed Tool Execution</div>
+              <div style={{ fontSize: '0.75rem', color: '#EF4444', marginBottom: '8px', lineHeight: '1.3' }}>
+                <b>Legacy Friction:</b> Ad-hoc web scrapers, arbitrary code execution without isolation, 8k context window truncation.
+              </div>
+              <div style={{ fontSize: '0.75rem', color: '#10B981', lineHeight: '1.3' }}>
+                <b>Target Solution:</b> Standardized Model Context Protocol (MCP) tool contracts + Model Armor TRiSM Shield.
+              </div>
+            </div>
+
+            {/* Step 4 */}
+            <div style={{ background: '#111827', borderRadius: '10px', border: '1px solid #1E293B', padding: '14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#94A3B8' }}>STEP 4</span>
+                <span style={{ background: '#450A0A', border: '1px solid #EF4444', color: '#FECACA', fontSize: '0.7rem', fontWeight: 800, padding: '2px 8px', borderRadius: '10px' }}>⚠️ 45% Lossy Fail</span>
+              </div>
+              <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#F8FAFC', marginBottom: '6px' }}>Vector Storage &amp; Context</div>
+              <div style={{ fontSize: '0.75rem', color: '#EF4444', marginBottom: '8px', lineHeight: '1.3' }}>
+                <b>Legacy Friction:</b> 500-token arbitrary slicing, unmanaged third-party SaaS index ($4,200/mo), high hallucination rate.
+              </div>
+              <div style={{ fontSize: '0.75rem', color: '#10B981', lineHeight: '1.3' }}>
+                <b>Target Solution:</b> Vertex AI Gemini 2.5/3.7 native 2M context + BigLake zero-copy vector grounding.
+              </div>
+            </div>
+
+            {/* Step 5 */}
+            <div style={{ background: '#111827', borderRadius: '10px', border: '1px solid #1E293B', padding: '14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#94A3B8' }}>STEP 5</span>
+                <span style={{ background: '#450A0A', border: '1px solid #EF4444', color: '#FECACA', fontSize: '0.7rem', fontWeight: 800, padding: '2px 8px', borderRadius: '10px' }}>⚠️ CISO Blocked</span>
+              </div>
+              <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#F8FAFC', marginBottom: '6px' }}>Client Delivery &amp; Audit</div>
+              <div style={{ fontSize: '0.75rem', color: '#EF4444', marginBottom: '8px', lineHeight: '1.3' }}>
+                <b>Legacy Friction:</b> Unmonitored chat UIs, unmasked PII in provider logs, absent compliance audit trails, shadow card spend.
+              </div>
+              <div style={{ fontSize: '0.75rem', color: '#10B981', lineHeight: '1.3' }}>
+                <b>Target Solution:</b> Immutable BigQuery audit logging, Cloud DLP PII de-identification, and SOC2/HIPAA compliance.
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

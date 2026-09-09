@@ -558,7 +558,7 @@ function buildPristineFinopsXml() {
         <mxCell id="box_tool_bg" value="" style="rounded=1;arcSize=8;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.5;" vertex="1" parent="1"><mxGeometry x="16" y="374" width="1214" height="106" as="geometry"/></mxCell>
         <mxCell id="lbl_tool" value="DATA &amp;amp; TOOLING LAYER" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#1E3A8A;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="16" y="378" width="1214" height="16" as="geometry"/></mxCell>
         <mxCell id="tl_0" value="&lt;div style=&quot;font-size:24px;text-align:center;&quot;&gt;💳&lt;/div&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#1E3A8A;text-align:center;margin-top:2px;&quot;&gt;Google Cloud Billing&lt;/div&gt;&lt;div style=&quot;font-size:8px;color:#64748B;text-align:center;&quot;&gt;Billing API&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="26" y="400" width="140" height="72" as="geometry"/></mxCell>
-        <mxCell id="tl_1" value="&lt;div style=&quot;font-size:24px;text-align:center;&quot;&gt;📊&lt;/div&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#1E3A8A;text-align:center;margin-top:2px;&quot;&gt;BigQuery&lt;/div&gt;&lt;div style=&quot;font-size:8px;color:#64748B;text-align:center;&quot;&gt;(Cost Export)&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="176" y="400" width="140" height="72" as="geometry"/></mxCell>
+        <mxCell id="tl_1" value="&lt;div style=&quot;font-size:24px;text-align:center;&quot;&gt;📊&lt;/div&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#1E3A8A;text-align:center;margin-top:2px;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:google-cloud.svg&quot; width=&quot;14&quot; height=&quot;14&quot;/&gt;&amp;nbsp;BigQuery&lt;/div&gt;&lt;div style=&quot;font-size:8px;color:#64748B;text-align:center;&quot;&gt;(Cost Export)&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="176" y="400" width="140" height="72" as="geometry"/></mxCell>
         <mxCell id="e_tl_1" edge="1" parent="1" source="tl_0" target="tl_1" style="strokeColor=#2563EB;strokeWidth=1.8;endArrow=classic;endSize=5;"><mxGeometry relative="1" as="geometry"/></mxCell>
         <mxCell id="tl_2" value="&lt;div style=&quot;font-size:24px;text-align:center;&quot;&gt;🗃️&lt;/div&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#1E3A8A;text-align:center;margin-top:2px;&quot;&gt;Cloud Asset Inventory&lt;/div&gt;&lt;div style=&quot;font-size:8px;color:#64748B;text-align:center;&quot;&gt;Asset Metadata&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="326" y="400" width="140" height="72" as="geometry"/></mxCell>
         <mxCell id="e_tl_2" edge="1" parent="1" source="tl_1" target="tl_2" style="strokeColor=#2563EB;strokeWidth=1.8;endArrow=classic;endSize=5;"><mxGeometry relative="1" as="geometry"/></mxCell>
@@ -566,7 +566,7 @@ function buildPristineFinopsXml() {
         <mxCell id="e_tl_3" edge="1" parent="1" source="tl_2" target="tl_3" style="strokeColor=#2563EB;strokeWidth=1.8;endArrow=classic;endSize=5;"><mxGeometry relative="1" as="geometry"/></mxCell>
         <mxCell id="tl_4" value="&lt;div style=&quot;font-size:24px;text-align:center;&quot;&gt;⚡&lt;/div&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#1E3A8A;text-align:center;margin-top:2px;&quot;&gt;Dataflow&lt;/div&gt;&lt;div style=&quot;font-size:8px;color:#64748B;text-align:center;&quot;&gt;(ETL)&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="626" y="400" width="140" height="72" as="geometry"/></mxCell>
         <mxCell id="e_tl_4" edge="1" parent="1" source="tl_3" target="tl_4" style="strokeColor=#2563EB;strokeWidth=1.8;endArrow=classic;endSize=5;"><mxGeometry relative="1" as="geometry"/></mxCell>
-        <mxCell id="tl_5" value="&lt;div style=&quot;font-size:24px;text-align:center;&quot;&gt;🗄️&lt;/div&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#1E3A8A;text-align:center;margin-top:2px;&quot;&gt;BigQuery&lt;/div&gt;&lt;div style=&quot;font-size:8px;color:#64748B;text-align:center;&quot;&gt;(Curated Data)&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="776" y="400" width="140" height="72" as="geometry"/></mxCell>
+        <mxCell id="tl_5" value="&lt;div style=&quot;font-size:24px;text-align:center;&quot;&gt;🗄️&lt;/div&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#1E3A8A;text-align:center;margin-top:2px;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:google-cloud.svg&quot; width=&quot;14&quot; height=&quot;14&quot;/&gt;&amp;nbsp;BigQuery&lt;/div&gt;&lt;div style=&quot;font-size:8px;color:#64748B;text-align:center;&quot;&gt;(Curated Data)&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="776" y="400" width="140" height="72" as="geometry"/></mxCell>
         <mxCell id="e_tl_5" edge="1" parent="1" source="tl_4" target="tl_5" style="strokeColor=#2563EB;strokeWidth=1.8;endArrow=classic;endSize=5;"><mxGeometry relative="1" as="geometry"/></mxCell>
         <mxCell id="tl_6" value="&lt;div style=&quot;font-size:24px;text-align:center;&quot;&gt;📈&lt;/div&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#1E3A8A;text-align:center;margin-top:2px;&quot;&gt;Looker Studio&lt;/div&gt;&lt;div style=&quot;font-size:8px;color:#64748B;text-align:center;&quot;&gt;(Dashboards)&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="926" y="400" width="140" height="72" as="geometry"/></mxCell>
         <mxCell id="e_tl_6" edge="1" parent="1" source="tl_5" target="tl_6" style="strokeColor=#2563EB;strokeWidth=1.8;endArrow=classic;endSize=5;"><mxGeometry relative="1" as="geometry"/></mxCell>
@@ -1370,7 +1370,7 @@ function buildDataLakehouseXml() {
     &lt;div style=&quot;display:flex;justify-content:space-around;gap:6px;&quot;&gt;
       &lt;div style=&quot;text-align:center;&quot;&gt;
         &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#4285F4&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;circle cx=&quot;11&quot; cy=&quot;11&quot; r=&quot;8&quot;/&gt;&lt;path d=&quot;m21 21-4.3-4.3&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
-        &lt;div style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;BigQuery&lt;/div&gt;
+        &lt;div style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:google-cloud.svg&quot; width=&quot;14&quot; height=&quot;14&quot;/&gt;&amp;nbsp;BigQuery&lt;/div&gt;
         &lt;div style=&quot;font-size:6.5px;color:#64748B;&quot;&gt;(Warehouse)&lt;/div&gt;
       &lt;/div&gt;
       &lt;div style=&quot;text-align:center;&quot;&gt;
@@ -1398,7 +1398,7 @@ function buildDataLakehouseXml() {
         <mxCell id="t3_c_1" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
       &lt;div style=&quot;font-size:8px;font-weight:800;color:#D97706;margin-bottom:2px;&quot;&gt;Interactive Analytics&lt;/div&gt;
       &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#D97706&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;circle cx=&quot;11&quot; cy=&quot;11&quot; r=&quot;8&quot;/&gt;&lt;path d=&quot;m21 21-4.3-4.3&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
-      &lt;div style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;BigQuery&lt;/div&gt;
+      &lt;div style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:google-cloud.svg&quot; width=&quot;14&quot; height=&quot;14&quot;/&gt;&amp;nbsp;BigQuery&lt;/div&gt;
       &lt;div style=&quot;font-size:6.5px;color:#64748B;&quot;&gt;Interactive Engine&lt;/div&gt;
     &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFFBEB;strokeColor=#FDE68A;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="329" y="520" width="174" height="90" as="geometry"/></mxCell>
         <mxCell id="t3_c_2" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
@@ -4954,14 +4954,14 @@ function buildEnterpriseAgentRuntimeXml() {
         <mxCell id="box_t4_router" value="" style="rounded=1;arcSize=4;fillColor=#F0F9FF;strokeColor=#BAE6FD;strokeWidth=1.2;" vertex="1" parent="1"><mxGeometry x="300" y="398" width="764" height="100" as="geometry"/></mxCell>
         <mxCell id="lbl_t4_router" value="Model Gateway / LLM Router" style="fontColor=#0284C7;fontSize=8;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="300" y="400" width="764" height="14" as="geometry"/></mxCell>
         <mxCell id="lbl_t4_sub" value="Route • Select • Ensemble • Fallback • Cost / Latency Optimization" style="fontColor:#64748B;fontSize=7.5;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="300" y="414" width="764" height="12" as="geometry"/></mxCell>
-        <mxCell id="mc_0" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;svg width=&quot;20&quot; height=&quot;20&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#0284C7&quot; stroke-width=&quot;2&quot;&gt;&lt;path d=&quot;m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z&quot;/&gt;&lt;/svg&gt;&lt;div style=&quot;font-size:8.5px;font-weight:900;color:#0F172A;margin-top:2px;&quot;&gt;Gemini&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;font-weight:700;&quot;&gt;1.5 Pro / 1.5 Flash&lt;/div&gt;&lt;/div&gt;" style="rounded=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1"><mxGeometry x="308" y="430" width="124" height="62" as="geometry"/></mxCell>
+        <mxCell id="mc_0" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;svg width=&quot;20&quot; height=&quot;20&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#0284C7&quot; stroke-width=&quot;2&quot;&gt;&lt;path d=&quot;m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z&quot;/&gt;&lt;/svg&gt;&lt;div style=&quot;font-size:8.5px;font-weight:900;color:#0F172A;margin-top:2px;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:google-gemini.svg&quot; width=&quot;16&quot; height=&quot;16&quot;/&gt;&amp;nbsp;Gemini&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;font-weight:700;&quot;&gt;1.5 Pro / 1.5 Flash&lt;/div&gt;&lt;/div&gt;" style="rounded=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1"><mxGeometry x="308" y="430" width="124" height="62" as="geometry"/></mxCell>
         <mxCell id="e_router_mc_0" edge="1" parent="1" style="edgeStyle=none;strokeColor=#0284C7;strokeWidth=1.5;endArrow=classic;endSize=4;">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="370" y="426" as="sourcePoint"/>
             <mxPoint x="370" y="430" as="targetPoint"/>
           </mxGeometry>
         </mxCell>
-        <mxCell id="mc_1" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;svg width=&quot;20&quot; height=&quot;20&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#0284C7&quot; stroke-width=&quot;2&quot;&gt;&lt;path d=&quot;M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z&quot;/&gt;&lt;circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;3&quot;/&gt;&lt;/svg&gt;&lt;div style=&quot;font-size:8.5px;font-weight:900;color:#0F172A;margin-top:2px;&quot;&gt;Gemini&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;font-weight:700;&quot;&gt;1.5 Pro (Vision)&lt;/div&gt;&lt;/div&gt;" style="rounded=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1"><mxGeometry x="438" y="430" width="124" height="62" as="geometry"/></mxCell>
+        <mxCell id="mc_1" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;svg width=&quot;20&quot; height=&quot;20&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#0284C7&quot; stroke-width=&quot;2&quot;&gt;&lt;path d=&quot;M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z&quot;/&gt;&lt;circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;3&quot;/&gt;&lt;/svg&gt;&lt;div style=&quot;font-size:8.5px;font-weight:900;color:#0F172A;margin-top:2px;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:google-gemini.svg&quot; width=&quot;16&quot; height=&quot;16&quot;/&gt;&amp;nbsp;Gemini&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;font-weight:700;&quot;&gt;1.5 Pro (Vision)&lt;/div&gt;&lt;/div&gt;" style="rounded=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1"><mxGeometry x="438" y="430" width="124" height="62" as="geometry"/></mxCell>
         <mxCell id="e_router_mc_1" edge="1" parent="1" style="edgeStyle=none;strokeColor=#0284C7;strokeWidth=1.5;endArrow=classic;endSize=4;">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="500" y="426" as="sourcePoint"/>
@@ -5161,7 +5161,7 @@ function buildEnterpriseAgentRuntimeXml() {
         <mxCell id="db_3" value="&lt;div style=&quot;font-size:7.5px;font-weight:800;color:#0F172A;text-align:center;&quot;&gt;Bigtable&lt;/div&gt;" style="rounded=1;fillColor=#F8FAFC;strokeColor=#E2E8F0;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="902" y="694" width="76" height="32" as="geometry"/></mxCell>
         <mxCell id="box_t7_analytics" value="" style="rounded=1;arcSize=4;fillColor=#FFFFFF;strokeColor=#CBD5E1;html=1;" vertex="1" parent="1"><mxGeometry x="992" y="678" width="348" height="52" as="geometry"/></mxCell>
         <mxCell id="lbl_t7_analytics" value="Analytics &amp; Data Platform (GCP)" style="fontColor=#1E40AF;fontSize=7.5;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="992" y="680" width="348" height="12" as="geometry"/></mxCell>
-        <mxCell id="an_0" value="&lt;div style=&quot;font-size:7.5px;font-weight:800;color:#0F172A;text-align:center;&quot;&gt;BigQuery&lt;/div&gt;" style="rounded=1;fillColor=#F8FAFC;strokeColor=#E2E8F0;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="998" y="694" width="80" height="32" as="geometry"/></mxCell>
+        <mxCell id="an_0" value="&lt;div style=&quot;font-size:7.5px;font-weight:800;color:#0F172A;text-align:center;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:google-cloud.svg&quot; width=&quot;14&quot; height=&quot;14&quot;/&gt;&amp;nbsp;BigQuery&lt;/div&gt;" style="rounded=1;fillColor=#F8FAFC;strokeColor=#E2E8F0;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="998" y="694" width="80" height="32" as="geometry"/></mxCell>
         <mxCell id="an_1" value="&lt;div style=&quot;font-size:7.5px;font-weight:800;color:#0F172A;text-align:center;&quot;&gt;Dataplex&lt;/div&gt;" style="rounded=1;fillColor=#F8FAFC;strokeColor=#E2E8F0;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1082" y="694" width="80" height="32" as="geometry"/></mxCell>
         <mxCell id="an_2" value="&lt;div style=&quot;font-size:7.5px;font-weight:800;color:#0F172A;text-align:center;&quot;&gt;Data Catalog&lt;/div&gt;" style="rounded=1;fillColor=#F8FAFC;strokeColor=#E2E8F0;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1166" y="694" width="80" height="32" as="geometry"/></mxCell>
         <mxCell id="an_3" value="&lt;div style=&quot;font-size:7.5px;font-weight:800;color:#0F172A;text-align:center;&quot;&gt;Looker&lt;/div&gt;" style="rounded=1;fillColor=#F8FAFC;strokeColor=#E2E8F0;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1250" y="694" width="80" height="32" as="geometry"/></mxCell>
@@ -5297,7 +5297,7 @@ function buildEnterpriseAgentRuntimeXml() {
         <mxCell id="op_0" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1E40AF&quot; stroke-width=&quot;2&quot;&gt;&lt;circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;3&quot;/&gt;&lt;path d=&quot;M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z&quot;/&gt;&lt;/svg&gt;&lt;div&gt;&lt;div style=&quot;font-size:8px;font-weight:900;color:#0F172A;&quot;&gt;CI/CD / GitOps&lt;/div&gt;&lt;div style=&quot;font-size:7px;color:#64748B;font-weight:600;&quot;&gt;Cloud Build • Cloud Deploy • ArgoCD&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=1;fillColor=#EFF6FF;strokeColor=#BFDBFE;strokeWidth=1.2;html=1;align=left;verticalAlign=middle;padding=3;" vertex="1" parent="1"><mxGeometry x="1360" y="614" width="218" height="40" as="geometry"/></mxCell>
         <mxCell id="op_1" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1E40AF&quot; stroke-width=&quot;2&quot;&gt;&lt;path d=&quot;M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2&quot;/&gt;&lt;rect width=&quot;8&quot; height=&quot;4&quot; x=&quot;8&quot; y=&quot;2&quot; rx=&quot;1&quot; ry=&quot;1&quot;/&gt;&lt;path d=&quot;m9 14 2 2 4-4&quot;/&gt;&lt;/svg&gt;&lt;div&gt;&lt;div style=&quot;font-size:8px;font-weight:900;color:#0F172A;&quot;&gt;Prompt Management&lt;/div&gt;&lt;div style=&quot;font-size:7px;color:#64748B;font-weight:600;&quot;&gt;Templates, Versioning, A/B Test&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=1;fillColor=#EFF6FF;strokeColor=#BFDBFE;strokeWidth=1.2;html=1;align=left;verticalAlign=middle;padding=3;" vertex="1" parent="1"><mxGeometry x="1360" y="660" width="218" height="40" as="geometry"/></mxCell>
         <mxCell id="op_2" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1E40AF&quot; stroke-width=&quot;2&quot;&gt;&lt;path d=&quot;M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04zM14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z&quot;/&gt;&lt;/svg&gt;&lt;div&gt;&lt;div style=&quot;font-size:8px;font-weight:900;color:#0F172A;&quot;&gt;Model Registry &amp; Pipeline&lt;/div&gt;&lt;div style=&quot;font-size:7px;color:#64748B;font-weight:600;&quot;&gt;Build, Test, Deploy, Monitor&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=1;fillColor=#EFF6FF;strokeColor=#BFDBFE;strokeWidth=1.2;html=1;align=left;verticalAlign=middle;padding=3;" vertex="1" parent="1"><mxGeometry x="1360" y="706" width="218" height="40" as="geometry"/></mxCell>
-        <mxCell id="op_3" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1E40AF&quot; stroke-width=&quot;2&quot;&gt;&lt;rect width=&quot;20&quot; height=&quot;8&quot; x=&quot;2&quot; y=&quot;2&quot; rx=&quot;2&quot; ry=&quot;2&quot;/&gt;&lt;rect width=&quot;20&quot; height=&quot;8&quot; x=&quot;2&quot; y=&quot;14&quot; rx=&quot;2&quot; ry=&quot;2&quot;/&gt;&lt;line x1=&quot;6&quot; y1=&quot;6&quot; x2=&quot;6.01&quot; y2=&quot;6&quot;/&gt;&lt;line x1=&quot;6&quot; y1=&quot;18&quot; x2=&quot;6.01&quot; y2=&quot;18&quot;/&gt;&lt;/svg&gt;&lt;div&gt;&lt;div style=&quot;font-size:8px;font-weight:900;color:#0F172A;&quot;&gt;Runtime &amp; Compute&lt;/div&gt;&lt;div style=&quot;font-size:7px;color:#64748B;font-weight:600;&quot;&gt;GKE • Cloud Run • Cloud Functions&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=1;fillColor=#EFF6FF;strokeColor=#BFDBFE;strokeWidth=1.2;html=1;align=left;verticalAlign=middle;padding=3;" vertex="1" parent="1"><mxGeometry x="1360" y="752" width="218" height="40" as="geometry"/></mxCell>
+        <mxCell id="op_3" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1E40AF&quot; stroke-width=&quot;2&quot;&gt;&lt;rect width=&quot;20&quot; height=&quot;8&quot; x=&quot;2&quot; y=&quot;2&quot; rx=&quot;2&quot; ry=&quot;2&quot;/&gt;&lt;rect width=&quot;20&quot; height=&quot;8&quot; x=&quot;2&quot; y=&quot;14&quot; rx=&quot;2&quot; ry=&quot;2&quot;/&gt;&lt;line x1=&quot;6&quot; y1=&quot;6&quot; x2=&quot;6.01&quot; y2=&quot;6&quot;/&gt;&lt;line x1=&quot;6&quot; y1=&quot;18&quot; x2=&quot;6.01&quot; y2=&quot;18&quot;/&gt;&lt;/svg&gt;&lt;div&gt;&lt;div style=&quot;font-size:8px;font-weight:900;color:#0F172A;&quot;&gt;Runtime &amp; Compute&lt;/div&gt;&lt;div style=&quot;font-size:7px;color:#64748B;font-weight:600;&quot;&gt;GKE • &lt;img src=&quot;https://api.iconify.design/logos:google-cloud-run.svg&quot; width=&quot;14&quot; height=&quot;14&quot;/&gt;&amp;nbsp;Cloud Run • Cloud Functions&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=1;fillColor=#EFF6FF;strokeColor=#BFDBFE;strokeWidth=1.2;html=1;align=left;verticalAlign=middle;padding=3;" vertex="1" parent="1"><mxGeometry x="1360" y="752" width="218" height="40" as="geometry"/></mxCell>
         <mxCell id="op_4" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1E40AF&quot; stroke-width=&quot;2&quot;&gt;&lt;rect width=&quot;16&quot; height=&quot;11&quot; x=&quot;4&quot; y=&quot;11&quot; rx=&quot;2&quot; ry=&quot;2&quot;/&gt;&lt;path d=&quot;M7 11V7a5 5 0 0 1 10 0v4&quot;/&gt;&lt;/svg&gt;&lt;div&gt;&lt;div style=&quot;font-size:8px;font-weight:900;color:#0F172A;&quot;&gt;Artifacts &amp; Secrets&lt;/div&gt;&lt;div style=&quot;font-size:7px;color:#64748B;font-weight:600;&quot;&gt;Artifact Registry • Secret Manager • KMS&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=1;fillColor=#EFF6FF;strokeColor=#BFDBFE;strokeWidth=1.2;html=1;align=left;verticalAlign=middle;padding=3;" vertex="1" parent="1"><mxGeometry x="1360" y="798" width="218" height="40" as="geometry"/></mxCell>
         <mxCell id="box_ftr_legend" value="" style="rounded=1;arcSize=4;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.2;html=1;" vertex="1" parent="1"><mxGeometry x="16" y="866" width="260" height="74" as="geometry"/></mxCell>
         <mxCell id="lbl_ftr_legend" value="LEGEND (Arrow Types)" style="fontColor:#0F172A;fontSize=8;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="16" y="868" width="260" height="14" as="geometry"/></mxCell>
@@ -9034,215 +9034,237 @@ function buildHybridMultiCloudXml() {
 
 // ===== Sourced from build_master_legacy_genai_stack.ts =====
 function buildLegacyGenAiStackXml(cust = "Enterprise Organization") {
+  const cEsc = (cust || "Enterprise Organization").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  
   return `<mxfile host="embed.diagrams.net">
-  <diagram id="legacy_genai_stack" name="${cust} - Current Fragile GenAI Stack">
-    <mxGraphModel dx="1600" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="860" background="#FFFFFF" math="0" shadow="0">
+  <diagram id="legacy_genai_stack" name="${cEsc} - Current Baseline Architecture">
+    <mxGraphModel dx="1600" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1560" pageHeight="860" background="#0B111E" math="0" shadow="0">
       <root>
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
 
-        <!-- HEADER BANNER -->
-        <mxCell id="top_logo" value="&lt;svg width=&quot;26&quot; height=&quot;26&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#DC2626&quot; stroke-width=&quot;2&quot;&gt;&lt;path d=&quot;m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z&quot;/&gt;&lt;line x1=&quot;12&quot; y1=&quot;9&quot; x2=&quot;12&quot; y2=&quot;13&quot;/&gt;&lt;line x1=&quot;12&quot; y1=&quot;17&quot; x2=&quot;12.01&quot; y2=&quot;17&quot;/&gt;&lt;/svg&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="25" y="10" width="35" height="35" as="geometry"/>
-        </mxCell>
-        <mxCell id="main_title" value="&lt;b style=&quot;font-size:16px;color:#0F172A;letter-spacing:-0.2px;&quot;&gt;${cust.toUpperCase()}: CURRENT STATE — FRAGILE OPENAI &amp;amp; UNANCHORED GENAI STACK (P1-AI-L-01)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="65" y="10" width="1150" height="22" as="geometry"/>
-        </mxCell>
-        <mxCell id="main_subtitle" value="&lt;span style=&quot;font-size:9.5px;color:#475569;font-weight:700;letter-spacing:0.1px;&quot;&gt;Direct OpenAI REST Calls • Hardcoded API Keys • Lossy 8k Chunking • Zero Context Caching • Missing AI TRiSM Shielding&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="65" y="32" width="1150" height="16" as="geometry"/>
-        </mxCell>
-        
-        <mxCell id="top_badge" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:12px;font-weight:bold;color:#EF4444;&quot;&gt;⚠️ Legacy GenAI Debt&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:8px;color:#94A3B8;font-weight:600;&quot;&gt;100% Full-Price Tokens • Public Egress&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;strokeWidth=1.5;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="1350" y="8" width="225" height="42" as="geometry"/>
+        <!-- ==================== HEADER BANNER ==================== -->
+        <mxCell id="main_title" value="&lt;div style=&quot;text-align:center;font-size:18px;font-weight:900;color:#F8FAFC;letter-spacing:-0.2px;&quot;&gt;Current Baseline Architecture: Fragmented LLM Wrappers &amp;amp; Token Waste&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="30" y="16" width="1500" height="26" as="geometry"/>
         </mxCell>
 
-        <!-- COLUMN 1: CLIENT APPS & INGRESS -->
-        <mxCell id="col1_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#EF4444;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="25" y="60" width="360" height="715" as="geometry"/>
+        <!-- ==================== 4 COLUMN CONTAINERS ==================== -->
+        <!-- COLUMN 1: Departmental Silos & Prompts -->
+        <mxCell id="col1_bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="30" y="55" width="355" height="735" as="geometry"/>
         </mxCell>
-        <mxCell id="col1_step" value="❶" style="shape=ellipse;fillColor=#DC2626;strokeColor=#DC2626;fontColor=#FFFFFF;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="35" y="64" width="20" height="20" as="geometry"/>
-        </mxCell>
-        <mxCell id="col1_title" value="&lt;b style=&quot;font-size:10.5px;color:#991B1B;&quot;&gt;Client Ingress &amp;amp; Unmanaged Endpoints&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="60" y="64" width="315" height="20" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_web_app" value="&lt;table style=&quot;width:100%;text-align:left;padding:4px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;🌐 ENTERPRISE WEB &amp;amp; MOBILE APPS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Direct fetch() calls to public AI APIs&lt;br&gt;• Hardcoded OPENAI_API_KEY in client bundles&lt;br&gt;• Zero proxy aggregation or corporate rate control&lt;br&gt;• Unmonitored client-side prompt tampering&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
-          <mxGeometry x="35" y="88" width="340" height="115" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_support_bot" value="&lt;table style=&quot;width:100%;text-align:left;padding:4px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;💬 FRAGMENTED SUPPORT CHATBOTS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Monolithic Python LangChain scripts&lt;br&gt;• Rigid, single-threaded chat execution&lt;br&gt;• Frequent state drops on reconnect&lt;br&gt;• Zero cross-departmental tool sharing&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
-          <mxGeometry x="35" y="215" width="340" height="115" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_adhoc_scripts" value="&lt;table style=&quot;width:100%;text-align:left;padding:4px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;📝 AD-HOC NOTEBOOKS &amp;amp; CRON JOBS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Jupyter notebooks with unrotated credentials&lt;br&gt;• Scheduled cron batch summarization scripts&lt;br&gt;• Unmonitored shadow AI API tokens&lt;br&gt;• Silent failures without alert logging&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
-          <mxGeometry x="35" y="342" width="340" height="115" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_shadow_dev" value="&lt;table style=&quot;width:100%;text-align:left;padding:4px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;⚠️ SHADOW AI &amp;amp; BROWSER EXTENSIONS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Unapproved developer copilot extensions&lt;br&gt;• Proprietary source code egress to public models&lt;br&gt;• Zero enterprise DLP screening&lt;br&gt;• Unaudited personal corporate card spend&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#B91C1C;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
-          <mxGeometry x="35" y="470" width="340" height="115" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_database_backend" value="&lt;table style=&quot;width:100%;text-align:left;padding:4px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;🗄️ FRAGMENTED BACKEND DATA STORES&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Isolated MySQL &amp;amp; PostgreSQL databases&lt;br&gt;• Direct SQL query access without masking&lt;br&gt;• Unencrypted connection strings in scripts&lt;br&gt;• S3/GCS raw dumps without access policies&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
-          <mxGeometry x="35" y="598" width="340" height="162" as="geometry"/>
+        <mxCell id="col1_title" value="&lt;b style=&quot;font-size:12.5px;color:#94A3B8;&quot;&gt;Departmental Silos &amp;amp; Prompts&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="30" y="65" width="355" height="24" as="geometry"/>
         </mxCell>
 
-        <!-- COLUMN 2: PUBLIC AI GATEWAY & RATE LIMITS -->
-        <mxCell id="col2_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#F59E0B;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="405" y="60" width="355" height="715" as="geometry"/>
+        <!-- COLUMN 2: Fragile Unmanaged API Gateway -->
+        <mxCell id="col2_bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="410" y="55" width="355" height="735" as="geometry"/>
         </mxCell>
-        <mxCell id="col2_step" value="❷" style="shape=ellipse;fillColor=#D97706;strokeColor=#D97706;fontColor=#FFFFFF;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="415" y="64" width="20" height="20" as="geometry"/>
-        </mxCell>
-        <mxCell id="col2_title" value="&lt;b style=&quot;font-size:10.5px;color:#B45309;&quot;&gt;Public AI Gateway &amp;amp; Token Friction&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="440" y="64" width="310" height="20" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_openai_api" value="&lt;b style=&quot;font-size:9.5px;color:#B45309;&quot;&gt;Direct api.openai.com&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7.5px;color:#64748B;&quot;&gt;Public Internet Egress (No VPC-SC)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="415" y="92" width="160" height="110" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_full_token" value="&lt;b style=&quot;font-size:9.5px;color:#B45309;&quot;&gt;100% Full-Price Tokens&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7.5px;color:#64748B;&quot;&gt;0% Context Caching Discount&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="415" y="222" width="160" height="110" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_rate_limits" value="&lt;b style=&quot;font-size:9.5px;color:#B45309;&quot;&gt;429 Rate-Limit Spikes&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7.5px;color:#64748B;&quot;&gt;Peak TPM/RPM Outages&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="415" y="352" width="160" height="110" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_vendor_lock" value="&lt;b style=&quot;font-size:9.5px;color:#B45309;&quot;&gt;Proprietary SDK Lock-in&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7.5px;color:#64748B;&quot;&gt;Tight Vendor Coupling&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="415" y="482" width="160" height="110" as="geometry"/>
+        <mxCell id="col2_title" value="&lt;b style=&quot;font-size:12.5px;color:#94A3B8;&quot;&gt;Fragile Unmanaged API Gateway&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="410" y="65" width="355" height="24" as="geometry"/>
         </mxCell>
 
-        <!-- Warning Pills inside Column 2 -->
-        <mxCell id="pill_prob_tokens" value="&lt;b style=&quot;font-size:8px;color:#B91C1C;&quot;&gt;💸 $28k/mo Token Burn (No Cache)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="600" y="115" width="145" height="40" as="geometry"/>
+        <!-- COLUMN 3: Point-to-Point Tools -->
+        <mxCell id="col3_bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="790" y="55" width="355" height="735" as="geometry"/>
         </mxCell>
-        <mxCell id="pill_prob_throttling" value="&lt;b style=&quot;font-size:8px;color:#B91C1C;&quot;&gt;⚠️ 429 Rate Throttling Outages&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="600" y="245" width="145" height="40" as="geometry"/>
-        </mxCell>
-        <mxCell id="pill_prob_latency" value="&lt;b style=&quot;font-size:8px;color:#B91C1C;&quot;&gt;⏱️ 14.2s P95 Ingestion Latency&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="600" y="375" width="145" height="40" as="geometry"/>
-        </mxCell>
-        <mxCell id="pill_prob_key_leak" value="&lt;b style=&quot;font-size:8px;color:#B91C1C;&quot;&gt;🔑 Static Unrotated API Keys&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="600" y="505" width="145" height="40" as="geometry"/>
-        </mxCell>
-        <mxCell id="pill_prob_egress" value="&lt;b style=&quot;font-size:8px;color:#B91C1C;&quot;&gt;🚨 Public SaaS Egress (No Private Link)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="450" y="660" width="260" height="42" as="geometry"/>
+        <mxCell id="col3_title" value="&lt;b style=&quot;font-size:12.5px;color:#94A3B8;&quot;&gt;Point-to-Point Tools&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="790" y="65" width="355" height="24" as="geometry"/>
         </mxCell>
 
-        <!-- COLUMN 3: FRAGILE 8K RAG & VECTOR SPRAWL -->
-        <mxCell id="col3_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="780" y="60" width="395" height="715" as="geometry"/>
+        <!-- COLUMN 4: Client Apps -->
+        <mxCell id="col4_bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="1170" y="55" width="360" height="735" as="geometry"/>
         </mxCell>
-        <mxCell id="col3_step" value="❸" style="shape=ellipse;fillColor=#2563EB;strokeColor=#2563EB;fontColor=#FFFFFF;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="790" y="64" width="20" height="20" as="geometry"/>
-        </mxCell>
-        <mxCell id="col3_title" value="&lt;b style=&quot;font-size:10.5px;color:#1D4ED8;&quot;&gt;Fragile 8k RAG &amp;amp; Vector Sprawl&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="815" y="64" width="350" height="20" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_chunking" value="&lt;table style=&quot;width:100%;text-align:left;padding:4px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;📄 500-TOKEN ARBITRARY CHUNKING&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Blind fixed-token slicing destroys semantic context&lt;br&gt;• Multi-page financial tables shredded across chunks&lt;br&gt;• 45% retrieval failure on synthesis questions&lt;br&gt;• Missing parent-child document hierarchy&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
-          <mxGeometry x="790" y="92" width="375" height="110" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_pinecone" value="&lt;table style=&quot;width:100%;text-align:left;padding:4px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;🌲 UNMANAGED SAAS VECTOR DATABASE&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Third-party hosted Pinecone/Weaviate cluster&lt;br&gt;• No VPC Service Controls or private IP peering&lt;br&gt;• Separate billing silo ($4,200/mo index cost)&lt;br&gt;• Stale embeddings requiring full periodic re-indexing&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
-          <mxGeometry x="790" y="222" width="375" height="110" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_hallucination" value="&lt;table style=&quot;width:100%;text-align:left;padding:4px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#B91C1C;&quot;&gt;⚠️ HIGH HALLUCINATION &amp;amp; DRIFT RATE&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Model hallucinates citations on missing context&lt;br&gt;• Zero automated factuality or toxicity evaluation&lt;br&gt;• No grounding attribution to enterprise truth&lt;br&gt;• Customer-facing discrepancies in answers&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#EF4444;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
-          <mxGeometry x="790" y="352" width="375" height="110" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_no_mcp" value="&lt;table style=&quot;width:100%;text-align:left;padding:4px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;🔌 BRITTLE BESPOKE FUNCTION CALLING&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Ad-hoc tool calling without Model Context Protocol (MCP)&lt;br&gt;• Custom parameter parsing prone to syntax errors&lt;br&gt;• No sandboxed container execution environment&lt;br&gt;• Hardcoded integration code for every API endpoint&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
-          <mxGeometry x="790" y="482" width="375" height="110" as="geometry"/>
-        </mxCell>
-        <mxCell id="pill_rag_verdict" value="&lt;b style=&quot;font-size:8.5px;color:#B91C1C;&quot;&gt;Verifiable Grounding Accuracy: Only 54% on Multi-Page Documents&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="810" y="660" width="335" height="42" as="geometry"/>
+        <mxCell id="col4_title" value="&lt;b style=&quot;font-size:12.5px;color:#94A3B8;&quot;&gt;Client Apps&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1170" y="65" width="360" height="24" as="geometry"/>
         </mxCell>
 
-        <!-- COLUMN 4: SECURITY, TRISM & COMPLIANCE VOID -->
-        <mxCell id="col4_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FAF5FF;strokeColor=#A855F7;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="1195" y="60" width="380" height="715" as="geometry"/>
-        </mxCell>
-        <mxCell id="col4_step" value="❹" style="shape=ellipse;fillColor=#9333EA;strokeColor=#9333EA;fontColor=#FFFFFF;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1205" y="64" width="20" height="20" as="geometry"/>
-        </mxCell>
-        <mxCell id="col4_title" value="&lt;b style=&quot;font-size:10.5px;color:#6B21A8;&quot;&gt;Security, TRiSM &amp;amp; Governance Void&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1230" y="64" width="335" height="20" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_pii_leak" value="&lt;table style=&quot;width:100%;text-align:left;padding:4px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;🪪 UNMASKED PII IN TRAINING &amp;amp; LOGS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Plaintext SSN, credit cards, and customer data in prompts&lt;br&gt;• No automated surrogate tokenization or Cloud DLP&lt;br&gt;• Prompts retained in third-party API provider logs&lt;br&gt;• Critical HIPAA &amp;amp; GDPR regulatory exposure&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
-          <mxGeometry x="1205" y="92" width="360" height="110" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_prompt_inj" value="&lt;table style=&quot;width:100%;text-align:left;padding:4px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;🪲 ZERO PROMPT INJECTION SHIELDING&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Vulnerable to jailbreaks and system prompt extraction&lt;br&gt;• No Model Armor or TRiSM firewall inspection layer&lt;br&gt;• Indirect prompt injection via untrusted user inputs&lt;br&gt;• Unrestricted tool calling privileges&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
-          <mxGeometry x="1205" y="222" width="360" height="110" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_no_audit" value="&lt;table style=&quot;width:100%;text-align:left;padding:4px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;📋 ABSENT COMPLIANCE AUDIT TRAILS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Zero immutable BigQuery audit logs of agent actions&lt;br&gt;• Manual 14-day SOC2 evidence gathering overhead&lt;br&gt;• Inability to prove non-training data governance&lt;br&gt;• Enterprise CISO security approval blocked&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
-          <mxGeometry x="1205" y="352" width="360" height="110" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_shadow_spend" value="&lt;table style=&quot;width:100%;text-align:left;padding:4px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#B91C1C;&quot;&gt;💳 UNCONTROLLED SHADOW AI SPEND&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• 12+ departmental corporate cards paying OpenAI directly&lt;br&gt;• Zero unified billing or enterprise volume tiers&lt;br&gt;• Missing cost-per-call and unit economics metrics&lt;br&gt;• 300% cost variance month-over-month&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
-          <mxGeometry x="1205" y="482" width="360" height="110" as="geometry"/>
-        </mxCell>
-        <mxCell id="pill_ciso_verdict" value="&lt;b style=&quot;font-size:8.5px;color:#991B1B;&quot;&gt;CISO Verdict: Fails Enterprise Zero-Trust &amp;amp; HIPAA Compliance&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#B91C1C;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1225" y="660" width="320" height="42" as="geometry"/>
+        <!-- ==================== COLUMN 1 NODES & PAIN POINTS ==================== -->
+        <!-- Card 1A: Isolated Python Scripts -->
+        <mxCell id="card_python_scripts" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;svg width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 48 48&quot;&gt;&lt;path fill=&quot;#3776AB&quot; d=&quot;M23.6 4C14.7 4 15.3 7.8 15.3 7.8l.1 4.1h8.5v1.2H12.3S5 12.3 5 21.2s6.4 8.7 6.4 8.7h3.8v-5.4s-.2-6.4 6.3-6.4h10.9s6.1.1 6.1-5.9-5.4-8.2-14.9-8.2zm-4.7 4.2c1.2 0 2.2 1 2.2 2.2s-1 2.2-2.2 2.2-2.2-1-2.2-2.2 1-2.2 2.2-2.2z&quot;/&gt;&lt;path fill=&quot;#FFD43B&quot; d=&quot;M24.4 44c8.9 0 8.3-3.8 8.3-3.8l-.1-4.1h-8.5v-1.2h11.6s7.3.8 7.3-8.1-6.4-8.7-6.4-8.7h-3.8v5.4s.2 6.4-6.3 6.4H16s-6.1-.1-6.1 5.9 5.4 8.2 14.5 8.2zm4.7-4.2c-1.2 0-2.2-1-2.2-2.2s1-2.2 2.2-2.2 2.2 1 2.2 2.2-1 2.2-2.2 2.2z&quot;/&gt;&lt;/svg&gt;&lt;div style=&quot;font-size:10.5px;font-weight:700;color:#F8FAFC;margin-top:4px;line-height:1.2;&quot;&gt;Isolated&lt;br/&gt;Python scripts&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#18111A;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
+          <mxGeometry x="50" y="160" width="145" height="85" as="geometry"/>
         </mxCell>
 
-        <!-- ==================== COMPLETE 16-EDGE ORTHOGONAL PROCESS & DATA FLOW ==================== -->
-        <!-- Flow 1: Web App -> Direct OpenAI REST API -->
-        <mxCell id="conn_1" value="1. Plaintext Prompt (Hardcoded Key)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#DC2626;strokeWidth=1.6;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#DC2626;fontStyle=1;fontSize=8.5;fontColor=#991B1B;exitX=1;exitY=0.35;entryX=0;entryY=0.35;" edge="1" parent="1" source="card_web_app" target="card_openai_api">
-          <mxGeometry relative="1" as="geometry"/>
+        <!-- Warning Pill: 8k Context Window Truncation -->
+        <mxCell id="badge_8k_trunc" value="&lt;div style=&quot;font-size:9px;font-weight:800;color:#FECACA;text-align:center;&quot;&gt;⚠️ 8k Context Window Truncation&lt;/div&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#450A0A;strokeColor=#EF4444;strokeWidth=1.2;" vertex="1" parent="1">
+          <mxGeometry x="130" y="142" width="180" height="24" as="geometry"/>
         </mxCell>
-        <!-- Flow 2: Support Bot -> Rate Limits Spike -->
-        <mxCell id="conn_2" value="2. Single-threaded Prompt Stream" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#D97706;strokeWidth=1.6;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#D97706;fontStyle=1;fontSize=8.5;fontColor=#B45309;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_support_bot" target="card_rate_limits">
-          <mxGeometry relative="1" as="geometry"/>
+
+        <!-- Card 1B: Hardcoded Prompt Templates -->
+        <mxCell id="card_hardcoded_prompts" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;svg width=&quot;22&quot; height=&quot;22&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#F97316&quot; stroke-width=&quot;2&quot;&gt;&lt;path d=&quot;M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z&quot;/&gt;&lt;polyline points=&quot;14 2 14 8 20 8&quot;/&gt;&lt;line x1=&quot;16&quot; y1=&quot;13&quot; x2=&quot;8&quot; y2=&quot;13&quot;/&gt;&lt;line x1=&quot;16&quot; y1=&quot;17&quot; x2=&quot;8&quot; y2=&quot;17&quot;/&gt;&lt;/svg&gt;&lt;div style=&quot;font-size:10.5px;font-weight:700;color:#F8FAFC;margin-top:4px;line-height:1.2;&quot;&gt;Hardcoded&lt;br/&gt;prompt templates&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#1A1713;strokeColor=#F97316;strokeWidth=1.8;" vertex="1" parent="1">
+          <mxGeometry x="220" y="160" width="145" height="85" as="geometry"/>
         </mxCell>
-        <!-- Flow 3: Ad-hoc Notebooks -> 100% Full-Price Tokens -->
-        <mxCell id="conn_3" value="3. Uncached Batch Cron (0% Cache)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#D97706;strokeWidth=1.6;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#D97706;fontStyle=1;fontSize=8.5;fontColor=#B45309;exitX=1;exitY=0.35;entryX=0;entryY=0.65;" edge="1" parent="1" source="card_adhoc_scripts" target="card_full_token">
-          <mxGeometry relative="1" as="geometry"/>
+
+        <!-- Card 1C: LLM Token -->
+        <mxCell id="card_llm_token" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:11px;font-weight:700;color:#F8FAFC;line-height:1.2;&quot;&gt;LLM&lt;br/&gt;Token&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#18111A;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
+          <mxGeometry x="50" y="315" width="145" height="75" as="geometry"/>
         </mxCell>
-        <!-- Flow 4: Shadow Dev Copilots -> Proprietary SDK Lock-in -->
-        <mxCell id="conn_4" value="4. Unvetted Copilot SDK Egress" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#B91C1C;strokeWidth=1.6;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#B91C1C;fontStyle=1;fontSize=8.5;fontColor=#7F1D1D;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_shadow_dev" target="card_vendor_lock">
-          <mxGeometry relative="1" as="geometry"/>
+
+        <!-- Warning Pill: High Token Prompt Injection Exposure -->
+        <mxCell id="badge_token_inj" value="&lt;div style=&quot;font-size:8.5px;font-weight:800;color:#FECACA;text-align:center;&quot;&gt;⚠️ High Token Prompt Injection Exposure&lt;/div&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#450A0A;strokeColor=#EF4444;strokeWidth=1.2;" vertex="1" parent="1">
+          <mxGeometry x="115" y="295" width="195" height="24" as="geometry"/>
         </mxCell>
-        <!-- Flow 5: SQL Backend -> 500-Token Chunking -->
-        <mxCell id="conn_5" value="5. Direct SQL Unmasked Table Dump" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#DC2626;strokeWidth=1.6;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#DC2626;fontStyle=1;fontSize=8.5;fontColor=#991B1B;exitX=1;exitY=0.2;entryX=0;entryY=0.85;" edge="1" parent="1" source="card_database_backend" target="card_chunking">
-          <mxGeometry relative="1" as="geometry"/>
+
+        <!-- Card 1D: Python Script -->
+        <mxCell id="card_python_script_sub" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:11px;font-weight:700;color:#F8FAFC;line-height:1.2;&quot;&gt;Python&lt;br/&gt;Script&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#18111A;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
+          <mxGeometry x="50" y="460" width="140" height="65" as="geometry"/>
         </mxCell>
-        <!-- Flow 6: OpenAI API -> Lossy 500-Token Slicing -->
-        <mxCell id="conn_6" value="6. 8k Lossy Context Window Slicing" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#DC2626;strokeWidth=1.6;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#DC2626;fontStyle=1;fontSize=8.5;fontColor=#991B1B;exitX=1;exitY=0.5;entryX=0;entryY=0.35;" edge="1" parent="1" source="card_openai_api" target="card_chunking">
-          <mxGeometry relative="1" as="geometry"/>
+
+        <!-- Card 1E: Prompt Templates -->
+        <mxCell id="card_prompt_templates_sub" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:11px;font-weight:700;color:#F8FAFC;line-height:1.2;&quot;&gt;Prompt&lt;br/&gt;Templates&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#18111A;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
+          <mxGeometry x="215" y="460" width="150" height="65" as="geometry"/>
         </mxCell>
-        <!-- Flow 7: Full Price Token Burn Pill -->
-        <mxCell id="conn_7" value="Zero Context Caching" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=1;strokeColor=#EF4444;strokeWidth=1.4;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;fontSize=8;fontColor=#B91C1C;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_full_token" target="pill_prob_tokens">
-          <mxGeometry relative="1" as="geometry"/>
+
+        <!-- Warning Pill: Unshielded Prompt Injection Exposure -->
+        <mxCell id="badge_unshielded_inj" value="&lt;div style=&quot;font-size:8.5px;font-weight:800;color:#FECACA;text-align:center;&quot;&gt;⚠️ Unshielded Prompt Injection Exposure&lt;/div&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#450A0A;strokeColor=#EF4444;strokeWidth=1.2;" vertex="1" parent="1">
+          <mxGeometry x="120" y="435" width="195" height="24" as="geometry"/>
         </mxCell>
-        <!-- Flow 8: Rate Limits Throttling Pill -->
-        <mxCell id="conn_8" value="429 Drops" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=1;strokeColor=#EF4444;strokeWidth=1.4;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;fontSize=8;fontColor=#B91C1C;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_rate_limits" target="pill_prob_throttling">
-          <mxGeometry relative="1" as="geometry"/>
+
+        <!-- Card 1F: Unshielded Prompt Injection Exposure Box -->
+        <mxCell id="card_unshielded_exec" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;line-height:1.2;&quot;&gt;Unshielded Prompt&lt;br/&gt;Injection Exposure&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#18111A;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
+          <mxGeometry x="105" y="595" width="225" height="65" as="geometry"/>
         </mxCell>
-        <!-- Flow 9: Vendor Lock -> Brittle Function Calling -->
-        <mxCell id="conn_9" value="7. Custom Parameter Parsing (No MCP)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#2563EB;strokeWidth=1.6;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#2563EB;fontStyle=1;fontSize=8.5;fontColor=#1E40AF;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_vendor_lock" target="card_no_mcp">
-          <mxGeometry relative="1" as="geometry"/>
+
+        <!-- Warning Pill: Silent Model Drift -->
+        <mxCell id="badge_model_drift" value="&lt;div style=&quot;font-size:8.5px;font-weight:800;color:#FFEDD5;text-align:center;&quot;&gt;⚠️ Silent Model Drift&lt;/div&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#431407;strokeColor=#F97316;strokeWidth=1.2;" vertex="1" parent="1">
+          <mxGeometry x="175" y="573" width="145" height="24" as="geometry"/>
         </mxCell>
-        <!-- Flow 10: Chunking -> Unmanaged SaaS Vector DB -->
-        <mxCell id="conn_10" value="8. Blind Fixed-Token Embeddings" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#2563EB;strokeWidth=1.6;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#2563EB;fontStyle=1;fontSize=8.5;fontColor=#1E40AF;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="card_chunking" target="card_pinecone">
-          <mxGeometry relative="1" as="geometry"/>
+
+        <!-- ==================== COLUMN 2 NODES & PAIN POINTS ==================== -->
+        <!-- Warning Pill: High Token Burn (Zero Caching) -->
+        <mxCell id="badge_token_burn" value="&lt;div style=&quot;font-size:9px;font-weight:800;color:#FFEDD5;text-align:center;&quot;&gt;⚠️ High Token Burn (Zero Caching)&lt;/div&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#431407;strokeColor=#F97316;strokeWidth=1.2;" vertex="1" parent="1">
+          <mxGeometry x="460" y="142" width="225" height="24" as="geometry"/>
         </mxCell>
-        <!-- Flow 11: Vector DB -> High Hallucination Rate -->
-        <mxCell id="conn_11" value="9. Missing Semantic Context Query" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#EF4444;strokeWidth=1.6;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#EF4444;fontStyle=1;fontSize=8.5;fontColor=#B91C1C;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="card_pinecone" target="card_hallucination">
-          <mxGeometry relative="1" as="geometry"/>
+
+        <!-- Card 2A: Direct Public Endpoints -->
+        <mxCell id="card_direct_endpoints" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;line-height:1.2;&quot;&gt;Direct public&lt;br/&gt;endpoints&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#18111A;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
+          <mxGeometry x="465" y="175" width="235" height="75" as="geometry"/>
         </mxCell>
-        <!-- Flow 12: Hallucination -> Unmasked PII in Training -->
-        <mxCell id="conn_12" value="10. Hallucinated Discrepancy &amp; Leak" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#9333EA;strokeWidth=1.6;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#9333EA;fontStyle=1;fontSize=8.5;fontColor=#6B21A8;exitX=1;exitY=0.35;entryX=0;entryY=0.65;" edge="1" parent="1" source="card_hallucination" target="card_pii_leak">
-          <mxGeometry relative="1" as="geometry"/>
+
+        <!-- Card 2B: Fragile Unmanaged API Gateway -->
+        <mxCell id="card_fragile_gateway" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:12.5px;font-weight:800;color:#F8FAFC;line-height:1.2;&quot;&gt;Fragile Unmanaged&lt;br/&gt;API Gateway&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#18111A;strokeColor=#EF4444;strokeWidth=2.2;" vertex="1" parent="1">
+          <mxGeometry x="465" y="320" width="235" height="80" as="geometry"/>
         </mxCell>
-        <!-- Flow 13: Brittle Function Calling -> Prompt Injection -->
-        <mxCell id="conn_13" value="11. Unsandboxed Code / Jailbreak" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#9333EA;strokeWidth=1.6;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#9333EA;fontStyle=1;fontSize=8.5;fontColor=#6B21A8;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_no_mcp" target="card_prompt_inj">
-          <mxGeometry relative="1" as="geometry"/>
+
+        <!-- Card 2C: 8k token context fragmentation -->
+        <mxCell id="card_8k_frag" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;line-height:1.2;&quot;&gt;8k token context&lt;br/&gt;fragmentation&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#1A1713;strokeColor=#F97316;strokeWidth=1.8;" vertex="1" parent="1">
+          <mxGeometry x="465" y="490" width="235" height="75" as="geometry"/>
         </mxCell>
-        <!-- Flow 14: PII Leak -> Absent Compliance Audit -->
-        <mxCell id="conn_14" value="12. Plaintext SSN Retained in Provider Logs" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#9333EA;strokeWidth=1.6;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#9333EA;fontStyle=1;fontSize=8.5;fontColor=#6B21A8;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="card_pii_leak" target="card_no_audit">
-          <mxGeometry relative="1" as="geometry"/>
+
+        <!-- ==================== COLUMN 3 NODES ==================== -->
+        <!-- Card 3A: Unsandboxed Web Scrapers -->
+        <mxCell id="card_scrapers" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;svg width=&quot;22&quot; height=&quot;22&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#EF4444&quot; stroke-width=&quot;2&quot;&gt;&lt;circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;10&quot;/&gt;&lt;line x1=&quot;2&quot; y1=&quot;12&quot; x2=&quot;22&quot; y2=&quot;12&quot;/&gt;&lt;path d=&quot;M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z&quot;/&gt;&lt;/svg&gt;&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;margin-top:4px;line-height:1.2;&quot;&gt;Unsandboxed&lt;br/&gt;web scrapers&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#18111A;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
+          <mxGeometry x="850" y="175" width="230" height="80" as="geometry"/>
         </mxCell>
-        <!-- Flow 15: Absent Audit -> Uncontrolled Shadow Spend -->
-        <mxCell id="conn_15" value="13. Zero Central Billing Governance" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#DC2626;strokeWidth=1.6;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#DC2626;fontStyle=1;fontSize=8.5;fontColor=#991B1B;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="card_no_audit" target="card_shadow_spend">
-          <mxGeometry relative="1" as="geometry"/>
+
+        <!-- Card 3B: Unindexed Vector Dumps (Top) -->
+        <mxCell id="card_vector_dumps_1" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;svg width=&quot;22&quot; height=&quot;22&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#EF4444&quot; stroke-width=&quot;2&quot;&gt;&lt;ellipse cx=&quot;12&quot; cy=&quot;5&quot; rx=&quot;9&quot; ry=&quot;3&quot;/&gt;&lt;path d=&quot;M21 12c0 1.66-4 3-9 3s-9-1.34-9-3&quot;/&gt;&lt;path d=&quot;M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5&quot;/&gt;&lt;/svg&gt;&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;margin-top:4px;line-height:1.2;&quot;&gt;Unindexed&lt;br/&gt;vector dumps&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#18111A;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
+          <mxGeometry x="850" y="460" width="230" height="80" as="geometry"/>
         </mxCell>
-        <!-- Flow 16: Shadow Spend -> CISO Verdict Failure -->
-        <mxCell id="conn_16" value="14. 12+ Personal Cards ($28k/mo)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=1;strokeColor=#B91C1C;strokeWidth=1.6;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#B91C1C;fontStyle=1;fontSize=8.5;fontColor=#991B1B;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="card_shadow_spend" target="pill_ciso_verdict">
+
+        <!-- Card 3C: Unindexed Vector Dumps (Bottom) -->
+        <mxCell id="card_vector_dumps_2" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;line-height:1.2;&quot;&gt;Unindexed&lt;br/&gt;vector dumps&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#1A1713;strokeColor=#F97316;strokeWidth=1.8;" vertex="1" parent="1">
+          <mxGeometry x="850" y="595" width="230" height="75" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== COLUMN 4 NODES ==================== -->
+        <!-- Card 4A: Unmonitored Chat UI (Top) -->
+        <mxCell id="card_unmonitored_chat_top" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;svg width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#F97316&quot; stroke-width=&quot;2&quot;&gt;&lt;rect x=&quot;2&quot; y=&quot;3&quot; width=&quot;20&quot; height=&quot;14&quot; rx=&quot;2&quot; ry=&quot;2&quot;/&gt;&lt;line x1=&quot;8&quot; y1=&quot;21&quot; x2=&quot;16&quot; y2=&quot;21&quot;/&gt;&lt;line x1=&quot;12&quot; y1=&quot;17&quot; x2=&quot;12&quot; y2=&quot;21&quot;/&gt;&lt;/svg&gt;&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;margin-top:4px;line-height:1.2;&quot;&gt;Unmonitored&lt;br/&gt;chat UI&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#1A1713;strokeColor=#F97316;strokeWidth=1.8;" vertex="1" parent="1">
+          <mxGeometry x="1235" y="165" width="220" height="90" as="geometry"/>
+        </mxCell>
+
+        <!-- Card 4B: Unmonitored Chat UIs (Bottom) -->
+        <mxCell id="card_unmonitored_chat_bot" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;svg width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#EF4444&quot; stroke-width=&quot;2&quot;&gt;&lt;path d=&quot;M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z&quot;/&gt;&lt;/svg&gt;&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;margin-top:4px;line-height:1.2;&quot;&gt;Unmonitored&lt;br/&gt;chat UIs&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#18111A;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
+          <mxGeometry x="1235" y="335" width="220" height="85" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== NUMBERED ORTHOGONAL CONNECTORS ==================== -->
+        <!-- Flow 1: Python Scripts -> LLM Token -->
+        <mxCell id="edge_step1_scripts" value="Step 1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9.5;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="card_python_scripts" target="card_llm_token">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
-        <!-- BOTTOM STRIP & LEGEND -->
-        <mxCell id="strip_footer" value="&lt;table style=&quot;width:100%;font-size:9.5px;color:#202124;&quot;&gt;&lt;tr&gt;&lt;td&gt;&lt;b style=&quot;color:#C5221F;&quot;&gt;🚨 LEGACY PROCESS FLOW:&lt;/b&gt; ❶ Ingress ➔ ❷ Public Egress ➔ ❸ Uncached 100% Token Burn ➔ ❹ 429 Throttle ➔ ❺ Lossy Chunking ➔ ❻ SaaS Vector Query ➔ ❼ Hallucination ➔ ❽ PII &amp;amp; Prompt Injection Leak ➔ ❾ Audit Failure &amp;nbsp;|&amp;nbsp; &lt;b style=&quot;color:#137333;&quot;&gt;TARGET MODERNIZATION:&lt;/b&gt; Google Vertex AI Gemini 2.5/3.7, 2M Context Caching (75% discount), Model Armor TRiSM Shield, &amp;amp; BigLake Grounding.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#FCA5A5;strokeWidth=1;align=left;spacingLeft=12;" vertex="1" parent="1">
-          <mxGeometry x="25" y="790" width="1550" height="42" as="geometry"/>
+        <!-- Flow 2: LLM Token -> Fragile Gateway -->
+        <mxCell id="edge_step1_gateway" value="Step 1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9.5;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.35;" edge="1" parent="1" source="card_llm_token" target="card_fragile_gateway">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Flow 3: Hardcoded Prompts -> Fragile Gateway -->
+        <mxCell id="edge_prompts_gateway" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=0.5;exitY=1;entryX=0;entryY=0.2;" edge="1" parent="1" source="card_hardcoded_prompts" target="card_fragile_gateway">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Flow 4: Direct Endpoints -> Gateway (Step 2 + Lack rate limiting) -->
+        <mxCell id="edge_step2_endpoints" value="Step 2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9.5;fontStyle=1;exitX=0.35;exitY=1;entryX=0.35;entryY=0;" edge="1" parent="1" source="card_direct_endpoints" target="card_fragile_gateway">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_lack_limits" value="Lack rate limiting" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9;fontStyle=1;exitX=0.65;exitY=1;entryX=0.65;entryY=0;" edge="1" parent="1" source="card_direct_endpoints" target="card_fragile_gateway">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Flow 5: Python Sub & Prompt Sub -> Unshielded Execution -->
+        <mxCell id="edge_sub_scripts_exec" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=0.5;exitY=1;entryX=0.3;entryY=0;" edge="1" parent="1" source="card_python_script_sub" target="card_unshielded_exec">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_sub_prompts_exec" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=0.5;exitY=1;entryX=0.7;entryY=0;" edge="1" parent="1" source="card_prompt_templates_sub" target="card_unshielded_exec">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Flow 6: Prompt Templates Sub -> Gateway (Step 2) -->
+        <mxCell id="edge_step2_prompts_sub" value="Step 2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9.5;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.8;" edge="1" parent="1" source="card_prompt_templates_sub" target="card_fragile_gateway">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Flow 7: Gateway -> 8k context fragmentation (Step 2) -->
+        <mxCell id="edge_step2_frag" value="Step 2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9.5;fontStyle=1;exitX=0.35;exitY=1;entryX=0.35;entryY=0;" edge="1" parent="1" source="card_fragile_gateway" target="card_8k_frag">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Flow 8: 8k context fragmentation -> Gateway (Step 3) -->
+        <mxCell id="edge_step3_frag_return" value="Step 3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9.5;fontStyle=1;exitX=0.65;exitY=0;entryX=0.65;entryY=1;" edge="1" parent="1" source="card_8k_frag" target="card_fragile_gateway">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Flow 9: Gateway -> Unsandboxed Web Scrapers (Step 4) -->
+        <mxCell id="edge_step4_scrapers" value="Step 4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9.5;fontStyle=1;exitX=1;exitY=0.25;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_fragile_gateway" target="card_scrapers">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Flow 10: Scrapers -> Unmonitored Chat UIs (Step 3) -->
+        <mxCell id="edge_step3_scrapers_chat" value="Step 3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9.5;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.3;" edge="1" parent="1" source="card_scrapers" target="card_unmonitored_chat_bot">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Flow 11: Gateway -> Unindexed Vector Dumps (Step 4) -->
+        <mxCell id="edge_step4_vector" value="Step 4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9.5;fontStyle=1;exitX=1;exitY=0.75;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_fragile_gateway" target="card_vector_dumps_1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Flow 12: Vector Dumps -> Chat UIs (Step 4) -->
+        <mxCell id="edge_step4_vector_chat" value="Step 4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9.5;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.7;" edge="1" parent="1" source="card_vector_dumps_1" target="card_unmonitored_chat_bot">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Flow 13: Vector Dumps 1 -> Vector Dumps 2 (Step 5) -->
+        <mxCell id="edge_step5_vector_down" value="Step 5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9.5;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="card_vector_dumps_1" target="card_vector_dumps_2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Flow 14: Unmonitored Chat UIs -> Unmonitored Chat UI Top -->
+        <mxCell id="edge_chat_bot_to_top" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" edge="1" parent="1" source="card_unmonitored_chat_bot" target="card_unmonitored_chat_top">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Flow 15: Unshielded Exec -> Vector Dumps 2 across bottom (Step 3) -->
+        <mxCell id="edge_step3_bottom_leak" value="Step 3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9.5;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_unshielded_exec" target="card_vector_dumps_2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== BOTTOM PROCESS FLOW & LEGEND ==================== -->
+        <mxCell id="strip_footer" value="&lt;table style=&quot;width:100%;font-size:9.5px;color:#94A3B8;line-height:1.2;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;padding-left:12px;&quot;&gt;&lt;b style=&quot;color:#EF4444;&quot;&gt;🚨 CURRENT BASELINE PROCESS FLOW:&lt;/b&gt; &lt;span style=&quot;color:#FCA5A5;&quot;&gt;Step 1:&lt;/span&gt; Siloed Client Scripts &amp;amp; Tokens ➔ &lt;span style=&quot;color:#FCA5A5;&quot;&gt;Step 2:&lt;/span&gt; Fragile Public Egress (Lack Rate Limiting) ➔ &lt;span style=&quot;color:#FCA5A5;&quot;&gt;Step 3:&lt;/span&gt; Unsandboxed Scrapers &amp;amp; 8k Context Fragmentation ➔ &lt;span style=&quot;color:#FCA5A5;&quot;&gt;Step 4:&lt;/span&gt; Unindexed Vector Dumps ➔ &lt;span style=&quot;color:#FCA5A5;&quot;&gt;Step 5:&lt;/span&gt; Unmonitored Chat UIs &amp;amp; Model Drift &amp;nbsp;|&amp;nbsp; &lt;b style=&quot;color:#10B981;&quot;&gt;✓ TARGET MODERNIZATION:&lt;/b&gt; Vertex AI Gemini 2.5/3.7, Model Armor TRiSM, Context Caching &amp;amp; BigLake Grounding.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#111827;strokeColor=#1E293B;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="805" width="1500" height="38" as="geometry"/>
         </mxCell>
       </root>
     </mxGraphModel>
@@ -9950,35 +9972,32 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
       if (isOpenAiDetected && isAws) {
         res = res
           .replace(
-            /&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Direct api\.openai\.com&lt;\/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Public Internet Egress \(No VPC-SC\)&lt;\/span&gt;/g,
-            '&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:openai-icon.svg&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&amp;nbsp;&lt;img src=&quot;https://api.iconify.design/logos:aws.svg&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:9px;font-weight:bold;color:#B45309;padding-top:2px;&quot;&gt;OpenAI on AWS&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;font-weight:normal;&quot;&gt;AWS NAT Gateway Egress&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
+            /&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;line-height:1.2;&quot;&gt;Direct public&lt;br\/&gt;endpoints&lt;\/div&gt;/g,
+            '&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:openai-icon.svg&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&amp;nbsp;&lt;img src=&quot;https://api.iconify.design/logos:aws.svg&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10.5px;font-weight:bold;color:#F8FAFC;padding-top:2px;&quot;&gt;OpenAI on AWS&lt;br/&gt;&lt;span style=&quot;font-size:7.5px;color:#94A3B8;font-weight:normal;&quot;&gt;Direct Public Endpoints (No VPC-SC)&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
           );
       } else if (isOpenAiDetected) {
         res = res.replace(
-          /&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Direct api\.openai\.com&lt;\/b&gt;/g,
-          '&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:openai-icon.svg&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:9px;font-weight:bold;color:#B45309;&quot;&gt;OpenAI REST API&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
+          /&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;line-height:1.2;&quot;&gt;Direct public&lt;br\/&gt;endpoints&lt;\/div&gt;/g,
+          '&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:openai-icon.svg&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10.5px;font-weight:bold;color:#F8FAFC;padding-top:2px;&quot;&gt;Direct OpenAI API&lt;br/&gt;&lt;span style=&quot;font-size:7.5px;color:#94A3B8;font-weight:normal;&quot;&gt;Unproxied Public Egress&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
         );
       }
 
       if (isPinecone) {
         res = res.replace(
-          /🌲 UNMANAGED SAAS VECTOR DATABASE/g,
-          '&lt;table style=&quot;width:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:pinecone-icon.svg&quot; width=&quot;14&quot; height=&quot;14&quot;/&gt;&amp;nbsp;&lt;b style=&quot;font-size:9.5px;color:#1E40AF;&quot;&gt;PINECONE VECTOR DB&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
-        ).replace(
-          /Third-party hosted Pinecone\/Weaviate cluster/g,
-          'Unmanaged Pinecone SaaS index with unproxied egress'
+          /&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;margin-top:4px;line-height:1.2;&quot;&gt;Unindexed&lt;br\/&gt;vector dumps&lt;\/div&gt;/,
+          '&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:pinecone-icon.svg&quot; width=&quot;22&quot; height=&quot;22&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10.5px;font-weight:bold;color:#F8FAFC;padding-top:2px;&quot;&gt;Pinecone Vector DB&lt;br/&gt;&lt;span style=&quot;font-size:7.5px;color:#94A3B8;font-weight:normal;&quot;&gt;Unmanaged SaaS Cluster&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
         );
       } else if (isWeaviate) {
         res = res.replace(
-          /🌲 UNMANAGED SAAS VECTOR DATABASE/g,
-          '&lt;table style=&quot;width:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:weaviate-icon.svg&quot; width=&quot;14&quot; height=&quot;14&quot;/&gt;&amp;nbsp;&lt;b style=&quot;font-size:9.5px;color:#1E40AF;&quot;&gt;WEAVIATE VECTOR DB&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
+          /&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;margin-top:4px;line-height:1.2;&quot;&gt;Unindexed&lt;br\/&gt;vector dumps&lt;\/div&gt;/,
+          '&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:weaviate-icon.svg&quot; width=&quot;22&quot; height=&quot;22&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10.5px;font-weight:bold;color:#F8FAFC;padding-top:2px;&quot;&gt;Weaviate Vector DB&lt;br/&gt;&lt;span style=&quot;font-size:7.5px;color:#94A3B8;font-weight:normal;&quot;&gt;Self-Hosted / Managed Cluster&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
         );
       }
 
       if (isLangChain) {
         res = res.replace(
-          /💬 FRAGMENTED SUPPORT CHATBOTS/g,
-          '&lt;table style=&quot;width:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:langchain-icon.svg&quot; width=&quot;14&quot; height=&quot;14&quot;/&gt;&amp;nbsp;&lt;b style=&quot;font-size:9.5px;color:#1E40AF;&quot;&gt;LANGCHAIN AGENT CHAINS&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
+          /&lt;div style=&quot;font-size:10.5px;font-weight:700;color:#F8FAFC;margin-top:4px;line-height:1.2;&quot;&gt;Isolated&lt;br\/&gt;Python scripts&lt;\/div&gt;/,
+          '&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:langchain-icon.svg&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#F8FAFC;padding-top:2px;&quot;&gt;LangChain Scripts&lt;br/&gt;&lt;span style=&quot;font-size:7.5px;color:#94A3B8;font-weight:normal;&quot;&gt;Fragile Single-Thread Chains&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
         );
       }
 

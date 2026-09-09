@@ -50,6 +50,14 @@ function sanitizeInstance(instance) {
 
 function userOwnsInstance(user, instance) {
   if (isAdmin(user)) return true;
+  if (user?.role === 'demo' && (
+    instance?.customerName === 'ScoreX Demo Workspace' ||
+    instance?.createdBy?.startsWith('demo_') ||
+    instance?.isSampleReport ||
+    instance?.id?.startsWith('inst_')
+  )) {
+    return true;
+  }
   return canAccessResource(user, instance, ['createdBy', 'created_by', 'ownerId', 'owner_id', 'userId', 'user_id']);
 }
 

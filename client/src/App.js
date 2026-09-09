@@ -79,6 +79,14 @@ class ChunkErrorBoundary extends React.Component {
 
   render() {
     if (this.state.hasError) {
+      const isChunk =
+        this.state.error?.name === 'ChunkLoadError' ||
+        (this.state.error?.message && (
+          this.state.error.message.includes('Loading chunk') ||
+          this.state.error.message.includes('Failed to fetch dynamically imported module') ||
+          this.state.error.message.includes('Unexpected token')
+        ));
+
       return (
         <div style={{
           minHeight: '80vh',
@@ -99,10 +107,12 @@ class ChunkErrorBoundary extends React.Component {
             boxShadow: '0 10px 25px rgba(0,0,0,0.05)'
           }}>
             <h2 style={{ fontSize: '1.4rem', color: '#0f172a', margin: '0 0 10px', fontWeight: 800 }}>
-              Updating Application
+              {isChunk ? 'Updating Application' : 'Application Recovered'}
             </h2>
             <p style={{ fontSize: '0.92rem', color: '#64748b', margin: '0 0 20px', lineHeight: 1.5 }}>
-              A new version of ScoreX was recently deployed. Click below to refresh and load the latest release.
+              {isChunk
+                ? 'A new version of ScoreX was recently deployed. Click below to refresh and load the latest release.'
+                : 'A view component encountered a recoverable state change. Click below to refresh and continue.'}
             </p>
             <button
               onClick={() => {
@@ -120,7 +130,7 @@ class ChunkErrorBoundary extends React.Component {
                 cursor: 'pointer'
               }}
             >
-              🔄 Reload Latest Version
+              🔄 Reload Application
             </button>
           </div>
         </div>
