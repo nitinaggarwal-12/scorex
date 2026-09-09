@@ -694,20 +694,40 @@ const ArchitectureComparisonDiagram = ({
     );
   }, [framework, customerName, useCase, currentScore, targetScore, responses, notes]);
 
+  // Detect obsolete/draft diagrams that lack full orthogonal connectivity or use raw emojis
+  const isOutdatedDiagram = useCallback((diagrams) => {
+    if (!diagrams || !diagrams.currentStateXml) return true;
+    const cur = diagrams.currentStateXml;
+    const tgt = diagrams.targetStateXml || '';
+    if (cur.includes('stage1_box')) return true;
+    // Check for old 4-arrow or 3-arrow drafts (all upgraded diagrams have >= 16 orthogonal edges)
+    const curEdges = (cur.match(/edge="1"/g) || []).length;
+    if (curEdges < 10) return true;
+    // Check for raw emojis in vertex cells
+    if (cur.includes('💸') || cur.includes('🖥️') || cur.includes('⚡') || cur.includes('🤖')) return true;
+    // Check for low target edge count
+    const tgtEdges = (tgt.match(/edge="1"/g) || []).length;
+    if (tgtEdges < 10) return true;
+    return false;
+  }, []);
+
   const [diagramsData, setDiagramsData] = useState(() => {
-    if (initialDiagrams && initialDiagrams.currentStateXml && !initialDiagrams.currentStateXml.includes('stage1_box')) {
+    if (initialDiagrams && !isOutdatedDiagram(initialDiagrams)) {
       return initialDiagrams;
     }
     return defaultBlueprintData;
   });
 
   useEffect(() => {
-    if (initialDiagrams && initialDiagrams.currentStateXml && !initialDiagrams.currentStateXml.includes('stage1_box')) {
+    if (initialDiagrams && !isOutdatedDiagram(initialDiagrams)) {
       setDiagramsData(initialDiagrams);
     } else {
       setDiagramsData(defaultBlueprintData);
+      if (initialDiagrams && isOutdatedDiagram(initialDiagrams)) {
+        persistDiagramsToBackend(defaultBlueprintData);
+      }
     }
-  }, [initialDiagrams, defaultBlueprintData]);
+  }, [initialDiagrams, defaultBlueprintData, isOutdatedDiagram, persistDiagramsToBackend]);
 
   const [versionHistory, setVersionHistory] = useState([
     { id: 'v1.0', version: 'v1.0', label: 'Initial AI Synthesis', timestamp: formatAuditTimestamp(), target: 'target' }
