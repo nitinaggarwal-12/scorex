@@ -1219,34 +1219,147 @@ const ArchitectureComparisonDiagram = ({
 
       {/* 1. SIDE-BY-SIDE DUAL DIAGRAM VIEWPORT */}
       {viewMode === 'side_by_side' && (
-        <DualDiagramGrid>
-          <div>
-            <DiagramErrorBoundary onAutoHeal={handleRegenerate}>
-              <DiagramViewer
-                xml={currentXml}
-                title={currentTitle}
-                subtitle={currentSubtitle}
-                badge="Current State"
-                theme={diagramTheme}
-                height="480px"
-                isTarget={false}
-              />
-            </DiagramErrorBoundary>
+        <>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '12px',
+            background: 'linear-gradient(90deg, #f8fafc 0%, #f1f5f9 100%)',
+            border: '1px solid #e2e8f0',
+            borderRadius: '10px',
+            padding: '10px 16px',
+            marginBottom: '14px',
+            fontSize: '0.84rem',
+            color: '#334155'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '1.1rem' }}>💡</span>
+              <span>
+                <strong>Side-by-Side Dual View</strong>: Blueprints are scaled to fit side-by-side. Click <strong>"⛶ Enlarge (100%)"</strong> or the tabs above for full-resolution architectural view.
+              </span>
+            </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                type="button"
+                onClick={() => setViewMode('current_diagram')}
+                style={{
+                  background: '#fff1f2',
+                  border: '1px solid #fecdd3',
+                  color: '#be123c',
+                  padding: '5px 12px',
+                  borderRadius: '6px',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+              >
+                ⚠️ Enlarge Current State
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('target_diagram')}
+                style={{
+                  background: '#f0fdf4',
+                  border: '1px solid #bbf7d0',
+                  color: '#15803d',
+                  padding: '5px 12px',
+                  borderRadius: '6px',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+              >
+                ✨ Enlarge Target State
+              </button>
+            </div>
           </div>
-          <div>
-            <DiagramErrorBoundary onAutoHeal={handleRegenerate}>
-              <DiagramViewer
-                xml={targetXml}
-                title={targetTitle}
-                subtitle={targetSubtitle}
-                badge="Desired Future State"
-                theme={diagramTheme}
-                height="480px"
-                isTarget={true}
-              />
-            </DiagramErrorBoundary>
-          </div>
-        </DualDiagramGrid>
+          <DualDiagramGrid>
+            <div style={{ position: 'relative' }}>
+              <button
+                type="button"
+                onClick={() => setViewMode('current_diagram')}
+                title="Expand Current State to 100% Full Width"
+                style={{
+                  position: 'absolute',
+                  top: '12px',
+                  right: '16px',
+                  zIndex: 20,
+                  background: 'rgba(255, 255, 255, 0.95)',
+                  border: '1px solid #cbd5e1',
+                  borderRadius: '6px',
+                  padding: '4px 10px',
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  color: '#be123c',
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+              >
+                ⛶ Enlarge (100%)
+              </button>
+              <DiagramErrorBoundary onAutoHeal={handleRegenerate}>
+                <DiagramViewer
+                  xml={currentXml}
+                  title={currentTitle}
+                  subtitle={currentSubtitle}
+                  badge="Current State"
+                  theme={diagramTheme}
+                  height="580px"
+                  isTarget={false}
+                />
+              </DiagramErrorBoundary>
+            </div>
+            <div style={{ position: 'relative' }}>
+              <button
+                type="button"
+                onClick={() => setViewMode('target_diagram')}
+                title="Expand Target State to 100% Full Width"
+                style={{
+                  position: 'absolute',
+                  top: '12px',
+                  right: '16px',
+                  zIndex: 20,
+                  background: 'rgba(255, 255, 255, 0.95)',
+                  border: '1px solid #cbd5e1',
+                  borderRadius: '6px',
+                  padding: '4px 10px',
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  color: '#15803d',
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+              >
+                ⛶ Enlarge (100%)
+              </button>
+              <DiagramErrorBoundary onAutoHeal={handleRegenerate}>
+                <DiagramViewer
+                  xml={targetXml}
+                  title={targetTitle}
+                  subtitle={targetSubtitle}
+                  badge="Desired Future State"
+                  theme={diagramTheme}
+                  height="580px"
+                  isTarget={true}
+                />
+              </DiagramErrorBoundary>
+            </div>
+          </DualDiagramGrid>
+        </>
       )}
 
       {/* 2. FULL-WIDTH CURRENT STATE DIAGRAM */}
