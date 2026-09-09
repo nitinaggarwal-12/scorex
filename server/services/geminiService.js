@@ -58,7 +58,7 @@ class GeminiService {
   /**
    * Internal helper to generate content with automatic exponential backoff retry and model fallback
    */
-  async _generateWithFallback(prompt, systemInstruction = '', temperature = 0.7, responseMimeType = null, maxRetries = 2) {
+  async _generateWithFallback(promptOrContents, systemInstruction = '', temperature = 0.7, responseMimeType = null, maxRetries = 2) {
     if (!this.isAvailable()) {
       throw new Error('Gemini API key is not configured. Please set GEMINI_API_KEY in your environment variables (or in your Railway project under Variables).');
     }
@@ -81,7 +81,7 @@ class GeminiService {
 
           const response = await this.client.models.generateContent({
             model,
-            contents: prompt,
+            contents: promptOrContents,
             config
           });
 

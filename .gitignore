@@ -7,6 +7,9 @@ client/build/
 # Runtime data files (may contain assessment, auth, feedback, or customer PII)
 data/
 server/data/*.json
+*.db
+*.sqlite
+*.sqlite3
 
 # Environment variables & keys
 .env

@@ -8897,6 +8897,614 @@ function buildHybridMultiCloudXml() {
   `.trim();
 }
 
+
+// ===== Sourced from build_master_legacy_genai_stack.ts =====
+function buildLegacyGenAiStackXml(cust = 'Enterprise Organization') {
+  return `<mxfile host="embed.diagrams.net">
+  <diagram id="legacy_genai_stack" name="Enterprise Organization - Current Fragile GenAI Stack">
+    <mxGraphModel dx="1600" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="860" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- HEADER BANNER -->
+        <mxCell id="top_logo" value="&lt;span style=&quot;font-size:24px;&quot;&gt;⚠️&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="25" y="10" width="35" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="main_title" value="&lt;b style=&quot;font-size:16px;color:#0F172A;letter-spacing:-0.2px;&quot;&gt;ENTERPRISE ORGANIZATION: CURRENT STATE — FRAGILE OPENAI &amp;amp; UNANCHORED GENAI STACK (P1-AI-L-01)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="65" y="10" width="1150" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="main_subtitle" value="&lt;span style=&quot;font-size:9.5px;color:#475569;font-weight:700;letter-spacing:0.1px;&quot;&gt;Direct OpenAI REST Calls, Hardcoded API Keys, 8k Fragmented RAG, Zero Prompt Caching, and Missing AI TRiSM Guardrails&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="65" y="32" width="1150" height="16" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="top_badge" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:12px;font-weight:bold;color:#EF4444;&quot;&gt;⚠️ Legacy GenAI Stack&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:8px;color:#94A3B8;font-weight:600;&quot;&gt;100% Full-Price Tokens • Public Egress&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;strokeWidth=1.5;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1350" y="8" width="225" height="42" as="geometry"/>
+        </mxCell>
+
+        <!-- COLUMN 1: CLIENT APPS & UNMANAGED API WRAPPERS -->
+        <mxCell id="col1_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#EF4444;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="25" y="60" width="360" height="715" as="geometry"/>
+        </mxCell>
+        <mxCell id="col1_title" value="&lt;b style=&quot;font-size:10.5px;color:#991B1B;&quot;&gt;📱 Client Apps &amp;amp; Hardcoded Endpoints&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="35" y="64" width="340" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_web_app" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;🌐 ENTERPRISE WEB &amp;amp; MOBILE APPS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Direct fetch() calls to public AI APIs&lt;br&gt;• Hardcoded OPENAI_API_KEY in client bundles&lt;br&gt;• Zero proxy aggregation or corporate rate control&lt;br&gt;• Unmonitored client-side prompt tampering&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="35" y="88" width="340" height="115" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_support_bot" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;💬 FRAGMENTED SUPPORT CHATBOTS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Monolithic Python LangChain scripts&lt;br&gt;• Rigid, single-threaded chat execution&lt;br&gt;• Frequent state drops on reconnect&lt;br&gt;• Zero cross-departmental tool sharing&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="35" y="215" width="340" height="115" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_adhoc_scripts" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;📝 AD-HOC NOTEBOOKS &amp;amp; CRON JOBS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Jupyter notebooks with unrotated credentials&lt;br&gt;• Scheduled cron batch summarization scripts&lt;br&gt;• Unmonitored shadow AI API tokens&lt;br&gt;• Silent failures without alert logging&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="35" y="342" width="340" height="115" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_shadow_dev" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;⚠️ SHADOW AI &amp;amp; BROWSER EXTENSIONS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Unapproved developer copilot extensions&lt;br&gt;• Proprietary source code egress to public models&lt;br&gt;• Zero enterprise DLP screening&lt;br&gt;• Unaudited personal corporate card spend&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#B91C1C;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="35" y="470" width="340" height="115" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_database_backend" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;🗄️ FRAGMENTED BACKEND DATA STORES&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Isolated MySQL &amp;amp; PostgreSQL databases&lt;br&gt;• Direct SQL query access without masking&lt;br&gt;• Unencrypted connection strings in scripts&lt;br&gt;• S3/GCS raw dumps without access policies&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="35" y="598" width="340" height="162" as="geometry"/>
+        </mxCell>
+
+        <!-- COLUMN 2: PUBLIC AI GATEWAY & RATE LIMIT BOTTLENECKS -->
+        <mxCell id="col2_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#F59E0B;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="405" y="60" width="355" height="715" as="geometry"/>
+        </mxCell>
+        <mxCell id="col2_title" value="&lt;b style=&quot;font-size:10.5px;color:#B45309;&quot;&gt;🌐 Public AI Gateway &amp;amp; Egress Friction&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="415" y="64" width="335" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_openai_api" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Direct api.openai.com&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Public Internet Egress (No VPC-SC)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="415" y="92" width="160" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_full_token" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;100% Full-Price Tokens&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;0% Context Caching Discount&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="415" y="222" width="160" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_rate_limits" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;429 Rate-Limit Spikes&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Peak TPM/RPM Outages&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="415" y="352" width="160" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_vendor_lock" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Proprietary SDK Lock-in&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Tight Vendor Coupling&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="415" y="482" width="160" height="110" as="geometry"/>
+        </mxCell>
+
+        <!-- Warning Pills inside Column 2 -->
+        <mxCell id="pill_prob_tokens" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;💸 $28k/mo Token Burn (No Cache)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="600" y="115" width="145" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="pill_prob_throttling" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;⚠️ 429 Rate Throttling Outages&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="600" y="245" width="145" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="pill_prob_latency" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;⏱️ 14.2s P95 Ingestion Latency&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="600" y="375" width="145" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="pill_prob_key_leak" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;🔑 Static Unrotated API Keys&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="600" y="505" width="145" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="pill_prob_egress" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;🚨 Public SaaS Egress (No Private Link)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="450" y="660" width="260" height="42" as="geometry"/>
+        </mxCell>
+
+        <!-- COLUMN 3: FRAGILE 8K RAG & VECTOR SPRAWL -->
+        <mxCell id="col3_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="780" y="60" width="395" height="715" as="geometry"/>
+        </mxCell>
+        <mxCell id="col3_title" value="&lt;b style=&quot;font-size:10.5px;color:#1D4ED8;&quot;&gt;🧩 Fragile 8k RAG &amp;amp; Vector Sprawl&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="790" y="64" width="375" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_chunking" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;📄 500-TOKEN ARBITRARY CHUNKING&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Blind fixed-token slicing destroys semantic context&lt;br&gt;• Multi-page financial tables shredded across chunks&lt;br&gt;• 45% retrieval failure on synthesis questions&lt;br&gt;• Missing parent-child document hierarchy&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="790" y="92" width="375" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_pinecone" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;🌲 UNMANAGED SAAS VECTOR DATABASE&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Third-party hosted Pinecone/Weaviate cluster&lt;br&gt;• No VPC Service Controls or private IP peering&lt;br&gt;• Separate billing silo ($4,200/mo index cost)&lt;br&gt;• Stale embeddings requiring full periodic re-indexing&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="790" y="222" width="375" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_hallucination" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#B91C1C;&quot;&gt;⚠️ HIGH HALLUCINATION &amp;amp; DRIFT RATE&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Model hallucinates citations on missing context&lt;br&gt;• Zero automated factuality or toxicity evaluation&lt;br&gt;• No grounding attribution to enterprise truth&lt;br&gt;• Customer-facing discrepancies in answers&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#EF4444;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="790" y="352" width="375" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_no_mcp" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;🔌 BRITTLE BESPOKE FUNCTION CALLING&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Ad-hoc tool calling without Model Context Protocol (MCP)&lt;br&gt;• Custom parameter parsing prone to syntax errors&lt;br&gt;• No sandboxed container execution environment&lt;br&gt;• Hardcoded integration code for every API endpoint&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="790" y="482" width="375" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="pill_rag_verdict" value="&lt;b style=&quot;font-size:8px;color:#B91C1C;&quot;&gt;Verifiable Grounding Accuracy: Only 54% on Multi-Page Documents&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="810" y="660" width="335" height="42" as="geometry"/>
+        </mxCell>
+
+        <!-- COLUMN 4: SECURITY, TRISM & COMPLIANCE VOID -->
+        <mxCell id="col4_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FAF5FF;strokeColor=#A855F7;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="1195" y="60" width="380" height="715" as="geometry"/>
+        </mxCell>
+        <mxCell id="col4_title" value="&lt;b style=&quot;font-size:10.5px;color:#6B21A8;&quot;&gt;🛡️ Security, TRiSM &amp;amp; Governance Void&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1205" y="64" width="360" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_pii_leak" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;🪪 UNMASKED PII IN TRAINING &amp;amp; LOGS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Plaintext SSN, credit cards, and customer data in prompts&lt;br&gt;• No automated surrogate tokenization or Cloud DLP&lt;br&gt;• Prompts retained in third-party API provider logs&lt;br&gt;• Critical HIPAA &amp;amp; GDPR regulatory exposure&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="1205" y="92" width="360" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_prompt_inj" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;🪲 ZERO PROMPT INJECTION SHIELDING&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Vulnerable to jailbreaks and system prompt extraction&lt;br&gt;• No Model Armor or TRiSM firewall inspection layer&lt;br&gt;• Indirect prompt injection via untrusted user inputs&lt;br&gt;• Unrestricted tool calling privileges&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="1205" y="222" width="360" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_no_audit" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;📋 ABSENT COMPLIANCE AUDIT TRAILS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Zero immutable BigQuery audit logs of agent actions&lt;br&gt;• Manual 14-day SOC2 evidence gathering overhead&lt;br&gt;• Inability to prove non-training data governance&lt;br&gt;• Enterprise CISO security approval blocked&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="1205" y="352" width="360" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_shadow_spend" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#B91C1C;&quot;&gt;💳 UNCONTROLLED SHADOW AI SPEND&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• 12+ departmental corporate cards paying OpenAI directly&lt;br&gt;• Zero unified billing or enterprise volume tiers&lt;br&gt;• Missing cost-per-call and unit economics metrics&lt;br&gt;• 300% cost variance month-over-month&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="1205" y="482" width="360" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="pill_ciso_verdict" value="&lt;b style=&quot;font-size:8px;color:#991B1B;&quot;&gt;CISO Verdict: Fails Enterprise Zero-Trust &amp;amp; HIPAA Compliance&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#B91C1C;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1225" y="660" width="320" height="42" as="geometry"/>
+        </mxCell>
+
+        <!-- CONNECTORS -->
+        <mxCell id="conn_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;curved=1;endArrow=block;strokeColor=#DC2626;strokeWidth=1.2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_web_app" target="card_openai_api">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;curved=1;endArrow=block;strokeColor=#D97706;strokeWidth=1.2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_support_bot" target="card_full_token">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;curved=1;endArrow=block;strokeColor=#DC2626;strokeWidth=1.2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_openai_api" target="card_chunking">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;curved=1;endArrow=block;strokeColor=#3B82F6;strokeWidth=1.2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_chunking" target="card_pii_leak">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- BOTTOM STRIP -->
+        <mxCell id="strip_footer" value="&lt;table style=&quot;width:100%;font-size:9.5px;color:#202124;&quot;&gt;&lt;tr&gt;&lt;td&gt;&lt;b style=&quot;color:#C5221F;&quot;&gt;🚨 Legacy GenAI Technical Debt Summary:&lt;/b&gt; &lt;span style=&quot;color:#1A237E;&quot;&gt;Direct OpenAI Egress (No VPC-SC)&lt;/span&gt; &amp;nbsp;➔&amp;nbsp; &lt;span style=&quot;color:#C5221F;&quot;&gt;Zero Context Caching (Paying 100% full token fees)&lt;/span&gt; &amp;nbsp;➔&amp;nbsp; &lt;span style=&quot;color:#B06000;&quot;&gt;8k Chunking Hallucinations&lt;/span&gt; &amp;nbsp;|&amp;nbsp; &lt;b style=&quot;color:#137333;&quot;&gt;Target Modernization:&lt;/b&gt; Google Vertex AI Gemini 2.5/3.7, 2M Context Caching (75% discount), Model Armor TRiSM Shield, &amp;amp; BigLake Grounding.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#FCA5A5;strokeWidth=1;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="25" y="790" width="1550" height="42" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>`.trim();
+}
+
+// ===== Sourced from build_master_legacy_finops_waste.ts =====
+function buildLegacyFinOpsWasteXml(cust = 'Enterprise Organization') {
+  return `<mxfile host="embed.diagrams.net">
+  <diagram id="legacy_finops_waste" name="Enterprise Organization - Current Cloud Spend &amp; Waste">
+    <mxGraphModel dx="1600" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="860" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- HEADER BANNER -->
+        <mxCell id="top_logo" value="&lt;span style=&quot;font-size:24px;&quot;&gt;💸&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="25" y="10" width="35" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="main_title" value="&lt;b style=&quot;font-size:16px;color:#0F172A;letter-spacing:-0.2px;&quot;&gt;ENTERPRISE ORGANIZATION: CURRENT BASELINE — UNCONTROLLED CLOUD SPEND &amp;amp; IDLE WASTE (P2-FIN-L-01)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="65" y="10" width="1150" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="main_subtitle" value="&lt;span style=&quot;font-size:9.5px;color:#475569;font-weight:700;letter-spacing:0.1px;&quot;&gt;Static 24/7 Over-Provisioned VMs, Ghost Disks, 42% Untagged Resources, and Manual 14-Day Month-End Excel Invoicing&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="65" y="32" width="1150" height="16" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="top_badge" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:12px;font-weight:bold;color:#EF4444;&quot;&gt;💸 High Cloud Waste&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:8px;color:#94A3B8;font-weight:600;&quot;&gt;42% Untagged • $42k/mo Waste&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;strokeWidth=1.5;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1350" y="8" width="225" height="42" as="geometry"/>
+        </mxCell>
+
+        <!-- COLUMN 1: OVER-PROVISIONED COMPUTE -->
+        <mxCell id="col1_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#EF4444;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="25" y="60" width="360" height="715" as="geometry"/>
+        </mxCell>
+        <mxCell id="col1_title" value="&lt;b style=&quot;font-size:10.5px;color:#991B1B;&quot;&gt;🖥️ Over-Provisioned Static Compute&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="35" y="64" width="340" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_ec2_vms" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;⚡ STATIC 24/7 AWS EC2 &amp;amp; AZURE VMS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Average CPU utilization only 8.4% - 12.1%&lt;br&gt;• Non-production dev instances running all weekend&lt;br&gt;• Zero automated schedule shutdown or rightsizing&lt;br&gt;• On-demand pricing without commitment discounts&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="35" y="88" width="340" height="115" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_idle_gpus" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;🎮 IDLE GPU DEV INSTANCES (A100/H100)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Oversized 8x A100 GPU clusters left unstopped&lt;br&gt;• $18,400/month idle spend across 3 AI teams&lt;br&gt;• No GPU memory bin-packing or time-slicing&lt;br&gt;• Missing auto-kill watchdog daemon&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="35" y="215" width="340" height="115" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_static_k8s" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;☸️ FIXED-NODE KUBERNETES CLUSTERS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• GKE/EKS clusters with high minimum node floors&lt;br&gt;• Missing GKE Autopilot pod-level resource billing&lt;br&gt;• Pod CPU requests inflated 400% above actual usage&lt;br&gt;• Unused cluster capacity burning 45% of budget&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="35" y="342" width="340" height="115" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_cross_egress" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;🌐 UNMONITORED MULTI-CLOUD EGRESS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Terabytes of ETL data moving across cloud regions&lt;br&gt;• Surprise monthly egress billing penalties ($9,200)&lt;br&gt;• Zero cross-cloud routing policy or Cloud Interconnect&lt;br&gt;• Redundant copies transferred multiple times daily&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#B91C1C;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="35" y="470" width="340" height="115" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_total_compute_waste" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;📉 COMPUTE EFFICIENCY: GRADE F (14%)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• 86% of provisioned vCPUs sitting entirely idle&lt;br&gt;• Estimated preventable annual waste: $310,000&lt;br&gt;• No right-sizing recommendations integrated into CI/CD&lt;br&gt;• Developers resist downsizing for fear of peak failure&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="35" y="598" width="340" height="162" as="geometry"/>
+        </mxCell>
+
+        <!-- COLUMN 2: ORPHANED STORAGE & ZOMBIE ASSETS -->
+        <mxCell id="col2_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#F59E0B;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="405" y="60" width="355" height="715" as="geometry"/>
+        </mxCell>
+        <mxCell id="col2_title" value="&lt;b style=&quot;font-size:10.5px;color:#B45309;&quot;&gt;🗄️ Orphaned Storage &amp;amp; Zombie Disks&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="415" y="64" width="335" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_ghost_disks" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Detached Ghost Disks&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;340+ Unattached EBS/PD Volumes&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="415" y="92" width="160" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_stale_buckets" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Abandoned S3/GCS Data&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;No Lifecycle Auto-Tiering&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="415" y="222" width="160" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_snapshots" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Unpruned DB Snapshots&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;1,800+ Stale DB Clones&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="415" y="352" width="160" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_dr_waste" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Passive 100% DR Standby&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Zero Traffic, Full Compute Bill&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="415" y="482" width="160" height="110" as="geometry"/>
+        </mxCell>
+
+        <!-- Warning Pills inside Column 2 -->
+        <mxCell id="pill_fin_disks" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;💾 $14,800/mo Ghost Disks&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="600" y="115" width="145" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="pill_fin_tiering" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;❄️ Zero Coldline/Archive Tiering&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="600" y="245" width="145" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="pill_fin_snapshots" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;🗃️ 3 Years of Unpruned Snapshots&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="600" y="375" width="145" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="pill_fin_idle_dr" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;💸 $22,000/mo Idle DR Footprint&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="600" y="505" width="145" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="pill_fin_zombies" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;🚨 Zombie Storage: 48TB Unaccessed for &gt;180 Days&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="450" y="660" width="260" height="42" as="geometry"/>
+        </mxCell>
+
+        <!-- COLUMN 3: UNTAGGED SPRAWL & UNBUDGETED AI -->
+        <mxCell id="col3_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="780" y="60" width="395" height="715" as="geometry"/>
+        </mxCell>
+        <mxCell id="col3_title" value="&lt;b style=&quot;font-size:10.5px;color:#1D4ED8;&quot;&gt;🏷️ Untagged Sprawl &amp;amp; Rogue AI Spend&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="790" y="64" width="375" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_untagged" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;🏷️ 42% UNTAGGED CLOUD ASSETS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Missing Cost Center, Environment, and Owner tags&lt;br&gt;• Terraform CI/CD lacks mandatory tag linting gates&lt;br&gt;• Impossible to attribute spend to specific products&lt;br&gt;• Unclaimed resources never decommissioned&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="790" y="92" width="375" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_rogue_ai" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;🤖 UNBUDGETED GENAI EXPERIMENTS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Departmental teams testing LLMs without budget caps&lt;br&gt;• Runaway training loops burning $12k in single weekends&lt;br&gt;• No token quotas or automated rate-limiting governor&lt;br&gt;• Unmonitored third-party model API bills&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="790" y="222" width="375" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_reactive_alerts" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#B91C1C;&quot;&gt;⚠️ REACTIVE 30-DAY INVOICE ALERTS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Email alerts trigger only AFTER monthly budget is blown&lt;br&gt;• Zero real-time BigQuery ML anomaly detection&lt;br&gt;• Anomaly spikes discovered weeks after occurrence&lt;br&gt;• Lack of automated circuit-breaker killswitches&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#EF4444;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="790" y="352" width="375" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_shadow_saas" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;💳 SHADOW SAAS &amp;amp; CREDIT CARD SPRAWL&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• 18 separate subscriptions across Databricks, Snowflake, OpenAI&lt;br&gt;• Missing enterprise master agreement volume tiers&lt;br&gt;• Uncoordinated credit purchases without procurement&lt;br&gt;• Double-paying for overlapping data tools&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="790" y="482" width="375" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="pill_fin_untagged_stat" value="&lt;b style=&quot;font-size:8px;color:#B91C1C;&quot;&gt;Attribution Blindspot: $165,000/mo Cloud Spend Unallocated&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="810" y="660" width="335" height="42" as="geometry"/>
+        </mxCell>
+
+        <!-- COLUMN 4: MANUAL EXCEL RECONCILIATIONS -->
+        <mxCell id="col4_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FAF5FF;strokeColor=#A855F7;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="1195" y="60" width="380" height="715" as="geometry"/>
+        </mxCell>
+        <mxCell id="col4_title" value="&lt;b style=&quot;font-size:10.5px;color:#6B21A8;&quot;&gt;📊 Invoicing &amp;amp; Manual Spreadsheets&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1205" y="64" width="360" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_manual_excel" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;📑 14-DAY MANUAL EXCEL RECONCILIATION&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Finance team manually stitching AWS/Azure/GCP CSV exports&lt;br&gt;• VLOOKUP formulas failing on divergent billing schemas&lt;br&gt;• 30 to 45-day delay before leadership sees monthly totals&lt;br&gt;• Zero interactive Looker Studio or BigQuery FOCUS views&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="1205" y="92" width="360" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_no_unit_cost" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;📉 ZERO UNIT ECONOMICS METRICS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Unable to compute cost-per-customer or cost-per-query&lt;br&gt;• Gross margin calculations distorted by pooled IT bills&lt;br&gt;• Pricing strategy set without actual compute cost data&lt;br&gt;• C-suite lacks profitability visibility by product tier&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="1205" y="222" width="360" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_missed_cuds" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;💸 38% MISSED COMMITMENT DISCOUNTS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Paying full on-demand rates due to fear of lock-in&lt;br&gt;• Missed 1-3 year Google Cloud CUD / AWS Savings Plans&lt;br&gt;• Excess $180k/yr paid above discounted rate cards&lt;br&gt;• No algorithmic portfolio optimization engine&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="1205" y="352" width="360" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_disputed_chargebacks" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#B91C1C;&quot;&gt;🥊 DISPUTED BUSINESS UNIT INVOICES&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Product managers contest arbitrary shared-cost tax&lt;br&gt;• Zero Kubecost/OpenCost container attribution&lt;br&gt;• Infighting over who pays for multi-tenant database clusters&lt;br&gt;• Accountability abandoned across engineering teams&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="1205" y="482" width="360" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="pill_cfo_verdict" value="&lt;b style=&quot;font-size:8px;color:#991B1B;&quot;&gt;CFO Verdict: Lacks FOCUS 1.0 Standardization &amp;amp; Automated Chargeback&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#B91C1C;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1225" y="660" width="320" height="42" as="geometry"/>
+        </mxCell>
+
+        <!-- CONNECTORS -->
+        <mxCell id="conn_fin_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;curved=1;endArrow=block;strokeColor=#DC2626;strokeWidth=1.2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_ec2_vms" target="card_ghost_disks">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_fin_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;curved=1;endArrow=block;strokeColor=#D97706;strokeWidth=1.2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_ghost_disks" target="card_untagged">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_fin_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;curved=1;endArrow=block;strokeColor=#3B82F6;strokeWidth=1.2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_untagged" target="card_manual_excel">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- BOTTOM STRIP -->
+        <mxCell id="strip_footer_fin" value="&lt;table style=&quot;width:100%;font-size:9.5px;color:#202124;&quot;&gt;&lt;tr&gt;&lt;td&gt;&lt;b style=&quot;color:#C5221F;&quot;&gt;💸 FinOps Legacy Gaps Summary:&lt;/b&gt; &lt;span style=&quot;color:#1A237E;&quot;&gt;86% Idle Compute vCPUs&lt;/span&gt; &amp;nbsp;➔&amp;nbsp; &lt;span style=&quot;color:#C5221F;&quot;&gt;340+ Ghost Disks ($14.8k/mo)&lt;/span&gt; &amp;nbsp;➔&amp;nbsp; &lt;span style=&quot;color:#B06000;&quot;&gt;42% Untagged Resources&lt;/span&gt; &amp;nbsp;|&amp;nbsp; &lt;b style=&quot;color:#137333;&quot;&gt;Target Architecture:&lt;/b&gt; BigQuery FOCUS 1.0 Lakehouse, GKE Kubecost Pod Attribution, Automated CUD Optimizer, &amp;amp; 15-min Anomaly Killswitches.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#FCA5A5;strokeWidth=1;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="25" y="790" width="1550" height="42" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>`.trim();
+}
+
+// ===== Sourced from build_master_legacy_edw_silos.ts =====
+function buildLegacyEdwSiloXml(cust = 'Enterprise Organization') {
+  return `<mxfile host="embed.diagrams.net">
+  <diagram id="legacy_edw_silos" name="Enterprise Organization - Current Legacy EDW &amp; Silos">
+    <mxGraphModel dx="1600" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="860" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- HEADER BANNER -->
+        <mxCell id="top_logo" value="&lt;span style=&quot;font-size:24px;&quot;&gt;🗄️&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="25" y="10" width="35" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="main_title" value="&lt;b style=&quot;font-size:16px;color:#0F172A;letter-spacing:-0.2px;&quot;&gt;ENTERPRISE ORGANIZATION: CURRENT BASELINE — LEGACY EDW SILOS &amp;amp; FRAGILE BATCH BOTTLENECKS (P1-DAT-L-01)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="65" y="10" width="1150" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="main_subtitle" value="&lt;span style=&quot;font-size:9.5px;color:#475569;font-weight:700;letter-spacing:0.1px;&quot;&gt;Teradata / Exadata Monoliths, 24-48h Batch Latency, 1,500+ Unmonitored Cron Shell Scripts, and Conflicting Departmental Marts&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="65" y="32" width="1150" height="16" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="top_badge" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:12px;font-weight:bold;color:#EF4444;&quot;&gt;⚠️ Legacy EDW Silo&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:8px;color:#94A3B8;font-weight:600;&quot;&gt;24-48h Lag • High Egress Lock-in&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;strokeWidth=1.5;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1350" y="8" width="225" height="42" as="geometry"/>
+        </mxCell>
+
+        <!-- COLUMN 1: PROPRIETARY MONOLITHIC EDWS -->
+        <mxCell id="col1_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#EF4444;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="25" y="60" width="360" height="715" as="geometry"/>
+        </mxCell>
+        <mxCell id="col1_title" value="&lt;b style=&quot;font-size:10.5px;color:#991B1B;&quot;&gt;🏢 Proprietary On-Prem &amp;amp; EDW Appliances&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="35" y="64" width="340" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_teradata" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;🗄️ TERADATA / NETEZZA APPLIANCE&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• End-of-life hardware appliance running at 94% storage&lt;br&gt;• Proprietary BTEQ scripts &amp;amp; vendor lock-in&lt;br&gt;• Escalating annual maintenance contracts ($420k/yr)&lt;br&gt;• Cannot scale compute independently of storage&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="35" y="88" width="340" height="115" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_oracle_rac" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;🗄️ ORACLE 11g / 19c RAC CLUSTER&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Dual-node RAC overloaded with analytical queries&lt;br&gt;• 3,200+ undocumented PL/SQL stored procedures&lt;br&gt;• Frequent ORA-01555 snapshot too old errors&lt;br&gt;• Heavy BI queries causing OLTP lock contention&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="35" y="215" width="340" height="115" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_snowflake_sprawl" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;❄️ FRAGMENTED SNOWFLAKE ACCOUNTS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Multiple independent Snowflake accounts across BUs&lt;br&gt;• Proprietary micro-partition storage lock-in&lt;br&gt;• Heavy cross-cloud egress fees to egress data to AI tools&lt;br&gt;• Warehouses auto-suspending late, inflating credit spend&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="35" y="342" width="340" height="115" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_hadoop_cluster" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;🐘 ON-PREM HADOOP / CLOUDERA CLUSTER&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• 48-node physical cluster with aging HDFS hardware&lt;br&gt;• Deprecated MapReduce and Hive 1.2 jobs&lt;br&gt;• High operational burden: NameNode failovers&lt;br&gt;• Missing open Apache Iceberg / Parquet table formats&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#B91C1C;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="35" y="470" width="340" height="115" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_legacy_summary" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;🚨 INFRASTRUCTURE DEFICIT SUMMARY&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• 4 redundant query engines with zero federated catalog&lt;br&gt;• $780,000 combined annual proprietary licensing overhead&lt;br&gt;• No cross-engine ACID transactions or time travel&lt;br&gt;• Incompatible SQL dialects preventing consolidation&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="35" y="598" width="340" height="162" as="geometry"/>
+        </mxCell>
+
+        <!-- COLUMN 2: SPAGHETTI BATCH ETL & 24H LAG -->
+        <mxCell id="col2_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#F59E0B;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="405" y="60" width="355" height="715" as="geometry"/>
+        </mxCell>
+        <mxCell id="col2_title" value="&lt;b style=&quot;font-size:10.5px;color:#B45309;&quot;&gt;🍝 Spaghetti Batch ETL &amp;amp; 24h Lag&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="415" y="64" width="335" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_informatica" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Informatica PowerCenter&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;12h Nightly Batch Window&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="415" y="92" width="160" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_cron_scripts" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;1,500+ Cron Shell Scripts&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Unmonitored Point-to-Point&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="415" y="222" width="160" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_sftp_drops" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Unencrypted SFTP Drops&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;CSV Files Without Schemas&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="415" y="352" width="160" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_cdc_gap" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Missing Real-Time CDC&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Zero Datastream / PubSub&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="415" y="482" width="160" height="110" as="geometry"/>
+        </mxCell>
+
+        <!-- Warning Pills inside Column 2 -->
+        <mxCell id="pill_edw_lag" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;⏱️ 24h-48h Business Latency&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="600" y="115" width="145" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="pill_edw_failures" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;⚠️ 3-4 Batch Failures / Week&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="600" y="245" width="145" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="pill_edw_creds" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;🔑 Cleartext Passwords in Scripts&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="600" y="375" width="145" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="pill_edw_drift" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;💥 Silent Schema Drift Breaks ETL&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="600" y="505" width="145" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="pill_edw_overrun" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;🚨 Overnight Batch Regularly Overruns 9:00 AM Open&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="450" y="660" width="260" height="42" as="geometry"/>
+        </mxCell>
+
+        <!-- COLUMN 3: DISCONNECTED DEPARTMENTAL MARTS -->
+        <mxCell id="col3_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="780" y="60" width="395" height="715" as="geometry"/>
+        </mxCell>
+        <mxCell id="col3_title" value="&lt;b style=&quot;font-size:10.5px;color:#1D4ED8;&quot;&gt;📦 Disconnected Departmental Data Marts&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="790" y="64" width="375" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_mktg_mart" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;🎯 MARKETING POSTGRESQL MART&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Isolated customer copy out of sync with ERP&lt;br&gt;• Custom ETL transforms changing revenue definitions&lt;br&gt;• 18% duplicate customer account profiles&lt;br&gt;• No lineage to upstream source of truth&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="790" y="92" width="375" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_fin_mart" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;💳 FINANCE SQL SERVER REPORTING DB&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Nightly delta loads breaking on composite keys&lt;br&gt;• Custom manual Excel adjustments before board meetings&lt;br&gt;• Numbers diverge from Marketing reports by 14%&lt;br&gt;• Zero automated reconciliation or data testing&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="790" y="222" width="375" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_ops_mart" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#B91C1C;&quot;&gt;📦 SUPPLY CHAIN ACCESS &amp;amp; CSV SWAMP&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Offline Microsoft Access databases on network shares&lt;br&gt;• Inventory counts updated manually by operations staff&lt;br&gt;• Zero role-based access control or audit logging&lt;br&gt;• Risk of accidental file deletion or overwrites&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#EF4444;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="790" y="352" width="375" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_no_dataplex" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;🔍 ABSENT CENTRAL DATA GOVERNANCE&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Zero Dataplex universal catalog or glossary&lt;br&gt;• Missing column-level lineage and automated classification&lt;br&gt;• Analysts don't know where canonical data lives&lt;br&gt;• 4-week ticket wait time to discover existing datasets&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="790" y="482" width="375" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="pill_edw_discrepancy" value="&lt;b style=&quot;font-size:8px;color:#B91C1C;&quot;&gt;Data Trust Crisis: 3 Different Revenue Numbers Reported Each Month&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="810" y="660" width="335" height="42" as="geometry"/>
+        </mxCell>
+
+        <!-- COLUMN 4: PRODUCTION LOCK CONTENTION & STALE BI -->
+        <mxCell id="col4_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FAF5FF;strokeColor=#A855F7;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="1195" y="60" width="380" height="715" as="geometry"/>
+        </mxCell>
+        <mxCell id="col4_title" value="&lt;b style=&quot;font-size:10.5px;color:#6B21A8;&quot;&gt;📉 Production Locks &amp;amp; Stale Reporting&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1205" y="64" width="360" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_prod_locks" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;🔒 OLTP TABLE LOCK CONTENTION&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Direct BI queries against operational transactional tables&lt;br&gt;• Unindexed SELECT * queries locking customer checkouts&lt;br&gt;• Application connection pools exhausted during peak BI runs&lt;br&gt;• 22 production transaction outages in the last 12 months&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="1205" y="92" width="360" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_stale_extracts" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;📊 STALE TABLEAU &amp;amp; POWERBI EXTRACTS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Analysts caching multi-gigabyte extract files on laptops&lt;br&gt;• Stale numbers presented during executive strategy sessions&lt;br&gt;• Severe PII exposure on unencrypted personal workstations&lt;br&gt;• Missing Looker centralized semantic metric layer&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="1205" y="222" width="360" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_ad_hoc_queue" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;⏳ 4-WEEK AD-HOC SQL REPORT BACKLOG&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Data team overwhelmed with manual SQL request tickets&lt;br&gt;• Business users unable to self-serve trusted analytics&lt;br&gt;• Zero natural-language generative AI data chat interface&lt;br&gt;• High analyst turnover due to repetitive grunt work&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="1205" y="352" width="360" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_no_ai_mesh" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#B91C1C;&quot;&gt;🚫 ZERO AI &amp;amp; ML READY DATA ARCHITECTURE&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Data scientists spend 80% of time munging CSV extracts&lt;br&gt;• No vector embeddings or vector search over enterprise data&lt;br&gt;• Missing Apache Iceberg open table metadata for Vertex AI&lt;br&gt;• Generative AI initiatives completely blocked by data swamp&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="1205" y="482" width="360" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="pill_cdo_verdict" value="&lt;b style=&quot;font-size:8px;color:#991B1B;&quot;&gt;CDO Verdict: Fails Modern Data Platform SLA &amp;amp; Blocks AI Readiness&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#B91C1C;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1225" y="660" width="320" height="42" as="geometry"/>
+        </mxCell>
+
+        <!-- CONNECTORS -->
+        <mxCell id="conn_edw_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;curved=1;endArrow=block;strokeColor=#DC2626;strokeWidth=1.2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_teradata" target="card_informatica">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_edw_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;curved=1;endArrow=block;strokeColor=#D97706;strokeWidth=1.2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_informatica" target="card_mktg_mart">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_edw_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;curved=1;endArrow=block;strokeColor=#3B82F6;strokeWidth=1.2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_mktg_mart" target="card_prod_locks">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- BOTTOM STRIP -->
+        <mxCell id="strip_footer_edw" value="&lt;table style=&quot;width:100%;font-size:9.5px;color:#202124;&quot;&gt;&lt;tr&gt;&lt;td&gt;&lt;b style=&quot;color:#C5221F;&quot;&gt;🗄️ Legacy EDW Technical Debt:&lt;/b&gt; &lt;span style=&quot;color:#1A237E;&quot;&gt;Proprietary Teradata Lock-in ($420k/yr)&lt;/span&gt; &amp;nbsp;➔&amp;nbsp; &lt;span style=&quot;color:#C5221F;&quot;&gt;24-48h Batch Ingestion Lag&lt;/span&gt; &amp;nbsp;➔&amp;nbsp; &lt;span style=&quot;color:#B06000;&quot;&gt;Disconnected Silo Marts&lt;/span&gt; &amp;nbsp;|&amp;nbsp; &lt;b style=&quot;color:#137333;&quot;&gt;Target Architecture:&lt;/b&gt; Google BigLake Apache Iceberg Open Fabric, Datastream Real-Time CDC, BigQuery Editions Vectorized SQL, &amp;amp; Looker Semantic Layer.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#FCA5A5;strokeWidth=1;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="25" y="790" width="1550" height="42" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>`.trim();
+}
+
+// ===== Sourced from build_master_legacy_agentic_fragility.ts =====
+function buildLegacyAgenticXml(cust = 'Enterprise Organization') {
+  return `<mxfile host="embed.diagrams.net">
+  <diagram id="legacy_agentic_fragility" name="Enterprise Organization - Current Agentic &amp; Chatbot Fragility">
+    <mxGraphModel dx="1600" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="860" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- HEADER BANNER -->
+        <mxCell id="top_logo" value="&lt;span style=&quot;font-size:24px;&quot;&gt;🤖&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="25" y="10" width="35" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="main_title" value="&lt;b style=&quot;font-size:16px;color:#0F172A;letter-spacing:-0.2px;&quot;&gt;ENTERPRISE ORGANIZATION: CURRENT BASELINE — SILOED CHATBOTS &amp;amp; AGENT FRAGILITY (P1-AGT-L-01)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="65" y="10" width="1150" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="main_subtitle" value="&lt;span style=&quot;font-size:9.5px;color:#475569;font-weight:700;letter-spacing:0.1px;&quot;&gt;Isolated Departmental Chatbots, Hardcoded Prompt Chains, Missing Tool Protocols, and Zero Shared Context&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="65" y="32" width="1150" height="16" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="top_badge" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:12px;font-weight:bold;color:#EF4444;&quot;&gt;⚠️ Fragmented Bots&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:8px;color:#94A3B8;font-weight:600;&quot;&gt;No MCP Standard • Zero Shared Memory&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;strokeWidth=1.5;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1350" y="8" width="225" height="42" as="geometry"/>
+        </mxCell>
+
+        <!-- COLUMN 1: SILOED DEPARTMENTAL CHATBOTS -->
+        <mxCell id="col1_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#EF4444;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="25" y="60" width="360" height="715" as="geometry"/>
+        </mxCell>
+        <mxCell id="col1_title" value="&lt;b style=&quot;font-size:10.5px;color:#991B1B;&quot;&gt;💬 Siloed Departmental Chatbots&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="35" y="64" width="340" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_support_bot" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;🎧 CUSTOMER SUPPORT CHATBOT&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Isolated Python script calling GPT-4 with static prompt&lt;br&gt;• Cannot query order tracking database or ERP&lt;br&gt;• User forced to repeat issue when transferred to human&lt;br&gt;• 42% escalation rate due to shallow context&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="35" y="88" width="340" height="115" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_hr_bot" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;👥 INTERNAL HR ONBOARDING BOT&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Standalone LangChain bot answering policy questions&lt;br&gt;• No connection to Workday / Active Directory&lt;br&gt;• Answers based on outdated 2022 PDF handbook&lt;br&gt;• Zero ability to take actions (e.g. enroll benefits)&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="35" y="215" width="340" height="115" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_sales_bot" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;💼 SALES ENABLEMENT PROTOTYPE&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Unmaintained demo script created by sales rep&lt;br&gt;• Queries static pricing sheets with frequent hallucinations&lt;br&gt;• Quotes incorrect discounted prices to enterprise prospects&lt;br&gt;• No governance or accuracy review process&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="35" y="342" width="340" height="115" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_slack_bot" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;📟 IT HELPDESK SLACK BOT&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Brittle regex keyword matching bot in Slack channel&lt;br&gt;• Fails on 58% of natural language requests&lt;br&gt;• High user frustration leading to direct engineer DMs&lt;br&gt;• Lacks multi-turn conversation memory&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#B91C1C;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="35" y="470" width="340" height="115" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_bot_summary" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;🚨 BOT FRAGMENTATION DEFICIT&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• 4 isolated bots developed with 4 different tech stacks&lt;br&gt;• 0% code or prompt reuse across teams&lt;br&gt;• Each team reinventing authentication &amp;amp; rate limiting&lt;br&gt;• Total annual wasted dev spend: $240,000&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="35" y="598" width="340" height="162" as="geometry"/>
+        </mxCell>
+
+        <!-- COLUMN 2: AD-HOC SCRIPTS & FUNCTION CALLING -->
+        <mxCell id="col2_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#F59E0B;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="405" y="60" width="355" height="715" as="geometry"/>
+        </mxCell>
+        <mxCell id="col2_title" value="&lt;b style=&quot;font-size:10.5px;color:#B45309;&quot;&gt;🔌 Ad-Hoc Scripts &amp;amp; Function Calling Gaps&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="415" y="64" width="335" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_custom_json" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Custom JSON Tool Schemas&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Missing Model Context Protocol&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="415" y="92" width="160" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_unsandboxed" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Unsandboxed Execution&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Raw Container Shell Privileges&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="415" y="222" width="160" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_hallucinated_args" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Hallucinated Parameters&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Silent Function Failures&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="415" y="352" width="160" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_no_registry" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Hardcoded Tool Arrays&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;No Dynamic Tool Discovery&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="415" y="482" width="160" height="110" as="geometry"/>
+        </mxCell>
+
+        <!-- Warning Pills inside Column 2 -->
+        <mxCell id="pill_agt_mcp" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;🔌 Zero MCP Standards Compliance&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="600" y="115" width="145" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="pill_agt_sandbox" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;⚠️ No Container Sandboxing&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="600" y="245" width="145" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="pill_agt_args" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;💥 32% Tool Invocation Error Rate&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="600" y="375" width="145" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="pill_agt_deploy" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;📦 Requires App Redeploy to Add Tools&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="600" y="505" width="145" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="pill_agt_tool_waste" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;🚨 Point-to-Point Function Code Breaks with Every Model Version&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="450" y="660" width="260" height="42" as="geometry"/>
+        </mxCell>
+
+        <!-- COLUMN 3: CONTEXT AMNESIA & ZERO SHARED MEMORY -->
+        <mxCell id="col3_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="780" y="60" width="395" height="715" as="geometry"/>
+        </mxCell>
+        <mxCell id="col3_title" value="&lt;b style=&quot;font-size:10.5px;color:#1D4ED8;&quot;&gt;🧠 Context Amnesia &amp;amp; Zero Shared Memory&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="790" y="64" width="375" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_no_memory" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;🧠 ZERO EPISODIC OR SEMANTIC MEMORY&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Each session restarts from zero context&lt;br&gt;• Customer preferences and past orders forgotten&lt;br&gt;• No cross-session user profile knowledge graph&lt;br&gt;• Repetitive clarification questions frustrate users&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="790" y="92" width="375" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_no_mesh" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;⛓️ SINGLE-THREADED BOTTLENECKS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• No Super-Orchestrator to coordinate sub-agents&lt;br&gt;• Bots cannot delegate tasks to specialized peers&lt;br&gt;• Sequential execution causes 18s+ response lag&lt;br&gt;• Complex multi-step reasoning tasks fail&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="790" y="222" width="375" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_context_bloat" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#B91C1C;&quot;&gt;📜 CONTEXT WINDOW BLOAT &amp;amp; CONFUSION&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Full chat histories dumped into prompt on each turn&lt;br&gt;• High token burn on repeated conversation turns&lt;br&gt;• Model reasoning degrades as context length grows&lt;br&gt;• Missing 2M context caching optimization&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#EF4444;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="790" y="352" width="375" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_no_grounding" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;🛡️ UNVERIFIED DATABASE MUTATIONS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Agents mutate production databases based on assumptions&lt;br&gt;• Missing validation checks before write execution&lt;br&gt;• Accidental database overwrites during edge cases&lt;br&gt;• No transactional rollback mechanism&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="790" y="482" width="375" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="pill_agt_amnesia_verdict" value="&lt;b style=&quot;font-size:8px;color:#B91C1C;&quot;&gt;Customer Friction: 68% of Users Complain of Repeating Information&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="810" y="660" width="335" height="42" as="geometry"/>
+        </mxCell>
+
+        <!-- COLUMN 4: ABSENT SAFETY & UNAUTHORIZED EXECUTION -->
+        <mxCell id="col4_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FAF5FF;strokeColor=#A855F7;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="1195" y="60" width="380" height="715" as="geometry"/>
+        </mxCell>
+        <mxCell id="col4_title" value="&lt;b style=&quot;font-size:10.5px;color:#6B21A8;&quot;&gt;🛡️ Safety &amp;amp; Execution Governance Void&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1205" y="64" width="360" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_no_hitl" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;🛑 ZERO HUMAN-IN-THE-LOOP (HITL) GATES&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Autonomous scripts issuing customer refunds and credits&lt;br&gt;• No human approval threshold on high-value actions&lt;br&gt;• Single prompt injection can trigger bulk data modification&lt;br&gt;• High operational risk for revenue-critical systems&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="1205" y="92" width="360" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_indirect_inj" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;🪲 INDIRECT PROMPT INJECTION VECTORS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Agents reading incoming customer emails &amp;amp; web content&lt;br&gt;• Untrusted content contains embedded prompt override instructions&lt;br&gt;• Agent coerced into exfiltrating API keys or system prompts&lt;br&gt;• Zero Model Armor TRiSM inspection between inputs and tools&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="1205" y="222" width="360" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_overprivileged" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;🔑 OVERPRIVILEGED SHARED CREDENTIALS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Bots run with DB admin credentials rather than least privilege&lt;br&gt;• No granular ABAC tool permissions per agent archetype&lt;br&gt;• Compromise of one bot exposes full enterprise database&lt;br&gt;• Violates Zero-Trust least privilege mandate&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="1205" y="352" width="360" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_no_agent_audit" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#B91C1C;&quot;&gt;📋 ZERO AGENTIC EXECUTION TELEMETRY&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Missing audit trail of tool invocations, parameters, and results&lt;br&gt;• Incidents cannot be debugged or traced after occurrence&lt;br&gt;• Inability to prove compliance with financial regulations&lt;br&gt;• Production rollout vetoed by corporate compliance&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+          <mxGeometry x="1205" y="482" width="360" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="pill_ciso_agent_verdict" value="&lt;b style=&quot;font-size:8px;color:#991B1B;&quot;&gt;Enterprise Risk: Uncontrolled Agentic Autonomous Execution&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#B91C1C;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1225" y="660" width="320" height="42" as="geometry"/>
+        </mxCell>
+
+        <!-- CONNECTORS -->
+        <mxCell id="conn_agt_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;curved=1;endArrow=block;strokeColor=#DC2626;strokeWidth=1.2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_support_bot" target="card_custom_json">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_agt_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;curved=1;endArrow=block;strokeColor=#D97706;strokeWidth=1.2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_custom_json" target="card_no_memory">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_agt_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;curved=1;endArrow=block;strokeColor=#3B82F6;strokeWidth=1.2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_no_memory" target="card_no_hitl">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- BOTTOM STRIP -->
+        <mxCell id="strip_footer_agt" value="&lt;table style=&quot;width:100%;font-size:9.5px;color:#202124;&quot;&gt;&lt;tr&gt;&lt;td&gt;&lt;b style=&quot;color:#C5221F;&quot;&gt;🤖 Agentic Fragility Summary:&lt;/b&gt; &lt;span style=&quot;color:#1A237E;&quot;&gt;Siloed Bots Without Mesh&lt;/span&gt; &amp;nbsp;➔&amp;nbsp; &lt;span style=&quot;color:#C5221F;&quot;&gt;Ad-Hoc JSON Function Calling (No MCP)&lt;/span&gt; &amp;nbsp;➔&amp;nbsp; &lt;span style=&quot;color:#B06000;&quot;&gt;Context Amnesia &amp;amp; Zero HITL&lt;/span&gt; &amp;nbsp;|&amp;nbsp; &lt;b style=&quot;color:#137333;&quot;&gt;Target Architecture:&lt;/b&gt; Gemini 3.7 Super-Orchestrator Hub, Model Context Protocol (MCP) Microservices, Model Armor TRiSM Shield, &amp;amp; Human-in-the-Loop Review Gates.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#FCA5A5;strokeWidth=1;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="25" y="790" width="1550" height="42" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>`.trim();
+}
+
 /**
  * Dispatch bespoke, high-craft PromptCanvas Draw.io XML blueprints tailored to the assessment framework
  */
@@ -8917,19 +9525,31 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
   // Helper to customize XML title with customer name and score
   const customizeXml = (xmlStr, curOrTgt, titleText) => {
     if (!xmlStr) return '';
-    return xmlStr
+    let res = xmlStr
+      .replace(/ENTERPRISE ORGANIZATION/g, cust.toUpperCase())
+      .replace(/ENTERPRISE CLIENT/g, cust.toUpperCase())
       .replace(/Enterprise Organization/g, cust)
-      .replace(/Acme Global/g, cust)
-      .replace(/Apex Health Systems/g, cust);
+
+    if (metadata.industry) {
+      res = res.replace(/Retail & Consumer Goods/g, metadata.industry)
+               .replace(/Healthcare & Life Sciences/g, metadata.industry);
+    }
+
+    if (metadata.detectedTechnologies && Array.isArray(metadata.detectedTechnologies) && metadata.detectedTechnologies.length > 0) {
+      const topTechs = metadata.detectedTechnologies.slice(0, 4).join(', ');
+      res = res.replace(/MySQL &amp; PostgreSQL/g, topTechs)
+               .replace(/MySQL & PostgreSQL/g, topTechs);
+    }
+    return res;
   };
 
   // 1. OPENAI TO GEMINI ENTERPRISE MIGRATION
   if (isOpenAI) {
     return {
       currentTitle: `Current Baseline: Fragile OpenAI Endpoints & High Token Costs (${cust})`,
-      currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • P1-APP-L-01 Dependency Map • Unmanaged API Wrappers`,
+      currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • ARCH-GENAI-01 OpenAI Wrapper • Unmanaged API Keys`,
       curReasoning: "Proprietary SDK hardcoding, unmanaged public egress endpoints, lack of prompt caching, and 8k token context fragmentation cause high token burn and vendor lock-in.",
-      currentStateXml: customizeXml(buildLegacyDataDependencyMapXml(), 'current', 'OpenAI Legacy Wrapper'),
+      currentStateXml: customizeXml(buildLegacyGenAiStackXml(cust), 'current', 'OpenAI Legacy Stack'),
       targetTitle: `Target State: Google Vertex AI & Gemini Enterprise Agent Platform (${cust})`,
       targetSubtitle: `Target Maturity Level ${tgt}/5.0 (Optimized) • P4-AI-P-04 Agent Runtime • 2M Context • Model Armor`,
       targetStateXml: customizeXml(buildEnterpriseAgentRuntimeXml(), 'target', 'Vertex AI & Gemini Runtime'),
@@ -8951,7 +9571,7 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
       currentTitle: `Current Baseline: Uncontrolled Multi-Cloud Spend & Idle Waste (${cust})`,
       currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • P2-GOV-C-01 Waste Breakdown • 40% Untagged Resources`,
       curReasoning: "Missing resource tagging, static 24/7 cluster over-provisioning, unmanaged Kubernetes pods, and uncoordinated on-demand spend lead to severe cloud financial waste.",
-      currentStateXml: customizeXml(buildLegacyDataDependencyMapXml(), 'current', 'FinOps Legacy Gaps'),
+      currentStateXml: customizeXml(buildLegacyFinOpsWasteXml(cust), 'current', 'FinOps Legacy Gaps'),
       targetTitle: `Target State: Automated FinOps Chargeback & Capacity Governor (${cust})`,
       targetSubtitle: `Target Maturity Level ${tgt}/5.0 (Optimized) • P2-GOV-C-01 FinOps Model • P5-AI-L-05 Quota Governor`,
       targetStateXml: customizeXml(buildPristineFinopsXml(), 'target', 'FinOps & Chargeback Model'),
@@ -8971,9 +9591,9 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
   if (isAgenticMesh) {
     return {
       currentTitle: `Current Baseline: Siloed Single-Threaded Chatbots & Tool Fragility (${cust})`,
-      currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • Unmanaged Hardcoded Prompts • Point-to-Point Scripts`,
+      currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • ARCH-AGT-01 Fragmented Bots • Point-to-Point Scripts`,
       curReasoning: "Isolated departmental chatbots, hardcoded prompt templates, uncoordinated backend integrations, and absence of standardized tool protocols prevent enterprise scale.",
-      currentStateXml: customizeXml(buildLegacyDataDependencyMapXml(), 'current', 'Siloed Chatbots'),
+      currentStateXml: customizeXml(buildLegacyAgenticXml(cust), 'current', 'Siloed Chatbots'),
       targetTitle: `Target State: Autonomous Hub-and-Spoke Agent Mesh & MCP Gateway (${cust})`,
       targetSubtitle: `Target Maturity Level ${tgt}/5.0 (Optimized) • P3-AI-L-03 Agent Mesh • ARCH-MCP-06 MCP Gateway`,
       targetStateXml: customizeXml(buildHubAndSpokeAgentConfigXml(), 'target', 'Hub-and-Spoke Agent Mesh'),
@@ -8993,9 +9613,9 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
   if (isLakehouse) {
     return {
       currentTitle: `Current Baseline: Siloed Proprietary EDW & Egress Friction (${cust})`,
-      currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • P1-APP-L-01 Dependency Map • Daily Batch Bottlenecks`,
+      currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • ARCH-EDW-02 Legacy EDW Silos • 24h Batch Bottlenecks`,
       curReasoning: "Proprietary database lock-in (Teradata/Snowflake/Oracle), high inter-cloud egress fees, 24-hour batch replication lag, and disjoint data catalogs create operational bottlenecks.",
-      currentStateXml: customizeXml(buildLegacyDataDependencyMapXml(), 'current', 'Legacy EDW Silos'),
+      currentStateXml: customizeXml(buildLegacyEdwSiloXml(cust), 'current', 'Legacy EDW Silos'),
       targetTitle: `Target State: GCP Enterprise Data Lakehouse & BigLake Medallion Mesh (${cust})`,
       targetSubtitle: `Target Maturity Level ${tgt}/5.0 (Optimized) • P3-DAT-L-04 Medallion Fabric • BigLake Iceberg`,
       targetStateXml: customizeXml(buildDataLakehouseXml(), 'target', 'BigLake Enterprise Lakehouse'),
@@ -9037,9 +9657,9 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
   if (isGenAIReadiness) {
     return {
       currentTitle: `Current Baseline: Fragmented Departmental AI Sandboxes (${cust})`,
-      currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • Unanchored LLM POCs • Ad-Hoc Evaluation`,
+      currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • ARCH-GENAI-01 Departmental POCs • Ad-Hoc Evaluation`,
       curReasoning: "Disjointed departmental POCs, unbenchmarked LLM accuracy, lack of centralized model evaluation, and absent guardrails prevent production deployment.",
-      currentStateXml: customizeXml(buildLegacyDataDependencyMapXml(), 'current', 'Departmental POCs'),
+      currentStateXml: customizeXml(buildLegacyGenAiStackXml(cust), 'current', 'Departmental POCs'),
       targetTitle: `Target State: Enterprise GenAI Platform & Automated Evaluation Suite (${cust})`,
       targetSubtitle: `Target Maturity Level ${tgt}/5.0 (Optimized) • P4-GOV-L-06 Evaluation Suite • Vertex Model Garden`,
       targetStateXml: customizeXml(buildEvalSafetyXml(), 'target', 'GenAI Platform & Evaluation'),

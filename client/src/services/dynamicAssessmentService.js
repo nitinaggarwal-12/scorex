@@ -275,6 +275,28 @@ class DynamicAssessmentService {
     });
     return response.data;
   }
+
+  /**
+   * Auto-populate from uploaded architecture document or diagram
+   */
+  async autoPopulateFromDoc(file, instanceId = null, metadata = {}) {
+    const formData = new FormData();
+    formData.append('file', file);
+    if (metadata.customerName) formData.append('customerName', metadata.customerName);
+    if (metadata.organizationName) formData.append('organizationName', metadata.organizationName);
+    if (metadata.industry) formData.append('industry', metadata.industry);
+    if (metadata.useCase) formData.append('useCase', metadata.useCase);
+
+    const endpoint = instanceId
+      ? `/api/assessment/${instanceId}/auto-populate-from-doc`
+      : '/api/assessments/auto-populate-from-doc';
+
+    const response = await axios.post(endpoint, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 180000
+    });
+    return response.data;
+  }
 }
 
 const dynamicAssessmentService = new DynamicAssessmentService();

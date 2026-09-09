@@ -30,6 +30,7 @@ const featureDB = require('./services/databricksFeatureDatabase');
 const sampleAssessmentGenerator = require('./utils/sampleAssessmentGenerator');
 const industryBenchmarkingService = require('./services/industryBenchmarkingService');
 const masterBlueprintCatalog = require('./services/masterBlueprintCatalog');
+const geminiService = require('./services/geminiService');
 const db = require('./db/connection');
 const { applyQuestionEdits } = require('./utils/questionEditsHelper');
 const { requireAuth } = require('./middleware/auth');
@@ -1012,6 +1013,89 @@ app.put('/api/assessment/:id/edited-executive-summary', async (req, res) => {
   }
 });
 
+// Auto-populate assessment from uploaded document (PDF, Word, Image, Text)
+app.post(['/api/assessments/auto-populate-from-doc', '/api/assessment/:id/auto-populate-from-doc'], async (req, res) => {
+  try {
+    const uploadedFile = req.files?.file || req.files?.document;
+    if (!uploadedFile) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'No document uploaded. Please upload a PDF, Word doc (.docx), Image, or Text file.' 
+      });
+    }
+
+    const docService = require('./services/documentExtractionService');
+    const assessmentRepo = require('./db/assessmentRepository');
+    const targetId = req.params.id || uuidv4();
+
+    const effectiveFramework = req.params.id 
+      ? await applyQuestionEdits(req.params.id, assessmentFramework) 
+      : assessmentFramework;
+
+    const extractionResult = await docService.extractAssessmentFromDocument(
+      uploadedFile.data,
+      uploadedFile.mimetype,
+      uploadedFile.name,
+      effectiveFramework,
+      {
+        customerName: req.body.customerName || req.body.organizationName,
+        useCase: req.body.useCase || req.body.assessmentDescription,
+        industry: req.body.industry
+      }
+    );
+
+    const { extractedData, sourceDocument, modelUsed } = extractionResult;
+    const completedCategories = effectiveFramework.assessmentAreas.map(a => a.id);
+
+    if (!req.params.id) {
+      await assessmentRepo.create({
+        id: targetId,
+        userId: req.user?.id || 'demo_public_guest',
+        assessmentName: `${extractedData.organizationName || 'Enterprise'} Architecture Assessment`,
+        assessmentDescription: `AI-extracted from ${uploadedFile.name}: ${(extractedData.executiveSummary || '').slice(0, 180)}...`,
+        organizationName: extractedData.organizationName || req.body.organizationName || 'Enterprise Organization',
+        contactEmail: req.body.contactEmail || 'architect@enterprise.com',
+        industry: extractedData.industry || req.body.industry || 'Technology',
+        status: 'completed',
+        progress: 100,
+        completedCategories,
+        responses: extractedData.responses || {},
+        startedAt: new Date().toISOString(),
+        selectedPillars: completedCategories
+      });
+    } else {
+      await assessmentRepo.update(targetId, {
+        organizationName: extractedData.organizationName || req.body.organizationName,
+        industry: extractedData.industry || req.body.industry,
+        status: 'completed',
+        progress: 100,
+        completedCategories,
+        responses: extractedData.responses || {}
+      });
+    }
+
+    res.json({
+      success: true,
+      assessmentId: targetId,
+      redirectUrl: `/results/${targetId}`,
+      organizationName: extractedData.organizationName,
+      industry: extractedData.industry,
+      detectedTechnologies: extractedData.detectedTechnologies || [],
+      overallMaturityEstimate: extractedData.overallMaturityEstimate,
+      executiveSummary: extractedData.executiveSummary,
+      evidenceCount: Object.keys(extractedData.evidenceMap || {}).length,
+      modelUsed,
+      sourceDocument
+    });
+  } catch (err) {
+    console.error('Error auto-populating assessment from document:', err);
+    res.status(500).json({ 
+      success: false, 
+      error: err.message || 'Failed to extract assessment from document' 
+    });
+  }
+});
+
 // Auto-save individual question responses (with editor tracking)
 app.post('/api/assessment/:id/save-progress', async (req, res) => {
   try {
@@ -1755,6 +1839,74 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
       console.log(`⚠️ No fully completed pillars - returning minimal results`);
     }
 
+    // 🏛️ Resolve or Auto-Synthesize Bespoke Architecture Diagrams (Current vs Target)
+    let resolvedDiagrams = assessment.architectureDiagrams ||
+      assessment.diagrams ||
+      assessment.aiReport?.architectureDiagrams ||
+      assessment.aiReport?.diagrams ||
+      assessment.executiveReport?.architectureDiagrams ||
+      recommendations.architectureDiagrams;
+
+    if (!resolvedDiagrams && hasAnyResponses && geminiService.isAvailable()) {
+      try {
+        const dynamicEngine = require('./services/dynamicAssessmentEngine');
+        console.log(`🎨 [Gemini Architecture] Auto-synthesizing bespoke diagrams for ${assessment.organizationName || assessment.assessmentName || 'Enterprise'}...`);
+        resolvedDiagrams = await dynamicEngine.generateArchitectureDiagramsWithGemini(
+          {
+            typeKey: 'enterprise_data_ai_maturity',
+            title: 'Enterprise Cloud, Data & AI Architecture',
+            subtitle: 'Multi-Cloud Lakehouse & Agentic AI Modernization',
+            dimensions: effectiveFramework.assessmentAreas.map(a => ({
+              id: a.id,
+              name: a.name,
+              questions: (a.dimensions || []).map(d => ({
+                id: d.id,
+                text: d.name,
+                category: a.name
+              }))
+            }))
+          },
+          assessment.responses || {},
+          {
+            overallScore: recommendations.overall?.currentScore || 2.5,
+            targetScore: recommendations.overall?.futureScore || 4.5,
+            maturityLevel: recommendations.overall?.level || 'Developing',
+            dimensionScores: categoryDetails
+          },
+          {
+            customerName: assessment.organizationName || assessment.assessmentName || 'Enterprise Organization',
+            industry: assessment.industry,
+            useCase: assessment.assessmentDescription || 'Data & AI Modernization'
+          }
+        );
+        if (resolvedDiagrams) {
+          assessmentRepo.update(id, {
+            architectureDiagrams: resolvedDiagrams,
+            diagrams: resolvedDiagrams
+          }).catch(e => console.warn('Notice persisting diagrams:', e.message));
+        }
+      } catch (diagErr) {
+        console.warn('⚠️ Notice auto-synthesizing bespoke diagrams:', diagErr.message);
+      }
+    }
+
+    if (!resolvedDiagrams) {
+      resolvedDiagrams = masterBlueprintCatalog.getMasterArchitectureDiagrams(
+        effectiveFramework,
+        {
+          customerName: assessment.organizationName || assessment.assessmentName || 'Enterprise Organization',
+          industry: assessment.industry,
+          useCase: assessment.assessmentDescription || 'Data & AI Modernization'
+        },
+        {
+          overallScore: recommendations.overall?.currentScore || 2.5,
+          targetScore: recommendations.overall?.futureScore || 4.5,
+          maturityLevel: recommendations.overall?.level || 'Developing',
+          dimensionScores: categoryDetails
+        }
+      );
+    }
+
     const results = {
       assessmentInfo: {
         id: assessment.id,
@@ -1790,24 +1942,7 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
       riskAreas: recommendations.riskAreas,
       executiveSummary: recommendations.executiveSummary || '', // ADAPTIVE: Executive summary
       whatsNew: recommendations.whatsNew, // ADAPTIVE: Latest Databricks features
-      architectureDiagrams: assessment.architectureDiagrams ||
-        assessment.aiReport?.architectureDiagrams ||
-        assessment.executiveReport?.architectureDiagrams ||
-        recommendations.architectureDiagrams ||
-        masterBlueprintCatalog.getMasterArchitectureDiagrams(
-          effectiveFramework,
-          {
-            customerName: assessment.organizationName || assessment.assessmentName || 'Enterprise Organization',
-            industry: assessment.industry,
-            useCase: assessment.assessmentDescription || 'Data & AI Modernization'
-          },
-          {
-            overallScore: recommendations.overall?.currentScore || 2.5,
-            targetScore: recommendations.overall?.futureScore || 4.5,
-            maturityLevel: recommendations.overall?.level || 'Developing',
-            dimensionScores: categoryDetails
-          }
-        ),
+      architectureDiagrams: resolvedDiagrams,
       pillarStatus: effectiveFramework.assessmentAreas.map(area => {
         const isCompleted = assessment.completedCategories.includes(area.id);
         const hasResponses = areasWithResponses.some(a => a.id === area.id);

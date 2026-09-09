@@ -26,13 +26,15 @@ import {
   FiExternalLink,
   FiChevronDown,
   FiChevronUp,
-  FiHelpCircle
+  FiHelpCircle,
+  FiUploadCloud
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import dynamicAssessmentService from '../services/dynamicAssessmentService';
 import assessmentService from '../services/assessmentService';
 import LoadingSpinner from './LoadingSpinner';
+import UploadDocumentModal from './UploadDocumentModal';
 
 const HubContainer = styled.div`
   min-height: 100vh;
@@ -109,6 +111,35 @@ const CreateBtn = styled.button`
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 15px 30px rgba(99, 102, 241, 0.6);
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+`;
+
+const UploadDocBtn = styled.button`
+  background: white;
+  color: #1e293b;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 14px;
+  padding: 14px 24px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+  min-height: 48px;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: #6366f1;
+    color: #4f46e5;
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.15);
   }
 
   @media (max-width: 768px) {
@@ -560,6 +591,7 @@ const DynamicAssessmentHub = () => {
   const [instances, setInstances] = useState([]);
   const [expandedPreview, setExpandedPreview] = useState({});
   const [startModalType, setStartModalType] = useState(null);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [modalForm, setModalForm] = useState({
     customerName: '',
     useCase: '',
@@ -696,10 +728,16 @@ const DynamicAssessmentHub = () => {
             </HeaderSubtitle>
           </div>
 
-          <CreateBtn onClick={() => navigate('/assessments/ai-generator')}>
-            <HiSparkles />
-            Create with Gemini 3.7
-          </CreateBtn>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+            <UploadDocBtn onClick={() => setIsUploadModalOpen(true)}>
+              <FiUploadCloud />
+              Auto-Populate from Document
+            </UploadDocBtn>
+            <CreateBtn onClick={() => navigate('/assessments/ai-generator')}>
+              <HiSparkles />
+              Create with Gemini 3.7
+            </CreateBtn>
+          </div>
         </HeaderSection>
 
         <StatsGrid>
@@ -1102,6 +1140,12 @@ const DynamicAssessmentHub = () => {
           </ModalContent>
         </ModalOverlay>
       )}
+
+      {/* Multimodal Architecture Document Upload Modal */}
+      <UploadDocumentModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+      />
     </HubContainer>
   );
 };

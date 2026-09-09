@@ -497,4 +497,33 @@ export const fetchLogoFromURL = async (url) => {
   }
 };
 
+/**
+ * Auto-populate questionnaire and architecture by extracting from uploaded PDF, Word, Image, or text specs
+ */
+export const autoPopulateFromDoc = async (file, assessmentId = null, metadata = {}) => {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    if (metadata.customerName) formData.append('customerName', metadata.customerName);
+    if (metadata.organizationName) formData.append('organizationName', metadata.organizationName);
+    if (metadata.industry) formData.append('industry', metadata.industry);
+    if (metadata.useCase) formData.append('useCase', metadata.useCase);
+
+    const endpoint = assessmentId 
+      ? `/assessment/${assessmentId}/auto-populate-from-doc`
+      : '/assessments/auto-populate-from-doc';
+
+    const response = await api.post(endpoint, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      timeout: 180000 // 3 minutes for multimodal processing
+    });
+    return response;
+  } catch (error) {
+    console.error('Error in autoPopulateFromDoc:', error);
+    throw error;
+  }
+};
+
 export default api;

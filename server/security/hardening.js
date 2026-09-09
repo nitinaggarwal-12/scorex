@@ -69,7 +69,8 @@ function isAssessmentIdPath(pathname) {
     'generate-multiple-samples',
     'samples',
     'bulk',
-    'compare'
+    'compare',
+    'auto-populate-from-doc'
   ]);
 
   return reserved.has(match[1]) ? null : match[1];

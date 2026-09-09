@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { FiMail, FiArrowRight, FiFileText, FiEdit3, FiBriefcase, FiLayers, FiZap } from 'react-icons/fi';
+import { FiMail, FiArrowRight, FiFileText, FiEdit3, FiBriefcase, FiLayers, FiZap, FiUploadCloud } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import UploadDocumentModal from './UploadDocumentModal';
 
 const AutofillButton = styled.button`
   background: none;
@@ -25,6 +26,30 @@ const AutofillButton = styled.button`
     background: rgba(99, 102, 241, 0.08);
     border-color: #4f46e5;
     color: #4f46e5;
+  }
+`;
+
+const UploadDocButton = styled.button`
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border: 1.5px solid #bfdbfe;
+  color: #1d4ed8;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: all 0.2s ease;
+  align-self: center;
+
+  &:hover {
+    background: #dbeafe;
+    border-color: #93c5fd;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(29, 78, 216, 0.15);
   }
 `;
 
@@ -273,6 +298,7 @@ const AssessmentStart = ({ onStart }) => {
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -395,7 +421,10 @@ const AssessmentStart = ({ onStart }) => {
           evaluating your current capabilities and future goals.
         </FormSubtitle>
 
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap', marginBottom: '10px' }}>
+          <UploadDocButton type="button" onClick={() => setIsUploadModalOpen(true)}>
+            <FiUploadCloud /> Upload Architecture Doc / Diagram (Auto-Populate)
+          </UploadDocButton>
           <AutofillButton type="button" onClick={handlePrefillForm}>
             <FiZap /> Autofill Sample Details
           </AutofillButton>
@@ -526,6 +555,11 @@ const AssessmentStart = ({ onStart }) => {
           </SubmitButton>
         </Form>
       </FormCard>
+
+      <UploadDocumentModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+      />
     </StartContainer>
   );
 };
