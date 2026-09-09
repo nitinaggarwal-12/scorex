@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -1898,7 +1898,7 @@ const AssessmentResultsNew = () => {
   const [editingNewNextStep, setEditingNewNextStep] = useState(null); // Track which new next step is being edited
   const [editedContent, setEditedContent] = useState({});
   const [showColorPicker, setShowColorPicker] = useState(null); // Track which pillar's color picker is shown
-  const [customizations, setCustomizations] = useState({
+  const defaultCustomizations = {
     title: '',
     summary: '',
     pillars: {},
@@ -1917,9 +1917,12 @@ const AssessmentResultsNew = () => {
     impactMetrics: {}, // { metricKey: { value, label, drivers } }
     cardColors: {}, // { cardKey: { bg, border, text } }
     collapsedSections: {} // { sectionKey: boolean }
-  });
+  };
 
-  // Load customizations from localStorage on mount
+  const [customizations, setCustomizations] = useState(defaultCustomizations);
+  const loadedAssessmentIdRef = useRef(null);
+
+  // Load customizations from localStorage on assessment change
   useEffect(() => {
     if (assessmentId) {
       const storageKey = `assessment_customizations_${assessmentId}`;
@@ -1927,21 +1930,29 @@ const AssessmentResultsNew = () => {
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
-          setCustomizations(prevState => ({ ...prevState, ...parsed }));
-          console.log('[AssessmentResultsNew] Loaded customizations from localStorage:', parsed);
+          setCustomizations({ ...defaultCustomizations, ...parsed });
+          console.log('[AssessmentResultsNew] Loaded customizations from localStorage for:', assessmentId, parsed);
         } catch (error) {
           console.error('[AssessmentResultsNew] Error parsing saved customizations:', error);
+          setCustomizations(defaultCustomizations);
         }
+      } else {
+        // Reset to default customizations for new/un-customized assessment
+        setCustomizations(defaultCustomizations);
       }
+      loadedAssessmentIdRef.current = assessmentId;
+    } else {
+      setCustomizations(defaultCustomizations);
+      loadedAssessmentIdRef.current = null;
     }
   }, [assessmentId]);
 
-  // Save customizations to localStorage whenever they change
+  // Save customizations to localStorage whenever they change, only if loaded for the current assessment
   useEffect(() => {
-    if (assessmentId && Object.keys(customizations).length > 0) {
+    if (assessmentId && loadedAssessmentIdRef.current === assessmentId && Object.keys(customizations).length > 0) {
       const storageKey = `assessment_customizations_${assessmentId}`;
       localStorage.setItem(storageKey, JSON.stringify(customizations));
-      console.log('[AssessmentResultsNew] Saved customizations to localStorage');
+      console.log('[AssessmentResultsNew] Saved customizations to localStorage for:', assessmentId);
     }
   }, [customizations, assessmentId]);
 
@@ -1969,9 +1980,11 @@ const AssessmentResultsNew = () => {
     try {
       if (showRefreshToast) {
         setRefreshing(true);
+        setBenchmarkData(null);
         toast.loading('Refreshing results...', { id: 'refresh-results' });
       } else {
         setLoading(true);
+        setBenchmarkData(null);
       }
       setError(null);
       console.log('[AssessmentResultsNew] Fetching results for:', assessmentId);
@@ -2011,6 +2024,7 @@ const AssessmentResultsNew = () => {
 
   useEffect(() => {
     if (assessmentId) {
+      setBenchmarkData(null);
       fetchResults();
     } else {
       console.error('[AssessmentResultsNew] No assessment ID provided');
@@ -2021,6 +2035,7 @@ const AssessmentResultsNew = () => {
 
   // Fetch benchmarking data
   const fetchBenchmarkData = useCallback(async () => {
+    if (!assessmentId) return;
     try {
       setBenchmarkLoading(true);
       console.log('[AssessmentResultsNew] Fetching benchmarking data for:', assessmentId);
@@ -2038,10 +2053,10 @@ const AssessmentResultsNew = () => {
 
   // Fetch benchmarking data after results are loaded
   useEffect(() => {
-    if (results && results.data && !benchmarkData && !benchmarkLoading) {
+    if (results && results.data && !benchmarkData && !benchmarkLoading && assessmentId) {
       fetchBenchmarkData();
     }
-  }, [results, benchmarkData, benchmarkLoading, fetchBenchmarkData]);
+  }, [results, benchmarkData, benchmarkLoading, fetchBenchmarkData, assessmentId]);
 
   // Fetch assessment framework for dimension names
   useEffect(() => {

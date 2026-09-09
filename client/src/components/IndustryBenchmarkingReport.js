@@ -1105,6 +1105,7 @@ const IndustryBenchmarkingReport = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
+        setBenchmarkData(null);
         const response = await assessmentService.getAssessmentResults(assessmentId);
         setResults(response.data || response);
       } catch (err) {
@@ -1115,29 +1116,36 @@ const IndustryBenchmarkingReport = () => {
     };
     
     if (assessmentId) {
+      setBenchmarkData(null);
       fetchData();
     }
   }, [assessmentId]);
 
   // Fetch benchmark data separately
   useEffect(() => {
+    let isMounted = true;
     const fetchBenchmarkData = async () => {
-      if (!results) return;
+      if (!results || !assessmentId) return;
       
       try {
         const data = await assessmentService.getBenchmarkReport(assessmentId);
-        setBenchmarkData(data);
-        setLoading(false);
+        if (isMounted) {
+          setBenchmarkData(data);
+          setLoading(false);
+        }
       } catch (err) {
         console.error('Error fetching benchmark data:', err);
-        setBenchmarkData(null);
-        setLoading(false);
+        if (isMounted) {
+          setBenchmarkData(null);
+          setLoading(false);
+        }
       }
     };
 
     if (results && !benchmarkData) {
       fetchBenchmarkData();
     }
+    return () => { isMounted = false; };
   }, [results, benchmarkData, assessmentId]);
 
   // Extract data from results
