@@ -182,20 +182,9 @@ const ProtectedRoute = ({ children }) => {
   let isAuthenticated = authService.isAuthenticated();
   
   if (!isAuthenticated) {
-    // Automatically provision seamless guest executive access for first-time visitors & Google judges
-    const guestUser = {
-      id: 'guest_user_' + Date.now(),
-      email: 'guest.architect@enterprise.com',
-      name: 'Guest Executive',
-      firstName: 'Guest',
-      lastName: 'Architect',
-      role: 'admin',
-      organization: 'Enterprise Organization'
-    };
-    authService.setSession('guest_session_' + Date.now(), guestUser);
-    localStorage.setItem('user', JSON.stringify(guestUser));
-    localStorage.setItem('scorex_guest_auth', 'true');
-    isAuthenticated = true;
+    // Automatically provision seamless guest executive access for first-time visitors
+    authService.createGuestSession();
+    localStorage.setItem('scorex_disclaimer_accepted', 'true');
   }
   
   return children;

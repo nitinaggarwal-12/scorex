@@ -324,6 +324,34 @@ const DomainSubmitBtn = styled.button`
   }
 `;
 
+const GuestNoticeBanner = styled.div`
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 1.5px solid #86efac;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+`;
+
+const GuestQuickBtn = styled.button`
+  padding: 8px 14px;
+  background: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(22, 163, 74, 0.2);
+
+  &:hover {
+    background: #15803d;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(22, 163, 74, 0.3);
+  }
+`;
+
 const SandboxBanner = styled.div`
   background: #eff6ff;
   border: 1px solid #bfdbfe;
@@ -711,6 +739,34 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                 }
               </Subtitle>
 
+              {/* Instant Guest Exploration Notice */}
+              <GuestNoticeBanner>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+                  <div>
+                    <strong style={{ display: 'block', fontSize: '0.85rem', color: '#14532d', fontWeight: 700 }}>
+                      🚀 No Sign In Required
+                    </strong>
+                    <span style={{ fontSize: '0.78rem', color: '#166534' }}>
+                      Explore, create, and edit your own assessments instantly as a guest.
+                    </span>
+                  </div>
+                  <GuestQuickBtn
+                    type="button"
+                    onClick={() => {
+                      const guestUser = authService.createGuestSession();
+                      localStorage.setItem('scorex_disclaimer_accepted', 'true');
+                      toast.success('Guest Mode Activated (No Sign In Required)');
+                      if (onLoginSuccess) {
+                        onLoginSuccess(guestUser);
+                      }
+                      onClose();
+                    }}
+                  >
+                    Explore as Guest →
+                  </GuestQuickBtn>
+                </div>
+              </GuestNoticeBanner>
+
               {error && <ErrorMessage>{error}</ErrorMessage>}
 
               {/* --- Corporate SSO Buttons --- */}
@@ -879,17 +935,9 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                 <button
                   type="button"
                   onClick={() => {
-                    const guestUser = {
-                      id: 'admin_guest_' + Date.now(),
-                      email: 'admin.guest@enterprise.com',
-                      role: 'admin',
-                      firstName: 'Admin',
-                      lastName: 'Guest'
-                    };
-                    authService.setSession('guest_admin_session_' + Date.now(), guestUser);
-                    localStorage.setItem('user', JSON.stringify(guestUser));
+                    const guestUser = authService.createGuestSession();
                     localStorage.setItem('scorex_disclaimer_accepted', 'true');
-                    toast.success('Admin Mode Unlocked (Full Access)');
+                    toast.success('Guest Mode Activated (No Sign In Required)');
                     if (onLoginSuccess) {
                       onLoginSuccess(guestUser);
                     }

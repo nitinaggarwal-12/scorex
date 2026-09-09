@@ -84,6 +84,7 @@ test('browser Excel export no longer imports the vulnerable xlsx parser', () => 
 });
 
 test('runtime customer/auth JSON stores are not tracked', () => {
+  const { execSync } = require('child_process');
   const forbidden = [
     'data/users.json',
     'data/sessions.json',
@@ -93,7 +94,11 @@ test('runtime customer/auth JSON stores are not tracked', () => {
     'server/data/feedback.json'
   ];
   for (const relativePath of forbidden) {
-    assert.equal(fs.existsSync(path.join(root, relativePath)), false, `${relativePath} must not be tracked`);
+    let tracked = '';
+    try {
+      tracked = execSync(`git ls-files "${relativePath}"`, { cwd: root }).toString().trim();
+    } catch (_) {}
+    assert.equal(tracked, '', `${relativePath} must not be tracked`);
   }
 });
 

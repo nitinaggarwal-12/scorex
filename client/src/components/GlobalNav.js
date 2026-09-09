@@ -585,6 +585,9 @@ const GlobalNav = () => {
     if (authService.isAuthenticated()) {
       setCurrentUser(authService.getUser());
     }
+    const syncUser = () => setCurrentUser(authService.getUser());
+    window.addEventListener('scorex-auth-changed', syncUser);
+    return () => window.removeEventListener('scorex-auth-changed', syncUser);
   }, []);
 
   // Close dropdowns when clicking outside
@@ -687,18 +690,10 @@ const GlobalNav = () => {
 
   const handleExploreAsGuest = (redirectPath = '/insights-dashboard') => {
     closeMobileMenu();
-    const guestUser = {
-      id: 'admin_guest_' + Date.now(),
-      email: 'admin.guest@enterprise.com',
-      role: 'admin',
-      firstName: 'Admin',
-      lastName: 'Guest'
-    };
-    authService.setSession('guest_admin_session_' + Date.now(), guestUser);
-    localStorage.setItem('user', JSON.stringify(guestUser));
-    setCurrentUser(guestUser);
+    const guestUser = authService.createGuestSession();
     localStorage.setItem('scorex_disclaimer_accepted', 'true');
-    toast.success('Admin Mode Unlocked (Full Access)');
+    setCurrentUser(guestUser);
+    toast.success('Guest Mode Activated (No Sign In Required)');
     navigate(redirectPath);
   };
 

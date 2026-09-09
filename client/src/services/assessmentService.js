@@ -369,7 +369,9 @@ export const generateSampleAssessment = async (completionLevel = 'full', specifi
 export const submitAssessment = async (assessmentId) => {
   try {
     console.log('[submitAssessment] Submitting assessment:', assessmentId);
-    const data = await api.post(`/assessment/${assessmentId}/submit`);
+    const data = await api.post(`/assessment/${assessmentId}/submit`, {}, {
+      timeout: 60000
+    });
     console.log('[submitAssessment] Response:', data);
     return data;
   } catch (error) {
