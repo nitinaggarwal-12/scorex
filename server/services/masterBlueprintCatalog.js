@@ -1768,8 +1768,7 @@ function buildDataLakehouseXml() {
           <mxGeometry x="710" y="204" width="270" height="18" as="geometry"/>
         </mxCell>
 
-        <!-- 1. Gemini 3.7 Flash / Pro Foundation Reasoner -->
-        <mxCell id="card_gemini_models_lake" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:18px;color:#2563EB;&quot;&gt;✨ 🧠&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7px;font-weight:bold;color:#0F172A;&quot;&gt;Gemini 3.7 Flash &amp;amp; Pro Reasoner&lt;br&gt;&lt;span style=&quot;font-size:5.5px;color:#475569;font-weight:normal;&quot;&gt;2M+ Token Context Window, Multimodal Audio/Visual Understanding&lt;br&gt;&amp;amp; Deep Analytical Reasoning over Petabyte Datasets&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#93C5FD;strokeWidth=1.2;align=center;verticalAlign=middle;padding=2;\" vertex=\"1\" parent=\"1\">
+        <mxCell id="card_gemini_models_lake" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:18px;color:#2563EB;&quot;&gt;✨ 🧠&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7px;font-weight:bold;color:#0F172A;&quot;&gt;Gemini 3.7 Flash &amp;amp; Pro Reasoner&lt;br&gt;&lt;span style=&quot;font-size:5.5px;color:#475569;font-weight:normal;&quot;&gt;2M+ Token Context Window, Multimodal Audio/Visual Understanding&lt;br&gt;&amp;amp; Deep Analytical Reasoning over Petabyte Datasets&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#93C5FD;strokeWidth=1.2;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1">
           <mxGeometry x="710" y="226" width="268" height="68" as="geometry"/>
         </mxCell>
 
@@ -9506,6 +9505,63 @@ function buildLegacyAgenticXml(cust = 'Enterprise Organization') {
 }
 
 /**
+ * Extract architectural context, cloud vendors, and tools from questionnaire responses and notes
+ */
+function extractArchitectureContext(responses = {}, metadata = {}) {
+  const commentsList = [];
+  const selectedPainPoints = [];
+
+  if (responses && typeof responses === 'object') {
+    Object.entries(responses).forEach(([k, v]) => {
+      if ((k.endsWith('_painPoints') || k.endsWith('_pain') || k.includes('business_pain') || k.includes('technical_pain')) && Array.isArray(v)) {
+        v.forEach(p => { if (p) selectedPainPoints.push(typeof p === 'string' ? p : JSON.stringify(p)); });
+      }
+      if ((k.endsWith('_comment') || k.endsWith('_notes') || k.endsWith('_note') || k.includes('comment') || k.includes('note')) && typeof v === 'string' && v.trim()) {
+        commentsList.push(v.trim());
+      }
+    });
+  }
+
+  if (metadata.notes) {
+    if (Array.isArray(metadata.notes)) metadata.notes.forEach(n => { if (n && typeof n === 'string' && n.trim()) commentsList.push(n.trim()); });
+    else if (typeof metadata.notes === 'string' && metadata.notes.trim()) commentsList.push(metadata.notes.trim());
+  }
+  if (metadata.comments) {
+    if (Array.isArray(metadata.comments)) metadata.comments.forEach(c => { if (c && typeof c === 'string' && c.trim()) commentsList.push(c.trim()); });
+    else if (typeof metadata.comments === 'string' && metadata.comments.trim()) commentsList.push(metadata.comments.trim());
+  }
+  if (metadata.contextNotes && typeof metadata.contextNotes === 'string') {
+    commentsList.push(metadata.contextNotes.trim());
+  }
+  if (metadata.extractedComponents && Array.isArray(metadata.extractedComponents)) {
+    metadata.extractedComponents.forEach(comp => {
+      if (typeof comp === 'string') commentsList.push(comp);
+      else if (comp && comp.name) commentsList.push(`${comp.name}: ${comp.details || comp.role || ''}`);
+    });
+  }
+
+  const combined = (commentsList.join(' ') + ' ' + selectedPainPoints.join(' ')).toLowerCase();
+
+  return {
+    commentsList,
+    selectedPainPoints,
+    isAws: /\b(aws|amazon\s+web\s+services|ec2|s3|lambda|bedrock|msk|glue|redshift|fargate|eks)\b/i.test(combined),
+    isAzure: /\b(azure|blob\s+storage|synapse|azure\s+openai|aks|azure\s+sql)\b/i.test(combined),
+    isGcp: /\b(gcp|google\s+cloud|bigquery|vertex|dataflow|dataproc|cloud\s+run)\b/i.test(combined),
+    isOnPrem: /\b(on-prem|onprem|mainframe|ibm|oracle|teradata|informatica|bare\s+metal)\b/i.test(combined),
+    isOpenAi: /\b(openai|chatgpt|gpt-4|gpt-4o|gpt-3\.5)\b/i.test(combined),
+    isClaude: /\b(claude|anthropic)\b/i.test(combined),
+    isPinecone: /\b(pinecone)\b/i.test(combined),
+    isWeaviate: /\b(weaviate|qdrant|chroma)\b/i.test(combined),
+    isLangChain: /\b(langchain|langgraph)\b/i.test(combined),
+    isSnowflake: /\b(snowflake)\b/i.test(combined),
+    isDatabricks: /\b(databricks|delta\s+lake|unity\s+catalog)\b/i.test(combined),
+    isTeradata: /\b(teradata)\b/i.test(combined),
+    isOracle: /\b(oracle)\b/i.test(combined)
+  };
+}
+
+/**
  * Dispatch bespoke, high-craft PromptCanvas Draw.io XML blueprints tailored to the assessment framework
  */
 function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {}) {
@@ -9515,20 +9571,31 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
   const lvl = scores.overallScore ? Number(scores.overallScore).toFixed(1) : "2.7";
   const tgt = scores.overallScore ? Math.min(5.0, Number(scores.overallScore) + 1.8).toFixed(1) : "4.5";
 
-  const isAgenticMesh = key.includes("agentic") || key.includes("mcp") || key.includes("banking") || title.includes("agentic") || title.includes("multi-agent") || title.includes("mcp");
-  const isGenAIReadiness = (key.includes("genai") || title.includes("genai")) && !key.includes("openai") && !key.includes("mesh");
-  const isOpenAI = key.includes("openai") || (key.includes("gemini") && key.includes("migration")) || title.includes("openai");
+  // Dynamic Questionnaire Context Extraction
+  const archCtx = extractArchitectureContext(metadata.responses || {}, metadata);
+  const isAws = archCtx.isAws;
+  const isAzure = archCtx.isAzure;
+  const isOpenAiDetected = archCtx.isOpenAi;
+  const isPinecone = archCtx.isPinecone;
+  const isWeaviate = archCtx.isWeaviate;
+  const isLangChain = archCtx.isLangChain;
+  const isSnowflake = archCtx.isSnowflake;
+  const isDatabricks = archCtx.isDatabricks;
+
+  const isAgenticMesh = key.includes("agentic") || key.includes("mcp") || key.includes("banking") || title.includes("agentic") || title.includes("multi-agent") || title.includes("mcp") || isLangChain;
+  const isGenAIReadiness = (key.includes("genai") || title.includes("genai") || isOpenAiDetected) && !key.includes("openai") && !key.includes("mesh");
+  const isOpenAI = key.includes("openai") || (key.includes("gemini") && key.includes("migration")) || title.includes("openai") || (isOpenAiDetected && !key.includes("lakehouse") && !key.includes("finops"));
   const isSecurity = key.includes("security") || key.includes("zero_trust") || key.includes("ciso") || title.includes("security") || title.includes("zero trust");
-  const isLakehouse = key.includes("lakehouse") || key.includes("bigquery") || key.includes("edw") || key.includes("snowflake") || key.includes("teradata") || title.includes("lakehouse") || title.includes("bigquery") || title.includes("snowflake");
+  const isLakehouse = key.includes("lakehouse") || key.includes("bigquery") || key.includes("edw") || key.includes("snowflake") || key.includes("teradata") || title.includes("lakehouse") || title.includes("bigquery") || title.includes("snowflake") || archCtx.isSnowflake || archCtx.isDatabricks || archCtx.isTeradata;
   const isFinOps = key.includes("finops") || key.includes("cost") || key.includes("billing") || title.includes("finops") || title.includes("cost");
 
-  // Helper to customize XML title with customer name and score
+  // Helper to customize XML title, customer name, detected cloud vendors and tool branding
   const customizeXml = (xmlStr, curOrTgt, titleText) => {
     if (!xmlStr) return '';
     let res = xmlStr
       .replace(/ENTERPRISE ORGANIZATION/g, cust.toUpperCase())
       .replace(/ENTERPRISE CLIENT/g, cust.toUpperCase())
-      .replace(/Enterprise Organization/g, cust)
+      .replace(/Enterprise Organization/g, cust);
 
     if (metadata.industry) {
       res = res.replace(/Retail & Consumer Goods/g, metadata.industry)
@@ -9540,6 +9607,117 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
       res = res.replace(/MySQL &amp; PostgreSQL/g, topTechs)
                .replace(/MySQL & PostgreSQL/g, topTechs);
     }
+
+    if (curOrTgt === 'current') {
+      // 1. Dynamic Cloud Provider Injection from Questionnaire Notes
+      if (isAws) {
+        res = res
+          .replace(/📱 Client Apps &amp; Hardcoded Endpoints/g, '📱 AWS VPC &amp; Client Endpoints')
+          .replace(/🌐 ENTERPRISE WEB &amp; MOBILE APPS/g, '🌐 AWS EC2 / LAMBDA &amp; CLIENT APPS')
+          .replace(
+            /<img src="https:\/\/api\.iconify\.design\/lucide:server\.svg" width="26" height="26"\/>/g,
+            '<img src="https://api.iconify.design/logos:aws.svg" width="26" height="26"/>'
+          )
+          .replace(
+            /<img src="https:\/\/api\.iconify\.design\/lucide:radio\.svg" width="26" height="26"\/>/g,
+            '<img src="https://api.iconify.design/logos:aws.svg" width="26" height="26"/>'
+          );
+      } else if (isAzure) {
+        res = res
+          .replace(/📱 Client Apps &amp; Hardcoded Endpoints/g, '📱 Azure VNet &amp; App Services')
+          .replace(/🌐 ENTERPRISE WEB &amp; MOBILE APPS/g, '🌐 AZURE APP SERVICES &amp; FUNCTIONS')
+          .replace(
+            /<img src="https:\/\/api\.iconify\.design\/lucide:server\.svg" width="26" height="26"\/>/g,
+            '<img src="https://api.iconify.design/logos:azure-icon.svg" width="26" height="26"/>'
+          );
+      }
+
+      // 2. Dynamic AI/LLM Stack Injection from Questionnaire Notes
+      if (isOpenAiDetected && isAws) {
+        res = res
+          .replace(
+            /&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Direct api\.openai\.com&lt;\/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Public Internet Egress \(No VPC-SC\)&lt;\/span&gt;/g,
+            '&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:openai-icon.svg&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&amp;nbsp;&lt;img src=&quot;https://api.iconify.design/logos:aws.svg&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:9px;font-weight:bold;color:#B45309;padding-top:2px;&quot;&gt;OpenAI on AWS&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;font-weight:normal;&quot;&gt;AWS NAT Gateway Egress&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
+          );
+      } else if (isOpenAiDetected) {
+        res = res.replace(
+          /&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Direct api\.openai\.com&lt;\/b&gt;/g,
+          '&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:openai-icon.svg&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:9px;font-weight:bold;color:#B45309;&quot;&gt;OpenAI REST API&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
+        );
+      }
+
+      if (isPinecone) {
+        res = res.replace(
+          /🌲 UNMANAGED SAAS VECTOR DATABASE/g,
+          '&lt;table style=&quot;width:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:pinecone-icon.svg&quot; width=&quot;14&quot; height=&quot;14&quot;/&gt;&amp;nbsp;&lt;b style=&quot;font-size:9.5px;color:#1E40AF;&quot;&gt;PINECONE VECTOR DB&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
+        ).replace(
+          /Third-party hosted Pinecone\/Weaviate cluster/g,
+          'Unmanaged Pinecone SaaS index with unproxied egress'
+        );
+      } else if (isWeaviate) {
+        res = res.replace(
+          /🌲 UNMANAGED SAAS VECTOR DATABASE/g,
+          '&lt;table style=&quot;width:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:weaviate-icon.svg&quot; width=&quot;14&quot; height=&quot;14&quot;/&gt;&amp;nbsp;&lt;b style=&quot;font-size:9.5px;color:#1E40AF;&quot;&gt;WEAVIATE VECTOR DB&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
+        );
+      }
+
+      if (isLangChain) {
+        res = res.replace(
+          /💬 FRAGMENTED SUPPORT CHATBOTS/g,
+          '&lt;table style=&quot;width:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:langchain-icon.svg&quot; width=&quot;14&quot; height=&quot;14&quot;/&gt;&amp;nbsp;&lt;b style=&quot;font-size:9.5px;color:#1E40AF;&quot;&gt;LANGCHAIN AGENT CHAINS&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
+        );
+      }
+
+      if (isSnowflake) {
+        res = res.replace(
+          /💾 UNSTRUCTURED DATA LAKE/g,
+          '&lt;table style=&quot;width:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:snowflake-icon.svg&quot; width=&quot;14&quot; height=&quot;14&quot;/&gt;&amp;nbsp;&lt;b style=&quot;font-size:9.5px;color:#1E40AF;&quot;&gt;SNOWFLAKE SILO&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
+        );
+      } else if (isDatabricks) {
+        res = res.replace(
+          /💾 UNSTRUCTURED DATA LAKE/g,
+          '&lt;table style=&quot;width:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:databricks.svg&quot; width=&quot;14&quot; height=&quot;14&quot;/&gt;&amp;nbsp;&lt;b style=&quot;font-size:9.5px;color:#1E40AF;&quot;&gt;DATABRICKS WORKSPACE&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
+        );
+      }
+    }
+
+    if (curOrTgt === 'target') {
+      // 3. Strictly 100% Google Cloud / GCP / Gemini Native Target State Branding
+      res = res
+        .replace(
+          /<img src="https:\/\/api\.iconify\.design\/lucide:sparkles\.svg" width="26" height="26"\/>/g,
+          '<img src="https://api.iconify.design/logos:google-gemini.svg" width="26" height="26"/>'
+        )
+        .replace(
+          /<img src="https:\/\/api\.iconify\.design\/lucide:box\.svg" width="26" height="26"\/>/g,
+          '<img src="https://api.iconify.design/logos:google-cloud-run.svg" width="26" height="26"/>'
+        )
+        .replace(
+          /<img src="https:\/\/api\.iconify\.design\/lucide:radio\.svg" width="26" height="26"\/>/g,
+          '<img src="https://api.iconify.design/logos:google-cloud.svg" width="26" height="26"/>'
+        )
+        .replace(
+          /✨ Intelligence Core \(Foundation Models\)/g,
+          '&lt;img src=&quot;https://api.iconify.design/logos:google-gemini.svg&quot; width=&quot;18&quot; height=&quot;18&quot;/&gt;&amp;nbsp;Google Vertex AI Intelligence Core (Gemini 2.5 / 3.7)'
+        )
+        .replace(
+          /Cloud Run Container • Fastify \/ React SSR/g,
+          '&lt;img src=&quot;https://api.iconify.design/logos:google-cloud-run.svg&quot; width=&quot;16&quot; height=&quot;16&quot;/&gt;&amp;nbsp;Cloud Run Container • Fastify / React SSR'
+        )
+        .replace(
+          /📊 BigQuery Enterprise Analytics Lakehouse/g,
+          '&lt;img src=&quot;https://api.iconify.design/logos:google-cloud.svg&quot; width=&quot;18&quot; height=&quot;18&quot;/&gt;&amp;nbsp;BigQuery Enterprise Analytics Lakehouse'
+        );
+
+      if (isAws || isOpenAiDetected) {
+        const fromSource = isAws && isOpenAiDetected ? 'AWS &amp; OpenAI' : isAws ? 'AWS' : 'OpenAI';
+        res = res.replace(
+          /GOOGLE CLOUD STRANGLER FIG MODERNIZATION BRIDGE/g,
+          `GOOGLE CLOUD STRANGLER FIG MODERNIZATION BRIDGE (Target Modernization from ${fromSource})`
+        );
+      }
+    }
+
     return res;
   };
 

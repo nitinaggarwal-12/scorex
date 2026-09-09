@@ -11,6 +11,8 @@ class DynamicAssessmentEngine {
   constructor() {
     this.gemini = geminiService;
     this.geminiService = geminiService;
+    this.generateArchitectureDiagramsWithGemini = this.generateArchitectureDiagramsWithGemini.bind(this);
+    this._extractArchitectureContext = this._extractArchitectureContext.bind(this);
   }
 
   /**
@@ -582,37 +584,187 @@ Generate a comprehensive JSON executive report matching this schema:
   /**
    * AI-generate bespoke Draw.io XML Architecture Diagrams using Gemini 3.7 Flash
    */
-  async generateArchitectureDiagramsWithGemini(framework, responses = {}, scores = {}, metadata = {}, customInstructions = '') {
-    console.log(`🤖 [Gemini 3.7 Flash] Generating bespoke Architecture Diagrams for: ${metadata.customerName || 'Enterprise Client'} (${framework.title})...`);
-
-    // Extract pain points, notes, dimension scores
+  _extractArchitectureContext(responses = {}, metadata = {}) {
     const selectedPainPoints = [];
     const commentsList = [];
-    if (responses) {
+
+    // 1. Gather all comment and note strings from responses
+    if (responses && typeof responses === 'object') {
       Object.entries(responses).forEach(([k, v]) => {
-        if (k.endsWith('_painPoints') && Array.isArray(v)) {
-          v.forEach(p => selectedPainPoints.push(`- ${p}`));
+        // Pain points
+        if ((k.endsWith('_painPoints') || k.endsWith('_pain') || k.includes('business_pain') || k.includes('technical_pain')) && Array.isArray(v)) {
+          v.forEach(p => {
+            if (p) selectedPainPoints.push(typeof p === 'string' ? p : JSON.stringify(p));
+          });
         }
-        if (k.endsWith('_notes') && typeof v === 'string' && v.trim()) {
-          commentsList.push(`- ${v.trim()}`);
+        // Comments & Notes
+        if ((k.endsWith('_comment') || k.endsWith('_notes') || k.endsWith('_note') || k.includes('comment') || k.includes('note')) && typeof v === 'string' && v.trim()) {
+          commentsList.push(v.trim());
         }
       });
     }
 
+    // 2. Gather from metadata
+    if (metadata.notes) {
+      if (Array.isArray(metadata.notes)) {
+        metadata.notes.forEach(n => { if (n && typeof n === 'string' && n.trim()) commentsList.push(n.trim()); });
+      } else if (typeof metadata.notes === 'string' && metadata.notes.trim()) {
+        commentsList.push(metadata.notes.trim());
+      }
+    }
+    if (metadata.comments) {
+      if (Array.isArray(metadata.comments)) {
+        metadata.comments.forEach(c => { if (c && typeof c === 'string' && c.trim()) commentsList.push(c.trim()); });
+      } else if (typeof metadata.comments === 'string' && metadata.comments.trim()) {
+        commentsList.push(metadata.comments.trim());
+      }
+    }
+    if (metadata.contextNotes && typeof metadata.contextNotes === 'string' && metadata.contextNotes.trim()) {
+      commentsList.push(metadata.contextNotes.trim());
+    }
+    if (metadata.extractedComponents && Array.isArray(metadata.extractedComponents)) {
+      metadata.extractedComponents.forEach(comp => {
+        if (typeof comp === 'string' && comp.trim()) commentsList.push(comp.trim());
+        else if (comp && comp.name) commentsList.push(`${comp.name}: ${comp.details || comp.role || ''}`);
+      });
+    }
+
+    const combinedText = (commentsList.join(' ') + ' ' + selectedPainPoints.join(' ')).toLowerCase();
+
+    // 3. Detect Cloud Providers
+    const isAws = /\b(aws|amazon\s+web\s+services|ec2|s3|lambda|bedrock|msk|glue|redshift|fargate|eks)\b/i.test(combinedText);
+    const isAzure = /\b(azure|blob\s+storage|synapse|azure\s+openai|aks|azure\s+sql)\b/i.test(combinedText);
+    const isGcp = /\b(gcp|google\s+cloud|bigquery|vertex|dataflow|dataproc|cloud\s+run|alloydb)\b/i.test(combinedText);
+    const isOnPrem = /\b(on-prem|onprem|on\s+premises|mainframe|ibm|oracle\s+rac|teradata|informatica|bare\s+metal|datacenter)\b/i.test(combinedText);
+
+    // 4. Detect AI / LLM Models
+    const isOpenAi = /\b(openai|chatgpt|gpt-4|gpt-4o|gpt-3\.5|dall-e)\b/i.test(combinedText);
+    const isClaude = /\b(claude|anthropic|opus|sonnet)\b/i.test(combinedText);
+    const isGemini = /\b(gemini|vertex\s+ai)\b/i.test(combinedText);
+    const isOpenWeights = /\b(llama|mistral|vllm|ollama|deepseek)\b/i.test(combinedText);
+
+    // 5. Detect Agentic / Orchestration Frameworks
+    const isLangChain = /\b(langchain|langgraph)\b/i.test(combinedText);
+    const isLlamaIndex = /\b(llamaindex|llama\s+index)\b/i.test(combinedText);
+    const isAutoGen = /\b(autogen|crewai)\b/i.test(combinedText);
+    const isMcp = /\b(mcp|model\s+context\s+protocol)\b/i.test(combinedText);
+
+    // 6. Detect Vector Databases
+    const isPinecone = /\b(pinecone)\b/i.test(combinedText);
+    const isWeaviate = /\b(weaviate|qdrant|chroma|milvus)\b/i.test(combinedText);
+
+    // 7. Detect Data Warehouses / Databases
+    const isSnowflake = /\b(snowflake)\b/i.test(combinedText);
+    const isDatabricks = /\b(databricks|delta\s+lake|unity\s+catalog)\b/i.test(combinedText);
+    const isTeradata = /\b(teradata)\b/i.test(combinedText);
+    const isOracle = /\b(oracle)\b/i.test(combinedText);
+
+    return {
+      selectedPainPoints,
+      commentsList,
+      combinedText,
+      techFlags: {
+        isAws,
+        isAzure,
+        isGcp,
+        isOnPrem,
+        isOpenAi,
+        isClaude,
+        isGemini,
+        isOpenWeights,
+        isLangChain,
+        isLlamaIndex,
+        isAutoGen,
+        isMcp,
+        isPinecone,
+        isWeaviate,
+        isSnowflake,
+        isDatabricks,
+        isTeradata,
+        isOracle
+      }
+    };
+  }
+
+  /**
+   * AI-generate bespoke Draw.io XML Architecture Diagrams using Gemini 3.7 Flash
+   */
+  async generateArchitectureDiagramsWithGemini(framework = {}, responses = {}, scores = {}, metadata = {}, customInstructions = '') {
+    // Handle both object-argument calling pattern and positional calling pattern
+    if (framework && !framework.title && (framework.frameworkTitle || framework.customerName)) {
+      const opts = framework;
+      framework = { title: opts.frameworkTitle || 'Enterprise Architecture Framework', id: opts.frameworkId || 'genai' };
+      responses = opts.responses || {};
+      scores = { overallScore: opts.currentScore || 2.5, targetScore: opts.targetScore || 4.5 };
+      metadata = opts.metadata || { customerName: opts.customerName, useCase: opts.useCase, industry: opts.industry };
+      customInstructions = opts.customInstructions || '';
+    }
+
+    console.log(`🤖 [Gemini 3.7 Flash] Generating bespoke Architecture Diagrams for: ${metadata.customerName || 'Enterprise Client'} (${framework?.title || 'Enterprise Architecture'})...`);
+
+    // Extract pain points, notes, comments and detect technologies
+    const extractor = (this && typeof this._extractArchitectureContext === 'function') 
+      ? this._extractArchitectureContext.bind(this) 
+      : (module.exports && typeof module.exports._extractArchitectureContext === 'function')
+        ? module.exports._extractArchitectureContext.bind(module.exports)
+        : null;
+    const archContext = extractor ? extractor(responses, metadata) : { selectedPainPoints: [], commentsList: [], techFlags: {} };
+    const { selectedPainPoints, commentsList, techFlags } = archContext;
+
+    let detectedCloudSummary = 'Hybrid / On-Premises';
+    if (techFlags.isAws && techFlags.isAzure) detectedCloudSummary = 'Multi-Cloud (AWS & Azure)';
+    else if (techFlags.isAws) detectedCloudSummary = 'Amazon Web Services (AWS)';
+    else if (techFlags.isAzure) detectedCloudSummary = 'Microsoft Azure';
+    else if (techFlags.isGcp) detectedCloudSummary = 'Google Cloud Platform (GCP)';
+    else if (techFlags.isOnPrem) detectedCloudSummary = 'On-Premises / Legacy Datacenter';
+
+    const detectedAiStack = [];
+    if (techFlags.isOpenAi) detectedAiStack.push('OpenAI (GPT-4/GPT-4o API)');
+    if (techFlags.isClaude) detectedAiStack.push('Anthropic Claude');
+    if (techFlags.isGemini) detectedAiStack.push('Google Gemini / Vertex AI');
+    if (techFlags.isOpenWeights) detectedAiStack.push('Open-Weight Models (Llama/Mistral)');
+    if (techFlags.isLangChain) detectedAiStack.push('LangChain / LangGraph');
+    if (techFlags.isLlamaIndex) detectedAiStack.push('LlamaIndex');
+    if (techFlags.isPinecone) detectedAiStack.push('Pinecone Vector Store');
+    if (techFlags.isWeaviate) detectedAiStack.push('Weaviate / Qdrant');
+    if (techFlags.isSnowflake) detectedAiStack.push('Snowflake Data Warehouse');
+    if (techFlags.isDatabricks) detectedAiStack.push('Databricks Lakehouse');
+    if (techFlags.isTeradata) detectedAiStack.push('Teradata Enterprise Appliance');
+    if (techFlags.isOracle) detectedAiStack.push('Oracle Database / RAC');
+
     const systemInstruction = `You are a Principal Enterprise Cloud & AI Solutions Architect at the highest industry tier.
 Your role is to generate authentic, production-ready Draw.io / mxGraph XML architecture diagrams representing:
-1. CURRENT BASELINE ARCHITECTURE (Current State): The client's specific legacy stack, fragmented tools, batch scripts, static clusters, unmanaged data lakes, bottlenecks, and identified technical debt.
-2. DESIRED FUTURE STATE ARCHITECTURE (Target State): The modern, governed, scalable, domain-accurate target state tailored to the client's actual cloud environment and assessment domain.
+1. CURRENT BASELINE ARCHITECTURE (Current State): The client's specific legacy stack, fragmented tools, batch scripts, static clusters, unmanaged data lakes, bottlenecks, and identified technical debt extracted dynamically from their questionnaire notes and comments.
+2. DESIRED FUTURE STATE ARCHITECTURE (Target State): The modern, governed, scalable target state tailored strictly to Google Cloud / GCP / Gemini native architecture.
 
-CRITICAL VENDOR-NEUTRALITY & DOMAIN RELEVANCE MANDATE:
-- NEVER force Databricks, Unity Catalog, Delta Lake, or Photon into the diagram UNLESS the assessment explicitly requests Databricks.
-- Match the architecture technologies strictly to the assessment framework and customer context:
-  * If FINOPS / CLOUD COST: Focus on Kubernetes (EKS/GKE) Autopilot, FOCUS 1.0 Cloud Billing Export, OpenCost/Kubecost, Anomaly Alerting, 15-min auto-suspend, and multi-tenant attribution.
-  * If GENAI / AGENTIC AI: Focus on Model Context Protocol (MCP), Model Gateway & Guardrails, Vector Databases, RAG Grounding, Prompt Context Caching (75% token discount), Multi-Agent Mesh, and CMEK isolation.
-  * If GOOGLE CLOUD: Focus on Cloud Pub/Sub, Cloud Dataflow (Beam), Cloud Storage, BigQuery BigLake (Apache Iceberg), Dataplex Universal Catalog, Vertex AI Multi-Agent, Gemini 3.7 Flash Reasoner, and Looker.
-  * If AWS: Focus on Amazon MSK, AWS Glue, Amazon S3 (Apache Iceberg), AWS Lake Formation, Amazon Bedrock Agentic Mesh, and Amazon QuickSight.
-  * If SNOWFLAKE: Focus on Fivetran/Kafka, Snowflake Polaris Catalog (Apache Iceberg), dbt Core/Cloud, Snowflake Cortex AI, and Streamlit.
-  * If VENDOR-NEUTRAL / GENERAL DATA & AI: Focus on Open Standards (Apache Kafka, Apache Iceberg, Apache Polaris Catalog / OpenMetadata, Trino / Serverless SQL, MLflow / Model Registry, MCP Multi-Agent Mesh, and Semantic Metric Layer).
+CRITICAL QUESTIONNAIRE DYNAMIC ADAPTATION & LOGO/ICON MANDATE:
+- You MUST inspect the user's questionnaire notes and comments to identify their specific current tools, frameworks, and deployment environments.
+- In CURRENT STATE Diagram:
+  * Visually represent the user's specific current stack based on their notes.
+  * If the user notes indicate an AWS deployment (e.g. "OpenAI deployed on AWS"):
+    - Depict an AWS VPC perimeter with AWS EC2/Lambda compute and client endpoints.
+    - Embed authentic AWS branding: <img src="https://api.iconify.design/logos:aws.svg" width="24" height="24"/>
+  * If the user notes indicate OpenAI:
+    - Depict direct api.openai.com REST calls with OpenAI branding: <img src="https://api.iconify.design/logos:openai-icon.svg" width="24" height="24"/>
+    - Highlight legacy friction: unproxied public egress, paying 100% full-price tokens, 8k context window truncation, unmanaged API keys.
+  * If user notes mention Pinecone, LangChain, Azure, Snowflake, Databricks, or Oracle, embed their authentic logos:
+    - Pinecone: <img src="https://api.iconify.design/logos:pinecone-icon.svg" width="22" height="22"/>
+    - LangChain: <img src="https://api.iconify.design/logos:langchain-icon.svg" width="22" height="22"/>
+    - Azure: <img src="https://api.iconify.design/logos:azure-icon.svg" width="24" height="24"/>
+    - Snowflake: <img src="https://api.iconify.design/logos:snowflake-icon.svg" width="24" height="24"/>
+    - Databricks: <img src="https://api.iconify.design/logos:databricks.svg" width="24" height="24"/>
+    - Oracle: <img src="https://api.iconify.design/logos:oracle.svg" width="24" height="24"/>
+
+- In TARGET STATE Diagram (STRICTLY 100% GOOGLE CLOUD / GCP / GEMINI NATIVE):
+  * You MUST modernize that exact legacy stack into native Google Cloud architecture:
+    - Core Foundation AI: Google Vertex AI Gemini 2.5 Flash / 3.7 Pro (<img src="https://api.iconify.design/logos:google-gemini.svg" width="24" height="24"/>) with 2M native context & Vertex AI Prompt Context Caching (75% token cost discount).
+    - Ingress & Compute: Google Cloud Run (<img src="https://api.iconify.design/logos:google-cloud-run.svg" width="24" height="24"/>) and GKE Autopilot (<img src="https://api.iconify.design/logos:kubernetes.svg" width="24" height="24"/>).
+    - Agent Protocol: Standardized Model Context Protocol (MCP) tool mesh on Vertex AI Reasoning Engine.
+    - Vector Search: Vertex AI Vector Search & BigQuery Vector Search (<img src="https://api.iconify.design/logos:google-cloud.svg" width="24" height="24"/>).
+    - Lakehouse & Storage: Google Cloud Storage & BigQuery BigLake (Apache Iceberg) + BigQuery Omni for cross-cloud zero-egress analytics (<img src="https://api.iconify.design/logos:google-cloud.svg" width="24" height="24"/>).
+    - Security & Guardrails: Google Cloud Armor WAF & Model Armor TRiSM Shield (<img src="https://api.iconify.design/lucide:shield-check.svg" width="24" height="24"/>) with VPC Service Controls perimeter.
+    - Analytics & BI: Looker Studio & Governed Semantic Metric Layer (<img src="https://api.iconify.design/logos:looker-icon.svg" width="24" height="24"/>).
+    - Header/Banner Badge: Google Cloud (<img src="https://api.iconify.design/logos:google-cloud.svg" width="24" height="24"/>).
 
 CRITICAL XML FORMAT & TYPOGRAPHY RULES:
 - Return a strictly valid JSON object matching the output schema.
@@ -640,11 +792,13 @@ CRITICAL XML FORMAT & TYPOGRAPHY RULES:
 - Dimension Scores:
 ${Object.values(scores.dimensionScores || {}).map(d => `  * ${d.name}: ${d.score}/5.0`).join('\n')}
 
-IDENTIFIED PAIN POINTS & BOTTLENECKS:
-${selectedPainPoints.length > 0 ? selectedPainPoints.join('\n') : 'Legacy batch latency, fragmented data silos, unmanaged cluster spend, slow analytics turnaround.'}
-
-ASSESSOR CONTEXTUAL NOTES:
-${commentsList.length > 0 ? commentsList.join('\n') : 'Standard deployment assessment.'}
+DETECTED USER QUESTIONNAIRE DETAILS & ARCHITECTURE STACK:
+- Current Cloud Environment: ${detectedCloudSummary}
+- Detected Technologies & Tools: ${detectedAiStack.length > 0 ? detectedAiStack.join(', ') : 'Standard Enterprise Monolith'}
+- User Questionnaire Notes & Operational Evidence:
+${commentsList.length > 0 ? commentsList.map(c => `  * "${c}"`).join('\n') : '  * None provided, use standard enterprise baseline.'}
+- Assessor Bottlenecks & Friction Points:
+${selectedPainPoints.length > 0 ? selectedPainPoints.map(p => `  * ${p}`).join('\n') : '  * Legacy batch latency, unmanaged API keys, lack of prompt caching.'}
 
 ${customInstructions ? `USER FOCUS INSTRUCTIONS:\n${customInstructions}\n` : ''}
 
@@ -661,7 +815,6 @@ Generate a strictly valid JSON response matching this schema:
     "<Key shift 1: e.g. Nightly cron batch -> Real-time CDC Auto-Loader>",
     "<Key shift 2: e.g. Siloed buckets -> Open Table Formats (Apache Iceberg) with centralized governance>",
     "<Key shift 3: e.g. Static 24/7 VMs -> Serverless FinOps compute with 15-min auto-suspend>",
-    "<Key shift 4: e.g. Unguarded APIs -> Model Context Protocol (MCP) Multi-Agent Mesh with 75% prompt context caching>"
   ]
 }`;
 

@@ -1059,6 +1059,8 @@ export const UnifiedDocumentPreviewModal = ({
                       customerName={customDeckData.customerName}
                       useCase={instance?.useCase}
                       framework={framework}
+                      responses={instance?.responses || {}}
+                      notes={instance?.notes || []}
                     />
                   </div>
 
@@ -1440,6 +1442,8 @@ export const UnifiedDocumentPreviewModal = ({
               customerName={org}
               useCase={instance?.useCase}
               framework={framework}
+              responses={instance?.responses || {}}
+              notes={instance?.notes || []}
             />
           )}
 

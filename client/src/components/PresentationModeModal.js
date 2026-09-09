@@ -374,6 +374,8 @@ const PresentationModeModal = ({ isOpen, onClose, instance, report, framework })
                   customerName={instance?.customerName}
                   useCase={instance?.useCase}
                   framework={framework}
+                  responses={instance?.responses || {}}
+                  notes={instance?.notes || []}
                 />
               </motion.div>
             )}

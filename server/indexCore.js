@@ -1195,7 +1195,15 @@ app.post('/api/assessment/:id/submit', async (req, res) => {
         },
         assessment.responses || {},
         aiContent?.overallScores || {},
-        { customerName: assessment.customerName || assessment.assessmentName || 'Enterprise Client' }
+        { 
+          customerName: assessment.customerName || assessment.assessmentName || 'Enterprise Client',
+          industry: assessment.industry,
+          useCase: assessment.assessmentDescription || 'Data & AI Modernization',
+          responses: assessment.responses || {},
+          notes: assessment.notes,
+          comments: assessment.comments,
+          extractedComponents: assessment.extractedComponents
+        }
       );
       if (diagrams) {
         updatePayload.diagrams = diagrams;
@@ -1876,7 +1884,11 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
           {
             customerName: assessment.organizationName || assessment.assessmentName || 'Enterprise Organization',
             industry: assessment.industry,
-            useCase: assessment.assessmentDescription || 'Data & AI Modernization'
+            useCase: assessment.assessmentDescription || 'Data & AI Modernization',
+            responses: assessment.responses || {},
+            notes: assessment.notes,
+            comments: assessment.comments,
+            extractedComponents: assessment.extractedComponents
           }
         );
         if (resolvedDiagrams) {
@@ -1896,7 +1908,11 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
         {
           customerName: assessment.organizationName || assessment.assessmentName || 'Enterprise Organization',
           industry: assessment.industry,
-          useCase: assessment.assessmentDescription || 'Data & AI Modernization'
+          useCase: assessment.assessmentDescription || 'Data & AI Modernization',
+          responses: assessment.responses || {},
+          notes: assessment.notes,
+          comments: assessment.comments,
+          extractedComponents: assessment.extractedComponents
         },
         {
           overallScore: recommendations.overall?.currentScore || 2.5,

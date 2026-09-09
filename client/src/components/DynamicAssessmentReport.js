@@ -1292,6 +1292,8 @@ const DynamicAssessmentReport = () => {
               customerName={instance?.customerName}
               useCase={instance?.useCase}
               framework={framework}
+              responses={instance?.responses || {}}
+              notes={instance?.notes || []}
             />
 
             {/* 1-Click Infrastructure-as-Code (IaC) Cloud Deployer */}

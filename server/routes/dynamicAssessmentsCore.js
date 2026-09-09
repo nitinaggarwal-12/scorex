@@ -486,7 +486,12 @@ router.get('/instances/:id', async (req, res) => {
     const fw = instance.frameworkSnapshot || {};
     const metadata = {
       customerName: instance.customerName || 'Enterprise Client',
-      useCase: instance.useCase || 'Platform Modernization'
+      useCase: instance.useCase || 'Platform Modernization',
+      industry: instance.industry,
+      responses: instance.responses || {},
+      notes: instance.notes,
+      comments: instance.comments,
+      extractedComponents: instance.extractedComponents
     };
     const scores = {
       overallScore: instance.totalScore || 2.8,
@@ -812,7 +817,11 @@ router.post('/instances/:id/generate-diagrams', aiRateLimiter(15, 60000), async 
       {
         customerName: instance.customerName,
         useCase: instance.useCase,
-        industry: req.body.industry
+        industry: req.body.industry || instance.industry,
+        responses: instance.responses || {},
+        notes: instance.notes,
+        comments: instance.comments,
+        extractedComponents: instance.extractedComponents
       },
       customInstructions
     );

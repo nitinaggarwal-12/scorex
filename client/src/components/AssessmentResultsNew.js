@@ -3720,6 +3720,8 @@ const AssessmentResultsNew = () => {
             currentScore={parseFloat(currentMaturity) || 2.5}
             targetScore={parseFloat(targetMaturity) || 4.0}
             theme="light"
+            responses={resultsData?.responses || resultsData?.assessment?.responses || {}}
+            notes={resultsData?.notes || resultsData?.assessment?.notes || []}
           />
 
           {/* Multi-Persona Executive Transformation Blueprints */}

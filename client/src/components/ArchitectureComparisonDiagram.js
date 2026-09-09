@@ -664,7 +664,9 @@ const ArchitectureComparisonDiagram = ({
   customerName = 'Enterprise Client',
   useCase = 'Platform Modernization',
   framework = {},
-  theme = 'light'
+  theme = 'light',
+  responses = {},
+  notes = []
 }) => {
   const [viewMode, setViewMode] = useState('side_by_side'); // 'side_by_side', 'current_diagram', 'target_diagram', 'cards'
   const [diagramTheme, setDiagramTheme] = useState(theme || 'light'); // 'light' | 'dark'
@@ -687,10 +689,10 @@ const ArchitectureComparisonDiagram = ({
   const defaultBlueprintData = React.useMemo(() => {
     return getMasterArchitectureDiagrams(
       framework,
-      { customerName, useCase },
+      { customerName, useCase, responses, notes },
       { overallScore: currentScore, targetScore }
     );
-  }, [framework, customerName, useCase, currentScore, targetScore]);
+  }, [framework, customerName, useCase, currentScore, targetScore, responses, notes]);
 
   const [diagramsData, setDiagramsData] = useState(() => {
     if (initialDiagrams && initialDiagrams.currentStateXml && !initialDiagrams.currentStateXml.includes('stage1_box')) {
