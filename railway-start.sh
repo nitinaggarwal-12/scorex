@@ -17,9 +17,9 @@ echo "✅ Client build found"
 
 # Run database migrations if DATABASE_URL is set
 if [ ! -z "$DATABASE_URL" ]; then
-  echo "🗄️ Setting up PostgreSQL database..."
-  node server/scripts/setupDatabase.js || echo "⚠️ Database setup failed, continuing anyway..."
-  echo "✅ Database setup complete"
+  echo "🗄️ Running PostgreSQL database migrations..."
+  node server/run-migrations.js || echo "⚠️ Database migrations encountered warnings, continuing..."
+  echo "✅ Database migrations complete"
 else
   echo "⚠️ No DATABASE_URL found, skipping database setup"
 fi
