@@ -1855,11 +1855,11 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
       assessment.executiveReport?.architectureDiagrams ||
       recommendations.architectureDiagrams;
 
-    if (!resolvedDiagrams && hasAnyResponses && geminiService.isAvailable()) {
+    if (!resolvedDiagrams && hasAnyResponses && geminiService.isAvailable() && req.query._refresh === 'true') {
       try {
         const dynamicEngine = require('./services/dynamicAssessmentEngine');
         console.log(`🎨 [Gemini Architecture] Auto-synthesizing bespoke diagrams for ${assessment.organizationName || assessment.assessmentName || 'Enterprise'}...`);
-        resolvedDiagrams = await dynamicEngine.generateArchitectureDiagramsWithGemini(
+        const synthesisPromise = dynamicEngine.generateArchitectureDiagramsWithGemini(
           {
             typeKey: 'enterprise_data_ai_maturity',
             title: 'Enterprise Cloud, Data & AI Architecture',
@@ -1891,6 +1891,10 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
             extractedComponents: assessment.extractedComponents
           }
         );
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Gemini diagram synthesis timed out after 12s')), 12000)
+        );
+        resolvedDiagrams = await Promise.race([synthesisPromise, timeoutPromise]);
         if (resolvedDiagrams) {
           assessmentRepo.update(id, {
             architectureDiagrams: resolvedDiagrams,
@@ -1921,6 +1925,12 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
           dimensionScores: categoryDetails
         }
       );
+      if (resolvedDiagrams && !assessment.architectureDiagrams) {
+        assessmentRepo.update(id, {
+          architectureDiagrams: resolvedDiagrams,
+          diagrams: resolvedDiagrams
+        }).catch(e => console.warn('Notice persisting fallback diagrams:', e.message));
+      }
     }
 
     const results = {
@@ -3488,6 +3498,28 @@ app.post('/api/assessment/generate-sample', requireAuth, async (req, res) => {
       completionLevel,
       specificPillars
     });
+
+    // Attach default architecture diagrams from masterBlueprintCatalog for instant sub-50ms report loading
+    try {
+      const defaultDiagrams = masterBlueprintCatalog.getMasterArchitectureDiagrams(
+        assessmentFramework,
+        {
+          customerName: sampleAssessment.organizationName,
+          industry: sampleAssessment.industry,
+          useCase: sampleAssessment.assessmentDescription,
+          responses: sampleAssessment.responses || {}
+        },
+        {
+          overallScore: 2.5,
+          targetScore: 4.5,
+          maturityLevel: 'Developing'
+        }
+      );
+      sampleAssessment.architectureDiagrams = defaultDiagrams;
+      sampleAssessment.diagrams = defaultDiagrams;
+    } catch (dErr) {
+      console.warn('Notice generating sample diagrams:', dErr.message);
+    }
     
     // Save to PostgreSQL if available, otherwise file store
     try {
@@ -3506,7 +3538,9 @@ app.post('/api/assessment/generate-sample', requireAuth, async (req, res) => {
         responses: sampleAssessment.responses,
         editHistory: sampleAssessment.editHistory || [],
         startedAt: sampleAssessment.startedAt || new Date().toISOString(),
-        userId: req.user?.id || 'guest_admin'
+        userId: req.user?.id || 'guest_admin',
+        architectureDiagrams: sampleAssessment.architectureDiagrams,
+        diagrams: sampleAssessment.diagrams
       });
       console.log(`✅ Sample assessment created in PostgreSQL: ${sampleAssessment.id}`);
     } catch (dbErr) {

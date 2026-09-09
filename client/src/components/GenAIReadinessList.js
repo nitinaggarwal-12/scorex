@@ -168,7 +168,10 @@ const GenAIReadinessList = () => {
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    if (!dateString) return 'In Progress';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'In Progress';
+    return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',

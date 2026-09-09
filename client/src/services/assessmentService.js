@@ -181,7 +181,8 @@ export const getAssessmentResults = async (assessmentId, forceRefresh = false) =
     } : {};
     
     const response = await api.get(`/assessment/${assessmentId}/results?_refresh=${forceRefresh ? 'true' : 'false'}&_=${cacheBuster}`, {
-      headers
+      headers,
+      timeout: 60000
     });
     // API interceptor already extracts response.data, so we get the actual data directly
     // Backend returns { success: true, data: { ... } }
