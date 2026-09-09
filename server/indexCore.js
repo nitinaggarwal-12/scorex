@@ -1603,6 +1603,7 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
         console.log(`⚠️ OpenAI scores missing for ${area.id}, calculating from responses...`);
         let currentSum = 0;
         let futureSum = 0;
+        let totalWeights = 0;
         let answeredCount = 0;
         let totalQuestions = 0;
         
@@ -1611,27 +1612,31 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
             const currentKey = `${question.id}_current_state`;
             const futureKey = `${question.id}_future_state`;
             const skippedKey = `${question.id}_skipped`;
+            const qWeight = (question.weight !== undefined && question.weight !== null && !isNaN(Number(question.weight)) && Number(question.weight) >= 0)
+              ? Number(question.weight)
+              : 1.0;
             
             // Count all non-skipped questions as part of the denominator
             if (!assessment.responses[skippedKey]) {
               totalQuestions++;
+              totalWeights += qWeight;
               
               // Only add to sum if actually answered
               if (assessment.responses[currentKey] !== undefined) {
-                currentSum += assessment.responses[currentKey];
-                futureSum += assessment.responses[futureKey] || assessment.responses[currentKey];
+                currentSum += (assessment.responses[currentKey] * qWeight);
+                futureSum += ((assessment.responses[futureKey] || assessment.responses[currentKey]) * qWeight);
                 answeredCount++;
               }
             }
           });
         });
         
-        // FIX: Divide by total non-skipped questions, not just answered questions
-        // This ensures partial completion shows lower scores (e.g., 1/10 = 0.5, not 5/1 = 5.0)
-        if (totalQuestions > 0) {
-          currentScore = currentSum / totalQuestions;
-          futureScore = futureSum / totalQuestions;
-          console.log(`✅ Calculated scores for ${area.id}: answered=${answeredCount}/${totalQuestions}, current=${currentScore.toFixed(2)}, future=${futureScore.toFixed(2)}`);
+        // FIX: Divide by total non-skipped weights, not just answered questions
+        // This ensures partial completion shows lower scores and respects question weights
+        if (totalWeights > 0) {
+          currentScore = currentSum / totalWeights;
+          futureScore = futureSum / totalWeights;
+          console.log(`✅ Calculated scores for ${area.id}: answered=${answeredCount}/${totalQuestions}, current=${currentScore.toFixed(2)}, future=${futureScore.toFixed(2)} (totalWeights: ${totalWeights.toFixed(2)})`);
         }
       }
       
@@ -1645,12 +1650,16 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
       area.dimensions.forEach(dimension => {
         let dimCurrentSum = 0;
         let dimFutureSum = 0;
+        let dimWeights = 0;
         let dimQuestionCount = 0;
         let dimAnsweredCount = 0;
         
         dimension.questions.forEach(question => {
           totalQuestionsForPillar++;
           dimQuestionCount++;
+          const qWeight = (question.weight !== undefined && question.weight !== null && !isNaN(Number(question.weight)) && Number(question.weight) >= 0)
+            ? Number(question.weight)
+            : 1.0;
           
           const currentKey = `${question.id}_current_state`;
           const futureKey = `${question.id}_future_state`;
@@ -1658,15 +1667,16 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
           if (assessment.responses[currentKey] !== undefined) {
             questionsAnsweredForPillar++;
             dimAnsweredCount++;
-            dimCurrentSum += assessment.responses[currentKey];
-            dimFutureSum += assessment.responses[futureKey] || assessment.responses[currentKey];
+            dimWeights += qWeight;
+            dimCurrentSum += (assessment.responses[currentKey] * qWeight);
+            dimFutureSum += ((assessment.responses[futureKey] || assessment.responses[currentKey]) * qWeight);
           }
         });
         
         // Calculate dimension scores
-        if (dimAnsweredCount > 0) {
-          const dimCurrentScore = dimCurrentSum / dimAnsweredCount;
-          const dimFutureScore = dimFutureSum / dimAnsweredCount;
+        if (dimAnsweredCount > 0 && dimWeights > 0) {
+          const dimCurrentScore = dimCurrentSum / dimWeights;
+          const dimFutureScore = dimFutureSum / dimWeights;
           dimensionScores[dimension.id] = {
             id: dimension.id,
             name: dimension.name,
@@ -1674,7 +1684,8 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
             futureScore: parseFloat(dimFutureScore.toFixed(1)),
             gap: parseFloat((dimFutureScore - dimCurrentScore).toFixed(1)),
             questionsAnswered: dimAnsweredCount,
-            totalQuestions: dimQuestionCount
+            totalQuestions: dimQuestionCount,
+            effectiveWeight: parseFloat(dimWeights.toFixed(2))
           };
         }
       });
@@ -1822,11 +1833,38 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
       const avgCurrent = completedPillarScores.reduce((sum, s) => sum + s.current, 0) / completedPillarScores.length;
       const avgFuture = completedPillarScores.reduce((sum, s) => sum + s.future, 0) / completedPillarScores.length;
       
+      // 🏛️ Industry Best Practice: Foundation & Governance Maturity Gate (CMMI / NIST AI RMF Standard)
+      // Check foundational pillars: platform_governance and data_engineering
+      const govScore = categoryDetails['platform_governance']?.currentScore;
+      const dataScore = categoryDetails['data_engineering']?.currentScore;
+      const minFoundational = (govScore !== undefined && dataScore !== undefined) 
+        ? Math.min(govScore, dataScore) 
+        : (govScore ?? dataScore ?? avgCurrent);
+      
+      const isMaturityGated = minFoundational < 2.5 && avgCurrent >= 3.5;
+      const standardLevel = avgCurrent < 2 ? 'Initial' : avgCurrent < 3 ? 'Developing' : avgCurrent < 4 ? 'Defined' : avgCurrent < 4.5 ? 'Advanced' : 'Optimized';
+      const gatedLevel = isMaturityGated
+        ? (minFoundational < 2.0 ? 'Developing' : 'Defined')
+        : standardLevel;
+
       recommendations.overall = {
         currentScore: parseFloat(avgCurrent.toFixed(1)),
         futureScore: parseFloat(avgFuture.toFixed(1)),
         gap: parseFloat((avgFuture - avgCurrent).toFixed(1)),
-        level: avgCurrent < 2 ? 'Initial' : avgCurrent < 3 ? 'Developing' : avgCurrent < 4 ? 'Defined' : avgCurrent < 4.5 ? 'Advanced' : 'Optimized',
+        level: standardLevel,
+        gatedLevel,
+        isMaturityGated,
+        governanceGate: {
+          governanceScore: govScore !== undefined ? parseFloat(govScore.toFixed(1)) : null,
+          dataArchitectureScore: dataScore !== undefined ? parseFloat(dataScore.toFixed(1)) : null,
+          foundationalFloor: parseFloat(minFoundational.toFixed(1)),
+          standardLevel,
+          recommendedCap: gatedLevel,
+          complianceStandard: 'CMMI / NIST AI RMF 1.0 (Foundational Governance Gate)',
+          rationale: isMaturityGated 
+            ? `Foundational Platform Governance & Data Architecture (${minFoundational.toFixed(1)}) limits organizational scale despite higher downstream experimental scores.`
+            : 'Foundational platform and governance capabilities are sufficiently aligned with advanced data & AI capabilities.'
+        },
         summary: existingSummary || `Based on ${fullyCompletedAreas.length} completed pillar(s)`,
         completionStatus: `Based on ${fullyCompletedAreas.length} completed pillar(s)`
       };
@@ -1834,7 +1872,7 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
         recommendations.executiveSummary = existingSummary;
       }
       
-      console.log(`✅ Overall score recalculated from ${fullyCompletedAreas.length} fully completed pillars: ${avgCurrent.toFixed(1)} → ${avgFuture.toFixed(1)}`);
+      console.log(`✅ Overall score recalculated from ${fullyCompletedAreas.length} fully completed pillars: ${avgCurrent.toFixed(1)} → ${avgFuture.toFixed(1)} (gated: ${isMaturityGated ? gatedLevel : 'no'})`);
     } else {
       // No fully completed pillars - return empty/minimal results
       recommendations.overall = {

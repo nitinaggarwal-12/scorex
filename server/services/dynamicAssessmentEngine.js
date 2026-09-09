@@ -175,14 +175,18 @@ Output a strictly valid JSON object with the following schema:
       let dimTargetCount = 0;
 
       (dim.questions || []).forEach(q => {
+        const qWeight = (q.weight !== undefined && q.weight !== null && !isNaN(Number(q.weight)) && Number(q.weight) >= 0)
+          ? Number(q.weight)
+          : 1.0;
+
         // Current score
         const val = responses[q.id] !== undefined ? responses[q.id] : responses[`${q.id}_current_state`];
         const currentScore = (val !== undefined && val !== null && !isNaN(Number(val))) ? Number(val) : 0;
         if (currentScore > 0) {
-          dimSum += currentScore;
-          dimCount++;
-          totalScoreSum += currentScore;
-          totalQuestionsCount++;
+          dimSum += (currentScore * qWeight);
+          dimCount += qWeight;
+          totalScoreSum += (currentScore * qWeight);
+          totalQuestionsCount += qWeight;
         }
 
         // Future target score - strictly higher than current baseline
@@ -192,10 +196,10 @@ Output a strictly valid JSON object with the following schema:
         if (targetVal !== undefined && targetVal !== null && !isNaN(Number(targetVal))) {
           const minTarget = currentScore > 0 ? Math.min(5, currentScore + 1) : 1;
           const tScore = Math.min(5, Math.max(minTarget, Number(targetVal)));
-          dimTargetSum += tScore;
-          dimTargetCount++;
-          totalTargetSum += tScore;
-          totalTargetCount++;
+          dimTargetSum += (tScore * qWeight);
+          dimTargetCount += qWeight;
+          totalTargetSum += (tScore * qWeight);
+          totalTargetCount += qWeight;
         }
       });
 
@@ -214,6 +218,7 @@ Output a strictly valid JSON object with the following schema:
         gap,
         answeredCount: dimCount,
         totalQuestions: (dim.questions || []).length,
+        effectiveWeight: parseFloat(dimCount.toFixed(2)),
         percentage: Math.round((avgScore / 5) * 100)
       };
     });
@@ -230,6 +235,16 @@ Output a strictly valid JSON object with the following schema:
     if (!matchedLevel && maturityLevels.length > 0) {
       matchedLevel = overallScore < 2 ? maturityLevels[0] : maturityLevels[maturityLevels.length - 1];
     }
+    const standardLevel = matchedLevel ? matchedLevel.name : (overallScore >= 4 ? 'Optimizing' : overallScore >= 3 ? 'Defined' : overallScore >= 2 ? 'Developing' : 'Initial');
+
+    // 🏛️ Industry Best Practice: Foundational Governance & Security Gate (CMMI / NIST AI RMF Standard)
+    const foundationalDim = dimensions.find(d => {
+      const lower = (d.id + ' ' + (d.name || '')).toLowerCase();
+      return lower.includes('governance') || lower.includes('security') || lower.includes('privacy');
+    });
+    const foundationalScore = foundationalDim ? dimensionScores[foundationalDim.id]?.score : null;
+    const isMaturityGated = foundationalScore !== null && foundationalScore < 2.5 && overallScore >= 3.5;
+    const gatedLevel = isMaturityGated ? 'Defined' : standardLevel;
 
     return {
       overallScore,
@@ -240,7 +255,20 @@ Output a strictly valid JSON object with the following schema:
       gap: overallGap,
       maxScore,
       percentage: Math.round((overallScore / maxScore) * 100),
-      maturityLevel: matchedLevel ? matchedLevel.name : (overallScore >= 4 ? 'Optimizing' : overallScore >= 3 ? 'Defined' : overallScore >= 2 ? 'Developing' : 'Initial'),
+      maturityLevel: standardLevel,
+      gatedLevel,
+      isMaturityGated,
+      governanceGate: {
+        foundationalDimension: foundationalDim?.name || null,
+        foundationalScore,
+        standardLevel,
+        recommendedCap: gatedLevel,
+        isMaturityGated,
+        complianceStandard: 'CMMI / NIST AI RMF 1.0 (Foundational Governance Gate)',
+        rationale: isMaturityGated
+          ? `Foundational capability in ${foundationalDim?.name || 'Governance'} (${foundationalScore}) requires enhancement before broad organization-wide optimization.`
+          : 'Foundational capabilities align with overall modernization maturity.'
+      },
       maturityDetails: matchedLevel || null,
       dimensionScores,
       totalAnswered: totalQuestionsCount

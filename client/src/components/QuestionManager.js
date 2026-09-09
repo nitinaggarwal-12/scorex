@@ -1152,7 +1152,38 @@ const QuestionManager = () => {
                     </FormGroup>
 
                     <FormGroup>
-                      <Label>Weight</Label>
+                      <Label>
+                        Impact Weight / Criticality
+                        <span style={{ fontSize: '0.75rem', fontWeight: 'normal', color: '#6b7280', marginLeft: '6px' }}>
+                          (0.0x - 2.0x)
+                        </span>
+                      </Label>
+                      <div style={{ display: 'flex', gap: '6px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                        {[
+                          { label: 'Informational (0x)', val: 0.0 },
+                          { label: 'Standard (1.0x)', val: 1.0 },
+                          { label: 'Strategic (1.5x)', val: 1.5 },
+                          { label: 'High Risk (2.0x)', val: 2.0 }
+                        ].map(preset => (
+                          <button
+                            key={preset.val}
+                            type="button"
+                            onClick={() => setFormData(prev => ({ ...prev, weight: preset.val }))}
+                            style={{
+                              fontSize: '0.7rem',
+                              padding: '4px 8px',
+                              borderRadius: '4px',
+                              border: formData.weight === preset.val ? '1px solid #3b82f6' : '1px solid #e5e7eb',
+                              background: formData.weight === preset.val ? '#eff6ff' : '#ffffff',
+                              color: formData.weight === preset.val ? '#1d4ed8' : '#4b5563',
+                              fontWeight: formData.weight === preset.val ? '600' : 'normal',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            {preset.label}
+                          </button>
+                        ))}
+                      </div>
                       <Input
                         type="number"
                         name="weight"
