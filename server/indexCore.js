@@ -3860,6 +3860,12 @@ app.post('/api/assessment/:id/audit-event', async (req, res) => {
   }
 });
 
+// Serve scratch screenshots and artifacts directly
+const scratchPath = path.join(__dirname, '../scratch');
+if (fs.existsSync(scratchPath)) {
+  app.use('/scratch', express.static(scratchPath));
+}
+
 // Serve React app for all non-API routes
 const buildPath = path.join(__dirname, '../client/build');
 
