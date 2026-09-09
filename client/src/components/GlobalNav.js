@@ -1222,6 +1222,16 @@ const GlobalNav = () => {
                   </DropdownContainer>
                 )}
 
+                {currentUser.role === 'demo' && (
+                  <SecondaryCTAButton 
+                    style={{ background: 'rgba(99, 102, 241, 0.15)', borderColor: 'rgba(99, 102, 241, 0.4)', color: '#a5b4fc', fontWeight: '600' }}
+                    onClick={() => setShowLoginModal(true)}
+                  >
+                    <FiLogIn size={13} />
+                    Sign In
+                  </SecondaryCTAButton>
+                )}
+
                 {/* Admin/User Dropdown with Hover Trigger */}
                 <DropdownContainer 
                   className="dropdown-container"
@@ -1240,6 +1250,21 @@ const GlobalNav = () => {
                     <FiChevronDown size={14} className="chevron" />
                   </DropdownButton>
                   <DropdownMenu $isOpen={adminDropdownOpen}>
+                    {currentUser.role === 'demo' && (
+                      <>
+                        <DropdownItem 
+                          style={{ color: '#818cf8', fontWeight: 600 }}
+                          onClick={() => {
+                            setAdminDropdownOpen(false);
+                            setShowLoginModal(true);
+                          }}
+                        >
+                          <FiLogIn style={{ color: '#818cf8' }} />
+                          Sign In / Corporate SSO
+                        </DropdownItem>
+                        <DropdownDivider />
+                      </>
+                    )}
                     {currentUser.role === 'admin' && !currentUser.testMode && (
                       <>
                         <DropdownItem onClick={() => {

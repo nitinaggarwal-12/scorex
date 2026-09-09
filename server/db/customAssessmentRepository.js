@@ -3506,6 +3506,46 @@ class CustomAssessmentRepository {
     }
   }
 
+  /**
+   * Seamlessly migrate instances created in guest/demo sessions to an authenticated user
+   */
+  async migrateGuestInstances(guestUserId, targetUserId) {
+    if (!guestUserId || !targetUserId || guestUserId === targetUserId) return 0;
+    let migratedCount = 0;
+
+    // 1. Update PostgreSQL dynamic_assessments if available
+    try {
+      const pgResult = await db.query(
+        'UPDATE dynamic_assessments SET created_by = $1, updated_at = NOW() WHERE created_by = $2',
+        [targetUserId, guestUserId]
+      );
+      if (pgResult && typeof pgResult.rowCount === 'number') {
+        migratedCount += pgResult.rowCount;
+      }
+    } catch (_) {}
+
+    // 2. Update FileStore instances
+    try {
+      const all = instancesFileStore.getAll() || {};
+      for (const [id, inst] of Object.entries(all)) {
+        if (inst && (inst.createdBy === guestUserId || inst.created_by === guestUserId)) {
+          inst.createdBy = targetUserId;
+          inst.created_by = targetUserId;
+          inst.updatedAt = new Date().toISOString();
+          instancesFileStore.set(id, inst);
+          migratedCount++;
+        }
+      }
+    } catch (fsErr) {
+      console.warn('⚠️ [CustomAssessmentRepo] FileStore guest migration warning:', fsErr.message);
+    }
+
+    if (migratedCount > 0) {
+      console.log(`[CustomAssessmentRepo] Migrated ${migratedCount} instance(s) from guest "${guestUserId}" to user "${targetUserId}"`);
+    }
+    return migratedCount;
+  }
+
   // ==========================================
   // 3. ROW MAPPING HELPERS
   // ==========================================

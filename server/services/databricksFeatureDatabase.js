@@ -7,20 +7,13 @@
  * Source: https://docs.databricks.com/aws/en/release-notes/product/
  */
 
-const { Pool } = require('pg');
+const db = require('../db/connection');
 
 class DatabricksFeatureDatabase {
   constructor() {
-    // Initialize PostgreSQL connection
-    this.pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-      max: 20,
-      idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 2000,
-    });
-
-    console.log('[DatabricksFeatureDB] Initialized with DATABASE_URL:', process.env.DATABASE_URL ? 'Set' : 'NOT SET');
+    // Share centralized PostgreSQL connection pool
+    this.pool = db;
+    console.log('[DatabricksFeatureDB] Initialized with shared database connection pool');
   }
 
   /**

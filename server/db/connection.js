@@ -202,9 +202,28 @@ class DatabaseConnection {
         return;
       }
 
+      // Ensure schema_migrations table exists to track executed migrations
+      try {
+        await this.pool.query(`
+          CREATE TABLE IF NOT EXISTS schema_migrations (
+            filename VARCHAR(255) PRIMARY KEY,
+            executed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+          )
+        `);
+      } catch (tableErr) {
+        console.warn('⚠️  Could not create schema_migrations table, continuing with direct checks:', tableErr.message);
+      }
+
+      // Fetch already executed migrations
+      let executedSet = new Set();
+      try {
+        const res = await this.pool.query('SELECT filename FROM schema_migrations');
+        executedSet = new Set(res.rows.map(r => r.filename));
+      } catch (_) {}
+
       // Get all .sql files in migrations directory
       const files = fs.readdirSync(migrationsDir)
-        .filter(f => f.endsWith('.sql'))
+        .filter(f => f.endsWith('.sql') && !f.includes('.bak'))
         .sort(); // Run in alphabetical order (001, 002, etc.)
 
       if (files.length === 0) {
@@ -212,22 +231,29 @@ class DatabaseConnection {
         return;
       }
 
-      console.log(`🔄 Running ${files.length} migration(s)...`);
+      console.log(`🔄 Evaluating ${files.length} migration(s)...`);
 
       for (const file of files) {
+        if (executedSet.has(file)) {
+          console.log(`  ⏭️  ${file} (already executed)`);
+          continue;
+        }
+
         const migrationPath = path.join(migrationsDir, file);
         const migrationSQL = fs.readFileSync(migrationPath, 'utf8');
         
         try {
           await this.pool.query(migrationSQL);
+          await this.pool.query('INSERT INTO schema_migrations (filename) VALUES ($1) ON CONFLICT DO NOTHING', [file]);
           console.log(`  ✅ ${file}`);
         } catch (error) {
-          // If error is "already exists", it's okay - migration was already run
-          if (error.message.includes('already exists') || error.message.includes('duplicate key')) {
-            console.log(`  ⏭️  ${file} (already applied)`);
+          // If error is "already exists" or "duplicate key", it was already applied in legacy runs
+          if (error.message.includes('already exists') || error.message.includes('duplicate key') || error.message.includes('already a partition')) {
+            console.log(`  ⏭️  ${file} (already applied - marking executed)`);
+            await this.pool.query('INSERT INTO schema_migrations (filename) VALUES ($1) ON CONFLICT DO NOTHING', [file]).catch(() => {});
           } else {
             console.error(`  ❌ ${file}: ${error.message}`);
-            // Continue with other migrations even if one fails
+            // Continue with other migrations
           }
         }
       }

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiMessageCircle, FiX, FiSend, FiMinimize2 } from 'react-icons/fi';
 import { useLocation } from 'react-router-dom';
+import DOMPurify from 'dompurify';
 import chatService from '../services/chatService';
 
 const ChatButton = styled(motion.button)`
@@ -323,17 +324,14 @@ const ChatWidget = () => {
   const user = JSON.parse(localStorage.getItem('user') || 'null');
   const userEmail = user?.email || null;
 
-  // Simple Markdown to HTML converter
+  // Simple Markdown to HTML converter with strict DOMPurify sanitization
   const formatMessage = (text) => {
     if (!text) return '';
     
-    let formatted = text;
+    let formatted = String(text);
     
     // Links FIRST (before bold/italic): [text](/url) or [text](url) -> <a>text</a>
-    const linkCount = (text.match(/\[([^\]]+)\]\(([^)]+)\)/g) || []).length;
-    console.log('[ChatWidget] Formatting message with', linkCount, 'links');
-    formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color: #667eea; font-weight: 600; text-decoration: underline; cursor: pointer;">$1</a>');
-    console.log('[ChatWidget] After replacement, has <a> tags:', formatted.includes('<a href'));
+    formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color: #667eea; font-weight: 600; text-decoration: underline; cursor: pointer;">$1</a>');
     
     // Bold: **text** -> <strong>text</strong>
     formatted = formatted.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
@@ -376,7 +374,12 @@ const ChatWidget = () => {
     formatted = formatted.replace(/\n\n/g, '<br/><br/>');
     formatted = formatted.replace(/\n/g, '<br/>');
     
-    return formatted;
+    // Strict XSS neutralization via DOMPurify
+    return DOMPurify.sanitize(formatted, {
+      ALLOWED_TAGS: ['strong', 'em', 'code', 'ul', 'li', 'a', 'p', 'br', 'span'],
+      ALLOWED_ATTR: ['href', 'target', 'rel', 'style', 'title', 'class'],
+      ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
+    });
   };
 
   // Get current page context

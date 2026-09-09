@@ -35,6 +35,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_update_assessments_updated_at ON assessments;
 CREATE TRIGGER trigger_update_assessments_updated_at
   BEFORE UPDATE ON assessments
   FOR EACH ROW

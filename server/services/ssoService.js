@@ -55,11 +55,10 @@ class SSOService {
   }
 
   isSandboxAllowed() {
-    return (
-      process.env.NODE_ENV !== 'production' ||
-      process.env.ENABLE_SSO_SANDBOX === 'true' ||
-      (!this.isGoogleConfigured() && !this.isMicrosoftConfigured() && !this.isOktaConfigured() && !this.isGenericOidcConfigured())
-    );
+    if (process.env.NODE_ENV === 'production') {
+      return process.env.ENABLE_SSO_SANDBOX === 'true';
+    }
+    return true;
   }
 
   /**
@@ -582,6 +581,16 @@ class SSOService {
       throw new Error('SSO Sandbox is disabled in strict production mode');
     }
 
+    // Validate and sanitize requested role
+    const validRoles = ['consumer', 'author', 'admin'];
+    let targetRole = validRoles.includes(role) ? role : 'consumer';
+
+    // Never elevate role to admin in production sandbox mode unless explicitly permitted
+    if (process.env.NODE_ENV === 'production' && targetRole === 'admin' && process.env.ALLOW_SANDBOX_ADMIN !== 'true') {
+      console.warn('[SSO Security] Attempted admin elevation in production sandbox rejected. Downgrading to consumer.');
+      targetRole = 'consumer';
+    }
+
     const cleanEmail = (email || 'architect@enterprise.com').trim().toLowerCase();
     const domain = cleanEmail.split('@')[1] || 'enterprise.com';
     const org = organization || (domain ? domain.split('.')[0].toUpperCase() : 'ENTERPRISE');
@@ -595,7 +604,7 @@ class SSOService {
       ssoId: `sandbox_${crypto.randomBytes(8).toString('hex')}`
     };
 
-    return this.provisionOrSyncUser(profile, role);
+    return this.provisionOrSyncUser(profile, targetRole);
   }
 }
 

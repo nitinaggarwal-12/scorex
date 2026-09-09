@@ -164,6 +164,10 @@ router.get('/callback/:provider', async (req, res) => {
  */
 router.post('/sandbox-login', async (req, res) => {
   try {
+    if (!ssoService.isSandboxAllowed()) {
+      return res.status(403).json({ success: false, error: 'SSO Sandbox is disabled in strict production mode' });
+    }
+
     const { email, role, firstName, lastName, organization, provider } = req.body;
     const result = await ssoService.executeSandboxLogin({
       email,

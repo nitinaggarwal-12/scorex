@@ -31,7 +31,7 @@ async function runMigrations() {
     console.log(`✅ Connected! Database time: ${result.rows[0].now}\n`);
 
     // Get migration files
-    const migrationsDir = path.join(__dirname, 'migrations');
+    const migrationsDir = path.join(__dirname, 'db', 'migrations');
     console.log(`📂 Looking for migrations in: ${migrationsDir}\n`);
 
     if (!fs.existsSync(migrationsDir)) {

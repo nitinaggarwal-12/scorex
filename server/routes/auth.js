@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const userRepository = require('../db/userRepository');
 const fileUserStore = require('../db/fileUserStore');
-const { requireAuth, requireAdmin, requireAuthorOrAdmin } = require('../middleware/auth');
+const { requireAuth, requireAdmin, requireAuthorOrAdmin, isGuestSession, guestUserFromSession } = require('../middleware/auth');
 
 let fileStoreInitialized = false;
 const loginBuckets = new Map();
@@ -299,6 +299,46 @@ router.get('/users/:userId', requireAuth, async (req, res) => {
   } catch (error) {
     console.error('Get user details error:', error.message);
     return res.status(500).json({ error: 'Failed to fetch user details' });
+  }
+});
+
+/**
+ * POST /api/auth/claim-guest-session
+ * Migrates dynamic assessments created during guest exploration to the authenticated user
+ */
+router.post('/claim-guest-session', requireAuth, async (req, res) => {
+  try {
+    const { guestSessionId } = req.body;
+    if (!guestSessionId) {
+      return res.status(400).json({ error: 'guestSessionId is required' });
+    }
+
+    const isGuest = isGuestSession(guestSessionId);
+    if (!isGuest) {
+      return res.status(400).json({ error: 'Invalid guest session ID' });
+    }
+
+    const guestUser = guestUserFromSession(guestSessionId);
+    const customAssessmentRepo = require('../db/customAssessmentRepository');
+    const migratedCount = await customAssessmentRepo.migrateGuestInstances(guestUser.id, req.user.id);
+
+    // Also migrate classic assessments in PostgreSQL if exists
+    try {
+      const db = require('../db/connection');
+      await db.query(
+        'UPDATE assessments SET user_id = $1 WHERE user_id = $2',
+        [req.user.id, guestUser.id]
+      );
+    } catch (_) {}
+
+    return res.json({
+      success: true,
+      migratedCount,
+      message: `Successfully migrated ${migratedCount} guest assessment(s) to your account`
+    });
+  } catch (error) {
+    console.error('Claim guest session error:', error.message);
+    return res.status(500).json({ error: 'Failed to claim guest session' });
   }
 });
 

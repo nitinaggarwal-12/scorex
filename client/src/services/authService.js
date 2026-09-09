@@ -119,6 +119,10 @@ class AuthService {
       }
     }
 
+    const previousSessionId = this.sessionId || localStorage.getItem('sessionId');
+    const wasGuest = SECURE_GUEST_SESSION_RE.test(previousSessionId || '');
+    const isNewUserAuth = !isGuestLikeSession(normalizedSessionId) && normalizedUser?.role !== 'demo';
+
     this.sessionId = normalizedSessionId;
     this.user = normalizedUser;
     localStorage.setItem('sessionId', normalizedSessionId);
@@ -126,7 +130,24 @@ class AuthService {
     axios.defaults.headers.common['x-session-id'] = normalizedSessionId;
     window.dispatchEvent(new CustomEvent('scorex-auth-changed', { detail: { user: normalizedUser } }));
 
+    if (wasGuest && isNewUserAuth) {
+      this.claimPreviousGuestSession(previousSessionId);
+    }
+
     return { sessionId: normalizedSessionId, user: normalizedUser };
+  }
+
+  async claimPreviousGuestSession(guestSessionId) {
+    if (!guestSessionId || !SECURE_GUEST_SESSION_RE.test(guestSessionId)) return;
+    try {
+      const response = await axios.post('/api/auth/claim-guest-session', { guestSessionId });
+      if (response.data?.migratedCount > 0) {
+        console.log(`[ScoreX Auth] Seamlessly claimed ${response.data.migratedCount} guest assessments into authenticated account.`);
+      }
+    } catch (err) {
+      // Non-blocking background sync
+      console.warn('[ScoreX Auth] Claim guest session background notice:', err.response?.data?.error || err.message);
+    }
   }
 
   createGuestSession() {
