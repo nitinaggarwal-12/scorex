@@ -1,0 +1,237 @@
+<mxfile host="app.diagrams.net" modified="2026-09-09T17:50:00.000Z" agent="ScoreX Enterprise Architecture Engine" version="24.7.5">
+  <diagram id="agentic_target_state_mcp_mesh" name="Target State: Autonomous Hub-and-Spoke Agent Mesh &amp; MCP Gateway">
+    <mxGraphModel dx="1600" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="920" background="#0B111E" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- MAIN TITLE -->
+        <mxCell id="main_title" value="&lt;b style=&quot;font-size:28px;color:#FFFFFF;letter-spacing:-0.5px;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;&quot;&gt;Target State: Autonomous Hub-and-Spoke Agent Mesh &amp;amp; MCP Gateway&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="40" y="32" width="1200" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Request Ingress on Left -->
+        <mxCell id="user_request" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:32px;&quot;&gt;👤&lt;/div&gt;&lt;b style=&quot;font-size:14px;color:#FFFFFF;&quot;&gt;Request&lt;/b&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="20" y="450" width="80" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ========================================================================= -->
+        <!-- COLUMN 1: Ingestion & Security Perimeter                                  -->
+        <!-- ========================================================================= -->
+        <mxCell id="col1_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#101827;strokeColor=#1E293B;strokeWidth=1.5;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="120" y="95" width="220" height="750" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_col1" value="&lt;b style=&quot;font-size:15px;color:#FFFFFF;&quot;&gt;Ingestion &amp;amp;&lt;br&gt;Security Perimeter&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="130" y="115" width="200" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: Apigee Enterprise AI Gateway -->
+        <mxCell id="card_apigee" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:24px;color:#F97316;margin-bottom:4px;&quot;&gt;♾️&lt;/div&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Apigee&lt;/span&gt;&lt;br&gt;&lt;b style=&quot;font-size:14px;color:#FFFFFF;&quot;&gt;Apigee Enterprise&lt;br&gt;AI Gateway&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="140" y="220" width="180" height="110" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: Google Cloud Model Armor WAF -->
+        <mxCell id="card_model_armor" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:24px;color:#38BDF8;margin-bottom:4px;&quot;&gt;🛡️&lt;/div&gt;&lt;b style=&quot;font-size:14px;color:#FFFFFF;&quot;&gt;Google Cloud&lt;br&gt;Model Armor WAF&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="140" y="435" width="180" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: VPC Service Controls -->
+        <mxCell id="card_vpc" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:24px;color:#38BDF8;margin-bottom:4px;&quot;&gt;🔒&lt;/div&gt;&lt;b style=&quot;font-size:14px;color:#FFFFFF;&quot;&gt;VPC&lt;br&gt;Service Controls&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="140" y="640" width="180" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Connectors Col 1 -->
+        <mxCell id="e_req_armor" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 1&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="user_request" target="card_model_armor">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_apigee_armor" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 1&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_apigee" target="card_model_armor">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_armor_vpc" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 2&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_model_armor" target="card_vpc">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+
+        <!-- ========================================================================= -->
+        <!-- COLUMN 2: Autonomous Multi-Agent Mesh                                     -->
+        <!-- ========================================================================= -->
+        <mxCell id="col2_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#101827;strokeColor=#1E293B;strokeWidth=1.5;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="360" y="95" width="370" height="750" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_col2" value="&lt;b style=&quot;font-size:15px;color:#FFFFFF;&quot;&gt;Autonomous&lt;br&gt;Multi-Agent Mesh&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="410" y="115" width="270" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Value Unlock Top Badge -->
+        <mxCell id="badge_token_discount" value="&lt;div style=&quot;font-size:10px;color:#34D399;font-weight:bold;&quot;&gt;VALUE UNLOCK BADGES&lt;/div&gt;&lt;b style=&quot;font-size:12px;color:#34D399;&quot;&gt;✓ 75% Input Token Discount&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;(Context Caching)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064E3B;strokeColor=#10B981;strokeWidth=1.5;align=center;verticalAlign=middle;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="385" y="180" width="320" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Central Hub: Gemini 2.5/3.1 Super-Orchestrator -->
+        <mxCell id="card_orchestrator" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:26px;color:#38BDF8;margin-bottom:6px;&quot;&gt;✨&lt;/div&gt;&lt;b style=&quot;font-size:15px;color:#FFFFFF;&quot;&gt;Gemini 2.5/3.1&lt;br&gt;Super-Orchestrator&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="380" y="420" width="170" height="130" as="geometry"/>
+        </mxCell>
+
+        <!-- Sub-Agent 1: Code Gen -->
+        <mxCell id="card_sub_codegen" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Sub-Agent&lt;br&gt;Worker&lt;/span&gt;&lt;br&gt;&lt;b style=&quot;font-size:13px;color:#FFFFFF;&quot;&gt;Code Gen&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=6;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="580" y="320" width="130" height="75" as="geometry"/>
+        </mxCell>
+        <!-- Sub-Agent 2: Analytics -->
+        <mxCell id="card_sub_analytics" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Sub-Agent&lt;/span&gt;&lt;br&gt;&lt;b style=&quot;font-size:13px;color:#FFFFFF;&quot;&gt;Analytics&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=6;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="580" y="445" width="130" height="75" as="geometry"/>
+        </mxCell>
+        <!-- Sub-Agent 3: SQL Agent -->
+        <mxCell id="card_sub_sql" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Sub-Agent&lt;/span&gt;&lt;br&gt;&lt;b style=&quot;font-size:13px;color:#FFFFFF;&quot;&gt;SQL Agent&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=6;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="580" y="565" width="130" height="75" as="geometry"/>
+        </mxCell>
+
+        <!-- Connections from Orchestrator to Sub-Agents -->
+        <mxCell id="e_orch_codegen" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_orchestrator" target="card_sub_codegen">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_orch_analytics" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_orchestrator" target="card_sub_analytics">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_orch_sql" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_orchestrator" target="card_sub_sql">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Connector Model Armor -> Orchestrator -->
+        <mxCell id="e_armor_orch" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_model_armor" target="card_orchestrator">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Value Unlock Bottom Badge -->
+        <mxCell id="badge_context_window" value="&lt;div style=&quot;font-size:10px;color:#34D399;font-weight:bold;&quot;&gt;VALUE UNLOCK&lt;/div&gt;&lt;b style=&quot;font-size:12px;color:#34D399;&quot;&gt;✓ 2M Long-Context&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Window&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064E3B;strokeColor=#10B981;strokeWidth=1.5;align=center;verticalAlign=middle;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="430" y="760" width="220" height="55" as="geometry"/>
+        </mxCell>
+
+
+        <!-- ========================================================================= -->
+        <!-- COLUMN 3: Model Context Protocol (MCP) & Context Caching                  -->
+        <!-- ========================================================================= -->
+        <mxCell id="col3_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#101827;strokeColor=#1E293B;strokeWidth=1.5;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="750" y="95" width="300" height="750" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_col3" value="&lt;b style=&quot;font-size:15px;color:#FFFFFF;&quot;&gt;Model Context Protocol (MCP)&lt;br&gt;&amp;amp; Context Caching&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="760" y="115" width="280" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: Standardized MCP Tool Gateway -->
+        <mxCell id="card_mcp" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:24px;color:#38BDF8;margin-bottom:4px;&quot;&gt;🎛️&lt;/div&gt;&lt;b style=&quot;font-size:14px;color:#FFFFFF;&quot;&gt;Standardized&lt;br&gt;MCP Tool Gateway&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="790" y="240" width="220" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: Vertex AI Prompt Context Caching -->
+        <mxCell id="card_context_cache" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:24px;color:#38BDF8;margin-bottom:4px;&quot;&gt;⚡&lt;/div&gt;&lt;b style=&quot;font-size:14px;color:#FFFFFF;&quot;&gt;Vertex AI Prompt&lt;br&gt;Context Caching&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;(75% token discount)&lt;/span&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="790" y="440" width="220" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: Vertex AI Vector Search Grounding -->
+        <mxCell id="card_vector_search" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:24px;color:#38BDF8;margin-bottom:4px;&quot;&gt;🕸️&lt;/div&gt;&lt;b style=&quot;font-size:14px;color:#FFFFFF;&quot;&gt;Vertex AI Vector&lt;br&gt;Search Grounding&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="790" y="605" width="220" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Connectors Col 3 -->
+        <mxCell id="e_mcp_cache_step3" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 3&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_mcp" target="card_context_cache">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="860" y="390"/>
+              <mxPoint x="860" y="390"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_mcp_cache_step4" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 4&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_mcp" target="card_context_cache">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="940" y="390"/>
+              <mxPoint x="940" y="390"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_vector_cache_step5" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 5&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_vector_search" target="card_context_cache">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Connectors from Sub-Agents into Col 3 -->
+        <mxCell id="e_codegen_mcp" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_sub_codegen" target="card_mcp">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_analytics_cache" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_sub_analytics" target="card_context_cache">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_sql_cache" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_sub_sql" target="card_context_cache">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Loopback: Vector Search -> Orchestrator -->
+        <mxCell id="e_vector_orch" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_vector_search" target="card_orchestrator">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="730" y="730"/>
+              <mxPoint x="465" y="730"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Value Unlock Bottom Badge -->
+        <mxCell id="badge_zero_trust" value="&lt;div style=&quot;font-size:10px;color:#34D399;font-weight:bold;&quot;&gt;VALUE UNLOCK&lt;/div&gt;&lt;b style=&quot;font-size:12px;color:#34D399;&quot;&gt;✓ Zero-Trust Sandboxed&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Tool Execution&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064E3B;strokeColor=#10B981;strokeWidth=1.5;align=center;verticalAlign=middle;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="770" y="760" width="260" height="55" as="geometry"/>
+        </mxCell>
+
+
+        <!-- ========================================================================= -->
+        <!-- COLUMN 4: Governed Enterprise Consumption                                 -->
+        <!-- ========================================================================= -->
+        <mxCell id="col4_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#101827;strokeColor=#1E293B;strokeWidth=1.5;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="1070" y="95" width="250" height="750" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_col4" value="&lt;b style=&quot;font-size:15px;color:#FFFFFF;&quot;&gt;Governed Enterprise&lt;br&gt;Consumption&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="115" width="230" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: Sub-500ms TTFT Streaming Chat -->
+        <mxCell id="card_ttft" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;b style=&quot;font-size:14px;color:#FFFFFF;&quot;&gt;Sub-500ms TTFT&lt;br&gt;Streaming Chat&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="250" width="190" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Connector MCP -> TTFT labeled Step 6 -->
+        <mxCell id="e_mcp_ttft" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 6&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_mcp" target="card_ttft">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: Automated Evaluation Gates -->
+        <mxCell id="card_eval_gates" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:24px;color:#34D399;margin-bottom:4px;&quot;&gt;📈&lt;/div&gt;&lt;b style=&quot;font-size:14px;color:#FFFFFF;&quot;&gt;Automated&lt;br&gt;Evaluation Gates&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="440" width="190" height="95" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_ttft_gates" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 5&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_ttft" target="card_eval_gates">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: HITL Approval -->
+        <mxCell id="card_hitl" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;b style=&quot;font-size:14px;color:#FFFFFF;&quot;&gt;HITL Approval&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="650" width="190" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_gates_hitl" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 6&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_eval_gates" target="card_hitl">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Return Loop from HITL -> TTFT -->
+        <mxCell id="e_hitl_ttft_return" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_hitl" target="card_ttft">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1080" y="685"/>
+              <mxPoint x="1080" y="290"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Value Unlock Bottom Badge -->
+        <mxCell id="badge_agent_ttft" value="&lt;div style=&quot;font-size:10px;color:#34D399;font-weight:bold;&quot;&gt;VALUE UNLOCK&lt;/div&gt;&lt;b style=&quot;font-size:12px;color:#34D399;&quot;&gt;✓ Sub-Second Agent TTFT&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064E3B;strokeColor=#10B981;strokeWidth=1.5;align=center;verticalAlign=middle;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="1075" y="760" width="240" height="55" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

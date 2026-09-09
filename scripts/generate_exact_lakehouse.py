@@ -1,4 +1,8 @@
-<mxfile host="app.diagrams.net" modified="2026-09-09T17:50:00.000Z" agent="ScoreX Enterprise Architecture Engine" version="24.7.5">
+import os
+import json
+
+def generate_lakehouse_xml():
+    xml = """<mxfile host="app.diagrams.net" modified="2026-09-09T17:50:00.000Z" agent="ScoreX Enterprise Architecture Engine" version="24.7.5">
   <diagram id="lakehouse_target_state_biglake_omni" name="Target State: GCP Enterprise Data Lakehouse &amp; BigLake Medallion Mesh">
     <mxGraphModel dx="1600" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="920" background="#0B111E" math="0" shadow="0">
       <root>
@@ -257,4 +261,15 @@
       </root>
     </mxGraphModel>
   </diagram>
-</mxfile>
+</mxfile>"""
+    return xml
+
+if __name__ == '__main__':
+    xml = generate_lakehouse_xml()
+    with open('scratch/03_lakehouse_target_state_biglake_omni.drawio.xml', 'w') as f:
+        f.write(xml)
+    with open('client/public/blueprints/03_lakehouse_target_state_biglake_omni.drawio.xml', 'w') as f:
+        f.write(xml)
+    with open('client/build/blueprints/03_lakehouse_target_state_biglake_omni.drawio.xml', 'w') as f:
+        f.write(xml)
+    print("Updated 03_lakehouse_target_state_biglake_omni.drawio.xml to 100% exact replica!")
