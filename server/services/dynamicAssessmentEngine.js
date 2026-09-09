@@ -916,6 +916,43 @@ Generate a strictly valid JSON response matching this schema:
       if (!rootTag || cellsCount === 0) {
         throw new Error('XML lacks root element or mxCell nodes');
       }
+
+      // 6. Enforce Text Wrapping on all Vertex Cards
+      const vertexIds = new Set(['0', '1']);
+      $('mxCell[vertex="1"]').each((i, el) => {
+        const id = $(el).attr('id');
+        if (id) vertexIds.add(id);
+
+        let style = $(el).attr('style') || '';
+        if (!style.includes('whiteSpace=wrap')) style += ';whiteSpace=wrap;';
+        if (!style.includes('html=1')) style += ';html=1;';
+        $(el).attr('style', style);
+      });
+
+      // 7. Graph Topology & Edge Integrity: Purge Dangling Arrows & Enforce Orthogonal Routing
+      let removedOrphanEdges = 0;
+      let modifiedEdges = 0;
+      $('mxCell[edge="1"]').each((i, el) => {
+        const src = $(el).attr('source');
+        const tgt = $(el).attr('target');
+        // If an arrow points to a non-existent node, purge it to prevent floating/pointing to (0,0)
+        if (!src || !tgt || !vertexIds.has(src) || !vertexIds.has(tgt)) {
+          $(el).remove();
+          removedOrphanEdges++;
+        } else {
+          let edgeStyle = $(el).attr('style') || '';
+          if (!edgeStyle.includes('edgeStyle=')) {
+            edgeStyle = 'edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;' + edgeStyle;
+            $(el).attr('style', edgeStyle);
+            modifiedEdges++;
+          }
+        }
+      });
+
+      if (removedOrphanEdges > 0 || modifiedEdges > 0) {
+        cleaned = $.xml();
+      }
+
       return cleaned;
     } catch (e) {
       console.warn('⚠️ XML syntax validation failed in _sanitizeDrawioXml, auto-healing with fallback:', e.message);
