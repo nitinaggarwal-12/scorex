@@ -29,6 +29,7 @@ const IntelligentRecommendationEngine = require('./services/intelligentRecommend
 const featureDB = require('./services/databricksFeatureDatabase');
 const sampleAssessmentGenerator = require('./utils/sampleAssessmentGenerator');
 const industryBenchmarkingService = require('./services/industryBenchmarkingService');
+const masterBlueprintCatalog = require('./services/masterBlueprintCatalog');
 const db = require('./db/connection');
 const { applyQuestionEdits } = require('./utils/questionEditsHelper');
 const { requireAuth } = require('./middleware/auth');
@@ -1789,6 +1790,24 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
       riskAreas: recommendations.riskAreas,
       executiveSummary: recommendations.executiveSummary || '', // ADAPTIVE: Executive summary
       whatsNew: recommendations.whatsNew, // ADAPTIVE: Latest Databricks features
+      architectureDiagrams: assessment.architectureDiagrams ||
+        assessment.aiReport?.architectureDiagrams ||
+        assessment.executiveReport?.architectureDiagrams ||
+        recommendations.architectureDiagrams ||
+        masterBlueprintCatalog.getMasterArchitectureDiagrams(
+          effectiveFramework,
+          {
+            customerName: assessment.organizationName || assessment.assessmentName || 'Enterprise Organization',
+            industry: assessment.industry,
+            useCase: assessment.assessmentDescription || 'Data & AI Modernization'
+          },
+          {
+            overallScore: recommendations.overall?.currentScore || 2.5,
+            targetScore: recommendations.overall?.futureScore || 4.5,
+            maturityLevel: recommendations.overall?.level || 'Developing',
+            dimensionScores: categoryDetails
+          }
+        ),
       pillarStatus: effectiveFramework.assessmentAreas.map(area => {
         const isCompleted = assessment.completedCategories.includes(area.id);
         const hasResponses = areasWithResponses.some(a => a.id === area.id);

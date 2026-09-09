@@ -3706,33 +3706,50 @@ const AssessmentResultsNew = () => {
               }
               return obj;
             })()}
+            framework={framework || resultsData?.framework || {}}
             overallCurrent={parseFloat(currentMaturity) || 2.5}
             overallTarget={parseFloat(targetMaturity) || 4.0}
           />
 
           {/* Architectural Evolution Blueprint: Current vs Target */}
           <ArchitectureComparisonDiagram
+            instanceId={resultsData?.assessmentInfo?.id || resultsData?.assessmentId || assessmentId}
+            initialDiagrams={resultsData?.architectureDiagrams}
+            customerName={resultsData?.assessmentInfo?.organizationName || resultsData?.assessmentInfo?.assessmentName || 'Enterprise Client'}
+            useCase={resultsData?.assessmentInfo?.assessmentDescription || resultsData?.assessmentInfo?.industry || 'Platform Modernization'}
+            framework={framework || resultsData?.framework || {}}
             currentScore={parseFloat(currentMaturity) || 2.5}
             targetScore={parseFloat(targetMaturity) || 4.0}
+            theme="light"
           />
 
           {/* Multi-Persona Executive Transformation Blueprints */}
           <MultiPersonaViews
-            assessmentName={resultsData?.assessmentInfo?.organizationName || 'Enterprise Platform'}
+            assessmentName={resultsData?.assessmentInfo?.organizationName || resultsData?.assessmentInfo?.assessmentName || 'Enterprise Platform'}
             currentScore={parseFloat(currentMaturity) || 2.5}
             targetScore={parseFloat(targetMaturity) || 4.0}
+            aiReport={resultsData?.aiReport || resultsData?.executiveReport}
+            recs={resultsData?.prioritizedActions || []}
+            roadmap={resultsData?.roadmap || {}}
+            framework={framework || resultsData?.framework || {}}
+            scores={resultsData?.categoryDetails}
           />
 
           {/* 1-Click Transformation Backlog Exporter */}
           <BacklogExporterCard
-            assessmentName={resultsData?.assessmentInfo?.organizationName || 'Enterprise Platform'}
+            assessmentName={resultsData?.assessmentInfo?.organizationName || resultsData?.assessmentInfo?.assessmentName || 'Enterprise Platform'}
+            recommendations={resultsData?.prioritizedActions || []}
+            prioritizedActions={resultsData?.prioritizedActions || []}
           />
 
           {/* 1-Click Infrastructure-as-Code (IaC) Cloud Deployer */}
           <IaCBlueprintCard
-            organizationName={resultsData?.assessmentInfo?.organizationName || 'Enterprise Platform'}
+            organizationName={resultsData?.assessmentInfo?.organizationName || resultsData?.assessmentInfo?.assessmentName || 'Enterprise Platform'}
+            assessmentName={resultsData?.assessmentInfo?.assessmentName || 'Enterprise Data & AI Architecture'}
             currentScore={parseFloat(currentMaturity) || 2.5}
             targetScore={parseFloat(targetMaturity) || 4.0}
+            framework={framework || resultsData?.framework || {}}
+            prioritizedActions={resultsData?.prioritizedActions || []}
           />
 
           {/* Maturity Roadmap Visualization */}
@@ -5272,7 +5289,7 @@ const AssessmentResultsNew = () => {
                                     fontStyle: 'italic',
                                     borderLeft: '3px solid #f59e0b'
                                   }}>
-                                    {displayFeature.reason || `Helps address: Poor environment isolation`}
+                                    {displayFeature.reason || (displayFeature.addresses && displayFeature.addresses.length > 0 ? `Helps address: ${displayFeature.addresses.join(', ')}` : `Accelerates ${pillar?.name || 'strategic'} target maturity and enterprise governance`)}
                                   </div>
                                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.7rem' }}>
                                     {displayFeature.releaseDate && (

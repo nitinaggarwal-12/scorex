@@ -1052,24 +1052,89 @@ class IntelligentRecommendationEngine {
     const avgCurrent = stateGaps.length > 0 ? stateGaps.reduce((sum, g) => sum + g.current, 0) / stateGaps.length : 0;
     const avgGap = stateGaps.length > 0 ? (stateGaps.reduce((sum, g) => sum + g.future, 0) / stateGaps.length) - avgCurrent : 0;
     
+    // Dynamic Industry Domain Configuration
+    const industry = (assessment?.industry || assessment?.assessmentInfo?.industry || '').toLowerCase();
+    
+    let domainPilot = 'Finance, Operations, or Analytics';
+    let domainCompliance = 'SOC 2 Type II, ISO 27001, and Zero-Trust cloud security';
+    let domainPeers = 'industry enterprise peers';
+    let domainPipelineExample = 'Core Operational ETL or Customer 360 ingestion';
+    let domainDataStandards = 'Open table formats (Apache Iceberg) and real-time event streaming';
+    let domainBIDemo = 'cross-functional data democratization and self-service analytics';
+    let domainMLUseCase = 'churn prediction, demand forecasting, or anomaly detection';
+    let domainMLCompliance = 'enterprise AI governance, model lineage, and automated audit trails';
+    let domainGenAIUseCases = 'Intelligent Document Processing, Customer Support Copilot, and Knowledge Search';
+
+    if (industry.includes('health') || industry.includes('life') || industry.includes('pharma') || industry.includes('clinical')) {
+      domainPilot = 'Clinical, Claims, or Patient Experience';
+      domainCompliance = 'HIPAA, HITRUST, and GxP best practices';
+      domainPeers = 'healthcare and life sciences peers';
+      domainPipelineExample = 'Claims ETL or Member 360 ingestion';
+      domainDataStandards = 'FHIR, HL7, and real-time event streaming for healthcare analytics';
+      domainBIDemo = 'payer/provider data democratization and clinical outcome reporting';
+      domainMLUseCase = 'readmission risk, claims anomaly detection, or patient triage';
+      domainMLCompliance = 'regulated AI compliance in healthcare and life sciences (FDA SaMD)';
+      domainGenAIUseCases = 'Prior Auth Optimization, Clinical Documentation, and Patient Care Copilot';
+    } else if (industry.includes('finan') || industry.includes('bank') || industry.includes('insur') || industry.includes('wealth')) {
+      domainPilot = 'Risk Analytics, Fraud Detection, or Treasury';
+      domainCompliance = 'PCI-DSS, SOX, Basel III/IV, and GLBA regulatory controls';
+      domainPeers = 'financial services and tier-1 banking institutions';
+      domainPipelineExample = 'Real-time Transaction Ledger or Trade Settlement ETL';
+      domainDataStandards = 'FIX protocol, ISO 20022, and low-latency Kafka transaction feeds';
+      domainBIDemo = 'wealth management dashboarding, portfolio P&L, and regulatory liquidity reporting';
+      domainMLUseCase = 'real-time fraud scoring, credit underwriting, or market risk VaR modeling';
+      domainMLCompliance = 'SR 11-7 model risk management, explainable AI, and auditability';
+      domainGenAIUseCases = 'Wealth Advisor Copilot, KYC/AML Document Intelligence, and Credit Risk Narrative Generation';
+    } else if (industry.includes('retail') || industry.includes('commerce') || industry.includes('cpg') || industry.includes('consumer')) {
+      domainPilot = 'Merchandising, Inventory Allocation, or E-Commerce';
+      domainCompliance = 'PCI-DSS, CCPA/GDPR consumer data privacy, and SOC 2';
+      domainPeers = 'omnichannel retail and e-commerce leaders';
+      domainPipelineExample = 'Point-of-Sale (POS) Streaming or Omnichannel Clickstream ETL';
+      domainDataStandards = 'Real-time CDC, headless commerce event APIs, and unified customer data profiles';
+      domainBIDemo = 'store performance scorecards, gross margin return on investment (GMROI), and promotion elasticity';
+      domainMLUseCase = 'personalized product recommendations, dynamic markdown pricing, or inventory replenishment';
+      domainMLCompliance = 'consumer privacy guardrails and fair pricing algorithmic compliance';
+      domainGenAIUseCases = 'Autonomous Customer Support Agent, Catalog Search RAG, and Marketing Copy Generator';
+    } else if (industry.includes('telecom') || industry.includes('media') || industry.includes('network')) {
+      domainPilot = 'Network Operations, Subscriber Experience, or BSS/OSS';
+      domainCompliance = 'FCC, CPNI data privacy regulations, and ISO 27001';
+      domainPeers = 'telecommunications carriers and network operators';
+      domainPipelineExample = 'Call Detail Record (CDR) Ingestion or 5G RAN Telemetry streaming';
+      domainDataStandards = 'TM Forum Open Digital Architecture (ODA) APIs and Kafka event streaming';
+      domainBIDemo = 'network latency heatmap analytics, churn propensity dashboards, and ARPU tracking';
+      domainMLUseCase = 'predictive cell tower maintenance, subscriber churn prediction, or bandwidth anomaly detection';
+      domainMLCompliance = 'telecom data sovereignty and automated regulatory reporting';
+      domainGenAIUseCases = 'Field Operations Diagnostic Copilot, Virtual Customer Care Agent, and Network Outage Triage';
+    } else if (industry.includes('manuf') || industry.includes('auto') || industry.includes('industrial') || industry.includes('supply')) {
+      domainPilot = 'Plant Operations, Supply Chain, or Quality Assurance';
+      domainCompliance = 'ISO 9001, ISO 27001, and industrial cybersecurity standards (IEC 62443)';
+      domainPeers = 'global manufacturing and discrete industrial enterprises';
+      domainPipelineExample = 'IoT Sensor Telemetry or ERP/MES Supply Chain Ingestion';
+      domainDataStandards = 'OPC UA, MQTT industrial protocols, and real-time edge-to-cloud pipelines';
+      domainBIDemo = 'Overall Equipment Effectiveness (OEE), scrap rate monitoring, and supplier risk dashboards';
+      domainMLUseCase = 'predictive machine maintenance, visual defect detection, or yield optimization';
+      domainMLCompliance = 'industrial safety standards, traceable machine learning, and calibration governance';
+      domainGenAIUseCases = 'Shopfloor Technical Manual Copilot, Root-Cause Incident Assistant, and Supply Chain Risk Radar';
+    }
+
     // Comprehensive next steps library by pillar - Simplified format with arrows
     const nextStepsLibrary = {
       platform_governance: [
         'Executive Alignment: Present governance vision to leadership; secure funding and sponsorship for cross-domain rollout',
         'Workshop: Conduct a Platform Governance & Unified Metadata Catalog Workshop with Enterprise Lakehouse SMEs to align architecture, access models, and catalog strategy',
         'Enablement & Training: Role-based sessions for platform admins and data stewards on workspace hierarchy, permissions, lineage, and FinOps tagging',
-        'Adoption Strategy: Start with one business domain as a pilot (e.g., Finance, Clinical, or Claims), then scale horizontally',
-        'Assessment: Run a Security, Compliance & Governance Assessment to benchmark against HIPAA, HITRUST, and GxP best practices',
-        'Industry Outlook: Review emerging regulations (e.g., AI Act, Data Privacy) and benchmark governance models across healthcare peers',
+        `Adoption Strategy: Start with one business domain as a pilot (e.g., ${domainPilot}), then scale horizontally`,
+        `Assessment: Run a Security, Compliance & Governance Assessment to benchmark against ${domainCompliance}`,
+        `Industry Outlook: Review emerging regulations (e.g., AI Act, Data Privacy) and benchmark governance models across ${domainPeers}`,
         'Partner / SI Engagement: Engage SI partners (e.g., Deloitte, Slalom, Accenture) for governance rollout and cross-workspace architecture design',
         'Change Management: Create a governance council; publish policies, catalog taxonomy, and data ownership matrix'
       ],
       data_engineering: [
         'Workshop: Host a LakeFlow / Declarative Data Pipelines Ingestion Strategy Workshop to align on ingestion patterns, SLAs, and DQ policies',
         'Enablement: Train engineers and analysts on medallion architecture principles, CDC integration, and cost-efficient job scheduling',
-        'Adoption & Pilot: Identify 1-2 high-value pipelines for modernization (e.g., Claims ETL or Member 360 ingestion) as lighthouse examples',
+        `Adoption & Pilot: Identify 1-2 high-value pipelines for modernization (e.g., ${domainPipelineExample}) as lighthouse examples`,
         'Assessment: Conduct a Pipeline Reliability & Cost Optimization Assessment to quantify gains from migration',
-        'Industry Outlook: Highlight interoperability trends — FHIR, HL7, and real-time event streaming for healthcare analytics',
+        `Industry Outlook: Highlight interoperability trends — ${domainDataStandards}`,
         'Partner / SI Engagement: Leverage ETL modernization partners (e.g., TCS, Cognizant, Wipro) for workload migration support',
         'Governance Alignment: Define data ownership and stewardship roles per pipeline domain',
         'Change Management: Create documentation and reusable templates for new pipelines; standardize intake and approval workflows'
@@ -1079,7 +1144,7 @@ class IntelligentRecommendationEngine {
         'Enablement: Train business users on dataset discovery via Unified Metadata Catalog and certified data usage',
         'Adoption: Identify top 5 dashboards to migrate; ensure alignment with governed datasets and performance SLAs',
         'Assessment: Execute a BI Performance & Adoption Assessment to evaluate latency, concurrency, and usability',
-        'Industry Outlook: Share BI modernization success stories (payer/provider data democratization)',
+        `Industry Outlook: Share BI modernization success stories (${domainBIDemo})`,
         'Partner / SI Engagement: Collaborate with BI accelerators (e.g., Thorogood, Tredence, Aimpoint Digital) for dashboard modernization',
         'Change Management: Establish "Data Champions" in each department to drive adoption and training',
         'Success Metrics: Measure report refresh frequency, active dashboard usage, and time-to-insight KPIs'
@@ -1087,9 +1152,9 @@ class IntelligentRecommendationEngine {
       machine_learning: [
         'Workshop: Conduct a Model Lifecycle Management Workshop covering MLflow, Model Registry, and MLOps governance',
         'Enablement: Provide training for DS/ML teams on model versioning, experiment tracking, and deployment workflows',
-        'Adoption: Select one business use case (e.g., fraud detection, churn prediction, or risk scoring) for MLflow deployment pilot',
+        `Adoption: Select one business use case (e.g., ${domainMLUseCase}) for MLflow deployment pilot`,
         'Assessment: Perform an ML Governance & Readiness Assessment focusing on model lineage, explainability, and audit',
-        'Industry Outlook: Review state of MLOps adoption and regulated AI compliance in healthcare and life sciences',
+        `Industry Outlook: Review state of MLOps adoption and ${domainMLCompliance}`,
         'Partner / SI Engagement: Engage AI partners (ZS, IQVIA, Deloitte AI) for co-development or validation support',
         'Change Management: Form an internal "Model Review Board" to standardize approval and transition criteria',
         'Measurement: Track metrics like model re-training frequency, deployment cycle time, and business ROI'
@@ -1097,7 +1162,7 @@ class IntelligentRecommendationEngine {
       generative_ai: [
         'Workshop: Schedule a GenAI Strategy & AI Gateway Workshop to define architecture, security, and governance approach',
         'Enablement: Conduct enablement sessions for developers and product owners on RAG, prompt engineering, and evaluation frameworks',
-        'Adoption: Identify 2–3 lighthouse GenAI use cases (e.g., Prior Auth Optimization, Intelligent Documentation, Customer Support Copilot)',
+        `Adoption: Identify 2–3 lighthouse GenAI use cases (e.g., ${domainGenAIUseCases})`,
         'Assessment: Perform a GenAI Readiness & Risk Assessment (focus: privacy, bias, and model auditability)',
         'Industry Outlook: Present evolving trends — GenAI copilots, regulated model governance, fine-tuning ethics, and AI act implications',
         'Partner / SI Engagement: Collaborate with GenAI implementation partners (Quantiphi, Enterprise Lakehouse PS, or industry ISVs)',
@@ -1109,7 +1174,7 @@ class IntelligentRecommendationEngine {
         'Enablement: Train administrators and PMs on monitoring, alerting, tagging, and usage governance',
         'Adoption: Standardize ops dashboards and monthly business reviews (MBRs) to track system health and cost',
         'Assessment: Run an Operational Maturity Assessment on incident management, SLAs, and observability',
-        'Industry Outlook: Benchmark operational cost, uptime, and governance KPIs vs. peers',
+        `Industry Outlook: Benchmark operational cost, uptime, and governance KPIs vs. ${domainPeers}`,
         'Partner / SI Engagement: Collaborate with managed service providers (e.g., Persistent, Capgemini, HCL) for 24×7 support',
         'Change Management: Define escalation paths, ticket SLAs, and accountability models for teams',
         'Measurement: KPIs — uptime %, mean time to detect (MTTD), cost reduction %, and automation coverage'

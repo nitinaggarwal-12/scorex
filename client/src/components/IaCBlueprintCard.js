@@ -224,11 +224,12 @@ const LaunchBtn = styled.button`
 `;
 
 const IaCBlueprintCard = ({ 
-  organizationName = 'ConnectPlus Telecom', 
+  organizationName = 'Enterprise Organization', 
   assessmentName = 'Enterprise Data & AI Architecture',
   currentScore = 2.5,
   targetScore = 4.5,
-  framework = null
+  framework = null,
+  prioritizedActions = []
 }) => {
   const [selectedCloud, setSelectedCloud] = useState('gcp');
   const [copiedSnippet, setCopiedSnippet] = useState(false);
@@ -236,12 +237,17 @@ const IaCBlueprintCard = ({
   const [showCode, setShowCode] = useState(false);
 
   // Derive auto-populated project slug
-  const orgSlug = organizationName.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 20);
+  const orgSlug = organizationName.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 20) || 'enterprise';
   const derivedProject = `${orgSlug}-lakehouse-prod`;
   const derivedBucket = `${orgSlug}-data-catalog-prod`;
 
   const keyType = (framework?.typeKey || '').toLowerCase();
-  const isGenAI = keyType.includes('openai') || keyType.includes('gemini') || keyType.includes('genai');
+  const frameworkTitle = (framework?.title || '').toLowerCase();
+  const isGenAI = keyType.includes('openai') || keyType.includes('gemini') || keyType.includes('genai') || frameworkTitle.includes('genai') || frameworkTitle.includes('agent') || prioritizedActions.some(p => (p.pillarId || p.pillarName || '').toLowerCase().includes('genai'));
+  const hasSecurityPriority = keyType.includes('security') || keyType.includes('zero_trust') || frameworkTitle.includes('security') || prioritizedActions.some(p => {
+    const name = (p.pillarName || p.pillarId || '').toLowerCase();
+    return (name.includes('govern') || name.includes('secur')) && (p.gap >= 1 || p.priority === 'critical');
+  });
 
   // Cloud configurations & 1-Click Launch URLs
   const cloudConfigs = isGenAI ? {
@@ -391,7 +397,19 @@ resource "google_monitoring_alert_policy" "finops_budget" {
       threshold_value = 500
     }
   }
-}`
+}${hasSecurityPriority ? `
+
+# 4. Zero-Trust Customer-Managed KMS (CMEK) Key Ring
+resource "google_kms_key_ring" "lakehouse_keyring" {
+  name     = "${orgSlug}-keyring"
+  location = "us-central1"
+}
+
+resource "google_kms_crypto_key" "storage_cmek" {
+  name            = "${orgSlug}-storage-key"
+  key_ring        = google_kms_key_ring.lakehouse_keyring.id
+  rotation_period = "7776000s" # 90-day rotation
+}` : ''}`
     },
     aws: {
       name: 'Amazon Web Services (AWS)',

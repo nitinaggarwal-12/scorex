@@ -198,28 +198,43 @@ const BacklogExporterCard = ({
 
   const rawRecs = recommendations.length > 0 ? recommendations : prioritizedActions;
 
+  // Helper to extract actionable tasks
+  const extractTasks = (rec) => {
+    if (!rec) return [];
+    if (Array.isArray(rec.actionSteps) && rec.actionSteps.length > 0) return rec.actionSteps;
+    if (Array.isArray(rec.recommendations) && rec.recommendations.length > 0) return rec.recommendations;
+    if (Array.isArray(rec.nextSteps) && rec.nextSteps.length > 0) return rec.nextSteps;
+    if (Array.isArray(rec.specificRecommendations) && rec.specificRecommendations.length > 0) return rec.specificRecommendations;
+    if (Array.isArray(rec.actions) && rec.actions.length > 0) return rec.actions;
+    if (Array.isArray(rec.quickWins) && rec.quickWins.length > 0) return rec.quickWins;
+    return [];
+  };
+
   // Generate standardized Epics & User Stories dynamically from AI recommendations
   const backlogEpics = rawRecs.length > 0
     ? rawRecs.map((rec, idx) => {
-        const pillar = rec.dimension || rec.pillar || `Strategic Pillar ${idx + 1}`;
-        const stories = (rec.actionSteps && rec.actionSteps.length > 0)
-          ? rec.actionSteps.map((step, sIdx) => ({
+        const pillar = rec.pillarName || rec.dimension || rec.pillar || rec.name || `Strategic Pillar ${idx + 1}`;
+        const epicTitle = rec.title || (rec.pillarName ? `Modernize & Accelerate ${rec.pillarName}` : `Strategic Initiative ${idx + 1}`);
+        const tasks = extractTasks(rec);
+
+        const stories = tasks.length > 0
+          ? tasks.slice(0, 4).map((step, sIdx) => ({
               key: `STORY-${idx + 1}0${sIdx + 1}`,
-              title: typeof step === 'string' ? step : (step.title || step.text || `Execute implementation task ${sIdx + 1}`),
-              priority: sIdx === 0 ? 'Highest' : (rec.priority === 'Critical' ? 'Highest' : 'High'),
+              title: typeof step === 'string' ? step : (step.title || step.action || step.recommendation || step.text || `Execute implementation task ${sIdx + 1}`),
+              priority: sIdx === 0 ? 'Highest' : ((rec.priority === 'Critical' || rec.priority === 'critical') ? 'Highest' : 'High'),
               sprint: `Sprint ${Math.floor(idx * 1.5) + sIdx + 1}`
             }))
           : [
-              { key: `STORY-${idx + 1}01`, title: `Architecture review & baseline scoping for ${rec.title}`, priority: 'Highest', sprint: `Sprint ${idx * 2 + 1}` },
-              { key: `STORY-${idx + 1}02`, title: `Pilot rollout & security perimeter validation for ${rec.title}`, priority: 'High', sprint: `Sprint ${idx * 2 + 2}` },
-              { key: `STORY-${idx + 1}03`, title: `Production cutover & telemetry verification for ${rec.title}`, priority: 'Medium', sprint: `Sprint ${idx * 2 + 3}` }
+              { key: `STORY-${idx + 1}01`, title: `Architecture review & baseline scoping for ${epicTitle}`, priority: 'Highest', sprint: `Sprint ${idx * 2 + 1}` },
+              { key: `STORY-${idx + 1}02`, title: `Pilot rollout & security perimeter validation for ${epicTitle}`, priority: 'High', sprint: `Sprint ${idx * 2 + 2}` },
+              { key: `STORY-${idx + 1}03`, title: `Production cutover & telemetry verification for ${epicTitle}`, priority: 'Medium', sprint: `Sprint ${idx * 2 + 3}` }
             ];
 
         return {
           id: `EPIC-${idx + 1}`,
-          title: rec.title,
+          title: epicTitle,
           pillar,
-          whyItMatters: rec.whyItMatters || 'Strategic transformation initiative.',
+          whyItMatters: rec.whyItMatters || rec.justification || rec.description || (rec.theBad?.[0] ? `Remediates: ${rec.theBad[0]}` : `Accelerates ${pillar} target maturity and operational excellence.`),
           stories
         };
       })

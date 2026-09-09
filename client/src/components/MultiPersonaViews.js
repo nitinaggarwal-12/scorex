@@ -326,19 +326,46 @@ const PlaybookCard = styled.div`
   }
 `;
 
+const extractSteps = (rec) => {
+  if (!rec) return [];
+  if (Array.isArray(rec.actionSteps) && rec.actionSteps.length > 0) {
+    return rec.actionSteps.map(s => typeof s === 'string' ? s : (s.title || s.text || s.action || JSON.stringify(s)));
+  }
+  if (Array.isArray(rec.nextSteps) && rec.nextSteps.length > 0) {
+    return rec.nextSteps.map(s => typeof s === 'string' ? s : (s.title || s.step || s.action || JSON.stringify(s)));
+  }
+  if (Array.isArray(rec.specificRecommendations) && rec.specificRecommendations.length > 0) {
+    return rec.specificRecommendations.map(s => typeof s === 'string' ? s : (s.title || s.recommendation || JSON.stringify(s)));
+  }
+  if (Array.isArray(rec.recommendations) && rec.recommendations.length > 0) {
+    return rec.recommendations.map(s => typeof s === 'string' ? s : (s.title || s.action || s.recommendation || JSON.stringify(s)));
+  }
+  if (Array.isArray(rec.actions) && rec.actions.length > 0) {
+    return rec.actions.map(s => typeof s === 'string' ? s : (s.title || s.action || JSON.stringify(s)));
+  }
+  if (Array.isArray(rec.quickWins) && rec.quickWins.length > 0) {
+    return rec.quickWins.map(s => typeof s === 'string' ? s : (s.title || s.action || JSON.stringify(s)));
+  }
+  return [];
+};
+
 const MultiPersonaViews = ({ 
   assessmentName = 'Enterprise Cloud, Data & AI Platform', 
   currentScore = 2.6, 
   targetScore = 4.5,
   aiReport = null,
   framework = null,
-  scores = null
+  scores = null,
+  recs: propRecs = null,
+  roadmap: propRoadmap = null
 }) => {
   const [activePersona, setActivePersona] = useState('board'); // 'board', 'vp', 'architect'
 
-  // Extract dynamic values from live AI report
-  const roadmap = aiReport?.transformationRoadmap || {};
-  const recs = aiReport?.prioritizedRecommendations || aiReport?.prioritizedActions || [];
+  // Extract dynamic values from props or live AI report
+  const effectiveRoadmap = propRoadmap || aiReport?.transformationRoadmap || aiReport?.roadmap || {};
+  const recs = (propRecs && propRecs.length > 0)
+    ? propRecs
+    : (aiReport?.prioritizedRecommendations || aiReport?.prioritizedActions || []);
   const strengths = aiReport?.keyStrengths || [];
   const constraints = aiReport?.criticalConstraints || [];
 
@@ -355,38 +382,59 @@ const MultiPersonaViews = ({
   const implCost = Math.round(estSavings * 0.38);
   const calculatedPayback = `${Math.max(2.1, Math.min(16.0, Number(((implCost / estSavings) * 12).toFixed(1)))).toFixed(1)} Months`;
 
-  // Dynamic Phase 1, 2, 3 data
-  const phase1 = roadmap.phase1 || {
-    title: 'Phase 1: Foundation & FinOps Governance',
-    timeline: 'Months 0–3',
-    focus: 'Establish centralized metadata governance, VPC network perimeters, and compute autoscaling guardrails.',
-    milestones: [
-      recs[0]?.actionSteps?.[0] || 'Deploy Centralized Metadata Catalog with ABAC IAM Roles',
-      recs[0]?.actionSteps?.[1] || 'Configure Serverless Autoscaling & Cost Limiters',
-      'Enforce VPC Service Controls & CMEK Encryption'
-    ]
+  // Dynamic Phase 1, 2, 3 data from roadmap or prioritizedActions
+  const roadmapPhases = Array.isArray(effectiveRoadmap.phases) ? effectiveRoadmap.phases : null;
+  const rawPhase1 = roadmapPhases ? roadmapPhases.find(p => p.id === 'phase1' || p.title?.includes('Phase 1')) : effectiveRoadmap.phase1;
+  const rawPhase2 = roadmapPhases ? roadmapPhases.find(p => p.id === 'phase2' || p.title?.includes('Phase 2')) : effectiveRoadmap.phase2;
+  const rawPhase3 = roadmapPhases ? roadmapPhases.find(p => p.id === 'phase3' || p.title?.includes('Phase 3')) : effectiveRoadmap.phase3;
+
+  const rec1Steps = extractSteps(recs[0]);
+  const rec2Steps = extractSteps(recs[1]);
+  const rec3Steps = extractSteps(recs[2]);
+
+  const phase1 = {
+    title: rawPhase1?.title || 'Phase 1: Foundation & Governance',
+    timeline: rawPhase1?.timeline || 'Months 0–3',
+    focus: rawPhase1?.focus || (recs[0]?.pillarName ? `Establish core foundational governance and baseline capabilities for ${recs[0].pillarName}.` : 'Establish centralized metadata governance, VPC network perimeters, and compute autoscaling guardrails.'),
+    milestones: (rawPhase1?.milestones && rawPhase1.milestones.length > 0)
+      ? rawPhase1.milestones
+      : (rawPhase1?.items && rawPhase1.items.length > 0)
+      ? rawPhase1.items
+      : [
+          rec1Steps[0] || (recs[0]?.pillarName ? `Deploy ${recs[0].pillarName} foundational governance framework` : 'Deploy Centralized Metadata Catalog with ABAC IAM Roles'),
+          rec1Steps[1] || 'Configure Serverless Autoscaling & Cost Limiters',
+          rec1Steps[2] || 'Enforce VPC Service Controls & CMEK Encryption'
+        ]
   };
 
-  const phase2 = roadmap.phase2 || {
-    title: 'Phase 2: Open Lakehouse & Pipeline Scale',
-    timeline: 'Months 3–6',
-    focus: 'Unify storage with Apache Iceberg / BigLake, transition legacy batch to real-time CDC streaming, and automate CI/CD.',
-    milestones: [
-      recs[1]?.actionSteps?.[0] || 'Standardize on Open Table Formats (Apache Iceberg / Delta)',
-      recs[1]?.actionSteps?.[1] || 'Deploy Declarative Dataform/dbt Pipelines with Git CI/CD',
-      'Automate Real-Time Change Data Capture (CDC)'
-    ]
+  const phase2 = {
+    title: rawPhase2?.title || 'Phase 2: Scale & Acceleration',
+    timeline: rawPhase2?.timeline || 'Months 3–6',
+    focus: rawPhase2?.focus || (recs[1]?.pillarName ? `Scale modernization across ${recs[1].pillarName} with declarative pipelines and automated contracts.` : 'Unify storage with Apache Iceberg / BigLake, transition legacy batch to real-time CDC streaming, and automate CI/CD.'),
+    milestones: (rawPhase2?.milestones && rawPhase2.milestones.length > 0)
+      ? rawPhase2.milestones
+      : (rawPhase2?.items && rawPhase2.items.length > 0)
+      ? rawPhase2.items
+      : [
+          rec2Steps[0] || (recs[1]?.pillarName ? `Standardize ${recs[1].pillarName} on open table formats & declarative models` : 'Standardize on Open Table Formats (Apache Iceberg / Delta)'),
+          rec2Steps[1] || 'Deploy Declarative Dataform/dbt Pipelines with Git CI/CD',
+          rec2Steps[2] || 'Automate Real-Time Change Data Capture (CDC)'
+        ]
   };
 
-  const phase3 = roadmap.phase3 || {
-    title: 'Phase 3: Autonomous Agent Mesh & Production AI',
-    timeline: 'Months 6–12',
-    focus: 'Operationalize Vertex AI Gemini Agentic Mesh with Model Context Protocol (MCP) and Prompt Context Caching.',
-    milestones: [
-      recs[2]?.actionSteps?.[0] || 'Enable Gemini Prompt Context Caching (75% Input Discount)',
-      recs[2]?.actionSteps?.[1] || 'Deploy Model Context Protocol (MCP) Multi-Agent Mesh',
-      'In-Database Real-Time Machine Learning & Vector Search'
-    ]
+  const phase3 = {
+    title: rawPhase3?.title || 'Phase 3: Production AI & Autonomous Operations',
+    timeline: rawPhase3?.timeline || 'Months 6–12',
+    focus: rawPhase3?.focus || (recs[2]?.pillarName ? `Productionize advanced capabilities across ${recs[2].pillarName} with real-time intelligence.` : 'Operationalize Vertex AI Gemini Agentic Mesh with Model Context Protocol (MCP) and Prompt Context Caching.'),
+    milestones: (rawPhase3?.milestones && rawPhase3.milestones.length > 0)
+      ? rawPhase3.milestones
+      : (rawPhase3?.items && rawPhase3.items.length > 0)
+      ? rawPhase3.items
+      : [
+          rec3Steps[0] || (recs[2]?.pillarName ? `Operationalize ${recs[2].pillarName} enterprise automation & agent contracts` : 'Enable Gemini Prompt Context Caching (75% Input Discount)'),
+          rec3Steps[1] || 'Deploy Model Context Protocol (MCP) Multi-Agent Mesh',
+          rec3Steps[2] || 'In-Database Real-Time Machine Learning & Vector Search'
+        ]
   };
 
   // Domain-specialized Top Board Decisions
@@ -396,9 +444,18 @@ const MultiPersonaViews = ({
   const isFinOpsDomain = keyType.includes('finops') || keyType.includes('cost');
 
   const boardDecisions = recs.length >= 3 ? [
-    { title: recs[0].title || (isGenAIDomain ? 'Authorize Enterprise AI Gateway & Model Governance' : 'Authorize Centralized Cloud Governance'), desc: recs[0].whyItMatters || 'Eliminate vendor lock-in, unmonitored egress, and compliance blind spots.' },
-    { title: recs[1].title || (isGenAIDomain ? 'Approve Vertex AI Gemini Long-Context & Prompt Caching Migration' : 'Approve Serverless Compute & Storage Modernization'), desc: recs[1].whyItMatters || 'Capture 50-75% token cost reduction and eliminate brittle vector RAG chunking.' },
-    { title: recs[2].title || (isGenAIDomain ? 'Fund Model Armor & MCP Multi-Agent Mesh Deployment' : 'Fund Enterprise AI & Automation Deployment'), desc: recs[2].whyItMatters || 'Deploy standardized MCP agent contracts with real-time prompt injection defense.' }
+    { 
+      title: recs[0].title || (recs[0].pillarName ? `Authorize ${recs[0].pillarName} Modernization & Governance` : (isGenAIDomain ? 'Authorize Enterprise AI Gateway & Model Governance' : 'Authorize Centralized Cloud Governance')), 
+      desc: recs[0].whyItMatters || recs[0].justification || recs[0].description || (recs[0].theBad?.[0] ? `Remediate: ${recs[0].theBad[0]}` : 'Eliminate vendor lock-in, unmonitored egress, and compliance blind spots.') 
+    },
+    { 
+      title: recs[1].title || (recs[1].pillarName ? `Approve ${recs[1].pillarName} Acceleration & Migration` : (isGenAIDomain ? 'Approve Vertex AI Gemini Long-Context & Prompt Caching Migration' : 'Approve Serverless Compute & Storage Modernization')), 
+      desc: recs[1].whyItMatters || recs[1].justification || recs[1].description || (recs[1].theBad?.[0] ? `Remediate: ${recs[1].theBad[0]}` : 'Capture 50-75% token cost reduction and eliminate brittle vector RAG chunking.') 
+    },
+    { 
+      title: recs[2].title || (recs[2].pillarName ? `Fund ${recs[2].pillarName} Automation & Intelligence Deployment` : (isGenAIDomain ? 'Fund Model Armor & MCP Multi-Agent Mesh Deployment' : 'Fund Enterprise AI & Automation Deployment')), 
+      desc: recs[2].whyItMatters || recs[2].justification || recs[2].description || (recs[2].theBad?.[0] ? `Remediate: ${recs[2].theBad[0]}` : 'Deploy standardized MCP agent contracts with real-time prompt injection defense.') 
+    }
   ] : isGenAIDomain ? [
     { title: 'Authorize Enterprise AI Gateway & CMEK Perimeter', desc: 'Decouple backend microservices from direct vendor SDKs and enforce VPC-SC and Cloud KMS CMEK encryption.' },
     { title: 'Approve Gemini Long-Context & Prompt Context Caching', desc: 'Capture up to 75% input token discount and eliminate lossy 8k chunking via native 2M context windows.' },
@@ -412,6 +469,25 @@ const MultiPersonaViews = ({
     { title: 'Approve Serverless Reservation Slot Migration', desc: 'Shift from static over-provisioned VMs to serverless autoscaling compute with 15-min auto-suspend.' },
     { title: 'Fund Enterprise GenAI Agentic Infrastructure', desc: 'Establish enterprise prompt caching (75% savings), model routing, and zero-trust guardrails.' }
   ];
+
+  // Derive dynamic playbook items from assessed pillars
+  const findRecByTerms = (terms) => {
+    return recs.find(r => {
+      const pid = (r.pillarId || r.area || r.pillar || '').toLowerCase();
+      const pname = (r.pillarName || r.name || r.title || '').toLowerCase();
+      return terms.some(t => pid.includes(t) || pname.includes(t));
+    });
+  };
+
+  const secRec = findRecByTerms(['govern', 'secur', 'platform', 'trust', 'compliance']);
+  const dataRec = findRecByTerms(['engineer', 'data', 'pipeline', 'lakehouse', 'etl']);
+  const aiRec = findRecByTerms(['genai', 'ai', 'machine', 'ml', 'model', 'agent']);
+  const opsRec = findRecByTerms(['ops', 'finops', 'cost', 'excellence', 'cloud', 'infra']);
+
+  const secSteps = extractSteps(secRec);
+  const dataSteps = extractSteps(dataRec);
+  const aiSteps = extractSteps(aiRec);
+  const opsSteps = extractSteps(opsRec);
 
   return (
     <Container
@@ -591,18 +667,16 @@ const MultiPersonaViews = ({
                   <FiLock color="#10b981" /> Security, IAM & Zero-Trust Checklist
                 </div>
                 <div className="checklist">
-                  <div className="check-row">
-                    <FiCheckSquare /> Provision centralized cloud metadata catalog with fine-grained IAM role delegation.
-                  </div>
-                  <div className="check-row">
-                    <FiCheckSquare /> Implement dynamic column-level masking and row-level filtering for PII data.
-                  </div>
-                  <div className="check-row">
-                    <FiCheckSquare /> Enable Customer-Managed Encryption Keys (CMEK) and VPC Service Controls (VPC-SC).
-                  </div>
-                  <div className="check-row">
-                    <FiCheckSquare /> Set up automated tag-based access control (ABAC) and data classification policies.
-                  </div>
+                  {(secSteps.length > 0 ? secSteps.slice(0, 4) : [
+                    'Provision centralized cloud metadata catalog with fine-grained IAM role delegation.',
+                    'Implement dynamic column-level masking and row-level filtering for PII data.',
+                    'Enable Customer-Managed Encryption Keys (CMEK) and VPC Service Controls (VPC-SC).',
+                    'Set up automated tag-based access control (ABAC) and data classification policies.'
+                  ]).map((item, idx) => (
+                    <div key={idx} className="check-row">
+                      <FiCheckSquare /> {item}
+                    </div>
+                  ))}
                 </div>
               </PlaybookCard>
 
@@ -611,18 +685,16 @@ const MultiPersonaViews = ({
                   <FiCpu color="#3b82f6" /> Declarative Data Engineering & CDC Architecture
                 </div>
                 <div className="checklist">
-                  <div className="check-row">
-                    <FiCheckSquare /> Standardize on open table formats (Apache Iceberg / Delta UniForm) for zero-copy querying.
-                  </div>
-                  <div className="check-row">
-                    <FiCheckSquare /> Replace legacy batch polling with real-time log-based Change Data Capture (CDC).
-                  </div>
-                  <div className="check-row">
-                    <FiCheckSquare /> Enforce declarative data quality contracts and schema drift alerting.
-                  </div>
-                  <div className="check-row">
-                    <FiCheckSquare /> Deploy version-controlled Dataform / dbt pipelines with automated Git CI/CD testing.
-                  </div>
+                  {(dataSteps.length > 0 ? dataSteps.slice(0, 4) : [
+                    'Standardize on open table formats (Apache Iceberg / Delta UniForm) for zero-copy querying.',
+                    'Replace legacy batch polling with real-time log-based Change Data Capture (CDC).',
+                    'Enforce declarative data quality contracts and schema drift alerting.',
+                    'Deploy version-controlled Dataform / dbt pipelines with automated Git CI/CD testing.'
+                  ]).map((item, idx) => (
+                    <div key={idx} className="check-row">
+                      <FiCheckSquare /> {item}
+                    </div>
+                  ))}
                 </div>
               </PlaybookCard>
 
@@ -631,18 +703,16 @@ const MultiPersonaViews = ({
                   <HiSparkles color="#8b5cf6" /> Compound AI & Agentic Implementation
                 </div>
                 <div className="checklist">
-                  <div className="check-row">
-                    <FiCheckSquare /> Standardize agent tool calling schemas on Model Context Protocol (MCP).
-                  </div>
-                  <div className="check-row">
-                    <FiCheckSquare /> Implement Gemini Prompt Context Caching for large static reference documents (75% cost reduction).
-                  </div>
-                  <div className="check-row">
-                    <FiCheckSquare /> Build dynamic model router (route simple queries to Flash models, complex to Pro/Thinking).
-                  </div>
-                  <div className="check-row">
-                    <FiCheckSquare /> Add real-time LLM input/output toxicity, jailbreak, and prompt injection guardrails.
-                  </div>
+                  {(aiSteps.length > 0 ? aiSteps.slice(0, 4) : [
+                    'Standardize agent tool calling schemas on Model Context Protocol (MCP).',
+                    'Implement Gemini Prompt Context Caching for large static reference documents (75% cost reduction).',
+                    'Build dynamic model router (route simple queries to Flash models, complex to Pro/Thinking).',
+                    'Add real-time LLM input/output toxicity, jailbreak, and prompt injection guardrails.'
+                  ]).map((item, idx) => (
+                    <div key={idx} className="check-row">
+                      <FiCheckSquare /> {item}
+                    </div>
+                  ))}
                 </div>
               </PlaybookCard>
 
@@ -651,18 +721,16 @@ const MultiPersonaViews = ({
                   <FiDollarSign color="#f59e0b" /> FinOps & Infrastructure Optimization
                 </div>
                 <div className="checklist">
-                  <div className="check-row">
-                    <FiCheckSquare /> Configure 15-minute auto-termination timeout on all interactive developer compute clusters.
-                  </div>
-                  <div className="check-row">
-                    <FiCheckSquare /> Migrate analytical SQL workloads to Serverless BigQuery Editions reservation slot pools.
-                  </div>
-                  <div className="check-row">
-                    <FiCheckSquare /> Set up FOCUS 1.0 multi-tenant cost attribution and automated budget alerting webhooks.
-                  </div>
-                  <div className="check-row">
-                    <FiCheckSquare /> Run weekly automated compute right-sizing and spot instance utilization audits.
-                  </div>
+                  {(opsSteps.length > 0 ? opsSteps.slice(0, 4) : [
+                    'Configure 15-minute auto-termination timeout on all interactive developer compute clusters.',
+                    'Migrate analytical SQL workloads to Serverless BigQuery Editions reservation slot pools.',
+                    'Set up FOCUS 1.0 multi-tenant cost attribution and automated budget alerting webhooks.',
+                    'Run weekly automated compute right-sizing and spot instance utilization audits.'
+                  ]).map((item, idx) => (
+                    <div key={idx} className="check-row">
+                      <FiCheckSquare /> {item}
+                    </div>
+                  ))}
                 </div>
               </PlaybookCard>
             </PlaybookGrid>
