@@ -1709,6 +1709,10 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
 
     // 🚨 RECALCULATE overall score using ONLY fully completed pillars
     if (fullyCompletedAreas.length > 0) {
+      const existingSummary = (recommendations.overall?.summary && recommendations.overall.summary.length > 50)
+        ? recommendations.overall.summary
+        : (recommendations.executiveSummary || '');
+
       const completedPillarScores = fullyCompletedAreas.map(area => {
         const detail = categoryDetails[area.id];
         return {
@@ -1725,8 +1729,12 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
         futureScore: parseFloat(avgFuture.toFixed(1)),
         gap: parseFloat((avgFuture - avgCurrent).toFixed(1)),
         level: avgCurrent < 2 ? 'Initial' : avgCurrent < 3 ? 'Developing' : avgCurrent < 4 ? 'Defined' : avgCurrent < 4.5 ? 'Advanced' : 'Optimized',
-        summary: `Based on ${fullyCompletedAreas.length} completed pillar(s)`
+        summary: existingSummary || `Based on ${fullyCompletedAreas.length} completed pillar(s)`,
+        completionStatus: `Based on ${fullyCompletedAreas.length} completed pillar(s)`
       };
+      if (existingSummary && !recommendations.executiveSummary) {
+        recommendations.executiveSummary = existingSummary;
+      }
       
       console.log(`✅ Overall score recalculated from ${fullyCompletedAreas.length} fully completed pillars: ${avgCurrent.toFixed(1)} → ${avgFuture.toFixed(1)}`);
     } else {
@@ -2216,7 +2224,34 @@ app.get('/api/dashboard/stats', async (req, res) => {
       (recentAvgImprovement - previousAvgImprovement).toFixed(1) : '0.0';
     
     // 6. PILLAR-SPECIFIC MATURITY (dynamic by pillar)
-    const pillarIds = ['platform_governance', 'data_engineering', 'analytics_bi', 'ml_mlops', 'genai_agentic', 'operational_excellence'];
+    const pillarIds = ['platform_governance', 'data_engineering', 'analytics_bi', 'machine_learning', 'generative_ai', 'operational_excellence'];
+    
+    // Map question ID to pillar ID from framework
+    const questionToPillar = {};
+    if (assessmentFramework && assessmentFramework.assessmentAreas) {
+      assessmentFramework.assessmentAreas.forEach(area => {
+        if (area.dimensions) {
+          area.dimensions.forEach(dim => {
+            if (dim.questions) {
+              dim.questions.forEach(q => {
+                questionToPillar[q.id] = area.id;
+              });
+            }
+          });
+        }
+      });
+    }
+
+    const getPillarForQuestionKey = (key) => {
+      for (const pId of pillarIds) {
+        if (key.startsWith(pId)) return pId;
+      }
+      if (key.startsWith('ml_mlops')) return 'machine_learning';
+      if (key.startsWith('genai_agentic')) return 'generative_ai';
+      const qId = key.replace(/_(current_state|future_state|technical_pain|business_pain|comment|skipped)$/, '');
+      return questionToPillar[qId] || null;
+    };
+
     const pillarMaturityCurrent = [];
     const pillarMaturityTarget = [];
     
@@ -2227,19 +2262,20 @@ app.get('/api/dashboard/stats', async (req, res) => {
       
       allAssessments.forEach(assessment => {
         if (assessment.responses) {
-          const pillarKeys = Object.keys(assessment.responses).filter(key => 
-            key.startsWith(pillarId) && (key.endsWith('_current_state') || key.endsWith('_future_state'))
-          );
+          const currentStates = [];
+          const futureStates = [];
           
-          const currentStates = pillarKeys
-            .filter(key => key.endsWith('_current_state'))
-            .map(key => parseInt(assessment.responses[key], 10))
-            .filter(val => !isNaN(val));
-          
-          const futureStates = pillarKeys
-            .filter(key => key.endsWith('_future_state'))
-            .map(key => parseInt(assessment.responses[key], 10))
-            .filter(val => !isNaN(val));
+          Object.entries(assessment.responses).forEach(([key, val]) => {
+            if (getPillarForQuestionKey(key) === pillarId) {
+              if (key.endsWith('_current_state')) {
+                const num = parseInt(val, 10);
+                if (!isNaN(num)) currentStates.push(num);
+              } else if (key.endsWith('_future_state')) {
+                const num = parseInt(val, 10);
+                if (!isNaN(num)) futureStates.push(num);
+              }
+            }
+          });
           
           if (currentStates.length > 0) {
             pillarCurrentTotal += currentStates.reduce((a, b) => a + b, 0) / currentStates.length;
@@ -2252,8 +2288,8 @@ app.get('/api/dashboard/stats', async (req, res) => {
         }
       });
       
-      pillarMaturityCurrent.push(pillarCount > 0 ? (pillarCurrentTotal / pillarCount).toFixed(1) : 3.0);
-      pillarMaturityTarget.push(pillarCount > 0 ? (pillarFutureTotal / pillarCount).toFixed(1) : 4.0);
+      pillarMaturityCurrent.push(pillarCount > 0 ? parseFloat((pillarCurrentTotal / pillarCount).toFixed(1)) : 0.0);
+      pillarMaturityTarget.push(pillarCount > 0 ? parseFloat((pillarFutureTotal / pillarCount).toFixed(1)) : 0.0);
     });
     
     // 7. WEEKLY COMPLETIONS (last 6 weeks) - DYNAMIC
@@ -2317,28 +2353,37 @@ app.get('/api/dashboard/stats', async (req, res) => {
           'platform_governance': 'Platform',
           'data_engineering': 'Data Eng',
           'analytics_bi': 'Analytics',
-          'ml_mlops': 'ML/MLOps',
-          'genai_agentic': 'GenAI',
-          'operational_excellence': 'Ops'
+          'machine_learning': 'ML',
+          'generative_ai': 'GenAI',
+          'operational_excellence': 'Ops',
+          'ml_mlops': 'ML',
+          'genai_agentic': 'GenAI'
         };
         
         pillarIds.forEach(pillarId => {
           if (assessment.responses) {
-            const pillarKeys = Object.keys(assessment.responses).filter(key => key.startsWith(pillarId));
-            const currentStates = pillarKeys
-              .filter(key => key.endsWith('_current_state'))
-              .map(key => parseInt(assessment.responses[key], 10))
-              .filter(val => !isNaN(val));
-            const futureStates = pillarKeys
-              .filter(key => key.endsWith('_future_state'))
-              .map(key => parseInt(assessment.responses[key], 10))
-              .filter(val => !isNaN(val));
+            const currentStates = [];
+            const futureStates = [];
+            
+            Object.entries(assessment.responses).forEach(([key, val]) => {
+              if (getPillarForQuestionKey(key) === pillarId) {
+                if (key.endsWith('_current_state')) {
+                  const num = parseInt(val, 10);
+                  if (!isNaN(num)) currentStates.push(num);
+                } else if (key.endsWith('_future_state')) {
+                  const num = parseInt(val, 10);
+                  if (!isNaN(num)) futureStates.push(num);
+                }
+              }
+            });
             
             if (currentStates.length > 0 && futureStates.length > 0) {
               const avgCurrent = currentStates.reduce((a, b) => a + b, 0) / currentStates.length;
               const avgFuture = futureStates.reduce((a, b) => a + b, 0) / futureStates.length;
               const gap = avgFuture - avgCurrent;
-              pillarGaps.push({ pillar: pillarNames[pillarId], gap });
+              if (gap > 0) {
+                pillarGaps.push({ pillar: pillarNames[pillarId] || pillarId, gap });
+              }
             }
           }
         });
@@ -2355,7 +2400,7 @@ app.get('/api/dashboard/stats', async (req, res) => {
           maturity: maturity > 0 ? maturity.toFixed(1) : '0.0',
           target: target > 0 ? target.toFixed(1) : '0.0',
           completion: completion,
-          keyGaps: keyGaps.length > 0 ? keyGaps : ['Assessment in progress'],
+          keyGaps: keyGaps.length > 0 ? keyGaps : (completion === 100 ? ['Target Reached'] : ['Assessment in progress']),
           status: status
         };
       });

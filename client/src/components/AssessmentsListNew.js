@@ -1035,7 +1035,13 @@ const AssessmentsListNew = () => {
 
     const matchesPillar = 
       pillarFilter === 'all' ||
-      (assessment.completedCategories && assessment.completedCategories.includes(pillarFilter));
+      (assessment.completedCategories && (
+        assessment.completedCategories.includes(pillarFilter) ||
+        (pillarFilter === 'machine_learning' && assessment.completedCategories.includes('ml_mlops')) ||
+        (pillarFilter === 'generative_ai' && assessment.completedCategories.includes('genai_agentic')) ||
+        (pillarFilter === 'ml_mlops' && assessment.completedCategories.includes('machine_learning')) ||
+        (pillarFilter === 'genai_agentic' && assessment.completedCategories.includes('generative_ai'))
+      ));
 
     const matchesOwner = 
       ownerFilter === 'all' ||
@@ -1135,8 +1141,8 @@ const AssessmentsListNew = () => {
     { id: 'platform_governance', name: 'Platform & Governance' },
     { id: 'data_engineering', name: 'Data Engineering' },
     { id: 'analytics_bi', name: 'Analytics & BI' },
-    { id: 'ml_mlops', name: 'ML & MLOps' },
-    { id: 'genai_agentic', name: 'GenAI & Agentic' },
+    { id: 'machine_learning', name: 'ML & MLOps' },
+    { id: 'generative_ai', name: 'GenAI & Agentic' },
     { id: 'operational_excellence', name: 'Operational Excellence' }
   ];
 
