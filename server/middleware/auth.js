@@ -132,20 +132,59 @@ const requireAuthorOrAdmin = authenticateThenAuthorize(
   'Author or admin access required'
 );
 
+const LEGACY_PUBLIC_OWNERS = new Set([
+  'guest_admin',
+  'system_unowned',
+  'system',
+  'demo_guest',
+  'admin_guest',
+  'guest',
+  'public',
+  'unowned',
+  'user'
+]);
+
+function isLegacyOrPublicResource(resource, ownerFields) {
+  if (!resource) return false;
+  if (resource.isSample || resource.isSampleReport || resource.is_sample) return true;
+  if (typeof resource.id === 'string' && (resource.id.startsWith('sample_') || resource.id.startsWith('inst_'))) {
+    return true;
+  }
+
+  const explicitOwners = ownerFields
+    .map((field) => resource[field])
+    .filter((val) => val !== undefined && val !== null && String(val).trim() !== '');
+
+  // If no owner field is populated, it is a legacy unowned resource
+  if (explicitOwners.length === 0) return true;
+
+  // If all specified owner fields are recognized legacy/system markers, it is a legacy public resource
+  return explicitOwners.every((owner) => LEGACY_PUBLIC_OWNERS.has(String(owner).toLowerCase().trim()));
+}
+
 /**
  * Resource ownership helper used by assessment routes.
- * Admins may access all resources. Other roles may access only resources they own,
- * unless an explicit list of additional owner fields matches their identity.
+ * Admins may access all resources. Other roles may access resources they own,
+ * or legacy/unowned/starter resources created prior to session fingerprinting.
  */
 function canAccessResource(user, resource, ownerFields = ['userId', 'user_id', 'ownerId', 'owner_id', 'createdBy']) {
   if (!user || !resource) return false;
   if (user.role === 'admin') return true;
 
   const userId = String(user.id);
-  return ownerFields.some((field) => {
+  const isDirectOwner = ownerFields.some((field) => {
     const owner = resource[field];
     return owner !== undefined && owner !== null && String(owner) === userId;
   });
+
+  if (isDirectOwner) return true;
+
+  // Allow access to legacy, unowned, guest, or sample resources for all authenticated sessions (demo, consumer, author)
+  if (isLegacyOrPublicResource(resource, ownerFields)) {
+    return true;
+  }
+
+  return false;
 }
 
 module.exports = {

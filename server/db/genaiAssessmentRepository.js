@@ -168,7 +168,7 @@ class GenAIAssessmentRepository {
         let where = '';
         if (!isAdmin && ownerId) {
           params.push(ownerId);
-          where = 'WHERE owner_id = $1';
+          where = 'WHERE (owner_id = $1 OR owner_id IS NULL OR owner_id IN (\'system\', \'guest_admin\', \'system_unowned\', \'demo_guest\', \'admin_guest\', \'guest\', \'public\'))';
         }
         const result = await db.query(
           `SELECT id, customer_name, total_score, max_score, maturity_level, completed_at, created_at, owner_id
@@ -197,7 +197,8 @@ class GenAIAssessmentRepository {
     const all = fileStore.getAll() || {};
     let items = Object.values(all);
     if (!isAdmin && ownerId) {
-      items = items.filter(it => !it.owner_id || String(it.owner_id) === String(ownerId));
+      const publicOwners = new Set(['system', 'guest_admin', 'system_unowned', 'demo_guest', 'admin_guest', 'guest', 'public']);
+      items = items.filter(it => !it.owner_id || String(it.owner_id) === String(ownerId) || publicOwners.has(String(it.owner_id || '')));
     }
     return items.map(item => ({
       id: item.id,

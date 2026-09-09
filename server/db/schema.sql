@@ -18,7 +18,8 @@ CREATE TABLE IF NOT EXISTS assessments (
   started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   completed_at TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  user_id VARCHAR(255)
 );
 
 -- Create index on status for faster queries

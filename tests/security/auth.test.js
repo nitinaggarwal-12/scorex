@@ -96,3 +96,17 @@ test('resource ownership helper allows owner/admin and rejects unrelated demo us
   assert.equal(canAccessResource(other, resource), false);
   assert.equal(canAccessResource(admin, resource), true);
 });
+
+test('resource ownership helper allows demo and consumer access to legacy unowned and starter resources', () => {
+  const demoUser = { id: 'demo_1234567890abcdef12345678', role: 'demo', isDemo: true };
+  const consumerUser = { id: 'user_456', role: 'consumer' };
+
+  assert.equal(canAccessResource(demoUser, { userId: null }), true);
+  assert.equal(canAccessResource(demoUser, {}), true);
+  assert.equal(canAccessResource(demoUser, { userId: 'guest_admin' }), true);
+  assert.equal(canAccessResource(demoUser, { userId: 'system_unowned' }), true);
+  assert.equal(canAccessResource(demoUser, { isSample: true, userId: 'other_user' }), true);
+  assert.equal(canAccessResource(consumerUser, { userId: 'guest_admin' }), true);
+  assert.equal(canAccessResource(consumerUser, { user_id: null }), true);
+  assert.equal(canAccessResource(demoUser, { userId: 'other_private_user' }), false);
+});

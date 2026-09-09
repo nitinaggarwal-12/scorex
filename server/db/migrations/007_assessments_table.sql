@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS assessments (
   completed_categories JSONB DEFAULT '[]'::jsonb,
   responses JSONB DEFAULT '{}'::jsonb,
   edit_history JSONB DEFAULT '[]'::jsonb,
-  user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  user_id VARCHAR(255),
   started_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()

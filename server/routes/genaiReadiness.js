@@ -18,11 +18,16 @@ async function requireOwner(req, res, next) {
     const row = await loadAssessment(req.params.id);
     if (!row) return res.status(404).json({ error: 'Assessment not found' });
     const ownerId = row.owner_id || row.ownerId;
-    if (!isAdmin(req.user) && String(ownerId || '') !== String(req.user.id)) {
-      return res.status(403).json({ error: 'Access denied' });
+    const isRead = ['GET', 'HEAD', 'OPTIONS'].includes(req.method);
+    const isDirectOwner = String(ownerId || '') === String(req.user?.id || '');
+    const isLegacyPublic = !ownerId || ['system', 'guest_admin', 'system_unowned', 'demo_guest', 'admin_guest', 'guest', 'public'].includes(String(ownerId).toLowerCase().trim());
+
+    if (isAdmin(req.user) || isDirectOwner || (isRead && isLegacyPublic)) {
+      req.genaiAssessmentSecurity = row;
+      return next();
     }
-    req.genaiAssessmentSecurity = row;
-    return next();
+
+    return res.status(403).json({ error: 'Access denied' });
   } catch (error) {
     console.error('[GenAIReadiness] Ownership validation failed:', error.message);
     return res.status(500).json({ error: 'Unable to validate assessment access' });

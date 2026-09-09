@@ -171,6 +171,18 @@ class DatabaseConnection {
       // Run migrations
       await this.runMigrations();
 
+      // Ensure starter enterprise assessments are present if table is empty
+      try {
+        const countRes = await this.pool.query('SELECT COUNT(*) as count FROM assessments');
+        if (parseInt(countRes.rows[0].count, 10) === 0) {
+          console.log('🌱 Seeding starter enterprise assessments into PostgreSQL...');
+          const assessmentRepo = require('./assessmentRepository');
+          await assessmentRepo.seedStarterAssessments();
+        }
+      } catch (seedErr) {
+        console.warn('⚠️  Could not seed starter assessments:', seedErr.message);
+      }
+
     } catch (error) {
       console.error('❌ Failed to initialize schema:', error.message);
       throw error;

@@ -8,7 +8,7 @@ function normalizeReleaseState(assessment) {
   if (!assessment) return assessment;
 
   const ownerId = assessment.userId || assessment.user_id || '';
-  const isDemoOwned = typeof ownerId === 'string' && ownerId.startsWith('demo_');
+  const isDemoOwned = (typeof ownerId === 'string' && ownerId.startsWith('demo_')) || !ownerId || ['guest_admin', 'system_unowned', 'system', 'demo_guest', 'admin_guest', 'guest', 'public', 'unowned', 'user'].includes(String(ownerId).toLowerCase().trim());
 
   return {
     ...assessment,
@@ -101,24 +101,103 @@ class AssessmentRepository {
     } catch (error) {
       // Fallback to file storage
     }
-    return normalizeReleaseState(fileStore.get(id) || null);
+    const fromFile = fileStore.get(id);
+    if (fromFile) {
+      return normalizeReleaseState(fromFile);
+    }
+
+    // Check starter seeds if not found
+    try {
+      const fs = require('fs');
+      const seedsPath = path.join(__dirname, 'seeds/starterAssessments.json');
+      if (fs.existsSync(seedsPath)) {
+        const starterData = JSON.parse(fs.readFileSync(seedsPath, 'utf8'));
+        if (starterData[id]) {
+          return normalizeReleaseState(starterData[id]);
+        }
+      }
+    } catch (_) {}
+
+    return null;
+  }
+
+  /**
+   * Seed built-in starter enterprise assessments if database is empty
+   */
+  async seedStarterAssessments() {
+    const fs = require('fs');
+    const seedsPath = path.join(__dirname, 'seeds/starterAssessments.json');
+    if (!fs.existsSync(seedsPath)) return [];
+
+    try {
+      const starterData = JSON.parse(fs.readFileSync(seedsPath, 'utf8'));
+      const assessments = Object.values(starterData);
+      const seeded = [];
+
+      for (const item of assessments) {
+        const assessment = {
+          ...item,
+          userId: item.userId || 'system_unowned',
+          results_released: true,
+          isSample: true
+        };
+        try {
+          const saved = await this.create(assessment);
+          seeded.push(saved);
+        } catch (_) {
+          fileStore.set(assessment.id, assessment);
+          seeded.push(normalizeReleaseState(assessment));
+        }
+      }
+
+      console.log(`[AssessmentRepo] Loaded ${seeded.length} starter enterprise assessments`);
+      return seeded;
+    } catch (err) {
+      console.warn('[AssessmentRepo] Failed to seed starter assessments:', err.message);
+      return [];
+    }
   }
 
   /**
    * Get all assessments
    */
   async findAll() {
+    const list = [];
+    const seenIds = new Set();
+
     try {
       const query = 'SELECT * FROM assessments ORDER BY updated_at DESC';
       const result = await db.query(query);
       if (result && result.rows) {
-        return result.rows.map(row => normalizeReleaseState(this.mapRowToAssessment(row)));
+        for (const row of result.rows) {
+          const item = normalizeReleaseState(this.mapRowToAssessment(row));
+          if (item?.id) {
+            seenIds.add(item.id);
+            list.push(item);
+          }
+        }
       }
     } catch (error) {
       // Fallback to file storage
     }
-    const all = fileStore.getAll() || {};
-    return Object.values(all).map(normalizeReleaseState);
+
+    try {
+      const all = fileStore.getAll() || {};
+      for (const item of Object.values(all)) {
+        if (item?.id && !seenIds.has(item.id)) {
+          seenIds.add(item.id);
+          list.push(normalizeReleaseState(item));
+        }
+      }
+    } catch (_) {}
+
+    // Auto-seed starter assessments if database and file store have no assessments
+    if (list.length === 0) {
+      const starterList = await this.seedStarterAssessments();
+      return starterList;
+    }
+
+    return list;
   }
 
   /**
