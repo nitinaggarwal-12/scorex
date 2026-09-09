@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2026-09-09T17:35:00.000Z" agent="ScoreX Enterprise Architecture Engine" version="24.7.5">
+<mxfile host="app.diagrams.net" modified="2026-09-09T17:45:00.000Z" agent="ScoreX Enterprise Architecture Engine" version="24.7.5">
   <diagram id="lakehouse_target_state_biglake_omni" name="Target State: GCP Enterprise Data Lakehouse &amp; BigLake Medallion Mesh">
     <mxGraphModel dx="1600" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="920" background="#0B111E" math="0" shadow="0">
       <root>
@@ -7,67 +7,66 @@
 
         <!-- MAIN HEADER -->
         <mxCell id="hdr_title" value="&lt;b style=&quot;font-size:24px;color:#F8FAFC;letter-spacing:-0.5px;&quot;&gt;Target State: GCP Enterprise Data Lakehouse &amp;amp; BigLake Medallion Mesh&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="40" y="35" width="1050" height="40" as="geometry"/>
+          <mxGeometry x="40" y="30" width="1050" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="hdr_subtitle" value="&lt;span style=&quot;font-size:12px;color:#94A3B8;&quot;&gt;Enterprise Multi-Cloud Reference Architecture • Apache Iceberg Medallion • BigQuery Omni Zero-Egress • Dataplex Governance&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="40" y="65" width="1050" height="25" as="geometry"/>
         </mxCell>
 
         <!-- ========================================================================= -->
-        <!-- TIER 1: REAL-TIME STREAMING INGESTION                                     -->
+        <!-- TIER 1: REAL-TIME STREAMING & CDC INGESTION                               -->
         <!-- ========================================================================= -->
         <mxCell id="tier_1_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111827;strokeColor=#1F2937;strokeWidth=1.5;arcSize=6;" vertex="1" parent="1">
           <mxGeometry x="40" y="100" width="1520" height="160" as="geometry"/>
         </mxCell>
-        <mxCell id="lbl_tier_1" value="&lt;b style=&quot;font-size:16px;color:#F8FAFC;&quot;&gt;1. Real-Time&lt;br&gt;Streaming Ingestion&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+        <mxCell id="lbl_tier_1" value="&lt;b style=&quot;font-size:15px;color:#F8FAFC;&quot;&gt;1. Real-Time&lt;br&gt;Streaming &amp;amp; CDC&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Ingestion Layer&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="60" y="145" width="160" height="60" as="geometry"/>
         </mxCell>
 
         <!-- Pub/Sub -->
-        <mxCell id="card_pubsub" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:22px;color:#38BDF8;width:36px;vertical-align:middle;&quot;&gt;⚡&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:15px;color:#F8FAFC;&quot;&gt;Google Cloud Pub/Sub&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:12px;color:#94A3B8;&quot;&gt;Enterprise Event Ingestion Buffer&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#334155;strokeWidth=1.5;align=left;verticalAlign=middle;padding=12;arcSize=10;" vertex="1" parent="1">
+        <mxCell id="card_pubsub" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:22px;color:#38BDF8;width:36px;vertical-align:middle;&quot;&gt;⚡&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:14px;color:#F8FAFC;&quot;&gt;Google Cloud Pub/Sub&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Global Event Streaming Buffer&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#334155;strokeWidth=1.5;align=left;verticalAlign=middle;padding=10;arcSize=10;" vertex="1" parent="1">
           <mxGeometry x="250" y="140" width="240" height="80" as="geometry"/>
         </mxCell>
 
-        <!-- Value Badge: Sub-Second CDC Streaming -->
-        <mxCell id="badge_cdc" value="&lt;b style=&quot;font-size:11px;color:#34D399;&quot;&gt;✓ Sub-Second CDC Streaming&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=rgba(16,185,129,0.15);strokeColor=#10B981;strokeWidth=1;align=center;verticalAlign=middle;arcSize=50;" vertex="1" parent="1">
-          <mxGeometry x="540" y="112" width="190" height="24" as="geometry"/>
-        </mxCell>
-
         <!-- Datastream CDC -->
-        <mxCell id="card_datastream" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:22px;color:#38BDF8;width:36px;vertical-align:middle;&quot;&gt;🔄&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:15px;color:#F8FAFC;&quot;&gt;Datastream CDC&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:12px;color:#94A3B8;&quot;&gt;Serverless Relational Ingestion&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#334155;strokeWidth=1.5;align=left;verticalAlign=middle;padding=12;arcSize=10;" vertex="1" parent="1">
+        <mxCell id="badge_cdc" value="&lt;b style=&quot;font-size:11px;color:#34D399;&quot;&gt;✓ Sub-Second CDC Streaming&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=rgba(16,185,129,0.15);strokeColor=#10B981;strokeWidth=1;align=center;verticalAlign=middle;arcSize=50;" vertex="1" parent="1">
+          <mxGeometry x="540" y="112" width="200" height="24" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_datastream" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:22px;color:#38BDF8;width:36px;vertical-align:middle;&quot;&gt;🔄&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:14px;color:#F8FAFC;&quot;&gt;Datastream CDC&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Serverless Oracle/MySQL CDC&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#334155;strokeWidth=1.5;align=left;verticalAlign=middle;padding=10;arcSize=10;" vertex="1" parent="1">
           <mxGeometry x="540" y="140" width="240" height="80" as="geometry"/>
         </mxCell>
 
-        <!-- Value Badge: Storage Write API -->
-        <mxCell id="badge_omni_write" value="&lt;b style=&quot;font-size:11px;color:#34D399;&quot;&gt;✓ Zero-Egress Multi-Cloud Querying (BigQuery Omni)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=rgba(16,185,129,0.15);strokeColor=#10B981;strokeWidth=1;align=center;verticalAlign=middle;arcSize=50;" vertex="1" parent="1">
-          <mxGeometry x="840" y="112" width="310" height="24" as="geometry"/>
-        </mxCell>
-
         <!-- BigQuery Storage Write API -->
-        <mxCell id="card_storage_write_api" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:22px;color:#38BDF8;width:36px;vertical-align:middle;&quot;&gt;📊&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:15px;color:#F8FAFC;&quot;&gt;BigQuery Storage Write API&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:12px;color:#94A3B8;&quot;&gt;High-Throughput Streaming Commits&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#334155;strokeWidth=1.5;align=left;verticalAlign=middle;padding=12;arcSize=10;" vertex="1" parent="1">
+        <mxCell id="badge_write_api" value="&lt;b style=&quot;font-size:11px;color:#34D399;&quot;&gt;✓ High-Throughput Exactly-Once Ingestion&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=rgba(16,185,129,0.15);strokeColor=#10B981;strokeWidth=1;align=center;verticalAlign=middle;arcSize=50;" vertex="1" parent="1">
+          <mxGeometry x="840" y="112" width="270" height="24" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_storage_write_api" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:22px;color:#38BDF8;width:36px;vertical-align:middle;&quot;&gt;📊&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:14px;color:#F8FAFC;&quot;&gt;BigQuery Storage Write API&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Real-Time Ingestion Commits&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#334155;strokeWidth=1.5;align=left;verticalAlign=middle;padding=10;arcSize=10;" vertex="1" parent="1">
           <mxGeometry x="840" y="140" width="280" height="80" as="geometry"/>
         </mxCell>
 
 
         <!-- ========================================================================= -->
-        <!-- TIER 2: OPEN MEDALLION STORAGE & CATALOG                                  -->
+        <!-- TIER 2: OPEN MEDALLION STORAGE & CATALOG (APACHE ICEBERG)                 -->
         <!-- ========================================================================= -->
         <mxCell id="tier_2_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111827;strokeColor=#1F2937;strokeWidth=1.5;arcSize=6;" vertex="1" parent="1">
           <mxGeometry x="40" y="280" width="1520" height="175" as="geometry"/>
         </mxCell>
-        <mxCell id="lbl_tier_2" value="&lt;b style=&quot;font-size:16px;color:#F8FAFC;&quot;&gt;2. Open Medallion&lt;br&gt;Storage &amp;amp; Catalog&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+        <mxCell id="lbl_tier_2" value="&lt;b style=&quot;font-size:15px;color:#F8FAFC;&quot;&gt;2. Open Medallion&lt;br&gt;Storage &amp;amp; Catalog&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;BigLake Architecture&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="60" y="330" width="160" height="60" as="geometry"/>
         </mxCell>
 
         <!-- Bronze: Cloud Storage Raw -->
-        <mxCell id="card_raw_bronze" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:20px;color:#D97706;width:32px;vertical-align:middle;&quot;&gt;🪣&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:14px;color:#F8FAFC;&quot;&gt;Cloud Storage Raw&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Apache Iceberg 🧊&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E1B16;strokeColor=#B45309;strokeWidth=1.5;align=left;verticalAlign=middle;padding=10;arcSize=10;" vertex="1" parent="1">
+        <mxCell id="card_raw_bronze" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:20px;color:#D97706;width:32px;vertical-align:middle;&quot;&gt;🪣&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:13px;color:#F8FAFC;&quot;&gt;Cloud Storage Raw&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#D97706;&quot;&gt;Bronze • Apache Iceberg 🧊&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E1B16;strokeColor=#B45309;strokeWidth=1.5;align=left;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
           <mxGeometry x="250" y="325" width="210" height="85" as="geometry"/>
         </mxCell>
 
         <!-- Silver: Silver Enriched -->
-        <mxCell id="card_silver_enriched" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:20px;color:#94A3B8;width:32px;vertical-align:middle;&quot;&gt;🪣&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:14px;color:#F8FAFC;&quot;&gt;Silver Enriched&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Apache Iceberg 🧊&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#475569;strokeWidth=1.5;align=left;verticalAlign=middle;padding=10;arcSize=10;" vertex="1" parent="1">
+        <mxCell id="card_silver_enriched" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:20px;color:#94A3B8;width:32px;vertical-align:middle;&quot;&gt;🪣&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:13px;color:#F8FAFC;&quot;&gt;Silver Enriched&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#38BDF8;&quot;&gt;Silver • Apache Iceberg 🧊&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#475569;strokeWidth=1.5;align=left;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
           <mxGeometry x="500" y="325" width="210" height="85" as="geometry"/>
         </mxCell>
 
         <!-- Gold: Gold Aggregated -->
-        <mxCell id="card_gold_aggregated" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:20px;color:#EAB308;width:32px;vertical-align:middle;&quot;&gt;🪣&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:14px;color:#F8FAFC;&quot;&gt;Gold Aggregated&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Apache Iceberg 🧊&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#292310;strokeColor=#CA8A04;strokeWidth=1.5;align=left;verticalAlign=middle;padding=10;arcSize=10;" vertex="1" parent="1">
+        <mxCell id="card_gold_aggregated" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:20px;color:#EAB308;width:32px;vertical-align:middle;&quot;&gt;🪣&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:13px;color:#F8FAFC;&quot;&gt;Gold Aggregated&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#EAB308;&quot;&gt;Gold • Apache Iceberg 🧊&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#292310;strokeColor=#CA8A04;strokeWidth=1.5;align=left;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
           <mxGeometry x="750" y="325" width="210" height="85" as="geometry"/>
         </mxCell>
 
@@ -77,57 +76,57 @@
         </mxCell>
 
         <!-- Dataplex Universal Catalog -->
-        <mxCell id="card_dataplex" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:22px;color:#38BDF8;width:36px;vertical-align:middle;&quot;&gt;🕸️&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:15px;color:#F8FAFC;&quot;&gt;Dataplex Universal Catalog&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Automated column masking across three layers&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#334155;strokeWidth=1.5;align=left;verticalAlign=middle;padding=12;arcSize=10;" vertex="1" parent="1">
+        <mxCell id="card_dataplex" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:22px;color:#38BDF8;width:36px;vertical-align:middle;&quot;&gt;🕸️&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:14px;color:#F8FAFC;&quot;&gt;Dataplex Universal Catalog&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Automated column masking across layers&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#334155;strokeWidth=1.5;align=left;verticalAlign=middle;padding=10;arcSize=10;" vertex="1" parent="1">
           <mxGeometry x="1010" y="325" width="300" height="85" as="geometry"/>
         </mxCell>
 
 
         <!-- ========================================================================= -->
-        <!-- TIER 3: HIGH-PERFORMANCE COMPUTE & MULTI-CLOUD                            -->
+        <!-- TIER 3: HIGH-PERFORMANCE COMPUTE & BIGQUERY OMNI MULTI-CLOUD              -->
         <!-- ========================================================================= -->
         <mxCell id="tier_3_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111827;strokeColor=#1F2937;strokeWidth=1.5;arcSize=6;" vertex="1" parent="1">
           <mxGeometry x="40" y="475" width="1520" height="185" as="geometry"/>
         </mxCell>
-        <mxCell id="lbl_tier_3" value="&lt;b style=&quot;font-size:16px;color:#F8FAFC;&quot;&gt;3. High-Performance&lt;br&gt;Compute &amp;amp; Multi-Cloud&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+        <mxCell id="lbl_tier_3" value="&lt;b style=&quot;font-size:15px;color:#F8FAFC;&quot;&gt;3. High-Performance&lt;br&gt;Compute &amp;amp; Multi-Cloud&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;BigQuery &amp;amp; Omni Engine&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="60" y="530" width="160" height="60" as="geometry"/>
         </mxCell>
 
         <!-- BigQuery Editions -->
-        <mxCell id="card_bq_editions" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:22px;color:#38BDF8;width:36px;vertical-align:middle;&quot;&gt;⚡&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:15px;color:#F8FAFC;&quot;&gt;BigQuery Editions&lt;/b&gt;&lt;br&gt;&lt;b style=&quot;font-size:13px;color:#E2E8F0;&quot;&gt;Autoscaling Slots&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Massive processing power&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#334155;strokeWidth=1.5;align=left;verticalAlign=middle;padding=12;arcSize=10;" vertex="1" parent="1">
+        <mxCell id="card_bq_editions" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:22px;color:#38BDF8;width:36px;vertical-align:middle;&quot;&gt;⚡&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:14px;color:#F8FAFC;&quot;&gt;BigQuery Editions&lt;/b&gt;&lt;br&gt;&lt;b style=&quot;font-size:12px;color:#E2E8F0;&quot;&gt;Autoscaling Slots&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#94A3B8;&quot;&gt;Massive processing power&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#334155;strokeWidth=1.5;align=left;verticalAlign=middle;padding=10;arcSize=10;" vertex="1" parent="1">
           <mxGeometry x="250" y="520" width="240" height="95" as="geometry"/>
         </mxCell>
 
         <!-- Dataproc Serverless Spark -->
-        <mxCell id="card_dataproc_spark" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:22px;color:#38BDF8;width:36px;vertical-align:middle;&quot;&gt;🔥&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:15px;color:#F8FAFC;&quot;&gt;Dataproc Serverless Spark&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Managed Spark jobs&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#334155;strokeWidth=1.5;align=left;verticalAlign=middle;padding=12;arcSize=10;" vertex="1" parent="1">
+        <mxCell id="card_dataproc_spark" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:22px;color:#38BDF8;width:36px;vertical-align:middle;&quot;&gt;🔥&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:14px;color:#F8FAFC;&quot;&gt;Dataproc Serverless Spark&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Managed PySpark transformations&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#334155;strokeWidth=1.5;align=left;verticalAlign=middle;padding=10;arcSize=10;" vertex="1" parent="1">
           <mxGeometry x="530" y="520" width="240" height="95" as="geometry"/>
         </mxCell>
 
-        <!-- Value Badge: BigQuery Omni -->
+        <!-- Value Badge: BigQuery Omni Zero-Egress -->
         <mxCell id="badge_omni" value="&lt;b style=&quot;font-size:11px;color:#34D399;&quot;&gt;✓ Zero-Egress Multi-Cloud Querying (BigQuery Omni)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=rgba(16,185,129,0.15);strokeColor=#10B981;strokeWidth=1;align=center;verticalAlign=middle;arcSize=50;" vertex="1" parent="1">
           <mxGeometry x="810" y="490" width="310" height="24" as="geometry"/>
         </mxCell>
 
         <!-- BigQuery Omni -->
-        <mxCell id="card_bq_omni" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:22px;color:#38BDF8;width:36px;vertical-align:middle;&quot;&gt;🌐&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:15px;color:#F8FAFC;&quot;&gt;BigQuery Omni&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Zero-egress in-place querying across data&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#334155;strokeWidth=1.5;align=left;verticalAlign=middle;padding=12;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="810" y="520" width="260" height="95" as="geometry"/>
+        <mxCell id="card_bq_omni" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:22px;color:#38BDF8;width:36px;vertical-align:middle;&quot;&gt;🌐&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:14px;color:#F8FAFC;&quot;&gt;BigQuery Omni&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Executes queries in-place on AWS/Azure&lt;br&gt;without moving data across clouds&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=1.5;align=left;verticalAlign=middle;padding=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="810" y="520" width="270" height="95" as="geometry"/>
         </mxCell>
 
         <!-- Remote Clouds: AWS S3 & Azure ADLS -->
-        <mxCell id="card_aws_s3" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:18px;color:#F97316;width:28px;vertical-align:middle;&quot;&gt;🟧&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:13px;color:#F8FAFC;&quot;&gt;AWS S3&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#EA580C;strokeWidth=1.5;align=left;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1130" y="515" width="150" height="45" as="geometry"/>
+        <mxCell id="card_aws_s3" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:18px;color:#F97316;width:28px;vertical-align:middle;&quot;&gt;🟧&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:13px;color:#F8FAFC;&quot;&gt;AWS S3&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#F97316;&quot;&gt;In-Place Query (No Egress)&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#EA580C;strokeWidth=1.5;align=left;verticalAlign=middle;padding=6;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="515" width="180" height="46" as="geometry"/>
         </mxCell>
-        <mxCell id="card_azure_adls" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:18px;color:#38BDF8;width:28px;vertical-align:middle;&quot;&gt;🟦&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:13px;color:#F8FAFC;&quot;&gt;Azure ADLS&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#0284C7;strokeWidth=1.5;align=left;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1130" y="570" width="150" height="45" as="geometry"/>
+        <mxCell id="card_azure_adls" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:18px;color:#38BDF8;width:28px;vertical-align:middle;&quot;&gt;🟦&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:13px;color:#F8FAFC;&quot;&gt;Azure ADLS Gen2&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#38BDF8;&quot;&gt;In-Place Query (No Egress)&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#0284C7;strokeWidth=1.5;align=left;verticalAlign=middle;padding=6;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="570" width="180" height="46" as="geometry"/>
         </mxCell>
 
 
         <!-- ========================================================================= -->
-        <!-- TIER 4: GOVERNED CONSUMPTION & BI                                         -->
+        <!-- TIER 4: GOVERNED CONSUMPTION & ENTERPRISE INTELLIGENCE                     -->
         <!-- ========================================================================= -->
         <mxCell id="tier_4_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111827;strokeColor=#1F2937;strokeWidth=1.5;arcSize=6;" vertex="1" parent="1">
           <mxGeometry x="40" y="680" width="1520" height="175" as="geometry"/>
         </mxCell>
-        <mxCell id="lbl_tier_4" value="&lt;b style=&quot;font-size:16px;color:#F8FAFC;&quot;&gt;4. Governed&lt;br&gt;Consumption &amp;amp; BI&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+        <mxCell id="lbl_tier_4" value="&lt;b style=&quot;font-size:15px;color:#F8FAFC;&quot;&gt;4. Governed&lt;br&gt;Consumption &amp;amp; BI&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Semantic &amp;amp; AI Layer&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="60" y="730" width="160" height="60" as="geometry"/>
         </mxCell>
 
@@ -137,98 +136,116 @@
         </mxCell>
 
         <!-- Looker -->
-        <mxCell id="card_looker" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:22px;color:#38BDF8;width:36px;vertical-align:middle;&quot;&gt;📊&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:15px;color:#F8FAFC;&quot;&gt;Looker Governed&lt;br&gt;Semantic Metric Layer&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Consistent business metrics&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#334155;strokeWidth=1.5;align=left;verticalAlign=middle;padding=12;arcSize=10;" vertex="1" parent="1">
+        <mxCell id="card_looker" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:22px;color:#38BDF8;width:36px;vertical-align:middle;&quot;&gt;📊&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:14px;color:#F8FAFC;&quot;&gt;Looker Governed&lt;br&gt;Semantic Layer&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Single metric source of truth&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#334155;strokeWidth=1.5;align=left;verticalAlign=middle;padding=10;arcSize=10;" vertex="1" parent="1">
           <mxGeometry x="250" y="722" width="260" height="95" as="geometry"/>
         </mxCell>
 
         <!-- Vertex AI In-Database ML -->
-        <mxCell id="card_vertex_ml" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:22px;color:#818CF8;width:36px;vertical-align:middle;&quot;&gt;🤖&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:15px;color:#F8FAFC;&quot;&gt;Vertex AI In-Database ML&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Advanced analytics integrate with data warehouse&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#334155;strokeWidth=1.5;align=left;verticalAlign=middle;padding=12;arcSize=10;" vertex="1" parent="1">
+        <mxCell id="card_vertex_ml" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:22px;color:#818CF8;width:36px;vertical-align:middle;&quot;&gt;🤖&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:14px;color:#F8FAFC;&quot;&gt;Vertex AI In-Database ML&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;In-warehouse GenAI &amp;amp; LLM scoring&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#334155;strokeWidth=1.5;align=left;verticalAlign=middle;padding=10;arcSize=10;" vertex="1" parent="1">
           <mxGeometry x="550" y="722" width="260" height="95" as="geometry"/>
         </mxCell>
 
         <!-- Zero-Copy Clean Rooms -->
-        <mxCell id="card_clean_rooms" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:22px;color:#34D399;width:36px;vertical-align:middle;&quot;&gt;🔄&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:15px;color:#F8FAFC;&quot;&gt;Zero-Copy Secure&lt;br&gt;Data Clean Rooms&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Governed data sharing and collaboration&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#334155;strokeWidth=1.5;align=left;verticalAlign=middle;padding=12;arcSize=10;" vertex="1" parent="1">
+        <mxCell id="card_clean_rooms" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:22px;color:#34D399;width:36px;vertical-align:middle;&quot;&gt;🔄&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:14px;color:#F8FAFC;&quot;&gt;Zero-Copy Secure&lt;br&gt;Data Clean Rooms&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Governed multi-party collaboration&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#334155;strokeWidth=1.5;align=left;verticalAlign=middle;padding=10;arcSize=10;" vertex="1" parent="1">
           <mxGeometry x="850" y="722" width="270" height="95" as="geometry"/>
         </mxCell>
 
 
         <!-- ========================================================================= -->
-        <!-- CONNECTORS & STEP FLOW LABELS (90-DEGREE ORTHOGONAL ONLY)                 -->
+        <!-- CLEAN ORTHOGONAL CONNECTORS (ARCHITECTURALLY PRECISE)                     -->
         <!-- ========================================================================= -->
 
-        <!-- Connector 1: Pub/Sub -> Datastream CDC -->
-        <mxCell id="e_step1" value="&lt;b style=&quot;font-size:11px;color:#34D399;&quot;&gt;1&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#34D399;strokeWidth=2;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;labelBorderColor=#34D399;" edge="1" parent="1" source="card_pubsub" target="card_datastream">
+        <!-- Pub/Sub -> Datastream & Storage Write API -->
+        <mxCell id="e_pubsub_write" value="&lt;span style=&quot;font-size:10px;color:#34D399;&quot;&gt;Real-Time Stream&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#34D399;strokeWidth=2;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;labelBorderColor=#34D399;" edge="1" parent="1" source="card_pubsub" target="card_storage_write_api">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="490" y="160"/>
+              <mxPoint x="490" y="160"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Datastream -> Raw Bronze -->
+        <mxCell id="e_datastream_bronze" value="&lt;span style=&quot;font-size:10px;color:#94A3B8;&quot;&gt;CDC Batch Ingest&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_datastream" target="card_raw_bronze">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
-        <!-- Connector: Datastream -> BigQuery Write API -->
-        <mxCell id="e_step1b" value="&lt;span style=&quot;font-size:10px;color:#94A3B8;&quot;&gt;Step 6&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_datastream" target="card_storage_write_api">
+        <!-- Storage Write API -> Raw Bronze -->
+        <mxCell id="e_write_api_bronze" value="&lt;span style=&quot;font-size:10px;color:#94A3B8;&quot;&gt;Append Stream&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_storage_write_api" target="card_raw_bronze">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="980" y="240"/>
+              <mxPoint x="355" y="240"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Bronze -> Silver (via Dataproc Spark) -->
+        <mxCell id="e_bronze_silver" value="&lt;b style=&quot;font-size:11px;color:#34D399;&quot;&gt;Spark Cleanse&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#34D399;strokeWidth=2;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;labelBorderColor=#34D399;" edge="1" parent="1" source="card_raw_bronze" target="card_silver_enriched">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
-        <!-- Connector: Pub/Sub -> Raw (Bronze) -->
-        <mxCell id="e_step1_down" value="&lt;span style=&quot;font-size:10px;color:#94A3B8;&quot;&gt;Step 1&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_pubsub" target="card_raw_bronze">
+        <!-- Silver -> Gold (Aggregations) -->
+        <mxCell id="e_silver_gold" value="&lt;b style=&quot;font-size:11px;color:#34D399;&quot;&gt;Aggregate Marts&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#34D399;strokeWidth=2;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;labelBorderColor=#34D399;" edge="1" parent="1" source="card_silver_enriched" target="card_gold_aggregated">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
-        <!-- Connector: Raw -> Silver Enriched -->
-        <mxCell id="e_step3" value="&lt;span style=&quot;font-size:10px;color:#94A3B8;&quot;&gt;Step 3&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_raw_bronze" target="card_silver_enriched">
+        <!-- Gold -> Dataplex Catalog -->
+        <mxCell id="e_gold_dataplex" value="&lt;span style=&quot;font-size:10px;color:#94A3B8;&quot;&gt;Catalog &amp;amp; Masking&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_gold_aggregated" target="card_dataplex">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
-        <!-- Connector: Silver -> Gold -->
-        <mxCell id="e_step_silver_gold" value="&lt;b style=&quot;font-size:11px;color:#34D399;&quot;&gt;5&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#34D399;strokeWidth=2;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;labelBorderColor=#34D399;" edge="1" parent="1" source="card_silver_enriched" target="card_gold_aggregated">
+        <!-- Gold -> BigQuery Editions -->
+        <mxCell id="e_gold_bq" value="&lt;span style=&quot;font-size:10px;color:#38BDF8;&quot;&gt;BigLake SQL Query&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#38BDF8;strokeWidth=2;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;labelBorderColor=#38BDF8;" edge="1" parent="1" source="card_gold_aggregated" target="card_bq_editions">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="855" y="440"/>
+              <mxPoint x="370" y="440"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Spark to Silver/Gold Transformation Engine -->
+        <mxCell id="e_spark_silver" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_dataproc_spark" target="card_silver_enriched">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
-        <!-- Connector: Gold -> Dataplex -->
-        <mxCell id="e_gold_dataplex" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_gold_aggregated" target="card_dataplex">
+        <!-- WHAT BIGQUERY OMNI DOES: In-Place Cross-Cloud Queries on AWS S3 & Azure ADLS -->
+        <mxCell id="e_s3_omni" value="&lt;span style=&quot;font-size:10px;color:#F97316;&quot;&gt;In-Place S3 Read&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#EA580C;strokeWidth=2;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;labelBorderColor=#EA580C;" edge="1" parent="1" source="card_aws_s3" target="card_bq_omni">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_adls_omni" value="&lt;span style=&quot;font-size:10px;color:#38BDF8;&quot;&gt;In-Place ADLS Read&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0284C7;strokeWidth=2;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;labelBorderColor=#0284C7;" edge="1" parent="1" source="card_azure_adls" target="card_bq_omni">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
-        <!-- Connector: Raw -> BQ Editions -->
-        <mxCell id="e_raw_bq" value="&lt;span style=&quot;font-size:10px;color:#94A3B8;&quot;&gt;Step 1&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_raw_bronze" target="card_bq_editions">
+        <!-- BigQuery Omni -> BigQuery Editions (Returns Aggregated Query Result with Zero Data Egress) -->
+        <mxCell id="e_omni_bq" value="&lt;b style=&quot;font-size:10px;color:#34D399;&quot;&gt;Zero-Egress Multi-Cloud Joins&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#10B981;strokeWidth=2.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;labelBorderColor=#10B981;" edge="1" parent="1" source="card_bq_omni" target="card_bq_editions">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
-        <!-- Connector: BQ Editions -> Dataproc Spark -->
-        <mxCell id="e_bq_spark" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_bq_editions" target="card_dataproc_spark">
+        <!-- BigQuery Editions -> Looker -->
+        <mxCell id="e_bq_looker" value="&lt;span style=&quot;font-size:10px;color:#38BDF8;&quot;&gt;Semantic Models&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#38BDF8;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_bq_editions" target="card_looker">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
-        <!-- Connector: Dataproc Spark -> BQ Omni -->
-        <mxCell id="e_spark_omni" value="&lt;span style=&quot;font-size:10px;color:#94A3B8;&quot;&gt;Step 6&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_dataproc_spark" target="card_bq_omni">
-          <mxGeometry relative="1" as="geometry"/>
+        <!-- BigQuery Editions -> Vertex AI ML -->
+        <mxCell id="e_bq_vertex" value="&lt;span style=&quot;font-size:10px;color:#818CF8;&quot;&gt;In-DB Inference&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#818CF8;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_bq_editions" target="card_vertex_ml">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="420" y="650"/>
+              <mxPoint x="680" y="650"/>
+            </Array>
+          </mxGeometry>
         </mxCell>
 
-        <!-- Connector: BQ Omni -> AWS S3 -->
-        <mxCell id="e_omni_s3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#F97316;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_bq_omni" target="card_aws_s3">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-
-        <!-- Connector: BQ Omni -> Azure ADLS -->
-        <mxCell id="e_omni_adls" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#38BDF8;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_bq_omni" target="card_azure_adls">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-
-        <!-- Connector: BQ Editions -> Looker -->
-        <mxCell id="e_bq_looker" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_bq_editions" target="card_looker">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-
-        <!-- Connector: Looker -> Vertex AI ML -->
-        <mxCell id="e_looker_ml" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_looker" target="card_vertex_ml">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-
-        <!-- Connector: Dataproc Spark -> Vertex AI ML -->
-        <mxCell id="e_spark_ml" value="&lt;span style=&quot;font-size:10px;color:#94A3B8;&quot;&gt;Step 5&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_dataproc_spark" target="card_vertex_ml">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-
-        <!-- Connector: BQ Omni -> Clean Rooms -->
-        <mxCell id="e_omni_clean" value="&lt;span style=&quot;font-size:10px;color:#94A3B8;&quot;&gt;Step 6&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_bq_omni" target="card_clean_rooms">
-          <mxGeometry relative="1" as="geometry"/>
+        <!-- BigQuery Editions -> Zero-Copy Clean Rooms -->
+        <mxCell id="e_bq_cleanrooms" value="&lt;span style=&quot;font-size:10px;color:#34D399;&quot;&gt;Authorized Views&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#34D399;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_bq_editions" target="card_clean_rooms">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="460" y="665"/>
+              <mxPoint x="985" y="665"/>
+            </Array>
+          </mxGeometry>
         </mxCell>
 
       </root>
