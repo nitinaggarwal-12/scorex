@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db/connection');
+const genaiAssessmentRepo = require('../db/genaiAssessmentRepository');
 const genAIFramework = require('../data/genai-readiness-framework');
 const ExcelJS = require('exceljs');
 
@@ -12,25 +12,8 @@ router.get('/framework', (req, res) => {
 // Save a new assessment
 router.post('/assessments', async (req, res) => {
   try {
-    const { customerName, responses, scores, totalScore, maxScore, maturityLevel, completedAt } = req.body;
-    
-    const result = await db.query(
-      `INSERT INTO genai_assessments 
-       (customer_name, responses, scores, total_score, max_score, maturity_level, completed_at, created_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
-       RETURNING id`,
-      [
-        customerName,
-        JSON.stringify(responses),
-        JSON.stringify(scores),
-        totalScore,
-        maxScore,
-        maturityLevel,
-        completedAt
-      ]
-    );
-
-    res.json({ id: result.rows[0].id, message: 'Assessment saved successfully' });
+    const saved = await genaiAssessmentRepo.create(req.body);
+    res.json({ id: saved.id, message: 'Assessment saved successfully' });
   } catch (error) {
     console.error('Error saving assessment:', error);
     res.status(500).json({ error: 'Failed to save assessment' });
@@ -41,28 +24,13 @@ router.post('/assessments', async (req, res) => {
 router.get('/assessments/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    
-    const result = await db.query(
-      'SELECT * FROM genai_assessments WHERE id = $1',
-      [id]
-    );
+    const assessment = await genaiAssessmentRepo.findById(id);
 
-    if (result.rows.length === 0) {
+    if (!assessment) {
       return res.status(404).json({ error: 'Assessment not found' });
     }
 
-    const assessment = result.rows[0];
-    res.json({
-      id: assessment.id,
-      customerName: assessment.customer_name,
-      responses: assessment.responses,
-      scores: assessment.scores,
-      totalScore: assessment.total_score,
-      maxScore: assessment.max_score,
-      maturityLevel: assessment.maturity_level,
-      completedAt: assessment.completed_at,
-      createdAt: assessment.created_at
-    });
+    res.json(assessment);
   } catch (error) {
     console.error('Error fetching assessment:', error);
     res.status(500).json({ error: 'Failed to fetch assessment' });
@@ -73,31 +41,13 @@ router.get('/assessments/:id', async (req, res) => {
 router.put('/assessments/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { customerName, responses, scores, totalScore, maxScore, maturityLevel, completedAt } = req.body;
-    
-    const result = await db.query(
-      `UPDATE genai_assessments 
-       SET customer_name = $1, responses = $2, scores = $3, total_score = $4, 
-           max_score = $5, maturity_level = $6, completed_at = $7, updated_at = NOW()
-       WHERE id = $8
-       RETURNING id`,
-      [
-        customerName,
-        JSON.stringify(responses),
-        JSON.stringify(scores),
-        totalScore,
-        maxScore,
-        maturityLevel,
-        completedAt,
-        id
-      ]
-    );
+    const updated = await genaiAssessmentRepo.update(id, req.body);
 
-    if (result.rows.length === 0) {
+    if (!updated) {
       return res.status(404).json({ error: 'Assessment not found' });
     }
 
-    res.json({ id: result.rows[0].id, message: 'Assessment updated successfully' });
+    res.json({ id: updated.id, message: 'Assessment updated successfully' });
   } catch (error) {
     console.error('Error updating assessment:', error);
     res.status(500).json({ error: 'Failed to update assessment' });
@@ -107,20 +57,7 @@ router.put('/assessments/:id', async (req, res) => {
 // Get all assessments (for dashboard/list view)
 router.get('/assessments', async (req, res) => {
   try {
-    const result = await db.query(
-      'SELECT id, customer_name, total_score, max_score, maturity_level, completed_at, created_at FROM genai_assessments ORDER BY created_at DESC'
-    );
-
-    const assessments = result.rows.map(row => ({
-      id: row.id,
-      customerName: row.customer_name,
-      totalScore: row.total_score,
-      maxScore: row.max_score,
-      maturityLevel: row.maturity_level,
-      completedAt: row.completed_at,
-      createdAt: row.created_at
-    }));
-
+    const assessments = await genaiAssessmentRepo.findAll();
     res.json(assessments);
   } catch (error) {
     console.error('Error fetching assessments:', error);
@@ -132,9 +69,7 @@ router.get('/assessments', async (req, res) => {
 router.delete('/assessments/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    
-    await db.query('DELETE FROM genai_assessments WHERE id = $1', [id]);
-    
+    await genaiAssessmentRepo.delete(id);
     res.json({ message: 'Assessment deleted successfully' });
   } catch (error) {
     console.error('Error deleting assessment:', error);
@@ -146,17 +81,12 @@ router.delete('/assessments/:id', async (req, res) => {
 router.get('/assessments/:id/excel', async (req, res) => {
   try {
     const { id } = req.params;
-    
-    const result = await db.query(
-      'SELECT * FROM genai_assessments WHERE id = $1',
-      [id]
-    );
+    const assessment = await genaiAssessmentRepo.findById(id);
 
-    if (result.rows.length === 0) {
+    if (!assessment) {
       return res.status(404).json({ error: 'Assessment not found' });
     }
 
-    const assessment = result.rows[0];
     const workbook = new ExcelJS.Workbook();
     
     // Summary Sheet
@@ -386,19 +316,12 @@ router.post('/assessments/:id/upload-excel', async (req, res) => {
     );
 
     // Update assessment in database
-    await db.query(
-      `UPDATE genai_assessments 
-       SET responses = $1, scores = $2, total_score = $3, 
-           maturity_level = $4, updated_at = NOW()
-       WHERE id = $5`,
-      [
-        JSON.stringify(responses),
-        JSON.stringify(newScores),
-        totalScore,
-        maturityLevel?.level || null,
-        id
-      ]
-    );
+    await genaiAssessmentRepo.update(id, {
+      responses,
+      scores: newScores,
+      totalScore,
+      maturityLevel: maturityLevel?.level || null
+    });
 
     res.json({ 
       message: 'Assessment updated successfully from Excel',
