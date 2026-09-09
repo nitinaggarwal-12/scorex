@@ -3909,7 +3909,7 @@ if (process.env.VERCEL !== '1') {
   const db = require('./db/connection');
   
   // Start listening immediately on 0.0.0.0 to guarantee instant port binding
-  app.listen(PORT, '0.0.0.0', () => {
+  const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 ScoreX Enterprise Cloud, Data & AI Assessment API running on port ${PORT}`);
     console.log(`📊 Assessment framework loaded with ${assessmentFramework.assessmentAreas.length} areas`);
     console.log(`🔗 API Health Check: http://localhost:${PORT}/api/health`);
@@ -3927,6 +3927,36 @@ if (process.env.VERCEL !== '1') {
       console.warn('Background database initialization notice:', err.message);
     });
   });
+
+  // Graceful shutdown protocol for cloud container lifecycles (Railway, Docker, K8s)
+  let isShuttingDown = false;
+  const gracefulShutdown = async (signal) => {
+    if (isShuttingDown) return;
+    isShuttingDown = true;
+    console.log(`\n🛑 [ScoreX] Received ${signal}. Draining connections and initiating graceful shutdown...`);
+
+    // Stop accepting new incoming connections
+    server.close(async () => {
+      console.log('🔒 [ScoreX] HTTP server successfully closed to new incoming requests');
+      try {
+        await db.close();
+        console.log('🔒 [ScoreX] PostgreSQL connection pool closed');
+      } catch (err) {
+        console.warn('⚠️ [ScoreX] Error closing database pool during shutdown:', err.message);
+      }
+      process.exit(0);
+    });
+
+    // Enforce hard timeout in case connections refuse to drain
+    const forceTimeout = setTimeout(() => {
+      console.error('⚠️ [ScoreX] Forced termination after 10s shutdown timeout');
+      process.exit(1);
+    }, 10000);
+    if (forceTimeout.unref) forceTimeout.unref();
+  };
+
+  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 }
 
 module.exports = app;

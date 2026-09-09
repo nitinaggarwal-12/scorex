@@ -1,28 +1,25 @@
 const express = require('express');
 const router = express.Router();
-const { Pool } = require('pg');
+const db = require('../db/connection');
 const { requireAdmin } = require('../middleware/auth');
 
 // Data cleanup can inspect and destructively mutate shared assessment data.
 // Every endpoint in this router is therefore admin-only.
 router.use(requireAdmin);
 
-// Create PostgreSQL connection pool
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
-});
-
 /**
  * Identify corrupted assessments
  * Corrupted = completedCategories shows complete but no actual response data
  */
 router.get('/corrupted-assessments', async (req, res) => {
+  if (!db.pool) {
+    return res.status(503).json({ success: false, message: 'PostgreSQL database service unavailable' });
+  }
+
   try {
     const query = `
       SELECT 
         id,
-        assessment_id,
         assessment_name,
         organization_name,
         industry,
@@ -67,7 +64,7 @@ router.get('/corrupted-assessments', async (req, res) => {
       ORDER BY updated_at DESC;
     `;
 
-    const result = await pool.query(query);
+    const result = await db.query(query);
     
     console.log(`[Data Cleanup] Found ${result.rows.length} corrupted assessments`);
     
@@ -76,7 +73,7 @@ router.get('/corrupted-assessments', async (req, res) => {
       count: result.rows.length,
       assessments: result.rows.map(row => ({
         id: row.id,
-        assessmentId: row.assessment_id,
+        assessmentId: row.id,
         assessmentName: row.assessment_name,
         organizationName: row.organization_name,
         industry: row.industry,
@@ -103,20 +100,24 @@ router.get('/corrupted-assessments', async (req, res) => {
  * Delete a specific assessment by ID
  */
 router.delete('/assessment/:assessmentId', async (req, res) => {
+  if (!db.pool) {
+    return res.status(503).json({ success: false, message: 'PostgreSQL database service unavailable' });
+  }
+
   const { assessmentId } = req.params;
-  const client = await pool.connect();
+  let client;
 
   try {
+    client = await db.getClient();
     await client.query('BEGIN');
 
     // Delete related data first (if any foreign key constraints exist)
-    // Add more related tables as needed
     await client.query('DELETE FROM question_edits WHERE assessment_id = $1', [assessmentId]);
     await client.query('DELETE FROM deleted_questions WHERE assessment_id = $1', [assessmentId]);
     
-    // Delete the assessment
+    // Delete the assessment using primary key 'id'
     const result = await client.query(
-      'DELETE FROM assessments WHERE assessment_id = $1 RETURNING assessment_name, organization_name',
+      'DELETE FROM assessments WHERE id = $1 RETURNING assessment_name, organization_name',
       [assessmentId]
     );
 
@@ -142,7 +143,7 @@ router.delete('/assessment/:assessmentId', async (req, res) => {
     });
 
   } catch (error) {
-    await client.query('ROLLBACK');
+    if (client) await client.query('ROLLBACK');
     console.error('[Data Cleanup] Error deleting assessment:', error);
     res.status(500).json({
       success: false,
@@ -150,7 +151,7 @@ router.delete('/assessment/:assessmentId', async (req, res) => {
       error: error.message
     });
   } finally {
-    client.release();
+    if (client) client.release();
   }
 });
 
@@ -158,6 +159,10 @@ router.delete('/assessment/:assessmentId', async (req, res) => {
  * Bulk delete corrupted assessments
  */
 router.post('/bulk-delete-corrupted', async (req, res) => {
+  if (!db.pool) {
+    return res.status(503).json({ success: false, message: 'PostgreSQL database service unavailable' });
+  }
+
   const { assessmentIds } = req.body;
 
   if (!assessmentIds || !Array.isArray(assessmentIds) || assessmentIds.length === 0) {
@@ -167,13 +172,14 @@ router.post('/bulk-delete-corrupted', async (req, res) => {
     });
   }
 
-  const client = await pool.connect();
+  let client;
   const results = {
     deleted: [],
     failed: []
   };
 
   try {
+    client = await db.getClient();
     await client.query('BEGIN');
 
     for (const assessmentId of assessmentIds) {
@@ -182,9 +188,9 @@ router.post('/bulk-delete-corrupted', async (req, res) => {
         await client.query('DELETE FROM question_edits WHERE assessment_id = $1', [assessmentId]);
         await client.query('DELETE FROM deleted_questions WHERE assessment_id = $1', [assessmentId]);
         
-        // Delete assessment
+        // Delete assessment using primary key 'id'
         const result = await client.query(
-          'DELETE FROM assessments WHERE assessment_id = $1 RETURNING assessment_name',
+          'DELETE FROM assessments WHERE id = $1 RETURNING assessment_name',
           [assessmentId]
         );
 
@@ -218,7 +224,7 @@ router.post('/bulk-delete-corrupted', async (req, res) => {
     });
 
   } catch (error) {
-    await client.query('ROLLBACK');
+    if (client) await client.query('ROLLBACK');
     console.error('[Data Cleanup] Error in bulk delete:', error);
     res.status(500).json({
       success: false,
@@ -227,7 +233,7 @@ router.post('/bulk-delete-corrupted', async (req, res) => {
       partialResults: results
     });
   } finally {
-    client.release();
+    if (client) client.release();
   }
 });
 
@@ -235,6 +241,10 @@ router.post('/bulk-delete-corrupted', async (req, res) => {
  * Get statistics about data quality
  */
 router.get('/data-quality-stats', async (req, res) => {
+  if (!db.pool) {
+    return res.status(503).json({ success: false, message: 'PostgreSQL database service unavailable' });
+  }
+
   try {
     const statsQuery = `
       SELECT 
@@ -267,7 +277,7 @@ router.get('/data-quality-stats', async (req, res) => {
       FROM assessments;
     `;
 
-    const result = await pool.query(statsQuery);
+    const result = await db.query(statsQuery);
     const stats = result.rows[0];
     const totalAssessments = parseInt(stats.total_assessments);
     const corruptedAssessments = parseInt(stats.corrupted_assessments);
