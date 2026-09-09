@@ -304,6 +304,96 @@ class AuthService {
       };
     }
   }
+
+  // --- Universal SSO Client Methods ---
+
+  async getSSOConfig() {
+    try {
+      const response = await axios.get(`${API_URL}/auth/sso/config`);
+      return response.data;
+    } catch (error) {
+      console.warn('Failed to load SSO config:', error);
+      return { success: false, providers: {}, sandboxMode: true };
+    }
+  }
+
+  async lookupSSODomain(email) {
+    try {
+      const response = await axios.post(`${API_URL}/auth/sso/lookup`, { email });
+      return response.data;
+    } catch (error) {
+      return { success: false, error: error.response?.data?.error || 'Domain lookup failed' };
+    }
+  }
+
+  initiateSSOLogin(provider, loginHint = '') {
+    const params = new URLSearchParams();
+    if (loginHint) params.append('login_hint', loginHint);
+    const query = params.toString() ? `?${params.toString()}` : '';
+    window.location.href = `${API_URL}/auth/sso/login/${provider}${query}`;
+  }
+
+  async loginWithSSOSandbox({ email, role = 'consumer', firstName = '', lastName = '', organization = '', provider = 'google' }) {
+    try {
+      const response = await axios.post(`${API_URL}/auth/sso/sandbox-login`, {
+        email,
+        role,
+        firstName,
+        lastName,
+        organization,
+        provider
+      });
+      const { sessionId, user } = response.data;
+      this.setSession(sessionId, user);
+      return { success: true, user, sessionId };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.error || 'Corporate SSO sandbox login failed'
+      };
+    }
+  }
+
+  checkAndProcessSSOCallback() {
+    if (typeof window === 'undefined' || !window.location.search) return null;
+    const params = new URLSearchParams(window.location.search);
+    
+    if (params.get('sso_status') === 'success') {
+      const sessionId = params.get('session_id');
+      const role = params.get('role') || 'consumer';
+      const email = params.get('email') || '';
+      const name = params.get('name') || '';
+      const organization = params.get('organization') || 'Corporate Enterprise';
+      const provider = params.get('provider') || 'sso';
+      const userId = params.get('user_id') || `sso_${Date.now()}`;
+
+      const nameParts = name.split(' ');
+      const user = {
+        id: userId,
+        email,
+        role,
+        firstName: nameParts[0] || 'Corporate',
+        lastName: nameParts.slice(1).join(' ') || 'User',
+        organization,
+        ssoProvider: provider
+      };
+
+      if (sessionId) {
+        this.setSession(sessionId, user);
+        // Clean URL params without reload
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+        return { success: true, user, provider };
+      }
+    } else if (params.get('sso_error')) {
+      const errorMsg = params.get('sso_error');
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+      return { success: false, error: errorMsg };
+    }
+
+    return null;
+  }
 }
 
 const authService = new AuthService();

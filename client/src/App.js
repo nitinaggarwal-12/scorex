@@ -245,6 +245,23 @@ function App() {
   const [assessmentFramework, setAssessmentFramework] = useState(null);
   const [loading, setLoading] = useState(true);
   
+  // Handle Corporate SSO redirect callback on application load
+  useEffect(() => {
+    const ssoResult = authService.checkAndProcessSSOCallback();
+    if (ssoResult) {
+      if (ssoResult.success) {
+        toast.success(`Signed in via Corporate SSO (${(ssoResult.provider || 'OIDC').toUpperCase()}) as ${ssoResult.user.email}`);
+        if (ssoResult.user.role === 'consumer') {
+          window.location.href = '/my-assessments';
+        } else {
+          window.location.href = '/insights-dashboard';
+        }
+      } else if (ssoResult.error) {
+        toast.error(`Corporate SSO Error: ${ssoResult.error}`);
+      }
+    }
+  }, []);
+
   // Track pathname changes
   useEffect(() => {
     const updatePath = () => setCurrentPath(window.location.pathname);

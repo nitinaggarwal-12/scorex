@@ -75,9 +75,11 @@ const authorValidationRoutes = require('./routes/authorValidation');
 const genaiReadinessRoutes = require('./routes/genaiReadiness');
 const dynamicAssessmentsRoutes = require('./routes/dynamicAssessments');
 const audioRoutes = require('./routes/audio');
+const ssoRoutes = require('./routes/sso');
 const { requireAdmin } = require('./middleware/auth');
 
 // Mount routes
+app.use('/api/auth/sso', ssoRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/assignments', assignmentRoutes);
 app.use('/api/author', require('./routes/authorValidation')); // Enhanced Author features

@@ -137,6 +137,47 @@ class UserRepository {
   async cleanupExpiredSessions() {
     await pool.query('DELETE FROM sessions WHERE expires_at < NOW()');
   }
+
+  async findBySSO(provider, ssoId) {
+    try {
+      const query = 'SELECT * FROM users WHERE sso_provider = $1 AND sso_id = $2';
+      const result = await pool.query(query, [provider, ssoId]);
+      return result.rows[0] || null;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  async createSSOUser({ email, role, firstName, lastName, organization, ssoProvider, ssoId }) {
+    const dummyPasswordHash = await bcrypt.hash(crypto.randomUUID() + crypto.randomBytes(32).toString('hex'), SALT_ROUNDS);
+    try {
+      const query = `
+        INSERT INTO users (email, password_hash, role, first_name, last_name, organization, sso_provider, sso_id)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        RETURNING id, email, role, first_name, last_name, organization, is_active, created_at
+      `;
+      const values = [email, dummyPasswordHash, role, firstName, lastName, organization, ssoProvider, ssoId];
+      const result = await pool.query(query, values);
+      return result.rows[0];
+    } catch (err) {
+      const fallbackQuery = `
+        INSERT INTO users (email, password_hash, role, first_name, last_name, organization)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING id, email, role, first_name, last_name, organization, is_active, created_at
+      `;
+      const fallbackValues = [email, dummyPasswordHash, role, firstName, lastName, organization];
+      const result = await pool.query(fallbackQuery, fallbackValues);
+      return result.rows[0];
+    }
+  }
+
+  async linkSSOToUser(userId, ssoProvider, ssoId) {
+    try {
+      await pool.query('UPDATE users SET sso_provider = $1, sso_id = $2, last_login_at = CURRENT_TIMESTAMP WHERE id = $3', [ssoProvider, ssoId, userId]);
+    } catch (err) {
+      await pool.query('UPDATE users SET last_login_at = CURRENT_TIMESTAMP WHERE id = $1', [userId]);
+    }
+  }
 }
 
 module.exports = new UserRepository();
