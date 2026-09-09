@@ -705,6 +705,8 @@ const ArchitectureComparisonDiagram = ({
     if (curEdges < 10) return true;
     // Check for raw emojis in vertex cells
     if (cur.includes('💸') || cur.includes('🖥️') || cur.includes('⚡') || cur.includes('🤖')) return true;
+    // Detect legacy marketing reference diagram (template_40_enterprise_genai_platform)
+    if (tgt.includes('template_40_enterprise_genai_platform') || tgt.includes('CHANNELS') && tgt.includes('EXPERIENCE &amp;')) return true;
     // Check for low target edge count
     const tgtEdges = (tgt.match(/edge="1"/g) || []).length;
     if (tgtEdges < 10) return true;
