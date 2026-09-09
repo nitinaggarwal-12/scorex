@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import toast from 'react-hot-toast';
 import { 
-  FiChevronDown, 
   FiChevronRight, 
   FiCheckCircle, 
   FiCircle, 
@@ -263,38 +261,6 @@ const ActionButton = styled(motion.button)`
     cursor: not-allowed;
     box-shadow: none;
     opacity: 0.6;
-  }
-`;
-
-const PillarResultButton = styled(motion.button)`
-  width: 100%;
-  padding: 12px 16px;
-  margin-bottom: 8px;
-  border: none;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 13px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 10px;
-  transition: all 0.3s ease;
-  background: ${props => props.isCompleted ? 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)' : '#f3f4f6'};
-  color: ${props => props.isCompleted ? '#f97316' : '#9ca3af'};
-  border: 2px solid ${props => props.isCompleted ? '#f97316' : '#e5e7eb'};
-
-  &:hover {
-    ${props => props.isCompleted && `
-      background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
-      transform: translateX(2px);
-      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
-    `}
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
   }
 `;
 

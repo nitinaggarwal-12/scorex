@@ -6,12 +6,8 @@ import {
   FiDownload, 
   FiChevronLeft, 
   FiChevronRight, 
-  FiCheckCircle, 
   FiPrinter, 
   FiCopy, 
-  FiExternalLink,
-  FiFileText,
-  FiLayers,
   FiSearch
 } from "react-icons/fi";
 import toast from "react-hot-toast";
@@ -19,7 +15,6 @@ import { exportAssessmentToPPTX } from "../services/pptxExportService";
 import { exportDynamicAssessmentToExcel } from "../services/excelExportService";
 import { 
   exportAssessmentToCSV, 
-  exportAssessmentToJSON, 
   exportAssessmentToWord, 
   exportDrawioFile 
 } from "../services/dataExportService";

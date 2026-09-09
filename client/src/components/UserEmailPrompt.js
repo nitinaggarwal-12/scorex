@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { FiMail, FiUser } from 'react-icons/fi';
-import toast from 'react-hot-toast';
 
 const ModalOverlay = styled.div`
   position: fixed;

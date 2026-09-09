@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import { FiFileText, FiClock, FiCheckCircle, FiLock, FiEye, FiPlay } from 'react-icons/fi';
 import assignmentService from '../services/assignmentService';
 import authService from '../services/authService';
-import toast from 'react-hot-toast';
 
 const PageContainer = styled.div`
   min-height: 100vh;

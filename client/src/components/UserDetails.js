@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import toast from 'react-hot-toast';
 import { FiUser, FiMail, FiBriefcase, FiCalendar, FiArrowLeft, FiFileText, FiCheckCircle, FiClock } from 'react-icons/fi';
 import axios from 'axios';
 
@@ -276,11 +275,7 @@ const UserDetails = () => {
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchUserDetails();
-  }, [userId]);
-
-  const fetchUserDetails = async () => {
+  const fetchUserDetails = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -293,11 +288,14 @@ const UserDetails = () => {
       setAssignments(assignmentsResponse.data.assignments || []);
     } catch (error) {
       console.error('Error fetching user details:', error);
-      
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    fetchUserDetails();
+  }, [fetchUserDetails]);
 
   const getInitials = (firstName, lastName) => {
     return `${firstName?.charAt(0) || ''}${lastName?.charAt(0) || ''}`;

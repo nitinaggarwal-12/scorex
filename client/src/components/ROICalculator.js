@@ -3,17 +3,12 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import {
   FiDollarSign,
-  FiTrendingUp,
   FiUsers,
   FiDatabase,
   FiCpu,
-  FiDownload,
   FiRefreshCw,
   FiInfo,
-  FiCheckCircle,
-  FiEdit2,
-  FiTrash2,
-  FiPlus
+  FiCheckCircle
 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 // jsPDF import removed - Download Business Case feature removed
@@ -324,220 +319,6 @@ const InfoText = styled.div`
   line-height: 1.6;
 `;
 
-// Interactive Elements for CRUD
-const AddBenefitButton = styled.button`
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  background: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  opacity: 0;
-  margin-top: 16px;
-
-  ${CalculatorContainer}:hover & {
-    opacity: 1;
-  }
-
-  @media (max-width: 768px) {
-    opacity: 1;
-  }
-
-  &:hover {
-    background: #2563eb;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-  }
-
-  @media print {
-    display: none !important;
-  }
-`;
-
-const CustomBenefitsSection = styled.div`
-  margin-bottom: 24px;
-`;
-
-const CustomBenefitCard = styled(motion.div)`
-  position: relative;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  margin-bottom: 12px;
-
-  &:hover .benefit-actions {
-    opacity: 1;
-  }
-`;
-
-const BenefitActions = styled.div.attrs({ className: 'benefit-actions' })`
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  display: flex;
-  gap: 8px;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  z-index: 10;
-
-  @media (max-width: 768px) {
-    opacity: 1;
-  }
-
-  @media print {
-    display: none !important;
-  }
-`;
-
-const BenefitActionButton = styled.button`
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
-  border: none;
-  background: rgba(255, 255, 255, 0.95);
-  color: #64748b;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: #3b82f6;
-    color: white;
-    transform: scale(1.1);
-  }
-`;
-
-const ModalOverlay = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-`;
-
-const ModalContent = styled(motion.div)`
-  background: white;
-  border-radius: 16px;
-  padding: 32px;
-  max-width: 600px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-`;
-
-const ModalTitle = styled.h3`
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin: 0 0 24px 0;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-`;
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-`;
-
-const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const Label = styled.label`
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #475569;
-`;
-
-const Input = styled.input`
-  padding: 12px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-
-  &:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-  }
-`;
-
-const TextArea = styled.textarea`
-  padding: 12px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 1rem;
-  min-height: 80px;
-  font-family: inherit;
-  resize: vertical;
-  transition: all 0.2s ease;
-
-  &:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-  }
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-  margin-top: 8px;
-`;
-
-const Button = styled.button`
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
-
-  ${props => props.$variant === 'primary' ? `
-    background: #3b82f6;
-    color: white;
-    &:hover {
-      background: #2563eb;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-    }
-  ` : `
-    background: #f1f5f9;
-    color: #64748b;
-    &:hover {
-      background: #e2e8f0;
-    }
-  `}
-
-  &:active {
-    transform: translateY(0);
-  }
-`;
-
 // =====================
 // COMPONENT
 // =====================
@@ -714,7 +495,7 @@ const ROICalculator = ({ results, assessment }) => {
     }, interval);
 
     return () => clearInterval(timer);
-  }, [scenario, assumptions]);
+  }, [scenario, assumptions, roi.netROI, roi.revenue, roi.savings, roi.threeYearValue]);
 
   const handleAssumptionChange = (key, value) => {
     const parsed = parseInt(value, 10);

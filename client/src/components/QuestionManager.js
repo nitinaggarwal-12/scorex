@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiPlus, FiEdit2, FiTrash2, FiCheck, FiX, FiEye, FiEyeOff, FiLink } from 'react-icons/fi';
+import { FiPlus, FiEdit2, FiTrash2, FiX, FiEye, FiEyeOff, FiLink } from 'react-icons/fi';
 import customQuestionsService from '../services/customQuestionsService';
 import * as assessmentService from '../services/assessmentService';
 
@@ -76,13 +76,6 @@ const FilterGroup = styled.div`
   gap: 10px;
   align-items: center;
   flex-wrap: wrap;
-`;
-
-const PillarButtonGroup = styled.div`
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  position: relative;
 `;
 
 const SampleButton = styled(motion.button)`
@@ -629,12 +622,7 @@ const QuestionManager = () => {
     maturity_level_5: ''
   });
 
-  useEffect(() => {
-    fetchQuestions();
-    fetchStats();
-  }, [showInactive, selectedPillar]);
-
-  const fetchQuestions = async () => {
+  const fetchQuestions = useCallback(async () => {
     try {
       setLoading(true);
       const pillarFilter = selectedPillar === 'all' ? null : selectedPillar;
@@ -645,16 +633,21 @@ const QuestionManager = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showInactive, selectedPillar]);
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       const response = await customQuestionsService.getStatistics();
       setStats(response.stats || {});
     } catch (error) {
       console.error('Error fetching stats:', error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchQuestions();
+    fetchStats();
+  }, [fetchQuestions, fetchStats]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -890,6 +883,37 @@ const QuestionManager = () => {
         </StatsBar>
 
         <ActionBar>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <AddButton
+              onClick={handleAddNew}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <FiPlus size={18} /> Add Custom Question
+            </AddButton>
+            <select
+              value={selectedPillar}
+              onChange={(e) => setSelectedPillar(e.target.value)}
+              style={{
+                padding: '10px 16px',
+                borderRadius: '8px',
+                border: '2px solid white',
+                background: 'rgba(255, 255, 255, 0.2)',
+                color: 'white',
+                fontWeight: 600,
+                fontSize: '0.9rem',
+                cursor: 'pointer',
+                outline: 'none'
+              }}
+              title="Filter by pillar"
+            >
+              {PILLARS.map(p => (
+                <option key={p.value} value={p.value} style={{ color: '#1e293b' }}>
+                  {p.label}
+                </option>
+              ))}
+            </select>
+          </div>
           <FilterGroup>
             {PILLARS.filter(p => p.value !== 'all').map(pillar => (
               <SampleButton

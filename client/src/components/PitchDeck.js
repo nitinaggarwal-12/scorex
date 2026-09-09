@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
-import { FiArrowRight, FiCheckCircle, FiTrendingUp, FiTarget, FiAward, FiZap, FiBarChart2, FiUsers, FiDollarSign, FiClock, FiShield, FiActivity, FiMonitor, FiPrinter, FiX, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiCheckCircle, FiTrendingUp, FiTarget, FiAward, FiZap, FiBarChart2, FiUsers, FiDollarSign, FiClock, FiShield, FiActivity, FiMonitor, FiPrinter, FiX, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
@@ -266,28 +266,6 @@ const HeroSubtitle = styled.p`
   }
 `;
 
-const CTAButton = styled.button`
-  background: white;
-  color: #667eea;
-  padding: 18px 48px;
-  font-size: 1.2rem;
-  font-weight: 700;
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  transition: all 0.3s ease;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-    background: #f8f9ff;
-  }
-`;
-
 const ContentSection = styled.div`
   max-width: 1400px;
   margin: 0 auto 30px auto;
@@ -453,6 +431,14 @@ const PitchDeck = () => {
     { id: 'thank-you', title: 'Thank You', type: 'thank-you' }
   ];
 
+  const nextSlide = useCallback(() => {
+    setCurrentSlide(prev => (prev < slides.length - 1 ? prev + 1 : prev));
+  }, [slides.length]);
+
+  const prevSlide = useCallback(() => {
+    setCurrentSlide(prev => (prev > 0 ? prev - 1 : prev));
+  }, []);
+
   useEffect(() => {
     const handleKeyPress = (e) => {
       if (!showSlideshow) return;
@@ -471,19 +457,7 @@ const PitchDeck = () => {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [showSlideshow, currentSlide]);
-
-  const nextSlide = () => {
-    if (currentSlide < slides.length - 1) {
-      setCurrentSlide(currentSlide + 1);
-    }
-  };
-
-  const prevSlide = () => {
-    if (currentSlide > 0) {
-      setCurrentSlide(currentSlide - 1);
-    }
-  };
+  }, [showSlideshow, nextSlide, prevSlide]);
 
   const handlePrint = async () => {
     setIsPrinting(true);
@@ -1014,10 +988,6 @@ const PitchDeck = () => {
     }
 
     return null;
-  };
-
-  const handleGetStarted = () => {
-    window.location.href = '/';
   };
 
   if (showSlideshow) {

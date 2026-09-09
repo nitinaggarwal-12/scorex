@@ -4,18 +4,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FiBriefcase, 
   FiGitPullRequest, 
-  FiShield, 
   FiCheckCircle, 
   FiClock, 
-  FiTrendingUp, 
   FiUsers, 
   FiCpu, 
   FiTerminal, 
   FiLock,
   FiTarget,
   FiDollarSign,
-  FiCheckSquare,
-  FiList
+  FiCheckSquare
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 
@@ -366,8 +363,6 @@ const MultiPersonaViews = ({
   const recs = (propRecs && propRecs.length > 0)
     ? propRecs
     : (aiReport?.prioritizedRecommendations || aiReport?.prioritizedActions || []);
-  const strengths = aiReport?.keyStrengths || [];
-  const constraints = aiReport?.criticalConstraints || [];
 
   const curr = typeof currentScore === 'number' ? currentScore : 2.5;
   const tgt = typeof targetScore === 'number' ? targetScore : 4.2;
@@ -464,6 +459,10 @@ const MultiPersonaViews = ({
     { title: 'Mandate Elimination of Static Service Account Keys', desc: 'Enforce Workload Identity Federation (OIDC) and ephemeral JIT PAM privileges (<4h) across all cloud environments.' },
     { title: 'Deploy Real-Time Cloud DLP & Customer-Managed KMS (CMEK)', desc: 'Automate PII surrogate tokenization and institute cryptographic tenant data shredding.' },
     { title: 'Authorize Centralized Chronicle SIEM & Automated Incident Triage', desc: 'Correlate cloud audit logs across all regions to reduce mean-time-to-remediate (MTTR) under 15 minutes.' }
+  ] : isFinOpsDomain ? [
+    { title: 'Authorize Automated Anomaly Detection & Budgets', desc: 'Deploy cloud cost anomaly detection with real-time alerting and automated budget triggers.' },
+    { title: 'Approve Dynamic Resource Rightsizing & Auto-Shutdown', desc: 'Implement automated scheduling for idle non-prod workloads and compute rightsizing.' },
+    { title: 'Fund Unified Multi-Cloud Cost Allocation Framework', desc: 'Enforce comprehensive tagging policies, unit-economic reporting, and showback/chargeback.' }
   ] : [
     { title: 'Authorize Unified Lakehouse Governance & Open Storage', desc: 'Mandate open table formats (Apache Iceberg) and centralized ABAC cataloging across all teams.' },
     { title: 'Approve Serverless Reservation Slot Migration', desc: 'Shift from static over-provisioned VMs to serverless autoscaling compute with 15-min auto-suspend.' },

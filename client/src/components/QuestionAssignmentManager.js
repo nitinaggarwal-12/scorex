@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import authService from '../services/authService';
 
@@ -298,7 +297,6 @@ const SuccessMessage = styled.div`
 `;
 
 const QuestionAssignmentManager = () => {
-  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');

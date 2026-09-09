@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import styled from 'styled-components';
-import { FiUsers, FiUserPlus, FiEdit2, FiTrash2, FiCheck, FiX, FiSearch, FiFilter, FiSend } from 'react-icons/fi';
+import { FiUsers, FiUserPlus, FiEdit2, FiTrash2, FiCheck, FiX, FiSend } from 'react-icons/fi';
 import authService from '../services/authService';
-import toast from 'react-hot-toast';
 
 // Use relative URL in production (Railway), localhost in development
 const API_URL = (window.location.hostname === 'localhost' ? 'http://localhost:5001/api' : '/api');

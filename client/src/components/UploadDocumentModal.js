@@ -5,14 +5,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FiUploadCloud, 
   FiFileText, 
-  FiImage, 
   FiCheckCircle, 
-  FiAlertCircle, 
   FiX, 
   FiArrowRight, 
   FiCpu, 
   FiDatabase, 
-  FiShield, 
   FiLayers 
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';

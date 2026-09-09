@@ -8,12 +8,10 @@ import {
   FiCheckCircle,
   FiClock,
   FiDollarSign,
-  FiInfo,
   FiEdit2,
   FiTrash2,
   FiPlus
 } from 'react-icons/fi';
-import toast from 'react-hot-toast';
 
 // =====================
 // STYLED COMPONENTS

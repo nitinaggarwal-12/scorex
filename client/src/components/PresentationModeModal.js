@@ -5,14 +5,7 @@ import {
   FiX, 
   FiChevronLeft, 
   FiChevronRight, 
-  FiMaximize2, 
   FiAward, 
-  FiTrendingUp, 
-  FiDollarSign, 
-  FiLayers,
-  FiCheckCircle,
-  FiBarChart2,
-  FiCpu,
   FiDownload
 } from "react-icons/fi";
 import toast from "react-hot-toast";

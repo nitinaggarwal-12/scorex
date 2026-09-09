@@ -10,8 +10,6 @@ import {
   FiRefreshCw,
   FiMaximize2,
   FiMinimize2,
-  FiCheckCircle, 
-  FiArrowRight, 
   FiCpu, 
   FiShield, 
   FiTrendingUp, 

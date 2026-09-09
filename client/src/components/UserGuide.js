@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import html2canvas from 'html2canvas';
@@ -8,7 +8,6 @@ import {
   FiUsers,
   FiTarget,
   FiCheckCircle,
-  FiPlay,
   FiEdit3,
   FiEye,
   FiBarChart2,
@@ -37,62 +36,10 @@ const PageContainer = styled.div`
   overflow: hidden;
 `;
 
-const FloatingSlideshowButton = styled.button`
-  position: fixed;
-  top: 100px;
-  right: 40px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 14px 28px;
-  border-radius: 50px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-  transition: all 0.3s ease;
-  z-index: 100;
-  
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
-  }
-  
-  @media print {
-    display: none !important;
-  }
-`;
-
 const ContentWrapper = styled.div`
   max-width: 1600px;
   margin: 0 auto;
   padding: 0 40px;
-`;
-
-const HeroSection = styled.div`
-  text-align: center;
-  margin-bottom: 40px;
-  color: white;
-`;
-
-const HeroTitle = styled.h1`
-  font-size: 3rem;
-  font-weight: 900;
-  margin-bottom: 15px;
-  color: white;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-`;
-
-const HeroSubtitle = styled.p`
-  font-size: 1.2rem;
-  opacity: 0.95;
-  max-width: 800px;
-  margin: 0 auto;
-  line-height: 1.6;
-  color: white;
 `;
 
 const Section = styled.div`
@@ -508,6 +455,14 @@ const UserGuide = () => {
     { id: 'thank-you', title: 'Thank You', type: 'thank-you' }
   ];
 
+  const nextSlide = useCallback(() => {
+    setCurrentSlide(prev => (prev < slides.length - 1 ? prev + 1 : prev));
+  }, [slides.length]);
+
+  const prevSlide = useCallback(() => {
+    setCurrentSlide(prev => (prev > 0 ? prev - 1 : prev));
+  }, []);
+
   useEffect(() => {
     const handleKeyPress = (e) => {
       if (!showSlideshow) return;
@@ -526,19 +481,7 @@ const UserGuide = () => {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [showSlideshow, currentSlide]);
-
-  const nextSlide = () => {
-    if (currentSlide < slides.length - 1) {
-      setCurrentSlide(currentSlide + 1);
-    }
-  };
-
-  const prevSlide = () => {
-    if (currentSlide > 0) {
-      setCurrentSlide(currentSlide - 1);
-    }
-  };
+  }, [showSlideshow, nextSlide, prevSlide]);
 
   const handlePrint = async () => {
     setIsPrinting(true);
