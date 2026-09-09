@@ -499,559 +499,199 @@ function buildAsIsToBeProcessFlowXml() {
 
 // ===== Sourced from master_builder_finops.ts =====
 function buildPristineFinopsXml() {
-  return `
-<mxfile host="app.diagrams.net" modified="2026-08-08T17:48:00.000Z" agent="PromptCanvas" version="21.0.0" type="device">
-  <diagram id="cloud_finops_chargeback" name="Cloud FinOps &amp; Chargeback Model">
-    <mxGraphModel dx="1500" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1480" pageHeight="860" background="#FFFFFF">
+  return `<mxfile host="embed.diagrams.net">
+  <diagram id="template_30_finops_cost_flow_architecture" name="Template 30: FinOps / Cost Flow Architecture">
+    <mxGraphModel dx="1536" dy="1024" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1536" pageHeight="1024" background="#FFFFFF" math="0" shadow="0">
       <root>
-        <mxCell id="0" />
-        <mxCell id="1" parent="0" />
-
-        <!-- CANVAS FRAME -->
-        <mxCell id="frame_finops" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=none;" vertex="1" parent="1">
-          <mxGeometry x="0" y="0" width="1480" height="860" as="geometry" />
-        </mxCell>
-
-        <!-- TOP TITLE BANNER (Left & Right Boxes exact 1:1 match to uploaded design) -->
-        <mxCell id="hdr_box_left" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;b style=&quot;font-size:15px;color:#000000;font-family:system-ui,-apple-system,sans-serif;&quot;&gt;Cloud FinOps &amp;amp; Chargeback Model&lt;br&gt;(FinOps &amp;amp; Economics Category)&lt;/b&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#1E293B;strokeWidth=1.5;fillColor=#FFFFFF;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="20" y="20" width="460" height="50" as="geometry" />
-        </mxCell>
-
-        <mxCell id="hdr_box_right" value="&lt;div style=&quot;font-size:12px;color:#000000;font-family:system-ui,-apple-system,sans-serif;&quot;&gt;&lt;span style=&quot;background:#E2E8F0;padding:2px 6px;font-weight:bold;border:1px solid #94A3B8;margin-right:8px;&quot;&gt;'To-Be'&lt;/span&gt;Cost Optimization &amp;amp; Chargeback Specifications for Exec &amp;amp; Strategy, FinOps teams, Cloud Economists&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#CBD5E1;strokeWidth=1;fillColor=#F8FAFC;align=left;verticalAlign=middle;spacingLeft=12;" vertex="1" parent="1">
-          <mxGeometry x="510" y="20" width="670" height="50" as="geometry" />
-        </mxCell>
-
-        <!-- ========================================================================= -->
-        <!-- LAYER 1: INGESTION & USAGE TRACKING LAYER (y = 85 to y = 265) -->
-        <!-- ========================================================================= -->
-        <!-- Vertical Left Tab -->
-        <mxCell id="tab_layer1" value="&lt;b style=&quot;font-size:11px;color:#0F172A;&quot;&gt;Ingestion&lt;br&gt;&amp;amp; Usage&lt;br&gt;Tracking&lt;br&gt;Layer&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F1F5F9;strokeColor=#94A3B8;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="20" y="85" width="60" height="180" as="geometry" />
-        </mxCell>
-        <!-- Outer Layer Container -->
-        <mxCell id="cont_layer1" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;" vertex="1" parent="1">
-          <mxGeometry x="80" y="85" width="1100" height="180" as="geometry" />
-        </mxCell>
-
-        <!-- Sub-box 1: GCP Infrastructure Usage -->
-        <mxCell id="box_infra_usage" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;strokeWidth=1;" vertex="1" parent="1">
-          <mxGeometry x="90" y="95" width="315" height="160" as="geometry" />
-        </mxCell>
-        <mxCell id="lbl_infra_usage" value="&lt;b style=&quot;font-size:12px;color:#0F172A;&quot;&gt;GCP Infrastructure Usage&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="90" y="100" width="315" height="20" as="geometry" />
-        </mxCell>
-
-        <!-- Card 1: GKE Clusters Running Kubecost -->
-        <mxCell id="card_gke_kubecost" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:kubernetes.svg&quot; width=&quot;28&quot; height=&quot;28&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10.5px;font-weight:bold;color:#0F172A;line-height:1.2;padding-top:4px;&quot;&gt;GKE Clusters&lt;br&gt;&lt;span style=&quot;font-size:9.5px;font-weight:normal;color:#475569;&quot;&gt;Running&lt;br&gt;Kubecost Agents&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;strokeWidth=1;align=center;verticalAlign=top;padding=4;" vertex="1" parent="1">
-          <mxGeometry x="100" y="125" width="95" height="120" as="geometry" />
-        </mxCell>
-
-        <!-- Card 2: Compute Engine VMs -->
-        <mxCell id="card_compute_vms" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:google-cloud.svg&quot; width=&quot;28&quot; height=&quot;28&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10.5px;font-weight:bold;color:#0F172A;line-height:1.2;padding-top:8px;&quot;&gt;Compute&lt;br&gt;Engine VMs&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;strokeWidth=1;align=center;verticalAlign=top;padding=4;" vertex="1" parent="1">
-          <mxGeometry x="205" y="125" width="90" height="120" as="geometry" />
-        </mxCell>
-
-        <!-- Card 3: Cloud Storage -->
-        <mxCell id="card_gcs" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:google-cloud.svg&quot; width=&quot;28&quot; height=&quot;28&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10.5px;font-weight:bold;color:#0F172A;line-height:1.2;padding-top:8px;&quot;&gt;Cloud&lt;br&gt;Storage&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;strokeWidth=1;align=center;verticalAlign=top;padding=4;" vertex="1" parent="1">
-          <mxGeometry x="305" y="125" width="90" height="120" as="geometry" />
-        </mxCell>
-
-        <!-- Sub-box 2: Generative AI Token Tracking (Vertex AI) -->
-        <mxCell id="box_genai_tracking" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;strokeWidth=1;" vertex="1" parent="1">
-          <mxGeometry x="420" y="95" width="465" height="160" as="geometry" />
-        </mxCell>
-        <mxCell id="lbl_genai_tracking" value="&lt;b style=&quot;font-size:12px;color:#0F172A;&quot;&gt;Generative AI Token Tracking (Vertex AI)&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="420" y="100" width="465" height="20" as="geometry" />
-        </mxCell>
-
-        <!-- Sub-nodes Cloud Run & GKE Pods -->
-        <mxCell id="node_cloud_run" value="&lt;table style=&quot;width:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:24px;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:google-cloud-run.svg&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;font-size:11px;font-weight:bold;color:#0F172A;&quot;&gt;Cloud&lt;br&gt;Run&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;strokeWidth=1;align=left;spacingLeft=6;" vertex="1" parent="1">
-          <mxGeometry x="435" y="128" width="90" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="node_gke_pods" value="&lt;table style=&quot;width:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:24px;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:kubernetes.svg&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;font-size:11px;font-weight:bold;color:#0F172A;&quot;&gt;GKE&lt;br&gt;Pods&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;strokeWidth=1;align=left;spacingLeft=6;" vertex="1" parent="1">
-          <mxGeometry x="435" y="188" width="90" height="50" as="geometry" />
-        </mxCell>
-
-        <!-- Generative AI Token Tracker -->
-        <mxCell id="node_token_tracker" value="&lt;b style=&quot;font-size:11px;color:#0F172A;&quot;&gt;Generative AI&lt;br&gt;Token Tracker&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="585" y="150" width="115" height="60" as="geometry" />
-        </mxCell>
-
-        <!-- Token Usage Logs (BigQuery) Cylinder -->
-        <mxCell id="cyl_token_logs" value="&lt;b style=&quot;font-size:11px;color:#0F172A;&quot;&gt;Token Usage&lt;br&gt;Logs&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#475569;&quot;&gt;(BigQuery)&lt;/span&gt;&lt;/b&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#FFFFFF;strokeColor=#475569;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="760" y="145" width="110" height="70" as="geometry" />
-        </mxCell>
-
-        <!-- Arrows inside GenAI Tracking -->
-        <mxCell id="edge_run_to_tracker" value="Vertex AI&lt;br&gt;model calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#2563EB;fontSize=9.5;align=center;" edge="1" parent="1" source="node_cloud_run" target="node_token_tracker">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="555" y="153" />
-              <mxPoint x="555" y="170" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="edge_pods_to_tracker" value="Model calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#2563EB;fontSize=9.5;align=center;" edge="1" parent="1" source="node_gke_pods" target="node_token_tracker">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="555" y="213" />
-              <mxPoint x="555" y="190" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="edge_tracker_to_logs" value="Prompt tokens&lt;br&gt;+Completion tokens" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;fontColor=#16A34A;fontSize=9.5;align=center;" edge="1" parent="1" source="node_token_tracker" target="cyl_token_logs">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- Sub-box 3: Managed Services -->
-        <mxCell id="box_managed_svcs" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;strokeWidth=1;" vertex="1" parent="1">
-          <mxGeometry x="898" y="95" width="170" height="160" as="geometry" />
-        </mxCell>
-        <mxCell id="lbl_managed_svcs" value="&lt;b style=&quot;font-size:12px;color:#0F172A;&quot;&gt;Managed Services&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="898" y="100" width="170" height="20" as="geometry" />
-        </mxCell>
-
-        <mxCell id="node_cloud_sql" value="&lt;table style=&quot;width:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:24px;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:postgresql.svg&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;font-size:11px;font-weight:bold;color:#0F172A;&quot;&gt;Cloud SQL&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=6;fillColor=#FFFFFF;strokeColor=#94A3B8;strokeWidth=1;align=left;spacingLeft=6;" vertex="1" parent="1">
-          <mxGeometry x="918" y="130" width="130" height="46" as="geometry" />
-        </mxCell>
-        <mxCell id="node_bigquery_svc" value="&lt;table style=&quot;width:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:24px;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:google-cloud.svg&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;font-size:11px;font-weight:bold;color:#0F172A;&quot;&gt;BigQuery&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;strokeWidth=1;align=left;spacingLeft=6;" vertex="1" parent="1">
-          <mxGeometry x="918" y="190" width="130" height="46" as="geometry" />
-        </mxCell>
-
-        <!-- ========================================================================= -->
-        <!-- LAYER 2: DATA AGGREGATION & COST ALLOCATION LAYER (y = 280 to y = 495) -->
-        <!-- ========================================================================= -->
-        <!-- Vertical Left Tab -->
-        <mxCell id="tab_layer2" value="&lt;b style=&quot;font-size:10px;color:#0F172A;&quot;&gt;Data Aggregation &amp;amp;&lt;br&gt;Cost Allocation&lt;br&gt;Layer&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F1F5F9;strokeColor=#94A3B8;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="20" y="280" width="60" height="215" as="geometry" />
-        </mxCell>
-        <!-- Outer Layer Container -->
-        <mxCell id="cont_layer2" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;" vertex="1" parent="1">
-          <mxGeometry x="80" y="280" width="1100" height="215" as="geometry" />
-        </mxCell>
-
-        <!-- GCP Billing Node (Left) -->
-        <mxCell id="node_gcp_billing" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:google-cloud.svg&quot; width=&quot;30&quot; height=&quot;30&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:11px;font-weight:bold;color:#0F172A;padding-top:4px;&quot;&gt;GCP&lt;br&gt;Billing&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;strokeWidth=1;align=center;verticalAlign=top;padding=4;" vertex="1" parent="1">
-          <mxGeometry x="100" y="340" width="70" height="85" as="geometry" />
-        </mxCell>
-
-        <!-- GCP Billing Exports Pill -->
-        <mxCell id="pill_billing_exports" value="&lt;b style=&quot;font-size:11px;color:#0F172A;&quot;&gt;GCP Billing Exports&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#475569;&quot;&gt;(BigQuery)&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="200" y="325" width="140" height="42" as="geometry" />
-        </mxCell>
-
-        <!-- Container Cost Data (Kubecost) Dashed Box -->
-        <mxCell id="box_container_costs" value="&lt;b style=&quot;font-size:11px;color:#0F172A;&quot;&gt;Container Cost Data&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#475569;&quot;&gt;(Kubecost)&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;dashed=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="200" y="415" width="140" height="42" as="geometry" />
-        </mxCell>
-
-        <!-- BigQuery GCP Detailed Billing Export Cylinder -->
-        <mxCell id="cyl_bq_detailed" value="&lt;table style=&quot;width:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:24px;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:google-cloud.svg&quot; width=&quot;18&quot; height=&quot;18&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;font-size:11px;font-weight:bold;color:#0F172A;&quot;&gt;BigQuery&lt;br&gt;&lt;span style=&quot;font-size:9px;font-weight:normal;color:#334155;&quot;&gt;GCP Detailed&lt;br&gt;Billing Export&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=8;fillColor=#FFFFFF;strokeColor=#475569;strokeWidth=1.5;align=left;spacingLeft=6;" vertex="1" parent="1">
-          <mxGeometry x="375" y="315" width="140" height="65" as="geometry" />
-        </mxCell>
-
-        <!-- BigQuery Kubecost Container Costs Cylinder -->
-        <mxCell id="cyl_bq_kubecost" value="&lt;table style=&quot;width:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:24px;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:google-cloud.svg&quot; width=&quot;18&quot; height=&quot;18&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;font-size:11px;font-weight:bold;color:#0F172A;&quot;&gt;BigQuery&lt;br&gt;&lt;span style=&quot;font-size:9px;font-weight:normal;color:#334155;&quot;&gt;Kubecost&lt;br&gt;Container Costs&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=8;fillColor=#FFFFFF;strokeColor=#475569;strokeWidth=1.5;align=left;spacingLeft=6;" vertex="1" parent="1">
-          <mxGeometry x="375" y="405" width="140" height="65" as="geometry" />
-        </mxCell>
-
-        <!-- Unified BigQuery Cost Data Lake (Central Hub) -->
-        <mxCell id="cyl_unified_datalake" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:google-cloud.svg&quot; width=&quot;24&quot; height=&quot;24&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:11.5px;font-weight:bold;color:#0F172A;padding-top:2px;&quot;&gt;Unified BigQuery&lt;br&gt;Cost Data Lake&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=2;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="560" y="400" width="170" height="75" as="geometry" />
-        </mxCell>
-
-        <!-- Vertex AI Token Cost Calculator -->
-        <mxCell id="node_token_calc" value="&lt;b style=&quot;font-size:11px;color:#0F172A;&quot;&gt;Vertex AI Token&lt;br&gt;Cost Calculator&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9px;color:#475569;&quot;&gt;(using current&lt;br&gt;model pricing)&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="750" y="320" width="125" height="65" as="geometry" />
-        </mxCell>
-
-        <!-- GenAI Service Costs Table -->
-        <mxCell id="tbl_genai_costs" value="&lt;div style=&quot;font-size:10px;font-weight:bold;color:#0F172A;margin-bottom:2px;&quot;&gt;GenAI Service Costs&lt;/div&gt;&lt;table style=&quot;width:100%;font-size:9px;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;th style=&quot;border:1px solid #94A3B8;background:#E2E8F0;padding:2px;&quot;&gt;Table&lt;/th&gt;&lt;th style=&quot;border:1px solid #94A3B8;background:#E2E8F0;padding:2px;&quot;&gt;Costs&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;border:1px solid #CBD5E1;text-align:center;padding:2px;&quot;&gt;...&lt;/td&gt;&lt;td style=&quot;border:1px solid #CBD5E1;text-align:center;padding:2px;&quot;&gt;...&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;border:1px solid #CBD5E1;text-align:center;padding:2px;&quot;&gt;...&lt;/td&gt;&lt;td style=&quot;border:1px solid #CBD5E1;text-align:center;padding:2px;&quot;&gt;...&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;strokeWidth=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1">
-          <mxGeometry x="910" y="320" width="135" height="65" as="geometry" />
-        </mxCell>
-
-        <!-- Enterprise Resource Tagging Policies Pill -->
-        <mxCell id="pill_tagging_policies" value="&lt;b style=&quot;font-size:10.5px;color:#0F172A;&quot;&gt;Enterprise Resource&lt;br&gt;Tagging Policies&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="780" y="420" width="145" height="36" as="geometry" />
-        </mxCell>
-
-        <!-- Layer 2 Connectors -->
-        <!-- GKE Kubecost downward dashed connector to Container Cost Data -->
-        <mxCell id="edge_gke_to_kubecost" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;" edge="1" parent="1" source="card_gke_kubecost" target="box_container_costs">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="148" y="295" />
-              <mxPoint x="270" y="295" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-
-        <!-- GCP Billing to Billing Exports -->
-        <mxCell id="edge_billing_to_exports" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="node_gcp_billing" target="pill_billing_exports">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <!-- GCP Billing to Container Costs -->
-        <mxCell id="edge_billing_to_containers" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;" edge="1" parent="1" source="node_gcp_billing" target="box_container_costs">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- Exports to Detailed BQ -->
-        <mxCell id="edge_exports_to_bq" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="pill_billing_exports" target="cyl_bq_detailed">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <!-- Container Costs to Kubecost BQ -->
-        <mxCell id="edge_containers_to_bq" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;" edge="1" parent="1" source="box_container_costs" target="cyl_bq_kubecost">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- Detailed BQ to Unified Lake -->
-        <mxCell id="edge_bq_det_to_unified" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="cyl_bq_detailed" target="cyl_unified_datalake">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="535" y="348" />
-              <mxPoint x="535" y="425" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <!-- Kubecost BQ to Unified Lake -->
-        <mxCell id="edge_bq_k8s_to_unified" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="cyl_bq_kubecost" target="cyl_unified_datalake">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- Token Logs from Layer 1 down to Token Calculator -->
-        <mxCell id="edge_logs_to_calc" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="cyl_token_logs" target="node_token_calc">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <!-- Token Calc to Costs Table -->
-        <mxCell id="edge_calc_to_tbl" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="node_token_calc" target="tbl_genai_costs">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <!-- Token Calc to Unified Lake -->
-        <mxCell id="edge_calc_to_unified" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="node_token_calc" target="cyl_unified_datalake">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="812" y="390" />
-              <mxPoint x="645" y="390" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <!-- Tagging Policies to Unified Lake -->
-        <mxCell id="edge_tagging_to_unified" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#475569;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="pill_tagging_policies" target="cyl_unified_datalake">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- ========================================================================= -->
-        <!-- LAYER 3: VISUALIZATION, POLICY, & REPORT LAYER (y = 510 to y = 825) -->
-        <!-- ========================================================================= -->
-        <!-- Vertical Left Tab -->
-        <mxCell id="tab_layer3" value="&lt;b style=&quot;font-size:10px;color:#0F172A;&quot;&gt;Visualization,&lt;br&gt;Policy, &amp;amp;&lt;br&gt;Report Layer&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F1F5F9;strokeColor=#94A3B8;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="20" y="510" width="60" height="295" as="geometry" />
-        </mxCell>
-        <!-- Outer Layer Container -->
-        <mxCell id="cont_layer3" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;" vertex="1" parent="1">
-          <mxGeometry x="80" y="510" width="1100" height="295" as="geometry" />
-        </mxCell>
-
-        <!-- Sub-box 1: Looker Studio (Visualization & Reporting) -->
-        <mxCell id="box_looker_studio" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;strokeWidth=1;" vertex="1" parent="1">
-          <mxGeometry x="90" y="520" width="280" height="275" as="geometry" />
-        </mxCell>
-        <mxCell id="lbl_looker_studio" value="&lt;b style=&quot;font-size:12px;color:#0F172A;&quot;&gt;Looker Studio (Visualization &amp;amp; Reporting)&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="90" y="525" width="280" height="20" as="geometry" />
-        </mxCell>
-
-        <!-- Dashboard Visual Cards -->
-        <!-- Card 1: Executive Summary -->
-        <mxCell id="card_looker_exec" value="&lt;div style=&quot;font-size:9.5px;font-weight:bold;color:#0F172A;margin-bottom:4px;&quot;&gt;FinOps Executive Summary&lt;/div&gt;&lt;div style=&quot;height:6px;background:#0284C7;width:80%;margin-bottom:3px;border-radius:2px;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;height:6px;background:#CBD5E1;width:60%;margin-bottom:3px;border-radius:2px;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;height:6px;background:#38BDF8;width:95%;border-radius:2px;&quot;&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
-          <mxGeometry x="100" y="550" width="125" height="110" as="geometry" />
-        </mxCell>
-        <!-- Card 2: Unit Cost Anomalies Line Chart -->
-        <mxCell id="card_looker_anomalies" value="&lt;div style=&quot;font-size:9.5px;font-weight:bold;color:#0F172A;margin-bottom:4px;&quot;&gt;Unit Cost Anomalies&lt;/div&gt;&lt;div style=&quot;text-align:center;&quot;&gt;&lt;svg width=&quot;110&quot; height=&quot;65&quot;&gt;&lt;polyline points=&quot;5,50 30,45 55,20 80,48 105,35&quot; style=&quot;fill:none;stroke:#0284C7;stroke-width:2&quot;/&gt;&lt;circle cx=&quot;55&quot; cy=&quot;20&quot; r=&quot;3&quot; fill=&quot;#DC2626&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
-          <mxGeometry x="235" y="550" width="125" height="110" as="geometry" />
-        </mxCell>
-        <!-- Card 3: GenAI Cost by Project Bar Chart -->
-        <mxCell id="card_looker_genai" value="&lt;div style=&quot;font-size:9.5px;font-weight:bold;color:#0F172A;margin-bottom:4px;&quot;&gt;GenAI Cost by Project&lt;/div&gt;&lt;div style=&quot;display:flex;align-items:flex-end;gap:6px;height:60px;padding-top:10px;&quot;&gt;&lt;div style=&quot;width:18px;height:35px;background:#0284C7;border-radius:2px;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;width:18px;height:55px;background:#2563EB;border-radius:2px;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;width:18px;height:40px;background:#38BDF8;border-radius:2px;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;width:18px;height:25px;background:#60A5FA;border-radius:2px;&quot;&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
-          <mxGeometry x="100" y="670" width="125" height="115" as="geometry" />
-        </mxCell>
-        <!-- Card 4: Budgets & Forecasts Horizontal Bars -->
-        <mxCell id="card_looker_budgets" value="&lt;div style=&quot;font-size:9.5px;font-weight:bold;color:#0F172A;margin-bottom:6px;&quot;&gt;Budgets &amp;amp; Forecasts&lt;/div&gt;&lt;div style=&quot;height:10px;background:#16A34A;width:90%;margin-bottom:6px;border-radius:2px;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;height:10px;background:#0284C7;width:75%;border-radius:2px;&quot;&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
-          <mxGeometry x="235" y="670" width="125" height="115" as="geometry" />
-        </mxCell>
-
-        <!-- Sub-box 2: FinOps Governance Engine -->
-        <mxCell id="box_gov_engine" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;strokeWidth=1;" vertex="1" parent="1">
-          <mxGeometry x="390" y="520" width="310" height="275" as="geometry" />
-        </mxCell>
-        <mxCell id="lbl_gov_engine" value="&lt;b style=&quot;font-size:12px;color:#0F172A;&quot;&gt;FinOps Governance Engine&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="390" y="525" width="310" height="20" as="geometry" />
-        </mxCell>
-
-        <!-- Governance Sub-nodes -->
-        <mxCell id="node_gov_tagging" value="&lt;b style=&quot;font-size:11px;color:#0F172A;&quot;&gt;🏷️ Tagging Enforcement&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#475569;&quot;&gt;For non-compliant resources&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#94A3B8;strokeWidth=1;align=left;spacingLeft=8;" vertex="1" parent="1">
-          <mxGeometry x="405" y="555" width="180" height="50" as="geometry" />
-        </mxCell>
-
-        <mxCell id="node_gov_budgets" value="&lt;b style=&quot;font-size:11px;color:#0F172A;&quot;&gt;⚠️ Budgets &amp;amp; Alerts&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#475569;&quot;&gt;Integrated / Cloud Monitoring&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#94A3B8;strokeWidth=1;align=left;spacingLeft=8;" vertex="1" parent="1">
-          <mxGeometry x="405" y="630" width="180" height="50" as="geometry" />
-        </mxCell>
-
-        <mxCell id="node_cloud_monitoring" value="&lt;b style=&quot;font-size:10.5px;color:#0F172A;&quot;&gt;Cloud&lt;br&gt;Monitoring&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="605" y="630" width="80" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="edge_budgets_to_monitoring" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="node_gov_budgets" target="node_cloud_monitoring">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <mxCell id="node_gov_commitment" value="&lt;b style=&quot;font-size:11px;color:#0F172A;&quot;&gt;✅ Commitment Manager&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#475569;&quot;&gt;Validate CUDs/SUDs&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#94A3B8;strokeWidth=1;align=left;spacingLeft=8;" vertex="1" parent="1">
-          <mxGeometry x="405" y="705" width="180" height="50" as="geometry" />
-        </mxCell>
-
-        <!-- Connector between Looker Studio and Governance Engine -->
-        <mxCell id="edge_looker_to_gov" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="box_looker_studio" target="box_gov_engine">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- Chargeback & Showback Generator -->
-        <mxCell id="node_chargeback_gen" value="&lt;b style=&quot;font-size:11px;color:#0F172A;&quot;&gt;Chargeback &amp;amp;&lt;br&gt;Showback&lt;br&gt;Generator&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="725" y="625" width="110" height="65" as="geometry" />
-        </mxCell>
-
-        <!-- Connectors into Chargeback Generator -->
-        <mxCell id="edge_gov_to_chargeback" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="node_cloud_monitoring" target="node_chargeback_gen">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="edge_datalake_to_chargeback" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="cyl_unified_datalake" target="node_chargeback_gen">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="645" y="500" />
-              <mxPoint x="780" y="500" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-
-        <!-- Target Business Units (Right of Layer 3) -->
-        <mxCell id="bu_engineering" value="&lt;table style=&quot;width:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:24px;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/lucide:users.svg?color=%230284C7&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;font-size:11px;font-weight:bold;color:#0F172A;&quot;&gt;Business Unit 1&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#475569;&quot;&gt;(Engineering)&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;strokeWidth=1;align=left;spacingLeft=8;" vertex="1" parent="1">
-          <mxGeometry x="875" y="555" width="165" height="50" as="geometry" />
-        </mxCell>
-
-        <mxCell id="bu_product" value="&lt;table style=&quot;width:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:24px;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/lucide:users.svg?color=%230284C7&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;font-size:11px;font-weight:bold;color:#0F172A;&quot;&gt;Business Unit 2&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#475569;&quot;&gt;(Product)&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;strokeWidth=1;align=left;spacingLeft=8;" vertex="1" parent="1">
-          <mxGeometry x="875" y="632" width="165" height="50" as="geometry" />
-        </mxCell>
-
-        <mxCell id="bu_genai" value="&lt;table style=&quot;width:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:24px;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/lucide:users.svg?color=%230284C7&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;font-size:11px;font-weight:bold;color:#0F172A;&quot;&gt;Data Science &amp;amp;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#475569;&quot;&gt;GenAI Teams&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;strokeWidth=1;align=left;spacingLeft=8;" vertex="1" parent="1">
-          <mxGeometry x="875" y="710" width="165" height="50" as="geometry" />
-        </mxCell>
-
-        <!-- Fan-out Arrows to Business Units -->
-        <mxCell id="edge_charge_to_bu1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="node_chargeback_gen" target="bu_engineering">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="850" y="658" />
-              <mxPoint x="850" y="580" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="edge_charge_to_bu2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="node_chargeback_gen" target="bu_product">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="edge_charge_to_bu3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="node_chargeback_gen" target="bu_genai">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="850" y="658" />
-              <mxPoint x="850" y="735" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-
-        <!-- ========================================================================= -->
-        <!-- RIGHT COLUMN: CLOUD IAM & GOVERNANCE SIDEBAR (x = 1200 to x = 1460) -->
-        <!-- ========================================================================= -->
-        <!-- Tall Vertical IAM Bar -->
-        <mxCell id="bar_iam_title" value="&lt;div style=&quot;writing-mode:vertical-rl;transform:rotate(180deg);font-weight:bold;font-size:12.5px;color:#0F172A;letter-spacing:1px;text-align:center;&quot;&gt;Cloud IAM (Identity and Access Management)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=#3B82F6;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1200" y="85" width="45" height="720" as="geometry" />
-        </mxCell>
-
-        <!-- Role Access Permissions -->
-        <mxCell id="role_1" value="&lt;b style=&quot;font-size:10.5px;color:#0F172A;&quot;&gt;FinOps Lead:&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#475569;&quot;&gt;Access to detailed billing&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1265" y="100" width="180" height="36" as="geometry" />
-        </mxCell>
-        <mxCell id="arr_role_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1245" y="118" as="sourcePoint" />
-            <mxPoint x="1265" y="118" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-
-        <mxCell id="role_2" value="&lt;b style=&quot;font-size:10.5px;color:#0F172A;&quot;&gt;FinOps Lead:&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#475569;&quot;&gt;Access to allocation&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1265" y="165" width="180" height="36" as="geometry" />
-        </mxCell>
-        <mxCell id="arr_role_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1245" y="183" as="sourcePoint" />
-            <mxPoint x="1265" y="183" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-
-        <mxCell id="role_3" value="&lt;b style=&quot;font-size:10.5px;color:#0F172A;&quot;&gt;BU Lead:&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#475569;&quot;&gt;Access to detailed billing&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1265" y="235" width="180" height="36" as="geometry" />
-        </mxCell>
-        <mxCell id="arr_role_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1245" y="253" as="sourcePoint" />
-            <mxPoint x="1265" y="253" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-
-        <mxCell id="role_4" value="&lt;b style=&quot;font-size:10.5px;color:#0F172A;&quot;&gt;BU Lead:&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#475569;&quot;&gt;Access to chargeback reports&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1265" y="300" width="180" height="36" as="geometry" />
-        </mxCell>
-        <mxCell id="arr_role_4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1245" y="318" as="sourcePoint" />
-            <mxPoint x="1265" y="318" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-
-        <mxCell id="role_5" value="&lt;b style=&quot;font-size:10.5px;color:#0F172A;&quot;&gt;Cost Optimization Lead:&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#475569;&quot;&gt;Access to optimization insights&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1265" y="370" width="180" height="36" as="geometry" />
-        </mxCell>
-        <mxCell id="arr_role_5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;startArrow=block;startFill=1;endArrow=block;endFill=1;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1245" y="388" as="sourcePoint" />
-            <mxPoint x="1265" y="388" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-
-        <mxCell id="role_6" value="&lt;b style=&quot;font-size:10.5px;color:#0F172A;&quot;&gt;BU Lead:&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:9.5px;color:#475569;&quot;&gt;Access to chargeback reports&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1265" y="440" width="180" height="36" as="geometry" />
-        </mxCell>
-        <mxCell id="arr_role_6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1245" y="458" as="sourcePoint" />
-            <mxPoint x="1265" y="458" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-
-        <!-- Secret Manager Security Box -->
-        <mxCell id="box_secret_mgr" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/lucide:lock.svg?color=%230284C7&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;font-size:11px;font-weight:bold;color:#0F172A;padding-left:4px;&quot;&gt;Secret Manager&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan=&quot;2&quot; style=&quot;font-size:9.5px;color:#475569;padding-top:4px;&quot;&gt;Secure storage of&lt;br&gt;Kubecost API keys&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;strokeWidth=1;align=center;verticalAlign=middle;padding=6;" vertex="1" parent="1">
-          <mxGeometry x="1260" y="520" width="180" height="75" as="geometry" />
-        </mxCell>
-
-        <!-- Legend Box -->
-        <mxCell id="box_legend" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;strokeWidth=1;" vertex="1" parent="1">
-          <mxGeometry x="1260" y="615" width="180" height="190" as="geometry" />
-        </mxCell>
-        <mxCell id="lbl_legend_title" value="&lt;b style=&quot;font-size:11.5px;color:#0F172A;&quot;&gt;Legend&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1270" y="620" width="80" height="20" as="geometry" />
-        </mxCell>
-
-        <mxCell id="leg_item_symbols" value="&lt;table style=&quot;width:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:24px;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:google-cloud.svg&quot; width=&quot;16&quot; height=&quot;16&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;font-size:10px;color:#0F172A;&quot;&gt;Symbol / Symbols&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1270" y="645" width="165" height="24" as="geometry" />
-        </mxCell>
-
-        <mxCell id="leg_line_fin" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#16A34A;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1275" y="685" as="sourcePoint" />
-            <mxPoint x="1315" y="685" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="lbl_leg_fin" value="&lt;span style=&quot;font-size:10px;color:#0F172A;&quot;&gt;Financial data&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1325" y="675" width="100" height="20" as="geometry" />
-        </mxCell>
-
-        <mxCell id="leg_line_usage" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2563EB;strokeWidth=2;dashed=1;endArrow=block;endFill=1;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1275" y="715" as="sourcePoint" />
-            <mxPoint x="1315" y="715" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="lbl_leg_usage" value="&lt;span style=&quot;font-size:10px;color:#0F172A;&quot;&gt;Usage metrics&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1325" y="705" width="100" height="20" as="geometry" />
-        </mxCell>
-
-        <mxCell id="leg_box_fin_color" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;strokeWidth=1;" vertex="1" parent="1">
-          <mxGeometry x="1275" y="740" width="38" height="18" as="geometry" />
-        </mxCell>
-        <mxCell id="lbl_leg_fin_color" value="&lt;span style=&quot;font-size:10px;color:#0F172A;&quot;&gt;Financial Color&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1325" y="738" width="100" height="20" as="geometry" />
-        </mxCell>
-
-        <mxCell id="leg_box_blue_color" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=#3B82F6;strokeWidth=1;" vertex="1" parent="1">
-          <mxGeometry x="1275" y="770" width="38" height="18" as="geometry" />
-        </mxCell>
-        <mxCell id="lbl_leg_blue_color" value="&lt;span style=&quot;font-size:10px;color:#0F172A;&quot;&gt;Colors&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1325" y="768" width="100" height="20" as="geometry" />
-        </mxCell>
-
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="hdr_num" value="30" style="shape=rectangle;rounded=1;arcSize=14;fillColor=#1E3A8A;strokeColor=#1E3A8A;fontColor=#FFFFFF;fontSize=28;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="16" y="12" width="68" height="54" as="geometry"/></mxCell>
+        <mxCell id="hdr_title" value="&lt;div style='font-size:24px;font-weight:900;color:#0F172A;letter-spacing:0.5px;'&gt;FINOPS / COST FLOW ARCHITECTURE&lt;/div&gt;&lt;div style='font-size:12.5px;font-weight:700;color:#1E3A8A;margin-top:2px;'&gt;Use Case: NovaCura – AI-Powered Regulatory Intelligence Platform&lt;/div&gt;&lt;div style='font-size:11px;color:#64748B;margin-top:2px;'&gt;☁️ Environment: Production &amp;nbsp;|&amp;nbsp; 📍 Region: us-central1 &amp;nbsp;|&amp;nbsp; 📅 Last Updated: May 8, 2025&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="94" y="12" width="760" height="54" as="geometry"/></mxCell>
+        <mxCell id="hdr_brand" value="&lt;table style=&quot;width:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:36px;vertical-align:middle;text-align:center;&quot;&gt;&lt;span style=&quot;font-size:32px;&quot;&gt;🧬&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;text-align:left;vertical-align:middle;padding-left:8px;&quot;&gt;&lt;div style=&quot;font-size:24px;font-weight:900;color:#0284C7;letter-spacing:1px;&quot;&gt;NOVACURA&lt;/div&gt;&lt;div style=&quot;font-size:10.5px;color:#64748B;font-weight:600;font-style:italic;&quot;&gt;AI-Powered Regulatory Intelligence Platform&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="860" y="12" width="270" height="54" as="geometry"/></mxCell>
+        <mxCell id="hdr_obj" value="&lt;div style='white-space:normal;word-break:break-word;font-size:11px;font-weight:900;color:#1E3A8A;margin-bottom:2px;'&gt;OBJECTIVE&lt;/div&gt;&lt;div style='white-space:normal;word-break:break-word;font-size:9.5px;line-height:1.4;color:#0F172A;'&gt;Optimize cloud spend, drive accountability, and maximize business value through visibility, allocation, optimization, and continuous improvement.&lt;/div&gt;" style="overflow=hidden;whiteSpace=wrap;rounded=1;arcSize=8;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.5;html=1;align=left;verticalAlign=top;spacing=8;" vertex="1" parent="1"><mxGeometry x="1140" y="12" width="380" height="54" as="geometry"/></mxCell>
+        <mxCell id="box_flow_bg" value="" style="rounded=1;arcSize=8;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.5;" vertex="1" parent="1"><mxGeometry x="16" y="74" width="1214" height="292" as="geometry"/></mxCell>
+        <mxCell id="lbl_flow" value="COST FLOW ARCHITECTURE" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#1E3A8A;fontSize=13;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="16" y="78" width="1214" height="18" as="geometry"/></mxCell>
+        <mxCell id="f_box_0" value="" style="rounded=1;arcSize=8;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;" vertex="1" parent="1"><mxGeometry x="26" y="100" width="192" height="230" as="geometry"/></mxCell>
+        <mxCell id="stg_0" value="1. USAGE SOURCES" style="shape=rectangle;rounded=1;arcSize=10;fillColor=#2563EB;strokeColor=#2563EB;fontColor=#FFFFFF;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="26" y="100" width="192" height="30" as="geometry"/></mxCell>
+        <mxCell id="f_txt_0" value="&lt;div style=&quot;font-size:9.5px;line-height:1.6;color:#0F172A;padding:4px;&quot;&gt;
+      &lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;⚙️ Compute (GCE, GKE)&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;💾 Databases (Cloud SQL)&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;🗄️ Storage (GCS, PD, Bucket)&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;🌐 Network (VPC, LB, CDN)&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;🧠 AI/ML (Vertex AI, GPUs)&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;📦 SaaS &amp; 3rd Party APIs&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;📑 Licenses &amp; Subscriptions&lt;/div&gt;
+    &lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;" vertex="1" parent="1"><mxGeometry x="28" y="134" width="188" height="192" as="geometry"/></mxCell>
+        <mxCell id="f_box_1" value="" style="rounded=1;arcSize=8;fillColor=#EFF6FF;strokeColor=#1E40AF;strokeWidth=1.5;" vertex="1" parent="1"><mxGeometry x="226" y="100" width="192" height="230" as="geometry"/></mxCell>
+        <mxCell id="stg_1" value="2. INGEST &amp; COLLECT" style="shape=rectangle;rounded=1;arcSize=10;fillColor=#1E40AF;strokeColor=#1E40AF;fontColor=#FFFFFF;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="226" y="100" width="192" height="30" as="geometry"/></mxCell>
+        <mxCell id="e_stg_1" edge="1" parent="1" source="stg_0" target="stg_1" style="strokeColor=#1E40AF;strokeWidth=2;endArrow=classic;endSize=5;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f_txt_1" value="&lt;div style=&quot;font-size:9.5px;line-height:1.6;color:#0F172A;padding:4px;&quot;&gt;
+      &lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;📥 Cloud Billing Export (BQ)&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;🗃️ Cloud Asset Inventory&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;📑 Logging / Audit Logs&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;📊 Usage &amp; Metering APIs&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;💳 Marketplace Bills&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;💰 Commitment Usage&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;💱 Currency &amp; FX Rates&lt;/div&gt;
+    &lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;" vertex="1" parent="1"><mxGeometry x="228" y="134" width="188" height="192" as="geometry"/></mxCell>
+        <mxCell id="f_box_2" value="" style="rounded=1;arcSize=8;fillColor=#F0F9FF;strokeColor=#0284C7;strokeWidth=1.5;" vertex="1" parent="1"><mxGeometry x="426" y="100" width="192" height="230" as="geometry"/></mxCell>
+        <mxCell id="stg_2" value="3. NORMALIZE &amp; ENRICH" style="shape=rectangle;rounded=1;arcSize=10;fillColor=#0284C7;strokeColor=#0284C7;fontColor=#FFFFFF;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="426" y="100" width="192" height="30" as="geometry"/></mxCell>
+        <mxCell id="e_stg_2" edge="1" parent="1" source="stg_1" target="stg_2" style="strokeColor=#0284C7;strokeWidth=2;endArrow=classic;endSize=5;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f_txt_2" value="&lt;div style=&quot;font-size:9.5px;line-height:1.6;color:#0F172A;padding:4px;&quot;&gt;
+      &lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;🔄 Cost Normalization&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;🗺️ Resource Mapping&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;🏷️ Tags / Labels Enrichment&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;🏢 Business Context Join&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;💲 Pricing Catalog&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;📉 Amortization Logic&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;⚖️ RI/SP Adjustment&lt;/div&gt;
+    &lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;" vertex="1" parent="1"><mxGeometry x="428" y="134" width="188" height="192" as="geometry"/></mxCell>
+        <mxCell id="f_box_3" value="" style="rounded=1;arcSize=8;fillColor=#F0FDF4;strokeColor=#16A34A;strokeWidth=1.5;" vertex="1" parent="1"><mxGeometry x="626" y="100" width="192" height="230" as="geometry"/></mxCell>
+        <mxCell id="stg_3" value="4. ALLOCATE &amp; ASSIGN" style="shape=rectangle;rounded=1;arcSize=10;fillColor=#16A34A;strokeColor=#16A34A;fontColor=#FFFFFF;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="626" y="100" width="192" height="30" as="geometry"/></mxCell>
+        <mxCell id="e_stg_3" edge="1" parent="1" source="stg_2" target="stg_3" style="strokeColor=#16A34A;strokeWidth=2;endArrow=classic;endSize=5;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f_txt_3" value="&lt;div style=&quot;font-size:9.5px;line-height:1.6;color:#0F172A;padding:4px;&quot;&gt;
+      &lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;⚙️ Allocation Rules Engine&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;🏷️ Tag-Based Allocation&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;📐 Custom Allocation %&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;💳 Showback / Chargeback&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;🤝 Shared Service Allocation&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;☁️ Multi-Cloud Allocation&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;🏢 Business Unit Mapping&lt;/div&gt;
+    &lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;" vertex="1" parent="1"><mxGeometry x="628" y="134" width="188" height="192" as="geometry"/></mxCell>
+        <mxCell id="f_box_4" value="" style="rounded=1;arcSize=8;fillColor=#FFFBEB;strokeColor=#EA580C;strokeWidth=1.5;" vertex="1" parent="1"><mxGeometry x="826" y="100" width="192" height="230" as="geometry"/></mxCell>
+        <mxCell id="stg_4" value="5. ANALYZE &amp; OPTIMIZE" style="shape=rectangle;rounded=1;arcSize=10;fillColor=#EA580C;strokeColor=#EA580C;fontColor=#FFFFFF;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="826" y="100" width="192" height="30" as="geometry"/></mxCell>
+        <mxCell id="e_stg_4" edge="1" parent="1" source="stg_3" target="stg_4" style="strokeColor=#EA580C;strokeWidth=2;endArrow=classic;endSize=5;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f_txt_4" value="&lt;div style=&quot;font-size:9.5px;line-height:1.6;color:#0F172A;padding:4px;&quot;&gt;
+      &lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;📊 Cost Analytics&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;📈 Trend &amp; Forecasting&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;⚠️ Anomaly Detection&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;⚙️ Rightsizing Recs&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;💡 Savings Opportunities&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;🤝 Commitment Advisor&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;🎯 Scenario Modeling&lt;/div&gt;
+    &lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;" vertex="1" parent="1"><mxGeometry x="828" y="134" width="188" height="192" as="geometry"/></mxCell>
+        <mxCell id="f_box_5" value="" style="rounded=1;arcSize=8;fillColor=#FAF5FF;strokeColor=#7C3AED;strokeWidth=1.5;" vertex="1" parent="1"><mxGeometry x="1026" y="100" width="192" height="230" as="geometry"/></mxCell>
+        <mxCell id="stg_5" value="6. REPORT &amp; ACT" style="shape=rectangle;rounded=1;arcSize=10;fillColor=#7C3AED;strokeColor=#7C3AED;fontColor=#FFFFFF;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1026" y="100" width="192" height="30" as="geometry"/></mxCell>
+        <mxCell id="e_stg_5" edge="1" parent="1" source="stg_4" target="stg_5" style="strokeColor=#7C3AED;strokeWidth=2;endArrow=classic;endSize=5;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f_txt_5" value="&lt;div style=&quot;font-size:9.5px;line-height:1.6;color:#0F172A;padding:4px;&quot;&gt;
+      &lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;📊 Executive Dashboards&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;📑 BU / Project Reports&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;🔔 Alerts &amp; Notifications&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;⚖️ Budget vs Actuals&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;🎫 Cost Actions &amp; Tickets&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;👥 FinOps Reviews&lt;/div&gt;&lt;div style=&quot;margin-bottom:3px;font-weight:600;&quot;&gt;🏛️ Decisions &amp; Governance&lt;/div&gt;
+    &lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;" vertex="1" parent="1"><mxGeometry x="1028" y="134" width="188" height="192" as="geometry"/></mxCell>
+        <mxCell id="flow_loop" value="🔄 FEEDBACK LOOP (CONTINUOUS IMPROVEMENT)" style="rounded=1;arcSize=12;fillColor=#F0FDF4;strokeColor=#16A34A;strokeWidth=1.5;fontColor=#16A34A;fontSize=10.5;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="26" y="336" width="1194" height="24" as="geometry"/></mxCell>
+        <mxCell id="box_cat_bg" value="" style="rounded=1;arcSize=8;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.5;" vertex="1" parent="1"><mxGeometry x="1240" y="74" width="280" height="292" as="geometry"/></mxCell>
+        <mxCell id="lbl_cat" value="COST CATEGORIES IN SCOPE" style="shape=rectangle;rounded=1;arcSize=8;fillColor=#F8FAFC;strokeColor=#CBD5E1;fontColor=#1E3A8A;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1240" y="74" width="280" height="26" as="geometry"/></mxCell>
+        <mxCell id="txt_cat" value="&lt;table style='width:100%;border-collapse:collapse;font-size:8.5px;'&gt;
+    &lt;tr style='font-weight:800;border-bottom:1.5px solid #CBD5E1;background:#F8FAFC;'&gt;
+      &lt;td style='padding:3px;'&gt;CATEGORY&lt;/td&gt;&lt;td&gt;EXAMPLES&lt;/td&gt;&lt;td style='text-align:center;'&gt;INCL&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr style='border-bottom:1px solid #F1F5F9;'&gt;&lt;td style='padding:3px;'&gt;&lt;b&gt;⚙️ Compute&lt;/b&gt;&lt;/td&gt;&lt;td style='color:#64748B;'&gt;GCE, GKE, Cloud Run, GPUs&lt;/td&gt;&lt;td style='text-align:center;color:#16A34A;font-weight:900;'&gt;✔&lt;/td&gt;&lt;/tr&gt;&lt;tr style='border-bottom:1px solid #F1F5F9;'&gt;&lt;td style='padding:3px;'&gt;&lt;b&gt;🗄️ Storage&lt;/b&gt;&lt;/td&gt;&lt;td style='color:#64748B;'&gt;GCS / Persistent Disk, Backup&lt;/td&gt;&lt;td style='text-align:center;color:#16A34A;font-weight:900;'&gt;✔&lt;/td&gt;&lt;/tr&gt;&lt;tr style='border-bottom:1px solid #F1F5F9;'&gt;&lt;td style='padding:3px;'&gt;&lt;b&gt;💾 Database&lt;/b&gt;&lt;/td&gt;&lt;td style='color:#64748B;'&gt;Cloud SQL, AlloyDB, BigQuery&lt;/td&gt;&lt;td style='text-align:center;color:#16A34A;font-weight:900;'&gt;✔&lt;/td&gt;&lt;/tr&gt;&lt;tr style='border-bottom:1px solid #F1F5F9;'&gt;&lt;td style='padding:3px;'&gt;&lt;b&gt;🌐 Network&lt;/b&gt;&lt;/td&gt;&lt;td style='color:#64748B;'&gt;VPC, LB, CDN, Cloud Interconnect&lt;/td&gt;&lt;td style='text-align:center;color:#16A34A;font-weight:900;'&gt;✔&lt;/td&gt;&lt;/tr&gt;&lt;tr style='border-bottom:1px solid #F1F5F9;'&gt;&lt;td style='padding:3px;'&gt;&lt;b&gt;🧠 AI / ML&lt;/b&gt;&lt;/td&gt;&lt;td style='color:#64748B;'&gt;Vertex AI, Model Serving, AI APIs&lt;/td&gt;&lt;td style='text-align:center;color:#16A34A;font-weight:900;'&gt;✔&lt;/td&gt;&lt;/tr&gt;&lt;tr style='border-bottom:1px solid #F1F5F9;'&gt;&lt;td style='padding:3px;'&gt;&lt;b&gt;📊 Data &amp;amp; Integration&lt;/b&gt;&lt;/td&gt;&lt;td style='color:#64748B;'&gt;Dataflow, Pub/Sub, DataProc&lt;/td&gt;&lt;td style='text-align:center;color:#16A34A;font-weight:900;'&gt;✔&lt;/td&gt;&lt;/tr&gt;&lt;tr style='border-bottom:1px solid #F1F5F9;'&gt;&lt;td style='padding:3px;'&gt;&lt;b&gt;🛡️ Security&lt;/b&gt;&lt;/td&gt;&lt;td style='color:#64748B;'&gt;Security Command Center, IAM&lt;/td&gt;&lt;td style='text-align:center;color:#16A34A;font-weight:900;'&gt;✔&lt;/td&gt;&lt;/tr&gt;&lt;tr style='border-bottom:1px solid #F1F5F9;'&gt;&lt;td style='padding:3px;'&gt;&lt;b&gt;📈 Management&lt;/b&gt;&lt;/td&gt;&lt;td style='color:#64748B;'&gt;Cloud Monitoring, Logging, Others&lt;/td&gt;&lt;td style='text-align:center;color:#16A34A;font-weight:900;'&gt;✔&lt;/td&gt;&lt;/tr&gt;&lt;tr style='border-bottom:1px solid #F1F5F9;'&gt;&lt;td style='padding:3px;'&gt;&lt;b&gt;📦 SaaS / 3rd Party&lt;/b&gt;&lt;/td&gt;&lt;td style='color:#64748B;'&gt;Snowflake, Datadog, GitHub, etc.&lt;/td&gt;&lt;td style='text-align:center;color:#16A34A;font-weight:900;'&gt;✔&lt;/td&gt;&lt;/tr&gt;&lt;tr style='border-bottom:1px solid #F1F5F9;'&gt;&lt;td style='padding:3px;'&gt;&lt;b&gt;📑 Licenses / Subs&lt;/b&gt;&lt;/td&gt;&lt;td style='color:#64748B;'&gt;Adobe, Microsoft, Splunk, etc.&lt;/td&gt;&lt;td style='text-align:center;color:#16A34A;font-weight:900;'&gt;✔&lt;/td&gt;&lt;/tr&gt;
+  &lt;/table&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;padding=2;" vertex="1" parent="1"><mxGeometry x="1244" y="102" width="272" height="258" as="geometry"/></mxCell>
+        <mxCell id="box_tool_bg" value="" style="rounded=1;arcSize=8;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.5;" vertex="1" parent="1"><mxGeometry x="16" y="374" width="1214" height="106" as="geometry"/></mxCell>
+        <mxCell id="lbl_tool" value="DATA &amp;amp; TOOLING LAYER" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#1E3A8A;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="16" y="378" width="1214" height="16" as="geometry"/></mxCell>
+        <mxCell id="tl_0" value="&lt;div style=&quot;font-size:24px;text-align:center;&quot;&gt;💳&lt;/div&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#1E3A8A;text-align:center;margin-top:2px;&quot;&gt;Google Cloud Billing&lt;/div&gt;&lt;div style=&quot;font-size:8px;color:#64748B;text-align:center;&quot;&gt;Billing API&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="26" y="400" width="140" height="72" as="geometry"/></mxCell>
+        <mxCell id="tl_1" value="&lt;div style=&quot;font-size:24px;text-align:center;&quot;&gt;📊&lt;/div&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#1E3A8A;text-align:center;margin-top:2px;&quot;&gt;BigQuery&lt;/div&gt;&lt;div style=&quot;font-size:8px;color:#64748B;text-align:center;&quot;&gt;(Cost Export)&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="176" y="400" width="140" height="72" as="geometry"/></mxCell>
+        <mxCell id="e_tl_1" edge="1" parent="1" source="tl_0" target="tl_1" style="strokeColor=#2563EB;strokeWidth=1.8;endArrow=classic;endSize=5;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="tl_2" value="&lt;div style=&quot;font-size:24px;text-align:center;&quot;&gt;🗃️&lt;/div&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#1E3A8A;text-align:center;margin-top:2px;&quot;&gt;Cloud Asset Inventory&lt;/div&gt;&lt;div style=&quot;font-size:8px;color:#64748B;text-align:center;&quot;&gt;Asset Metadata&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="326" y="400" width="140" height="72" as="geometry"/></mxCell>
+        <mxCell id="e_tl_2" edge="1" parent="1" source="tl_1" target="tl_2" style="strokeColor=#2563EB;strokeWidth=1.8;endArrow=classic;endSize=5;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="tl_3" value="&lt;div style=&quot;font-size:24px;text-align:center;&quot;&gt;📑&lt;/div&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#1E3A8A;text-align:center;margin-top:2px;&quot;&gt;Cloud Logging &amp;amp; Audit Logs&lt;/div&gt;&lt;div style=&quot;font-size:8px;color:#64748B;text-align:center;&quot;&gt;Audit Trails&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="476" y="400" width="140" height="72" as="geometry"/></mxCell>
+        <mxCell id="e_tl_3" edge="1" parent="1" source="tl_2" target="tl_3" style="strokeColor=#2563EB;strokeWidth=1.8;endArrow=classic;endSize=5;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="tl_4" value="&lt;div style=&quot;font-size:24px;text-align:center;&quot;&gt;⚡&lt;/div&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#1E3A8A;text-align:center;margin-top:2px;&quot;&gt;Dataflow&lt;/div&gt;&lt;div style=&quot;font-size:8px;color:#64748B;text-align:center;&quot;&gt;(ETL)&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="626" y="400" width="140" height="72" as="geometry"/></mxCell>
+        <mxCell id="e_tl_4" edge="1" parent="1" source="tl_3" target="tl_4" style="strokeColor=#2563EB;strokeWidth=1.8;endArrow=classic;endSize=5;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="tl_5" value="&lt;div style=&quot;font-size:24px;text-align:center;&quot;&gt;🗄️&lt;/div&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#1E3A8A;text-align:center;margin-top:2px;&quot;&gt;BigQuery&lt;/div&gt;&lt;div style=&quot;font-size:8px;color:#64748B;text-align:center;&quot;&gt;(Curated Data)&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="776" y="400" width="140" height="72" as="geometry"/></mxCell>
+        <mxCell id="e_tl_5" edge="1" parent="1" source="tl_4" target="tl_5" style="strokeColor=#2563EB;strokeWidth=1.8;endArrow=classic;endSize=5;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="tl_6" value="&lt;div style=&quot;font-size:24px;text-align:center;&quot;&gt;📈&lt;/div&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#1E3A8A;text-align:center;margin-top:2px;&quot;&gt;Looker Studio&lt;/div&gt;&lt;div style=&quot;font-size:8px;color:#64748B;text-align:center;&quot;&gt;(Dashboards)&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="926" y="400" width="140" height="72" as="geometry"/></mxCell>
+        <mxCell id="e_tl_6" edge="1" parent="1" source="tl_5" target="tl_6" style="strokeColor=#2563EB;strokeWidth=1.8;endArrow=classic;endSize=5;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="tl_7" value="&lt;div style=&quot;font-size:24px;text-align:center;&quot;&gt;⚙️&lt;/div&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#1E3A8A;text-align:center;margin-top:2px;&quot;&gt;Cloud Functions / Workflows&lt;/div&gt;&lt;div style=&quot;font-size:8px;color:#64748B;text-align:center;&quot;&gt;(Automations)&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="1076" y="400" width="140" height="72" as="geometry"/></mxCell>
+        <mxCell id="e_tl_7" edge="1" parent="1" source="tl_6" target="tl_7" style="strokeColor=#2563EB;strokeWidth=1.8;endArrow=classic;endSize=5;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="box_opt_bg" value="" style="rounded=1;arcSize=8;fillColor=#FFFFFF;strokeColor=#16A34A;strokeWidth=1.5;" vertex="1" parent="1"><mxGeometry x="1240" y="374" width="280" height="106" as="geometry"/></mxCell>
+        <mxCell id="lbl_opt" value="COST OPTIMIZATION OPPORTUNITIES" style="shape=rectangle;rounded=1;arcSize=8;fillColor=#F0FDF4;strokeColor=#CBD5E1;fontColor=#16A34A;fontSize=10.5;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1240" y="374" width="280" height="22" as="geometry"/></mxCell>
+        <mxCell id="opt_c_0" value="&lt;div style=&quot;font-size:13px;text-align:center;&quot;&gt;⚙️&lt;/div&gt;&lt;div style=&quot;font-size:7px;font-weight:800;color:#0F172A;text-align:center;line-height:1.1;&quot;&gt;Rightsize Compute &amp;amp; DB&lt;/div&gt;" style="rounded=1;arcSize=6;fillColor=#F0FDF4;strokeColor=#BBF7D0;html=1;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1"><mxGeometry x="1246" y="402" width="64" height="34" as="geometry"/></mxCell>
+        <mxCell id="opt_c_1" value="&lt;div style=&quot;font-size:13px;text-align:center;&quot;&gt;🧹&lt;/div&gt;&lt;div style=&quot;font-size:7px;font-weight:800;color:#0F172A;text-align:center;line-height:1.1;&quot;&gt;Idle Resource Cleanup&lt;/div&gt;" style="rounded=1;arcSize=6;fillColor=#F0FDF4;strokeColor=#BBF7D0;html=1;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1"><mxGeometry x="1313" y="402" width="64" height="34" as="geometry"/></mxCell>
+        <mxCell id="opt_c_2" value="&lt;div style=&quot;font-size:13px;text-align:center;&quot;&gt;🗄️&lt;/div&gt;&lt;div style=&quot;font-size:7px;font-weight:800;color:#0F172A;text-align:center;line-height:1.1;&quot;&gt;Storage Lifecycle Policies&lt;/div&gt;" style="rounded=1;arcSize=6;fillColor=#F0FDF4;strokeColor=#BBF7D0;html=1;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1"><mxGeometry x="1380" y="402" width="64" height="34" as="geometry"/></mxCell>
+        <mxCell id="opt_c_3" value="&lt;div style=&quot;font-size:13px;text-align:center;&quot;&gt;💰&lt;/div&gt;&lt;div style=&quot;font-size:7px;font-weight:800;color:#0F172A;text-align:center;line-height:1.1;&quot;&gt;Savings Plans / CUD&lt;/div&gt;" style="rounded=1;arcSize=6;fillColor=#F0FDF4;strokeColor=#BBF7D0;html=1;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1"><mxGeometry x="1447" y="402" width="64" height="34" as="geometry"/></mxCell>
+        <mxCell id="opt_c_4" value="&lt;div style=&quot;font-size:13px;text-align:center;&quot;&gt;⏱️&lt;/div&gt;&lt;div style=&quot;font-size:7px;font-weight:800;color:#0F172A;text-align:center;line-height:1.1;&quot;&gt;Autoscaling &amp;amp; Scheduling&lt;/div&gt;" style="rounded=1;arcSize=6;fillColor=#F0FDF4;strokeColor=#BBF7D0;html=1;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1"><mxGeometry x="1246" y="439" width="64" height="34" as="geometry"/></mxCell>
+        <mxCell id="opt_c_5" value="&lt;div style=&quot;font-size:13px;text-align:center;&quot;&gt;🌐&lt;/div&gt;&lt;div style=&quot;font-size:7px;font-weight:800;color:#0F172A;text-align:center;line-height:1.1;&quot;&gt;Reserved IP / LB Opt&lt;/div&gt;" style="rounded=1;arcSize=6;fillColor=#F0FDF4;strokeColor=#BBF7D0;html=1;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1"><mxGeometry x="1313" y="439" width="64" height="34" as="geometry"/></mxCell>
+        <mxCell id="opt_c_6" value="&lt;div style=&quot;font-size:13px;text-align:center;&quot;&gt;⚡&lt;/div&gt;&lt;div style=&quot;font-size:7px;font-weight:800;color:#0F172A;text-align:center;line-height:1.1;&quot;&gt;Data Transfer Opt&lt;/div&gt;" style="rounded=1;arcSize=6;fillColor=#F0FDF4;strokeColor=#BBF7D0;html=1;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1"><mxGeometry x="1380" y="439" width="64" height="34" as="geometry"/></mxCell>
+        <mxCell id="opt_c_7" value="&lt;div style=&quot;font-size:13px;text-align:center;&quot;&gt;📑&lt;/div&gt;&lt;div style=&quot;font-size:7px;font-weight:800;color:#0F172A;text-align:center;line-height:1.1;&quot;&gt;License &amp;amp; SaaS Opt&lt;/div&gt;" style="rounded=1;arcSize=6;fillColor=#F0FDF4;strokeColor=#BBF7D0;html=1;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1"><mxGeometry x="1447" y="439" width="64" height="34" as="geometry"/></mxCell>
+        <mxCell id="box_alloc_bg" value="" style="rounded=1;arcSize=8;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.5;" vertex="1" parent="1"><mxGeometry x="16" y="488" width="1214" height="106" as="geometry"/></mxCell>
+        <mxCell id="lbl_alloc" value="ALLOCATION MODEL (EXAMPLES)" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#1E3A8A;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="16" y="492" width="1214" height="16" as="geometry"/></mxCell>
+        <mxCell id="alloc_c_0" value="&lt;div style=&quot;font-size:22px;text-align:center;&quot;&gt;🏢&lt;/div&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#1E3A8A;text-align:center;margin-top:2px;&quot;&gt;Business Unit&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;text-align:center;line-height:1.2;&quot;&gt;Allocate cost by BU using tags or hierarchy&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#EFF6FF;strokeColor=#BFDBFE;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="26" y="514" width="140" height="72" as="geometry"/></mxCell>
+        <mxCell id="alloc_c_1" value="&lt;div style=&quot;font-size:22px;text-align:center;&quot;&gt;💻&lt;/div&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#1E3A8A;text-align:center;margin-top:2px;&quot;&gt;Project / App&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;text-align:center;line-height:1.2;&quot;&gt;Cost by project, app, or workload ownership&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#EFF6FF;strokeColor=#BFDBFE;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="176" y="514" width="140" height="72" as="geometry"/></mxCell>
+        <mxCell id="alloc_c_2" value="&lt;div style=&quot;font-size:22px;text-align:center;&quot;&gt;☁️&lt;/div&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#1E3A8A;text-align:center;margin-top:2px;&quot;&gt;Environment&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;text-align:center;line-height:1.2;&quot;&gt;Prod / Non-Prod allocation separation&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#EFF6FF;strokeColor=#BFDBFE;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="326" y="514" width="140" height="72" as="geometry"/></mxCell>
+        <mxCell id="alloc_c_3" value="&lt;div style=&quot;font-size:22px;text-align:center;&quot;&gt;🤝&lt;/div&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#1E3A8A;text-align:center;margin-top:2px;&quot;&gt;Shared Services&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;text-align:center;line-height:1.2;&quot;&gt;Platform, Security, Network shared costs&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#EFF6FF;strokeColor=#BFDBFE;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="476" y="514" width="140" height="72" as="geometry"/></mxCell>
+        <mxCell id="alloc_c_4" value="&lt;div style=&quot;font-size:22px;text-align:center;&quot;&gt;🏛️&lt;/div&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#1E3A8A;text-align:center;margin-top:2px;&quot;&gt;Cost Center&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;text-align:center;line-height:1.2;&quot;&gt;Finance cost centers mapping and roll-up&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#EFF6FF;strokeColor=#BFDBFE;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="626" y="514" width="140" height="72" as="geometry"/></mxCell>
+        <mxCell id="alloc_c_5" value="&lt;div style=&quot;font-size:22px;text-align:center;&quot;&gt;👥&lt;/div&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#1E3A8A;text-align:center;margin-top:2px;&quot;&gt;Customer / Product&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;text-align:center;line-height:1.2;&quot;&gt;Internal showback or chargeback by product&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#EFF6FF;strokeColor=#BFDBFE;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="776" y="514" width="140" height="72" as="geometry"/></mxCell>
+        <mxCell id="alloc_c_6" value="&lt;div style=&quot;font-size:22px;text-align:center;&quot;&gt;🌐&lt;/div&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#1E3A8A;text-align:center;margin-top:2px;&quot;&gt;Region / Location&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;text-align:center;line-height:1.2;&quot;&gt;Allocate by region or data residency&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#EFF6FF;strokeColor=#BFDBFE;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="926" y="514" width="140" height="72" as="geometry"/></mxCell>
+        <mxCell id="alloc_c_7" value="&lt;div style=&quot;font-size:22px;text-align:center;&quot;&gt;📐&lt;/div&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#1E3A8A;text-align:center;margin-top:2px;&quot;&gt;Allocation Method&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;text-align:center;line-height:1.2;&quot;&gt;• Tag-Based&lt;br/&gt;• Rule-Based&lt;br/&gt;• Driver-Based&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#EFF6FF;strokeColor=#BFDBFE;strokeWidth=1.2;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="1076" y="514" width="140" height="72" as="geometry"/></mxCell>
+        <mxCell id="box_ano_bg" value="" style="rounded=1;arcSize=8;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.5;" vertex="1" parent="1"><mxGeometry x="1240" y="488" width="280" height="106" as="geometry"/></mxCell>
+        <mxCell id="lbl_ano" value="COST ANOMALY DETECTION (EXAMPLES)" style="shape=rectangle;rounded=1;arcSize=8;fillColor=#FEF2F2;strokeColor=#CBD5E1;fontColor=#DC2626;fontSize=10.5;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1240" y="488" width="280" height="22" as="geometry"/></mxCell>
+        <mxCell id="txt_ano" value="&lt;div style=&quot;font-size:8px;line-height:1.4;color:#0F172A;padding:4px;&quot;&gt;
+    📈 &lt;b&gt;[Spike Wave]&lt;/b&gt; &amp;nbsp; Spike in compute GPU usage&lt;br/&gt;
+    • Unusual data egress charges&lt;br/&gt;
+    • Sudden increase in API calls&lt;br/&gt;
+    • Orphaned resources running&lt;br/&gt;
+    • Budget threshold breach
+  &lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;" vertex="1" parent="1"><mxGeometry x="1244" y="514" width="272" height="74" as="geometry"/></mxCell>
+        <mxCell id="box_gov_bg" value="" style="rounded=1;arcSize=8;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.5;" vertex="1" parent="1"><mxGeometry x="16" y="602" width="1214" height="170" as="geometry"/></mxCell>
+        <mxCell id="lbl_gov" value="COST GOVERNANCE &amp;amp; FINOPS OPERATING MODEL" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#1E3A8A;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="16" y="606" width="1214" height="16" as="geometry"/></mxCell>
+        <mxCell id="box_f_raci" value="&lt;table style='width:100%;border-collapse:collapse;font-size:8.5px;'&gt;
+    &lt;tr style='font-weight:800;border-bottom:1.5px solid #CBD5E1;background:#F8FAFC;'&gt;
+      &lt;td style='padding:3px;'&gt;ROLE&lt;/td&gt;&lt;td&gt;RESPONSIBILITIES (RACI SUMMARY)&lt;/td&gt;&lt;td style='text-align:center;'&gt;R A C I&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr style='border-bottom:1px solid #F1F5F9;'&gt;&lt;td style='padding:3px;'&gt;&lt;b&gt;👤 FinOps Lead&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Define policy, guardrails, model, reviews&lt;/td&gt;&lt;td style='text-align:center;font-weight:900;color:#16A34A;'&gt;R A C&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr style='border-bottom:1px solid #F1F5F9;'&gt;&lt;td style='padding:3px;'&gt;&lt;b&gt;💰 Finance&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Budgeting, forecasting, chargeback, reports&lt;/td&gt;&lt;td style='text-align:center;font-weight:900;color:#2563EB;'&gt;R A&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr style='border-bottom:1px solid #F1F5F9;'&gt;&lt;td style='padding:3px;'&gt;&lt;b&gt;⚙️ Engineering&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Cost awareness, tagging, optimization&lt;/td&gt;&lt;td style='text-align:center;font-weight:900;color:#EA580C;'&gt;R A C&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr style='border-bottom:1px solid #F1F5F9;'&gt;&lt;td style='padding:3px;'&gt;&lt;b&gt;📊 Data Platform&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Data collection, pipeline reliability&lt;/td&gt;&lt;td style='text-align:center;font-weight:900;color:#0284C7;'&gt;R C I&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr style='border-bottom:1px solid #F1F5F9;'&gt;&lt;td style='padding:3px;'&gt;&lt;b&gt;🛡️ Security&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Guardrails, access control, anomaly alerts&lt;/td&gt;&lt;td style='text-align:center;font-weight:900;color:#7C3AED;'&gt;R C I&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td style='padding:3px;'&gt;&lt;b&gt;🏢 BU Owner&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Budget ownership, review, accountability&lt;/td&gt;&lt;td style='text-align:center;font-weight:900;color:#DC2626;'&gt;A R C&lt;/td&gt;&lt;/tr&gt;
+  &lt;/table&gt;" style="rounded=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.2;html=1;align=left;verticalAlign=top;padding=4;" vertex="1" parent="1"><mxGeometry x="26" y="628" width="410" height="136" as="geometry"/></mxCell>
+        <mxCell id="box_f_prin" value="&lt;div style='font-size:10px;font-weight:800;color:#1E3A8A;margin-bottom:4px;'&gt;FINOPS PRINCIPLES&lt;/div&gt;
+  &lt;div style='font-size:8.5px;line-height:1.5;color:#0F172A;'&gt;
+    ☑ Teams collaborate across business, finance &amp;amp; eng&lt;br/&gt;
+    ☑ Everyone takes ownership for their cloud usage&lt;br/&gt;
+    ☑ A centralized team drives FinOps&lt;br/&gt;
+    ☑ Reports are accessible and timely&lt;br/&gt;
+    ☑ Decisions are driven by business value&lt;br/&gt;
+    ☑ Take advantage of variable cloud cost model
+  &lt;/div&gt;" style="rounded=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.2;html=1;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1"><mxGeometry x="446" y="628" width="380" height="136" as="geometry"/></mxCell>
+        <mxCell id="box_f_cad" value="&lt;div style='font-size:10px;font-weight:800;color:#1E3A8A;margin-bottom:4px;'&gt;FINOPS CADENCE&lt;/div&gt;
+  &lt;div style='font-size:8.5px;line-height:1.5;color:#0F172A;'&gt;
+    📅 &lt;b&gt;Weekly:&lt;/b&gt; Cost review &amp;amp; anomalies&lt;br/&gt;
+    📅 &lt;b&gt;Bi-weekly:&lt;/b&gt; Optimization review&lt;br/&gt;
+    📅 &lt;b&gt;Monthly:&lt;/b&gt; Executive report &amp;amp; forecast&lt;br/&gt;
+    📅 &lt;b&gt;Quarterly:&lt;/b&gt; Business review&lt;br/&gt;
+    📅 &lt;b&gt;Annually:&lt;/b&gt; Strategy &amp;amp; model update
+  &lt;/div&gt;" style="rounded=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.2;html=1;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1"><mxGeometry x="836" y="628" width="384" height="136" as="geometry"/></mxCell>
+        <mxCell id="box_bud_bg" value="" style="rounded=1;arcSize=8;fillColor=#FFFFFF;strokeColor=#16A34A;strokeWidth=1.5;" vertex="1" parent="1"><mxGeometry x="1240" y="602" width="280" height="170" as="geometry"/></mxCell>
+        <mxCell id="lbl_bud" value="BUDGET &amp;amp; ALERTING (EXAMPLE)" style="shape=rectangle;rounded=1;arcSize=8;fillColor=#F0FDF4;strokeColor=#CBD5E1;fontColor=#16A34A;fontSize=10.5;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1240" y="602" width="280" height="22" as="geometry"/></mxCell>
+        <mxCell id="bud_gauge" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;span style=&quot;font-size:24px;font-weight:900;color:#16A34A;&quot;&gt;72%&lt;/span&gt;&lt;div style=&quot;font-size:9.5px;font-weight:800;color:#0F172A;margin-top:2px;&quot;&gt;$72K of $100K&lt;/div&gt;&lt;div style=&quot;font-size:8px;color:#64748B;&quot;&gt;Monthly Budget&lt;/div&gt;&lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#F0FDF4;strokeColor=#BBF7D0;html=1;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="1250" y="630" width="260" height="64" as="geometry"/></mxCell>
+        <mxCell id="bud_alerts" value="&lt;div style='font-size:8px;line-height:1.4;color:#0F172A;'&gt;
+    ⚠️ &lt;b&gt;Budget &amp;gt; 80%&lt;/b&gt;&lt;br/&gt;
+    ⚠️ &lt;b&gt;Daily spend increase &amp;gt; 30% WoW&lt;/b&gt;&lt;br/&gt;
+    ⚠️ &lt;b&gt;Anomaly detected (High)&lt;/b&gt;&lt;br/&gt;
+    ⚠️ &lt;b&gt;Commitment utilization &amp;lt; 60%&lt;/b&gt;
+  &lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;" vertex="1" parent="1"><mxGeometry x="1250" y="700" width="260" height="64" as="geometry"/></mxCell>
+        <mxCell id="box_b_flow" value="" style="rounded=1;arcSize=8;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.5;" vertex="1" parent="1"><mxGeometry x="16" y="780" width="235" height="174" as="geometry"/></mxCell>
+        <mxCell id="lbl_b_flow" value="DATA FLOW (HIGH LEVEL)" style="shape=rectangle;rounded=1;arcSize=8;fillColor=#F8FAFC;strokeColor=#CBD5E1;fontColor=#1E3A8A;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="16" y="780" width="235" height="22" as="geometry"/></mxCell>
+        <mxCell id="txt_b_flow" value="&lt;div style=&quot;font-size:8.5px;line-height:1.55;text-align:center;padding:6px;&quot;&gt;
+    📥 Billing Export (BigQuery)&lt;br/&gt;↓&lt;br/&gt;
+    ⚡ ETL &amp;amp; Enrichment (Dataflow)&lt;br/&gt;↓&lt;br/&gt;
+    🗄️ Curated Cost Data (BigQuery)&lt;br/&gt;↓&lt;br/&gt;
+    📊 Analytics &amp;amp; Reporting (Looker Studio)
+  &lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;" vertex="1" parent="1"><mxGeometry x="18" y="804" width="231" height="144" as="geometry"/></mxCell>
+        <mxCell id="box_b_met" value="" style="rounded=1;arcSize=8;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.5;" vertex="1" parent="1"><mxGeometry x="259" y="780" width="330" height="174" as="geometry"/></mxCell>
+        <mxCell id="lbl_b_met" value="KEY METRICS (TRACK &amp;amp; IMPROVE)" style="shape=rectangle;rounded=1;arcSize=8;fillColor=#F8FAFC;strokeColor=#CBD5E1;fontColor=#1E3A8A;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="259" y="780" width="330" height="22" as="geometry"/></mxCell>
+        <mxCell id="txt_b_met" value="&lt;div style=&quot;font-size:9px;line-height:1.65;color:#0F172A;padding:6px;&quot;&gt;
+    💰 &lt;b&gt;Total Cloud Spend&lt;/b&gt; &amp;nbsp;|&amp;nbsp; 📊 &lt;b&gt;Budget Variance %&lt;/b&gt;&lt;br/&gt;
+    👤 &lt;b&gt;Cost per Active User&lt;/b&gt; &amp;nbsp;|&amp;nbsp; 🤝 &lt;b&gt;Committed Use Savings %&lt;/b&gt;&lt;br/&gt;
+    🧬 &lt;b&gt;Unit Economics (per Case / Dossier)&lt;/b&gt;&lt;br/&gt;
+    💵 &lt;b&gt;Cost Optimization Realized $&lt;/b&gt;
+  &lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;" vertex="1" parent="1"><mxGeometry x="261" y="804" width="326" height="144" as="geometry"/></mxCell>
+        <mxCell id="box_b_tag" value="" style="rounded=1;arcSize=8;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.5;" vertex="1" parent="1"><mxGeometry x="597" y="780" width="290" height="174" as="geometry"/></mxCell>
+        <mxCell id="lbl_b_tag" value="TAGS &amp;amp; LABELS STRATEGY" style="shape=rectangle;rounded=1;arcSize=8;fillColor=#F8FAFC;strokeColor=#CBD5E1;fontColor=#1E3A8A;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="597" y="780" width="290" height="22" as="geometry"/></mxCell>
+        <mxCell id="txt_b_tag" value="&lt;div style=&quot;font-size:8.5px;line-height:1.6;color:#0F172A;padding:6px;&quot;&gt;
+    🏷️ &lt;b&gt;env:&lt;/b&gt; prod / nonprod&lt;br/&gt;
+    🏷️ &lt;b&gt;app:&lt;/b&gt; dossier-service&lt;br/&gt;
+    🏷️ &lt;b&gt;owner:&lt;/b&gt; data-platform&lt;br/&gt;
+    🏷️ &lt;b&gt;cost_center:&lt;/b&gt; R&amp;amp;D&lt;br/&gt;
+    🏷️ &lt;b&gt;business_unit:&lt;/b&gt; Regulatory&lt;br/&gt;
+    🏷️ &lt;b&gt;data_class:&lt;/b&gt; Internal / Confidential
+  &lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;" vertex="1" parent="1"><mxGeometry x="599" y="804" width="286" height="144" as="geometry"/></mxCell>
+        <mxCell id="box_b_succ" value="" style="rounded=1;arcSize=8;fillColor=#FFFFFF;strokeColor=#16A34A;strokeWidth=1.5;" vertex="1" parent="1"><mxGeometry x="895" y="780" width="290" height="174" as="geometry"/></mxCell>
+        <mxCell id="lbl_b_succ" value="SUCCESS CRITERIA" style="shape=rectangle;rounded=1;arcSize=8;fillColor=#F0FDF4;strokeColor=#CBD5E1;fontColor=#16A34A;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="895" y="780" width="290" height="22" as="geometry"/></mxCell>
+        <mxCell id="txt_b_succ" value="&lt;div style=&quot;font-size:9px;line-height:1.6;color:#0F172A;padding:6px;&quot;&gt;
+    ✔ &lt;b&gt;100% Budget Visibility&lt;/b&gt;&lt;br/&gt;
+    ✔ &lt;b&gt;&amp;gt; 90% Tagged Resources&lt;/b&gt;&lt;br/&gt;
+    ✔ &lt;b&gt;&amp;gt; 20% Cost Optimization Realized&lt;/b&gt;&lt;br/&gt;
+    ✔ &lt;b&gt;Forecast Accuracy &amp;gt; 85%&lt;/b&gt;&lt;br/&gt;
+    ✔ &lt;b&gt;Anomalies Detected &amp;lt; 24h&lt;/b&gt;
+  &lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;" vertex="1" parent="1"><mxGeometry x="897" y="804" width="286" height="144" as="geometry"/></mxCell>
+        <mxCell id="box_b_notes" value="" style="rounded=1;arcSize=8;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.5;" vertex="1" parent="1"><mxGeometry x="1193" y="780" width="327" height="174" as="geometry"/></mxCell>
+        <mxCell id="lbl_b_notes" value="NOTES" style="shape=rectangle;rounded=1;arcSize=8;fillColor=#F8FAFC;strokeColor=#CBD5E1;fontColor=#1E3A8A;fontSize=10;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1193" y="780" width="327" height="22" as="geometry"/></mxCell>
+        <mxCell id="txt_b_notes" value="&lt;div style=&quot;font-size:8.5px;line-height:1.55;color:#64748B;padding:6px;&quot;&gt;
+    • Use consistent tagging at source.&lt;br/&gt;
+    • Review and refine allocation rules regularly.&lt;br/&gt;
+    • Automate where possible.&lt;br/&gt;
+    • Drive cost conversations with business context and value.
+  &lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;" vertex="1" parent="1"><mxGeometry x="1195" y="804" width="323" height="144" as="geometry"/></mxCell>
+        <mxCell id="footer_status" value="&lt;div style='font-size:9px;color:#64748B;display:flex;justify-content:space-between;align-items:center;'&gt;
+    &lt;div&gt;&lt;b&gt;CLASSIFICATION:&lt;/b&gt; Confidential | NovaCura FinOps Framework v1.0&lt;/div&gt;
+    &lt;div&gt;Enterprise Architecture Team&lt;/div&gt;
+  &lt;/div&gt;" style="rounded=1;arcSize=8;fillColor=#F8FAFC;strokeColor=#CBD5E1;html=1;align=left;verticalAlign=middle;padding=4;" vertex="1" parent="1"><mxGeometry x="16" y="962" width="1504" height="24" as="geometry"/></mxCell>
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram id="cloud_finops_playbook" name="Page 2: Executive Playbook &amp; Governance Profile">
-    <mxGraphModel dx="1400" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1380" pageHeight="680" background="#FFFFFF">
-      <root>
-        <mxCell id="0_p2" />
-        <mxCell id="1_p2" parent="0_p2" />
-
-        <!-- PAGE 2 HEADER BANNER -->
-        <mxCell id="p2_hdr" value="&lt;b&gt;EXECUTIVE CLOUD FINOPS &amp;amp; UNIT ECONOMICS PLAYBOOK — GOVERNANCE PROFILE&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;fontStyle=1;fontSize=15;fontColor=#0F172A;" vertex="1" parent="1_p2">
-          <mxGeometry x="35" y="10" width="1310" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="p2_line" value="" style="line;strokeWidth=2;strokeColor=#0F172A;" vertex="1" parent="1_p2">
-          <mxGeometry x="35" y="38" width="1310" height="4" as="geometry" />
-        </mxCell>
-
-        <!-- KPI SUMMARY BAR -->
-        <mxCell id="kpi_1" value="&lt;font color=&quot;#0F172A&quot; style=&quot;font-size:11px;&quot;&gt;ARCHITECTURE ID&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#0F172A&quot; style=&quot;font-size:13px;&quot;&gt;&lt;b&gt;Cloud FinOps Model&lt;/b&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=1.5;strokeColor=#0F172A;fillColor=#F8FAFC;align=center;" vertex="1" parent="1_p2">
-          <mxGeometry x="35" y="55" width="310" height="55" as="geometry" />
-        </mxCell>
-
-        <mxCell id="kpi_2" value="&lt;font color=&quot;#0F172A&quot; style=&quot;font-size:11px;&quot;&gt;COST ATTRIBUTION COVERAGE&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#16A34A&quot; style=&quot;font-size:16px;&quot;&gt;&lt;b&gt;★★★★★ &amp;nbsp;100% Granular&lt;/b&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;strokeColor=#16A34A;fillColor=#F0FDF4;align=center;" vertex="1" parent="1_p2">
-          <mxGeometry x="375" y="55" width="290" height="55" as="geometry" />
-        </mxCell>
-
-        <mxCell id="kpi_3" value="&lt;font color=&quot;#0F172A&quot; style=&quot;font-size:11px;&quot;&gt;AI UNIT ECONOMICS&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#0284C7&quot; style=&quot;font-size:13px;&quot;&gt;&lt;b&gt;Vertex AI Token Attribution&lt;/b&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=1.5;strokeColor=#0284C7;fillColor=#F0F9FF;align=center;" vertex="1" parent="1_p2">
-          <mxGeometry x="695" y="55" width="310" height="55" as="geometry" />
-        </mxCell>
-
-        <mxCell id="kpi_4" value="&lt;font color=&quot;#0F172A&quot; style=&quot;font-size:11px;&quot;&gt;FINOPS FOUNDATION LEVEL&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#2563EB&quot; style=&quot;font-size:13px;&quot;&gt;&lt;b&gt;Run Stage (Mature Automation)&lt;/b&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=1.5;strokeColor=#2563EB;fillColor=#EFF6FF;align=center;" vertex="1" parent="1_p2">
-          <mxGeometry x="1035" y="55" width="310" height="55" as="geometry" />
-        </mxCell>
-
-        <!-- PERSONA MATRIX ROW -->
-        <mxCell id="per_card_1" value="&lt;table style=&quot;width:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;background-color:#0F172A;padding:8px 12px;&quot;&gt;&lt;font color=&quot;#FFFFFF&quot; style=&quot;font-size:13px;&quot;&gt;&lt;b&gt;👤 PRIMARY CREATOR PERSONA&lt;/b&gt;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;padding:12px;background-color:#FFFFFF;&quot;&gt;&lt;font color=&quot;#0F172A&quot; style=&quot;font-size:12px;&quot;&gt;&lt;b&gt;Head of Cloud FinOps &amp;amp; Enterprise Cloud Economist&lt;/b&gt;&lt;br&gt;&lt;br&gt;Responsible for establishing unit economics KPIs, Kubecost pod-level cost allocation rules, Vertex AI prompt/completion token pricing models, and CUD commitment strategies.&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=3;strokeWidth=2;strokeColor=#0F172A;verticalAlign=top;align=left;overflow=hidden;" vertex="1" parent="1_p2">
-          <mxGeometry x="35" y="130" width="630" height="115" as="geometry" />
-        </mxCell>
-
-        <mxCell id="per_card_2" value="&lt;table style=&quot;width:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;background-color:#0284C7;padding:8px 12px;&quot;&gt;&lt;font color=&quot;#FFFFFF&quot; style=&quot;font-size:13px;&quot;&gt;&lt;b&gt;👔 PRIMARY CONSUMER PERSONA&lt;/b&gt;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;padding:12px;background-color:#F0F9FF;&quot;&gt;&lt;font color=&quot;#0F172A&quot; style=&quot;font-size:12px;&quot;&gt;&lt;b&gt;CFO, VP of Finance &amp;amp; Business Unit General Managers&lt;/b&gt;&lt;br&gt;&lt;br&gt;Reviews monthly departmental chargeback invoices, tracks cloud spend vs forecast budgets, and approves committed use discount (CUD) multi-year contracts.&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=3;strokeWidth=2;strokeColor=#0284C7;verticalAlign=top;align=left;overflow=hidden;" vertex="1" parent="1_p2">
-          <mxGeometry x="695" y="130" width="650" height="115" as="geometry" />
-        </mxCell>
-
-        <!-- DUAL LENS COMPARISON -->
-        <mxCell id="lens_google" value="&lt;table style=&quot;width:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;background-color:#1D4ED8;padding:10px 14px;&quot;&gt;&lt;font color=&quot;#FFFFFF&quot; style=&quot;font-size:14px;&quot;&gt;&lt;b&gt;🚀 BIG TECH &amp;amp; ENGINEERING PERSPECTIVE (Google / Uber / Stripe)&lt;/b&gt;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;padding:16px;background-color:#FFFFFF;&quot;&gt;&lt;font color=&quot;#0F172A&quot; style=&quot;font-size:12px;line-height:1.6;&quot;&gt;&lt;b style=&quot;color:#1D4ED8;&quot;&gt;1. Microservice &amp;amp; AI Unit Economics:&lt;/b&gt; Tracks cost-per-query, cost-per-token, and cost-per-active-user in real-time, giving engineering squads direct accountability for architectural efficiency.&lt;br&gt;&lt;br&gt;&lt;b style=&quot;color:#1D4ED8;&quot;&gt;2. Automated Tagging CI/CD Linter:&lt;/b&gt; Terraform pull requests automatically fail CI gates if infrastructure manifests lack mandatory owner, environment, and cost-center metadata tags.&lt;br&gt;&lt;br&gt;&lt;b style=&quot;color:#1D4ED8;&quot;&gt;3. Real-Time Anomaly Interception:&lt;/b&gt; BigQuery ML detects spending anomalies within 15 minutes of runaway Cloud Run or Vertex AI job triggers, firing automated Cloud Monitoring webhooks.&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=3;strokeWidth=2;strokeColor=#1D4ED8;verticalAlign=top;align=left;overflow=hidden;" vertex="1" parent="1_p2">
-          <mxGeometry x="35" y="265" width="630" height="380" as="geometry" />
-        </mxCell>
-
-        <mxCell id="lens_mckinsey" value="&lt;table style=&quot;width:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;background-color:#0F172A;padding:10px 14px;&quot;&gt;&lt;font color=&quot;#FFFFFF&quot; style=&quot;font-size:14px;&quot;&gt;&lt;b&gt;💼 TIER-1 STRATEGY CONSULTING PERSPECTIVE (McKinsey / BCG / Bain)&lt;/b&gt;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;padding:16px;background-color:#F8FAFC;&quot;&gt;&lt;font color=&quot;#0F172A&quot; style=&quot;font-size:12px;line-height:1.6;&quot;&gt;&lt;b style=&quot;color:#0F172A;&quot;&gt;1. Cultural Transformation from IT Cost Center to Profit Engine:&lt;/b&gt; Replaces opaque shared infrastructure overhead with 100% transparent departmental chargeback, aligning cloud spend directly with business P&amp;amp;L outcomes.&lt;br&gt;&lt;br&gt;&lt;b style=&quot;color:#0F172A;&quot;&gt;2. GenAI ROI Validation:&lt;/b&gt; Directly correlates LLM token consumption costs against business value generated per department (Customer Service, Marketing, Engineering), preventing unmonitored AI budget inflation.&lt;br&gt;&lt;br&gt;&lt;b style=&quot;color:#0F172A;&quot;&gt;3. Strategic Commitment Hedging:&lt;/b&gt; Optimizes 1-year and 3-year Flexible Committed Use Discounts (CUDs) to maximize enterprise discount tiers while retaining multi-cloud workload flexibility.&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=3;strokeWidth=2;strokeColor=#0F172A;verticalAlign=top;align=left;overflow=hidden;" vertex="1" parent="1_p2">
-          <mxGeometry x="695" y="265" width="650" height="380" as="geometry" />
-        </mxCell>
-      </root>
-    </mxGraphModel>
-  </diagram>
-</mxfile>
-`.trim();
+</mxfile>`.trim();
 }
-
-// ===== Sourced from master_builder.ts =====
-/**
- * 100% Google Cloud Well-Architected & Enterprise-Certified Multi-Page Reference Architecture
- * Complete Validation Across:
- * 1. IaC Parity & CI/CD Mapping (Terraform State Sync, Cloud Build/Deploy Canary)
- * 2. Deep Network Perimeter & Exfiltration (VPC-SC, PSC, Serverless VPC Access, IPAM CIDRs)
- * 3. Granular IAM & Least Privilege (Dedicated SAs, Break-Glass PAM)
- * 4. Quotas, Throttling & Backpressure (Cloud Run Limits, Pub/Sub DLQ, Exponential Backoff)
- * 5. Regulatory Compliance & CMEK (GxP, GDPR, HIPAA, Immutable WORM Audit Sinks)
- * 6. FMEA Failure Mode & Effects Analysis (Graceful Degradation, Redis Circuit Breakers)
- */
 
 function buildCompleteWellArchitectedGcpDrMasterXml() {
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -1542,411 +1182,494 @@ function buildCompleteWellArchitectedGcpDrMasterXml() {
 // ===== Sourced from build_master_data_lakehouse.ts =====
 function buildDataLakehouseXml() {
   return `<mxfile host="embed.diagrams.net">
-  <diagram id="modern_data_stack_lakehouse" name="GCP Enterprise Data Lakehouse &amp; Gemini Agentic Mesh (P3-DAT-L-04)">
-    <mxGraphModel dx="1400" dy="950" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1360" pageHeight="700" background="#FFFFFF" math="0" shadow="0">
+  <diagram id="template_42" name="Modern Data Lakehouse &amp; Data Mesh">
+    <mxGraphModel dx="1600" dy="980" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="980" background="#FFFFFF" math="0" shadow="0">
       <root>
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
-
-        <!-- ==================== TOP TITLE BANNER & HEADER ==================== -->
-        <mxCell id="top_cloud_logo" value="&lt;span style=&quot;font-size:24px;&quot;&gt;🗄️ ☁️&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="25" y="6" width="35" height="35" as="geometry"/>
-        </mxCell>
-        <mxCell id="main_title" value="&lt;b style=&quot;font-size:18.5px;color:#0F172A;letter-spacing:-0.2px;&quot;&gt;GCP ENTERPRISE DATA LAKEHOUSE &amp;amp; GEMINI AGENTIC COGNITIVE MESH&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="68" y="6" width="1050" height="24" as="geometry"/>
-        </mxCell>
-        <mxCell id="main_subtitle" value="&lt;span style=&quot;font-size:11px;color:#475569;font-weight:600;&quot;&gt;End-to-End Modern Data Stack: Multimodal Ingestion, Dataplex Governance, BigLake Apache Iceberg, Gemini Agentic AI &amp;amp; GE Industrial Apps&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="68" y="30" width="1050" height="18" as="geometry"/>
-        </mxCell>
-
-        <!-- Top Right Gemini Logo -->
-        <mxCell id="top_gemini_brand" value="&lt;b style=&quot;font-size:18px;color:#2563EB;&quot;&gt;Gemini&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7.5px;color:#475569;&quot;&gt;Agentic Intelligence&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1190" y="6" width="135" height="40" as="geometry"/>
-        </mxCell>
-
-
-        <!-- ==================== COLUMN 1: SOURCE SYSTEMS & GE FEEDS ==================== -->
-        <!-- x = 20 .. 185 (width = 165) -->
-        <mxCell id="col1_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;" vertex="1" parent="1">
-          <mxGeometry x="20" y="52" width="165" height="575" as="geometry"/>
-        </mxCell>
-        <mxCell id="col1_hdr" value="&lt;b style=&quot;font-size:8.5px;color:#0F172A;&quot;&gt;SOURCE SYSTEMS &amp;amp;&lt;br&gt;GE INDUSTRIAL FEEDS&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="25" y="55" width="155" height="25" as="geometry"/>
-        </mxCell>
-
-        <!-- 1. GE Equipment & Industrial IoT -->
-        <mxCell id="card_ge_iot_sources" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:18px;&quot;&gt;⚙️ 💨 &lt;span style=&quot;color:#0284C7;font-size:11px;font-weight:bold;&quot;&gt;GE&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7px;font-weight:bold;color:#0F172A;&quot;&gt;GE Equipment Telemetry&lt;br&gt;&lt;span style=&quot;font-size:5.5px;color:#475569;font-weight:normal;&quot;&gt;Turbines, SCADA OPC-UA,&lt;br&gt;10kHz Vibration &amp;amp; Thermal Sensors&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#93C5FD;strokeWidth=1.2;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1">
-          <mxGeometry x="26" y="84" width="153" height="75" as="geometry"/>
-        </mxCell>
-
-        <!-- 2. Relational & Transactional DBs -->
-        <mxCell id="card_db_sources" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:16px;&quot;&gt;🗄️ 🐘 ⚡&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7px;font-weight:bold;color:#0F172A;&quot;&gt;Transactional Databases&lt;br&gt;&lt;span style=&quot;font-size:5.5px;color:#475569;font-weight:normal;&quot;&gt;Cloud SQL (PostgreSQL, MySQL),&lt;br&gt;Cloud Spanner &amp;amp; Oracle OLTP&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1">
-          <mxGeometry x="26" y="165" width="153" height="75" as="geometry"/>
-        </mxCell>
-
-        <!-- 3. Enterprise SaaS Applications -->
-        <mxCell id="card_saas_sources" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:16px;&quot;&gt;☁️ 💼 🟢&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7px;font-weight:bold;color:#0F172A;&quot;&gt;Enterprise SaaS &amp;amp; ERP&lt;br&gt;&lt;span style=&quot;font-size:5.5px;color:#475569;font-weight:normal;&quot;&gt;Salesforce, SAP S/4HANA,&lt;br&gt;ServiceNow, Zendesk, Workday&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1">
-          <mxGeometry x="26" y="246" width="153" height="75" as="geometry"/>
-        </mxCell>
-
-        <!-- 4. Files, Logs & Object Stores -->
-        <mxCell id="card_files_sources" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:16px;&quot;&gt;📄 📑 📦&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7px;font-weight:bold;color:#0F172A;&quot;&gt;Unstructured Files &amp;amp; Logs&lt;br&gt;&lt;span style=&quot;font-size:5.5px;color:#475569;font-weight:normal;&quot;&gt;Multi-Cloud S3/Blob, Syslog,&lt;br&gt;PDFs, Audio, 4K Optical Images&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1">
-          <mxGeometry x="26" y="327" width="153" height="75" as="geometry"/>
-        </mxCell>
-
-        <!-- 5. Streaming Event Buses -->
-        <mxCell id="card_kafka_sources" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:16px;&quot;&gt;📡 ⚡&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7px;font-weight:bold;color:#0F172A;&quot;&gt;External Event Streams&lt;br&gt;&lt;span style=&quot;font-size:5.5px;color:#475569;font-weight:normal;&quot;&gt;Apache Kafka, RabbitMQ,&lt;br&gt;MQTT Sparkplug B Edge Feeds&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1">
-          <mxGeometry x="26" y="408" width="153" height="75" as="geometry"/>
-        </mxCell>
-
-        <!-- 6. Ingress Security Gateway -->
-        <mxCell id="card_source_gateway" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:14px;color:#1E40AF;&quot;&gt;🛡️ 🔑&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:6.5px;font-weight:bold;color:#0F172A;&quot;&gt;mTLS &amp;amp; Identity Gateway&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;Hardware TPM &amp;amp; JWT Auth&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#93C5FD;strokeWidth=1;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
-          <mxGeometry x="26" y="489" width="153" height="50" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="lbl_col1_status" value="&lt;span style=&quot;font-size:6px;color:#1E3A8A;font-weight:bold;&quot;&gt;Hybrid &amp;amp; Multi-Cloud Ingress&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="26" y="605" width="153" height="14" as="geometry"/>
-        </mxCell>
-
-
-        <!-- ==================== COLUMN 2: INGESTION & STREAMING FABRIC ==================== -->
-        <!-- x = 193 .. 383 (width = 190) -->
-        <mxCell id="col2_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#BFDBFE;strokeWidth=1.2;" vertex="1" parent="1">
-          <mxGeometry x="193" y="52" width="190" height="575" as="geometry"/>
-        </mxCell>
-        <mxCell id="col2_hdr" value="&lt;b style=&quot;font-size:8.5px;color:#1E3A8A;&quot;&gt;INGESTION &amp;amp;&lt;br&gt;STREAMING FABRIC&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="198" y="55" width="180" height="25" as="geometry"/>
-        </mxCell>
-
-        <!-- Batch & CDC Ingestion Frame -->
-        <mxCell id="box_batch_ingest" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;" vertex="1" parent="1">
-          <mxGeometry x="198" y="84" width="180" height="175" as="geometry"/>
-        </mxCell>
-        <mxCell id="lbl_batch_hdr" value="&lt;b style=&quot;font-size:7.5px;color:#1D4ED8;&quot;&gt;Batch &amp;amp; Serverless CDC Ingestion&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="202" y="86" width="172" height="16" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_storage_transfer" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:16px;color:#2563EB;&quot;&gt;🔄 📦&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:6.5px;font-weight:bold;color:#0F172A;&quot;&gt;Storage Transfer Service&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;Multi-Cloud S3/Azure to GCS&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
-          <mxGeometry x="204" y="106" width="168" height="42" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_datastream_cdc" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:16px;color:#2563EB;&quot;&gt;⚡ 🗄️&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:6.5px;font-weight:bold;color:#0F172A;&quot;&gt;Datastream (Serverless CDC)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;Zero-Downtime Replication to BigQuery&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
-          <mxGeometry x="204" y="154" width="168" height="44" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_batch_pipeline_flow" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:14px;color:#2563EB;&quot;&gt;💠 ⚙️&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:6px;font-weight:bold;color:#0F172A;&quot;&gt;Cloud Data Fusion / Dataflow Batch&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;Visual ETL &amp;amp; Schema Transformation&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
-          <mxGeometry x="204" y="204" width="168" height="44" as="geometry"/>
-        </mxCell>
-
-        <!-- Real-Time Streaming Ingestion Frame -->
-        <mxCell id="box_stream_ingest" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.2;" vertex="1" parent="1">
-          <mxGeometry x="198" y="268" width="180" height="175" as="geometry"/>
-        </mxCell>
-        <mxCell id="lbl_stream_hdr" value="&lt;b style=&quot;font-size:7.5px;color:#1D4ED8;&quot;&gt;Real-Time Streaming Ingestion&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="202" y="270" width="172" height="16" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_pubsub_main" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:18px;color:#2563EB;&quot;&gt;💠&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7px;font-weight:bold;color:#0F172A;&quot;&gt;Cloud Pub/Sub (Global)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;Ordered Multi-Region Event Streams&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=#3B82F6;strokeWidth=1.2;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
-          <mxGeometry x="204" y="290" width="168" height="46" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_dataflow_stream" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:18px;color:#2563EB;&quot;&gt;💠 🌊&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7px;font-weight:bold;color:#0F172A;&quot;&gt;Cloud Dataflow (Apache Beam)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;Sub-100ms Sliding Window &amp;amp; Exactly-Once&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=#3B82F6;strokeWidth=1.2;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
-          <mxGeometry x="204" y="342" width="168" height="46" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_bigquery_storage_api" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:16px;color:#2563EB;&quot;&gt;⚡ 📥&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:6.5px;font-weight:bold;color:#0F172A;&quot;&gt;BigQuery Storage Write API&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;High-Throughput Streaming Ingestion&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
-          <mxGeometry x="204" y="394" width="168" height="42" as="geometry"/>
-        </mxCell>
-
-        <!-- 3. Automated Gemini Ingestion Validator -->
-        <mxCell id="card_gemini_ingest_guard" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:16px;color:#059669;&quot;&gt;🤖 ✨&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:6.5px;font-weight:bold;color:#166534;&quot;&gt;Gemini Agentic Ingestion Guard&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;Detects corrupted payloads, schema drift &amp;amp; PII violations in real-time&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#86EFAC;strokeWidth=1.2;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
-          <mxGeometry x="198" y="452" width="180" height="60" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="lbl_col2_status" value="&lt;span style=&quot;font-size:6px;color:#1E3A8A;font-weight:bold;&quot;&gt;Zero-Downtime Serverless CDC &amp;amp; Streaming&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="198" y="605" width="180" height="14" as="geometry"/>
-        </mxCell>
-
-
-        <!-- ==================== COLUMN 3: GCP ENTERPRISE DATA LAKEHOUSE (BIGLAKE & DATAPLEX) ==================== -->
-        <!-- x = 391 .. 691 (width = 300) -->
-        <mxCell id="col3_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="391" y="52" width="300" height="575" as="geometry"/>
-        </mxCell>
-        <mxCell id="col3_hdr" value="&lt;b style=&quot;font-size:9px;color:#0F172A;&quot;&gt;GCP ENTERPRISE DATA LAKEHOUSE&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#475569;&quot;&gt;(BigLake, Cloud Storage &amp;amp; BigQuery Compute)&lt;/span&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="396" y="55" width="290" height="25" as="geometry"/>
-        </mxCell>
-
-        <!-- Tier 1: Medallion Architecture on Cloud Storage -->
-        <mxCell id="box_lake_medallion" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;" vertex="1" parent="1">
-          <mxGeometry x="398" y="84" width="286" height="110" as="geometry"/>
-        </mxCell>
-        <mxCell id="lbl_lake_medallion_hdr" value="&lt;b style=&quot;font-size:8px;color:#1D4ED8;&quot;&gt;🗄️ Cloud Storage Medallion Lake (Apache Iceberg / Delta)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="404" y="86" width="275" height="16" as="geometry"/>
-        </mxCell>
-
-        <!-- 3 Zones: Raw, Staged, Curated -->
-        <mxCell id="pill_raw_bronze" value="&lt;b style=&quot;font-size:6.5px;color:#92400E;&quot;&gt;🥉 Raw (Bronze)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;Immutable Raw JSON, Avro, 4K Images&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#FDE68A;strokeWidth=1;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
-          <mxGeometry x="404" y="106" width="86" height="42" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="pill_staged_silver" value="&lt;b style=&quot;font-size:6.5px;color:#1E3A8A;&quot;&gt;🥈 Staged (Silver)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;Deduplicated, Schema-Enforced Iceberg&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=#93C5FD;strokeWidth=1;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
-          <mxGeometry x="498" y="106" width="90" height="42" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="pill_curated_gold" value="&lt;b style=&quot;font-size:6.5px;color:#166534;&quot;&gt;🥇 Curated (Gold)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;Dimensional Marts &amp;amp; Star Schemas&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#86EFAC;strokeWidth=1;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
-          <mxGeometry x="594" y="106" width="84" height="42" as="geometry"/>
-        </mxCell>
-        <mxCell id="lbl_medallion_sub" value="&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;BigLake Unified Metastore: Open Parquet/Iceberg format querying with zero copy&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="404" y="152" width="275" height="15" as="geometry"/>
-        </mxCell>
-
-        <!-- Tier 2: Governed & Secured Fabric (Dataplex / BigLake) -->
-        <mxCell id="box_dataplex_fabric" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.2;" vertex="1" parent="1">
-          <mxGeometry x="398" y="202" width="286" height="115" as="geometry"/>
-        </mxCell>
-        <mxCell id="lbl_dataplex_hdr" value="&lt;b style=&quot;font-size:8px;color:#1E40AF;&quot;&gt;🛡️ Governed &amp;amp; Secured Layer (Dataplex / BigLake)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="404" y="204" width="275" height="16" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_dp_catalog" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt;Universal Data Catalog&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Business Glossary, Search &amp;amp; Automated End-to-End Lineage Tracking&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
-          <mxGeometry x="404" y="222" width="274" height="28" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_dp_quality" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt;Automated Data Quality &amp;amp; Profiling&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Continuous SLA Checks, Anomaly Alerts &amp;amp; Schema Drift Guard&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
-          <mxGeometry x="404" y="254" width="274" height="28" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_dp_security_mask" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt;Centralized Fine-Grained Security&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Row-Level (RLS), Column-Level (CLS) &amp;amp; Dynamic Data Masking&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
-          <mxGeometry x="404" y="286" width="274" height="28" as="geometry"/>
-        </mxCell>
-
-        <!-- Tier 3: BigQuery Unified Data Warehouse & Vector Engine -->
-        <mxCell id="box_bigquery_core" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="398" y="325" width="286" height="185" as="geometry"/>
-        </mxCell>
-        <mxCell id="lbl_bq_core_hdr" value="&lt;b style=&quot;font-size:8.5px;color:#1D4ED8;&quot;&gt;🔍 BigQuery Enterprise Warehouse &amp;amp; Vector Engine&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="404" y="328" width="275" height="16" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_bq_serverless_sql" value="&lt;b style=&quot;font-size:6.5px;color:#0F172A;&quot;&gt;Serverless Petabyte-Scale SQL Engine&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Auto-scaling slots, partitioned &amp;amp; clustered column storage&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
-          <mxGeometry x="404" y="348" width="274" height="32" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_bq_vector_search" value="&lt;b style=&quot;font-size:6.5px;color:#0F172A;&quot;&gt;BigQuery Vector Search &amp;amp; Embeddings (VECTOR_SEARCH)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Sub-second vector cosine/L2 search on petabytes of text &amp;amp; multimodal data&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#93C5FD;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
-          <mxGeometry x="404" y="384" width="274" height="34" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_bq_bi_engine" value="&lt;b style=&quot;font-size:6.5px;color:#0F172A;&quot;&gt;BigQuery BI Engine (In-Memory Accelerator)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Sub-millisecond query response for interactive Looker dashboards&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
-          <mxGeometry x="404" y="422" width="274" height="34" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_bq_ml_engine" value="&lt;b style=&quot;font-size:6.5px;color:#0F172A;&quot;&gt;BigQuery ML &amp;amp; Vertex AI Integration&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Direct SQL calls to Gemini 3.7 Flash (ML.GENERATE_TEXT)&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#86EFAC;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
-          <mxGeometry x="404" y="460" width="274" height="34" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="lbl_col3_status" value="&lt;span style=&quot;font-size:6px;color:#1E3A8A;font-weight:bold;&quot;&gt;Unified Multi-Modal Lakehouse Storage &amp;amp; Governance&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="398" y="605" width="286" height="14" as="geometry"/>
-        </mxCell>
-
-
-        <!-- ==================== COLUMN 4: TRANSFORMATION, ORCHESTRATION & GEMINI AI CORE ==================== -->
-        <!-- x = 699 .. 989 (width = 290) -->
-        <mxCell id="col4_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#FDE68A;strokeWidth=1.2;" vertex="1" parent="1">
-          <mxGeometry x="699" y="52" width="290" height="575" as="geometry"/>
-        </mxCell>
-        <mxCell id="col4_hdr" value="&lt;b style=&quot;font-size:8.5px;color:#92400E;&quot;&gt;TRANSFORMATION, ORCHESTRATION&lt;br&gt;&amp;amp; GEMINI INTELLIGENCE CORE&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="704" y="55" width="280" height="25" as="geometry"/>
-        </mxCell>
-
-        <!-- Transformation Box (dbt & Dataflow) -->
-        <mxCell id="box_transform_layer" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#F59E0B;strokeWidth=1;" vertex="1" parent="1">
-          <mxGeometry x="704" y="84" width="280" height="110" as="geometry"/>
-        </mxCell>
-        <mxCell id="lbl_trans_hdr" value="&lt;b style=&quot;font-size:8px;color:#0F172A;&quot;&gt;⚙️ ELT / ETL Transformation &amp;amp; Modeling&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="710" y="86" width="270" height="16" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_dbt_bigquery" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt;dbt on BigQuery / Dataform&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Modular SQL Modeling, Automated Tests &amp;amp; Documentation&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
-          <mxGeometry x="710" y="106" width="268" height="38" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_composer_dag" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt;Cloud Composer (Managed Airflow)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Enterprise DAG Scheduling, SLA Alerts &amp;amp; Cross-Cloud Dependencies&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
-          <mxGeometry x="710" y="148" width="268" height="38" as="geometry"/>
-        </mxCell>
-
-        <!-- Gemini Agentic AI Core Frame -->
-        <mxCell id="box_gemini_agent_core" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="704" y="202" width="280" height="308" as="geometry"/>
-        </mxCell>
-        <mxCell id="lbl_gemini_core_hdr" value="&lt;b style=&quot;font-size:8.5px;color:#1D4ED8;&quot;&gt;✨ Gemini Agentic AI &amp;amp; Intelligence Core&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="710" y="204" width="270" height="18" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="card_gemini_models_lake" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:18px;color:#2563EB;&quot;&gt;✨ 🧠&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7px;font-weight:bold;color:#0F172A;&quot;&gt;Gemini 3.7 Flash &amp;amp; Pro Reasoner&lt;br&gt;&lt;span style=&quot;font-size:5.5px;color:#475569;font-weight:normal;&quot;&gt;2M+ Token Context Window, Multimodal Audio/Visual Understanding&lt;br&gt;&amp;amp; Deep Analytical Reasoning over Petabyte Datasets&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#93C5FD;strokeWidth=1.2;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1">
-          <mxGeometry x="710" y="226" width="268" height="68" as="geometry"/>
-        </mxCell>
-
-        <!-- 2. Vertex AI Agent Builder & Multi-Agent Mesh -->
-        <mxCell id="card_vertex_agent_mesh_lake" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:16px;color:#D97706;&quot;&gt;🤖 🤝 🤖&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:6.5px;font-weight:bold;color:#0F172A;&quot;&gt;Vertex AI Agent Builder (Multi-Agent Swarm)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;• Text-to-SQL Semantic Agent • Anomaly Investigation Agent&lt;br&gt;• Data Quality Remediation Agent • Automated Executive Summarizer&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#F59E0B;strokeWidth=1.2;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1">
-          <mxGeometry x="710" y="300" width="268" height="65" as="geometry"/>
-        </mxCell>
-
-        <!-- 3. Vertex AI Search & Grounding Engine -->
-        <mxCell id="card_vertex_search_grounding" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:16px;color:#2563EB;&quot;&gt;🔍 📚&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:6.5px;font-weight:bold;color:#0F172A;&quot;&gt;Vertex AI Search &amp;amp; Enterprise Grounding&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;Fact-checking generated queries against BigLake golden metadata&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1">
-          <mxGeometry x="710" y="370" width="268" height="52" as="geometry"/>
-        </mxCell>
-
-        <!-- 4. Vertex AI Model Evaluation & Telemetry -->
-        <mxCell id="card_vertex_lake_monitoring" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:14px;color:#059669;&quot;&gt;📈 🔄&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:6.5px;font-weight:bold;color:#166534;&quot;&gt;Continuous Model Monitoring &amp;amp; Drift Guard&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;Tracks agent execution accuracy &amp;amp; auto-tunes prompt templates&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#86EFAC;strokeWidth=1;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
-          <mxGeometry x="710" y="428" width="268" height="48" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="lbl_col4_status" value="&lt;span style=&quot;font-size:6px;color:#92400E;font-weight:bold;&quot;&gt;Autonomous Multi-Agent AI &amp;amp; Orchestration&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="704" y="605" width="280" height="14" as="geometry"/>
-        </mxCell>
-
-
-        <!-- ==================== COLUMN 5: SERVING, ACTIONS & GE APPLICATION COCKPIT ==================== -->
-        <!-- x = 997 .. 1337 (width = 340) -->
-        <mxCell id="col5_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFF1F2;strokeColor=#FECDD3;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="997" y="52" width="340" height="575" as="geometry"/>
-        </mxCell>
-        <mxCell id="col5_hdr" value="&lt;b style=&quot;font-size:8.5px;color:#9F1239;&quot;&gt;SERVING, ACTION LAYER &amp;amp;&lt;br&gt;GE APPLICATION COCKPIT&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1002" y="55" width="330" height="25" as="geometry"/>
-        </mxCell>
-
-        <!-- 1. Looker BI & Conversational Analytics -->
-        <mxCell id="box_looker_suite" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#22C55E;strokeWidth=1.2;" vertex="1" parent="1">
-          <mxGeometry x="1003" y="84" width="328" height="110" as="geometry"/>
-        </mxCell>
-        <mxCell id="lbl_looker_hdr" value="&lt;b style=&quot;font-size:8px;color:#166534;&quot;&gt;📊 Looker BI &amp;amp; Conversational Analytics Suite&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1010" y="86" width="315" height="16" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_looker_dash" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt;Looker Enterprise Dashboards&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Real-Time Executive KPIs, Financial Metrics &amp;amp; Plant Efficiency&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
-          <mxGeometry x="1010" y="106" width="314" height="38" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_looker_gemini_nlq" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt;Looker Conversational AI (Duet/Gemini NLQ)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Ask questions in plain English -&amp;gt; Instant Looker charts &amp;amp; deep root-cause analysis&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#86EFAC;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
-          <mxGeometry x="1010" y="148" width="314" height="38" as="geometry"/>
-        </mxCell>
-
-        <!-- 2. GE Application Layer (GE Industrial & Commercial Cockpit) -->
-        <mxCell id="box_ge_app_suite" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#60A5FA;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="1003" y="202" width="328" height="175" as="geometry"/>
-        </mxCell>
-        <mxCell id="lbl_ge_app_hdr" value="&lt;table style=&quot;width:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:14px;color:#0284C7;font-weight:bold;&quot;&gt;💻 GE APP&lt;/td&gt;&lt;td style=&quot;text-align:right;font-size:7px;color:#475569;&quot;&gt;Industrial Operations Cockpit&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1010" y="204" width="315" height="20" as="geometry"/>
-        </mxCell>
-
-        <!-- 4 Action Buttons inside GE App -->
-        <mxCell id="btn_ge_sched_maint" value="&lt;b style=&quot;font-size:6.5px;color:#0F172A;&quot;&gt;🛠️ SCHEDULE EQUIPMENT MAINTENANCE&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Dispatches SAP PM / IBM Maximo Work Order&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#93C5FD;strokeWidth=1;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
-          <mxGeometry x="1010" y="228" width="314" height="32" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="btn_ge_opt_speed" value="&lt;b style=&quot;font-size:6.5px;color:#0F172A;&quot;&gt;⏱️ OPTIMIZE LINE SPEED &amp;amp; YIELD&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Sends Real-Time Setpoints to Shop Floor SCADA / PLC&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#93C5FD;strokeWidth=1;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
-          <mxGeometry x="1010" y="264" width="314" height="32" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="btn_ge_order_parts" value="&lt;b style=&quot;font-size:6.5px;color:#0F172A;&quot;&gt;💳 AUTOMATE PART PROCUREMENT&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Triggers Just-In-Time ERP Replenishment&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#93C5FD;strokeWidth=1;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
-          <mxGeometry x="1010" y="300" width="314" height="32" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="btn_ge_retrain_model" value="&lt;b style=&quot;font-size:6.5px;color:#166534;&quot;&gt;🔄 RE-TRAIN AI MODELS (CLOSED-LOOP FEEDBACK)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Fine-tunes Gemini reasoners on verified field telemetry&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#86EFAC;strokeWidth=1.2;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
-          <mxGeometry x="1010" y="336" width="314" height="34" as="geometry"/>
-        </mxCell>
-
-        <!-- Downstream Eventarc & Serverless Push Execution -->
-        <mxCell id="box_downstream_dispatch" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.2;" vertex="1" parent="1">
-          <mxGeometry x="1003" y="385" width="328" height="125" as="geometry"/>
-        </mxCell>
-        <mxCell id="lbl_dispatch_hdr" value="&lt;b style=&quot;font-size:8px;color:#0F172A;&quot;&gt;⚡ Serverless Action Handlers &amp;amp; Field Dispatch&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1010" y="387" width="315" height="16" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_cloud_run_lake" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt;Cloud Run Microservices&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Asynchronous Eventarc webhook consumers for external systems&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
-          <mxGeometry x="1010" y="406" width="314" height="30" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_fcm_lake" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt;Firebase Cloud Messaging (FCM)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;High-priority push notifications to field engineers&apos; rugged tablets&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
-          <mxGeometry x="1010" y="440" width="314" height="30" as="geometry"/>
-        </mxCell>
-        <mxCell id="card_emergency_stop_lake" value="&lt;b style=&quot;font-size:6px;color:#DC2626;&quot;&gt;🚨 Emergency Safety Interlock Trigger&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Sub-15ms machine cutoff upon critical anomaly detection&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#F87171;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
-          <mxGeometry x="1010" y="474" width="314" height="30" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="lbl_col5_status" value="&lt;span style=&quot;font-size:6px;color:#9F1239;font-weight:bold;&quot;&gt;Automated Enterprise Actions &amp;amp; Real-Time Cockpit&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1003" y="605" width="328" height="14" as="geometry"/>
-        </mxCell>
-
-
-        <!-- ==================== FLOW ARROWS BETWEEN TIERS ==================== -->
-        <!-- Sources -> Ingestion -->
-        <mxCell id="e_src_to_ingest" value="" style="edgeStyle=none;html=1;strokeColor=#0F172A;strokeWidth=1.5;endArrow=classic;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="185" y="290" as="sourcePoint"/>
-            <mxPoint x="193" y="290" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-
-        <!-- Ingestion -> Lakehouse -->
-        <mxCell id="e_ingest_to_lake" value="" style="edgeStyle=none;html=1;strokeColor=#0F172A;strokeWidth=1.5;endArrow=classic;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="383" y="290" as="sourcePoint"/>
-            <mxPoint x="391" y="290" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-
-        <!-- Lakehouse -> Transformations & Gemini Core -->
-        <mxCell id="e_lake_to_gemini" value="" style="edgeStyle=none;html=1;strokeColor=#0F172A;strokeWidth=1.5;endArrow=classic;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="691" y="290" as="sourcePoint"/>
-            <mxPoint x="699" y="290" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-
-        <!-- Gemini Core -> Looker & GE App -->
-        <mxCell id="e_gemini_to_serving" value="" style="edgeStyle=none;html=1;strokeColor=#0F172A;strokeWidth=1.5;endArrow=classic;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="989" y="290" as="sourcePoint"/>
-            <mxPoint x="997" y="290" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-
-        <!-- Closed Loop Re-Train Line from GE App to Gemini & Dataplex -->
-        <mxCell id="e_retrain_lake_loop" value="&lt;b style=&quot;font-size:6px;color:#166534;&quot;&gt;Closed-Loop Model Retraining &amp;amp; Schema Refinement Vector&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#166534;strokeWidth=1.8;endArrow=classic;dashed=1;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1010" y="353" as="sourcePoint"/>
-            <mxPoint x="541" y="494" as="targetPoint"/>
-            <Array as="points">
-              <mxPoint x="990" y="353"/>
-              <mxPoint x="990" y="555"/>
-              <mxPoint x="541" y="555"/>
-            </Array>
-          </mxGeometry>
-        </mxCell>
-
-
-        <!-- ==================== BOTTOM HORIZONTAL BAR: UNIFIED GOVERNANCE & SECURITY ==================== -->
-        <!-- x = 20 .. 1337 (width = 1317) -->
-        <mxCell id="bar_btm_lake_gov" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#93C5FD;strokeWidth=1.5;" vertex="1" parent="1">
-          <mxGeometry x="20" y="632" width="1317" height="58" as="geometry"/>
-        </mxCell>
-        <mxCell id="lbl_btm_lake_title" value="&lt;b style=&quot;font-size:10.5px;color:#1E3A8A;&quot;&gt;🛡️ UNIFIED GOVERNANCE, ZERO-TRUST SECURITY &amp;amp; QUALITY PERIMETER&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:6px;color:#475569;&quot;&gt;Enterprise Multi-Tier Compliance Baseline Spanning Ingestion, Storage, Gemini AI &amp;amp; Serving&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="35" y="636" width="380" height="50" as="geometry"/>
-        </mxCell>
-
-        <!-- 6 Governance Badges across bottom -->
-        <mxCell id="lake_gov_iam" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt;👤 Cloud IAM &amp;amp; ABAC&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Least Privilege Policy&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="425" y="639" width="135" height="42" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="lake_gov_vpcsc" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt;💠 VPC Service Controls&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Zero Data Exfiltration&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="570" y="639" width="145" height="42" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="lake_gov_cmek" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt;🔑 Cloud KMS CMEK&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;FIPS 140-2 Level 3 HSM&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="725" y="639" width="135" height="42" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="lake_gov_scc" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt;🛡️ Security Command Center&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Threat Detection &amp;amp; Posture&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="870" y="639" width="145" height="42" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="lake_gov_dataplex" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt;📊 Dataplex Fabric&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Catalog, Lineage &amp;amp; DLP&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1025" y="639" width="145" height="42" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="lake_gov_audit" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt;📋 Cloud Audit Logs&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Chronicle SIEM Streaming&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1180" y="639" width="145" height="42" as="geometry"/>
-        </mxCell>
-
+        <mxCell id="hdr_num" value="42" style="shape=rectangle;rounded=1;arcSize=14;fillColor=#1D4ED8;strokeColor=#1D4ED8;fontColor=#FFFFFF;fontSize=26;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="16" y="12" width="54" height="48" as="geometry"/></mxCell>
+        <mxCell id="hdr_title" value="&lt;div style=&quot;font-size:20px;font-weight:900;color:#0F172A;letter-spacing:0.5px;&quot;&gt;MODERN DATA LAKEHOUSE &amp;amp; DATA MESH&lt;/div&gt;
+    &lt;div style=&quot;font-size:11px;color:#475569;font-weight:600;margin-top:2px;&quot;&gt;Unified • Governed • Scalable • Secure • AI-Ready&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="78" y="12" width="700" height="48" as="geometry"/></mxCell>
+        <mxCell id="hdr_brand" value="&lt;div style=&quot;display:flex;align-items:center;justify-content:flex-end;gap:8px;&quot;&gt;
+    &lt;div style=&quot;text-align:right;&quot;&gt;
+      &lt;div style=&quot;font-size:16px;font-weight:900;color:#4285F4;letter-spacing:0.5px;display:flex;align-items:center;justify-content:flex-end;gap:6px;&quot;&gt;
+        &lt;svg width=&quot;20&quot; height=&quot;20&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#4285F4&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z&quot;/&gt;&lt;/svg&gt; Google Cloud
+      &lt;/div&gt;
+      &lt;div style=&quot;font-size:9px;color:#64748B;font-weight:600;margin-top:2px;&quot;&gt;Reference Architecture v2.0&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1280" y="12" width="304" height="48" as="geometry"/></mxCell>
+        <mxCell id="t7_frame" value="" style="rounded=1;arcSize=2;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.2;" vertex="1" parent="1"><mxGeometry x="16" y="68" width="1214" height="104" as="geometry"/></mxCell>
+        <mxCell id="t7_badge" value="7" style="rounded=1;arcSize=4;fillColor=#1D4ED8;fontColor=#FFFFFF;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="22" y="74" width="24" height="24" as="geometry"/></mxCell>
+        <mxCell id="t7_lbl" value="&lt;b style=&quot;font-size:9.5px;color:#1D4ED8;&quot;&gt;CONSUMPTION LAYER&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:7.5px;color:#64748B;&quot;&gt;Data Products&lt;br/&gt;&amp;amp; Experiences&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;" vertex="1" parent="1"><mxGeometry x="50" y="74" width="95" height="34" as="geometry"/></mxCell>
+        <mxCell id="t7_c_0" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
+      &lt;div style=&quot;font-size:8.5px;font-weight:800;color:#0F172A;margin-bottom:4px;&quot;&gt;BI &amp;amp; Reporting&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:4px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1D4ED8&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;line x1=&quot;18&quot; y1=&quot;20&quot; x2=&quot;18&quot; y2=&quot;10&quot;/&gt;&lt;line x1=&quot;12&quot; y1=&quot;20&quot; x2=&quot;12&quot; y2=&quot;4&quot;/&gt;&lt;line x1=&quot;6&quot; y1=&quot;20&quot; x2=&quot;6&quot; y2=&quot;14&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:7px;color:#64748B;line-height:1.2;&quot;&gt;Looker • Looker Studio&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F8FAFC;strokeColor=#E2E8F0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="150" y="74" width="142" height="92" as="geometry"/></mxCell>
+        <mxCell id="t7_c_1" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
+      &lt;div style=&quot;font-size:8.5px;font-weight:800;color:#0F172A;margin-bottom:4px;&quot;&gt;Dashboards&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:4px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1D4ED8&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;line x1=&quot;18&quot; y1=&quot;20&quot; x2=&quot;18&quot; y2=&quot;10&quot;/&gt;&lt;line x1=&quot;12&quot; y1=&quot;20&quot; x2=&quot;12&quot; y2=&quot;4&quot;/&gt;&lt;line x1=&quot;6&quot; y1=&quot;20&quot; x2=&quot;6&quot; y2=&quot;14&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:7px;color:#64748B;line-height:1.2;&quot;&gt;Google Sheets • Data Studio&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F8FAFC;strokeColor=#E2E8F0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="298" y="74" width="142" height="92" as="geometry"/></mxCell>
+        <mxCell id="t7_c_2" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
+      &lt;div style=&quot;font-size:8.5px;font-weight:800;color:#0F172A;margin-bottom:4px;&quot;&gt;Self-Service Analytics&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:4px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1D4ED8&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;circle cx=&quot;11&quot; cy=&quot;11&quot; r=&quot;8&quot;/&gt;&lt;path d=&quot;m21 21-4.3-4.3&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:7px;color:#64748B;line-height:1.2;&quot;&gt;Vertex AI Notebooks • BigQuery Studio&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F8FAFC;strokeColor=#E2E8F0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="446" y="74" width="142" height="92" as="geometry"/></mxCell>
+        <mxCell id="t7_c_3" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
+      &lt;div style=&quot;font-size:8.5px;font-weight:800;color:#0F172A;margin-bottom:4px;&quot;&gt;AI / ML Applications&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:4px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1D4ED8&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:7px;color:#64748B;line-height:1.2;&quot;&gt;Vertex AI Apps&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F8FAFC;strokeColor=#E2E8F0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="594" y="74" width="142" height="92" as="geometry"/></mxCell>
+        <mxCell id="t7_c_4" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
+      &lt;div style=&quot;font-size:8.5px;font-weight:800;color:#0F172A;margin-bottom:4px;&quot;&gt;Operational Applications&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:4px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1D4ED8&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;polygon points=&quot;12 2 2 7 12 12 22 7 12 2&quot;/&gt;&lt;polyline points=&quot;2 17 12 22 22 17&quot;/&gt;&lt;polyline points=&quot;2 12 12 17 22 12&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:7px;color:#64748B;line-height:1.2;&quot;&gt;Business Applications • Data Apps&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F8FAFC;strokeColor=#E2E8F0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="742" y="74" width="142" height="92" as="geometry"/></mxCell>
+        <mxCell id="t7_c_5" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
+      &lt;div style=&quot;font-size:8.5px;font-weight:800;color:#0F172A;margin-bottom:4px;&quot;&gt;APIs &amp;amp; Data Sharing&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:4px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1D4ED8&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;rect width=&quot;6&quot; height=&quot;6&quot; x=&quot;9&quot; y=&quot;2&quot; rx=&quot;1&quot;/&gt;&lt;rect width=&quot;6&quot; height=&quot;6&quot; x=&quot;2&quot; y=&quot;16&quot; rx=&quot;1&quot;/&gt;&lt;rect width=&quot;6&quot; height=&quot;6&quot; x=&quot;16&quot; y=&quot;16&quot; rx=&quot;1&quot;/&gt;&lt;path d=&quot;M5 16v-4h14v4&quot;/&gt;&lt;path d=&quot;M12 8v8&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:7px;color:#64748B;line-height:1.2;&quot;&gt;Gateway • Apigee&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F8FAFC;strokeColor=#E2E8F0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="890" y="74" width="142" height="92" as="geometry"/></mxCell>
+        <mxCell id="t7_consumers" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
+    &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;18&quot; height=&quot;18&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1D4ED8&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;circle cx=&quot;9&quot; cy=&quot;7&quot; r=&quot;3.5&quot;/&gt;&lt;path d=&quot;M3 20a6 6 0 0 1 12 0&quot;/&gt;&lt;circle cx=&quot;16.5&quot; cy=&quot;8.5&quot; r=&quot;2.5&quot;/&gt;&lt;path d=&quot;M15 20a5 5 0 0 1 6 0&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+    &lt;div style=&quot;font-size:8.5px;font-weight:900;color:#0F172A;&quot;&gt;Data Consumers&lt;/div&gt;
+    &lt;div style=&quot;font-size:7px;color:#64748B;margin-top:2px;&quot;&gt;Business Users&lt;br/&gt;Data Scientists&lt;br/&gt;Engineers&lt;/div&gt;
+  &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#EFF6FF;strokeColor=#BFDBFE;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1042" y="74" width="180" height="92" as="geometry"/></mxCell>
+        <mxCell id="t6_frame" value="" style="rounded=1;arcSize=2;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.2;" vertex="1" parent="1"><mxGeometry x="16" y="178" width="1214" height="108" as="geometry"/></mxCell>
+        <mxCell id="t6_badge" value="6" style="rounded=1;arcSize=4;fillColor=#1D4ED8;fontColor=#FFFFFF;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="22" y="184" width="24" height="24" as="geometry"/></mxCell>
+        <mxCell id="t6_lbl" value="&lt;b style=&quot;font-size:9.5px;color:#1D4ED8;&quot;&gt;DATA PRODUCT LAYER&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:7.5px;color:#64748B;&quot;&gt;Curated • Trusted&lt;br/&gt;Discoverable • Shareable&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;" vertex="1" parent="1"><mxGeometry x="50" y="184" width="95" height="34" as="geometry"/></mxCell>
+        <mxCell id="t6_domain_box" value="" style="rounded=1;arcSize=4;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;" vertex="1" parent="1"><mxGeometry x="150" y="184" width="1072" height="54" as="geometry"/></mxCell>
+        <mxCell id="t6_domain_hdr" value="&lt;b style=&quot;font-size:8.5px;color:#0F172A;&quot;&gt;Domain-Oriented Data Products (Data as a Product)&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="150" y="186" width="1072" height="16" as="geometry"/></mxCell>
+        <mxCell id="t6_chip_0" value="&lt;div style=&quot;display:flex;align-items:center;justify-content:center;gap:4px;font-size:8px;font-weight:800;color:#0F172A;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;12&quot; height=&quot;12&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1D4ED8&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;circle cx=&quot;9&quot; cy=&quot;7&quot; r=&quot;3.5&quot;/&gt;&lt;path d=&quot;M3 20a6 6 0 0 1 12 0&quot;/&gt;&lt;circle cx=&quot;16.5&quot; cy=&quot;8.5&quot; r=&quot;2.5&quot;/&gt;&lt;path d=&quot;M15 20a5 5 0 0 1 6 0&quot;/&gt;&lt;/svg&gt;
+      &lt;span&gt;Customer 360&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFFFFF;strokeColor=#E2E8F0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="158" y="204" width="124" height="28" as="geometry"/></mxCell>
+        <mxCell id="t6_chip_1" value="&lt;div style=&quot;display:flex;align-items:center;justify-content:center;gap:4px;font-size:8px;font-weight:800;color:#0F172A;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;12&quot; height=&quot;12&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1D4ED8&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;line x1=&quot;12&quot; y1=&quot;2&quot; x2=&quot;12&quot; y2=&quot;22&quot;/&gt;&lt;path d=&quot;M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6&quot;/&gt;&lt;/svg&gt;
+      &lt;span&gt;Finance&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFFFFF;strokeColor=#E2E8F0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="289" y="204" width="124" height="28" as="geometry"/></mxCell>
+        <mxCell id="t6_chip_2" value="&lt;div style=&quot;display:flex;align-items:center;justify-content:center;gap:4px;font-size:8px;font-weight:800;color:#0F172A;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;12&quot; height=&quot;12&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1D4ED8&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;line x1=&quot;18&quot; y1=&quot;20&quot; x2=&quot;18&quot; y2=&quot;10&quot;/&gt;&lt;line x1=&quot;12&quot; y1=&quot;20&quot; x2=&quot;12&quot; y2=&quot;4&quot;/&gt;&lt;line x1=&quot;6&quot; y1=&quot;20&quot; x2=&quot;6&quot; y2=&quot;14&quot;/&gt;&lt;/svg&gt;
+      &lt;span&gt;Sales&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFFFFF;strokeColor=#E2E8F0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="420" y="204" width="124" height="28" as="geometry"/></mxCell>
+        <mxCell id="t6_chip_3" value="&lt;div style=&quot;display:flex;align-items:center;justify-content:center;gap:4px;font-size:8px;font-weight:800;color:#0F172A;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;12&quot; height=&quot;12&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1D4ED8&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;polygon points=&quot;12 2 2 7 12 12 22 7 12 2&quot;/&gt;&lt;polyline points=&quot;2 17 12 22 22 17&quot;/&gt;&lt;polyline points=&quot;2 12 12 17 22 12&quot;/&gt;&lt;/svg&gt;
+      &lt;span&gt;Supply Chain&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFFFFF;strokeColor=#E2E8F0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="551" y="204" width="124" height="28" as="geometry"/></mxCell>
+        <mxCell id="t6_chip_4" value="&lt;div style=&quot;display:flex;align-items:center;justify-content:center;gap:4px;font-size:8px;font-weight:800;color:#0F172A;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;12&quot; height=&quot;12&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1D4ED8&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z&quot;/&gt;&lt;/svg&gt;
+      &lt;span&gt;Product&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFFFFF;strokeColor=#E2E8F0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="682" y="204" width="124" height="28" as="geometry"/></mxCell>
+        <mxCell id="t6_chip_5" value="&lt;div style=&quot;display:flex;align-items:center;justify-content:center;gap:4px;font-size:8px;font-weight:800;color:#0F172A;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;12&quot; height=&quot;12&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1D4ED8&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;polyline points=&quot;22 12 18 12 15 21 9 3 6 12 2 12&quot;/&gt;&lt;/svg&gt;
+      &lt;span&gt;Marketing&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFFFFF;strokeColor=#E2E8F0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="813" y="204" width="124" height="28" as="geometry"/></mxCell>
+        <mxCell id="t6_chip_6" value="&lt;div style=&quot;display:flex;align-items:center;justify-content:center;gap:4px;font-size:8px;font-weight:800;color:#0F172A;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;12&quot; height=&quot;12&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1D4ED8&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z&quot;/&gt;&lt;path d=&quot;m9 12 2 2 4-4&quot;/&gt;&lt;/svg&gt;
+      &lt;span&gt;Risk &amp;amp; Compliance&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFFFFF;strokeColor=#E2E8F0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="944" y="204" width="124" height="28" as="geometry"/></mxCell>
+        <mxCell id="t6_chip_7" value="&lt;div style=&quot;display:flex;align-items:center;justify-content:center;gap:4px;font-size:8px;font-weight:800;color:#0F172A;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;12&quot; height=&quot;12&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1D4ED8&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z&quot;/&gt;&lt;/svg&gt;
+      &lt;span&gt;... More&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFFFFF;strokeColor=#E2E8F0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1075" y="204" width="124" height="28" as="geometry"/></mxCell>
+        <mxCell id="t6_feat_0" value="&lt;div style=&quot;display:flex;align-items:center;justify-content:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;13&quot; height=&quot;13&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#7C3AED&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;circle cx=&quot;9&quot; cy=&quot;7&quot; r=&quot;3.5&quot;/&gt;&lt;path d=&quot;M3 20a6 6 0 0 1 12 0&quot;/&gt;&lt;circle cx=&quot;16.5&quot; cy=&quot;8.5&quot; r=&quot;2.5&quot;/&gt;&lt;path d=&quot;M15 20a5 5 0 0 1 6 0&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Data Product Portal&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FAF5FF;strokeColor=#DDD6FE;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="150" y="244" width="174" height="34" as="geometry"/></mxCell>
+        <mxCell id="t6_feat_1" value="&lt;div style=&quot;display:flex;align-items:center;justify-content:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;13&quot; height=&quot;13&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#7C3AED&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Catalog&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FAF5FF;strokeColor=#DDD6FE;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="329" y="244" width="174" height="34" as="geometry"/></mxCell>
+        <mxCell id="t6_feat_2" value="&lt;div style=&quot;display:flex;align-items:center;justify-content:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;13&quot; height=&quot;13&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#7C3AED&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;polygon points=&quot;12 2 2 7 12 12 22 7 12 2&quot;/&gt;&lt;polyline points=&quot;2 17 12 22 22 17&quot;/&gt;&lt;polyline points=&quot;2 12 12 17 22 12&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Marketplace&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FAF5FF;strokeColor=#DDD6FE;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="508" y="244" width="174" height="34" as="geometry"/></mxCell>
+        <mxCell id="t6_feat_3" value="&lt;div style=&quot;display:flex;align-items:center;justify-content:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;13&quot; height=&quot;13&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#7C3AED&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z&quot;/&gt;&lt;polyline points=&quot;14 2 14 8 20 8&quot;/&gt;&lt;path d=&quot;m10 13-2 2 2 2&quot;/&gt;&lt;path d=&quot;m14 17 2-2-2-2&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Data Contracts&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FAF5FF;strokeColor=#DDD6FE;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="687" y="244" width="174" height="34" as="geometry"/></mxCell>
+        <mxCell id="t6_feat_4" value="&lt;div style=&quot;display:flex;align-items:center;justify-content:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;13&quot; height=&quot;13&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#7C3AED&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M22 11.08V12a10 10 0 1 1-5.93-9.14&quot;/&gt;&lt;polyline points=&quot;22 4 12 14.01 9 11.01&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;SLOs &amp;amp; SLAs&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FAF5FF;strokeColor=#DDD6FE;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="866" y="244" width="174" height="34" as="geometry"/></mxCell>
+        <mxCell id="t6_feat_5" value="&lt;div style=&quot;display:flex;align-items:center;justify-content:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;13&quot; height=&quot;13&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#7C3AED&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;rect width=&quot;18&quot; height=&quot;11&quot; x=&quot;3&quot; y=&quot;11&quot; rx=&quot;2&quot; ry=&quot;2&quot;/&gt;&lt;path d=&quot;M7 11V7a5 5 0 0 1 10 0v4&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Access Policies&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FAF5FF;strokeColor=#DDD6FE;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1045" y="244" width="174" height="34" as="geometry"/></mxCell>
+        <mxCell id="t5_frame" value="" style="rounded=1;arcSize=2;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.2;" vertex="1" parent="1"><mxGeometry x="16" y="292" width="1214" height="102" as="geometry"/></mxCell>
+        <mxCell id="t5_badge" value="5" style="rounded=1;arcSize=4;fillColor=#1D4ED8;fontColor=#FFFFFF;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="22" y="298" width="24" height="24" as="geometry"/></mxCell>
+        <mxCell id="t5_lbl" value="&lt;b style=&quot;font-size:9px;color:#1D4ED8;&quot;&gt;DATA MESH&lt;br/&gt;GOVERNANCE LAYER&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Federated Governance&lt;br/&gt;&amp;amp; Domain Ownership&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;" vertex="1" parent="1"><mxGeometry x="50" y="298" width="95" height="34" as="geometry"/></mxCell>
+        <mxCell id="t5_pill_0" value="&lt;div style=&quot;text-align:center;padding:3px 2px;&quot;&gt;
+      &lt;div style=&quot;font-size:8px;font-weight:800;color:#0F172A;margin-bottom:2px;&quot;&gt;Domain Ownership&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1D4ED8&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;circle cx=&quot;9&quot; cy=&quot;7&quot; r=&quot;3.5&quot;/&gt;&lt;path d=&quot;M3 20a6 6 0 0 1 12 0&quot;/&gt;&lt;circle cx=&quot;16.5&quot; cy=&quot;8.5&quot; r=&quot;2.5&quot;/&gt;&lt;path d=&quot;M15 20a5 5 0 0 1 6 0&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:6.5px;color:#64748B;&quot;&gt;Domain Teams &amp;amp; Stewards&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F8FAFC;strokeColor=#E2E8F0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="150" y="298" width="147" height="56" as="geometry"/></mxCell>
+        <mxCell id="t5_pill_1" value="&lt;div style=&quot;text-align:center;padding:3px 2px;&quot;&gt;
+      &lt;div style=&quot;font-size:8px;font-weight:800;color:#0F172A;margin-bottom:2px;&quot;&gt;Data Standards&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1D4ED8&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z&quot;/&gt;&lt;polyline points=&quot;14 2 14 8 20 8&quot;/&gt;&lt;path d=&quot;m10 13-2 2 2 2&quot;/&gt;&lt;path d=&quot;m14 17 2-2-2-2&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:6.5px;color:#64748B;&quot;&gt;Schemas &amp;amp; Conventions&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F8FAFC;strokeColor=#E2E8F0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="303" y="298" width="147" height="56" as="geometry"/></mxCell>
+        <mxCell id="t5_pill_2" value="&lt;div style=&quot;text-align:center;padding:3px 2px;&quot;&gt;
+      &lt;div style=&quot;font-size:8px;font-weight:800;color:#0F172A;margin-bottom:2px;&quot;&gt;Metadata &amp;amp; Catalog&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1D4ED8&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;circle cx=&quot;11&quot; cy=&quot;11&quot; r=&quot;8&quot;/&gt;&lt;path d=&quot;m21 21-4.3-4.3&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:6.5px;color:#64748B;&quot;&gt;Data Catalog &amp;amp; Glossary&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F8FAFC;strokeColor=#E2E8F0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="456" y="298" width="147" height="56" as="geometry"/></mxCell>
+        <mxCell id="t5_pill_3" value="&lt;div style=&quot;text-align:center;padding:3px 2px;&quot;&gt;
+      &lt;div style=&quot;font-size:8px;font-weight:800;color:#0F172A;margin-bottom:2px;&quot;&gt;Data Quality&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1D4ED8&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M22 11.08V12a10 10 0 1 1-5.93-9.14&quot;/&gt;&lt;polyline points=&quot;22 4 12 14.01 9 11.01&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:6.5px;color:#64748B;&quot;&gt;Policy Rules &amp;amp; Scorecards&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F8FAFC;strokeColor=#E2E8F0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="609" y="298" width="147" height="56" as="geometry"/></mxCell>
+        <mxCell id="t5_pill_4" value="&lt;div style=&quot;text-align:center;padding:3px 2px;&quot;&gt;
+      &lt;div style=&quot;font-size:8px;font-weight:800;color:#0F172A;margin-bottom:2px;&quot;&gt;Data Lineage&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1D4ED8&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;rect width=&quot;6&quot; height=&quot;6&quot; x=&quot;9&quot; y=&quot;2&quot; rx=&quot;1&quot;/&gt;&lt;rect width=&quot;6&quot; height=&quot;6&quot; x=&quot;2&quot; y=&quot;16&quot; rx=&quot;1&quot;/&gt;&lt;rect width=&quot;6&quot; height=&quot;6&quot; x=&quot;16&quot; y=&quot;16&quot; rx=&quot;1&quot;/&gt;&lt;path d=&quot;M5 16v-4h14v4&quot;/&gt;&lt;path d=&quot;M12 8v8&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:6.5px;color:#64748B;&quot;&gt;End-to-End Lineage&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F8FAFC;strokeColor=#E2E8F0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="762" y="298" width="147" height="56" as="geometry"/></mxCell>
+        <mxCell id="t5_pill_5" value="&lt;div style=&quot;text-align:center;padding:3px 2px;&quot;&gt;
+      &lt;div style=&quot;font-size:8px;font-weight:800;color:#0F172A;margin-bottom:2px;&quot;&gt;Policy &amp;amp; Compliance&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1D4ED8&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z&quot;/&gt;&lt;path d=&quot;m9 12 2 2 4-4&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:6.5px;color:#64748B;&quot;&gt;Classifications &amp;amp; Policies&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F8FAFC;strokeColor=#E2E8F0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="915" y="298" width="147" height="56" as="geometry"/></mxCell>
+        <mxCell id="t5_pill_6" value="&lt;div style=&quot;text-align:center;padding:3px 2px;&quot;&gt;
+      &lt;div style=&quot;font-size:8px;font-weight:800;color:#0F172A;margin-bottom:2px;&quot;&gt;Access &amp;amp; Sharing&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1D4ED8&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;rect width=&quot;18&quot; height=&quot;11&quot; x=&quot;3&quot; y=&quot;11&quot; rx=&quot;2&quot; ry=&quot;2&quot;/&gt;&lt;path d=&quot;M7 11V7a5 5 0 0 1 10 0v4&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:6.5px;color:#64748B;&quot;&gt;IAM &amp;amp; Sharing Policies&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F8FAFC;strokeColor=#E2E8F0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1068" y="298" width="147" height="56" as="geometry"/></mxCell>
+        <mxCell id="t5_fed_bar" value="&lt;div style=&quot;display:flex;align-items:center;justify-content:center;gap:8px;&quot;&gt;
+    &lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1D4ED8&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z&quot;/&gt;&lt;path d=&quot;m9 12 2 2 4-4&quot;/&gt;&lt;/svg&gt;
+    &lt;b style=&quot;font-size:8.5px;color:#1D4ED8;&quot;&gt;Federated Governance (Central Guardrails + Decentralized Execution)&lt;/b&gt;
+  &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#EFF6FF;strokeColor=#BFDBFE;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="150" y="360" width="1072" height="28" as="geometry"/></mxCell>
+        <mxCell id="t4_frame" value="" style="rounded=1;arcSize=2;fillColor=#FFFFFF;strokeColor=#16A34A;strokeWidth=1.2;" vertex="1" parent="1"><mxGeometry x="16" y="400" width="1214" height="108" as="geometry"/></mxCell>
+        <mxCell id="t4_badge" value="4" style="rounded=1;arcSize=4;fillColor=#16A34A;fontColor=#FFFFFF;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="22" y="406" width="24" height="24" as="geometry"/></mxCell>
+        <mxCell id="t4_lbl" value="&lt;b style=&quot;font-size:9.5px;color:#16A34A;&quot;&gt;LAKEHOUSE&lt;br/&gt;STORAGE LAYER&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:7.5px;color:#64748B;&quot;&gt;Open • Scalable&lt;br/&gt;Multi-Engine&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;" vertex="1" parent="1"><mxGeometry x="50" y="406" width="95" height="34" as="geometry"/></mxCell>
+        <mxCell id="t4_z1" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
+    &lt;div style=&quot;font-size:8.5px;font-weight:800;color:#16A34A;margin-bottom:4px;&quot;&gt;Data Lake (Raw Zone)&lt;/div&gt;
+    &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;18&quot; height=&quot;18&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#4285F4&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;ellipse cx=&quot;12&quot; cy=&quot;5&quot; rx=&quot;9&quot; ry=&quot;3&quot;/&gt;&lt;path d=&quot;M21 12c0 1.66-4 3-9 3s-9-1.34-9-3&quot;/&gt;&lt;path d=&quot;M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+    &lt;div style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Cloud Storage&lt;/div&gt;
+    &lt;div style=&quot;font-size:6.5px;color:#64748B;&quot;&gt;Raw / Ingestion Immutable&lt;/div&gt;
+  &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F0FDF4;strokeColor=#BBF7D0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="150" y="406" width="170" height="96" as="geometry"/></mxCell>
+        <mxCell id="t4_biglake" value="&lt;div style=&quot;text-align:center;padding:2px;&quot;&gt;
+    &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#1D4ED8&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;ellipse cx=&quot;12&quot; cy=&quot;5&quot; rx=&quot;9&quot; ry=&quot;3&quot;/&gt;&lt;path d=&quot;M21 12c0 1.66-4 3-9 3s-9-1.34-9-3&quot;/&gt;&lt;path d=&quot;M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+    &lt;div style=&quot;font-size:8.5px;font-weight:900;color:#1D4ED8;&quot;&gt;BigLake&lt;/div&gt;
+  &lt;/div&gt;" style="rounded=1;arcSize=6;fillColor=#EFF6FF;strokeColor=#BFDBFE;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="326" y="434" width="76" height="44" as="geometry"/></mxCell>
+        <mxCell id="t4_z2" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
+    &lt;div style=&quot;font-size:8.5px;font-weight:800;color:#16A34A;margin-bottom:4px;&quot;&gt;Lakehouse (Curated Zone)&lt;/div&gt;
+    &lt;div style=&quot;display:flex;justify-content:space-around;gap:6px;&quot;&gt;
+      &lt;div style=&quot;text-align:center;&quot;&gt;
+        &lt;div style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Delta Lake / Iceberg&lt;/div&gt;
+        &lt;div style=&quot;font-size:6.5px;color:#64748B;&quot;&gt;ACID Transactions • Time Travel&lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div style=&quot;text-align:center;&quot;&gt;
+        &lt;div style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Unity / Dataplex Catalog&lt;/div&gt;
+        &lt;div style=&quot;font-size:6.5px;color:#64748B;&quot;&gt;Fine-Grained Security • Governance&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F0FDF4;strokeColor=#BBF7D0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="408" y="406" width="320" height="96" as="geometry"/></mxCell>
+        <mxCell id="t4_z3" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
+    &lt;div style=&quot;font-size:8.5px;font-weight:800;color:#16A34A;margin-bottom:4px;&quot;&gt;Serving Zone&lt;/div&gt;
+    &lt;div style=&quot;display:flex;justify-content:space-around;gap:6px;&quot;&gt;
+      &lt;div style=&quot;text-align:center;&quot;&gt;
+        &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#4285F4&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;circle cx=&quot;11&quot; cy=&quot;11&quot; r=&quot;8&quot;/&gt;&lt;path d=&quot;m21 21-4.3-4.3&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+        &lt;div style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;BigQuery&lt;/div&gt;
+        &lt;div style=&quot;font-size:6.5px;color:#64748B;&quot;&gt;(Warehouse)&lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div style=&quot;text-align:center;&quot;&gt;
+        &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#7C3AED&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+        &lt;div style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Vertex AI&lt;/div&gt;
+        &lt;div style=&quot;font-size:6.5px;color:#64748B;&quot;&gt;Feature Store&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F0FDF4;strokeColor=#BBF7D0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="734" y="406" width="270" height="96" as="geometry"/></mxCell>
+        <mxCell id="t4_formats" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
+    &lt;div style=&quot;font-size:8px;font-weight:800;color:#0F172A;margin-bottom:2px;&quot;&gt;Storage Formats&lt;/div&gt;
+    &lt;div style=&quot;font-size:7px;color:#475569;line-height:1.3;&quot;&gt;
+      &lt;b&gt;Parquet&lt;/b&gt;&lt;br/&gt;&lt;b&gt;ORC&lt;/b&gt;&lt;br/&gt;&lt;b&gt;Avro&lt;/b&gt;&lt;br/&gt;&lt;b&gt;JSON&lt;/b&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F8FAFC;strokeColor=#E2E8F0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1010" y="406" width="212" height="96" as="geometry"/></mxCell>
+        <mxCell id="t3_frame" value="" style="rounded=1;arcSize=2;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;" vertex="1" parent="1"><mxGeometry x="16" y="514" width="1214" height="102" as="geometry"/></mxCell>
+        <mxCell id="t3_badge" value="3" style="rounded=1;arcSize=4;fillColor=#D97706;fontColor=#FFFFFF;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="22" y="520" width="24" height="24" as="geometry"/></mxCell>
+        <mxCell id="t3_lbl" value="&lt;b style=&quot;font-size:9px;color:#D97706;&quot;&gt;DATA PROCESSING&lt;br/&gt;&amp;amp; COMPUTE LAYER&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Batch • Stream&lt;br/&gt;Interactive • ML&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;" vertex="1" parent="1"><mxGeometry x="50" y="520" width="95" height="34" as="geometry"/></mxCell>
+        <mxCell id="t3_c_0" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
+      &lt;div style=&quot;font-size:8px;font-weight:800;color:#D97706;margin-bottom:2px;&quot;&gt;Batch Processing&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#D97706&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;rect width=&quot;20&quot; height=&quot;8&quot; x=&quot;2&quot; y=&quot;2&quot; rx=&quot;2&quot; ry=&quot;2&quot;/&gt;&lt;rect width=&quot;20&quot; height=&quot;8&quot; x=&quot;2&quot; y=&quot;14&quot; rx=&quot;2&quot; ry=&quot;2&quot;/&gt;&lt;line x1=&quot;6&quot; y1=&quot;6&quot; x2=&quot;6.01&quot; y2=&quot;6&quot;/&gt;&lt;line x1=&quot;6&quot; y1=&quot;18&quot; x2=&quot;6.01&quot; y2=&quot;18&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Dataproc&lt;/div&gt;
+      &lt;div style=&quot;font-size:6.5px;color:#64748B;&quot;&gt;Spark / Hive / Python&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFFBEB;strokeColor=#FDE68A;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="150" y="520" width="174" height="90" as="geometry"/></mxCell>
+        <mxCell id="t3_c_1" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
+      &lt;div style=&quot;font-size:8px;font-weight:800;color:#D97706;margin-bottom:2px;&quot;&gt;Interactive Analytics&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#D97706&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;circle cx=&quot;11&quot; cy=&quot;11&quot; r=&quot;8&quot;/&gt;&lt;path d=&quot;m21 21-4.3-4.3&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;BigQuery&lt;/div&gt;
+      &lt;div style=&quot;font-size:6.5px;color:#64748B;&quot;&gt;Interactive Engine&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFFBEB;strokeColor=#FDE68A;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="329" y="520" width="174" height="90" as="geometry"/></mxCell>
+        <mxCell id="t3_c_2" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
+      &lt;div style=&quot;font-size:8px;font-weight:800;color:#D97706;margin-bottom:2px;&quot;&gt;Stream Processing&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#D97706&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;rect width=&quot;6&quot; height=&quot;6&quot; x=&quot;9&quot; y=&quot;2&quot; rx=&quot;1&quot;/&gt;&lt;rect width=&quot;6&quot; height=&quot;6&quot; x=&quot;2&quot; y=&quot;16&quot; rx=&quot;1&quot;/&gt;&lt;rect width=&quot;6&quot; height=&quot;6&quot; x=&quot;16&quot; y=&quot;16&quot; rx=&quot;1&quot;/&gt;&lt;path d=&quot;M5 16v-4h14v4&quot;/&gt;&lt;path d=&quot;M12 8v8&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Datastream&lt;/div&gt;
+      &lt;div style=&quot;font-size:6.5px;color:#64748B;&quot;&gt;Real-time Pipelines&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFFBEB;strokeColor=#FDE68A;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="508" y="520" width="174" height="90" as="geometry"/></mxCell>
+        <mxCell id="t3_c_3" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
+      &lt;div style=&quot;font-size:8px;font-weight:800;color:#D97706;margin-bottom:2px;&quot;&gt;Data Transformation&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#D97706&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;m17 2 4 4-4 4&quot;/&gt;&lt;path d=&quot;M3 11v-1a4 4 0 0 1 4-4h14&quot;/&gt;&lt;path d=&quot;m7 22-4-4 4-4&quot;/&gt;&lt;path d=&quot;M21 13v1a4 4 0 0 1-4 4H3&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Dataflow&lt;/div&gt;
+      &lt;div style=&quot;font-size:6.5px;color:#64748B;&quot;&gt;Batch &amp;amp; Streaming (Beam)&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFFBEB;strokeColor=#FDE68A;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="687" y="520" width="174" height="90" as="geometry"/></mxCell>
+        <mxCell id="t3_c_4" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
+      &lt;div style=&quot;font-size:8px;font-weight:800;color:#D97706;margin-bottom:2px;&quot;&gt;AI / ML Processing&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#D97706&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Vertex AI&lt;/div&gt;
+      &lt;div style=&quot;font-size:6.5px;color:#64748B;&quot;&gt;Training &amp;amp; Inference&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFFBEB;strokeColor=#FDE68A;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="866" y="520" width="174" height="90" as="geometry"/></mxCell>
+        <mxCell id="t3_c_5" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
+      &lt;div style=&quot;font-size:8px;font-weight:800;color:#D97706;margin-bottom:2px;&quot;&gt;Orchestration&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#D97706&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;polyline points=&quot;22 12 18 12 15 21 9 3 6 12 2 12&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Cloud Composer&lt;/div&gt;
+      &lt;div style=&quot;font-size:6.5px;color:#64748B;&quot;&gt;Managed Airflow Workflows&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFFBEB;strokeColor=#FDE68A;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1045" y="520" width="174" height="90" as="geometry"/></mxCell>
+        <mxCell id="t2_frame" value="" style="rounded=1;arcSize=2;fillColor=#FFFFFF;strokeColor=#EA580C;strokeWidth=1.2;" vertex="1" parent="1"><mxGeometry x="16" y="622" width="1214" height="102" as="geometry"/></mxCell>
+        <mxCell id="t2_badge" value="2" style="rounded=1;arcSize=4;fillColor=#EA580C;fontColor=#FFFFFF;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="22" y="628" width="24" height="24" as="geometry"/></mxCell>
+        <mxCell id="t2_lbl" value="&lt;b style=&quot;font-size:9px;color:#EA580C;&quot;&gt;DATA INGESTION&lt;br/&gt;LAYER&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Reliable • Scalable&lt;br/&gt;Continuous&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;" vertex="1" parent="1"><mxGeometry x="50" y="628" width="95" height="34" as="geometry"/></mxCell>
+        <mxCell id="t2_c_0" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
+      &lt;div style=&quot;display:inline-block;background:#EA580C;color:#FFFFFF;border-radius:10px;width:16px;height:16px;font-size:9px;font-weight:900;line-height:16px;margin-bottom:2px;&quot;&gt;❶&lt;/div&gt;
+      &lt;div style=&quot;font-size:7.5px;font-weight:800;color:#EA580C;margin-bottom:2px;&quot;&gt;Batch Ingestion&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#EA580C&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;rect width=&quot;20&quot; height=&quot;8&quot; x=&quot;2&quot; y=&quot;2&quot; rx=&quot;2&quot; ry=&quot;2&quot;/&gt;&lt;rect width=&quot;20&quot; height=&quot;8&quot; x=&quot;2&quot; y=&quot;14&quot; rx=&quot;2&quot; ry=&quot;2&quot;/&gt;&lt;line x1=&quot;6&quot; y1=&quot;6&quot; x2=&quot;6.01&quot; y2=&quot;6&quot;/&gt;&lt;line x1=&quot;6&quot; y1=&quot;18&quot; x2=&quot;6.01&quot; y2=&quot;18&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:7.5px;font-weight:700;color:#0F172A;line-height:1.1;&quot;&gt;Transfer Appliance&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFF7ED;strokeColor=#FED7AA;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="150" y="628" width="147" height="90" as="geometry"/></mxCell>
+        <mxCell id="t2_c_1" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
+      &lt;div style=&quot;display:inline-block;background:#EA580C;color:#FFFFFF;border-radius:10px;width:16px;height:16px;font-size:9px;font-weight:900;line-height:16px;margin-bottom:2px;&quot;&gt;❷&lt;/div&gt;
+      &lt;div style=&quot;font-size:7.5px;font-weight:800;color:#EA580C;margin-bottom:2px;&quot;&gt;Database Ingestion&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#EA580C&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;ellipse cx=&quot;12&quot; cy=&quot;5&quot; rx=&quot;9&quot; ry=&quot;3&quot;/&gt;&lt;path d=&quot;M21 12c0 1.66-4 3-9 3s-9-1.34-9-3&quot;/&gt;&lt;path d=&quot;M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:7.5px;font-weight:700;color:#0F172A;line-height:1.1;&quot;&gt;Database Migration Service&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFF7ED;strokeColor=#FED7AA;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="303" y="628" width="147" height="90" as="geometry"/></mxCell>
+        <mxCell id="t2_c_2" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
+      &lt;div style=&quot;display:inline-block;background:#EA580C;color:#FFFFFF;border-radius:10px;width:16px;height:16px;font-size:9px;font-weight:900;line-height:16px;margin-bottom:2px;&quot;&gt;❸&lt;/div&gt;
+      &lt;div style=&quot;font-size:7.5px;font-weight:800;color:#EA580C;margin-bottom:2px;&quot;&gt;Streaming Ingestion&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#EA580C&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;rect width=&quot;6&quot; height=&quot;6&quot; x=&quot;9&quot; y=&quot;2&quot; rx=&quot;1&quot;/&gt;&lt;rect width=&quot;6&quot; height=&quot;6&quot; x=&quot;2&quot; y=&quot;16&quot; rx=&quot;1&quot;/&gt;&lt;rect width=&quot;6&quot; height=&quot;6&quot; x=&quot;16&quot; y=&quot;16&quot; rx=&quot;1&quot;/&gt;&lt;path d=&quot;M5 16v-4h14v4&quot;/&gt;&lt;path d=&quot;M12 8v8&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:7.5px;font-weight:700;color:#0F172A;line-height:1.1;&quot;&gt;Pub/Sub Lite&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFF7ED;strokeColor=#FED7AA;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="456" y="628" width="147" height="90" as="geometry"/></mxCell>
+        <mxCell id="t2_c_3" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
+      &lt;div style=&quot;display:inline-block;background:#EA580C;color:#FFFFFF;border-radius:10px;width:16px;height:16px;font-size:9px;font-weight:900;line-height:16px;margin-bottom:2px;&quot;&gt;❹&lt;/div&gt;
+      &lt;div style=&quot;font-size:7.5px;font-weight:800;color:#EA580C;margin-bottom:2px;&quot;&gt;Change Data Capture&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#EA580C&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;m17 2 4 4-4 4&quot;/&gt;&lt;path d=&quot;M3 11v-1a4 4 0 0 1 4-4h14&quot;/&gt;&lt;path d=&quot;m7 22-4-4 4-4&quot;/&gt;&lt;path d=&quot;M21 13v1a4 4 0 0 1-4 4H3&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:7.5px;font-weight:700;color:#0F172A;line-height:1.1;&quot;&gt;Datastream CDC&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFF7ED;strokeColor=#FED7AA;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="609" y="628" width="147" height="90" as="geometry"/></mxCell>
+        <mxCell id="t2_c_4" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
+      &lt;div style=&quot;display:inline-block;background:#EA580C;color:#FFFFFF;border-radius:10px;width:16px;height:16px;font-size:9px;font-weight:900;line-height:16px;margin-bottom:2px;&quot;&gt;❺&lt;/div&gt;
+      &lt;div style=&quot;font-size:7.5px;font-weight:800;color:#EA580C;margin-bottom:2px;&quot;&gt;Data Ingestion API&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#EA580C&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;rect width=&quot;6&quot; height=&quot;6&quot; x=&quot;9&quot; y=&quot;2&quot; rx=&quot;1&quot;/&gt;&lt;rect width=&quot;6&quot; height=&quot;6&quot; x=&quot;2&quot; y=&quot;16&quot; rx=&quot;1&quot;/&gt;&lt;rect width=&quot;6&quot; height=&quot;6&quot; x=&quot;16&quot; y=&quot;16&quot; rx=&quot;1&quot;/&gt;&lt;path d=&quot;M5 16v-4h14v4&quot;/&gt;&lt;path d=&quot;M12 8v8&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:7.5px;font-weight:700;color:#0F172A;line-height:1.1;&quot;&gt;Apigee Connect&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFF7ED;strokeColor=#FED7AA;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="762" y="628" width="147" height="90" as="geometry"/></mxCell>
+        <mxCell id="t2_c_5" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
+      &lt;div style=&quot;display:inline-block;background:#EA580C;color:#FFFFFF;border-radius:10px;width:16px;height:16px;font-size:9px;font-weight:900;line-height:16px;margin-bottom:2px;&quot;&gt;❻&lt;/div&gt;
+      &lt;div style=&quot;font-size:7.5px;font-weight:800;color:#EA580C;margin-bottom:2px;&quot;&gt;Event Ingestion&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#EA580C&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;polyline points=&quot;22 12 18 12 15 21 9 3 6 12 2 12&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:7.5px;font-weight:700;color:#0F172A;line-height:1.1;&quot;&gt;Eventarc&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFF7ED;strokeColor=#FED7AA;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="915" y="628" width="147" height="90" as="geometry"/></mxCell>
+        <mxCell id="t2_c_6" value="&lt;div style=&quot;text-align:center;padding:4px 2px;&quot;&gt;
+      &lt;div style=&quot;display:inline-block;background:#EA580C;color:#FFFFFF;border-radius:10px;width:16px;height:16px;font-size:9px;font-weight:900;line-height:16px;margin-bottom:2px;&quot;&gt;❼&lt;/div&gt;
+      &lt;div style=&quot;font-size:7.5px;font-weight:800;color:#EA580C;margin-bottom:2px;&quot;&gt;File Ingestion&lt;/div&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#EA580C&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:7.5px;font-weight:700;color:#0F172A;line-height:1.1;&quot;&gt;Cloud Storage Transfer&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFF7ED;strokeColor=#FED7AA;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1068" y="628" width="147" height="90" as="geometry"/></mxCell>
+        <mxCell id="t1_frame" value="" style="rounded=1;arcSize=2;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;" vertex="1" parent="1"><mxGeometry x="16" y="730" width="1214" height="88" as="geometry"/></mxCell>
+        <mxCell id="t1_badge" value="1" style="rounded=1;arcSize=4;fillColor=#DC2626;fontColor=#FFFFFF;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="22" y="736" width="24" height="24" as="geometry"/></mxCell>
+        <mxCell id="t1_lbl" value="&lt;b style=&quot;font-size:9px;color:#DC2626;&quot;&gt;DATA SOURCES&lt;br/&gt;LAYER&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Internal • External&lt;br/&gt;Diverse • Trusted&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;" vertex="1" parent="1"><mxGeometry x="50" y="736" width="95" height="34" as="geometry"/></mxCell>
+        <mxCell id="t1_s_0" value="&lt;div style=&quot;text-align:center;padding:3px 2px;&quot;&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#DC2626&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;ellipse cx=&quot;12&quot; cy=&quot;5&quot; rx=&quot;9&quot; ry=&quot;3&quot;/&gt;&lt;path d=&quot;M21 12c0 1.66-4 3-9 3s-9-1.34-9-3&quot;/&gt;&lt;path d=&quot;M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:7.5px;font-weight:700;color:#0F172A;line-height:1.1;&quot;&gt;On-prem Databases&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FEF2F2;strokeColor=#FECACA;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="150" y="736" width="110" height="76" as="geometry"/></mxCell>
+        <mxCell id="t1_s_1" value="&lt;div style=&quot;text-align:center;padding:3px 2px;&quot;&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#DC2626&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;rect width=&quot;20&quot; height=&quot;8&quot; x=&quot;2&quot; y=&quot;2&quot; rx=&quot;2&quot; ry=&quot;2&quot;/&gt;&lt;rect width=&quot;20&quot; height=&quot;8&quot; x=&quot;2&quot; y=&quot;14&quot; rx=&quot;2&quot; ry=&quot;2&quot;/&gt;&lt;line x1=&quot;6&quot; y1=&quot;6&quot; x2=&quot;6.01&quot; y2=&quot;6&quot;/&gt;&lt;line x1=&quot;6&quot; y1=&quot;18&quot; x2=&quot;6.01&quot; y2=&quot;18&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:7.5px;font-weight:700;color:#0F172A;line-height:1.1;&quot;&gt;Operational Applications&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FEF2F2;strokeColor=#FECACA;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="266" y="736" width="110" height="76" as="geometry"/></mxCell>
+        <mxCell id="t1_s_2" value="&lt;div style=&quot;text-align:center;padding:3px 2px;&quot;&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#DC2626&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z&quot;/&gt;&lt;polyline points=&quot;14 2 14 8 20 8&quot;/&gt;&lt;path d=&quot;m10 13-2 2 2 2&quot;/&gt;&lt;path d=&quot;m14 17 2-2-2-2&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:7.5px;font-weight:700;color:#0F172A;line-height:1.1;&quot;&gt;Files / Logs Documents&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FEF2F2;strokeColor=#FECACA;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="382" y="736" width="110" height="76" as="geometry"/></mxCell>
+        <mxCell id="t1_s_3" value="&lt;div style=&quot;text-align:center;padding:3px 2px;&quot;&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#DC2626&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;polyline points=&quot;22 12 18 12 15 21 9 3 6 12 2 12&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:7.5px;font-weight:700;color:#0F172A;line-height:1.1;&quot;&gt;IoT / Devices Sensors&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FEF2F2;strokeColor=#FECACA;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="498" y="736" width="110" height="76" as="geometry"/></mxCell>
+        <mxCell id="t1_s_4" value="&lt;div style=&quot;text-align:center;padding:3px 2px;&quot;&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#DC2626&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:7.5px;font-weight:700;color:#0F172A;line-height:1.1;&quot;&gt;SaaS Applications&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FEF2F2;strokeColor=#FECACA;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="614" y="736" width="110" height="76" as="geometry"/></mxCell>
+        <mxCell id="t1_s_5" value="&lt;div style=&quot;text-align:center;padding:3px 2px;&quot;&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#DC2626&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;rect width=&quot;6&quot; height=&quot;6&quot; x=&quot;9&quot; y=&quot;2&quot; rx=&quot;1&quot;/&gt;&lt;rect width=&quot;6&quot; height=&quot;6&quot; x=&quot;2&quot; y=&quot;16&quot; rx=&quot;1&quot;/&gt;&lt;rect width=&quot;6&quot; height=&quot;6&quot; x=&quot;16&quot; y=&quot;16&quot; rx=&quot;1&quot;/&gt;&lt;path d=&quot;M5 16v-4h14v4&quot;/&gt;&lt;path d=&quot;M12 8v8&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:7.5px;font-weight:700;color:#0F172A;line-height:1.1;&quot;&gt;APIs (External)&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FEF2F2;strokeColor=#FECACA;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="730" y="736" width="110" height="76" as="geometry"/></mxCell>
+        <mxCell id="t1_s_6" value="&lt;div style=&quot;text-align:center;padding:3px 2px;&quot;&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#DC2626&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;polygon points=&quot;12 2 2 7 12 12 22 7 12 2&quot;/&gt;&lt;polyline points=&quot;2 17 12 22 22 17&quot;/&gt;&lt;polyline points=&quot;2 12 12 17 22 12&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:7.5px;font-weight:700;color:#0F172A;line-height:1.1;&quot;&gt;Third-party Data&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FEF2F2;strokeColor=#FECACA;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="846" y="736" width="110" height="76" as="geometry"/></mxCell>
+        <mxCell id="t1_s_7" value="&lt;div style=&quot;text-align:center;padding:3px 2px;&quot;&gt;
+      &lt;div style=&quot;display:flex;justify-content:center;margin-bottom:2px;&quot;&gt;&lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#DC2626&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div style=&quot;font-size:7.5px;font-weight:700;color:#0F172A;line-height:1.1;&quot;&gt;Multi-region &amp;amp; Zones&lt;/div&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FEF2F2;strokeColor=#FECACA;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="962" y="736" width="110" height="76" as="geometry"/></mxCell>
+        <mxCell id="t1_global_infra" value="&lt;div style=&quot;font-size:7px;color:#475569;line-height:1.3;padding:2px 4px;&quot;&gt;
+    • Global Infrastructure&lt;br/&gt;
+    • High Availability&lt;br/&gt;
+    • Scalability&lt;br/&gt;
+    • Sustainability
+  &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F8FAFC;strokeColor=#E2E8F0;strokeWidth=1;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1084" y="736" width="138" height="76" as="geometry"/></mxCell>
+        <mxCell id="t8_frame" value="" style="rounded=1;arcSize=2;fillColor=#FFFFFF;strokeColor=#7C3AED;strokeWidth=1.2;" vertex="1" parent="1"><mxGeometry x="1246" y="68" width="338" height="284" as="geometry"/></mxCell>
+        <mxCell id="t8_badge" value="8" style="rounded=1;arcSize=4;fillColor=#7C3AED;fontColor=#FFFFFF;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1252" y="74" width="24" height="24" as="geometry"/></mxCell>
+        <mxCell id="t8_lbl" value="&lt;b style=&quot;font-size:9.5px;color:#7C3AED;&quot;&gt;GOVERNANCE &amp;amp; DATA MANAGEMENT&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:7.5px;color:#64748B;&quot;&gt;Governed • Secure • Compliant&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1282" y="74" width="290" height="24" as="geometry"/></mxCell>
+        <mxCell id="t8_g_0" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#7C3AED&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Data Catalog&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FAF5FF;strokeColor=#DDD6FE;strokeWidth=1;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1256" y="104" width="154" height="38" as="geometry"/></mxCell>
+        <mxCell id="t8_g_1" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#7C3AED&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;rect width=&quot;6&quot; height=&quot;6&quot; x=&quot;9&quot; y=&quot;2&quot; rx=&quot;1&quot;/&gt;&lt;rect width=&quot;6&quot; height=&quot;6&quot; x=&quot;2&quot; y=&quot;16&quot; rx=&quot;1&quot;/&gt;&lt;rect width=&quot;6&quot; height=&quot;6&quot; x=&quot;16&quot; y=&quot;16&quot; rx=&quot;1&quot;/&gt;&lt;path d=&quot;M5 16v-4h14v4&quot;/&gt;&lt;path d=&quot;M12 8v8&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Data Lineage&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FAF5FF;strokeColor=#DDD6FE;strokeWidth=1;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1416" y="104" width="154" height="38" as="geometry"/></mxCell>
+        <mxCell id="t8_g_2" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#7C3AED&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M22 11.08V12a10 10 0 1 1-5.93-9.14&quot;/&gt;&lt;polyline points=&quot;22 4 12 14.01 9 11.01&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Data Quality&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FAF5FF;strokeColor=#DDD6FE;strokeWidth=1;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1256" y="148" width="154" height="38" as="geometry"/></mxCell>
+        <mxCell id="t8_g_3" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#7C3AED&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;polyline points=&quot;22 12 18 12 15 21 9 3 6 12 2 12&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Data Observability&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FAF5FF;strokeColor=#DDD6FE;strokeWidth=1;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1416" y="148" width="154" height="38" as="geometry"/></mxCell>
+        <mxCell id="t8_g_4" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#7C3AED&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z&quot;/&gt;&lt;path d=&quot;m9 12 2 2 4-4&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Data Privacy&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FAF5FF;strokeColor=#DDD6FE;strokeWidth=1;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1256" y="192" width="154" height="38" as="geometry"/></mxCell>
+        <mxCell id="t8_g_5" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#7C3AED&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;ellipse cx=&quot;12&quot; cy=&quot;5&quot; rx=&quot;9&quot; ry=&quot;3&quot;/&gt;&lt;path d=&quot;M21 12c0 1.66-4 3-9 3s-9-1.34-9-3&quot;/&gt;&lt;path d=&quot;M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Master Data Mgmt&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FAF5FF;strokeColor=#DDD6FE;strokeWidth=1;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1416" y="192" width="154" height="38" as="geometry"/></mxCell>
+        <mxCell id="t8_g_6" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#7C3AED&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;polygon points=&quot;12 2 2 7 12 12 22 7 12 2&quot;/&gt;&lt;polyline points=&quot;2 17 12 22 22 17&quot;/&gt;&lt;polyline points=&quot;2 12 12 17 22 12&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Reference Data&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FAF5FF;strokeColor=#DDD6FE;strokeWidth=1;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1256" y="236" width="154" height="38" as="geometry"/></mxCell>
+        <mxCell id="t8_g_7" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#7C3AED&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z&quot;/&gt;&lt;polyline points=&quot;14 2 14 8 20 8&quot;/&gt;&lt;path d=&quot;m10 13-2 2 2 2&quot;/&gt;&lt;path d=&quot;m14 17 2-2-2-2&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Data Contracts&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FAF5FF;strokeColor=#DDD6FE;strokeWidth=1;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1416" y="236" width="154" height="38" as="geometry"/></mxCell>
+        <mxCell id="t8_iam" value="&lt;div style=&quot;display:flex;align-items:center;justify-content:center;gap:8px;&quot;&gt;
+    &lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#7C3AED&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;rect width=&quot;18&quot; height=&quot;11&quot; x=&quot;3&quot; y=&quot;11&quot; rx=&quot;2&quot; ry=&quot;2&quot;/&gt;&lt;path d=&quot;M7 11V7a5 5 0 0 1 10 0v4&quot;/&gt;&lt;/svg&gt;
+    &lt;b style=&quot;font-size:8.5px;color:#0F172A;&quot;&gt;IAM &amp;amp; Access Management&lt;/b&gt;
+  &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F5F3FF;strokeColor=#DDD6FE;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1256" y="286" width="314" height="56" as="geometry"/></mxCell>
+        <mxCell id="t9_frame" value="" style="rounded=1;arcSize=2;fillColor=#FFFFFF;strokeColor=#16A34A;strokeWidth=1.2;" vertex="1" parent="1"><mxGeometry x="1246" y="358" width="338" height="220" as="geometry"/></mxCell>
+        <mxCell id="t9_badge" value="9" style="rounded=1;arcSize=4;fillColor=#16A34A;fontColor=#FFFFFF;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1252" y="364" width="24" height="24" as="geometry"/></mxCell>
+        <mxCell id="t9_lbl" value="&lt;b style=&quot;font-size:9.5px;color:#16A34A;&quot;&gt;OBSERVABILITY &amp;amp; OPERATIONS&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:7.5px;color:#64748B;&quot;&gt;Monitor • Optimize • Secure&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1282" y="364" width="290" height="24" as="geometry"/></mxCell>
+        <mxCell id="t9_o_0" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#16A34A&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;polyline points=&quot;22 12 18 12 15 21 9 3 6 12 2 12&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Cloud Monitoring&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F0FDF4;strokeColor=#BBF7D0;strokeWidth=1;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1256" y="394" width="154" height="38" as="geometry"/></mxCell>
+        <mxCell id="t9_o_1" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#16A34A&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z&quot;/&gt;&lt;polyline points=&quot;14 2 14 8 20 8&quot;/&gt;&lt;path d=&quot;m10 13-2 2 2 2&quot;/&gt;&lt;path d=&quot;m14 17 2-2-2-2&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Logging&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F0FDF4;strokeColor=#BBF7D0;strokeWidth=1;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1416" y="394" width="154" height="38" as="geometry"/></mxCell>
+        <mxCell id="t9_o_2" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#16A34A&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z&quot;/&gt;&lt;path d=&quot;m9 12 2 2 4-4&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Error Reporting&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F0FDF4;strokeColor=#BBF7D0;strokeWidth=1;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1256" y="438" width="154" height="38" as="geometry"/></mxCell>
+        <mxCell id="t9_o_3" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#16A34A&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;rect width=&quot;6&quot; height=&quot;6&quot; x=&quot;9&quot; y=&quot;2&quot; rx=&quot;1&quot;/&gt;&lt;rect width=&quot;6&quot; height=&quot;6&quot; x=&quot;2&quot; y=&quot;16&quot; rx=&quot;1&quot;/&gt;&lt;rect width=&quot;6&quot; height=&quot;6&quot; x=&quot;16&quot; y=&quot;16&quot; rx=&quot;1&quot;/&gt;&lt;path d=&quot;M5 16v-4h14v4&quot;/&gt;&lt;path d=&quot;M12 8v8&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Cloud Trace&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F0FDF4;strokeColor=#BBF7D0;strokeWidth=1;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1416" y="438" width="154" height="38" as="geometry"/></mxCell>
+        <mxCell id="t9_o_4" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#16A34A&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9&quot;/&gt;&lt;path d=&quot;M10.3 21a1.94 1.94 0 0 0 3.4 0&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;SLO / Alerting&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F0FDF4;strokeColor=#BBF7D0;strokeWidth=1;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1256" y="482" width="154" height="38" as="geometry"/></mxCell>
+        <mxCell id="t9_o_5" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#16A34A&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;ellipse cx=&quot;12&quot; cy=&quot;5&quot; rx=&quot;9&quot; ry=&quot;3&quot;/&gt;&lt;path d=&quot;M21 12c0 1.66-4 3-9 3s-9-1.34-9-3&quot;/&gt;&lt;path d=&quot;M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;Audit Logs&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#F0FDF4;strokeColor=#BBF7D0;strokeWidth=1;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1416" y="482" width="154" height="38" as="geometry"/></mxCell>
+        <mxCell id="t9_insights" value="&lt;div style=&quot;display:flex;align-items:center;justify-content:center;gap:8px;&quot;&gt;
+    &lt;svg width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#16A34A&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;line x1=&quot;18&quot; y1=&quot;20&quot; x2=&quot;18&quot; y2=&quot;10&quot;/&gt;&lt;line x1=&quot;12&quot; y1=&quot;20&quot; x2=&quot;12&quot; y2=&quot;4&quot;/&gt;&lt;line x1=&quot;6&quot; y1=&quot;20&quot; x2=&quot;6&quot; y2=&quot;14&quot;/&gt;&lt;/svg&gt;
+    &lt;b style=&quot;font-size:8.5px;color:#0F172A;&quot;&gt;Data Insights&lt;/b&gt;
+  &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#DCFCE7;strokeColor=#BBF7D0;strokeWidth=1;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1256" y="530" width="314" height="40" as="geometry"/></mxCell>
+        <mxCell id="t10_frame" value="" style="rounded=1;arcSize=2;fillColor=#FFFFFF;strokeColor=#EA580C;strokeWidth=1.2;" vertex="1" parent="1"><mxGeometry x="1246" y="584" width="338" height="234" as="geometry"/></mxCell>
+        <mxCell id="t10_badge" value="10" style="rounded=1;arcSize=4;fillColor=#EA580C;fontColor=#FFFFFF;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1252" y="590" width="24" height="24" as="geometry"/></mxCell>
+        <mxCell id="t10_lbl" value="&lt;b style=&quot;font-size:9.5px;color:#EA580C;&quot;&gt;PLATFORM OPERATIONS&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:7.5px;color:#64748B;&quot;&gt;Manage • Automate • Optimize&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1282" y="590" width="290" height="24" as="geometry"/></mxCell>
+        <mxCell id="t10_o_0" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#EA580C&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z&quot;/&gt;&lt;polyline points=&quot;14 2 14 8 20 8&quot;/&gt;&lt;path d=&quot;m10 13-2 2 2 2&quot;/&gt;&lt;path d=&quot;m14 17 2-2-2-2&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;line-height:1.15;&quot;&gt;Infrastructure as Code&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFF7ED;strokeColor=#FED7AA;strokeWidth=1;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1256" y="620" width="154" height="50" as="geometry"/></mxCell>
+        <mxCell id="t10_o_1" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#EA580C&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;m17 2 4 4-4 4&quot;/&gt;&lt;path d=&quot;M3 11v-1a4 4 0 0 1 4-4h14&quot;/&gt;&lt;path d=&quot;m7 22-4-4 4-4&quot;/&gt;&lt;path d=&quot;M21 13v1a4 4 0 0 1-4 4H3&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;line-height:1.15;&quot;&gt;CI / CD (Cloud Build)&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFF7ED;strokeColor=#FED7AA;strokeWidth=1;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1416" y="620" width="154" height="50" as="geometry"/></mxCell>
+        <mxCell id="t10_o_2" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#EA580C&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;3&quot;/&gt;&lt;path d=&quot;M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;line-height:1.15;&quot;&gt;Deployment Manager&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFF7ED;strokeColor=#FED7AA;strokeWidth=1;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1256" y="676" width="154" height="50" as="geometry"/></mxCell>
+        <mxCell id="t10_o_3" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#EA580C&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;line x1=&quot;12&quot; y1=&quot;2&quot; x2=&quot;12&quot; y2=&quot;22&quot;/&gt;&lt;path d=&quot;M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;line-height:1.15;&quot;&gt;Cost Management&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFF7ED;strokeColor=#FED7AA;strokeWidth=1;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1416" y="676" width="154" height="50" as="geometry"/></mxCell>
+        <mxCell id="t10_o_4" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#EA580C&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;rect width=&quot;20&quot; height=&quot;8&quot; x=&quot;2&quot; y=&quot;2&quot; rx=&quot;2&quot; ry=&quot;2&quot;/&gt;&lt;rect width=&quot;20&quot; height=&quot;8&quot; x=&quot;2&quot; y=&quot;14&quot; rx=&quot;2&quot; ry=&quot;2&quot;/&gt;&lt;line x1=&quot;6&quot; y1=&quot;6&quot; x2=&quot;6.01&quot; y2=&quot;6&quot;/&gt;&lt;line x1=&quot;6&quot; y1=&quot;18&quot; x2=&quot;6.01&quot; y2=&quot;18&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;line-height:1.15;&quot;&gt;Capacity Management&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFF7ED;strokeColor=#FED7AA;strokeWidth=1;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1256" y="732" width="154" height="50" as="geometry"/></mxCell>
+        <mxCell id="t10_o_5" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;padding:2px 4px;&quot;&gt;
+      &lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#EA580C&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z&quot;/&gt;&lt;path d=&quot;m9 12 2 2 4-4&quot;/&gt;&lt;/svg&gt;
+      &lt;span style=&quot;font-size:8px;font-weight:700;color:#0F172A;line-height:1.15;&quot;&gt;Security Command Center&lt;/span&gt;
+    &lt;/div&gt;" style="rounded=1;arcSize=4;fillColor=#FFF7ED;strokeColor=#FED7AA;strokeWidth=1;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1416" y="732" width="154" height="50" as="geometry"/></mxCell>
+        <mxCell id="flow_legend_box" value="" style="rounded=1;arcSize=3;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;" vertex="1" parent="1"><mxGeometry x="16" y="828" width="1014" height="50" as="geometry"/></mxCell>
+        <mxCell id="flow_legend_content" value="&lt;div style=&quot;display:flex;align-items:center;justify-content:space-between;padding:4px 12px;&quot;&gt;
+    &lt;b style=&quot;font-size:9px;color:#1D4ED8;letter-spacing:0.5px;&quot;&gt;DATA FLOW LEGEND&lt;/b&gt;
+    &lt;div style=&quot;display:flex;align-items:center;gap:12px;font-size:8px;font-weight:700;color:#0F172A;&quot;&gt;
+      &lt;span style=&quot;display:flex;align-items:center;gap:4px;&quot;&gt;&lt;span style=&quot;background:#DC2626;color:#FFF;border-radius:10px;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;&quot;&gt;1&lt;/span&gt; Source&lt;/span&gt;
+      &lt;span style=&quot;color:#64748B;&quot;&gt;➔&lt;/span&gt;
+      &lt;span style=&quot;display:flex;align-items:center;gap:4px;&quot;&gt;&lt;span style=&quot;background:#EA580C;color:#FFF;border-radius:10px;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;&quot;&gt;2&lt;/span&gt; Ingestion&lt;/span&gt;
+      &lt;span style=&quot;color:#64748B;&quot;&gt;➔&lt;/span&gt;
+      &lt;span style=&quot;display:flex;align-items:center;gap:4px;&quot;&gt;&lt;span style=&quot;background:#D97706;color:#FFF;border-radius:10px;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;&quot;&gt;3&lt;/span&gt; Processing&lt;/span&gt;
+      &lt;span style=&quot;color:#64748B;&quot;&gt;➔&lt;/span&gt;
+      &lt;span style=&quot;display:flex;align-items:center;gap:4px;&quot;&gt;&lt;span style=&quot;background:#16A34A;color:#FFF;border-radius:10px;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;&quot;&gt;4&lt;/span&gt; Storage&lt;/span&gt;
+      &lt;span style=&quot;color:#64748B;&quot;&gt;➔&lt;/span&gt;
+      &lt;span style=&quot;display:flex;align-items:center;gap:4px;&quot;&gt;&lt;span style=&quot;background:#1D4ED8;color:#FFF;border-radius:10px;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;&quot;&gt;5&lt;/span&gt; Governance&lt;/span&gt;
+      &lt;span style=&quot;color:#64748B;&quot;&gt;➔&lt;/span&gt;
+      &lt;span style=&quot;display:flex;align-items:center;gap:4px;&quot;&gt;&lt;span style=&quot;background:#2563EB;color:#FFF;border-radius:10px;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;&quot;&gt;6&lt;/span&gt; Data Products&lt;/span&gt;
+      &lt;span style=&quot;color:#64748B;&quot;&gt;➔&lt;/span&gt;
+      &lt;span style=&quot;display:flex;align-items:center;gap:4px;&quot;&gt;&lt;span style=&quot;background:#1E40AF;color:#FFF;border-radius:10px;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;&quot;&gt;7&lt;/span&gt; Consumption&lt;/span&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="16" y="828" width="1014" height="50" as="geometry"/></mxCell>
+        <mxCell id="style_legend_box" value="" style="rounded=1;arcSize=3;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;" vertex="1" parent="1"><mxGeometry x="1040" y="828" width="544" height="50" as="geometry"/></mxCell>
+        <mxCell id="style_legend_content" value="&lt;div style=&quot;display:flex;align-items:center;justify-content:space-between;padding:4px 12px;font-size:8px;&quot;&gt;
+    &lt;b style=&quot;color:#0F172A;&quot;&gt;LEGEND&lt;/b&gt;
+    &lt;span style=&quot;display:flex;align-items:center;gap:4px;&quot;&gt;&lt;span style=&quot;width:16px;height:2px;background:#2563EB;border-top:1px dashed #2563EB;display:inline-block;&quot;&gt;&lt;/span&gt; Data Flow&lt;/span&gt;
+    &lt;span style=&quot;display:flex;align-items:center;gap:4px;&quot;&gt;&lt;span style=&quot;width:16px;height:2px;background:#16A34A;border-top:1px dashed #16A34A;display:inline-block;&quot;&gt;&lt;/span&gt; Metadata / Control Flow&lt;/span&gt;
+    &lt;span style=&quot;display:flex;align-items:center;gap:4px;&quot;&gt;&lt;span style=&quot;width:16px;height:2px;background:#0F172A;display:inline-block;&quot;&gt;&lt;/span&gt; Governance / Security&lt;/span&gt;
+  &lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1040" y="828" width="544" height="50" as="geometry"/></mxCell>
+        <mxCell id="e_t1_t2_0" edge="1" parent="1" style="edgeStyle=none;strokeColor=#EA580C;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="223" y="730" as="sourcePoint"/><mxPoint x="223" y="724" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t1_t2_1" edge="1" parent="1" style="edgeStyle=none;strokeColor=#EA580C;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="376" y="730" as="sourcePoint"/><mxPoint x="376" y="724" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t1_t2_2" edge="1" parent="1" style="edgeStyle=none;strokeColor=#EA580C;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="529" y="730" as="sourcePoint"/><mxPoint x="529" y="724" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t1_t2_3" edge="1" parent="1" style="edgeStyle=none;strokeColor=#EA580C;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="682" y="730" as="sourcePoint"/><mxPoint x="682" y="724" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t1_t2_4" edge="1" parent="1" style="edgeStyle=none;strokeColor=#EA580C;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="835" y="730" as="sourcePoint"/><mxPoint x="835" y="724" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t1_t2_5" edge="1" parent="1" style="edgeStyle=none;strokeColor=#EA580C;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="988" y="730" as="sourcePoint"/><mxPoint x="988" y="724" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t2_t3_0" edge="1" parent="1" style="edgeStyle=none;strokeColor=#D97706;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="237" y="622" as="sourcePoint"/><mxPoint x="237" y="616" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t2_t3_1" edge="1" parent="1" style="edgeStyle=none;strokeColor=#D97706;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="416" y="622" as="sourcePoint"/><mxPoint x="416" y="616" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t2_t3_2" edge="1" parent="1" style="edgeStyle=none;strokeColor=#D97706;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="595" y="622" as="sourcePoint"/><mxPoint x="595" y="616" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t2_t3_3" edge="1" parent="1" style="edgeStyle=none;strokeColor=#D97706;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="774" y="622" as="sourcePoint"/><mxPoint x="774" y="616" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t2_t3_4" edge="1" parent="1" style="edgeStyle=none;strokeColor=#D97706;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="953" y="622" as="sourcePoint"/><mxPoint x="953" y="616" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t2_t3_5" edge="1" parent="1" style="edgeStyle=none;strokeColor=#D97706;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="1132" y="622" as="sourcePoint"/><mxPoint x="1132" y="616" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t3_t4_0" edge="1" parent="1" style="edgeStyle=none;strokeColor=#16A34A;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="235" y="514" as="sourcePoint"/><mxPoint x="235" y="508" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t3_t4_1" edge="1" parent="1" style="edgeStyle=none;strokeColor=#16A34A;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="480" y="514" as="sourcePoint"/><mxPoint x="480" y="508" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t3_t4_2" edge="1" parent="1" style="edgeStyle=none;strokeColor=#16A34A;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="725" y="514" as="sourcePoint"/><mxPoint x="725" y="508" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t3_t4_3" edge="1" parent="1" style="edgeStyle=none;strokeColor=#16A34A;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="970" y="514" as="sourcePoint"/><mxPoint x="970" y="508" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t4_t5_0" edge="1" parent="1" style="edgeStyle=none;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="235" y="400" as="sourcePoint"/><mxPoint x="235" y="394" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t4_t5_1" edge="1" parent="1" style="edgeStyle=none;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="568" y="400" as="sourcePoint"/><mxPoint x="568" y="394" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t4_t5_2" edge="1" parent="1" style="edgeStyle=none;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="869" y="400" as="sourcePoint"/><mxPoint x="869" y="394" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t5_t6_0" edge="1" parent="1" style="edgeStyle=none;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="226" y="292" as="sourcePoint"/><mxPoint x="226" y="286" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t5_t6_1" edge="1" parent="1" style="edgeStyle=none;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="379" y="292" as="sourcePoint"/><mxPoint x="379" y="286" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t5_t6_2" edge="1" parent="1" style="edgeStyle=none;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="532" y="292" as="sourcePoint"/><mxPoint x="532" y="286" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t5_t6_3" edge="1" parent="1" style="edgeStyle=none;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="685" y="292" as="sourcePoint"/><mxPoint x="685" y="286" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t5_t6_4" edge="1" parent="1" style="edgeStyle=none;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="838" y="292" as="sourcePoint"/><mxPoint x="838" y="286" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t5_t6_5" edge="1" parent="1" style="edgeStyle=none;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="991" y="292" as="sourcePoint"/><mxPoint x="991" y="286" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t5_t6_6" edge="1" parent="1" style="edgeStyle=none;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="1144" y="292" as="sourcePoint"/><mxPoint x="1144" y="286" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t6_t7_0" edge="1" parent="1" style="edgeStyle=none;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="221" y="178" as="sourcePoint"/><mxPoint x="221" y="172" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t6_t7_1" edge="1" parent="1" style="edgeStyle=none;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="369" y="178" as="sourcePoint"/><mxPoint x="369" y="172" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t6_t7_2" edge="1" parent="1" style="edgeStyle=none;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="517" y="178" as="sourcePoint"/><mxPoint x="517" y="172" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t6_t7_3" edge="1" parent="1" style="edgeStyle=none;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="665" y="178" as="sourcePoint"/><mxPoint x="665" y="172" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t6_t7_4" edge="1" parent="1" style="edgeStyle=none;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="813" y="178" as="sourcePoint"/><mxPoint x="813" y="172" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="e_t6_t7_5" edge="1" parent="1" style="edgeStyle=none;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=4;"><mxGeometry relative="1" as="geometry"><mxPoint x="961" y="178" as="sourcePoint"/><mxPoint x="961" y="172" as="targetPoint"/></mxGeometry></mxCell>
       </root>
     </mxGraphModel>
   </diagram>
-</mxfile>`;
+</mxfile>`.trim();
 }
 
 function buildGcpDataLakehouseWbsXml() {
@@ -9529,25 +9252,26 @@ function buildLegacyGenAiStackXml(cust = "Enterprise Organization") {
 
 // ===== Sourced from build_master_legacy_finops_waste.ts =====
 function buildLegacyFinOpsWasteXml(cust = 'Enterprise Organization') {
+  const cEsc = (cust || 'Enterprise Organization').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   return `<mxfile host="embed.diagrams.net">
-  <diagram id="legacy_finops_waste" name="Enterprise Organization - Current Cloud Spend &amp; Waste">
+  <diagram id="legacy_finops_waste" name="${cEsc} - Current Cloud Spend &amp; Waste">
     <mxGraphModel dx="1600" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="860" background="#FFFFFF" math="0" shadow="0">
       <root>
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
 
         <!-- HEADER BANNER -->
-        <mxCell id="top_logo" value="&lt;span style=&quot;font-size:24px;&quot;&gt;💸&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="top_logo" value="&lt;svg width=&quot;26&quot; height=&quot;26&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#DC2626&quot; stroke-width=&quot;2&quot;&gt;&lt;line x1=&quot;12&quot; y1=&quot;2&quot; x2=&quot;12&quot; y2=&quot;22&quot;/&gt;&lt;path d=&quot;M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6&quot;/&gt;&lt;/svg&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="25" y="10" width="35" height="35" as="geometry"/>
         </mxCell>
-        <mxCell id="main_title" value="&lt;b style=&quot;font-size:16px;color:#0F172A;letter-spacing:-0.2px;&quot;&gt;ENTERPRISE ORGANIZATION: CURRENT BASELINE — UNCONTROLLED CLOUD SPEND &amp;amp; IDLE WASTE (P2-FIN-L-01)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="main_title" value="&lt;b style=&quot;font-size:16px;color:#0F172A;letter-spacing:-0.2px;&quot;&gt;${cEsc}: CURRENT BASELINE — UNCONTROLLED CLOUD SPEND &amp;amp; IDLE WASTE (P2-FIN-L-01)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="65" y="10" width="1150" height="22" as="geometry"/>
         </mxCell>
         <mxCell id="main_subtitle" value="&lt;span style=&quot;font-size:9.5px;color:#475569;font-weight:700;letter-spacing:0.1px;&quot;&gt;Static 24/7 Over-Provisioned VMs, Ghost Disks, 42% Untagged Resources, and Manual 14-Day Month-End Excel Invoicing&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="65" y="32" width="1150" height="16" as="geometry"/>
         </mxCell>
         
-        <mxCell id="top_badge" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:12px;font-weight:bold;color:#EF4444;&quot;&gt;💸 High Cloud Waste&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:8px;color:#94A3B8;font-weight:600;&quot;&gt;42% Untagged • $42k/mo Waste&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;strokeWidth=1.5;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+        <mxCell id="top_badge" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:12px;font-weight:bold;color:#EF4444;&quot;&gt;High Cloud Waste&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:8px;color:#94A3B8;font-weight:600;&quot;&gt;42% Untagged • $42k/mo Waste&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;strokeWidth=1.5;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
           <mxGeometry x="1350" y="8" width="225" height="42" as="geometry"/>
         </mxCell>
 
@@ -9555,22 +9279,22 @@ function buildLegacyFinOpsWasteXml(cust = 'Enterprise Organization') {
         <mxCell id="col1_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#EF4444;strokeWidth=1.5;" vertex="1" parent="1">
           <mxGeometry x="25" y="60" width="360" height="715" as="geometry"/>
         </mxCell>
-        <mxCell id="col1_title" value="&lt;b style=&quot;font-size:10.5px;color:#991B1B;&quot;&gt;🖥️ Over-Provisioned Static Compute&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="col1_title" value="&lt;b style=&quot;font-size:10.5px;color:#991B1B;&quot;&gt;Over-Provisioned Static Compute&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="35" y="64" width="340" height="20" as="geometry"/>
         </mxCell>
-        <mxCell id="card_ec2_vms" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;⚡ STATIC 24/7 AWS EC2 &amp;amp; AZURE VMS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Average CPU utilization only 8.4% - 12.1%&lt;br&gt;• Non-production dev instances running all weekend&lt;br&gt;• Zero automated schedule shutdown or rightsizing&lt;br&gt;• On-demand pricing without commitment discounts&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_ec2_vms" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;STATIC 24/7 AWS EC2 &amp;amp; AZURE VMS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Average CPU utilization only 8.4% - 12.1%&lt;br&gt;• Non-production dev instances running all weekend&lt;br&gt;• Zero automated schedule shutdown or rightsizing&lt;br&gt;• On-demand pricing without commitment discounts&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="35" y="88" width="340" height="115" as="geometry"/>
         </mxCell>
-        <mxCell id="card_idle_gpus" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;🎮 IDLE GPU DEV INSTANCES (A100/H100)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Oversized 8x A100 GPU clusters left unstopped&lt;br&gt;• $18,400/month idle spend across 3 AI teams&lt;br&gt;• No GPU memory bin-packing or time-slicing&lt;br&gt;• Missing auto-kill watchdog daemon&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_idle_gpus" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;IDLE GPU DEV INSTANCES (A100/H100)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Oversized 8x A100 GPU clusters left unstopped&lt;br&gt;• $18,400/month idle spend across 3 AI teams&lt;br&gt;• No GPU memory bin-packing or time-slicing&lt;br&gt;• Missing auto-kill watchdog daemon&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="35" y="215" width="340" height="115" as="geometry"/>
         </mxCell>
-        <mxCell id="card_static_k8s" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;☸️ FIXED-NODE KUBERNETES CLUSTERS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• GKE/EKS clusters with high minimum node floors&lt;br&gt;• Missing GKE Autopilot pod-level resource billing&lt;br&gt;• Pod CPU requests inflated 400% above actual usage&lt;br&gt;• Unused cluster capacity burning 45% of budget&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_static_k8s" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;FIXED-NODE KUBERNETES CLUSTERS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• GKE/EKS clusters with high minimum node floors&lt;br&gt;• Missing GKE Autopilot pod-level resource billing&lt;br&gt;• Pod CPU requests inflated 400% above actual usage&lt;br&gt;• Unused cluster capacity burning 45% of budget&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="35" y="342" width="340" height="115" as="geometry"/>
         </mxCell>
-        <mxCell id="card_cross_egress" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;🌐 UNMONITORED MULTI-CLOUD EGRESS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Terabytes of ETL data moving across cloud regions&lt;br&gt;• Surprise monthly egress billing penalties ($9,200)&lt;br&gt;• Zero cross-cloud routing policy or Cloud Interconnect&lt;br&gt;• Redundant copies transferred multiple times daily&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#B91C1C;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_cross_egress" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;UNMONITORED MULTI-CLOUD EGRESS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Terabytes of ETL data moving across cloud regions&lt;br&gt;• Surprise monthly egress billing penalties ($9,200)&lt;br&gt;• Zero cross-cloud routing policy or Cloud Interconnect&lt;br&gt;• Redundant copies transferred multiple times daily&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#B91C1C;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="35" y="470" width="340" height="115" as="geometry"/>
         </mxCell>
-        <mxCell id="card_total_compute_waste" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;📉 COMPUTE EFFICIENCY: GRADE F (14%)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• 86% of provisioned vCPUs sitting entirely idle&lt;br&gt;• Estimated preventable annual waste: $310,000&lt;br&gt;• No right-sizing recommendations integrated into CI/CD&lt;br&gt;• Developers resist downsizing for fear of peak failure&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_total_compute_waste" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;COMPUTE EFFICIENCY: GRADE F (14%)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• 86% of provisioned vCPUs sitting entirely idle&lt;br&gt;• Estimated preventable annual waste: $310,000&lt;br&gt;• No right-sizing recommendations integrated into CI/CD&lt;br&gt;• Developers resist downsizing for fear of peak failure&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="35" y="598" width="340" height="162" as="geometry"/>
         </mxCell>
 
@@ -9578,7 +9302,7 @@ function buildLegacyFinOpsWasteXml(cust = 'Enterprise Organization') {
         <mxCell id="col2_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#F59E0B;strokeWidth=1.5;" vertex="1" parent="1">
           <mxGeometry x="405" y="60" width="355" height="715" as="geometry"/>
         </mxCell>
-        <mxCell id="col2_title" value="&lt;b style=&quot;font-size:10.5px;color:#B45309;&quot;&gt;🗄️ Orphaned Storage &amp;amp; Zombie Disks&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="col2_title" value="&lt;b style=&quot;font-size:10.5px;color:#B45309;&quot;&gt;Orphaned Storage &amp;amp; Zombie Disks&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="415" y="64" width="335" height="20" as="geometry"/>
         </mxCell>
         <mxCell id="card_ghost_disks" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Detached Ghost Disks&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;340+ Unattached EBS/PD Volumes&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
@@ -9595,19 +9319,19 @@ function buildLegacyFinOpsWasteXml(cust = 'Enterprise Organization') {
         </mxCell>
 
         <!-- Warning Pills inside Column 2 -->
-        <mxCell id="pill_fin_disks" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;💾 $14,800/mo Ghost Disks&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="pill_fin_disks" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;$14,800/mo Ghost Disks&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="600" y="115" width="145" height="40" as="geometry"/>
         </mxCell>
-        <mxCell id="pill_fin_tiering" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;❄️ Zero Coldline/Archive Tiering&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="pill_fin_tiering" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;Zero Coldline/Archive Tiering&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="600" y="245" width="145" height="40" as="geometry"/>
         </mxCell>
-        <mxCell id="pill_fin_snapshots" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;🗃️ 3 Years of Unpruned Snapshots&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="pill_fin_snapshots" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;3 Years of Unpruned Snapshots&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="600" y="375" width="145" height="40" as="geometry"/>
         </mxCell>
-        <mxCell id="pill_fin_idle_dr" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;💸 $22,000/mo Idle DR Footprint&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="pill_fin_idle_dr" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;$22,000/mo Idle DR Footprint&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="600" y="505" width="145" height="40" as="geometry"/>
         </mxCell>
-        <mxCell id="pill_fin_zombies" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;🚨 Zombie Storage: 48TB Unaccessed for &gt;180 Days&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="pill_fin_zombies" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;Zombie Storage: 48TB Unaccessed for &amp;gt;180 Days&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="450" y="660" width="260" height="42" as="geometry"/>
         </mxCell>
 
@@ -9615,19 +9339,19 @@ function buildLegacyFinOpsWasteXml(cust = 'Enterprise Organization') {
         <mxCell id="col3_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=1.5;" vertex="1" parent="1">
           <mxGeometry x="780" y="60" width="395" height="715" as="geometry"/>
         </mxCell>
-        <mxCell id="col3_title" value="&lt;b style=&quot;font-size:10.5px;color:#1D4ED8;&quot;&gt;🏷️ Untagged Sprawl &amp;amp; Rogue AI Spend&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="col3_title" value="&lt;b style=&quot;font-size:10.5px;color:#1D4ED8;&quot;&gt;Untagged Sprawl &amp;amp; Rogue AI Spend&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="790" y="64" width="375" height="20" as="geometry"/>
         </mxCell>
-        <mxCell id="card_untagged" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;🏷️ 42% UNTAGGED CLOUD ASSETS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Missing Cost Center, Environment, and Owner tags&lt;br&gt;• Terraform CI/CD lacks mandatory tag linting gates&lt;br&gt;• Impossible to attribute spend to specific products&lt;br&gt;• Unclaimed resources never decommissioned&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_untagged" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;42% UNTAGGED CLOUD ASSETS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Missing Cost Center, Environment, and Owner tags&lt;br&gt;• Terraform CI/CD lacks mandatory tag linting gates&lt;br&gt;• Impossible to attribute spend to specific products&lt;br&gt;• Unclaimed resources never decommissioned&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="790" y="92" width="375" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="card_rogue_ai" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;🤖 UNBUDGETED GENAI EXPERIMENTS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Departmental teams testing LLMs without budget caps&lt;br&gt;• Runaway training loops burning $12k in single weekends&lt;br&gt;• No token quotas or automated rate-limiting governor&lt;br&gt;• Unmonitored third-party model API bills&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_rogue_ai" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;UNBUDGETED GENAI EXPERIMENTS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Departmental teams testing LLMs without budget caps&lt;br&gt;• Runaway training loops burning $12k in single weekends&lt;br&gt;• No token quotas or automated rate-limiting governor&lt;br&gt;• Unmonitored third-party model API bills&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="790" y="222" width="375" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="card_reactive_alerts" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#B91C1C;&quot;&gt;⚠️ REACTIVE 30-DAY INVOICE ALERTS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Email alerts trigger only AFTER monthly budget is blown&lt;br&gt;• Zero real-time BigQuery ML anomaly detection&lt;br&gt;• Anomaly spikes discovered weeks after occurrence&lt;br&gt;• Lack of automated circuit-breaker killswitches&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#EF4444;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_reactive_alerts" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#B91C1C;&quot;&gt;REACTIVE 30-DAY INVOICE ALERTS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Email alerts trigger only AFTER monthly budget is blown&lt;br&gt;• Zero real-time BigQuery ML anomaly detection&lt;br&gt;• Anomaly spikes discovered weeks after occurrence&lt;br&gt;• Lack of automated circuit-breaker killswitches&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#EF4444;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="790" y="352" width="375" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="card_shadow_saas" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;💳 SHADOW SAAS &amp;amp; CREDIT CARD SPRAWL&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• 18 separate subscriptions across Databricks, Snowflake, OpenAI&lt;br&gt;• Missing enterprise master agreement volume tiers&lt;br&gt;• Uncoordinated credit purchases without procurement&lt;br&gt;• Double-paying for overlapping data tools&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_shadow_saas" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;SHADOW SAAS &amp;amp; CREDIT CARD SPRAWL&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• 18 separate subscriptions across Databricks, Snowflake, OpenAI&lt;br&gt;• Missing enterprise master agreement volume tiers&lt;br&gt;• Uncoordinated credit purchases without procurement&lt;br&gt;• Double-paying for overlapping data tools&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="790" y="482" width="375" height="110" as="geometry"/>
         </mxCell>
         <mxCell id="pill_fin_untagged_stat" value="&lt;b style=&quot;font-size:8px;color:#B91C1C;&quot;&gt;Attribution Blindspot: $165,000/mo Cloud Spend Unallocated&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
@@ -9638,38 +9362,77 @@ function buildLegacyFinOpsWasteXml(cust = 'Enterprise Organization') {
         <mxCell id="col4_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FAF5FF;strokeColor=#A855F7;strokeWidth=1.5;" vertex="1" parent="1">
           <mxGeometry x="1195" y="60" width="380" height="715" as="geometry"/>
         </mxCell>
-        <mxCell id="col4_title" value="&lt;b style=&quot;font-size:10.5px;color:#6B21A8;&quot;&gt;📊 Invoicing &amp;amp; Manual Spreadsheets&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="col4_title" value="&lt;b style=&quot;font-size:10.5px;color:#6B21A8;&quot;&gt;Invoicing &amp;amp; Manual Spreadsheets&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="1205" y="64" width="360" height="20" as="geometry"/>
         </mxCell>
-        <mxCell id="card_manual_excel" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;📑 14-DAY MANUAL EXCEL RECONCILIATION&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Finance team manually stitching AWS/Azure/GCP CSV exports&lt;br&gt;• VLOOKUP formulas failing on divergent billing schemas&lt;br&gt;• 30 to 45-day delay before leadership sees monthly totals&lt;br&gt;• Zero interactive Looker Studio or BigQuery FOCUS views&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_manual_excel" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;14-DAY MANUAL EXCEL RECONCILIATION&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Finance team manually stitching AWS/Azure/GCP CSV exports&lt;br&gt;• VLOOKUP formulas failing on divergent billing schemas&lt;br&gt;• 30 to 45-day delay before leadership sees monthly totals&lt;br&gt;• Zero interactive Looker Studio or BigQuery FOCUS views&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="1205" y="92" width="360" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="card_no_unit_cost" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;📉 ZERO UNIT ECONOMICS METRICS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Unable to compute cost-per-customer or cost-per-query&lt;br&gt;• Gross margin calculations distorted by pooled IT bills&lt;br&gt;• Pricing strategy set without actual compute cost data&lt;br&gt;• C-suite lacks profitability visibility by product tier&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_no_unit_cost" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;ZERO UNIT ECONOMICS METRICS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Unable to compute cost-per-customer or cost-per-query&lt;br&gt;• Gross margin calculations distorted by pooled IT bills&lt;br&gt;• Pricing strategy set without actual compute cost data&lt;br&gt;• C-suite lacks profitability visibility by product tier&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="1205" y="222" width="360" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="card_missed_cuds" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;💸 38% MISSED COMMITMENT DISCOUNTS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Paying full on-demand rates due to fear of lock-in&lt;br&gt;• Missed 1-3 year Google Cloud CUD / AWS Savings Plans&lt;br&gt;• Excess $180k/yr paid above discounted rate cards&lt;br&gt;• No algorithmic portfolio optimization engine&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_missed_cuds" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;38% MISSED COMMITMENT DISCOUNTS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Paying full on-demand rates due to fear of lock-in&lt;br&gt;• Missed 1-3 year Google Cloud CUD / AWS Savings Plans&lt;br&gt;• Excess $180k/yr paid above discounted rate cards&lt;br&gt;• No algorithmic portfolio optimization engine&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="1205" y="352" width="360" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="card_disputed_chargebacks" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#B91C1C;&quot;&gt;🥊 DISPUTED BUSINESS UNIT INVOICES&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Product managers contest arbitrary shared-cost tax&lt;br&gt;• Zero Kubecost/OpenCost container attribution&lt;br&gt;• Infighting over who pays for multi-tenant database clusters&lt;br&gt;• Accountability abandoned across engineering teams&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_disputed_chargebacks" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#B91C1C;&quot;&gt;DISPUTED BUSINESS UNIT INVOICES&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Product managers contest arbitrary shared-cost tax&lt;br&gt;• Zero Kubecost/OpenCost container attribution&lt;br&gt;• Infighting over who pays for multi-tenant database clusters&lt;br&gt;• Accountability abandoned across engineering teams&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="1205" y="482" width="360" height="110" as="geometry"/>
         </mxCell>
         <mxCell id="pill_cfo_verdict" value="&lt;b style=&quot;font-size:8px;color:#991B1B;&quot;&gt;CFO Verdict: Lacks FOCUS 1.0 Standardization &amp;amp; Automated Chargeback&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#B91C1C;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="1225" y="660" width="320" height="42" as="geometry"/>
         </mxCell>
 
-        <!-- CONNECTORS -->
-        <mxCell id="conn_fin_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;curved=1;endArrow=block;strokeColor=#DC2626;strokeWidth=1.2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_ec2_vms" target="card_ghost_disks">
+        <!-- 16 CONNECTORS: ORTHOGONAL, SOLID WHITE LABELS, STEP BADGES ❶..⓰ -->
+        <mxCell id="conn_fin_1" value="&lt;b style=&quot;font-size:7.5px;color:#DC2626;&quot;&gt;❶ Detached EBS Volumes&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#EF4444;" edge="1" parent="1" source="card_ec2_vms" target="card_ghost_disks">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
-        <mxCell id="conn_fin_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;curved=1;endArrow=block;strokeColor=#D97706;strokeWidth=1.2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_ghost_disks" target="card_untagged">
+        <mxCell id="conn_fin_2" value="&lt;b style=&quot;font-size:7.5px;color:#DC2626;&quot;&gt;❷ $18.4k/mo GPU Idle Burn&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#EF4444;" edge="1" parent="1" source="card_idle_gpus" target="card_rogue_ai">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
-        <mxCell id="conn_fin_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;curved=1;endArrow=block;strokeColor=#3B82F6;strokeWidth=1.2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_untagged" target="card_manual_excel">
+        <mxCell id="conn_fin_3" value="&lt;b style=&quot;font-size:7.5px;color:#DC2626;&quot;&gt;❸ 400% Inflated Pod Alloc&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#EF4444;" edge="1" parent="1" source="card_static_k8s" target="card_untagged">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_fin_4" value="&lt;b style=&quot;font-size:7.5px;color:#DC2626;&quot;&gt;❹ Egress Data Movement&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#EF4444;" edge="1" parent="1" source="card_cross_egress" target="card_stale_buckets">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_fin_5" value="&lt;b style=&quot;font-size:7.5px;color:#D97706;&quot;&gt;❺ 340+ Ghost Disks&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D97706;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#F59E0B;" edge="1" parent="1" source="card_ghost_disks" target="card_snapshots">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_fin_6" value="&lt;b style=&quot;font-size:7.5px;color:#D97706;&quot;&gt;❻ Zero Coldline Tiering&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D97706;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#F59E0B;" edge="1" parent="1" source="card_stale_buckets" target="pill_fin_tiering">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_fin_7" value="&lt;b style=&quot;font-size:7.5px;color:#D97706;&quot;&gt;❼ 1,800+ DB Snapshots&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D97706;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#F59E0B;" edge="1" parent="1" source="card_snapshots" target="pill_fin_snapshots">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_fin_8" value="&lt;b style=&quot;font-size:7.5px;color:#D97706;&quot;&gt;❽ 100% Hot Standby Bill&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D97706;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#F59E0B;" edge="1" parent="1" source="card_dr_waste" target="pill_fin_idle_dr">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_fin_9" value="&lt;b style=&quot;font-size:7.5px;color:#DC2626;&quot;&gt;❾ 86% Idle vCPUs ($310k/yr)&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#EF4444;" edge="1" parent="1" source="card_total_compute_waste" target="pill_fin_zombies">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_fin_10" value="&lt;b style=&quot;font-size:7.5px;color:#2563EB;&quot;&gt;❿ 42% Untagged Resources&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#3B82F6;" edge="1" parent="1" source="card_untagged" target="card_manual_excel">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_fin_11" value="&lt;b style=&quot;font-size:7.5px;color:#2563EB;&quot;&gt;⓫ Uncapped Token Loops&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#3B82F6;" edge="1" parent="1" source="card_rogue_ai" target="card_no_unit_cost">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_fin_12" value="&lt;b style=&quot;font-size:7.5px;color:#2563EB;&quot;&gt;⓬ 30-Day Lagging Invoices&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#3B82F6;" edge="1" parent="1" source="card_reactive_alerts" target="card_manual_excel">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_fin_13" value="&lt;b style=&quot;font-size:7.5px;color:#2563EB;&quot;&gt;⓭ Unmanaged Corporate Cards&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#3B82F6;" edge="1" parent="1" source="card_shadow_saas" target="card_disputed_chargebacks">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_fin_14" value="&lt;b style=&quot;font-size:7.5px;color:#9333EA;&quot;&gt;⓮ 14-Day VLOOKUP Lag&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9333EA;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#A855F7;" edge="1" parent="1" source="card_manual_excel" target="card_missed_cuds">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_fin_15" value="&lt;b style=&quot;font-size:7.5px;color:#9333EA;&quot;&gt;⓯ Arbitrary Shared-Cost Tax&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9333EA;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#A855F7;" edge="1" parent="1" source="card_no_unit_cost" target="card_disputed_chargebacks">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_fin_16" value="&lt;b style=&quot;font-size:7.5px;color:#B91C1C;&quot;&gt;⓰ Budget Disputed / Audit Fail&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#B91C1C;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#EF4444;" edge="1" parent="1" source="card_disputed_chargebacks" target="pill_cfo_verdict">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
         <!-- BOTTOM STRIP -->
-        <mxCell id="strip_footer_fin" value="&lt;table style=&quot;width:100%;font-size:9.5px;color:#202124;&quot;&gt;&lt;tr&gt;&lt;td&gt;&lt;b style=&quot;color:#C5221F;&quot;&gt;💸 FinOps Legacy Gaps Summary:&lt;/b&gt; &lt;span style=&quot;color:#1A237E;&quot;&gt;86% Idle Compute vCPUs&lt;/span&gt; &amp;nbsp;➔&amp;nbsp; &lt;span style=&quot;color:#C5221F;&quot;&gt;340+ Ghost Disks ($14.8k/mo)&lt;/span&gt; &amp;nbsp;➔&amp;nbsp; &lt;span style=&quot;color:#B06000;&quot;&gt;42% Untagged Resources&lt;/span&gt; &amp;nbsp;|&amp;nbsp; &lt;b style=&quot;color:#137333;&quot;&gt;Target Architecture:&lt;/b&gt; BigQuery FOCUS 1.0 Lakehouse, GKE Kubecost Pod Attribution, Automated CUD Optimizer, &amp;amp; 15-min Anomaly Killswitches.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#FCA5A5;strokeWidth=1;align=left;spacingLeft=12;" vertex="1" parent="1">
+        <mxCell id="strip_footer_fin" value="&lt;table style=&quot;width:100%;font-size:9.5px;color:#202124;&quot;&gt;&lt;tr&gt;&lt;td&gt;&lt;b style=&quot;color:#C5221F;&quot;&gt;FinOps Legacy Gaps Summary:&lt;/b&gt; &lt;span style=&quot;color:#1A237E;&quot;&gt;86% Idle Compute vCPUs&lt;/span&gt; &amp;nbsp;➔&amp;nbsp; &lt;span style=&quot;color:#C5221F;&quot;&gt;340+ Ghost Disks ($14.8k/mo)&lt;/span&gt; &amp;nbsp;➔&amp;nbsp; &lt;span style=&quot;color:#B06000;&quot;&gt;42% Untagged Resources&lt;/span&gt; &amp;nbsp;|&amp;nbsp; &lt;b style=&quot;color:#137333;&quot;&gt;Target Architecture:&lt;/b&gt; BigQuery FOCUS 1.0 Lakehouse, GKE Kubecost Pod Attribution, Automated CUD Optimizer, &amp;amp; 15-min Anomaly Killswitches.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#FCA5A5;strokeWidth=1;align=left;spacingLeft=12;" vertex="1" parent="1">
           <mxGeometry x="25" y="790" width="1550" height="42" as="geometry"/>
         </mxCell>
       </root>
@@ -9678,149 +9441,188 @@ function buildLegacyFinOpsWasteXml(cust = 'Enterprise Organization') {
 </mxfile>`.trim();
 }
 
-// ===== Sourced from build_master_legacy_edw_silos.ts =====
 function buildLegacyEdwSiloXml(cust = 'Enterprise Organization') {
+  const cEsc = (cust || 'Enterprise Organization').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   return `<mxfile host="embed.diagrams.net">
-  <diagram id="legacy_edw_silos" name="Enterprise Organization - Current Legacy EDW &amp; Silos">
+  <diagram id="legacy_edw_silos" name="${cEsc} - Current Legacy EDW &amp; Silos">
     <mxGraphModel dx="1600" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="860" background="#FFFFFF" math="0" shadow="0">
       <root>
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
 
         <!-- HEADER BANNER -->
-        <mxCell id="top_logo" value="&lt;span style=&quot;font-size:24px;&quot;&gt;🗄️&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="top_logo" value="&lt;svg width=&quot;26&quot; height=&quot;26&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#DC2626&quot; stroke-width=&quot;2&quot;&gt;&lt;ellipse cx=&quot;12&quot; cy=&quot;5&quot; rx=&quot;9&quot; ry=&quot;3&quot;/&gt;&lt;path d=&quot;M21 12c0 1.66-4 3-9 3s-9-1.34-9-3&quot;/&gt;&lt;path d=&quot;M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5&quot;/&gt;&lt;/svg&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="25" y="10" width="35" height="35" as="geometry"/>
         </mxCell>
-        <mxCell id="main_title" value="&lt;b style=&quot;font-size:16px;color:#0F172A;letter-spacing:-0.2px;&quot;&gt;ENTERPRISE ORGANIZATION: CURRENT BASELINE — LEGACY EDW SILOS &amp;amp; FRAGILE BATCH BOTTLENECKS (P1-DAT-L-01)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="main_title" value="&lt;b style=&quot;font-size:16px;color:#0F172A;letter-spacing:-0.2px;&quot;&gt;${cEsc}: CURRENT BASELINE — PROPRIETARY EDW LOCK-IN &amp;amp; DATA SILOS (P3-DAT-L-01)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="65" y="10" width="1150" height="22" as="geometry"/>
         </mxCell>
-        <mxCell id="main_subtitle" value="&lt;span style=&quot;font-size:9.5px;color:#475569;font-weight:700;letter-spacing:0.1px;&quot;&gt;Teradata / Exadata Monoliths, 24-48h Batch Latency, 1,500+ Unmonitored Cron Shell Scripts, and Conflicting Departmental Marts&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="main_subtitle" value="&lt;span style=&quot;font-size:9.5px;color:#475569;font-weight:700;letter-spacing:0.1px;&quot;&gt;Teradata/Oracle Appliances, 24-48h Batch Informatica ETL, Disconnected Marts, and 4-Week SQL Queue Blocking AI&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="65" y="32" width="1150" height="16" as="geometry"/>
         </mxCell>
         
-        <mxCell id="top_badge" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:12px;font-weight:bold;color:#EF4444;&quot;&gt;⚠️ Legacy EDW Silo&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:8px;color:#94A3B8;font-weight:600;&quot;&gt;24-48h Lag • High Egress Lock-in&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;strokeWidth=1.5;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+        <mxCell id="top_badge" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:12px;font-weight:bold;color:#EF4444;&quot;&gt;High EDW Debt&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:8px;color:#94A3B8;font-weight:600;&quot;&gt;24-48h Lag • $420k/yr Lock-in&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;strokeWidth=1.5;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
           <mxGeometry x="1350" y="8" width="225" height="42" as="geometry"/>
         </mxCell>
 
-        <!-- COLUMN 1: PROPRIETARY MONOLITHIC EDWS -->
+        <!-- COLUMN 1: MONOLITHIC ON-PREM EDW -->
         <mxCell id="col1_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#EF4444;strokeWidth=1.5;" vertex="1" parent="1">
           <mxGeometry x="25" y="60" width="360" height="715" as="geometry"/>
         </mxCell>
-        <mxCell id="col1_title" value="&lt;b style=&quot;font-size:10.5px;color:#991B1B;&quot;&gt;🏢 Proprietary On-Prem &amp;amp; EDW Appliances&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="col1_title" value="&lt;b style=&quot;font-size:10.5px;color:#991B1B;&quot;&gt;Monolithic On-Prem EDW Appliances&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="35" y="64" width="340" height="20" as="geometry"/>
         </mxCell>
-        <mxCell id="card_teradata" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;🗄️ TERADATA / NETEZZA APPLIANCE&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• End-of-life hardware appliance running at 94% storage&lt;br&gt;• Proprietary BTEQ scripts &amp;amp; vendor lock-in&lt;br&gt;• Escalating annual maintenance contracts ($420k/yr)&lt;br&gt;• Cannot scale compute independently of storage&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_teradata" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;PROPRIETARY TERADATA &amp;amp; NETEZZA&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Exorbitant proprietary hardware maintenance ($420k/yr)&lt;br&gt;• Proprietary BTEQ scripts prevent cloud portability&lt;br&gt;• Fixed compute capacity hits wall during peak financial close&lt;br&gt;• End-of-life hardware refresh forcing massive capex renewal&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="35" y="88" width="340" height="115" as="geometry"/>
         </mxCell>
-        <mxCell id="card_oracle_rac" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;🗄️ ORACLE 11g / 19c RAC CLUSTER&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Dual-node RAC overloaded with analytical queries&lt;br&gt;• 3,200+ undocumented PL/SQL stored procedures&lt;br&gt;• Frequent ORA-01555 snapshot too old errors&lt;br&gt;• Heavy BI queries causing OLTP lock contention&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_exadata" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;ORACLE EXADATA SILOS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Core-based enterprise licensing penalties&lt;br&gt;• Monolithic PL/SQL stored procedure spaghetti&lt;br&gt;• Table locks on massive OLTP batch extractions&lt;br&gt;• High operational friction between DBA &amp;amp; analytics teams&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="35" y="215" width="340" height="115" as="geometry"/>
         </mxCell>
-        <mxCell id="card_snowflake_sprawl" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;❄️ FRAGMENTED SNOWFLAKE ACCOUNTS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Multiple independent Snowflake accounts across BUs&lt;br&gt;• Proprietary micro-partition storage lock-in&lt;br&gt;• Heavy cross-cloud egress fees to egress data to AI tools&lt;br&gt;• Warehouses auto-suspending late, inflating credit spend&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_hadoop" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;UNMANAGED HADOOP HDFS CLUSTERS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Cloudera/Hortonworks unmanaged 40-node cluster&lt;br&gt;• NameNode single point of failure (SPOF) risks&lt;br&gt;• Sluggish MapReduce &amp;amp; Hive queries take hours to finish&lt;br&gt;• Massive operational overhead just maintaining OS patches&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="35" y="342" width="340" height="115" as="geometry"/>
         </mxCell>
-        <mxCell id="card_hadoop_cluster" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;🐘 ON-PREM HADOOP / CLOUDERA CLUSTER&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• 48-node physical cluster with aging HDFS hardware&lt;br&gt;• Deprecated MapReduce and Hive 1.2 jobs&lt;br&gt;• High operational burden: NameNode failovers&lt;br&gt;• Missing open Apache Iceberg / Parquet table formats&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#B91C1C;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_mainframe" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;MAINFRAME VSAM &amp;amp; DB2 EXPORTS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Nightly EBCDIC flat-file dumps with zero change tracking&lt;br&gt;• High MIPS consumption billing costs during batch runs&lt;br&gt;• Cobol copybook dependencies break on upstream changes&lt;br&gt;• Missing real-time CDC or event streaming bridges&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#B91C1C;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="35" y="470" width="340" height="115" as="geometry"/>
         </mxCell>
-        <mxCell id="card_legacy_summary" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;🚨 INFRASTRUCTURE DEFICIT SUMMARY&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• 4 redundant query engines with zero federated catalog&lt;br&gt;• $780,000 combined annual proprietary licensing overhead&lt;br&gt;• No cross-engine ACID transactions or time travel&lt;br&gt;• Incompatible SQL dialects preventing consolidation&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_total_edw_debt" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;DATA ARCHITECTURE: GRADE F (11%)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Zero open table format (No Apache Iceberg / Delta)&lt;br&gt;• Multi-vendor sprawl with 6 incompatible SQL dialects&lt;br&gt;• Data governance purely reactive and audit-driven&lt;br&gt;• Total annual technical debt cost exceeds $850,000&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="35" y="598" width="340" height="162" as="geometry"/>
         </mxCell>
 
-        <!-- COLUMN 2: SPAGHETTI BATCH ETL & 24H LAG -->
+        <!-- COLUMN 2: FRAGILE BATCH INGESTION -->
         <mxCell id="col2_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#F59E0B;strokeWidth=1.5;" vertex="1" parent="1">
           <mxGeometry x="405" y="60" width="355" height="715" as="geometry"/>
         </mxCell>
-        <mxCell id="col2_title" value="&lt;b style=&quot;font-size:10.5px;color:#B45309;&quot;&gt;🍝 Spaghetti Batch ETL &amp;amp; 24h Lag&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="col2_title" value="&lt;b style=&quot;font-size:10.5px;color:#B45309;&quot;&gt;Fragile Batch ETL Pipelines&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="415" y="64" width="335" height="20" as="geometry"/>
         </mxCell>
-        <mxCell id="card_informatica" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Informatica PowerCenter&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;12h Nightly Batch Window&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="card_informatica" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Informatica PowerCenter&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;450+ Complex GUI Mappings&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="415" y="92" width="160" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="card_cron_scripts" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;1,500+ Cron Shell Scripts&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Unmonitored Point-to-Point&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="card_ssis" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;SSIS &amp;amp; DataStage Jobs&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Brittle Point-to-Point Cron&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="415" y="222" width="160" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="card_sftp_drops" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Unencrypted SFTP Drops&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;CSV Files Without Schemas&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="card_batch_lag" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;24-48h Batch Replication&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Nightly Windows Breached&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="415" y="352" width="160" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="card_cdc_gap" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Missing Real-Time CDC&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Zero Datastream / PubSub&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="card_schema_drift" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Schema Drift Failures&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Silent Downstream Corruption&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="415" y="482" width="160" height="110" as="geometry"/>
         </mxCell>
 
         <!-- Warning Pills inside Column 2 -->
-        <mxCell id="pill_edw_lag" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;⏱️ 24h-48h Business Latency&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="pill_edw_lag" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;24-48h Ingestion Latency&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="600" y="115" width="145" height="40" as="geometry"/>
         </mxCell>
-        <mxCell id="pill_edw_failures" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;⚠️ 3-4 Batch Failures / Week&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="pill_edw_scripts" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;Zero Dataform / dbt Governance&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="600" y="245" width="145" height="40" as="geometry"/>
         </mxCell>
-        <mxCell id="pill_edw_creds" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;🔑 Cleartext Passwords in Scripts&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="pill_edw_failures" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;34% Nightly Batch Failure Rate&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="600" y="375" width="145" height="40" as="geometry"/>
         </mxCell>
-        <mxCell id="pill_edw_drift" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;💥 Silent Schema Drift Breaks ETL&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="pill_edw_sprawl" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;Zero Apache Iceberg Open Fabric&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="600" y="505" width="145" height="40" as="geometry"/>
         </mxCell>
-        <mxCell id="pill_edw_overrun" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;🚨 Overnight Batch Regularly Overruns 9:00 AM Open&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="pill_edw_fragility_verdict" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;Pipeline Fragility: 180+ Unmonitored Crons&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="450" y="660" width="260" height="42" as="geometry"/>
         </mxCell>
 
-        <!-- COLUMN 3: DISCONNECTED DEPARTMENTAL MARTS -->
+        <!-- COLUMN 3: DISCONNECTED DATA MARTS -->
         <mxCell id="col3_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=1.5;" vertex="1" parent="1">
           <mxGeometry x="780" y="60" width="395" height="715" as="geometry"/>
         </mxCell>
-        <mxCell id="col3_title" value="&lt;b style=&quot;font-size:10.5px;color:#1D4ED8;&quot;&gt;📦 Disconnected Departmental Data Marts&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="col3_title" value="&lt;b style=&quot;font-size:10.5px;color:#1D4ED8;&quot;&gt;Disconnected Data Mart Silos&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="790" y="64" width="375" height="20" as="geometry"/>
         </mxCell>
-        <mxCell id="card_mktg_mart" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;🎯 MARKETING POSTGRESQL MART&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Isolated customer copy out of sync with ERP&lt;br&gt;• Custom ETL transforms changing revenue definitions&lt;br&gt;• 18% duplicate customer account profiles&lt;br&gt;• No lineage to upstream source of truth&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_mktg_mart" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;MARKETING POSTGRES MART&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Isolated AWS RDS Postgres instance for campaign data&lt;br&gt;• Out-of-sync customer records with core ERP&lt;br&gt;• Duplicated ETL pipelines loading redundant records&lt;br&gt;• Missing unified customer 360 view&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="790" y="92" width="375" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="card_fin_mart" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;💳 FINANCE SQL SERVER REPORTING DB&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Nightly delta loads breaking on composite keys&lt;br&gt;• Custom manual Excel adjustments before board meetings&lt;br&gt;• Numbers diverge from Marketing reports by 14%&lt;br&gt;• Zero automated reconciliation or data testing&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_fin_mart" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;FINANCE ORACLE OLAP MART&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Custom fiscal calendar definitions divergent from marketing&lt;br&gt;• Locked multidimensional cubes that crash on concurrent users&lt;br&gt;• 10-day delay in month-end financial reconciliation&lt;br&gt;• High storage costs for uncompressed historical data&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="790" y="222" width="375" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="card_ops_mart" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#B91C1C;&quot;&gt;📦 SUPPLY CHAIN ACCESS &amp;amp; CSV SWAMP&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Offline Microsoft Access databases on network shares&lt;br&gt;• Inventory counts updated manually by operations staff&lt;br&gt;• Zero role-based access control or audit logging&lt;br&gt;• Risk of accidental file deletion or overwrites&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#EF4444;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_ops_mart" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;SUPPLY CHAIN SQL SERVER MART&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• On-prem SQL Server 2016 without disaster recovery&lt;br&gt;• Inventory counts disagree with warehouse logistics logs&lt;br&gt;• Daily manual CSV export requests sent to DBA team&lt;br&gt;• Zero real-time streaming telemetry or Pub/Sub ingestion&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="790" y="352" width="375" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="card_no_dataplex" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;🔍 ABSENT CENTRAL DATA GOVERNANCE&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Zero Dataplex universal catalog or glossary&lt;br&gt;• Missing column-level lineage and automated classification&lt;br&gt;• Analysts don't know where canonical data lives&lt;br&gt;• 4-week ticket wait time to discover existing datasets&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_metric_clash" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#B91C1C;&quot;&gt;CONFLICTING METRIC DEFINITIONS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• 'Active Customer' defined 4 different ways across teams&lt;br&gt;• Executive meetings derailed by metric disagreements&lt;br&gt;• Missing central semantic layer (Looker / Dataplex)&lt;br&gt;• Data distrust leads to shadow Excel spreadsheets&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#EF4444;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="790" y="482" width="375" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="pill_edw_discrepancy" value="&lt;b style=&quot;font-size:8px;color:#B91C1C;&quot;&gt;Data Trust Crisis: 3 Different Revenue Numbers Reported Each Month&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="pill_edw_silos_stat" value="&lt;b style=&quot;font-size:8px;color:#B91C1C;&quot;&gt;Semantic Chaos: 22 Disjoint Data Marts with Zero Lineage&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="810" y="660" width="335" height="42" as="geometry"/>
         </mxCell>
 
-        <!-- COLUMN 4: PRODUCTION LOCK CONTENTION & STALE BI -->
+        <!-- COLUMN 4: DOWNSTREAM BI & AI BOTTLENECKS -->
         <mxCell id="col4_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FAF5FF;strokeColor=#A855F7;strokeWidth=1.5;" vertex="1" parent="1">
           <mxGeometry x="1195" y="60" width="380" height="715" as="geometry"/>
         </mxCell>
-        <mxCell id="col4_title" value="&lt;b style=&quot;font-size:10.5px;color:#6B21A8;&quot;&gt;📉 Production Locks &amp;amp; Stale Reporting&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="col4_title" value="&lt;b style=&quot;font-size:10.5px;color:#6B21A8;&quot;&gt;Analytics Bottlenecks &amp;amp; Blocked AI&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="1205" y="64" width="360" height="20" as="geometry"/>
         </mxCell>
-        <mxCell id="card_prod_locks" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;🔒 OLTP TABLE LOCK CONTENTION&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Direct BI queries against operational transactional tables&lt;br&gt;• Unindexed SELECT * queries locking customer checkouts&lt;br&gt;• Application connection pools exhausted during peak BI runs&lt;br&gt;• 22 production transaction outages in the last 12 months&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_prod_locks" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;TABLEAU SERVER EXTRACT OVERLOAD&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• 1,200+ stale desktop workbooks pounding production DBs&lt;br&gt;• 6am extract refresh jobs crashing transactional servers&lt;br&gt;• 90-minute query timeouts during Monday morning peak&lt;br&gt;• Redundant compute billed across fragmented dashboards&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="1205" y="92" width="360" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="card_stale_extracts" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;📊 STALE TABLEAU &amp;amp; POWERBI EXTRACTS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Analysts caching multi-gigabyte extract files on laptops&lt;br&gt;• Stale numbers presented during executive strategy sessions&lt;br&gt;• Severe PII exposure on unencrypted personal workstations&lt;br&gt;• Missing Looker centralized semantic metric layer&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_ad_hoc_queue" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;4-WEEK AD-HOC SQL REPORT BACKLOG&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Data team overwhelmed with manual SQL request tickets&lt;br&gt;• Business users unable to self-serve trusted analytics&lt;br&gt;• Zero natural-language generative AI data chat interface&lt;br&gt;• High analyst turnover due to repetitive grunt work&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="1205" y="222" width="360" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="card_ad_hoc_queue" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;⏳ 4-WEEK AD-HOC SQL REPORT BACKLOG&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Data team overwhelmed with manual SQL request tickets&lt;br&gt;• Business users unable to self-serve trusted analytics&lt;br&gt;• Zero natural-language generative AI data chat interface&lt;br&gt;• High analyst turnover due to repetitive grunt work&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_no_ai_mesh" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#B91C1C;&quot;&gt;ZERO AI &amp;amp; ML READY DATA ARCHITECTURE&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Data scientists spend 80% of time munging CSV extracts&lt;br&gt;• No vector embeddings or vector search over enterprise data&lt;br&gt;• Missing Apache Iceberg open table metadata for Vertex AI&lt;br&gt;• Generative AI initiatives completely blocked by data swamp&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="1205" y="352" width="360" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="card_no_ai_mesh" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#B91C1C;&quot;&gt;🚫 ZERO AI &amp;amp; ML READY DATA ARCHITECTURE&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Data scientists spend 80% of time munging CSV extracts&lt;br&gt;• No vector embeddings or vector search over enterprise data&lt;br&gt;• Missing Apache Iceberg open table metadata for Vertex AI&lt;br&gt;• Generative AI initiatives completely blocked by data swamp&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_unmanaged_exports" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#B91C1C;&quot;&gt;SHADOW CSV &amp;amp; DESKTOP DATA COPIES&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Terabytes of sensitive customer records stored locally&lt;br&gt;• Unencrypted spreadsheets shared across email attachments&lt;br&gt;• Major GDPR/CCPA data loss and regulatory audit exposure&lt;br&gt;• Zero access revocation capability for departed employees&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="1205" y="482" width="360" height="110" as="geometry"/>
         </mxCell>
         <mxCell id="pill_cdo_verdict" value="&lt;b style=&quot;font-size:8px;color:#991B1B;&quot;&gt;CDO Verdict: Fails Modern Data Platform SLA &amp;amp; Blocks AI Readiness&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#B91C1C;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="1225" y="660" width="320" height="42" as="geometry"/>
         </mxCell>
 
-        <!-- CONNECTORS -->
-        <mxCell id="conn_edw_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;curved=1;endArrow=block;strokeColor=#DC2626;strokeWidth=1.2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_teradata" target="card_informatica">
+        <!-- 16 CONNECTORS: ORTHOGONAL, SOLID WHITE LABELS, STEP BADGES ❶..⓰ -->
+        <mxCell id="conn_edw_1" value="&lt;b style=&quot;font-size:7.5px;color:#DC2626;&quot;&gt;❶ Proprietary BTEQ Extraction&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#EF4444;" edge="1" parent="1" source="card_teradata" target="card_informatica">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
-        <mxCell id="conn_edw_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;curved=1;endArrow=block;strokeColor=#D97706;strokeWidth=1.2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_informatica" target="card_mktg_mart">
+        <mxCell id="conn_edw_2" value="&lt;b style=&quot;font-size:7.5px;color:#DC2626;&quot;&gt;❷ Table Locks &amp;amp; Heavy PL/SQL&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#EF4444;" edge="1" parent="1" source="card_exadata" target="card_ssis">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
-        <mxCell id="conn_edw_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;curved=1;endArrow=block;strokeColor=#3B82F6;strokeWidth=1.2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_mktg_mart" target="card_prod_locks">
+        <mxCell id="conn_edw_3" value="&lt;b style=&quot;font-size:7.5px;color:#DC2626;&quot;&gt;❸ Sluggish MapReduce Queues&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#EF4444;" edge="1" parent="1" source="card_hadoop" target="card_batch_lag">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_edw_4" value="&lt;b style=&quot;font-size:7.5px;color:#DC2626;&quot;&gt;❹ EBCDIC Fixed-Width Dumps&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#EF4444;" edge="1" parent="1" source="card_mainframe" target="card_schema_drift">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_edw_5" value="&lt;b style=&quot;font-size:7.5px;color:#D97706;&quot;&gt;❺ Point-to-Point CSV Pipelines&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D97706;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#F59E0B;" edge="1" parent="1" source="card_informatica" target="card_mktg_mart">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_edw_6" value="&lt;b style=&quot;font-size:7.5px;color:#D97706;&quot;&gt;❻ Fragile SSIS Cron Pipelines&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D97706;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#F59E0B;" edge="1" parent="1" source="card_ssis" target="card_fin_mart">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_edw_7" value="&lt;b style=&quot;font-size:7.5px;color:#D97706;&quot;&gt;❼ 24h Nightly Window Overflow&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D97706;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#F59E0B;" edge="1" parent="1" source="card_batch_lag" target="card_ops_mart">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_edw_8" value="&lt;b style=&quot;font-size:7.5px;color:#D97706;&quot;&gt;❽ Dropped Columns Crash Marts&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D97706;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#F59E0B;" edge="1" parent="1" source="card_schema_drift" target="card_metric_clash">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_edw_9" value="&lt;b style=&quot;font-size:7.5px;color:#DC2626;&quot;&gt;❾ Heavy Nightly Extract Jobs&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#EF4444;" edge="1" parent="1" source="card_total_edw_debt" target="pill_edw_fragility_verdict">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_edw_10" value="&lt;b style=&quot;font-size:7.5px;color:#2563EB;&quot;&gt;❿ Desktop Extract Hyper Sprawl&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#3B82F6;" edge="1" parent="1" source="card_mktg_mart" target="card_prod_locks">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_edw_11" value="&lt;b style=&quot;font-size:7.5px;color:#2563EB;&quot;&gt;⓫ Divergent Fiscal Definitions&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#3B82F6;" edge="1" parent="1" source="card_fin_mart" target="card_metric_clash">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_edw_12" value="&lt;b style=&quot;font-size:7.5px;color:#2563EB;&quot;&gt;⓬ Manual SQL Extraction Ticket&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#3B82F6;" edge="1" parent="1" source="card_ops_mart" target="card_ad_hoc_queue">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_edw_13" value="&lt;b style=&quot;font-size:7.5px;color:#2563EB;&quot;&gt;⓭ KPI Inconsistencies Escalate&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#3B82F6;" edge="1" parent="1" source="card_metric_clash" target="card_ad_hoc_queue">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_edw_14" value="&lt;b style=&quot;font-size:7.5px;color:#9333EA;&quot;&gt;⓮ Missing Vector Indexes / Iceberg&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9333EA;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#A855F7;" edge="1" parent="1" source="card_prod_locks" target="card_no_ai_mesh">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_edw_15" value="&lt;b style=&quot;font-size:7.5px;color:#9333EA;&quot;&gt;⓯ Local CSV Clones Expose PII&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9333EA;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#A855F7;" edge="1" parent="1" source="card_ad_hoc_queue" target="card_unmanaged_exports">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_edw_16" value="&lt;b style=&quot;font-size:7.5px;color:#B91C1C;&quot;&gt;⓰ Blocks Enterprise AI Strategy&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#B91C1C;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#EF4444;" edge="1" parent="1" source="card_no_ai_mesh" target="pill_cdo_verdict">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
         <!-- BOTTOM STRIP -->
-        <mxCell id="strip_footer_edw" value="&lt;table style=&quot;width:100%;font-size:9.5px;color:#202124;&quot;&gt;&lt;tr&gt;&lt;td&gt;&lt;b style=&quot;color:#C5221F;&quot;&gt;🗄️ Legacy EDW Technical Debt:&lt;/b&gt; &lt;span style=&quot;color:#1A237E;&quot;&gt;Proprietary Teradata Lock-in ($420k/yr)&lt;/span&gt; &amp;nbsp;➔&amp;nbsp; &lt;span style=&quot;color:#C5221F;&quot;&gt;24-48h Batch Ingestion Lag&lt;/span&gt; &amp;nbsp;➔&amp;nbsp; &lt;span style=&quot;color:#B06000;&quot;&gt;Disconnected Silo Marts&lt;/span&gt; &amp;nbsp;|&amp;nbsp; &lt;b style=&quot;color:#137333;&quot;&gt;Target Architecture:&lt;/b&gt; Google BigLake Apache Iceberg Open Fabric, Datastream Real-Time CDC, BigQuery Editions Vectorized SQL, &amp;amp; Looker Semantic Layer.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#FCA5A5;strokeWidth=1;align=left;spacingLeft=12;" vertex="1" parent="1">
+        <mxCell id="strip_footer_edw" value="&lt;table style=&quot;width:100%;font-size:9.5px;color:#202124;&quot;&gt;&lt;tr&gt;&lt;td&gt;&lt;b style=&quot;color:#C5221F;&quot;&gt;Legacy EDW Technical Debt:&lt;/b&gt; &lt;span style=&quot;color:#1A237E;&quot;&gt;Proprietary Teradata Lock-in ($420k/yr)&lt;/span&gt; &amp;nbsp;➔&amp;nbsp; &lt;span style=&quot;color:#C5221F;&quot;&gt;24-48h Batch Ingestion Lag&lt;/span&gt; &amp;nbsp;➔&amp;nbsp; &lt;span style=&quot;color:#B06000;&quot;&gt;Disconnected Silo Marts&lt;/span&gt; &amp;nbsp;|&amp;nbsp; &lt;b style=&quot;color:#137333;&quot;&gt;Target Architecture:&lt;/b&gt; Google BigLake Apache Iceberg Open Fabric, Datastream Real-Time CDC, BigQuery Editions Vectorized SQL, &amp;amp; Looker Semantic Layer.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#FCA5A5;strokeWidth=1;align=left;spacingLeft=12;" vertex="1" parent="1">
           <mxGeometry x="25" y="790" width="1550" height="42" as="geometry"/>
         </mxCell>
       </root>
@@ -9829,149 +9631,188 @@ function buildLegacyEdwSiloXml(cust = 'Enterprise Organization') {
 </mxfile>`.trim();
 }
 
-// ===== Sourced from build_master_legacy_agentic_fragility.ts =====
 function buildLegacyAgenticXml(cust = 'Enterprise Organization') {
+  const cEsc = (cust || 'Enterprise Organization').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   return `<mxfile host="embed.diagrams.net">
-  <diagram id="legacy_agentic_fragility" name="Enterprise Organization - Current Agentic &amp; Chatbot Fragility">
+  <diagram id="legacy_agentic_fragility" name="${cEsc} - Current Agentic &amp; Chatbot Fragility">
     <mxGraphModel dx="1600" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="860" background="#FFFFFF" math="0" shadow="0">
       <root>
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
 
         <!-- HEADER BANNER -->
-        <mxCell id="top_logo" value="&lt;span style=&quot;font-size:24px;&quot;&gt;🤖&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="top_logo" value="&lt;svg width=&quot;26&quot; height=&quot;26&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#DC2626&quot; stroke-width=&quot;2&quot;&gt;&lt;rect width=&quot;18&quot; height=&quot;12&quot; x=&quot;3&quot; y=&quot;8&quot; rx=&quot;2&quot;/&gt;&lt;path d=&quot;M12 2v6&quot;/&gt;&lt;path d=&quot;M8 8v-2a4 4 0 0 1 8 0v2&quot;/&gt;&lt;circle cx=&quot;9&quot; cy=&quot;14&quot; r=&quot;1&quot;/&gt;&lt;circle cx=&quot;15&quot; cy=&quot;14&quot; r=&quot;1&quot;/&gt;&lt;/svg&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="25" y="10" width="35" height="35" as="geometry"/>
         </mxCell>
-        <mxCell id="main_title" value="&lt;b style=&quot;font-size:16px;color:#0F172A;letter-spacing:-0.2px;&quot;&gt;ENTERPRISE ORGANIZATION: CURRENT BASELINE — SILOED CHATBOTS &amp;amp; AGENT FRAGILITY (P1-AGT-L-01)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="main_title" value="&lt;b style=&quot;font-size:16px;color:#0F172A;letter-spacing:-0.2px;&quot;&gt;${cEsc}: CURRENT BASELINE — FRAGMENTED CHATBOTS &amp;amp; AGENTIC TOOL FRAGILITY (ARCH-AGT-01)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="65" y="10" width="1150" height="22" as="geometry"/>
         </mxCell>
-        <mxCell id="main_subtitle" value="&lt;span style=&quot;font-size:9.5px;color:#475569;font-weight:700;letter-spacing:0.1px;&quot;&gt;Isolated Departmental Chatbots, Hardcoded Prompt Chains, Missing Tool Protocols, and Zero Shared Context&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="main_subtitle" value="&lt;span style=&quot;font-size:9.5px;color:#475569;font-weight:700;letter-spacing:0.1px;&quot;&gt;Isolated Departmental Bots, Ad-Hoc JSON Functions (No MCP), Context Amnesia, Runaway Loops &amp;amp; Zero Audit Governance&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="65" y="32" width="1150" height="16" as="geometry"/>
         </mxCell>
         
-        <mxCell id="top_badge" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:12px;font-weight:bold;color:#EF4444;&quot;&gt;⚠️ Fragmented Bots&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:8px;color:#94A3B8;font-weight:600;&quot;&gt;No MCP Standard • Zero Shared Memory&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;strokeWidth=1.5;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+        <mxCell id="top_badge" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:12px;font-weight:bold;color:#EF4444;&quot;&gt;High Agentic Risk&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:8px;color:#94A3B8;font-weight:600;&quot;&gt;Zero MCP • Stateless Amnesia&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;strokeWidth=1.5;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
           <mxGeometry x="1350" y="8" width="225" height="42" as="geometry"/>
         </mxCell>
 
-        <!-- COLUMN 1: SILOED DEPARTMENTAL CHATBOTS -->
+        <!-- COLUMN 1: FRAGMENTED DEPARTMENTAL BOTS -->
         <mxCell id="col1_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#EF4444;strokeWidth=1.5;" vertex="1" parent="1">
           <mxGeometry x="25" y="60" width="360" height="715" as="geometry"/>
         </mxCell>
-        <mxCell id="col1_title" value="&lt;b style=&quot;font-size:10.5px;color:#991B1B;&quot;&gt;💬 Siloed Departmental Chatbots&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="col1_title" value="&lt;b style=&quot;font-size:10.5px;color:#991B1B;&quot;&gt;Fragmented Departmental Bots&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="35" y="64" width="340" height="20" as="geometry"/>
         </mxCell>
-        <mxCell id="card_support_bot" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;🎧 CUSTOMER SUPPORT CHATBOT&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Isolated Python script calling GPT-4 with static prompt&lt;br&gt;• Cannot query order tracking database or ERP&lt;br&gt;• User forced to repeat issue when transferred to human&lt;br&gt;• 42% escalation rate due to shallow context&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_support_bot" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;CUSTOMER SERVICE CHATBOT&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Hardcoded OpenAI wrapper without retry handling&lt;br&gt;• Disconnects on 429 rate limit spikes during peak traffic&lt;br&gt;• Hallucinates product return policies and discounts&lt;br&gt;• No integration with core enterprise CRM systems&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="35" y="88" width="340" height="115" as="geometry"/>
         </mxCell>
-        <mxCell id="card_hr_bot" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;👥 INTERNAL HR ONBOARDING BOT&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Standalone LangChain bot answering policy questions&lt;br&gt;• No connection to Workday / Active Directory&lt;br&gt;• Answers based on outdated 2022 PDF handbook&lt;br&gt;• Zero ability to take actions (e.g. enroll benefits)&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_it_script" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;IT HELPDESK SLACK BOT&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Ad-hoc Python script running on unmonitored VM&lt;br&gt;• Hardcoded ServiceNow API tokens in source code&lt;br&gt;• Fails on multi-turn password reset conversations&lt;br&gt;• Zero fallback escalation to human tier-2 support&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="35" y="215" width="340" height="115" as="geometry"/>
         </mxCell>
-        <mxCell id="card_sales_bot" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;💼 SALES ENABLEMENT PROTOTYPE&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Unmaintained demo script created by sales rep&lt;br&gt;• Queries static pricing sheets with frequent hallucinations&lt;br&gt;• Quotes incorrect discounted prices to enterprise prospects&lt;br&gt;• No governance or accuracy review process&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_hr_bot" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;HR BENEFITS ASSISTANT&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Built on deprecated LangChain version with memory leaks&lt;br&gt;• Queries unencrypted PDF documents on shared network drive&lt;br&gt;• Confuses medical tier plans and maternity leave policy&lt;br&gt;• High employee frustration leading to abandoned adoption&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="35" y="342" width="340" height="115" as="geometry"/>
         </mxCell>
-        <mxCell id="card_slack_bot" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;📟 IT HELPDESK SLACK BOT&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Brittle regex keyword matching bot in Slack channel&lt;br&gt;• Fails on 58% of natural language requests&lt;br&gt;• High user frustration leading to direct engineer DMs&lt;br&gt;• Lacks multi-turn conversation memory&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#B91C1C;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_sales_agent" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;SALES LEAD QUALIFICATION BOT&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Shadow AI project deployed without InfoSec review&lt;br&gt;• Exports customer email leads to unapproved Google Sheet&lt;br&gt;• Vulnerable to prompt injection prompt overrides&lt;br&gt;• Directly writes unvalidated contact fields into Salesforce&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#B91C1C;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="35" y="470" width="340" height="115" as="geometry"/>
         </mxCell>
-        <mxCell id="card_bot_summary" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;🚨 BOT FRAGMENTATION DEFICIT&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• 4 isolated bots developed with 4 different tech stacks&lt;br&gt;• 0% code or prompt reuse across teams&lt;br&gt;• Each team reinventing authentication &amp;amp; rate limiting&lt;br&gt;• Total annual wasted dev spend: $240,000&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_total_bot_debt" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#991B1B;&quot;&gt;AGENTIC MATURITY: GRADE F (15%)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Zero inter-agent communication or shared state mesh&lt;br&gt;• Point-to-point spaghetti prevents centralized governance&lt;br&gt;• 5 separate departmental teams building redundant tools&lt;br&gt;• Estimated wasted development spend: $450,000&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="35" y="598" width="340" height="162" as="geometry"/>
         </mxCell>
 
-        <!-- COLUMN 2: AD-HOC SCRIPTS & FUNCTION CALLING -->
+        <!-- COLUMN 2: POINT-TO-POINT TOOL CALLING (NO MCP) -->
         <mxCell id="col2_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#F59E0B;strokeWidth=1.5;" vertex="1" parent="1">
           <mxGeometry x="405" y="60" width="355" height="715" as="geometry"/>
         </mxCell>
-        <mxCell id="col2_title" value="&lt;b style=&quot;font-size:10.5px;color:#B45309;&quot;&gt;🔌 Ad-Hoc Scripts &amp;amp; Function Calling Gaps&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="col2_title" value="&lt;b style=&quot;font-size:10.5px;color:#B45309;&quot;&gt;Ad-Hoc Tool Calling (No MCP Standard)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="415" y="64" width="335" height="20" as="geometry"/>
         </mxCell>
-        <mxCell id="card_custom_json" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Custom JSON Tool Schemas&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Missing Model Context Protocol&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="card_custom_json" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Ad-Hoc JSON Schemas&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Incompatible Custom Formats&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="415" y="92" width="160" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="card_unsandboxed" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Unsandboxed Execution&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Raw Container Shell Privileges&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="card_point_to_point" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Point-to-Point Webhooks&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Unproxied Internal APIs&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="415" y="222" width="160" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="card_hallucinated_args" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Hallucinated Parameters&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Silent Function Failures&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="card_no_mcp" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;No MCP Tool Gateway&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Vendor SDK Lock-in&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="415" y="352" width="160" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="card_no_registry" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Hardcoded Tool Arrays&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;No Dynamic Tool Discovery&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="card_hardcoded_keys" value="&lt;b style=&quot;font-size:9px;color:#B45309;&quot;&gt;Hardcoded Credentials&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#64748B;&quot;&gt;Shared DB Admin Passwords&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="415" y="482" width="160" height="110" as="geometry"/>
         </mxCell>
 
         <!-- Warning Pills inside Column 2 -->
-        <mxCell id="pill_agt_mcp" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;🔌 Zero MCP Standards Compliance&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="pill_agt_no_mcp" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;Zero Model Context Protocol (MCP)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="600" y="115" width="145" height="40" as="geometry"/>
         </mxCell>
-        <mxCell id="pill_agt_sandbox" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;⚠️ No Container Sandboxing&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="pill_agt_unversioned" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;Unversioned Tool Schemas&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="600" y="245" width="145" height="40" as="geometry"/>
         </mxCell>
-        <mxCell id="pill_agt_args" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;💥 32% Tool Invocation Error Rate&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="pill_agt_unmonitored" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;Direct Unsandboxed DB Access&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="600" y="375" width="145" height="40" as="geometry"/>
         </mxCell>
-        <mxCell id="pill_agt_deploy" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;📦 Requires App Redeploy to Add Tools&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="pill_agt_sprawl" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;Zero Apigee API Gateway Policy&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="600" y="505" width="145" height="40" as="geometry"/>
         </mxCell>
-        <mxCell id="pill_agt_tool_waste" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;🚨 Point-to-Point Function Code Breaks with Every Model Version&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="pill_agt_fragility_verdict" value="&lt;b style=&quot;font-size:7px;color:#B91C1C;&quot;&gt;Tool Integration: Fragile Point-to-Point Scripts&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="450" y="660" width="260" height="42" as="geometry"/>
         </mxCell>
 
-        <!-- COLUMN 3: CONTEXT AMNESIA & ZERO SHARED MEMORY -->
+        <!-- COLUMN 3: STATELESS AMNESIA & RUNAWAY LOOPS -->
         <mxCell id="col3_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=1.5;" vertex="1" parent="1">
           <mxGeometry x="780" y="60" width="395" height="715" as="geometry"/>
         </mxCell>
-        <mxCell id="col3_title" value="&lt;b style=&quot;font-size:10.5px;color:#1D4ED8;&quot;&gt;🧠 Context Amnesia &amp;amp; Zero Shared Memory&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="col3_title" value="&lt;b style=&quot;font-size:10.5px;color:#1D4ED8;&quot;&gt;Stateless Amnesia &amp;amp; Runaway Loops&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="790" y="64" width="375" height="20" as="geometry"/>
         </mxCell>
-        <mxCell id="card_no_memory" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;🧠 ZERO EPISODIC OR SEMANTIC MEMORY&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Each session restarts from zero context&lt;br&gt;• Customer preferences and past orders forgotten&lt;br&gt;• No cross-session user profile knowledge graph&lt;br&gt;• Repetitive clarification questions frustrate users&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_no_memory" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;STATELESS CONTEXT AMNESIA&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Conversation state lost between turns&lt;br&gt;• Users forced to repeat instructions across interactions&lt;br&gt;• Zero session persistence in Redis or Memorystore&lt;br&gt;• Missing long-term episodic memory store&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="790" y="92" width="375" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="card_no_mesh" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;⛓️ SINGLE-THREADED BOTTLENECKS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• No Super-Orchestrator to coordinate sub-agents&lt;br&gt;• Bots cannot delegate tasks to specialized peers&lt;br&gt;• Sequential execution causes 18s+ response lag&lt;br&gt;• Complex multi-step reasoning tasks fail&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_runaway_loops" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;RUNAWAY TOOL CALLING LOOPS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Infinite ReAct reflection loops when tools return unexpected error&lt;br&gt;• Single bot burned $8,200 in API tokens over one weekend&lt;br&gt;• Missing step budget limits and circuit-breaker killswitches&lt;br&gt;• Overloaded internal APIs with recursive retry storms&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="790" y="222" width="375" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="card_context_bloat" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#B91C1C;&quot;&gt;📜 CONTEXT WINDOW BLOAT &amp;amp; CONFUSION&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Full chat histories dumped into prompt on each turn&lt;br&gt;• High token burn on repeated conversation turns&lt;br&gt;• Model reasoning degrades as context length grows&lt;br&gt;• Missing 2M context caching optimization&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#EF4444;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_hallucinated_args" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#B91C1C;&quot;&gt;HALLUCINATED TOOL ARGUMENTS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• LLM invents non-existent parameters in tool function calls&lt;br&gt;• Type coercion errors crash execution runtime mid-flight&lt;br&gt;• Absence of Pydantic / JSON schema runtime validation&lt;br&gt;• Corrupted database updates generated from hallucinated IDs&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#EF4444;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="790" y="352" width="375" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="card_no_grounding" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;🛡️ UNVERIFIED DATABASE MUTATIONS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Agents mutate production databases based on assumptions&lt;br&gt;• Missing validation checks before write execution&lt;br&gt;• Accidental database overwrites during edge cases&lt;br&gt;• No transactional rollback mechanism&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_no_hitl" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#1E40AF;&quot;&gt;ZERO HUMAN-IN-THE-LOOP (HITL)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Irreversible write operations executed autonomously&lt;br&gt;• No approval gate for financial transfers or refunds&lt;br&gt;• Customer records deleted without supervisor confirmation&lt;br&gt;• Total lack of audit escalation protocol&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="790" y="482" width="375" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="pill_agt_amnesia_verdict" value="&lt;b style=&quot;font-size:8px;color:#B91C1C;&quot;&gt;Customer Friction: 68% of Users Complain of Repeating Information&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="pill_agt_loops_stat" value="&lt;b style=&quot;font-size:8px;color:#B91C1C;&quot;&gt;Operational Danger: Unconstrained Autonomous Execution&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="810" y="660" width="335" height="42" as="geometry"/>
         </mxCell>
 
-        <!-- COLUMN 4: ABSENT SAFETY & UNAUTHORIZED EXECUTION -->
+        <!-- COLUMN 4: GOVERNANCE VOID & REGULATORY EXPOSURE -->
         <mxCell id="col4_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FAF5FF;strokeColor=#A855F7;strokeWidth=1.5;" vertex="1" parent="1">
           <mxGeometry x="1195" y="60" width="380" height="715" as="geometry"/>
         </mxCell>
-        <mxCell id="col4_title" value="&lt;b style=&quot;font-size:10.5px;color:#6B21A8;&quot;&gt;🛡️ Safety &amp;amp; Execution Governance Void&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="col4_title" value="&lt;b style=&quot;font-size:10.5px;color:#6B21A8;&quot;&gt;Governance Void &amp;amp; Risk Exposure&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="1205" y="64" width="360" height="20" as="geometry"/>
         </mxCell>
-        <mxCell id="card_no_hitl" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;🛑 ZERO HUMAN-IN-THE-LOOP (HITL) GATES&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Autonomous scripts issuing customer refunds and credits&lt;br&gt;• No human approval threshold on high-value actions&lt;br&gt;• Single prompt injection can trigger bulk data modification&lt;br&gt;• High operational risk for revenue-critical systems&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_no_agent_audit" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;ZERO AGENTIC EXECUTION TELEMETRY&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Missing audit trail of tool invocations, parameters, and results&lt;br&gt;• Incidents cannot be debugged or traced after occurrence&lt;br&gt;• Inability to prove compliance with financial regulations&lt;br&gt;• Production rollout vetoed by corporate compliance&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="1205" y="92" width="360" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="card_indirect_inj" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;🪲 INDIRECT PROMPT INJECTION VECTORS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Agents reading incoming customer emails &amp;amp; web content&lt;br&gt;• Untrusted content contains embedded prompt override instructions&lt;br&gt;• Agent coerced into exfiltrating API keys or system prompts&lt;br&gt;• Zero Model Armor TRiSM inspection between inputs and tools&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_pii_leak" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;PII &amp;amp; PROMPT INJECTION LEAKAGE&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Direct prompt injection via poisoned customer inputs&lt;br&gt;• SSNs and credit card numbers logged in plaintext&lt;br&gt;• Zero DLP redaction or Model Armor prompt firewalling&lt;br&gt;• Severe HIPAA &amp;amp; GDPR violation liability&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="1205" y="222" width="360" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="card_overprivileged" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;🔑 OVERPRIVILEGED SHARED CREDENTIALS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Bots run with DB admin credentials rather than least privilege&lt;br&gt;• No granular ABAC tool permissions per agent archetype&lt;br&gt;• Compromise of one bot exposes full enterprise database&lt;br&gt;• Violates Zero-Trust least privilege mandate&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_overprivileged" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#6B21A8;&quot;&gt;OVERPRIVILEGED SHARED CREDENTIALS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Bots run with DB admin credentials rather than least privilege&lt;br&gt;• No granular ABAC tool permissions per agent archetype&lt;br&gt;• Compromise of one bot exposes full enterprise database&lt;br&gt;• Violates Zero-Trust least privilege mandate&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9333EA;strokeWidth=1.2;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="1205" y="352" width="360" height="110" as="geometry"/>
         </mxCell>
-        <mxCell id="card_no_agent_audit" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#B91C1C;&quot;&gt;📋 ZERO AGENTIC EXECUTION TELEMETRY&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Missing audit trail of tool invocations, parameters, and results&lt;br&gt;• Incidents cannot be debugged or traced after occurrence&lt;br&gt;• Inability to prove compliance with financial regulations&lt;br&gt;• Production rollout vetoed by corporate compliance&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_unreviewed_actions" value="&lt;table style=&quot;width:100%;text-align:left;padding:6px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#B91C1C;&quot;&gt;UNVALIDATED REASONING OUTPUTS&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7.5px;color:#475569;padding-top:2px;&quot;&gt;• Critical financial reports published without human review&lt;br&gt;• Inaccurate customer commitments made in production chat&lt;br&gt;• Brand reputation damage from unaligned model answers&lt;br&gt;• Legal liability on unauthorized agent-negotiated terms&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="1205" y="482" width="360" height="110" as="geometry"/>
         </mxCell>
         <mxCell id="pill_ciso_agent_verdict" value="&lt;b style=&quot;font-size:8px;color:#991B1B;&quot;&gt;Enterprise Risk: Uncontrolled Agentic Autonomous Execution&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#B91C1C;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="1225" y="660" width="320" height="42" as="geometry"/>
         </mxCell>
 
-        <!-- CONNECTORS -->
-        <mxCell id="conn_agt_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;curved=1;endArrow=block;strokeColor=#DC2626;strokeWidth=1.2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_support_bot" target="card_custom_json">
+        <!-- 16 CONNECTORS: ORTHOGONAL, SOLID WHITE LABELS, STEP BADGES ❶..⓰ -->
+        <mxCell id="conn_agt_1" value="&lt;b style=&quot;font-size:7.5px;color:#DC2626;&quot;&gt;❶ Ad-Hoc JSON Function Schema&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#EF4444;" edge="1" parent="1" source="card_support_bot" target="card_custom_json">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
-        <mxCell id="conn_agt_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;curved=1;endArrow=block;strokeColor=#D97706;strokeWidth=1.2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_custom_json" target="card_no_memory">
+        <mxCell id="conn_agt_2" value="&lt;b style=&quot;font-size:7.5px;color:#DC2626;&quot;&gt;❷ Hardcoded ServiceNow Tokens&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#EF4444;" edge="1" parent="1" source="card_it_script" target="card_point_to_point">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
-        <mxCell id="conn_agt_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;curved=1;endArrow=block;strokeColor=#3B82F6;strokeWidth=1.2;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_no_memory" target="card_no_hitl">
+        <mxCell id="conn_agt_3" value="&lt;b style=&quot;font-size:7.5px;color:#DC2626;&quot;&gt;❸ Deprecated LangChain Bindings&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#EF4444;" edge="1" parent="1" source="card_hr_bot" target="card_no_mcp">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_agt_4" value="&lt;b style=&quot;font-size:7.5px;color:#DC2626;&quot;&gt;❹ Direct DB Admin Superuser&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#EF4444;" edge="1" parent="1" source="card_sales_agent" target="card_hardcoded_keys">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_agt_5" value="&lt;b style=&quot;font-size:7.5px;color:#D97706;&quot;&gt;❺ Stateless Memory Amnesia&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D97706;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#F59E0B;" edge="1" parent="1" source="card_custom_json" target="card_no_memory">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_agt_6" value="&lt;b style=&quot;font-size:7.5px;color:#D97706;&quot;&gt;❻ Infinite ReAct Retry Storm&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D97706;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#F59E0B;" edge="1" parent="1" source="card_point_to_point" target="card_runaway_loops">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_agt_7" value="&lt;b style=&quot;font-size:7.5px;color:#D97706;&quot;&gt;❼ Missing Parameter Validation&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D97706;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#F59E0B;" edge="1" parent="1" source="card_no_mcp" target="card_hallucinated_args">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_agt_8" value="&lt;b style=&quot;font-size:7.5px;color:#D97706;&quot;&gt;❽ Direct Unreviewed DB Writes&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D97706;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#F59E0B;" edge="1" parent="1" source="card_hardcoded_keys" target="card_no_hitl">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_agt_9" value="&lt;b style=&quot;font-size:7.5px;color:#DC2626;&quot;&gt;❾ 5 Redundant Tool Implementations&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#EF4444;" edge="1" parent="1" source="card_total_bot_debt" target="pill_agt_fragility_verdict">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_agt_10" value="&lt;b style=&quot;font-size:7.5px;color:#2563EB;&quot;&gt;❿ Zero Conversation Telemetry&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#3B82F6;" edge="1" parent="1" source="card_no_memory" target="card_no_agent_audit">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_agt_11" value="&lt;b style=&quot;font-size:7.5px;color:#2563EB;&quot;&gt;⓫ $8.2k Weekend Token Exhaustion&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#3B82F6;" edge="1" parent="1" source="card_runaway_loops" target="card_overprivileged">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_agt_12" value="&lt;b style=&quot;font-size:7.5px;color:#2563EB;&quot;&gt;⓬ Prompt Injection Injects Bad SQL&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#3B82F6;" edge="1" parent="1" source="card_hallucinated_args" target="card_pii_leak">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_agt_13" value="&lt;b style=&quot;font-size:7.5px;color:#2563EB;&quot;&gt;⓭ Unreviewed Production Deletions&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#3B82F6;" edge="1" parent="1" source="card_no_hitl" target="card_unreviewed_actions">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_agt_14" value="&lt;b style=&quot;font-size:7.5px;color:#9333EA;&quot;&gt;⓮ Inability to Audit Actions&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9333EA;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#A855F7;" edge="1" parent="1" source="card_no_agent_audit" target="pill_ciso_agent_verdict">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_agt_15" value="&lt;b style=&quot;font-size:7.5px;color:#9333EA;&quot;&gt;⓯ GDPR/HIPAA Violation Risk&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9333EA;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#A855F7;" edge="1" parent="1" source="card_pii_leak" target="pill_ciso_agent_verdict">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="conn_agt_16" value="&lt;b style=&quot;font-size:7.5px;color:#B91C1C;&quot;&gt;⓰ CISO Vetoes Production Launch&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#B91C1C;strokeWidth=1.5;endArrow=classic;endSize=5;labelBackgroundColor=#FFFFFF;labelBorderColor=#EF4444;" edge="1" parent="1" source="card_unreviewed_actions" target="pill_ciso_agent_verdict">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
         <!-- BOTTOM STRIP -->
-        <mxCell id="strip_footer_agt" value="&lt;table style=&quot;width:100%;font-size:9.5px;color:#202124;&quot;&gt;&lt;tr&gt;&lt;td&gt;&lt;b style=&quot;color:#C5221F;&quot;&gt;🤖 Agentic Fragility Summary:&lt;/b&gt; &lt;span style=&quot;color:#1A237E;&quot;&gt;Siloed Bots Without Mesh&lt;/span&gt; &amp;nbsp;➔&amp;nbsp; &lt;span style=&quot;color:#C5221F;&quot;&gt;Ad-Hoc JSON Function Calling (No MCP)&lt;/span&gt; &amp;nbsp;➔&amp;nbsp; &lt;span style=&quot;color:#B06000;&quot;&gt;Context Amnesia &amp;amp; Zero HITL&lt;/span&gt; &amp;nbsp;|&amp;nbsp; &lt;b style=&quot;color:#137333;&quot;&gt;Target Architecture:&lt;/b&gt; Gemini 3.7 Super-Orchestrator Hub, Model Context Protocol (MCP) Microservices, Model Armor TRiSM Shield, &amp;amp; Human-in-the-Loop Review Gates.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#FCA5A5;strokeWidth=1;align=left;spacingLeft=12;" vertex="1" parent="1">
+        <mxCell id="strip_footer_agt" value="&lt;table style=&quot;width:100%;font-size:9.5px;color:#202124;&quot;&gt;&lt;tr&gt;&lt;td&gt;&lt;b style=&quot;color:#C5221F;&quot;&gt;Agentic Fragility Summary:&lt;/b&gt; &lt;span style=&quot;color:#1A237E;&quot;&gt;Siloed Bots Without Mesh&lt;/span&gt; &amp;nbsp;➔&amp;nbsp; &lt;span style=&quot;color:#C5221F;&quot;&gt;Ad-Hoc JSON Function Calling (No MCP)&lt;/span&gt; &amp;nbsp;➔&amp;nbsp; &lt;span style=&quot;color:#B06000;&quot;&gt;Context Amnesia &amp;amp; Zero HITL&lt;/span&gt; &amp;nbsp;|&amp;nbsp; &lt;b style=&quot;color:#137333;&quot;&gt;Target Architecture:&lt;/b&gt; Gemini 3.7 Super-Orchestrator Hub, Model Context Protocol (MCP) Microservices, Model Armor TRiSM Shield, &amp;amp; Human-in-the-Loop Review Gates.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#FCA5A5;strokeWidth=1;align=left;spacingLeft=12;" vertex="1" parent="1">
           <mxGeometry x="25" y="790" width="1550" height="42" as="geometry"/>
         </mxCell>
       </root>
@@ -9980,9 +9821,6 @@ function buildLegacyAgenticXml(cust = 'Enterprise Organization') {
 </mxfile>`.trim();
 }
 
-/**
- * Extract architectural context, cloud vendors, and tools from questionnaire responses and notes
- */
 function extractArchitectureContext(responses = {}, metadata = {}) {
   const commentsList = [];
   const selectedPainPoints = [];
