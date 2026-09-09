@@ -9033,237 +9033,325 @@ function buildHybridMultiCloudXml() {
 
 
 // ===== Sourced from build_master_legacy_genai_stack.ts =====
-function buildLegacyGenAiStackXml(cust = "Enterprise Organization") {
+function buildLegacyGenAiStackXml(cust = "Enterprise Organization", archCtx = null) {
   const cEsc = (cust || "Enterprise Organization").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-  
+
+  // Extract real customer pain points if available from archCtx
+  const pains = (archCtx && Array.isArray(archCtx.selectedPainPoints)) ? archCtx.selectedPainPoints : [];
+
+  const badge1Text = (pains.find(p => /function\s+calling|syntax|parameter/i.test(p))
+    ? "⚠️ Vendor-Specific Function Syntax"
+    : "⚠️ 8k Context Window Truncation").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const card1ASub = "Brittle custom agent scripts";
+
+  const card1BSub = (pains.find(p => /hardcoded|response\s+object|parsing/i.test(p))
+    ? "Hardcoded OpenAI response parsing"
+    : "Unversioned string templates").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const badge2Text = (pains.find(p => /prompt\s+injection|jailbreak|sql\s+injection/i.test(p))
+    ? "⚠️ Unshielded Prompt &amp; SQL Injection"
+    : "⚠️ High Token Prompt Injection Exposure").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const card1DSub = (pains.find(p => /python|script|custom\s+agent|loop/i.test(p))
+    ? "Brittle custom agent loops"
+    : "Unversioned microservices").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const card1ESub = (pains.find(p => /vendor|spec|parameter|syntax/i.test(p))
+    ? "Parameter spec mismatches"
+    : "Hardcoded JSON schemas").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const badge3Text = (pains.find(p => /unvalidated|execution|vulnerabilit/i.test(p))
+    ? "⚠️ Unvalidated Function Execution"
+    : "⚠️ Unshielded Prompt Exposure").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const card1FSub = (pains.find(p => /sandboxing|destructive|executable/i.test(p))
+    ? "Zero model output sandboxing"
+    : "Prompt injection surface").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const badge4Text = (pains.find(p => /eval|benchmark|ground\s+truth|drift/i.test(p))
+    ? "⚠️ Silent Drift &amp; No Evals Benchmark"
+    : "⚠️ Silent Model Drift").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const badge5Text = (pains.find(p => /caching|cold\s+prompt|sub-second|latency/i.test(p))
+    ? "⚠️ Cold Prompt Parsing (Zero Caching)"
+    : "⚠️ High Token Burn (Zero Caching)").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const card2ASub = (pains.find(p => /private\s+endpoint|peering|whitelisting|vpc/i.test(p))
+    ? "No private endpoint peering"
+    : "Public Internet ingress").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const card2BSub = (pains.find(p => /fallback|rate\s+limit|quota/i.test(p))
+    ? "Missing automated quota fallback"
+    : "Lack rate limiting &amp; quotas").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const card2CTitle = (pains.find(p => /latency|vector\s+search|chunking|context/i.test(p))
+    ? "8k token context fragmentation"
+    : "8k token context fragmentation").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const card2CSub = (pains.find(p => /semantic|multi-step|lost\s+context|pdf/i.test(p))
+    ? "Multi-step semantic search latency"
+    : "Lossy chunking across PDFs").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const card3ASub = (pains.find(p => /sandbox|script|tool/i.test(p))
+    ? "Unrestricted code execution"
+    : "Ad-hoc scraping scripts").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const card3BTitle = "Unindexed vector dumps";
+
+  const card3BSub = (pains.find(p => /embedding|cost|infrastructure/i.test(p))
+    ? "High embedding compute costs"
+    : "Dedicated SaaS vector DB").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const card3CSub = (pains.find(p => /ocr|multimodal|layout|table/i.test(p))
+    ? "OCR dropping tables &amp; charts"
+    : "Unstructured document splits").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const card4ASub = (pains.find(p => /audit|logging|tracing|distributed/i.test(p))
+    ? "Lack of structured audit logging"
+    : "Direct production DB queries").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const badge6Text = (pains.find(p => /failure\s+loop|churn|reputation/i.test(p))
+    ? "⚠️ Customer Tool Failure Loops"
+    : "⚠️ Customer Facing Failure Loops").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const card4BSub = (pains.find(p => /failure\s+loop|customer|churn/i.test(p))
+    ? "Tool failure loops during live calls"
+    : "Unmasked PII in provider logs").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
   return `<mxfile host="embed.diagrams.net">
   <diagram id="legacy_genai_stack" name="${cEsc} - Current Baseline Architecture">
-    <mxGraphModel dx="1600" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1560" pageHeight="860" background="#0B111E" math="0" shadow="0">
+    <mxGraphModel dx="1600" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1560" pageHeight="860" background="#FFFFFF" math="0" shadow="0">
       <root>
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
 
         <!-- ==================== HEADER BANNER ==================== -->
-        <mxCell id="main_title" value="&lt;div style=&quot;text-align:center;font-size:18px;font-weight:900;color:#F8FAFC;letter-spacing:-0.2px;&quot;&gt;Current Baseline Architecture: Fragmented LLM Wrappers &amp;amp; Token Waste&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="main_title" value="&lt;div style=&quot;text-align:center;font-size:18px;font-weight:900;color:#0F172A;letter-spacing:-0.2px;&quot;&gt;Current Baseline Architecture: Fragmented LLM Wrappers &amp;amp; Token Waste (${cEsc})&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="30" y="16" width="1500" height="26" as="geometry"/>
         </mxCell>
 
         <!-- ==================== 4 COLUMN CONTAINERS ==================== -->
         <!-- COLUMN 1: Departmental Silos & Prompts -->
-        <mxCell id="col1_bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;strokeWidth=1.5;" vertex="1" parent="1">
+        <mxCell id="col1_bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.5;" vertex="1" parent="1">
           <mxGeometry x="30" y="55" width="355" height="735" as="geometry"/>
         </mxCell>
-        <mxCell id="col1_title" value="&lt;b style=&quot;font-size:12.5px;color:#94A3B8;&quot;&gt;Departmental Silos &amp;amp; Prompts&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="col1_title" value="&lt;b style=&quot;font-size:12.5px;color:#0F172A;font-weight:800;&quot;&gt;Departmental Silos &amp;amp; Prompts&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="30" y="65" width="355" height="24" as="geometry"/>
         </mxCell>
 
         <!-- COLUMN 2: Fragile Unmanaged API Gateway -->
-        <mxCell id="col2_bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;strokeWidth=1.5;" vertex="1" parent="1">
+        <mxCell id="col2_bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.5;" vertex="1" parent="1">
           <mxGeometry x="410" y="55" width="355" height="735" as="geometry"/>
         </mxCell>
-        <mxCell id="col2_title" value="&lt;b style=&quot;font-size:12.5px;color:#94A3B8;&quot;&gt;Fragile Unmanaged API Gateway&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="col2_title" value="&lt;b style=&quot;font-size:12.5px;color:#0F172A;font-weight:800;&quot;&gt;Fragile Unmanaged API Gateway&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="410" y="65" width="355" height="24" as="geometry"/>
         </mxCell>
 
         <!-- COLUMN 3: Point-to-Point Tools -->
-        <mxCell id="col3_bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;strokeWidth=1.5;" vertex="1" parent="1">
+        <mxCell id="col3_bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.5;" vertex="1" parent="1">
           <mxGeometry x="790" y="55" width="355" height="735" as="geometry"/>
         </mxCell>
-        <mxCell id="col3_title" value="&lt;b style=&quot;font-size:12.5px;color:#94A3B8;&quot;&gt;Point-to-Point Tools&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="col3_title" value="&lt;b style=&quot;font-size:12.5px;color:#0F172A;font-weight:800;&quot;&gt;Point-to-Point Tools&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="790" y="65" width="355" height="24" as="geometry"/>
         </mxCell>
 
         <!-- COLUMN 4: Client Apps -->
-        <mxCell id="col4_bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;strokeWidth=1.5;" vertex="1" parent="1">
+        <mxCell id="col4_bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.5;" vertex="1" parent="1">
           <mxGeometry x="1170" y="55" width="360" height="735" as="geometry"/>
         </mxCell>
-        <mxCell id="col4_title" value="&lt;b style=&quot;font-size:12.5px;color:#94A3B8;&quot;&gt;Client Apps&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="col4_title" value="&lt;b style=&quot;font-size:12.5px;color:#0F172A;font-weight:800;&quot;&gt;Client Apps&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="1170" y="65" width="360" height="24" as="geometry"/>
         </mxCell>
 
         <!-- ==================== COLUMN 1 NODES & PAIN POINTS ==================== -->
         <!-- Card 1A: Isolated Python Scripts -->
-        <mxCell id="card_python_scripts" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;svg width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 48 48&quot;&gt;&lt;path fill=&quot;#3776AB&quot; d=&quot;M23.6 4C14.7 4 15.3 7.8 15.3 7.8l.1 4.1h8.5v1.2H12.3S5 12.3 5 21.2s6.4 8.7 6.4 8.7h3.8v-5.4s-.2-6.4 6.3-6.4h10.9s6.1.1 6.1-5.9-5.4-8.2-14.9-8.2zm-4.7 4.2c1.2 0 2.2 1 2.2 2.2s-1 2.2-2.2 2.2-2.2-1-2.2-2.2 1-2.2 2.2-2.2z&quot;/&gt;&lt;path fill=&quot;#FFD43B&quot; d=&quot;M24.4 44c8.9 0 8.3-3.8 8.3-3.8l-.1-4.1h-8.5v-1.2h11.6s7.3.8 7.3-8.1-6.4-8.7-6.4-8.7h-3.8v5.4s.2 6.4-6.3 6.4H16s-6.1-.1-6.1 5.9 5.4 8.2 14.5 8.2zm4.7-4.2c-1.2 0-2.2-1-2.2-2.2s1-2.2 2.2-2.2 2.2 1 2.2 2.2-1 2.2-2.2 2.2z&quot;/&gt;&lt;/svg&gt;&lt;div style=&quot;font-size:10.5px;font-weight:700;color:#F8FAFC;margin-top:4px;line-height:1.2;&quot;&gt;Isolated&lt;br/&gt;Python scripts&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#18111A;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
+        <mxCell id="card_python_scripts" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;svg width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 48 48&quot;&gt;&lt;path fill=&quot;#3776AB&quot; d=&quot;M23.6 4C14.7 4 15.3 7.8 15.3 7.8l.1 4.1h8.5v1.2H12.3S5 12.3 5 21.2s6.4 8.7 6.4 8.7h3.8v-5.4s-.2-6.4 6.3-6.4h10.9s6.1.1 6.1-5.9-5.4-8.2-14.9-8.2zm-4.7 4.2c1.2 0 2.2 1 2.2 2.2s-1 2.2-2.2 2.2-2.2-1-2.2-2.2 1-2.2 2.2-2.2z&quot;/&gt;&lt;path fill=&quot;#FFD43B&quot; d=&quot;M24.4 44c8.9 0 8.3-3.8 8.3-3.8l-.1-4.1h-8.5v-1.2h11.6s7.3.8 7.3-8.1-6.4-8.7-6.4-8.7h-3.8v5.4s.2 6.4-6.3 6.4H16s-6.1-.1-6.1 5.9 5.4 8.2 14.5 8.2zm4.7-4.2c-1.2 0-2.2-1-2.2-2.2s1-2.2 2.2-2.2 2.2 1 2.2 2.2-1 2.2-2.2 2.2z&quot;/&gt;&lt;/svg&gt;&lt;div style=&quot;font-size:10.5px;font-weight:700;color:#0F172A;margin-top:4px;line-height:1.2;&quot;&gt;Isolated&lt;br/&gt;Python scripts&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;margin-top:2px;&quot;&gt;${card1ASub}&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
           <mxGeometry x="50" y="160" width="145" height="85" as="geometry"/>
         </mxCell>
 
-        <!-- Warning Pill: 8k Context Window Truncation -->
-        <mxCell id="badge_8k_trunc" value="&lt;div style=&quot;font-size:9px;font-weight:800;color:#FECACA;text-align:center;&quot;&gt;⚠️ 8k Context Window Truncation&lt;/div&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#450A0A;strokeColor=#EF4444;strokeWidth=1.2;" vertex="1" parent="1">
-          <mxGeometry x="130" y="142" width="180" height="24" as="geometry"/>
+        <!-- Warning Pill: Vendor-Specific Function Syntax / 8k Context Window Truncation -->
+        <mxCell id="badge_8k_trunc" value="&lt;div style=&quot;font-size:8.5px;font-weight:800;color:#92400E;text-align:center;&quot;&gt;${badge1Text}&lt;/div&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#F59E0B;strokeWidth=1.2;" vertex="1" parent="1">
+          <mxGeometry x="120" y="142" width="200" height="24" as="geometry"/>
         </mxCell>
 
         <!-- Card 1B: Hardcoded Prompt Templates -->
-        <mxCell id="card_hardcoded_prompts" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;svg width=&quot;22&quot; height=&quot;22&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#F97316&quot; stroke-width=&quot;2&quot;&gt;&lt;path d=&quot;M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z&quot;/&gt;&lt;polyline points=&quot;14 2 14 8 20 8&quot;/&gt;&lt;line x1=&quot;16&quot; y1=&quot;13&quot; x2=&quot;8&quot; y2=&quot;13&quot;/&gt;&lt;line x1=&quot;16&quot; y1=&quot;17&quot; x2=&quot;8&quot; y2=&quot;17&quot;/&gt;&lt;/svg&gt;&lt;div style=&quot;font-size:10.5px;font-weight:700;color:#F8FAFC;margin-top:4px;line-height:1.2;&quot;&gt;Hardcoded&lt;br/&gt;prompt templates&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#1A1713;strokeColor=#F97316;strokeWidth=1.8;" vertex="1" parent="1">
+        <mxCell id="card_hardcoded_prompts" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;svg width=&quot;22&quot; height=&quot;22&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#F97316&quot; stroke-width=&quot;2&quot;&gt;&lt;path d=&quot;M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z&quot;/&gt;&lt;polyline points=&quot;14 2 14 8 20 8&quot;/&gt;&lt;line x1=&quot;16&quot; y1=&quot;13&quot; x2=&quot;8&quot; y2=&quot;13&quot;/&gt;&lt;line x1=&quot;16&quot; y1=&quot;17&quot; x2=&quot;8&quot; y2=&quot;17&quot;/&gt;&lt;/svg&gt;&lt;div style=&quot;font-size:10.5px;font-weight:700;color:#0F172A;margin-top:4px;line-height:1.2;&quot;&gt;Hardcoded&lt;br/&gt;prompt templates&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;margin-top:2px;&quot;&gt;${card1BSub}&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#F97316;strokeWidth=1.8;" vertex="1" parent="1">
           <mxGeometry x="220" y="160" width="145" height="85" as="geometry"/>
         </mxCell>
 
         <!-- Card 1C: LLM Token -->
-        <mxCell id="card_llm_token" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:11px;font-weight:700;color:#F8FAFC;line-height:1.2;&quot;&gt;LLM&lt;br/&gt;Token&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#18111A;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
+        <mxCell id="card_llm_token" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:11px;font-weight:700;color:#0F172A;line-height:1.2;&quot;&gt;LLM&lt;br/&gt;Token&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;margin-top:2px;&quot;&gt;API key in egress&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
           <mxGeometry x="50" y="315" width="145" height="75" as="geometry"/>
         </mxCell>
 
         <!-- Warning Pill: High Token Prompt Injection Exposure -->
-        <mxCell id="badge_token_inj" value="&lt;div style=&quot;font-size:8.5px;font-weight:800;color:#FECACA;text-align:center;&quot;&gt;⚠️ High Token Prompt Injection Exposure&lt;/div&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#450A0A;strokeColor=#EF4444;strokeWidth=1.2;" vertex="1" parent="1">
-          <mxGeometry x="115" y="295" width="195" height="24" as="geometry"/>
+        <mxCell id="badge_token_inj" value="&lt;div style=&quot;font-size:8.5px;font-weight:800;color:#991B1B;text-align:center;&quot;&gt;${badge2Text}&lt;/div&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1.2;" vertex="1" parent="1">
+          <mxGeometry x="110" y="295" width="205" height="24" as="geometry"/>
         </mxCell>
 
         <!-- Card 1D: Python Script -->
-        <mxCell id="card_python_script_sub" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:11px;font-weight:700;color:#F8FAFC;line-height:1.2;&quot;&gt;Python&lt;br/&gt;Script&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#18111A;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
+        <mxCell id="card_python_script_sub" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:11px;font-weight:700;color:#0F172A;line-height:1.2;&quot;&gt;Python&lt;br/&gt;Script&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;margin-top:2px;&quot;&gt;${card1DSub}&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
           <mxGeometry x="50" y="460" width="140" height="65" as="geometry"/>
         </mxCell>
 
         <!-- Card 1E: Prompt Templates -->
-        <mxCell id="card_prompt_templates_sub" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:11px;font-weight:700;color:#F8FAFC;line-height:1.2;&quot;&gt;Prompt&lt;br/&gt;Templates&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#18111A;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
+        <mxCell id="card_prompt_templates_sub" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:11px;font-weight:700;color:#0F172A;line-height:1.2;&quot;&gt;Prompt&lt;br/&gt;Templates&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;margin-top:2px;&quot;&gt;${card1ESub}&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
           <mxGeometry x="215" y="460" width="150" height="65" as="geometry"/>
         </mxCell>
 
         <!-- Warning Pill: Unshielded Prompt Injection Exposure -->
-        <mxCell id="badge_unshielded_inj" value="&lt;div style=&quot;font-size:8.5px;font-weight:800;color:#FECACA;text-align:center;&quot;&gt;⚠️ Unshielded Prompt Injection Exposure&lt;/div&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#450A0A;strokeColor=#EF4444;strokeWidth=1.2;" vertex="1" parent="1">
-          <mxGeometry x="120" y="435" width="195" height="24" as="geometry"/>
+        <mxCell id="badge_unshielded_inj" value="&lt;div style=&quot;font-size:8.5px;font-weight:800;color:#991B1B;text-align:center;&quot;&gt;${badge3Text}&lt;/div&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1.2;" vertex="1" parent="1">
+          <mxGeometry x="110" y="435" width="205" height="24" as="geometry"/>
         </mxCell>
 
         <!-- Card 1F: Unshielded Prompt Injection Exposure Box -->
-        <mxCell id="card_unshielded_exec" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;line-height:1.2;&quot;&gt;Unshielded Prompt&lt;br/&gt;Injection Exposure&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#18111A;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
+        <mxCell id="card_unshielded_exec" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#0F172A;line-height:1.2;&quot;&gt;Unshielded Prompt&lt;br/&gt;Injection Exposure&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;margin-top:2px;&quot;&gt;${card1FSub}&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
           <mxGeometry x="105" y="595" width="225" height="65" as="geometry"/>
         </mxCell>
 
         <!-- Warning Pill: Silent Model Drift -->
-        <mxCell id="badge_model_drift" value="&lt;div style=&quot;font-size:8.5px;font-weight:800;color:#FFEDD5;text-align:center;&quot;&gt;⚠️ Silent Model Drift&lt;/div&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#431407;strokeColor=#F97316;strokeWidth=1.2;" vertex="1" parent="1">
-          <mxGeometry x="175" y="573" width="145" height="24" as="geometry"/>
+        <mxCell id="badge_model_drift" value="&lt;div style=&quot;font-size:8.5px;font-weight:800;color:#92400E;text-align:center;&quot;&gt;${badge4Text}&lt;/div&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#F59E0B;strokeWidth=1.2;" vertex="1" parent="1">
+          <mxGeometry x="150" y="573" width="190" height="24" as="geometry"/>
         </mxCell>
 
         <!-- ==================== COLUMN 2 NODES & PAIN POINTS ==================== -->
         <!-- Warning Pill: High Token Burn (Zero Caching) -->
-        <mxCell id="badge_token_burn" value="&lt;div style=&quot;font-size:9px;font-weight:800;color:#FFEDD5;text-align:center;&quot;&gt;⚠️ High Token Burn (Zero Caching)&lt;/div&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#431407;strokeColor=#F97316;strokeWidth=1.2;" vertex="1" parent="1">
-          <mxGeometry x="460" y="142" width="225" height="24" as="geometry"/>
+        <mxCell id="badge_token_burn" value="&lt;div style=&quot;font-size:8.5px;font-weight:800;color:#92400E;text-align:center;&quot;&gt;${badge5Text}&lt;/div&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#F59E0B;strokeWidth=1.2;" vertex="1" parent="1">
+          <mxGeometry x="450" y="142" width="235" height="24" as="geometry"/>
         </mxCell>
 
         <!-- Card 2A: Direct Public Endpoints -->
-        <mxCell id="card_direct_endpoints" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;line-height:1.2;&quot;&gt;Direct public&lt;br/&gt;endpoints&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#18111A;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
+        <mxCell id="card_direct_endpoints" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#0F172A;line-height:1.2;&quot;&gt;Direct public&lt;br/&gt;endpoints&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;margin-top:2px;&quot;&gt;${card2ASub}&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
           <mxGeometry x="465" y="175" width="235" height="75" as="geometry"/>
         </mxCell>
 
         <!-- Card 2B: Fragile Unmanaged API Gateway -->
-        <mxCell id="card_fragile_gateway" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:12.5px;font-weight:800;color:#F8FAFC;line-height:1.2;&quot;&gt;Fragile Unmanaged&lt;br/&gt;API Gateway&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#18111A;strokeColor=#EF4444;strokeWidth=2.2;" vertex="1" parent="1">
+        <mxCell id="card_fragile_gateway" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:12.5px;font-weight:800;color:#0F172A;line-height:1.2;&quot;&gt;Fragile Unmanaged&lt;br/&gt;API Gateway&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;margin-top:2px;&quot;&gt;${card2BSub}&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#EF4444;strokeWidth=2.2;" vertex="1" parent="1">
           <mxGeometry x="465" y="320" width="235" height="80" as="geometry"/>
         </mxCell>
 
         <!-- Card 2C: 8k token context fragmentation -->
-        <mxCell id="card_8k_frag" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;line-height:1.2;&quot;&gt;8k token context&lt;br/&gt;fragmentation&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#1A1713;strokeColor=#F97316;strokeWidth=1.8;" vertex="1" parent="1">
+        <mxCell id="card_8k_frag" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#0F172A;line-height:1.2;&quot;&gt;${card2CTitle}&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;margin-top:2px;&quot;&gt;${card2CSub}&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#F97316;strokeWidth=1.8;" vertex="1" parent="1">
           <mxGeometry x="465" y="490" width="235" height="75" as="geometry"/>
         </mxCell>
 
         <!-- ==================== COLUMN 3 NODES ==================== -->
         <!-- Card 3A: Unsandboxed Web Scrapers -->
-        <mxCell id="card_scrapers" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;svg width=&quot;22&quot; height=&quot;22&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#EF4444&quot; stroke-width=&quot;2&quot;&gt;&lt;circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;10&quot;/&gt;&lt;line x1=&quot;2&quot; y1=&quot;12&quot; x2=&quot;22&quot; y2=&quot;12&quot;/&gt;&lt;path d=&quot;M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z&quot;/&gt;&lt;/svg&gt;&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;margin-top:4px;line-height:1.2;&quot;&gt;Unsandboxed&lt;br/&gt;web scrapers&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#18111A;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
+        <mxCell id="card_scrapers" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;svg width=&quot;22&quot; height=&quot;22&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#EF4444&quot; stroke-width=&quot;2&quot;&gt;&lt;circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;10&quot;/&gt;&lt;line x1=&quot;2&quot; y1=&quot;12&quot; x2=&quot;22&quot; y2=&quot;12&quot;/&gt;&lt;path d=&quot;M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z&quot;/&gt;&lt;/svg&gt;&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#0F172A;margin-top:4px;line-height:1.2;&quot;&gt;Unsandboxed&lt;br/&gt;web scrapers&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;margin-top:2px;&quot;&gt;${card3ASub}&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
           <mxGeometry x="850" y="175" width="230" height="80" as="geometry"/>
         </mxCell>
 
         <!-- Card 3B: Unindexed Vector Dumps (Top) -->
-        <mxCell id="card_vector_dumps_1" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;svg width=&quot;22&quot; height=&quot;22&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#EF4444&quot; stroke-width=&quot;2&quot;&gt;&lt;ellipse cx=&quot;12&quot; cy=&quot;5&quot; rx=&quot;9&quot; ry=&quot;3&quot;/&gt;&lt;path d=&quot;M21 12c0 1.66-4 3-9 3s-9-1.34-9-3&quot;/&gt;&lt;path d=&quot;M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5&quot;/&gt;&lt;/svg&gt;&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;margin-top:4px;line-height:1.2;&quot;&gt;Unindexed&lt;br/&gt;vector dumps&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#18111A;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
+        <mxCell id="card_vector_dumps_1" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;svg width=&quot;22&quot; height=&quot;22&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#EF4444&quot; stroke-width=&quot;2&quot;&gt;&lt;ellipse cx=&quot;12&quot; cy=&quot;5&quot; rx=&quot;9&quot; ry=&quot;3&quot;/&gt;&lt;path d=&quot;M21 12c0 1.66-4 3-9 3s-9-1.34-9-3&quot;/&gt;&lt;path d=&quot;M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5&quot;/&gt;&lt;/svg&gt;&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#0F172A;margin-top:4px;line-height:1.2;&quot;&gt;${card3BTitle}&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;margin-top:2px;&quot;&gt;${card3BSub}&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
           <mxGeometry x="850" y="460" width="230" height="80" as="geometry"/>
         </mxCell>
 
         <!-- Card 3C: Unindexed Vector Dumps (Bottom) -->
-        <mxCell id="card_vector_dumps_2" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;line-height:1.2;&quot;&gt;Unindexed&lt;br/&gt;vector dumps&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#1A1713;strokeColor=#F97316;strokeWidth=1.8;" vertex="1" parent="1">
+        <mxCell id="card_vector_dumps_2" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#0F172A;line-height:1.2;&quot;&gt;Unindexed&lt;br/&gt;vector dumps&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;margin-top:2px;&quot;&gt;${card3CSub}&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#F97316;strokeWidth=1.8;" vertex="1" parent="1">
           <mxGeometry x="850" y="595" width="230" height="75" as="geometry"/>
         </mxCell>
 
         <!-- ==================== COLUMN 4 NODES ==================== -->
         <!-- Card 4A: Unmonitored Chat UI (Top) -->
-        <mxCell id="card_unmonitored_chat_top" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;svg width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#F97316&quot; stroke-width=&quot;2&quot;&gt;&lt;rect x=&quot;2&quot; y=&quot;3&quot; width=&quot;20&quot; height=&quot;14&quot; rx=&quot;2&quot; ry=&quot;2&quot;/&gt;&lt;line x1=&quot;8&quot; y1=&quot;21&quot; x2=&quot;16&quot; y2=&quot;21&quot;/&gt;&lt;line x1=&quot;12&quot; y1=&quot;17&quot; x2=&quot;12&quot; y2=&quot;21&quot;/&gt;&lt;/svg&gt;&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;margin-top:4px;line-height:1.2;&quot;&gt;Unmonitored&lt;br/&gt;chat UI&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#1A1713;strokeColor=#F97316;strokeWidth=1.8;" vertex="1" parent="1">
+        <mxCell id="card_unmonitored_chat_top" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;svg width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#F97316&quot; stroke-width=&quot;2&quot;&gt;&lt;rect x=&quot;2&quot; y=&quot;3&quot; width=&quot;20&quot; height=&quot;14&quot; rx=&quot;2&quot; ry=&quot;2&quot;/&gt;&lt;line x1=&quot;8&quot; y1=&quot;21&quot; x2=&quot;16&quot; y2=&quot;21&quot;/&gt;&lt;line x1=&quot;12&quot; y1=&quot;17&quot; x2=&quot;12&quot; y2=&quot;21&quot;/&gt;&lt;/svg&gt;&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#0F172A;margin-top:4px;line-height:1.2;&quot;&gt;Unmonitored&lt;br/&gt;chat UI&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;margin-top:2px;&quot;&gt;${card4ASub}&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#F97316;strokeWidth=1.8;" vertex="1" parent="1">
           <mxGeometry x="1235" y="165" width="220" height="90" as="geometry"/>
         </mxCell>
 
+        <!-- Warning Pill: Customer Tool Failure Loops -->
+        <mxCell id="badge_customer_loops" value="&lt;div style=&quot;font-size:8.5px;font-weight:800;color:#991B1B;text-align:center;&quot;&gt;${badge6Text}&lt;/div&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1.2;" vertex="1" parent="1">
+          <mxGeometry x="1245" y="312" width="200" height="24" as="geometry"/>
+        </mxCell>
+
         <!-- Card 4B: Unmonitored Chat UIs (Bottom) -->
-        <mxCell id="card_unmonitored_chat_bot" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;svg width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#EF4444&quot; stroke-width=&quot;2&quot;&gt;&lt;path d=&quot;M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z&quot;/&gt;&lt;/svg&gt;&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;margin-top:4px;line-height:1.2;&quot;&gt;Unmonitored&lt;br/&gt;chat UIs&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#18111A;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
+        <mxCell id="card_unmonitored_chat_bot" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:center;&quot;&gt;&lt;svg width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;#EF4444&quot; stroke-width=&quot;2&quot;&gt;&lt;path d=&quot;M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z&quot;/&gt;&lt;/svg&gt;&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#0F172A;margin-top:4px;line-height:1.2;&quot;&gt;Unmonitored&lt;br/&gt;chat UIs&lt;/div&gt;&lt;div style=&quot;font-size:7.5px;color:#64748B;margin-top:2px;&quot;&gt;${card4BSub}&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#EF4444;strokeWidth=1.8;" vertex="1" parent="1">
           <mxGeometry x="1235" y="335" width="220" height="85" as="geometry"/>
         </mxCell>
 
         <!-- ==================== NUMBERED ORTHOGONAL CONNECTORS ==================== -->
         <!-- Flow 1: Python Scripts -> LLM Token -->
-        <mxCell id="edge_step1_scripts" value="Step 1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9.5;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="card_python_scripts" target="card_llm_token">
+        <mxCell id="edge_step1_scripts" value="Step 1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#475569;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#CBD5E1;fontColor=#0F172A;fontSize=9.5;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="card_python_scripts" target="card_llm_token">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
         <!-- Flow 2: LLM Token -> Fragile Gateway -->
-        <mxCell id="edge_step1_gateway" value="Step 1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9.5;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.35;" edge="1" parent="1" source="card_llm_token" target="card_fragile_gateway">
+        <mxCell id="edge_step1_gateway" value="Step 1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#475569;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#CBD5E1;fontColor=#0F172A;fontSize=9.5;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.35;" edge="1" parent="1" source="card_llm_token" target="card_fragile_gateway">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
         <!-- Flow 3: Hardcoded Prompts -> Fragile Gateway -->
-        <mxCell id="edge_prompts_gateway" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=0.5;exitY=1;entryX=0;entryY=0.2;" edge="1" parent="1" source="card_hardcoded_prompts" target="card_fragile_gateway">
+        <mxCell id="edge_prompts_gateway" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#475569;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=0.5;exitY=1;entryX=0;entryY=0.2;" edge="1" parent="1" source="card_hardcoded_prompts" target="card_fragile_gateway">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
         <!-- Flow 4: Direct Endpoints -> Gateway (Step 2 + Lack rate limiting) -->
-        <mxCell id="edge_step2_endpoints" value="Step 2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9.5;fontStyle=1;exitX=0.35;exitY=1;entryX=0.35;entryY=0;" edge="1" parent="1" source="card_direct_endpoints" target="card_fragile_gateway">
+        <mxCell id="edge_step2_endpoints" value="Step 2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#475569;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#CBD5E1;fontColor=#0F172A;fontSize=9.5;fontStyle=1;exitX=0.35;exitY=1;entryX=0.35;entryY=0;" edge="1" parent="1" source="card_direct_endpoints" target="card_fragile_gateway">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
-        <mxCell id="edge_lack_limits" value="Lack rate limiting" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9;fontStyle=1;exitX=0.65;exitY=1;entryX=0.65;entryY=0;" edge="1" parent="1" source="card_direct_endpoints" target="card_fragile_gateway">
+        <mxCell id="edge_lack_limits" value="Lack rate limiting" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#EF4444;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#FCA5A5;fontColor=#991B1B;fontSize=9;fontStyle=1;exitX=0.65;exitY=1;entryX=0.65;entryY=0;" edge="1" parent="1" source="card_direct_endpoints" target="card_fragile_gateway">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
         <!-- Flow 5: Python Sub & Prompt Sub -> Unshielded Execution -->
-        <mxCell id="edge_sub_scripts_exec" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=0.5;exitY=1;entryX=0.3;entryY=0;" edge="1" parent="1" source="card_python_script_sub" target="card_unshielded_exec">
+        <mxCell id="edge_sub_scripts_exec" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#475569;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=0.5;exitY=1;entryX=0.3;entryY=0;" edge="1" parent="1" source="card_python_script_sub" target="card_unshielded_exec">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
-        <mxCell id="edge_sub_prompts_exec" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=0.5;exitY=1;entryX=0.7;entryY=0;" edge="1" parent="1" source="card_prompt_templates_sub" target="card_unshielded_exec">
+        <mxCell id="edge_sub_prompts_exec" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#475569;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=0.5;exitY=1;entryX=0.7;entryY=0;" edge="1" parent="1" source="card_prompt_templates_sub" target="card_unshielded_exec">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
         <!-- Flow 6: Prompt Templates Sub -> Gateway (Step 2) -->
-        <mxCell id="edge_step2_prompts_sub" value="Step 2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9.5;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.8;" edge="1" parent="1" source="card_prompt_templates_sub" target="card_fragile_gateway">
+        <mxCell id="edge_step2_prompts_sub" value="Step 2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#475569;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#CBD5E1;fontColor=#0F172A;fontSize=9.5;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.8;" edge="1" parent="1" source="card_prompt_templates_sub" target="card_fragile_gateway">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
         <!-- Flow 7: Gateway -> 8k context fragmentation (Step 2) -->
-        <mxCell id="edge_step2_frag" value="Step 2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9.5;fontStyle=1;exitX=0.35;exitY=1;entryX=0.35;entryY=0;" edge="1" parent="1" source="card_fragile_gateway" target="card_8k_frag">
+        <mxCell id="edge_step2_frag" value="Step 2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#475569;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#CBD5E1;fontColor=#0F172A;fontSize=9.5;fontStyle=1;exitX=0.35;exitY=1;entryX=0.35;entryY=0;" edge="1" parent="1" source="card_fragile_gateway" target="card_8k_frag">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
         <!-- Flow 8: 8k context fragmentation -> Gateway (Step 3) -->
-        <mxCell id="edge_step3_frag_return" value="Step 3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9.5;fontStyle=1;exitX=0.65;exitY=0;entryX=0.65;entryY=1;" edge="1" parent="1" source="card_8k_frag" target="card_fragile_gateway">
+        <mxCell id="edge_step3_frag_return" value="Step 3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#475569;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#CBD5E1;fontColor=#0F172A;fontSize=9.5;fontStyle=1;exitX=0.65;exitY=0;entryX=0.65;entryY=1;" edge="1" parent="1" source="card_8k_frag" target="card_fragile_gateway">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
         <!-- Flow 9: Gateway -> Unsandboxed Web Scrapers (Step 4) -->
-        <mxCell id="edge_step4_scrapers" value="Step 4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9.5;fontStyle=1;exitX=1;exitY=0.25;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_fragile_gateway" target="card_scrapers">
+        <mxCell id="edge_step4_scrapers" value="Step 4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#475569;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#CBD5E1;fontColor=#0F172A;fontSize=9.5;fontStyle=1;exitX=1;exitY=0.25;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_fragile_gateway" target="card_scrapers">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
         <!-- Flow 10: Scrapers -> Unmonitored Chat UIs (Step 3) -->
-        <mxCell id="edge_step3_scrapers_chat" value="Step 3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9.5;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.3;" edge="1" parent="1" source="card_scrapers" target="card_unmonitored_chat_bot">
+        <mxCell id="edge_step3_scrapers_chat" value="Step 3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#475569;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#CBD5E1;fontColor=#0F172A;fontSize=9.5;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.3;" edge="1" parent="1" source="card_scrapers" target="card_unmonitored_chat_bot">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
         <!-- Flow 11: Gateway -> Unindexed Vector Dumps (Step 4) -->
-        <mxCell id="edge_step4_vector" value="Step 4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9.5;fontStyle=1;exitX=1;exitY=0.75;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_fragile_gateway" target="card_vector_dumps_1">
+        <mxCell id="edge_step4_vector" value="Step 4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#475569;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#CBD5E1;fontColor=#0F172A;fontSize=9.5;fontStyle=1;exitX=1;exitY=0.75;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_fragile_gateway" target="card_vector_dumps_1">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
         <!-- Flow 12: Vector Dumps -> Chat UIs (Step 4) -->
-        <mxCell id="edge_step4_vector_chat" value="Step 4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9.5;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.7;" edge="1" parent="1" source="card_vector_dumps_1" target="card_unmonitored_chat_bot">
+        <mxCell id="edge_step4_vector_chat" value="Step 4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#475569;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#CBD5E1;fontColor=#0F172A;fontSize=9.5;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.7;" edge="1" parent="1" source="card_vector_dumps_1" target="card_unmonitored_chat_bot">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
         <!-- Flow 13: Vector Dumps 1 -> Vector Dumps 2 (Step 5) -->
-        <mxCell id="edge_step5_vector_down" value="Step 5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9.5;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="card_vector_dumps_1" target="card_vector_dumps_2">
+        <mxCell id="edge_step5_vector_down" value="Step 5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#475569;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#CBD5E1;fontColor=#0F172A;fontSize=9.5;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="card_vector_dumps_1" target="card_vector_dumps_2">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
         <!-- Flow 14: Unmonitored Chat UIs -> Unmonitored Chat UI Top -->
-        <mxCell id="edge_chat_bot_to_top" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" edge="1" parent="1" source="card_unmonitored_chat_bot" target="card_unmonitored_chat_top">
+        <mxCell id="edge_chat_bot_to_top" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#475569;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" edge="1" parent="1" source="card_unmonitored_chat_bot" target="card_unmonitored_chat_top">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
         <!-- Flow 15: Unshielded Exec -> Vector Dumps 2 across bottom (Step 3) -->
-        <mxCell id="edge_step3_bottom_leak" value="Step 3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0F172A;fontColor=#CBD5E1;fontSize=9.5;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_unshielded_exec" target="card_vector_dumps_2">
+        <mxCell id="edge_step3_bottom_leak" value="Step 3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#475569;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#FFFFFF;labelBorderColor=#CBD5E1;fontColor=#0F172A;fontSize=9.5;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="card_unshielded_exec" target="card_vector_dumps_2">
           <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
         <!-- ==================== BOTTOM PROCESS FLOW & LEGEND ==================== -->
-        <mxCell id="strip_footer" value="&lt;table style=&quot;width:100%;font-size:9.5px;color:#94A3B8;line-height:1.2;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;padding-left:12px;&quot;&gt;&lt;b style=&quot;color:#EF4444;&quot;&gt;🚨 CURRENT BASELINE PROCESS FLOW:&lt;/b&gt; &lt;span style=&quot;color:#FCA5A5;&quot;&gt;Step 1:&lt;/span&gt; Siloed Client Scripts &amp;amp; Tokens ➔ &lt;span style=&quot;color:#FCA5A5;&quot;&gt;Step 2:&lt;/span&gt; Fragile Public Egress (Lack Rate Limiting) ➔ &lt;span style=&quot;color:#FCA5A5;&quot;&gt;Step 3:&lt;/span&gt; Unsandboxed Scrapers &amp;amp; 8k Context Fragmentation ➔ &lt;span style=&quot;color:#FCA5A5;&quot;&gt;Step 4:&lt;/span&gt; Unindexed Vector Dumps ➔ &lt;span style=&quot;color:#FCA5A5;&quot;&gt;Step 5:&lt;/span&gt; Unmonitored Chat UIs &amp;amp; Model Drift &amp;nbsp;|&amp;nbsp; &lt;b style=&quot;color:#10B981;&quot;&gt;✓ TARGET MODERNIZATION:&lt;/b&gt; Vertex AI Gemini 2.5/3.7, Model Armor TRiSM, Context Caching &amp;amp; BigLake Grounding.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#111827;strokeColor=#1E293B;strokeWidth=1;" vertex="1" parent="1">
+        <mxCell id="strip_footer" value="&lt;table style=&quot;width:100%;font-size:9.5px;color:#334155;line-height:1.2;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;padding-left:12px;&quot;&gt;&lt;b style=&quot;color:#DC2626;&quot;&gt;🚨 CURRENT BASELINE PROCESS FLOW:&lt;/b&gt; &lt;span style=&quot;color:#991B1B;font-weight:bold;&quot;&gt;Step 1:&lt;/span&gt; Siloed Client Scripts &amp;amp; Tokens ➔ &lt;span style=&quot;color:#991B1B;font-weight:bold;&quot;&gt;Step 2:&lt;/span&gt; Fragile Public Egress (Lack Rate Limiting) ➔ &lt;span style=&quot;color:#991B1B;font-weight:bold;&quot;&gt;Step 3:&lt;/span&gt; Unsandboxed Scrapers &amp;amp; 8k Context Fragmentation ➔ &lt;span style=&quot;color:#991B1B;font-weight:bold;&quot;&gt;Step 4:&lt;/span&gt; Unindexed Vector Dumps ➔ &lt;span style=&quot;color:#991B1B;font-weight:bold;&quot;&gt;Step 5:&lt;/span&gt; Unmonitored Chat UIs &amp;amp; Tool Failure Loops &amp;nbsp;|&amp;nbsp; &lt;b style=&quot;color:#15803D;&quot;&gt;✓ TARGET MODERNIZATION:&lt;/b&gt; Vertex AI Gemini 2.5/3.7, Model Armor TRiSM, Context Caching &amp;amp; BigLake Grounding.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;" vertex="1" parent="1">
           <mxGeometry x="30" y="805" width="1500" height="38" as="geometry"/>
         </mxCell>
       </root>
@@ -9972,32 +10060,32 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
       if (isOpenAiDetected && isAws) {
         res = res
           .replace(
-            /&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;line-height:1.2;&quot;&gt;Direct public&lt;br\/&gt;endpoints&lt;\/div&gt;/g,
-            '&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:openai-icon.svg&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&amp;nbsp;&lt;img src=&quot;https://api.iconify.design/logos:aws.svg&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10.5px;font-weight:bold;color:#F8FAFC;padding-top:2px;&quot;&gt;OpenAI on AWS&lt;br/&gt;&lt;span style=&quot;font-size:7.5px;color:#94A3B8;font-weight:normal;&quot;&gt;Direct Public Endpoints (No VPC-SC)&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
+            /&lt;div style=&quot;font-size:11(?:\.5)?px;font-weight:700;color:#(?:0F172A|F8FAFC);line-height:1\.2;&quot;&gt;Direct public&lt;br\/?&gt;endpoints&lt;\/div&gt;(?:&lt;div[^&gt;]*&gt;[^&lt;]*&lt;\/div&gt;)?/g,
+            '&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:openai-icon.svg&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&amp;nbsp;&lt;img src=&quot;https://api.iconify.design/logos:aws.svg&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10.5px;font-weight:bold;color:#0F172A;padding-top:2px;&quot;&gt;OpenAI on AWS&lt;br/&gt;&lt;span style=&quot;font-size:7.5px;color:#475569;font-weight:normal;&quot;&gt;Direct Public Endpoints (No VPC-SC)&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
           );
       } else if (isOpenAiDetected) {
         res = res.replace(
-          /&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;line-height:1.2;&quot;&gt;Direct public&lt;br\/&gt;endpoints&lt;\/div&gt;/g,
-          '&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:openai-icon.svg&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10.5px;font-weight:bold;color:#F8FAFC;padding-top:2px;&quot;&gt;Direct OpenAI API&lt;br/&gt;&lt;span style=&quot;font-size:7.5px;color:#94A3B8;font-weight:normal;&quot;&gt;Unproxied Public Egress&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
+          /&lt;div style=&quot;font-size:11(?:\.5)?px;font-weight:700;color:#(?:0F172A|F8FAFC);line-height:1\.2;&quot;&gt;Direct public&lt;br\/?&gt;endpoints&lt;\/div&gt;(?:&lt;div[^&gt;]*&gt;[^&lt;]*&lt;\/div&gt;)?/g,
+          '&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:openai-icon.svg&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10.5px;font-weight:bold;color:#0F172A;padding-top:2px;&quot;&gt;Direct OpenAI API&lt;br/&gt;&lt;span style=&quot;font-size:7.5px;color:#475569;font-weight:normal;&quot;&gt;Unproxied Public Egress&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
         );
       }
 
       if (isPinecone) {
         res = res.replace(
-          /&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;margin-top:4px;line-height:1.2;&quot;&gt;Unindexed&lt;br\/&gt;vector dumps&lt;\/div&gt;/,
-          '&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:pinecone-icon.svg&quot; width=&quot;22&quot; height=&quot;22&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10.5px;font-weight:bold;color:#F8FAFC;padding-top:2px;&quot;&gt;Pinecone Vector DB&lt;br/&gt;&lt;span style=&quot;font-size:7.5px;color:#94A3B8;font-weight:normal;&quot;&gt;Unmanaged SaaS Cluster&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
+          /&lt;div style=&quot;font-size:11(?:\.5)?px;font-weight:700;color:#(?:0F172A|F8FAFC);(?:margin-top:4px;)?line-height:1\.2;&quot;&gt;Unindexed&lt;br\/?&gt;vector dumps&lt;\/div&gt;(?:&lt;div[^&gt;]*&gt;[^&lt;]*&lt;\/div&gt;)?/,
+          '&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:pinecone-icon.svg&quot; width=&quot;22&quot; height=&quot;22&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10.5px;font-weight:bold;color:#0F172A;padding-top:2px;&quot;&gt;Pinecone Vector DB&lt;br/&gt;&lt;span style=&quot;font-size:7.5px;color:#475569;font-weight:normal;&quot;&gt;Unmanaged SaaS Cluster&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
         );
       } else if (isWeaviate) {
         res = res.replace(
-          /&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;margin-top:4px;line-height:1.2;&quot;&gt;Unindexed&lt;br\/&gt;vector dumps&lt;\/div&gt;/,
-          '&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:weaviate-icon.svg&quot; width=&quot;22&quot; height=&quot;22&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10.5px;font-weight:bold;color:#F8FAFC;padding-top:2px;&quot;&gt;Weaviate Vector DB&lt;br/&gt;&lt;span style=&quot;font-size:7.5px;color:#94A3B8;font-weight:normal;&quot;&gt;Self-Hosted / Managed Cluster&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
+          /&lt;div style=&quot;font-size:11(?:\.5)?px;font-weight:700;color:#(?:0F172A|F8FAFC);(?:margin-top:4px;)?line-height:1\.2;&quot;&gt;Unindexed&lt;br\/?&gt;vector dumps&lt;\/div&gt;(?:&lt;div[^&gt;]*&gt;[^&lt;]*&lt;\/div&gt;)?/,
+          '&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:weaviate-icon.svg&quot; width=&quot;22&quot; height=&quot;22&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10.5px;font-weight:bold;color:#0F172A;padding-top:2px;&quot;&gt;Weaviate Vector DB&lt;br/&gt;&lt;span style=&quot;font-size:7.5px;color:#475569;font-weight:normal;&quot;&gt;Self-Hosted / Managed Cluster&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
         );
       }
 
       if (isLangChain) {
         res = res.replace(
-          /&lt;div style=&quot;font-size:10.5px;font-weight:700;color:#F8FAFC;margin-top:4px;line-height:1.2;&quot;&gt;Isolated&lt;br\/&gt;Python scripts&lt;\/div&gt;/,
-          '&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:langchain-icon.svg&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#F8FAFC;padding-top:2px;&quot;&gt;LangChain Scripts&lt;br/&gt;&lt;span style=&quot;font-size:7.5px;color:#94A3B8;font-weight:normal;&quot;&gt;Fragile Single-Thread Chains&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
+          /&lt;div style=&quot;font-size:10(?:\.5)?px;font-weight:700;color:#(?:0F172A|F8FAFC);(?:margin-top:4px;)?line-height:1\.2;&quot;&gt;Isolated&lt;br\/?&gt;Python scripts&lt;\/div&gt;(?:&lt;div[^&gt;]*&gt;[^&lt;]*&lt;\/div&gt;)?/,
+          '&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:langchain-icon.svg&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;font-weight:bold;color:#0F172A;padding-top:2px;&quot;&gt;LangChain Scripts&lt;br/&gt;&lt;span style=&quot;font-size:7.5px;color:#475569;font-weight:normal;&quot;&gt;Fragile Single-Thread Chains&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
         );
       }
 
@@ -10060,7 +10148,7 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
       currentTitle: `Current Baseline: Fragile OpenAI Endpoints & High Token Costs (${cust})`,
       currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • ARCH-GENAI-01 OpenAI Wrapper • Unmanaged API Keys`,
       curReasoning: "Proprietary SDK hardcoding, unmanaged public egress endpoints, lack of prompt caching, and 8k token context fragmentation cause high token burn and vendor lock-in.",
-      currentStateXml: customizeXml(buildLegacyGenAiStackXml(cust), 'current', 'OpenAI Legacy Stack'),
+      currentStateXml: customizeXml(buildLegacyGenAiStackXml(cust, archCtx), 'current', 'OpenAI Legacy Stack'),
       targetTitle: `Target State: Google Vertex AI & Gemini Enterprise Agent Platform (${cust})`,
       targetSubtitle: `Target Maturity Level ${tgt}/5.0 (Optimized) • P4-AI-P-04 Agent Runtime • 2M Context • Model Armor`,
       targetStateXml: customizeXml(buildEnterpriseAgentRuntimeXml(), 'target', 'Vertex AI & Gemini Runtime'),
@@ -10170,7 +10258,7 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
       currentTitle: `Current Baseline: Fragmented Departmental AI Sandboxes (${cust})`,
       currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • ARCH-GENAI-01 Departmental POCs • Ad-Hoc Evaluation`,
       curReasoning: "Disjointed departmental POCs, unbenchmarked LLM accuracy, lack of centralized model evaluation, and absent guardrails prevent production deployment.",
-      currentStateXml: customizeXml(buildLegacyGenAiStackXml(cust), 'current', 'Departmental POCs'),
+      currentStateXml: customizeXml(buildLegacyGenAiStackXml(cust, archCtx), 'current', 'Departmental POCs'),
       targetTitle: `Target State: Enterprise GenAI Platform & Automated Evaluation Suite (${cust})`,
       targetSubtitle: `Target Maturity Level ${tgt}/5.0 (Optimized) • P4-GOV-L-06 Evaluation Suite • Vertex Model Garden`,
       targetStateXml: customizeXml(buildEnterpriseAgentRuntimeXml(), 'target', 'Enterprise GenAI & Multi-Agent Platform'),
@@ -10426,5 +10514,6 @@ module.exports = {
   buildMicroFrontendsXml,
   buildLogicalAiConfigTenantXml,
   buildDataResidencySovereignMapXml,
-  buildHybridMultiCloudXml
+  buildHybridMultiCloudXml,
+  buildLegacyGenAiStackXml
 };
