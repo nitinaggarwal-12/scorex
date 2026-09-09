@@ -30,6 +30,7 @@ const featureDB = require('./services/databricksFeatureDatabase');
 const sampleAssessmentGenerator = require('./utils/sampleAssessmentGenerator');
 const industryBenchmarkingService = require('./services/industryBenchmarkingService');
 const db = require('./db/connection');
+const { applyQuestionEdits } = require('./utils/questionEditsHelper');
 const { requireAuth } = require('./middleware/auth');
 
 const app = express();
@@ -580,7 +581,8 @@ app.get('/api/assessment/:id/category/:categoryId', requireAuth, async (req, res
       });
     }
 
-    const area = assessmentFramework.assessmentAreas.find(a => a.id === categoryId);
+    const effectiveFramework = await applyQuestionEdits(id, assessmentFramework);
+    const area = effectiveFramework.assessmentAreas.find(a => a.id === categoryId);
     if (!area) {
       return res.status(404).json({
         success: false,
