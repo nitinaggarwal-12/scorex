@@ -8,6 +8,10 @@ const db = require('../db/connection');
  */
 async function applyQuestionEdits(assessmentId, framework) {
   try {
+    if (!db.isInitialized || !db.pool) {
+      return framework;
+    }
+
     // Fetch all edits for this assessment
     const editsResult = await db.query(
       'SELECT * FROM question_edits WHERE assessment_id = $1',
