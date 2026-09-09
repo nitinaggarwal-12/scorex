@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -1856,6 +1856,43 @@ const ResultsNotReleased = ({ assessmentId }) => {
   );
 };
 
+// Standard reference pillars with rich visual metadata
+const DEFAULT_PILLARS = [
+  { id: 'platform_governance', name: 'Platform & Governance', icon: '🧱', color: '#3b82f6', emoji: '🏛️' },
+  { id: 'data_engineering', name: 'Data Engineering & Integration', icon: '💾', color: '#10b981', emoji: '🔄' },
+  { id: 'analytics_bi', name: 'Analytics & BI Modernization', icon: '📈', color: '#ec4899', emoji: '📊' },
+  { id: 'machine_learning', name: 'Machine Learning & MLOps', icon: '🤖', color: '#f59e0b', emoji: '🧠' },
+  { id: 'generative_ai', name: 'Generative AI & Agentic Capabilities', icon: '💡', color: '#8b5cf6', emoji: '✨' },
+  { id: 'operational_excellence', name: 'Operational Excellence & Adoption', icon: '⚙️', color: '#06b6d4', emoji: '🎯' }
+];
+
+const getActivePillars = (resultsData) => {
+  const catDetails = resultsData?.categoryDetails;
+  if (catDetails && typeof catDetails === 'object' && Object.keys(catDetails).length > 0) {
+    const keys = Object.keys(catDetails);
+    const defaultIds = DEFAULT_PILLARS.map(p => p.id);
+    const hasCustomKeys = keys.some(k => !defaultIds.includes(k));
+    if (hasCustomKeys) {
+      const palette = ['#3b82f6', '#10b981', '#ec4899', '#f59e0b', '#8b5cf6', '#06b6d4', '#6366f1', '#14b8a6'];
+      const icons = ['🧱', '💾', '📈', '🤖', '💡', '⚙️', '🛡️', '⚡'];
+      return keys.map((key, idx) => {
+        const found = DEFAULT_PILLARS.find(p => p.id === key);
+        if (found) return found;
+        const details = catDetails[key] || {};
+        const name = details.name || details.title || key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        return {
+          id: key,
+          name: name,
+          icon: details.icon || icons[idx % icons.length],
+          color: details.color || palette[idx % palette.length],
+          emoji: details.emoji || details.icon || icons[idx % icons.length]
+        };
+      });
+    }
+  }
+  return DEFAULT_PILLARS;
+};
+
 const AssessmentResultsNew = () => {
   const { assessmentId } = useParams();
   const navigate = useNavigate();
@@ -1870,6 +1907,11 @@ const AssessmentResultsNew = () => {
   const [benchmarkLoading, setBenchmarkLoading] = useState(false);
   const [showSimulator, setShowSimulator] = useState(false);
   const [simulatedTargets, setSimulatedTargets] = useState(null);
+
+  // Dynamic assessment data & active pillars resolution
+  const resultsData = results?.data || results;
+  const pillars = useMemo(() => getActivePillars(resultsData), [resultsData]);
+  const totalSlides = 3 + (pillars.length * 3);
   
   // Slideshow mode state
   const [presentationMode, setPresentationMode] = useState(false);
@@ -2247,9 +2289,9 @@ const AssessmentResultsNew = () => {
       
       const originalSlide = currentSlide;
       
-      // Loop through all 20 slides
-      for (let i = 0; i < 20; i++) {
-        toast.loading(`Capturing slide ${i + 1} of 20...`, { id: toastId });
+      // Loop through all slides
+      for (let i = 0; i < totalSlides; i++) {
+        toast.loading(`Capturing slide ${i + 1} of ${totalSlides}...`, { id: toastId });
         
         // Navigate to slide
         setCurrentSlide(i);
@@ -2356,16 +2398,6 @@ const AssessmentResultsNew = () => {
   };
 
   const nextSlide = () => {
-    const pillarsArray = [
-      { id: 'platform_governance', name: 'Platform & Governance' },
-      { id: 'data_engineering', name: 'Data Engineering & Integration' },
-      { id: 'analytics_bi', name: 'Analytics & BI Modernization' },
-      { id: 'machine_learning', name: 'Machine Learning & MLOps' },
-      { id: 'generative_ai', name: 'Generative AI & Agentic Capabilities' },
-      { id: 'operational_excellence', name: 'Operational Excellence & Adoption' }
-    ];
-    // Total: 2 intro slides + 6 pillars x 3 slides each (dimensions, overview, next steps) = 2 + 18 = 20 total
-    const totalSlides = 2 + (pillarsArray.length * 3); // = 2 + 18 = 20
     if (currentSlide < totalSlides - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
@@ -2380,27 +2412,16 @@ const AssessmentResultsNew = () => {
     }
   };
 
-  // Calculate overall score from all pillars
+  // Calculate overall score dynamically from all active pillars
   const calculateOverallScore = () => {
-    const resultsData = results?.data || results;
     const categoryDetails = resultsData?.categoryDetails;
-    
     if (!categoryDetails) return 0;
-    
-    const pillarsArray = [
-      'platform_governance',
-      'data_engineering',
-      'analytics_bi',
-      'machine_learning',
-      'generative_ai',
-      'operational_excellence'
-    ];
     
     let totalScore = 0;
     let count = 0;
     
-    pillarsArray.forEach(pillarId => {
-      const pillarData = categoryDetails[pillarId];
+    pillars.forEach(p => {
+      const pillarData = categoryDetails[p.id];
       if (pillarData && pillarData.score !== undefined) {
         totalScore += pillarData.score;
         count++;
@@ -2421,15 +2442,6 @@ const AssessmentResultsNew = () => {
         document.body.style.overflow = 'auto';
       }
       if (e.key === 'ArrowRight' || e.key === ' ') {
-        const pillarsArray = [
-          { id: 'platform_governance', name: 'Platform & Governance' },
-          { id: 'data_engineering', name: 'Data Engineering & Integration' },
-          { id: 'analytics_bi', name: 'Analytics & BI Modernization' },
-          { id: 'machine_learning', name: 'Machine Learning & MLOps' },
-          { id: 'generative_ai', name: 'Generative AI & Agentic Capabilities' },
-          { id: 'operational_excellence', name: 'Operational Excellence & Adoption' }
-        ];
-        const totalSlides = 2 + (pillarsArray.length * 3);
         setCurrentSlide(prev => {
           if (prev < totalSlides - 1) {
             return prev + 1;
@@ -2448,7 +2460,7 @@ const AssessmentResultsNew = () => {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [presentationMode]);
+  }, [presentationMode, totalSlides]);
 
   // Edit handlers for Good Items ("What's Working")
   const handleEditGoodItem = (pillarId, itemIndex, text) => {
@@ -3196,25 +3208,12 @@ const AssessmentResultsNew = () => {
     );
   }
 
-  // 🔥 FIX: Extract resultsData FIRST before using it
-  const resultsData = results?.data || results;
-  
   // Calculate maturity levels from actual results data
   // 🔥 FIX: Default to Level 1 (Explore) if no responses, not Level 3!
   const hasAnyResponses = resultsData?.assessmentInfo?.questionsAnswered > 0;
   const currentMaturity = hasAnyResponses ? (resultsData?.overall?.currentScore || 1) : 1;
   const targetMaturity = hasAnyResponses ? (resultsData?.overall?.futureScore || 1) : 1;
   const improvementLevel = parseFloat((targetMaturity - currentMaturity).toFixed(1)); // 🔥 Round to 1 decimal place
-
-  // Pillar data with icons
-  const pillars = [
-    { id: 'platform_governance', name: 'Platform & Governance', icon: '🧱' },
-    { id: 'data_engineering', name: 'Data Engineering & Integration', icon: '📊' },
-    { id: 'analytics_bi', name: 'Analytics & BI Modernization', icon: '📈' },
-    { id: 'machine_learning', name: 'Machine Learning & MLOps', icon: '🤖' },
-    { id: 'generative_ai', name: 'Generative AI & Agentic Capabilities', icon: '💡' },
-    { id: 'operational_excellence', name: 'Operational Excellence & Adoption', icon: '⚙️' },
-  ];
 
   // Phase colors for Strategic Roadmap
   const phaseColors = {
@@ -6054,28 +6053,20 @@ const AssessmentResultsNew = () => {
             </NavigationButton>
             
             <SlideHeading>
-              {currentSlide === 0 || currentSlide === 21 ? '' : 
+              {currentSlide === 0 || currentSlide === totalSlides - 1 ? '' : 
                currentSlide === 1 ? 'Maturity Snapshot by Pillar' : (() => {
-                const pillarsArray = [
-                  { id: 'platform_governance', name: 'Platform & Governance' },
-                  { id: 'data_engineering', name: 'Data Engineering & Integration' },
-                  { id: 'analytics_bi', name: 'Analytics & BI Modernization' },
-                  { id: 'machine_learning', name: 'Machine Learning & MLOps' },
-                  { id: 'generative_ai', name: 'Generative AI & Agentic Capabilities' },
-                  { id: 'operational_excellence', name: 'Operational Excellence & Adoption' }
-                ];
-                // Slides 2-19: 6 pillars x 3 slides each (title, maturity chart, recommendations/next steps)
-                if (currentSlide >= 2 && currentSlide <= 19) {
+                const pillarLimit = 2 + (pillars.length * 3);
+                if (currentSlide >= 2 && currentSlide < pillarLimit) {
                   const pillarIndex = Math.floor((currentSlide - 2) / 3);
                   const slideType = (currentSlide - 2) % 3; // 0=title, 1=chart, 2=recommendations
-                  const pillarName = pillarsArray[pillarIndex]?.name || '';
+                  const pillarName = pillars[pillarIndex]?.name || '';
                   // Hide heading for pillar title slides
                   return slideType === 0 ? '' : pillarName;
                 }
                 return '';
               })()}
             </SlideHeading>
-            <SlideCounter data-hide-on-print="true">{currentSlide + 1} / 22</SlideCounter>
+            <SlideCounter data-hide-on-print="true">{currentSlide + 1} / {totalSlides}</SlideCounter>
 
             {/* Print Button - Always visible on hover */}
             <PrintButton
@@ -6084,7 +6075,7 @@ const AssessmentResultsNew = () => {
                 handlePrintSlideshow();
               }}
               whileTap={{ scale: 0.9 }}
-              title="Print all 20 slides"
+              title={`Print all ${totalSlides} slides`}
               data-hide-on-print="true"
             >
               <FiPrinter />
@@ -6370,66 +6361,55 @@ const AssessmentResultsNew = () => {
 
                       {/* Maturity Snapshot Chart - Below Cards */}
                       {(() => {
-                    const pillarsArray = [
-                      { id: 'platform_governance', name: 'Platform & Governance', icon: '🧱', color: '#3b82f6' },
-                      { id: 'data_engineering', name: 'Data Engineering & Integration', icon: '💾', color: '#ef4444' },
-                      { id: 'analytics_bi', name: 'Analytics & BI Modernization', icon: '📈', color: '#10b981' },
-                      { id: 'machine_learning', name: 'Machine Learning & MLOps', icon: '🤖', color: '#f59e0b' },
-                      { id: 'generative_ai', name: 'Generative AI & Agentic Capabilities', icon: '💡', color: '#8b5cf6' },
-                      { id: 'operational_excellence', name: 'Operational Excellence & Adoption', icon: '⚙️', color: '#06b6d4' }
-                    ];
-                    
-                    const resultsData = results?.data || results;
-                    
-                    return (
-                      <div style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '12px',
-                        paddingTop: '10px',
-                        paddingBottom: '10px',
-                        maxWidth: '1400px',
-                        margin: '0 auto',
-                        width: '100%'
-                      }}>
-                        {/* Legend */}
-                        <div style={{
-                          display: 'flex',
-                          justifyContent: 'center',
-                          gap: '32px',
-                          marginBottom: '8px'
-                        }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <div style={{ 
-                              width: 18, 
-                              height: 18, 
-                              borderRadius: 5, 
-                              background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)', 
-                              boxShadow: '0 3px 10px rgba(59, 130, 246, 0.4)'
-                            }} />
-                            <span style={{ fontSize: '1.05rem', color: 'white', fontWeight: 700, textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)' }}>Today</span>
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <div style={{ 
-                              width: 18, 
-                              height: 18, 
-                              borderRadius: 5, 
-                              background: 'transparent', 
-                              border: '2.5px solid #10b981',
-                              boxShadow: '0 3px 10px rgba(16, 185, 129, 0.3)'
-                            }} />
-                            <span style={{ fontSize: '1.05rem', color: 'white', fontWeight: 700, textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)' }}>Tomorrow</span>
-                          </div>
-                        </div>
+                        return (
+                          <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '12px',
+                            paddingTop: '10px',
+                            paddingBottom: '10px',
+                            maxWidth: '1400px',
+                            margin: '0 auto',
+                            width: '100%'
+                          }}>
+                            {/* Legend */}
+                            <div style={{
+                              display: 'flex',
+                              justifyContent: 'center',
+                              gap: '32px',
+                              marginBottom: '8px'
+                            }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <div style={{ 
+                                  width: 18, 
+                                  height: 18, 
+                                  borderRadius: 5, 
+                                  background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)', 
+                                  boxShadow: '0 3px 10px rgba(59, 130, 246, 0.4)'
+                                }} />
+                                <span style={{ fontSize: '1.05rem', color: 'white', fontWeight: 700, textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)' }}>Today</span>
+                              </div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <div style={{ 
+                                  width: 18, 
+                                  height: 18, 
+                                  borderRadius: 5, 
+                                  background: 'transparent', 
+                                  border: '2.5px solid #10b981', 
+                                  boxShadow: '0 3px 10px rgba(16, 185, 129, 0.3)'
+                                }} />
+                                <span style={{ fontSize: '1.05rem', color: 'white', fontWeight: 700, textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)' }}>Tomorrow</span>
+                              </div>
+                            </div>
 
-                        {/* 3x2 Grid of Pillars */}
-                        <div style={{
-                          display: 'grid',
-                          gridTemplateColumns: 'repeat(2, 1fr)',
-                          gap: '14px',
-                          padding: '0 30px'
-                        }}>
-                        {pillarsArray.map((pillar) => {
+                            {/* Grid of Pillars */}
+                            <div style={{
+                              display: 'grid',
+                              gridTemplateColumns: 'repeat(2, 1fr)',
+                              gap: '14px',
+                              padding: '0 30px'
+                            }}>
+                            {pillars.map((pillar) => {
                             const categoryData = resultsData?.categoryDetails?.[pillar.id] || {};
                             const currentScore = (categoryData.currentScore || categoryData.score || 0).toFixed(1);
                             const futureScore = (categoryData.futureScore || categoryData.currentScore || categoryData.score || 0).toFixed(1);
@@ -6543,18 +6523,10 @@ const AssessmentResultsNew = () => {
                     </div>
                   )}
 
-                  {/* Pillar Title Slides (Slides 2,5,8,11,14,17) - Pillar Introduction */}
-                  {currentSlide >= 2 && currentSlide <= 19 && (currentSlide - 2) % 3 === 0 && (() => {
-                    const pillarsArray = [
-                      { id: 'platform_governance', name: 'Platform & Governance', icon: '🧱', color: '#3b82f6', emoji: '🏛️' },
-                      { id: 'data_engineering', name: 'Data Engineering & Integration', icon: '💾', color: '#10b981', emoji: '🔄' },
-                      { id: 'analytics_bi', name: 'Analytics & BI Modernization', icon: '📈', color: '#ec4899', emoji: '📊' },
-                      { id: 'machine_learning', name: 'Machine Learning & MLOps', icon: '🤖', color: '#f59e0b', emoji: '🧠' },
-                      { id: 'generative_ai', name: 'Generative AI & Agentic Capabilities', icon: '💡', color: '#8b5cf6', emoji: '✨' },
-                      { id: 'operational_excellence', name: 'Operational Excellence & Adoption', icon: '⚙️', color: '#06b6d4', emoji: '🎯' }
-                    ];
+                  {/* Pillar Title Slides - Pillar Introduction */}
+                  {currentSlide >= 2 && currentSlide < (2 + pillars.length * 3) && (currentSlide - 2) % 3 === 0 && (() => {
                     const pillarIndex = Math.floor((currentSlide - 2) / 3);
-                    const pillar = pillarsArray[pillarIndex];
+                    const pillar = pillars[pillarIndex];
                     if (!pillar) return null;
                     
                     return (
@@ -6573,7 +6545,7 @@ const AssessmentResultsNew = () => {
                           marginBottom: '20px',
                           filter: 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3))'
                         }}>
-                          {pillar.emoji}
+                          {pillar.emoji || pillar.icon || '✨'}
                         </div>
                         <div style={{
                           fontSize: '4rem',
@@ -6589,26 +6561,18 @@ const AssessmentResultsNew = () => {
                         <div style={{
                           width: '200px',
                           height: '6px',
-                          background: `linear-gradient(90deg, transparent, ${pillar.color}, transparent)`,
+                          background: `linear-gradient(90deg, transparent, ${pillar.color || '#3b82f6'}, transparent)`,
                           borderRadius: '3px',
-                          boxShadow: `0 4px 12px ${pillar.color}60`
+                          boxShadow: `0 4px 12px ${(pillar.color || '#3b82f6')}60`
                         }} />
                       </div>
                     );
                   })()}
 
-                  {/* Pillar Overview Slides (Slides 4,7,10,13,16,19) - Key Recommendations & Next Steps */}
-                  {currentSlide >= 2 && currentSlide <= 19 && (currentSlide - 2) % 3 === 2 && (() => {
-                    const pillarsArray = [
-                      { id: 'platform_governance', name: 'Platform & Governance', color: '#3b82f6' },
-                      { id: 'data_engineering', name: 'Data Engineering & Integration', color: '#10b981' },
-                      { id: 'analytics_bi', name: 'Analytics & BI Modernization', color: '#ec4899' },
-                      { id: 'machine_learning', name: 'Machine Learning & MLOps', color: '#f59e0b' },
-                      { id: 'generative_ai', name: 'Generative AI & Agentic Capabilities', color: '#8b5cf6' },
-                      { id: 'operational_excellence', name: 'Operational Excellence & Adoption', color: '#06b6d4' }
-                    ];
+                  {/* Pillar Overview Slides - Key Recommendations & Next Steps */}
+                  {currentSlide >= 2 && currentSlide < (2 + pillars.length * 3) && (currentSlide - 2) % 3 === 2 && (() => {
                     const pillarIndex = Math.floor((currentSlide - 2) / 3);
-                    const pillarDef = pillarsArray[pillarIndex];
+                    const pillarDef = pillars[pillarIndex];
                     if (!pillarDef) return null;
                     
                     // Get pillar data from results using the same logic as getPillarData
@@ -6809,19 +6773,11 @@ const AssessmentResultsNew = () => {
                     );
                   })()}
 
-                  {/* Dimension Breakdown / Maturity Chart Slides (Slides 3,6,9,12,15,18) - slideType 1 */}
+                  {/* Dimension Breakdown / Maturity Chart Slides - slideType 1 */}
                   {/* NEW LAYOUT: Chart (left) + What's Working (top right) + Key Challenges (bottom right) */}
-                  {currentSlide >= 2 && currentSlide <= 19 && (currentSlide - 2) % 3 === 1 && (() => {
-                    const pillarsArray = [
-                      { id: 'platform_governance', name: 'Platform & Governance', color: '#3b82f6' },
-                      { id: 'data_engineering', name: 'Data Engineering & Integration', color: '#10b981' },
-                      { id: 'analytics_bi', name: 'Analytics & BI Modernization', color: '#ec4899' },
-                      { id: 'machine_learning', name: 'Machine Learning & MLOps', color: '#f59e0b' },
-                      { id: 'generative_ai', name: 'Generative AI & Agentic Capabilities', color: '#8b5cf6' },
-                      { id: 'operational_excellence', name: 'Operational Excellence & Adoption', color: '#06b6d4' }
-                    ];
+                  {currentSlide >= 2 && currentSlide < (2 + pillars.length * 3) && (currentSlide - 2) % 3 === 1 && (() => {
                     const pillarIndex = Math.floor((currentSlide - 2) / 3);
-                    const pillarDef = pillarsArray[pillarIndex];
+                    const pillarDef = pillars[pillarIndex];
                     if (!pillarDef) return null;
                     
                     // Get dimensions for this pillar (same logic as report section)
@@ -7102,114 +7058,8 @@ const AssessmentResultsNew = () => {
                     );
                   })()}
 
-                  {/* Next Steps Slides - REMOVED */}
-                  {false && currentSlide >= 2 && currentSlide <= 20 && (currentSlide - 2) % 3 === 2 && (() => {
-                    const pillarsArray = [
-                      { id: 'platform_governance', name: 'Platform & Governance', color: '#3b82f6' },
-                      { id: 'data_engineering', name: 'Data Engineering & Integration', color: '#10b981' },
-                      { id: 'analytics_bi', name: 'Analytics & BI Modernization', color: '#ec4899' },
-                      { id: 'machine_learning', name: 'Machine Learning & MLOps', color: '#f59e0b' },
-                      { id: 'generative_ai', name: 'Generative AI & Agentic Capabilities', color: '#8b5cf6' },
-                      { id: 'operational_excellence', name: 'Operational Excellence & Adoption', color: '#06b6d4' }
-                    ];
-                    const pillarIndex = Math.floor((currentSlide - 2) / 3);
-                    const pillarDef = pillarsArray[pillarIndex];
-                    if (!pillarDef) return null;
-                    
-                    // Get pillar data
-                    const pillarData = getPillarData(pillarDef.id);
-                    const nextSteps = pillarData?.specificRecommendations || pillarData?.nextSteps || [];
-                    
-                    console.log(`[Slideshow] Next Steps for ${pillarDef.id}:`, nextSteps?.length || 0);
-                    
-                    return (
-                              <div style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                        gap: '20px',
-                        paddingTop: '50px',
-                        maxWidth: '1200px',
-                        margin: '0 auto',
-                        width: '100%'
-                      }}>
-                        {/* Title */}
-                        <div style={{
-                          fontSize: '2.5rem',
-                          fontWeight: 700,
-                          color: 'white',
-                          textAlign: 'center',
-                          marginBottom: '20px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                                gap: '12px'
-                              }}>
-                          <span style={{ fontSize: '3rem' }}>🎯</span>
-                          Next Steps
-                        </div>
-
-                        {nextSteps && nextSteps.length > 0 ? (
-                          <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(2, 1fr)',
-                            gap: '20px'
-                          }}>
-                            {nextSteps.slice(0, 6).map((step, idx) => (
-                                  <div key={idx} style={{
-                                background: 'rgba(255, 255, 255, 0.95)',
-                                borderRadius: '16px',
-                                padding: '24px',
-                                border: `4px solid ${pillarDef.color}`,
-                                    display: 'flex',
-                                gap: '16px',
-                                alignItems: 'flex-start',
-                                minHeight: '140px'
-                              }}>
-                                <div style={{
-                                  background: pillarDef.color,
-                                  color: 'white',
-                                  width: '40px',
-                                  height: '40px',
-                                  borderRadius: '50%',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  fontSize: '1.5rem',
-                                  fontWeight: 700,
-                                  flexShrink: 0
-                                }}>
-                                  {idx + 1}
-                                </div>
-                                <div style={{
-                                      fontSize: '1.2rem',
-                                  color: '#1e293b',
-                                  lineHeight: '1.7',
-                                  flex: 1
-                                    }}>
-                                  {step}
-                                </div>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : (
-                              <div style={{
-                            background: 'rgba(255, 255, 255, 0.95)',
-                            borderRadius: '16px',
-                            padding: '40px',
-                                textAlign: 'center',
-                            fontSize: '1.3rem',
-                            color: '#64748b',
-                            fontStyle: 'italic'
-                              }}>
-                            No specific next steps available for this pillar
-                              </div>
-                            )}
-                          </div>
-                    );
-                  })()}
-
-                  {/* Thank You Slide (Slide 21) */}
-                  {currentSlide === 21 && (
+                  {/* Thank You Slide */}
+                  {currentSlide === totalSlides - 1 && (
                     <div style={{
                       display: 'flex',
                       flexDirection: 'column',

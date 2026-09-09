@@ -58,11 +58,26 @@ export const exportAssessmentToPPTX = async (instance, report) => {
       maturityLevel: instance?.maturityLevel || 'Defined',
       dimensionScores: instance?.scores || {}
     };
-    const dimensions = framework.dimensions || [];
+    let dimensions = framework.dimensions || framework.assessmentAreas || [];
+    if (!dimensions || dimensions.length === 0) {
+      if (report?.categoryDetails) {
+        dimensions = Object.entries(report.categoryDetails).map(([key, cat]) => ({
+          id: key,
+          name: cat.name || cat.title || key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+          description: cat.description || ''
+        }));
+      } else if (report?.pillarStatus && Array.isArray(report.pillarStatus)) {
+        dimensions = report.pillarStatus.map(p => ({
+          id: p.id || p.key,
+          name: p.name || p.title,
+          description: p.description || ''
+        }));
+      }
+    }
 
-    const org = instance?.customerName || 'Quantum FinTech Global';
-    const assessTitle = framework.title || 'Enterprise Data & AI Architecture Maturity';
-    const industry = instance?.useCase || framework.badge || 'Enterprise GenAI Architecture Modernization & Cost Arbitrage';
+    const org = instance?.customerName || instance?.organizationName || instance?.assessmentInfo?.organizationName || report?.assessmentInfo?.organizationName || 'Enterprise Organization';
+    const assessTitle = framework.title || report?.assessmentTitle || report?.assessmentInfo?.title || 'Enterprise Data & AI Architecture Maturity';
+    const industry = instance?.industry || instance?.customerIndustry || instance?.useCase || (["Technology", "Healthcare & Life Sciences", "Financial Services", "Retail & E-Commerce", "Manufacturing & Supply Chain", "Energy & Utilities", "Telecommunications", "Media & Entertainment"].includes(framework?.badge) ? framework.badge : 'Cloud & Technology Modernization');
     const curScore = Number(scores.overallScore || instance?.totalScore || 3.0).toFixed(1);
     const tgtScore = Number(Math.min(5.0, +(parseFloat(curScore) + 1.3))).toFixed(1);
     const delta = +(tgtScore - curScore).toFixed(1);
@@ -346,9 +361,9 @@ export const exportAssessmentToPPTX = async (instance, report) => {
     ];
 
     dimensions.forEach((dim, idx) => {
-      const dScore = scores.dimensionScores?.[dim.id] || {};
-      const cScore = typeof dScore.score === 'number' ? dScore.score : (parseFloat(instance?.responses?.[`${dim.id}_current`]) || 3.0);
-      const fScore = typeof dScore.targetScore === 'number' ? dScore.targetScore : Math.min(5.0, +(cScore + 1.2).toFixed(1));
+      const dScore = scores.dimensionScores?.[dim.id] || report?.categoryDetails?.[dim.id] || {};
+      const cScore = typeof dScore.score === 'number' ? dScore.score : (typeof dScore.currentScore === 'number' ? dScore.currentScore : (parseFloat(instance?.responses?.[`${dim.id}_current`]) || 3.0));
+      const fScore = typeof dScore.targetScore === 'number' ? dScore.targetScore : (typeof dScore.futureScore === 'number' ? dScore.futureScore : Math.min(5.0, +(cScore + 1.2).toFixed(1)));
       const dVal = +(fScore - cScore).toFixed(1);
       const tier = cScore >= 4.2 ? 'Optimized (L5)' : cScore >= 3.4 ? 'Managed (L4)' : cScore >= 2.6 ? 'Defined (L3)' : 'Developing (L2)';
       const prio = dVal >= 1.5 ? 'CRITICAL GAP' : dVal >= 0.8 ? 'HIGH PRIORITY' : 'OPTIMIZED';
@@ -356,7 +371,7 @@ export const exportAssessmentToPPTX = async (instance, report) => {
       const rowBg = idx % 2 === 0 ? 'FFFFFF' : PPTX_THEME.slateBg;
 
       tableRows.push([
-        { text: dim.name, options: { bold: true, color: PPTX_THEME.textDark, fill: { color: rowBg } } },
+        { text: dim.name || dim.title || dim.id, options: { bold: true, color: PPTX_THEME.textDark, fill: { color: rowBg } } },
         { text: `${Number(cScore).toFixed(1)} / 5.0`, options: { align: 'center', bold: true, color: PPTX_THEME.primary, fill: { color: rowBg } } },
         { text: `${Number(fScore).toFixed(1)} / 5.0`, options: { align: 'center', bold: true, color: PPTX_THEME.success, fill: { color: rowBg } } },
         { text: `+${dVal}`, options: { align: 'center', bold: true, color: PPTX_THEME.accentCyan, fill: { color: rowBg } } },

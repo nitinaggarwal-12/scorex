@@ -218,9 +218,9 @@ export class ExecutivePDFExporter {
   // PAGE 1: EXECUTIVE COVER & SCORECARD
   // ==========================================
   addCoverPage() {
-    const org = this.assessmentInfo.organizationName || 'Quantum FinTech Global';
+    const org = this.assessmentInfo.organizationName || 'Enterprise Organization';
     const assessTitle = this.assessmentInfo.assessmentName || 'Enterprise Data & AI Architecture Maturity';
-    const industry = this.assessmentInfo.industry || 'Enterprise GenAI Architecture Modernization & Cost Arbitrage';
+    const industry = this.assessmentInfo.industry || 'Enterprise Cloud & Technology Modernization';
     const curScore = Number(this.results.overall?.currentScore || 3.0).toFixed(1);
     const tgtScore = Number(this.results.overall?.futureScore || 4.5).toFixed(1);
     const delta = +(tgtScore - curScore).toFixed(1);
@@ -1436,9 +1436,9 @@ export const generateDynamicPDFReport = (instance, report) => {
     };
 
     const assessmentInfo = {
-      organizationName: instance?.customerName || 'Quantum FinTech Global',
+      organizationName: instance?.customerName || instance?.organizationName || 'Enterprise Organization',
       assessmentName: framework.title || 'Dynamic Architecture Assessment',
-      industry: instance?.useCase || framework.badge || 'Enterprise Cloud & AI Modernization',
+      industry: instance?.industry || instance?.customerIndustry || instance?.useCase || (["Technology", "Healthcare & Life Sciences", "Financial Services", "Retail & E-Commerce", "Manufacturing & Supply Chain", "Energy & Utilities", "Telecommunications", "Media & Entertainment"].includes(framework?.badge) ? framework.badge : 'Enterprise Cloud & AI Modernization'),
       createdAt: instance?.completedAt || instance?.createdAt || new Date().toISOString(),
       updatedAt: instance?.updatedAt || new Date().toISOString(),
       totalQuestions: framework.dimensions?.reduce((acc, d) => acc + (d.questions?.length || 2), 0) || 10,

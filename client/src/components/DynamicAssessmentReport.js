@@ -1298,8 +1298,9 @@ const DynamicAssessmentReport = () => {
             <IaCBlueprintCard
               organizationName={instance?.customerName || framework?.title || "Enterprise Platform"}
               currentScore={scores.overallScore || 2.5}
-              targetScore={4.5}
+              targetScore={simulatedOverallTarget || 4.5}
               framework={framework}
+              prioritizedActions={report.prioritizedRecommendations || report.prioritizedActions || []}
             />
           </div>
         )}
@@ -1320,7 +1321,7 @@ const DynamicAssessmentReport = () => {
             {/* Industry Peer Benchmarking & Percentile Distribution Matrix */}
             <IndustryPeerBenchmarkingCard theme={theme}
               instanceId={instance?.id}
-              defaultIndustry={framework?.badge || "Retail & E-Commerce"}
+              defaultIndustry={instance?.industry || instance?.customerIndustry || framework?.industry || (["Technology", "Healthcare & Life Sciences", "Financial Services", "Retail & E-Commerce", "Manufacturing & Supply Chain", "Energy & Utilities", "Telecommunications", "Media & Entertainment"].includes(framework?.badge) ? framework.badge : "Technology")}
             />
           </div>
         )}
@@ -1344,6 +1345,7 @@ const DynamicAssessmentReport = () => {
             <BacklogExporterCard
               assessmentName={framework?.title || "Enterprise Data & AI Maturity Assessment"}
               recommendations={report.prioritizedRecommendations || report.prioritizedActions || []}
+              prioritizedActions={report.prioritizedRecommendations || report.prioritizedActions || []}
             />
 
             {/* Strategic Transformation Roadmap */}

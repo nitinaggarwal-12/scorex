@@ -41,7 +41,22 @@ export const exportAssessmentToJSON = (instance, report) => {
 export const exportAssessmentToCSV = (instance, report) => {
   try {
     const framework = instance?.frameworkSnapshot || {};
-    const dimensions = framework.dimensions || [];
+    let dimensions = framework.dimensions || framework.assessmentAreas || [];
+    if (!dimensions || dimensions.length === 0) {
+      if (report?.categoryDetails) {
+        dimensions = Object.entries(report.categoryDetails).map(([key, cat]) => ({
+          id: key,
+          name: cat.name || cat.title || key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+          questions: cat.questions || (cat.dimensions ? Object.entries(cat.dimensions).map(([dKey, dVal]) => ({ id: `${key}_${dKey}`, text: dVal.name || dKey })) : [])
+        }));
+      } else if (report?.pillarStatus && Array.isArray(report.pillarStatus)) {
+        dimensions = report.pillarStatus.map(p => ({
+          id: p.id || p.key,
+          name: p.name || p.title,
+          questions: []
+        }));
+      }
+    }
     const responses = instance?.responses || {};
 
     const escapeCsv = (val) => {
@@ -73,9 +88,10 @@ export const exportAssessmentToCSV = (instance, report) => {
     ];
 
     dimensions.forEach(dim => {
-      (dim.questions || []).forEach(q => {
-        const currentScore = responses[q.id] !== undefined ? responses[q.id] : 'Not Answered';
-        const targetScore = responses[`${q.id}_future_state`] !== undefined ? responses[`${q.id}_future_state`] : 'N/A';
+      const qList = dim.questions && dim.questions.length > 0 ? dim.questions : [{ id: dim.id, text: dim.name }];
+      qList.forEach(q => {
+        const currentScore = responses[q.id] !== undefined ? responses[q.id] : (report?.categoryDetails?.[dim.id]?.score ?? report?.categoryDetails?.[dim.id]?.currentScore ?? 'Not Answered');
+        const targetScore = responses[`${q.id}_future_state`] !== undefined ? responses[`${q.id}_future_state`] : (report?.categoryDetails?.[dim.id]?.futureScore ?? 'N/A');
         const tp = Array.isArray(responses[`${q.id}_technical_pain`]) 
           ? responses[`${q.id}_technical_pain`].join('; ') 
           : (Array.isArray(responses[`${q.id}_tech_pain`]) ? responses[`${q.id}_tech_pain`].join('; ') : '');
@@ -125,6 +141,28 @@ export const exportAssessmentToWord = (instance, report) => {
     const recs = report?.prioritizedRecommendations || report?.prioritizedActions || [];
     const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
+    const curNum = parseFloat(overallScore) || 2.5;
+    const tgtNum = Math.min(5.0, +(curNum + 1.3)).toFixed(1);
+    const delta = Math.max(0.5, +(tgtNum - curNum)).toFixed(1);
+    const minRoi = (parseFloat(delta) * 1.5).toFixed(1);
+    const maxRoi = (parseFloat(delta) * 3.0).toFixed(1);
+    const roiStr = report?.businessImpact?.financialRoi || `$${minRoi}M - $${maxRoi}M (30-45% TCO Reduction)`;
+
+    let dimensions = framework.dimensions || framework.assessmentAreas || [];
+    if (!dimensions || dimensions.length === 0) {
+      if (report?.categoryDetails) {
+        dimensions = Object.entries(report.categoryDetails).map(([key, cat]) => ({
+          id: key,
+          name: cat.name || cat.title || key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+        }));
+      } else if (report?.pillarStatus && Array.isArray(report.pillarStatus)) {
+        dimensions = report.pillarStatus.map(p => ({
+          id: p.id || p.key,
+          name: p.name || p.title
+        }));
+      }
+    }
+
     const htmlContent = `
       <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
       <head>
@@ -153,8 +191,8 @@ export const exportAssessmentToWord = (instance, report) => {
           <strong>Enterprise Client:</strong> ${org}<br>
           <strong>Initiative / Scope:</strong> ${framework.title || 'Data & AI Architecture Maturity'}<br>
           <strong>Overall Maturity Score:</strong> <span class="badge badge-blue">${overallScore} / 5.0 (${maturityStage})</span><br>
-          <strong>Target Horizon:</strong> <span class="badge badge-green">4.2+ / 5.0 (Optimized Multi-Agent Mesh)</span><br>
-          <strong>Projected 3-Yr ROI:</strong> $2.3M - $4.2M (35-50% TCO Reduction)
+          <strong>Target Horizon:</strong> <span class="badge badge-green">${tgtNum} / 5.0 (Optimized Multi-Agent Mesh)</span><br>
+          <strong>Projected 3-Yr ROI:</strong> ${roiStr}
         </div>
 
         <h2>1. Executive Summary & Strategic Context</h2>
@@ -171,13 +209,15 @@ export const exportAssessmentToWord = (instance, report) => {
             </tr>
           </thead>
           <tbody>
-            ${(framework.dimensions || []).map(dim => {
-              const cur = scores[dim.id] || scores[dim.name] || '2.8';
+            ${dimensions.map(dim => {
+              const dScore = scores[dim.id] || scores[dim.name] || report?.categoryDetails?.[dim.id];
+              const cur = typeof dScore === 'number' ? dScore.toFixed(1) : (dScore?.score !== undefined ? Number(dScore.score).toFixed(1) : (dScore?.currentScore !== undefined ? Number(dScore.currentScore).toFixed(1) : '2.8'));
+              const target = typeof dScore?.futureScore === 'number' ? Number(dScore.futureScore).toFixed(1) : (typeof dScore?.targetScore === 'number' ? Number(dScore.targetScore).toFixed(1) : Math.min(5.0, +(parseFloat(cur) + 1.2)).toFixed(1));
               return `
                 <tr>
                   <td><strong>${dim.name}</strong></td>
                   <td>${cur} / 5.0</td>
-                  <td>4.0+ / 5.0</td>
+                  <td>${target} / 5.0</td>
                   <td><span class="badge badge-blue">In Modernization</span></td>
                 </tr>
               `;

@@ -124,14 +124,40 @@ router.post('/message', async (req, res) => {
       history = memoryMessages.get(convId) || [];
     }
 
-    // Get assessment data if available
+    // Get assessment data if available (supports standard and dynamic/custom assessments)
     let assessmentData = null;
-    if (context?.pageData?.assessmentId) {
+    const targetAssessmentId = context?.pageData?.assessmentId || context?.pageData?.instanceId || context?.pageData?.id;
+    if (targetAssessmentId) {
       try {
         const assessmentRepo = require('../db/assessmentRepository');
-        assessmentData = await assessmentRepo.findById(context.pageData.assessmentId);
+        assessmentData = await assessmentRepo.findById(targetAssessmentId);
       } catch (err) {
         console.warn('Notice fetching assessment for chat context:', err.message);
+      }
+      if (!assessmentData) {
+        try {
+          const customRepo = require('../db/customAssessmentRepository');
+          const instance = await customRepo.getInstanceById(targetAssessmentId);
+          if (instance) {
+            assessmentData = {
+              id: instance.id,
+              assessmentInfo: {
+                organizationName: instance.customerName || instance.organizationName || 'Enterprise Client',
+                assessmentName: instance.frameworkSnapshot?.title || 'Architecture Assessment',
+                industry: instance.useCase || instance.industry || instance.frameworkSnapshot?.badge || 'Technology'
+              },
+              overall: {
+                currentScore: instance.totalScore || 3.0,
+                futureScore: Math.min(5.0, (instance.totalScore || 3.0) + 1.2)
+              },
+              categoryDetails: instance.scores || {},
+              responses: instance.responses || {},
+              aiReport: instance.aiReport || {}
+            };
+          }
+        } catch (err) {
+          console.warn('Notice fetching custom assessment instance for chat context:', err.message);
+        }
       }
     }
 

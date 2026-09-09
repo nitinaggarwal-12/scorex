@@ -922,8 +922,8 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
    * 🎬 The Master Storyteller Narrative Engine
    */
   const buildStoryChapters = () => {
-    const customer = instance?.customerName || 'your organization';
-    const framework = instance?.frameworkSnapshot?.title || instance?.useCase || 'Architecture Assessment';
+    const customer = instance?.customerName || instance?.organizationName || instance?.assessmentInfo?.organizationName || report?.assessmentInfo?.organizationName || 'your organization';
+    const framework = instance?.frameworkSnapshot?.title || report?.assessmentInfo?.assessmentName || instance?.useCase || 'Architecture Assessment';
     const score = report?.overallScore || instance?.totalScore || 3.2;
     const stage = report?.maturityLevel || instance?.maturityLevel || 'Defined';
     const summary = report?.executiveSummary || 'Your architecture exhibits robust core foundations with immediate high-impact modernization frontiers.';

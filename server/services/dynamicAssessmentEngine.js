@@ -473,7 +473,7 @@ Generate a comprehensive JSON executive report matching this schema:
         ],
         organizationalImplications: [
           'Transition from fractured siloed pipelines to declarative, version-controlled streaming data contracts',
-          'Deployment of centralized Unity Catalog metadata for automated column/row PII masking',
+          'Deployment of centralized Cloud Data Catalog & IAM metadata for automated column/row PII masking',
           'Establishment of an Enterprise Center of Excellence for production MLOps and Prompt Context Caching'
         ]
       },
@@ -495,9 +495,9 @@ Generate a comprehensive JSON executive report matching this schema:
           timeline: '1–3 Months',
           focus: 'Eliminate security vulnerabilities and stop cloud spend leakage',
           milestones: [
-            'Deploy unified Unity Catalog / Cloud Metastore and map IAM role delegations',
+            'Deploy unified Cloud Metastore / Universal Data Catalog and map IAM role delegations',
             'Configure 15-minute auto-termination policies on all development SQL warehouses',
-            'Enable automated Delta Lake / Apache Iceberg UniForm for zero-copy sharing'
+            'Enable open table format (Apache Iceberg / Delta Lake) with automated compaction'
           ]
         },
         phase2: {
@@ -505,8 +505,8 @@ Generate a comprehensive JSON executive report matching this schema:
           timeline: '3–6 Months',
           focus: 'Automate data movement and centralize production ML model deployments',
           milestones: [
-            'Migrate batch pipelines to Serverless Auto-Loader with schema evolution',
-            'Deploy centralized MLflow Model and Prompt Registry with automated evaluation gates',
+            'Migrate batch ingestion pipelines to event-driven streaming with automated schema evolution',
+            'Deploy centralized Model and Prompt Registry with automated evaluation gates',
             'Implement declarative data pipelines (SDF / dbt) with automated data quality expectations'
           ]
         },
@@ -527,9 +527,9 @@ Generate a comprehensive JSON executive report matching this schema:
           timeline: '1–3 Months',
           focus: 'Eliminate security vulnerabilities and stop cloud spend leakage',
           milestones: [
-            'Deploy unified Unity Catalog / Cloud Metastore and map IAM role delegations',
+            'Deploy unified Cloud Metastore / Universal Data Catalog and map IAM role delegations',
             'Configure 15-minute auto-termination policies on all development SQL warehouses',
-            'Enable automated Delta Lake / Apache Iceberg UniForm for zero-copy sharing'
+            'Enable open table format (Apache Iceberg / Delta Lake) with automated compaction'
           ]
         },
         phase2: {
@@ -537,8 +537,8 @@ Generate a comprehensive JSON executive report matching this schema:
           timeline: '3–6 Months',
           focus: 'Automate data movement and centralize production ML model deployments',
           milestones: [
-            'Migrate batch pipelines to Serverless Auto-Loader with schema evolution',
-            'Deploy centralized MLflow Model and Prompt Registry with automated evaluation gates',
+            'Migrate batch ingestion pipelines to event-driven streaming with automated schema evolution',
+            'Deploy centralized Model and Prompt Registry with automated evaluation gates',
             'Implement declarative data pipelines (SDF / dbt) with automated data quality expectations'
           ]
         },
