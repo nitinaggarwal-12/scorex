@@ -51,8 +51,9 @@ class LiveDataEnhancer {
    * - Industry blogs/news
    */
   async fetchLatestData() {
-    // Placeholder for multiple data sources
+    // Multi-source feature retrieval prioritizing database and dynamic sources
     const promises = [
+      this.fetchFromDatabase(),
       this.fetchFromOpenAI(),
       this.fetchFromDatabricksAPI(),
       this.fetchFromDatabricksDocs(),
@@ -62,6 +63,35 @@ class LiveDataEnhancer {
     const results = await Promise.allSettled(promises);
     
     return this.consolidateResults(results);
+  }
+
+  /**
+   * Fetch latest features directly from the local Databricks feature database
+   */
+  async fetchFromDatabase() {
+    try {
+      const featureDB = require('./databricksFeatureDatabase');
+      const dbFeatures = await featureDB.getLatestFeatures(15);
+      if (dbFeatures && dbFeatures.length > 0) {
+        return {
+          source: 'databricks_database',
+          features: dbFeatures.map(f => ({
+            name: f.name,
+            description: f.description || f.short_description || '',
+            benefit: `Enterprise ${f.category || 'data'} capability with unified governance`,
+            difficulty: f.complexity_weeks > 6 ? 'advanced' : f.complexity_weeks > 2 ? 'intermediate' : 'beginner',
+            impact: f.ga_status === 'GA' ? 'high' : 'medium',
+            addresses: [f.category || 'platform_governance'],
+            pillar: f.category || 'platform_governance',
+            releaseDate: f.release_date || new Date().toISOString().split('T')[0],
+            guide: f.docs ? `See documentation: ${f.docs}` : 'Enable in workspace console'
+          }))
+        };
+      }
+    } catch (err) {
+      console.log('[LiveDataEnhancer] Database feature fetch skipped:', err.message);
+    }
+    return { source: 'databricks_database', features: [] };
   }
 
   /**
@@ -79,8 +109,9 @@ class LiveDataEnhancer {
       };
     }
 
-    const query = `What are the latest Databricks features and capabilities announced in 2024? 
-    Focus on: Unity Catalog updates, Lakehouse Monitoring, Mosaic AI, serverless compute, 
+    const currentYear = new Date().getFullYear();
+    const query = `What are the latest Databricks features and capabilities announced in ${currentYear} and recent releases? 
+    Focus on: Unity Catalog updates, Lakeflow Connect, Lakehouse Monitoring, Mosaic AI Agent Framework, Serverless compute, 
     Delta Lake improvements, and data governance features.
     
     For each feature provide:
@@ -90,7 +121,7 @@ class LiveDataEnhancer {
     - releaseDate: When it was released (YYYY-MM-DD format)
     - difficulty: beginner, intermediate, or advanced
     - impact: low, medium, high, or critical
-    - pillar: which pillar it belongs to
+    - pillar: which pillar it belongs to (platform_governance, data_engineering, analytics_bi, machine_learning, generative_ai, operational_excellence)
     - addresses: which pain points it solves`;
 
     try {
@@ -359,64 +390,82 @@ class LiveDataEnhancer {
   }
 
   /**
-   * Mock latest features (placeholder until real API integrated)
+   * Mock latest features (fallback across all 6 assessment pillars)
    */
   getMockLatestFeatures() {
+    const today = new Date();
+    const recentDate = (monthsAgo) => {
+      const d = new Date(today);
+      d.setMonth(d.getMonth() - monthsAgo);
+      return d.toISOString().split('T')[0];
+    };
+
     return [
       {
-        name: 'Lakehouse Monitoring',
-        description: 'Automated data quality and ML monitoring with custom metrics',
-        benefit: 'Detect data quality issues before they impact business',
-        difficulty: 'intermediate',
-        impact: 'high',
-        addresses: ['data_quality_issues', 'monitoring_gaps'],
-        pillar: 'platform_governance',
-        releaseDate: '2024-06-01',
-        guide: 'Enable in Unity Catalog → Monitoring → Create Monitor'
-      },
-      {
-        name: 'AI Functions in SQL',
-        description: 'Call LLMs directly from SQL queries for text analysis',
-        benefit: 'Democratize AI for all analysts, no Python required',
+        name: 'Lakeflow Connect',
+        description: 'Serverless, automated ingestion connectors with built-in schema evolution',
+        benefit: 'Eliminate point ETL tools and automate pipeline maintenance',
         difficulty: 'beginner',
         impact: 'high',
-        addresses: ['limited_self_service', 'skill_gaps'],
-        pillar: 'generative_ai',
-        releaseDate: '2024-08-15',
-        guide: 'Use ai_query(), ai_analyze_sentiment(), ai_extract() in SQL'
-      },
-      {
-        name: 'Serverless Compute for Workflows',
-        description: 'Auto-scaling compute for jobs without cluster management',
-        benefit: 'Reduce costs by 40-60% and eliminate cluster sizing complexity',
-        difficulty: 'beginner',
-        impact: 'high',
-        addresses: ['cost_management', 'scalability_concerns'],
+        addresses: ['pipeline_automation', 'manual_ingestion', 'scalability_concerns'],
         pillar: 'data_engineering',
-        releaseDate: '2024-07-01',
-        guide: 'Create workflow → Select Serverless compute type'
-      },
-      {
-        name: 'Unity Catalog for AI',
-        description: 'Govern LLM models, prompts, and AI assets centrally',
-        benefit: 'Ensure AI governance, lineage, and compliance',
-        difficulty: 'intermediate',
-        impact: 'critical',
-        addresses: ['security_gaps', 'compliance_challenges'],
-        pillar: 'platform_governance',
-        releaseDate: '2024-09-01',
-        guide: 'Enable UC → Register models → Set permissions'
+        releaseDate: recentDate(1),
+        guide: 'Workspace → Ingestion → Connect new source'
       },
       {
         name: 'Mosaic AI Agent Framework',
-        description: 'Build production RAG and agent applications',
-        benefit: 'Deploy production AI apps 10x faster with built-in monitoring',
+        description: 'End-to-end multi-agent development, evaluation, and production monitoring',
+        benefit: 'Deploy enterprise-grade RAG and agentic workflows with compound AI systems',
         difficulty: 'advanced',
-        impact: 'high',
-        addresses: ['lack_of_automation', 'limited_self_service'],
+        impact: 'critical',
+        addresses: ['genai_maturity', 'lack_of_automation', 'limited_self_service'],
         pillar: 'generative_ai',
-        releaseDate: '2024-10-01',
+        releaseDate: recentDate(2),
         guide: 'Use Agent Framework SDK → mlflow.langchain.log_model()'
+      },
+      {
+        name: 'Lakehouse Monitoring & Governance',
+        description: 'Automated data quality, drift detection, and Unity Catalog lineage',
+        benefit: 'Detect data and model drift before business impact occurs',
+        difficulty: 'intermediate',
+        impact: 'high',
+        addresses: ['data_quality_issues', 'monitoring_gaps', 'compliance_challenges'],
+        pillar: 'platform_governance',
+        releaseDate: recentDate(3),
+        guide: 'Enable in Unity Catalog → Quality & Monitoring → Create Monitor'
+      },
+      {
+        name: 'AI Functions & GenBI in SQL',
+        description: 'Native LLM functions and semantic analysis directly within SQL dashboards',
+        benefit: 'Enable natural language analytics and automated classification in SQL',
+        difficulty: 'beginner',
+        impact: 'high',
+        addresses: ['limited_self_service', 'skill_gaps', 'slow_insights'],
+        pillar: 'analytics_bi',
+        releaseDate: recentDate(4),
+        guide: 'Use ai_query(), ai_analyze_sentiment(), ai_extract() in SQL'
+      },
+      {
+        name: 'Mosaic AI Model Serving & Feature Store',
+        description: 'Zero-downtime serverless model serving with unified feature catalog',
+        benefit: 'Sub-10ms inference latency with automated lineage and feature reuse',
+        difficulty: 'intermediate',
+        impact: 'high',
+        addresses: ['model_deployment_delays', 'feature_duplication'],
+        pillar: 'machine_learning',
+        releaseDate: recentDate(5),
+        guide: 'Unity Catalog → Feature Store → Register model endpoint'
+      },
+      {
+        name: 'Serverless Compute for Workflows',
+        description: 'Instant auto-scaling compute without cluster provisioning overhead',
+        benefit: 'Reduce total cost of ownership by 40-60% and improve job reliability',
+        difficulty: 'beginner',
+        impact: 'high',
+        addresses: ['cost_management', 'operational_overhead'],
+        pillar: 'operational_excellence',
+        releaseDate: recentDate(6),
+        guide: 'Create workflow → Select Serverless execution mode'
       }
     ];
   }

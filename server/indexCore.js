@@ -1288,6 +1288,9 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
       assessment.responses = {};
     }
 
+    // Apply question edits and deletions for this assessment
+    const effectiveFramework = await applyQuestionEdits(id, assessmentFramework);
+
     // Allow results even with no responses - will show zero state
     const hasAnyResponses = Object.keys(assessment.responses).length > 0;
     const hasCompletedCategories = assessment.completedCategories.length > 0;
@@ -1297,7 +1300,7 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
     console.log('Has responses:', hasAnyResponses, 'Completed categories:', assessment.completedCategories.length);
     
     // Calculate total questions and answered questions
-    const totalQuestions = assessmentFramework.assessmentAreas.reduce((total, area) => {
+    const totalQuestions = effectiveFramework.assessmentAreas.reduce((total, area) => {
       return total + area.dimensions.reduce((dimTotal, dim) => {
         return dimTotal + (dim.questions?.length || 0);
       }, 0);
@@ -1326,7 +1329,7 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
     
     // Find areas with any responses (completed or partial)
     const areasWithResponses = hasAnyResponses 
-      ? assessmentFramework.assessmentAreas.filter(area => {
+      ? effectiveFramework.assessmentAreas.filter(area => {
           // Check if there are any responses for this area
           const hasAreaResponses = Object.keys(assessment.responses).some(key => {
             // Skip comment and skipped keys
@@ -1611,8 +1614,8 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
       
       console.log(`🧠 Analyzing pillar: ${pillarId} (maturity: ${pillarMaturity})`);
       
-      // Get the pillar framework data to pass actual question IDs
-      const pillarFramework = assessmentFramework.assessmentAreas.find(a => a.id === pillarId);
+      // Get the pillar framework data to pass actual question IDs (with applied edits/deletions)
+      const pillarFramework = effectiveFramework.assessmentAreas.find(a => a.id === pillarId);
       
       // Generate intelligent, customer-specific recommendations (NOW WITH DATABASE! 🚀)
       const intelligentRecs = await intelligentEngine.generateRecommendations(
@@ -1761,9 +1764,9 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
         industry: assessment.industry,
         completedAt: assessment.completedAt,
         startedAt: assessment.startedAt,
-        isPartialAssessment: fullyCompletedAreas.length < assessmentFramework.assessmentAreas.length,
+        isPartialAssessment: fullyCompletedAreas.length < effectiveFramework.assessmentAreas.length,
         completedPillars: fullyCompletedAreas.length, // 🚨 Changed to fully completed count
-        totalPillars: assessmentFramework.assessmentAreas.length,
+        totalPillars: effectiveFramework.assessmentAreas.length,
         pillarsWithResponses: areasWithResponses.length,
         questionsAnswered: answeredQuestions,
         totalQuestions: totalQuestions,
@@ -1786,7 +1789,7 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
       riskAreas: recommendations.riskAreas,
       executiveSummary: recommendations.executiveSummary || '', // ADAPTIVE: Executive summary
       whatsNew: recommendations.whatsNew, // ADAPTIVE: Latest Databricks features
-      pillarStatus: assessmentFramework.assessmentAreas.map(area => {
+      pillarStatus: effectiveFramework.assessmentAreas.map(area => {
         const isCompleted = assessment.completedCategories.includes(area.id);
         const hasResponses = areasWithResponses.some(a => a.id === area.id);
         return {

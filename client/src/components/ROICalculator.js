@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import {
@@ -544,13 +544,70 @@ const Button = styled.button`
 
 const ROICalculator = ({ results, assessment }) => {
   const [scenario, setScenario] = useState('realistic');
-  const [assumptions, setAssumptions] = useState({
-    teamSize: 50,
-    dataVolumeTB: 100,
-    currentInfraCost: 500000,
-    avgEngineerSalary: 150000,
-    currentDataQualityIssues: 20
-  });
+
+  // Derive dynamic baseline assumptions from assessment & results
+  const getDynamicAssumptions = useCallback(() => {
+    const industry = assessment?.industry || results?.assessmentInfo?.industry || 'Technology';
+    const overallGap = results?.overall?.gap || 1.5;
+    const dataEngGap = results?.categoryDetails?.data_engineering?.gap || overallGap;
+    const govGap = results?.categoryDetails?.platform_governance?.gap || overallGap;
+    
+    // Industry baselines
+    let baseTeam = 50;
+    let baseData = 100;
+    let baseInfra = 500000;
+    let baseSalary = 150000;
+    
+    if (industry.includes('Financial') || industry.includes('Banking')) {
+      baseTeam = 65;
+      baseData = 180;
+      baseInfra = 750000;
+      baseSalary = 165000;
+    } else if (industry.includes('Healthcare') || industry.includes('Life Sciences')) {
+      baseTeam = 45;
+      baseData = 120;
+      baseInfra = 600000;
+      baseSalary = 155000;
+    } else if (industry.includes('Retail') || industry.includes('Consumer')) {
+      baseTeam = 40;
+      baseData = 150;
+      baseInfra = 450000;
+      baseSalary = 145000;
+    } else if (industry.includes('Manufacturing')) {
+      baseTeam = 35;
+      baseData = 80;
+      baseInfra = 400000;
+      baseSalary = 140000;
+    } else if (industry.includes('Tech')) {
+      baseTeam = 60;
+      baseData = 200;
+      baseInfra = 650000;
+      baseSalary = 160000;
+    }
+    
+    // Adjust data quality issues based on governance gap
+    const qualityIssues = Math.min(45, Math.max(10, Math.round(15 + (govGap * 8))));
+    
+    // Adjust infra cost based on data engineering gap
+    const infraCost = Math.round(baseInfra * (1 + (dataEngGap - 1) * 0.15));
+    
+    return {
+      teamSize: baseTeam,
+      dataVolumeTB: baseData,
+      currentInfraCost: infraCost,
+      avgEngineerSalary: baseSalary,
+      currentDataQualityIssues: qualityIssues
+    };
+  }, [assessment, results]);
+
+  const [assumptions, setAssumptions] = useState(getDynamicAssumptions());
+
+  // Update assumptions when assessment or results change
+  useEffect(() => {
+    if (results || assessment) {
+      setAssumptions(getDynamicAssumptions());
+    }
+  }, [getDynamicAssumptions, results, assessment]);
 
   const [animatedValues, setAnimatedValues] = useState({
     savings: 0,
@@ -559,7 +616,7 @@ const ROICalculator = ({ results, assessment }) => {
     roi: 0
   });
 
-  // Calculate ROI based on assumptions and scenario
+  // Calculate ROI based on assumptions, scenario, and assessment maturity gaps
   const calculateROI = () => {
     const multipliers = {
       conservative: { infra: 0.25, productivity: 0.20, quality: 0.15, revenue: 0.10 },
@@ -569,23 +626,27 @@ const ROICalculator = ({ results, assessment }) => {
 
     const m = multipliers[scenario];
 
+    // Maturity gap scaling factor (derived from results)
+    const overallGap = results?.overall?.gap || (results?.overall?.targetScore && results?.overall?.currentScore ? results.overall.targetScore - results.overall.currentScore : 1.5);
+    const gapScale = Math.min(1.25, Math.max(0.85, overallGap / 1.5));
+
     // Infrastructure savings
-    const infraSavings = assumptions.currentInfraCost * m.infra;
+    const infraSavings = assumptions.currentInfraCost * m.infra * gapScale;
 
     // Engineering productivity (time saved = cost saved)
-    const productivitySavings = (assumptions.teamSize * assumptions.avgEngineerSalary) * m.productivity;
+    const productivitySavings = (assumptions.teamSize * assumptions.avgEngineerSalary) * m.productivity * gapScale;
 
     // Data quality improvements (reduced rework, better decisions)
     const qualitySavings = (assumptions.currentDataQualityIssues / 100) * 
                           (assumptions.teamSize * assumptions.avgEngineerSalary * 0.3) * 
-                          m.quality;
+                          m.quality * gapScale;
 
     const totalSavings = infraSavings + productivitySavings + qualitySavings;
 
     // Revenue opportunities (new use cases enabled)
-    const genAIRevenue = assumptions.teamSize * 50000 * m.revenue; // $50K per engineer in GenAI value
-    const mlRevenue = assumptions.dataVolumeTB * 5000 * m.revenue; // $5K per TB in ML value
-    const dataMonetization = assumptions.dataVolumeTB * 2000 * m.revenue; // $2K per TB in data products
+    const genAIRevenue = assumptions.teamSize * 50000 * m.revenue * gapScale; // $50K per engineer in GenAI value
+    const mlRevenue = assumptions.dataVolumeTB * 5000 * m.revenue * gapScale; // $5K per TB in ML value
+    const dataMonetization = assumptions.dataVolumeTB * 2000 * m.revenue * gapScale; // $2K per TB in data products
 
     const totalRevenue = genAIRevenue + mlRevenue + dataMonetization;
 
@@ -598,7 +659,7 @@ const ROICalculator = ({ results, assessment }) => {
     const threeYearValue = (totalSavings + totalRevenue) * 3;
     const threeYearInvestment = platformInvestment * 3;
     const netROI = threeYearValue - threeYearInvestment;
-    const roiRatio = threeYearValue / threeYearInvestment;
+    const roiRatio = threeYearInvestment > 0 ? (threeYearValue / threeYearInvestment) : 0;
 
     return {
       savings: totalSavings,
@@ -617,7 +678,7 @@ const ROICalculator = ({ results, assessment }) => {
       investment: threeYearInvestment,
       netROI,
       roiRatio,
-      paybackMonths: Math.ceil((platformInvestment / (totalSavings + totalRevenue)) * 12)
+      paybackMonths: (totalSavings + totalRevenue) > 0 ? Math.ceil((platformInvestment / (totalSavings + totalRevenue)) * 12) : 12
     };
   };
 
@@ -656,19 +717,16 @@ const ROICalculator = ({ results, assessment }) => {
   }, [scenario, assumptions]);
 
   const handleAssumptionChange = (key, value) => {
-    setAssumptions(prev => ({ ...prev, [key]: parseInt(value) }));
+    const parsed = parseInt(value, 10);
+    if (!isNaN(parsed)) {
+      setAssumptions(prev => ({ ...prev, [key]: parsed }));
+    }
   };
 
   const handleReset = () => {
-    setAssumptions({
-      teamSize: 50,
-      dataVolumeTB: 100,
-      currentInfraCost: 500000,
-      avgEngineerSalary: 150000,
-      currentDataQualityIssues: 20
-    });
+    setAssumptions(getDynamicAssumptions());
     setScenario('realistic');
-    
+    toast.success('Assumptions reset to assessment baseline');
   };
 
   const formatCurrency = (value) => {
@@ -678,6 +736,9 @@ const ROICalculator = ({ results, assessment }) => {
     return `$${(value / 1000).toFixed(0)}K`;
   };
 
+  const orgName = assessment?.organizationName || results?.assessmentInfo?.organizationName;
+  const industryName = assessment?.industry || results?.assessmentInfo?.industry;
+
   return (
     <CalculatorContainer>
       <CalculatorHeader>
@@ -686,7 +747,11 @@ const ROICalculator = ({ results, assessment }) => {
           Interactive ROI Calculator
         </CalculatorTitle>
         <CalculatorSubtitle>
-          Customize assumptions to see your specific business case and ROI potential
+          {orgName ? (
+            <span>Tailored for <strong>{orgName}</strong> based on {industryName || 'Enterprise'} industry benchmarks & assessment gaps</span>
+          ) : (
+            'Customize assumptions to see your specific business case and ROI potential'
+          )}
         </CalculatorSubtitle>
       </CalculatorHeader>
 

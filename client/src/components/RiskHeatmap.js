@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -696,8 +696,32 @@ const getRisks = (results) => {
   
   console.log('[RiskHeatmap] Generating risks from:', { categoryDetails, resultsKeys: Object.keys(results || {}) });
   
-  // If no category details, generate sample risks
-  if (Object.keys(categoryDetails).length === 0) {
+  // Incorporate dynamic riskAreas from backend recommendations if present
+  if (results?.riskAreas && Array.isArray(results.riskAreas) && results.riskAreas.length > 0) {
+    results.riskAreas.forEach((ra, idx) => {
+      const isCritical = ra.risk === 'Critical' || (ra.score !== undefined && ra.score <= 1.5);
+      const cleanName = (ra.name || ra.category || 'Maturity').replace(/^[^\w\s]+/, '').trim();
+      risks.push({
+        id: `assessment-risk-${ra.category || idx}`,
+        title: `${cleanName} Critical Gap`,
+        impact: isCritical ? 'high' : 'medium',
+        probability: isCritical ? 'high' : 'medium',
+        financialImpact: isCritical ? '$2M-$10M' : '$500K-$2M/yr',
+        description: ra.description || `Assessment identified vulnerabilities in ${cleanName} with current maturity at ${ra.score || 'low'}/5.`,
+        mitigation: [
+          `Execute target remediation plan for ${cleanName}`,
+          'Establish automated governance gates and security controls',
+          'Deploy enterprise architectural standards to close maturity gaps',
+          'Track SLA adherence with monthly executive reviews'
+        ],
+        timeline: isCritical ? '4-6 weeks' : '8-12 weeks',
+        priority: isCritical ? 'Critical' : 'High'
+      });
+    });
+  }
+
+  // If no category details and no dynamic risk areas, generate sample risks
+  if (Object.keys(categoryDetails).length === 0 && risks.length === 0) {
     console.log('[RiskHeatmap] No category details found, using sample risks');
     return getSampleRisks();
   }
@@ -825,11 +849,45 @@ const getRisks = (results) => {
 // =====================
 
 const RiskHeatmap = ({ results, assessment }) => {
+  const assessmentId = assessment?.id || results?.assessmentInfo?.id || results?.assessmentId || results?.id;
+  const storageKey = assessmentId ? `scorex_risk_heatmap_${assessmentId}` : null;
+  const isLoadedRef = useRef(false);
+
   const [selectedRisk, setSelectedRisk] = useState(null);
   const [editingRisk, setEditingRisk] = useState(null);
   const [customRisks, setCustomRisks] = useState([]);
   const [deletedRiskIds, setDeletedRiskIds] = useState([]);
   const [isAddingRisk, setIsAddingRisk] = useState(false);
+
+  // Load persisted custom risks and deleted risk IDs for this assessment
+  useEffect(() => {
+    if (storageKey) {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed.customRisks)) setCustomRisks(parsed.customRisks);
+          if (Array.isArray(parsed.deletedRiskIds)) setDeletedRiskIds(parsed.deletedRiskIds);
+        } catch (e) {
+          console.error('[RiskHeatmap] Error parsing persisted risks:', e);
+        }
+      } else {
+        setCustomRisks([]);
+        setDeletedRiskIds([]);
+      }
+      isLoadedRef.current = true;
+    }
+  }, [storageKey]);
+
+  // Persist when customRisks or deletedRiskIds change
+  useEffect(() => {
+    if (storageKey && isLoadedRef.current) {
+      localStorage.setItem(storageKey, JSON.stringify({
+        customRisks,
+        deletedRiskIds
+      }));
+    }
+  }, [customRisks, deletedRiskIds, storageKey]);
   const [formData, setFormData] = useState({
     title: '',
     impact: 'medium',
