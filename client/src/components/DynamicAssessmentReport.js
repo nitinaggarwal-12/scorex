@@ -957,7 +957,7 @@ const DynamicAssessmentReport = () => {
                 fontSize: '0.85rem',
                 boxShadow: '0 4px 14px rgba(245, 158, 11, 0.3)'
               }}
-              onClick={() => setPreviewDocState({ isOpen: true, type: 'slides' })}
+              onClick={() => setIsPresentationOpen(true)}
               title="Launch Fullscreen 16:9 Slide Deck for Executive Presentation"
             >
               <span>📊</span> Present Deck
