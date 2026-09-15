@@ -3450,52 +3450,249 @@ export default function EuAiComplianceWorkspace() {
               </ScorecardTable>
             </div>
 
+            {/* ================= SECTION 4: CISO CYBERSECURITY & FORENSICS ARCHITECTURE ================= */}
+            {evaluation.cisoBriefing && (
+              <div style={{ marginTop: '24px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <FiShield color="#2563eb" size={18} />
+                    4. CISO End-to-End Cybersecurity, Threat Resilience & Forensics Architecture (Articles 12, 15 & 73)
+                  </h3>
+                  <span style={{
+                    fontSize: '0.72rem',
+                    fontWeight: '800',
+                    padding: '4px 10px',
+                    borderRadius: '6px',
+                    background: evaluation.cisoBriefing.securityPostureStatus.includes('HARDENED') ? '#dcfce7' : '#fee2e2',
+                    color: evaluation.cisoBriefing.securityPostureStatus.includes('HARDENED') ? '#166534' : '#b91c1c',
+                    border: '1px solid currentColor'
+                  }}>
+                    CISO POSTURE: {evaluation.cisoBriefing.securityPostureStatus}
+                  </span>
+                </div>
+
+                {/* Threat Vector Table */}
+                <ScorecardTable style={{ marginBottom: '16px' }}>
+                  <thead>
+                    <tr>
+                      <th style={{ width: '28%' }}>Adversarial Threat Vector (MITRE ATLAS)</th>
+                      <th style={{ width: '16%' }}>Reference ID</th>
+                      <th style={{ width: '18%' }}>Posture Status</th>
+                      <th style={{ width: '38%' }}>Active Technical Countermeasure & Control</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {evaluation.cisoBriefing.threatSurfaceVectors.map((tv, i) => (
+                      <tr key={i}>
+                        <td style={{ fontWeight: '700', color: '#0f172a' }}>{tv.vector}</td>
+                        <td style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace', fontSize: '0.78rem', fontWeight: '700', color: '#4f46e5' }}>{tv.mitreId}</td>
+                        <td>
+                          <span style={{
+                            padding: '3px 8px',
+                            borderRadius: '6px',
+                            fontSize: '0.72rem',
+                            fontWeight: '800',
+                            background: tv.status.includes('Mitigated') ? '#dcfce7' : '#fef3c7',
+                            color: tv.status.includes('Mitigated') ? '#166534' : '#b45309'
+                          }}>
+                            {tv.status}
+                          </span>
+                        </td>
+                        <td style={{ fontSize: '0.82rem', color: '#475569' }}>{tv.control}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </ScorecardTable>
+
+                {/* Cross-Framework Mapping & Incident Response SLA */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '14px' }}>
+                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '14px' }}>
+                    <div style={{ fontSize: '0.78rem', fontWeight: '800', color: '#1e3a8a', textTransform: 'uppercase', marginBottom: '8px' }}>
+                      Cross-Framework Regulatory Harmonization
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {evaluation.cisoBriefing.crossFrameworkMapping.map((cf, i) => (
+                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem', borderBottom: i < 3 ? '1px dashed #e2e8f0' : 'none', paddingBottom: i < 3 ? '6px' : 0 }}>
+                          <div>
+                            <strong style={{ color: '#0f172a' }}>{cf.framework}</strong>
+                            <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{cf.article}</div>
+                          </div>
+                          <span style={{
+                            fontWeight: '800',
+                            fontSize: '0.72rem',
+                            padding: '2px 7px',
+                            borderRadius: '5px',
+                            background: cf.alignment.includes('Aligned') || cf.alignment.includes('Ready') ? '#dcfce7' : '#ffedd5',
+                            color: cf.alignment.includes('Aligned') || cf.alignment.includes('Ready') ? '#166534' : '#c2410c'
+                          }}>
+                            {cf.alignment}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div style={{ background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: '10px', padding: '14px' }}>
+                    <div style={{ fontSize: '0.78rem', fontWeight: '800', color: '#9f1239', textTransform: 'uppercase', marginBottom: '8px' }}>
+                      Statutory Incident & Breach Notification SLA (Art. 73 / Art. 55)
+                    </div>
+                    <div style={{ fontSize: '0.82rem', color: '#881337', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <div>
+                        <strong>Mandatory Reporting Window: </strong>
+                        <span style={{ fontWeight: '800', background: '#ffe4e6', padding: '2px 6px', borderRadius: '4px' }}>
+                          {evaluation.cisoBriefing.incidentResponseSla.statutoryDeadline}
+                        </span>
+                      </div>
+                      <div>
+                        <strong>Designated Regulatory Authority: </strong>
+                        {evaluation.cisoBriefing.incidentResponseSla.authorityTarget}
+                      </div>
+                      <div>
+                        <strong>Forensic SOC / SIEM Runbook Posture: </strong>
+                        {evaluation.cisoBriefing.incidentResponseSla.currentReadiness}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ================= SECTION 5: CHIEF AI OFFICER (CAIO) MODEL GOVERNANCE DOSSIER ================= */}
+            {evaluation.caioBriefing && (
+              <div style={{ marginTop: '24px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <HiSparkles color="#7c3aed" size={18} />
+                    5. Chief AI Officer (CAIO) End-to-End Model Governance, Fairness & Lifecycle Dossier
+                  </h3>
+                  <span style={{
+                    fontSize: '0.72rem',
+                    fontWeight: '800',
+                    padding: '4px 10px',
+                    borderRadius: '6px',
+                    background: '#f5f3ff',
+                    color: '#6d28d9',
+                    border: '1px solid #ddd6fe'
+                  }}>
+                    CAIO MATURITY: {evaluation.caioBriefing.governanceMaturity}
+                  </span>
+                </div>
+
+                {/* CAIO 3-Column Executive Cards */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '14px', marginBottom: '16px' }}>
+                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '14px' }}>
+                    <div style={{ fontSize: '0.76rem', fontWeight: '800', color: '#4f46e5', textTransform: 'uppercase', marginBottom: '6px' }}>
+                      Value-Chain Liability & Art. 25 Guardrail
+                    </div>
+                    <div style={{ fontSize: '0.82rem', color: '#334155', lineHeight: '1.5' }}>
+                      <div><strong>Statutory Role:</strong> {evaluation.caioBriefing.valueChainRoleAnalysis.currentRole}</div>
+                      <div style={{ marginTop: '6px' }}><strong>Modification Risk:</strong> {evaluation.caioBriefing.valueChainRoleAnalysis.substantialModificationRisk}</div>
+                      <div style={{ marginTop: '6px' }}><strong>Conformity Route:</strong> {evaluation.caioBriefing.valueChainRoleAnalysis.conformityPathway}</div>
+                    </div>
+                  </div>
+
+                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '14px' }}>
+                    <div style={{ fontSize: '0.76rem', fontWeight: '800', color: '#059669', textTransform: 'uppercase', marginBottom: '6px' }}>
+                      Algorithmic Fairness & Data Lineage (Art. 10)
+                    </div>
+                    <div style={{ fontSize: '0.82rem', color: '#334155', lineHeight: '1.5' }}>
+                      <div><strong>Disparate Impact Audit:</strong> {evaluation.caioBriefing.algorithmicFairnessAndData.biasAuditStatus}</div>
+                      <div style={{ marginTop: '6px' }}><strong>Provenance & TDM:</strong> {evaluation.caioBriefing.algorithmicFairnessAndData.dataProvenanceStatus}</div>
+                      <div style={{ marginTop: '6px', fontSize: '0.78rem', color: '#64748b' }}>{evaluation.caioBriefing.algorithmicFairnessAndData.notes}</div>
+                    </div>
+                  </div>
+
+                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '14px' }}>
+                    <div style={{ fontSize: '0.76rem', fontWeight: '800', color: '#ea580c', textTransform: 'uppercase', marginBottom: '6px' }}>
+                      Human-in-the-Loop & Explainability (Art. 13, 14, 86)
+                    </div>
+                    <div style={{ fontSize: '0.82rem', color: '#334155', lineHeight: '1.5' }}>
+                      <div><strong>HITL Interlock:</strong> {evaluation.caioBriefing.humanOversightAndExplainability.hitlArchitecture}</div>
+                      <div style={{ marginTop: '6px' }}><strong>Explainability (Art. 86):</strong> {evaluation.caioBriefing.humanOversightAndExplainability.explainabilityStandard}</div>
+                      <div style={{ marginTop: '6px' }}><strong>AI Literacy (Art. 4):</strong> {evaluation.caioBriefing.humanOversightAndExplainability.aiLiteracyCompliance}</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Lifecycle Production Monitoring SLA Table */}
+                <ScorecardTable>
+                  <thead>
+                    <tr>
+                      <th style={{ width: '38%' }}>CAIO Production Model Telemetry & MLOps Metric</th>
+                      <th style={{ width: '28%' }}>Statutory / Enterprise Target Threshold</th>
+                      <th style={{ width: '34%' }}>Live Telemetry & Governance Verification</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {evaluation.caioBriefing.lifecycleMonitoringMetrics.map((m, i) => (
+                      <tr key={i}>
+                        <td style={{ fontWeight: '700', color: '#0f172a' }}>{m.metric}</td>
+                        <td style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace', fontSize: '0.8rem', fontWeight: '700', color: '#1e3a8a' }}>{m.target}</td>
+                        <td>
+                          <span style={{
+                            padding: '3px 8px',
+                            borderRadius: '6px',
+                            fontSize: '0.74rem',
+                            fontWeight: '800',
+                            background: m.currentStatus.includes('Active') || m.currentStatus.includes('Pass') || m.currentStatus.includes('Ready') || m.currentStatus.includes('SLA') ? '#dcfce7' : '#fef3c7',
+                            color: m.currentStatus.includes('Active') || m.currentStatus.includes('Pass') || m.currentStatus.includes('Ready') || m.currentStatus.includes('SLA') ? '#166534' : '#b45309'
+                          }}>
+                            {m.currentStatus}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </ScorecardTable>
+              </div>
+            )}
+
             {/* Verification & Attestation Block */}
-            <div>
+            <div style={{ marginTop: '24px' }}>
               <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#0f172a', marginBottom: '6px' }}>
-                4. Statutory Attestation & Regulatory Sign-Off
+                6. C-Suite Statutory Attestation & Regulatory Sign-Off
               </h3>
               <p style={{ fontSize: '0.82rem', color: '#64748b', margin: '0 0 16px 0' }}>
-                By signing below, the nominated responsible officers certify that this assessment accurately reflects the technical architecture, data governance safeguards, and operational controls of the evaluated AI system in conformance with Regulation (EU) 2024/1689.
+                By signing below, the nominated C-Suite and responsible officers certify that this assessment accurately reflects the cybersecurity architecture, model governance safeguards, and operational controls of the evaluated AI system in conformance with Regulation (EU) 2024/1689.
               </p>
 
               <SignatureBlockGrid>
                 <SignatureCard>
-                  <span style={{ fontSize: '0.78rem', fontWeight: '800', color: '#475569', textTransform: 'uppercase' }}>
-                    Product / System Lead
+                  <span style={{ fontSize: '0.78rem', fontWeight: '800', color: '#1e3a8a', textTransform: 'uppercase' }}>
+                    Chief Information Security Officer (CISO)
                   </span>
-                  <SignatureLine>Marcus Lindqvist</SignatureLine>
+                  <SignatureLine>Vikramaditya Rao, CISO</SignatureLine>
                   <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                    VP Product, People Analytics<br />
+                    Adversarial Security, WORM Logging & NIS2/DORA Alignment (Art. 12 & 15)<br />
                     Date: {meta.evaluationDate}
                   </div>
                 </SignatureCard>
 
                 <SignatureCard>
-                  <span style={{ fontSize: '0.78rem', fontWeight: '800', color: '#475569', textTransform: 'uppercase' }}>
-                    MLOps & Technical Lead
+                  <span style={{ fontSize: '0.78rem', fontWeight: '800', color: '#6d28d9', textTransform: 'uppercase' }}>
+                    Chief AI Officer (CAIO)
                   </span>
-                  <SignatureLine>Dr. Aris Thorne</SignatureLine>
+                  <SignatureLine>Dr. Aris Thorne, CAIO</SignatureLine>
                   <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                    Principal AI Systems Architect<br />
+                    Model Fairness, Data Lineage, HITL Stop-Button & Drift Telemetry (Art. 9–14)<br />
                     Date: {meta.evaluationDate}
                   </div>
                 </SignatureCard>
 
                 <SignatureCard>
-                  <span style={{ fontSize: '0.78rem', fontWeight: '800', color: '#475569', textTransform: 'uppercase' }}>
-                    Chief Legal / Compliance Officer
+                  <span style={{ fontSize: '0.78rem', fontWeight: '800', color: '#047857', textTransform: 'uppercase' }}>
+                    Chief Legal & Compliance Officer
                   </span>
-                  <SignatureLine>Helena Vance</SignatureLine>
+                  <SignatureLine>{meta.leadEvaluator?.split(',')[0] || 'Helena Vance, CLO'}</SignatureLine>
                   <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                    Chief Privacy & AI Compliance Counsel<br />
+                    Statutory Conformity, FRIA & EU Database Filing (Art. 26, 27 & 49)<br />
                     Date: {meta.evaluationDate}
                   </div>
                 </SignatureCard>
               </SignatureBlockGrid>
             </div>
 
-            {/* Section 5: AI Statutory Legal Synthesis & Annex IV Technical File */}
+            {/* Section 7: AI Statutory Legal Synthesis & Annex IV Technical File */}
             {synthesis && (
               <div style={{ marginTop: '28px', paddingTop: '24px', borderTop: '2px solid #e2e8f0' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>

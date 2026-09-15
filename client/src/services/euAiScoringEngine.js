@@ -285,6 +285,81 @@ export function evaluateCompliance(answers = {}, meta = {}) {
     },
     vectorBreakdown: vectorMap,
     remediationTasks,
-    scorecardItems
+    scorecardItems,
+    cisoBriefing: {
+      securityPostureStatus: answers['q11']?.level2OptionId?.startsWith('11.1') && answers['q9']?.level2OptionId?.startsWith('9.1')
+        ? 'HARDENED (ART. 12 & 15 COMPLIANT)'
+        : (isUnacceptable ? 'CRITICAL STATUTORY VIOLATION (DECOMMISSION)' : 'ACTION REQUIRED (SECURITY & LOGGING GAPS)'),
+      threatSurfaceVectors: [
+        {
+          vector: 'Adversarial Prompt / Input Injection & Data Poisoning (Art. 15(4))',
+          mitreId: 'AML.T0051 / AML.T0020',
+          status: answers['q11']?.level2OptionId?.startsWith('11.1') ? 'Mitigated' : 'Remediation Required',
+          control: answers['q11']?.notes || 'Deploy runtime input sanitization, prompt guardrails, and adversarial red-teaming.'
+        },
+        {
+          vector: 'Model Weight Exfiltration & Supply Chain Integrity',
+          mitreId: 'AML.T0044 / SLSA-L3',
+          status: answers['q2']?.level2OptionId?.startsWith('2.1') || answers['q2']?.level2OptionId?.startsWith('2.2') ? 'Mitigated' : 'Review Required',
+          control: 'Cryptographic SHA-256 model signing, private VPC isolation, and zero-egress inference endpoints.'
+        },
+        {
+          vector: 'Audit Trail Tampering & Non-Repudiation Failure (Art. 12)',
+          mitreId: 'EU-AIA-ART12',
+          status: answers['q9']?.level2OptionId?.startsWith('9.1') ? 'Mitigated (WORM Active)' : 'Gap Detected (<6 Mo Retention)',
+          control: answers['q9']?.notes || 'Enforce immutable Write-Once-Read-Many (WORM) cold storage bucket with minimum 6-month statutory retention.'
+        },
+        {
+          vector: 'PII / Biometric Special Category Data Leakage (Art. 10 & GDPR Art. 9)',
+          mitreId: 'GDPR-ART9 / ART32',
+          status: answers['q7']?.level2OptionId?.startsWith('7.1') ? 'Mitigated' : 'Remediation Required',
+          control: answers['q7']?.notes || 'Enforce automated PII/biometric redaction middleware prior to inference payload ingestion.'
+        }
+      ],
+      crossFrameworkMapping: [
+        { framework: 'NIS2 Directive (EU 2022/2555)', article: 'Art. 21 Risk Management & Supply Chain Security', alignment: answers['q11']?.level2OptionId?.startsWith('11.1') ? 'Aligned' : 'Partial Gap' },
+        { framework: 'DORA (EU 2022/2554 Financial ICT)', article: 'Art. 8–11 ICT Resilience & Incident Classification', alignment: answers['q20']?.level2OptionId?.startsWith('20.1') ? 'Aligned' : 'Action Needed' },
+        { framework: 'ISO/IEC 42001:2023 (AIMS)', article: 'Clause 6.1.2 AI Risk Assessment & Annex B Controls', alignment: healthScore >= 80 ? 'Certified Ready' : 'In Progress' },
+        { framework: 'GDPR (EU 2016/679)', article: 'Art. 22 Automated Profiling & Art. 32 Security of Processing', alignment: answers['q14']?.level2OptionId?.startsWith('14.1') ? 'Aligned' : 'Review Required' }
+      ],
+      incidentResponseSla: {
+        statutoryDeadline: isGpaiSystemic ? '24 Hours (Art. 55 Systemic Incident)' : '15 Days Max / 2 Days Widespread Infringement (Art. 73)',
+        authorityTarget: isGpaiSystemic ? 'European Commission AI Office & ENISA' : 'National Market Surveillance Authority & CSIRT',
+        currentReadiness: answers['q20']?.notes || 'Establish automated SIEM/SOAR webhook bridge to legal counsel and national authority reporting portal.'
+      }
+    },
+    caioBriefing: {
+      governanceMaturity: healthScore >= 85 ? 'OPTIMIZED (BOARD READY)' : (healthScore >= 65 ? 'MANAGED (REMEDIATION TRACKED)' : 'EXPOSED (IMMEDIATE GOVERNANCE INTERVENTION)'),
+      valueChainRoleAnalysis: {
+        currentRole: answers['q1']?.level1OptionId === '1.2' ? 'Upstream Provider (Art. 16 Full Liability)' :
+                     answers['q1']?.level1OptionId === '1.3' ? 'De-Facto Provider via Modification (Art. 25 Liability Shift)' :
+                     answers['q1']?.level1OptionId === '1.4' ? 'Distributor / Internal Enterprise Tooling' : 'Downstream Deployer (Art. 26 Obligations)',
+        substantialModificationRisk: answers['q1']?.level1OptionId === '1.3' || answers['q1']?.level2OptionId === '1.1.2'
+          ? 'HIGH ALERT: Fine-tuning or prompt modification outside vendor IFU transfers full €15M–€35M Provider obligations to your enterprise under Article 25.'
+          : 'CONTROLLED: Operating within documented parameters preserves downstream Deployer boundaries.',
+        conformityPathway: isUnacceptable ? 'PROHIBITED — CANNOT BE CE MARKED' :
+                           isCriticalDomain ? 'Mandatory Pre-Market Conformity Assessment (Annex VI Internal Control or Annex VII Notified Body) + CE Marking + Art. 49 EU Database Registration' :
+                           isGpaiSystemic ? 'Mandatory EU AI Office Notification + Annex XI/XII Technical Documentation + Art. 55 Adversarial Evaluations' :
+                           'Self-Assessment & Article 50 Transparency / Article 4 Staff AI Literacy'
+      },
+      algorithmicFairnessAndData: {
+        biasAuditStatus: answers['q8']?.level2OptionId?.startsWith('8.1') ? 'Disparate Impact & Equalized Odds Verified (<2% Variance)' : 'Disparate Impact Audit Pending / Gap Detected',
+        dataProvenanceStatus: answers['q7']?.level2OptionId?.startsWith('7.1') ? 'Curated Lineage & TDM Copyright Opt-Out Verified' : 'Data Sanitization & Provenance Documentation Required',
+        notes: answers['q8']?.notes || 'Implement automated pre-release demographic parity testing across gender, age, ethnicity, and disability cohorts.'
+      },
+      humanOversightAndExplainability: {
+        hitlArchitecture: answers['q12']?.level2OptionId?.startsWith('12.1') ? 'Active Human-in-the-Loop (HITL) Dual-Control & Hardware/Software Stop Button (Art. 14)' : 'Human Oversight Protocol Deficient',
+        explainabilityStandard: answers['q13']?.level2OptionId?.startsWith('13.1') && answers['q14']?.level2OptionId?.startsWith('14.1')
+          ? 'SHAP/Counterfactual Feature Attribution + Art. 86 Plain-Language Individual Rationale Active'
+          : 'Explainability & Operator Confidence Bounds Require Upgrade',
+        aiLiteracyCompliance: answers['q3']?.level2OptionId?.startsWith('3.1') ? '100% Operator AI Literacy Certified (Art. 4)' : 'Mandatory Staff AI Literacy Training Required'
+      },
+      lifecycleMonitoringMetrics: [
+        { metric: 'Population Stability Index (PSI) / Drift Threshold', target: '< 0.15 Quarterly Shift', currentStatus: answers['q20']?.level2OptionId?.startsWith('20.1') ? 'Monitored Active' : 'Unmonitored' },
+        { metric: 'Disparate Impact Ratio (80% Rule / Four-Fifths Rule)', target: '0.85 – 1.15 Parity Band', currentStatus: answers['q8']?.level2OptionId?.startsWith('8.1') ? 'Verified Pass' : 'Audit Pending' },
+        { metric: 'Hallucination / Factual Grounding Accuracy Rate', target: '> 98.5% Grounded Citations', currentStatus: answers['q11']?.level2OptionId?.startsWith('11.1') ? 'Within SLA' : 'Calibration Needed' },
+        { metric: 'Human Override / Kill-Switch Latency (Art. 14(4)(e))', target: '< 500ms Safe Fallback', currentStatus: answers['q12']?.level2OptionId?.startsWith('12.1') ? 'Hardware/API Interlock Ready' : 'Not Implemented' }
+      ]
+    }
   };
 }
