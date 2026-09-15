@@ -5,7 +5,8 @@ node_modules/
 client/build/
 
 # Runtime data files (may contain assessment, auth, feedback, or customer PII)
-data/
+/data/
+!client/src/data/
 server/data/*.json
 *.db
 *.sqlite

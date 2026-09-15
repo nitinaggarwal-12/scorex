@@ -1,14 +1,171 @@
 /**
- * EU AI Act Statutory Scoring & Classification Engine
- * Deterministic regulatory decision tree and remediation task compiler
+ * EU AI Act Statutory Scoring, Weighting & Classification Engine
+ * Deterministic regulatory decision tree, statutory penalty tier weighting,
+ * mathematical score justification, and remediation task compiler.
  */
 
 import { EU_AI_QUESTIONS } from '../data/euAiComplianceData';
 
-export function evaluateCompliance(answers = {}, meta = {}) {
+/**
+ * Statutory Weight Multipliers & Legal Justifications per Question (Regulation (EU) 2024/1689)
+ * Justified directly by Article 99 Penalty Tiers & Pre-Market Conformity Enforcement Severity:
+ * - Tier 1 (Weight 3.5x + Veto Cap): Art. 5 Prohibited Practices (Up to €35M or 7% Global Turnover)
+ * - Tier 2 (Weight 2.0x - 2.5x): Art. 9-15 High-Risk Core Obligations, Art. 25 Provider Reclassification, Art. 51-55 GPAI Systemic Risk (Up to €15M or 3% Turnover)
+ * - Tier 3 (Weight 1.5x - 1.8x): Art. 13, 26(7), 49, 50, 86 Transparency, Registry & Explainability Rights (€7.5M - €15M / 1.5% - 3% Turnover)
+ * - Tier 4 (Weight 1.0x): Art. 4 General Staff AI Literacy Baseline
+ */
+export const QUESTION_STATUTORY_WEIGHTS = {
+  q1: {
+    weight: 2.5,
+    tier: 'Tier 2: Value-Chain Liability (Art. 16 & 25)',
+    maxFineRule: '€15M or 3% Worldwide Turnover',
+    justification: 'Substantial modification or white-labeling transfers full €15M–€35M Provider statutory liabilities onto the deployer under Article 25.'
+  },
+  q2: {
+    weight: 2.5,
+    tier: 'Tier 2: GPAI Systemic Risk (Art. 51–55 & Art. 101)',
+    maxFineRule: '€15M or 3% Worldwide Turnover',
+    justification: 'Foundation models exceeding 10^25 FLOPs face direct European Commission AI Office enforcement, mandatory adversarial red-teaming, and systemic incident reporting.'
+  },
+  q3: {
+    weight: 1.0,
+    tier: 'Tier 4: Universal AI Literacy (Art. 4)',
+    maxFineRule: 'Baseline Statutory Mandate (Enforced Feb 2, 2025)',
+    justification: 'Applies universally across all AI systems; foundational operational requirement but carries lower direct financial penalty than Art. 5 or Art. 9–15 breaches.'
+  },
+  q4: {
+    weight: 3.5,
+    tier: 'Tier 1: Prohibited AI Practices (Art. 5 & Art. 99(3))',
+    maxFineRule: '€35M or 7% Worldwide Turnover (STATUTORY VETO)',
+    justification: 'Highest statutory severity under EU law. Any violation triggers an absolute market ban and hard-caps overall readiness below 25% regardless of other controls.'
+  },
+  q5: {
+    weight: 2.2,
+    tier: 'Tier 2: Annex I & III High-Risk Domain Scope (Art. 6)',
+    maxFineRule: '€15M or 3% Worldwide Turnover',
+    justification: 'Determines whether mandatory pre-market CE conformity assessment (Articles 8–15) and EU database registration legally apply.'
+  },
+  q6: {
+    weight: 2.0,
+    tier: 'Tier 2: Article 6(3) Derogation Substantiation',
+    maxFineRule: '€15M or 3% Turnover + Art. 79 Market Withdrawal',
+    justification: 'Invalid or undocumented Article 6(3) exemption claims result in immediate national surveillance authority market recall and uncertified high-risk operation fines.'
+  },
+  q7: {
+    weight: 2.5,
+    tier: 'Tier 2: Data Governance & Special Category PII (Art. 10 & GDPR Art. 9)',
+    maxFineRule: '€15M / 3% (AI Act) + €20M / 4% (GDPR Art. 83)',
+    justification: 'Dual statutory liability under EU AI Act Article 10 and GDPR Article 9/32 for training/inference on unredacted biometric or sensitive personal data.'
+  },
+  q8: {
+    weight: 2.5,
+    tier: 'Tier 2: Algorithmic Bias & Non-Discrimination (Art. 10(2)(f))',
+    maxFineRule: '€15M or 3% Worldwide Turnover',
+    justification: 'Core EU Charter of Fundamental Rights protection; statistical disparate impact in employment, credit, or healthcare triggers severe regulatory enforcement.'
+  },
+  q9: {
+    weight: 2.0,
+    tier: 'Tier 2: Automatic Event Logging & WORM Retention (Art. 12)',
+    maxFineRule: '€15M or 3% Worldwide Turnover',
+    justification: 'Without immutable Write-Once-Read-Many (WORM) logs retained for ≥6 months, post-incident forensic investigation by national authorities is impossible.'
+  },
+  q10: {
+    weight: 2.0,
+    tier: 'Tier 2: Annex IV Technical Documentation (Art. 11)',
+    maxFineRule: '€15M or 3% Worldwide Turnover',
+    justification: 'Mandatory statutory prerequisite for signing the EU Declaration of Conformity (Article 47) and affixing the CE Marking (Article 48).'
+  },
+  q11: {
+    weight: 2.5,
+    tier: 'Tier 2: Robustness, Accuracy & Cybersecurity (Art. 15)',
+    maxFineRule: '€15M or 3% Worldwide Turnover',
+    justification: 'Mandates resilience against prompt injection, data poisoning, model evasion, and adversarial attacks, intersecting directly with NIS2 and DORA.'
+  },
+  q12: {
+    weight: 2.5,
+    tier: 'Tier 2: Human Oversight & Kill-Switch Interlock (Art. 14)',
+    maxFineRule: '€15M or 3% Worldwide Turnover',
+    justification: 'High-risk systems cannot legally operate autonomously without verified Human-in-the-Loop (HITL) intervention and a <500ms safe stop switch.'
+  },
+  q13: {
+    weight: 1.5,
+    tier: 'Tier 3: Deployer Instructions for Use (IFU) (Art. 13)',
+    maxFineRule: '€7.5M–€15M or 1.5%–3% Turnover',
+    justification: 'Ensures downstream deployers understand system capabilities, confidence thresholds, and known failure modes.'
+  },
+  q14: {
+    weight: 1.8,
+    tier: 'Tier 3: Individual Right to Explanation (Art. 86)',
+    maxFineRule: '€15M or 3% Turnover + Civil Litigation Exposure',
+    justification: 'Grants natural persons directly affected by high-risk AI decisions a legally enforceable right to a clear, meaningful explanation of the decision logic.'
+  },
+  q15: {
+    weight: 1.5,
+    tier: 'Tier 3: Workplace Representative Notification (Art. 26(7))',
+    maxFineRule: '€15M or 3% Turnover + Labor Injunctions',
+    justification: 'Mandatory prior consultation and information notice to Works Councils and employee representatives before workplace AI deployment.'
+  },
+  q16: {
+    weight: 2.2,
+    tier: 'Tier 2: Fundamental Rights Impact Assessment (FRIA) (Art. 27)',
+    maxFineRule: '€15M or 3% Worldwide Turnover',
+    justification: 'Mandatory pre-deployment assessment for public bodies and private operators in banking, insurance, education, and essential services.'
+  },
+  q17: {
+    weight: 1.5,
+    tier: 'Tier 3: EU Central Database Registration (Art. 49 & 71)',
+    maxFineRule: '€15M or 3% Turnover (Unregistered Operation)',
+    justification: 'Public Annex VIII registration in the European Commission database is legally required prior to placing high-risk AI on the market.'
+  },
+  q18: {
+    weight: 1.5,
+    tier: 'Tier 3: Conversational AI User Disclosure (Art. 50(1))',
+    maxFineRule: '€15M or 3% Worldwide Turnover',
+    justification: 'Natural persons must be explicitly informed they are interacting with an AI system unless obvious from the context.'
+  },
+  q19: {
+    weight: 1.5,
+    tier: 'Tier 3: Synthetic Content & Deepfake Watermarking (Art. 50(2))',
+    maxFineRule: '€15M or 3% Worldwide Turnover',
+    justification: 'Generative AI outputs (audio, image, video, text) must embed machine-readable, tamper-evident cryptographic provenance (e.g. C2PA).'
+  },
+  q20: {
+    weight: 2.0,
+    tier: 'Tier 2: Post-Market Surveillance & 15-Day Incident SLA (Art. 72–73)',
+    maxFineRule: '€15M or 3% Worldwide Turnover',
+    justification: 'Continuous production drift monitoring and mandatory 15-day (or 2-day widespread infringement) serious incident reporting to national authorities.'
+  }
+};
+
+/**
+ * Granular option credit multiplier (0.00 to 1.00)
+ * Evaluates both complianceStatus and option specificity so partial engineering controls
+ * earn proportional mathematical credit.
+ */
+function getOptionCreditMultiplier(qId, l1Id, l2Id, complianceStatus) {
+  if (complianceStatus === 'COMPLIANT') {
+    return 1.0;
+  }
+  if (complianceStatus === 'NON_COMPLIANT') {
+    return 0.0;
+  }
+  // REMEDIATION_REQUIRED granular differentiation:
+  // Sub-options ending in .1 or representing active/automated controls in progress get 0.62 credit;
+  // Sub-options representing manual/policy-only or unverified controls get 0.42 credit.
+  if (l2Id && (l2Id.endsWith('.1') || l2Id.includes('2.1'))) {
+    return 0.62;
+  }
+  return 0.45;
+}
+
+export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}) {
   const answeredCount = Object.keys(answers).filter(k => answers[k]?.level1OptionId).length;
   const totalQuestions = EU_AI_QUESTIONS.length;
   const isComplete = answeredCount === totalQuestions;
+
+  // Financial parameters (dynamic CFO simulator)
+  const globalTurnoverMillions = Number(financialConfig.globalTurnoverMillions) || 2500; // Default €2.5B
+  const isSme = Boolean(financialConfig.isSme); // Article 99(6) SME lower-of-two cap rule
 
   // 1. Overall Risk Tier Determination
   let overallRiskTier = 'Minimal / Low Risk (General Art. 4 Literacy Applies)';
@@ -59,25 +216,60 @@ export function evaluateCompliance(answers = {}, meta = {}) {
     riskTierDescription = 'System interacts directly with natural persons or generates synthetic content. Mandatory user notifications and C2PA machine-readable watermarking apply under Article 50.';
   }
 
-  // 2. Conformity Determination
+  // 2. Conformity & Weighted Mathematical Score Calculation
   let conformityStatus = 'Compliant (Ready for Sign-off)';
   let conformityBadgeColor = '#10b981';
   let nonCompliantCount = 0;
   let remediationCount = 0;
   let compliantCount = 0;
 
-  // 3. Remediation Tasks Collection
   const remediationTasks = [];
+  const questionAuditTrail = [];
+
+  let totalPossibleWeight = 0;
+  let totalEarnedWeightedPoints = 0;
+  let unweightedEarnedPoints = 0;
+  let unweightedAssessedCount = 0;
 
   EU_AI_QUESTIONS.forEach(q => {
+    const weightConfig = QUESTION_STATUTORY_WEIGHTS[q.id] || {
+      weight: 1.5,
+      tier: 'Tier 3: General Compliance Obligation',
+      maxFineRule: '€15M or 3% Turnover',
+      justification: 'Statutory requirement under Regulation (EU) 2024/1689.'
+    };
+    const qWeight = weightConfig.weight;
+    totalPossibleWeight += qWeight;
+
     const userAns = answers[q.id];
-    if (!userAns || !userAns.level1OptionId) return;
+    const l1 = q.options.find(o => o.id === userAns?.level1OptionId);
+    const l2 = l1?.subOptions?.find(s => s.id === userAns?.level2OptionId);
 
-    const l1 = q.options.find(o => o.id === userAns.level1OptionId);
-    if (!l1) return;
+    if (!userAns || !l1 || !l2) {
+      questionAuditTrail.push({
+        id: q.id,
+        number: q.id.replace('q', ''),
+        title: q.title,
+        article: q.articleReference || weightConfig.tier.split(':')[0],
+        weight: qWeight,
+        tier: weightConfig.tier,
+        maxFineRule: weightConfig.maxFineRule,
+        justification: weightConfig.justification,
+        selectedOptionLabel: 'Unanswered / Pending Assessment',
+        complianceStatus: 'UNASSESSED',
+        optionCreditMultiplier: 0,
+        weightedPointsEarned: 0,
+        maxWeightedPoints: qWeight
+      });
+      return;
+    }
 
-    const l2 = l1.subOptions?.find(s => s.id === userAns.level2OptionId);
-    if (!l2) return;
+    unweightedAssessedCount++;
+    const creditMultiplier = getOptionCreditMultiplier(q.id, l1.id, l2.id, l2.complianceStatus);
+    const earnedWeighted = Number((qWeight * creditMultiplier).toFixed(2));
+
+    totalEarnedWeightedPoints += earnedWeighted;
+    unweightedEarnedPoints += creditMultiplier;
 
     if (l2.complianceStatus === 'NON_COMPLIANT') {
       nonCompliantCount++;
@@ -97,9 +289,35 @@ export function evaluateCompliance(answers = {}, meta = {}) {
         task: l2.remediation.task,
         targetOwner: l2.remediation.targetOwner,
         sourceLabel: l2.label,
+        statutoryWeight: qWeight,
         status: 'Todo'
       });
     }
+
+    questionAuditTrail.push({
+      id: q.id,
+      number: q.id.replace('q', ''),
+      title: q.title,
+      article: q.articleReference || weightConfig.tier.split(':')[0],
+      weight: qWeight,
+      tier: weightConfig.tier,
+      maxFineRule: weightConfig.maxFineRule,
+      justification: weightConfig.justification,
+      selectedOptionLabel: `${l1.label} → ${l2.label}`,
+      complianceStatus: l2.complianceStatus,
+      optionCreditMultiplier: creditMultiplier,
+      weightedPointsEarned: earnedWeighted,
+      maxWeightedPoints: qWeight,
+      notes: userAns.notes || ''
+    });
+  });
+
+  // Sort remediation tasks by statutory weight * severity priority
+  const severityRank = { CRITICAL: 4, HIGH: 3, MEDIUM: 2, LOW: 1 };
+  remediationTasks.sort((a, b) => {
+    const rankDiff = (severityRank[b.severity] || 0) - (severityRank[a.severity] || 0);
+    if (rankDiff !== 0) return rankDiff;
+    return (b.statutoryWeight || 1) - (a.statutoryWeight || 1);
   });
 
   if (isUnacceptable || nonCompliantCount > 0) {
@@ -113,64 +331,155 @@ export function evaluateCompliance(answers = {}, meta = {}) {
     conformityBadgeColor = '#3b82f6';
   }
 
-  // 4. Compliance Health Score Calculation (0-100)
-  // Max possible points based on total questions (20)
-  let healthScore = 0;
-  if (answeredCount > 0) {
-    const totalAssessed = compliantCount + remediationCount + nonCompliantCount;
-    if (totalAssessed > 0) {
-      const rawPoints = (compliantCount * 5) + (remediationCount * 2.2) - (nonCompliantCount * 6);
-      const maxPossible = totalAssessed * 5;
-      healthScore = Math.max(0, Math.min(100, Math.round((rawPoints / maxPossible) * 100)));
-    }
+  // 3. Weighted Compliance Health Score vs Unweighted Score
+  let rawWeightedPercentage = totalPossibleWeight > 0
+    ? Math.round((totalEarnedWeightedPoints / totalPossibleWeight) * 100)
+    : 0;
+  const unweightedPercentage = unweightedAssessedCount > 0
+    ? Math.round((unweightedEarnedPoints / totalQuestions) * 100)
+    : 0;
+
+  // Statutory Veto Override Rule: If Article 5 Prohibited Practice is present, cap readiness score at 18%
+  let vetoTriggered = false;
+  let vetoReason = null;
+  let healthScore = rawWeightedPercentage;
+
+  if (isUnacceptable) {
+    vetoTriggered = true;
+    vetoReason = 'Article 5 Prohibited AI Practice Veto Applied: Non-compliance with Article 5 cannot be offset by compliant technical documentation or logging elsewhere. Score hard-capped at 18% (Critical Non-Conformity).';
+    healthScore = Math.min(rawWeightedPercentage, 18);
+  } else if (nonCompliantCount > 0) {
+    // Any Tier 2 non-compliance caps maximum readiness at 64% until resolved
+    healthScore = Math.min(rawWeightedPercentage, 64);
   }
 
-  // 5. 7 Core Statutory Vectors Breakdown
+  // 4. 7 Core Statutory Vectors Breakdown (Weighted by Question Statutory Multipliers)
   const vectorMap = {
-    riskManagement: { name: 'Risk Management (Art. 9)', qIds: ['q4', 'q11', 'q20'], score: 0, weight: 1 },
-    dataGovernance: { name: 'Data Governance & Bias (Art. 10)', qIds: ['q7', 'q8'], score: 0, weight: 1 },
-    technicalDocs: { name: 'Technical Documentation (Art. 11)', qIds: ['q2', 'q10'], score: 0, weight: 1 },
-    loggingRetention: { name: 'Logging & Retention (Art. 12)', qIds: ['q9'], score: 0, weight: 1 },
-    humanOversight: { name: 'Human Oversight (Art. 14)', qIds: ['q12', 'q13', 'q14'], score: 0, weight: 1 },
-    robustnessCyber: { name: 'Robustness & Cybersecurity (Art. 15)', qIds: ['q11'], score: 0, weight: 1 },
-    transparency: { name: 'Transparency & Watermarking (Art. 50)', qIds: ['q18', 'q19'], score: 0, weight: 1 }
+    riskManagement: { name: 'Risk Management (Art. 9)', qIds: ['q4', 'q11', 'q20'], score: 0, weightSum: 0 },
+    dataGovernance: { name: 'Data Governance & Bias (Art. 10)', qIds: ['q7', 'q8'], score: 0, weightSum: 0 },
+    technicalDocs: { name: 'Technical Documentation (Art. 11)', qIds: ['q2', 'q10'], score: 0, weightSum: 0 },
+    loggingRetention: { name: 'Logging & Retention (Art. 12)', qIds: ['q9'], score: 0, weightSum: 0 },
+    humanOversight: { name: 'Human Oversight (Art. 14)', qIds: ['q12', 'q13', 'q14'], score: 0, weightSum: 0 },
+    robustnessCyber: { name: 'Robustness & Cybersecurity (Art. 15)', qIds: ['q11'], score: 0, weightSum: 0 },
+    transparency: { name: 'Transparency & Watermarking (Art. 50)', qIds: ['q18', 'q19'], score: 0, weightSum: 0 }
   };
 
   Object.keys(vectorMap).forEach(vKey => {
     const vector = vectorMap[vKey];
-    let vPoints = 0;
-    let vTotal = 0;
+    let vWeightedEarned = 0;
+    let vWeightedMax = 0;
 
     vector.qIds.forEach(qid => {
+      const qWeight = QUESTION_STATUTORY_WEIGHTS[qid]?.weight || 1.5;
+      vWeightedMax += qWeight;
+
       const uAns = answers[qid];
-      if (!uAns?.level2OptionId) {
-        vTotal += 100;
-        vPoints += 40; // baseline if unassessed
-        return;
-      }
-
       const q = EU_AI_QUESTIONS.find(x => x.id === qid);
-      const l1 = q?.options.find(o => o.id === uAns.level1OptionId);
-      const l2 = l1?.subOptions?.find(s => s.id === uAns.level2OptionId);
+      const l1 = q?.options.find(o => o.id === uAns?.level1OptionId);
+      const l2 = l1?.subOptions?.find(s => s.id === uAns?.level2OptionId);
 
-      vTotal += 100;
-      if (l2?.complianceStatus === 'COMPLIANT') {
-        vPoints += 100;
-      } else if (l2?.complianceStatus === 'REMEDIATION_REQUIRED') {
-        vPoints += 55;
+      if (!l2) {
+        vWeightedEarned += qWeight * 0.35; // baseline unassessed
       } else {
-        vPoints += 10;
+        const credit = getOptionCreditMultiplier(qid, l1.id, l2.id, l2.complianceStatus);
+        vWeightedEarned += qWeight * credit;
       }
     });
 
-    vector.score = Math.round(vPoints / (vTotal || 1));
+    vector.weightSum = Number(vWeightedMax.toFixed(1));
+    vector.score = Math.round((vWeightedEarned / (vWeightedMax || 1)) * 100);
   });
 
-  // 6. Statutory Scorecard Generation
+  // 5. Dynamic CFO Financial Penalty & Value-at-Risk (VaR) Simulator (Article 99)
+  // Compute statutory maximum fine under Art. 99(3) [7% / €35M] or Art. 99(4) [3% / €15M]
+  // Standard Enterprise: HIGHER of fixed EUR or turnover %
+  // SME / Startup (Art. 99(6)): LOWER of fixed EUR or turnover %
+  const pctFineArt5 = Number((globalTurnoverMillions * 0.07).toFixed(2));
+  const fixedFineArt5 = 35.0;
+  const maxFineArt5Millions = isSme ? Math.min(fixedFineArt5, pctFineArt5) : Math.max(fixedFineArt5, pctFineArt5);
+
+  const pctFineArt9to15 = Number((globalTurnoverMillions * 0.03).toFixed(2));
+  const fixedFineArt9to15 = 15.0;
+  const maxFineArt9to15Millions = isSme ? Math.min(fixedFineArt9to15, pctFineArt9to15) : Math.max(fixedFineArt9to15, pctFineArt9to15);
+
+  const applicableStatutoryCeilingMillions = isUnacceptable
+    ? maxFineArt5Millions
+    : (isCriticalDomain || isGpaiSystemic || nonCompliantCount > 0 || remediationCount > 0 ? maxFineArt9to15Millions : 7.5);
+
+  // Probability-weighted Regulatory Value-at-Risk (VaR) based on non-compliance severity & healthScore deficit
+  const riskExposureFactor = Math.max(0.02, (100 - healthScore) / 100);
+  const expectedValueAtRiskMillions = Number((applicableStatutoryCeilingMillions * riskExposureFactor * (isUnacceptable ? 0.95 : 0.45)).toFixed(2));
+
+  const criticalCount = remediationTasks.filter(t => t.severity === 'CRITICAL').length;
+  const highCount = remediationTasks.filter(t => t.severity === 'HIGH').length;
+  const mediumCount = remediationTasks.filter(t => t.severity === 'MEDIUM').length;
+
+  const estimatedRemediationCostMillions = Number(
+    Math.max(0.08, (criticalCount * 0.18) + (highCount * 0.09) + (mediumCount * 0.04)).toFixed(2)
+  );
+
+  const netComplianceRoiMultiplier = estimatedRemediationCostMillions > 0
+    ? Number((expectedValueAtRiskMillions / estimatedRemediationCostMillions).toFixed(1))
+    : 10.0;
+
+  const financialSimulation = {
+    globalTurnoverMillions,
+    isSme,
+    applicableArticleRule: isUnacceptable ? 'Article 99(3) — Prohibited Practices (7% / €35M)' : 'Article 99(4) — High-Risk & Core Obligations (3% / €15M)',
+    smeRuleApplied: isSme ? 'Article 99(6) SME Protection Active (LOWER of Fixed Cap or Turnover %)' : 'Standard Enterprise Cap (HIGHER of Fixed Cap or Turnover %)',
+    applicableStatutoryCeilingMillions: Number(applicableStatutoryCeilingMillions.toFixed(2)),
+    expectedValueAtRiskMillions,
+    estimatedRemediationCostMillions,
+    netSavingsAvoidedMillions: Number(Math.max(0, expectedValueAtRiskMillions - estimatedRemediationCostMillions).toFixed(2)),
+    netComplianceRoiMultiplier
+  };
+
+  // 6. Dynamic Article 27 Fundamental Rights Impact Assessment (FRIA) 6-Point Statutory Matrix
+  const friaCriteria = [
+    {
+      clause: 'Article 27(1)(a)',
+      title: 'Deployer Processes & Intended Purpose Alignment',
+      status: answers['q1']?.level2OptionId?.startsWith('1.1') || answers['q5']?.level1OptionId ? 'VERIFIED' : 'GAP DETECTED',
+      assessment: answers['q5']?.notes || `System operates in ${meta.operatingDepartment || 'enterprise workflows'} with defined operational boundaries under ${overallRiskTier}.`
+    },
+    {
+      clause: 'Article 27(1)(b)',
+      title: 'Temporal & Geographic Scope of Affected Persons',
+      status: answers['q17']?.level2OptionId?.startsWith('17.1') ? 'VERIFIED' : 'ACTION REQUIRED',
+      assessment: `Continuous production deployment across EU member state jurisdictions; registered under Dossier ${meta.assessmentId || 'Active'}.`
+    },
+    {
+      clause: 'Article 27(1)(c)',
+      title: 'Specific Categories of Natural Persons & Vulnerable Groups',
+      status: answers['q8']?.level2OptionId?.startsWith('8.1') ? 'VERIFIED (PROTECTED)' : 'HIGH EXPOSURE GAP',
+      assessment: answers['q8']?.notes || 'Evaluates disparate impact across protected cohorts (age, gender, ethnicity, disability, employment applicants).'
+    },
+    {
+      clause: 'Article 27(1)(d)',
+      title: 'Specific Risks of Harm to Fundamental Rights (EU Charter)',
+      status: isUnacceptable ? 'CRITICAL VIOLATION' : (answers['q4']?.level1OptionId === '4.1' ? 'MITIGATED' : 'REMEDIATION REQUIRED'),
+      assessment: isUnacceptable ? 'Prohibited Article 5 practice detected; severe fundamental rights infringement.' : 'Screened against non-discrimination, privacy (Art. 7/8 Charter), and human dignity.'
+    },
+    {
+      clause: 'Article 27(1)(e)',
+      title: 'Human Oversight Measures (Article 14 Implementation)',
+      status: answers['q12']?.level2OptionId?.startsWith('12.1') ? 'VERIFIED (HITL ACTIVE)' : 'DEFICIENT OVERRIDE',
+      assessment: answers['q12']?.notes || 'Requires dual-control human review prior to adverse citizen/employee decisions and <500ms kill-switch.'
+    },
+    {
+      clause: 'Article 27(1)(f)',
+      title: 'Internal Governance, Complaint Mechanism & Art. 86 Redress',
+      status: answers['q14']?.level2OptionId?.startsWith('14.1') && answers['q20']?.level2OptionId?.startsWith('20.1') ? 'VERIFIED' : 'REMEDIATION REQUIRED',
+      assessment: answers['q14']?.notes || 'Provides affected individuals with plain-language decision explanations and a 15-day incident response workflow.'
+    }
+  ];
+
+  // 7. Statutory Scorecard Generation
   const scorecardItems = [
     {
       article: 'Article 4',
       title: 'AI Literacy Framework',
+      weight: '1.0x',
       status: answers['q3']?.level2OptionId === '3.1.1' || answers['q3']?.level2OptionId === '3.1.2' ? 'PASSED' : 
               answers['q3']?.level2OptionId?.startsWith('3.2') ? 'REMEDIATION REQUIRED' : 
               answers['q3']?.level2OptionId?.startsWith('3.3') ? 'FAILED' : 'PENDING',
@@ -179,6 +488,7 @@ export function evaluateCompliance(answers = {}, meta = {}) {
     {
       article: 'Article 5',
       title: 'Prohibited Practices Screen',
+      weight: '3.5x (Veto)',
       status: isUnacceptable ? 'PROHIBITED / FAILED' : 
               answers['q4']?.level1OptionId === '4.1' ? 'PASSED' : 'REMEDIATION REQUIRED',
       notes: answers['q4']?.notes || 'Screening for subliminal distortion and biometric categorization.'
@@ -186,48 +496,56 @@ export function evaluateCompliance(answers = {}, meta = {}) {
     {
       article: 'Articles 6 & 25',
       title: 'Classification & Value Chain',
+      weight: '2.5x',
       status: answers['q1']?.level2OptionId === '1.3.1' || answers['q1']?.level2OptionId === '1.3.2' ? 'RECLASSIFIED AS PROVIDER' : 'PASSED',
       notes: answers['q1']?.notes || 'Value-chain liability and substantial modification analysis.'
     },
     {
       article: 'Article 10',
       title: 'Data Governance & Bias',
+      weight: '2.5x',
       status: answers['q7']?.level2OptionId?.startsWith('7.1') && answers['q8']?.level2OptionId?.startsWith('8.1') ? 'PASSED' : 'REMEDIATION REQUIRED',
       notes: `${answers['q7']?.notes || ''} ${answers['q8']?.notes || ''}`.trim() || 'Data provenance and statistical bias mitigations.'
     },
     {
       article: 'Article 11 & Annex IV',
       title: 'Technical Documentation',
+      weight: '2.0x',
       status: answers['q10']?.level2OptionId === '10.1.1' ? 'PASSED' : 'REMEDIATION REQUIRED',
       notes: answers['q10']?.notes || 'Comprehensive Annex IV technical dossier.'
     },
     {
       article: 'Article 12',
       title: 'Automatic Event Logging (WORM)',
+      weight: '2.0x',
       status: answers['q9']?.level2OptionId?.startsWith('9.1') ? 'PASSED' : 'REMEDIATION REQUIRED',
       notes: answers['q9']?.notes || 'Minimum 6-month tamper-resistant write-once logging.'
     },
     {
       article: 'Article 13',
       title: 'Transparency & Instructions for Use',
+      weight: '1.5x',
       status: answers['q13']?.level2OptionId?.startsWith('13.1') ? 'PASSED' : 'REMEDIATION REQUIRED',
       notes: answers['q13']?.notes || 'Instructions for use and automation bias cues.'
     },
     {
       article: 'Article 14',
       title: 'Human Oversight (HITL/HOTL)',
+      weight: '2.5x',
       status: answers['q12']?.level2OptionId?.startsWith('12.1') || answers['q12']?.level2OptionId?.startsWith('12.2') ? 'PASSED' : 'FAILED',
       notes: answers['q12']?.notes || 'Human-in-the-loop intervention and emergency kill-switch.'
     },
     {
       article: 'Article 15',
       title: 'Accuracy & Adversarial Hardening',
+      weight: '2.5x',
       status: answers['q11']?.level2OptionId?.startsWith('11.1') ? 'PASSED' : 'REMEDIATION REQUIRED',
       notes: answers['q11']?.notes || 'AI-specific penetration testing and prompt injection resilience.'
     },
     {
       article: 'Article 26(7)',
       title: 'Workplace Worker Notification',
+      weight: '1.5x',
       status: answers['q15']?.level2OptionId?.startsWith('15.1') ? 'PASSED' : 
               answers['q15']?.level2OptionId?.startsWith('15.2') ? 'IN PROGRESS (HELD)' : 'REMEDIATION REQUIRED',
       notes: answers['q15']?.notes || 'Works council / employee representative information notice.'
@@ -235,30 +553,35 @@ export function evaluateCompliance(answers = {}, meta = {}) {
     {
       article: 'Article 27',
       title: 'Fundamental Rights Impact Assessment (FRIA)',
+      weight: '2.2x',
       status: answers['q16']?.level2OptionId?.startsWith('16.1') || answers['q16']?.level2OptionId?.startsWith('16.3') ? 'PASSED' : 'REMEDIATION REQUIRED',
       notes: answers['q16']?.notes || 'Mandatory evaluation for public bodies and designated sectors.'
     },
     {
       article: 'Articles 49 & 71',
       title: 'EU Database Registration',
+      weight: '1.5x',
       status: answers['q17']?.level2OptionId?.startsWith('17.1') ? 'PASSED' : 'PENDING REGISTRATION',
       notes: answers['q17']?.notes || 'Annex VIII registration on official EU Central Database.'
     },
     {
       article: 'Article 50',
       title: 'Generative AI & Watermarking',
+      weight: '1.5x',
       status: answers['q18']?.level2OptionId?.startsWith('18.1') && (answers['q19']?.level2OptionId?.startsWith('19.1') || answers['q19']?.level2OptionId?.startsWith('19.2')) ? 'PASSED' : 'REMEDIATION REQUIRED',
       notes: answers['q18']?.notes || 'Conversational interaction disclosure and C2PA watermarking.'
     },
     {
       article: 'Articles 72 & 73',
       title: 'Post-Market Telemetry & Incident Reporting',
+      weight: '2.0x',
       status: answers['q20']?.level2OptionId?.startsWith('20.1') ? 'PASSED' : 'REMEDIATION REQUIRED',
       notes: answers['q20']?.notes || 'Production drift alerts and 15-day statutory incident SLA.'
     },
     {
       article: 'Article 86',
       title: 'Affected Individual Right to Explanation',
+      weight: '1.8x',
       status: answers['q14']?.level2OptionId?.startsWith('14.1') || answers['q14']?.level2OptionId?.startsWith('14.2') ? 'PASSED' : 'FAILED',
       notes: answers['q14']?.notes || 'Delivery of plain-language decision rationale upon request.'
     }
@@ -275,13 +598,25 @@ export function evaluateCompliance(answers = {}, meta = {}) {
     conformityStatus,
     conformityBadgeColor,
     healthScore,
+    weightedBreakdown: {
+      totalPossibleWeight: Number(totalPossibleWeight.toFixed(1)),
+      totalEarnedWeightedPoints: Number(totalEarnedWeightedPoints.toFixed(2)),
+      rawWeightedPercentage,
+      unweightedPercentage,
+      weightingDelta: healthScore - unweightedPercentage,
+      vetoTriggered,
+      vetoReason,
+      questionAuditTrail
+    },
+    financialSimulation,
+    friaCriteria,
     stats: {
       compliantCount,
       remediationCount,
       nonCompliantCount,
-      criticalRemediations: remediationTasks.filter(t => t.severity === 'CRITICAL').length,
-      highRemediations: remediationTasks.filter(t => t.severity === 'HIGH').length,
-      mediumRemediations: remediationTasks.filter(t => t.severity === 'MEDIUM').length
+      criticalRemediations: criticalCount,
+      highRemediations: highCount,
+      mediumRemediations: mediumCount
     },
     vectorBreakdown: vectorMap,
     remediationTasks,

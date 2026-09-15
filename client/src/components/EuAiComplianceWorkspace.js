@@ -1842,10 +1842,70 @@ export default function EuAiComplianceWorkspace() {
     }
   }, [meta, answers, taskStatusOverrides, routeParamId]);
 
-  // Compute compliance evaluation
+  // CFO & Board Financial Exposure & SME Cap State (Dynamic)
+  const [globalTurnoverMillions, setGlobalTurnoverMillions] = useState(2500); // default €2.5B
+  const [isSme, setIsSme] = useState(false);
+  const [syncingServer, setSyncingServer] = useState(false);
+
+  // Independent Multi-Model LLM Live API Audit State
+  const [auditorModel, setAuditorModel] = useState('gemini-2.5-pro');
+  const [liveAuditReport, setLiveAuditReport] = useState(null);
+  const [runningLiveAudit, setRunningLiveAudit] = useState(false);
+  const [showWeightJustificationTable, setShowWeightJustificationTable] = useState(false);
+  const [addedAuditTasks, setAddedAuditTasks] = useState([]);
+
+  // Compute compliance evaluation dynamically across all parameters
   const evaluation = useMemo(() => {
-    return evaluateCompliance(answers, meta);
-  }, [answers, meta]);
+    const baseEval = evaluateCompliance(answers, meta, { globalTurnoverMillions, isSme });
+    if (addedAuditTasks.length > 0) {
+      baseEval.remediationTasks = [...addedAuditTasks, ...baseEval.remediationTasks];
+    }
+    return baseEval;
+  }, [answers, meta, globalTurnoverMillions, isSme, addedAuditTasks]);
+
+  // Run Independent Multi-Model LLM Live API Audit
+  const handleRunLiveAudit = async (selectedModel = auditorModel) => {
+    setRunningLiveAudit(true);
+    const toastId = toast.loading(`🔍 Running Independent LLM Statutory Audit via ${selectedModel}...`);
+    try {
+      const res = await axios.post('/api/eu-ai-compliance/live-audit', {
+        auditorModel: selectedModel,
+        meta,
+        answers,
+        evaluation
+      });
+      if (res.data?.auditReport) {
+        setLiveAuditReport(res.data.auditReport);
+        toast.success(
+          `✅ Independent Audit Complete (${selectedModel}): Calibrated Score ${res.data.auditReport.llmCalibratedScore}% (${res.data.auditReport.overallVerdict.replace(/_/g, ' ')})`,
+          { id: toastId, duration: 5000 }
+        );
+      }
+    } catch (err) {
+      toast.error('Independent LLM Audit error: ' + (err.response?.data?.error || err.message), { id: toastId });
+    } finally {
+      setRunningLiveAudit(false);
+    }
+  };
+
+  // Add Auditor-Recommended Task into Live Dossier Backlog
+  const handleAddRecommendedAuditTask = (recTask) => {
+    const newId = `task_auditor_${Date.now().toString().slice(-4)}`;
+    const newTask = {
+      id: newId,
+      questionId: 'AUDIT',
+      questionTitle: `[Independent Auditor: ${auditorModel}] ${recTask.title}`,
+      severity: recTask.severity || 'HIGH',
+      article: recTask.article || 'Article 15 / 25',
+      task: recTask.title,
+      targetOwner: recTask.targetOwner || 'Legal & CAIO',
+      sourceLabel: `Independent LLM Live Audit (${auditorModel})`,
+      statutoryWeight: 2.5,
+      status: 'Todo'
+    };
+    setAddedAuditTasks(prev => [newTask, ...prev]);
+    toast.success(`➕ Added "${recTask.title}" to Dossier Remediation Backlog!`);
+  };
 
   // Handle Level 1 selection
   const handleSelectLevel1 = (questionId, l1Id) => {
@@ -1908,6 +1968,8 @@ export default function EuAiComplianceWorkspace() {
     setAnswers({});
     setTaskStatusOverrides({});
     setSynthesis(null);
+    setLiveAuditReport(null);
+    setAddedAuditTasks([]);
     setActiveTab('questionnaire');
     setActiveSectionId(1);
     persistState({}, freshMeta, {});
@@ -1929,9 +1991,136 @@ export default function EuAiComplianceWorkspace() {
     setAnswers(preset.answers);
     setTaskStatusOverrides({});
     setSynthesis(null);
+    setLiveAuditReport(null);
+    setAddedAuditTasks([]);
     persistState(preset.answers, preset.meta, {});
     navigate(`/eu-ai-compliance/${preset.meta.documentId}`);
     toast.success(`✨ Loaded Category: ${preset.shortLabel} (${preset.meta.documentId})`);
+  };
+
+  // Sync dossier state to backend server for multi-stakeholder sharing
+  const handleSyncToServer = async () => {
+    setSyncingServer(true);
+    const toastId = toast.loading('☁️ Syncing Dossier to enterprise server...');
+    try {
+      const docId = meta.documentId || routeParamId || 'EUAIA-2026-DEFAULT';
+      await axios.post(`/api/eu-ai-compliance/dossiers/${docId}`, {
+        meta,
+        answers,
+        taskStatusOverrides,
+        synthesis,
+        financialConfig: { globalTurnoverMillions, isSme }
+      });
+      toast.success(`✅ Dossier ${docId} saved & synced to server! Shareable link active.`, { id: toastId });
+    } catch (err) {
+      toast.error('Server sync error: ' + (err.response?.data?.error || err.message), { id: toastId });
+    } finally {
+      setSyncingServer(false);
+    }
+  };
+
+  // Export Annex IV Technical Documentation as Markdown (.md)
+  const handleExportAnnexIvMarkdown = () => {
+    const docId = meta.documentId || 'EUAIA-2026-ANNEX-IV';
+    const lines = [
+      `# EU AI ACT — ANNEX IV TECHNICAL DOCUMENTATION DOSSIER`,
+      `**Document ID:** \`${docId}\`  |  **Date:** ${meta.evaluationDate}  |  **Version:** ${meta.version}`,
+      `**AI System Name:** ${meta.systemName}`,
+      `**Lead Compliance Evaluator:** ${meta.leadEvaluator}`,
+      `**Operating Department:** ${meta.department}`,
+      `**Statutory Classification:** ${evaluation.overallRiskTier}`,
+      `**Conformity Verdict:** ${evaluation.conformityStatus} (Health Score: ${evaluation.healthScore}/100)`,
+      ``,
+      `---`,
+      `## 1. Executive Classification & Value-Chain Role`,
+      `- **Statutory Finding:** ${evaluation.riskTierDescription}`,
+      `- **Value-Chain Role:** ${evaluation.caioBriefing?.valueChainRoleAnalysis?.currentRole || 'Deployer/Provider'}`,
+      `- **Substantial Modification Analysis (Art. 25):** ${evaluation.caioBriefing?.valueChainRoleAnalysis?.substantialModificationRisk || 'N/A'}`,
+      `- **Conformity Assessment Pathway:** ${evaluation.caioBriefing?.valueChainRoleAnalysis?.conformityPathway || 'Annex VI / VII'}`,
+      ``,
+      `---`,
+      `## 2. CISO Cybersecurity, MITRE ATLAS Threat Matrix & Forensics (Articles 12 & 15)`,
+      `- **CISO Security Posture:** ${evaluation.cisoBriefing?.securityPostureStatus}`,
+      `- **Statutory Incident Reporting Window (Art. 73 / Art. 55):** ${evaluation.cisoBriefing?.incidentResponseSla?.statutoryDeadline}`,
+      `- **Designated Authority:** ${evaluation.cisoBriefing?.incidentResponseSla?.authorityTarget}`,
+      ``,
+      `### MITRE ATLAS Adversarial Threat Vectors`,
+      ...(evaluation.cisoBriefing?.threatSurfaceVectors || []).map(tv =>
+        `- **${tv.vector}** (\`${tv.mitreId}\`) — Status: **${tv.status}**\n  - *Control:* ${tv.control}`
+      ),
+      ``,
+      `---`,
+      `## 3. Chief AI Officer (CAIO) Model Governance & Production Telemetry (Articles 9, 10, 13, 14, 72)`,
+      `- **CAIO Governance Maturity:** ${evaluation.caioBriefing?.governanceMaturity}`,
+      `- **Algorithmic Fairness & Disparate Impact Audit:** ${evaluation.caioBriefing?.algorithmicFairnessAndData?.biasAuditStatus}`,
+      `- **Training Data Lineage & Copyright TDM (Art. 53):** ${evaluation.caioBriefing?.algorithmicFairnessAndData?.dataProvenanceStatus}`,
+      `- **Human-in-the-Loop (HITL) Interlock (Art. 14):** ${evaluation.caioBriefing?.humanOversightAndExplainability?.hitlArchitecture}`,
+      `- **Explainability Standard (Art. 86):** ${evaluation.caioBriefing?.humanOversightAndExplainability?.explainabilityStandard}`,
+      ``,
+      `---`,
+      `## 4. Statutory Compliance Scorecard (20-Point Decision Tree Evidence)`,
+      ...(evaluation.scorecardItems || []).map(s =>
+        `- **${s.article} — ${s.title}**: \`[${s.status}]\` — ${s.notes}`
+      ),
+      ``,
+      `---`,
+      `## 5. Prioritized Engineering Remediation Roadmap`,
+      ...(evaluation.remediationTasks || []).map(t =>
+        `- **[${t.severity}] ${t.article} (${t.targetOwner})**: ${t.task} — *Status: ${taskStatusOverrides[t.id] || t.status}*`
+      )
+    ];
+
+    const blob = new Blob([lines.join('\n')], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${docId}_Annex_IV_Technical_Dossier.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success(`📄 Exported Annex IV Technical File (${docId}_Annex_IV_Technical_Dossier.md)`);
+  };
+
+  // Export Annex VIII EU Database Registration Payload as JSON (.json)
+  const handleExportAnnexViiiJson = () => {
+    const docId = meta.documentId || 'EUAIA-2026-ANNEX-VIII';
+    const payload = {
+      schemaVersion: 'EU-AI-ACT-ANNEX-VIII-2026.1',
+      registrationAuthority: 'European Commission Central AI Database (Article 49 / Article 71)',
+      dossierId: docId,
+      registrationTimestamp: new Date().toISOString(),
+      providerOrDeployerIdentification: {
+        enterpriseDepartment: meta.department,
+        leadComplianceOfficer: meta.leadEvaluator,
+        valueChainRole: evaluation.caioBriefing?.valueChainRoleAnalysis?.currentRole
+      },
+      aiSystemSpecification: {
+        systemName: meta.systemName,
+        versionTag: meta.version,
+        statutoryRiskClassification: evaluation.overallRiskTier,
+        conformityVerdict: evaluation.conformityStatus,
+        complianceHealthScore: evaluation.healthScore
+      },
+      cisoSecurityAttestation: evaluation.cisoBriefing,
+      caioGovernanceAttestation: evaluation.caioBriefing,
+      statutoryScorecard: evaluation.scorecardItems,
+      openRemediationTasks: evaluation.remediationTasks.map(t => ({
+        ...t,
+        currentStatus: taskStatusOverrides[t.id] || t.status
+      }))
+    };
+
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${docId}_EU_Database_Annex_VIII_Payload.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success(`🏛️ Exported EU Database Annex VIII Registration Payload (${docId}.json)`);
   };
 
   // Reset Questionnaire
@@ -1951,6 +2140,16 @@ export default function EuAiComplianceWorkspace() {
     };
     setTaskStatusOverrides(updated);
     persistState(answers, meta, updated);
+  };
+
+  const handleTaskStatusChange = (taskId, newStatus) => {
+    const updated = {
+      ...taskStatusOverrides,
+      [taskId]: newStatus
+    };
+    setTaskStatusOverrides(updated);
+    persistState(answers, meta, updated);
+    toast.success(`Task status updated to "${newStatus}"`);
   };
 
   // Generate Legal Synthesis with Gemini 3.7 Flash
@@ -2831,13 +3030,25 @@ export default function EuAiComplianceWorkspace() {
               <KpiCard $accent="#3b82f6">
                 <KpiLabel>
                   <FiCheckCircle size={14} />
-                  Compliance Health Score
+                  Weighted Compliance Score
                 </KpiLabel>
-                <KpiValue $color={evaluation.healthScore >= 80 ? '#10b981' : (evaluation.healthScore >= 50 ? '#f59e0b' : '#ef4444')}>
-                  {evaluation.healthScore}%
-                </KpiValue>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                  <KpiValue $color={evaluation.healthScore >= 80 ? '#10b981' : (evaluation.healthScore >= 50 ? '#f59e0b' : '#ef4444')}>
+                    {evaluation.healthScore}%
+                  </KpiValue>
+                  <span style={{ fontSize: '0.76rem', fontWeight: '700', color: '#64748b' }}>
+                    (Unweighted: {evaluation.weightedBreakdown?.unweightedPercentage ?? evaluation.healthScore}%)
+                  </span>
+                </div>
                 <KpiSubtitle>
-                  Derived from {evaluation.stats.compliantCount} passed checks across 20 statutory mandates.
+                  Weighted by Art. 99 penalty tiers ({evaluation.weightedBreakdown?.totalEarnedWeightedPoints} / {evaluation.weightedBreakdown?.totalPossibleWeight} pts).
+                  <button
+                    type="button"
+                    onClick={() => setShowWeightJustificationTable(!showWeightJustificationTable)}
+                    style={{ display: 'block', marginTop: '6px', background: '#eff6ff', border: '1px solid #bfdbfe', color: '#1d4ed8', fontSize: '0.72rem', fontWeight: '800', padding: '3px 8px', borderRadius: '6px', cursor: 'pointer' }}
+                  >
+                    ⚖️ {showWeightJustificationTable ? 'Hide Weighting Math Matrix' : 'Inspect Statutory Weights & Math Justification'}
+                  </button>
                 </KpiSubtitle>
               </KpiCard>
 
@@ -2854,6 +3065,309 @@ export default function EuAiComplianceWorkspace() {
                 </KpiSubtitle>
               </KpiCard>
             </KpiCardsRow>
+
+            {/* COLLAPSIBLE STATUTORY WEIGHTING & MATHEMATICAL JUSTIFICATION TABLE */}
+            {showWeightJustificationTable && evaluation.weightedBreakdown && (
+              <div style={{ background: '#ffffff', border: '2px solid #3b82f6', borderRadius: '14px', padding: '20px', boxShadow: '0 8px 24px rgba(59, 130, 246, 0.12)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '10px' }}>
+                  <div>
+                    <h3 style={{ fontSize: '1.05rem', fontWeight: '900', color: '#0f172a', margin: 0 }}>
+                      ⚖️ Statutory Weighting & Mathematical Score Justification Matrix (Regulation (EU) 2024/1689 Article 99)
+                    </h3>
+                    <p style={{ fontSize: '0.8rem', color: '#475569', margin: '4px 0 0 0' }}>
+                      Formula: <strong>Overall Score = [ Σ (Question Statutory Weight W_i × Option Credit Multiplier S_i) / Σ W_i ] × 100</strong> • Total Possible Weighted Points: <strong>{evaluation.weightedBreakdown.totalPossibleWeight}</strong> • Earned: <strong>{evaluation.weightedBreakdown.totalEarnedWeightedPoints}</strong>
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowWeightJustificationTable(false)}
+                    style={{ background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '5px 12px', fontSize: '0.75rem', fontWeight: '700', cursor: 'pointer', color: '#334155' }}
+                  >
+                    ✕ Close Table
+                  </button>
+                </div>
+
+                {evaluation.weightedBreakdown.vetoTriggered && (
+                  <div style={{ background: '#fef2f2', border: '1px solid #f87171', borderRadius: '8px', padding: '10px 14px', marginBottom: '12px', color: '#991b1b', fontSize: '0.8rem', fontWeight: '700' }}>
+                    🚨 {evaluation.weightedBreakdown.vetoReason}
+                  </div>
+                )}
+
+                <div style={{ maxHeight: '340px', overflowY: 'auto', border: '1px solid #e2e8f0', borderRadius: '10px' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.78rem' }}>
+                    <thead style={{ background: '#0f172a', color: '#ffffff', position: 'sticky', top: 0 }}>
+                      <tr>
+                        <th style={{ padding: '8px 10px', textAlign: 'left' }}>Q# & Statutory Article</th>
+                        <th style={{ padding: '8px 10px', textAlign: 'left' }}>Penalty Tier & Weight (W_i)</th>
+                        <th style={{ padding: '8px 10px', textAlign: 'left' }}>Selected Option & Credit (S_i)</th>
+                        <th style={{ padding: '8px 10px', textAlign: 'right' }}>Weighted Pts</th>
+                        <th style={{ padding: '8px 10px', textAlign: 'left' }}>Statutory & Financial Justification</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {evaluation.weightedBreakdown.questionAuditTrail.map((row, idx) => (
+                        <tr key={row.id} style={{ borderBottom: '1px solid #e2e8f0', background: idx % 2 === 0 ? '#ffffff' : '#f8fafc' }}>
+                          <td style={{ padding: '8px 10px', fontWeight: '800', color: '#1e3a8a' }}>
+                            Q{row.number}: {row.article}
+                            <div style={{ fontSize: '0.72rem', fontWeight: '600', color: '#475569' }}>{row.title}</div>
+                          </td>
+                          <td style={{ padding: '8px 10px' }}>
+                            <span style={{ background: row.weight >= 3.0 ? '#fef2f2' : (row.weight >= 2.0 ? '#fff7ed' : '#f0fdf4'), color: row.weight >= 3.0 ? '#dc2626' : (row.weight >= 2.0 ? '#ea580c' : '#16a34a'), fontWeight: '800', padding: '2px 6px', borderRadius: '4px', border: '1px solid currentColor', fontSize: '0.72rem' }}>
+                              {row.weight.toFixed(1)}x Weight
+                            </span>
+                            <div style={{ fontSize: '0.68rem', color: '#64748b', marginTop: '2px' }}>{row.maxFineRule}</div>
+                          </td>
+                          <td style={{ padding: '8px 10px' }}>
+                            <span style={{ fontWeight: '700', color: row.complianceStatus === 'COMPLIANT' ? '#15803d' : (row.complianceStatus === 'NON_COMPLIANT' ? '#b91c1c' : '#b45309') }}>
+                              {row.complianceStatus} ({(row.optionCreditMultiplier * 100).toFixed(0)}% Credit)
+                            </span>
+                            <div style={{ fontSize: '0.7rem', color: '#334155' }}>{row.selectedOptionLabel}</div>
+                          </td>
+                          <td style={{ padding: '8px 10px', textAlign: 'right', fontFamily: 'monospace', fontWeight: '800', fontSize: '0.82rem' }}>
+                            {row.weightedPointsEarned.toFixed(2)} / {row.maxWeightedPoints.toFixed(2)}
+                          </td>
+                          <td style={{ padding: '8px 10px', fontSize: '0.72rem', color: '#475569', lineHeight: '1.35' }}>
+                            {row.justification}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* DYNAMIC CFO & BOARD FINANCIAL EXPOSURE & REMEDIATION ROI SIMULATOR (ARTICLE 99) */}
+            {evaluation.financialSimulation && (
+              <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', borderRadius: '14px', padding: '18px 22px', color: '#f8fafc', border: '1px solid #334155', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ background: '#f59e0b', color: '#0f172a', fontSize: '0.7rem', fontWeight: '900', padding: '2px 8px', borderRadius: '4px', textTransform: 'uppercase' }}>
+                        CFO & Board Live Simulator
+                      </span>
+                      <h3 style={{ fontSize: '1.05rem', fontWeight: '800', color: '#ffffff', margin: 0 }}>
+                        Dynamic Article 99 Financial Penalty, Turnover Cap & Remediation ROI Simulator
+                      </h3>
+                    </div>
+                    <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
+                      {evaluation.financialSimulation.applicableArticleRule} • {evaluation.financialSimulation.smeRuleApplied}
+                    </span>
+                  </div>
+
+                  {/* Interactive Controls: Turnover Slider + SME Toggle */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap', background: 'rgba(255,255,255,0.06)', padding: '8px 14px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.12)' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                      <label style={{ fontSize: '0.72rem', color: '#cbd5e1', fontWeight: '700' }}>
+                        Global Annual Turnover: <strong style={{ color: '#38bdf8' }}>€{globalTurnoverMillions.toLocaleString()} Million</strong> (€{(globalTurnoverMillions / 1000).toFixed(2)}B)
+                      </label>
+                      <input
+                        type="range"
+                        min="50"
+                        max="25000"
+                        step="50"
+                        value={globalTurnoverMillions}
+                        onChange={(e) => setGlobalTurnoverMillions(Number(e.target.value))}
+                        style={{ width: '200px', accentColor: '#38bdf8', cursor: 'pointer' }}
+                      />
+                    </div>
+
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.76rem', fontWeight: '700', color: '#f8fafc', paddingLeft: '10px', borderLeft: '1px solid #475569' }}>
+                      <input
+                        type="checkbox"
+                        checked={isSme}
+                        onChange={(e) => setIsSme(e.target.checked)}
+                        style={{ width: '16px', height: '16px', accentColor: '#10b981', cursor: 'pointer' }}
+                      />
+                      <div>
+                        <div>SME / Startup Lower-Cap Protection</div>
+                        <div style={{ fontSize: '0.68rem', color: '#94a3b8', fontWeight: '500' }}>Article 99(6): Lower of Fixed EUR or %</div>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                {/* 4 Dynamic Financial Metric Tiles */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+                  <div style={{ background: 'rgba(239, 68, 68, 0.12)', border: '1px solid rgba(239, 68, 68, 0.35)', borderRadius: '10px', padding: '12px 14px' }}>
+                    <div style={{ fontSize: '0.72rem', color: '#fca5a5', fontWeight: '700', textTransform: 'uppercase' }}>Statutory Maximum Fine Ceiling</div>
+                    <div style={{ fontSize: '1.45rem', fontWeight: '900', color: '#f87171', marginTop: '2px' }}>
+                      €{evaluation.financialSimulation.applicableStatutoryCeilingMillions.toLocaleString()}M
+                    </div>
+                    <div style={{ fontSize: '0.7rem', color: '#cbd5e1', marginTop: '2px' }}>
+                      {isSme ? 'Capped at SME lower-of-two threshold' : 'Higher of €15M/€35M or 3%/7% global turnover'}
+                    </div>
+                  </div>
+
+                  <div style={{ background: 'rgba(245, 158, 11, 0.12)', border: '1px solid rgba(245, 158, 11, 0.35)', borderRadius: '10px', padding: '12px 14px' }}>
+                    <div style={{ fontSize: '0.72rem', color: '#fcd34d', fontWeight: '700', textTransform: 'uppercase' }}>Probability-Weighted Value-at-Risk (VaR)</div>
+                    <div style={{ fontSize: '1.45rem', fontWeight: '900', color: '#fbbf24', marginTop: '2px' }}>
+                      €{evaluation.financialSimulation.expectedValueAtRiskMillions.toLocaleString()}M
+                    </div>
+                    <div style={{ fontSize: '0.7rem', color: '#cbd5e1', marginTop: '2px' }}>
+                      Based on {100 - evaluation.healthScore}% unweighted/weighted compliance deficit
+                    </div>
+                  </div>
+
+                  <div style={{ background: 'rgba(56, 189, 248, 0.12)', border: '1px solid rgba(56, 189, 248, 0.35)', borderRadius: '10px', padding: '12px 14px' }}>
+                    <div style={{ fontSize: '0.72rem', color: '#7dd3fc', fontWeight: '700', textTransform: 'uppercase' }}>Est. Engineering Remediation Cost</div>
+                    <div style={{ fontSize: '1.45rem', fontWeight: '900', color: '#38bdf8', marginTop: '2px' }}>
+                      €{evaluation.financialSimulation.estimatedRemediationCostMillions.toLocaleString()}M
+                    </div>
+                    <div style={{ fontSize: '0.7rem', color: '#cbd5e1', marginTop: '2px' }}>
+                      Across {evaluation.remediationTasks.length} active technical & legal backlog items
+                    </div>
+                  </div>
+
+                  <div style={{ background: 'rgba(16, 185, 129, 0.14)', border: '1px solid rgba(16, 185, 129, 0.4)', borderRadius: '10px', padding: '12px 14px' }}>
+                    <div style={{ fontSize: '0.72rem', color: '#6ee7b7', fontWeight: '700', textTransform: 'uppercase' }}>Net Compliance Avoidance ROI</div>
+                    <div style={{ fontSize: '1.45rem', fontWeight: '900', color: '#34d399', marginTop: '2px' }}>
+                      {evaluation.financialSimulation.netComplianceRoiMultiplier}x ROI
+                    </div>
+                    <div style={{ fontSize: '0.7rem', color: '#cbd5e1', marginTop: '2px' }}>
+                      Net Penalty Avoided: €{evaluation.financialSimulation.netSavingsAvoidedMillions.toLocaleString()}M
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* INDEPENDENT MULTI-MODEL LLM LIVE API AUDIT CENTER ("SECOND-OPINION AUDITOR") */}
+            <div style={{ background: '#ffffff', border: '2px solid #6366f1', borderRadius: '14px', padding: '18px 22px', boxShadow: '0 6px 20px rgba(99, 102, 241, 0.08)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: liveAuditReport ? '16px' : '0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: 'linear-gradient(135deg, #4f46e5 0%, #9333ea 100%)', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '900', fontSize: '1.1rem' }}>
+                    ⚡
+                  </div>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <h3 style={{ fontSize: '1.05rem', fontWeight: '900', color: '#0f172a', margin: 0 }}>
+                        Independent Multi-Model LLM Live API Audit (Second-Opinion Statutory Cross-Examiner)
+                      </h3>
+                      <span style={{ background: '#eef2ff', color: '#4f46e5', border: '1px solid #c7d2fe', fontSize: '0.7rem', fontWeight: '800', padding: '2px 8px', borderRadius: '999px' }}>
+                        Zero Self-Confirmation Bias
+                      </span>
+                    </div>
+                    <p style={{ fontSize: '0.78rem', color: '#475569', margin: '3px 0 0 0' }}>
+                      Audit the primary deterministic engine ({evaluation.healthScore}%) using an independent LLM auditor model to verify statutory weightings, detect cross-question contradictions (e.g. Q1 vs Q7 role shifts), and uncover blind spots.
+                    </p>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                  <select
+                    value={auditorModel}
+                    onChange={(e) => setAuditorModel(e.target.value)}
+                    style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '7px 12px', fontSize: '0.78rem', fontWeight: '700', color: '#0f172a', cursor: 'pointer' }}
+                  >
+                    <option value="gemini-2.5-pro">Auditor Model: Gemini 2.5 Pro (Deep Statutory Reasoning)</option>
+                    <option value="gemini-2.5-flash">Auditor Model: Gemini 2.5 Flash (Rapid Contradiction Cross-Check)</option>
+                    <option value="gemini-3.1-pro-preview">Auditor Model: Gemini 3.1 Pro Preview (Multi-Framework Consensus)</option>
+                  </select>
+
+                  <ActionButton
+                    $gemini
+                    onClick={() => handleRunLiveAudit(auditorModel)}
+                    disabled={runningLiveAudit}
+                    style={{ padding: '8px 16px', fontSize: '0.8rem' }}
+                  >
+                    <FiRefreshCw size={13} className={runningLiveAudit ? 'animate-spin' : ''} />
+                    {runningLiveAudit ? 'Auditing via Live API...' : '🔍 Run Live Independent LLM Audit'}
+                  </ActionButton>
+                </div>
+              </div>
+
+              {liveAuditReport && (
+                <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  {/* Top Summary Banner */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '12px' }}>
+                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px' }}>
+                      <div style={{ fontSize: '0.7rem', fontWeight: '800', color: '#64748b', textTransform: 'uppercase' }}>Auditor Verdict</div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: '900', color: liveAuditReport.overallVerdict === 'VERIFIED_ACCURATE' ? '#15803d' : '#b91c1c', marginTop: '4px' }}>
+                        {liveAuditReport.overallVerdict.replace(/_/g, ' ')}
+                      </div>
+                      <div style={{ fontSize: '0.7rem', color: '#475569', marginTop: '2px' }}>
+                        Hash: <code>{liveAuditReport.verificationHash}</code>
+                      </div>
+                    </div>
+
+                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px' }}>
+                      <div style={{ fontSize: '0.7rem', fontWeight: '800', color: '#64748b', textTransform: 'uppercase' }}>Deterministic vs. LLM Calibrated Score</div>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginTop: '4px' }}>
+                        <span style={{ fontSize: '1.35rem', fontWeight: '900', color: '#4f46e5' }}>{liveAuditReport.llmCalibratedScore}%</span>
+                        <span style={{ fontSize: '0.78rem', fontWeight: '700', color: '#64748b' }}>
+                          (Primary Engine: {liveAuditReport.deterministicWeightedScore}%)
+                        </span>
+                      </div>
+                      <div style={{ fontSize: '0.7rem', color: liveAuditReport.calibrationDelta < 0 ? '#dc2626' : '#16a34a', fontWeight: '700', marginTop: '2px' }}>
+                        {liveAuditReport.calibrationDelta === 0 ? '✓ 100% Mathematical Alignment' : `Calibration Delta: ${liveAuditReport.calibrationDelta > 0 ? '+' : ''}${liveAuditReport.calibrationDelta} pts`}
+                      </div>
+                    </div>
+
+                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px' }}>
+                      <div style={{ fontSize: '0.7rem', fontWeight: '800', color: '#64748b', textTransform: 'uppercase' }}>Independent Auditor Model</div>
+                      <div style={{ fontSize: '0.82rem', fontWeight: '800', color: '#0f172a', marginTop: '4px' }}>
+                        {liveAuditReport.auditorModelUsed}
+                      </div>
+                      <div style={{ fontSize: '0.7rem', color: '#16a34a', fontWeight: '700', marginTop: '2px' }}>
+                        Confidence Rating: {liveAuditReport.confidenceScore}%
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Executive Audit Summary & Weight Justification Verdict */}
+                  <div style={{ background: '#eef2ff', border: '1px solid #c7d2fe', borderRadius: '10px', padding: '12px 16px', fontSize: '0.82rem', color: '#1e1b4b', lineHeight: '1.5' }}>
+                    <div><strong>Independent Auditor Executive Synthesis:</strong> {liveAuditReport.executiveAuditSummary}</div>
+                    {liveAuditReport.weightJustificationAudit && (
+                      <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px dashed #a5b4fc' }}>
+                        <strong>Statutory Weighting Validation ({liveAuditReport.weightJustificationAudit.verdict}):</strong> {liveAuditReport.weightJustificationAudit.analysis}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Cross-Question Contradictions & Actionable Recommendations */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '14px' }}>
+                    <div style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px 14px' }}>
+                      <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#0f172a', margin: '0 0 8px 0' }}>
+                        🔍 Cross-Question Logical Contradiction Check (Q1–Q20)
+                      </h4>
+                      {liveAuditReport.crossQuestionContradictions?.map((c, idx) => (
+                        <div key={idx} style={{ background: c.severity === 'CRITICAL' ? '#fef2f2' : '#fffbeb', border: `1px solid ${c.severity === 'CRITICAL' ? '#fecaca' : '#fde68a'}`, borderRadius: '8px', padding: '8px 10px', marginBottom: '8px', fontSize: '0.76rem' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: '800', color: c.severity === 'CRITICAL' ? '#991b1b' : '#92400e' }}>
+                            <span>[{c.severity}] {c.questionsInvolved}</span>
+                            <span>{c.article}</span>
+                          </div>
+                          <div style={{ fontWeight: '700', color: '#0f172a', marginTop: '3px' }}>{c.title}</div>
+                          <div style={{ color: '#334155', marginTop: '2px' }}>{c.finding}</div>
+                          <div style={{ color: '#1e40af', fontWeight: '700', marginTop: '4px' }}>Fix: {c.remediationAction}</div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px 14px' }}>
+                      <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#0f172a', margin: '0 0 8px 0' }}>
+                        🛡️ Independent Auditor Recommended Remediations (1-Click Add)
+                      </h4>
+                      {liveAuditReport.recommendedAuditTasks?.map((rt, idx) => (
+                        <div key={idx} style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '8px 10px', marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+                          <div style={{ fontSize: '0.76rem' }}>
+                            <div style={{ fontWeight: '800', color: '#0f172a' }}>{rt.title}</div>
+                            <div style={{ color: '#64748b', fontSize: '0.7rem' }}>{rt.article} • Owner: {rt.targetOwner} • Severity: {rt.severity}</div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleAddRecommendedAuditTask(rt)}
+                            style={{ background: '#4f46e5', color: '#ffffff', border: 'none', borderRadius: '6px', padding: '5px 10px', fontSize: '0.72rem', fontWeight: '700', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                          >
+                            ➕ Add to Backlog
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* Executive Audio Briefing Bar */}
             <AudioBriefingCard>
@@ -3335,6 +3849,55 @@ export default function EuAiComplianceWorkspace() {
         {/* ================= TAB 3: FORMAL AUDIT DOSSIER & REPORT ================= */}
         {activeTab === 'report' && (
           <ReportPaperCard>
+            {/* 1-CLICK DELIVERABLES EXPORT, CLOUD SYNC & INDEPENDENT LLM AUDIT BAR */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', padding: '12px 16px', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '12px', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '0.75rem', fontWeight: '900', color: '#0f172a', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  📦 Official Deliverables & Cloud Sync:
+                </span>
+                <button
+                  type="button"
+                  onClick={handleExportAnnexIvMarkdown}
+                  style={{ background: '#ffffff', border: '1px solid #94a3b8', borderRadius: '8px', padding: '6px 12px', fontSize: '0.76rem', fontWeight: '700', color: '#1e3a8a', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                >
+                  📄 Export Annex IV Technical File (.md)
+                </button>
+                <button
+                  type="button"
+                  onClick={handleExportAnnexViiiJson}
+                  style={{ background: '#ffffff', border: '1px solid #94a3b8', borderRadius: '8px', padding: '6px 12px', fontSize: '0.76rem', fontWeight: '700', color: '#0f172a', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                >
+                  🏛️ Export EU Database Annex VIII (.json)
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSyncToServer}
+                  disabled={syncingServer}
+                  style={{ background: '#eff6ff', border: '1px solid #93c5fd', borderRadius: '8px', padding: '6px 12px', fontSize: '0.76rem', fontWeight: '800', color: '#1d4ed8', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                >
+                  ☁️ {syncingServer ? 'Syncing...' : 'Save & Sync Dossier to Server'}
+                </button>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={() => handleRunLiveAudit(auditorModel)}
+                  disabled={runningLiveAudit}
+                  style={{ background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)', color: '#ffffff', border: 'none', borderRadius: '8px', padding: '6px 14px', fontSize: '0.76rem', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                >
+                  ⚡ {runningLiveAudit ? 'Auditing...' : `Run Live LLM Audit (${auditorModel})`}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  style={{ background: '#0f172a', color: '#ffffff', border: 'none', borderRadius: '8px', padding: '6px 14px', fontSize: '0.76rem', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                >
+                  🖨️ Print Official PDF Dossier
+                </button>
+              </div>
+            </div>
+
             {/* Header Block */}
             <ReportHeaderBlock>
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -3647,10 +4210,327 @@ export default function EuAiComplianceWorkspace() {
               </div>
             )}
 
+            {/* ================= SECTION 6: CFO & BOARD FINANCIAL EXPOSURE & REMEDIATION ROI SIMULATOR ================= */}
+            {evaluation.financialSimulation && (
+              <div style={{ marginTop: '28px', paddingTop: '24px', borderTop: '2px solid #e2e8f0' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '10px' }}>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#0f172a', margin: 0 }}>
+                    6. CFO & Board Article 99 Financial Exposure, Turnover Cap & Remediation ROI Analysis
+                  </h3>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#f8fafc', padding: '6px 12px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#0f172a' }}>
+                      Global Turnover: €{globalTurnoverMillions.toLocaleString()}M
+                    </span>
+                    <input
+                      type="range"
+                      min="50"
+                      max="25000"
+                      step="50"
+                      value={globalTurnoverMillions}
+                      onChange={(e) => setGlobalTurnoverMillions(Number(e.target.value))}
+                      style={{ width: '140px', accentColor: '#2563eb', cursor: 'pointer' }}
+                    />
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.74rem', fontWeight: '700', color: '#1e3a8a', cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={isSme}
+                        onChange={(e) => setIsSme(e.target.checked)}
+                      />
+                      SME Art. 99(6) Cap
+                    </label>
+                  </div>
+                </div>
+
+                <MetaTable>
+                  <tbody>
+                    <tr>
+                      <th>Applicable Statutory Fine Rule</th>
+                      <td>{evaluation.financialSimulation.applicableArticleRule}</td>
+                      <th>SME Cap Protection Status</th>
+                      <td>{evaluation.financialSimulation.smeRuleApplied}</td>
+                    </tr>
+                    <tr>
+                      <th>Maximum Statutory Fine Ceiling</th>
+                      <td style={{ color: '#dc2626', fontWeight: '900', fontSize: '1rem' }}>
+                        €{evaluation.financialSimulation.applicableStatutoryCeilingMillions.toLocaleString()} Million
+                      </td>
+                      <th>Probability-Weighted Value-at-Risk (VaR)</th>
+                      <td style={{ color: '#d97706', fontWeight: '900', fontSize: '1rem' }}>
+                        €{evaluation.financialSimulation.expectedValueAtRiskMillions.toLocaleString()} Million
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>Est. Engineering Remediation Cost</th>
+                      <td style={{ color: '#2563eb', fontWeight: '800' }}>
+                        €{evaluation.financialSimulation.estimatedRemediationCostMillions.toLocaleString()} Million
+                      </td>
+                      <th>Net Compliance Avoidance ROI</th>
+                      <td style={{ color: '#15803d', fontWeight: '900', fontSize: '1.05rem' }}>
+                        {evaluation.financialSimulation.netComplianceRoiMultiplier}x ROI (Net Savings: €{evaluation.financialSimulation.netSavingsAvoidedMillions.toLocaleString()}M)
+                      </td>
+                    </tr>
+                  </tbody>
+                </MetaTable>
+              </div>
+            )}
+
+            {/* ================= SECTION 7: STATUTORY WEIGHTING & MATHEMATICAL SCORE JUSTIFICATION MATRIX ================= */}
+            {evaluation.weightedBreakdown && (
+              <div style={{ marginTop: '28px', paddingTop: '24px', borderTop: '2px solid #e2e8f0' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', flexWrap: 'wrap', gap: '8px' }}>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#0f172a', margin: 0 }}>
+                    7. Statutory Weighting & Mathematical Score Justification Matrix (Regulation (EU) 2024/1689 Article 99)
+                  </h3>
+                  <span style={{ fontSize: '0.74rem', fontWeight: '800', background: '#eff6ff', color: '#1d4ed8', padding: '4px 10px', borderRadius: '6px', border: '1px solid #bfdbfe' }}>
+                    Weighted Score: {evaluation.healthScore}% vs. Unweighted Flat Average: {evaluation.weightedBreakdown.unweightedPercentage}%
+                  </span>
+                </div>
+                <p style={{ fontSize: '0.82rem', color: '#475569', margin: '0 0 12px 0', lineHeight: '1.5' }}>
+                  <strong>Mathematical & Legal Rationale:</strong> Under EU Regulation 2024/1689, questions cannot be treated with equal flat weights. Article 5 Prohibited AI Practices carry up to <strong>€35M or 7% global turnover fines (3.5x weight + Statutory Hard-Cap Veto)</strong>, Articles 9–15 & 25 High-Risk Core obligations carry <strong>€15M or 3% turnover fines (2.0x–2.5x weight)</strong>, while Article 4 AI Literacy represents a baseline operational mandate (<strong>1.0x weight</strong>).
+                </p>
+
+                <ScorecardTable>
+                  <thead>
+                    <tr>
+                      <th style={{ width: '18%' }}>Question & Article</th>
+                      <th style={{ width: '16%' }}>Penalty Weight (W_i)</th>
+                      <th style={{ width: '22%' }}>Selected Option & Credit (S_i)</th>
+                      <th style={{ width: '12%' }}>Weighted Points</th>
+                      <th style={{ width: '32%' }}>Statutory & Financial Justification</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {evaluation.weightedBreakdown.questionAuditTrail.map((row) => (
+                      <tr key={row.id}>
+                        <td style={{ fontWeight: '800', color: '#1e3a8a' }}>
+                          Q{row.number}: {row.article}
+                          <div style={{ fontSize: '0.72rem', fontWeight: '600', color: '#475569' }}>{row.title}</div>
+                        </td>
+                        <td>
+                          <span style={{ fontWeight: '800', color: row.weight >= 3.0 ? '#dc2626' : (row.weight >= 2.0 ? '#ea580c' : '#16a34a') }}>
+                            {row.weight.toFixed(1)}x Multiplier
+                          </span>
+                          <div style={{ fontSize: '0.7rem', color: '#64748b' }}>{row.maxFineRule}</div>
+                        </td>
+                        <td>
+                          <StatusPill $status={row.complianceStatus === 'COMPLIANT' ? 'PASSED' : (row.complianceStatus === 'NON_COMPLIANT' ? 'FAILED' : 'REMEDIATION REQUIRED')}>
+                            {row.complianceStatus} ({(row.optionCreditMultiplier * 100).toFixed(0)}%)
+                          </StatusPill>
+                        </td>
+                        <td style={{ fontWeight: '800', fontFamily: 'monospace' }}>
+                          {row.weightedPointsEarned.toFixed(2)} / {row.maxWeightedPoints.toFixed(2)}
+                        </td>
+                        <td style={{ fontSize: '0.76rem', color: '#334155', lineHeight: '1.4' }}>
+                          {row.justification}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </ScorecardTable>
+              </div>
+            )}
+
+            {/* ================= SECTION 8: INDEPENDENT MULTI-MODEL LLM LIVE API AUDIT CERTIFICATE ================= */}
+            <div style={{ marginTop: '28px', paddingTop: '24px', borderTop: '2px solid #e2e8f0' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '10px' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#0f172a', margin: 0 }}>
+                  8. Independent Multi-Model LLM Live API Audit Certificate (Second-Opinion Statutory Cross-Examiner)
+                </h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <select
+                    value={auditorModel}
+                    onChange={(e) => setAuditorModel(e.target.value)}
+                    style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '4px 8px', fontSize: '0.75rem', fontWeight: '700' }}
+                  >
+                    <option value="gemini-2.5-pro">Auditor: Gemini 2.5 Pro</option>
+                    <option value="gemini-2.5-flash">Auditor: Gemini 2.5 Flash</option>
+                    <option value="gemini-3.1-pro-preview">Auditor: Gemini 3.1 Pro Preview</option>
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => handleRunLiveAudit(auditorModel)}
+                    disabled={runningLiveAudit}
+                    style={{ background: '#4f46e5', color: '#ffffff', border: 'none', borderRadius: '6px', padding: '5px 12px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer' }}
+                  >
+                    {runningLiveAudit ? 'Running Live Audit...' : '🔍 Run / Refresh Independent LLM Audit'}
+                  </button>
+                </div>
+              </div>
+
+              {!liveAuditReport ? (
+                <div style={{ padding: '18px', borderRadius: '10px', background: '#eef2ff', border: '1px dashed #6366f1', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+                  <div style={{ fontSize: '0.84rem', color: '#1e1b4b' }}>
+                    <strong>Independent Second-Opinion Verification Ready:</strong> Click <em>Run / Refresh Independent LLM Audit</em> to execute a live multi-model cross-examination of all 20 answers, verifying accuracy, statutory weights, and cross-question contradictions via <strong>{auditorModel}</strong>.
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleRunLiveAudit(auditorModel)}
+                    style={{ background: '#4f46e5', color: '#ffffff', border: 'none', borderRadius: '8px', padding: '8px 16px', fontSize: '0.8rem', fontWeight: '800', cursor: 'pointer' }}
+                  >
+                    ⚡ Execute Live Audit Now
+                  </button>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <MetaTable>
+                    <tbody>
+                      <tr>
+                        <th>Independent Auditor Model</th>
+                        <td style={{ fontWeight: '800', color: '#4f46e5' }}>{liveAuditReport.auditorModelUsed}</td>
+                        <th>Verification Fingerprint</th>
+                        <td><code>{liveAuditReport.verificationHash}</code> ({new Date(liveAuditReport.auditTimestamp).toLocaleTimeString()})</td>
+                      </tr>
+                      <tr>
+                        <th>Primary Weighted Score</th>
+                        <td style={{ fontWeight: '800' }}>{liveAuditReport.deterministicWeightedScore}% (Unweighted: {liveAuditReport.unweightedRawScore}%)</td>
+                        <th>Independent LLM Calibrated Score</th>
+                        <td style={{ fontWeight: '900', color: '#4f46e5', fontSize: '1.05rem' }}>
+                          {liveAuditReport.llmCalibratedScore}% (Confidence: {liveAuditReport.confidenceScore}%)
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>Audit Verdict</th>
+                        <td colSpan={3} style={{ fontWeight: '800', color: liveAuditReport.overallVerdict === 'VERIFIED_ACCURATE' ? '#15803d' : '#b91c1c' }}>
+                          {liveAuditReport.overallVerdict.replace(/_/g, ' ')} — {liveAuditReport.executiveAuditSummary}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </MetaTable>
+
+                  {liveAuditReport.crossQuestionContradictions?.length > 0 && (
+                    <ScorecardTable>
+                      <thead>
+                        <tr>
+                          <th style={{ width: '20%' }}>Cross-Question Check</th>
+                          <th style={{ width: '15%' }}>Statutory Article</th>
+                          <th style={{ width: '15%' }}>Severity</th>
+                          <th style={{ width: '50%' }}>Auditor Finding & Required Resolution</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {liveAuditReport.crossQuestionContradictions.map((c, idx) => (
+                          <tr key={idx}>
+                            <td style={{ fontWeight: '800', color: '#1e3a8a' }}>{c.questionsInvolved}</td>
+                            <td style={{ fontWeight: '700' }}>{c.article}</td>
+                            <td>
+                              <StatusPill $status={c.severity === 'CRITICAL' ? 'FAILED' : 'REMEDIATION REQUIRED'}>{c.severity}</StatusPill>
+                            </td>
+                            <td style={{ fontSize: '0.8rem', color: '#334155' }}>
+                              <strong>{c.title}:</strong> {c.finding} <br />
+                              <span style={{ color: '#1d4ed8', fontWeight: '700' }}>Resolution: {c.remediationAction}</span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </ScorecardTable>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* ================= SECTION 9: ARTICLE 27 FRIA MATRIX & PRIORITIZED REMEDIATION ROADMAP ================= */}
+            <div style={{ marginTop: '28px', paddingTop: '24px', borderTop: '2px solid #e2e8f0' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#0f172a', marginBottom: '12px' }}>
+                9. Article 27 Fundamental Rights Impact Assessment (FRIA) & Engineering Remediation Roadmap
+              </h3>
+
+              {evaluation.friaCriteria && (
+                <div style={{ marginBottom: '18px' }}>
+                  <h4 style={{ fontSize: '0.92rem', fontWeight: '800', color: '#1e3a8a', marginBottom: '8px' }}>
+                    9.1 Statutory Article 27(1)(a–f) Fundamental Rights Impact Assessment Matrix
+                  </h4>
+                  <ScorecardTable>
+                    <thead>
+                      <tr>
+                        <th style={{ width: '18%' }}>Statutory Clause</th>
+                        <th style={{ width: '28%' }}>FRIA Evaluation Criterion</th>
+                        <th style={{ width: '18%' }}>Readiness Status</th>
+                        <th style={{ width: '36%' }}>System Impact & Safeguard Assessment</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {evaluation.friaCriteria.map((fc, idx) => (
+                        <tr key={idx}>
+                          <td style={{ fontWeight: '800', color: '#1e3a8a' }}>{fc.clause}</td>
+                          <td style={{ fontWeight: '700' }}>{fc.title}</td>
+                          <td>
+                            <StatusPill $status={fc.status.includes('VERIFIED') || fc.status.includes('MITIGATED') ? 'PASSED' : 'REMEDIATION REQUIRED'}>
+                              {fc.status}
+                            </StatusPill>
+                          </td>
+                          <td style={{ fontSize: '0.8rem', color: '#334155' }}>{fc.assessment}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </ScorecardTable>
+                </div>
+              )}
+
+              <div>
+                <h4 style={{ fontSize: '0.92rem', fontWeight: '800', color: '#1e3a8a', marginBottom: '8px' }}>
+                  9.2 Prioritized Engineering & Legal Remediation Action Plan ({evaluation.remediationTasks.length} Items)
+                </h4>
+                {evaluation.remediationTasks.length === 0 ? (
+                  <div style={{ padding: '14px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', color: '#166534', fontWeight: '700', fontSize: '0.85rem' }}>
+                    ✓ Zero open statutory remediation items. System meets all pre-market conformity thresholds.
+                  </div>
+                ) : (
+                  <ScorecardTable>
+                    <thead>
+                      <tr>
+                        <th style={{ width: '14%' }}>Statutory Article</th>
+                        <th style={{ width: '12%' }}>Severity & Wt</th>
+                        <th style={{ width: '16%' }}>Target Owner</th>
+                        <th style={{ width: '44%' }}>Mandatory Remediation Action</th>
+                        <th style={{ width: '14%' }}>Live Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {evaluation.remediationTasks.map((t) => {
+                        const currentStatus = taskStatusOverrides[t.id] || t.status || 'Todo';
+                        return (
+                          <tr key={t.id}>
+                            <td style={{ fontWeight: '800', color: '#1e3a8a' }}>{t.article}</td>
+                            <td>
+                              <StatusPill $status={t.severity === 'CRITICAL' ? 'FAILED' : 'REMEDIATION REQUIRED'}>
+                                {t.severity} ({t.statutoryWeight || 2.0}x)
+                              </StatusPill>
+                            </td>
+                            <td style={{ fontWeight: '700', color: '#334155' }}>{t.targetOwner}</td>
+                            <td style={{ fontSize: '0.8rem', color: '#0f172a' }}>{t.task}</td>
+                            <td>
+                              <select
+                                value={currentStatus}
+                                onChange={(e) => handleTaskStatusChange(t.id, e.target.value)}
+                                style={{
+                                  padding: '4px 8px',
+                                  borderRadius: '6px',
+                                  fontSize: '0.74rem',
+                                  fontWeight: '800',
+                                  border: '1px solid #cbd5e1',
+                                  background: currentStatus === 'Completed' ? '#dcfce7' : (currentStatus === 'In Progress' ? '#dbeafe' : '#f1f5f9'),
+                                  color: currentStatus === 'Completed' ? '#166534' : (currentStatus === 'In Progress' ? '#1e40af' : '#475569'),
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                <option value="Todo">Todo</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Completed">Completed</option>
+                              </select>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </ScorecardTable>
+                )}
+              </div>
+            </div>
+
             {/* Verification & Attestation Block */}
-            <div style={{ marginTop: '24px' }}>
+            <div style={{ marginTop: '28px', paddingTop: '24px', borderTop: '2px solid #e2e8f0' }}>
               <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#0f172a', marginBottom: '6px' }}>
-                6. C-Suite Statutory Attestation & Regulatory Sign-Off
+                10. C-Suite Statutory Attestation & Regulatory Sign-Off
               </h3>
               <p style={{ fontSize: '0.82rem', color: '#64748b', margin: '0 0 16px 0' }}>
                 By signing below, the nominated C-Suite and responsible officers certify that this assessment accurately reflects the cybersecurity architecture, model governance safeguards, and operational controls of the evaluated AI system in conformance with Regulation (EU) 2024/1689.
