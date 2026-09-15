@@ -854,6 +854,38 @@ const DynamicAssessmentHub = () => {
               </TypeFooter>
             </TypeCard>
 
+            {/* Specialized: EU AI Act Compliance Engine & Audit Workspace */}
+            <TypeCard>
+              <div>
+                <CardTopRow>
+                  <TypeBadge $bg="rgba(16, 185, 129, 0.2)" $color="#34d399">EU Statutory Compliance</TypeBadge>
+                  <StatusTag $status="production">Production Ready</StatusTag>
+                </CardTopRow>
+                <TypeTitle>EU AI Act Compliance Engine & Audit Workspace</TypeTitle>
+                <TypeDesc>
+                  Statutory risk classification (Art. 5 tripwires, Annex III High-Risk), 7-vector conformity audit (Arts. 8–15), and formal regulatory attestation dossier.
+                </TypeDesc>
+                <MetaPillsRow>
+                  <MetaPill><FiLayers /> 9 Statutory Sections</MetaPill>
+                  <MetaPill><FiTarget /> 20 Multi-Branch Qs</MetaPill>
+                  <MetaPill><FiClock /> ~15 mins</MetaPill>
+                </MetaPillsRow>
+              </div>
+              <TypeFooter>
+                <ActionButtonsRow>
+                  <LaunchBtn onClick={() => navigate('/eu-ai-compliance')}>
+                    <FiPlay /> Start Assessment
+                  </LaunchBtn>
+                  <SampleBtn onClick={() => navigate('/eu-ai-compliance?demo=high-risk-hr')}>
+                    🧪 Try Sample
+                  </SampleBtn>
+                </ActionButtonsRow>
+                <SecondaryActionsRow>
+                  <span style={{ fontSize: '0.8rem', color: '#10b981', fontWeight: '600' }}>✓ Core Statutory</span>
+                </SecondaryActionsRow>
+              </TypeFooter>
+            </TypeCard>
+
             {/* Custom Production Ready Templates */}
             {productionTypes.map((type) => {
               const dimensions = type.framework?.dimensions || [];

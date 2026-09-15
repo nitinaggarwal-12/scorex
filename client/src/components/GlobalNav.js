@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { FiMenu, FiX, FiPlay, FiList, FiLogIn, FiLogOut, FiUser, FiFileText, FiUsers, FiSend, FiChevronDown, FiLock, FiUserPlus, FiMail, FiMessageSquare, FiSettings, FiBook, FiMonitor, FiCpu, FiAward, FiLayers, FiBarChart2, FiTrendingUp } from 'react-icons/fi';
+import { FiMenu, FiX, FiPlay, FiList, FiLogIn, FiLogOut, FiUser, FiFileText, FiUsers, FiSend, FiChevronDown, FiLock, FiUserPlus, FiMail, FiMessageSquare, FiSettings, FiBook, FiMonitor, FiCpu, FiAward, FiLayers, FiBarChart2, FiTrendingUp, FiDatabase, FiShield, FiShare2, FiArrowRight, FiZap } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import * as assessmentService from '../services/assessmentService';
@@ -440,21 +440,19 @@ const DropdownDivider = styled.div`
   margin: 6px 0;
 `;
 
-const TrySampleDropdownContainer = styled.div`
-  position: relative;
-  display: inline-block;
-`;
-
-const TrySampleMenu = styled.div`
+const AssessmentsMegaMenu = styled.div`
   position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  background: white;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 710px;
+  max-width: calc(100vw - 32px);
+  background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.15);
-  min-width: 340px;
-  padding: 8px 0;
+  border-radius: 16px;
+  box-shadow: 0 24px 48px -12px rgba(15, 23, 42, 0.16), 0 6px 16px -4px rgba(15, 23, 42, 0.06);
+  display: grid;
+  grid-template-columns: 430px 280px;
+  overflow: hidden;
   z-index: 1000;
   opacity: ${props => props.$isOpen ? 1 : 0};
   visibility: ${props => props.$isOpen ? 'visible' : 'hidden'};
@@ -464,51 +462,219 @@ const TrySampleMenu = styled.div`
   &::before {
     content: '';
     position: absolute;
-    top: -12px;
+    top: -14px;
     left: 0;
     right: 0;
-    height: 12px;
+    height: 14px;
+  }
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    width: 360px;
+  }
+`;
+
+const MegaMenuPrimaryCol = styled.div`
+  padding: 14px 12px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+`;
+
+const MegaMenuSecondaryCol = styled.div`
+  padding: 14px 12px;
+  background: #f8fafc;
+  border-left: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+
+  @media (max-width: 900px) {
+    border-left: none;
+    border-top: 1px solid #e2e8f0;
+  }
+`;
+
+const MegaMenuSectionHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 10px 8px;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 4px;
+  font-size: 0.69rem;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+`;
+
+const MegaMenuTrackItem = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    transform: translateX(2px);
+  }
+`;
+
+const TrackIconBox = styled.div`
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: ${props => props.$bg || 'rgba(59, 130, 246, 0.1)'};
+  color: ${props => props.$color || '#2563eb'};
+  border: 1px solid ${props => props.$border || 'rgba(59, 130, 246, 0.2)'};
+  font-size: 16px;
+`;
+
+const TrackContent = styled.div`
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+`;
+
+const TrackTopRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+`;
+
+const TrackTitle = styled.span`
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #0f172a;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const TrackBadge = styled.span`
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: ${props => props.$bg || 'rgba(99, 102, 241, 0.12)'};
+  color: ${props => props.$color || '#6366f1'};
+  border: 1px solid ${props => props.$border || 'rgba(99, 102, 241, 0.25)'};
+  white-space: nowrap;
+  flex-shrink: 0;
+`;
+
+const TrackSubtitle = styled.span`
+  font-size: 0.72rem;
+  color: #64748b;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const MegaMenuStudioCard = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 11px;
+  border-radius: 10px;
+  background: ${props => props.$gradient ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(219, 39, 119, 0.08) 100%)' : '#ffffff'};
+  border: 1px solid ${props => props.$gradient ? 'rgba(139, 92, 246, 0.28)' : '#e2e8f0'};
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.16s ease;
+
+  &:hover {
+    border-color: ${props => props.$gradient ? 'rgba(219, 39, 119, 0.45)' : '#cbd5e1'};
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+    transform: translateY(-1px);
+  }
+`;
+
+const TrySampleDropdownContainer = styled.div`
+  position: relative;
+  display: inline-block;
+`;
+
+const TrySampleMenu = styled.div`
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 20px 44px -10px rgba(15, 23, 42, 0.16), 0 4px 14px -2px rgba(15, 23, 42, 0.05);
+  min-width: 445px;
+  padding: 12px;
+  z-index: 1000;
+  opacity: ${props => props.$isOpen ? 1 : 0};
+  visibility: ${props => props.$isOpen ? 'visible' : 'hidden'};
+  transform: translateY(${props => props.$isOpen ? '0' : '-8px'});
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -14px;
+    left: 0;
+    right: 0;
+    height: 14px;
   }
 `;
 
 const TrySampleHeader = styled.div`
-  padding: 10px 18px 8px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #94a3b8;
+  padding: 4px 10px 8px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #64748b;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   border-bottom: 1px solid #f1f5f9;
   margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 const TrySampleOption = styled.button`
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 11px;
   width: 100%;
-  padding: 10px 18px;
-  background: none;
-  border: none;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: transparent;
+  border: 1px solid transparent;
   text-align: left;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: all 0.15s ease;
 
   &:hover {
     background: #f8fafc;
-  }
-
-  strong {
-    font-size: 0.88rem;
-    color: #1e293b;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 2px;
-  }
-
-  span {
-    font-size: 0.75rem;
-    color: #64748b;
+    border-color: #e2e8f0;
+    transform: translateX(2px);
   }
 `;
 
@@ -579,6 +745,28 @@ const GlobalNav = () => {
     fetchPromotedTypes();
     window.addEventListener('assessment-types-updated', fetchPromotedTypes);
     return () => window.removeEventListener('assessment-types-updated', fetchPromotedTypes);
+  }, []);
+
+  // Auto-reload open local dev tabs when bundle hash changes after build
+  useEffect(() => {
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (!isLocal) return;
+    let initialHash = null;
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch('/build-info', { cache: 'no-store' });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data?.bundleHash) {
+          if (!initialHash) {
+            initialHash = data.bundleHash;
+          } else if (initialHash !== data.bundleHash) {
+            window.location.reload();
+          }
+        }
+      } catch (_) {}
+    }, 3000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -911,6 +1099,296 @@ const GlobalNav = () => {
     return comments[commentIndex];
   };
 
+  const getTrackVisuals = (type) => {
+    const key = (type.typeKey || '').toLowerCase();
+    const iconName = type.icon || '';
+    const color = type.color || '#6366f1';
+
+    let IconComponent = FiAward;
+    if (iconName === 'HiSparkles' || key.includes('gemini')) IconComponent = HiSparkles;
+    else if (iconName === 'FiTrendingUp' || key.includes('finops') || key.includes('cost')) IconComponent = FiTrendingUp;
+    else if (iconName === 'HiDatabase' || key.includes('lakehouse') || key.includes('bigquery')) IconComponent = FiDatabase;
+    else if (iconName === 'HiShieldCheck' || key.includes('security') || key.includes('zero_trust') || key.includes('eu_ai') || key.includes('compliance')) IconComponent = FiShield;
+    else if (iconName === 'FiCpu' || key.includes('agentic') || key.includes('mesh')) IconComponent = FiShare2;
+
+    let displayTitle = type.title || '';
+    if (displayTitle === 'Autonomous Multi-Agent AI Mesh Architecture & MCP Readiness') {
+      displayTitle = 'Autonomous Multi-Agent AI & MCP';
+    } else if (displayTitle === 'FinOps & Cloud Cost Optimization Assessment') {
+      displayTitle = 'FinOps & Cloud Cost Optimization';
+    } else if (displayTitle === 'Gemini Enterprise Migration Assessment') {
+      displayTitle = 'Gemini Enterprise Migration';
+    } else if (displayTitle === 'Enterprise AI & Zero-Trust Security Assessment') {
+      displayTitle = 'Enterprise AI & Zero-Trust Security';
+    }
+
+    let displayBadge = type.badge || 'Custom';
+    if (displayBadge === 'Lakehouse Modernization') displayBadge = 'Lakehouse';
+    if (displayBadge === 'CISO & Zero-Trust') displayBadge = 'Zero-Trust';
+
+    let microSubtitle = type.subtitle || 'Enterprise architecture & readiness evaluation';
+    let demoSubtitle = microSubtitle;
+    if (key.includes('gemini')) {
+      microSubtitle = 'Vertex AI modernization & token cost arbitrage';
+      demoSubtitle = 'Quantum FinTech Global • Vertex AI Migration Report';
+    } else if (key.includes('finops')) {
+      microSubtitle = 'Cloud financial governance & unit economics';
+      demoSubtitle = 'Nova Retail & E-Commerce • Cloud Unit Economics Report';
+    } else if (key.includes('agentic')) {
+      microSubtitle = 'MCP protocol, durable state & agent telemetry';
+      demoSubtitle = 'Apex Global Banking • Multi-Agent Mesh & MCP Report';
+    } else if (key.includes('lakehouse')) {
+      microSubtitle = 'Open Iceberg storage, BigLake & slot economics';
+      demoSubtitle = 'Global Logistics Alliance • Iceberg & BigLake Report';
+    } else if (key.includes('zero_trust')) {
+      microSubtitle = 'CISO posture, real-time DLP & Model Armor';
+      demoSubtitle = 'CyberShield Health • CISO & AI Gateway Security Report';
+    } else if (key.includes('eu_ai') || key.includes('compliance')) {
+      microSubtitle = 'Articles 8–15 conformity, Art. 5 tripwires & audit dossier';
+      demoSubtitle = 'ApexHire Global Enterprise • High-Risk HR Screening AI Dossier';
+    }
+
+    return { IconComponent, displayTitle, displayBadge, microSubtitle, demoSubtitle, color };
+  };
+
+  const renderTrySampleMenu = () => (
+    <TrySampleMenu $isOpen={trySampleDropdownOpen}>
+      <TrySampleHeader>
+        <span>⚡ Instant Autopopulated Demos</span>
+        <span style={{ fontSize: '0.64rem', color: '#2563eb', background: '#eff6ff', padding: '2px 6px', borderRadius: '999px', fontWeight: 700 }}>Pre-Seeded Data</span>
+      </TrySampleHeader>
+      <TrySampleOption onClick={handleTrySampleCore}>
+        <TrackIconBox $bg="rgba(255, 107, 53, 0.12)" $color="#ff6b35" $border="rgba(255, 107, 53, 0.25)">
+          <FiBarChart2 />
+        </TrackIconBox>
+        <TrackContent>
+          <TrackTopRow>
+            <TrackTitle>Enterprise Data & AI Maturity</TrackTitle>
+            <TrackBadge $bg="rgba(255, 107, 53, 0.12)" $color="#ea580c" $border="rgba(255, 107, 53, 0.28)">Core 6-Pillar</TrackBadge>
+          </TrackTopRow>
+          <TrackSubtitle>ConnectPlus Telecom • 60-Question Executive Report</TrackSubtitle>
+        </TrackContent>
+      </TrySampleOption>
+
+      <TrySampleOption onClick={() => { setTrySampleDropdownOpen(false); navigate('/eu-ai-compliance?demo=high-risk-hr'); }}>
+        <TrackIconBox $bg="rgba(16, 185, 129, 0.12)" $color="#059669" $border="rgba(16, 185, 129, 0.28)">
+          <FiShield />
+        </TrackIconBox>
+        <TrackContent>
+          <TrackTopRow>
+            <TrackTitle>EU AI Act Compliance & Audit</TrackTitle>
+            <TrackBadge $bg="rgba(16, 185, 129, 0.12)" $color="#059669" $border="rgba(16, 185, 129, 0.28)">High-Risk HR</TrackBadge>
+          </TrackTopRow>
+          <TrackSubtitle>ApexHire Global Enterprise • High-Risk HR Screening AI Dossier</TrackSubtitle>
+        </TrackContent>
+      </TrySampleOption>
+
+      {promotedTypes.map((type) => {
+        const { IconComponent, displayTitle, displayBadge, demoSubtitle, color } = getTrackVisuals(type);
+        return (
+          <TrySampleOption
+            key={type.id || type.typeKey}
+            onClick={() => handleTrySampleDynamic(type.typeKey, type.title)}
+          >
+            <TrackIconBox $bg={`${color}15`} $color={color} $border={`${color}30`}>
+              <IconComponent />
+            </TrackIconBox>
+            <TrackContent>
+              <TrackTopRow>
+                <TrackTitle>{displayTitle}</TrackTitle>
+                <TrackBadge $bg={`${color}15`} $color={color} $border={`${color}30`}>{displayBadge}</TrackBadge>
+              </TrackTopRow>
+              <TrackSubtitle>{demoSubtitle}</TrackSubtitle>
+            </TrackContent>
+          </TrySampleOption>
+        );
+      })}
+
+      <DropdownDivider style={{ margin: '8px 0' }} />
+      <MegaMenuStudioCard
+        $gradient
+        onClick={() => { setTrySampleDropdownOpen(false); navigate('/assessments/custom-hub'); }}
+      >
+        <TrackIconBox $bg="rgba(139, 92, 246, 0.15)" $color="#7c3aed" $border="rgba(139, 92, 246, 0.3)">
+          <FiLayers />
+        </TrackIconBox>
+        <TrackContent>
+          <TrackTopRow>
+            <TrackTitle style={{ color: '#6d28d9' }}>Browse All Sample Blueprints</TrackTitle>
+            <FiArrowRight style={{ color: '#7c3aed', fontSize: '14px' }} />
+          </TrackTopRow>
+          <TrackSubtitle>Explore 12+ industry reference architectures & reports</TrackSubtitle>
+        </TrackContent>
+      </MegaMenuStudioCard>
+    </TrySampleMenu>
+  );
+
+  const renderAssessmentsMegaMenu = (isGuest = false) => {
+    const runNav = (path) => {
+      setAssessmentsDropdownOpen(false);
+      if (isGuest) {
+        handleExploreAsGuest(path);
+      } else {
+        navigate(path);
+      }
+    };
+
+    const promotedList = promotedTypes.filter(t => t.isPromoted);
+
+    return (
+      <AssessmentsMegaMenu $isOpen={assessmentsDropdownOpen}>
+        {/* Left Column: Diagnostic Frameworks */}
+        <MegaMenuPrimaryCol>
+          <MegaMenuSectionHeader>
+            <span>⚡ Diagnostic Frameworks</span>
+            <span style={{ fontSize: '0.64rem', color: '#2563eb', background: '#eff6ff', padding: '2px 7px', borderRadius: '999px', fontWeight: 700 }}>
+              {3 + promotedList.length} Tracks
+            </span>
+          </MegaMenuSectionHeader>
+
+          {/* Track 1: Data & AI Maturity */}
+          <MegaMenuTrackItem onClick={() => runNav('/start')}>
+            <TrackIconBox $bg="rgba(37, 99, 235, 0.1)" $color="#2563eb" $border="rgba(37, 99, 235, 0.22)">
+              <FiBarChart2 />
+            </TrackIconBox>
+            <TrackContent>
+              <TrackTopRow>
+                <TrackTitle>Data & AI Maturity Assessment</TrackTitle>
+                <TrackBadge $bg="rgba(37, 99, 235, 0.1)" $color="#2563eb" $border="rgba(37, 99, 235, 0.25)">Core 6-Pillar</TrackBadge>
+              </TrackTopRow>
+              <TrackSubtitle>Enterprise data, MLOps & cloud governance • 60 Qs</TrackSubtitle>
+            </TrackContent>
+          </MegaMenuTrackItem>
+
+          {/* Track 2: Gen AI Readiness */}
+          <MegaMenuTrackItem onClick={() => runNav('/genai-readiness')}>
+            <TrackIconBox $bg="rgba(124, 58, 237, 0.1)" $color="#7c3aed" $border="rgba(124, 58, 237, 0.22)">
+              <FiCpu />
+            </TrackIconBox>
+            <TrackContent>
+              <TrackTopRow>
+                <TrackTitle>Gen AI Readiness Assessment</TrackTitle>
+                <TrackBadge $bg="rgba(124, 58, 237, 0.1)" $color="#7c3aed" $border="rgba(124, 58, 237, 0.25)">LLM & RAG</TrackBadge>
+              </TrackTopRow>
+              <TrackSubtitle>Prompt engineering, vector RAG & guardrails • 35 Qs</TrackSubtitle>
+            </TrackContent>
+          </MegaMenuTrackItem>
+
+          {/* Track 3: EU AI Act Compliance */}
+          <MegaMenuTrackItem onClick={() => runNav('/eu-ai-compliance')}>
+            <TrackIconBox $bg="rgba(16, 185, 129, 0.1)" $color="#059669" $border="rgba(16, 185, 129, 0.25)">
+              <FiShield />
+            </TrackIconBox>
+            <TrackContent>
+              <TrackTopRow>
+                <TrackTitle>EU AI Act Compliance Engine</TrackTitle>
+                <TrackBadge $bg="rgba(16, 185, 129, 0.1)" $color="#059669" $border="rgba(16, 185, 129, 0.25)">Legal & Audit</TrackBadge>
+              </TrackTopRow>
+              <TrackSubtitle>Statutory classification, conformity audit & legal dossier • 20 Qs</TrackSubtitle>
+            </TrackContent>
+          </MegaMenuTrackItem>
+
+          {/* Promoted Dynamic Assessment Tracks */}
+          {promotedList.map((type) => {
+            const { IconComponent, displayTitle, displayBadge, microSubtitle, color } = getTrackVisuals(type);
+            return (
+              <MegaMenuTrackItem
+                key={type.id || type.typeKey}
+                onClick={() => runNav(`/assessments/run/${type.typeKey}`)}
+              >
+                <TrackIconBox $bg={`${color}14`} $color={color} $border={`${color}28`}>
+                  <IconComponent />
+                </TrackIconBox>
+                <TrackContent>
+                  <TrackTopRow>
+                    <TrackTitle>{displayTitle}</TrackTitle>
+                    <TrackBadge $bg={`${color}14`} $color={color} $border={`${color}28`}>{displayBadge}</TrackBadge>
+                  </TrackTopRow>
+                  <TrackSubtitle>{microSubtitle}</TrackSubtitle>
+                </TrackContent>
+              </MegaMenuTrackItem>
+            );
+          })}
+        </MegaMenuPrimaryCol>
+
+        {/* Right Column: Workspace & AI Studio */}
+        <MegaMenuSecondaryCol>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <MegaMenuSectionHeader>
+              <span>🗂️ Workspace & Directory</span>
+            </MegaMenuSectionHeader>
+
+            {!isGuest && (
+              <MegaMenuTrackItem onClick={() => { setAssessmentsDropdownOpen(false); navigate('/my-assessments'); }}>
+                <TrackIconBox $bg="rgba(59, 130, 246, 0.1)" $color="#2563eb" $border="rgba(59, 130, 246, 0.2)">
+                  <FiFileText />
+                </TrackIconBox>
+                <TrackContent>
+                  <TrackTitle>My Assessments</TrackTitle>
+                  <TrackSubtitle>Active & completed runs</TrackSubtitle>
+                </TrackContent>
+              </MegaMenuTrackItem>
+            )}
+
+            <MegaMenuTrackItem onClick={() => { setAssessmentsDropdownOpen(false); navigate('/assessments'); }}>
+              <TrackIconBox $bg="rgba(13, 148, 136, 0.1)" $color="#0d9488" $border="rgba(13, 148, 136, 0.2)">
+                <FiList />
+              </TrackIconBox>
+              <TrackContent>
+                <TrackTitle>All Assessments</TrackTitle>
+                <TrackSubtitle>Benchmark directory & results</TrackSubtitle>
+              </TrackContent>
+            </MegaMenuTrackItem>
+
+            {currentUser && currentUser.role === 'admin' && !currentUser.testMode && (
+              <MegaMenuTrackItem onClick={() => { setAssessmentsDropdownOpen(false); navigate('/admin/questions'); }}>
+                <TrackIconBox $bg="rgba(100, 116, 139, 0.12)" $color="#475569" $border="rgba(100, 116, 139, 0.25)">
+                  <FiSettings />
+                </TrackIconBox>
+                <TrackContent>
+                  <TrackTitle>Manage Questions</TrackTitle>
+                  <TrackSubtitle>Edit framework question bank</TrackSubtitle>
+                </TrackContent>
+              </MegaMenuTrackItem>
+            )}
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <MegaMenuSectionHeader style={{ marginBottom: '2px' }}>
+              <span>✨ AI Studio & Catalog</span>
+            </MegaMenuSectionHeader>
+
+            <MegaMenuStudioCard onClick={() => { setAssessmentsDropdownOpen(false); navigate('/assessments/custom-hub'); }}>
+              <TrackIconBox $bg="rgba(139, 92, 246, 0.12)" $color="#7c3aed" $border="rgba(139, 92, 246, 0.25)">
+                <FiLayers />
+              </TrackIconBox>
+              <TrackContent>
+                <TrackTopRow>
+                  <TrackTitle style={{ color: '#6d28d9' }}>Template Catalog</TrackTitle>
+                  <FiArrowRight style={{ color: '#7c3aed', fontSize: '13px', flexShrink: 0 }} />
+                </TrackTopRow>
+                <TrackSubtitle>12+ industry blueprints</TrackSubtitle>
+              </TrackContent>
+            </MegaMenuStudioCard>
+
+            <MegaMenuStudioCard $gradient onClick={() => { setAssessmentsDropdownOpen(false); navigate('/assessments/ai-generator'); }}>
+              <TrackIconBox $bg="rgba(219, 39, 119, 0.12)" $color="#db2777" $border="rgba(219, 39, 119, 0.25)">
+                <HiSparkles />
+              </TrackIconBox>
+              <TrackContent>
+                <TrackTopRow>
+                  <TrackTitle style={{ color: '#be185d' }}>AI Studio Compiler</TrackTitle>
+                  <FiArrowRight style={{ color: '#db2777', fontSize: '13px', flexShrink: 0 }} />
+                </TrackTopRow>
+                <TrackSubtitle>Prompt-to-Assessment AI</TrackSubtitle>
+              </TrackContent>
+            </MegaMenuStudioCard>
+          </div>
+        </MegaMenuSecondaryCol>
+      </AssessmentsMegaMenu>
+    );
+  };
+
   return (
     <>
       <LoginModal 
@@ -1024,150 +1502,63 @@ const GlobalNav = () => {
                 {/* Try Sample Dropdown */}
                 <TrySampleDropdownContainer 
                   className="dropdown-container"
-                  onMouseEnter={() => setTrySampleDropdownOpen(true)}
+                  onMouseEnter={() => {
+                    setTrySampleDropdownOpen(true);
+                    setAssessmentsDropdownOpen(false);
+                    setResourcesDropdownOpen(false);
+                    setAssignmentsDropdownOpen(false);
+                    setAdminDropdownOpen(false);
+                  }}
                   onMouseLeave={() => setTrySampleDropdownOpen(false)}
                 >
-                  <SecondaryCTAButton onClick={() => setTrySampleDropdownOpen(!trySampleDropdownOpen)}>
+                  <SecondaryCTAButton onClick={() => {
+                    const next = !trySampleDropdownOpen;
+                    setTrySampleDropdownOpen(next);
+                    if (next) {
+                      setAssessmentsDropdownOpen(false);
+                      setResourcesDropdownOpen(false);
+                      setAssignmentsDropdownOpen(false);
+                      setAdminDropdownOpen(false);
+                    }
+                  }}>
                     <FiPlay size={14} />
                     Try Sample
                     <FiChevronDown size={14} className="chevron" style={{ marginLeft: '-2px', transform: trySampleDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
                   </SecondaryCTAButton>
                   
-                  <TrySampleMenu $isOpen={trySampleDropdownOpen}>
-                    <TrySampleHeader>Select Sample Assessment</TrySampleHeader>
-                    <TrySampleOption onClick={handleTrySampleCore}>
-                      <strong><FiBarChart2 style={{ color: '#ff6b35' }} /> Enterprise Data & AI Maturity</strong>
-                      <span>ConnectPlus Telecom • 6-Pillar Full Framework</span>
-                    </TrySampleOption>
-                    {promotedTypes.map((type) => (
-                      <TrySampleOption 
-                        key={type.id || type.typeKey} 
-                        onClick={() => handleTrySampleDynamic(type.typeKey, type.title)}
-                      >
-                        <strong>
-                          <FiAward style={{ color: type.color || '#8b5cf6' }} /> 
-                          {type.title}
-                        </strong>
-                        <span>{type.subtitle || 'Autopopulated sample evaluation with AI report'}</span>
-                      </TrySampleOption>
-                    ))}
-                    <DropdownDivider />
-                    <TrySampleOption onClick={() => { setTrySampleDropdownOpen(false); navigate('/assessments/custom-hub'); }}>
-                      <strong style={{ color: '#8b5cf6' }}><FiLayers /> Browse All Assessment Templates →</strong>
-                    </TrySampleOption>
-                  </TrySampleMenu>
+                  {renderTrySampleMenu()}
                 </TrySampleDropdownContainer>
 
                 {/* Assessments Dropdown with Hover Trigger */}
                 <DropdownContainer 
                   className="dropdown-container"
-                  onMouseEnter={() => setAssessmentsDropdownOpen(true)}
+                  onMouseEnter={() => {
+                    setAssessmentsDropdownOpen(true);
+                    setTrySampleDropdownOpen(false);
+                    setResourcesDropdownOpen(false);
+                    setAssignmentsDropdownOpen(false);
+                    setAdminDropdownOpen(false);
+                  }}
                   onMouseLeave={() => setAssessmentsDropdownOpen(false)}
                 >
                   <DropdownButton 
                     $isOpen={assessmentsDropdownOpen}
-                    onClick={() => setAssessmentsDropdownOpen(!assessmentsDropdownOpen)}
+                    onClick={() => {
+                      const next = !assessmentsDropdownOpen;
+                      setAssessmentsDropdownOpen(next);
+                      if (next) {
+                        setTrySampleDropdownOpen(false);
+                        setResourcesDropdownOpen(false);
+                        setAssignmentsDropdownOpen(false);
+                        setAdminDropdownOpen(false);
+                      }
+                    }}
                   >
                     <FiFileText size={14} />
                     Assessments
                     <FiChevronDown size={14} className="chevron" />
                   </DropdownButton>
-                  <DropdownMenu $isOpen={assessmentsDropdownOpen}>
-                    <DropdownItem onClick={() => {
-                      navigate('/start');
-                      setAssessmentsDropdownOpen(false);
-                    }}>
-                      <FiPlay />
-                      Data & AI Maturity Assessment
-                    </DropdownItem>
-                    <DropdownItem onClick={() => {
-                      navigate('/genai-readiness');
-                      setAssessmentsDropdownOpen(false);
-                    }}>
-                      <FiCpu />
-                      Gen AI Readiness Assessment
-                    </DropdownItem>
-
-                    {/* Dynamically Promoted Custom Assessment Types */}
-                    {promotedTypes.filter(t => t.isPromoted).map((type) => (
-                      <DropdownItem 
-                        key={type.id || type.typeKey}
-                        onClick={() => {
-                          navigate(`/assessments/run/${type.typeKey}`);
-                          setAssessmentsDropdownOpen(false);
-                        }}
-                        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-                      >
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
-                          <FiAward style={{ color: type.color || '#818cf8', flexShrink: 0 }} />
-                          {type.title}
-                        </span>
-                        {type.badge && (
-                          <span style={{
-                            fontSize: '0.68rem',
-                            fontWeight: 700,
-                            padding: '2px 6px',
-                            borderRadius: '4px',
-                            background: type.color ? `${type.color}20` : 'rgba(99, 102, 241, 0.15)',
-                            color: type.color || '#818cf8',
-                            border: `1px solid ${type.color ? `${type.color}40` : 'rgba(99, 102, 241, 0.3)'}`,
-                            whiteSpace: 'nowrap'
-                          }}>
-                            {type.badge}
-                          </span>
-                        )}
-                      </DropdownItem>
-                    ))}
-
-                    <DropdownDivider />
-                    <DropdownItem onClick={() => {
-                      navigate('/my-assessments');
-                      setAssessmentsDropdownOpen(false);
-                    }}>
-                      <FiFileText />
-                      My Assessments
-                    </DropdownItem>
-                    <DropdownItem onClick={() => {
-                      navigate('/assessments');
-                      setAssessmentsDropdownOpen(false);
-                    }}>
-                      <FiList />
-                      All Assessments
-                    </DropdownItem>
-
-                    <DropdownDivider />
-                    <DropdownItem 
-                      style={{ color: '#8b5cf6', fontWeight: '700' }}
-                      onClick={() => {
-                        navigate('/assessments/custom-hub');
-                        setAssessmentsDropdownOpen(false);
-                      }}
-                    >
-                      <FiLayers style={{ color: '#8b5cf6' }} />
-                      📋 Assessment Catalog & Templates
-                    </DropdownItem>
-
-                    <DropdownItem 
-                      style={{ color: '#a855f7', fontWeight: '600' }}
-                      onClick={() => {
-                        navigate('/assessments/ai-generator');
-                        setAssessmentsDropdownOpen(false);
-                      }}
-                    >
-                      <HiSparkles style={{ color: '#a855f7' }} />
-                      ✨ AI Assessment Generator
-                    </DropdownItem>
-
-                    {currentUser.role === 'admin' && !currentUser.testMode && (
-                      <DropdownItem onClick={() => {
-                        navigate('/admin/questions');
-                        setAssessmentsDropdownOpen(false);
-                      }}>
-                        <FiSettings />
-                        Manage Questions
-                      </DropdownItem>
-                    )}
-                  </DropdownMenu>
+                  {renderAssessmentsMegaMenu(false)}
                 </DropdownContainer>
 
                 {/* Assignments Dropdown (Admin/Author only) with Hover Trigger */}
@@ -1391,133 +1782,55 @@ const GlobalNav = () => {
                 {/* Try Sample Dropdown (Guest View) */}
                 <TrySampleDropdownContainer 
                   className="dropdown-container"
-                  onMouseEnter={() => setTrySampleDropdownOpen(true)}
+                  onMouseEnter={() => {
+                    setTrySampleDropdownOpen(true);
+                    setAssessmentsDropdownOpen(false);
+                    setResourcesDropdownOpen(false);
+                  }}
                   onMouseLeave={() => setTrySampleDropdownOpen(false)}
                 >
-                  <SecondaryCTAButton onClick={() => setTrySampleDropdownOpen(!trySampleDropdownOpen)}>
+                  <SecondaryCTAButton onClick={() => {
+                    const next = !trySampleDropdownOpen;
+                    setTrySampleDropdownOpen(next);
+                    if (next) {
+                      setAssessmentsDropdownOpen(false);
+                      setResourcesDropdownOpen(false);
+                    }
+                  }}>
                     <FiPlay size={14} />
                     Try Sample
                     <FiChevronDown size={14} className="chevron" style={{ marginLeft: '-2px', transform: trySampleDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
                   </SecondaryCTAButton>
                   
-                  <TrySampleMenu $isOpen={trySampleDropdownOpen}>
-                    <TrySampleHeader>Select Sample Assessment</TrySampleHeader>
-                    <TrySampleOption onClick={handleTrySampleCore}>
-                      <strong><FiBarChart2 style={{ color: '#ff6b35' }} /> Enterprise Data & AI Maturity</strong>
-                      <span>ConnectPlus Telecom • 6-Pillar Full Framework</span>
-                    </TrySampleOption>
-                    {promotedTypes.map((type) => (
-                      <TrySampleOption 
-                        key={type.id || type.typeKey} 
-                        onClick={() => handleTrySampleDynamic(type.typeKey, type.title)}
-                      >
-                        <strong>
-                          <FiAward style={{ color: type.color || '#8b5cf6' }} /> 
-                          {type.title}
-                        </strong>
-                        <span>{type.subtitle || 'Autopopulated sample evaluation with AI report'}</span>
-                      </TrySampleOption>
-                    ))}
-                    <DropdownDivider />
-                    <TrySampleOption onClick={() => { setTrySampleDropdownOpen(false); navigate('/assessments/custom-hub'); }}>
-                      <strong style={{ color: '#8b5cf6' }}><FiLayers /> Browse All Assessment Templates →</strong>
-                    </TrySampleOption>
-                  </TrySampleMenu>
+                  {renderTrySampleMenu()}
                 </TrySampleDropdownContainer>
 
                 {/* Assessments Hover Dropdown for Guests */}
                 <DropdownContainer 
                   className="dropdown-container"
-                  onMouseEnter={() => setAssessmentsDropdownOpen(true)}
+                  onMouseEnter={() => {
+                    setAssessmentsDropdownOpen(true);
+                    setTrySampleDropdownOpen(false);
+                    setResourcesDropdownOpen(false);
+                  }}
                   onMouseLeave={() => setAssessmentsDropdownOpen(false)}
                 >
                   <DropdownButton 
                     $isOpen={assessmentsDropdownOpen}
-                    onClick={() => setAssessmentsDropdownOpen(!assessmentsDropdownOpen)}
+                    onClick={() => {
+                      const next = !assessmentsDropdownOpen;
+                      setAssessmentsDropdownOpen(next);
+                      if (next) {
+                        setTrySampleDropdownOpen(false);
+                        setResourcesDropdownOpen(false);
+                      }
+                    }}
                   >
                     <FiFileText size={14} />
                     Assessments
                     <FiChevronDown size={14} className="chevron" />
                   </DropdownButton>
-                  <DropdownMenu $isOpen={assessmentsDropdownOpen}>
-                    <DropdownItem onClick={() => {
-                      handleExploreAsGuest('/start');
-                      setAssessmentsDropdownOpen(false);
-                    }}>
-                      <FiPlay />
-                      Data & AI Maturity Assessment
-                    </DropdownItem>
-                    <DropdownItem onClick={() => {
-                      handleExploreAsGuest('/genai-readiness');
-                      setAssessmentsDropdownOpen(false);
-                    }}>
-                      <FiCpu />
-                      Gen AI Readiness Assessment
-                    </DropdownItem>
-
-                    {/* Dynamically Promoted Custom Assessment Types */}
-                    {promotedTypes.filter(t => t.isPromoted).map((type) => (
-                      <DropdownItem 
-                        key={type.id || type.typeKey}
-                        onClick={() => {
-                          handleExploreAsGuest(`/assessments/run/${type.typeKey}`);
-                          setAssessmentsDropdownOpen(false);
-                        }}
-                        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-                      >
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
-                          <FiAward style={{ color: type.color || '#818cf8', flexShrink: 0 }} />
-                          {type.title}
-                        </span>
-                        {type.badge && (
-                          <span style={{
-                            fontSize: '0.68rem',
-                            fontWeight: 700,
-                            padding: '2px 6px',
-                            borderRadius: '4px',
-                            background: type.color ? `${type.color}20` : 'rgba(99, 102, 241, 0.15)',
-                            color: type.color || '#818cf8',
-                            border: `1px solid ${type.color ? `${type.color}40` : 'rgba(99, 102, 241, 0.3)'}`,
-                            whiteSpace: 'nowrap'
-                          }}>
-                            {type.badge}
-                          </span>
-                        )}
-                      </DropdownItem>
-                    ))}
-
-                    <DropdownDivider />
-                    <DropdownItem onClick={() => {
-                      navigate('/assessments');
-                      setAssessmentsDropdownOpen(false);
-                    }}>
-                      <FiList />
-                      All Assessments
-                    </DropdownItem>
-
-                    <DropdownDivider />
-                    <DropdownItem 
-                      style={{ color: '#8b5cf6', fontWeight: '700' }}
-                      onClick={() => {
-                        navigate('/assessments/custom-hub');
-                        setAssessmentsDropdownOpen(false);
-                      }}
-                    >
-                      <FiLayers style={{ color: '#8b5cf6' }} />
-                      📋 Assessment Catalog & Templates
-                    </DropdownItem>
-
-                    <DropdownItem 
-                      style={{ color: '#a855f7', fontWeight: '600' }}
-                      onClick={() => {
-                        navigate('/assessments/ai-generator');
-                        setAssessmentsDropdownOpen(false);
-                      }}
-                    >
-                      <HiSparkles style={{ color: '#a855f7' }} />
-                      ✨ AI Assessment Generator
-                    </DropdownItem>
-                  </DropdownMenu>
+                  {renderAssessmentsMegaMenu(true)}
                 </DropdownContainer>
 
                 <SecondaryCTAButton onClick={() => setShowLoginModal(true)}>
@@ -1564,6 +1877,10 @@ const GlobalNav = () => {
               <FiCpu size={16} />
               Gen AI Readiness
             </MobileSecondaryCTAButton>
+            <MobileSecondaryCTAButton onClick={() => handleNavigate('/eu-ai-compliance')}>
+              <FiShield size={16} style={{ color: '#059669' }} />
+              EU AI Compliance Engine
+            </MobileSecondaryCTAButton>
             {currentUser.role !== 'consumer' && (
               <>
                 <MobileSecondaryCTAButton onClick={() => handleNavigate('/insights-dashboard')}>
@@ -1578,6 +1895,7 @@ const GlobalNav = () => {
                   <div style={{ background: '#f8fafc', padding: '8px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <MobileSubLink onClick={handleTrySampleCore}>• Enterprise Data & AI Maturity (ConnectPlus)</MobileSubLink>
                     <MobileSubLink onClick={handleTrySampleGenAI}>• Gen AI Readiness (Global Retail)</MobileSubLink>
+                    <MobileSubLink onClick={() => handleNavigate('/eu-ai-compliance?demo=high-risk-hr')}>• EU AI Act Compliance (ApexHire HR)</MobileSubLink>
                     {promotedTypes.map(t => (
                       <MobileSubLink key={t.typeKey} onClick={() => handleTrySampleDynamic(t.typeKey, t.title)}>
                         • {t.title}

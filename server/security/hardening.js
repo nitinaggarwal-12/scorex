@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const axios = require('axios');
 const requestContext = require('./requestContext');
 const assessmentRepository = require('../db/assessmentRepository');
@@ -275,10 +277,22 @@ function getBuildInfo(req) {
     process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : ''
   );
 
+  let bundleHash = null;
+  try {
+    const manifestPath = path.join(__dirname, '../../client/build/asset-manifest.json');
+    if (fs.existsSync(manifestPath)) {
+      const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+      bundleHash = manifest.files?.['main.js'] || null;
+    }
+  } catch (_) {
+    // ignore
+  }
+
   return {
     service: 'scorex',
     branch,
     commit: commit ? commit.slice(0, 8) : null,
+    bundleHash,
     environment,
     url: railwayDomain || requestOrigin(req)
   };

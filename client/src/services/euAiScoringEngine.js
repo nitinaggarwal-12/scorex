@@ -1,6 +1,7 @@
 /**
  * EU AI Act Statutory Scoring, Weighting & Classification Engine
  * Deterministic regulatory decision tree, statutory penalty tier weighting,
+ * live remediation resolution credit loop, multi-regulator fine stacking (AI Act + GDPR + NIS2),
  * mathematical score justification, and remediation task compiler.
  */
 
@@ -139,26 +140,34 @@ export const QUESTION_STATUTORY_WEIGHTS = {
 
 /**
  * Granular option credit multiplier (0.00 to 1.00)
- * Evaluates both complianceStatus and option specificity so partial engineering controls
- * earn proportional mathematical credit.
+ * Evaluates complianceStatus, statutory question weight severity, and live remediation task overrides!
  */
-function getOptionCreditMultiplier(qId, l1Id, l2Id, complianceStatus) {
+function getOptionCreditMultiplier(qId, l1Id, l2Id, complianceStatus, taskOverrideStatus = null) {
+  // If user marked the remediation task for this question as Completed or Resolved, grant full 1.00 credit!
+  if (taskOverrideStatus === 'Completed' || taskOverrideStatus === 'Resolved') {
+    return 1.0;
+  }
   if (complianceStatus === 'COMPLIANT') {
     return 1.0;
   }
   if (complianceStatus === 'NON_COMPLIANT') {
-    return 0.0;
+    // If remediation is actively In Progress on a non-compliant item, grant partial 0.35 progress credit
+    return taskOverrideStatus === 'In Progress' ? 0.35 : 0.0;
   }
   // REMEDIATION_REQUIRED granular differentiation:
-  // Sub-options ending in .1 or representing active/automated controls in progress get 0.62 credit;
-  // Sub-options representing manual/policy-only or unverified controls get 0.42 credit.
-  if (l2Id && (l2Id.endsWith('.1') || l2Id.includes('2.1'))) {
-    return 0.62;
+  // High-weight Tier 2 core obligations (weight >= 2.2) carry stricter baseline credit (0.48) when un-remediated,
+  // proving visually and mathematically how statutory weighting penalizes core technical gaps more than flat averages.
+  const qWeight = QUESTION_STATUTORY_WEIGHTS[qId]?.weight || 1.5;
+  let baseCredit = qWeight >= 2.2 ? 0.48 : 0.64;
+
+  // If remediation task is marked 'In Progress', boost credit by +0.22
+  if (taskOverrideStatus === 'In Progress') {
+    baseCredit = Math.min(0.88, baseCredit + 0.22);
   }
-  return 0.45;
+  return Number(baseCredit.toFixed(2));
 }
 
-export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}) {
+export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}, taskStatusOverrides = {}) {
   const answeredCount = Object.keys(answers).filter(k => answers[k]?.level1OptionId).length;
   const totalQuestions = EU_AI_QUESTIONS.length;
   const isComplete = answeredCount === totalQuestions;
@@ -166,6 +175,7 @@ export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}
   // Financial parameters (dynamic CFO simulator)
   const globalTurnoverMillions = Number(financialConfig.globalTurnoverMillions) || 2500; // Default €2.5B
   const isSme = Boolean(financialConfig.isSme); // Article 99(6) SME lower-of-two cap rule
+  const includeConcurrentGdprNis2 = financialConfig.includeConcurrentGdprNis2 !== false; // Default true
 
   // 1. Overall Risk Tier Determination
   let overallRiskTier = 'Minimal / Low Risk (General Art. 4 Literacy Applies)';
@@ -178,9 +188,13 @@ export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}
 
   // Check Question 4 (Article 5 Prohibited Practices)
   const q4Ans = answers['q4'];
-  const isUnacceptable = q4Ans?.level2OptionId === '4.2.1' || 
-                         q4Ans?.level2OptionId === '4.3.1' || 
-                         q4Ans?.level2OptionId === '4.3.2';
+  const q4TaskId = q4Ans?.level2OptionId ? `task_q4_${q4Ans.level2OptionId.replace(/\./g, '_')}` : '';
+  const isQ4Resolved = taskStatusOverrides[q4TaskId] === 'Completed' || taskStatusOverrides[q4TaskId] === 'Resolved';
+  const isUnacceptable = !isQ4Resolved && (
+    q4Ans?.level2OptionId === '4.2.1' || 
+    q4Ans?.level2OptionId === '4.3.1' || 
+    q4Ans?.level2OptionId === '4.3.2'
+  );
 
   // Check Question 5 & 6 (High-Risk Domains & Derogations)
   const q5Ans = answers['q5'];
@@ -216,12 +230,13 @@ export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}
     riskTierDescription = 'System interacts directly with natural persons or generates synthetic content. Mandatory user notifications and C2PA machine-readable watermarking apply under Article 50.';
   }
 
-  // 2. Conformity & Weighted Mathematical Score Calculation
+  // 2. Conformity & Weighted Mathematical Score Calculation (Live Remediation Loop Active)
   let conformityStatus = 'Compliant (Ready for Sign-off)';
   let conformityBadgeColor = '#10b981';
   let nonCompliantCount = 0;
   let remediationCount = 0;
   let compliantCount = 0;
+  let resolvedRemediationCount = 0;
 
   const remediationTasks = [];
   const questionAuditTrail = [];
@@ -264,14 +279,26 @@ export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}
       return;
     }
 
+    const taskId = `task_${q.id}_${l2.id.replace(/\./g, '_')}`;
+    const taskOverrideStatus = taskStatusOverrides[taskId] || null;
+    const isTaskResolved = taskOverrideStatus === 'Completed' || taskOverrideStatus === 'Resolved';
+
     unweightedAssessedCount++;
-    const creditMultiplier = getOptionCreditMultiplier(q.id, l1.id, l2.id, l2.complianceStatus);
+    const creditMultiplier = getOptionCreditMultiplier(q.id, l1.id, l2.id, l2.complianceStatus, taskOverrideStatus);
     const earnedWeighted = Number((qWeight * creditMultiplier).toFixed(2));
 
-    totalEarnedWeightedPoints += earnedWeighted;
-    unweightedEarnedPoints += creditMultiplier;
+    // Unweighted flat model gives 1.0 for COMPLIANT or resolved, 0.70 for REMEDIATION_REQUIRED, 0.0 for NON_COMPLIANT
+    const flatCredit = isTaskResolved || l2.complianceStatus === 'COMPLIANT'
+      ? 1.0
+      : (l2.complianceStatus === 'REMEDIATION_REQUIRED' ? 0.70 : 0.0);
 
-    if (l2.complianceStatus === 'NON_COMPLIANT') {
+    totalEarnedWeightedPoints += earnedWeighted;
+    unweightedEarnedPoints += flatCredit;
+
+    if (isTaskResolved) {
+      compliantCount++;
+      if (l2.remediation) resolvedRemediationCount++;
+    } else if (l2.complianceStatus === 'NON_COMPLIANT') {
       nonCompliantCount++;
     } else if (l2.complianceStatus === 'REMEDIATION_REQUIRED') {
       remediationCount++;
@@ -281,7 +308,7 @@ export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}
 
     if (l2.remediation) {
       remediationTasks.push({
-        id: `task_${q.id}_${l2.id.replace(/\./g, '_')}`,
+        id: taskId,
         questionId: q.id,
         questionTitle: q.title,
         severity: l2.remediation.severity,
@@ -290,7 +317,7 @@ export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}
         targetOwner: l2.remediation.targetOwner,
         sourceLabel: l2.label,
         statutoryWeight: qWeight,
-        status: 'Todo'
+        status: taskOverrideStatus || 'Todo'
       });
     }
 
@@ -304,7 +331,7 @@ export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}
       maxFineRule: weightConfig.maxFineRule,
       justification: weightConfig.justification,
       selectedOptionLabel: `${l1.label} → ${l2.label}`,
-      complianceStatus: l2.complianceStatus,
+      complianceStatus: isTaskResolved ? 'COMPLIANT (REMEDIATED)' : l2.complianceStatus,
       optionCreditMultiplier: creditMultiplier,
       weightedPointsEarned: earnedWeighted,
       maxWeightedPoints: qWeight,
@@ -320,15 +347,23 @@ export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}
     return (b.statutoryWeight || 1) - (a.statutoryWeight || 1);
   });
 
+  const openRemediationTasks = remediationTasks.filter(t => {
+    const st = taskStatusOverrides[t.id] || t.status;
+    return st !== 'Completed' && st !== 'Resolved';
+  });
+
   if (isUnacceptable || nonCompliantCount > 0) {
     conformityStatus = 'Non-Compliant / Prohibited';
     conformityBadgeColor = '#ef4444';
-  } else if (remediationCount > 0 || (overallRiskTier.includes('High-Risk') && remediationTasks.length > 0)) {
+  } else if (openRemediationTasks.length > 0) {
     conformityStatus = 'Remediation Required';
     conformityBadgeColor = '#ea580c';
   } else if (!isComplete) {
     conformityStatus = `In Progress (${answeredCount} of ${totalQuestions} Answered)`;
     conformityBadgeColor = '#3b82f6';
+  } else if (resolvedRemediationCount > 0) {
+    conformityStatus = `Compliant (All ${resolvedRemediationCount} Remediation Tasks Verified)`;
+    conformityBadgeColor = '#10b981';
   }
 
   // 3. Weighted Compliance Health Score vs Unweighted Score
@@ -339,7 +374,7 @@ export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}
     ? Math.round((unweightedEarnedPoints / totalQuestions) * 100)
     : 0;
 
-  // Statutory Veto Override Rule: If Article 5 Prohibited Practice is present, cap readiness score at 18%
+  // Statutory Veto Override Rule: If Article 5 Prohibited Practice is active, cap readiness score at 18%
   let vetoTriggered = false;
   let vetoReason = null;
   let healthScore = rawWeightedPercentage;
@@ -349,11 +384,10 @@ export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}
     vetoReason = 'Article 5 Prohibited AI Practice Veto Applied: Non-compliance with Article 5 cannot be offset by compliant technical documentation or logging elsewhere. Score hard-capped at 18% (Critical Non-Conformity).';
     healthScore = Math.min(rawWeightedPercentage, 18);
   } else if (nonCompliantCount > 0) {
-    // Any Tier 2 non-compliance caps maximum readiness at 64% until resolved
     healthScore = Math.min(rawWeightedPercentage, 64);
   }
 
-  // 4. 7 Core Statutory Vectors Breakdown (Weighted by Question Statutory Multipliers)
+  // 4. 7 Core Statutory Vectors Breakdown (Weighted by Question Statutory Multipliers & Live Remediation Status)
   const vectorMap = {
     riskManagement: { name: 'Risk Management (Art. 9)', qIds: ['q4', 'q11', 'q20'], score: 0, weightSum: 0 },
     dataGovernance: { name: 'Data Governance & Bias (Art. 10)', qIds: ['q7', 'q8'], score: 0, weightSum: 0 },
@@ -379,9 +413,10 @@ export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}
       const l2 = l1?.subOptions?.find(s => s.id === uAns?.level2OptionId);
 
       if (!l2) {
-        vWeightedEarned += qWeight * 0.35; // baseline unassessed
+        vWeightedEarned += qWeight * 0.35;
       } else {
-        const credit = getOptionCreditMultiplier(qid, l1.id, l2.id, l2.complianceStatus);
+        const taskId = `task_${qid}_${l2.id.replace(/\./g, '_')}`;
+        const credit = getOptionCreditMultiplier(qid, l1.id, l2.id, l2.complianceStatus, taskStatusOverrides[taskId]);
         vWeightedEarned += qWeight * credit;
       }
     });
@@ -390,10 +425,7 @@ export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}
     vector.score = Math.round((vWeightedEarned / (vWeightedMax || 1)) * 100);
   });
 
-  // 5. Dynamic CFO Financial Penalty & Value-at-Risk (VaR) Simulator (Article 99)
-  // Compute statutory maximum fine under Art. 99(3) [7% / €35M] or Art. 99(4) [3% / €15M]
-  // Standard Enterprise: HIGHER of fixed EUR or turnover %
-  // SME / Startup (Art. 99(6)): LOWER of fixed EUR or turnover %
+  // 5. Dynamic CFO Financial Penalty, Multi-Regulator Stacking & Remediation ROI Simulator
   const pctFineArt5 = Number((globalTurnoverMillions * 0.07).toFixed(2));
   const fixedFineArt5 = 35.0;
   const maxFineArt5Millions = isSme ? Math.min(fixedFineArt5, pctFineArt5) : Math.max(fixedFineArt5, pctFineArt5);
@@ -402,32 +434,52 @@ export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}
   const fixedFineArt9to15 = 15.0;
   const maxFineArt9to15Millions = isSme ? Math.min(fixedFineArt9to15, pctFineArt9to15) : Math.max(fixedFineArt9to15, pctFineArt9to15);
 
-  const applicableStatutoryCeilingMillions = isUnacceptable
+  const aiActCeilingMillions = isUnacceptable
     ? maxFineArt5Millions
-    : (isCriticalDomain || isGpaiSystemic || nonCompliantCount > 0 || remediationCount > 0 ? maxFineArt9to15Millions : 7.5);
+    : (isCriticalDomain || isGpaiSystemic || nonCompliantCount > 0 || openRemediationTasks.length > 0 ? maxFineArt9to15Millions : 7.5);
 
-  // Probability-weighted Regulatory Value-at-Risk (VaR) based on non-compliance severity & healthScore deficit
-  const riskExposureFactor = Math.max(0.02, (100 - healthScore) / 100);
-  const expectedValueAtRiskMillions = Number((applicableStatutoryCeilingMillions * riskExposureFactor * (isUnacceptable ? 0.95 : 0.45)).toFixed(2));
+  // Concurrent GDPR Art. 83(5) (4% or €20M) & NIS2 Art. 34 (2% or €10M) Fine Stacking
+  const hasGdprPiiOrProfilingGap = openRemediationTasks.some(t => ['q7', 'q8', 'q14'].includes(t.questionId)) || nonCompliantCount > 0;
+  const hasNis2CyberGap = openRemediationTasks.some(t => ['q9', 'q11', 'q20'].includes(t.questionId));
 
-  const criticalCount = remediationTasks.filter(t => t.severity === 'CRITICAL').length;
-  const highCount = remediationTasks.filter(t => t.severity === 'HIGH').length;
-  const mediumCount = remediationTasks.filter(t => t.severity === 'MEDIUM').length;
+  const gdprFineMillions = (includeConcurrentGdprNis2 && hasGdprPiiOrProfilingGap)
+    ? (isSme ? Math.min(20.0, globalTurnoverMillions * 0.04) : Math.max(20.0, globalTurnoverMillions * 0.04))
+    : 0;
+  const nis2FineMillions = (includeConcurrentGdprNis2 && hasNis2CyberGap)
+    ? (isSme ? Math.min(10.0, globalTurnoverMillions * 0.02) : Math.max(10.0, globalTurnoverMillions * 0.02))
+    : 0;
+
+  const applicableStatutoryCeilingMillions = Number((aiActCeilingMillions + gdprFineMillions + nis2FineMillions).toFixed(2));
+
+  // Probability-weighted Regulatory Value-at-Risk (VaR) drops dynamically as remediation tasks are marked Completed!
+  const riskExposureFactor = openRemediationTasks.length === 0 && !isUnacceptable
+    ? 0.01 // 99% risk reduction when all remediation tasks are resolved
+    : Math.max(0.03, (100 - healthScore) / 100);
+
+  const expectedValueAtRiskMillions = Number((applicableStatutoryCeilingMillions * riskExposureFactor * (isUnacceptable ? 0.95 : 0.42)).toFixed(2));
+
+  const criticalOpenCount = openRemediationTasks.filter(t => t.severity === 'CRITICAL').length;
+  const highOpenCount = openRemediationTasks.filter(t => t.severity === 'HIGH').length;
+  const mediumOpenCount = openRemediationTasks.filter(t => t.severity === 'MEDIUM').length;
 
   const estimatedRemediationCostMillions = Number(
-    Math.max(0.08, (criticalCount * 0.18) + (highCount * 0.09) + (mediumCount * 0.04)).toFixed(2)
+    Math.max(0.05, (criticalOpenCount * 0.18) + (highOpenCount * 0.09) + (mediumOpenCount * 0.04)).toFixed(2)
   );
 
   const netComplianceRoiMultiplier = estimatedRemediationCostMillions > 0
     ? Number((expectedValueAtRiskMillions / estimatedRemediationCostMillions).toFixed(1))
-    : 10.0;
+    : 12.5;
 
   const financialSimulation = {
     globalTurnoverMillions,
     isSme,
-    applicableArticleRule: isUnacceptable ? 'Article 99(3) — Prohibited Practices (7% / €35M)' : 'Article 99(4) — High-Risk & Core Obligations (3% / €15M)',
+    includeConcurrentGdprNis2,
+    aiActCeilingMillions: Number(aiActCeilingMillions.toFixed(2)),
+    gdprFineMillions: Number(gdprFineMillions.toFixed(2)),
+    nis2FineMillions: Number(nis2FineMillions.toFixed(2)),
+    applicableArticleRule: isUnacceptable ? 'EU AI Act Art. 99(3) (7% / €35M)' : 'EU AI Act Art. 99(4) (3% / €15M)',
     smeRuleApplied: isSme ? 'Article 99(6) SME Protection Active (LOWER of Fixed Cap or Turnover %)' : 'Standard Enterprise Cap (HIGHER of Fixed Cap or Turnover %)',
-    applicableStatutoryCeilingMillions: Number(applicableStatutoryCeilingMillions.toFixed(2)),
+    applicableStatutoryCeilingMillions,
     expectedValueAtRiskMillions,
     estimatedRemediationCostMillions,
     netSavingsAvoidedMillions: Number(Math.max(0, expectedValueAtRiskMillions - estimatedRemediationCostMillions).toFixed(2)),
@@ -446,12 +498,12 @@ export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}
       clause: 'Article 27(1)(b)',
       title: 'Temporal & Geographic Scope of Affected Persons',
       status: answers['q17']?.level2OptionId?.startsWith('17.1') ? 'VERIFIED' : 'ACTION REQUIRED',
-      assessment: `Continuous production deployment across EU member state jurisdictions; registered under Dossier ${meta.assessmentId || 'Active'}.`
+      assessment: `Continuous production deployment across EU member state jurisdictions; registered under Dossier ${meta.documentId || 'Active'}.`
     },
     {
       clause: 'Article 27(1)(c)',
       title: 'Specific Categories of Natural Persons & Vulnerable Groups',
-      status: answers['q8']?.level2OptionId?.startsWith('8.1') ? 'VERIFIED (PROTECTED)' : 'HIGH EXPOSURE GAP',
+      status: answers['q8']?.level2OptionId?.startsWith('8.1') || taskStatusOverrides['task_q8_8_2_1'] === 'Completed' ? 'VERIFIED (PROTECTED)' : 'HIGH EXPOSURE GAP',
       assessment: answers['q8']?.notes || 'Evaluates disparate impact across protected cohorts (age, gender, ethnicity, disability, employment applicants).'
     },
     {
@@ -469,7 +521,7 @@ export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}
     {
       clause: 'Article 27(1)(f)',
       title: 'Internal Governance, Complaint Mechanism & Art. 86 Redress',
-      status: answers['q14']?.level2OptionId?.startsWith('14.1') && answers['q20']?.level2OptionId?.startsWith('20.1') ? 'VERIFIED' : 'REMEDIATION REQUIRED',
+      status: answers['q14']?.level2OptionId?.startsWith('14.1') && (answers['q20']?.level2OptionId?.startsWith('20.1') || taskStatusOverrides['task_q20_20_2_1'] === 'Completed') ? 'VERIFIED' : 'REMEDIATION REQUIRED',
       assessment: answers['q14']?.notes || 'Provides affected individuals with plain-language decision explanations and a 15-day incident response workflow.'
     }
   ];
@@ -504,7 +556,8 @@ export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}
       article: 'Article 10',
       title: 'Data Governance & Bias',
       weight: '2.5x',
-      status: answers['q7']?.level2OptionId?.startsWith('7.1') && answers['q8']?.level2OptionId?.startsWith('8.1') ? 'PASSED' : 'REMEDIATION REQUIRED',
+      status: (answers['q7']?.level2OptionId?.startsWith('7.1') || taskStatusOverrides['task_q7_7_2_1'] === 'Completed') &&
+              (answers['q8']?.level2OptionId?.startsWith('8.1') || taskStatusOverrides['task_q8_8_2_1'] === 'Completed') ? 'PASSED' : 'REMEDIATION REQUIRED',
       notes: `${answers['q7']?.notes || ''} ${answers['q8']?.notes || ''}`.trim() || 'Data provenance and statistical bias mitigations.'
     },
     {
@@ -518,7 +571,7 @@ export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}
       article: 'Article 12',
       title: 'Automatic Event Logging (WORM)',
       weight: '2.0x',
-      status: answers['q9']?.level2OptionId?.startsWith('9.1') ? 'PASSED' : 'REMEDIATION REQUIRED',
+      status: answers['q9']?.level2OptionId?.startsWith('9.1') || taskStatusOverrides['task_q9_9_2_1'] === 'Completed' ? 'PASSED' : 'REMEDIATION REQUIRED',
       notes: answers['q9']?.notes || 'Minimum 6-month tamper-resistant write-once logging.'
     },
     {
@@ -539,14 +592,14 @@ export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}
       article: 'Article 15',
       title: 'Accuracy & Adversarial Hardening',
       weight: '2.5x',
-      status: answers['q11']?.level2OptionId?.startsWith('11.1') ? 'PASSED' : 'REMEDIATION REQUIRED',
+      status: answers['q11']?.level2OptionId?.startsWith('11.1') || taskStatusOverrides['task_q11_11_2_1'] === 'Completed' ? 'PASSED' : 'REMEDIATION REQUIRED',
       notes: answers['q11']?.notes || 'AI-specific penetration testing and prompt injection resilience.'
     },
     {
       article: 'Article 26(7)',
       title: 'Workplace Worker Notification',
       weight: '1.5x',
-      status: answers['q15']?.level2OptionId?.startsWith('15.1') ? 'PASSED' : 
+      status: answers['q15']?.level2OptionId?.startsWith('15.1') || taskStatusOverrides['task_q15_15_2_1'] === 'Completed' ? 'PASSED' : 
               answers['q15']?.level2OptionId?.startsWith('15.2') ? 'IN PROGRESS (HELD)' : 'REMEDIATION REQUIRED',
       notes: answers['q15']?.notes || 'Works council / employee representative information notice.'
     },
@@ -561,7 +614,7 @@ export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}
       article: 'Articles 49 & 71',
       title: 'EU Database Registration',
       weight: '1.5x',
-      status: answers['q17']?.level2OptionId?.startsWith('17.1') ? 'PASSED' : 'PENDING REGISTRATION',
+      status: answers['q17']?.level2OptionId?.startsWith('17.1') || taskStatusOverrides['task_q17_17_2_1'] === 'Completed' ? 'PASSED' : 'PENDING REGISTRATION',
       notes: answers['q17']?.notes || 'Annex VIII registration on official EU Central Database.'
     },
     {
@@ -575,7 +628,7 @@ export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}
       article: 'Articles 72 & 73',
       title: 'Post-Market Telemetry & Incident Reporting',
       weight: '2.0x',
-      status: answers['q20']?.level2OptionId?.startsWith('20.1') ? 'PASSED' : 'REMEDIATION REQUIRED',
+      status: answers['q20']?.level2OptionId?.startsWith('20.1') || taskStatusOverrides['task_q20_20_2_1'] === 'Completed' ? 'PASSED' : 'REMEDIATION REQUIRED',
       notes: answers['q20']?.notes || 'Production drift alerts and 15-day statutory incident SLA.'
     },
     {
@@ -614,22 +667,26 @@ export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}
       compliantCount,
       remediationCount,
       nonCompliantCount,
-      criticalRemediations: criticalCount,
-      highRemediations: highCount,
-      mediumRemediations: mediumCount
+      openRemediationCount: openRemediationTasks.length,
+      resolvedRemediationCount,
+      criticalRemediations: criticalOpenCount,
+      highRemediations: highOpenCount,
+      mediumRemediations: mediumOpenCount
     },
     vectorBreakdown: vectorMap,
     remediationTasks,
+    openRemediationTasks,
     scorecardItems,
     cisoBriefing: {
-      securityPostureStatus: answers['q11']?.level2OptionId?.startsWith('11.1') && answers['q9']?.level2OptionId?.startsWith('9.1')
+      securityPostureStatus: (answers['q11']?.level2OptionId?.startsWith('11.1') || taskStatusOverrides['task_q11_11_2_1'] === 'Completed') &&
+                             (answers['q9']?.level2OptionId?.startsWith('9.1') || taskStatusOverrides['task_q9_9_2_1'] === 'Completed')
         ? 'HARDENED (ART. 12 & 15 COMPLIANT)'
         : (isUnacceptable ? 'CRITICAL STATUTORY VIOLATION (DECOMMISSION)' : 'ACTION REQUIRED (SECURITY & LOGGING GAPS)'),
       threatSurfaceVectors: [
         {
           vector: 'Adversarial Prompt / Input Injection & Data Poisoning (Art. 15(4))',
           mitreId: 'AML.T0051 / AML.T0020',
-          status: answers['q11']?.level2OptionId?.startsWith('11.1') ? 'Mitigated' : 'Remediation Required',
+          status: answers['q11']?.level2OptionId?.startsWith('11.1') || taskStatusOverrides['task_q11_11_2_1'] === 'Completed' ? 'Mitigated' : 'Remediation Required',
           control: answers['q11']?.notes || 'Deploy runtime input sanitization, prompt guardrails, and adversarial red-teaming.'
         },
         {
@@ -641,19 +698,19 @@ export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}
         {
           vector: 'Audit Trail Tampering & Non-Repudiation Failure (Art. 12)',
           mitreId: 'EU-AIA-ART12',
-          status: answers['q9']?.level2OptionId?.startsWith('9.1') ? 'Mitigated (WORM Active)' : 'Gap Detected (<6 Mo Retention)',
+          status: answers['q9']?.level2OptionId?.startsWith('9.1') || taskStatusOverrides['task_q9_9_2_1'] === 'Completed' ? 'Mitigated (WORM Active)' : 'Gap Detected (<6 Mo Retention)',
           control: answers['q9']?.notes || 'Enforce immutable Write-Once-Read-Many (WORM) cold storage bucket with minimum 6-month statutory retention.'
         },
         {
           vector: 'PII / Biometric Special Category Data Leakage (Art. 10 & GDPR Art. 9)',
           mitreId: 'GDPR-ART9 / ART32',
-          status: answers['q7']?.level2OptionId?.startsWith('7.1') ? 'Mitigated' : 'Remediation Required',
+          status: answers['q7']?.level2OptionId?.startsWith('7.1') || taskStatusOverrides['task_q7_7_2_1'] === 'Completed' ? 'Mitigated' : 'Remediation Required',
           control: answers['q7']?.notes || 'Enforce automated PII/biometric redaction middleware prior to inference payload ingestion.'
         }
       ],
       crossFrameworkMapping: [
-        { framework: 'NIS2 Directive (EU 2022/2555)', article: 'Art. 21 Risk Management & Supply Chain Security', alignment: answers['q11']?.level2OptionId?.startsWith('11.1') ? 'Aligned' : 'Partial Gap' },
-        { framework: 'DORA (EU 2022/2554 Financial ICT)', article: 'Art. 8–11 ICT Resilience & Incident Classification', alignment: answers['q20']?.level2OptionId?.startsWith('20.1') ? 'Aligned' : 'Action Needed' },
+        { framework: 'NIS2 Directive (EU 2022/2555)', article: 'Art. 21 Risk Management & Supply Chain Security', alignment: answers['q11']?.level2OptionId?.startsWith('11.1') || taskStatusOverrides['task_q11_11_2_1'] === 'Completed' ? 'Aligned' : 'Partial Gap' },
+        { framework: 'DORA (EU 2022/2554 Financial ICT)', article: 'Art. 8–11 ICT Resilience & Incident Classification', alignment: answers['q20']?.level2OptionId?.startsWith('20.1') || taskStatusOverrides['task_q20_20_2_1'] === 'Completed' ? 'Aligned' : 'Action Needed' },
         { framework: 'ISO/IEC 42001:2023 (AIMS)', article: 'Clause 6.1.2 AI Risk Assessment & Annex B Controls', alignment: healthScore >= 80 ? 'Certified Ready' : 'In Progress' },
         { framework: 'GDPR (EU 2016/679)', article: 'Art. 22 Automated Profiling & Art. 32 Security of Processing', alignment: answers['q14']?.level2OptionId?.startsWith('14.1') ? 'Aligned' : 'Review Required' }
       ],
@@ -678,8 +735,8 @@ export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}
                            'Self-Assessment & Article 50 Transparency / Article 4 Staff AI Literacy'
       },
       algorithmicFairnessAndData: {
-        biasAuditStatus: answers['q8']?.level2OptionId?.startsWith('8.1') ? 'Disparate Impact & Equalized Odds Verified (<2% Variance)' : 'Disparate Impact Audit Pending / Gap Detected',
-        dataProvenanceStatus: answers['q7']?.level2OptionId?.startsWith('7.1') ? 'Curated Lineage & TDM Copyright Opt-Out Verified' : 'Data Sanitization & Provenance Documentation Required',
+        biasAuditStatus: answers['q8']?.level2OptionId?.startsWith('8.1') || taskStatusOverrides['task_q8_8_2_1'] === 'Completed' ? 'Disparate Impact & Equalized Odds Verified (<2% Variance)' : 'Disparate Impact Audit Pending / Gap Detected',
+        dataProvenanceStatus: answers['q7']?.level2OptionId?.startsWith('7.1') || taskStatusOverrides['task_q7_7_2_1'] === 'Completed' ? 'Curated Lineage & TDM Copyright Opt-Out Verified' : 'Data Sanitization & Provenance Documentation Required',
         notes: answers['q8']?.notes || 'Implement automated pre-release demographic parity testing across gender, age, ethnicity, and disability cohorts.'
       },
       humanOversightAndExplainability: {
@@ -690,9 +747,9 @@ export function evaluateCompliance(answers = {}, meta = {}, financialConfig = {}
         aiLiteracyCompliance: answers['q3']?.level2OptionId?.startsWith('3.1') ? '100% Operator AI Literacy Certified (Art. 4)' : 'Mandatory Staff AI Literacy Training Required'
       },
       lifecycleMonitoringMetrics: [
-        { metric: 'Population Stability Index (PSI) / Drift Threshold', target: '< 0.15 Quarterly Shift', currentStatus: answers['q20']?.level2OptionId?.startsWith('20.1') ? 'Monitored Active' : 'Unmonitored' },
-        { metric: 'Disparate Impact Ratio (80% Rule / Four-Fifths Rule)', target: '0.85 – 1.15 Parity Band', currentStatus: answers['q8']?.level2OptionId?.startsWith('8.1') ? 'Verified Pass' : 'Audit Pending' },
-        { metric: 'Hallucination / Factual Grounding Accuracy Rate', target: '> 98.5% Grounded Citations', currentStatus: answers['q11']?.level2OptionId?.startsWith('11.1') ? 'Within SLA' : 'Calibration Needed' },
+        { metric: 'Population Stability Index (PSI) / Drift Threshold', target: '< 0.15 Quarterly Shift', currentStatus: answers['q20']?.level2OptionId?.startsWith('20.1') || taskStatusOverrides['task_q20_20_2_1'] === 'Completed' ? 'Monitored Active' : 'Unmonitored' },
+        { metric: 'Disparate Impact Ratio (80% Rule / Four-Fifths Rule)', target: '0.85 – 1.15 Parity Band', currentStatus: answers['q8']?.level2OptionId?.startsWith('8.1') || taskStatusOverrides['task_q8_8_2_1'] === 'Completed' ? 'Verified Pass' : 'Audit Pending' },
+        { metric: 'Hallucination / Factual Grounding Accuracy Rate', target: '> 98.5% Grounded Citations', currentStatus: answers['q11']?.level2OptionId?.startsWith('11.1') || taskStatusOverrides['task_q11_11_2_1'] === 'Completed' ? 'Within SLA' : 'Calibration Needed' },
         { metric: 'Human Override / Kill-Switch Latency (Art. 14(4)(e))', target: '< 500ms Safe Fallback', currentStatus: answers['q12']?.level2OptionId?.startsWith('12.1') ? 'Hardware/API Interlock Ready' : 'Not Implemented' }
       ]
     }

@@ -82,6 +82,12 @@ const WorkspaceWrapper = styled.div`
   padding-top: 68px; /* GlobalNav clearance */
   padding-bottom: 80px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  @media print {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    background: #ffffff !important;
+  }
 `;
 
 const TopStickyBar = styled.div`
@@ -92,6 +98,10 @@ const TopStickyBar = styled.div`
   border-bottom: 1px solid #e2e8f0;
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
   width: 100%;
+
+  @media print {
+    display: none !important;
+  }
 `;
 
 const TopBarInner = styled.div`
@@ -1802,22 +1812,42 @@ export default function EuAiComplianceWorkspace() {
           setAnswers(parsed.answers || {});
           setTaskStatusOverrides(parsed.taskStatusOverrides || {});
         } else {
-          const freshMeta = {
-            systemName: 'New Enterprise AI System Evaluation',
-            version: 'v1.0.0',
-            leadEvaluator: '',
-            department: '',
-            evaluationDate: new Date().toISOString().split('T')[0],
-            documentId: routeParamId
-          };
-          setMeta(freshMeta);
-          setAnswers({});
-          setTaskStatusOverrides({});
-          localStorage.setItem(`scorex_eu_ai_compliance_${routeParamId}`, JSON.stringify({
-            meta: freshMeta,
-            answers: {},
-            taskStatusOverrides: {}
-          }));
+          // Attempt to auto-hydrate shared dossier from backend server
+          axios.get(`/api/eu-ai-compliance/dossiers/${routeParamId}`)
+            .then(res => {
+              if (res.data?.success && res.data?.dossier) {
+                const d = res.data.dossier;
+                setMeta(d.meta || { documentId: routeParamId, systemName: 'Shared Enterprise AI System' });
+                setAnswers(d.answers || {});
+                setTaskStatusOverrides(d.taskStatusOverrides || {});
+                if (d.synthesis) setSynthesis(d.synthesis);
+                if (d.financialConfig) {
+                  if (d.financialConfig.globalTurnoverMillions) setGlobalTurnoverMillions(d.financialConfig.globalTurnoverMillions);
+                  if (typeof d.financialConfig.isSme === 'boolean') setIsSme(d.financialConfig.isSme);
+                  if (typeof d.financialConfig.includeConcurrentGdprNis2 === 'boolean') setIncludeConcurrentGdprNis2(d.financialConfig.includeConcurrentGdprNis2);
+                }
+                toast.success(`☁️ Loaded shared Dossier ${routeParamId} from enterprise server!`);
+              }
+            })
+            .catch(() => {
+              // If not found on server, initialize new blank dossier for this ID
+              const freshMeta = {
+                systemName: 'New Enterprise AI System Evaluation',
+                version: 'v1.0.0',
+                leadEvaluator: '',
+                department: '',
+                evaluationDate: new Date().toISOString().split('T')[0],
+                documentId: routeParamId
+              };
+              setMeta(freshMeta);
+              setAnswers({});
+              setTaskStatusOverrides({});
+              localStorage.setItem(`scorex_eu_ai_compliance_${routeParamId}`, JSON.stringify({
+                meta: freshMeta,
+                answers: {},
+                taskStatusOverrides: {}
+              }));
+            });
         }
       }
     } catch (e) {
@@ -1825,26 +1855,45 @@ export default function EuAiComplianceWorkspace() {
     }
   }, [routeParamId, navigate, generateUniqueDossierId]);
 
-  // Save to localStorage per Assessment ID continuously
+  // Save to localStorage & server per Assessment ID continuously
   const persistState = useCallback((newAnswers, newMeta, newOverrides) => {
     try {
       const currentMeta = newMeta || meta;
       const docId = currentMeta.documentId || routeParamId || 'EUAIA-2026-DEFAULT';
-      const payload = JSON.stringify({
+      const activeAnswers = newAnswers !== undefined ? newAnswers : answers;
+      const activeOverrides = newOverrides !== undefined ? newOverrides : taskStatusOverrides;
+      const dossierRecord = {
+        dossierId: docId,
         meta: currentMeta,
-        answers: newAnswers !== undefined ? newAnswers : answers,
-        taskStatusOverrides: newOverrides !== undefined ? newOverrides : taskStatusOverrides
-      });
+        answers: activeAnswers,
+        taskStatusOverrides: activeOverrides,
+        updatedAt: new Date().toISOString()
+      };
+      const payload = JSON.stringify(dossierRecord);
       localStorage.setItem(`scorex_eu_ai_compliance_${docId}`, payload);
       localStorage.setItem('scorex_eu_ai_compliance_state', payload);
+
+      // Update unified portfolio index in localStorage
+      try {
+        const existingIndexRaw = localStorage.getItem('scorex_eu_ai_dossiers_v2');
+        const existingIndex = existingIndexRaw ? JSON.parse(existingIndexRaw) : {};
+        existingIndex[docId] = dossierRecord;
+        localStorage.setItem('scorex_eu_ai_dossiers_v2', JSON.stringify(existingIndex));
+      } catch (err) {
+        // ignore index error
+      }
+
+      // Background sync to backend server so /my-assessments and shared URLs stay hydrated
+      axios.post(`/api/eu-ai-compliance/dossiers/${docId}`, dossierRecord).catch(() => {});
     } catch (e) {
       console.warn('Failed to save to localStorage:', e);
     }
   }, [meta, answers, taskStatusOverrides, routeParamId]);
 
-  // CFO & Board Financial Exposure & SME Cap State (Dynamic)
+  // CFO & Board Financial Exposure, SME Cap & Multi-Regulator Stacking State (Dynamic)
   const [globalTurnoverMillions, setGlobalTurnoverMillions] = useState(2500); // default €2.5B
   const [isSme, setIsSme] = useState(false);
+  const [includeConcurrentGdprNis2, setIncludeConcurrentGdprNis2] = useState(true);
   const [syncingServer, setSyncingServer] = useState(false);
 
   // Independent Multi-Model LLM Live API Audit State
@@ -1854,14 +1903,52 @@ export default function EuAiComplianceWorkspace() {
   const [showWeightJustificationTable, setShowWeightJustificationTable] = useState(false);
   const [addedAuditTasks, setAddedAuditTasks] = useState([]);
 
-  // Compute compliance evaluation dynamically across all parameters
+  // Compute compliance evaluation dynamically across all parameters & live remediation status overrides!
   const evaluation = useMemo(() => {
-    const baseEval = evaluateCompliance(answers, meta, { globalTurnoverMillions, isSme });
+    const baseEval = evaluateCompliance(
+      answers,
+      meta,
+      { globalTurnoverMillions, isSme, includeConcurrentGdprNis2 },
+      taskStatusOverrides
+    );
     if (addedAuditTasks.length > 0) {
       baseEval.remediationTasks = [...addedAuditTasks, ...baseEval.remediationTasks];
     }
     return baseEval;
-  }, [answers, meta, globalTurnoverMillions, isSme, addedAuditTasks]);
+  }, [answers, meta, globalTurnoverMillions, isSme, includeConcurrentGdprNis2, taskStatusOverrides, addedAuditTasks]);
+
+  // 1-Click Auto-Heal Cross-Question Statutory Contradictions
+  const handleAutoHealContradiction = (contra) => {
+    const nextAnswers = { ...answers };
+    if (contra.id === 'contra_art25_role' || contra.questionsInvolved?.includes('Q1')) {
+      nextAnswers['q1'] = {
+        level1OptionId: '1.3',
+        level2OptionId: '1.3.1',
+        notes: 'Auto-reclassified to De-Facto Provider under Article 25(1)(b)–(c) due to custom model/dataset modifications.'
+      };
+    } else if (contra.id === 'contra_art14_ifu' || contra.questionsInvolved?.includes('Q13')) {
+      nextAnswers['q13'] = {
+        level1OptionId: '13.1',
+        level2OptionId: '13.1.1',
+        notes: 'Published formal Article 13 Operator Instructions for Use (IFU) with confidence score bounds.'
+      };
+    } else if (contra.id === 'contra_art12_sla' || contra.questionsInvolved?.includes('Q9')) {
+      nextAnswers['q9'] = {
+        level1OptionId: '9.1',
+        level2OptionId: '9.1.1',
+        notes: 'Enabled immutable Write-Once-Read-Many (WORM) Object Lock bucket with 180-day statutory retention.'
+      };
+    } else if (contra.id === 'contra_art27_fria' || contra.questionsInvolved?.includes('Q16')) {
+      nextAnswers['q16'] = {
+        level1OptionId: '16.1',
+        level2OptionId: '16.1.1',
+        notes: 'Completed 6-point Article 27 Fundamental Rights Impact Assessment (FRIA) and authority filing.'
+      };
+    }
+    setAnswers(nextAnswers);
+    persistState(nextAnswers, meta, taskStatusOverrides);
+    toast.success(`🔧 Auto-Healed Contradiction: ${contra.title}! Re-evaluating dossier...`);
+  };
 
   // Run Independent Multi-Model LLM Live API Audit
   const handleRunLiveAudit = async (selectedModel = auditorModel) => {
@@ -3032,7 +3119,7 @@ export default function EuAiComplianceWorkspace() {
                   <FiCheckCircle size={14} />
                   Weighted Compliance Score
                 </KpiLabel>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', flexWrap: 'wrap' }}>
                   <KpiValue $color={evaluation.healthScore >= 80 ? '#10b981' : (evaluation.healthScore >= 50 ? '#f59e0b' : '#ef4444')}>
                     {evaluation.healthScore}%
                   </KpiValue>
@@ -3040,6 +3127,11 @@ export default function EuAiComplianceWorkspace() {
                     (Unweighted: {evaluation.weightedBreakdown?.unweightedPercentage ?? evaluation.healthScore}%)
                   </span>
                 </div>
+                {liveAuditReport && (
+                  <div style={{ marginTop: '4px', display: 'inline-flex', alignItems: 'center', gap: '6px', background: liveAuditReport.calibrationDelta < 0 ? '#fef2f2' : '#eef2ff', border: `1px solid ${liveAuditReport.calibrationDelta < 0 ? '#fecaca' : '#c7d2fe'}`, color: liveAuditReport.calibrationDelta < 0 ? '#dc2626' : '#4f46e5', fontSize: '0.72rem', fontWeight: '800', padding: '2px 8px', borderRadius: '6px' }}>
+                    ⚡ Audited: {liveAuditReport.llmCalibratedScore}% ({liveAuditReport.calibrationDelta >= 0 ? '+' : ''}{liveAuditReport.calibrationDelta} pts)
+                  </div>
+                )}
                 <KpiSubtitle>
                   Weighted by Art. 99 penalty tiers ({evaluation.weightedBreakdown?.totalEarnedWeightedPoints} / {evaluation.weightedBreakdown?.totalPossibleWeight} pts).
                   <button
@@ -3057,9 +3149,16 @@ export default function EuAiComplianceWorkspace() {
                   <FiAlertTriangle size={14} />
                   Open Remediation Items
                 </KpiLabel>
-                <KpiValue $color={evaluation.remediationTasks.length > 0 ? '#ea580c' : '#10b981'}>
-                  {evaluation.remediationTasks.length}
-                </KpiValue>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px', flexWrap: 'wrap' }}>
+                  <KpiValue $color={evaluation.remediationTasks.length > 0 ? '#ea580c' : '#10b981'}>
+                    {evaluation.remediationTasks.length}
+                  </KpiValue>
+                  {evaluation.stats.resolvedRemediationCount > 0 && (
+                    <span style={{ background: '#dcfce7', color: '#15803d', border: '1px solid #86efac', fontSize: '0.72rem', fontWeight: '800', padding: '2px 8px', borderRadius: '999px' }}>
+                      ✓ {evaluation.stats.resolvedRemediationCount} Resolved & Credited
+                    </span>
+                  )}
+                </div>
                 <KpiSubtitle>
                   {evaluation.stats.criticalRemediations} Critical • {evaluation.stats.highRemediations} High • {evaluation.stats.mediumRemediations} Medium
                 </KpiSubtitle>
@@ -3155,8 +3254,8 @@ export default function EuAiComplianceWorkspace() {
                     </span>
                   </div>
 
-                  {/* Interactive Controls: Turnover Slider + SME Toggle */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap', background: 'rgba(255,255,255,0.06)', padding: '8px 14px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.12)' }}>
+                  {/* Interactive Controls: Turnover Slider + SME Toggle + Multi-Regulator Stacking Toggle */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap', background: 'rgba(255,255,255,0.06)', padding: '8px 14px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.12)' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                       <label style={{ fontSize: '0.72rem', color: '#cbd5e1', fontWeight: '700' }}>
                         Global Annual Turnover: <strong style={{ color: '#38bdf8' }}>€{globalTurnoverMillions.toLocaleString()} Million</strong> (€{(globalTurnoverMillions / 1000).toFixed(2)}B)
@@ -3168,20 +3267,33 @@ export default function EuAiComplianceWorkspace() {
                         step="50"
                         value={globalTurnoverMillions}
                         onChange={(e) => setGlobalTurnoverMillions(Number(e.target.value))}
-                        style={{ width: '200px', accentColor: '#38bdf8', cursor: 'pointer' }}
+                        style={{ width: '180px', accentColor: '#38bdf8', cursor: 'pointer' }}
                       />
                     </div>
 
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.76rem', fontWeight: '700', color: '#f8fafc', paddingLeft: '10px', borderLeft: '1px solid #475569' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '7px', cursor: 'pointer', fontSize: '0.74rem', fontWeight: '700', color: '#f8fafc', paddingLeft: '10px', borderLeft: '1px solid #475569' }}>
                       <input
                         type="checkbox"
                         checked={isSme}
                         onChange={(e) => setIsSme(e.target.checked)}
-                        style={{ width: '16px', height: '16px', accentColor: '#10b981', cursor: 'pointer' }}
+                        style={{ width: '15px', height: '15px', accentColor: '#10b981', cursor: 'pointer' }}
                       />
                       <div>
-                        <div>SME / Startup Lower-Cap Protection</div>
-                        <div style={{ fontSize: '0.68rem', color: '#94a3b8', fontWeight: '500' }}>Article 99(6): Lower of Fixed EUR or %</div>
+                        <div>SME / Startup Lower-Cap</div>
+                        <div style={{ fontSize: '0.66rem', color: '#94a3b8', fontWeight: '500' }}>Art. 99(6) Lower Threshold</div>
+                      </div>
+                    </label>
+
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '7px', cursor: 'pointer', fontSize: '0.74rem', fontWeight: '700', color: '#f8fafc', paddingLeft: '10px', borderLeft: '1px solid #475569' }}>
+                      <input
+                        type="checkbox"
+                        checked={includeConcurrentGdprNis2}
+                        onChange={(e) => setIncludeConcurrentGdprNis2(e.target.checked)}
+                        style={{ width: '15px', height: '15px', accentColor: '#f59e0b', cursor: 'pointer' }}
+                      />
+                      <div>
+                        <div>Stack Concurrent GDPR + NIS2 Fines</div>
+                        <div style={{ fontSize: '0.66rem', color: '#fcd34d', fontWeight: '500' }}>Art. 83 (4%) + NIS2 Art. 34 (2%)</div>
                       </div>
                     </label>
                   </div>
@@ -3190,12 +3302,16 @@ export default function EuAiComplianceWorkspace() {
                 {/* 4 Dynamic Financial Metric Tiles */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
                   <div style={{ background: 'rgba(239, 68, 68, 0.12)', border: '1px solid rgba(239, 68, 68, 0.35)', borderRadius: '10px', padding: '12px 14px' }}>
-                    <div style={{ fontSize: '0.72rem', color: '#fca5a5', fontWeight: '700', textTransform: 'uppercase' }}>Statutory Maximum Fine Ceiling</div>
+                    <div style={{ fontSize: '0.72rem', color: '#fca5a5', fontWeight: '700', textTransform: 'uppercase' }}>
+                      {includeConcurrentGdprNis2 ? 'Combined Multi-Regulator Ceiling' : 'Statutory Maximum Fine Ceiling'}
+                    </div>
                     <div style={{ fontSize: '1.45rem', fontWeight: '900', color: '#f87171', marginTop: '2px' }}>
                       €{evaluation.financialSimulation.applicableStatutoryCeilingMillions.toLocaleString()}M
                     </div>
-                    <div style={{ fontSize: '0.7rem', color: '#cbd5e1', marginTop: '2px' }}>
-                      {isSme ? 'Capped at SME lower-of-two threshold' : 'Higher of €15M/€35M or 3%/7% global turnover'}
+                    <div style={{ fontSize: '0.68rem', color: '#cbd5e1', marginTop: '2px' }}>
+                      {includeConcurrentGdprNis2
+                        ? `AI Act: €${evaluation.financialSimulation.aiActCeilingMillions}M + GDPR: €${evaluation.financialSimulation.gdprFineMillions}M + NIS2: €${evaluation.financialSimulation.nis2FineMillions}M`
+                        : (isSme ? 'Capped at SME lower-of-two threshold' : 'Higher of €15M/€35M or 3%/7% global turnover')}
                     </div>
                   </div>
 
@@ -3332,14 +3448,25 @@ export default function EuAiComplianceWorkspace() {
                         🔍 Cross-Question Logical Contradiction Check (Q1–Q20)
                       </h4>
                       {liveAuditReport.crossQuestionContradictions?.map((c, idx) => (
-                        <div key={idx} style={{ background: c.severity === 'CRITICAL' ? '#fef2f2' : '#fffbeb', border: `1px solid ${c.severity === 'CRITICAL' ? '#fecaca' : '#fde68a'}`, borderRadius: '8px', padding: '8px 10px', marginBottom: '8px', fontSize: '0.76rem' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: '800', color: c.severity === 'CRITICAL' ? '#991b1b' : '#92400e' }}>
+                        <div key={idx} style={{ background: c.severity === 'CRITICAL' ? '#fef2f2' : '#fffbeb', border: `1px solid ${c.severity === 'CRITICAL' ? '#fecaca' : '#fde68a'}`, borderRadius: '8px', padding: '10px 12px', marginBottom: '8px', fontSize: '0.76rem' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: '800', color: c.severity === 'CRITICAL' ? '#991b1b' : '#92400e' }}>
                             <span>[{c.severity}] {c.questionsInvolved}</span>
                             <span>{c.article}</span>
                           </div>
-                          <div style={{ fontWeight: '700', color: '#0f172a', marginTop: '3px' }}>{c.title}</div>
-                          <div style={{ color: '#334155', marginTop: '2px' }}>{c.finding}</div>
-                          <div style={{ color: '#1e40af', fontWeight: '700', marginTop: '4px' }}>Fix: {c.remediationAction}</div>
+                          <div style={{ fontWeight: '800', color: '#0f172a', marginTop: '4px' }}>{c.title}</div>
+                          <div style={{ color: '#334155', marginTop: '3px', lineHeight: '1.35' }}>{c.finding}</div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', marginTop: '8px', flexWrap: 'wrap' }}>
+                            <div style={{ color: '#1e40af', fontWeight: '700', fontSize: '0.73rem' }}>Fix: {c.remediationAction}</div>
+                            {c.severity !== 'INFO' && (
+                              <button
+                                type="button"
+                                onClick={() => handleAutoHealContradiction(c)}
+                                style={{ background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)', color: '#ffffff', border: 'none', borderRadius: '6px', padding: '4px 10px', fontSize: '0.72rem', fontWeight: '800', cursor: 'pointer', whiteSpace: 'nowrap', boxShadow: '0 2px 6px rgba(22, 163, 74, 0.25)' }}
+                              >
+                                🔧 1-Click Auto-Heal Contradiction
+                              </button>
+                            )}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -4217,7 +4344,7 @@ export default function EuAiComplianceWorkspace() {
                   <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#0f172a', margin: 0 }}>
                     6. CFO & Board Article 99 Financial Exposure, Turnover Cap & Remediation ROI Analysis
                   </h3>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#f8fafc', padding: '6px 12px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#f8fafc', padding: '6px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', flexWrap: 'wrap' }}>
                     <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#0f172a' }}>
                       Global Turnover: €{globalTurnoverMillions.toLocaleString()}M
                     </span>
@@ -4228,7 +4355,7 @@ export default function EuAiComplianceWorkspace() {
                       step="50"
                       value={globalTurnoverMillions}
                       onChange={(e) => setGlobalTurnoverMillions(Number(e.target.value))}
-                      style={{ width: '140px', accentColor: '#2563eb', cursor: 'pointer' }}
+                      style={{ width: '130px', accentColor: '#2563eb', cursor: 'pointer' }}
                     />
                     <label style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.74rem', fontWeight: '700', color: '#1e3a8a', cursor: 'pointer' }}>
                       <input
@@ -4237,6 +4364,14 @@ export default function EuAiComplianceWorkspace() {
                         onChange={(e) => setIsSme(e.target.checked)}
                       />
                       SME Art. 99(6) Cap
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.74rem', fontWeight: '700', color: '#b45309', cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={includeConcurrentGdprNis2}
+                        onChange={(e) => setIncludeConcurrentGdprNis2(e.target.checked)}
+                      />
+                      Stack GDPR + NIS2 Fines
                     </label>
                   </div>
                 </div>
@@ -4250,9 +4385,14 @@ export default function EuAiComplianceWorkspace() {
                       <td>{evaluation.financialSimulation.smeRuleApplied}</td>
                     </tr>
                     <tr>
-                      <th>Maximum Statutory Fine Ceiling</th>
+                      <th>{includeConcurrentGdprNis2 ? 'Combined Multi-Regulator Ceiling' : 'Maximum Statutory Fine Ceiling'}</th>
                       <td style={{ color: '#dc2626', fontWeight: '900', fontSize: '1rem' }}>
                         €{evaluation.financialSimulation.applicableStatutoryCeilingMillions.toLocaleString()} Million
+                        {includeConcurrentGdprNis2 && (
+                          <div style={{ fontSize: '0.72rem', fontWeight: '700', color: '#64748b' }}>
+                            (AI Act: €{evaluation.financialSimulation.aiActCeilingMillions}M + GDPR: €{evaluation.financialSimulation.gdprFineMillions}M + NIS2: €{evaluation.financialSimulation.nis2FineMillions}M)
+                          </div>
+                        )}
                       </td>
                       <th>Probability-Weighted Value-at-Risk (VaR)</th>
                       <td style={{ color: '#d97706', fontWeight: '900', fontSize: '1rem' }}>
@@ -4401,10 +4541,10 @@ export default function EuAiComplianceWorkspace() {
                     <ScorecardTable>
                       <thead>
                         <tr>
-                          <th style={{ width: '20%' }}>Cross-Question Check</th>
-                          <th style={{ width: '15%' }}>Statutory Article</th>
-                          <th style={{ width: '15%' }}>Severity</th>
-                          <th style={{ width: '50%' }}>Auditor Finding & Required Resolution</th>
+                          <th style={{ width: '18%' }}>Cross-Question Check</th>
+                          <th style={{ width: '14%' }}>Statutory Article</th>
+                          <th style={{ width: '14%' }}>Severity</th>
+                          <th style={{ width: '54%' }}>Auditor Finding & Required Resolution</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -4416,8 +4556,21 @@ export default function EuAiComplianceWorkspace() {
                               <StatusPill $status={c.severity === 'CRITICAL' ? 'FAILED' : 'REMEDIATION REQUIRED'}>{c.severity}</StatusPill>
                             </td>
                             <td style={{ fontSize: '0.8rem', color: '#334155' }}>
-                              <strong>{c.title}:</strong> {c.finding} <br />
-                              <span style={{ color: '#1d4ed8', fontWeight: '700' }}>Resolution: {c.remediationAction}</span>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                                <div>
+                                  <strong>{c.title}:</strong> {c.finding} <br />
+                                  <span style={{ color: '#1d4ed8', fontWeight: '700' }}>Resolution: {c.remediationAction}</span>
+                                </div>
+                                {c.severity !== 'INFO' && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleAutoHealContradiction(c)}
+                                    style={{ background: '#16a34a', color: '#ffffff', border: 'none', borderRadius: '6px', padding: '4px 10px', fontSize: '0.72rem', fontWeight: '800', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                                  >
+                                    🔧 1-Click Auto-Heal Contradiction
+                                  </button>
+                                )}
+                              </div>
                             </td>
                           </tr>
                         ))}

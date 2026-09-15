@@ -5,8 +5,8 @@ import styled from 'styled-components';
 import { FiUsers, FiUserPlus, FiEdit2, FiTrash2, FiCheck, FiX, FiSend } from 'react-icons/fi';
 import authService from '../services/authService';
 
-// Use relative URL in production (Railway), localhost in development
-const API_URL = (window.location.hostname === 'localhost' ? 'http://localhost:5001/api' : '/api');
+// Use relative URL in production (Railway) or custom port, localhost:5001 only in standalone dev server on :3000
+const API_URL = (window.location.hostname === 'localhost' && window.location.port === '3000' ? 'http://localhost:5001/api' : '/api');
 
 // =====================
 // STYLED COMPONENTS

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = process.env.NODE_ENV === 'production' 
+const API_URL = (process.env.NODE_ENV === 'production' || (window.location.hostname === 'localhost' && window.location.port !== '3000'))
   ? '/api/assessment-excel'
   : 'http://localhost:5001/api/assessment-excel';
 

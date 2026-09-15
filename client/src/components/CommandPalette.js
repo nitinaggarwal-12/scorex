@@ -13,6 +13,7 @@ import {
   FiSun, 
   FiCpu, 
   FiCornerDownLeft,
+  FiShield,
   FiX
 } from 'react-icons/fi';
 import dynamicAssessmentService from '../services/dynamicAssessmentService';
@@ -215,6 +216,13 @@ const CommandPalette = () => {
       subtitle: 'Evaluates model latency, routing gateways & agent security',
       icon: FiCpu,
       action: () => navigate('/assessments/run/openai_to_gemini_enterprise_migration')
+    },
+    {
+      id: 'eu-ai-compliance',
+      title: 'EU AI Act Compliance Engine & Audit Workspace',
+      subtitle: 'Statutory classification, conformity audit (Arts. 8–15) & legal dossier',
+      icon: FiShield,
+      action: () => navigate('/eu-ai-compliance')
     }
   ];
 

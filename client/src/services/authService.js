@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-// Use relative URL in production (Railway), localhost in development
+// Use relative URL in production (Railway) or custom port, localhost:5001 only in standalone dev server on :3000
 const API_URL = process.env.REACT_APP_API_URL ||
-  (window.location.hostname === 'localhost' ? 'http://localhost:5001/api' : '/api');
+  (window.location.hostname === 'localhost' && window.location.port === '3000' ? 'http://localhost:5001/api' : '/api');
 
 const SECURE_GUEST_SESSION_RE = /^guest_[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 

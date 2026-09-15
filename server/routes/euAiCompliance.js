@@ -132,6 +132,19 @@ function saveServerDossiers(dossiers) {
 }
 
 /**
+ * GET /api/eu-ai-compliance/dossiers
+ * List all saved EU AI Act compliance dossiers for My Assessments & Portfolio views.
+ */
+router.get('/dossiers', (req, res) => {
+  try {
+    const dossiers = loadServerDossiers();
+    return res.json({ success: true, dossiers: Object.values(dossiers) });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
  * GET /api/eu-ai-compliance/dossiers/:id
  * Retrieve a saved EU AI Act compliance dossier by its unique Dossier ID.
  */

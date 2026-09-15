@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import authService from '../services/authService';
 
+// Use relative URL in production (Railway) or custom port, localhost:5001 only in standalone dev server on :3000
 const API_BASE = process.env.REACT_APP_API_URL || 
-  (window.location.hostname === 'localhost' ? 'http://localhost:5001/api' : '/api');
+  (window.location.hostname === 'localhost' && window.location.port === '3000' ? 'http://localhost:5001/api' : '/api');
 
 const PageContainer = styled.div`
   min-height: 100vh;

@@ -174,6 +174,52 @@ const MessageBubble = styled.div`
   word-wrap: break-word;
 
   /* Markdown-style formatting */
+  h1, h2, h3, h4 {
+    margin-top: 10px;
+    margin-bottom: 6px;
+    line-height: 1.35;
+    color: ${props => props.$isUser ? 'white' : '#0f172a'};
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  h1 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    border-bottom: 1.5px solid ${props => props.$isUser ? 'rgba(255,255,255,0.3)' : '#e2e8f0'};
+    padding-bottom: 4px;
+  }
+
+  h2 {
+    font-size: 1.0rem;
+    font-weight: 700;
+  }
+
+  h3 {
+    font-size: 0.92rem;
+    font-weight: 700;
+  }
+
+  h4 {
+    font-size: 0.88rem;
+    font-weight: 700;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid ${props => props.$isUser ? 'rgba(255,255,255,0.25)' : '#e2e8f0'};
+    margin: 10px 0;
+  }
+
+  blockquote {
+    border-left: 3px solid #667eea;
+    padding-left: 10px;
+    margin: 8px 0;
+    font-style: italic;
+    color: ${props => props.$isUser ? '#f1f5f9' : '#475569'};
+  }
+
   strong {
     font-weight: 700;
     color: ${props => props.$isUser ? 'white' : '#0f172a'};
@@ -212,6 +258,22 @@ const MessageBubble = styled.div`
     border-radius: 4px;
     font-family: 'Monaco', 'Courier New', monospace;
     font-size: 0.9em;
+  }
+
+  pre {
+    background: #0f172a;
+    color: #f8fafc;
+    padding: 10px 12px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 0.8rem;
+    margin: 8px 0;
+    code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+      border: none;
+    }
   }
 
   p {
@@ -324,11 +386,32 @@ const ChatWidget = () => {
   const user = JSON.parse(localStorage.getItem('user') || 'null');
   const userEmail = user?.email || null;
 
-  // Simple Markdown to HTML converter with strict DOMPurify sanitization
+  // Comprehensive Markdown to HTML converter with strict DOMPurify sanitization
   const formatMessage = (text) => {
     if (!text) return '';
     
     let formatted = String(text);
+
+    // Code blocks: ```lang ... ```
+    formatted = formatted.replace(/```([a-zA-Z0-9_-]*)\n?([\s\S]*?)```/g, (match, lang, code) => {
+      const escaped = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return `<pre><code>${escaped}</code></pre>`;
+    });
+
+    // Inline Code: `code`
+    formatted = formatted.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+    // Horizontal rules: --- or ***
+    formatted = formatted.replace(/^(?:---|---|\*\*\*|___)\s*$/gm, '<hr />');
+
+    // Headers: #, ##, ###, ####
+    formatted = formatted.replace(/^#### (.*?)$/gm, '<h4>$1</h4>');
+    formatted = formatted.replace(/^### (.*?)$/gm, '<h3>$1</h3>');
+    formatted = formatted.replace(/^## (.*?)$/gm, '<h2>$1</h2>');
+    formatted = formatted.replace(/^# (.*?)$/gm, '<h1>$1</h1>');
+
+    // Blockquotes: > quote
+    formatted = formatted.replace(/^> (.*?)$/gm, '<blockquote>$1</blockquote>');
     
     // Links FIRST (before bold/italic): [text](/url) or [text](url) -> <a>text</a>
     formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color: #667eea; font-weight: 600; text-decoration: underline; cursor: pointer;">$1</a>');
@@ -336,47 +419,59 @@ const ChatWidget = () => {
     // Bold: **text** -> <strong>text</strong>
     formatted = formatted.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     
-    // Italic: *text* -> <em>text</em>
-    formatted = formatted.replace(/\*([^*]+?)\*/g, '<em>$1</em>');
+    // Italic: *text* -> <em>text</em> (avoid matching standalone bullet stars)
+    formatted = formatted.replace(/(^|[^\*])\*([^\*]+?)\*([^\*]|$)/g, '$1<em>$2</em>$3');
     
-    // Code: `text` -> <code>text</code>
-    formatted = formatted.replace(/`(.+?)`/g, '<code>$1</code>');
-    
-    // Bullet points: • text -> proper list items
+    // Lists: unordered (•, -, *) and ordered (1., 2.)
     const lines = formatted.split('\n');
-    let inList = false;
+    let inUl = false;
+    let inOl = false;
     const processedLines = [];
     
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      if (line.trim().startsWith('•')) {
-        if (!inList) {
-          processedLines.push('<ul style="margin: 8px 0; padding-left: 20px;">');
-          inList = true;
+      const ulMatch = line.match(/^(\s*)(?:[•*-])\s+(.+)$/);
+      const olMatch = line.match(/^(\s*)\d+\.\s+(.+)$/);
+
+      if (ulMatch) {
+        if (inOl) { processedLines.push('</ol>'); inOl = false; }
+        if (!inUl) {
+          processedLines.push('<ul style="margin: 6px 0; padding-left: 20px;">');
+          inUl = true;
         }
-        processedLines.push(`<li style="margin: 4px 0;">${line.trim().substring(1).trim()}</li>`);
+        processedLines.push(`<li style="margin: 3px 0;">${ulMatch[2]}</li>`);
+      } else if (olMatch) {
+        if (inUl) { processedLines.push('</ul>'); inUl = false; }
+        if (!inOl) {
+          processedLines.push('<ol style="margin: 6px 0; padding-left: 20px;">');
+          inOl = true;
+        }
+        processedLines.push(`<li style="margin: 3px 0;">${olMatch[2]}</li>`);
       } else {
-        if (inList) {
-          processedLines.push('</ul>');
-          inList = false;
-        }
+        if (inUl) { processedLines.push('</ul>'); inUl = false; }
+        if (inOl) { processedLines.push('</ol>'); inOl = false; }
         processedLines.push(line);
       }
     }
-    
-    if (inList) {
-      processedLines.push('</ul>');
-    }
+    if (inUl) processedLines.push('</ul>');
+    if (inOl) processedLines.push('</ol>');
     
     formatted = processedLines.join('\n');
     
-    // Preserve line breaks
-    formatted = formatted.replace(/\n\n/g, '<br/><br/>');
+    // Preserve line breaks cleanly
+    formatted = formatted.replace(/\n\n+/g, '<br/><br/>');
     formatted = formatted.replace(/\n/g, '<br/>');
+    formatted = formatted.replace(/<(ul|ol)([^>]*)><br\s*\/?>/gi, '<$1$2>');
+    formatted = formatted.replace(/<\/(ul|ol)>\s*<br\s*\/?>/gi, '</$1>');
+    formatted = formatted.replace(/<li><br\s*\/?>/gi, '<li>');
+    formatted = formatted.replace(/<br\s*\/?><li>/gi, '<li>');
+    formatted = formatted.replace(/<br\s*\/><\/li>/gi, '</li>');
+    formatted = formatted.replace(/<br\s*\/?>\s*<(ul|ol|li|h[1-4]|hr|blockquote|pre)([^>]*)>/gi, '<$1$2>');
+    formatted = formatted.replace(/<\/(ul|ol|li|h[1-4]|hr|blockquote|pre)>\s*<br\s*\/?>/gi, '</$1>');
     
     // Strict XSS neutralization via DOMPurify
     return DOMPurify.sanitize(formatted, {
-      ALLOWED_TAGS: ['strong', 'em', 'code', 'ul', 'li', 'a', 'p', 'br', 'span'],
+      ALLOWED_TAGS: ['strong', 'em', 'code', 'pre', 'ul', 'ol', 'li', 'a', 'p', 'br', 'span', 'div', 'h1', 'h2', 'h3', 'h4', 'hr', 'blockquote'],
       ALLOWED_ATTR: ['href', 'target', 'rel', 'style', 'title', 'class'],
       ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
     });
@@ -598,6 +693,11 @@ const ChatWidget = () => {
   const handleMinimize = () => {
     setIsOpen(false);
   };
+
+  // Prevent dual-chatbot UI collision on EU AI Act workspace (which has its own dedicated Regulatory Copilot drawer)
+  if (location.pathname.includes('/eu-ai-compliance')) {
+    return null;
+  }
 
   return (
     <>
