@@ -18,6 +18,8 @@ import {
   FiTrendingUp
 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import axios from 'axios';
+import authService from '../services/authService';
 import * as assessmentService from '../services/assessmentService';
 import dynamicAssessmentService from '../services/dynamicAssessmentService';
 import excelService from '../services/excelService';
@@ -672,6 +674,7 @@ const AssessmentsListNew = () => {
   const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [suiteFilter, setSuiteFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [pillarFilter, setPillarFilter] = useState('all');
   const [ownerFilter, setOwnerFilter] = useState('all');
@@ -688,52 +691,150 @@ const AssessmentsListNew = () => {
     fetchAssessments();
   }, []);
 
+  const normalizeAssessmentRecord = (raw, family = 'classic') => {
+    const id = raw.id || raw.assessmentId;
+    const rawOrg = raw.organization_name || raw.organizationName || raw.customerName || raw.customer_name || raw.meta?.organizationName || raw.meta?.customerName;
+    const orgName = (rawOrg && rawOrg !== 'Unknown Org' && rawOrg !== 'Not specified') ? rawOrg : 'Enterprise Organization';
+
+    const rawName = raw.assessment_name || raw.assessmentName || raw.meta?.systemName || (raw.frameworkSnapshot?.title ? `${orgName} - ${raw.frameworkSnapshot.title}` : null);
+    const defaultTitleByFamily = {
+      classic: `${orgName} - Enterprise Data & AI Maturity Assessment`,
+      dynamic: `${orgName} - ${raw.frameworkSnapshot?.title || 'Dynamic Blueprint Assessment'}`,
+      genai: `${orgName} - GenAI Readiness & Governance Assessment`,
+      eu_ai_act: `${orgName} - EU AI Act Statutory Dossier (${raw.meta?.systemName || 'High-Risk AI System'})`
+    };
+    const assessmentName = (rawName && rawName !== 'Untitled Assessment') ? rawName : (defaultTitleByFamily[family] || `${orgName} - Enterprise Assessment`);
+
+    const rawEmail = raw.contact_email || raw.contactEmail || raw.meta?.assessorEmail || raw.createdBy || raw.ownerId || raw.owner_id;
+    const isSystemMarker = !rawEmail || ['unknown', 'system', 'guest_admin', 'system_unowned', 'demo_guest', 'admin_guest', 'guest', 'public'].includes(String(rawEmail).toLowerCase().trim());
+    const email = !isSystemMarker ? rawEmail : 'architect@scorex.ai';
+    const creatorName = raw.creator_name || (email.includes('@') ? email.split('@')[0] : email) || 'Enterprise Architect';
+
+    const rawIndustry = raw.industry || raw.frameworkSnapshot?.badge || raw.meta?.sector || raw.maturityLevel || raw.maturity_level;
+    const industry = (rawIndustry && rawIndustry !== 'Not specified') ? rawIndustry : (
+      family === 'eu_ai_act' ? 'EU AI Act Annex III' :
+      family === 'genai' ? 'GenAI & Agentic AI' :
+      family === 'dynamic' ? 'Cloud & Zero-Trust' : 'Enterprise Data & AI'
+    );
+
+    const createdAt = raw.created_at || raw.createdAt || raw.startedAt || raw.started_at || raw.completedAt || raw.completed_at || '2026-08-15T14:30:00.000Z';
+    const updatedAt = raw.updated_at || raw.updatedAt || raw.completedAt || raw.completed_at || createdAt;
+
+    // Calculate accurate progress & status
+    let progress = 0;
+    let status = 'not_started';
+    let completedCategories = raw.completedCategories || raw.completed_categories || [];
+
+    if (family === 'dynamic') {
+      const dims = raw.frameworkSnapshot?.dimensions || [];
+      const totalQuestions = dims.reduce((acc, d) => acc + (d.questions?.length || 0), 0);
+      const answeredCount = Object.keys(raw.responses || {}).filter(k => !k.includes('_')).length;
+      progress = totalQuestions > 0
+        ? Math.min(100, Math.round((answeredCount / totalQuestions) * 100))
+        : (raw.status === 'completed' || raw.status === 'submitted' ? 100 : (Number(raw.progress) || 0));
+      completedCategories = dims.filter(d => {
+        const qCount = d.questions?.length || 0;
+        const ansInDim = (d.questions || []).filter(q => raw.responses?.[q.id] !== undefined).length;
+        return qCount > 0 && ansInDim === qCount;
+      }).map(d => d.name || d.id);
+      if (raw.status === 'completed' || raw.status === 'submitted' || progress >= 100) {
+        status = 'completed';
+        progress = 100;
+      } else if (progress > 0 || answeredCount > 0) {
+        status = 'in_progress';
+      }
+    } else if (family === 'genai') {
+      const answeredCount = Object.keys(raw.responses || {}).length;
+      const isComplete = Boolean(raw.completedAt || raw.completed_at || raw.status === 'completed' || answeredCount >= 12);
+      progress = isComplete ? 100 : Math.min(95, Math.round((answeredCount / 15) * 100));
+      status = isComplete ? 'completed' : (progress > 0 ? 'in_progress' : 'not_started');
+      completedCategories = isComplete ? ['generative_ai', 'platform_governance'] : (progress > 0 ? ['generative_ai'] : []);
+    } else if (family === 'eu_ai_act') {
+      const answeredCount = Object.keys(raw.answers || {}).length;
+      const isComplete = Boolean(raw.synthesis || answeredCount >= 8);
+      progress = isComplete ? 100 : Math.min(95, Math.round((answeredCount / 10) * 100));
+      status = isComplete ? 'completed' : (progress > 0 ? 'in_progress' : 'not_started');
+      completedCategories = isComplete ? ['platform_governance', 'generative_ai'] : (progress > 0 ? ['platform_governance'] : []);
+    } else {
+      // Classic 6-Pillar
+      const isComplete = raw.status === 'completed' || raw.status === 'submitted' || Number(raw.progress) >= 100 || completedCategories.length >= 6;
+      if (isComplete) {
+        status = 'completed';
+        progress = 100;
+      } else {
+        const pillarCount = completedCategories.length;
+        const respCount = Object.keys(raw.responses || {}).length;
+        progress = Number(raw.progress) > 0 ? Number(raw.progress) : Math.min(95, Math.round((pillarCount / 6) * 100) || (respCount > 0 ? 25 : 0));
+        status = (progress > 0 || respCount > 0) ? 'in_progress' : 'not_started';
+      }
+    }
+
+    const suiteBadges = {
+      classic: { label: 'Core 6-Pillar', bg: '#eff6ff', text: '#1d4ed8', border: '#bfdbfe' },
+      dynamic: { label: 'Dynamic Blueprint', bg: '#f3e8ff', text: '#6d28d9', border: '#ddd6fe' },
+      genai: { label: 'GenAI Readiness', bg: '#ecfdf5', text: '#047857', border: '#a7f3d0' },
+      eu_ai_act: { label: 'EU AI Act Dossier', bg: '#fffbeb', text: '#b45309', border: '#fde68a' }
+    };
+
+    const selectedPillars = raw.selected_pillars || raw.selectedPillars || ['platform_governance', 'data_engineering', 'analytics_bi', 'machine_learning', 'generative_ai', 'operational_excellence'];
+
+    return {
+      ...raw,
+      id,
+      assessmentId: id,
+      assessmentFamily: family,
+      isDynamic: family === 'dynamic',
+      suiteBadge: suiteBadges[family] || suiteBadges.classic,
+      assessment_name: assessmentName,
+      assessmentName: assessmentName,
+      organization_name: orgName,
+      organizationName: orgName,
+      contact_email: email,
+      contactEmail: email,
+      creator_name: creatorName,
+      industry,
+      status,
+      progress,
+      completedCategories,
+      selected_pillars: selectedPillars,
+      selectedPillars: selectedPillars,
+      created_at: createdAt,
+      createdAt: createdAt,
+      updated_at: updatedAt,
+      updatedAt: updatedAt
+    };
+  };
+
   const fetchAssessments = async () => {
     try {
       setLoading(true);
-      const [classicData, dynamicInstances] = await Promise.allSettled([
+      const headers = authService.getAuthHeader ? authService.getAuthHeader() : {};
+      const [classicData, dynamicInstances, genaiData, euAiData] = await Promise.allSettled([
         assessmentService.getAssessments(),
-        dynamicAssessmentService.getInstances()
+        dynamicAssessmentService.getInstances(),
+        axios.get('/api/genai-readiness/assessments', { headers }),
+        axios.get('/api/eu-ai-compliance/dossiers', { headers })
       ]);
 
-      const classicList = classicData.status === 'fulfilled' && Array.isArray(classicData.value) 
-        ? classicData.value 
+      const classicList = classicData.status === 'fulfilled' && Array.isArray(classicData.value)
+        ? classicData.value.map(item => normalizeAssessmentRecord(item, 'classic'))
         : [];
 
       const dynamicList = dynamicInstances.status === 'fulfilled' && Array.isArray(dynamicInstances.value)
-        ? dynamicInstances.value.map(inst => {
-            const dims = inst.frameworkSnapshot?.dimensions || [];
-            const totalQuestions = dims.reduce((acc, d) => acc + (d.questions?.length || 0), 0);
-            const answeredCount = Object.keys(inst.responses || {}).filter(k => !k.includes('_')).length;
-            const progressPct = totalQuestions > 0 
-              ? Math.min(100, Math.round((answeredCount / totalQuestions) * 100))
-              : (inst.status === 'completed' ? 100 : 0);
-            const completedDims = dims.filter(d => {
-              const qCount = d.questions?.length || 0;
-              const ansInDim = (d.questions || []).filter(q => inst.responses?.[q.id] !== undefined).length;
-              return qCount > 0 && ansInDim === qCount;
-            }).map(d => d.name || d.id);
-
-            return {
-              id: inst.id,
-              assessmentId: inst.id,
-              isDynamic: true,
-              assessment_name: `${inst.customerName || 'Enterprise'} - ${inst.frameworkSnapshot?.title || 'Custom Assessment'}`,
-              organization_name: inst.customerName || 'Enterprise Organization',
-              industry: inst.frameworkSnapshot?.badge || 'Cloud & AI',
-              status: inst.status === 'completed' ? 'submitted' : (progressPct > 0 ? 'in_progress' : 'draft'),
-              completedCategories: completedDims,
-              progress: inst.status === 'completed' ? 100 : progressPct,
-              created_at: inst.createdAt,
-              updated_at: inst.updatedAt || inst.createdAt,
-              scores: inst.scores,
-              maturity_level: inst.maturityLevel,
-              typeKey: inst.typeKey
-            };
-          })
+        ? dynamicInstances.value.map(item => normalizeAssessmentRecord(item, 'dynamic'))
         : [];
 
-      setAssessments([...dynamicList, ...classicList]);
+      const genaiRaw = genaiData.status === 'fulfilled' && Array.isArray(genaiData.value?.data)
+        ? genaiData.value.data
+        : [];
+      const genaiList = genaiRaw.map(item => normalizeAssessmentRecord(item, 'genai'));
+
+      const euAiRaw = euAiData.status === 'fulfilled' && Array.isArray(euAiData.value?.data?.dossiers)
+        ? euAiData.value.data.dossiers
+        : [];
+      const euAiList = euAiRaw.map(item => normalizeAssessmentRecord(item, 'eu_ai_act'));
+
+      setAssessments([...euAiList, ...genaiList, ...dynamicList, ...classicList]);
     } catch (error) {
       console.error('Error fetching assessments:', error);
       setAssessments([]);
@@ -784,23 +885,44 @@ const AssessmentsListNew = () => {
     event.stopPropagation();
     try {
       toast.loading('Cloning assessment...', { id: 'clone' });
-      
-      if (assessment.isDynamic) {
-        await dynamicAssessmentService.cloneInstance(assessment.id || assessment.assessmentId, 'Next Quarter');
-        toast.success('Assessment cloned for next quarter review!', { id: 'clone' });
+      const family = assessment.assessmentFamily || (assessment.isDynamic ? 'dynamic' : 'classic');
+      const id = assessment.id || assessment.assessmentId;
+
+      if (family === 'dynamic') {
+        await dynamicAssessmentService.cloneInstance(id, 'Next Quarter');
+        toast.success('Dynamic blueprint cloned for next quarter review!', { id: 'clone' });
+      } else if (family === 'genai') {
+        const headers = authService.getAuthHeader ? authService.getAuthHeader() : {};
+        await axios.post('/api/genai-readiness/assessments', {
+          customerName: `${assessment.organization_name || 'Organization'} (Copy)`,
+          responses: assessment.responses || {},
+          scores: assessment.scores || {},
+          totalScore: assessment.totalScore || 0,
+          maxScore: assessment.maxScore || 100,
+          maturityLevel: assessment.maturityLevel || 'Developing'
+        }, { headers });
+        toast.success('GenAI Readiness assessment cloned!', { id: 'clone' });
+      } else if (family === 'eu_ai_act') {
+        const headers = authService.getAuthHeader ? authService.getAuthHeader() : {};
+        const newId = `EU-AI-${new Date().getFullYear()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+        await axios.post(`/api/eu-ai-compliance/dossiers/${newId}`, {
+          meta: { ...(assessment.meta || {}), systemName: `${assessment.meta?.systemName || assessment.assessment_name} (Copy)` },
+          answers: assessment.answers || {},
+          synthesis: assessment.synthesis || null
+        }, { headers });
+        toast.success(`EU AI Act Dossier cloned (${newId})!`, { id: 'clone' });
       } else {
         const clonedData = {
-          organizationName: assessment.organization_name,
-          contactEmail: assessment.contact_email,
-          industry: assessment.industry,
-          assessmentName: `${assessment.assessment_name} (Copy)`,
-          assessmentDescription: assessment.assessmentDescription
+          organizationName: assessment.organization_name || assessment.organizationName || 'Enterprise Organization',
+          contactEmail: assessment.contact_email || assessment.contactEmail || 'architect@scorex.ai',
+          industry: assessment.industry || 'Enterprise Data & AI',
+          assessmentName: `${assessment.assessment_name || assessment.assessmentName || 'Assessment'} (Copy)`,
+          assessmentDescription: assessment.assessmentDescription || ''
         };
-        await assessmentService.cloneAssessment(assessment.id || assessment.assessmentId, clonedData);
+        await assessmentService.cloneAssessment(id, clonedData);
         toast.success('Assessment cloned successfully!', { id: 'clone' });
       }
       
-      // Refresh the assessments list
       await fetchAssessments();
     } catch (error) {
       console.error('Error cloning assessment:', error);
@@ -811,23 +933,26 @@ const AssessmentsListNew = () => {
   const handleDeleteAssessment = async (assessment, assessmentName, event) => {
     event.stopPropagation();
     const assessmentId = typeof assessment === 'object' ? (assessment.id || assessment.assessmentId) : assessment;
-    const isDynamic = typeof assessment === 'object' && assessment.isDynamic;
-    const name = assessmentName || (typeof assessment === 'object' ? assessment.assessment_name : 'this assessment');
+    const family = typeof assessment === 'object' ? (assessment.assessmentFamily || (assessment.isDynamic ? 'dynamic' : 'classic')) : 'classic';
+    const name = assessmentName || (typeof assessment === 'object' ? (assessment.assessment_name || assessment.assessmentName) : 'this assessment');
     
-    // Confirm deletion
     if (!window.confirm(`Are you sure you want to delete "${name}"? This action cannot be undone.`)) {
       return;
     }
     
     try {
       toast.loading('Deleting assessment...', { id: 'delete' });
-      if (isDynamic) {
+      const headers = authService.getAuthHeader ? authService.getAuthHeader() : {};
+      if (family === 'dynamic') {
         await dynamicAssessmentService.deleteInstance(assessmentId);
+      } else if (family === 'genai') {
+        await axios.delete(`/api/genai-readiness/assessments/${assessmentId}`, { headers });
+      } else if (family === 'eu_ai_act') {
+        await axios.delete(`/api/eu-ai-compliance/dossiers/${assessmentId}`, { headers });
       } else {
         await assessmentService.deleteAssessment(assessmentId);
       }
       toast.success('Assessment deleted successfully', { id: 'delete' });
-      // Refresh the assessments list
       await fetchAssessments();
     } catch (error) {
       console.error('Error deleting assessment:', error);
@@ -838,12 +963,17 @@ const AssessmentsListNew = () => {
   // Handle Excel Export
   const handleExportToExcel = async (assessment, e) => {
     e?.stopPropagation();
+    const family = assessment.assessmentFamily || (assessment.isDynamic ? 'dynamic' : 'classic');
     
     try {
       toast.loading(`Generating Excel file for ${assessment.assessment_name}...`, { id: 'excel-export' });
-      
+      if (family === 'genai') {
+        window.open(`/api/genai-readiness/assessments/${assessment.id}/excel`, '_blank');
+        toast.success(`✅ GenAI Readiness Excel downloaded!`, { id: 'excel-export' });
+        return;
+      }
       const blob = await excelService.exportAssessment(assessment.id);
-      const fileName = `${assessment.assessment_name || 'Assessment'}_${assessment.id}_${new Date().toISOString().split('T')[0]}.xlsx`;
+      const fileName = `${(assessment.assessment_name || 'Assessment').replace(/[^a-zA-Z0-9_-]/g, '_')}_${assessment.id}_${new Date().toISOString().split('T')[0]}.xlsx`;
       
       excelService.downloadFile(blob, fileName);
       
@@ -1019,19 +1149,58 @@ const AssessmentsListNew = () => {
     }
   };
 
+  const getStatusFromAssessment = (assessment) => {
+    if (assessment.status === 'completed' || assessment.status === 'submitted' || Number(assessment.progress) >= 100) {
+      return 'completed';
+    }
+    if (assessment.status === 'in_progress' || (assessment.completedCategories && assessment.completedCategories.length > 0) || Number(assessment.progress) > 0) {
+      return 'in_progress';
+    }
+    if (assessment.responses && Object.keys(assessment.responses).length > 0) {
+      return 'in_progress';
+    }
+    return 'not_started';
+  };
+
+  const getStatusLabel = (assessment) => {
+    const status = getStatusFromAssessment(assessment);
+    return status === 'in_progress' ? 'In Progress' : 
+           status === 'completed' ? 'Completed' : 
+           'Not Started';
+  };
+
+  const getProgressPercentage = (assessment) => {
+    if (assessment.status === 'completed' || assessment.status === 'submitted' || Number(assessment.progress) >= 100) {
+      return 100;
+    }
+    if (typeof assessment.progress === 'number' && !isNaN(assessment.progress) && assessment.progress > 0) {
+      return Math.min(99, Math.round(assessment.progress));
+    }
+    const totalPillars = 6;
+    const completedCount = assessment.completedCategories?.length || 0;
+    const percentage = Math.round((completedCount / totalPillars) * 100);
+    return percentage >= 100 ? 99 : percentage;
+  };
+
   // Filter and sort assessments
   const filteredAssessments = assessments.filter(assessment => {
-    const matchesSearch = 
-      searchTerm === '' ||
-      (assessment.assessment_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (assessment.organization_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (assessment.contact_email || '').toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSuite =
+      suiteFilter === 'all' ||
+      (assessment.assessmentFamily || 'classic') === suiteFilter;
 
+    const q = searchTerm.toLowerCase().trim();
+    const matchesSearch = 
+      q === '' ||
+      (assessment.assessment_name || assessment.assessmentName || '').toLowerCase().includes(q) ||
+      (assessment.organization_name || assessment.organizationName || '').toLowerCase().includes(q) ||
+      (assessment.contact_email || assessment.contactEmail || '').toLowerCase().includes(q) ||
+      (assessment.industry || '').toLowerCase().includes(q) ||
+      (assessment.suiteBadge?.label || '').toLowerCase().includes(q);
+
+    const actualStatus = getStatusFromAssessment(assessment);
     const matchesStatus = 
       statusFilter === 'all' ||
-      (statusFilter === 'completed' && assessment.status === 'completed') ||
-      (statusFilter === 'in_progress' && assessment.completedCategories && assessment.completedCategories.length > 0 && assessment.status !== 'completed') ||
-      (statusFilter === 'not_started' && (!assessment.completedCategories || assessment.completedCategories.length === 0));
+      statusFilter === actualStatus;
 
     const matchesPillar = 
       pillarFilter === 'all' ||
@@ -1045,13 +1214,13 @@ const AssessmentsListNew = () => {
 
     const matchesOwner = 
       ownerFilter === 'all' ||
-      (assessment.contactEmail || '').toLowerCase().includes(ownerFilter.toLowerCase());
+      (assessment.contact_email || assessment.contactEmail || '').toLowerCase().includes(ownerFilter.toLowerCase());
 
     const matchesIndustry = 
       industryFilter === 'all' ||
       (assessment.industry || '').toLowerCase() === industryFilter.toLowerCase();
 
-    const progress = (assessment.completedCategories?.length || 0) / 6 * 100;
+    const progress = getProgressPercentage(assessment);
     const matchesCompletionRange = 
       completionRangeFilter === 'all' ||
       (completionRangeFilter === '0-25' && progress <= 25) ||
@@ -1059,56 +1228,24 @@ const AssessmentsListNew = () => {
       (completionRangeFilter === '51-75' && progress > 50 && progress <= 75) ||
       (completionRangeFilter === '76-100' && progress > 75);
 
-    return matchesSearch && matchesStatus && matchesPillar && matchesOwner && matchesIndustry && matchesCompletionRange;
+    return matchesSuite && matchesSearch && matchesStatus && matchesPillar && matchesOwner && matchesIndustry && matchesCompletionRange;
   });
 
   const sortedAssessments = [...filteredAssessments].sort((a, b) => {
     switch (sortBy) {
-      case 'recent':
-        return new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt);
+      case 'recent': {
+        const timeB = new Date(b.updated_at || b.updatedAt || b.created_at || b.createdAt || 0).getTime() || 0;
+        const timeA = new Date(a.updated_at || a.updatedAt || a.created_at || a.createdAt || 0).getTime() || 0;
+        return timeB - timeA;
+      }
       case 'name':
-        return (a.assessmentName || '').localeCompare(b.assessmentName || '');
+        return (a.assessment_name || a.assessmentName || '').localeCompare(b.assessment_name || b.assessmentName || '');
       case 'progress':
-        const progressA = (a.completedCategories?.length || 0) / 6;
-        const progressB = (b.completedCategories?.length || 0) / 6;
-        return progressB - progressA;
+        return getProgressPercentage(b) - getProgressPercentage(a);
       default:
         return 0;
     }
   });
-
-  const getStatusFromAssessment = (assessment) => {
-    // Check explicit status first
-    if (assessment.status === 'completed' || assessment.status === 'submitted') return 'completed';
-    
-    // If has responses or completed categories, it's in progress
-    if (assessment.completedCategories && assessment.completedCategories.length > 0) return 'in_progress';
-    if (assessment.responses && Object.keys(assessment.responses).length > 0) return 'in_progress';
-    
-    return 'not_started';
-  };
-
-  const getStatusLabel = (assessment) => {
-    const status = getStatusFromAssessment(assessment);
-    return status === 'in_progress' ? 'In Progress' : 
-           status === 'completed' ? 'Completed' : 
-           'Not Started';
-  };
-
-  const getProgressPercentage = (assessment) => {
-    // If status is explicitly completed/submitted, return 100%
-    if (assessment.status === 'completed' || assessment.status === 'submitted') {
-      return 100;
-    }
-    
-    // Calculate based on completed categories
-    const totalPillars = 6; // Total number of pillars
-    const completedCount = assessment.completedCategories?.length || 0;
-    const percentage = Math.round((completedCount / totalPillars) * 100);
-    
-    // Cap at 99% if not officially submitted (to show it's not complete)
-    return percentage >= 100 ? 99 : percentage;
-  };
 
   const getTimeAgo = (dateString) => {
     if (!dateString) return 'Just now';
@@ -1202,6 +1339,59 @@ const AssessmentsListNew = () => {
           </div>
         </HeaderSection>
 
+        {/* Suite Filter Bar */}
+        <div style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '10px',
+          marginBottom: '16px',
+          alignItems: 'center'
+        }}>
+          {[
+            { id: 'all', label: 'All Suites', count: assessments.length, color: '#0f172a' },
+            { id: 'classic', label: 'Core 6-Pillar', count: assessments.filter(a => (a.assessmentFamily || 'classic') === 'classic').length, color: '#1d4ed8' },
+            { id: 'dynamic', label: 'Dynamic Blueprints', count: assessments.filter(a => a.assessmentFamily === 'dynamic').length, color: '#6d28d9' },
+            { id: 'genai', label: 'GenAI Readiness', count: assessments.filter(a => a.assessmentFamily === 'genai').length, color: '#047857' },
+            { id: 'eu_ai_act', label: 'EU AI Act Dossiers', count: assessments.filter(a => a.assessmentFamily === 'eu_ai_act').length, color: '#b45309' }
+          ].map(suite => {
+            const isActive = suiteFilter === suite.id;
+            return (
+              <button
+                key={suite.id}
+                data-suite-filter={suite.id}
+                onClick={() => setSuiteFilter(suite.id)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '8px 16px',
+                  borderRadius: '999px',
+                  fontSize: '0.875rem',
+                  fontWeight: isActive ? 700 : 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  background: isActive ? suite.color : '#ffffff',
+                  color: isActive ? '#ffffff' : '#475569',
+                  border: `1.5px solid ${isActive ? suite.color : '#e2e8f0'}`,
+                  boxShadow: isActive ? '0 4px 12px rgba(15, 23, 42, 0.12)' : '0 1px 2px rgba(0, 0, 0, 0.04)'
+                }}
+              >
+                <span>{suite.label}</span>
+                <span style={{
+                  background: isActive ? 'rgba(255, 255, 255, 0.22)' : '#f1f5f9',
+                  color: isActive ? '#ffffff' : '#334155',
+                  padding: '2px 8px',
+                  borderRadius: '999px',
+                  fontSize: '0.75rem',
+                  fontWeight: 700
+                }}>
+                  {suite.count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
         {/* Filter Bar */}
         <FilterBar>
           <div className="top-row">
@@ -1250,7 +1440,7 @@ const AssessmentsListNew = () => {
             </Dropdown>
             <Dropdown value={ownerFilter} onChange={(e) => setOwnerFilter(e.target.value)}>
               <option value="all">All owners</option>
-              {[...new Set(assessments.map(a => a.contactEmail).filter(Boolean))].map(email => (
+              {[...new Set(assessments.map(a => a.contact_email || a.contactEmail).filter(Boolean))].map(email => (
                 <option key={email} value={email}>{email.split('@')[0]}</option>
               ))}
             </Dropdown>
@@ -1379,24 +1569,69 @@ const AssessmentsListNew = () => {
                 finalId: assessmentId
               });
 
+              const family = assessment.assessmentFamily || (assessment.isDynamic ? 'dynamic' : 'classic');
+              const suiteBadge = assessment.suiteBadge || { label: 'Core 6-Pillar', bg: '#eff6ff', text: '#1d4ed8', border: '#bfdbfe' };
+              const selectedPillars = assessment.selected_pillars || assessment.selectedPillars || ['platform_governance'];
+              const targetPillar = (selectedPillars && selectedPillars.length > 0) ? selectedPillars[0] : 'platform_governance';
+
+              const handleOpenReportOrEditor = () => {
+                if (family === 'eu_ai_act') {
+                  navigate(`/eu-ai-compliance/${assessmentId}`);
+                } else if (family === 'genai') {
+                  if (status === 'completed') {
+                    navigate(`/genai-readiness/report/${assessmentId}`);
+                  } else {
+                    navigate(`/genai-readiness/edit/${assessmentId}`);
+                  }
+                } else if (family === 'dynamic') {
+                  if (status === 'completed') {
+                    navigate(`/assessments/report/${assessmentId}`);
+                  } else {
+                    navigate(`/assessments/run/instance/${assessmentId}`);
+                  }
+                } else {
+                  if (status === 'completed') {
+                    navigate(`/results/${assessmentId}`);
+                  } else {
+                    navigate(`/assessment/${assessmentId}/${targetPillar}`);
+                  }
+                }
+              };
+
+              const handleOpenEditor = (e) => {
+                e.stopPropagation();
+                if (family === 'eu_ai_act') {
+                  navigate(`/eu-ai-compliance/${assessmentId}`);
+                } else if (family === 'genai') {
+                  navigate(`/genai-readiness/edit/${assessmentId}`);
+                } else if (family === 'dynamic') {
+                  navigate(`/assessments/run/instance/${assessmentId}`);
+                } else {
+                  navigate(`/assessment/${assessmentId}/${targetPillar}`);
+                }
+              };
+
+              const handleOpenReport = (e) => {
+                e.stopPropagation();
+                if (progress === 0 || status === 'not_started') return;
+                if (family === 'eu_ai_act') {
+                  navigate(`/eu-ai-compliance/${assessmentId}`);
+                } else if (family === 'genai') {
+                  navigate(`/genai-readiness/report/${assessmentId}`);
+                } else if (family === 'dynamic') {
+                  navigate(`/assessments/report/${assessmentId}`);
+                } else {
+                  navigate(`/results/${assessmentId}`);
+                }
+              };
+
               return (
                 <AssessmentCard
                   key={assessmentId}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
-                  onClick={() => {
-                    if (assessment.isDynamic) {
-                      if (assessment.status === 'submitted' || assessment.progress === 100) {
-                        navigate(`/assessments/report/${assessmentId}`);
-                      } else {
-                        navigate(`/assessments/run/instance/${assessmentId}`);
-                      }
-                    } else {
-                      console.log(`[AssessmentsListNew] Card clicked, navigating to: /assessment/${assessmentId}/platform_governance`);
-                      navigate(`/assessment/${assessmentId}/platform_governance`);
-                    }
-                  }}
+                  onClick={handleOpenReportOrEditor}
                 >
                   <div className="header" style={{ position: 'relative' }}>
                     <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
@@ -1408,43 +1643,57 @@ const AssessmentsListNew = () => {
                         style={{ width: '18px', height: '18px', marginTop: '4px', cursor: 'pointer', accentColor: '#3b82f6' }}
                       />
                       <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
+                          <span style={{
+                            display: 'inline-block',
+                            padding: '3px 9px',
+                            borderRadius: '999px',
+                            fontSize: '0.72rem',
+                            fontWeight: 700,
+                            background: suiteBadge.bg,
+                            color: suiteBadge.text,
+                            border: `1px solid ${suiteBadge.border}`
+                          }}>
+                            {suiteBadge.label}
+                          </span>
+                        </div>
                         <div className="title">
-                          {assessment.assessment_name || 'Untitled Assessment'}
+                          {assessment.assessment_name || assessment.assessmentName}
                         </div>
-                      <div className="meta">
-                        <div className="meta-item">
-                          <span>🏢</span>
-                          <span>{assessment.organization_name || 'Unknown Org'}</span>
+                        <div className="meta">
+                          <div className="meta-item">
+                            <span>🏢</span>
+                            <span>{assessment.organization_name || assessment.organizationName}</span>
+                          </div>
+                          <span>›</span>
+                          <div className="meta-item">
+                            <span>🏭</span>
+                            <span>{assessment.industry}</span>
+                          </div>
                         </div>
-                        <span>›</span>
-                        <div className="meta-item">
-                          <span>🏭</span>
-                          <span>{assessment.industry || 'Not specified'}</span>
+                        <div className="meta" style={{ marginTop: '8px', fontSize: '0.85rem', color: '#64748b' }}>
+                          <div className="meta-item">
+                            <span>📝</span>
+                            <span>Created by: {assessment.creator_name}</span>
+                          </div>
+                          <span>•</span>
+                          <div className="meta-item">
+                            <span>📅</span>
+                            <span>{formatDateTime(assessment.created_at || assessment.createdAt)}</span>
+                          </div>
+                        </div>
+                        <div className="meta" style={{ marginTop: '4px', fontSize: '0.85rem', color: '#64748b' }}>
+                          <div className="meta-item">
+                            <span>✏️</span>
+                            <span>Updated by: {assessment.creator_name}</span>
+                          </div>
+                          <span>•</span>
+                          <div className="meta-item">
+                            <span>🕐</span>
+                            <span>{formatDateTime(assessment.updated_at || assessment.updatedAt)}</span>
+                          </div>
                         </div>
                       </div>
-                      <div className="meta" style={{ marginTop: '8px', fontSize: '0.85rem', color: '#64748b' }}>
-                        <div className="meta-item">
-                          <span>📝</span>
-                          <span>Created by: {assessment.creator_name || assessment.contact_email?.split('@')[0] || 'Unknown'}</span>
-                        </div>
-                        <span>•</span>
-                        <div className="meta-item">
-                          <span>📅</span>
-                          <span>{formatDateTime(assessment.created_at)}</span>
-                        </div>
-                      </div>
-                      <div className="meta" style={{ marginTop: '4px', fontSize: '0.85rem', color: '#64748b' }}>
-                        <div className="meta-item">
-                          <span>✏️</span>
-                          <span>Updated by: {assessment.creator_name || assessment.contact_email?.split('@')[0] || 'Unknown'}</span>
-                        </div>
-                        <span>•</span>
-                        <div className="meta-item">
-                          <span>🕐</span>
-                          <span>{formatDateTime(assessment.updated_at)}</span>
-                        </div>
-                      </div>
-                    </div>
                     </div>
                     <StatusBadge $status={status}>
                       {getStatusLabel(assessment)}
@@ -1464,18 +1713,7 @@ const AssessmentsListNew = () => {
                   <div className="footer">
                     <div className="actions">
                       <ActionButton
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (assessment.isDynamic) {
-                            navigate(`/assessments/run/instance/${assessmentId}`);
-                            return;
-                          }
-                          const selectedPillars = assessment.selected_pillars;
-                          const targetPillar = (selectedPillars && selectedPillars.length > 0) 
-                            ? selectedPillars[0] 
-                            : 'platform_governance';
-                          navigate(`/assessment/${assessmentId}/${targetPillar}`);
-                        }}
+                        onClick={handleOpenEditor}
                         title="Edit assessment"
                       >
                         <FiEdit2 />
@@ -1511,18 +1749,8 @@ const AssessmentsListNew = () => {
                       <ActionButton
                         className="primary"
                         disabled={progress === 0 || status === 'not_started'}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (progress === 0 || status === 'not_started') {
-                            return;
-                          }
-                          if (assessment.isDynamic) {
-                            navigate(`/assessments/report/${assessmentId}`);
-                          } else {
-                            navigate(`/results/${assessmentId}`);
-                          }
-                        }}
-                        title={progress === 0 || status === 'not_started' ? 'Complete at least one pillar to view report' : 'View assessment report'}
+                        onClick={handleOpenReport}
+                        title={progress === 0 || status === 'not_started' ? 'Complete at least one section to view report' : 'View executive assessment report'}
                       >
                         <FiStar />
                       </ActionButton>

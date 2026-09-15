@@ -3148,23 +3148,33 @@ class CustomAssessmentRepository {
   }
 
   async findAssessmentTypeByKey(typeKey) {
+    const LEGACY_TYPE_ALIASES = {
+      'cloud_security___zero_trust_architecture_readiness': 'enterprise_ai_zero_trust_security',
+      'cloud_security_zero_trust_architecture': 'enterprise_ai_zero_trust_security',
+      'ciso_enterprise_ai_security_shadow_gateway': 'enterprise_ai_zero_trust_security',
+      'cloud-security': 'enterprise_ai_zero_trust_security',
+      'enterprise_data_ai_maturity': 'edw_lakehouse_to_bigquery_modernization'
+    };
+    const resolvedKey = LEGACY_TYPE_ALIASES[typeKey] || typeKey;
+    const normalized = String(resolvedKey || '').replace(/_+/g, '_');
+
     try {
-      const normalized = typeKey.replace(/_+/g, '_');
       const query = 'SELECT * FROM custom_assessment_types WHERE type_key = $1 OR type_key = $2 OR id = $1';
-      const result = await db.query(query, [typeKey, normalized]);
+      const result = await db.query(query, [resolvedKey, normalized]);
       if (result.rows.length === 0) {
-        return typesFileStore.get(typeKey) || 
+        return typesFileStore.get(resolvedKey) || 
                typesFileStore.get(normalized) || 
-               typesFileStore.get('cloud_security_zero_trust_architecture') || 
+               typesFileStore.get('enterprise_ai_zero_trust_security') || 
+               Object.values(typesFileStore.getAll() || {})[0] ||
                null;
       }
       return this.mapRowToType(result.rows[0]);
     } catch (error) {
       console.warn('PostgreSQL findAssessmentTypeByKey fallback to file store:', error.message);
-      const normalized = typeKey.replace(/_+/g, '_');
-      return typesFileStore.get(typeKey) || 
+      return typesFileStore.get(resolvedKey) || 
              typesFileStore.get(normalized) || 
-             typesFileStore.get('cloud_security_zero_trust_architecture') || 
+             typesFileStore.get('enterprise_ai_zero_trust_security') || 
+             Object.values(typesFileStore.getAll() || {})[0] ||
              null;
     }
   }

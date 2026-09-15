@@ -186,4 +186,22 @@ router.post('/dossiers/:id', (req, res) => {
   }
 });
 
+/**
+ * DELETE /api/eu-ai-compliance/dossiers/:id
+ * Delete an EU AI Act compliance dossier from the server.
+ */
+router.delete('/dossiers/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    const dossiers = loadServerDossiers();
+    if (dossiers[id]) {
+      delete dossiers[id];
+      saveServerDossiers(dossiers);
+    }
+    return res.json({ success: true, message: 'Dossier deleted successfully' });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;

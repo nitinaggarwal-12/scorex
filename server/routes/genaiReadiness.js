@@ -20,7 +20,7 @@ async function requireOwner(req, res, next) {
     const ownerId = row.owner_id || row.ownerId;
     const isRead = ['GET', 'HEAD', 'OPTIONS'].includes(req.method);
     const isDirectOwner = String(ownerId || '') === String(req.user?.id || '');
-    const isLegacyPublic = !ownerId || ['system', 'guest_admin', 'system_unowned', 'demo_guest', 'admin_guest', 'guest', 'public'].includes(String(ownerId).toLowerCase().trim());
+    const isLegacyPublic = !ownerId || ['system', 'guest_admin', 'system_unowned', 'demo_guest', 'admin_guest', 'guest', 'public'].includes(String(ownerId).toLowerCase().trim()) || (String(req.user?.id || '').startsWith('demo_') && String(ownerId).startsWith('demo_'));
 
     if (isAdmin(req.user) || isDirectOwner || (isRead && isLegacyPublic)) {
       req.genaiAssessmentSecurity = row;

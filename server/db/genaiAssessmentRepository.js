@@ -198,7 +198,13 @@ class GenAIAssessmentRepository {
     let items = Object.values(all);
     if (!isAdmin && ownerId) {
       const publicOwners = new Set(['system', 'guest_admin', 'system_unowned', 'demo_guest', 'admin_guest', 'guest', 'public']);
-      items = items.filter(it => !it.owner_id || String(it.owner_id) === String(ownerId) || publicOwners.has(String(it.owner_id || '')));
+      const isDemoCaller = String(ownerId).startsWith('demo_') || publicOwners.has(String(ownerId));
+      items = items.filter(it => {
+        const itemOwner = String(it.owner_id || it.ownerId || '');
+        if (!itemOwner || itemOwner === String(ownerId) || publicOwners.has(itemOwner)) return true;
+        if (isDemoCaller && itemOwner.startsWith('demo_')) return true;
+        return false;
+      });
     }
     return items.map(item => ({
       id: item.id,

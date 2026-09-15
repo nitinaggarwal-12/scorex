@@ -266,9 +266,14 @@ const GenAIReadinessReport = () => {
     <div className="report-container">
       {/* Premium Executive Header */}
       <div className="report-header-premium no-print">
-        <button className="btn-back-glow" onClick={() => navigate('/genai-readiness/list')}>
-          <FiArrowLeft /> <span>All Assessments</span>
-        </button>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <button className="btn-back-glow" onClick={() => navigate('/assessments')}>
+            <FiArrowLeft /> <span>All Assessments</span>
+          </button>
+          <button className="btn-back-glow" onClick={() => navigate('/genai-readiness/list')} style={{ background: 'rgba(15, 23, 42, 0.06)', color: '#334155', borderColor: '#cbd5e1' }}>
+            <span>GenAI Suite List</span>
+          </button>
+        </div>
         
         <div className="header-actions-glow">
           <button className="btn-action-glow" onClick={handlePrint}>
@@ -530,7 +535,7 @@ const GenAIReadinessReport = () => {
 
       {/* Executive Footer Controls */}
       <div className="report-footer-premium no-print">
-        <button className="btn-glow-large secondary-glow" onClick={() => navigate('/genai-readiness/list')}>
+        <button className="btn-glow-large secondary-glow" onClick={() => navigate('/assessments')}>
           View All Assessments
         </button>
         <button className="btn-glow-large primary-glow" onClick={() => navigate('/genai-readiness')}>

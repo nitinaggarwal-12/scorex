@@ -10,11 +10,27 @@ function normalizeReleaseState(assessment) {
   const ownerId = assessment.userId || assessment.user_id || '';
   const isDemoOwned = (typeof ownerId === 'string' && ownerId.startsWith('demo_')) || !ownerId || ['guest_admin', 'system_unowned', 'system', 'demo_guest', 'admin_guest', 'guest', 'public', 'unowned', 'user'].includes(String(ownerId).toLowerCase().trim());
 
+  const name = assessment.assessment_name || assessment.assessmentName || 'Enterprise Data & AI Assessment';
+  const org = assessment.organization_name || assessment.organizationName || 'Enterprise Organization';
+  const email = assessment.contact_email || assessment.contactEmail || 'admin@scorex.ai';
+  const pillars = assessment.selected_pillars || assessment.selectedPillars || ['platform_governance', 'data_engineering', 'analytics_bi', 'machine_learning', 'generative_ai', 'operational_excellence'];
+  const created = assessment.created_at || assessment.createdAt || assessment.startedAt || assessment.started_at || '2026-08-15T12:00:00.000Z';
+  const updated = assessment.updated_at || assessment.updatedAt || assessment.completedAt || assessment.completed_at || created;
+
   return {
     ...assessment,
-    // Public visitors are provisioned as isolated demo identities. Their own assessments
-    // should be immediately viewable without an administrator release step. Registered
-    // users retain the persisted release workflow.
+    assessment_name: name,
+    assessmentName: name,
+    organization_name: org,
+    organizationName: org,
+    contact_email: email,
+    contactEmail: email,
+    selected_pillars: pillars,
+    selectedPillars: pillars,
+    created_at: created,
+    createdAt: created,
+    updated_at: updated,
+    updatedAt: updated,
     results_released: isDemoOwned ? true : Boolean(assessment.results_released),
     results_released_by: assessment.results_released_by || null,
     results_released_at: assessment.results_released_at || null
