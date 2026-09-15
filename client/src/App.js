@@ -176,6 +176,7 @@ const AssessmentComparisonView = lazyWithRetry(() => import('./components/Assess
 const CustomerPortfolioDashboard = lazyWithRetry(() => import('./components/CustomerPortfolioDashboard'));
 const CommandPalette = lazyWithRetry(() => import('./components/CommandPalette'));
 const InteractiveWorkflowWalkthrough = lazyWithRetry(() => import('./components/InteractiveWorkflowWalkthrough'));
+const EuAiComplianceWorkspace = lazyWithRetry(() => import('./components/EuAiComplianceWorkspace'));
 
 // Protected Route Component with Frictionless Auto-Guest Provisioning
 const ProtectedRoute = ({ children }) => {
@@ -494,6 +495,42 @@ function App() {
             element={
               <ProtectedRoute>
                 <GenAIReadinessReport />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/eu-ai-compliance" 
+            element={
+              <ProtectedRoute>
+                <EuAiComplianceWorkspace />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/eu-ai-compliance/:id" 
+            element={
+              <ProtectedRoute>
+                <EuAiComplianceWorkspace />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/assessments/eu-ai-compliance" 
+            element={
+              <ProtectedRoute>
+                <EuAiComplianceWorkspace />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/assessments/eu-ai-compliance/:id" 
+            element={
+              <ProtectedRoute>
+                <EuAiComplianceWorkspace />
               </ProtectedRoute>
             } 
           />
