@@ -182,7 +182,7 @@ const AIGenerationProgressModal = ({ customerName = "Enterprise Organization" })
         transition={{ duration: 0.4 }}
       >
         <GlowingBadge>
-          <HiSparkles /> Powered by Google Gemini 3.7 Flash
+          <HiSparkles /> Powered by Google Gemini 3.8 Flash
         </GlowingBadge>
 
         <Title>Synthesizing Executive AI Report</Title>

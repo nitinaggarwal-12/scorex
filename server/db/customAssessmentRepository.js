@@ -2979,31 +2979,87 @@ class CustomAssessmentRepository {
         title: 'Enterprise Data & AI Maturity Assessment (6 Pillars, 60 Questions)',
         subtitle: 'Flagship Multi-Dimensional Data, MLOps, Governance & Cloud Platform Maturity',
         dimensions: [
-          { id: 'platform_governance', name: 'Platform Governance & Operations', weight: 1 },
-          { id: 'data_architecture', name: 'Data Architecture & Management', weight: 1 },
-          { id: 'analytics_bi', name: 'Analytics & Business Intelligence', weight: 1 },
-          { id: 'ai_mlops', name: 'AI, Machine Learning & MLOps', weight: 1 },
-          { id: 'security_compliance', name: 'Security, Compliance & Privacy', weight: 1 },
-          { id: 'cost_finops', name: 'Cloud Economics & FinOps', weight: 1 }
+          {
+            id: 'platform_governance',
+            name: 'Platform Governance & Operations',
+            description: 'Multi-workspace architecture, IAM federation, lineage catalog & operational SLAs',
+            weight: 1,
+            questions: [
+              { id: 'pg_q1', text: 'Workspace & Environment Isolation Architecture', weight: 1 },
+              { id: 'pg_q2', text: 'Automated Lineage, Cataloging & Governance Controls', weight: 1 }
+            ]
+          },
+          {
+            id: 'data_architecture',
+            name: 'Data Architecture & Management',
+            description: 'Streaming CDC ingestion, open lakehouse storage & automated data quality gates',
+            weight: 1,
+            questions: [
+              { id: 'da_q1', text: 'Medallion Lakehouse & Open Table Format Standardization', weight: 1 },
+              { id: 'da_q2', text: 'Real-Time Streaming Ingestion & Automated Quality Gates', weight: 1 }
+            ]
+          },
+          {
+            id: 'analytics_bi',
+            name: 'Analytics & Business Intelligence',
+            description: 'Serverless SQL concurrency, governed semantic layer & self-service BI democratization',
+            weight: 1,
+            questions: [
+              { id: 'ab_q1', text: 'Serverless SQL Warehouse & Sub-Second BI Concurrency', weight: 1 },
+              { id: 'ab_q2', text: 'Enterprise Semantic Layer & Certified Metric Governance', weight: 1 }
+            ]
+          },
+          {
+            id: 'ai_mlops',
+            name: 'AI, Machine Learning & MLOps',
+            description: 'Model registry, feature store, GenAI RAG pipelines & continuous evaluation',
+            weight: 1,
+            questions: [
+              { id: 'am_q1', text: 'Unified Model Registry, Feature Store & Automated Retraining', weight: 1 },
+              { id: 'am_q2', text: 'Production GenAI RAG Grounding & LLM Evaluation Harness', weight: 1 }
+            ]
+          },
+          {
+            id: 'security_compliance',
+            name: 'Security, Compliance & Privacy',
+            description: 'Row/column masking, CMEK encryption, PII tokenization & audit logging',
+            weight: 1,
+            questions: [
+              { id: 'sc_q1', text: 'Fine-Grained ABAC, Row/Column Masking & PII Tokenization', weight: 1 },
+              { id: 'sc_q2', text: 'Zero-Trust Network Perimeter, CMEK & Continuous Audit Logs', weight: 1 }
+            ]
+          },
+          {
+            id: 'cost_finops',
+            name: 'Cloud Economics & FinOps',
+            description: 'Unit economics telemetry, workload chargeback, commitments & idle autoscaling',
+            weight: 1,
+            questions: [
+              { id: 'cf_q1', text: 'Automated Chargeback Attribution & Unit Cost Telemetry', weight: 1 },
+              { id: 'cf_q2', text: 'Serverless Autoscaling, Spot/Commitment Rate Optimization', weight: 1 }
+            ]
+          }
         ]
       };
-      const flagshipScores = {
-        overallScore: 2.7,
-        dimensionScores: {
-          platform_governance: { score: 2.5, maturityLevel: 'Developing' },
-          data_architecture: { score: 2.8, maturityLevel: 'Developing' },
-          analytics_bi: { score: 3.1, maturityLevel: 'Defined' },
-          ai_mlops: { score: 2.2, maturityLevel: 'Developing' },
-          security_compliance: { score: 3.0, maturityLevel: 'Defined' },
-          cost_finops: { score: 2.6, maturityLevel: 'Developing' }
-        },
-        maturityLevel: 'Developing',
-        maxScore: 5.0
+      const flagshipResponses = {
+        pg_q1: 2.5, pg_q1_current_state: 2.5, pg_q1_future_state: 4.4,
+        pg_q2: 2.5, pg_q2_current_state: 2.5, pg_q2_future_state: 4.2,
+        da_q1: 2.8, da_q1_current_state: 2.8, da_q1_future_state: 4.5,
+        da_q2: 2.8, da_q2_current_state: 2.8, da_q2_future_state: 4.5,
+        ab_q1: 3.1, ab_q1_current_state: 3.1, ab_q1_future_state: 4.6,
+        ab_q2: 3.1, ab_q2_current_state: 3.1, ab_q2_future_state: 4.6,
+        am_q1: 2.2, am_q1_current_state: 2.2, am_q1_future_state: 4.3,
+        am_q2: 2.2, am_q2_current_state: 2.2, am_q2_future_state: 4.3,
+        sc_q1: 3.0, sc_q1_current_state: 3.0, sc_q1_future_state: 4.7,
+        sc_q2: 3.0, sc_q2_current_state: 3.0, sc_q2_future_state: 4.7,
+        cf_q1: 2.6, cf_q1_current_state: 2.6, cf_q1_future_state: 4.4,
+        cf_q2: 2.6, cf_q2_current_state: 2.6, cf_q2_future_state: 4.4
       };
+      const flagshipScores = dynamicEngine.calculateScores(flagshipResponses, flagshipFramework);
       const flagshipMetadata = {
         customerName: 'ConnectPlus Telecom Global',
         useCase: 'Enterprise Data & AI Maturity Modernization',
-        responses: {}
+        responses: flagshipResponses
       };
       const flagshipReport = dynamicEngine._generateDeterministicReportFallback(
         flagshipFramework,
@@ -3017,9 +3073,10 @@ class CustomAssessmentRepository {
         useCase: 'Enterprise Data & AI Platform Modernization',
         contactEmail: 'cio@connectplus.telecom',
         frameworkSnapshot: flagshipFramework,
-        responses: {},
+        responses: flagshipResponses,
         scores: flagshipScores.dimensionScores,
         totalScore: flagshipScores.overallScore,
+        overallScore: flagshipScores.overallScore,
         maxScore: flagshipScores.maxScore,
         maturityLevel: flagshipScores.maturityLevel,
         status: 'completed',

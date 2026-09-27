@@ -23,16 +23,16 @@ class OpenAIContentGenerator {
   }
 
   /**
-   * Generate complete assessment results using Gemini (gemini-3.7-flash) or OpenAI
+   * Generate complete assessment results using Gemini (gemini-3.8-flash) or OpenAI
    * @param {object} assessment - Full assessment object with responses
    * @param {string} pillarId - Optional: specific pillar to generate results for
    * @returns {object} Complete results structure
    */
   async generateAssessmentContent(assessment, pillarId = null) {
-    // 🌟 1. Primary: Use Google Gemini (gemini-3.7-flash) if available
+    // 🌟 1. Primary: Use Google Gemini (gemini-3.8-flash) if available
     if (geminiService.isAvailable()) {
       try {
-        console.log(`🤖 Generating ${pillarId ? 'pillar' : 'overall'} content with Gemini (gemini-3.7-flash) for assessment ${assessment.id}`);
+        console.log(`🤖 Generating ${pillarId ? 'pillar' : 'overall'} content with Gemini (gemini-3.8-flash) for assessment ${assessment.id}`);
         const prompt = pillarId 
           ? this.buildPillarPrompt(assessment, pillarId)
           : this.buildOverallPrompt(assessment);
@@ -59,7 +59,7 @@ class OpenAIContentGenerator {
             ? this.formatPillarResults(parsed, assessment, pillarId)
             : this.formatOverallResults(parsed, assessment);
           formatted.source = 'gemini';
-          formatted.model = result.modelUsed;
+          formatted.model = result.modelUsed || 'gemini-3.8-flash';
           formatted.generatedAt = new Date().toISOString();
           return formatted;
         }

@@ -43,6 +43,7 @@ const GenAIReadinessReport = () => {
   const [framework, setFramework] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('');
+  const [aiSynthesis, setAiSynthesis] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -60,6 +61,15 @@ const GenAIReadinessReport = () => {
         setActiveTab(frameworkRes.data.dimensions[0].id);
       }
       setLoading(false);
+
+      // Asynchronously fetch Live Gemini 3.8 Flash synthesis for dimension recommendations & summary
+      axios.post(`/api/genai-readiness/assessments/${id}/ai-synthesis`)
+        .then(res => {
+          if (res.data?.aiSynthesis) {
+            setAiSynthesis(res.data.aiSynthesis);
+          }
+        })
+        .catch(err => console.warn('Live Gemini 3.8 Flash synthesis fallback:', err.message));
     } catch (error) {
       console.error('Error loading data:', error);
       setLoading(false);
@@ -67,6 +77,9 @@ const GenAIReadinessReport = () => {
   };
 
   const getRecommendations = (dimensionId, score, maxScore) => {
+    if (aiSynthesis?.dimensionRecommendations?.[dimensionId]?.length > 0) {
+      return aiSynthesis.dimensionRecommendations[dimensionId];
+    }
     if (!framework) return [];
     
     const percentage = (score / maxScore) * 100;

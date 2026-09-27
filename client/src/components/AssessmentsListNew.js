@@ -1305,29 +1305,24 @@ const AssessmentsListNew = () => {
             <p>Browse, filter, and manage all maturity assessments in one place.</p>
           </div>
           <div className="right" style={{ display: 'flex', gap: '12px' }}>
-            {assessments.length > 0 && (
-              <button
-                onClick={() => setShowDeleteAllConfirm(true)}
-                style={{
-                  padding: '10px 20px',
-                  background: '#ef4444',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  transition: 'all 0.2s ease'
-                }}
-                onMouseEnter={(e) => e.target.style.background = '#dc2626'}
-                onMouseLeave={(e) => e.target.style.background = '#ef4444'}
-              >
-                <FiTrash2 size={16} />
-                Delete All
-              </button>
-            )}
+            <button
+              onClick={() => navigate('/assessments/compare')}
+              style={{
+                padding: '10px 18px',
+                background: '#eff6ff',
+                color: '#1d4ed8',
+                border: '1px solid #bfdbfe',
+                borderRadius: '8px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              Compare Assessments
+            </button>
             <PrimaryButton
               onClick={() => navigate('/start')}
               whileHover={{ scale: 1.02 }}
@@ -1660,38 +1655,14 @@ const AssessmentsListNew = () => {
                         <div className="title">
                           {assessment.assessment_name || assessment.assessmentName}
                         </div>
-                        <div className="meta">
-                          <div className="meta-item">
-                            <span>🏢</span>
-                            <span>{assessment.organization_name || assessment.organizationName}</span>
-                          </div>
-                          <span>›</span>
-                          <div className="meta-item">
-                            <span>🏭</span>
-                            <span>{assessment.industry}</span>
-                          </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', fontSize: '0.84rem', fontWeight: 600, color: '#334155', marginTop: '6px' }}>
+                          <span>{assessment.organization_name || assessment.organizationName}</span>
+                          {assessment.industry && (
+                            <span style={{ color: '#64748b', fontWeight: 500 }}>• {assessment.industry}</span>
+                          )}
                         </div>
-                        <div className="meta" style={{ marginTop: '8px', fontSize: '0.85rem', color: '#64748b' }}>
-                          <div className="meta-item">
-                            <span>📝</span>
-                            <span>Created by: {assessment.creator_name}</span>
-                          </div>
-                          <span>•</span>
-                          <div className="meta-item">
-                            <span>📅</span>
-                            <span>{formatDateTime(assessment.created_at || assessment.createdAt)}</span>
-                          </div>
-                        </div>
-                        <div className="meta" style={{ marginTop: '4px', fontSize: '0.85rem', color: '#64748b' }}>
-                          <div className="meta-item">
-                            <span>✏️</span>
-                            <span>Updated by: {assessment.creator_name}</span>
-                          </div>
-                          <span>•</span>
-                          <div className="meta-item">
-                            <span>🕐</span>
-                            <span>{formatDateTime(assessment.updated_at || assessment.updatedAt)}</span>
-                          </div>
+                        <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '6px' }}>
+                          Owner: <strong style={{ color: '#475569', fontWeight: 600 }}>{assessment.creator_name || 'Lead Architect'}</strong> • {formatDateTime(assessment.updated_at || assessment.updatedAt || assessment.created_at || assessment.createdAt)}
                         </div>
                       </div>
                     </div>

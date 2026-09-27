@@ -228,14 +228,13 @@ export const saveQuestionResponse = saveProgress;
 export const getAllAssessments = async () => {
   try {
     const response = await api.get('/assessments');
-    // Handle different response structures and ensure we always return an array
-    if (response && response.data) {
-      return Array.isArray(response.data) ? response.data : [];
-    }
+    if (Array.isArray(response)) return response;
+    if (Array.isArray(response?.assessments)) return response.assessments;
+    if (Array.isArray(response?.data)) return response.data;
+    if (Array.isArray(response?.data?.assessments)) return response.data.assessments;
     return [];
   } catch (error) {
     console.error('Error fetching assessments:', error);
-    // Return empty array instead of throwing to prevent UI crash
     return [];
   }
 };

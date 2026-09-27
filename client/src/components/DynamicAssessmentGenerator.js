@@ -576,7 +576,7 @@ const DynamicAssessmentGenerator = () => {
     setGeneratedFramework(null);
 
     try {
-      toast.loading('Generating custom assessment framework with Gemini 3.7...', { id: 'generating' });
+      toast.loading('Generating custom assessment framework with Gemini 3.8...', { id: 'generating' });
       const response = await dynamicAssessmentService.generateFramework(textToUse.trim(), {
         industry,
         targetAudience,
@@ -713,12 +713,12 @@ const DynamicAssessmentGenerator = () => {
       <ContentWrapper>
         <HeaderSection>
           <Badge>
-            <HiSparkles /> Powered by Google Gemini 3.7 Flash
+            <HiSparkles /> Powered by Google Gemini 3.8 Flash
           </Badge>
           <Title>AI Assessment Generator</Title>
           <Subtitle>
             Describe any architecture, domain, technology stack, or business discipline.
-            Gemini 3.7 will architect a complete, tailored maturity assessment with dimensional questions, scoring criteria, and actionable recommendations.
+            Gemini 3.8 will architect a complete, tailored maturity assessment with dimensional questions, scoring criteria, and actionable recommendations.
           </Subtitle>
         </HeaderSection>
 

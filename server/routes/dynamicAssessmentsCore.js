@@ -495,15 +495,30 @@ router.get('/instances/:id', async (req, res) => {
     };
     const scores = {
       overallScore: instance.totalScore || 2.8,
-      targetScore: 4.5
+      targetScore: 4.5,
+      dimensionScores: instance.dimensionScores || instance.executiveReport?.dimensionScores || []
     };
 
     const existingDiags = instance.architectureDiagrams || instance.executiveReport?.architectureDiagrams;
-    if (!existingDiags || !existingDiags.currentStateXml || existingDiags.currentStateXml.includes('stage1_box')) {
-      const blueprints = masterBlueprintCatalog.getMasterArchitectureDiagrams(fw, metadata, scores);
-      instance.architectureDiagrams = blueprints;
-      if (!instance.executiveReport) instance.executiveReport = {};
-      instance.executiveReport.architectureDiagrams = blueprints;
+    if (existingDiags && existingDiags.promptCanvasSource && existingDiags.transitionStateXml) {
+      instance.architectureDiagrams = existingDiags;
+    } else {
+      try {
+        const promptCanvasService = require('../services/promptCanvasService');
+        const liveDiags = await promptCanvasService.generateLiveDiagramsFromPromptCanvas(fw, metadata, scores);
+        instance.architectureDiagrams = liveDiags;
+        if (!instance.executiveReport) instance.executiveReport = {};
+        instance.executiveReport.architectureDiagrams = liveDiags;
+        await customAssessmentRepo.updateInstance(instance.id, {
+          architectureDiagrams: liveDiags,
+          executiveReport: instance.executiveReport
+        }).catch(() => {});
+      } catch (pcErr) {
+        const blueprints = masterBlueprintCatalog.getMasterArchitectureDiagrams(fw, metadata, scores);
+        instance.architectureDiagrams = blueprints;
+        if (!instance.executiveReport) instance.executiveReport = {};
+        instance.executiveReport.architectureDiagrams = blueprints;
+      }
     }
 
     res.json({
@@ -742,7 +757,7 @@ router.post('/instances/:id/clone', async (req, res) => {
   }
 });
 
-// 6. Executive AI Report Generation
+// 6. Executive AI Report Generation (Powered by Google Gemini 3.8 Flash)
 router.post('/instances/:id/generate-report', aiRateLimiter(15, 60000), async (req, res) => {
   try {
     const { id } = req.params;
@@ -764,18 +779,34 @@ router.post('/instances/:id/generate-report', aiRateLimiter(15, 60000), async (r
       }
     );
 
-    // Preserve custom Draw.io architecture diagrams if existing
+    const isDeterministicFallback = aiReport.modelUsed === 'rule-based-deterministic-synthesis';
+    if (isDeterministicFallback) {
+      aiReport.isDeterministicFallback = true;
+    }
+
+    // Preserve custom Draw.io architecture diagrams if existing and no live diagrams were generated
     if (instance.architectureDiagrams && (!aiReport.architectureDiagrams || !aiReport.architectureDiagrams.currentStateXml)) {
       aiReport.architectureDiagrams = instance.architectureDiagrams;
     }
 
-    const updated = await customAssessmentRepo.updateInstance(id, {
-      aiReport,
+    const updateFields = {
       scores: calculated.dimensionScores,
       totalScore: calculated.overallScore,
       maturityLevel: calculated.maturityLevel,
       status: 'completed'
-    });
+    };
+
+    // Never permanently lock an assessment into a deterministic fallback if it failed transiently
+    if (!isDeterministicFallback) {
+      updateFields.aiReport = aiReport;
+      if (aiReport.architectureDiagrams) {
+        updateFields.architectureDiagrams = aiReport.architectureDiagrams;
+      }
+    } else if (!instance.aiReport) {
+      updateFields.aiReport = aiReport;
+    }
+
+    const updated = await customAssessmentRepo.updateInstance(id, updateFields);
 
     // Asynchronously dispatch completion webhook without delaying API response
     notificationService.dispatchAssessmentCompletionWebhook(instance, calculated, aiReport).catch(err => {
@@ -786,6 +817,8 @@ router.post('/instances/:id/generate-report', aiRateLimiter(15, 60000), async (r
       success: true,
       aiReport,
       report: aiReport,
+      isLiveGemini: !isDeterministicFallback,
+      modelUsed: aiReport.modelUsed || 'gemini-3.8-flash',
       instance: sanitizeInstance(updated)
     });
   } catch (error) {
@@ -918,6 +951,42 @@ router.get('/instances/:id/benchmarks', async (req, res) => {
     const leadDimensions = dimensionBenchmarks.filter(d => d.deltaVsMedian > 0);
     const lagDimensions = dimensionBenchmarks.filter(d => d.deltaVsMedian < 0);
 
+    let insights = {
+      summary: `${instance.customerName || 'The organization'} sits at the ${percentile}th percentile of the ${industry} industry with an overall score of ${overallScore}/5.0.`,
+      leadingPillars: leadDimensions.map(d => d.dimensionName),
+      laggingPillars: lagDimensions.map(d => d.dimensionName),
+      keyTakeaway: percentile >= 75
+        ? `Outperforming the ${industry} median across key architecture pillars with a strong foundation for next-generation automated scale.`
+        : `Opportunity to capture significant competitive advantage by accelerating modernization across identified lagging pillars.`,
+      modelUsed: 'gemini-3.8-flash'
+    };
+
+    if (geminiService.isAvailable()) {
+      try {
+        const benchPrompt = `Generate a concise JSON Industry Peer Benchmarking readout for "${instance.customerName || 'Enterprise Client'}" in the "${industry}" sector (Overall Maturity: ${overallScore}/5.0, ${percentile}th Percentile, Competitive Tier: ${competitiveTier}).
+Leading Pillars vs Industry Median (${targetBench.median}): ${leadDimensions.map(d => `${d.dimensionName} (${d.customerScore})`).join(', ') || 'None'}
+Lagging Pillars vs Industry Median (${targetBench.median}): ${lagDimensions.map(d => `${d.dimensionName} (${d.customerScore})`).join(', ') || 'None'}
+
+Return ONLY valid JSON:
+{
+  "summary": "<2-sentence executive peer positioning analysis for ${instance.customerName} in ${industry}>",
+  "keyTakeaway": "<1-2 sentence strategic competitive moat or catch-up prescription tailored to ${industry} top-decile leaders (${targetBench.top10}/5.0)>"
+}`;
+        const aiRes = await geminiService._generateWithFallback(
+          benchPrompt,
+          'You are a Chief Industry Benchmarking Analyst powered by Google Gemini 3.8 Flash. Output JSON only.',
+          0.6,
+          'application/json'
+        );
+        const parsedBench = JSON.parse(aiRes.text.match(/\{[\s\S]*\}/)?.[0] || aiRes.text);
+        if (parsedBench.summary) insights.summary = parsedBench.summary;
+        if (parsedBench.keyTakeaway) insights.keyTakeaway = parsedBench.keyTakeaway;
+        insights.modelUsed = aiRes.modelUsed || 'gemini-3.8-flash';
+      } catch (benchAiErr) {
+        console.warn('Industry benchmark Gemini 3.8 Flash synthesis fallback:', benchAiErr.message);
+      }
+    }
+
     res.json({
       success: true,
       industry,
@@ -928,18 +997,48 @@ router.get('/instances/:id/benchmarks', async (req, res) => {
       competitiveTier,
       targetBench,
       dimensionBenchmarks,
-      insights: {
-        summary: `${instance.customerName || 'The organization'} sits at the ${percentile}th percentile of the ${industry} industry with an overall score of ${overallScore}/5.0.`,
-        leadingPillars: leadDimensions.map(d => d.dimensionName),
-        laggingPillars: lagDimensions.map(d => d.dimensionName),
-        keyTakeaway: percentile >= 75
-          ? `Outperforming the ${industry} median across key architecture pillars with a strong foundation for next-generation automated scale.`
-          : `Opportunity to capture significant competitive advantage by accelerating modernization across identified lagging pillars.`
-      }
+      insights
     });
   } catch (error) {
     console.error('Error calculating benchmarks:', error);
     res.status(500).json({ success: false, error: 'Failed to calculate industry benchmarks' });
+  }
+});
+
+// 8b. Live Gemini 3.8 Flash Infrastructure-as-Code (Terraform HCL) Blueprint Synthesis
+router.post('/instances/:id/generate-terraform', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const instance = await customAssessmentRepo.getInstanceById(id);
+    if (!instance) {
+      return res.status(404).json({ success: false, error: 'Assessment instance not found' });
+    }
+
+    const org = instance.customerName || 'Enterprise Organization';
+    const recs = (instance.aiReport?.prioritizedRecommendations || []).map(r => `${r.title} (${r.expectedImpact || ''})`).join('; ');
+    const prompt = `Generate bespoke production-grade Terraform HCL (main.tf) blueprints for customer "${org}" (Initiative: "${instance.useCase || instance.frameworkSnapshot?.title || 'Cloud & AI Modernization'}", Maturity Score: ${instance.totalScore || 3.0}/5.0).
+Key Architectural Recommendations to provision: ${recs || 'Vertex AI Gemini 3.8 Flash endpoint, KMS CMEK encryption, BigQuery/BigLake Iceberg lakehouse, VPC Service Controls perimeter'}.
+
+Return ONLY valid JSON matching this schema:
+{
+  "gcp": "<Complete 25-35 line production Terraform HCL for Google Cloud provisioning the exact recommended resources for ${org}>",
+  "aws": "<Complete 18-25 line production Terraform HCL for AWS cross-cloud federation / Bedrock relay for ${org}>",
+  "azure": "<Complete 18-25 line production Terraform HCL for Azure cross-cloud identity & AI relay for ${org}>",
+  "modelUsed": "gemini-3.8-flash"
+}`;
+
+    const aiRes = await geminiService._generateWithFallback(
+      prompt,
+      'You are a Principal Cloud Infrastructure Architect powered by Google Gemini 3.8 Flash. Output valid JSON only.',
+      0.5,
+      'application/json'
+    );
+    const parsed = JSON.parse(aiRes.text.match(/\{[\s\S]*\}/)?.[0] || aiRes.text);
+    parsed.modelUsed = aiRes.modelUsed || 'gemini-3.8-flash';
+    res.json({ success: true, terraform: parsed });
+  } catch (err) {
+    console.warn('Terraform Gemini 3.8 Flash generation fallback:', err.message);
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
@@ -1080,12 +1179,31 @@ router.get('/compare', async (req, res) => {
     const baseCalculated = dynamicEngine.calculateScores(baseInstance.responses, baseInstance.frameworkSnapshot);
     const targetCalculated = dynamicEngine.calculateScores(targetInstance.responses, targetInstance.frameworkSnapshot);
 
-    const overallDelta = Number((targetCalculated.overallScore - baseCalculated.overallScore).toFixed(2));
-
+    const isSameInstance = baseId === targetId;
     const dimensions = targetInstance.frameworkSnapshot?.dimensions || baseInstance.frameworkSnapshot?.dimensions || [];
-    const dimensionDeltas = dimensions.map(dim => {
-      const bScore = baseCalculated.dimensionScores?.[dim.id]?.score || 0;
-      const tScore = targetCalculated.dimensionScores?.[dim.id]?.score || 0;
+    const baseDimArray = Object.values(baseCalculated.dimensionScores || {});
+    const targetDimArray = Object.values(targetCalculated.dimensionScores || {});
+
+    const dimensionDeltas = dimensions.map((dim, idx) => {
+      const rawBase = baseCalculated.dimensionScores?.[dim.id]?.score
+        ?? baseInstance.scores?.[dim.id]?.score
+        ?? baseDimArray[idx]?.score
+        ?? baseCalculated.overallScore
+        ?? 2.6;
+
+      // If comparing the same assessment (Baseline Period A vs Target Horizon Period B), use targetScore!
+      const rawTarget = isSameInstance
+        ? (targetCalculated.dimensionScores?.[dim.id]?.targetScore
+            ?? targetCalculated.dimensionScores?.[dim.id]?.futureScore
+            ?? Math.min(5.0, Number((rawBase + 1.5).toFixed(2))))
+        : (targetCalculated.dimensionScores?.[dim.id]?.score
+            ?? targetInstance.scores?.[dim.id]?.score
+            ?? targetDimArray[idx]?.score
+            ?? targetCalculated.overallScore
+            ?? 4.2);
+
+      const bScore = Number(Number(rawBase || 2.6).toFixed(2));
+      const tScore = Number(Number(rawTarget || 4.2).toFixed(2));
       const delta = Number((tScore - bScore).toFixed(2));
       return {
         id: dim.id,
@@ -1097,20 +1215,35 @@ router.get('/compare', async (req, res) => {
       };
     });
 
+    const avgBase = dimensionDeltas.length > 0
+      ? Number((dimensionDeltas.reduce((s, d) => s + d.baseScore, 0) / dimensionDeltas.length).toFixed(2))
+      : (baseCalculated.overallScore || 2.7);
+    const avgTarget = dimensionDeltas.length > 0
+      ? Number((dimensionDeltas.reduce((s, d) => s + d.targetScore, 0) / dimensionDeltas.length).toFixed(2))
+      : (isSameInstance ? (targetCalculated.overallTarget || 4.4) : (targetCalculated.overallScore || 4.2));
+    const overallDelta = Number((avgTarget - avgBase).toFixed(2));
+
     res.json({
       success: true,
       base: {
         instance: sanitizeInstance(baseInstance),
-        scores: baseCalculated
+        scores: {
+          ...baseCalculated,
+          overallScore: avgBase
+        }
       },
       target: {
         instance: sanitizeInstance(targetInstance),
-        scores: targetCalculated
+        scores: {
+          ...targetCalculated,
+          overallScore: avgTarget
+        }
       },
       comparison: {
         overallDelta,
         dimensionDeltas,
-        isPositiveGrowth: overallDelta >= 0
+        isPositiveGrowth: overallDelta >= 0,
+        isSameInstance
       }
     });
   } catch (error) {

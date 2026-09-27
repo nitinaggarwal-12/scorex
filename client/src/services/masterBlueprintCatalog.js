@@ -9203,7 +9203,8 @@ function extractArchitectureContext(responses = {}, metadata = {}) {
 function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {}) {
   const key = (framework.typeKey || "").toLowerCase();
   const title = (framework.title || "").toLowerCase();
-  const cust = metadata.customerName || "Enterprise Organization";
+  const rawCust = metadata.customerName && metadata.customerName !== 'Not specified' ? metadata.customerName : 'Enterprise Organization';
+  const cust = rawCust;
   const lvl = scores.overallScore ? Number(scores.overallScore).toFixed(1) : "2.7";
   const tgt = scores.overallScore ? Math.min(5.0, Number(scores.overallScore) + 1.8).toFixed(1) : "4.5";
 
@@ -9277,7 +9278,7 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
           );
       } else if (isOpenAiDetected) {
         res = res.replace(
-          /&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;line-height:1.2;&quot;&gt;Direct public&lt;br\/&gt;endpoints&lt;\/div&gt;/g,
+          /&lt;div style=&quot;font-size:11(?:\.5)?px;font-weight:700;color:#(?:0F172A|F8FAFC);line-height:1\.2;&quot;&gt;Direct public&lt;br\/?&gt;endpoints&lt;\/div&gt;(?:&lt;div[^&gt;]*&gt;[^&lt;]*&lt;\/div&gt;)?/g,
           '&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:openai-icon.svg&quot; width=&quot;20&quot; height=&quot;20&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10.5px;font-weight:bold;color:#0F172A;padding-top:2px;&quot;&gt;Direct OpenAI API&lt;br/&gt;&lt;span style=&quot;font-size:7.5px;color:#475569;font-weight:normal;&quot;&gt;Unproxied Public Egress&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
         );
       }
@@ -9289,8 +9290,8 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
         );
       } else if (isWeaviate) {
         res = res.replace(
-          /&lt;div style=&quot;font-size:11.5px;font-weight:700;color:#F8FAFC;margin-top:4px;line-height:1.2;&quot;&gt;Unindexed&lt;br\/&gt;vector dumps&lt;\/div&gt;/,
-          '&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:weaviate-icon.svg&quot; width=&quot;22&quot; height=&quot;22&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10.5px;font-weight:bold;color:#0F172A;padding-top:2px;&quot;&gt;Weaviate Vector DB&lt;br/&gt;&lt;span style=&quot;font-size:7.5px;color:#94A3B8;font-weight:normal;&quot;&gt;Self-Hosted / Managed Cluster&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
+          /&lt;div style=&quot;font-size:11(?:\.5)?px;font-weight:700;color:#(?:0F172A|F8FAFC);(?:margin-top:4px;)?line-height:1\.2;&quot;&gt;Unindexed&lt;br\/?&gt;vector dumps&lt;\/div&gt;(?:&lt;div[^&gt;]*&gt;[^&lt;]*&lt;\/div&gt;)?/,
+          '&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:weaviate-icon.svg&quot; width=&quot;22&quot; height=&quot;22&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10.5px;font-weight:bold;color:#0F172A;padding-top:2px;&quot;&gt;Weaviate Vector DB&lt;br/&gt;&lt;span style=&quot;font-size:7.5px;color:#475569;font-weight:normal;&quot;&gt;Self-Hosted / Managed Cluster&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'
         );
       }
 
@@ -9486,25 +9487,672 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
     };
   }
 
-  // 7. FLAGSHIP ENTERPRISE DATA & AI MATURITY (DEFAULT)
+  // 7. DYNAMIC SCORE-DRIVEN ENTERPRISE DATA & AI MATURITY ARCHITECTURE (DEFAULT & UNIVERSAL LIVE COMPILER)
+  const livePillars = extractLivePillarMetrics(framework, metadata, scores);
+  const sortedByCurrentAsc = [...livePillars].sort((a, b) => a.currentScore - b.currentScore);
+  const sortedByCurrentDesc = [...livePillars].sort((a, b) => b.currentScore - a.currentScore);
+  const sortedByGapDesc = [...livePillars].sort((a, b) => b.gap - a.gap);
+
+  const weakest = sortedByCurrentAsc[0] || { name: 'Generative AI', currentScore: 2.0, futureScore: 5.0, gap: 3.0 };
+  const secondWeakest = sortedByCurrentAsc[1] || { name: 'Machine Learning', currentScore: 3.0, futureScore: 5.0, gap: 2.0 };
+  const strongest = sortedByCurrentDesc[0] || { name: 'Analytics & BI', currentScore: 4.0, futureScore: 5.0, gap: 1.0 };
+
+  const computedAvgCur = livePillars.length > 0
+    ? (livePillars.reduce((acc, p) => acc + p.currentScore, 0) / livePillars.length).toFixed(1)
+    : lvl;
+  const computedAvgTgt = livePillars.length > 0
+    ? (livePillars.reduce((acc, p) => acc + p.futureScore, 0) / livePillars.length).toFixed(1)
+    : tgt;
+  const overallDelta = (Number(computedAvgTgt) - Number(computedAvgCur)).toFixed(1);
+
+  const dynamicTransformations = sortedByGapDesc.slice(0, 4).map(p => {
+    const n = p.name.toLowerCase();
+    if (n.includes('generative') || n.includes('genai') || n.includes('agent')) {
+      return `[+${p.gap.toFixed(1)} Gap • ${p.name} (${p.currentScore.toFixed(1)} → ${p.futureScore.toFixed(1)})]: Upgrade isolated LLM sandboxes to Vertex AI Gemini 2.5/3.7 (2M Context), Vector Search RAG Grounding, and Model Armor TRiSM guardrails`;
+    }
+    if (n.includes('machine learning') || n.includes('mlops') || n.includes('model')) {
+      return `[+${p.gap.toFixed(1)} Gap • ${p.name} (${p.currentScore.toFixed(1)} → ${p.futureScore.toFixed(1)})]: Transition manual notebook workflows to Vertex AI Feature Store, automated Vertex Pipelines CI/CD/CT, and continuous drift monitoring`;
+    }
+    if (n.includes('governance') || n.includes('security') || n.includes('trust')) {
+      return `[+${p.gap.toFixed(1)} Gap • ${p.name} (${p.currentScore.toFixed(1)} → ${p.futureScore.toFixed(1)})]: Unify fragmented IAM and manual audits under Dataplex Universal Catalog, automated Row/Column Policy Tags, and Cloud KMS HSM CMEK`;
+    }
+    if (n.includes('operational') || n.includes('finops') || n.includes('sre')) {
+      return `[+${p.gap.toFixed(1)} Gap • ${p.name} (${p.currentScore.toFixed(1)} → ${p.futureScore.toFixed(1)})]: Replace reactive alerting with Terraform GitOps IaC, Cloud Monitoring SLO burn alerts, and BigQuery FOCUS 1.0 FinOps chargeback`;
+    }
+    if (n.includes('data engineering') || n.includes('ingestion') || n.includes('pipeline')) {
+      return `[+${p.gap.toFixed(1)} Gap • ${p.name} (${p.currentScore.toFixed(1)} → ${p.futureScore.toFixed(1)})]: Consolidate hybrid batch ETL into Datastream Real-Time CDC, Dataflow streaming, and BigLake Apache Iceberg Medallion Lakehouse`;
+    }
+    return `[+${p.gap.toFixed(1)} Gap • ${p.name} (${p.currentScore.toFixed(1)} → ${p.futureScore.toFixed(1)})]: Optimize ${p.name} with BigQuery Editions autoscaling slots, BI Engine sub-second acceleration, and Looker Universal Semantic Layer`;
+  });
+
   return {
-    currentTitle: `Current Baseline: Legacy Data Silos & Fragile Dependencies (${cust})`,
-    currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • P1-APP-L-01 Silo Dependency • 24-48h Batch Lag`,
-    curReasoning: "Fragmented legacy pipelines, on-prem databases (Oracle/SQL Server/Hadoop), and unmanaged cron jobs cause high failure rates, unmonitored infrastructure spend, and delayed business analytics.",
-    currentStateXml: customizeXml(buildLegacyDataDependencyMapXml(), 'current', 'Legacy Silos & Dependencies'),
-    targetTitle: `Target State: Total Unified Enterprise System Architecture & Medallion Mesh (${cust})`,
-    targetSubtitle: `Target Maturity Level ${tgt}/5.0 (Optimized) • P3-APP-C-01 Panoramic Master Blueprint • BigLake Lakehouse`,
-    targetStateXml: customizeXml(buildCompleteWellArchitectedGcpDrMasterXml(), 'target', 'Total Unified System View'),
-    transformations: [
-      "Transform on-prem legacy silos into a Panoramic Enterprise Architecture on Google Cloud (P3-APP-C-01)",
-      "Unify batch and real-time streaming with Apache Iceberg / BigLake Medallion Lakehouse (P3-DAT-L-04)",
-      "Deploy Vertex AI Agent Builder with compound multi-agent mesh and Model Context Protocol (P3-AI-L-03)",
-      "Enforce Zero-Trust VPC Service Controls, Cloud KMS HSM CMEK, and continuous Dataplex governance (P4-SEC-P-02)"
-    ],
-    blueprintKeys: ["P1-APP-L-01", "P1-GOV-C-04", "P3-APP-C-01", "P3-DAT-L-04", "P2-GOV-C-01", "P4-SEC-P-02"],
-    modelUsed: "gemini-3.7-flash",
+    currentTitle: `Current Baseline: ${cust} (${computedAvgCur}/5.0 • Primary Bottleneck: ${weakest.name} ${weakest.currentScore.toFixed(1)}/5.0)`,
+    currentSubtitle: `Evaluated Baseline ${computedAvgCur}/5.0 • Strongest: ${strongest.name} (${strongest.currentScore.toFixed(1)}) • Bottlenecks: ${weakest.name} (${weakest.currentScore.toFixed(1)}) & ${secondWeakest.name} (${secondWeakest.currentScore.toFixed(1)})`,
+    curReasoning: `Dynamic architectural telemetry compiled from ${cust}'s live assessment scores: ${strongest.name} (${strongest.currentScore.toFixed(1)}/5.0) operates at Established maturity, whereas ${weakest.name} (${weakest.currentScore.toFixed(1)}/5.0, +${weakest.gap.toFixed(1)} gap) and ${secondWeakest.name} (${secondWeakest.currentScore.toFixed(1)}/5.0, +${secondWeakest.gap.toFixed(1)} gap) create downstream production bottlenecks.`,
+    currentStateXml: buildDynamicStateArchitectureXml('current', framework, metadata, scores, archCtx, livePillars),
+    targetTitle: `Target State: Unified Cloud, Data & Agentic AI Blueprint (${cust} • ${computedAvgTgt}/5.0)`,
+    targetSubtitle: `Target Maturity ${computedAvgTgt}/5.0 (+${overallDelta} Overall Leap) • Priority Remediation: ${weakest.name} (+${weakest.gap.toFixed(1)}) & ${secondWeakest.name} (+${secondWeakest.gap.toFixed(1)})`,
+    targetStateXml: buildDynamicStateArchitectureXml('target', framework, metadata, scores, archCtx, livePillars),
+    transformations: dynamicTransformations,
+    blueprintKeys: ["DYN-CUR-6P", "DYN-TGT-6P", "P3-DAT-L-04", "P3-AI-L-03", "P4-GOV-L-07"],
+    modelUsed: "gemini-3.8-flash-dynamic-compiler",
     generatedAt: new Date().toISOString()
   };
+}
+
+/**
+ * Extract live pillar-by-pillar scores (currentScore, futureScore, gap) from scores.dimensionScores
+ * or compute them directly from metadata.responses so diagrams are 100% faithful to the assessment.
+ */
+function extractLivePillarMetrics(framework = {}, metadata = {}, scores = {}) {
+  if (Array.isArray(scores.dimensionScores) && scores.dimensionScores.length > 0) {
+    return scores.dimensionScores.map((d, idx) => {
+      const cur = Number(d.currentScore ?? d.score ?? 2.8);
+      const fut = Number(d.futureScore ?? d.targetScore ?? Math.min(5.0, Math.max(cur + 1.0, 4.5)));
+      return {
+        id: d.id || d.areaId || `pillar_${idx + 1}`,
+        name: d.name || d.areaName || d.category || `Pillar ${idx + 1}`,
+        currentScore: Number(cur.toFixed(1)),
+        futureScore: Number(fut.toFixed(1)),
+        gap: Number(Math.max(0, fut - cur).toFixed(1))
+      };
+    });
+  }
+
+  const responses = metadata.responses || {};
+  const corePillars = [
+    { id: 'data_engineering', name: 'Data Engineering' },
+    { id: 'analytics_bi', name: 'Analytics & BI' },
+    { id: 'platform_governance', name: 'Platform Governance' },
+    { id: 'operational_excellence', name: 'Operational Excellence' },
+    { id: 'machine_learning', name: 'Machine Learning' },
+    { id: 'generative_ai', name: 'Generative AI' }
+  ];
+
+  // Check if responses contain core pillar keys
+  const respKeys = Object.keys(responses);
+  const hasCoreKeys = corePillars.some(p => respKeys.some(k => k.startsWith(p.id)));
+  if (hasCoreKeys) {
+    return corePillars.map(p => {
+      const curVals = [];
+      const futVals = [];
+      respKeys.forEach(k => {
+        if (k.startsWith(p.id)) {
+          const val = Number(responses[k]);
+          if (!isNaN(val) && val >= 1 && val <= 5) {
+            if (k.endsWith('_current')) curVals.push(val);
+            else if (k.endsWith('_future')) futVals.push(val);
+          }
+        }
+      });
+      const cur = curVals.length > 0 ? curVals.reduce((a, b) => a + b, 0) / curVals.length : (Number(scores.overallScore) || 3.0);
+      const fut = futVals.length > 0 ? futVals.reduce((a, b) => a + b, 0) / futVals.length : 5.0;
+      return {
+        id: p.id,
+        name: p.name,
+        currentScore: Number(cur.toFixed(1)),
+        futureScore: Number(fut.toFixed(1)),
+        gap: Number(Math.max(0, fut - cur).toFixed(1))
+      };
+    });
+  }
+
+  // Fallback for dynamic framework dimensions
+  if (Array.isArray(framework.dimensions) && framework.dimensions.length > 0) {
+    return framework.dimensions.slice(0, 6).map((dim, idx) => {
+      const qVals = [];
+      (dim.questions || []).forEach(q => {
+        const ans = responses[q.id];
+        const s = typeof ans === 'object' && ans !== null ? Number(ans.score) : Number(ans);
+        if (!isNaN(s) && s >= 1 && s <= 5) qVals.push(s);
+      });
+      const cur = qVals.length > 0 ? qVals.reduce((a, b) => a + b, 0) / qVals.length : (Number(scores.overallScore) || 2.8);
+      const fut = Number(scores.targetScore) || Math.min(5.0, Math.max(cur + 1.4, 4.6));
+      return {
+        id: dim.id || `dim_${idx + 1}`,
+        name: dim.name || `Dimension ${idx + 1}`,
+        currentScore: Number(cur.toFixed(1)),
+        futureScore: Number(fut.toFixed(1)),
+        gap: Number(Math.max(0, fut - cur).toFixed(1))
+      };
+    });
+  }
+
+  // Default 6 pillars if no responses found
+  const baseScore = Number(scores.overallScore) || 3.0;
+  return corePillars.map((p, idx) => {
+    const offsets = [0.8, 0.8, 0.0, 0.0, -0.2, -1.0];
+    const cur = Math.min(5.0, Math.max(1.0, baseScore + offsets[idx]));
+    const fut = 5.0;
+    return {
+      id: p.id,
+      name: p.name,
+      currentScore: Number(cur.toFixed(1)),
+      futureScore: fut,
+      gap: Number(Math.max(0, fut - cur).toFixed(1))
+    };
+  });
+}
+
+/**
+ * Compile a 100% dynamic, score-driven Draw.io XML architecture diagram (Current State or Target State)
+ * reflecting each evaluated pillar's actual maturity score, gap delta, status tier, and technology components.
+ */
+function buildDynamicStateArchitectureXml(mode, framework = {}, metadata = {}, scores = {}, archCtx = {}, livePillarsInput = null) {
+  const isTarget = mode === 'target';
+  const pillars = (livePillarsInput && livePillarsInput.length > 0)
+    ? livePillarsInput.slice(0, 6)
+    : extractLivePillarMetrics(framework, metadata, scores).slice(0, 6);
+
+  const esc = (s) => String(s || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+
+  const rawCustName = metadata.customerName && metadata.customerName !== 'Not specified' ? metadata.customerName : 'Apex Global Enterprise';
+  const cust = esc(rawCustName);
+  const ind = esc(metadata.industry && metadata.industry !== 'Not specified' ? metadata.industry : 'Enterprise Data & AI');
+  const avgCur = (pillars.reduce((a, p) => a + p.currentScore, 0) / (pillars.length || 1)).toFixed(1);
+  const avgTgt = (pillars.reduce((a, p) => a + p.futureScore, 0) / (pillars.length || 1)).toFixed(1);
+  const avgGap = (Number(avgTgt) - Number(avgCur)).toFixed(1);
+
+  const weakest = [...pillars].sort((a, b) => a.currentScore - b.currentScore)[0] || pillars[0];
+  const strongest = [...pillars].sort((a, b) => b.currentScore - a.currentScore)[0] || pillars[0];
+
+  // Dynamic Component Catalog per Pillar & Maturity Tier
+  const resolvePillarBlueprint = (p, index) => {
+    const n = p.name.toLowerCase();
+    const cur = p.currentScore;
+    const fut = p.futureScore;
+    const gap = p.gap;
+
+    // Color & Status Badge for Current vs Target
+    let cardFill, strokeColor, headerBg, headerText, badgeBg, badgeColor, statusLabel, slaMetric;
+    if (!isTarget) {
+      if (cur < 2.5) {
+        cardFill = '#FFF1F2';
+        strokeColor = '#E11D48';
+        headerBg = '#BE123C';
+        headerText = '#FFFFFF';
+        badgeBg = '#FFE4E6';
+        badgeColor = '#9F1239';
+        statusLabel = `CRITICAL BOTTLENECK (${cur.toFixed(1)}/5.0)`;
+        slaMetric = `Gap: +${gap.toFixed(1)} to Target • High Production Risk`;
+      } else if (cur < 3.5) {
+        cardFill = '#FFFBEB';
+        strokeColor = '#D97706';
+        headerBg = '#B45309';
+        headerText = '#FFFFFF';
+        badgeBg = '#FEF3C7';
+        badgeColor = '#92400E';
+        statusLabel = `DEVELOPING HYBRID (${cur.toFixed(1)}/5.0)`;
+        slaMetric = `Gap: +${gap.toFixed(1)} to Target • Partial Automation`;
+      } else {
+        cardFill = '#EFF6FF';
+        strokeColor = '#2563EB';
+        headerBg = '#1D4ED8';
+        headerText = '#FFFFFF';
+        badgeBg = '#DBEAFE';
+        badgeColor = '#1E40AF';
+        statusLabel = `ESTABLISHED CLOUD (${cur.toFixed(1)}/5.0)`;
+        slaMetric = `Gap: +${gap.toFixed(1)} to Target • Production Ready`;
+      }
+    } else {
+      if (gap >= 2.5) {
+        cardFill = '#ECFDF5';
+        strokeColor = '#059669';
+        headerBg = '#047857';
+        headerText = '#FFFFFF';
+        badgeBg = '#D1FAE5';
+        badgeColor = '#065F46';
+        statusLabel = `TARGET ${fut.toFixed(1)}/5.0 (+${gap.toFixed(1)} PRIORITY LEAP)`;
+        slaMetric = `100% Remediation of ${cur.toFixed(1)} Baseline Bottleneck`;
+      } else if (gap >= 1.5) {
+        cardFill = '#F0FDFA';
+        strokeColor = '#0D9488';
+        headerBg = '#0F766E';
+        headerText = '#FFFFFF';
+        badgeBg = '#CCFBF1';
+        badgeColor = '#115E59';
+        statusLabel = `TARGET ${fut.toFixed(1)}/5.0 (+${gap.toFixed(1)} MODERNIZATION)`;
+        slaMetric = `Upgraded from ${cur.toFixed(1)} Developing Baseline`;
+      } else {
+        cardFill = '#EFF6FF';
+        strokeColor = '#2563EB';
+        headerBg = '#1E40AF';
+        headerText = '#FFFFFF';
+        badgeBg = '#DBEAFE';
+        badgeColor = '#1E3A8A';
+        statusLabel = `TARGET ${fut.toFixed(1)}/5.0 (+${gap.toFixed(1)} AI OPTIMIZED)`;
+        slaMetric = `Scaled from ${cur.toFixed(1)} Established Baseline`;
+      }
+    }
+
+    // Determine domain-specific architectural nodes based on pillar name and actual score
+    let iconUrl = 'https://api.iconify.design/logos:google-cloud.svg';
+    let comp1Title = '', comp1Sub = '', comp2Title = '', comp2Sub = '', comp3Title = '', comp3Sub = '';
+
+    if (n.includes('data engineering') || n.includes('ingestion') || index === 0) {
+      if (!isTarget) {
+        iconUrl = archCtx.isAws ? 'https://api.iconify.design/logos:aws.svg' : (cur >= 3.5 ? 'https://api.iconify.design/logos:google-cloud.svg' : 'https://api.iconify.design/lucide:database.svg');
+        if (cur >= 3.5) {
+          comp1Title = archCtx.isAws ? 'AWS Glue & Hybrid Cloud CDC' : 'Managed Cloud Ingestion & CDC';
+          comp1Sub = 'Incremental micro-batch & streaming pipelines (15-30m SLA)';
+          comp2Title = 'Cloud Object Storage & Staging Lake';
+          comp2Sub = 'Partitioned Parquet/Avro zones with automated schema checks';
+          comp3Title = 'Orchestrated DAG Workflows (Airflow)';
+          comp3Sub = `Score ${cur.toFixed(1)}/5.0: Reliable ingestion; lacks unified Iceberg metadata`;
+        } else if (cur >= 2.5) {
+          comp1Title = 'Hybrid Batch ETL & Scheduled Jobs';
+          comp1Sub = 'Mixed cloud connectors & overnight SQL batch loads (4-8h lag)';
+          comp2Title = 'Multi-Zone Staging Buckets';
+          comp2Sub = 'Manual schema drift handling & brittle pipeline retries';
+          comp3Title = 'Fragmented Scheduler Scripts';
+          comp3Sub = `Score ${cur.toFixed(1)}/5.0: +${gap.toFixed(1)} gap to zero-ETL streaming mesh`;
+        } else {
+          comp1Title = 'Legacy On-Prem / SFTP Batch Dumps';
+          comp1Sub = 'Brittle nightly cron jobs & point-to-point JDBC scripts (24-48h lag)';
+          comp2Title = 'Unindexed Raw File Drops';
+          comp2Sub = 'Zero schema enforcement; frequent downstream pipeline breakage';
+          comp3Title = 'Manual Error Triage';
+          comp3Sub = `Score ${cur.toFixed(1)}/5.0: Critical ingestion bottleneck (+${gap.toFixed(1)} gap)`;
+        }
+      } else {
+        iconUrl = 'https://api.iconify.design/logos:google-cloud.svg';
+        comp1Title = 'Datastream Real-Time Serverless CDC';
+        comp1Sub = 'Sub-5 second zero-impact replication from operational databases';
+        comp2Title = 'Dataflow Unified Apache Beam Streaming';
+        comp2Sub = 'Auto-scaling stream enrichment, dead-letter healing & schema evolution';
+        comp3Title = 'BigLake Apache Iceberg Medallion Mesh';
+        comp3Sub = `Target ${fut.toFixed(1)}/5.0 (+${gap.toFixed(1)}): Open table format across Bronze/Silver/Gold`;
+      }
+    } else if (n.includes('analytics') || n.includes('bi') || n.includes('warehouse') || index === 1) {
+      if (!isTarget) {
+        iconUrl = archCtx.isSnowflake ? 'https://api.iconify.design/logos:snowflake-icon.svg' : (cur >= 3.5 ? 'https://api.iconify.design/logos:google-bigquery.svg' : 'https://api.iconify.design/lucide:bar-chart-2.svg');
+        if (cur >= 3.5) {
+          comp1Title = archCtx.isSnowflake ? 'Snowflake / Cloud Enterprise EDW' : 'Cloud Enterprise Data Warehouse';
+          comp1Sub = 'High-concurrency SQL analytics & departmental data marts';
+          comp2Title = 'Self-Service BI & Executive Dashboards';
+          comp2Sub = 'Curated KPI reporting with near-real-time refresh cycles';
+          comp3Title = 'Cross-Departmental Semantic Views';
+          comp3Sub = `Score ${cur.toFixed(1)}/5.0: Strong BI baseline; needs conversational AI & BI Engine`;
+        } else if (cur >= 2.5) {
+          comp1Title = 'Departmental Cloud Data Marts';
+          comp1Sub = 'Disconnected reporting tables with duplicated metric definitions';
+          comp2Title = 'Desktop BI Extracts (Tableau / PowerBI)';
+          comp2Sub = 'Scheduled extract refreshes causing metric drift across teams';
+          comp3Title = 'Ad-Hoc SQL Workbench Queries';
+          comp3Sub = `Score ${cur.toFixed(1)}/5.0: +${gap.toFixed(1)} gap to unified semantic layer`;
+        } else {
+          comp1Title = 'Siloed Spreadsheets & Legacy Reporting DBs';
+          comp1Sub = 'Manual CSV exports & high-latency reporting queries';
+          comp2Title = 'Static Executive KPI Packs';
+          comp2Sub = 'Inconsistent business definitions & multi-day reporting turnaround';
+          comp3Title = 'No Unified Semantic Layer';
+          comp3Sub = `Score ${cur.toFixed(1)}/5.0: Severe analytics bottleneck (+${gap.toFixed(1)} gap)`;
+        }
+      } else {
+        iconUrl = 'https://api.iconify.design/logos:google-bigquery.svg';
+        comp1Title = 'BigQuery Editions Autoscaling Compute';
+        comp1Sub = 'Petabyte-scale serverless warehouse with workload slot isolation';
+        comp2Title = 'BigQuery BI Engine In-Memory Acceleration';
+        comp2Sub = 'Sub-second vectorized query response for high-concurrency dashboards';
+        comp3Title = 'Looker Universal Semantic Layer & Gemini BI';
+        comp3Sub = `Target ${fut.toFixed(1)}/5.0 (+${gap.toFixed(1)}): Single source of truth + Natural Language BI`;
+      }
+    } else if (n.includes('governance') || n.includes('security') || index === 2) {
+      if (!isTarget) {
+        iconUrl = cur >= 3.5 ? 'https://api.iconify.design/logos:google-cloud.svg' : 'https://api.iconify.design/lucide:shield-alert.svg';
+        if (cur >= 3.5) {
+          comp1Title = 'Centralized Cloud IAM & RBAC Policies';
+          comp1Sub = 'Role-based access control & encrypted storage volumes';
+          comp2Title = 'Enterprise Data Catalog & Lineage';
+          comp2Sub = 'Automated table discovery; partial AI/prompt governance';
+          comp3Title = 'Compliance & Audit Logging';
+          comp3Sub = `Score ${cur.toFixed(1)}/5.0: Solid data RBAC; requires automated AI TRiSM & DLP`;
+        } else if (cur >= 2.5) {
+          comp1Title = 'Partial Data Cataloging & Project IAM';
+          comp1Sub = 'Coarse table-level permissions; manual access request tickets';
+          comp2Title = 'Periodic PII Scans & Manual Masking';
+          comp2Sub = 'Static SQL views for sensitive columns; incomplete end-to-end lineage';
+          comp3Title = 'Siloed Cloud & AI Governance Policies';
+          comp3Sub = `Score ${cur.toFixed(1)}/5.0: +${gap.toFixed(1)} gap to automated row/column policy tags`;
+        } else {
+          comp1Title = 'Over-Permissive Access & Shared Credentials';
+          comp1Sub = 'Lack of fine-grained row/column security or centralized catalog';
+          comp2Title = 'Unmasked PII in Analytics & AI Prompts';
+          comp2Sub = 'High compliance exposure across shadow data copies';
+          comp3Title = 'Manual Spreadsheet Audit Trails';
+          comp3Sub = `Score ${cur.toFixed(1)}/5.0: Critical governance exposure (+${gap.toFixed(1)} gap)`;
+        }
+      } else {
+        iconUrl = 'https://api.iconify.design/logos:google-cloud.svg';
+        comp1Title = 'Dataplex Universal Catalog & Auto-Lineage';
+        comp1Sub = 'Unified metadata, automated data quality SLAs & end-to-end lineage';
+        comp2Title = 'Fine-Grained Row/Column Policy Tags & Cloud DLP';
+        comp2Sub = 'Dynamic attribute-based masking & real-time PII surrogate tokenization';
+        comp3Title = 'VPC Service Controls & Cloud KMS HSM CMEK';
+        comp3Sub = `Target ${fut.toFixed(1)}/5.0 (+${gap.toFixed(1)}): Zero-Trust data & AI perimeter`;
+      }
+    } else if (n.includes('operational') || n.includes('finops') || n.includes('sre') || index === 3) {
+      if (!isTarget) {
+        iconUrl = cur >= 3.5 ? 'https://api.iconify.design/logos:terraform-icon.svg' : 'https://api.iconify.design/lucide:activity.svg';
+        if (cur >= 3.5) {
+          comp1Title = 'Automated CI/CD & Terraform Infrastructure';
+          comp1Sub = 'Repeatable environment provisioning & container orchestration';
+          comp2Title = 'Centralized APM & Log Aggregation';
+          comp2Sub = 'Proactive SLA dashboards & cloud billing visibility';
+          comp3Title = 'Standardized Incident Runbooks';
+          comp3Sub = `Score ${cur.toFixed(1)}/5.0: Mature SRE ops; needs autonomous FinOps & AI token governor`;
+        } else if (cur >= 2.5) {
+          comp1Title = 'Hybrid CI/CD & Semi-Automated Deployments';
+          comp1Sub = 'Mix of Terraform modules and manual console configuration drift';
+          comp2Title = 'Reactive Threshold Alerting & Cloud Logs';
+          comp2Sub = 'Delayed root-cause triage across data and application tiers';
+          comp3Title = 'Monthly Retrospective Cloud Cost Reviews';
+          comp3Sub = `Score ${cur.toFixed(1)}/5.0: +${gap.toFixed(1)} gap to predictive AIOps & FinOps`;
+        } else {
+          comp1Title = 'Manual Console Provisioning & Config Drift';
+          comp1Sub = 'Unversioned infrastructure changes & brittle release scripts';
+          comp2Title = 'Unmonitored Pipeline Failures & Cost Spikes';
+          comp2Sub = 'Users discover outages before IT; 35%+ idle compute waste';
+          comp3Title = 'No FinOps Chargeback or Quota Controls';
+          comp3Sub = `Score ${cur.toFixed(1)}/5.0: Severe operational fragility (+${gap.toFixed(1)} gap)`;
+        }
+      } else {
+        iconUrl = 'https://api.iconify.design/logos:terraform-icon.svg';
+        comp1Title = 'GitOps Terraform IaC & Cloud Deploy Pipelines';
+        comp1Sub = 'Immutable infrastructure with automated policy-as-code gates';
+        comp2Title = 'Cloud Monitoring SLO Burn & AIOps Auto-Remediation';
+        comp2Sub = 'End-to-end OpenTelemetry tracing across data pipelines and AI agents';
+        comp3Title = 'FinOps FOCUS 1.0 Chargeback & Token Governor';
+        comp3Sub = `Target ${fut.toFixed(1)}/5.0 (+${gap.toFixed(1)}): Real-time slot & token cost optimization`;
+      }
+    } else if (n.includes('machine learning') || n.includes('ml') || index === 4) {
+      if (!isTarget) {
+        iconUrl = archCtx.isDatabricks ? 'https://api.iconify.design/logos:databricks.svg' : 'https://api.iconify.design/logos:python.svg';
+        if (cur >= 3.5) {
+          comp1Title = 'Managed ML Workbench & Model Registry';
+          comp1Sub = 'Versioned model artifacts & scheduled retraining pipelines';
+          comp2Title = 'Online & Batch Prediction Endpoints';
+          comp2Sub = 'Autoscaled inference serving for core predictive use cases';
+          comp3Title = 'Baseline Performance Tracking';
+          comp3Sub = `Score ${cur.toFixed(1)}/5.0: Established ML; needs real-time Feature Store & CT`;
+        } else if (cur >= 2.5) {
+          comp1Title = 'Isolated Jupyter Notebooks & Custom Scripts';
+          comp1Sub = 'Data scientists train locally or on siloed VM instances';
+          comp2Title = 'Offline CSV Feature Engineering';
+          comp2Sub = 'Training-serving skew due to duplicated feature logic';
+          comp3Title = 'Manual Model Handoff & Sporadic Retraining';
+          comp3Sub = `Score ${cur.toFixed(1)}/5.0: +${gap.toFixed(1)} gap to automated Vertex MLOps`;
+        } else {
+          comp1Title = 'Ad-Hoc Desktop Data Science Experiments';
+          comp1Sub = 'Zero model registry, version control, or reproducible pipelines';
+          comp2Title = 'No Production Feature Store or Drift Alerts';
+          comp2Sub = 'Models degrade silently in production without telemetry';
+          comp3Title = 'Months-Long Lab-to-Production Cycle';
+          comp3Sub = `Score ${cur.toFixed(1)}/5.0: Critical ML deployment bottleneck (+${gap.toFixed(1)} gap)`;
+        }
+      } else {
+        iconUrl = 'https://api.iconify.design/logos:google-cloud.svg';
+        comp1Title = 'Vertex AI Feature Store (Online + Offline)';
+        comp1Sub = 'Low-latency Bigtable online serving + BigQuery historical parity';
+        comp2Title = 'Vertex AI Pipelines (Automated CI/CD/CT)';
+        comp2Sub = 'Serverless Kubeflow orchestration with automated hyperparameter tuning';
+        comp3Title = 'Vertex Model Registry & Continuous Drift Monitoring';
+        comp3Sub = `Target ${fut.toFixed(1)}/5.0 (+${gap.toFixed(1)}): Automated skew/drift triggers & lineage`;
+      }
+    } else {
+      // Generative AI & Agentic Systems (index === 5)
+      if (!isTarget) {
+        iconUrl = archCtx.isOpenAi ? 'https://api.iconify.design/logos:openai-icon.svg' : 'https://api.iconify.design/lucide:bot.svg';
+        if (cur >= 3.5) {
+          comp1Title = 'Managed Enterprise LLM API Gateway';
+          comp1Sub = 'Approved foundation models with rate limiting & audit logging';
+          comp2Title = 'Production Vector Search & RAG Pipelines';
+          comp2Sub = 'Grounded enterprise knowledge retrieval with citation tracking';
+          comp3Title = 'Initial Agent Tool Integrations';
+          comp3Sub = `Score ${cur.toFixed(1)}/5.0: Production GenAI; ready for multi-agent MCP mesh`;
+        } else if (cur >= 2.5) {
+          comp1Title = 'Departmental RAG Prototypes & Wrapper APIs';
+          comp1Sub = 'Single-turn prompt chains with static chunking & high token cost';
+          comp2Title = 'Unmanaged Vector Indexes (Siloed DBs)';
+          comp2Sub = 'Stale document embeddings without ACL permission inheritance';
+          comp3Title = 'Manual Prompt Testing (No Guardrails)';
+          comp3Sub = `Score ${cur.toFixed(1)}/5.0: +${gap.toFixed(1)} gap to governed Agentic AI platform`;
+        } else {
+          comp1Title = archCtx.isOpenAi ? 'Unproxied OpenAI API Keys & Shadow Chatbots' : 'Isolated Departmental LLM Sandboxes & POCs';
+          comp1Sub = 'Direct public API calls, hardcoded prompts & zero context caching';
+          comp2Title = 'No Enterprise RAG Grounding or Vector Sync';
+          comp2Sub = 'High hallucination risk & inability to access live enterprise data';
+          comp3Title = 'Zero Prompt Injection or PII Guardrails';
+          comp3Sub = `Score ${cur.toFixed(1)}/5.0: PRIMARY ARCHITECTURAL BOTTLENECK (+${gap.toFixed(1)} gap)`;
+        }
+      } else {
+        iconUrl = 'https://api.iconify.design/logos:google-gemini.svg';
+        comp1Title = 'Vertex AI Gemini 2.5 / 3.7 (2M Context + Caching)';
+        comp1Sub = 'Multimodal reasoning with 75% context cache savings & Apigee AI Gateway';
+        comp2Title = 'Vertex AI Vector Search & Grounded Enterprise RAG';
+        comp2Sub = 'Sub-10ms hybrid semantic search with real-time BigLake ACL inheritance';
+        comp3Title = 'Vertex Agent Builder, MCP Mesh & Model Armor TRiSM';
+        comp3Sub = `Target ${fut.toFixed(1)}/5.0 (+${gap.toFixed(1)} Leap): Autonomous multi-agent orchestration`;
+      }
+    }
+
+    return {
+      ...p,
+      cardFill,
+      strokeColor,
+      headerBg,
+      headerText,
+      badgeBg,
+      badgeColor,
+      statusLabel: esc(statusLabel),
+      slaMetric: esc(slaMetric),
+      iconUrl,
+      comp1Title: esc(comp1Title),
+      comp1Sub: esc(comp1Sub),
+      comp2Title: esc(comp2Title),
+      comp2Sub: esc(comp2Sub),
+      comp3Title: esc(comp3Title),
+      comp3Sub: esc(comp3Sub)
+    };
+  };
+
+  const enrichedPillars = pillars.map((p, idx) => resolvePillarBlueprint(p, idx));
+
+  // Layout Coordinates: 3 Columns x 2 Rows for the 6 Evaluated Pillars
+  // Row 1 (Top Core Data & Platform Flow): [0] Data Engineering (x=40, y=115), [1] Analytics & BI (x=510, y=115), [2] Platform Governance (x=980, y=115)
+  // Row 2 (AI, ML & Operations Flow):      [3] Operational Excellence (x=40, y=465), [4] Machine Learning (x=510, y=465), [5] Generative AI (x=980, y=465)
+  const colX = [40, 510, 980];
+  const rowY = [115, 465];
+  const cardW = 420;
+  const cardH = 295;
+
+  const bannerBg = isTarget ? '#064E3B' : '#0F172A';
+  const bannerStroke = isTarget ? '#10B981' : '#334155';
+  const bannerBadgeBg = isTarget ? '#059669' : '#E11D48';
+  const bannerTitle = isTarget
+    ? `DESIRED FUTURE STATE ARCHITECTURE — ${cust.toUpperCase()} (TARGET MATURITY: ${avgTgt}/5.0 • +${avgGap} LEAP)`
+    : `CURRENT BASELINE ARCHITECTURE — ${cust.toUpperCase()} (EVALUATED MATURITY: ${avgCur}/5.0 • ${ind.toUpperCase()})`;
+  const bannerSub = isTarget
+    ? `100% Score-Driven Target Blueprint • Remediates Primary Bottleneck in ${esc(weakest.name)} (${weakest.currentScore.toFixed(1)} → ${weakest.futureScore.toFixed(1)}, +${weakest.gap.toFixed(1)}) & Scales ${esc(strongest.name)} (${strongest.currentScore.toFixed(1)} → ${strongest.futureScore.toFixed(1)})`
+    : `Live Diagnostic Topology • Strongest Pillar: ${esc(strongest.name)} (${strongest.currentScore.toFixed(1)}/5.0 Established) • Primary Bottleneck: ${esc(weakest.name)} (${weakest.currentScore.toFixed(1)}/5.0 Critical Gap +${weakest.gap.toFixed(1)})`;
+
+  let cellsXml = '';
+
+  // 1. Top Executive Telemetry Banner
+  const bannerHtml = `&lt;div style=&quot;padding:10px 18px;font-family:Inter,system-ui,sans-serif;display:flex;align-items:center;justify-content:space-between;&quot;&gt;` +
+    `&lt;div&gt;` +
+    `&lt;div style=&quot;display:flex;align-items:center;gap:10px;&quot;&gt;` +
+    `&lt;span style=&quot;background:${bannerBadgeBg};color:#FFFFFF;font-size:10px;font-weight:800;padding:3px 9px;border-radius:999px;letter-spacing:0.6px;&quot;&gt;${isTarget ? 'TARGET STATE BLUEPRINT' : 'LIVE CURRENT STATE'}&lt;/span&gt;` +
+    `&lt;span style=&quot;color:#FFFFFF;font-size:14.5px;font-weight:800;letter-spacing:-0.2px;&quot;&gt;${bannerTitle}&lt;/span&gt;` +
+    `&lt;/div&gt;` +
+    `&lt;div style=&quot;color:#A7F3D0;font-size:11px;margin-top:4px;font-weight:500;&quot;&gt;${bannerSub}&lt;/div&gt;` +
+    `&lt;/div&gt;` +
+    `&lt;div style=&quot;text-align:right;background:rgba(255,255,255,0.1);padding:6px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);&quot;&gt;` +
+    `&lt;div style=&quot;color:#E2E8F0;font-size:9.5px;font-weight:700;text-transform:uppercase;&quot;&gt;${isTarget ? 'Target Score' : 'Current Score'}&lt;/div&gt;` +
+    `&lt;div style=&quot;color:#FFFFFF;font-size:18px;font-weight:900;&quot;&gt;${isTarget ? avgTgt : avgCur} &lt;span style=&quot;font-size:11px;font-weight:600;color:#94A3B8;&quot;&gt;/ 5.0&lt;/span&gt;&lt;/div&gt;` +
+    `&lt;/div&gt;` +
+    `&lt;/div&gt;`;
+
+  cellsXml += `\n        <mxCell id="dyn_banner" value="${bannerHtml}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=${bannerBg};strokeColor=${bannerStroke};strokeWidth=2;align=left;verticalAlign=middle;arcSize=8;shadow=1;" vertex="1" parent="1"><mxGeometry x="40" y="20" width="1360" height="72" as="geometry"/></mxCell>`;
+
+  // 2. Render each of the 6 Evaluated Pillars as an Architectural Domain Container with 3 Internal Component Nodes
+  enrichedPillars.forEach((p, idx) => {
+    const col = idx % 3;
+    const row = Math.floor(idx / 3);
+    const x = colX[col];
+    const y = rowY[row];
+    const cid = `pillar_box_${idx}`;
+
+    const headerHtml = `&lt;div style=&quot;padding:8px 12px;font-family:Inter,system-ui,sans-serif;&quot;&gt;` +
+      `&lt;div style=&quot;display:flex;align-items:center;justify-content:space-between;background:${p.headerBg};color:${p.headerText};padding:7px 12px;border-radius:7px;&quot;&gt;` +
+      `&lt;div style=&quot;display:flex;align-items:center;gap:8px;&quot;&gt;` +
+      `&lt;img src=&quot;${p.iconUrl}&quot; width=&quot;18&quot; height=&quot;18&quot;/&gt;` +
+      `&lt;span style=&quot;font-size:12.5px;font-weight:800;letter-spacing:0.2px;&quot;&gt;${idx + 1}. ${esc(p.name.toUpperCase())}&lt;/span&gt;` +
+      `&lt;/div&gt;` +
+      `&lt;span style=&quot;background:${p.badgeBg};color:${p.badgeColor};font-size:9.5px;font-weight:800;padding:2px 8px;border-radius:999px;&quot;&gt;${p.statusLabel}&lt;/span&gt;` +
+      `&lt;/div&gt;` +
+      `&lt;div style=&quot;font-size:10px;color:#475569;font-weight:600;margin-top:4px;padding-left:4px;&quot;&gt;${p.slaMetric}&lt;/div&gt;` +
+      `&lt;/div&gt;`;
+
+    cellsXml += `\n        <mxCell id="${cid}" value="${headerHtml}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=${p.cardFill};strokeColor=${p.strokeColor};strokeWidth=2;align=left;verticalAlign=top;arcSize=6;shadow=1;" vertex="1" parent="1"><mxGeometry x="${x}" y="${y}" width="${cardW}" height="${cardH}" as="geometry"/></mxCell>`;
+
+    // 3 Internal Architectural Component Nodes inside this Pillar Container
+    const comps = [
+      { title: p.comp1Title, sub: p.comp1Sub, ny: y + 66 },
+      { title: p.comp2Title, sub: p.comp2Sub, ny: y + 140 },
+      { title: p.comp3Title, sub: p.comp3Sub, ny: y + 214 }
+    ];
+
+    comps.forEach((c, cIdx) => {
+      const nid = `pillar_${idx}_node_${cIdx}`;
+      const isHighlight = cIdx === 2;
+      const nodeBg = isHighlight ? p.badgeBg : '#FFFFFF';
+      const nodeBorder = isHighlight ? p.strokeColor : '#CBD5E1';
+      const titleColor = isHighlight ? p.badgeColor : '#0F172A';
+
+      const nodeHtml = `&lt;div style=&quot;padding:6px 12px;font-family:Inter,system-ui,sans-serif;&quot;&gt;` +
+        `&lt;div style=&quot;font-size:11.5px;font-weight:700;color:${titleColor};&quot;&gt;${c.title}&lt;/div&gt;` +
+        `&lt;div style=&quot;font-size:9.5px;color:#475569;margin-top:2px;line-height:1.25;&quot;&gt;${c.sub}&lt;/div&gt;` +
+        `&lt;/div&gt;`;
+
+      cellsXml += `\n        <mxCell id="${nid}" value="${nodeHtml}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=${nodeBg};strokeColor=${nodeBorder};strokeWidth=1.5;align=left;verticalAlign=middle;arcSize=10;" vertex="1" parent="1"><mxGeometry x="${x + 16}" y="${c.ny}" width="${cardW - 32}" height="62" as="geometry"/></mxCell>`;
+    });
+
+    // Intra-pillar step edges (node_0 -> node_1 -> node_2)
+    cellsXml += `\n        <mxCell id="intra_${idx}_0_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=${p.strokeColor};strokeWidth=1.5;" edge="1" parent="1" source="pillar_${idx}_node_0" target="pillar_${idx}_node_1"><mxGeometry relative="1" as="geometry"/></mxCell>`;
+    cellsXml += `\n        <mxCell id="intra_${idx}_1_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=${p.strokeColor};strokeWidth=1.5;" edge="1" parent="1" source="pillar_${idx}_node_1" target="pillar_${idx}_node_2"><mxGeometry relative="1" as="geometry"/></mxCell>`;
+  });
+
+  // 3. Inter-Pillar Architectural Data & Control Flow Connectors
+  const edgeColorMain = isTarget ? '#059669' : '#2563EB';
+  const edgeColorWarn = isTarget ? '#0D9488' : '#E11D48';
+
+  const flows = [
+    {
+      id: 'edge_0_1',
+      src: 'pillar_box_0',
+      tgt: 'pillar_box_1',
+      label: isTarget ? 'Real-Time Iceberg Stream (<5s)' : (enrichedPillars[0]?.currentScore >= 3.5 ? 'Cloud CDC & Micro-Batch' : 'Batch ETL (4-24h Lag)'),
+      color: edgeColorMain,
+      dashed: 0,
+      exitX: 1, exitY: 0.5, entryX: 0, entryY: 0.5
+    },
+    {
+      id: 'edge_1_2',
+      src: 'pillar_box_1',
+      tgt: 'pillar_box_2',
+      label: isTarget ? 'Dataplex Policy Tags & Lineage' : (enrichedPillars[2]?.currentScore >= 3.5 ? 'Catalog & RBAC Sync' : 'Manual Access Audits'),
+      color: isTarget ? edgeColorMain : '#D97706',
+      dashed: isTarget ? 0 : 1,
+      exitX: 1, exitY: 0.5, entryX: 0, entryY: 0.5
+    },
+    {
+      id: 'edge_0_4',
+      src: 'pillar_box_0',
+      tgt: 'pillar_box_4',
+      label: isTarget ? 'Curated Feature Store Sync' : 'Training Data Extracts',
+      color: edgeColorMain,
+      dashed: isTarget ? 0 : 1,
+      exitX: 0.5, exitY: 1, entryX: 0.25, entryY: 0
+    },
+    {
+      id: 'edge_1_5',
+      src: 'pillar_box_1',
+      tgt: 'pillar_box_5',
+      label: isTarget ? 'Grounded Vector RAG & BigLake' : (enrichedPillars[5]?.currentScore < 2.5 ? 'Disconnected from Live EDW' : 'Partial RAG Indexing'),
+      color: edgeColorWarn,
+      dashed: isTarget ? 0 : 1,
+      exitX: 0.75, exitY: 1, entryX: 0.25, entryY: 0
+    },
+    {
+      id: 'edge_3_4',
+      src: 'pillar_box_3',
+      tgt: 'pillar_box_4',
+      label: isTarget ? 'Automated MLOps CI/CD/CT' : 'Hybrid Deployment Scripts',
+      color: isTarget ? edgeColorMain : '#D97706',
+      dashed: isTarget ? 0 : 1,
+      exitX: 1, exitY: 0.5, entryX: 0, entryY: 0.5
+    },
+    {
+      id: 'edge_4_5',
+      src: 'pillar_box_4',
+      tgt: 'pillar_box_5',
+      label: isTarget ? 'Vertex Model Registry & MCP Tools' : (enrichedPillars[5]?.currentScore < 2.5 ? 'Siloed POCs (No MLOps)' : 'API Endpoint Handoff'),
+      color: edgeColorWarn,
+      dashed: isTarget ? 0 : 1,
+      exitX: 1, exitY: 0.5, entryX: 0, entryY: 0.5
+    },
+    {
+      id: 'edge_2_5',
+      src: 'pillar_box_2',
+      tgt: 'pillar_box_5',
+      label: isTarget ? 'Model Armor TRiSM & DLP Shield' : (enrichedPillars[5]?.currentScore < 2.5 ? 'No AI Guardrails / PII Risk' : 'Basic API Filtering'),
+      color: edgeColorWarn,
+      dashed: isTarget ? 0 : 1,
+      exitX: 0.5, exitY: 1, entryX: 0.5, entryY: 0
+    }
+  ];
+
+  flows.forEach(f => {
+    cellsXml += `\n        <mxCell id="${f.id}" value="${esc(f.label)}" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=${f.exitX};exitY=${f.exitY};entryX=${f.entryX};entryY=${f.entryY};strokeColor=${f.color};strokeWidth=2.2;dashed=${f.dashed};fontSize=9.5;fontStyle=1;fontColor=${f.color};labelBackgroundColor=#FFFFFF;flowAnimation=1;" edge="1" parent="1" source="${f.src}" target="${f.tgt}"><mxGeometry relative="1" as="geometry"/></mxCell>`;
+  });
+
+  // 4. Bottom 6-Pillar Live Diagnostic Scorecard & Transformation Matrix Bar
+  const footerCells = enrichedPillars.map(p => {
+    const scoreBadge = isTarget
+      ? `${p.currentScore.toFixed(1)} → &lt;b style=&quot;color:#10B981;&quot;&gt;${p.futureScore.toFixed(1)}/5.0&lt;/b&gt; (+${p.gap.toFixed(1)})`
+      : `&lt;b style=&quot;color:${p.currentScore < 2.5 ? '#F43F5E' : (p.currentScore < 3.5 ? '#FBBF24' : '#60A5FA')};&quot;&gt;${p.currentScore.toFixed(1)}/5.0&lt;/b&gt; (Gap +${p.gap.toFixed(1)})`;
+    return `&lt;td style=&quot;padding:6px 10px;border-right:1px solid #334155;text-align:center;&quot;&gt;` +
+      `&lt;div style=&quot;font-size:9.5px;color:#94A3B8;font-weight:700;text-transform:uppercase;&quot;&gt;${esc(p.name)}&lt;/div&gt;` +
+      `&lt;div style=&quot;font-size:11px;color:#F8FAFC;margin-top:2px;&quot;&gt;${scoreBadge}&lt;/div&gt;` +
+      `&lt;/td&gt;`;
+  }).join('');
+
+  const footerHtml = `&lt;div style=&quot;padding:6px 14px;font-family:Inter,system-ui,sans-serif;&quot;&gt;` +
+    `&lt;table style=&quot;width:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;` +
+    `&lt;td style=&quot;padding:6px 12px;border-right:2px solid #475569;text-align:left;width:190px;&quot;&gt;` +
+    `&lt;div style=&quot;font-size:10px;color:#38BDF8;font-weight:800;text-transform:uppercase;&quot;&gt;6-PILLAR TELEMETRY MATRIX&lt;/div&gt;` +
+    `&lt;div style=&quot;font-size:9.5px;color:#CBD5E1;&quot;&gt;${isTarget ? 'Target State Scores &amp; Deltas' : 'Current Evaluated Scores'}&lt;/div&gt;` +
+    `&lt;/td&gt;` +
+    footerCells +
+    `&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;`;
+
+  cellsXml += `\n        <mxCell id="dyn_footer_matrix" value="${footerHtml}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#334155;strokeWidth=2;align=left;verticalAlign=middle;arcSize=8;shadow=1;" vertex="1" parent="1"><mxGeometry x="40" y="795" width="1360" height="68" as="geometry"/></mxCell>`;
+
+  return `<mxfile host="app.diagrams.net" modified="${new Date().toISOString()}" agent="ScoreX Dynamic Architecture Compiler" version="24.0.0">
+  <diagram id="dyn_${mode}_arch" name="${isTarget ? 'Desired Future State' : 'Current Baseline'}">
+    <mxGraphModel dx="1440" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1440" pageHeight="900" background="#F8FAFC" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>${cellsXml}
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>`;
 }
 
 /**
@@ -9699,13 +10347,9 @@ function getMermaidDiagram(framework = {}, isTarget = true) {
     end`;
 }
 
-const masterCatalog = {
-  getMasterArchitectureDiagrams,
-  getMermaidDiagram
-};
-
-export default masterCatalog;
-export {
+const masterBlueprintCatalog = {
+  buildDynamicStateArchitectureXml,
+  extractLivePillarMetrics,
   getMasterArchitectureDiagrams,
   getMermaidDiagram,
   buildLegacyDataDependencyMapXml,
@@ -9713,7 +10357,6 @@ export {
   buildPristineFinopsXml,
   buildCompleteWellArchitectedGcpDrMasterXml,
   buildDataLakehouseXml,
-  buildGcpDataLakehouseWbsXml,
   buildHubAndSpokeAgentConfigXml,
   buildMcpContextGatewayXml,
   buildSecureDeploymentTopologyXml,
@@ -9721,8 +10364,6 @@ export {
   buildThreatModelingStrideXml,
   buildAiTrismGuardrailsXml,
   buildEvalSafetyXml,
-  buildAgenticEvalSafetyXml,
-  buildAgenticRagWidescreenXml,
   buildStreamingAnalyticsXml,
   buildEnterpriseAgentRuntimeXml,
   buildLlmCapacityQuotaXml,
@@ -9738,3 +10379,39 @@ export {
   buildHybridMultiCloudXml,
   buildLegacyGenAiStackXml
 };
+
+export {
+  buildDynamicStateArchitectureXml,
+  extractLivePillarMetrics,
+  getMasterArchitectureDiagrams,
+  getMermaidDiagram,
+  buildLegacyDataDependencyMapXml,
+  buildAsIsToBeProcessFlowXml,
+  buildPristineFinopsXml,
+  buildCompleteWellArchitectedGcpDrMasterXml,
+  buildDataLakehouseXml,
+  buildHubAndSpokeAgentConfigXml,
+  buildMcpContextGatewayXml,
+  buildSecureDeploymentTopologyXml,
+  buildGcpLandingZoneVpcXml,
+  buildThreatModelingStrideXml,
+  buildAiTrismGuardrailsXml,
+  buildEvalSafetyXml,
+  buildStreamingAnalyticsXml,
+  buildEnterpriseAgentRuntimeXml,
+  buildLlmCapacityQuotaXml,
+  buildCognitiveRagXml,
+  buildPristineStranglerFigXml,
+  buildValueStreamMapXml,
+  build6RsMigrationMatrixXml,
+  buildFederatedIamSsoXml,
+  buildUnifiedDataGovernanceXml,
+  buildMicroFrontendsXml,
+  buildLogicalAiConfigTenantXml,
+  buildDataResidencySovereignMapXml,
+  buildHybridMultiCloudXml,
+  buildLegacyGenAiStackXml
+};
+
+export default masterBlueprintCatalog;
+

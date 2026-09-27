@@ -6,14 +6,14 @@ npm-debug.log
 .env
 .env.local
 client/node_modules
-client/build
 *.log
 .vercel
 .railway
 server/data/assessments.json
-
-
-
-
-
+scratch
+db-sync
+data/*.backup
+data/snapshots
+dev.db
+.agents/*.shadow_backup
 

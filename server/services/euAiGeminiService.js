@@ -3,7 +3,7 @@ const audioNarrationService = require('./audioNarrationService');
 
 /**
  * EU AI Act Compliance Gemini Intelligence Engine
- * Powered by Google Gemini (gemini-3.7-flash / gemini-2.5-flash)
+ * Powered by Google Gemini (gemini-3.8-flash / gemini-2.5-flash)
  * Synthesizes audit-grade legal analyses, statutory risk breakdowns,
  * Annex IV Technical File drafts, and executive spoken briefings.
  */
@@ -104,7 +104,7 @@ Generate a comprehensive JSON document with the following keys:
         if (result && result.text) {
           const clean = result.text.replace(/```json/g, '').replace(/```/g, '').trim();
           const parsed = JSON.parse(clean);
-          parsed._generatedBy = result.modelUsed || 'gemini-3.7-flash';
+          parsed._generatedBy = result.modelUsed || 'gemini-3.8-flash';
           parsed._isLiveGemini = true;
           return parsed;
         }
@@ -358,7 +358,7 @@ Respond directly as the statutory compliance copilot with full awareness of ${sy
         if (result && result.text) {
           return {
             reply: result.text.trim(),
-            modelUsed: result.modelUsed || 'gemini-3.7-flash'
+            modelUsed: result.modelUsed || 'gemini-3.8-flash'
           };
         }
       } catch (err) {

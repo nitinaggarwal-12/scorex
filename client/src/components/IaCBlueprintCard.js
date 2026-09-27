@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -224,6 +225,7 @@ const LaunchBtn = styled.button`
 `;
 
 const IaCBlueprintCard = ({ 
+  instanceId = null,
   organizationName = 'Enterprise Organization', 
   assessmentName = 'Enterprise Data & AI Architecture',
   currentScore = 2.5,
@@ -235,6 +237,19 @@ const IaCBlueprintCard = ({
   const [copiedSnippet, setCopiedSnippet] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
   const [showCode, setShowCode] = useState(false);
+  const [liveTerraform, setLiveTerraform] = useState(null);
+
+  useEffect(() => {
+    if (instanceId) {
+      axios.post(`/api/dynamic-assessments/instances/${instanceId}/generate-terraform`)
+        .then(res => {
+          if (res.data?.terraform) {
+            setLiveTerraform(res.data.terraform);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [instanceId]);
 
   // Derive auto-populated project slug
   const orgSlug = organizationName.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 20) || 'enterprise';
@@ -512,7 +527,10 @@ resource "google_bigquery_reservation" "analytics_slots" {
     }
   };
 
-  const activeCloud = cloudConfigs[selectedCloud];
+  const activeCloud = {
+    ...cloudConfigs[selectedCloud],
+    terraformCode: liveTerraform?.[selectedCloud] || cloudConfigs[selectedCloud].terraformCode
+  };
 
   const handleCopyAdminSnippet = () => {
     const snippet = `Hi Cloud Admin,\n\nPlease grant '${activeCloud.requiredRole}' to my user account for project '${derivedProject}' so I can execute the ScoreX Data & AI Modernization Blueprint.\n\nThank you!`;

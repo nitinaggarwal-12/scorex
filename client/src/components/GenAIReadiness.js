@@ -259,36 +259,61 @@ const GenAIReadiness = () => {
         </div>
       )}
 
-      {/* Header */}
+      {/* Upscale Executive Header */}
       <div className="genai-header">
-        <div className="genai-header-content">
-          <h1>🤖 Generative AI Readiness Assessment</h1>
-          <p className="genai-subtitle">
-            Evaluate your organization's readiness to successfully deploy Generative AI solutions
-          </p>
-          <div className="customer-info">
-            <strong>Customer:</strong> {customerName || 'Not specified'}
+        <div className="genai-header-top">
+          <div className="genai-header-content">
+            <div className="genai-eyebrow">
+              <span className="genai-eyebrow-dot" />
+              ENTERPRISE GENAI DIAGNOSTIC • 6 DIMENSIONS
+            </div>
+            <h1>Generative AI Readiness Assessment</h1>
+            <p className="genai-subtitle">
+              Evaluate architectural, governance, and operating model readiness to scale production Generative AI
+            </p>
+          </div>
+
+          <div className="genai-header-toolbar">
+            <div className="customer-pill">
+              <span className="customer-pill-label">Organization</span>
+              <strong className="customer-pill-value">{customerName || 'Unspecified'}</strong>
+              <button 
+                className="customer-pill-edit"
+                onClick={() => setShowNameModal(true)}
+              >
+                Edit
+              </button>
+            </div>
+
             <button 
-              className="btn-link"
-              onClick={() => setShowNameModal(true)}
-            >
-              Change
-            </button>
-            <span className="info-divider">|</span>
-            <button 
-              className="btn-link btn-prefill"
+              className="btn-executive-prefill"
               onClick={handlePrefill}
-              title="Automatically answer all questions with random selections for testing"
+              title="Populate all 30 diagnostic controls with realistic enterprise responses"
             >
-              ⚡ Auto Prefill
+              ⚡ Auto-Prefill Demo
             </button>
+
+            {progress > 0 && (
+              <div className="executive-score-pill">
+                <span className="score-pill-label">Readiness Index</span>
+                <span className="score-pill-num">{scores.total}/{framework.totalPoints}</span>
+                {getMaturityLevel(scores.total) && (
+                  <span 
+                    className="maturity-badge-inline"
+                    style={{ backgroundColor: `${getMaturityLevel(scores.total).color}18`, color: getMaturityLevel(scores.total).color, borderColor: `${getMaturityLevel(scores.total).color}40` }}
+                  >
+                    {getMaturityLevel(scores.total).label}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
         </div>
         
-        {/* Progress Bar */}
+        {/* Sleek Integrated Progress Bar */}
         <div className="progress-section">
           <div className="progress-header">
-            <span>Overall Progress</span>
+            <span>Diagnostic Completion ({Object.keys(responses).length} of {framework.dimensions.reduce((sum, dim) => sum + dim.questions.length, 0)} Controls Answered)</span>
             <span className="progress-percentage">{progress}%</span>
           </div>
           <div className="progress-bar">
@@ -297,26 +322,7 @@ const GenAIReadiness = () => {
               style={{ width: `${progress}%` }}
             />
           </div>
-          <div className="progress-details">
-            {Object.keys(responses).length} of {framework.dimensions.reduce((sum, dim) => sum + dim.questions.length, 0)} questions answered
-          </div>
         </div>
-
-        {/* Current Score */}
-        {progress > 0 && (
-          <div className="current-score-card">
-            <div className="score-value">{scores.total}/{framework.totalPoints}</div>
-            <div className="score-label">Current Score</div>
-            {getMaturityLevel(scores.total) && (
-              <div 
-                className="maturity-badge"
-                style={{ backgroundColor: getMaturityLevel(scores.total).color }}
-              >
-                {getMaturityLevel(scores.total).label}
-              </div>
-            )}
-          </div>
-        )}
       </div>
 
       {/* Dimension Navigation */}

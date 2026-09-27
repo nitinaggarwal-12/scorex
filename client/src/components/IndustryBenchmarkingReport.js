@@ -1100,13 +1100,31 @@ const IndustryBenchmarkingReport = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [printMode, setPrintMode] = useState(false);
 
+  const [resolvedId, setResolvedId] = useState(assessmentId || '');
+
   useEffect(() => {
-    // Fetch assessment results
+    // Fetch assessment results (auto-resolving latest assessment if assessmentId param is omitted)
     const fetchData = async () => {
       try {
         setLoading(true);
         setBenchmarkData(null);
-        const response = await assessmentService.getAssessmentResults(assessmentId);
+        let activeId = assessmentId;
+        if (!activeId) {
+          const allResp = await assessmentService.getAllAssessments();
+          const list = Array.isArray(allResp) ? allResp : (allResp?.assessments || allResp?.data || []);
+          const completed = list.find(a => a && a.id && (a.status === 'completed' || a.progress >= 50)) || list[0];
+          if (completed?.id) {
+            activeId = completed.id;
+          } else {
+            const sample = await assessmentService.generateSampleAssessment();
+            activeId = sample?.assessment?.id || sample?.data?.assessmentId || sample?.assessmentId || sample?.id;
+          }
+        }
+        if (!activeId) {
+          throw new Error('No completed assessment found');
+        }
+        setResolvedId(activeId);
+        const response = await assessmentService.getAssessmentResults(activeId);
         setResults(response.data || response);
       } catch (err) {
         console.error('Error fetching assessment data:', err);
@@ -1114,21 +1132,19 @@ const IndustryBenchmarkingReport = () => {
         setLoading(false);
       }
     };
-    
-    if (assessmentId) {
-      setBenchmarkData(null);
-      fetchData();
-    }
+
+    fetchData();
   }, [assessmentId]);
 
   // Fetch benchmark data separately
   useEffect(() => {
     let isMounted = true;
     const fetchBenchmarkData = async () => {
-      if (!results || !assessmentId) return;
+      const targetId = assessmentId || resolvedId;
+      if (!results || !targetId) return;
       
       try {
-        const data = await assessmentService.getBenchmarkReport(assessmentId);
+        const data = await assessmentService.getBenchmarkReport(targetId);
         if (isMounted) {
           setBenchmarkData(data);
           setLoading(false);
@@ -1146,7 +1162,7 @@ const IndustryBenchmarkingReport = () => {
       fetchBenchmarkData();
     }
     return () => { isMounted = false; };
-  }, [results, benchmarkData, assessmentId]);
+  }, [results, benchmarkData, assessmentId, resolvedId]);
 
   // Extract data from results
   const assessment = results?.assessmentInfo;
@@ -1415,7 +1431,8 @@ const IndustryBenchmarkingReport = () => {
   const getTierIcon = (tier) => {
     switch(tier) {
       case 'Market Leader': return FiAward;
-      case 'Fast Follower': return FiTrendingUp;
+      case 'Fast Follower':
+      case 'Above Average': return FiTrendingUp;
       case 'Industry Average': return FiUsers;
       default: return FiTrendingDown;
     }
@@ -1424,7 +1441,8 @@ const IndustryBenchmarkingReport = () => {
   const getTierColor = (tier) => {
     switch(tier) {
       case 'Market Leader': return { bg: '#d1fae5', color: '#065f46', border: '#10b981', shadow: 'rgba(16, 185, 129, 0.2)' };
-      case 'Fast Follower': return { bg: '#dbeafe', color: '#1e40af', border: '#3b82f6', shadow: 'rgba(59, 130, 246, 0.2)' };
+      case 'Fast Follower':
+      case 'Above Average': return { bg: '#dbeafe', color: '#1e40af', border: '#3b82f6', shadow: 'rgba(59, 130, 246, 0.2)' };
       case 'Industry Average': return { bg: '#fef3c7', color: '#78350f', border: '#fbbf24', shadow: 'rgba(251, 191, 36, 0.2)' };
       default: return { bg: '#fee2e2', color: '#991b1b', border: '#ef4444', shadow: 'rgba(239, 68, 68, 0.2)' };
     }

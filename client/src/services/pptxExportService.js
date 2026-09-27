@@ -82,7 +82,11 @@ export const exportAssessmentToPPTX = async (instance, report) => {
     const tgtScore = Number(Math.min(5.0, +(parseFloat(curScore) + 1.3))).toFixed(1);
     const delta = +(tgtScore - curScore).toFixed(1);
     const maturityTier = parseFloat(curScore) >= 4.2 ? 'Level 5 - Optimized' : parseFloat(curScore) >= 3.4 ? 'Level 4 - Managed' : parseFloat(curScore) >= 2.6 ? 'Level 3 - Defined' : 'Level 2 - Developing';
-    const netValueEst = `$${(parseFloat(delta) * 1.8).toFixed(1)}M - $${(parseFloat(delta) * 3.2).toFixed(1)}M`;
+    const netValueEst =
+      report?.slideDeckSynthesis?.roiEstimate ||
+      report?.financialAnalysis?.roiRangeFormatted ||
+      report?.financialAnalysis?.annualSavingsFormatted ||
+      `$${(parseFloat(delta) * 1.8).toFixed(1)}M - $${(parseFloat(delta) * 3.2).toFixed(1)}M`;
 
     const addHeaderAndFooter = (slide, titleText, slideNum, totalSlides = 8) => {
       // Header Top Strip
@@ -100,8 +104,8 @@ export const exportAssessmentToPPTX = async (instance, report) => {
         x: 0.5, y: 0.14, w: 2.0, h: 0.38,
         fontSize: 16, bold: true, color: PPTX_THEME.white, fontFace: 'Arial'
       });
-      slide.addText('•  Google Cloud Enterprise Advisory', {
-        x: 1.6, y: 0.16, w: 3.5, h: 0.35,
+      slide.addText('•  Google Cloud & Gemini 3.8 Flash Enterprise Advisory', {
+        x: 1.6, y: 0.16, w: 4.5, h: 0.35,
         fontSize: 10, color: '94A3B8', fontFace: 'Arial'
       });
 

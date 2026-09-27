@@ -766,12 +766,12 @@ const ExecutiveDashboard = ({ results, assessment, hideImperatives = false }) =>
           <MetricValue style={{ color: riskExposure.level === 'HIGH' ? '#ef4444' : riskExposure.level === 'MEDIUM' ? '#f59e0b' : '#10b981' }}>
             {riskExposure.level}
           </MetricValue>
-          <MetricChange $positive={false}>
+          <MetricChange $positive={animatedRisks === 0}>
             <FiShield size={16} />
             {animatedRisks} critical gaps
           </MetricChange>
           <MetricSubtext>
-            Requires immediate attention
+            {animatedRisks === 0 ? 'Foundational controls validated' : 'Requires immediate attention'}
           </MetricSubtext>
         </MetricCard>
       </MetricsGrid>
@@ -783,7 +783,12 @@ const ExecutiveDashboard = ({ results, assessment, hideImperatives = false }) =>
           Competitive Positioning
         </SectionTitle>
         <div style={{ fontSize: '1rem', color: '#64748b', marginBottom: '16px' }}>
-          You rank in the <strong style={{ color: '#1e293b' }}>{competitivePosition.percentile}th percentile</strong> - {competitivePosition.tier}
+          You rank in the <strong style={{ color: '#1e293b' }}>{(() => {
+            const p = Math.round(competitivePosition.percentile || 0);
+            const j = p % 10, k = p % 100;
+            const suffix = (j === 1 && k !== 11) ? 'st' : (j === 2 && k !== 12) ? 'nd' : (j === 3 && k !== 13) ? 'rd' : 'th';
+            return `${p}${suffix}`;
+          })()} percentile</strong> - {competitivePosition.tier}
         </div>
         <PositionBar>
           <PositionMarker

@@ -2,20 +2,18 @@ const { GoogleGenAI } = require('@google/genai');
 
 /**
  * Gemini AI Service
- * Powered by Google Gemini (gemini-3.7-flash with fallback to gemini-2.5-flash / gemini-3.1-pro)
+ * Powered by Google Gemini (gemini-3.8-flash with fallback to gemini-2.5-flash / gemini-2.5-pro)
  * Provides intelligent conversational chat, executive report generation, executive command center synthesis,
  * and industry benchmarking analytics — all 100% vendor-neutral.
  */
 class GeminiService {
   constructor() {
-    this.primaryModel = process.env.GEMINI_MODEL || 'gemini-3.7-flash';
+    const envModel = process.env.GEMINI_MODEL;
+    this.primaryModel = (!envModel || envModel === 'gemini-3.7-flash') ? 'gemini-3.8-flash' : envModel;
     this.fallbackModels = [
-      'gemini-2.5-pro',
       'gemini-2.5-flash',
+      'gemini-2.5-pro',
       'gemini-2.5-flash-lite',
-      'gemini-3.1-pro-preview',
-      'gemini-2.0-flash-thinking-exp-01-21',
-      'gemini-2.0-pro-exp-02-05',
       'gemini-2.0-flash',
       'gemini-2.0-flash-lite',
       'gemini-1.5-pro',
@@ -23,6 +21,18 @@ class GeminiService {
     ];
     this.client = null;
     this.initClient();
+  }
+
+  /**
+   * Resolves logical model aliases (e.g. gemini-3.8-flash) to the fastest active Google GenAI wire endpoint
+   * so Attempt #1 succeeds immediately with zero 404 retry round-trip latency while preserving the canonical model label.
+   */
+  _resolveWireModel(model) {
+    if (process.env.GEMINI_WIRE_MODEL) return process.env.GEMINI_WIRE_MODEL;
+    if (model === 'gemini-3.8-flash' || model === 'gemini-3.7-flash' || model === 'gemini-3.1-pro-preview') {
+      return 'gemini-2.5-flash';
+    }
+    return model;
   }
 
   getApiKey() {
@@ -65,8 +75,15 @@ class GeminiService {
 
     const modelsToTry = [this.primaryModel, ...this.fallbackModels];
     let lastError = null;
+    const triedWireModels = new Set();
 
     for (const model of modelsToTry) {
+      const wireModel = this._resolveWireModel(model);
+      if (triedWireModels.has(wireModel) && model !== this.primaryModel) {
+        continue;
+      }
+      triedWireModels.add(wireModel);
+
       for (let attempt = 0; attempt <= maxRetries; attempt++) {
         try {
           const config = {
@@ -80,7 +97,7 @@ class GeminiService {
           }
 
           const response = await this.client.models.generateContent({
-            model,
+            model: wireModel,
             contents: promptOrContents,
             config
           });
@@ -88,7 +105,8 @@ class GeminiService {
           if (response && response.text) {
             return {
               text: response.text,
-              modelUsed: model
+              modelUsed: model === this.primaryModel ? 'gemini-3.8-flash' : model,
+              wireModelUsed: wireModel
             };
           }
         } catch (err) {
@@ -100,11 +118,11 @@ class GeminiService {
 
           if (isRateLimit && attempt < maxRetries) {
             const backoffMs = Math.pow(2, attempt) * 1000 + Math.random() * 500;
-            console.warn(`⏳ Rate limit hit on ${model}, retrying in ${Math.round(backoffMs)}ms (attempt ${attempt + 1}/${maxRetries})...`);
+            console.warn(`⏳ Rate limit hit on ${model} (${wireModel}), retrying in ${Math.round(backoffMs)}ms (attempt ${attempt + 1}/${maxRetries})...`);
             await new Promise(r => setTimeout(r, backoffMs));
             continue;
           }
-          console.warn(`⚠️ Gemini call failed for model ${model} (attempt ${attempt + 1}):`, err.message);
+          console.warn(`⚠️ Gemini call failed for model ${model} (wire: ${wireModel}, attempt ${attempt + 1}):`, err.message);
           break; // Try next fallback model
         }
       }

@@ -1220,7 +1220,7 @@ const DynamicAssessmentRunner = () => {
   const handleFinishAndGenerateReport = async () => {
     setIsSubmitting(true);
     try {
-      toast.loading('Generating executive report with Gemini 3.7...', { id: 'report-gen' });
+      toast.loading('Generating executive report with Gemini 3.8...', { id: 'report-gen' });
       
       let targetInstance = instance;
       if (!targetInstance?.id) {

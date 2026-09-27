@@ -345,6 +345,7 @@ const PresentationModeModal = ({ isOpen, onClose, instance, report, framework })
                   framework={framework}
                   overallCurrent={scores.overallScore || 2.5}
                   overallTarget={scores.targetScore || 4.2}
+                  financialAnalysis={report?.financialAnalysis}
                 />
               </motion.div>
             )}

@@ -1709,7 +1709,7 @@ export default function EuAiComplianceWorkspace() {
   const [copilotMessages, setCopilotMessages] = useState([
     {
       role: 'assistant',
-      text: 'Greetings. I am your EU AI Act Regulatory Copilot powered by Gemini 3.7 Flash. I have full context of your evaluation for "' + (meta.systemName || 'this system') + '". How can I assist with Article 9–15 requirements, Article 26 deployer obligations, fine liability calculation, or Annex IV technical documentation?',
+      text: 'Greetings. I am your EU AI Act Regulatory Copilot powered by Gemini 3.8 Flash. I have full context of your evaluation for "' + (meta.systemName || 'this system') + '". How can I assist with Article 9–15 requirements, Article 26 deployer obligations, fine liability calculation, or Annex IV technical documentation?',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
@@ -1723,8 +1723,8 @@ export default function EuAiComplianceWorkspace() {
       const urlParams = new URLSearchParams(window.location.search);
       const isDemo = urlParams.get('demo') === 'high-risk-hr' || urlParams.get('demo') === 'true';
       const requestedTab = urlParams.get('tab');
-      if (requestedTab && ['assessment', 'questionnaire', 'dashboard', 'report'].includes(requestedTab)) {
-        setActiveTab(requestedTab === 'assessment' ? 'questionnaire' : requestedTab);
+      if (requestedTab && ['assessment', 'questionnaire', 'dashboard', 'report', 'dossier'].includes(requestedTab)) {
+        setActiveTab(requestedTab === 'assessment' ? 'questionnaire' : requestedTab === 'dossier' ? 'report' : requestedTab);
       }
 
       const savedSynthesis = localStorage.getItem('scorex_eu_ai_synthesis');
@@ -1747,7 +1747,7 @@ export default function EuAiComplianceWorkspace() {
             answers: SAMPLE_HIGH_RISK_HR_EVALUATION.answers,
             taskStatusOverrides: {}
           }));
-          if (!requestedTab) setActiveTab('dashboard');
+          if (!requestedTab) setActiveTab('report');
           navigate(`/eu-ai-compliance/${sampleId}${window.location.search}`, { replace: true });
           return;
         } else {
@@ -2239,10 +2239,10 @@ export default function EuAiComplianceWorkspace() {
     toast.success(`Task status updated to "${newStatus}"`);
   };
 
-  // Generate Legal Synthesis with Gemini 3.7 Flash
+  // Generate Legal Synthesis with Gemini 3.8 Flash
   const handleGenerateSynthesis = async () => {
     setLoadingSynthesis(true);
-    const toastId = toast.loading('✨ Gemini 3.7 Flash synthesizing statutory legal analysis...');
+    const toastId = toast.loading('✨ Gemini 3.8 Flash synthesizing statutory legal analysis...');
     try {
       const res = await axios.post('/api/eu-ai-compliance/generate-synthesis', {
         meta,
@@ -2252,7 +2252,7 @@ export default function EuAiComplianceWorkspace() {
       if (res.data && res.data.success && res.data.synthesis) {
         setSynthesis(res.data.synthesis);
         localStorage.setItem('scorex_eu_ai_synthesis', JSON.stringify(res.data.synthesis));
-        toast.success('✅ Gemini 3.7 Flash Legal Synthesis Generated!', { id: toastId });
+        toast.success('✅ Gemini 3.8 Flash Legal Synthesis Generated!', { id: toastId });
         if (activeTab === 'questionnaire') {
           setActiveTab('dashboard');
         }
@@ -2440,109 +2440,96 @@ export default function EuAiComplianceWorkspace() {
 
   return (
     <WorkspaceWrapper>
-      {/* ================= STICKY TOP HEADER ================= */}
-      <TopStickyBar>
-        <TopBarInner>
-          <BrandBlock>
-            <EuroFlagBadge>★</EuroFlagBadge>
-            <TitleBlock>
-              <MainHeading>
-                EU AI Act Compliance & Audit Engine
-              </MainHeading>
-              <SubHeading>
-                Regulation (EU) 2024/1689 • Statutory Decision Tree & Conformity Workspace
-              </SubHeading>
+      {/* ================= STICKY TOP EXECUTIVE HEADER ================= */}
+      <TopStickyBar style={{ position: 'sticky', top: '56px', zIndex: 90, background: 'rgba(255, 255, 255, 0.97)', backdropFilter: 'blur(16px)', borderBottom: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(15, 23, 42, 0.03)' }}>
+        <TopBarInner style={{ padding: '14px 36px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '20px', flexWrap: 'wrap' }}>
+          <BrandBlock style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <EuroFlagBadge style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%)', fontSize: '1.05rem', boxShadow: '0 2px 6px rgba(15, 23, 42, 0.15)' }}>★</EuroFlagBadge>
+            <TitleBlock style={{ gap: '3px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                <MainHeading style={{ fontSize: '1.22rem', letterSpacing: '-0.02em' }}>
+                  EU AI Act Compliance & Audit Engine
+                </MainHeading>
+                <span style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  padding: '2px 9px',
+                  borderRadius: '999px',
+                  fontSize: '0.72rem',
+                  fontWeight: 800,
+                  background: `${evaluation.riskTierBadgeColor}14`,
+                  color: evaluation.riskTierBadgeColor,
+                  border: `1px solid ${evaluation.riskTierBadgeColor}35`
+                }}>
+                  <FiShield size={11} />
+                  {evaluation.overallRiskTier.split(' (')[0]}
+                </span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.76rem', color: '#64748b', fontWeight: 500, flexWrap: 'wrap' }}>
+                <span>Regulation (EU) 2024/1689</span>
+                <span>•</span>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', fontWeight: 700, color: '#334155' }}>
+                  {meta.documentId || 'EUAIA-2026-HR4902'}
+                  <button
+                    type="button"
+                    onClick={() => handleCopy(meta.documentId || 'EUAIA-2026-HR4902', 'dossier-id')}
+                    style={{ background: 'transparent', border: 'none', color: '#64748b', cursor: 'pointer', padding: 0, display: 'inline-flex', alignItems: 'center' }}
+                    title="Copy Dossier ID"
+                  >
+                    {copiedId === 'dossier-id' ? <FiCheck size={12} color="#10b981" /> : <FiCopy size={12} />}
+                  </button>
+                </span>
+                <span>•</span>
+                <span style={{ fontWeight: 700, color: progressPct === 100 ? '#059669' : '#2563eb' }}>
+                  {answeredQuestions}/20 Controls ({progressPct}%)
+                </span>
+              </div>
             </TitleBlock>
           </BrandBlock>
 
-          <HeaderActions>
-            <NavTabsRow>
-              <NavTab 
-                $active={activeTab === 'questionnaire'}
-                onClick={() => setActiveTab('questionnaire')}
-              >
-                <FiFileText size={14} />
-                Questionnaire ({answeredQuestions}/20)
-              </NavTab>
-              <NavTab 
-                $active={activeTab === 'dashboard'}
-                onClick={() => setActiveTab('dashboard')}
-              >
-                <FiShield size={14} />
-                Compliance Dashboard
-              </NavTab>
-              <NavTab 
-                $active={activeTab === 'report'}
-                onClick={() => setActiveTab('report')}
-              >
-                <FiAward size={14} />
-                Formal Audit Dossier
-              </NavTab>
-            </NavTabsRow>
-
-            <ActionButton 
-              $primary
-              onClick={handleStartNewAssessment}
-              title="Start a fresh blank EU AI Act compliance assessment with a new unique Dossier ID"
+          {/* Segmented Primary View Switcher */}
+          <NavTabsRow style={{ background: '#f1f5f9', padding: '4px', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+            <NavTab 
+              $active={activeTab === 'questionnaire'}
+              onClick={() => setActiveTab('questionnaire')}
+              style={{ padding: '6px 14px', fontSize: '0.82rem' }}
             >
-              <FiPlus size={15} />
-              New Assessment
-            </ActionButton>
+              <FiFileText size={14} />
+              Statutory Intake ({answeredQuestions}/20)
+            </NavTab>
+            <NavTab 
+              $active={activeTab === 'dashboard' || activeTab === 'report'}
+              onClick={() => setActiveTab('dashboard')}
+              style={{ padding: '6px 14px', fontSize: '0.82rem' }}
+            >
+              <FiShield size={14} />
+              Compliance & Audit Dossier
+            </NavTab>
+          </NavTabsRow>
 
-            <CategoryDropdownContainer>
-              <CategoryDropdownTrigger
-                onClick={() => setCategoryDropdownOpen(prev => !prev)}
-                title="Select from 8 distinct EU AI Act statutory risk & domain categories"
-                data-testid="category-dropdown-trigger"
-              >
-                <HiSparkles size={15} />
-                {selectedCategoryPreset
-                  ? `Category: ${EU_AI_CATEGORY_PRESETS.find(p => p.id === selectedCategoryPreset)?.shortLabel || 'Custom'}`
-                  : '✨ Select AI Category Preset (8)'}
-                <FiChevronDown size={14} />
-              </CategoryDropdownTrigger>
-
-              {categoryDropdownOpen && (
-                <CategoryDropdownMenu data-testid="category-dropdown-menu">
-                  <CategoryMenuHeader>
-                    <span>EU AI Act Statutory Categories (8 Unique Profiles)</span>
-                    <button
-                      onClick={() => setCategoryDropdownOpen(false)}
-                      style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}
-                    >
-                      <FiX size={14} />
-                    </button>
-                  </CategoryMenuHeader>
-                  {EU_AI_CATEGORY_PRESETS.map(preset => (
-                    <CategoryMenuItem
-                      key={preset.id}
-                      $active={selectedCategoryPreset === preset.id}
-                      onClick={() => handleSelectCategoryPreset(preset.id)}
-                      data-testid={`category-option-${preset.id}`}
-                    >
-                      <CategoryItemTopRow>
-                        <CategoryItemTitle>{preset.label}</CategoryItemTitle>
-                        <CategoryBadge $color={preset.badgeColor}>{preset.badge}</CategoryBadge>
-                      </CategoryItemTopRow>
-                      <CategoryItemDesc>{preset.description} • Dossier: {preset.meta.documentId}</CategoryItemDesc>
-                    </CategoryMenuItem>
-                  ))}
-                </CategoryDropdownMenu>
-              )}
-            </CategoryDropdownContainer>
-
+          {/* Upscale Consolidated Executive Toolbar */}
+          <HeaderActions style={{ gap: '8px', flexWrap: 'nowrap' }}>
             <ActionButton 
-              $gemini
               onClick={handleGenerateSynthesis}
               disabled={loadingSynthesis}
-              title="Generate AI Legal Synthesis with Gemini 3.7 Flash"
+              title="Generate AI Legal Synthesis with Gemini 3.8 Flash"
+              style={{
+                background: '#0f172a',
+                color: '#ffffff',
+                border: '1px solid #1e293b',
+                padding: '7px 14px',
+                fontSize: '0.82rem',
+                borderRadius: '8px',
+                boxShadow: '0 1px 2px rgba(15, 23, 42, 0.12)'
+              }}
             >
-              <HiSparkles size={15} />
-              {loadingSynthesis ? 'Synthesizing...' : '✨ AI Legal Synthesis'}
+              <HiSparkles size={14} style={{ color: '#818cf8' }} />
+              {loadingSynthesis ? 'Synthesizing...' : 'AI Legal Synthesis'}
             </ActionButton>
 
             <ActionButton 
-              $audio
+              $secondary
               onClick={() => {
                 if (isPlayingAudio) {
                   stopCurrentAudio();
@@ -2552,104 +2539,62 @@ export default function EuAiComplianceWorkspace() {
               }}
               disabled={loadingAudio}
               title="Play 3-Act Executive Audio Briefing"
+              style={{ padding: '7px 12px', fontSize: '0.82rem', borderRadius: '8px' }}
             >
-              <FiMic size={15} />
-              {loadingAudio ? 'Generating...' : (isPlayingAudio ? 'Pause Audio' : '🎙️ Audio Briefing')}
+              <FiMic size={14} style={{ color: isPlayingAudio ? '#ef4444' : '#4f46e5' }} />
+              {loadingAudio ? 'Audio...' : (isPlayingAudio ? 'Pause' : 'Briefing')}
             </ActionButton>
 
             <ActionButton 
-              $copilot
+              $secondary
               onClick={() => setCopilotOpen(true)}
               title="Open In-Workspace Regulatory Copilot"
+              style={{ padding: '7px 12px', fontSize: '0.82rem', borderRadius: '8px' }}
             >
-              <FiMessageSquare size={14} />
-              AI Copilot
+              <FiMessageSquare size={14} style={{ color: '#2563eb' }} />
+              Copilot
+            </ActionButton>
+
+            <ActionButton 
+              $secondary
+              onClick={handleStartNewAssessment}
+              title="Start a fresh blank EU AI Act compliance assessment with a new unique Dossier ID"
+              style={{ padding: '7px 11px', fontSize: '0.82rem', borderRadius: '8px' }}
+            >
+              <FiPlus size={14} />
+              New
             </ActionButton>
 
             {activeTab === 'report' ? (
               <ActionButton 
-                $primary
+                $secondary
                 onClick={() => window.print()}
+                style={{ padding: '7px 11px', fontSize: '0.82rem', borderRadius: '8px' }}
               >
-                <FiPrinter size={15} />
-                Print / Export PDF
+                <FiPrinter size={14} />
+                Print
               </ActionButton>
             ) : (
               <ActionButton 
                 $secondary
                 onClick={handleReset}
                 title="Reset answers"
+                style={{ padding: '7px 10px', fontSize: '0.82rem', borderRadius: '8px', color: '#64748b' }}
               >
-                <FiRotateCcw size={14} />
-                Reset
+                <FiRotateCcw size={13} />
               </ActionButton>
             )}
           </HeaderActions>
         </TopBarInner>
+
+        {/* Subtle 2px bottom progress indicator line */}
+        <div style={{ width: '100%', height: '2px', background: '#f1f5f9' }}>
+          <div style={{ width: `${progressPct}%`, height: '100%', background: progressPct === 100 ? '#10b981' : '#4f46e5', transition: 'width 0.3s ease' }} />
+        </div>
       </TopStickyBar>
 
       {/* ================= MAIN CONTENT VIEWPORT ================= */}
       <ContentContainer>
-        {/* Progress Bar & Quick Status */}
-        <ProgressBanner>
-          <ProgressBarWrapper>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', fontWeight: '700' }}>
-              <span>Statutory Intake Progress: {answeredQuestions} of 20 Questions Completed</span>
-              <span style={{ color: progressPct === 100 ? '#10b981' : '#2563eb' }}>{progressPct}%</span>
-            </div>
-            <ProgressTrack>
-              <ProgressFill $pct={progressPct} />
-            </ProgressTrack>
-          </ProgressBarWrapper>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '8px', 
-              background: '#f8fafc', 
-              border: '1.5px solid #e2e8f0', 
-              padding: '6px 12px', 
-              borderRadius: '8px',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.02)'
-            }}>
-              <span style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Dossier ID:</span>
-              <span style={{ fontSize: '0.82rem', fontWeight: '800', color: '#0f172a', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace' }}>
-                {meta.documentId || 'EUAIA-2026-HR4902'}
-              </span>
-              <button
-                type="button"
-                onClick={() => handleCopy(meta.documentId || 'EUAIA-2026-HR4902', 'dossier-id')}
-                style={{ background: 'transparent', border: 'none', color: '#64748b', cursor: 'pointer', padding: '0 2px', display: 'flex', alignItems: 'center' }}
-                title="Copy Dossier ID"
-              >
-                {copiedId === 'dossier-id' ? <FiCheck size={13} color="#10b981" /> : <FiCopy size={13} />}
-              </button>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'right' }}>
-                <span style={{ fontSize: '0.70rem', color: '#64748b', fontWeight: '700', textTransform: 'uppercase' }}>Current Classification</span>
-                <span style={{ fontSize: '0.88rem', fontWeight: '800', color: evaluation.riskTierBadgeColor }}>
-                  {evaluation.overallRiskTier.split(' (')[0]}
-                </span>
-              </div>
-              <div style={{ 
-                width: '36px', 
-                height: '36px', 
-                borderRadius: '9px', 
-                background: `${evaluation.riskTierBadgeColor}15`, 
-                color: evaluation.riskTierBadgeColor,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: '800'
-              }}>
-                <FiShield size={18} />
-              </div>
-            </div>
-          </div>
-        </ProgressBanner>
 
         {/* ================= SYSTEM IDENTIFICATION & CATEGORY SELECTOR CARD ================= */}
         <div style={{
@@ -3081,7 +3026,46 @@ export default function EuAiComplianceWorkspace() {
           </QuestionnaireGrid>
         )}
 
-        {/* ================= TAB 2: COMPLIANCE DASHBOARD ================= */}
+        {/* ================= TAB 2: COMPLIANCE & AUDIT DOSSIER ================= */}
+        {(activeTab === 'dashboard' || activeTab === 'report') && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '10px 16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <button
+                onClick={() => setActiveTab('dashboard')}
+                style={{
+                  background: activeTab === 'dashboard' ? '#0f172a' : 'transparent',
+                  color: activeTab === 'dashboard' ? '#ffffff' : '#475569',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '6px 14px',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+              >
+                🛡️ Interactive Compliance Dashboard
+              </button>
+              <button
+                onClick={() => setActiveTab('report')}
+                style={{
+                  background: activeTab === 'report' ? '#0f172a' : 'transparent',
+                  color: activeTab === 'report' ? '#ffffff' : '#475569',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '6px 14px',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+              >
+                📄 Printable Annex IV / VIII Statutory Dossier
+              </button>
+            </div>
+            <ActionButton $primary onClick={() => window.print()}>
+              <FiPrinter size={14} /> Print / Export Statutory PDF
+            </ActionButton>
+          </div>
+        )}
         {activeTab === 'dashboard' && (
           <DashboardGrid>
             {/* 4 Hero KPI Cards */}
@@ -3578,14 +3562,14 @@ export default function EuAiComplianceWorkspace() {
               )}
             </AudioBriefingCard>
 
-            {/* Gemini 3.7 Flash AI Legal Synthesis */}
+            {/* Gemini 3.8 Flash AI Legal Synthesis */}
             <GeminiSynthesisContainer>
               <SynthesisHeaderBar>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                     <HiSparkles color="#6366f1" size={20} />
                     <h3 style={{ fontSize: '1.25rem', fontWeight: '900', color: '#0f172a', margin: 0 }}>
-                      Gemini 3.7 Flash Statutory Legal Synthesis & Enforcement Analysis
+                      Gemini 3.8 Flash Statutory Legal Synthesis & Enforcement Analysis
                     </h3>
                   </div>
                   <span style={{ fontSize: '0.82rem', color: '#64748b' }}>
@@ -3596,7 +3580,7 @@ export default function EuAiComplianceWorkspace() {
                 <SynthesisBadgeGroup>
                   <GeminiModelBadge>
                     <HiSparkles size={13} />
-                    Model: Gemini 3.7 Flash
+                    Model: Gemini 3.8 Flash
                   </GeminiModelBadge>
                   <span style={{ fontSize: '0.74rem', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', padding: '4px 10px', borderRadius: '999px', fontWeight: '800' }}>
                     Zero-Hallucination Grounded
@@ -3619,7 +3603,7 @@ export default function EuAiComplianceWorkspace() {
                     <HiSparkles size={26} />
                   </div>
                   <h4 style={{ fontSize: '1.15rem', fontWeight: '800', color: '#0f172a', margin: 0 }}>
-                    Generate Board-Level Legal Synthesis with Gemini 3.7 Flash
+                    Generate Board-Level Legal Synthesis with Gemini 3.8 Flash
                   </h4>
                   <p style={{ maxWidth: '680px', fontSize: '0.88rem', color: '#475569', margin: 0, lineHeight: 1.55 }}>
                     Perform deep statutory legal synthesis across Article 5 prohibitions, Annex III point 4 criteria, the 2025–2027 enforcement timeline, Article 99 fine liability calculation, and an initial Annex IV Technical File draft.
@@ -4731,7 +4715,7 @@ export default function EuAiComplianceWorkspace() {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
                   <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <HiSparkles color="#6366f1" size={18} />
-                    5. Statutory Legal Synthesis & Annex IV Technical Documentation (Gemini 3.7 Flash)
+                    5. Statutory Legal Synthesis & Annex IV Technical Documentation (Gemini 3.8 Flash)
                   </h3>
                   <span style={{ fontSize: '0.72rem', background: '#eef2ff', color: '#4f46e5', border: '1px solid #c7d2fe', padding: '3px 10px', borderRadius: '999px', fontWeight: '800' }}>
                     Article 11 & Annex IV Grounded
@@ -4770,7 +4754,7 @@ export default function EuAiComplianceWorkspace() {
       <CopilotFab
         type="button"
         onClick={() => setCopilotOpen(true)}
-        title="Open EU AI Act Regulatory Copilot (Gemini 3.7 Flash)"
+        title="Open EU AI Act Regulatory Copilot (Gemini 3.8 Flash)"
       >
         <FiMessageSquare size={18} />
         <span>EU AI Act Copilot</span>
@@ -4800,7 +4784,7 @@ export default function EuAiComplianceWorkspace() {
                         EU AI Act Regulatory Copilot
                       </h3>
                       <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
-                        Powered by Gemini 3.7 Flash • Zero-Hallucination
+                        Powered by Gemini 3.8 Flash • Zero-Hallucination
                       </span>
                     </div>
                   </div>
@@ -4885,7 +4869,7 @@ export default function EuAiComplianceWorkspace() {
                   {copilotLoading && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#6366f1', fontSize: '0.8rem', fontStyle: 'italic', padding: '6px 12px' }}>
                       <FiRefreshCw size={14} className="animate-spin" />
-                      Gemini 3.7 Flash analyzing statutory obligations...
+                      Gemini 3.8 Flash analyzing statutory obligations...
                     </div>
                   )}
                 </CopilotChatList>

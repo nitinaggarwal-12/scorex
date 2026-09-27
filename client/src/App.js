@@ -177,6 +177,7 @@ const CustomerPortfolioDashboard = lazyWithRetry(() => import('./components/Cust
 const CommandPalette = lazyWithRetry(() => import('./components/CommandPalette'));
 const InteractiveWorkflowWalkthrough = lazyWithRetry(() => import('./components/InteractiveWorkflowWalkthrough'));
 const EuAiComplianceWorkspace = lazyWithRetry(() => import('./components/EuAiComplianceWorkspace'));
+const GeValueRealizationWorkspace = lazyWithRetry(() => import('./components/GeValueRealizationWorkspace'));
 
 // Protected Route Component with Frictionless Auto-Guest Provisioning
 const ProtectedRoute = ({ children }) => {
@@ -531,6 +532,42 @@ function App() {
             element={
               <ProtectedRoute>
                 <EuAiComplianceWorkspace />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/ge-value-realization" 
+            element={
+              <ProtectedRoute>
+                <GeValueRealizationWorkspace />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/ge-value-realization/:id" 
+            element={
+              <ProtectedRoute>
+                <GeValueRealizationWorkspace />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/assessments/ge-value-realization" 
+            element={
+              <ProtectedRoute>
+                <GeValueRealizationWorkspace />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/assessments/ge-value-realization/:id" 
+            element={
+              <ProtectedRoute>
+                <GeValueRealizationWorkspace />
               </ProtectedRoute>
             } 
           />

@@ -1,6 +1,7 @@
 (() => {
   'use strict';
 
+  if (!new URLSearchParams(window.location.search).has('debug')) return;
   if (document.getElementById('scorex-build-switcher')) return;
 
   const style = document.createElement('style');

@@ -18,15 +18,15 @@ const Nav = styled.nav`
   right: 0;
   width: 100%;
   z-index: 1000;
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid #e2e8f0;
-  padding: 14px 0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02);
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+  padding: 11px 0;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
 
   @media (max-width: 768px) {
-    padding: 12px 0;
+    padding: 10px 0;
   }
 `;
 
@@ -37,7 +37,7 @@ const NavContainer = styled.div`
   width: 100%;
   max-width: 1600px;
   margin: 0 auto;
-  padding: 0 48px;
+  padding: 0 36px;
 
   @media (max-width: 1024px) {
     padding: 0 24px;
@@ -52,15 +52,15 @@ const NavContainer = styled.div`
 const BrandLogo = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   cursor: pointer;
   user-select: none;
-  margin-right: 8px;
+  margin-right: 12px;
   text-decoration: none;
-  transition: transform 0.2s ease;
+  transition: opacity 0.18s ease;
 
   &:hover {
-    transform: translateY(-1px);
+    opacity: 0.88;
   }
 `;
 
@@ -68,43 +68,35 @@ const LogoIcon = styled.div`
   width: 30px;
   height: 30px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #312e81 100%);
+  border: 1px solid rgba(99, 102, 241, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #ffffff;
   font-weight: 900;
-  font-size: 0.95rem;
-  box-shadow: 0 3px 10px rgba(59, 130, 246, 0.35);
+  font-size: 0.9rem;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.18);
 `;
 
 const LogoText = styled.span`
-  font-size: 1.18rem;
+  font-size: 1.15rem;
   font-weight: 800;
   letter-spacing: -0.03em;
   color: #0f172a;
   display: flex;
   align-items: center;
+  gap: 8px;
 
   span {
-    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #4f46e5;
   }
 `;
 
 const TopNav = styled.div`
   display: flex;
   align-items: center;
-  gap: 16px;
-
-  @media (max-width: 1400px) {
-    gap: 12px;
-  }
-
-  @media (max-width: 1100px) {
-    gap: 10px;
-  }
+  gap: 6px;
 
   @media (max-width: 1024px) {
     display: none;
@@ -114,7 +106,7 @@ const TopNav = styled.div`
 const ActionButtons = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   
   @media (max-width: 1024px) {
     display: none;
@@ -227,73 +219,58 @@ const MobileCTAButton = styled.button`
 `;
 
 const NavLink = styled.button`
-  background: none;
+  background: transparent;
   border: none;
-  color: #64748b;
-  font-weight: 500;
-  font-size: 0.9375rem;
+  outline: none;
+  color: #475569;
+  font-weight: 600;
+  font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.2s;
-  padding: 8px 0;
+  transition: all 0.16s ease;
+  padding: 7px 12px;
+  border-radius: 8px;
   position: relative;
   white-space: nowrap;
 
-  @media (max-width: 1200px) {
-    font-size: 0.875rem;
-  }
-
   &:hover {
-    color: #3b82f6;
+    color: #0f172a;
+    background: #f1f5f9;
   }
 
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: #3b82f6;
-    transform: scaleX(0);
-    transition: transform 0.2s;
-  }
-
-  &:hover::after {
-    transform: scaleX(1);
+  &:focus {
+    outline: none;
   }
 `;
 
 const SecondaryCTAButton = styled.button`
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: white;
-  color: #3b82f6;
-  border: 1.5px solid #3b82f6;
-  padding: 8px 15px;
-  border-radius: 8px;
+  gap: 7px;
+  background: #0f172a;
+  color: #ffffff;
+  border: 1px solid #1e293b;
+  outline: none;
+  padding: 7px 14px;
+  border-radius: 9px;
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 0.84rem;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.18s ease;
   white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12);
 
   &:hover {
-    background: #eff6ff;
+    background: #1e293b;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.18);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
   }
 
   &:active {
     transform: translateY(0);
   }
 
-  svg {
-    transition: transform 0.2s;
-  }
-
-  &:hover svg {
-    transform: scale(1.08);
+  &:focus {
+    outline: none;
   }
 `;
 
@@ -301,33 +278,24 @@ const CTAButton = styled.button`
   display: flex;
   align-items: center;
   gap: 6px;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  background: #0f172a;
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
+  outline: none;
+  padding: 7px 15px;
+  border-radius: 9px;
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 0.84rem;
   cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+  transition: all 0.2s ease;
   white-space: nowrap;
 
   &:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+    background: #1e293b;
   }
 
-  &:active {
-    transform: translateY(0);
-  }
-
-  svg {
-    transition: transform 0.2s;
-  }
-
-  &:hover svg {
-    transform: translateX(2px);
+  &:focus {
+    outline: none;
   }
 `;
 
@@ -340,13 +308,14 @@ const DropdownButton = styled.button`
   display: flex;
   align-items: center;
   gap: 6px;
-  background: white;
-  color: #374151;
-  border: 1.5px solid #e5e7eb;
-  padding: 8px 14px;
-  border-radius: 8px;
+  background: #f8fafc;
+  color: #0f172a;
+  border: 1px solid #e2e8f0;
+  outline: none;
+  padding: 7px 13px;
+  border-radius: 9px;
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 0.84rem;
   cursor: pointer;
   transition: all 0.25s ease;
   white-space: nowrap;
@@ -443,15 +412,16 @@ const DropdownDivider = styled.div`
 const AssessmentsMegaMenu = styled.div`
   position: absolute;
   top: calc(100% + 8px);
-  right: 0;
-  width: 710px;
+  left: 0;
+  right: auto;
+  width: 780px;
   max-width: calc(100vw - 32px);
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 16px;
   box-shadow: 0 24px 48px -12px rgba(15, 23, 42, 0.16), 0 6px 16px -4px rgba(15, 23, 42, 0.06);
-  display: grid;
-  grid-template-columns: 430px 280px;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   z-index: 1000;
   opacity: ${props => props.$isOpen ? 1 : 0};
@@ -469,7 +439,6 @@ const AssessmentsMegaMenu = styled.div`
   }
 
   @media (max-width: 900px) {
-    grid-template-columns: 1fr;
     width: 360px;
   }
 `;
@@ -621,12 +590,14 @@ const TrySampleDropdownContainer = styled.div`
 const TrySampleMenu = styled.div`
   position: absolute;
   top: calc(100% + 8px);
-  left: 0;
+  right: 0;
+  left: auto;
   background: white;
   border: 1px solid #e2e8f0;
   border-radius: 16px;
   box-shadow: 0 20px 44px -10px rgba(15, 23, 42, 0.16), 0 4px 14px -2px rgba(15, 23, 42, 0.05);
   min-width: 445px;
+  max-width: calc(100vw - 32px);
   padding: 12px;
   z-index: 1000;
   opacity: ${props => props.$isOpen ? 1 : 0};
@@ -728,6 +699,7 @@ const GlobalNav = () => {
   const [assignmentsDropdownOpen, setAssignmentsDropdownOpen] = useState(false);
   const [adminDropdownOpen, setAdminDropdownOpen] = useState(false);
   const [trySampleDropdownOpen, setTrySampleDropdownOpen] = useState(false);
+  const [portfolioDropdownOpen, setPortfolioDropdownOpen] = useState(false);
   const [resourcesDropdownOpen, setResourcesDropdownOpen] = useState(false);
   const [mobileTrySampleOpen, setMobileTrySampleOpen] = useState(false);
   const [promotedTypes, setPromotedTypes] = useState([]);
@@ -840,37 +812,86 @@ const GlobalNav = () => {
   const handleTrySampleCore = async () => {
     closeMobileMenu();
     setTrySampleDropdownOpen(false);
-    try {
-      toast.loading('Generating Enterprise Data & AI sample...', { id: 'sample-assessment' });
-      const result = await assessmentService.generateSampleAssessment();
-      const assessmentId = result?.assessment?.id || result?.data?.assessmentId || result?.assessmentId || result?.id;
-      if (!assessmentId) throw new Error('No assessment ID returned from server');
-      await new Promise(resolve => setTimeout(resolve, 800));
-      navigate(`/assessment/${assessmentId}/platform_governance`);
-    } catch (error) {
-      console.error('[GlobalNav] Error creating sample assessment:', error);
-      toast.error('Failed to create sample assessment');
-    }
+    setAssessmentsDropdownOpen(false);
+    toast.success('Opening Enterprise Data & AI Maturity Executive Report...');
+    navigate('/assessments/report/inst_enterprise_data_ai_maturity_demo');
   };
 
-  const handleTrySampleGenAI = () => {
+  const handleTrySampleGenAI = async () => {
     closeMobileMenu();
     setTrySampleDropdownOpen(false);
-    toast.success('Loading Gen AI Readiness sample assessment...');
-    navigate('/genai-readiness');
+    setAssessmentsDropdownOpen(false);
+    try {
+      toast.loading('Loading Gen AI Readiness Executive Report...', { id: 'genai-sample' });
+      const listRes = await fetch('/api/genai-readiness/assessments');
+      const listData = await listRes.json();
+      const items = Array.isArray(listData) ? listData : (listData?.assessments || []);
+      if (items.length > 0 && items[0]?.id) {
+        toast.success('Gen AI Readiness Report loaded!', { id: 'genai-sample' });
+        navigate(`/genai-readiness/report/${items[0].id}`);
+        return;
+      }
+      const fwRes = await fetch('/api/genai-readiness/framework');
+      const fw = await fwRes.json();
+      const responses = {};
+      const scores = {};
+      let total = 0;
+      (fw.dimensions || []).forEach((dim, dIdx) => {
+        let dimScore = 0;
+        (dim.questions || []).forEach((q, qIdx) => {
+          const val = q.options?.[Math.min((q.options?.length || 1) - 1, ((dIdx + qIdx) % 2) + 2)]?.value || 10;
+          responses[q.id] = val;
+          dimScore += val;
+        });
+        scores[dim.id] = { name: dim.name, score: dimScore, maxScore: dim.maxPoints || 50, percentage: Math.round((dimScore / (dim.maxPoints || 50)) * 100) };
+        total += dimScore;
+      });
+      const createRes = await fetch('/api/genai-readiness/assessments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerName: 'Global Retail Corp',
+          responses,
+          scores,
+          totalScore: total,
+          maxScore: fw.totalPoints || 300,
+          maturityLevel: 'Scaling & Governed',
+          completedAt: new Date().toISOString()
+        })
+      });
+      const created = await createRes.json();
+      toast.success('Gen AI Readiness Report loaded!', { id: 'genai-sample' });
+      navigate(`/genai-readiness/report/${created.id}`);
+    } catch (e) {
+      toast.dismiss('genai-sample');
+      navigate('/genai-readiness');
+    }
   };
 
   const handleTrySampleDynamic = async (typeKey, title) => {
     closeMobileMenu();
     setTrySampleDropdownOpen(false);
+    setAssessmentsDropdownOpen(false);
+    const canonicalDemoMap = {
+      openai_to_gemini_enterprise_migration: 'inst_openai_to_gemini_enterprise_migration_demo',
+      finops_cloud_cost_optimization: 'inst_finops_cloud_cost_optimization_demo',
+      agentic_ai_mesh_mcp_banking_readiness: 'inst_agentic_ai_mesh_mcp_banking_readiness_demo',
+      edw_lakehouse_to_bigquery_modernization: 'inst_edw_lakehouse_to_bigquery_modernization_demo',
+      enterprise_ai_zero_trust_security: 'inst_enterprise_ai_zero_trust_security_demo'
+    };
+    if (canonicalDemoMap[typeKey]) {
+      toast.success(`Opening "${title}" Executive Report...`);
+      navigate(`/assessments/report/${canonicalDemoMap[typeKey]}`);
+      return;
+    }
     try {
-      toast.loading(`Spinning up sample for "${title}"...`, { id: 'sample-assessment' });
+      toast.loading(`Opening sample report for "${title}"...`, { id: 'sample-assessment' });
       const result = await dynamicAssessmentService.generateSampleForType(typeKey);
-      toast.success(`"${title}" sample loaded!`, { id: 'sample-assessment' });
-      navigate(`/assessments/run/instance/${result.instanceId}`);
+      toast.success(`"${title}" report loaded!`, { id: 'sample-assessment' });
+      navigate(`/assessments/report/${result.instanceId}`);
     } catch (error) {
       console.error('[GlobalNav] Error creating dynamic sample:', error);
-      toast.error('Failed to create dynamic sample');
+      toast.error('Failed to open dynamic sample report');
     }
   };
 
@@ -1154,8 +1175,8 @@ const GlobalNav = () => {
   const renderTrySampleMenu = () => (
     <TrySampleMenu $isOpen={trySampleDropdownOpen}>
       <TrySampleHeader>
-        <span>⚡ Instant Autopopulated Demos</span>
-        <span style={{ fontSize: '0.64rem', color: '#2563eb', background: '#eff6ff', padding: '2px 6px', borderRadius: '999px', fontWeight: 700 }}>Pre-Seeded Data</span>
+        <span>⚡ 1-Click Pre-Seeded Executive Reports</span>
+        <span style={{ fontSize: '0.64rem', color: '#2563eb', background: '#eff6ff', padding: '2px 6px', borderRadius: '999px', fontWeight: 700 }}>8 Live Demos</span>
       </TrySampleHeader>
       <TrySampleOption onClick={handleTrySampleCore}>
         <TrackIconBox $bg="rgba(255, 107, 53, 0.12)" $color="#ff6b35" $border="rgba(255, 107, 53, 0.25)">
@@ -1167,6 +1188,32 @@ const GlobalNav = () => {
             <TrackBadge $bg="rgba(255, 107, 53, 0.12)" $color="#ea580c" $border="rgba(255, 107, 53, 0.28)">Core 6-Pillar</TrackBadge>
           </TrackTopRow>
           <TrackSubtitle>ConnectPlus Telecom • 60-Question Executive Report</TrackSubtitle>
+        </TrackContent>
+      </TrySampleOption>
+
+      <TrySampleOption onClick={handleTrySampleGenAI}>
+        <TrackIconBox $bg="rgba(124, 58, 237, 0.12)" $color="#7c3aed" $border="rgba(124, 58, 237, 0.28)">
+          <FiCpu />
+        </TrackIconBox>
+        <TrackContent>
+          <TrackTopRow>
+            <TrackTitle>Gen AI Readiness Assessment</TrackTitle>
+            <TrackBadge $bg="rgba(124, 58, 237, 0.12)" $color="#7c3aed" $border="rgba(124, 58, 237, 0.28)">LLM & RAG</TrackBadge>
+          </TrackTopRow>
+          <TrackSubtitle>Global Retail Corp • 6-Dimension Readiness Readout</TrackSubtitle>
+        </TrackContent>
+      </TrySampleOption>
+
+      <TrySampleOption onClick={() => { setTrySampleDropdownOpen(false); navigate('/ge-value-realization?tab=report'); }}>
+        <TrackIconBox $bg="rgba(37, 99, 235, 0.12)" $color="#2563eb" $border="rgba(37, 99, 235, 0.28)">
+          <FiTrendingUp />
+        </TrackIconBox>
+        <TrackContent>
+          <TrackTopRow>
+            <TrackTitle>GE Value Realization (Merck)</TrackTitle>
+            <TrackBadge $bg="rgba(37, 99, 235, 0.12)" $color="#1d4ed8" $border="rgba(37, 99, 235, 0.28)">CFO & OKR Bridge</TrackBadge>
+          </TrackTopRow>
+          <TrackSubtitle>Merck & Co., Inc. • 85,300 Seats • McKinsey & Google Readout</TrackSubtitle>
         </TrackContent>
       </TrySampleOption>
 
@@ -1203,23 +1250,6 @@ const GlobalNav = () => {
           </TrySampleOption>
         );
       })}
-
-      <DropdownDivider style={{ margin: '8px 0' }} />
-      <MegaMenuStudioCard
-        $gradient
-        onClick={() => { setTrySampleDropdownOpen(false); navigate('/assessments/custom-hub'); }}
-      >
-        <TrackIconBox $bg="rgba(139, 92, 246, 0.15)" $color="#7c3aed" $border="rgba(139, 92, 246, 0.3)">
-          <FiLayers />
-        </TrackIconBox>
-        <TrackContent>
-          <TrackTopRow>
-            <TrackTitle style={{ color: '#6d28d9' }}>Browse All Sample Blueprints</TrackTitle>
-            <FiArrowRight style={{ color: '#7c3aed', fontSize: '14px' }} />
-          </TrackTopRow>
-          <TrackSubtitle>Explore 12+ industry reference architectures & reports</TrackSubtitle>
-        </TrackContent>
-      </MegaMenuStudioCard>
     </TrySampleMenu>
   );
 
@@ -1237,154 +1267,156 @@ const GlobalNav = () => {
 
     return (
       <AssessmentsMegaMenu $isOpen={assessmentsDropdownOpen}>
-        {/* Left Column: Diagnostic Frameworks */}
-        <MegaMenuPrimaryCol>
-          <MegaMenuSectionHeader>
-            <span>⚡ Diagnostic Frameworks</span>
-            <span style={{ fontSize: '0.64rem', color: '#2563eb', background: '#eff6ff', padding: '2px 7px', borderRadius: '999px', fontWeight: 700 }}>
-              {3 + promotedList.length} Tracks
+        {/* Top Grid: Diagnostic Frameworks + 1-Click Sample Reports */}
+        <MegaMenuPrimaryCol style={{ padding: '14px 16px' }}>
+          <MegaMenuSectionHeader style={{ marginBottom: '8px' }}>
+            <span>⚡ Diagnostic Frameworks (Click Title to Start • Click Badge for Sample Report)</span>
+            <span style={{ fontSize: '0.64rem', color: '#2563eb', background: '#eff6ff', padding: '2px 8px', borderRadius: '999px', fontWeight: 700 }}>
+              {4 + promotedList.length} Tracks
             </span>
           </MegaMenuSectionHeader>
 
-          {/* Track 1: Data & AI Maturity */}
-          <MegaMenuTrackItem onClick={() => runNav('/start')}>
-            <TrackIconBox $bg="rgba(37, 99, 235, 0.1)" $color="#2563eb" $border="rgba(37, 99, 235, 0.22)">
-              <FiBarChart2 />
-            </TrackIconBox>
-            <TrackContent>
-              <TrackTopRow>
-                <TrackTitle>Data & AI Maturity Assessment</TrackTitle>
-                <TrackBadge $bg="rgba(37, 99, 235, 0.1)" $color="#2563eb" $border="rgba(37, 99, 235, 0.25)">Core 6-Pillar</TrackBadge>
-              </TrackTopRow>
-              <TrackSubtitle>Enterprise data, MLOps & cloud governance • 60 Qs</TrackSubtitle>
-            </TrackContent>
-          </MegaMenuTrackItem>
-
-          {/* Track 2: Gen AI Readiness */}
-          <MegaMenuTrackItem onClick={() => runNav('/genai-readiness')}>
-            <TrackIconBox $bg="rgba(124, 58, 237, 0.1)" $color="#7c3aed" $border="rgba(124, 58, 237, 0.22)">
-              <FiCpu />
-            </TrackIconBox>
-            <TrackContent>
-              <TrackTopRow>
-                <TrackTitle>Gen AI Readiness Assessment</TrackTitle>
-                <TrackBadge $bg="rgba(124, 58, 237, 0.1)" $color="#7c3aed" $border="rgba(124, 58, 237, 0.25)">LLM & RAG</TrackBadge>
-              </TrackTopRow>
-              <TrackSubtitle>Prompt engineering, vector RAG & guardrails • 35 Qs</TrackSubtitle>
-            </TrackContent>
-          </MegaMenuTrackItem>
-
-          {/* Track 3: EU AI Act Compliance */}
-          <MegaMenuTrackItem onClick={() => runNav('/eu-ai-compliance')}>
-            <TrackIconBox $bg="rgba(16, 185, 129, 0.1)" $color="#059669" $border="rgba(16, 185, 129, 0.25)">
-              <FiShield />
-            </TrackIconBox>
-            <TrackContent>
-              <TrackTopRow>
-                <TrackTitle>EU AI Act Compliance Engine</TrackTitle>
-                <TrackBadge $bg="rgba(16, 185, 129, 0.1)" $color="#059669" $border="rgba(16, 185, 129, 0.25)">Legal & Audit</TrackBadge>
-              </TrackTopRow>
-              <TrackSubtitle>Statutory classification, conformity audit & legal dossier • 20 Qs</TrackSubtitle>
-            </TrackContent>
-          </MegaMenuTrackItem>
-
-          {/* Promoted Dynamic Assessment Tracks */}
-          {promotedList.map((type) => {
-            const { IconComponent, displayTitle, displayBadge, microSubtitle, color } = getTrackVisuals(type);
-            return (
-              <MegaMenuTrackItem
-                key={type.id || type.typeKey}
-                onClick={() => runNav(`/assessments/run/${type.typeKey}`)}
-              >
-                <TrackIconBox $bg={`${color}14`} $color={color} $border={`${color}28`}>
-                  <IconComponent />
-                </TrackIconBox>
-                <TrackContent>
-                  <TrackTopRow>
-                    <TrackTitle>{displayTitle}</TrackTitle>
-                    <TrackBadge $bg={`${color}14`} $color={color} $border={`${color}28`}>{displayBadge}</TrackBadge>
-                  </TrackTopRow>
-                  <TrackSubtitle>{microSubtitle}</TrackSubtitle>
-                </TrackContent>
-              </MegaMenuTrackItem>
-            );
-          })}
-        </MegaMenuPrimaryCol>
-
-        {/* Right Column: Workspace & AI Studio */}
-        <MegaMenuSecondaryCol>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <MegaMenuSectionHeader>
-              <span>🗂️ Workspace & Directory</span>
-            </MegaMenuSectionHeader>
-
-            {!isGuest && (
-              <MegaMenuTrackItem onClick={() => { setAssessmentsDropdownOpen(false); navigate('/my-assessments'); }}>
-                <TrackIconBox $bg="rgba(59, 130, 246, 0.1)" $color="#2563eb" $border="rgba(59, 130, 246, 0.2)">
-                  <FiFileText />
-                </TrackIconBox>
-                <TrackContent>
-                  <TrackTitle>My Assessments</TrackTitle>
-                  <TrackSubtitle>Active & completed runs</TrackSubtitle>
-                </TrackContent>
-              </MegaMenuTrackItem>
-            )}
-
-            <MegaMenuTrackItem onClick={() => { setAssessmentsDropdownOpen(false); navigate('/assessments'); }}>
-              <TrackIconBox $bg="rgba(13, 148, 136, 0.1)" $color="#0d9488" $border="rgba(13, 148, 136, 0.2)">
-                <FiList />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '6px 12px' }}>
+            {/* Track 0: GE Value Realization (Merck Gemini Enterprise Migration) */}
+            <MegaMenuTrackItem onClick={() => runNav('/ge-value-realization?tab=inputs')}>
+              <TrackIconBox $bg="rgba(37, 99, 235, 0.12)" $color="#1d4ed8" $border="rgba(37, 99, 235, 0.28)">
+                <FiTrendingUp />
               </TrackIconBox>
               <TrackContent>
-                <TrackTitle>All Assessments</TrackTitle>
-                <TrackSubtitle>Benchmark directory & results</TrackSubtitle>
+                <TrackTopRow>
+                  <TrackTitle>GE Value Realization</TrackTitle>
+                  <span
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setAssessmentsDropdownOpen(false);
+                      navigate('/ge-value-realization?tab=report');
+                    }}
+                    style={{ fontSize: '0.64rem', fontWeight: 700, padding: '2px 6px', borderRadius: '5px', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', cursor: 'pointer', flexShrink: 0 }}
+                    title="Open Merck McKinsey & Google Executive Value Realization Readout"
+                  >
+                    📊 Merck Report
+                  </span>
+                </TrackTopRow>
+                <TrackSubtitle>Merck OpenAI → Gemini migration value bridge • 75 Qs</TrackSubtitle>
               </TrackContent>
             </MegaMenuTrackItem>
 
-            {currentUser && currentUser.role === 'admin' && !currentUser.testMode && (
-              <MegaMenuTrackItem onClick={() => { setAssessmentsDropdownOpen(false); navigate('/admin/questions'); }}>
-                <TrackIconBox $bg="rgba(100, 116, 139, 0.12)" $color="#475569" $border="rgba(100, 116, 139, 0.25)">
-                  <FiSettings />
-                </TrackIconBox>
-                <TrackContent>
-                  <TrackTitle>Manage Questions</TrackTitle>
-                  <TrackSubtitle>Edit framework question bank</TrackSubtitle>
-                </TrackContent>
-              </MegaMenuTrackItem>
-            )}
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <MegaMenuSectionHeader style={{ marginBottom: '2px' }}>
-              <span>✨ AI Studio & Catalog</span>
-            </MegaMenuSectionHeader>
-
-            <MegaMenuStudioCard onClick={() => { setAssessmentsDropdownOpen(false); navigate('/assessments/custom-hub'); }}>
-              <TrackIconBox $bg="rgba(139, 92, 246, 0.12)" $color="#7c3aed" $border="rgba(139, 92, 246, 0.25)">
-                <FiLayers />
+            {/* Track 1: Data & AI Maturity */}
+            <MegaMenuTrackItem onClick={() => runNav('/start')}>
+              <TrackIconBox $bg="rgba(37, 99, 235, 0.1)" $color="#2563eb" $border="rgba(37, 99, 235, 0.22)">
+                <FiBarChart2 />
               </TrackIconBox>
               <TrackContent>
                 <TrackTopRow>
-                  <TrackTitle style={{ color: '#6d28d9' }}>Template Catalog</TrackTitle>
-                  <FiArrowRight style={{ color: '#7c3aed', fontSize: '13px', flexShrink: 0 }} />
+                  <TrackTitle>Data & AI Maturity</TrackTitle>
+                  <span
+                    onClick={(e) => { e.stopPropagation(); handleTrySampleCore(); }}
+                    style={{ fontSize: '0.64rem', fontWeight: 700, padding: '2px 6px', borderRadius: '5px', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', cursor: 'pointer', flexShrink: 0 }}
+                    title="Open pre-seeded Executive Report"
+                  >
+                    📊 Sample Report
+                  </span>
                 </TrackTopRow>
-                <TrackSubtitle>12+ industry blueprints</TrackSubtitle>
+                <TrackSubtitle>Enterprise data, MLOps & cloud governance • 60 Qs</TrackSubtitle>
               </TrackContent>
-            </MegaMenuStudioCard>
+            </MegaMenuTrackItem>
 
-            <MegaMenuStudioCard $gradient onClick={() => { setAssessmentsDropdownOpen(false); navigate('/assessments/ai-generator'); }}>
-              <TrackIconBox $bg="rgba(219, 39, 119, 0.12)" $color="#db2777" $border="rgba(219, 39, 119, 0.25)">
-                <HiSparkles />
+            {/* Track 2: Gen AI Readiness */}
+            <MegaMenuTrackItem onClick={() => runNav('/genai-readiness')}>
+              <TrackIconBox $bg="rgba(124, 58, 237, 0.1)" $color="#7c3aed" $border="rgba(124, 58, 237, 0.22)">
+                <FiCpu />
               </TrackIconBox>
               <TrackContent>
                 <TrackTopRow>
-                  <TrackTitle style={{ color: '#be185d' }}>AI Studio Compiler</TrackTitle>
-                  <FiArrowRight style={{ color: '#db2777', fontSize: '13px', flexShrink: 0 }} />
+                  <TrackTitle>Gen AI Readiness</TrackTitle>
+                  <span
+                    onClick={(e) => { e.stopPropagation(); handleTrySampleGenAI(); }}
+                    style={{ fontSize: '0.64rem', fontWeight: 700, padding: '2px 6px', borderRadius: '5px', background: '#f5f3ff', color: '#6d28d9', border: '1px solid #ddd6fe', cursor: 'pointer', flexShrink: 0 }}
+                    title="Open pre-seeded GenAI Readiness Report"
+                  >
+                    📊 Sample Report
+                  </span>
                 </TrackTopRow>
-                <TrackSubtitle>Prompt-to-Assessment AI</TrackSubtitle>
+                <TrackSubtitle>Prompt engineering, vector RAG & guardrails • 30 Qs</TrackSubtitle>
               </TrackContent>
-            </MegaMenuStudioCard>
+            </MegaMenuTrackItem>
+
+            {/* Track 3: EU AI Act Compliance */}
+            <MegaMenuTrackItem onClick={() => runNav('/eu-ai-compliance')}>
+              <TrackIconBox $bg="rgba(16, 185, 129, 0.1)" $color="#059669" $border="rgba(16, 185, 129, 0.25)">
+                <FiShield />
+              </TrackIconBox>
+              <TrackContent>
+                <TrackTopRow>
+                  <TrackTitle>EU AI Act Compliance</TrackTitle>
+                  <span
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setAssessmentsDropdownOpen(false);
+                      navigate('/eu-ai-compliance?demo=high-risk-hr&tab=report');
+                    }}
+                    style={{ fontSize: '0.64rem', fontWeight: 700, padding: '2px 6px', borderRadius: '5px', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', cursor: 'pointer', flexShrink: 0 }}
+                    title="Open Annex IV Conformity Dossier & Board Readout"
+                  >
+                    📊 Sample Dossier
+                  </span>
+                </TrackTopRow>
+                <TrackSubtitle>Statutory classification & conformity dossier • 20 Qs</TrackSubtitle>
+              </TrackContent>
+            </MegaMenuTrackItem>
+
+            {/* Promoted Dynamic Assessment Tracks */}
+            {promotedList.map((type) => {
+              const { IconComponent, displayTitle, microSubtitle, color } = getTrackVisuals(type);
+              return (
+                <MegaMenuTrackItem
+                  key={type.id || type.typeKey}
+                  onClick={() => runNav(`/assessments/run/${type.typeKey}`)}
+                >
+                  <TrackIconBox $bg={`${color}14`} $color={color} $border={`${color}28`}>
+                    <IconComponent />
+                  </TrackIconBox>
+                  <TrackContent>
+                    <TrackTopRow>
+                      <TrackTitle>{displayTitle}</TrackTitle>
+                      <span
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleTrySampleDynamic(type.typeKey, displayTitle);
+                        }}
+                        style={{ fontSize: '0.64rem', fontWeight: 700, padding: '2px 6px', borderRadius: '5px', background: '#f8fafc', color: '#334155', border: '1px solid #cbd5e1', cursor: 'pointer', flexShrink: 0 }}
+                        title={`Open pre-seeded ${displayTitle} Executive Report`}
+                      >
+                        📊 Sample Report
+                      </span>
+                    </TrackTopRow>
+                    <TrackSubtitle>{microSubtitle}</TrackSubtitle>
+                  </TrackContent>
+                </MegaMenuTrackItem>
+              );
+            })}
           </div>
-        </MegaMenuSecondaryCol>
+        </MegaMenuPrimaryCol>
+
+        {/* Sleek Footer Bar: Methodology Rubric & Progression Diff */}
+        <div style={{ background: '#f8fafc', borderTop: '1px solid #e2e8f0', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+          <div
+            onClick={() => { setAssessmentsDropdownOpen(false); navigate('/deep-dive'); }}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 700, color: '#3730a3' }}
+          >
+            <FiLayers style={{ color: '#4f46e5' }} />
+            <span>6-Pillar Scoring Rubric & Methodology</span>
+            <FiArrowRight style={{ fontSize: '12px' }} />
+          </div>
+          <div
+            onClick={() => { setAssessmentsDropdownOpen(false); navigate('/assessments/compare'); }}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 700, color: '#0f172a' }}
+          >
+            <FiTrendingUp style={{ color: '#2563eb' }} />
+            <span>Quarter-over-Quarter Progression Diff</span>
+            <FiArrowRight style={{ fontSize: '12px' }} />
+          </div>
+        </div>
       </AssessmentsMegaMenu>
     );
   };
@@ -1400,96 +1432,196 @@ const GlobalNav = () => {
       <Nav>
         <NavContainer>
           {/* Brand Logo & Desktop Navigation */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
             <BrandLogo onClick={handleLogoClick}>
               <LogoIcon>⚡</LogoIcon>
-              <LogoText>Score<span>X</span></LogoText>
+              <LogoText>
+                Score<span>X</span>
+                <span style={{
+                  fontSize: '0.62rem',
+                  fontWeight: 800,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  padding: '2px 7px',
+                  borderRadius: '6px',
+                  background: '#f1f5f9',
+                  color: '#475569',
+                  border: '1px solid #e2e8f0'
+                }}>
+                  Enterprise
+                </span>
+              </LogoText>
             </BrandLogo>
 
             <TopNav>
-              <NavLink onClick={handleLogoClick}>Home</NavLink>
-              <NavLink 
+              <NavLink
                 onClick={() => handleNavigate('/assessments/custom-hub')}
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '6px',
-                  color: '#7c3aed',
-                  fontWeight: '700',
-                  background: 'rgba(124, 58, 237, 0.08)',
-                  padding: '5px 11px',
-                  borderRadius: '8px'
+                  color: '#0f172a',
+                  fontWeight: '700'
                 }}
               >
-                <HiSparkles size={15} style={{ color: '#8b5cf6' }} />
-                AI Assessment Hub
+                <HiSparkles size={14} style={{ color: '#4f46e5' }} />
+                Assessment Hub
               </NavLink>
 
-              <NavLink onClick={() => handleNavigate('/insights-dashboard')}>Dashboard</NavLink>
-
-              {/* 🧭 Consolidated Resources & Tools Dropdown */}
+              {/* 1. Frameworks & Demos Mega-Menu */}
               <DropdownContainer 
                 className="dropdown-container"
-                onMouseEnter={() => setResourcesDropdownOpen(true)}
+                onMouseEnter={() => {
+                  setAssessmentsDropdownOpen(true);
+                  setPortfolioDropdownOpen(false);
+                  setTrySampleDropdownOpen(false);
+                  setResourcesDropdownOpen(false);
+                  setAssignmentsDropdownOpen(false);
+                  setAdminDropdownOpen(false);
+                }}
+                onMouseLeave={() => setAssessmentsDropdownOpen(false)}
+              >
+                <NavLink 
+                  onClick={() => {
+                    const next = !assessmentsDropdownOpen;
+                    setAssessmentsDropdownOpen(next);
+                    if (next) {
+                      setPortfolioDropdownOpen(false);
+                      setTrySampleDropdownOpen(false);
+                      setResourcesDropdownOpen(false);
+                      setAssignmentsDropdownOpen(false);
+                      setAdminDropdownOpen(false);
+                    }
+                  }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+                >
+                  Frameworks & Demos
+                  <FiChevronDown size={13} style={{ transform: assessmentsDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                </NavLink>
+                {renderAssessmentsMegaMenu(!currentUser)}
+              </DropdownContainer>
+
+              {/* 2. Portfolio & Analytics Dropdown (5 Distinct MECE Views) */}
+              <DropdownContainer 
+                className="dropdown-container"
+                onMouseEnter={() => {
+                  setPortfolioDropdownOpen(true);
+                  setAssessmentsDropdownOpen(false);
+                  setResourcesDropdownOpen(false);
+                  setTrySampleDropdownOpen(false);
+                }}
+                onMouseLeave={() => setPortfolioDropdownOpen(false)}
+              >
+                <NavLink 
+                  onClick={() => {
+                    handleNavigate('/insights-dashboard');
+                    setPortfolioDropdownOpen(false);
+                  }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+                >
+                  Portfolio
+                  <FiChevronDown size={13} style={{ transform: portfolioDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                </NavLink>
+                <DropdownMenu $isOpen={portfolioDropdownOpen} style={{ minWidth: '310px', left: 0, right: 'auto', padding: '10px 0' }}>
+                  <DropdownHeader>📊 Executive Analytics & Benchmarks</DropdownHeader>
+                  <DropdownItem onClick={() => { handleNavigate('/insights-dashboard'); setPortfolioDropdownOpen(false); }}>
+                    <FiTrendingUp style={{ color: '#10b981' }} />
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+                      <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.84rem' }}>Executive Portfolio Dashboard</span>
+                      <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Multi-organization maturity & ROI telemetry</span>
+                    </div>
+                  </DropdownItem>
+                  <DropdownItem onClick={() => { handleNavigate('/executive-dashboard'); setPortfolioDropdownOpen(false); }}>
+                    <FiAward style={{ color: '#4f46e5' }} />
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+                      <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.84rem' }}>C-Suite Command Center</span>
+                      <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Board readiness & strategic decision cockpit</span>
+                    </div>
+                  </DropdownItem>
+                  <DropdownItem onClick={() => { handleNavigate('/assessments/compare'); setPortfolioDropdownOpen(false); }}>
+                    <FiBarChart2 style={{ color: '#2563eb' }} />
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+                      <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.84rem' }}>Side-by-Side Comparison</span>
+                      <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Compare baseline vs target horizon or reassessments</span>
+                    </div>
+                  </DropdownItem>
+                  <DropdownItem onClick={() => { handleNavigate('/industry-benchmarks'); setPortfolioDropdownOpen(false); }}>
+                    <FiDatabase style={{ color: '#0ea5e9' }} />
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+                      <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.84rem' }}>Industry Peer Benchmarks</span>
+                      <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Cross-industry percentile cohort rankings</span>
+                    </div>
+                  </DropdownItem>
+
+                  <DropdownDivider />
+                  <DropdownHeader>🗂️ Evaluation Directory</DropdownHeader>
+                  <DropdownItem onClick={() => { handleNavigate('/assessments'); setPortfolioDropdownOpen(false); }}>
+                    <FiList style={{ color: '#0d9488' }} />
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+                      <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.84rem' }}>Assessment Directory & History</span>
+                      <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Browse, filter & manage all completed evaluations</span>
+                    </div>
+                  </DropdownItem>
+                </DropdownMenu>
+              </DropdownContainer>
+
+              {/* 3. Resources & Enablement Dropdown */}
+              <DropdownContainer 
+                className="dropdown-container"
+                onMouseEnter={() => {
+                  setResourcesDropdownOpen(true);
+                  setAssessmentsDropdownOpen(false);
+                  setPortfolioDropdownOpen(false);
+                  setTrySampleDropdownOpen(false);
+                }}
                 onMouseLeave={() => setResourcesDropdownOpen(false)}
               >
                 <NavLink 
                   onClick={() => setResourcesDropdownOpen(!resourcesDropdownOpen)}
                   style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}
                 >
-                  Explore & Tools
+                  Resources
                   <FiChevronDown size={13} style={{ transform: resourcesDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
                 </NavLink>
                 <DropdownMenu $isOpen={resourcesDropdownOpen} style={{ minWidth: '320px', left: 0, right: 'auto', padding: '10px 0' }}>
-                  <DropdownHeader>⚡ Flagship AI Capabilities</DropdownHeader>
-                  <DropdownItem onClick={() => { handleNavigate('/assessments/custom-hub'); setResourcesDropdownOpen(false); }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', width: '100%' }}>
-                      <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', fontWeight: '700', color: '#7c3aed' }}>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>🎙️ DeepMind Voice & Audio</span>
-                        <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(124,58,237,0.12)', color: '#7c3aed', fontWeight: 800 }}>4,000+ Voices</span>
-                      </span>
-                      <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Neural voice briefs, podcast casting & multilingual dubbing</span>
+                  <DropdownHeader>💰 Financial & Value Modelers</DropdownHeader>
+                  <DropdownItem onClick={() => { handleNavigate('/tco-calculator'); setResourcesDropdownOpen(false); }}>
+                    <FiTrendingUp style={{ color: '#059669' }} />
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+                      <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.84rem' }}>TCO & Cloud Economics Modeler</span>
+                      <span style={{ fontSize: '0.72rem', color: '#64748b' }}>3-year total cost of ownership & slot arbitrage</span>
                     </div>
                   </DropdownItem>
-
-                  <DropdownItem onClick={() => { handleNavigate('/pitch-deck'); setResourcesDropdownOpen(false); }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', width: '100%' }}>
-                      <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', fontWeight: '700', color: '#d97706' }}>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>🎬 Veo 2 Video & Storyboard</span>
-                        <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(245,158,11,0.12)', color: '#d97706', fontWeight: 800 }}>Veo 2</span>
-                      </span>
-                      <span style={{ fontSize: '0.75rem', color: '#64748b' }}>5-act executive video synthesis & architecture fly-throughs</span>
-                    </div>
-                  </DropdownItem>
-
-                  <DropdownItem onClick={() => { handleNavigate('/assessments/ai-generator'); setResourcesDropdownOpen(false); }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', width: '100%' }}>
-                      <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', fontWeight: '700', color: '#db2777' }}>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>✨ Prompt-to-Assessment AI</span>
-                        <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(219,39,119,0.12)', color: '#db2777', fontWeight: 800 }}>GenAI</span>
-                      </span>
-                      <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Compile custom 60-question industry maturity frameworks</span>
+                  <DropdownItem onClick={() => { handleNavigate('/roi-calculator'); setResourcesDropdownOpen(false); }}>
+                    <FiAward style={{ color: '#2563eb' }} />
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+                      <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.84rem' }}>ROI & Value Realization Modeler</span>
+                      <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Board-level payback period & NPV business case</span>
                     </div>
                   </DropdownItem>
 
                   <DropdownDivider />
-
-                  <DropdownHeader>🏛️ Diagnostic Frameworks & Hubs</DropdownHeader>
-                  <DropdownItem onClick={() => { handleNavigate('/start'); setResourcesDropdownOpen(false); }}>
-                    <FiBarChart2 style={{ color: '#3b82f6' }} /> 6-Pillar Benchmark Assessment
-                  </DropdownItem>
+                  <DropdownHeader>📖 Methodology & Guided Tours</DropdownHeader>
                   <DropdownItem onClick={() => { handleNavigate('/deep-dive'); setResourcesDropdownOpen(false); }}>
-                    <FiCpu style={{ color: '#8b5cf6' }} /> Deep Dive Diagnostic Engine
+                    <FiLayers style={{ color: '#4f46e5' }} />
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+                      <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.84rem' }}>6-Pillar Scoring Rubric & Methodology</span>
+                      <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Maturity levels, weights & CMMI governance gates</span>
+                    </div>
                   </DropdownItem>
-                  <DropdownItem onClick={() => { handleNavigate('/insights-dashboard'); setResourcesDropdownOpen(false); }}>
-                    <FiTrendingUp style={{ color: '#10b981' }} /> Executive Portfolio Dashboard
+                  <DropdownItem onClick={() => { handleNavigate('/workflow-walkthrough'); setResourcesDropdownOpen(false); }}>
+                    <FiPlay style={{ color: '#7c3aed' }} />
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+                      <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.84rem' }}>Interactive Workflow Tour</span>
+                      <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Guided step-by-step architect & executive demo</span>
+                    </div>
                   </DropdownItem>
-
-                  <DropdownDivider />
-
-                  <DropdownHeader>📖 Guidance & Documentation</DropdownHeader>
-                  <DropdownItem onClick={() => { handleNavigate('/user-guide'); setResourcesDropdownOpen(false); }}>
-                    <FiBook style={{ color: '#6366f1' }} /> User Guide & Best Practices
+                  <DropdownItem onClick={() => { handleNavigate('/feedback'); setResourcesDropdownOpen(false); }}>
+                    <FiMessageSquare style={{ color: '#10b981' }} />
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+                      <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.84rem' }}>Architecture Advisory & Feedback</span>
+                      <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Request custom review or submit platform feedback</span>
+                    </div>
                   </DropdownItem>
                 </DropdownMenu>
               </DropdownContainer>
@@ -1499,67 +1631,11 @@ const GlobalNav = () => {
           <ActionButtons>
             {currentUser ? (
               <>
-                {/* Try Sample Dropdown */}
-                <TrySampleDropdownContainer 
-                  className="dropdown-container"
-                  onMouseEnter={() => {
-                    setTrySampleDropdownOpen(true);
-                    setAssessmentsDropdownOpen(false);
-                    setResourcesDropdownOpen(false);
-                    setAssignmentsDropdownOpen(false);
-                    setAdminDropdownOpen(false);
-                  }}
-                  onMouseLeave={() => setTrySampleDropdownOpen(false)}
-                >
-                  <SecondaryCTAButton onClick={() => {
-                    const next = !trySampleDropdownOpen;
-                    setTrySampleDropdownOpen(next);
-                    if (next) {
-                      setAssessmentsDropdownOpen(false);
-                      setResourcesDropdownOpen(false);
-                      setAssignmentsDropdownOpen(false);
-                      setAdminDropdownOpen(false);
-                    }
-                  }}>
-                    <FiPlay size={14} />
-                    Try Sample
-                    <FiChevronDown size={14} className="chevron" style={{ marginLeft: '-2px', transform: trySampleDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
-                  </SecondaryCTAButton>
-                  
-                  {renderTrySampleMenu()}
-                </TrySampleDropdownContainer>
-
-                {/* Assessments Dropdown with Hover Trigger */}
-                <DropdownContainer 
-                  className="dropdown-container"
-                  onMouseEnter={() => {
-                    setAssessmentsDropdownOpen(true);
-                    setTrySampleDropdownOpen(false);
-                    setResourcesDropdownOpen(false);
-                    setAssignmentsDropdownOpen(false);
-                    setAdminDropdownOpen(false);
-                  }}
-                  onMouseLeave={() => setAssessmentsDropdownOpen(false)}
-                >
-                  <DropdownButton 
-                    $isOpen={assessmentsDropdownOpen}
-                    onClick={() => {
-                      const next = !assessmentsDropdownOpen;
-                      setAssessmentsDropdownOpen(next);
-                      if (next) {
-                        setTrySampleDropdownOpen(false);
-                        setResourcesDropdownOpen(false);
-                        setAssignmentsDropdownOpen(false);
-                        setAdminDropdownOpen(false);
-                      }
-                    }}
-                  >
-                    <FiFileText size={14} />
-                    Assessments
-                    <FiChevronDown size={14} className="chevron" />
-                  </DropdownButton>
-                  {renderAssessmentsMegaMenu(false)}
-                </DropdownContainer>
+                {/* Primary 1-Click AI Framework Compiler Button (Zero Duplication with Frameworks & Demos) */}
+                <SecondaryCTAButton onClick={() => handleNavigate('/assessments/ai-generator')}>
+                  <HiSparkles size={14} style={{ color: '#a855f7' }} />
+                  AI Compiler
+                </SecondaryCTAButton>
 
                 {/* Assignments Dropdown (Admin/Author only) with Hover Trigger */}
                 {(currentUser.role === 'admin' || currentUser.role === 'author') && (
@@ -1611,16 +1687,6 @@ const GlobalNav = () => {
                       )}
                     </DropdownMenu>
                   </DropdownContainer>
-                )}
-
-                {currentUser.role === 'demo' && (
-                  <SecondaryCTAButton 
-                    style={{ background: 'rgba(99, 102, 241, 0.15)', borderColor: 'rgba(99, 102, 241, 0.4)', color: '#a5b4fc', fontWeight: '600' }}
-                    onClick={() => setShowLoginModal(true)}
-                  >
-                    <FiLogIn size={13} />
-                    Sign In
-                  </SecondaryCTAButton>
                 )}
 
                 {/* Admin/User Dropdown with Hover Trigger */}
@@ -1775,11 +1841,7 @@ const GlobalNav = () => {
               </>
             ) : (
               <>
-                <SecondaryCTAButton onClick={() => handleExploreAsGuest('/dashboard')}>
-                  Dashboard
-                </SecondaryCTAButton>
-
-                {/* Try Sample Dropdown (Guest View) */}
+                {/* Quick Launch Sample Dropdown (Guest View) */}
                 <TrySampleDropdownContainer 
                   className="dropdown-container"
                   onMouseEnter={() => {
@@ -1797,46 +1859,18 @@ const GlobalNav = () => {
                       setResourcesDropdownOpen(false);
                     }
                   }}>
-                    <FiPlay size={14} />
-                    Try Sample
-                    <FiChevronDown size={14} className="chevron" style={{ marginLeft: '-2px', transform: trySampleDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                    <FiPlay size={13} style={{ color: '#818cf8' }} />
+                    Quick Launch
+                    <FiChevronDown size={13} className="chevron" style={{ marginLeft: '-2px', transform: trySampleDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
                   </SecondaryCTAButton>
                   
                   {renderTrySampleMenu()}
                 </TrySampleDropdownContainer>
 
-                {/* Assessments Hover Dropdown for Guests */}
-                <DropdownContainer 
-                  className="dropdown-container"
-                  onMouseEnter={() => {
-                    setAssessmentsDropdownOpen(true);
-                    setTrySampleDropdownOpen(false);
-                    setResourcesDropdownOpen(false);
-                  }}
-                  onMouseLeave={() => setAssessmentsDropdownOpen(false)}
-                >
-                  <DropdownButton 
-                    $isOpen={assessmentsDropdownOpen}
-                    onClick={() => {
-                      const next = !assessmentsDropdownOpen;
-                      setAssessmentsDropdownOpen(next);
-                      if (next) {
-                        setTrySampleDropdownOpen(false);
-                        setResourcesDropdownOpen(false);
-                      }
-                    }}
-                  >
-                    <FiFileText size={14} />
-                    Assessments
-                    <FiChevronDown size={14} className="chevron" />
-                  </DropdownButton>
-                  {renderAssessmentsMegaMenu(true)}
-                </DropdownContainer>
-
-                <SecondaryCTAButton onClick={() => setShowLoginModal(true)}>
+                <DropdownButton onClick={() => setShowLoginModal(true)}>
                   <FiLogIn size={14} />
-                  Login
-                </SecondaryCTAButton>
+                  Sign In
+                </DropdownButton>
               </>
             )}
           </ActionButtons>

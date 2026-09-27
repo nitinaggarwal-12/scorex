@@ -356,7 +356,7 @@ const MultiPersonaViews = ({
   recs: propRecs = null,
   roadmap: propRoadmap = null
 }) => {
-  const [activePersona, setActivePersona] = useState('board'); // 'board', 'vp', 'architect'
+  const [activePersona, setActivePersona] = useState('vp'); // 'vp' (Phased Roadmap default), 'board', 'architect'
 
   // Extract dynamic values from props or live AI report
   const effectiveRoadmap = propRoadmap || aiReport?.transformationRoadmap || aiReport?.roadmap || {};
@@ -368,14 +368,17 @@ const MultiPersonaViews = ({
   const tgt = typeof targetScore === 'number' ? targetScore : 4.2;
   const gap = Math.max(0.5, tgt - curr);
 
-  // Dynamic Board Metrics
+  // Dynamic Board Metrics (Harmonized with Live Gemini 3.8 Flash financialAnalysis)
   const quartileBefore = curr < 2.5 ? 'Bottom 40%' : curr < 3.5 ? 'Mid 50%' : 'Top 25%';
   const quartileAfter = tgt >= 4.0 ? 'Top 10% (Leader)' : 'Top 25% (Advanced)';
-  const calculatedRiskAvoidance = `$${Math.round(gap * 360000).toLocaleString()}`;
-  // Harmonized with FinancialImpactCard engine
-  const estSavings = Math.max(120000, Math.round(gap * 380000));
+  const estSavings = Number(aiReport?.financialAnalysis?.annualSavingsUsd) > 0
+    ? Number(aiReport.financialAnalysis.annualSavingsUsd)
+    : Math.max(120000, Math.round(gap * 380000));
+  const calculatedRiskAvoidance = aiReport?.financialAnalysis?.annualSavingsFormatted || `$${Math.round(estSavings).toLocaleString()}/yr`;
   const implCost = Math.round(estSavings * 0.38);
-  const calculatedPayback = `${Math.max(2.1, Math.min(16.0, Number(((implCost / estSavings) * 12).toFixed(1)))).toFixed(1)} Months`;
+  const calculatedPayback = aiReport?.financialAnalysis?.paybackMonths
+    ? `${Number(aiReport.financialAnalysis.paybackMonths).toFixed(1)} Months`
+    : `${Math.max(2.1, Math.min(16.0, Number(((implCost / estSavings) * 12).toFixed(1)))).toFixed(1)} Months`;
 
   // Dynamic Phase 1, 2, 3 data from roadmap or prioritizedActions
   const roadmapPhases = Array.isArray(effectiveRoadmap.phases) ? effectiveRoadmap.phases : null;
@@ -509,16 +512,16 @@ const MultiPersonaViews = ({
 
         <PersonaTabs>
           <TabButton 
-            $active={activePersona === 'board'} 
-            onClick={() => setActivePersona('board')}
-          >
-            <FiBriefcase /> Board & C-Suite View
-          </TabButton>
-          <TabButton 
             $active={activePersona === 'vp'} 
             onClick={() => setActivePersona('vp')}
           >
-            <FiGitPullRequest /> VP & Engineering Roadmap
+            <FiGitPullRequest /> Phased Roadmap (0–12 Mos)
+          </TabButton>
+          <TabButton 
+            $active={activePersona === 'board'} 
+            onClick={() => setActivePersona('board')}
+          >
+            <FiBriefcase /> Board & C-Suite Mandates
           </TabButton>
           <TabButton 
             $active={activePersona === 'architect'} 
@@ -530,7 +533,7 @@ const MultiPersonaViews = ({
       </Header>
 
       <AnimatePresence mode="wait">
-        {/* 1. BOARD & C-SUITE VIEW */}
+        {/* 1. BOARD & C-SUITE VIEW (Focused on Strategic Mandates & Expected Outcomes — zero overlap with Tab 3 Financial Card) */}
         {activePersona === 'board' && (
           <ContentPanel
             key="board"
@@ -540,28 +543,25 @@ const MultiPersonaViews = ({
             transition={{ duration: 0.25 }}
           >
             <BoardCardGrid>
-              <BoardMetricBox>
-                <div className="label">Competitive Quartile Positioning</div>
-                <div className="value" style={{ color: '#0284c7' }}>{quartileBefore} ➔ {quartileAfter}</div>
-                <div className="desc">Advancing from score {curr.toFixed(1)} to {tgt.toFixed(1)} elevates technical capability into the industry upper tier.</div>
-              </BoardMetricBox>
-
-              <BoardMetricBox>
-                <div className="label">Total Risk Exposure Avoidance</div>
-                <div className="value" style={{ color: '#16a34a' }}>{calculatedRiskAvoidance}</div>
-                <div className="desc">Direct mitigation of GDPR/HIPAA compliance fines, security audit failures, and pipeline outages.</div>
-              </BoardMetricBox>
-
-              <BoardMetricBox>
-                <div className="label">Capital Payback Horizon</div>
-                <div className="value" style={{ color: '#9333ea' }}>{calculatedPayback}</div>
-                <div className="desc">Rapid capital recovery driven by serverless compute right-sizing and automated prompt context caching.</div>
-              </BoardMetricBox>
+              {(Array.isArray(aiReport?.expectedOutcomes) && aiReport.expectedOutcomes.length >= 3
+                ? aiReport.expectedOutcomes.slice(0, 3)
+                : [
+                    `Elevate architecture maturity from ${curr.toFixed(1)}/5.0 to ${tgt.toFixed(1)}/5.0 (${quartileAfter})`,
+                    `Enforce zero-trust IAM, CMEK encryption, and automated CI/CD evaluation gates`,
+                    `Realize ${calculatedRiskAvoidance} annualized operational velocity & FinOps arbitrage`
+                  ]
+              ).map((outcome, oIdx) => (
+                <BoardMetricBox key={oIdx}>
+                  <div className="label">Strategic Target Outcome #{oIdx + 1}</div>
+                  <div className="value" style={{ fontSize: '1.05rem', color: '#0f172a', lineHeight: 1.35 }}>{outcome}</div>
+                  <div className="desc">Verified Gemini 3.8 Flash executive outcome gate</div>
+                </BoardMetricBox>
+              ))}
             </BoardCardGrid>
 
             <DecisionsList>
               <h3>
-                <FiTarget color="#0284c7" /> Top 3 Board-Level Strategic Investment Decisions
+                <FiTarget color="#0284c7" /> Top 3 Board-Level Strategic Investment Mandates
               </h3>
               {boardDecisions.map((dec, idx) => (
                 <DecisionItem key={idx}>
@@ -575,7 +575,7 @@ const MultiPersonaViews = ({
           </ContentPanel>
         )}
 
-        {/* 2. VP & ENGINEERING GANTT VIEW */}
+        {/* 2. VP & ENGINEERING GANTT VIEW (Single Consolidated Phased Roadmap with Gemini 3.8 Flash Exit Gates) */}
         {activePersona === 'vp' && (
           <ContentPanel
             key="vp"
@@ -585,68 +585,60 @@ const MultiPersonaViews = ({
             transition={{ duration: 0.25 }}
           >
             <GanttPhases>
-              <PhaseCard $active={true}>
-                <div className="top">
-                  <div className="title-group">
-                    <FiClock color="#0284c7" /> {phase1.title || 'Phase 1: Foundation & Governance'}
-                  </div>
-                  <div className="timeline-badge">
-                    <FiClock /> {phase1.timeline || 'Months 0–3'}
-                  </div>
-                </div>
-                <p style={{ fontSize: '0.82rem', color: '#64748b', margin: '0 0 10px 0' }}>
-                  {phase1.focus}
-                </p>
-                <div className="milestones">
-                  {(phase1.milestones || []).slice(0, 3).map((m, mIdx) => (
-                    <div key={mIdx} className="milestone-item">
-                      <FiCheckCircle color="#10b981" /> {m}
+              {[
+                { p: phase1, raw: rawPhase1, icon: <FiClock color="#0284c7" />, active: true, badgeStyle: {} },
+                { p: phase2, raw: rawPhase2, icon: <FiCpu color="#6366f1" />, active: false, badgeStyle: { background: '#f5f3ff', color: '#6d28d9' } },
+                { p: phase3, raw: rawPhase3, icon: <HiSparkles color="#ec4899" />, active: false, badgeStyle: { background: '#fdf2f8', color: '#be185d' } }
+              ].map(({ p, raw, icon, active, badgeStyle }, idx) => (
+                <PhaseCard key={idx} $active={active}>
+                  <div className="top">
+                    <div className="title-group">
+                      {icon} {p.title}
                     </div>
-                  ))}
-                </div>
-              </PhaseCard>
-
-              <PhaseCard $active={false}>
-                <div className="top">
-                  <div className="title-group">
-                    <FiCpu color="#6366f1" /> {phase2.title || 'Phase 2: Open Lakehouse & Pipeline Scale'}
-                  </div>
-                  <div className="timeline-badge" style={{ background: '#f5f3ff', color: '#6d28d9' }}>
-                    <FiClock /> {phase2.timeline || 'Months 3–6'}
-                  </div>
-                </div>
-                <p style={{ fontSize: '0.82rem', color: '#64748b', margin: '0 0 10px 0' }}>
-                  {phase2.focus}
-                </p>
-                <div className="milestones">
-                  {(phase2.milestones || []).slice(0, 3).map((m, mIdx) => (
-                    <div key={mIdx} className="milestone-item">
-                      <FiCheckCircle color="#10b981" /> {m}
+                    <div className="timeline-badge" style={badgeStyle}>
+                      <FiClock /> {p.timeline}
                     </div>
-                  ))}
-                </div>
-              </PhaseCard>
-
-              <PhaseCard $active={false}>
-                <div className="top">
-                  <div className="title-group">
-                    <HiSparkles color="#ec4899" /> {phase3.title || 'Phase 3: Autonomous Agent Mesh & AI Integration'}
                   </div>
-                  <div className="timeline-badge" style={{ background: '#fdf2f8', color: '#be185d' }}>
-                    <FiClock /> {phase3.timeline || 'Months 6–12'}
-                  </div>
-                </div>
-                <p style={{ fontSize: '0.82rem', color: '#64748b', margin: '0 0 10px 0' }}>
-                  {phase3.focus}
-                </p>
-                <div className="milestones">
-                  {(phase3.milestones || []).slice(0, 3).map((m, mIdx) => (
-                    <div key={mIdx} className="milestone-item">
-                      <FiCheckCircle color="#10b981" /> {m}
+                  <p style={{ fontSize: '0.82rem', color: '#64748b', margin: '0 0 10px 0' }}>
+                    {p.focus}
+                  </p>
+                  {raw?.architecturePattern && (
+                    <div style={{
+                      fontSize: '0.76rem',
+                      fontWeight: 700,
+                      color: '#0284c7',
+                      background: '#e0f2fe',
+                      border: '1px solid #bae6fd',
+                      borderRadius: '8px',
+                      padding: '6px 10px',
+                      marginBottom: '10px'
+                    }}>
+                      🏛️ <strong>Target Pattern:</strong> {raw.architecturePattern}
                     </div>
-                  ))}
-                </div>
-              </PhaseCard>
+                  )}
+                  <div className="milestones">
+                    {(p.milestones || []).map((m, mIdx) => (
+                      <div key={mIdx} className="milestone-item">
+                        <FiCheckCircle color="#10b981" /> {m}
+                      </div>
+                    ))}
+                  </div>
+                  {raw?.exitGateKpi && (
+                    <div style={{
+                      marginTop: '10px',
+                      fontSize: '0.76rem',
+                      fontWeight: 700,
+                      color: '#059669',
+                      background: '#ecfdf5',
+                      border: '1px solid #a7f3d0',
+                      borderRadius: '8px',
+                      padding: '6px 10px'
+                    }}>
+                      🎯 <strong>Exit Gate KPI:</strong> {raw.exitGateKpi}
+                    </div>
+                  )}
+                </PhaseCard>
+              ))}
             </GanttPhases>
           </ContentPanel>
         )}

@@ -735,7 +735,7 @@ const DynamicAssessmentHub = () => {
             </UploadDocBtn>
             <CreateBtn onClick={() => navigate('/assessments/ai-generator')}>
               <HiSparkles />
-              Create with Gemini 3.7
+              Create with Gemini 3.8 Flash
             </CreateBtn>
           </div>
         </HeaderSection>
@@ -854,6 +854,38 @@ const DynamicAssessmentHub = () => {
               </TypeFooter>
             </TypeCard>
 
+            {/* Specialized: GE Value Realization (Merck Gemini Enterprise Migration) */}
+            <TypeCard style={{ borderColor: '#3b82f6', boxShadow: '0 8px 24px rgba(37, 99, 235, 0.08)' }}>
+              <div>
+                <CardTopRow>
+                  <TypeBadge $bg="rgba(37, 99, 235, 0.15)" $color="#2563eb">CFO & Value Bridge</TypeBadge>
+                  <StatusTag $status="production">Production Ready</StatusTag>
+                </CardTopRow>
+                <TypeTitle>GE Value Realization (Merck Migration)</TypeTitle>
+                <TypeDesc>
+                  Zero-hallucination value realization assessment for migrating homegrown OpenAI (GMax/GPTEAL) to Google Gemini Enterprise across 85,300 seats, 5 workflows, and a 5-Column CFO Cost Bridge.
+                </TypeDesc>
+                <MetaPillsRow>
+                  <MetaPill><FiLayers /> 10 Modules (C–G)</MetaPill>
+                  <MetaPill><FiTarget /> 75 Qs + 5 Workflows</MetaPill>
+                  <MetaPill><FiClock /> 3 Input Modes</MetaPill>
+                </MetaPillsRow>
+              </div>
+              <TypeFooter>
+                <ActionButtonsRow>
+                  <LaunchBtn onClick={() => navigate('/ge-value-realization?tab=inputs')}>
+                    <FiPlay /> Open Inputs (3 Modes)
+                  </LaunchBtn>
+                  <SampleBtn onClick={() => navigate('/ge-value-realization?tab=report')}>
+                    📊 McKinsey / Google Report
+                  </SampleBtn>
+                </ActionButtonsRow>
+                <SecondaryActionsRow>
+                  <span style={{ fontSize: '0.8rem', color: '#2563eb', fontWeight: '700' }}>✓ Pre-Staged w/ Real Merck Telemetry (`0014M00001hZEwfQAG`)</span>
+                </SecondaryActionsRow>
+              </TypeFooter>
+            </TypeCard>
+
             {/* Specialized: EU AI Act Compliance Engine & Audit Workspace */}
             <TypeCard>
               <div>
@@ -966,7 +998,7 @@ const DynamicAssessmentHub = () => {
                 <HiSparkles style={{ fontSize: '3rem', color: '#a855f7', marginBottom: '16px' }} />
                 <h3 style={{ fontSize: '1.4rem', color: '#0f172a', fontWeight: '800', marginBottom: '8px' }}>No Draft Frameworks</h3>
                 <p style={{ color: '#475569', maxWidth: '500px', margin: '0 auto 24px', fontSize: '0.95rem' }}>
-                  Generate custom assessment frameworks for specific industries, customer migrations, or emerging technology stacks using Gemini 3.7.
+                  Generate custom assessment frameworks for specific industries, customer migrations, or emerging technology stacks using Gemini 3.8 Flash.
                 </p>
                 <CreateBtn onClick={() => navigate('/assessments/ai-generator')}>
                   <HiSparkles /> Generate New Assessment

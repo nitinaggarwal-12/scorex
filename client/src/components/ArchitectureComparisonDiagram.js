@@ -338,6 +338,17 @@ const DualDiagramGrid = styled.div`
   }
 `;
 
+const TripleDiagramGrid = styled.div`
+  display: grid;
+  grid-template-columns: ${props => props.$stacked ? '1fr' : 'repeat(3, minmax(0, 1fr))'};
+  gap: 18px;
+  margin-bottom: 22px;
+
+  @media (max-width: 1340px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
 const ComparisonGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -532,7 +543,7 @@ class DiagramErrorBoundary extends React.Component {
             Architecture Diagram Rendering Notice
           </div>
           <p style={{ fontSize: '0.85rem', color: '#94a3b8', maxWidth: '480px', margin: 0 }}>
-            The graph canvas encountered a parsing anomaly. You can trigger an instant AI auto-heal regeneration with Gemini 3.7 Flash.
+            The graph canvas encountered a parsing anomaly. You can trigger an instant AI auto-heal regeneration with Gemini 3.8 Flash.
           </p>
           <button
             onClick={() => {
@@ -690,29 +701,15 @@ const ArchitectureComparisonDiagram = ({
     return getMasterArchitectureDiagrams(
       framework,
       { customerName, useCase, responses, notes },
-      { overallScore: currentScore, targetScore }
+      { overallScore: currentScore, targetScore, dimensionScores: framework?.dimensionScores || [] }
     );
   }, [framework, customerName, useCase, currentScore, targetScore, responses, notes]);
 
   // Detect obsolete/draft diagrams that lack full orthogonal connectivity or use raw emojis
   const isOutdatedDiagram = useCallback((diagrams) => {
     if (!diagrams || !diagrams.currentStateXml) return true;
-    const cur = diagrams.currentStateXml;
-    const tgt = diagrams.targetStateXml || '';
-    if (cur.includes('stage1_box')) return true;
-    // Check for old 4-arrow or 3-arrow drafts (all upgraded diagrams have >= 16 orthogonal edges)
-    const curEdges = (cur.match(/edge="1"/g) || []).length;
-    if (curEdges < 10) return true;
-    // Check for raw emojis in vertex cells
-    if (cur.includes('💸') || cur.includes('🖥️') || cur.includes('⚡') || cur.includes('🤖')) return true;
-    // Detect legacy marketing reference diagram (template_40_enterprise_genai_platform)
-    if (tgt.includes('template_40_enterprise_genai_platform') || tgt.includes('CHANNELS') && tgt.includes('EXPERIENCE &amp;')) return true;
-    // Detect obsolete 29-box 5-row un-sanitized draft
-    if (tgt.includes('card_web_copilot') || tgt.includes('card_eval_suite') || tgt.includes('card_dataplex_catalog')) return true;
-    // Check for low target edge count
-    const tgtEdges = (tgt.match(/edge="1"/g) || []).length;
-    if (tgtEdges < 10) return true;
-    return false;
+    if (diagrams.promptCanvasSource && diagrams.transitionStateXml) return false;
+    return true;
   }, []);
 
   const persistDiagramsToBackend = useCallback(async (updatedData) => {
@@ -766,6 +763,7 @@ const ArchitectureComparisonDiagram = ({
 
   const [noteText, setNoteText] = useState('');
   const [showNotesDrawer, setShowNotesDrawer] = useState(false);
+  const [stackedThreeView, setStackedThreeView] = useState(false);
   const drawioIframeRef = useRef(null);
 
   const handleOpenVisualDrawio = (target = 'target') => {
@@ -784,6 +782,8 @@ const ArchitectureComparisonDiagram = ({
           // Send active XML to Draw.io
           const xmlToSend = xmlTargetState === 'current'
             ? (diagramsData?.currentStateXml || currentXml)
+            : xmlTargetState === 'transition'
+            ? (diagramsData?.transitionStateXml || transitionXml)
             : (diagramsData?.targetStateXml || targetXml);
 
           if (drawioIframeRef.current && drawioIframeRef.current.contentWindow) {
@@ -791,7 +791,7 @@ const ArchitectureComparisonDiagram = ({
               action: 'load',
               autosave: 1,
               xml: sanitizeDrawioXmlAttributes(xmlToSend),
-              title: `ScoreX ${xmlTargetState === 'current' ? 'Current Baseline' : 'Target Future'} Architecture`
+              title: `ScoreX ${xmlTargetState === 'current' ? 'Current Baseline' : xmlTargetState === 'transition' ? 'Transition Bridge' : 'Target Future'} Architecture`
             }), '*');
           }
         } else if (msg.event === 'save' || msg.event === 'autosave') {
@@ -799,9 +799,15 @@ const ArchitectureComparisonDiagram = ({
             const nextVerNum = (versionHistory.length + 1);
             const newVer = `v1.${nextVerNum}`;
             
+            const xmlField = xmlTargetState === 'current'
+              ? 'currentStateXml'
+              : xmlTargetState === 'transition'
+              ? 'transitionStateXml'
+              : 'targetStateXml';
+
             const nextDiagrams = {
               ...diagramsData,
-              [xmlTargetState === 'current' ? 'currentStateXml' : 'targetStateXml']: msg.xml,
+              [xmlField]: msg.xml,
               generatedAt: new Date().toISOString()
             };
 
@@ -812,14 +818,14 @@ const ArchitectureComparisonDiagram = ({
               {
                 id: newVer,
                 version: newVer,
-                label: `Visual Draw.io Edit (${xmlTargetState === 'current' ? 'Current' : 'Target'})`,
+                label: `Visual Draw.io Edit (${xmlTargetState})`,
                 timestamp: formatAuditTimestamp(),
                 target: xmlTargetState
               },
               ...prev
             ]);
 
-            toast.success(`💾 Saved & synchronized ${xmlTargetState === 'current' ? 'Current' : 'Target'} Architecture (${newVer})!`, { icon: '🎨' });
+            toast.success(`💾 Saved & synchronized ${xmlTargetState} Architecture (${newVer})!`, { icon: '🎨' });
           }
         } else if (msg.event === 'exit') {
           setIsVisualDrawioOpen(false);
@@ -837,6 +843,8 @@ const ArchitectureComparisonDiagram = ({
     setXmlTargetState(target);
     const xmlToEdit = target === 'current' 
       ? (diagramsData?.currentStateXml || currentXml)
+      : target === 'transition'
+      ? (diagramsData?.transitionStateXml || transitionXml)
       : (diagramsData?.targetStateXml || targetXml);
     setRawXmlDraft(xmlToEdit);
     setIsXmlEditorOpen(true);
@@ -849,10 +857,15 @@ const ArchitectureComparisonDiagram = ({
     }
     const nextVerNum = (versionHistory.length + 1);
     const newVer = `v1.${nextVerNum}`;
-    
+    const xmlField = xmlTargetState === 'current'
+      ? 'currentStateXml'
+      : xmlTargetState === 'transition'
+      ? 'transitionStateXml'
+      : 'targetStateXml';
+
     const nextDiagrams = {
       ...diagramsData,
-      [xmlTargetState === 'current' ? 'currentStateXml' : 'targetStateXml']: rawXmlDraft,
+      [xmlField]: rawXmlDraft,
       generatedAt: new Date().toISOString()
     };
 
@@ -863,7 +876,7 @@ const ArchitectureComparisonDiagram = ({
       {
         id: newVer,
         version: newVer,
-        label: `Raw XML Tweak (${xmlTargetState === 'current' ? 'Current' : 'Target'})`,
+        label: `Raw XML Tweak (${xmlTargetState})`,
         timestamp: formatAuditTimestamp(),
         target: xmlTargetState
       },
@@ -875,12 +888,15 @@ const ArchitectureComparisonDiagram = ({
   };
 
   const currentXml = diagramsData?.currentStateXml || DEFAULT_CURRENT_XML;
+  const transitionXml = diagramsData?.transitionStateXml || diagramsData?.currentStateXml || DEFAULT_CURRENT_XML;
   const targetXml = diagramsData?.targetStateXml || DEFAULT_TARGET_XML;
-  const currentTitle = diagramsData?.currentTitle || 'Current Baseline Architecture';
+  const currentTitle = diagramsData?.currentTitle || '1. Current State (As-Is): Siloed Legacy Baseline';
   const currentSubtitle = diagramsData?.currentSubtitle || `Level ${currentScore} Developing`;
-  const targetTitle = diagramsData?.targetTitle || 'Desired Future State Architecture';
+  const transitionTitle = diagramsData?.transitionTitle || '2. Transition State (Current → Future Bridge): Hybrid / Strangler Fig Migration';
+  const transitionSubtitle = diagramsData?.transitionSubtitle || 'Phased Strangler Fig & Hybrid Cloud Cutover';
+  const targetTitle = diagramsData?.targetTitle || '3. Desired Future State (To-Be): Enterprise Data Lakehouse & Gemini Agentic Mesh';
   const targetSubtitle = diagramsData?.targetSubtitle || `Level ${targetScore} Optimized`;
-  const modelUsed = diagramsData?.modelUsed || 'gemini-3.7-flash';
+  const modelUsed = diagramsData?.modelUsed || 'PromptCanvas 3-Stage Blueprints (:3001)';
 
   const handleRegenerate = async () => {
     if (!instanceId) {
@@ -889,14 +905,14 @@ const ArchitectureComparisonDiagram = ({
     }
 
     setIsGenerating(true);
-    const toastId = toast.loading('Calling Gemini 3.7 Flash API to generate bespoke architecture diagrams...');
+    const toastId = toast.loading('Calling Gemini 3.8 Flash API to generate bespoke architecture diagrams...');
 
     try {
       const res = await dynamicAssessmentService.generateArchitectureDiagrams(instanceId, customPrompt);
       if (res.success && res.diagrams) {
         setDiagramsData(res.diagrams);
         persistDiagramsToBackend(res.diagrams);
-        toast.success(`✨ Architecture diagrams regenerated with ${res.diagrams.modelUsed || 'Gemini 3.7 Flash'}!`, { id: toastId });
+        toast.success(`✨ Architecture diagrams regenerated with ${res.diagrams.modelUsed || 'Gemini 3.8 Flash'}!`, { id: toastId });
         setIsModalOpen(false);
         setCustomPrompt('');
       } else {
@@ -1070,13 +1086,13 @@ const ArchitectureComparisonDiagram = ({
           </div>
           <div>
             <Title>
-              Architectural Evolution Blueprint: Current vs. Desired Future State
+              3-Stage Architectural Evolution: Current State → Transition Bridge → Desired Future State
               <GeminiBadge>
                 <SiGooglecloud /> {modelUsed.toUpperCase()}
               </GeminiBadge>
             </Title>
             <Subtitle>
-              Bespoke visual architecture diagrams generated by Gemini 3.7 Flash comparing your baseline legacy stack against the target modern Lakehouse & Agentic Mesh.
+              3-stage visual architecture roadmap powered by PromptCanvas: (1) Current State As-Is Baseline, (2) Hybrid / Strangler Fig Transition Bridge, and (3) Desired Future State Lakehouse &amp; Agentic Mesh.
             </Subtitle>
           </div>
         </TitleBlock>
@@ -1087,19 +1103,25 @@ const ArchitectureComparisonDiagram = ({
               $active={viewMode === 'side_by_side'} 
               onClick={() => setViewMode('side_by_side')}
             >
-              <FiEye /> 🔀 Side-by-Side Visuals
+              <FiEye /> 🔀 All 3 Diagrams (Current → Transition → Future)
             </ViewBtn>
             <ViewBtn 
               $active={viewMode === 'current_diagram'} 
               onClick={() => setViewMode('current_diagram')}
             >
-              <FiAlertTriangle /> ⚠️ Current State Diagram
+              <FiAlertTriangle /> 1️⃣ Current State (As-Is)
+            </ViewBtn>
+            <ViewBtn 
+              $active={viewMode === 'transition_diagram'} 
+              onClick={() => setViewMode('transition_diagram')}
+            >
+              <FiRepeat /> 2️⃣ Transition State (Bridge)
             </ViewBtn>
             <ViewBtn 
               $active={viewMode === 'target_diagram'} 
               onClick={() => setViewMode('target_diagram')}
             >
-              <FiCheckCircle /> ✨ Desired Future State Diagram
+              <FiCheckCircle /> 3️⃣ Desired Future State (To-Be)
             </ViewBtn>
             <ViewBtn 
               $active={viewMode === 'cards'} 
@@ -1118,7 +1140,7 @@ const ArchitectureComparisonDiagram = ({
           </button>
 
           <button
-            onClick={() => handleCopyXml(viewMode === 'current_diagram' ? currentXml : targetXml)}
+            onClick={() => handleCopyXml(viewMode === 'current_diagram' ? currentXml : viewMode === 'transition_diagram' ? transitionXml : targetXml)}
             style={{ background: '#f8fafc', border: '1px solid #cbd5e1', color: '#334155', padding: '7px 12px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: '600', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
             title="Copy raw Draw.io XML to clipboard"
           >
@@ -1144,14 +1166,14 @@ const ArchitectureComparisonDiagram = ({
           <RegenerateBtn 
             onClick={() => setIsModalOpen(true)}
             disabled={isGenerating}
-            title="Generate bespoke architecture diagrams using Gemini 3.7 Flash"
+            title="Generate bespoke architecture diagrams using PromptCanvas AI"
           >
             <FiRefreshCw className={isGenerating ? 'spin' : ''} /> 
-            {isGenerating ? 'Synthesizing...' : '⚡ Regenerate with Gemini 3.7'}
+            {isGenerating ? 'Synthesizing...' : '⚡ Regenerate with PromptCanvas AI'}
           </RegenerateBtn>
 
           <button
-            onClick={() => handleOpenVisualDrawio(viewMode === 'current_diagram' ? 'current' : 'target')}
+            onClick={() => handleOpenVisualDrawio(viewMode === 'current_diagram' ? 'current' : viewMode === 'transition_diagram' ? 'transition' : 'target')}
             style={{ background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)', border: 'none', color: '#ffffff', padding: '7px 14px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', boxShadow: '0 2px 8px rgba(2, 132, 199, 0.3)' }}
             title="Open full-featured interactive Draw.io visual canvas inside ScoreX"
           >
@@ -1179,7 +1201,7 @@ const ArchitectureComparisonDiagram = ({
           </button>
 
           <button
-            onClick={() => handleOpenXmlEditor(viewMode === 'current_diagram' ? 'current' : 'target')}
+            onClick={() => handleOpenXmlEditor(viewMode === 'current_diagram' ? 'current' : viewMode === 'transition_diagram' ? 'transition' : 'target')}
             style={{ background: '#f8fafc', border: '1px solid #cbd5e1', color: '#334155', padding: '7px 12px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
             title="Edit or paste raw Draw.io XML code directly into the diagram canvas"
           >
@@ -1188,8 +1210,8 @@ const ArchitectureComparisonDiagram = ({
 
           <ExportBtn 
             onClick={() => handleExportDrawio(
-              viewMode === 'current_diagram' ? currentXml : targetXml,
-              viewMode === 'current_diagram' ? 'ScoreX_Current_State_Architecture.drawio' : 'ScoreX_Desired_Future_State_Architecture.drawio'
+              viewMode === 'current_diagram' ? currentXml : viewMode === 'transition_diagram' ? transitionXml : targetXml,
+              viewMode === 'current_diagram' ? 'ScoreX_1_Current_State_Architecture.drawio' : viewMode === 'transition_diagram' ? 'ScoreX_2_Transition_Bridge_Architecture.drawio' : 'ScoreX_3_Desired_Future_State_Architecture.drawio'
             )}
             title="Download architecture diagram for Draw.io / diagrams.net"
           >
@@ -1241,7 +1263,7 @@ const ArchitectureComparisonDiagram = ({
         </div>
       )}
 
-      {/* 1. SIDE-BY-SIDE DUAL DIAGRAM VIEWPORT */}
+      {/* 1. 3-STAGE ARCHITECTURE PROGRESSION VIEWPORT (CURRENT -> TRANSITION -> FUTURE) */}
       {viewMode === 'side_by_side' && (
         <>
           <div style={{
@@ -1259,19 +1281,19 @@ const ArchitectureComparisonDiagram = ({
             color: '#334155'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '1.1rem' }}>💡</span>
+              <span style={{ fontSize: '1.1rem' }}>🏛️</span>
               <span>
-                <strong>Side-by-Side Dual View</strong>: Blueprints are scaled to fit side-by-side. Click <strong>"⛶ Enlarge (100%)"</strong> or the tabs above for full-resolution architectural view.
+                <strong>3-Stage Architecture Progression (3 Diagrams)</strong>: Comparing <strong>1. Current State (As-Is)</strong> → <strong>2. Transition State (Strangler Fig Bridge)</strong> → <strong>3. Desired Future State (To-Be)</strong>.
               </span>
             </div>
-            <div style={{ display: 'flex', gap: '8px' }}>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               <button
                 type="button"
-                onClick={() => setViewMode('current_diagram')}
+                onClick={() => setStackedThreeView(prev => !prev)}
                 style={{
-                  background: '#fff1f2',
-                  border: '1px solid #fecdd3',
-                  color: '#be123c',
+                  background: stackedThreeView ? '#4f46e5' : '#ffffff',
+                  border: '1px solid #cbd5e1',
+                  color: stackedThreeView ? '#ffffff' : '#1e293b',
                   padding: '5px 12px',
                   borderRadius: '6px',
                   fontSize: '0.78rem',
@@ -1282,7 +1304,39 @@ const ArchitectureComparisonDiagram = ({
                   gap: '4px'
                 }}
               >
-                ⚠️ Enlarge Current State
+                {stackedThreeView ? '▥ Switch to 3-Column Side-by-Side' : '▤ Switch to Full-Width Stacked (3 Rows)'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('current_diagram')}
+                style={{
+                  background: '#fff1f2',
+                  border: '1px solid #fecdd3',
+                  color: '#be123c',
+                  padding: '5px 11px',
+                  borderRadius: '6px',
+                  fontSize: '0.77rem',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+              >
+                1️⃣ Current State
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('transition_diagram')}
+                style={{
+                  background: '#fffbeb',
+                  border: '1px solid #fde68a',
+                  color: '#b45309',
+                  padding: '5px 11px',
+                  borderRadius: '6px',
+                  fontSize: '0.77rem',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+              >
+                2️⃣ Transition Bridge
               </button>
               <button
                 type="button"
@@ -1291,102 +1345,65 @@ const ArchitectureComparisonDiagram = ({
                   background: '#f0fdf4',
                   border: '1px solid #bbf7d0',
                   color: '#15803d',
-                  padding: '5px 12px',
+                  padding: '5px 11px',
                   borderRadius: '6px',
-                  fontSize: '0.78rem',
+                  fontSize: '0.77rem',
                   fontWeight: 700,
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px'
+                  cursor: 'pointer'
                 }}
               >
-                ✨ Enlarge Target State
+                3️⃣ Future State
               </button>
             </div>
           </div>
-          <DualDiagramGrid>
+          <TripleDiagramGrid $stacked={stackedThreeView}>
             <div style={{ position: 'relative' }}>
-              <button
-                type="button"
-                onClick={() => setViewMode('current_diagram')}
-                title="Expand Current State to 100% Full Width"
-                style={{
-                  position: 'absolute',
-                  top: '12px',
-                  right: '16px',
-                  zIndex: 20,
-                  background: 'rgba(255, 255, 255, 0.95)',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '6px',
-                  padding: '4px 10px',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  color: '#be123c',
-                  cursor: 'pointer',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px'
-                }}
-              >
-                ⛶ Enlarge (100%)
-              </button>
               <DiagramErrorBoundary onAutoHeal={handleRegenerate}>
                 <DiagramViewer
                   xml={currentXml}
-                  title={currentTitle}
+                  title={stackedThreeView ? currentTitle : 'P0-BASE-L-01 • Siloed Legacy Baseline'}
                   subtitle={currentSubtitle}
-                  badge="Current State"
+                  badge="1. Current State"
                   theme={diagramTheme}
-                  height="740px"
+                  height={stackedThreeView ? '640px' : '540px'}
                   isTarget={false}
+                  isTransition={false}
                 />
               </DiagramErrorBoundary>
             </div>
             <div style={{ position: 'relative' }}>
-              <button
-                type="button"
-                onClick={() => setViewMode('target_diagram')}
-                title="Expand Target State to 100% Full Width"
-                style={{
-                  position: 'absolute',
-                  top: '12px',
-                  right: '16px',
-                  zIndex: 20,
-                  background: 'rgba(255, 255, 255, 0.95)',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '6px',
-                  padding: '4px 10px',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  color: '#15803d',
-                  cursor: 'pointer',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px'
-                }}
-              >
-                ⛶ Enlarge (100%)
-              </button>
               <DiagramErrorBoundary onAutoHeal={handleRegenerate}>
                 <DiagramViewer
-                  xml={targetXml}
-                  title={targetTitle}
-                  subtitle={targetSubtitle}
-                  badge="Desired Future State"
+                  xml={transitionXml}
+                  title={stackedThreeView ? transitionTitle : 'P1-APP-L-01 • Hybrid Strangler Bridge'}
+                  subtitle={transitionSubtitle}
+                  badge="2. Transition Bridge"
                   theme={diagramTheme}
-                  height="740px"
-                  isTarget={true}
+                  height={stackedThreeView ? '640px' : '540px'}
+                  isTarget={false}
+                  isTransition={true}
                 />
               </DiagramErrorBoundary>
             </div>
-          </DualDiagramGrid>
+            <div style={{ position: 'relative' }}>
+              <DiagramErrorBoundary onAutoHeal={handleRegenerate}>
+                <DiagramViewer
+                  xml={targetXml}
+                  title={stackedThreeView ? targetTitle : 'P3-DAT-L-04 • Lakehouse & Agentic Mesh'}
+                  subtitle={targetSubtitle}
+                  badge="3. Future State"
+                  theme={diagramTheme}
+                  height={stackedThreeView ? '640px' : '540px'}
+                  isTarget={true}
+                  isTransition={false}
+                />
+              </DiagramErrorBoundary>
+            </div>
+          </TripleDiagramGrid>
         </>
       )}
 
-      {/* 2. FULL-WIDTH CURRENT STATE DIAGRAM */}
+      {/* 2. FULL-WIDTH STAGE 1: CURRENT STATE DIAGRAM */}
       {viewMode === 'current_diagram' && (
         <div style={{ marginBottom: '20px' }}>
           <DiagramErrorBoundary onAutoHeal={handleRegenerate}>
@@ -1394,16 +1411,35 @@ const ArchitectureComparisonDiagram = ({
               xml={currentXml}
               title={currentTitle}
               subtitle={currentSubtitle}
-              badge="Current State"
+              badge="1. Current State (As-Is)"
               theme={diagramTheme}
               height="780px"
               isTarget={false}
+              isTransition={false}
             />
           </DiagramErrorBoundary>
         </div>
       )}
 
-      {/* 3. FULL-WIDTH DESIRED FUTURE STATE DIAGRAM */}
+      {/* 3. FULL-WIDTH STAGE 2: TRANSITION STATE DIAGRAM */}
+      {viewMode === 'transition_diagram' && (
+        <div style={{ marginBottom: '20px' }}>
+          <DiagramErrorBoundary onAutoHeal={handleRegenerate}>
+            <DiagramViewer
+              xml={transitionXml}
+              title={transitionTitle}
+              subtitle={transitionSubtitle}
+              badge="2. Transition State (Bridge)"
+              theme={diagramTheme}
+              height="780px"
+              isTarget={false}
+              isTransition={true}
+            />
+          </DiagramErrorBoundary>
+        </div>
+      )}
+
+      {/* 4. FULL-WIDTH STAGE 3: DESIRED FUTURE STATE DIAGRAM */}
       {viewMode === 'target_diagram' && (
         <div style={{ marginBottom: '20px' }}>
           <DiagramErrorBoundary onAutoHeal={handleRegenerate}>
@@ -1411,10 +1447,11 @@ const ArchitectureComparisonDiagram = ({
               xml={targetXml}
               title={targetTitle}
               subtitle={targetSubtitle}
-              badge="Desired Future State"
+              badge="3. Desired Future State (To-Be)"
               theme={diagramTheme}
               height="780px"
               isTarget={true}
+              isTransition={false}
             />
           </DiagramErrorBoundary>
         </div>
@@ -1606,7 +1643,7 @@ const ArchitectureComparisonDiagram = ({
         <div className="callout">
           <HiSparkles size={20} />
           <span>
-            {diagramsData?.keyTransformations ? 'Key Architectural Modernization Shifts Identified by Gemini 3.7 Flash:' : 'Core Strategic Transformations Unlocked by Desired Future State Architecture:'}
+            {diagramsData?.keyTransformations ? 'Key Architectural Modernization Shifts Identified by Gemini 3.8 Flash:' : 'Core Strategic Transformations Unlocked by Desired Future State Architecture:'}
           </span>
         </div>
         <div className="badges">
@@ -1643,7 +1680,7 @@ const ArchitectureComparisonDiagram = ({
               <ModalHeader>
                 <h3>
                   <HiSparkles color="#6366f1" /> 
-                  Generate Custom Architecture with Gemini 3.7 Flash
+                  Generate Custom Architecture with Gemini 3.8 Flash
                 </h3>
                 <button 
                   onClick={() => setIsModalOpen(false)}
@@ -1654,7 +1691,7 @@ const ArchitectureComparisonDiagram = ({
               </ModalHeader>
 
               <p style={{ fontSize: '0.84rem', color: '#64748b', margin: '0 0 12px 0' }}>
-                Specify any custom technology stack, cloud provider, or domain requirements. Gemini 3.7 Flash will synthesize complete, tailored Draw.io XML models for both Current and Target states.
+                Specify any custom technology stack, cloud provider, or domain requirements. Gemini 3.8 Flash will synthesize complete, tailored Draw.io XML models for both Current and Target states.
               </p>
 
               <PromptChips>
@@ -1688,7 +1725,7 @@ const ArchitectureComparisonDiagram = ({
                 <PrimaryBtn onClick={handleRegenerate} disabled={isGenerating}>
                   {isGenerating ? (
                     <>
-                      <FiRefreshCw className="spin" /> Generating Draw.io XML with Gemini 3.7...
+                      <FiRefreshCw className="spin" /> Generating Draw.io XML with Gemini 3.8 Flash...
                     </>
                   ) : (
                     <>

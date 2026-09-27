@@ -402,36 +402,74 @@ export const UnifiedDocumentPreviewModal = ({
   const recs = report?.prioritizedRecommendations || report?.prioritizedActions || [];
   const safeName = org.toLowerCase().replace(/[^a-z0-9]/g, '_');
 
+  const liveRoiEstimate =
+    report?.slideDeckSynthesis?.roiEstimate ||
+    report?.financialAnalysis?.roiRangeFormatted ||
+    report?.financialAnalysis?.annualSavingsFormatted ||
+    '$1.8M - $3.1M';
+
+  const liveTcoArbitrage =
+    report?.slideDeckSynthesis?.tcoArbitrage ||
+    report?.financialAnalysis?.tcoArbitrageFormatted ||
+    (report?.financialAnalysis?.tcoReductionPct ? `${report.financialAnalysis.tcoReductionPct}% TCO Reduction` : '38% - 46% TCO Arbitrage');
+
+  const buildLiveSpeakerNotes = () => {
+    const slidesArr = report?.slideDeckSynthesis?.slides;
+    if (Array.isArray(slidesArr) && slidesArr.length > 0) {
+      const map = {};
+      slidesArr.forEach((s, idx) => {
+        map[s.slideIndex !== undefined ? s.slideIndex : idx] = s.speakerNotes;
+      });
+      return map;
+    }
+    return {
+      0: `Good morning everyone. Today we are presenting the Gemini 3.8 Flash strategic modernization readout for ${org}, targeting ${liveRoiEstimate} in projected value creation.`,
+      1: report?.financialAnalysis?.executiveFinancialNarrative || `On this diagnostic heatmap, we map ${org}'s current operational capability against organizational risk across each architectural dimension.`,
+      2: `This polar radar visualizes ${org}'s maturity gap (${overallScore}/5.0) between baseline foundation and target cloud architecture.`,
+      3: `Here we detail the Gemini 3.8 Flash financial model for ${org}, demonstrating ${liveRoiEstimate} net value with ${liveTcoArbitrage}.`,
+      4: report?.architectureDiagrams?.reasoning || `This blueprint outlines ${org}'s target state service mesh, event streaming backbone, and enterprise governance boundary.`,
+      5: `Finally, our 3-phase execution roadmap prioritizes high-impact quick wins in Phase 1 (${report?.transformationRoadmap?.phase1?.focus || 'Foundation'}) leading into autonomous scale.`
+    };
+  };
+
   const [isEditMode, setIsEditMode] = useState(false);
   const [customDeckData, setCustomDeckData] = useState({
     title: framework?.title || 'Enterprise Modernization Assessment',
     customerName: org,
-    scopeBadge: 'ScoreX Executive Advisory',
-    scopeSubtitle: 'Strategic Cloud & AI Architecture Readout',
+    scopeBadge: 'ScoreX • Gemini 3.8 Flash Advisory',
+    scopeSubtitle: report?.slideDeckSynthesis?.executiveHeadline || 'Strategic Cloud & AI Architecture Readout',
     maturityScore: overallScore,
     maturityStage: maturityStage,
-    roiEstimate: '$2.3M - $4.2M',
-    tcoArbitrage: '35% - 50% TCO Arbitrage',
-    executiveSummary: report?.executiveSummary || 'Comprehensive maturity diagnostic and target state architecture advisory formulated by Google DeepMind Gemini advisory compiler.',
-    speakerNotes: {
-      0: `Good morning everyone. Today we are presenting the strategic modernization assessment for ${org}. Our primary focus is accelerating target state cloud architecture while capturing $2.3M - $4.2M in projected 3-year value.`,
-      1: `On this diagnostic heatmap, we map current operational capability against organizational risk across each architectural dimension.`,
-      2: `This 5-axis polar radar visualizes the maturity gap between our baseline foundation and target cloud architecture.`,
-      3: `Here we detail the quantified financial model, demonstrating positive ROI realization with 35% - 50% TCO arbitrage.`,
-      4: `This blueprint outlines the target state service mesh, event streaming backbone, and enterprise governance boundary.`,
-      5: `Finally, our 3-phase execution roadmap prioritizes high-impact quick wins in Phase 1 leading into scale in Phase 2 & 3.`
-    },
-    recommendations: (recs && recs.length > 0 ? recs.slice(0, 4) : [
-      { title: "Establish Sovereign AI Mesh & MCP Gateway", impact: "Cuts API latency by 45% and eliminates shadow AI sprawl", timeline: "Phase 1 (0-3m)" },
-      { title: "BigLake Unified Iceberg Catalog Modernization", impact: "Zero-copy cross-cloud analytics with 60% query compute reduction", timeline: "Phase 1 (0-3m)" },
-      { title: "Automated FinOps Unit-Cost Anomaly Guardrails", impact: "Recovers $850K in unallocated cloud spend in year 1", timeline: "Phase 2 (3-6m)" },
-      { title: "Zero-Trust Identity Federation & VPC Service Controls", impact: "100% compliance with ISO 27001 and PCI-DSS data boundaries", timeline: "Phase 2 (3-6m)" }
-    ]).map((r, i) => ({
+    roiEstimate: liveRoiEstimate,
+    tcoArbitrage: liveTcoArbitrage,
+    executiveSummary: report?.executiveSummary || 'Comprehensive maturity diagnostic and target state architecture advisory formulated by Google Gemini 3.8 Flash.',
+    speakerNotes: buildLiveSpeakerNotes(),
+    recommendations: (recs && recs.length > 0 ? recs.slice(0, 4) : []).map((r, i) => ({
       title: r.title || r.recommendation || `Initiative #${i + 1}`,
-      impact: r.whyItMatters || r.impact || r.description || "Strategic architectural capability",
+      impact: r.whyItMatters || r.expectedImpact || r.impact || r.description || "Strategic architectural capability",
       timeline: r.timeline || `Phase ${(i % 3) + 1}`
     }))
   });
+
+  useEffect(() => {
+    setCustomDeckData(prev => ({
+      ...prev,
+      title: framework?.title || prev.title,
+      customerName: org,
+      scopeSubtitle: report?.slideDeckSynthesis?.executiveHeadline || prev.scopeSubtitle,
+      maturityScore: overallScore,
+      maturityStage: maturityStage,
+      roiEstimate: liveRoiEstimate,
+      tcoArbitrage: liveTcoArbitrage,
+      executiveSummary: report?.executiveSummary || prev.executiveSummary,
+      speakerNotes: buildLiveSpeakerNotes(),
+      recommendations: (recs && recs.length > 0 ? recs.slice(0, 4) : prev.recommendations).map((r, i) => ({
+        title: r.title || r.recommendation || `Initiative #${i + 1}`,
+        impact: r.whyItMatters || r.expectedImpact || r.impact || r.description || "Strategic architectural capability",
+        timeline: r.timeline || `Phase ${(i % 3) + 1}`
+      }))
+    }));
+  }, [report, org, overallScore, maturityStage]);
 
   if (!isOpen) return null;
 

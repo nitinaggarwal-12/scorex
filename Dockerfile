@@ -4,19 +4,12 @@ WORKDIR /app
 
 # Install server dependencies using the same approach as CI.
 COPY package.json package-lock.json ./
-RUN npm install --ignore-scripts
-
-# Install client dependencies separately so React can be built reproducibly.
-COPY client/package.json ./client/package.json
-RUN cd client && npm install --ignore-scripts --include=dev
+RUN npm install --omit=dev --ignore-scripts
 
 COPY . .
 
-# Build the React application served by the Express server.
-RUN cd client && CI=false npm run build
-
-# Keep only production server dependencies in the runtime image.
-RUN npm prune --omit=dev && rm -rf client/node_modules
+# Build the React application if not already pre-built in context, and ensure /app/data exists.
+RUN mkdir -p /app/data && if [ ! -f client/build/index.html ]; then cd client && npm install --ignore-scripts --include=dev && CI=false npm run build && rm -rf node_modules; fi
 
 FROM node:20-bookworm-slim AS runtime
 
@@ -34,13 +27,14 @@ COPY --from=build /app/package-lock.json ./package-lock.json
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/server ./server
 COPY --from=build /app/client/build ./client/build
+COPY --from=build /app/data ./data
 
-# ScoreX may use local filesystem storage when DATA_DIR is not externally mounted.
+# ScoreX uses local filesystem storage when DATA_DIR is not externally mounted.
 RUN mkdir -p /app/data && chown -R node:node /app
 
 USER node
 
-EXPOSE 5000
+EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD node -e "const p=process.env.PORT||5000;fetch('http://127.0.0.1:'+p+'/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"

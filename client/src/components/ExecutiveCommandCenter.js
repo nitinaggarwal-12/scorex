@@ -360,14 +360,14 @@ const ActionButton = styled(motion.button)`
 
 const FloatingSlideshowButton = styled.button`
   position: fixed;
-  top: 138px;
+  top: 108px;
   right: 32px;
   background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
   color: white;
   border: none;
-  padding: 14px 28px;
-  border-radius: 16px;
-  font-size: 16px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
@@ -1074,37 +1074,54 @@ const ExecutiveCommandCenter = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [printMode, setPrintMode] = useState(false);
 
+  const [resolvedId, setResolvedId] = useState(assessmentId || '');
+
   useEffect(() => {
-    const fetchResults = async () => {
+    const initAndFetch = async () => {
       try {
         setLoading(true);
         setError(null);
-        
-        console.log('[ExecutiveCommandCenter] Fetching results for:', assessmentId);
-        const response = await assessmentService.getAssessmentResults(assessmentId);
-        
+        let activeId = assessmentId;
+        if (!activeId) {
+          const allResp = await assessmentService.getAllAssessments();
+          const list = Array.isArray(allResp) ? allResp : (allResp?.assessments || allResp?.data || []);
+          const completed = list.find(a => a && a.id && (a.status === 'completed' || a.progress >= 50)) || list[0];
+          if (completed?.id) {
+            activeId = completed.id;
+          } else {
+            const sample = await assessmentService.generateSampleAssessment();
+            activeId = sample?.assessment?.id || sample?.data?.assessmentId || sample?.assessmentId || sample?.id;
+          }
+        }
+        if (!activeId) {
+          throw new Error('No completed assessment found');
+        }
+        setResolvedId(activeId);
+        const response = await assessmentService.getAssessmentResults(activeId);
         if (response.success && response.data) {
           setResults(response.data);
+        } else if (response && response.overall) {
+          setResults(response);
         } else {
           throw new Error('Failed to load assessment results');
         }
       } catch (err) {
         console.error('[ExecutiveCommandCenter] Error loading results:', err);
         setError(err.message || 'Failed to load assessment results');
-        
       } finally {
         setLoading(false);
       }
     };
 
-    if (assessmentId) {
-      fetchResults();
-    }
+    initAndFetch();
   }, [assessmentId]);
 
-
   const handleBack = () => {
-    navigate(`/results/${assessmentId}`);
+    if (resolvedId) {
+      navigate(`/results/${resolvedId}`);
+    } else {
+      navigate('/insights-dashboard');
+    }
   };
 
   const handleBenchmark = () => {

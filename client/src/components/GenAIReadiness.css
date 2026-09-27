@@ -1,77 +1,160 @@
 .genai-readiness-container {
-  max-width: 1400px;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 100px 20px 20px 20px; /* Added top padding for fixed header */
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 88px 32px 48px 32px;
+  background: #f8fafc;
   min-height: 100vh;
 }
 
 .genai-header {
-  background: white;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 16px;
-  padding: 40px;
-  margin-bottom: 30px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  padding: 28px 32px 22px 32px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03), 0 4px 16px rgba(15, 23, 42, 0.02);
 }
 
-.genai-header-content h1 {
-  font-size: 2.5em;
-  margin-bottom: 10px;
-  color: #2d3748;
+.genai-header-top {
   display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.genai-subtitle {
-  font-size: 1.1em;
-  color: #718096;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
   margin-bottom: 20px;
 }
 
-.customer-info {
+.genai-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #4f46e5;
+  margin-bottom: 6px;
+}
+
+.genai-eyebrow-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4f46e5;
+}
+
+.genai-header-content h1 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  margin: 0 0 6px 0;
+  color: #0f172a;
+}
+
+.genai-subtitle {
+  font-size: 0.92rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.genai-header-toolbar {
   display: flex;
   align-items: center;
-  gap: 15px;
-  padding: 15px;
-  background: #f7fafc;
-  border-radius: 8px;
-  margin-top: 20px;
-  font-size: 1.1em;
-  color: #2d3748;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-.customer-info strong {
-  color: #667eea;
+.customer-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 13px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+  font-size: 0.84rem;
 }
 
-.btn-link {
-  background: none;
-  border: none;
-  color: #667eea;
+.customer-pill-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+}
+
+.customer-pill-value {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.customer-pill-edit {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
   cursor: pointer;
-  text-decoration: underline;
-  font-size: 0.9em;
-  padding: 5px 10px;
+  transition: all 0.15s ease;
 }
 
-.btn-link:hover {
-  color: #764ba2;
+.customer-pill-edit:hover {
+  background: #f1f5f9;
+  color: #0f172a;
 }
 
-.info-divider {
-  color: #cbd5e0;
-  font-size: 0.9em;
-  user-select: none;
+.btn-executive-prefill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #0f172a;
+  color: #ffffff;
+  border: 1px solid #1e293b;
+  padding: 8px 15px;
+  border-radius: 9px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12);
 }
 
-.btn-prefill {
-  font-weight: 600;
-  color: #319795; /* A nice teal color for the prefill button */
+.btn-executive-prefill:hover {
+  background: #1e293b;
+  transform: translateY(-1px);
 }
 
-.btn-prefill:hover {
-  color: #2c7a7b;
+.executive-score-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 13px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+}
+
+.score-pill-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.score-pill-num {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.maturity-badge-inline {
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid transparent;
 }
 
 /* Modal */

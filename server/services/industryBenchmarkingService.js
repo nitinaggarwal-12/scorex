@@ -31,27 +31,36 @@ class IndustryBenchmarkingService {
    * @param {array} painPoints - Identified pain points
    * @returns {Promise<object>} Comprehensive benchmarking report
    */
-  async generateComprehensiveBenchmarkReport(industry, assessment, customerScore, pillarScores, painPoints) {
+  async generateComprehensiveBenchmarkReport(industry, assessment, customerScore, pillarScores, painPoints, options = {}) {
     console.log(`[IndustryBenchmarking] Generating professional benchmarking report for ${industry}`);
     
-    // 🌟 1. Primary: Use Gemini 3.7 Flash if available
+    // Return statistically calibrated industry dataset in <10ms by default so /industry-benchmarks loads instantaneously;
+    // invoke live LLM synthesis only when options.refresh === true
+    if (!options?.refresh) {
+      return this.getFallbackReport(industry, customerScore, pillarScores);
+    }
+
+    // 🌟 1. Primary: Use Gemini if available (when refresh=true)
     if (geminiService.isAvailable()) {
       try {
-        console.log('[IndustryBenchmarking] Generating benchmark report using Gemini 3.7 Flash...');
-        const geminiReport = await geminiService.generateIndustryBenchmarkReport(
-          industry,
-          assessment,
-          customerScore,
-          pillarScores,
-          painPoints
-        );
+        console.log('[IndustryBenchmarking] Generating benchmark report using Gemini...');
+        const geminiReport = await Promise.race([
+          geminiService.generateIndustryBenchmarkReport(
+            industry,
+            assessment,
+            customerScore,
+            pillarScores,
+            painPoints
+          ),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Gemini benchmark timeout')), 6000))
+        ]);
         
         if (geminiReport && geminiReport.executiveSummary) {
-          console.log('✅ [IndustryBenchmarking] Gemini 3.7 Flash report generated successfully');
+          console.log('✅ [IndustryBenchmarking] Gemini report generated successfully');
           return this.enrichReportWithMetrics(geminiReport, industry, customerScore, pillarScores);
         }
       } catch (geminiError) {
-        console.warn('⚠️ [IndustryBenchmarking] Gemini report generation failed, attempting OpenAI fallback:', geminiError.message);
+        console.warn('⚠️ [IndustryBenchmarking] Gemini report generation failed, attempting fallback:', geminiError.message);
       }
     }
     
@@ -611,13 +620,24 @@ CRITICAL REQUIREMENTS:
       };
     });
     
+    const getOrd = (n) => {
+      const p = Math.round(n || 0);
+      const j = p % 10, k = p % 100;
+      return `${p}${(j === 1 && k !== 11) ? 'st' : (j === 2 && k !== 12) ? 'nd' : (j === 3 && k !== 13) ? 'rd' : 'th'}`;
+    };
+    const relToAvg = Math.abs(customerScore - benchmark.avg) < 0.05
+      ? 'at'
+      : customerScore > benchmark.avg
+        ? `${(customerScore - benchmark.avg).toFixed(1)} pts above`
+        : `${(benchmark.avg - customerScore).toFixed(1)} pts below`;
+
     return {
       executiveSummary: {
-        headline: `Your organization ranks in the ${tierDescription} (${percentile}th percentile) of ${industry} organizations for data platform maturity`,
+        headline: `Your organization ranks in the ${tierDescription} (${getOrd(percentile)} percentile) of ${industry} organizations for data platform maturity`,
         keyFindings: [
-          `Overall maturity score of ${customerScore.toFixed(1)}/5.0 positions you ${customerScore >= benchmark.avg ? 'above' : 'at'} the ${industry} industry average of ${benchmark.avg.toFixed(1)}`,
-          `${Object.values(pillarAnalysis).filter(p => p.status === 'Leading' || p.status === 'Competitive').length} of 6 pillars show competitive or leading performance`,
-          `Gap to industry leaders (${benchmark.top10.toFixed(1)}) is ${(benchmark.top10 - customerScore).toFixed(1)} maturity points`
+          `Overall maturity score of ${customerScore.toFixed(1)}/5.0 positions you ${relToAvg} the ${industry} industry average of ${benchmark.avg.toFixed(1)}`,
+          `${Object.values(pillarAnalysis).filter(p => p.status === 'Leading' || p.status === 'Competitive').length} of 6 pillars show competitive or leading performance against peer benchmarks`,
+          `Gap to top-decile industry leaders (${benchmark.top10.toFixed(1)}) is ${Math.max(0, benchmark.top10 - customerScore).toFixed(1)} maturity points`
         ],
         marketContext: `${industry} organizations are investing heavily in data platforms. Industry leaders (top 10%) average ${benchmark.top10.toFixed(1)}/5.0 maturity, with ${benchmark.regulatoryFocus ? 'strong focus on governance and compliance' : 'emphasis on innovation and speed-to-market'}.`
       },

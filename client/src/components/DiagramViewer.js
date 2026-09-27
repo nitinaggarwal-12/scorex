@@ -103,7 +103,8 @@ export default function DiagramViewer({
   badge = 'Architecture',
   theme = 'light',
   height = '560px',
-  isTarget = false
+  isTarget = false,
+  isTransition = false
 }) {
   const [origin, setOrigin] = useState('');
 
@@ -117,6 +118,10 @@ export default function DiagramViewer({
   const cardBg = theme === 'dark' ? '#1e293b' : '#f8fafc';
   const textColor = theme === 'dark' ? '#f8fafc' : '#0f172a';
   const borderColor = theme === 'dark' ? 'rgba(51, 65, 85, 0.6)' : 'rgba(226, 232, 240, 0.9)';
+  const accentColor = isTarget ? '#10b981' : isTransition ? '#f59e0b' : '#f87171';
+  const accentBg = isTarget ? 'rgba(16, 185, 129, 0.18)' : isTransition ? 'rgba(245, 158, 11, 0.18)' : 'rgba(239, 68, 68, 0.18)';
+  const accentBorder = isTarget ? 'rgba(16, 185, 129, 0.45)' : isTransition ? 'rgba(245, 158, 11, 0.45)' : 'rgba(239, 68, 68, 0.4)';
+  const accentText = isTarget ? '#059669' : isTransition ? '#d97706' : '#e11d48';
 
   const sanitizedXml = useMemo(() => {
     const rawSanitized = getCleanGraphXml(sanitizeDrawioXmlAttributes(xml || ''));
@@ -182,9 +187,9 @@ export default function DiagramViewer({
       white-space: nowrap;
     }
     .badge {
-      background-color: ${isTarget ? 'rgba(16, 185, 129, 0.18)' : 'rgba(239, 68, 68, 0.18)'};
-      color: ${isTarget ? '#10b981' : '#f87171'};
-      border: 1px solid ${isTarget ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)'};
+      background-color: ${accentBg};
+      color: ${accentText};
+      border: 1px solid ${accentBorder};
       font-size: 10.5px;
       font-weight: 800;
       padding: 3px 8px;
@@ -276,18 +281,14 @@ export default function DiagramViewer({
     <div class="title-group">
       <span class="badge">${badge}</span>
       <span class="diagram-title">${title}</span>
-      ${subtitle ? `<span class="diagram-sub">(${subtitle})</span>` : ''}
     </div>
     <div class="banner-controls">
       <button class="banner-btn" onclick="window.parent.postMessage({ type: 'SCOREX_DIAGRAM_TOGGLE_SCROLL' }, '*')">
-        ${fullScaleScroll ? '🔍 Fit to Viewport' : '⛶ 100% Full Canvas'}
+        ${fullScaleScroll ? '🔍 Fit Canvas' : '🔍 1:1 Scroll'}
       </button>
       <button class="banner-btn" onclick="window.parent.postMessage({ type: 'SCOREX_DIAGRAM_OPEN_MODAL' }, '*')">
-        ⛶ Enlarge Zoom
+        ⛶ Fullscreen
       </button>
-      <div style="font-size: 10.5px; color: #64748b; font-weight: 600; margin-left: 4px;">
-        Interactive Draw.io
-      </div>
     </div>
   </div>
 
@@ -394,7 +395,7 @@ export default function DiagramViewer({
 
   return (
     <>
-      <ViewerContainer $height={height} $theme={theme} $borderColor={isTarget ? '#10b981' : '#f87171'}>
+      <ViewerContainer $height={height} $theme={theme} $borderColor={accentColor}>
         <iframe
           srcDoc={iframeHtml}
           style={{ width: '100%', height: '100%', border: 'none', background: 'transparent' }}
@@ -425,7 +426,7 @@ export default function DiagramViewer({
             height: '92vh',
             background: theme === 'dark' ? '#0b0f19' : '#ffffff',
             borderRadius: '16px',
-            border: `1.5px solid ${isTarget ? '#10b981' : '#f87171'}`,
+            border: `1.5px solid ${accentColor}`,
             boxShadow: '0 25px 60px rgba(0,0,0,0.35)',
             display: 'flex',
             flexDirection: 'column',
@@ -441,9 +442,9 @@ export default function DiagramViewer({
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <span style={{
-                  backgroundColor: isTarget ? 'rgba(16, 185, 129, 0.18)' : 'rgba(239, 68, 68, 0.18)',
-                  color: isTarget ? '#10b981' : '#f87171',
-                  border: `1px solid ${isTarget ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)'}`,
+                  backgroundColor: accentBg,
+                  color: accentText,
+                  border: `1px solid ${accentBorder}`,
                   fontSize: '11px',
                   fontWeight: 800,
                   padding: '4px 10px',

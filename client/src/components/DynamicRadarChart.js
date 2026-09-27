@@ -280,19 +280,28 @@ const BENCHMARK_PROFILES = {
   retail: { name: 'Retail & eCommerce', score: 3.5, color: '#f59e0b' }
 };
 
-// Helper: Split long label into 2 balanced lines without ugly ellipsis
-function wrapLabel(text, maxChars = 16) {
+// Helper: Split long label into up to 3 balanced lines without clipping
+function wrapLabel(text, maxChars = 15) {
   if (!text) return ['Dimension'];
   if (text.length <= maxChars) return [text];
   const words = text.split(' ');
-  if (words.length === 1) return [text.substring(0, 15) + '..'];
-  
-  let line1 = '';
-  let line2 = '';
-  let mid = Math.ceil(words.length / 2);
-  line1 = words.slice(0, mid).join(' ');
-  line2 = words.slice(mid).join(' ');
-  return [line1, line2];
+  const lines = [];
+  let current = '';
+  for (const w of words) {
+    if (!current) {
+      current = w;
+    } else if ((current + ' ' + w).length <= maxChars) {
+      current += ' ' + w;
+    } else {
+      lines.push(current);
+      current = w;
+    }
+  }
+  if (current) lines.push(current);
+  if (lines.length > 3) {
+    return [lines[0], lines[1], lines.slice(2).join(' ').substring(0, maxChars + 2) + '…'];
+  }
+  return lines;
 }
 
 const DynamicRadarChart = ({ 
@@ -319,7 +328,7 @@ const DynamicRadarChart = ({
 
   const size = 560;
   const center = size / 2;
-  const radius = 175;
+  const radius = 158;
   const totalAxes = dimensions.length;
   const angleStep = (2 * Math.PI) / totalAxes;
 
@@ -390,7 +399,7 @@ const DynamicRadarChart = ({
             <h3>
               {title}
               <span style={{ fontSize: '0.74rem', fontWeight: 800, background: '#eef2ff', color: '#4f46e5', border: '1px solid #c7d2fe', padding: '2px 8px', borderRadius: '6px' }}>
-                5-Axis Topology
+                {dimensions.length}-Axis Topology
               </span>
             </h3>
             <p>{subtitle}</p>
@@ -455,7 +464,7 @@ const DynamicRadarChart = ({
       <Grid>
         {/* SVG POLAR RADAR CANVAS */}
         <SvgContainer>
-          <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+          <svg width="100%" height={size} viewBox="-65 -15 690 590" style={{ maxWidth: '100%', height: 'auto', overflow: 'visible' }}>
             <defs>
               {/* Luminous Gradients */}
               <linearGradient id="targetGradStunning" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -632,7 +641,7 @@ const DynamicRadarChart = ({
               const sinA = Math.sin(angle);
               
               // Place label safely beyond outer ring
-              const labelRadius = radius + 36;
+              const labelRadius = radius + 28;
               const lx = center + labelRadius * cosA;
               const ly = center + labelRadius * sinA;
 
@@ -641,8 +650,9 @@ const DynamicRadarChart = ({
               if (cosA > 0.2) textAnchor = 'start';
               else if (cosA < -0.2) textAnchor = 'end';
 
-              const lines = wrapLabel(dim.name, 16);
+              const lines = wrapLabel(dim.name, 15);
               const isHovered = hoveredIdx === idx;
+              const startDy = lines.length === 1 ? 0 : lines.length === 2 ? -6 : -12;
 
               return (
                 <g 
@@ -651,33 +661,21 @@ const DynamicRadarChart = ({
                   onMouseEnter={() => setHoveredIdx(idx)}
                   onMouseLeave={() => setHoveredIdx(null)}
                 >
-                  {lines.length === 1 ? (
-                    <text
-                      x={lx}
-                      y={ly}
-                      textAnchor={textAnchor}
-                      dominantBaseline="central"
-                      fill={isHovered ? '#4f46e5' : (theme === 'dark' ? '#f8fafc' : '#0f172a')}
-                      fontSize={isHovered ? "12.5" : "11.5"}
-                      fontWeight="800"
-                      style={{ transition: 'all 0.2s ease' }}
-                    >
-                      {lines[0]}
-                    </text>
-                  ) : (
-                    <text
-                      x={lx}
-                      y={ly}
-                      textAnchor={textAnchor}
-                      fill={isHovered ? '#4f46e5' : (theme === 'dark' ? '#f8fafc' : '#0f172a')}
-                      fontSize={isHovered ? "12" : "11"}
-                      fontWeight="800"
-                      style={{ transition: 'all 0.2s ease' }}
-                    >
-                      <tspan x={lx} dy="-7">{lines[0]}</tspan>
-                      <tspan x={lx} dy="14">{lines[1]}</tspan>
-                    </text>
-                  )}
+                  <text
+                    x={lx}
+                    y={ly}
+                    textAnchor={textAnchor}
+                    fill={isHovered ? '#4f46e5' : (theme === 'dark' ? '#f8fafc' : '#0f172a')}
+                    fontSize={isHovered ? "11.5" : "10.8"}
+                    fontWeight="800"
+                    style={{ transition: 'all 0.2s ease' }}
+                  >
+                    {lines.map((lineText, lineIdx) => (
+                      <tspan key={lineIdx} x={lx} dy={lineIdx === 0 ? startDy : 13}>
+                        {lineText}
+                      </tspan>
+                    ))}
+                  </text>
                 </g>
               );
             })}
@@ -690,7 +688,9 @@ const DynamicRadarChart = ({
             const dScore = dimensionScores[dim.id];
             const current = dScore?.score !== undefined ? dScore.score : (parseFloat(responses[`${dim.id}_current`]) || 2.5);
             const target = dScore?.targetScore !== undefined ? dScore.targetScore : (parseFloat(responses[`${dim.id}_target`]) || 4.2);
-            const delta = (target - current).toFixed(1);
+            const rawDelta = target - current;
+            const delta = rawDelta.toFixed(1);
+            const isPositiveDelta = rawDelta >= 0;
             const isHovered = hoveredIdx === idx;
 
             return (
@@ -712,10 +712,16 @@ const DynamicRadarChart = ({
                   </DimLeft>
 
                   <DimScores>
-                    <span className="baseline-badge" title="Current Baseline">L{current}</span>
+                    <span className="baseline-badge" title="Current Baseline">L{Number(current).toFixed(1)}</span>
                     <FiArrowRight size={13} color="#94a3b8" />
-                    <span className="target-badge" title="Target Horizon">L{target}</span>
-                    <span className="delta-pill" title="Capability Growth Gap">+{delta}</span>
+                    <span className="target-badge" title="Target Horizon">L{Number(target).toFixed(1)}</span>
+                    <span
+                      className="delta-pill"
+                      title="Capability Growth Gap"
+                      style={{ background: isPositiveDelta ? '#4f46e5' : '#dc2626' }}
+                    >
+                      {isPositiveDelta ? `+${delta}` : delta}
+                    </span>
                   </DimScores>
                 </DimRowTop>
 

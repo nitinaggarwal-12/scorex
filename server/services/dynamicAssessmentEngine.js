@@ -297,23 +297,26 @@ Output a strictly valid JSON object with the following schema:
    * Main report synthesis engine
    */
   async generateDynamicReport(instance, framework) {
-    console.log(`🤖 Generating executive report for "${instance.customerName}" (${framework.title}) with Gemini 3.7...`);
+    console.log(`🤖 Generating executive report for "${instance.customerName}" (${framework.title}) with Gemini 3.8 Flash...`);
 
     const scores = this.calculateScores(instance.responses, framework);
     const selectedPainPoints = [];
     const commentsList = [];
+    const questionDigestList = [];
 
-    // Extract pain points & comments
+    // Extract pain points, comments & question-level scores for bespoke questionReadouts
     (framework.dimensions || []).forEach(dim => {
       (dim.questions || []).forEach(q => {
-        const painResp = instance.responses[`${q.id}_pain_points`] || instance.responses[`${q.id}_technical_pain`];
+        const rawScore = Number(instance.responses?.[q.id]) || 3;
+        const painResp = instance.responses?.[`${q.id}_pain_points`] || instance.responses?.[`${q.id}_technical_pain`];
         if (Array.isArray(painResp) && painResp.length > 0) {
           selectedPainPoints.push(...painResp.map(p => `[${dim.name}] ${p}`));
         }
-        const comment = instance.responses[`${q.id}_comment`];
+        const comment = instance.responses?.[`${q.id}_comment`];
         if (comment && comment.trim()) {
           commentsList.push(`[${dim.name} - ${q.text}]: "${comment.trim()}"`);
         }
+        questionDigestList.push(`- ID "${q.id}" [${dim.name}] (Score: ${rawScore}/5): "${q.text}"${comment ? ` | Note: "${comment.trim()}"` : ''}`);
       });
     });
 
@@ -325,7 +328,7 @@ Output a strictly valid JSON object with the following schema:
 
     let domainGuidance = "- Open Data Lakehouse: Dataplex Universal Catalog, Apache Iceberg, BigLake, and Dataform SQLX.";
     if (isGenAI) {
-      domainGuidance = `- GenAI Modernization & Parity: OpenAI API to Google Cloud Vertex AI translation, Gemini 1.5/2.5 Pro & Flash native 2M context windows.
+      domainGuidance = `- GenAI Modernization & Parity: OpenAI API to Google Cloud Vertex AI translation, Gemini 3.8 Flash & Pro native 2M context windows.
 - FinOps Token Economics: Vertex AI Prompt Context Caching (75% token discount), dynamic model routing (Flash for triage, Pro for reasoning).
 - Security & Agent Mesh: Google Cloud Model Armor prompt injection defense, Model Context Protocol (MCP) standardized tool calling, and VPC Service Controls.
 - CI/CD Quality: Automated LLM-as-a-judge regression evaluation pipelines. STRICTLY avoid referencing BigQuery reservation slots or Lakehouse catalogs in GenAI assessments unless explicitly mentioned by user.`;
@@ -335,14 +338,14 @@ Output a strictly valid JSON object with the following schema:
       domainGuidance = `- Cloud FinOps & Cost Optimization: BigQuery edition slot reservation commitments, autoscaling 15-minute auto-termination, Cloud Billing BigQuery export, and GKE compute right-sizing.`;
     }
 
-    const systemInstruction = `You are a Lead Executive Advisor and CTO Strategy Consultant at ScoreX.
+    const systemInstruction = `You are a Lead Executive Advisor and CTO Strategy Consultant at ScoreX powered by Google Gemini 3.8 Flash.
 You specialize in synthesizing maturity assessments into executive-ready strategic transformation reports for Board Members, CTOs, CIOs, and VP-level leaders.
 
 Deliver a rigorous, consultative, highly contextualized report based on the customer's actual scores, identified pain points, and specific notes.
 Ground all strategic guidance in proven modern architectural patterns:
 ${domainGuidance}
 
-Avoid generic fluff or vendor bias. Every recommendation must be actionable, architectural, and strategic.`;
+Avoid generic fluff or vendor bias. Every recommendation, financial ROI calculation, question audit prescription, and speaker note must be specifically tailored to ${instance.customerName || 'the organization'}.`;
 
     const userPrompt = `ASSESSMENT CONTEXT:
 - Assessment Type: ${framework.title} (${framework.subtitle || ''})
@@ -359,14 +362,17 @@ ${selectedPainPoints.length > 0 ? selectedPainPoints.join('\n') : 'General proce
 ASSESSOR CONTEXTUAL NOTES & COMMENTS:
 ${commentsList.length > 0 ? commentsList.join('\n') : 'Standard deployment review'}
 
-Generate a comprehensive JSON executive report matching this schema:
+QUESTION-LEVEL AUDIT INPUTS:
+${questionDigestList.slice(0, 30).join('\n')}
+
+Generate a comprehensive JSON executive report matching this exact schema:
 {
   "executiveSummary": "<Markdown 3-4 paragraphs: CTO-level analysis of current maturity, key strategic inflection points, technical debt / risk posture, and the business rationale for transformation>",
   "maturityBadge": {
     "level": ${scores.overallScore >= 4 ? 4 : scores.overallScore >= 3 ? 3 : scores.overallScore >= 2 ? 2 : 1},
     "name": "${scores.maturityLevel}",
     "score": ${scores.overallScore},
-    "summary": "<1-sentence summary of what this maturity score means for the customer's business>"
+    "summary": "<1-sentence summary of what this maturity score means for ${instance.customerName || 'the organization'}'s business>"
   },
   "radarChartData": [
     ${Object.values(scores.dimensionScores).map(d => `{"dimension": "${d.name}", "currentScore": ${d.score}, "targetScore": ${Math.min(5, Number(d.score) + 1.2)}, "maxScore": 5}`).join(',\n')}
@@ -382,6 +388,25 @@ Generate a comprehensive JSON executive report matching this schema:
       "priorityAction": "<Primary high-impact action to close gap>"
     }
   ],
+  "financialAnalysis": {
+    "annualSavingsUsd": <number, realistic estimated annual USD savings + value unlocked for this customer use case, e.g. 1850000>,
+    "annualSavingsFormatted": "<formatted string, e.g. $1.85M>",
+    "roiRangeFormatted": "<formatted range, e.g. $1.6M - $2.9M>",
+    "tcoReductionPct": <number, realistic TCO reduction percentage between 24 and 55, e.g. 41>,
+    "tcoArbitrageFormatted": "<formatted string, e.g. 41% TCO Arbitrage>",
+    "paybackMonths": <number, realistic payback period in months between 3.5 and 11, e.g. 5.2>,
+    "executiveFinancialNarrative": "<2-sentence CFO-ready explanation of how the TCO reduction and ROI are realized from the specific pain points>",
+    "threeYearValueProjection": [
+      { "year": "Year 1 (Foundation & FinOps)", "valueM": <number in millions, e.g. 1.3>, "label": "<specific Year 1 value driver summary>" },
+      { "year": "Year 2 (Scale & Automation)", "valueM": <number in millions, e.g. 2.9>, "label": "<specific Year 2 value driver summary>" },
+      { "year": "Year 3 (Autonomous Scale)", "valueM": <number in millions, e.g. 4.8>, "label": "<specific Year 3 value driver summary>" }
+    ],
+    "valueDrivers": [
+      { "category": "<Driver 1 Category>", "impact": "<Quantified $ or % impact>", "rationale": "<Customer-specific calculation rationale>" },
+      { "category": "<Driver 2 Category>", "impact": "<Quantified $ or % impact>", "rationale": "<Customer-specific calculation rationale>" },
+      { "category": "<Driver 3 Category>", "impact": "<Quantified $ or % impact>", "rationale": "<Customer-specific calculation rationale>" }
+    ]
+  },
   "keyStrengths": [
     "<Strength 1: specific capability organization is doing well>",
     "<Strength 2>",
@@ -397,6 +422,8 @@ Generate a comprehensive JSON executive report matching this schema:
       "title": "Phase 1: Foundation & Quick Wins",
       "timeline": "0–3 Months",
       "focus": "<Core objective of Phase 1>",
+      "exitGateKpi": "<Measurable Phase 1 exit gate KPI specific to this customer>",
+      "architecturePattern": "<Primary architecture pattern deployed in Phase 1>",
       "milestones": [
         "<Milestone 1>",
         "<Milestone 2>",
@@ -407,6 +434,8 @@ Generate a comprehensive JSON executive report matching this schema:
       "title": "Phase 2: Scale & Operationalization",
       "timeline": "3–6 Months",
       "focus": "<Core objective of Phase 2>",
+      "exitGateKpi": "<Measurable Phase 2 exit gate KPI specific to this customer>",
+      "architecturePattern": "<Primary architecture pattern deployed in Phase 2>",
       "milestones": [
         "<Milestone 1>",
         "<Milestone 2>",
@@ -417,6 +446,8 @@ Generate a comprehensive JSON executive report matching this schema:
       "title": "Phase 3: Optimization & Continuous Value",
       "timeline": "6–12 Months",
       "focus": "<Core objective of Phase 3>",
+      "exitGateKpi": "<Measurable Phase 3 exit gate KPI specific to this customer>",
+      "architecturePattern": "<Primary architecture pattern deployed in Phase 3>",
       "milestones": [
         "<Milestone 1>",
         "<Milestone 2>",
@@ -440,6 +471,26 @@ Generate a comprehensive JSON executive report matching this schema:
       "expectedImpact": "<Quantified / strategic impact on velocity, risk, or cost>"
     }
   ],
+  "questionReadouts": {
+    "<questionId>": {
+      "gapAnalysis": "<1-sentence diagnostic of why this question scored its current level>",
+      "remediationAction": "<1-sentence concrete technical remediation to achieve Level 5>",
+      "recommendedService": "<Recommended Google Cloud / modern architecture service>"
+    }
+  },
+  "slideDeckSynthesis": {
+    "executiveHeadline": "<1-sentence C-Suite presentation headline tailored to ${instance.customerName || 'the client'}>",
+    "roiEstimate": "<e.g. $1.6M - $2.9M>",
+    "tcoArbitrage": "<e.g. 41% TCO Arbitrage>",
+    "slides": [
+      { "slideIndex": 0, "title": "<Slide 1 Title>", "speakerNotes": "<Bespoke presenter script for Slide 1>" },
+      { "slideIndex": 1, "title": "<Slide 2 Title>", "speakerNotes": "<Bespoke presenter script for Slide 2>" },
+      { "slideIndex": 2, "title": "<Slide 3 Title>", "speakerNotes": "<Bespoke presenter script for Slide 3>" },
+      { "slideIndex": 3, "title": "<Slide 4 Title>", "speakerNotes": "<Bespoke presenter script for Slide 4>" },
+      { "slideIndex": 4, "title": "<Slide 5 Title>", "speakerNotes": "<Bespoke presenter script for Slide 5>" },
+      { "slideIndex": 5, "title": "<Slide 6 Title>", "speakerNotes": "<Bespoke presenter script for Slide 6>" }
+    ]
+  },
   "expectedOutcomes": [
     "<Outcome 1: e.g. 40% reduction in deployment latency>",
     "<Outcome 2: e.g. 100% compliance audit trail visibility>",
@@ -449,12 +500,27 @@ Generate a comprehensive JSON executive report matching this schema:
 
     let parsed = null;
     try {
-      const result = await this.gemini._generateWithFallback(
-        userPrompt + '\n\nIMPORTANT: Output ONLY pure JSON matching the schema.',
-        systemInstruction,
-        0.7,
-        'application/json'
-      );
+      // Run Executive Report Synthesis and Bespoke Draw.io Architecture Topology Generation in parallel via Gemini 3.8 Flash
+      const [result, liveDiagrams] = await Promise.all([
+        this.gemini._generateWithFallback(
+          userPrompt + '\n\nIMPORTANT: Output ONLY pure JSON matching the schema.',
+          systemInstruction,
+          0.7,
+          'application/json'
+        ),
+        this.generateArchitectureDiagramsWithGemini(
+          framework,
+          instance.responses || {},
+          scores,
+          {
+            customerName: instance.customerName,
+            useCase: instance.useCase
+          }
+        ).catch(diagErr => {
+          console.warn('⚠️ Parallel diagram generation fallback:', diagErr.message);
+          return this._generateDeterministicDiagramsFallback(framework, instance, scores);
+        })
+      ]);
 
       try {
         parsed = JSON.parse(result.text);
@@ -464,11 +530,14 @@ Generate a comprehensive JSON executive report matching this schema:
       }
 
       if (parsed) {
-        parsed.architectureDiagrams = this._generateDeterministicDiagramsFallback(framework, instance, scores);
+        parsed.architectureDiagrams = liveDiagrams || this._generateDeterministicDiagramsFallback(framework, instance, scores);
+        parsed.architectureXml = parsed.architectureDiagrams?.targetStateXml || null;
+        parsed.currentArchitectureXml = parsed.architectureDiagrams?.currentStateXml || null;
         parsed.generatedAt = new Date().toISOString();
-        parsed.modelUsed = result.modelUsed;
+        parsed.modelUsed = result.modelUsed || 'gemini-3.8-flash';
+        parsed.isLiveGemini = true;
         parsed.calculatedScores = scores;
-        console.log(`✅ Executive report generated successfully with ${result.modelUsed}`);
+        console.log(`✅ Executive report + architecture topology generated successfully with ${parsed.modelUsed}`);
         return parsed;
       }
     } catch (aiError) {

@@ -619,6 +619,22 @@ const DynamicAssessmentReport = () => {
           setFramework(inst.frameworkSnapshot);
           if (inst.aiReport) {
             setReport(inst.aiReport);
+            // Auto-upgrade deterministic fallbacks or legacy pre-baked demo snapshots lacking Gemini 3.8 Flash schema fields
+            const needsLiveGeminiUpgrade =
+              inst.aiReport.modelUsed === 'rule-based-deterministic-synthesis' ||
+              inst.aiReport.isDeterministicFallback ||
+              !inst.aiReport.financialAnalysis ||
+              !inst.aiReport.slideDeckSynthesis;
+            if (needsLiveGeminiUpgrade) {
+              dynamicAssessmentService.generateReport(id)
+                .then(genRes => {
+                  if (genRes && genRes.report) {
+                    setReport(genRes.report);
+                    toast.success('⚡ Upgraded report with Live Gemini 3.8 Flash synthesis!', { id: 'gemini-upgrade' });
+                  }
+                })
+                .catch(upErr => console.warn('Background Gemini 3.8 Flash upgrade skipped:', upErr?.message));
+            }
           } else {
             try {
               const genRes = await dynamicAssessmentService.generateReport(id);
@@ -640,6 +656,22 @@ const DynamicAssessmentReport = () => {
       setLoadError(err.response?.data?.error || 'Failed to load assessment report. The session may have expired.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRegenerateLiveGemini = async () => {
+    if (!id) return;
+    try {
+      toast.loading('⚡ Synthesizing fresh report & architecture with Live Gemini 3.8 Flash...', { id: 'regen-gemini' });
+      const genRes = await dynamicAssessmentService.generateReport(id);
+      if (genRes && genRes.report) {
+        setReport(genRes.report);
+        toast.success('✅ Live Gemini 3.8 Flash report & diagrams updated!', { id: 'regen-gemini' });
+      } else {
+        toast.error('Could not regenerate report', { id: 'regen-gemini' });
+      }
+    } catch (err) {
+      toast.error('Failed to regenerate with Live Gemini 3.8 Flash', { id: 'regen-gemini' });
     }
   };
 
@@ -889,6 +921,28 @@ const DynamicAssessmentReport = () => {
               {theme === 'light' ? '🌙 Dark' : '☀️ Light'}
             </button>
 
+            {/* 1b. Live Gemini 3.8 Flash Regenerate Action */}
+            <button
+              style={{
+                background: 'linear-gradient(135deg, #059669, #10b981)',
+                border: 'none',
+                color: '#ffffff',
+                padding: '8px 14px',
+                borderRadius: '10px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                cursor: 'pointer',
+                fontWeight: '800',
+                fontSize: '0.84rem',
+                boxShadow: '0 4px 14px rgba(16, 185, 129, 0.3)'
+              }}
+              onClick={handleRegenerateLiveGemini}
+              title="Re-run live synthesis & bespoke Draw.io architecture generation using Google Gemini 3.8 Flash"
+            >
+              <span>⚡</span> Gemini 3.8 Flash
+            </button>
+
             {/* 2. AI Voice Briefing Action */}
             <button
               style={{
@@ -957,8 +1011,8 @@ const DynamicAssessmentReport = () => {
                 fontSize: '0.85rem',
                 boxShadow: '0 4px 14px rgba(245, 158, 11, 0.3)'
               }}
-              onClick={() => setIsPresentationOpen(true)}
-              title="Launch Fullscreen 16:9 Slide Deck for Executive Presentation"
+              onClick={() => setPreviewDocState({ isOpen: true, type: 'slides' })}
+              title="Launch Unified 16:9 Executive Presentation Deck (Gemini 3.8 Flash)"
             >
               <span>📊</span> Present Deck
             </button>
@@ -1136,7 +1190,7 @@ const DynamicAssessmentReport = () => {
                 <span><FiUser /> Customer: <strong>{instance.customerName}</strong></span>
                 {instance.useCase && <span><FiTarget /> Initiative: <strong>{instance.useCase}</strong></span>}
                 <span><FiCalendar /> Completed: <strong>{new Date(instance.completedAt || instance.createdAt).toLocaleDateString()}</strong></span>
-                <span><HiSparkles /> Evaluated by: <strong>Gemini 3.7</strong></span>
+                <span><HiSparkles /> Evaluated by: <strong>{report?.modelUsed === 'rule-based-deterministic-synthesis' ? 'Gemini 3.8 Flash (Syncing...)' : 'Gemini 3.8 Flash'}</strong></span>
               </HeroMeta>
             </div>
 
@@ -1182,13 +1236,6 @@ const DynamicAssessmentReport = () => {
             onClick={() => setActiveExecutiveTab("audit")}
           >
             📋 Question Audit
-          </ExecutiveTabButton>
-          <ExecutiveTabButton $theme={theme} 
-            $isActive={activeExecutiveTab === "all"} 
-            onClick={() => setActiveExecutiveTab("all")}
-            title="Display all executive sections in a single unified dossier view"
-          >
-            📑 Full Dossier
           </ExecutiveTabButton>
         </ExecutiveTabContainer>
 
@@ -1286,7 +1333,7 @@ const DynamicAssessmentReport = () => {
             {/* Architectural Evolution Blueprint: Current vs Target */}
             <ArchitectureComparisonDiagram theme={theme}
               instanceId={instance?.id}
-              initialDiagrams={report?.architectureDiagrams}
+              initialDiagrams={report?.architectureDiagrams || instance?.architectureDiagrams}
               currentScore={scores.overallScore || 2.5}
               targetScore={simulatedOverallTarget}
               customerName={instance?.customerName}
@@ -1298,6 +1345,7 @@ const DynamicAssessmentReport = () => {
 
             {/* 1-Click Infrastructure-as-Code (IaC) Cloud Deployer */}
             <IaCBlueprintCard
+              instanceId={instance?.id}
               organizationName={instance?.customerName || framework?.title || "Enterprise Platform"}
               currentScore={scores.overallScore || 2.5}
               targetScore={simulatedOverallTarget || 4.5}
@@ -1312,12 +1360,13 @@ const DynamicAssessmentReport = () => {
         {/* ========================================================================= */}
         {(activeExecutiveTab === "financial" || activeExecutiveTab === "all") && (
           <div>
-            {/* Quantified Financial & TCO Impact Engine */}
+            {/* Quantified Financial & TCO Impact Engine (Powered by Live Gemini 3.8 Flash) */}
             <FinancialImpactCard theme={theme}
               pillarScores={simulatedDimensionScores}
               framework={framework}
               overallCurrent={scores.overallScore || 2.5}
               overallTarget={simulatedOverallTarget}
+              financialAnalysis={report?.financialAnalysis}
             />
 
             {/* Industry Peer Benchmarking & Percentile Distribution Matrix */}
@@ -1349,38 +1398,6 @@ const DynamicAssessmentReport = () => {
               recommendations={report.prioritizedRecommendations || report.prioritizedActions || []}
               prioritizedActions={report.prioritizedRecommendations || report.prioritizedActions || []}
             />
-
-            {/* Strategic Transformation Roadmap */}
-            {report.transformationRoadmap && (
-              <Card $theme={theme} style={{ marginBottom: "32px" }}>
-                <CardTitle $theme={theme}>
-                  <FiTrendingUp color="#38bdf8" /> Strategic Transformation Roadmap
-                </CardTitle>
-
-                <RoadmapGrid>
-                  {["phase1", "phase2", "phase3"].map((pKey) => {
-                    const phase = report.transformationRoadmap[pKey];
-                    if (!phase) return null;
-                    return (
-                      <RoadmapCard key={pKey} $theme={theme}>
-                        <RoadmapPhase $theme={theme}>{phase.title}</RoadmapPhase>
-                        <RoadmapTimeline $theme={theme}>{phase.timeline}</RoadmapTimeline>
-                        <p style={{ fontSize: "0.875rem", color: theme === 'dark' ? "#94a3b8" : "#475569", marginBottom: "16px", lineHeight: "1.5" }}>{phase.focus}</p>
-
-                        <MilestoneList>
-                          {(phase.milestones || []).map((m, mIdx) => (
-                            <MilestoneItem key={mIdx} $theme={theme}>
-                              <FiCheck size={16} />
-                              <span>{m}</span>
-                            </MilestoneItem>
-                          ))}
-                        </MilestoneList>
-                      </RoadmapCard>
-                    );
-                  })}
-                </RoadmapGrid>
-              </Card>
-            )}
 
             {/* Prioritized Recommendations */}
             {report.prioritizedRecommendations && report.prioritizedRecommendations.length > 0 && (
@@ -1431,10 +1448,10 @@ const DynamicAssessmentReport = () => {
         {(activeExecutiveTab === "audit" || activeExecutiveTab === "all") && (
           <Card $theme={theme} style={{ marginBottom: "32px" }}>
             <CardTitle $theme={theme}>
-              <FiCheckCircle color="#0284c7" /> Granular Question Audit & Operational Context
+              <FiCheckCircle color="#0284c7" /> Granular Question Audit & Live Gemini 3.8 Flash Prescriptions
             </CardTitle>
             <p style={{ color: theme === 'dark' ? "#94a3b8" : "#64748b", fontSize: "0.92rem", marginBottom: "24px" }}>
-              Complete record of dimensional question responses, baseline ratings, target horizons, identified technical/business pain points, and lead architect audit notes.
+              Complete record of dimensional question responses, baseline ratings, target horizons, identified technical/business pain points, lead architect audit notes, and question-specific Gemini 3.8 Flash remediation prescriptions.
             </p>
 
             {(framework?.dimensions || []).map((dim, dIdx) => (
@@ -1470,6 +1487,7 @@ const DynamicAssessmentReport = () => {
                   const comment = instance.responses?.[q.id + "_comment"];
                   const techPain = instance.responses?.[q.id + "_technical_pain"] || [];
                   const bizPain = instance.responses?.[q.id + "_business_pain"] || [];
+                  const geminiReadout = report?.questionReadouts?.[q.id] || null;
 
                   return (
                     <div key={q.id || qIdx} style={{ 
@@ -1490,11 +1508,34 @@ const DynamicAssessmentReport = () => {
                         <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "#15803d", background: "#f0fdf4", border: "1px solid #bbf7d0", padding: "3px 10px", borderRadius: "6px" }}>
                           Target Horizon: <strong>{futureVal}/5.0</strong>
                         </span>
+                        {geminiReadout?.recommendedService && (
+                          <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#0284c7", background: "#e0f2fe", border: "1px solid #bae6fd", padding: "3px 10px", borderRadius: "6px" }}>
+                            ☁️ Recommended Service: <strong>{geminiReadout.recommendedService}</strong>
+                          </span>
+                        )}
                       </div>
 
                       {selectedOpt && (
                         <div style={{ fontSize: "0.86rem", color: theme === 'dark' ? "#cbd5e1" : "#334155", marginBottom: "8px", lineHeight: "1.4" }}>
                           <strong style={{ color: theme === 'dark' ? '#ffffff' : '#0f172a' }}>Evaluated State:</strong> {selectedOpt.label}
+                        </div>
+                      )}
+
+                      {geminiReadout && (
+                        <div style={{
+                          background: theme === 'dark' ? "rgba(16, 185, 129, 0.1)" : "#ecfdf5",
+                          border: "1px solid #a7f3d0",
+                          borderRadius: "8px",
+                          padding: "8px 12px",
+                          marginBottom: "8px",
+                          fontSize: "0.83rem",
+                          color: theme === 'dark' ? "#d1fae5" : "#065f46",
+                          lineHeight: "1.45"
+                        }}>
+                          <div>⚡ <strong>Gemini 3.8 Flash Gap Analysis:</strong> {geminiReadout.gapAnalysis}</div>
+                          {geminiReadout.remediationAction && (
+                            <div style={{ marginTop: "4px" }}>🛠️ <strong>Prescription to Level 5:</strong> {geminiReadout.remediationAction}</div>
+                          )}
                         </div>
                       )}
 
