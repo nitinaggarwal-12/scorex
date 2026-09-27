@@ -71,22 +71,22 @@ const formatNumber = (val, suffix = '') => {
 
 const STATUS_META = {
   verified: {
-    label: '🟢 Verified Telemetry',
+    label: 'Verified',
     shortLabel: 'Verified',
     bg: '#ecfdf5',
     color: '#047857',
     border: '#6ee7b7'
   },
   draft_verify: {
-    label: '🟡 Pre-Filled — Verify w/ Customer',
-    shortLabel: 'Verify w/ Customer',
+    label: 'Needs Confirmation',
+    shortLabel: 'Confirm',
     bg: '#fffbeb',
     color: '#b45309',
     border: '#fcd34d'
   },
   pending: {
-    label: '⚪ Evidence Pending',
-    shortLabel: 'Evidence Pending',
+    label: 'Pending',
+    shortLabel: 'Pending',
     bg: '#f8fafc',
     color: '#475569',
     border: '#cbd5e1'
@@ -96,9 +96,9 @@ const STATUS_META = {
 const TIER_META = {
   A: {
     tier: 'A',
-    badge: '🟢 Tier A (90–100% • 1.00x)',
-    shortBadge: 'Tier A • 1.0x',
-    desc: 'Hard Portal / Telemetry Verified',
+    badge: 'Tier A • Verified',
+    shortBadge: 'Tier A',
+    desc: 'System Telemetry',
     bg: '#ecfdf5',
     color: '#047857',
     border: '#6ee7b7',
@@ -106,9 +106,9 @@ const TIER_META = {
   },
   B: {
     tier: 'B',
-    badge: '🔵 Tier B (75–89% • 0.75x)',
-    shortBadge: 'Tier B • 0.75x',
-    desc: 'Internal Doc / Pilot Backed — Confirm w/ Customer',
+    badge: 'Tier B • Doc/Pilot',
+    shortBadge: 'Tier B',
+    desc: 'Internal Doc / Pilot',
     bg: '#eff6ff',
     color: '#1d4ed8',
     border: '#93c5fd',
@@ -116,9 +116,9 @@ const TIER_META = {
   },
   C: {
     tier: 'C',
-    badge: '🟡 Tier C (40–74% • 0.40x)',
-    shortBadge: 'Tier C • 0.40x',
-    desc: 'CoP / Survey Recall or Workaround Estimate',
+    badge: 'Tier C • Survey',
+    shortBadge: 'Tier C',
+    desc: 'Survey / Estimate',
     bg: '#fffbeb',
     color: '#b45309',
     border: '#fcd34d',
@@ -126,9 +126,9 @@ const TIER_META = {
   },
   D: {
     tier: 'D',
-    badge: '⚪ Tier D (0–39% • 0.00x)',
-    shortBadge: 'Tier D • 0.0x',
-    desc: 'Customer Finance / Sign-Off Pending',
+    badge: 'Tier D • Pending',
+    shortBadge: 'Tier D',
+    desc: 'Sign-Off Pending',
     bg: '#f8fafc',
     color: '#475569',
     border: '#cbd5e1',
@@ -137,42 +137,42 @@ const TIER_META = {
 };
 
 const CONFIDENCE_OPTIONS = [
-  { value: 'A', label: 'Tier A (90–100% • 1.00x — System Telemetry / Confirmed)', mult: 1.0 },
-  { value: 'B', label: 'Tier B (75–89% • 0.75x — Internal Doc / Pilot Study)', mult: 0.75 },
-  { value: 'C', label: 'Tier C (40–74% • 0.40x — CoP Survey / Scoping Estimate)', mult: 0.4 },
-  { value: 'D', label: 'Tier D (0–39% • 0.00x — Pending Customer Finance / Unverified)', mult: 0.0 }
+  { value: 'A', label: 'Tier A (90–100% • Verified)', mult: 1.0 },
+  { value: 'B', label: 'Tier B (75–89% • Doc/Pilot)', mult: 0.75 },
+  { value: 'C', label: 'Tier C (40–74% • Survey)', mult: 0.4 },
+  { value: 'D', label: 'Tier D (0–39% • Pending)', mult: 0.0 }
 ];
 
 const ENTERPRISE_SOURCE_CONNECTORS = [
-  { id: 'salesforce', label: 'Salesforce / Vector', icon: '☁️', domain: 'vector.lightning.force.com' },
-  { id: 'chat', label: 'Google Chat', icon: '💬', domain: 'chat.google.com' },
-  { id: 'email', label: 'Email / Gmail', icon: '✉️', domain: 'mail.google.com' },
-  { id: 'drive', label: 'Google Drive', icon: '📁', domain: 'drive.google.com' },
-  { id: 'docs', label: 'Google Docs', icon: '📝', domain: 'docs.google.com/document' },
-  { id: 'sheets', label: 'Google Sheets', icon: '📊', domain: 'docs.google.com/spreadsheets' },
-  { id: 'slides', label: 'Google Slides', icon: '📽️', domain: 'docs.google.com/presentation' },
-  { id: 'moma', label: 'Moma / Buganizer / Gantry', icon: '🏛️', domain: 'moma.corp.google.com' }
+  { id: 'salesforce', label: 'Salesforce', icon: '☁️', domain: 'vector.lightning.force.com' },
+  { id: 'chat', label: 'Chat', icon: '💬', domain: 'chat.google.com' },
+  { id: 'email', label: 'Email', icon: '✉️', domain: 'mail.google.com' },
+  { id: 'drive', label: 'Drive', icon: '📁', domain: 'drive.google.com' },
+  { id: 'docs', label: 'Docs', icon: '📝', domain: 'docs.google.com/document' },
+  { id: 'sheets', label: 'Sheets', icon: '📊', domain: 'docs.google.com/spreadsheets' },
+  { id: 'slides', label: 'Slides', icon: '📽️', domain: 'docs.google.com/presentation' },
+  { id: 'moma', label: 'Moma', icon: '🏛️', domain: 'moma.corp.google.com' }
 ];
 
 const TIME_WINDOW_PRESETS = [
-  { id: 'ytd_2026', label: 'Full Program YTD 2026 (Jan 01 – Sep 26, 2026)', startDate: '2026-01-01', endDate: '2026-09-26' },
-  { id: 'migration_wave_1', label: 'Wave-1 Migration Cohort (Mar 16 – May 15, 2026)', startDate: '2026-03-16', endDate: '2026-05-15' },
-  { id: 'last_30d', label: 'Last 30 Days (Aug 27 – Sep 26, 2026)', startDate: '2026-08-27', endDate: '2026-09-26' },
-  { id: 'last_60d', label: 'Last 60 Days (Jul 28 – Sep 26, 2026)', startDate: '2026-07-28', endDate: '2026-09-26' },
-  { id: 'last_90d', label: 'Last 90 Days / Q3 2026 (Jun 28 – Sep 26, 2026)', startDate: '2026-06-28', endDate: '2026-09-26' },
-  { id: 'custom', label: 'Custom Date Range (Start Date → End Date)', startDate: '2026-05-01', endDate: '2026-09-26' }
+  { id: 'ytd_2026', label: 'YTD 2026 (Jan – Sep)', startDate: '2026-01-01', endDate: '2026-09-26' },
+  { id: 'migration_wave_1', label: 'Wave 1 (Mar – May)', startDate: '2026-03-16', endDate: '2026-05-15' },
+  { id: 'last_30d', label: 'Last 30 Days', startDate: '2026-08-27', endDate: '2026-09-26' },
+  { id: 'last_60d', label: 'Last 60 Days', startDate: '2026-07-28', endDate: '2026-09-26' },
+  { id: 'last_90d', label: 'Last 90 Days (Q3)', startDate: '2026-06-28', endDate: '2026-09-26' },
+  { id: 'custom', label: 'Custom Range', startDate: '2026-05-01', endDate: '2026-09-26' }
 ];
 
 const STRATEGIC_QUICK_ACCOUNTS = [
-  { sfdcId: '0014M00001hfHuqQAE', shortName: 'FedEx Corp', seats: '301K' },
-  { sfdcId: '0014M00001hZEwfQAG', shortName: 'Merck & Co.', seats: '85.3K' },
-  { sfdcId: '0014M00001hM6t4QAC', shortName: 'Walmart Inc.', seats: '1.17M' },
+  { sfdcId: '0014M00001hfHuqQAE', shortName: 'FedEx', seats: '301K' },
+  { sfdcId: '0014M00001hZEwfQAG', shortName: 'Merck', seats: '85.3K' },
+  { sfdcId: '0014M00001hM6t4QAC', shortName: 'Walmart', seats: '1.17M' },
   { sfdcId: '0014M00001hJwOQQA0', shortName: 'Intel', seats: '130K' },
-  { sfdcId: '0014M00001h4UQoQAM', shortName: 'KPMG LLP', seats: '55.5K' },
-  { sfdcId: '0014M00001hYyluQAC', shortName: 'McKinsey & Co.', seats: '41.8K' },
+  { sfdcId: '0014M00001h4UQoQAM', shortName: 'KPMG', seats: '55.5K' },
+  { sfdcId: '0014M00001hYyluQAC', shortName: 'McKinsey', seats: '41.8K' },
   { sfdcId: '0014M00001htywIQAQ', shortName: 'S&P Global', seats: '24.6K' },
-  { sfdcId: '0014M00001hctyiQAA', shortName: 'Pfizer Inc', seats: '19.0K' },
-  { sfdcId: '0014M00001hmeiwQAA', shortName: 'UKG / Kronos', seats: '15.0K' },
+  { sfdcId: '0014M00001hctyiQAA', shortName: 'Pfizer', seats: '19.0K' },
+  { sfdcId: '0014M00001hmeiwQAA', shortName: 'UKG', seats: '15.0K' },
   { sfdcId: '0014M00001hPA7cQAG', shortName: 'Home Depot', seats: '8.9K' }
 ];
 
@@ -877,278 +877,262 @@ const GeValueRealizationWorkspace = () => {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#f1f5f9',
+      background: '#f8fafc',
       color: '#0f172a',
-      paddingTop: '74px',
-      paddingBottom: '64px',
+      paddingTop: '68px',
+      paddingBottom: '56px',
       fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
     }}>
       {/* =====================================================================
-          TOP EXECUTIVE COMMAND BAR
+          LIGHT, MINIMAL EXECUTIVE HEADER
          ===================================================================== */}
       <div style={{
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 60%, #0f172a 100%)',
-        color: '#ffffff',
-        borderBottom: '1px solid rgba(148, 163, 184, 0.2)',
-        padding: '18px 32px',
-        boxShadow: '0 8px 24px rgba(15, 23, 42, 0.18)'
+        background: '#ffffff',
+        color: '#0f172a',
+        borderBottom: '1px solid #e2e8f0',
+        padding: '16px 32px'
       }}>
-        <div style={{ maxWidth: '1560px', margin: '0 auto' }}>
-          {/* Row 1: Entity Lock Badges + New Assessment & Gemini API Controls */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '14px' }}>
+        <div style={{ maxWidth: '1520px', margin: '0 auto' }}>
+          {/* Row 1: Title + Essential Meta + Clean Actions */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '12px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+              <h1 style={{ fontSize: '1.35rem', fontWeight: 800, margin: 0, letterSpacing: '-0.02em', color: '#0f172a' }}>
+                {dossier.meta?.customerName || 'Enterprise Customer'}
+              </h1>
               <span style={{
-                background: 'rgba(56, 189, 248, 0.16)',
-                border: '1px solid rgba(56, 189, 248, 0.4)',
-                color: '#7dd3fc',
-                fontSize: '0.72rem',
-                fontWeight: 800,
-                padding: '4px 10px',
-                borderRadius: '999px',
-                letterSpacing: '0.05em',
-                textTransform: 'uppercase'
-              }}>
-                GE Value Realization v2.0 • 8-Source Live Ingestor
-              </span>
-              <span style={{
-                background: 'rgba(16, 185, 129, 0.16)',
-                border: '1px solid rgba(16, 185, 129, 0.4)',
-                color: '#6ee7b7',
+                background: '#f1f5f9',
+                border: '1px solid #e2e8f0',
+                color: '#475569',
                 fontSize: '0.72rem',
                 fontWeight: 700,
-                padding: '4px 10px',
+                padding: '3px 9px',
                 borderRadius: '999px',
                 fontFamily: "'JetBrains Mono', monospace"
               }}>
-                🔒 SFDC Entity Lock: {dossier.meta?.customerName || 'Clean Intake'} ({dossier.meta?.vectorAccountId || 'No SFDC ID'})
+                {dossier.meta?.vectorAccountId || 'No SFDC ID'}
               </span>
               <span style={{
-                background: 'rgba(148, 163, 184, 0.14)',
-                border: '1px solid rgba(148, 163, 184, 0.3)',
-                color: '#cbd5e1',
-                fontSize: '0.72rem',
-                fontWeight: 600,
-                padding: '4px 10px',
-                borderRadius: '999px',
-                fontFamily: "'JetBrains Mono', monospace"
-              }}>
-                GCP: {dossier.meta?.gcpProjectId || 'Pending'} • {formatNumber(dossier.adoptionTelemetry?.contractedSeats || 0)} Seats • {dossier.meta?.currentWindow || `${startDate} → ${endDate}`}
-              </span>
-              <span style={{
-                background: activePrefillMode === 'random' ? 'rgba(236, 72, 153, 0.22)' : 'rgba(245, 158, 11, 0.16)',
-                border: activePrefillMode === 'random' ? '1px solid rgba(244, 114, 182, 0.5)' : '1px solid rgba(245, 158, 11, 0.4)',
-                color: activePrefillMode === 'random' ? '#fbcfe8' : '#fcd34d',
+                background: '#eff6ff',
+                border: '1px solid #bfdbfe',
+                color: '#1d4ed8',
                 fontSize: '0.72rem',
                 fontWeight: 700,
-                padding: '4px 10px',
+                padding: '3px 9px',
                 borderRadius: '999px'
               }}>
-                {activePrefillMode === 'random'
-                  ? '🎲 Mode: Random Option Prefill Active'
-                  : activePrefillMode === 'clean'
-                    ? '⚪ Mode: Clean Manual Intake'
-                    : '🟢 Mode: 8-Source Evidence Prefill'}
+                {formatNumber(dossier.adoptionTelemetry?.contractedSeats || 0)} Seats
               </span>
+              {dossier.meta?.executiveSponsor && (
+                <span style={{ fontSize: '0.76rem', color: '#64748b', fontWeight: 500 }}>
+                  Sponsor: <strong style={{ color: '#334155' }}>{dossier.meta.executiveSponsor}</strong>
+                </span>
+              )}
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
               <button
                 onClick={() => setShowNewAssessmentModal((prev) => !prev)}
                 style={{
-                  background: showNewAssessmentModal ? '#ec4899' : 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
-                  color: '#ffffff',
-                  border: '1px solid rgba(196, 181, 253, 0.55)',
+                  background: showNewAssessmentModal ? '#eff6ff' : '#ffffff',
+                  color: showNewAssessmentModal ? '#1d4ed8' : '#334155',
+                  border: showNewAssessmentModal ? '1px solid #93c5fd' : '1px solid #cbd5e1',
                   borderRadius: '8px',
-                  padding: '7px 14px',
-                  fontSize: '0.78rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 14px rgba(124, 58, 237, 0.35)'
+                  padding: '6px 12px',
+                  fontSize: '0.76rem',
+                  fontWeight: 700,
+                  cursor: 'pointer'
                 }}
               >
-                ➕ Start New Assessment (By SFDC ID / Random)
+                + New Assessment
               </button>
               <button
                 onClick={() => handlePickRandomCustomerForModal('rich', true, 'random')}
                 disabled={ingestingCustomer}
                 style={{
-                  background: 'rgba(236, 72, 153, 0.22)',
-                  color: '#fbcfe8',
-                  border: '1px solid rgba(244, 114, 182, 0.5)',
+                  background: '#ffffff',
+                  color: '#334155',
+                  border: '1px solid #cbd5e1',
                   borderRadius: '8px',
-                  padding: '7px 12px',
-                  fontSize: '0.76rem',
-                  fontWeight: 800,
+                  padding: '6px 11px',
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
                   cursor: ingestingCustomer ? 'wait' : 'pointer'
                 }}
-                title="Pick a random Salesforce customer, ingest all 8 sources, and prefill all 82 questions with randomized realistic options"
+                title="Pick a random Salesforce customer and prefill all 82 questions"
               >
-                🎲 Random Customer + Random Options
+                🎲 Random Customer
               </button>
               <button
                 onClick={handleRandomizeCurrentCustomerOptions}
                 style={{
-                  background: 'rgba(245, 158, 11, 0.2)',
-                  color: '#fde68a',
-                  border: '1px solid rgba(251, 191, 36, 0.45)',
+                  background: '#ffffff',
+                  color: '#334155',
+                  border: '1px solid #cbd5e1',
                   borderRadius: '8px',
-                  padding: '7px 12px',
-                  fontSize: '0.76rem',
-                  fontWeight: 800,
+                  padding: '6px 11px',
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
                   cursor: 'pointer'
                 }}
-                title="Randomize all 82 question option selections for the currently active customer"
+                title="Randomize all 82 option selections for this customer"
               >
-                🔀 Randomize 82 Options ({shortCustomerName})
+                🔀 Randomize
               </button>
               <button
                 onClick={handleSubmitAndGenerateGeminiReport}
                 disabled={generatingGeminiReport}
                 style={{
-                  background: generatingGeminiReport ? '#475569' : 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+                  background: generatingGeminiReport ? '#94a3b8' : '#2563eb',
                   color: '#ffffff',
-                  border: '1px solid #6ee7b7',
+                  border: 'none',
                   borderRadius: '8px',
                   padding: '7px 14px',
-                  fontSize: '0.78rem',
-                  fontWeight: 900,
-                  cursor: generatingGeminiReport ? 'wait' : 'pointer',
-                  boxShadow: '0 4px 14px rgba(16, 185, 129, 0.35)'
+                  fontSize: '0.76rem',
+                  fontWeight: 800,
+                  cursor: generatingGeminiReport ? 'wait' : 'pointer'
                 }}
               >
-                {generatingGeminiReport ? '🧠 Gemini API Synthesizing...' : '🚀 Submit & Generate Report (Gemini API)'}
+                {generatingGeminiReport ? 'Generating...' : '✨ Generate Report'}
               </button>
               <button
                 onClick={() => handleSaveDossier(dossier, false)}
                 disabled={saving}
                 style={{
-                  background: 'rgba(255,255,255,0.08)',
-                  color: '#cbd5e1',
-                  border: '1px solid rgba(255,255,255,0.2)',
+                  background: '#f8fafc',
+                  color: '#475569',
+                  border: '1px solid #e2e8f0',
                   borderRadius: '8px',
-                  padding: '6px 11px',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
+                  padding: '6px 10px',
+                  fontSize: '0.74rem',
+                  fontWeight: 600,
                   cursor: 'pointer'
                 }}
               >
-                {saving ? 'Saving...' : '💾 Save'}
+                {saving ? '...' : 'Save'}
               </button>
               <button
                 onClick={handleExportJson}
                 style={{
-                  background: 'rgba(255,255,255,0.08)',
-                  color: '#e2e8f0',
-                  border: '1px solid rgba(255,255,255,0.2)',
+                  background: '#f8fafc',
+                  color: '#475569',
+                  border: '1px solid #e2e8f0',
                   borderRadius: '8px',
-                  padding: '6px 11px',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
+                  padding: '6px 10px',
+                  fontSize: '0.74rem',
+                  fontWeight: 600,
                   cursor: 'pointer',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '5px'
+                  gap: '4px'
                 }}
               >
-                <FiDownload size={13} /> JSON
+                <FiDownload size={12} /> JSON
               </button>
               <button
                 onClick={() => window.print()}
                 style={{
-                  background: 'rgba(255,255,255,0.08)',
-                  color: '#e2e8f0',
-                  border: '1px solid rgba(255,255,255,0.2)',
+                  background: '#f8fafc',
+                  color: '#475569',
+                  border: '1px solid #e2e8f0',
                   borderRadius: '8px',
-                  padding: '6px 11px',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
+                  padding: '6px 10px',
+                  fontSize: '0.74rem',
+                  fontWeight: 600,
                   cursor: 'pointer',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '5px'
+                  gap: '4px'
                 }}
               >
-                <FiPrinter size={13} /> PDF
+                <FiPrinter size={12} /> PDF
               </button>
             </div>
           </div>
 
-          {/* Row 2: Title + Primary Workspace Mode Switcher */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
-            <div>
-              <h1 style={{ fontSize: '1.55rem', fontWeight: 800, margin: '0 0 4px 0', letterSpacing: '-0.02em', color: '#ffffff' }}>
-                {dossier.meta?.customerName || 'Enterprise Customer'} — Gemini Enterprise Value Realization Assessment
-              </h1>
-              <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>
-                <strong style={{ color: '#e2e8f0' }}>{dossier.meta?.legacyPlatformName || 'Legacy AI / Manual Baseline'}</strong> → <strong style={{ color: '#e2e8f0' }}>{dossier.meta?.targetPlatformName || 'Google Gemini Enterprise'}</strong> • Sponsor: <strong style={{ color: '#e2e8f0' }}>{dossier.meta?.executiveSponsor || 'CIO / VP Enterprise AI'}</strong> • Leads: <strong style={{ color: '#e2e8f0' }}>{(dossier.meta?.accountLeads && dossier.meta.accountLeads.length ? dossier.meta.accountLeads : ['Enterprise Account Lead']).join(', ')}</strong>
-              </p>
-            </div>
-
+          {/* Row 2: Clean 3-Tab Switcher + Quick KPI Summary */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
             <div style={{
               display: 'inline-flex',
-              background: 'rgba(15, 23, 42, 0.75)',
-              padding: '4px',
-              borderRadius: '12px',
-              border: '1px solid rgba(148, 163, 184, 0.3)',
-              gap: '4px'
+              background: '#f1f5f9',
+              padding: '3px',
+              borderRadius: '10px',
+              border: '1px solid #e2e8f0',
+              gap: '3px'
             }}>
               <button
                 onClick={() => setPrimaryView('inputs')}
                 style={{
-                  background: primaryView === 'inputs' ? 'linear-gradient(135deg, #2563eb, #4f46e5)' : 'transparent',
-                  color: primaryView === 'inputs' ? '#ffffff' : '#cbd5e1',
+                  background: primaryView === 'inputs' ? '#ffffff' : 'transparent',
+                  color: primaryView === 'inputs' ? '#0f172a' : '#64748b',
+                  boxShadow: primaryView === 'inputs' ? '0 1px 3px rgba(15,23,42,0.08)' : 'none',
                   border: 'none',
-                  borderRadius: '9px',
-                  padding: '9px 16px',
-                  fontSize: '0.82rem',
-                  fontWeight: 800,
+                  borderRadius: '7px',
+                  padding: '7px 14px',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '7px'
+                  gap: '6px'
                 }}
               >
-                <FiLayers size={15} />
-                1. Input & Verification Workspace ({GE_QUESTIONS.length} Qs + {dossier.workflows?.length || 5} Workflows)
+                <FiLayers size={14} />
+                1. Questionnaire ({GE_QUESTIONS.length})
               </button>
               <button
                 onClick={() => setPrimaryView('report')}
                 style={{
-                  background: primaryView === 'report' ? 'linear-gradient(135deg, #059669, #0d9488)' : 'transparent',
-                  color: primaryView === 'report' ? '#ffffff' : '#cbd5e1',
+                  background: primaryView === 'report' ? '#ffffff' : 'transparent',
+                  color: primaryView === 'report' ? '#0f172a' : '#64748b',
+                  boxShadow: primaryView === 'report' ? '0 1px 3px rgba(15,23,42,0.08)' : 'none',
                   border: 'none',
-                  borderRadius: '9px',
-                  padding: '9px 16px',
-                  fontSize: '0.82rem',
-                  fontWeight: 800,
+                  borderRadius: '7px',
+                  padding: '7px 14px',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '7px'
+                  gap: '6px'
                 }}
               >
-                <FiAward size={15} />
-                2. McKinsey & Google Executive Readout {dossier.geminiReport ? '✨' : ''}
+                <FiAward size={14} />
+                2. Executive Report {dossier.geminiReport ? '✨' : ''}
               </button>
               <button
                 onClick={() => setPrimaryView('math')}
                 style={{
-                  background: primaryView === 'math' ? 'linear-gradient(135deg, #d97706, #b45309)' : 'transparent',
-                  color: primaryView === 'math' ? '#ffffff' : '#cbd5e1',
+                  background: primaryView === 'math' ? '#ffffff' : 'transparent',
+                  color: primaryView === 'math' ? '#0f172a' : '#64748b',
+                  boxShadow: primaryView === 'math' ? '0 1px 3px rgba(15,23,42,0.08)' : 'none',
                   border: 'none',
-                  borderRadius: '9px',
-                  padding: '9px 16px',
-                  fontSize: '0.82rem',
-                  fontWeight: 800,
+                  borderRadius: '7px',
+                  padding: '7px 14px',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '7px'
+                  gap: '6px'
                 }}
               >
-                <FiShield size={15} />
-                3. Provenance & Contradiction Guardrails
+                <FiShield size={14} />
+                3. Guardrails
               </button>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.75rem', color: '#475569' }}>
+              <span>
+                Score: <strong style={{ color: '#0f172a', fontFamily: 'monospace' }}>{evaluation.index.evidenceAdjustedScore}/100</strong>
+              </span>
+              <span style={{ color: '#cbd5e1' }}>•</span>
+              <span>
+                Verified: <strong style={{ color: '#047857', fontFamily: 'monospace' }}>{statusCounts.verified}/{statusCounts.total}</strong>
+              </span>
+              <span style={{ color: '#cbd5e1' }}>•</span>
+              <span>
+                Capacity: <strong style={{ color: '#1d4ed8', fontFamily: 'monospace' }}>{formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualBase)}/yr</strong>
+              </span>
             </div>
           </div>
         </div>
@@ -1157,232 +1141,221 @@ const GeValueRealizationWorkspace = () => {
       {/* =====================================================================
           MAIN WORKSPACE BODY
          ===================================================================== */}
-      <div style={{ maxWidth: '1560px', margin: '18px auto 0', padding: '0 32px' }}>
+      <div style={{ maxWidth: '1520px', margin: '14px auto 0', padding: '0 32px' }}>
 
         {/* ===================================================================
-            INTERACTIVE "START NEW ASSESSMENT" INTAKE WIZARD PANEL
+            LIGHT "NEW ASSESSMENT" PANEL
            =================================================================== */}
         {showNewAssessmentModal && (
           <div style={{
-            background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)',
-            color: '#ffffff',
-            border: '2px solid #8b5cf6',
-            borderRadius: '16px',
-            padding: '22px 26px',
-            marginBottom: '18px',
-            boxShadow: '0 16px 36px rgba(15, 23, 42, 0.28)'
+            background: '#ffffff',
+            color: '#0f172a',
+            border: '1px solid #cbd5e1',
+            borderRadius: '12px',
+            padding: '18px 20px',
+            marginBottom: '14px',
+            boxShadow: '0 4px 12px rgba(15, 23, 42, 0.06)'
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                  <span style={{ background: '#7c3aed', color: '#ffffff', fontSize: '0.7rem', fontWeight: 900, padding: '3px 10px', borderRadius: '999px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                    ➕ Start New Customer Value Realization Assessment
-                  </span>
-                  <span style={{ fontSize: '0.75rem', color: '#c4b5fd', fontWeight: 700 }}>
-                    Step 1: Specify SFDC Customer Details → Step 2: Choose Prefill Mode (Evidence / Random Options / Blank) → Step 3: Populate 82 Questions & Submit to Gemini API
-                  </span>
-                </div>
-                <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, color: '#ffffff' }}>
-                  Configure Customer Details (by Salesforce ID) & Multi-Source Questionnaire Prefill
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', marginBottom: '14px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <h2 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>
+                  New Customer Assessment
                 </h2>
+                <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                  Enter a Salesforce ID or pick a random account
+                </span>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <button
                   onClick={() => handlePickRandomCustomerForModal('rich', false, newAssessmentForm.prefillMode)}
                   style={{
-                    background: '#ec4899',
-                    color: '#ffffff',
-                    border: 'none',
-                    borderRadius: '8px',
-                    padding: '7px 13px',
-                    fontSize: '0.76rem',
-                    fontWeight: 800,
-                    cursor: 'pointer'
-                  }}
-                >
-                  🎲 Pick Random Enterprise SFDC Customer
-                </button>
-                <button
-                  onClick={() => handlePickRandomCustomerForModal('any', false, newAssessmentForm.prefillMode)}
-                  style={{
-                    background: 'rgba(255,255,255,0.12)',
-                    color: '#e2e8f0',
-                    border: '1px solid rgba(255,255,255,0.25)',
-                    borderRadius: '8px',
-                    padding: '7px 13px',
-                    fontSize: '0.75rem',
+                    background: '#f8fafc',
+                    color: '#334155',
+                    border: '1px solid #cbd5e1',
+                    borderRadius: '7px',
+                    padding: '5px 10px',
+                    fontSize: '0.74rem',
                     fontWeight: 700,
                     cursor: 'pointer'
                   }}
                 >
-                  🌐 Pick Random from All 4,351 Accounts
+                  🎲 Random Enterprise
+                </button>
+                <button
+                  onClick={() => handlePickRandomCustomerForModal('any', false, newAssessmentForm.prefillMode)}
+                  style={{
+                    background: '#f8fafc',
+                    color: '#334155',
+                    border: '1px solid #cbd5e1',
+                    borderRadius: '7px',
+                    padding: '5px 10px',
+                    fontSize: '0.74rem',
+                    fontWeight: 600,
+                    cursor: 'pointer'
+                  }}
+                >
+                  🌐 Random (All 4,351)
                 </button>
                 <button
                   onClick={() => setShowNewAssessmentModal(false)}
                   style={{
                     background: 'transparent',
-                    color: '#94a3b8',
-                    border: '1px solid #475569',
-                    borderRadius: '8px',
-                    padding: '6px 11px',
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
+                    color: '#64748b',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '7px',
+                    padding: '5px 9px',
+                    fontSize: '0.74rem',
+                    fontWeight: 600,
                     cursor: 'pointer'
                   }}
                 >
-                  ✕ Close
+                  ✕
                 </button>
               </div>
             </div>
 
-            {/* Customer Details Form Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '12px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 800, color: '#cbd5e1', textTransform: 'uppercase', marginBottom: '4px' }}>
-                  Salesforce Account ID (18-Char Vector ID)
+                <label style={{ display: 'block', fontSize: '0.68rem', fontWeight: 700, color: '#64748b', marginBottom: '3px' }}>
+                  Salesforce Account ID
                 </label>
                 <input
                   type="text"
                   value={newAssessmentForm.sfdcAccountId}
                   onChange={(e) => setNewAssessmentForm((prev) => ({ ...prev, sfdcAccountId: e.target.value }))}
-                  placeholder="e.g. 0014M00001hfHuqQAE"
-                  style={{ width: '100%', padding: '8px 11px', borderRadius: '8px', border: '1px solid #64748b', background: '#1e293b', color: '#ffffff', fontSize: '0.82rem', fontFamily: 'monospace', fontWeight: 700 }}
+                  placeholder="0014M00001hfHuqQAE"
+                  style={{ width: '100%', padding: '7px 10px', borderRadius: '7px', border: '1px solid #cbd5e1', background: '#f8fafc', color: '#0f172a', fontSize: '0.8rem', fontFamily: 'monospace', fontWeight: 600 }}
                 />
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 800, color: '#cbd5e1', textTransform: 'uppercase', marginBottom: '4px' }}>
-                  Customer Legal / Account Name
+                <label style={{ display: 'block', fontSize: '0.68rem', fontWeight: 700, color: '#64748b', marginBottom: '3px' }}>
+                  Customer Name
                 </label>
                 <input
                   type="text"
                   value={newAssessmentForm.customerName}
                   onChange={(e) => setNewAssessmentForm((prev) => ({ ...prev, customerName: e.target.value }))}
-                  placeholder="e.g. Federal Express Corporation"
-                  style={{ width: '100%', padding: '8px 11px', borderRadius: '8px', border: '1px solid #64748b', background: '#1e293b', color: '#ffffff', fontSize: '0.82rem', fontWeight: 700 }}
+                  placeholder="Federal Express Corporation"
+                  style={{ width: '100%', padding: '7px 10px', borderRadius: '7px', border: '1px solid #cbd5e1', background: '#f8fafc', color: '#0f172a', fontSize: '0.8rem', fontWeight: 600 }}
                 />
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 800, color: '#cbd5e1', textTransform: 'uppercase', marginBottom: '4px' }}>
-                  Industry / Regulated Sector
+                <label style={{ display: 'block', fontSize: '0.68rem', fontWeight: 700, color: '#64748b', marginBottom: '3px' }}>
+                  Industry
                 </label>
                 <input
                   type="text"
                   value={newAssessmentForm.industry}
                   onChange={(e) => setNewAssessmentForm((prev) => ({ ...prev, industry: e.target.value }))}
-                  placeholder="e.g. Transportation, Logistics & Supply Chain"
-                  style={{ width: '100%', padding: '8px 11px', borderRadius: '8px', border: '1px solid #64748b', background: '#1e293b', color: '#ffffff', fontSize: '0.82rem', fontWeight: 600 }}
+                  placeholder="Transportation & Logistics"
+                  style={{ width: '100%', padding: '7px 10px', borderRadius: '7px', border: '1px solid #cbd5e1', background: '#f8fafc', color: '#0f172a', fontSize: '0.8rem' }}
                 />
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 800, color: '#cbd5e1', textTransform: 'uppercase', marginBottom: '4px' }}>
-                  Legacy AI / Search Baseline Being Replaced
+                <label style={{ display: 'block', fontSize: '0.68rem', fontWeight: 700, color: '#64748b', marginBottom: '3px' }}>
+                  Legacy Baseline
                 </label>
                 <input
                   type="text"
                   value={newAssessmentForm.legacyPlatformName}
                   onChange={(e) => setNewAssessmentForm((prev) => ({ ...prev, legacyPlatformName: e.target.value }))}
-                  placeholder="e.g. Custom OpenAI / Legacy Search"
-                  style={{ width: '100%', padding: '8px 11px', borderRadius: '8px', border: '1px solid #64748b', background: '#1e293b', color: '#ffffff', fontSize: '0.82rem', fontWeight: 600 }}
+                  placeholder="Legacy Search / Manual Ops"
+                  style={{ width: '100%', padding: '7px 10px', borderRadius: '7px', border: '1px solid #cbd5e1', background: '#f8fafc', color: '#0f172a', fontSize: '0.8rem' }}
                 />
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 800, color: '#cbd5e1', textTransform: 'uppercase', marginBottom: '4px' }}>
-                  Customer Executive Sponsor
+                <label style={{ display: 'block', fontSize: '0.68rem', fontWeight: 700, color: '#64748b', marginBottom: '3px' }}>
+                  Executive Sponsor
                 </label>
                 <input
                   type="text"
                   value={newAssessmentForm.executiveSponsor}
                   onChange={(e) => setNewAssessmentForm((prev) => ({ ...prev, executiveSponsor: e.target.value }))}
-                  placeholder="e.g. VP Enterprise AI & Digital"
-                  style={{ width: '100%', padding: '8px 11px', borderRadius: '8px', border: '1px solid #64748b', background: '#1e293b', color: '#ffffff', fontSize: '0.82rem', fontWeight: 600 }}
+                  placeholder="VP Enterprise AI"
+                  style={{ width: '100%', padding: '7px 10px', borderRadius: '7px', border: '1px solid #cbd5e1', background: '#f8fafc', color: '#0f172a', fontSize: '0.8rem' }}
                 />
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 800, color: '#cbd5e1', textTransform: 'uppercase', marginBottom: '4px' }}>
-                  Google Account / Technical Lead (CAL)
+                <label style={{ display: 'block', fontSize: '0.68rem', fontWeight: 700, color: '#64748b', marginBottom: '3px' }}>
+                  Account Lead
                 </label>
                 <input
                   type="text"
                   value={newAssessmentForm.calLead}
                   onChange={(e) => setNewAssessmentForm((prev) => ({ ...prev, calLead: e.target.value }))}
-                  placeholder="e.g. Steve Claughton"
-                  style={{ width: '100%', padding: '8px 11px', borderRadius: '8px', border: '1px solid #64748b', background: '#1e293b', color: '#ffffff', fontSize: '0.82rem', fontWeight: 600 }}
+                  placeholder="Steve Claughton"
+                  style={{ width: '100%', padding: '7px 10px', borderRadius: '7px', border: '1px solid #cbd5e1', background: '#f8fafc', color: '#0f172a', fontSize: '0.8rem' }}
                 />
               </div>
             </div>
 
-            {/* Step 2: Prefill Mode Selector + Launch Buttons */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', paddingTop: '14px', borderTop: '1px solid rgba(148, 163, 184, 0.25)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#cbd5e1', textTransform: 'uppercase' }}>
-                  Questionnaire Prefill Mode (82 Qs):
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', paddingTop: '10px', borderTop: '1px solid #e2e8f0' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#64748b' }}>
+                  Prefill:
                 </span>
                 {[
-                  { id: 'evidence', label: '🟢 8-Source Evidence Prefill (Highest Confidence)', desc: 'Selects best evidence-backed option per question' },
-                  { id: 'random', label: '🎲 Random Options Prefill (Simulate Any Scenario)', desc: 'Randomly selects realistic candidate options across all 82 Qs' },
-                  { id: 'clean', label: '⚪ Clean / Blank Selections', desc: 'Loads customer options & telemetry but leaves answers blank' }
+                  { id: 'evidence', label: 'Evidence Prefill' },
+                  { id: 'random', label: 'Random Options' },
+                  { id: 'clean', label: 'Blank' }
                 ].map((m) => (
                   <button
                     key={m.id}
                     onClick={() => setNewAssessmentForm((prev) => ({ ...prev, prefillMode: m.id }))}
                     style={{
-                      background: newAssessmentForm.prefillMode === m.id ? '#2563eb' : 'rgba(255,255,255,0.08)',
-                      color: '#ffffff',
-                      border: newAssessmentForm.prefillMode === m.id ? '1.5px solid #93c5fd' : '1px solid rgba(255,255,255,0.2)',
-                      borderRadius: '8px',
-                      padding: '7px 12px',
-                      fontSize: '0.75rem',
-                      fontWeight: 800,
+                      background: newAssessmentForm.prefillMode === m.id ? '#eff6ff' : '#f8fafc',
+                      color: newAssessmentForm.prefillMode === m.id ? '#1d4ed8' : '#475569',
+                      border: newAssessmentForm.prefillMode === m.id ? '1px solid #93c5fd' : '1px solid #e2e8f0',
+                      borderRadius: '7px',
+                      padding: '5px 10px',
+                      fontSize: '0.74rem',
+                      fontWeight: 700,
                       cursor: 'pointer'
                     }}
-                    title={m.desc}
                   >
                     {m.label}
                   </button>
                 ))}
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <button
-                  onClick={async () => {
-                    setShowNewAssessmentModal(false);
-                    setPrimaryView('inputs');
-                    await handleIngestCustomer({
-                      customerQuery: newAssessmentForm.customerName,
-                      sfdcAccountId: newAssessmentForm.sfdcAccountId,
-                      prefillMode: newAssessmentForm.prefillMode,
-                      customCustomerDetails: {
-                        customerName: newAssessmentForm.customerName,
-                        industry: newAssessmentForm.industry,
-                        legacyPlatformName: newAssessmentForm.legacyPlatformName,
-                        executiveSponsor: newAssessmentForm.executiveSponsor,
-                        calLead: newAssessmentForm.calLead
-                      }
-                    });
-                  }}
-                  disabled={ingestingCustomer}
-                  style={{
-                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                    color: '#ffffff',
-                    border: 'none',
-                    borderRadius: '10px',
-                    padding: '10px 18px',
-                    fontSize: '0.84rem',
-                    fontWeight: 900,
-                    cursor: ingestingCustomer ? 'wait' : 'pointer',
-                    boxShadow: '0 6px 18px rgba(16, 185, 129, 0.35)'
-                  }}
-                >
-                  🚀 Access All 8 Sources & Populate 82-Question Assessment
-                </button>
-              </div>
+              <button
+                onClick={async () => {
+                  setShowNewAssessmentModal(false);
+                  setPrimaryView('inputs');
+                  await handleIngestCustomer({
+                    customerQuery: newAssessmentForm.customerName,
+                    sfdcAccountId: newAssessmentForm.sfdcAccountId,
+                    prefillMode: newAssessmentForm.prefillMode,
+                    customCustomerDetails: {
+                      customerName: newAssessmentForm.customerName,
+                      industry: newAssessmentForm.industry,
+                      legacyPlatformName: newAssessmentForm.legacyPlatformName,
+                      executiveSponsor: newAssessmentForm.executiveSponsor,
+                      calLead: newAssessmentForm.calLead
+                    }
+                  });
+                }}
+                disabled={ingestingCustomer}
+                style={{
+                  background: '#2563eb',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '8px 16px',
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  cursor: ingestingCustomer ? 'wait' : 'pointer'
+                }}
+              >
+                Load Customer Assessment
+              </button>
             </div>
           </div>
         )}
 
         {/* ===================================================================
-            UNIVERSAL CUSTOMER 360 & TIME-SCOPED 8-SOURCE INGESTION HUB
+            COMPACT CUSTOMER & TIME-WINDOW SELECTOR BAR
            =================================================================== */}
         {(() => {
           const ingestionAudit = dossier.ingestionAudit;
@@ -1394,115 +1367,55 @@ const GeValueRealizationWorkspace = () => {
 
           return (
             <div style={{
-              background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
-              border: '1.5px solid #93c5fd',
-              borderTop: '4px solid #2563eb',
-              borderRadius: '16px',
-              padding: '18px 22px',
-              marginBottom: '18px',
-              boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)'
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
+              borderRadius: '12px',
+              padding: '12px 16px',
+              marginBottom: '12px',
+              boxShadow: '0 1px 3px rgba(15, 23, 42, 0.03)'
             }}>
-              {/* Top Header Row of Ingestion Hub */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '14px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                  <span style={{
-                    background: '#1e3a8a',
-                    color: '#ffffff',
-                    fontSize: '0.7rem',
-                    fontWeight: 900,
-                    padding: '4px 10px',
-                    borderRadius: '6px',
-                    letterSpacing: '0.06em',
-                    textTransform: 'uppercase'
-                  }}>
-                    🌐 Universal Salesforce Customer & Time-Window Multi-Source Ingestor
-                  </span>
-                  <span style={{ fontSize: '0.78rem', color: '#334155', fontWeight: 600 }}>
-                    Indexed Catalog: <strong>4,351 Salesforce / Vector Accounts</strong> • <strong>8 Enterprise Connectors</strong> (SFDC, Chat, Email, Drive, Docs, Sheets, Slides, Moma/Buganizer)
-                  </span>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                  {ingestionAudit && (
-                    <span style={{
-                      background: '#ecfdf5',
-                      color: '#047857',
-                      border: '1px solid #6ee7b7',
-                      borderRadius: '999px',
-                      padding: '4px 11px',
-                      fontSize: '0.72rem',
-                      fontWeight: 800,
-                      fontFamily: 'monospace'
-                    }}>
-                      ✓ {activeItemsList.length} Matched Artifacts • {quarantinedItemsList.length} Noise Quarantined
-                    </span>
-                  )}
-                  <button
-                    onClick={() => setShowIngestionAuditDrawer((prev) => !prev)}
-                    style={{
-                      background: showIngestionAuditDrawer ? '#0f172a' : '#eff6ff',
-                      color: showIngestionAuditDrawer ? '#ffffff' : '#1d4ed8',
-                      border: '1px solid #93c5fd',
-                      borderRadius: '8px',
-                      padding: '6px 12px',
-                      fontSize: '0.75rem',
-                      fontWeight: 800,
-                      cursor: 'pointer'
-                    }}
-                  >
-                    {showIngestionAuditDrawer ? '▾ Hide 8-Source Evidence & 4-Pillar Audit' : '▸ Inspect 8-Source Evidence & 4-Pillar Audit'}
-                  </button>
-                </div>
-              </div>
-
-              {/* Row 2: Search Input + Time Window Controls + Fetch Button */}
+              {/* Main Row: Customer Search + Period + Sync + Sources Drawer Toggle */}
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: '1.5fr 0.9fr 0.65fr 0.65fr auto',
+                gridTemplateColumns: timePreset === 'custom' ? '1.4fr 0.8fr 0.55fr 0.55fr auto' : '1.5fr 0.85fr auto',
                 gap: '10px',
-                alignItems: 'end',
-                marginBottom: '12px'
+                alignItems: 'center'
               }}>
-                {/* Control 1: Customer Name or 18-char Salesforce Account ID */}
+                {/* Customer Search */}
                 <div style={{ position: 'relative' }}>
-                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', color: '#1e293b', marginBottom: '4px' }}>
-                    1. Customer Name or Salesforce Account ID (e.g. FedEx, Walmart, 0014M00001hfHuqQAE)
-                  </label>
-                  <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                    <FiSearch size={14} style={{ position: 'absolute', left: '11px', color: '#64748b' }} />
-                    <input
-                      type="text"
-                      value={customerInput}
-                      onFocus={() => {
-                        setShowCustomerDropdown(true);
-                        handleSearchCustomerCatalog(customerInput);
-                      }}
-                      onBlur={() => setTimeout(() => setShowCustomerDropdown(false), 220)}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setCustomerInput(val);
-                        setShowCustomerDropdown(true);
-                        handleSearchCustomerCatalog(val);
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          setShowCustomerDropdown(false);
-                          handleIngestCustomer({ customerQuery: customerInput, sfdcAccountId: '' });
-                        }
-                      }}
-                      placeholder="Enter any Salesforce Customer Name or 18-char ID (0014M...)"
-                      style={{
-                        width: '100%',
-                        padding: '8px 12px 8px 32px',
-                        fontSize: '0.82rem',
-                        fontWeight: 700,
-                        borderRadius: '8px',
-                        border: '1.5px solid #93c5fd',
-                        background: '#ffffff',
-                        color: '#0f172a'
-                      }}
-                    />
-                  </div>
+                  <FiSearch size={14} style={{ position: 'absolute', left: '11px', top: '10px', color: '#64748b' }} />
+                  <input
+                    type="text"
+                    value={customerInput}
+                    onFocus={() => {
+                      setShowCustomerDropdown(true);
+                      handleSearchCustomerCatalog(customerInput);
+                    }}
+                    onBlur={() => setTimeout(() => setShowCustomerDropdown(false), 220)}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCustomerInput(val);
+                      setShowCustomerDropdown(true);
+                      handleSearchCustomerCatalog(val);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        setShowCustomerDropdown(false);
+                        handleIngestCustomer({ customerQuery: customerInput, sfdcAccountId: '' });
+                      }
+                    }}
+                    placeholder="Search 4,351 Salesforce customers or enter ID..."
+                    style={{
+                      width: '100%',
+                      padding: '7px 12px 7px 32px',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      borderRadius: '8px',
+                      border: '1px solid #cbd5e1',
+                      background: '#f8fafc',
+                      color: '#0f172a'
+                    }}
+                  />
 
                   {/* Autocomplete Dropdown */}
                   {showCustomerDropdown && customerMatches.length > 0 && (
@@ -1513,17 +1426,13 @@ const GeValueRealizationWorkspace = () => {
                       right: 0,
                       marginTop: '4px',
                       background: '#ffffff',
-                      border: '1.5px solid #2563eb',
+                      border: '1px solid #cbd5e1',
                       borderRadius: '10px',
-                      boxShadow: '0 12px 30px rgba(15, 23, 42, 0.18)',
-                      maxHeight: '280px',
+                      boxShadow: '0 10px 24px rgba(15, 23, 42, 0.12)',
+                      maxHeight: '260px',
                       overflowY: 'auto',
                       zIndex: 60
                     }}>
-                      <div style={{ padding: '6px 12px', background: '#eff6ff', borderBottom: '1px solid #dbeafe', fontSize: '0.68rem', fontWeight: 800, color: '#1e3a8a', display: 'flex', justifyContent: 'space-between' }}>
-                        <span>SALESFORCE / VECTOR ACCOUNT MATCHES ({customerMatches.length})</span>
-                        <span>CLICK TO INGEST ALL 8 SOURCES</span>
-                      </div>
                       {customerMatches.map((acct) => (
                         <div
                           key={acct.sfdcAccountId}
@@ -1548,23 +1457,18 @@ const GeValueRealizationWorkspace = () => {
                           }}
                         >
                           <div>
-                            <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#0f172a' }}>
+                            <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#0f172a' }}>
                               {acct.accountName}{' '}
-                              <span style={{ fontSize: '0.68rem', fontFamily: 'monospace', color: '#2563eb', fontWeight: 700 }}>
-                                [{acct.sfdcAccountId}]
+                              <span style={{ fontSize: '0.68rem', fontFamily: 'monospace', color: '#64748b' }}>
+                                ({acct.sfdcAccountId})
                               </span>
                             </div>
-                            <div style={{ fontSize: '0.68rem', color: '#64748b' }}>
-                              {acct.region} • {acct.industry} • {acct.subRegion}
+                            <div style={{ fontSize: '0.66rem', color: '#64748b' }}>
+                              {acct.region} • {acct.industry}
                             </div>
                           </div>
-                          <div style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
-                            <div style={{ fontSize: '0.73rem', fontWeight: 800, color: '#047857', fontFamily: 'monospace' }}>
-                              {formatNumber(acct.contractedSeats)} seats • {formatNumber(acct.wauAllApi)} WAU
-                            </div>
-                            <div style={{ fontSize: '0.65rem', color: '#475569' }}>
-                              {acct.useCaseCount > 0 ? `${acct.useCaseCount} Tracked Use Cases` : 'Telemetry + Docs Linked'}
-                            </div>
+                          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#047857', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>
+                            {formatNumber(acct.contractedSeats)} seats
                           </div>
                         </div>
                       ))}
@@ -1572,303 +1476,173 @@ const GeValueRealizationWorkspace = () => {
                   )}
                 </div>
 
-                {/* Control 2: Time Period Preset */}
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', color: '#1e293b', marginBottom: '4px' }}>
-                    2. Time Period Cohort
-                  </label>
-                  <select
-                    value={timePreset}
-                    onChange={(e) => {
-                      const nextPreset = e.target.value;
-                      setTimePreset(nextPreset);
-                      const found = TIME_WINDOW_PRESETS.find((p) => p.id === nextPreset);
-                      if (found && nextPreset !== 'custom') {
-                        setStartDate(found.startDate);
-                        setEndDate(found.endDate);
-                        handleIngestCustomer({
-                          timePreset: nextPreset,
-                          startDate: found.startDate,
-                          endDate: found.endDate
-                        });
-                      }
-                    }}
-                    style={{
-                      width: '100%',
-                      padding: '8px 10px',
-                      fontSize: '0.8rem',
-                      fontWeight: 700,
-                      borderRadius: '8px',
-                      border: '1px solid #cbd5e1',
-                      background: '#ffffff',
-                      color: '#0f172a'
-                    }}
-                  >
-                    {TIME_WINDOW_PRESETS.map((p) => (
-                      <option key={p.id} value={p.id}>{p.label}</option>
-                    ))}
-                  </select>
-                </div>
+                {/* Time Period Preset */}
+                <select
+                  value={timePreset}
+                  onChange={(e) => {
+                    const nextPreset = e.target.value;
+                    setTimePreset(nextPreset);
+                    const found = TIME_WINDOW_PRESETS.find((p) => p.id === nextPreset);
+                    if (found && nextPreset !== 'custom') {
+                      setStartDate(found.startDate);
+                      setEndDate(found.endDate);
+                      handleIngestCustomer({
+                        timePreset: nextPreset,
+                        startDate: found.startDate,
+                        endDate: found.endDate
+                      });
+                    }
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '7px 10px',
+                    fontSize: '0.78rem',
+                    fontWeight: 600,
+                    borderRadius: '8px',
+                    border: '1px solid #cbd5e1',
+                    background: '#f8fafc',
+                    color: '#0f172a'
+                  }}
+                >
+                  {TIME_WINDOW_PRESETS.map((p) => (
+                    <option key={p.id} value={p.id}>{p.label}</option>
+                  ))}
+                </select>
 
-                {/* Control 3: Start Date */}
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', color: '#1e293b', marginBottom: '4px' }}>
-                    Start Date
-                  </label>
-                  <input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => {
-                      setStartDate(e.target.value);
-                      setTimePreset('custom');
-                    }}
-                    style={{
-                      width: '100%',
-                      padding: '7px 10px',
-                      fontSize: '0.78rem',
-                      fontWeight: 700,
-                      fontFamily: 'monospace',
-                      borderRadius: '8px',
-                      border: '1px solid #cbd5e1',
-                      background: '#ffffff',
-                      color: '#0f172a'
-                    }}
-                  />
-                </div>
+                {/* Custom Start/End Dates only when Custom Range is selected */}
+                {timePreset === 'custom' && (
+                  <>
+                    <input
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '6px 8px',
+                        fontSize: '0.76rem',
+                        fontFamily: 'monospace',
+                        borderRadius: '8px',
+                        border: '1px solid #cbd5e1',
+                        background: '#f8fafc'
+                      }}
+                    />
+                    <input
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '6px 8px',
+                        fontSize: '0.76rem',
+                        fontFamily: 'monospace',
+                        borderRadius: '8px',
+                        border: '1px solid #cbd5e1',
+                        background: '#f8fafc'
+                      }}
+                    />
+                  </>
+                )}
 
-                {/* Control 4: End Date */}
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', color: '#1e293b', marginBottom: '4px' }}>
-                    End Date
-                  </label>
-                  <input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => {
-                      setEndDate(e.target.value);
-                      setTimePreset('custom');
-                    }}
-                    style={{
-                      width: '100%',
-                      padding: '7px 10px',
-                      fontSize: '0.78rem',
-                      fontWeight: 700,
-                      fontFamily: 'monospace',
-                      borderRadius: '8px',
-                      border: '1px solid #cbd5e1',
-                      background: '#ffffff',
-                      color: '#0f172a'
-                    }}
-                  />
-                </div>
-
-                {/* Control 5: Execute Multi-Source Fetch */}
-                <div style={{ display: 'flex', gap: '6px' }}>
+                {/* Sync & Sources Drawer Buttons */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <button
                     onClick={() => handleIngestCustomer({ prefillMode: 'evidence' })}
                     disabled={ingestingCustomer}
                     style={{
-                      background: ingestingCustomer ? '#64748b' : 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-                      color: '#ffffff',
-                      border: 'none',
-                      borderRadius: '9px',
-                      padding: '9px 14px',
-                      fontSize: '0.78rem',
-                      fontWeight: 800,
-                      cursor: ingestingCustomer ? 'wait' : 'pointer',
-                      whiteSpace: 'nowrap',
-                      boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)'
-                    }}
-                  >
-                    {ingestingCustomer ? '⏳ Reconciling...' : '⚡ Fetch 8 Sources'}
-                  </button>
-                  <button
-                    onClick={() => handlePickRandomCustomerForModal('rich', true, 'random')}
-                    disabled={ingestingCustomer}
-                    style={{
-                      background: 'linear-gradient(135deg, #db2777 0%, #9333ea 100%)',
-                      color: '#ffffff',
-                      border: 'none',
-                      borderRadius: '9px',
-                      padding: '9px 12px',
+                      background: '#eff6ff',
+                      color: '#1d4ed8',
+                      border: '1px solid #bfdbfe',
+                      borderRadius: '8px',
+                      padding: '7px 12px',
                       fontSize: '0.76rem',
-                      fontWeight: 800,
+                      fontWeight: 700,
                       cursor: ingestingCustomer ? 'wait' : 'pointer',
                       whiteSpace: 'nowrap'
                     }}
-                    title="Pick a random Salesforce customer and prefill all 82 questions with randomized options"
                   >
-                    🎲 Random Customer & Options
+                    {ingestingCustomer ? 'Syncing...' : '⚡ Sync Sources'}
+                  </button>
+                  <button
+                    onClick={() => setShowIngestionAuditDrawer((prev) => !prev)}
+                    style={{
+                      background: showIngestionAuditDrawer ? '#f1f5f9' : '#ffffff',
+                      color: '#475569',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '8px',
+                      padding: '7px 11px',
+                      fontSize: '0.74rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    ✓ {activeItemsList.length} Sources {showIngestionAuditDrawer ? '▾' : '▸'}
                   </button>
                 </div>
               </div>
 
-              {/* Row 3: Quick-Switch Strategic Salesforce Accounts + 8 Enterprise Source Connectors */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', paddingTop: '10px', borderTop: '1px solid #e2e8f0' }}>
-                {/* Quick-Switch Strategic Accounts */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: '0.68rem', fontWeight: 800, textTransform: 'uppercase', color: '#64748b' }}>
-                    Quick-Load SFDC Account:
-                  </span>
-                  {STRATEGIC_QUICK_ACCOUNTS.map((item) => {
-                    const isCurrent = dossier.meta?.vectorAccountId === item.sfdcId;
-                    return (
+              {/* Compact Quick-Switch Customer Pills */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexWrap: 'wrap', marginTop: '8px', paddingTop: '8px', borderTop: '1px solid #f1f5f9' }}>
+                <span style={{ fontSize: '0.68rem', fontWeight: 600, color: '#94a3b8', marginRight: '2px' }}>
+                  Customers:
+                </span>
+                {STRATEGIC_QUICK_ACCOUNTS.map((item) => {
+                  const isCurrent = dossier.meta?.vectorAccountId === item.sfdcId;
+                  return (
+                    <button
+                      key={item.sfdcId}
+                      onClick={() => {
+                        setCustomerInput(`${item.shortName} (${item.sfdcId})`);
+                        setSelectedSfdcId(item.sfdcId);
+                        handleIngestCustomer({
+                          customerQuery: item.shortName,
+                          sfdcAccountId: item.sfdcId
+                        });
+                      }}
+                      style={{
+                        background: isCurrent ? '#2563eb' : '#f8fafc',
+                        color: isCurrent ? '#ffffff' : '#475569',
+                        border: isCurrent ? '1px solid #2563eb' : '1px solid #e2e8f0',
+                        borderRadius: '999px',
+                        padding: '2px 9px',
+                        fontSize: '0.7rem',
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                      title={`${item.shortName} (${item.sfdcId} • ${item.seats} seats)`}
+                    >
+                      {item.shortName}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* =================================================================
+                  EXPANDABLE 8-SOURCE EVIDENCE LINEAGE DRAWER (HIDDEN BY DEFAULT)
+                 ================================================================= */}
+              {showIngestionAuditDrawer && ingestionAudit && (
+                <div style={{
+                  marginTop: '12px',
+                  paddingTop: '12px',
+                  borderTop: '1px solid #e2e8f0'
+                }}>
+                  {/* Source Connector Filter Pills */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px', marginBottom: '10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexWrap: 'wrap' }}>
                       <button
-                        key={item.sfdcId}
-                        onClick={() => {
-                          setCustomerInput(`${item.shortName} (${item.sfdcId})`);
-                          setSelectedSfdcId(item.sfdcId);
-                          handleIngestCustomer({
-                            customerQuery: item.shortName,
-                            sfdcAccountId: item.sfdcId
-                          });
-                        }}
+                        onClick={() => setAuditSourceFilter('ALL')}
                         style={{
-                          background: isCurrent ? '#1e3a8a' : '#f1f5f9',
-                          color: isCurrent ? '#ffffff' : '#334155',
-                          border: isCurrent ? '1px solid #1e3a8a' : '1px solid #cbd5e1',
-                          borderRadius: '999px',
-                          padding: '3px 9px',
+                          background: auditSourceFilter === 'ALL' ? '#2563eb' : '#f8fafc',
+                          color: auditSourceFilter === 'ALL' ? '#ffffff' : '#475569',
+                          border: '1px solid #cbd5e1',
+                          borderRadius: '6px',
+                          padding: '4px 9px',
                           fontSize: '0.7rem',
                           fontWeight: 700,
                           cursor: 'pointer'
                         }}
-                        title={`Salesforce ID: ${item.sfdcId} (${item.seats} seats)`}
                       >
-                        {item.shortName} <span style={{ opacity: 0.75, fontSize: '0.64rem' }}>({item.seats})</span>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* 8 Enterprise Source Connector Pills */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: '0.68rem', fontWeight: 800, textTransform: 'uppercase', color: '#64748b', marginRight: '2px' }}>
-                    Active Connectors:
-                  </span>
-                  {ENTERPRISE_SOURCE_CONNECTORS.map((src) => {
-                    const active = enabledSources.includes(src.id);
-                    const cov = (ingestionAudit?.sourceCoverage || []).find((c) => c.id === src.id);
-                    const count = cov ? cov.activeArtifactCount : '✓';
-                    return (
-                      <button
-                        key={src.id}
-                        onClick={() => {
-                          const nextSources = active
-                            ? (enabledSources.length > 1 ? enabledSources.filter((s) => s !== src.id) : enabledSources)
-                            : [...enabledSources, src.id];
-                          setEnabledSources(nextSources);
-                          handleIngestCustomer({ sources: nextSources });
-                        }}
-                        style={{
-                          background: active ? '#eff6ff' : '#f8fafc',
-                          color: active ? '#1d4ed8' : '#94a3b8',
-                          border: active ? '1px solid #93c5fd' : '1px solid #e2e8f0',
-                          borderRadius: '6px',
-                          padding: '3px 8px',
-                          fontSize: '0.68rem',
-                          fontWeight: 800,
-                          cursor: 'pointer',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '4px'
-                        }}
-                        title={`${src.label} (${src.domain}) — Click to toggle source`}
-                      >
-                        <span>{src.icon}</span>
-                        <span>{src.label}</span>
-                        <span style={{
-                          background: active ? '#1d4ed8' : '#cbd5e1',
-                          color: '#ffffff',
-                          borderRadius: '999px',
-                          padding: '0 5px',
-                          fontSize: '0.62rem',
-                          fontFamily: 'monospace'
-                        }}>
-                          {count}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* =================================================================
-                  EXPANDABLE 8-SOURCE EVIDENCE LINEAGE & 4-PILLAR QUALITY AUDIT DRAWER
-                 ================================================================= */}
-              {showIngestionAuditDrawer && ingestionAudit && (
-                <div style={{
-                  marginTop: '14px',
-                  paddingTop: '14px',
-                  borderTop: '2px dashed #cbd5e1'
-                }}>
-                  {/* 4 Quality Pillars Banner: Relevant, Related, Accurate, Complete */}
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '14px' }}>
-                    {[
-                      {
-                        key: 'relevant',
-                        badge: '1. RELEVANT',
-                        color: '#1d4ed8',
-                        bg: '#eff6ff',
-                        border: '#93c5fd',
-                        data: ingestionAudit.qualityGuarantees?.relevant
-                      },
-                      {
-                        key: 'related',
-                        badge: '2. RELATED',
-                        color: '#047857',
-                        bg: '#ecfdf5',
-                        border: '#6ee7b7',
-                        data: ingestionAudit.qualityGuarantees?.related
-                      },
-                      {
-                        key: 'accurate',
-                        badge: '3. ACCURATE',
-                        color: '#b45309',
-                        bg: '#fffbeb',
-                        border: '#fde68a',
-                        data: ingestionAudit.qualityGuarantees?.accurate
-                      },
-                      {
-                        key: 'complete',
-                        badge: '4. COMPLETE',
-                        color: '#6d28d9',
-                        bg: '#f5f3ff',
-                        border: '#c4b5fd',
-                        data: ingestionAudit.qualityGuarantees?.complete
-                      }
-                    ].map((p) => (
-                      <div key={p.key} style={{ background: p.bg, border: `1px solid ${p.border}`, borderRadius: '10px', padding: '10px 12px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                          <span style={{ fontSize: '0.7rem', fontWeight: 900, color: p.color }}>{p.badge}</span>
-                          <span style={{ fontSize: '0.66rem', fontWeight: 800, fontFamily: 'monospace', background: '#ffffff', color: p.color, padding: '1px 6px', borderRadius: '999px', border: `1px solid ${p.border}` }}>
-                            {p.data?.status || 'VERIFIED'} • 100%
-                          </span>
-                        </div>
-                        <div style={{ fontSize: '0.72rem', color: '#1e293b', lineHeight: 1.4, fontWeight: 600 }}>
-                          {p.data?.summary}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Filter Tabs by Enterprise Source */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                      <button
-                        onClick={() => setAuditSourceFilter('ALL')}
-                        style={{
-                          background: auditSourceFilter === 'ALL' ? '#0f172a' : '#f1f5f9',
-                          color: auditSourceFilter === 'ALL' ? '#ffffff' : '#334155',
-                          border: '1px solid #cbd5e1',
-                          borderRadius: '7px',
-                          padding: '5px 10px',
-                          fontSize: '0.72rem',
-                          fontWeight: 800,
-                          cursor: 'pointer'
-                        }}
-                      >
-                        All 8 Sources ({activeItemsList.length})
+                        All ({activeItemsList.length})
                       </button>
                       {ENTERPRISE_SOURCE_CONNECTORS.map((src) => {
                         const cov = (ingestionAudit.sourceCoverage || []).find((c) => c.id === src.id);
@@ -1878,13 +1652,13 @@ const GeValueRealizationWorkspace = () => {
                             key={src.id}
                             onClick={() => setAuditSourceFilter(src.id)}
                             style={{
-                              background: auditSourceFilter === src.id ? '#1d4ed8' : '#ffffff',
-                              color: auditSourceFilter === src.id ? '#ffffff' : '#334155',
-                              border: `1px solid ${auditSourceFilter === src.id ? '#1d4ed8' : '#cbd5e1'}`,
-                              borderRadius: '7px',
-                              padding: '5px 10px',
-                              fontSize: '0.72rem',
-                              fontWeight: 700,
+                              background: auditSourceFilter === src.id ? '#eff6ff' : '#ffffff',
+                              color: auditSourceFilter === src.id ? '#1d4ed8' : '#475569',
+                              border: `1px solid ${auditSourceFilter === src.id ? '#93c5fd' : '#e2e8f0'}`,
+                              borderRadius: '6px',
+                              padding: '4px 8px',
+                              fontSize: '0.7rem',
+                              fontWeight: 600,
                               cursor: 'pointer'
                             }}
                           >
@@ -1893,61 +1667,38 @@ const GeValueRealizationWorkspace = () => {
                         );
                       })}
                     </div>
-                    <span style={{ fontSize: '0.7rem', color: '#475569', fontFamily: 'monospace' }}>
-                      Time Window Filter: {ingestionAudit.startDate} → {ingestionAudit.endDate}
+                    <span style={{ fontSize: '0.68rem', color: '#64748b', fontFamily: 'monospace' }}>
+                      {ingestionAudit.startDate} → {ingestionAudit.endDate} • {quarantinedItemsList.length} quarantined
                     </span>
                   </div>
 
-                  {/* Two-Column Split: Ingested Source Artifacts vs. Quarantined / Excluded Noise */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1.55fr 1fr', gap: '12px' }}>
-                    {/* Left: Matched & Reconciled Multi-Source Artifacts */}
-                    <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '10px', overflow: 'hidden' }}>
-                      <div style={{ background: '#0f172a', color: '#ffffff', padding: '8px 12px', fontSize: '0.72rem', fontWeight: 800, display: 'flex', justifyContent: 'space-between' }}>
-                        <span>✓ INGESTED & RECONCILED MULTI-SOURCE ARTIFACTS ({auditSourceFilter === 'ALL' ? 'ALL 8 SOURCES' : auditSourceFilter.toUpperCase()})</span>
-                        <span>ENTITY: {ingestionAudit.customerName} [{ingestionAudit.sfdcAccountId}]</span>
-                      </div>
-                      <div style={{ maxHeight: '260px', overflowY: 'auto' }}>
-                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.72rem' }}>
+                  {/* Two-Column Split: Ingested Source Artifacts vs. Quarantined Noise */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: '10px' }}>
+                    <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '8px', overflow: 'hidden' }}>
+                      <div style={{ maxHeight: '220px', overflowY: 'auto' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.71rem' }}>
                           <thead>
-                            <tr style={{ background: '#f1f5f9', color: '#334155', textAlign: 'left', borderBottom: '1px solid #cbd5e1' }}>
+                            <tr style={{ background: '#f8fafc', color: '#475569', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>
                               <th style={{ padding: '6px 10px' }}>Source</th>
                               <th style={{ padding: '6px 10px' }}>Date</th>
-                              <th style={{ padding: '6px 10px' }}>Artifact / Title & URI</th>
-                              <th style={{ padding: '6px 10px' }}>Extracted Evidence & Linked Qs</th>
+                              <th style={{ padding: '6px 10px' }}>Artifact</th>
+                              <th style={{ padding: '6px 10px' }}>Summary</th>
                             </tr>
                           </thead>
                           <tbody>
                             {filteredActiveItems.map((art) => (
-                              <tr key={art.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
-                                <td style={{ padding: '7px 10px', fontWeight: 800, whiteSpace: 'nowrap', color: '#1e3a8a', verticalAlign: 'top' }}>
-                                  {art.sourceLabel || art.source?.toUpperCase()}
-                                  <div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 600 }}>{art.artifactType}</div>
+                              <tr key={art.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                                <td style={{ padding: '6px 10px', fontWeight: 700, whiteSpace: 'nowrap', color: '#1d4ed8' }}>
+                                  {art.sourceLabel || art.source}
                                 </td>
-                                <td style={{ padding: '7px 10px', fontFamily: 'monospace', whiteSpace: 'nowrap', color: '#475569', verticalAlign: 'top' }}>
+                                <td style={{ padding: '6px 10px', fontFamily: 'monospace', whiteSpace: 'nowrap', color: '#64748b' }}>
                                   {art.timestamp}
                                 </td>
-                                <td style={{ padding: '7px 10px', verticalAlign: 'top' }}>
-                                  <div style={{ fontWeight: 800, color: '#0f172a' }}>{art.title}</div>
-                                  <div style={{ fontSize: '0.64rem', fontFamily: 'monospace', color: '#2563eb', wordBreak: 'break-all' }}>
-                                    {art.url}
-                                  </div>
+                                <td style={{ padding: '6px 10px', fontWeight: 600, color: '#0f172a' }}>
+                                  {art.title}
                                 </td>
-                                <td style={{ padding: '7px 10px', color: '#334155', verticalAlign: 'top' }}>
-                                  <div>{art.extractedSummary}</div>
-                                  {art.mappedQuestions?.length > 0 && (
-                                    <div style={{ marginTop: '3px', display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                                      {art.mappedQuestions.slice(0, 12).map((qid) => (
-                                        <span key={qid} style={{ background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', borderRadius: '4px', padding: '0 5px', fontSize: '0.62rem', fontFamily: 'monospace', fontWeight: 800 }}>
-                                          {qid}
-                                        </span>
-                                      ))}
-                                      {art.mappedQuestions.length > 12 && (
-                                        <span style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>
-                                          +{art.mappedQuestions.length - 12} more
-                                        </span>
-                                      )}
-                                    </div>
-                                  )}
+                                <td style={{ padding: '6px 10px', color: '#475569' }}>
+                                  {art.extractedSummary}
                                 </td>
                               </tr>
                             ))}
@@ -1956,40 +1707,23 @@ const GeValueRealizationWorkspace = () => {
                       </div>
                     </div>
 
-                    {/* Right: Quarantined / Excluded Noise Log */}
-                    <div style={{ background: '#ffffff', border: '1px solid #fecaca', borderRadius: '10px', overflow: 'hidden' }}>
-                      <div style={{ background: '#7f1d1d', color: '#ffffff', padding: '8px 12px', fontSize: '0.72rem', fontWeight: 800, display: 'flex', justifyContent: 'space-between' }}>
-                        <span>🛡️ QUARANTINED / EXCLUDED NOISE ({quarantinedItemsList.length})</span>
-                        <span>ZERO-CONTAMINATION LOG</span>
+                    <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', padding: '8px 10px', maxHeight: '220px', overflowY: 'auto' }}>
+                      <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#991b1b', marginBottom: '6px' }}>
+                        Quarantined Noise ({quarantinedItemsList.length})
                       </div>
-                      <div style={{ maxHeight: '260px', overflowY: 'auto', padding: '8px 10px' }}>
-                        {quarantinedItemsList.map((qItem, idx) => (
-                          <div key={qItem.id || idx} style={{
-                            background: '#fef2f2',
-                            border: '1px solid #fecaca',
-                            borderRadius: '8px',
-                            padding: '7px 9px',
-                            marginBottom: '6px',
-                            fontSize: '0.7rem'
-                          }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
-                              <span style={{ fontWeight: 900, color: '#991b1b', fontFamily: 'monospace', fontSize: '0.65rem' }}>
-                                [{qItem.reasonCode}] • {qItem.sourceLabel || qItem.source}
-                              </span>
-                              <span style={{ fontSize: '0.62rem', fontFamily: 'monospace', color: '#7f1d1d' }}>
-                                {qItem.timestamp}
-                              </span>
-                            </div>
-                            <div style={{ fontWeight: 800, color: '#0f172a' }}>{qItem.title}</div>
-                            <div style={{ color: '#475569', marginTop: '2px', fontSize: '0.67rem' }}>{qItem.reasonDetail}</div>
-                            {qItem.preventedImpact && (
-                              <div style={{ color: '#047857', marginTop: '2px', fontSize: '0.65rem', fontWeight: 700 }}>
-                                ✓ Guardrail: {qItem.preventedImpact}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
+                      {quarantinedItemsList.map((qItem, idx) => (
+                        <div key={qItem.id || idx} style={{
+                          background: '#ffffff',
+                          border: '1px solid #fecaca',
+                          borderRadius: '6px',
+                          padding: '6px 8px',
+                          marginBottom: '5px',
+                          fontSize: '0.68rem'
+                        }}>
+                          <div style={{ fontWeight: 700, color: '#0f172a' }}>{qItem.title}</div>
+                          <div style={{ color: '#64748b', marginTop: '2px' }}>{qItem.reasonDetail}</div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -1999,362 +1733,160 @@ const GeValueRealizationWorkspace = () => {
         })()}
 
         {/* ===================================================================
-            VIEW 1: INPUT & VERIFICATION WORKSPACE (3 SWITCHABLE MODES)
+            VIEW 1: INPUT & VERIFICATION WORKSPACE
            =================================================================== */}
         {primaryView === 'inputs' && (
           <div>
-            {/* Top Mode Switcher & Filter Strip */}
+            {/* Single Unified Light Filter & View Mode Toolbar */}
             <div style={{
               background: '#ffffff',
-              border: '1px solid #cbd5e1',
-              borderRadius: '14px',
-              padding: '14px 20px',
-              marginBottom: '12px',
+              border: '1px solid #e2e8f0',
+              borderRadius: '12px',
+              padding: '10px 14px',
+              marginBottom: '14px',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
               flexWrap: 'wrap',
-              gap: '14px',
-              boxShadow: '0 2px 6px rgba(15,23,42,0.04)'
+              gap: '10px',
+              boxShadow: '0 1px 3px rgba(15,23,42,0.02)'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                <span style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#475569' }}>
-                  Input View Mode:
-                </span>
-                <div style={{ display: 'inline-flex', background: '#f1f5f9', padding: '3px', borderRadius: '10px', border: '1px solid #cbd5e1' }}>
-                  <button
-                    onClick={() => setInputMode('section')}
-                    style={{
-                      background: inputMode === 'section' ? '#0f172a' : 'transparent',
-                      color: inputMode === 'section' ? '#ffffff' : '#475569',
-                      border: 'none',
-                      borderRadius: '7px',
-                      padding: '7px 13px',
-                      fontSize: '0.78rem',
-                      fontWeight: 700,
-                      cursor: 'pointer'
-                    }}
-                  >
-                    📑 Mode 1: Section / Role Page (Default)
-                  </button>
-                  <button
-                    onClick={() => { setInputMode('wizard'); setWizardIndex(0); }}
-                    style={{
-                      background: inputMode === 'wizard' ? '#0f172a' : 'transparent',
-                      color: inputMode === 'wizard' ? '#ffffff' : '#475569',
-                      border: 'none',
-                      borderRadius: '7px',
-                      padding: '7px 13px',
-                      fontSize: '0.78rem',
-                      fontWeight: 700,
-                      cursor: 'pointer'
-                    }}
-                  >
-                    🎯 Mode 2: 1-by-1 Focus Wizard
-                  </button>
-                  <button
-                    onClick={() => setInputMode('grid')}
-                    style={{
-                      background: inputMode === 'grid' ? '#0f172a' : 'transparent',
-                      color: inputMode === 'grid' ? '#ffffff' : '#475569',
-                      border: 'none',
-                      borderRadius: '7px',
-                      padding: '7px 13px',
-                      fontSize: '0.78rem',
-                      fontWeight: 700,
-                      cursor: 'pointer'
-                    }}
-                  >
-                    ⊞ Mode 3: All-on-One-Page Audit Grid
-                  </button>
-                </div>
-              </div>
-
-              {/* Verification Status Filter Pills */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                <button
-                  onClick={() => setStatusFilter('ALL')}
-                  style={{
-                    background: statusFilter === 'ALL' ? '#1e293b' : '#f8fafc',
-                    color: statusFilter === 'ALL' ? '#ffffff' : '#334155',
-                    border: '1px solid #cbd5e1',
-                    borderRadius: '999px',
-                    padding: '5px 11px',
-                    fontSize: '0.74rem',
-                    fontWeight: 700,
-                    cursor: 'pointer'
-                  }}
-                >
-                  All ({statusCounts.total})
-                </button>
-                <button
-                  onClick={() => setStatusFilter('verified')}
-                  style={{
-                    background: statusFilter === 'verified' ? '#059669' : '#ecfdf5',
-                    color: statusFilter === 'verified' ? '#ffffff' : '#047857',
-                    border: '1px solid #6ee7b7',
-                    borderRadius: '999px',
-                    padding: '5px 11px',
-                    fontSize: '0.74rem',
-                    fontWeight: 700,
-                    cursor: 'pointer'
-                  }}
-                >
-                  🟢 Verified ({statusCounts.verified})
-                </button>
-                <button
-                  onClick={() => setStatusFilter('draft_verify')}
-                  style={{
-                    background: statusFilter === 'draft_verify' ? '#d97706' : '#fffbeb',
-                    color: statusFilter === 'draft_verify' ? '#ffffff' : '#b45309',
-                    border: '1px solid #fcd34d',
-                    borderRadius: '999px',
-                    padding: '5px 11px',
-                    fontSize: '0.74rem',
-                    fontWeight: 700,
-                    cursor: 'pointer'
-                  }}
-                >
-                  🟡 Verify w/ {shortCustomerName} ({statusCounts.draft_verify})
-                </button>
-                <button
-                  onClick={() => setStatusFilter('pending')}
-                  style={{
-                    background: statusFilter === 'pending' ? '#475569' : '#f8fafc',
-                    color: statusFilter === 'pending' ? '#ffffff' : '#475569',
-                    border: '1px solid #cbd5e1',
-                    borderRadius: '999px',
-                    padding: '5px 11px',
-                    fontSize: '0.74rem',
-                    fontWeight: 700,
-                    cursor: 'pointer'
-                  }}
-                >
-                  ⚪ Evidence Pending ({statusCounts.pending})
-                </button>
-              </div>
-
+              {/* Left: View Mode Switcher + Tier Filter Pills */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'inline-flex', background: '#f1f5f9', padding: '2px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                  {[
+                    { id: 'section', label: 'Sections' },
+                    { id: 'wizard', label: 'Wizard' },
+                    { id: 'grid', label: 'Table' }
+                  ].map((m) => (
+                    <button
+                      key={m.id}
+                      onClick={() => { setInputMode(m.id); if (m.id === 'wizard') setWizardIndex(0); }}
+                      style={{
+                        background: inputMode === m.id ? '#ffffff' : 'transparent',
+                        color: inputMode === m.id ? '#0f172a' : '#64748b',
+                        boxShadow: inputMode === m.id ? '0 1px 2px rgba(15,23,42,0.06)' : 'none',
+                        border: 'none',
+                        borderRadius: '6px',
+                        padding: '5px 10px',
+                        fontSize: '0.74rem',
+                        fontWeight: 700,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {m.label}
+                    </button>
+                  ))}
+                </div>
+
+                <span style={{ color: '#e2e8f0' }}>|</span>
+
+                {/* Clean Tier & Confirmation Filter Pills */}
+                {[
+                  { id: 'ALL', label: `All (${tierCounts.total})`, bg: '#f8fafc', activeBg: '#0f172a', color: '#475569', activeColor: '#ffffff', border: '#cbd5e1' },
+                  { id: 'A', label: `Tier A (${tierCounts.A})`, bg: '#ecfdf5', activeBg: '#059669', color: '#047857', activeColor: '#ffffff', border: '#6ee7b7' },
+                  { id: 'B', label: `Tier B (${tierCounts.B})`, bg: '#eff6ff', activeBg: '#2563eb', color: '#1d4ed8', activeColor: '#ffffff', border: '#93c5fd' },
+                  { id: 'C', label: `Tier C (${tierCounts.C})`, bg: '#fffbeb', activeBg: '#d97706', color: '#b45309', activeColor: '#ffffff', border: '#fcd34d' },
+                  { id: 'D', label: `Tier D (${tierCounts.D})`, bg: '#f8fafc', activeBg: '#475569', color: '#475569', activeColor: '#ffffff', border: '#cbd5e1' },
+                  { id: 'CONFIRM_QUEUE', label: `Needs Confirm (${tierCounts.confirmQueue})`, bg: '#fdf2f8', activeBg: '#db2777', color: '#be185d', activeColor: '#ffffff', border: '#f9a8d4' }
+                ].map((t) => {
+                  const active = confidenceTierFilter === t.id && statusFilter === 'ALL';
+                  return (
+                    <button
+                      key={t.id}
+                      onClick={() => {
+                        setStatusFilter('ALL');
+                        setConfidenceTierFilter(t.id);
+                        setWizardIndex(0);
+                      }}
+                      style={{
+                        background: active ? t.activeBg : t.bg,
+                        color: active ? t.activeColor : t.color,
+                        border: `1px solid ${t.border}`,
+                        borderRadius: '999px',
+                        padding: '4px 10px',
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {t.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Right: Search + Show Options Toggle + Bulk Confirm */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
                 <div style={{ position: 'relative' }}>
-                  <FiSearch style={{ position: 'absolute', left: '10px', top: '9px', color: '#64748b' }} size={14} />
+                  <FiSearch style={{ position: 'absolute', left: '9px', top: '8px', color: '#64748b' }} size={13} />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search ID, question, owner..."
+                    placeholder="Search questions..."
                     style={{
-                      padding: '6px 12px 6px 30px',
-                      borderRadius: '8px',
+                      padding: '5px 10px 5px 26px',
+                      borderRadius: '7px',
                       border: '1px solid #cbd5e1',
-                      fontSize: '0.78rem',
-                      width: '185px'
+                      fontSize: '0.74rem',
+                      width: '155px',
+                      background: '#f8fafc'
                     }}
                   />
                 </div>
-                <button
-                  onClick={handleRandomizeCurrentCustomerOptions}
-                  style={{
-                    background: '#fdf2f8',
-                    color: '#be185d',
-                    border: '1px solid #f472b6',
-                    borderRadius: '8px',
-                    padding: '7px 11px',
-                    fontSize: '0.75rem',
-                    fontWeight: 800,
-                    cursor: 'pointer'
-                  }}
-                  title="Randomly select candidate options across all 82 questions for this customer"
-                >
-                  🔀 Randomize 82 Options
-                </button>
-                <button
-                  onClick={handleSubmitAndGenerateGeminiReport}
-                  disabled={generatingGeminiReport}
-                  style={{
-                    background: generatingGeminiReport ? '#475569' : 'linear-gradient(135deg, #059669 0%, #0d9488 100%)',
-                    color: '#ffffff',
-                    border: 'none',
-                    borderRadius: '8px',
-                    padding: '7px 14px',
-                    fontSize: '0.78rem',
-                    fontWeight: 900,
-                    cursor: generatingGeminiReport ? 'wait' : 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    boxShadow: '0 4px 12px rgba(5, 150, 105, 0.25)'
-                  }}
-                >
-                  {generatingGeminiReport ? '🧠 Gemini API Synthesizing...' : '🚀 Submit & Generate Report (Gemini API)'} <FiArrowRight size={14} />
-                </button>
-              </div>
-            </div>
 
-            {/* ===============================================================
-                CONFIDENCE TIER FILTER BAR & CUSTOMER CONFIRMATION QUEUE STRIP
-               =============================================================== */}
-            <div style={{
-              background: 'linear-gradient(90deg, #0f172a 0%, #1e293b 100%)',
-              color: '#ffffff',
-              border: '1px solid #334155',
-              borderRadius: '14px',
-              padding: '12px 18px',
-              marginBottom: '16px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '12px',
-              boxShadow: '0 4px 14px rgba(15,23,42,0.1)'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                <span style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#94a3b8', marginRight: '4px' }}>
-                  🎯 Filter by Confidence Tier:
-                </span>
-                <button
-                  onClick={() => setConfidenceTierFilter('ALL')}
-                  style={{
-                    background: confidenceTierFilter === 'ALL' ? '#38bdf8' : 'rgba(255,255,255,0.08)',
-                    color: confidenceTierFilter === 'ALL' ? '#0f172a' : '#e2e8f0',
-                    border: '1px solid rgba(255,255,255,0.2)',
-                    borderRadius: '999px',
-                    padding: '5px 12px',
-                    fontSize: '0.73rem',
-                    fontWeight: 800,
-                    cursor: 'pointer'
-                  }}
-                >
-                  All Tiers ({tierCounts.total})
-                </button>
-                <button
-                  onClick={() => { setConfidenceTierFilter('A'); setWizardIndex(0); }}
-                  style={{
-                    background: confidenceTierFilter === 'A' ? '#10b981' : 'rgba(16, 185, 129, 0.14)',
-                    color: confidenceTierFilter === 'A' ? '#052e16' : '#6ee7b7',
-                    border: '1px solid rgba(110, 231, 183, 0.45)',
-                    borderRadius: '999px',
-                    padding: '5px 12px',
-                    fontSize: '0.73rem',
-                    fontWeight: 800,
-                    cursor: 'pointer'
-                  }}
-                >
-                  🟢 Tier A: 90–100% Portal Verified ({tierCounts.A} Qs • 1.0x)
-                </button>
-                <button
-                  onClick={() => { setConfidenceTierFilter('B'); setWizardIndex(0); }}
-                  style={{
-                    background: confidenceTierFilter === 'B' ? '#3b82f6' : 'rgba(59, 130, 246, 0.16)',
-                    color: confidenceTierFilter === 'B' ? '#ffffff' : '#93c5fd',
-                    border: '1px solid rgba(147, 197, 253, 0.45)',
-                    borderRadius: '999px',
-                    padding: '5px 12px',
-                    fontSize: '0.73rem',
-                    fontWeight: 800,
-                    cursor: 'pointer'
-                  }}
-                >
-                  🔵 Tier B: 75–89% Doc/Pilot Backed ({tierCounts.B} Qs • 0.75x)
-                </button>
-                <button
-                  onClick={() => { setConfidenceTierFilter('C'); setWizardIndex(0); }}
-                  style={{
-                    background: confidenceTierFilter === 'C' ? '#f59e0b' : 'rgba(245, 158, 11, 0.16)',
-                    color: confidenceTierFilter === 'C' ? '#0f172a' : '#fcd34d',
-                    border: '1px solid rgba(252, 211, 77, 0.45)',
-                    borderRadius: '999px',
-                    padding: '5px 12px',
-                    fontSize: '0.73rem',
-                    fontWeight: 800,
-                    cursor: 'pointer'
-                  }}
-                >
-                  🟡 Tier C: 40–74% CoP/Survey ({tierCounts.C} Qs • 0.40x)
-                </button>
-                <button
-                  onClick={() => { setConfidenceTierFilter('D'); setWizardIndex(0); }}
-                  style={{
-                    background: confidenceTierFilter === 'D' ? '#e2e8f0' : 'rgba(148, 163, 184, 0.16)',
-                    color: confidenceTierFilter === 'D' ? '#0f172a' : '#cbd5e1',
-                    border: '1px solid rgba(203, 213, 225, 0.35)',
-                    borderRadius: '999px',
-                    padding: '5px 12px',
-                    fontSize: '0.73rem',
-                    fontWeight: 800,
-                    cursor: 'pointer'
-                  }}
-                >
-                  ⚪ Tier D: 0–39% Finance Pending ({tierCounts.D} Qs • 0.0x)
-                </button>
-                <button
-                  onClick={() => { setConfidenceTierFilter('CONFIRM_QUEUE'); setWizardIndex(0); }}
-                  style={{
-                    background: confidenceTierFilter === 'CONFIRM_QUEUE' ? '#ec4899' : 'rgba(236, 72, 153, 0.16)',
-                    color: confidenceTierFilter === 'CONFIRM_QUEUE' ? '#ffffff' : '#f9a8d4',
-                    border: '1px solid rgba(249, 168, 212, 0.45)',
-                    borderRadius: '999px',
-                    padding: '5px 12px',
-                    fontSize: '0.73rem',
-                    fontWeight: 800,
-                    cursor: 'pointer'
-                  }}
-                >
-                  👥 Customer Confirmation Queue ({tierCounts.confirmQueue} Qs)
-                </button>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                 <button
                   onClick={() => setShowAllOptionBreakdown((v) => !v)}
                   style={{
-                    background: showAllOptionBreakdown ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255,255,255,0.08)',
-                    color: showAllOptionBreakdown ? '#7dd3fc' : '#cbd5e1',
-                    border: '1px solid rgba(125, 211, 252, 0.35)',
-                    borderRadius: '8px',
-                    padding: '5px 10px',
+                    background: showAllOptionBreakdown ? '#eff6ff' : '#f8fafc',
+                    color: showAllOptionBreakdown ? '#1d4ed8' : '#64748b',
+                    border: showAllOptionBreakdown ? '1px solid #93c5fd' : '1px solid #e2e8f0',
+                    borderRadius: '7px',
+                    padding: '5px 9px',
                     fontSize: '0.72rem',
-                    fontWeight: 700,
+                    fontWeight: 600,
                     cursor: 'pointer'
                   }}
                 >
-                  {showAllOptionBreakdown ? '✓ Showing Per-Option Confidence (%)' : 'Show Per-Option Confidence (%)'}
+                  {showAllOptionBreakdown ? '✓ Options' : 'Options'}
                 </button>
 
                 {(confidenceTierFilter !== 'ALL' || statusFilter !== 'ALL') && inputMode === 'section' && (
                   <button
                     onClick={() => setTierFilterCrossModule((v) => !v)}
                     style={{
-                      background: tierFilterCrossModule ? 'rgba(168, 85, 247, 0.22)' : 'rgba(255,255,255,0.08)',
-                      color: tierFilterCrossModule ? '#d8b4fe' : '#cbd5e1',
-                      border: '1px solid rgba(216, 180, 254, 0.35)',
-                      borderRadius: '8px',
-                      padding: '5px 10px',
+                      background: '#f8fafc',
+                      color: '#475569',
+                      border: '1px solid #cbd5e1',
+                      borderRadius: '7px',
+                      padding: '5px 9px',
                       fontSize: '0.72rem',
-                      fontWeight: 700,
+                      fontWeight: 600,
                       cursor: 'pointer'
                     }}
                   >
-                    {tierFilterCrossModule ? `Scope: All 10 Modules (${filteredQuestions.length} Qs)` : `Scope: Module ${activeModuleId} Only (${filteredQuestions.length} Qs)`}
+                    {tierFilterCrossModule ? `All Modules (${filteredQuestions.length})` : `Module ${activeModuleId} (${filteredQuestions.length})`}
                   </button>
                 )}
 
                 <button
                   onClick={handleBulkConfirmFilteredQuestions}
                   style={{
-                    background: '#10b981',
-                    color: '#052e16',
-                    border: 'none',
-                    borderRadius: '8px',
-                    padding: '6px 12px',
-                    fontSize: '0.73rem',
-                    fontWeight: 900,
+                    background: '#ecfdf5',
+                    color: '#047857',
+                    border: '1px solid #6ee7b7',
+                    borderRadius: '7px',
+                    padding: '5px 10px',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
                     cursor: 'pointer',
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '5px'
+                    gap: '4px'
                   }}
                 >
-                  <FiCheck size={13} /> Confirm Shown ({filteredQuestions.length}) w/ {shortCustomerName} → Tier A
+                  <FiCheck size={12} /> Confirm All ({filteredQuestions.length})
                 </button>
               </div>
             </div>
@@ -2363,21 +1895,21 @@ const GeValueRealizationWorkspace = () => {
                 MODE 1: SECTION / ROLE PAGE (DEFAULT)
                =============================================================== */}
             {inputMode === 'section' && (
-              <div style={{ display: 'grid', gridTemplateColumns: '295px 1fr', gap: '18px', alignItems: 'start' }}>
-                {/* Left Sidebar: 10 Modules + 6 Respondent Role Filters */}
+              <div style={{ display: 'grid', gridTemplateColumns: '250px 1fr', gap: '16px', alignItems: 'start' }}>
+                {/* Left Sidebar: Modules + Roles */}
                 <div style={{
                   background: '#ffffff',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '14px',
-                  padding: '16px',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '12px',
+                  padding: '12px',
                   position: 'sticky',
-                  top: '88px',
-                  boxShadow: '0 2px 6px rgba(15,23,42,0.04)'
+                  top: '76px',
+                  boxShadow: '0 1px 3px rgba(15,23,42,0.02)'
                 }}>
-                  <div style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#64748b', marginBottom: '8px' }}>
-                    10 Assessment Modules ({GE_QUESTIONS.length} Qs)
+                  <div style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: '#64748b', marginBottom: '6px' }}>
+                    Modules ({GE_QUESTIONS.length})
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', marginBottom: '18px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '14px' }}>
                     {GE_MODULES.map((m) => {
                       const modQuestions = GE_QUESTIONS.filter((q) => q.module === m.id);
                       const modVerified = modQuestions.filter((q) => dossier.questionResponses?.[q.id]?.verificationStatus === 'verified').length;
@@ -2393,33 +1925,32 @@ const GeValueRealizationWorkspace = () => {
                           }}
                           style={{
                             textAlign: 'left',
-                            padding: '9px 11px',
-                            borderRadius: '9px',
-                            border: isSelected ? '1.5px solid #2563eb' : '1px solid #e2e8f0',
-                            background: isSelected ? '#eff6ff' : '#f8fafc',
+                            padding: '7px 10px',
+                            borderRadius: '8px',
+                            border: isSelected ? '1px solid #93c5fd' : '1px solid transparent',
+                            background: isSelected ? '#eff6ff' : 'transparent',
                             cursor: 'pointer',
                             display: 'flex',
                             justifyContent: 'space-between',
                             alignItems: 'center',
-                            gap: '8px'
+                            gap: '6px'
                           }}
                         >
                           <div>
-                            <div style={{ fontSize: '0.78rem', fontWeight: 800, color: isSelected ? '#1d4ed8' : '#0f172a' }}>
-                              {m.code} — {m.title}
+                            <div style={{ fontSize: '0.76rem', fontWeight: isSelected ? 700 : 600, color: isSelected ? '#1d4ed8' : '#1e293b' }}>
+                              {m.code} · {m.title}
                             </div>
-                            <div style={{ fontSize: '0.67rem', color: '#64748b' }}>
-                              {m.ownerRole} {m.weight > 0 ? `• ${m.weight} pts` : ''}
+                            <div style={{ fontSize: '0.64rem', color: '#94a3b8' }}>
+                              {m.ownerRole}
                             </div>
                           </div>
                           <span style={{
-                            fontSize: '0.66rem',
-                            fontWeight: 800,
-                            padding: '2px 7px',
+                            fontSize: '0.64rem',
+                            fontWeight: 700,
+                            padding: '2px 6px',
                             borderRadius: '999px',
                             background: modPending > 0 ? '#fffbeb' : '#ecfdf5',
                             color: modPending > 0 ? '#b45309' : '#047857',
-                            border: modPending > 0 ? '1px solid #fcd34d' : '1px solid #6ee7b7',
                             whiteSpace: 'nowrap'
                           }}>
                             {modVerified}/{modQuestions.length}
@@ -2429,24 +1960,24 @@ const GeValueRealizationWorkspace = () => {
                     })}
                   </div>
 
-                  {/* 6 Respondent Role Packet Filter */}
-                  <div style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#64748b', marginBottom: '8px', borderTop: '1px solid #e2e8f0', paddingTop: '14px' }}>
-                    Filter by Stakeholder Packet (6 Roles)
+                  {/* Role Filter */}
+                  <div style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: '#64748b', marginBottom: '6px', borderTop: '1px solid #f1f5f9', paddingTop: '10px' }}>
+                    By Role
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
                     {RESPONDENT_FORMS.map((rf) => (
                       <button
                         key={rf.id}
                         onClick={() => setActiveRoleFilter(rf.id)}
                         style={{
                           textAlign: 'left',
-                          padding: '7px 10px',
-                          borderRadius: '8px',
-                          border: activeRoleFilter === rf.id ? '1.5px solid #2563eb' : '1px solid #e2e8f0',
-                          background: activeRoleFilter === rf.id ? '#eff6ff' : '#ffffff',
-                          color: activeRoleFilter === rf.id ? '#1d4ed8' : '#334155',
-                          fontSize: '0.73rem',
-                          fontWeight: 700,
+                          padding: '6px 9px',
+                          borderRadius: '7px',
+                          border: activeRoleFilter === rf.id ? '1px solid #93c5fd' : '1px solid transparent',
+                          background: activeRoleFilter === rf.id ? '#eff6ff' : 'transparent',
+                          color: activeRoleFilter === rf.id ? '#1d4ed8' : '#475569',
+                          fontSize: '0.72rem',
+                          fontWeight: activeRoleFilter === rf.id ? 700 : 600,
                           cursor: 'pointer',
                           display: 'flex',
                           justifyContent: 'space-between',
@@ -2454,66 +1985,62 @@ const GeValueRealizationWorkspace = () => {
                         }}
                       >
                         <span>{rf.title}</span>
-                        <span style={{ fontSize: '0.64rem', color: '#64748b' }}>{rf.badge}</span>
+                        <span style={{ fontSize: '0.62rem', color: '#94a3b8' }}>{rf.badge}</span>
                       </button>
                     ))}
                   </div>
                 </div>
 
-                {/* Right Content Area: Repeatable Workflow Register + Question Cards */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {/* Right Content Area: Workflow Register + Question Cards */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
 
-                  {/* Special Interactive Workflow Register & W04 6-Stage Effort Matrix when Module W is active */}
+                  {/* Interactive Workflow Register when Module W is active */}
                   {(activeModuleId === 'W' || activeRoleFilter === 'workflow_owner') && activeWorkflow && (
                     <div style={{
                       background: '#ffffff',
-                      border: '2px solid #2563eb',
-                      borderRadius: '14px',
-                      padding: '20px',
-                      boxShadow: '0 4px 16px rgba(37, 99, 235, 0.08)'
+                      border: '1px solid #bfdbfe',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      boxShadow: '0 2px 8px rgba(37, 99, 235, 0.04)'
                     }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '14px' }}>
-                        <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', marginBottom: '12px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <span style={{
-                            background: '#dbeafe',
+                            background: '#eff6ff',
                             color: '#1d4ed8',
                             fontSize: '0.68rem',
-                            fontWeight: 800,
-                            padding: '3px 8px',
-                            borderRadius: '6px',
-                            textTransform: 'uppercase'
+                            fontWeight: 700,
+                            padding: '2px 8px',
+                            borderRadius: '6px'
                           }}>
-                            Repeatable Module W • Multi-Workflow Instance Register
+                            Workflows
                           </span>
-                          <h3 style={{ margin: '6px 0 2px', fontSize: '1.1rem', fontWeight: 800, color: '#0f172a' }}>
-                            Priority {shortCustomerName} Workflows (Scaled / Pilot vs. Quarantined Scoping)
+                          <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, color: '#0f172a' }}>
+                            {shortCustomerName} Priority Workflows
                           </h3>
-                          <p style={{ margin: 0, fontSize: '0.78rem', color: '#64748b' }}>
-                            Each priority workflow is evaluated independently with Capped Hybrid Weighting (max 30% portfolio cap) and a Regulated GxP Floor.
-                          </p>
                         </div>
                         <button
                           onClick={handleAddWorkflow}
                           style={{
-                            background: '#0f172a',
-                            color: '#ffffff',
-                            border: 'none',
-                            borderRadius: '8px',
-                            padding: '8px 14px',
-                            fontSize: '0.78rem',
+                            background: '#f8fafc',
+                            color: '#0f172a',
+                            border: '1px solid #cbd5e1',
+                            borderRadius: '7px',
+                            padding: '5px 10px',
+                            fontSize: '0.74rem',
                             fontWeight: 700,
                             cursor: 'pointer',
                             display: 'inline-flex',
                             alignItems: 'center',
-                            gap: '6px'
+                            gap: '4px'
                           }}
                         >
-                          <FiPlus size={14} /> Add Workflow Instance
+                          <FiPlus size={13} /> Add Workflow
                         </button>
                       </div>
 
-                      {/* Workflow Instance Selector Tabs */}
-                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px', borderBottom: '1px solid #e2e8f0', paddingBottom: '12px' }}>
+                      {/* Workflow Selector Tabs */}
+                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '12px', borderBottom: '1px solid #f1f5f9', paddingBottom: '10px' }}>
                         {(dossier.workflows || []).map((wf, idx) => {
                           const isSelected = idx === activeWorkflowIdx;
                           const isQuarantined = wf.maturity === 'Scoping' || wf.numericState === 'pending';
@@ -2522,22 +2049,22 @@ const GeValueRealizationWorkspace = () => {
                               key={wf.id || wf.code}
                               onClick={() => setActiveWorkflowIdx(idx)}
                               style={{
-                                padding: '8px 13px',
-                                borderRadius: '9px',
-                                border: isSelected ? '2px solid #2563eb' : '1px solid #cbd5e1',
+                                padding: '6px 10px',
+                                borderRadius: '8px',
+                                border: isSelected ? '1.5px solid #2563eb' : '1px solid #e2e8f0',
                                 background: isSelected ? '#eff6ff' : '#f8fafc',
                                 cursor: 'pointer',
                                 textAlign: 'left'
                               }}
                             >
                               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <span style={{ fontSize: '0.76rem', fontWeight: 800, color: isSelected ? '#1d4ed8' : '#0f172a' }}>
+                                <span style={{ fontSize: '0.74rem', fontWeight: 700, color: isSelected ? '#1d4ed8' : '#0f172a' }}>
                                   {wf.code}: {wf.name}
                                 </span>
                                 <span style={{
-                                  fontSize: '0.64rem',
-                                  fontWeight: 800,
-                                  padding: '1px 6px',
+                                  fontSize: '0.62rem',
+                                  fontWeight: 700,
+                                  padding: '1px 5px',
                                   borderRadius: '4px',
                                   background: isQuarantined ? '#fef3c7' : '#dcfce7',
                                   color: isQuarantined ? '#b45309' : '#15803d'
@@ -2545,19 +2072,16 @@ const GeValueRealizationWorkspace = () => {
                                   {wf.maturity}
                                 </span>
                               </div>
-                              <div style={{ fontSize: '0.67rem', color: '#64748b', marginTop: '2px' }}>
-                                {wf.functionArea} {wf.isRegulatedGxp ? '• 🛡️ GxP Regulated' : ''}
-                              </div>
                             </button>
                           );
                         })}
                       </div>
 
-                      {/* Selected Workflow Metadata & Telemetry Inputs */}
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '16px' }}>
-                        <div style={{ background: '#f8fafc', padding: '10px 12px', borderRadius: '9px', border: '1px solid #e2e8f0' }}>
-                          <label style={{ fontSize: '0.68rem', fontWeight: 700, color: '#64748b', display: 'block', marginBottom: '4px' }}>
-                            Deployment Stage (Maturity)
+                      {/* Selected Workflow Inputs */}
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '12px' }}>
+                        <div style={{ background: '#f8fafc', padding: '8px 10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                          <label style={{ fontSize: '0.66rem', fontWeight: 600, color: '#64748b', display: 'block', marginBottom: '3px' }}>
+                            Stage
                           </label>
                           <select
                             value={activeWorkflow.maturity || 'Pilot'}
@@ -2568,53 +2092,53 @@ const GeValueRealizationWorkspace = () => {
                                 numericState: nextMat === 'Scoping' ? 'pending' : 'actual'
                               });
                             }}
-                            style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8rem', fontWeight: 700 }}
+                            style={{ width: '100%', padding: '5px 7px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.76rem', fontWeight: 600 }}
                           >
-                            <option value="Scaled">Scaled (Counts in Col 2 Capacity)</option>
-                            <option value="Pilot">Pilot (Counts in Col 2 Capacity)</option>
-                            <option value="Scoping">Scoping (Quarantined to Col 3 Modeled)</option>
+                            <option value="Scaled">Scaled (Validated)</option>
+                            <option value="Pilot">Pilot (Validated)</option>
+                            <option value="Scoping">Scoping (Modeled)</option>
                           </select>
                         </div>
 
-                        <div style={{ background: '#f8fafc', padding: '10px 12px', borderRadius: '9px', border: '1px solid #e2e8f0' }}>
-                          <label style={{ fontSize: '0.68rem', fontWeight: 700, color: '#64748b', display: 'block', marginBottom: '4px' }}>
-                            W03: Completed Tasks / Month
+                        <div style={{ background: '#f8fafc', padding: '8px 10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                          <label style={{ fontSize: '0.66rem', fontWeight: 600, color: '#64748b', display: 'block', marginBottom: '3px' }}>
+                            Tasks / Month
                           </label>
                           <input
                             type="number"
                             value={activeWorkflow.completedTasksPerMonth ?? ''}
-                            placeholder="Evidence Pending"
+                            placeholder="Pending"
                             onChange={(e) => updateWorkflowField(activeWorkflowIdx, {
                               completedTasksPerMonth: e.target.value === '' ? null : Number(e.target.value),
                               numericState: e.target.value === '' ? 'pending' : 'actual'
                             })}
-                            style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8rem', fontWeight: 700, fontFamily: 'monospace' }}
+                            style={{ width: '100%', padding: '5px 7px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.76rem', fontWeight: 600, fontFamily: 'monospace' }}
                           />
                         </div>
 
-                        <div style={{ background: '#f8fafc', padding: '10px 12px', borderRadius: '9px', border: '1px solid #e2e8f0' }}>
-                          <label style={{ fontSize: '0.68rem', fontWeight: 700, color: '#64748b', display: 'block', marginBottom: '4px' }}>
-                            W02: Active Users (Eligible: {activeWorkflow.eligibleUsers || 0})
+                        <div style={{ background: '#f8fafc', padding: '8px 10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                          <label style={{ fontSize: '0.66rem', fontWeight: 600, color: '#64748b', display: 'block', marginBottom: '3px' }}>
+                            Active Users
                           </label>
                           <input
                             type="number"
                             value={activeWorkflow.activeUsers ?? ''}
-                            placeholder="Evidence Pending"
+                            placeholder="Pending"
                             onChange={(e) => updateWorkflowField(activeWorkflowIdx, {
                               activeUsers: e.target.value === '' ? null : Number(e.target.value)
                             })}
-                            style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8rem', fontWeight: 700, fontFamily: 'monospace' }}
+                            style={{ width: '100%', padding: '5px 7px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.76rem', fontWeight: 600, fontFamily: 'monospace' }}
                           />
                         </div>
 
-                        <div style={{ background: '#f8fafc', padding: '10px 12px', borderRadius: '9px', border: '1px solid #e2e8f0' }}>
-                          <label style={{ fontSize: '0.68rem', fontWeight: 700, color: '#64748b', display: 'block', marginBottom: '4px' }}>
-                            Confidence Tier (A–D)
+                        <div style={{ background: '#f8fafc', padding: '8px 10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                          <label style={{ fontSize: '0.66rem', fontWeight: 600, color: '#64748b', display: 'block', marginBottom: '3px' }}>
+                            Confidence Tier
                           </label>
                           <select
                             value={activeWorkflow.confidenceTier || 'B'}
                             onChange={(e) => updateWorkflowField(activeWorkflowIdx, { confidenceTier: e.target.value })}
-                            style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8rem', fontWeight: 700 }}
+                            style={{ width: '100%', padding: '5px 7px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.76rem', fontWeight: 600 }}
                           >
                             {CONFIDENCE_OPTIONS.map((c) => (
                               <option key={c.value} value={c.value}>{c.label}</option>
@@ -2623,71 +2147,57 @@ const GeValueRealizationWorkspace = () => {
                         </div>
                       </div>
 
-                      {/* W04 6-Stage Effort Matrix Table */}
-                      <div style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '10px', padding: '14px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', flexWrap: 'wrap', gap: '8px' }}>
-                          <div>
-                            <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#0f172a' }}>
-                              W04 6-Stage Task Effort Decomposition Matrix (Minutes per Task) & W04R Verification/Rework Deduction
-                            </span>
-                            <span style={{ fontSize: '0.72rem', color: '#64748b', marginLeft: '8px' }}>
-                              Prevents gross-savings inflation by explicitly accounting for human citation verification & correction minutes.
-                            </span>
-                          </div>
+                      {/* 6-Stage Effort Matrix */}
+                      <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '10px 12px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
+                          <span style={{ fontSize: '0.74rem', fontWeight: 700, color: '#0f172a' }}>
+                            Minutes per Task (Before vs. Gemini)
+                          </span>
                           {activeWorkflowEval && (
-                            <div style={{ display: 'flex', gap: '10px', fontSize: '0.75rem', fontWeight: 800, fontFamily: 'monospace' }}>
-                              <span style={{ background: '#e2e8f0', padding: '3px 8px', borderRadius: '6px' }}>
-                                Baseline: {activeWorkflowEval.baselineMinutes}m
-                              </span>
-                              <span style={{ background: '#dbeafe', color: '#1d4ed8', padding: '3px 8px', borderRadius: '6px' }}>
-                                Gemini: {activeWorkflowEval.geminiMinutes}m
-                              </span>
-                              <span style={{ background: '#dcfce7', color: '#15803d', padding: '3px 8px', borderRadius: '6px' }}>
-                                Net Saved: {activeWorkflowEval.netMinutesSavedPerTask}m/task ({activeWorkflowEval.effortReductionPct.toFixed(1)}%)
-                              </span>
-                              <span style={{ background: '#ecfdf5', color: '#047857', border: '1px solid #6ee7b7', padding: '3px 8px', borderRadius: '6px' }}>
-                                {activeWorkflowEval.benefitColumn}
-                              </span>
+                            <div style={{ display: 'flex', gap: '8px', fontSize: '0.72rem', fontWeight: 700, fontFamily: 'monospace' }}>
+                              <span style={{ color: '#475569' }}>Before: {activeWorkflowEval.baselineMinutes}m</span>
+                              <span style={{ color: '#1d4ed8' }}>Gemini: {activeWorkflowEval.geminiMinutes}m</span>
+                              <span style={{ color: '#059669' }}>Saved: {activeWorkflowEval.netMinutesSavedPerTask}m ({activeWorkflowEval.effortReductionPct.toFixed(0)}%)</span>
                             </div>
                           )}
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '8px' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '6px' }}>
                           {[
-                            { id: 'discovery', label: '1. Search & Discovery' },
-                            { id: 'drafting', label: '2. First-Draft Synthesis' },
-                            { id: 'verification', label: '3. Citation Verification' },
-                            { id: 'correction', label: '4. Rework / Correction' },
-                            { id: 'approval', label: '5. SME / GxP Approval' },
-                            { id: 'handoff', label: '6. Downstream Handoff' }
+                            { id: 'discovery', label: '1. Search' },
+                            { id: 'drafting', label: '2. Draft' },
+                            { id: 'verification', label: '3. Verify' },
+                            { id: 'correction', label: '4. Rework' },
+                            { id: 'approval', label: '5. Approval' },
+                            { id: 'handoff', label: '6. Handoff' }
                           ].map((st) => {
                             const stObj = activeWorkflow.stages?.[st.id] || { baseline: 0, gemini: 0 };
                             const delta = (stObj.baseline || 0) - (stObj.gemini || 0);
                             return (
-                              <div key={st.id} style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '8px' }}>
-                                <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#1e293b', marginBottom: '6px' }}>
+                              <div key={st.id} style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '6px', padding: '6px 8px' }}>
+                                <div style={{ fontSize: '0.66rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>
                                   {st.label}
                                 </div>
-                                <div style={{ display: 'flex', gap: '6px', alignItems: 'center', marginBottom: '4px' }}>
-                                  <span style={{ fontSize: '0.65rem', color: '#64748b', width: '48px' }}>Baseline:</span>
+                                <div style={{ display: 'flex', gap: '4px', alignItems: 'center', marginBottom: '3px' }}>
+                                  <span style={{ fontSize: '0.62rem', color: '#94a3b8', width: '36px' }}>Before</span>
                                   <input
                                     type="number"
                                     value={stObj.baseline}
                                     onChange={(e) => updateWorkflowStageEffort(activeWorkflowIdx, st.id, 'baseline', e.target.value)}
-                                    style={{ width: '100%', padding: '3px 6px', fontSize: '0.75rem', fontFamily: 'monospace', border: '1px solid #cbd5e1', borderRadius: '4px' }}
+                                    style={{ width: '100%', padding: '2px 5px', fontSize: '0.72rem', fontFamily: 'monospace', border: '1px solid #cbd5e1', borderRadius: '4px' }}
                                   />
                                 </div>
-                                <div style={{ display: 'flex', gap: '6px', alignItems: 'center', marginBottom: '4px' }}>
-                                  <span style={{ fontSize: '0.65rem', color: '#64748b', width: '48px' }}>Gemini:</span>
+                                <div style={{ display: 'flex', gap: '4px', alignItems: 'center', marginBottom: '3px' }}>
+                                  <span style={{ fontSize: '0.62rem', color: '#94a3b8', width: '36px' }}>After</span>
                                   <input
                                     type="number"
                                     value={stObj.gemini}
                                     onChange={(e) => updateWorkflowStageEffort(activeWorkflowIdx, st.id, 'gemini', e.target.value)}
-                                    style={{ width: '100%', padding: '3px 6px', fontSize: '0.75rem', fontFamily: 'monospace', border: '1px solid #cbd5e1', borderRadius: '4px' }}
+                                    style={{ width: '100%', padding: '2px 5px', fontSize: '0.72rem', fontFamily: 'monospace', border: '1px solid #cbd5e1', borderRadius: '4px' }}
                                   />
                                 </div>
-                                <div style={{ fontSize: '0.68rem', fontWeight: 700, color: delta >= 0 ? '#059669' : '#dc2626', textAlign: 'right' }}>
-                                  {delta >= 0 ? `-${delta} min` : `+${Math.abs(delta)} min (Extra QA)`}
+                                <div style={{ fontSize: '0.64rem', fontWeight: 700, color: delta >= 0 ? '#059669' : '#dc2626', textAlign: 'right' }}>
+                                  {delta >= 0 ? `-${delta}m` : `+${Math.abs(delta)}m`}
                                 </div>
                               </div>
                             );
@@ -2697,7 +2207,7 @@ const GeValueRealizationWorkspace = () => {
                     </div>
                   )}
 
-                  {/* Question Cards List */}
+                  {/* Clean, Minimal Question Cards */}
                   {filteredQuestions.map((q) => {
                     const resp = dossier.questionResponses?.[q.id] || {
                       value: null,
@@ -2717,103 +2227,79 @@ const GeValueRealizationWorkspace = () => {
                     const displayValue = Array.isArray(resp.value) ? resp.value.join('; ') : (resp.value ?? '');
                     const optionConfidenceList = getQuestionOptionsWithConfidence(q, resp, dossier);
                     const contextualQuestionText = getCustomerContextualQuestionText(q, dossier);
-                    const dropdownOptionTexts = optionConfidenceList.length > 0
-                      ? optionConfidenceList.map((o) => o.optionText)
-                      : (q.options || []);
 
                     return (
                       <div
                         key={q.id}
                         style={{
                           background: '#ffffff',
-                          border: q.gateTrigger ? '1.5px solid #f59e0b' : '1px solid #cbd5e1',
-                          borderRadius: '12px',
-                          padding: '16px 18px',
-                          boxShadow: '0 1px 4px rgba(15,23,42,0.03)'
+                          border: q.gateTrigger ? '1px solid #fcd34d' : '1px solid #e2e8f0',
+                          borderRadius: '10px',
+                          padding: '13px 16px',
+                          boxShadow: '0 1px 2px rgba(15,23,42,0.02)'
                         }}
                       >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                        {/* Compact Header Row */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '6px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
                             <span style={{
-                              background: '#0f172a',
-                              color: '#ffffff',
+                              background: '#eff6ff',
+                              color: '#1d4ed8',
+                              border: '1px solid #bfdbfe',
                               fontFamily: "'JetBrains Mono', monospace",
-                              fontSize: '0.74rem',
-                              fontWeight: 800,
-                              padding: '3px 8px',
-                              borderRadius: '6px'
+                              fontSize: '0.72rem',
+                              fontWeight: 700,
+                              padding: '2px 7px',
+                              borderRadius: '5px'
                             }}>
                               {q.id}
-                            </span>
-                            <span style={{
-                              background: '#f1f5f9',
-                              color: '#475569',
-                              fontSize: '0.68rem',
-                              fontWeight: 700,
-                              padding: '3px 8px',
-                              borderRadius: '6px',
-                              textTransform: 'uppercase'
-                            }}>
-                              Module {q.module} • {q.inputType}
                             </span>
                             <span style={{
                               background: qTierMeta.bg,
                               color: qTierMeta.color,
                               border: `1px solid ${qTierMeta.border}`,
-                              fontSize: '0.7rem',
-                              fontWeight: 800,
-                              padding: '3px 9px',
+                              fontSize: '0.68rem',
+                              fontWeight: 700,
+                              padding: '2px 8px',
                               borderRadius: '999px',
                               fontFamily: "'JetBrains Mono', monospace"
                             }}>
-                              {qConfPct}% Conf • {qTierMeta.shortBadge}
+                              {qConfPct}% · {qTierMeta.shortBadge}
                             </span>
-                            {q.weight > 0 && (
-                              <span style={{
-                                background: '#eff6ff',
-                                color: '#1d4ed8',
-                                fontSize: '0.68rem',
-                                fontWeight: 700,
-                                padding: '3px 8px',
-                                borderRadius: '6px'
-                              }}>
-                                Weight: {q.weight} pts ({q.kpaId})
-                              </span>
-                            )}
                             {q.gateTrigger && (
                               <span style={{
                                 background: '#fef2f2',
                                 color: '#dc2626',
                                 border: '1px solid #fecaca',
-                                fontSize: '0.68rem',
-                                fontWeight: 800,
-                                padding: '3px 8px',
-                                borderRadius: '6px'
+                                fontSize: '0.66rem',
+                                fontWeight: 700,
+                                padding: '2px 7px',
+                                borderRadius: '5px'
                               }}>
-                                🛡️ Non-Compensable Gate ({q.gateTrigger})
+                                Gate: {q.gateTrigger}
                               </span>
                             )}
                           </div>
 
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
                             {resp.verificationStatus !== 'verified' && (
                               <button
                                 onClick={() => handleConfirmQuestionWithCustomer(q.id)}
                                 style={{
-                                  background: '#059669',
-                                  color: '#ffffff',
-                                  border: 'none',
+                                  background: '#ecfdf5',
+                                  color: '#047857',
+                                  border: '1px solid #6ee7b7',
                                   borderRadius: '999px',
-                                  padding: '4px 11px',
-                                  fontSize: '0.7rem',
-                                  fontWeight: 800,
+                                  padding: '3px 9px',
+                                  fontSize: '0.68rem',
+                                  fontWeight: 700,
                                   cursor: 'pointer',
                                   display: 'inline-flex',
                                   alignItems: 'center',
-                                  gap: '4px'
+                                  gap: '3px'
                                 }}
                               >
-                                <FiCheck size={12} /> Confirm w/ {shortCustomerName} (→ 100% Tier A)
+                                <FiCheck size={11} /> Confirm
                               </button>
                             )}
                             <select
@@ -2834,248 +2320,137 @@ const GeValueRealizationWorkspace = () => {
                                 color: stMeta.color,
                                 border: `1px solid ${stMeta.border}`,
                                 borderRadius: '999px',
-                                padding: '4px 10px',
-                                fontSize: '0.72rem',
-                                fontWeight: 800,
+                                padding: '3px 8px',
+                                fontSize: '0.68rem',
+                                fontWeight: 700,
                                 cursor: 'pointer'
                               }}
                             >
-                              <option value="verified">🟢 Verified Telemetry</option>
-                              <option value="draft_verify">🟡 Pre-Filled — Verify w/ {shortCustomerName}</option>
-                              <option value="pending">⚪ Evidence Pending</option>
+                              <option value="verified">🟢 Verified</option>
+                              <option value="draft_verify">🟡 Needs Review</option>
+                              <option value="pending">⚪ Pending</option>
+                            </select>
+
+                            <select
+                              value={resp.outcomeScore ?? 0}
+                              onChange={(e) => updateQuestionResponse(q.id, { outcomeScore: Number(e.target.value) })}
+                              title="Outcome Score (0-4)"
+                              style={{
+                                background: '#f8fafc',
+                                color: '#334155',
+                                border: '1px solid #cbd5e1',
+                                borderRadius: '6px',
+                                padding: '3px 6px',
+                                fontSize: '0.68rem',
+                                fontWeight: 700,
+                                fontFamily: 'monospace',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              <option value="0">0/4</option>
+                              <option value="1">1/4</option>
+                              <option value="2">2/4</option>
+                              <option value="3">3/4</option>
+                              <option value="4">4/4</option>
                             </select>
                           </div>
                         </div>
 
-                        <div style={{ fontSize: '0.93rem', fontWeight: 700, color: '#0f172a', marginBottom: '4px', lineHeight: 1.4 }}>
+                        {/* Question Title */}
+                        <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0f172a', marginBottom: '10px', lineHeight: 1.4 }}>
                           {contextualQuestionText}
                         </div>
-                        {q.requiredEntry && (
-                          <div style={{ fontSize: '0.74rem', color: '#64748b', marginBottom: '10px' }}>
-                            <strong>Required Entry:</strong> {getCustomerContextualRequiredEntry(q, dossier)}
-                          </div>
-                        )}
 
-                        {/* PER-OPTION CONFIDENCE SCORE MATRIX (CLICK ANY OPTION TO SELECT / CONFIRM WITH CUSTOMER) */}
+                        {/* Clean Clickable Options */}
                         {showAllOptionBreakdown && optionConfidenceList.length > 0 && (
-                          <div style={{
-                            background: '#f8fafc',
-                            border: '1px solid #e2e8f0',
-                            borderRadius: '10px',
-                            padding: '10px 12px',
-                            marginBottom: '12px'
-                          }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '6px' }}>
-                              <span style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', color: '#334155' }}>
-                                📊 Candidate Options & Per-Option Internal Evidence Confidence ({optionConfidenceList.length} Options — Click to Select / Override)
-                              </span>
-                              <span style={{ fontSize: '0.68rem', color: '#64748b' }}>
-                                {q.inputType === 'multi_select' || q.inputType === 'multi_select_rank' ? 'Multi-Select Options' : 'Single-Select / Primary Scenario Options'}
-                              </span>
-                            </div>
-
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                              {optionConfidenceList.map((optMeta) => {
-                                const oTier = TIER_META[optMeta.confidenceTier] || TIER_META.D;
-                                return (
-                                  <div
-                                    key={optMeta.optionText}
-                                    onClick={() => handleSelectOptionForQuestion(q, optMeta)}
-                                    style={{
-                                      display: 'grid',
-                                      gridTemplateColumns: '1fr auto',
-                                      gap: '10px',
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', marginBottom: '8px' }}>
+                            {optionConfidenceList.map((optMeta) => {
+                              const oTier = TIER_META[optMeta.confidenceTier] || TIER_META.D;
+                              return (
+                                <div
+                                  key={optMeta.optionText}
+                                  onClick={() => handleSelectOptionForQuestion(q, optMeta)}
+                                  style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    gap: '10px',
+                                    padding: '6px 10px',
+                                    borderRadius: '7px',
+                                    border: optMeta.isSelected ? '1.5px solid #2563eb' : '1px solid #f1f5f9',
+                                    background: optMeta.isSelected ? '#eff6ff' : '#f8fafc',
+                                    cursor: 'pointer'
+                                  }}
+                                >
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                                    <span style={{
+                                      width: '15px',
+                                      height: '15px',
+                                      borderRadius: (q.inputType === 'multi_select' || q.inputType === 'multi_select_rank') ? '4px' : '999px',
+                                      border: optMeta.isSelected ? '1.5px solid #2563eb' : '1px solid #cbd5e1',
+                                      background: optMeta.isSelected ? '#2563eb' : '#ffffff',
+                                      color: '#ffffff',
+                                      display: 'inline-flex',
                                       alignItems: 'center',
-                                      padding: '7px 10px',
-                                      borderRadius: '8px',
-                                      border: optMeta.isSelected ? '1.5px solid #2563eb' : '1px solid #e2e8f0',
-                                      background: optMeta.isSelected ? '#eff6ff' : '#ffffff',
-                                      cursor: 'pointer',
-                                      transition: 'all 0.12s ease'
-                                    }}
-                                  >
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                      <span style={{
-                                        width: '18px',
-                                        height: '18px',
-                                        borderRadius: (q.inputType === 'multi_select' || q.inputType === 'multi_select_rank') ? '4px' : '999px',
-                                        border: optMeta.isSelected ? '2px solid #2563eb' : '1.5px solid #94a3b8',
-                                        background: optMeta.isSelected ? '#2563eb' : '#ffffff',
-                                        color: '#ffffff',
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        fontSize: '0.68rem',
-                                        fontWeight: 900,
-                                        flexShrink: 0
-                                      }}>
-                                        {optMeta.isSelected ? '✓' : ''}
-                                      </span>
-                                      <div>
-                                        <div style={{ fontSize: '0.78rem', fontWeight: optMeta.isSelected ? 800 : 600, color: optMeta.isSelected ? '#1e3a8a' : '#1e293b' }}>
-                                          {optMeta.optionText}
-                                        </div>
-                                        <div style={{ fontSize: '0.66rem', color: '#64748b', marginTop: '1px' }}>
-                                          {optMeta.isPortalBacked ? '📌 Grounded in Internal Portal/Doc: ' : '🔄 Alternative Option: '}
-                                          <span style={{ fontWeight: 600, color: '#475569' }}>{optMeta.sourceBasis}</span>
-                                        </div>
-                                      </div>
-                                    </div>
-
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-                                      <div style={{ width: '68px', background: '#e2e8f0', height: '6px', borderRadius: '999px', overflow: 'hidden' }}>
-                                        <div style={{
-                                          width: `${optMeta.confidencePct}%`,
-                                          height: '100%',
-                                          background: oTier.barColor,
-                                          borderRadius: '999px'
-                                        }} />
-                                      </div>
-                                      <span style={{
-                                        background: oTier.bg,
-                                        color: oTier.color,
-                                        border: `1px solid ${oTier.border}`,
-                                        fontSize: '0.68rem',
-                                        fontWeight: 800,
-                                        padding: '2px 8px',
-                                        borderRadius: '999px',
-                                        fontFamily: "'JetBrains Mono', monospace",
-                                        minWidth: '126px',
-                                        textAlign: 'center'
-                                      }}>
-                                        {optMeta.confidencePct}% • {oTier.shortBadge}
-                                      </span>
-                                    </div>
+                                      justifyContent: 'center',
+                                      fontSize: '0.62rem',
+                                      fontWeight: 800,
+                                      flexShrink: 0
+                                    }}>
+                                      {optMeta.isSelected ? '✓' : ''}
+                                    </span>
+                                    <span style={{ fontSize: '0.78rem', fontWeight: optMeta.isSelected ? 700 : 500, color: optMeta.isSelected ? '#1e3a8a' : '#334155' }}>
+                                      {optMeta.optionText}
+                                    </span>
                                   </div>
-                                );
-                              })}
-                            </div>
+
+                                  <span style={{
+                                    background: oTier.bg,
+                                    color: oTier.color,
+                                    border: `1px solid ${oTier.border}`,
+                                    fontSize: '0.64rem',
+                                    fontWeight: 700,
+                                    padding: '1px 7px',
+                                    borderRadius: '999px',
+                                    fontFamily: "'JetBrains Mono', monospace",
+                                    whiteSpace: 'nowrap',
+                                    flexShrink: 0
+                                  }}>
+                                    {optMeta.confidencePct}% · {oTier.shortBadge}
+                                  </span>
+                                </div>
+                              );
+                            })}
                           </div>
                         )}
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1.2fr 1fr', gap: '12px', alignItems: 'start' }}>
-                          <div>
-                            <label style={{ fontSize: '0.68rem', fontWeight: 700, color: '#64748b', display: 'block', marginBottom: '4px' }}>
-                              Recorded Answer / Metric {q.unitLabel ? `(${q.unitLabel})` : ''}
-                            </label>
-                            {dropdownOptionTexts.length > 0 && q.inputType === 'single_select' ? (
-                              <select
-                                value={displayValue}
-                                onChange={(e) => updateQuestionResponse(q.id, {
-                                  value: e.target.value || null,
-                                  numericState: e.target.value ? 'actual' : 'pending'
-                                })}
-                                style={{
-                                  width: '100%',
-                                  padding: '8px 10px',
-                                  borderRadius: '8px',
-                                  border: '1px solid #cbd5e1',
-                                  fontSize: '0.82rem',
-                                  fontWeight: 600,
-                                  background: '#f8fafc'
-                                }}
-                              >
-                                <option value="">— Evidence Pending / Select Option —</option>
-                                {dropdownOptionTexts.map((opt) => (
-                                  <option key={opt} value={opt}>{opt}</option>
-                                ))}
-                              </select>
-                            ) : (
-                              <input
-                                type="text"
-                                value={displayValue}
-                                placeholder="Evidence Pending (Null — Never defaults to 0)"
-                                onChange={(e) => {
-                                  const raw = e.target.value;
-                                  updateQuestionResponse(q.id, {
-                                    value: raw === '' ? null : raw,
-                                    numericState: raw === '' ? 'pending' : 'actual'
-                                  });
-                                }}
-                                style={{
-                                  width: '100%',
-                                  padding: '8px 10px',
-                                  borderRadius: '8px',
-                                  border: '1px solid #cbd5e1',
-                                  fontSize: '0.82rem',
-                                  fontWeight: 600,
-                                  background: resp.value === null || resp.numericState === 'pending' ? '#fffbeb' : '#f8fafc'
-                                }}
-                              />
-                            )}
-                          </div>
-
-                          <div style={{ display: 'grid', gridTemplateColumns: '1.35fr 0.95fr', gap: '8px' }}>
-                            <div>
-                              <label style={{ fontSize: '0.68rem', fontWeight: 700, color: '#64748b', display: 'block', marginBottom: '4px', whiteSpace: 'nowrap' }}>
-                                Confidence Tier ({qConfPct}%)
-                              </label>
-                              <select
-                                value={resp.confidenceTier || 'D'}
-                                onChange={(e) => {
-                                  const nextT = e.target.value;
-                                  const defaultPctForTier = nextT === 'A' ? 96 : nextT === 'B' ? 84 : nextT === 'C' ? 62 : 20;
-                                  updateQuestionResponse(q.id, {
-                                    confidenceTier: nextT,
-                                    confidenceScorePct: defaultPctForTier
-                                  });
-                                }}
-                                style={{
-                                  width: '100%',
-                                  padding: '8px',
-                                  borderRadius: '8px',
-                                  border: '1px solid #cbd5e1',
-                                  fontSize: '0.75rem',
-                                  fontWeight: 700,
-                                  background: '#f8fafc'
-                                }}
-                              >
-                                {CONFIDENCE_OPTIONS.map((c) => (
-                                  <option key={c.value} value={c.value}>{c.label}</option>
-                                ))}
-                              </select>
-                            </div>
-                            <div>
-                              <label style={{ fontSize: '0.68rem', fontWeight: 700, color: '#64748b', display: 'block', marginBottom: '4px', whiteSpace: 'nowrap' }}>
-                                Score (0–4)
-                              </label>
-                              <select
-                                value={resp.outcomeScore ?? 0}
-                                onChange={(e) => updateQuestionResponse(q.id, {
-                                  outcomeScore: Number(e.target.value)
-                                })}
-                                style={{
-                                  width: '100%',
-                                  padding: '8px',
-                                  borderRadius: '8px',
-                                  border: '1px solid #cbd5e1',
-                                  fontSize: '0.78rem',
-                                  fontWeight: 800,
-                                  fontFamily: 'monospace',
-                                  background: '#f8fafc'
-                                }}
-                              >
-                                <option value="0">0 — Missing / Worse</option>
-                                <option value="1">1 — Partial / Weak</option>
-                                <option value="2">2 — Emerging / Caveat</option>
-                                <option value="3">3 — Meets Target</option>
-                                <option value="4">4 — Decision-Grade</option>
-                              </select>
-                            </div>
-                          </div>
-
-                          <div>
-                            <label style={{ fontSize: '0.68rem', fontWeight: 700, color: '#64748b', display: 'block', marginBottom: '4px' }}>
-                              Evidence Source & Owner
-                            </label>
-                            <div style={{ fontSize: '0.74rem', color: '#334155', background: '#f8fafc', padding: '7px 10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                              <div style={{ fontWeight: 700, color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                📄 {resp.evidenceUrl || 'Evidence Pending'}
-                              </div>
-                              <div style={{ fontSize: '0.68rem', color: '#64748b', marginTop: '2px' }}>
-                                👤 {resp.owner || 'Unassigned'}
-                              </div>
-                            </div>
+                        {/* Compact Single-Row Answer Override & Provenance Footer */}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap', paddingTop: '4px', borderTop: '1px solid #f8fafc' }}>
+                          <input
+                            type="text"
+                            value={displayValue}
+                            placeholder={q.unitLabel ? `Enter value (${q.unitLabel})...` : 'Custom answer or pending...'}
+                            onChange={(e) => {
+                              const raw = e.target.value;
+                              updateQuestionResponse(q.id, {
+                                value: raw === '' ? null : raw,
+                                numericState: raw === '' ? 'pending' : 'actual'
+                              });
+                            }}
+                            style={{
+                              flex: '1 1 240px',
+                              padding: '5px 9px',
+                              borderRadius: '6px',
+                              border: '1px solid #e2e8f0',
+                              fontSize: '0.75rem',
+                              fontWeight: 600,
+                              color: '#0f172a',
+                              background: resp.value === null || resp.numericState === 'pending' ? '#fffbeb' : '#ffffff'
+                            }}
+                          />
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.68rem', color: '#64748b' }}>
+                            <span>📄 {resp.evidenceUrl || 'Pending'}</span>
+                            <span>👤 {resp.owner || 'Unassigned'}</span>
                           </div>
                         </div>
                       </div>
@@ -3086,16 +2461,16 @@ const GeValueRealizationWorkspace = () => {
             )}
 
             {/* ===============================================================
-                MODE 2: 1-BY-1 FOCUS WIZARD (LIVE CUSTOMER SCREEN-SHARE)
+                MODE 2: 1-BY-1 FOCUS WIZARD
                =============================================================== */}
             {inputMode === 'wizard' && (
-              <div style={{ display: 'grid', gridTemplateColumns: '1.65fr 1fr', gap: '20px', alignItems: 'start' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1.7fr 1fr', gap: '16px', alignItems: 'start' }}>
                 {(() => {
                   const safeIdx = Math.min(Math.max(0, wizardIndex), Math.max(0, filteredQuestions.length - 1));
                   const q = filteredQuestions[safeIdx];
                   if (!q) {
                     return (
-                      <div style={{ background: '#ffffff', padding: '32px', borderRadius: '14px', border: '1px solid #cbd5e1' }}>
+                      <div style={{ background: '#ffffff', padding: '24px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                         No questions match the current filter.
                       </div>
                     );
@@ -3114,124 +2489,102 @@ const GeValueRealizationWorkspace = () => {
                     <>
                       <div style={{
                         background: '#ffffff',
-                        border: '2px solid #0f172a',
-                        borderRadius: '16px',
-                        padding: '28px',
-                        boxShadow: '0 10px 28px rgba(15,23,42,0.08)'
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '12px',
+                        padding: '22px',
+                        boxShadow: '0 2px 8px rgba(15,23,42,0.04)'
                       }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
-                          <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#2563eb', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                            🎯 Live Customer Verification Wizard • Question {safeIdx + 1} of {filteredQuestions.length}
-                          </span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ background: '#eff6ff', color: '#1d4ed8', fontFamily: 'monospace', fontSize: '0.8rem', fontWeight: 700, padding: '3px 9px', borderRadius: '6px' }}>
+                              {q.id}
+                            </span>
+                            <span style={{ fontSize: '0.76rem', fontWeight: 600, color: '#64748b' }}>
+                              Question {safeIdx + 1} of {filteredQuestions.length} · Module {q.module}
+                            </span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                             <span style={{
                               background: qTierMeta.bg,
                               color: qTierMeta.color,
                               border: `1px solid ${qTierMeta.border}`,
-                              padding: '4px 12px',
+                              padding: '3px 9px',
                               borderRadius: '999px',
-                              fontSize: '0.74rem',
-                              fontWeight: 800,
+                              fontSize: '0.7rem',
+                              fontWeight: 700,
                               fontFamily: "'JetBrains Mono', monospace"
                             }}>
-                              {qConfPct}% Conf • {qTierMeta.shortBadge}
+                              {qConfPct}% · {qTierMeta.shortBadge}
                             </span>
                             <span style={{
                               background: stMeta.bg,
                               color: stMeta.color,
                               border: `1px solid ${stMeta.border}`,
-                              padding: '4px 12px',
+                              padding: '3px 9px',
                               borderRadius: '999px',
-                              fontSize: '0.74rem',
-                              fontWeight: 800
+                              fontSize: '0.7rem',
+                              fontWeight: 700
                             }}>
                               {stMeta.label}
                             </span>
                           </div>
                         </div>
 
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-                          <span style={{ background: '#0f172a', color: '#ffffff', fontFamily: 'monospace', fontSize: '0.9rem', fontWeight: 800, padding: '4px 10px', borderRadius: '8px' }}>
-                            {q.id}
-                          </span>
-                          <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569' }}>
-                            Module {q.module} • {q.inputType}
-                          </span>
-                        </div>
-
-                        <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#0f172a', margin: '0 0 10px 0', lineHeight: 1.35 }}>
+                        <h2 style={{ fontSize: '1.12rem', fontWeight: 700, color: '#0f172a', margin: '0 0 14px 0', lineHeight: 1.4 }}>
                           {contextualQuestionText}
                         </h2>
-                        <p style={{ fontSize: '0.82rem', color: '#64748b', margin: '0 0 16px 0' }}>
-                          {getCustomerContextualRequiredEntry(q, dossier)}
-                        </p>
 
-                        {/* WIZARD PER-OPTION CONFIDENCE MATRIX */}
+                        {/* Wizard Options */}
                         {wizardOptions.length > 0 && (
-                          <div style={{
-                            background: '#f8fafc',
-                            border: '1.5px solid #cbd5e1',
-                            borderRadius: '12px',
-                            padding: '14px',
-                            marginBottom: '16px'
-                          }}>
-                            <div style={{ fontSize: '0.73rem', fontWeight: 800, color: '#0f172a', textTransform: 'uppercase', marginBottom: '8px' }}>
-                              📊 Selectable Options & Internal Evidence Confidence Scores (Click Option to Select)
-                            </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '7px' }}>
-                              {wizardOptions.map((optMeta) => {
-                                const oTier = TIER_META[optMeta.confidenceTier] || TIER_META.D;
-                                return (
-                                  <div
-                                    key={optMeta.optionText}
-                                    onClick={() => handleSelectOptionForQuestion(q, optMeta)}
-                                    style={{
-                                      display: 'grid',
-                                      gridTemplateColumns: '1fr auto',
-                                      gap: '10px',
-                                      alignItems: 'center',
-                                      padding: '9px 12px',
-                                      borderRadius: '9px',
-                                      border: optMeta.isSelected ? '2px solid #2563eb' : '1px solid #cbd5e1',
-                                      background: optMeta.isSelected ? '#eff6ff' : '#ffffff',
-                                      cursor: 'pointer'
-                                    }}
-                                  >
-                                    <div>
-                                      <div style={{ fontSize: '0.83rem', fontWeight: optMeta.isSelected ? 800 : 600, color: optMeta.isSelected ? '#1e3a8a' : '#0f172a' }}>
-                                        {optMeta.isSelected ? '✓ ' : ''}{optMeta.optionText}
-                                      </div>
-                                      <div style={{ fontSize: '0.68rem', color: '#64748b', marginTop: '2px' }}>
-                                        {optMeta.sourceBasis}
-                                      </div>
-                                    </div>
-                                    <span style={{
-                                      background: oTier.bg,
-                                      color: oTier.color,
-                                      border: `1px solid ${oTier.border}`,
-                                      fontSize: '0.72rem',
-                                      fontWeight: 800,
-                                      padding: '3px 9px',
-                                      borderRadius: '999px',
-                                      fontFamily: "'JetBrains Mono', monospace"
-                                    }}>
-                                      {optMeta.confidencePct}% • {oTier.shortBadge}
-                                    </span>
-                                  </div>
-                                );
-                              })}
-                            </div>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '14px' }}>
+                            {wizardOptions.map((optMeta) => {
+                              const oTier = TIER_META[optMeta.confidenceTier] || TIER_META.D;
+                              return (
+                                <div
+                                  key={optMeta.optionText}
+                                  onClick={() => handleSelectOptionForQuestion(q, optMeta)}
+                                  style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    gap: '10px',
+                                    padding: '8px 12px',
+                                    borderRadius: '8px',
+                                    border: optMeta.isSelected ? '1.5px solid #2563eb' : '1px solid #e2e8f0',
+                                    background: optMeta.isSelected ? '#eff6ff' : '#f8fafc',
+                                    cursor: 'pointer'
+                                  }}
+                                >
+                                  <span style={{ fontSize: '0.82rem', fontWeight: optMeta.isSelected ? 700 : 500, color: optMeta.isSelected ? '#1e3a8a' : '#0f172a' }}>
+                                    {optMeta.isSelected ? '✓ ' : ''}{optMeta.optionText}
+                                  </span>
+                                  <span style={{
+                                    background: oTier.bg,
+                                    color: oTier.color,
+                                    border: `1px solid ${oTier.border}`,
+                                    fontSize: '0.68rem',
+                                    fontWeight: 700,
+                                    padding: '2px 8px',
+                                    borderRadius: '999px',
+                                    fontFamily: "'JetBrains Mono', monospace",
+                                    whiteSpace: 'nowrap'
+                                  }}>
+                                    {optMeta.confidencePct}% · {oTier.shortBadge}
+                                  </span>
+                                </div>
+                              );
+                            })}
                           </div>
                         )}
 
-                        <div style={{ background: '#f8fafc', border: '1.5px solid #cbd5e1', borderRadius: '12px', padding: '16px', marginBottom: '18px' }}>
-                          <label style={{ fontSize: '0.74rem', fontWeight: 800, color: '#334155', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
-                            Recorded Value / Customer Response
+                        <div style={{ marginBottom: '14px' }}>
+                          <label style={{ fontSize: '0.7rem', fontWeight: 600, color: '#64748b', display: 'block', marginBottom: '4px' }}>
+                            Answer
                           </label>
                           <input
                             type="text"
                             value={displayValue}
-                            placeholder="Evidence Pending (Leave blank to keep Null — Never defaults to 0)"
+                            placeholder="Enter or select answer..."
                             onChange={(e) => {
                               const raw = e.target.value;
                               updateQuestionResponse(q.id, {
@@ -3241,21 +2594,21 @@ const GeValueRealizationWorkspace = () => {
                             }}
                             style={{
                               width: '100%',
-                              padding: '12px 14px',
-                              borderRadius: '10px',
-                              border: '1.5px solid #94a3b8',
-                              fontSize: '1rem',
-                              fontWeight: 700,
+                              padding: '9px 12px',
+                              borderRadius: '8px',
+                              border: '1px solid #cbd5e1',
+                              fontSize: '0.88rem',
+                              fontWeight: 600,
                               background: '#ffffff'
                             }}
                           />
                         </div>
 
-                        <div style={{ marginBottom: '20px' }}>
-                          <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#334155', textTransform: 'uppercase', marginBottom: '8px' }}>
-                            Anchored 0–4 Outcome Rubric
+                        <div style={{ marginBottom: '16px' }}>
+                          <div style={{ fontSize: '0.7rem', fontWeight: 600, color: '#64748b', marginBottom: '6px' }}>
+                            Score (0–4)
                           </div>
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px' }}>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '6px' }}>
                             {rubricItems.map((rItem) => {
                               const selected = Number(resp.outcomeScore) === rItem.score;
                               return (
@@ -3264,17 +2617,17 @@ const GeValueRealizationWorkspace = () => {
                                   onClick={() => updateQuestionResponse(q.id, { outcomeScore: rItem.score })}
                                   style={{
                                     textAlign: 'left',
-                                    padding: '10px',
-                                    borderRadius: '10px',
-                                    border: selected ? '2px solid #2563eb' : '1px solid #cbd5e1',
-                                    background: selected ? '#eff6ff' : '#ffffff',
+                                    padding: '8px',
+                                    borderRadius: '8px',
+                                    border: selected ? '1.5px solid #2563eb' : '1px solid #e2e8f0',
+                                    background: selected ? '#eff6ff' : '#f8fafc',
                                     cursor: 'pointer'
                                   }}
                                 >
-                                  <div style={{ fontSize: '0.8rem', fontWeight: 800, color: selected ? '#1d4ed8' : '#0f172a', marginBottom: '4px' }}>
+                                  <div style={{ fontSize: '0.74rem', fontWeight: 700, color: selected ? '#1d4ed8' : '#0f172a', marginBottom: '2px' }}>
                                     {rItem.label}
                                   </div>
-                                  <div style={{ fontSize: '0.68rem', color: '#475569', lineHeight: 1.3 }}>
+                                  <div style={{ fontSize: '0.64rem', color: '#64748b', lineHeight: 1.25 }}>
                                     {rItem.desc}
                                   </div>
                                 </button>
@@ -3283,25 +2636,25 @@ const GeValueRealizationWorkspace = () => {
                           </div>
                         </div>
 
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #e2e8f0', paddingTop: '16px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f1f5f9', paddingTop: '14px' }}>
                           <button
                             disabled={safeIdx === 0}
                             onClick={() => setWizardIndex(Math.max(0, safeIdx - 1))}
                             style={{
-                              padding: '10px 16px',
-                              borderRadius: '9px',
+                              padding: '8px 14px',
+                              borderRadius: '8px',
                               border: '1px solid #cbd5e1',
-                              background: safeIdx === 0 ? '#f1f5f9' : '#ffffff',
+                              background: safeIdx === 0 ? '#f8fafc' : '#ffffff',
                               color: safeIdx === 0 ? '#94a3b8' : '#0f172a',
-                              fontWeight: 700,
-                              fontSize: '0.82rem',
+                              fontWeight: 600,
+                              fontSize: '0.78rem',
                               cursor: safeIdx === 0 ? 'not-allowed' : 'pointer',
                               display: 'inline-flex',
                               alignItems: 'center',
-                              gap: '6px'
+                              gap: '5px'
                             }}
                           >
-                            <FiArrowLeft /> Previous Question
+                            <FiArrowLeft /> Previous
                           </button>
 
                           <button
@@ -3312,83 +2665,79 @@ const GeValueRealizationWorkspace = () => {
                               }
                             }}
                             style={{
-                              padding: '10px 20px',
-                              borderRadius: '9px',
+                              padding: '8px 16px',
+                              borderRadius: '8px',
                               border: 'none',
                               background: '#059669',
                               color: '#ffffff',
-                              fontWeight: 800,
-                              fontSize: '0.84rem',
+                              fontWeight: 700,
+                              fontSize: '0.78rem',
                               cursor: 'pointer',
                               display: 'inline-flex',
                               alignItems: 'center',
-                              gap: '6px'
+                              gap: '5px'
                             }}
                           >
-                            <FiCheck /> Confirm & Mark Verified with {shortCustomerName} (→ 100% Tier A)
+                            <FiCheck /> Confirm & Next
                           </button>
 
                           <button
                             disabled={safeIdx >= filteredQuestions.length - 1}
                             onClick={() => setWizardIndex(Math.min(filteredQuestions.length - 1, safeIdx + 1))}
                             style={{
-                              padding: '10px 16px',
-                              borderRadius: '9px',
+                              padding: '8px 14px',
+                              borderRadius: '8px',
                               border: '1px solid #cbd5e1',
-                              background: safeIdx >= filteredQuestions.length - 1 ? '#f1f5f9' : '#0f172a',
-                              color: safeIdx >= filteredQuestions.length - 1 ? '#94a3b8' : '#ffffff',
-                              fontWeight: 700,
-                              fontSize: '0.82rem',
+                              background: safeIdx >= filteredQuestions.length - 1 ? '#f8fafc' : '#ffffff',
+                              color: safeIdx >= filteredQuestions.length - 1 ? '#94a3b8' : '#0f172a',
+                              fontWeight: 600,
+                              fontSize: '0.78rem',
                               cursor: safeIdx >= filteredQuestions.length - 1 ? 'not-allowed' : 'pointer',
                               display: 'inline-flex',
                               alignItems: 'center',
-                              gap: '6px'
+                              gap: '5px'
                             }}
                           >
-                            Next Question <FiArrowRight />
+                            Next <FiArrowRight />
                           </button>
                         </div>
                       </div>
 
                       <div style={{
                         background: '#ffffff',
-                        border: '1px solid #cbd5e1',
-                        borderRadius: '16px',
-                        padding: '22px'
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '12px',
+                        padding: '16px'
                       }}>
-                        <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: '#64748b', marginBottom: '10px' }}>
-                          Provenance & Live Executive Signal Impact
+                        <div style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b', marginBottom: '8px' }}>
+                          Source & Score Impact
                         </div>
-                        <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px', marginBottom: '12px' }}>
-                          <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>Source Artifact</div>
-                          <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#0f172a', marginTop: '2px' }}>
-                            {resp.evidenceUrl || 'Evidence Pending'}
+                        <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '10px', marginBottom: '10px', fontSize: '0.76rem' }}>
+                          <div style={{ fontWeight: 700, color: '#0f172a' }}>
+                            📄 {resp.evidenceUrl || 'Pending'}
                           </div>
-                          <div style={{ fontSize: '0.75rem', color: '#475569', marginTop: '6px' }}>
-                            <strong>Owner:</strong> {resp.owner || 'Unassigned'}
+                          <div style={{ color: '#64748b', marginTop: '4px' }}>
+                            👤 {resp.owner || 'Unassigned'}
                           </div>
                           {resp.notes && (
-                            <div style={{ fontSize: '0.74rem', color: '#334155', marginTop: '6px', padding: '8px', background: '#fffbeb', borderRadius: '6px', border: '1px solid #fde68a' }}>
-                              💡 {resp.notes}
+                            <div style={{ color: '#475569', marginTop: '6px', paddingTop: '6px', borderTop: '1px solid #e2e8f0', fontSize: '0.72rem' }}>
+                              {resp.notes}
                             </div>
                           )}
                         </div>
 
-                        <div style={{ background: '#0f172a', color: '#ffffff', borderRadius: '12px', padding: '14px' }}>
-                          <div style={{ fontSize: '0.7rem', textTransform: 'uppercase', color: '#94a3b8', fontWeight: 800, marginBottom: '8px' }}>
-                            Live Deterministic Score Impact
+                        <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '10px', fontSize: '0.76rem' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                            <span style={{ color: '#64748b' }}>Raw Score</span>
+                            <strong style={{ color: '#0f172a', fontFamily: 'monospace' }}>{evaluation.index.rawScore}/100</strong>
                           </div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.82rem' }}>
-                            <span>Raw Performance Index:</span>
-                            <strong style={{ color: '#38bdf8', fontFamily: 'monospace' }}>{evaluation.index.rawScore} / 100</strong>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                            <span style={{ color: '#64748b' }}>Evidence-Adjusted</span>
+                            <strong style={{ color: '#2563eb', fontFamily: 'monospace' }}>{evaluation.index.evidenceAdjustedScore}/100</strong>
                           </div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.82rem' }}>
-                            <span>Evidence-Adjusted Index:</span>
-                            <strong style={{ color: '#6ee7b7', fontFamily: 'monospace' }}>{evaluation.index.evidenceAdjustedScore} / 100</strong>
-                          </div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem' }}>
-                            <span>Headline Verdict:</span>
-                            <strong style={{ color: evaluation.anyGateOpen ? '#fca5a5' : '#6ee7b7' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <span style={{ color: '#64748b' }}>Verdict</span>
+                            <strong style={{ color: evaluation.anyGateOpen ? '#dc2626' : '#059669' }}>
                               {evaluation.overallHeadlineVerdict}
                             </strong>
                           </div>
@@ -3401,37 +2750,29 @@ const GeValueRealizationWorkspace = () => {
             )}
 
             {/* ===============================================================
-                MODE 3: COMPACT ALL-ON-ONE-PAGE AUDIT GRID
+                MODE 3: COMPACT TABLE VIEW
                =============================================================== */}
             {inputMode === 'grid' && (
               <div style={{
                 background: '#ffffff',
-                border: '1px solid #cbd5e1',
-                borderRadius: '14px',
+                border: '1px solid #e2e8f0',
+                borderRadius: '12px',
                 overflow: 'hidden',
-                boxShadow: '0 2px 8px rgba(15,23,42,0.04)'
+                boxShadow: '0 1px 3px rgba(15,23,42,0.02)'
               }}>
-                <div style={{ padding: '14px 18px', background: '#0f172a', color: '#ffffff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.84rem', fontWeight: 800 }}>
-                    ⊞ Compact All-on-One-Page Audit Ledger ({filteredQuestions.length} Questions Shown)
-                  </span>
-                  <span style={{ fontSize: '0.74rem', color: '#94a3b8' }}>
-                    Inline edit any value, verification status, confidence tier, or 0–4 score
-                  </span>
-                </div>
                 <div style={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.78rem' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.76rem' }}>
                     <thead>
-                      <tr style={{ background: '#f8fafc', borderBottom: '2px solid #cbd5e1', textAlign: 'left' }}>
-                        <th style={{ padding: '10px 12px', width: '64px' }}>ID</th>
-                        <th style={{ padding: '10px 12px', width: '54px' }}>Mod</th>
-                        <th style={{ padding: '10px 12px', minWidth: '250px' }}>Question</th>
-                        <th style={{ padding: '10px 12px', minWidth: '220px' }}>Recorded Value</th>
-                        <th style={{ padding: '10px 12px', width: '150px' }}>Confidence (% & Tier)</th>
-                        <th style={{ padding: '10px 12px', width: '150px' }}>Verification Status</th>
-                        <th style={{ padding: '10px 12px', width: '80px' }}>Score</th>
-                        <th style={{ padding: '10px 12px', width: '110px' }}>Customer Action</th>
-                        <th style={{ padding: '10px 12px', minWidth: '170px' }}>Source & Owner</th>
+                      <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0', textAlign: 'left', color: '#475569' }}>
+                        <th style={{ padding: '9px 12px', width: '58px' }}>ID</th>
+                        <th style={{ padding: '9px 12px', width: '48px' }}>Mod</th>
+                        <th style={{ padding: '9px 12px', minWidth: '240px' }}>Question</th>
+                        <th style={{ padding: '9px 12px', minWidth: '200px' }}>Answer</th>
+                        <th style={{ padding: '9px 12px', width: '120px' }}>Confidence</th>
+                        <th style={{ padding: '9px 12px', width: '130px' }}>Status</th>
+                        <th style={{ padding: '9px 12px', width: '70px' }}>Score</th>
+                        <th style={{ padding: '9px 12px', width: '95px' }}>Action</th>
+                        <th style={{ padding: '9px 12px', minWidth: '150px' }}>Source</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -3444,21 +2785,21 @@ const GeValueRealizationWorkspace = () => {
                         const displayVal = Array.isArray(resp.value) ? resp.value.join('; ') : (resp.value ?? '');
                         const contextualQuestionText = getCustomerContextualQuestionText(q, dossier);
                         return (
-                          <tr key={q.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
-                            <td style={{ padding: '8px 12px', fontFamily: 'monospace', fontWeight: 800, color: '#0f172a' }}>
+                          <tr key={q.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                            <td style={{ padding: '7px 12px', fontFamily: 'monospace', fontWeight: 700, color: '#1d4ed8' }}>
                               {q.id}
                             </td>
-                            <td style={{ padding: '8px 12px', fontWeight: 700, color: '#475569' }}>
+                            <td style={{ padding: '7px 12px', fontWeight: 600, color: '#64748b' }}>
                               {q.module}
                             </td>
-                            <td style={{ padding: '8px 12px', color: '#1e293b', fontWeight: 600 }}>
+                            <td style={{ padding: '7px 12px', color: '#0f172a', fontWeight: 600 }}>
                               {contextualQuestionText}
                             </td>
-                            <td style={{ padding: '8px 12px' }}>
+                            <td style={{ padding: '7px 12px' }}>
                               <input
                                 type="text"
                                 value={displayVal}
-                                placeholder="Evidence Pending"
+                                placeholder="Pending"
                                 onChange={(e) => {
                                   const raw = e.target.value;
                                   updateQuestionResponse(q.id, {
@@ -3468,29 +2809,29 @@ const GeValueRealizationWorkspace = () => {
                                 }}
                                 style={{
                                   width: '100%',
-                                  padding: '5px 8px',
+                                  padding: '4px 7px',
                                   borderRadius: '6px',
                                   border: '1px solid #cbd5e1',
-                                  fontSize: '0.76rem'
+                                  fontSize: '0.74rem'
                                 }}
                               />
                             </td>
-                            <td style={{ padding: '8px 12px' }}>
+                            <td style={{ padding: '7px 12px' }}>
                               <span style={{
                                 display: 'inline-block',
                                 background: qTierMeta.bg,
                                 color: qTierMeta.color,
                                 border: `1px solid ${qTierMeta.border}`,
                                 borderRadius: '999px',
-                                padding: '3px 8px',
-                                fontSize: '0.7rem',
-                                fontWeight: 800,
+                                padding: '2px 7px',
+                                fontSize: '0.66rem',
+                                fontWeight: 700,
                                 fontFamily: 'monospace'
                               }}>
-                                {qConfPct}% • {qTierMeta.shortBadge}
+                                {qConfPct}% · {qTierMeta.shortBadge}
                               </span>
                             </td>
-                            <td style={{ padding: '8px 12px' }}>
+                            <td style={{ padding: '7px 12px' }}>
                               <select
                                 value={resp.verificationStatus || 'pending'}
                                 onChange={(e) => updateQuestionResponse(q.id, { verificationStatus: e.target.value })}
@@ -3500,21 +2841,21 @@ const GeValueRealizationWorkspace = () => {
                                   color: stMeta.color,
                                   border: `1px solid ${stMeta.border}`,
                                   borderRadius: '6px',
-                                  padding: '4px 6px',
-                                  fontSize: '0.72rem',
+                                  padding: '3px 6px',
+                                  fontSize: '0.7rem',
                                   fontWeight: 700
                                 }}
                               >
                                 <option value="verified">🟢 Verified</option>
-                                <option value="draft_verify">🟡 Verify w/ {shortCustomerName}</option>
+                                <option value="draft_verify">🟡 Needs Review</option>
                                 <option value="pending">⚪ Pending</option>
                               </select>
                             </td>
-                            <td style={{ padding: '8px 12px' }}>
+                            <td style={{ padding: '7px 12px' }}>
                               <select
                                 value={resp.outcomeScore ?? 0}
                                 onChange={(e) => updateQuestionResponse(q.id, { outcomeScore: Number(e.target.value) })}
-                                style={{ width: '100%', padding: '4px 6px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.74rem', fontWeight: 800, fontFamily: 'monospace' }}
+                                style={{ width: '100%', padding: '3px 5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.72rem', fontWeight: 700, fontFamily: 'monospace' }}
                               >
                                 <option value="0">0</option>
                                 <option value="1">1</option>
@@ -3523,7 +2864,7 @@ const GeValueRealizationWorkspace = () => {
                                 <option value="4">4</option>
                               </select>
                             </td>
-                            <td style={{ padding: '8px 12px' }}>
+                            <td style={{ padding: '7px 12px' }}>
                               <button
                                 onClick={() => handleConfirmQuestionWithCustomer(q.id)}
                                 style={{
@@ -3531,18 +2872,18 @@ const GeValueRealizationWorkspace = () => {
                                   color: resp.verificationStatus === 'verified' ? '#047857' : '#ffffff',
                                   border: resp.verificationStatus === 'verified' ? '1px solid #6ee7b7' : 'none',
                                   borderRadius: '6px',
-                                  padding: '4px 8px',
-                                  fontSize: '0.68rem',
-                                  fontWeight: 800,
+                                  padding: '4px 7px',
+                                  fontSize: '0.66rem',
+                                  fontWeight: 700,
                                   cursor: 'pointer',
                                   width: '100%'
                                 }}
                               >
-                                {resp.verificationStatus === 'verified' ? '✓ Confirmed' : '✓ Confirm'}
+                                {resp.verificationStatus === 'verified' ? '✓ Confirmed' : 'Confirm'}
                               </button>
                             </td>
-                            <td style={{ padding: '8px 12px', fontSize: '0.7rem', color: '#475569' }}>
-                              <div style={{ fontWeight: 700, color: '#0f172a' }}>{resp.evidenceUrl || 'Pending'}</div>
+                            <td style={{ padding: '7px 12px', fontSize: '0.68rem', color: '#64748b' }}>
+                              <div style={{ fontWeight: 600, color: '#334155' }}>{resp.evidenceUrl || 'Pending'}</div>
                               <div>{resp.owner || 'Unassigned'}</div>
                             </td>
                           </tr>
@@ -3555,74 +2896,64 @@ const GeValueRealizationWorkspace = () => {
             )}
 
             {/* ===============================================================
-                BOTTOM SUBMIT QUESTIONNAIRE & GENERATE GEMINI API REPORT BAR
+                LIGHT COMPACT SUBMIT FOOTER BAR
                =============================================================== */}
             <div style={{
-              marginTop: '20px',
-              background: 'linear-gradient(135deg, #0f172a 0%, #064e3b 100%)',
-              color: '#ffffff',
-              border: '2px solid #10b981',
-              borderRadius: '16px',
-              padding: '20px 26px',
+              marginTop: '16px',
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
+              borderRadius: '12px',
+              padding: '14px 18px',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
               flexWrap: 'wrap',
-              gap: '16px',
-              boxShadow: '0 10px 28px rgba(5, 150, 105, 0.2)'
+              gap: '12px',
+              boxShadow: '0 1px 3px rgba(15,23,42,0.03)'
             }}>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                  <span style={{ background: '#10b981', color: '#052e16', fontSize: '0.7rem', fontWeight: 900, padding: '3px 9px', borderRadius: '999px', textTransform: 'uppercase' }}>
-                    ✨ Live Gemini API Report Synthesizer
-                  </span>
-                  <span style={{ fontSize: '0.75rem', color: '#a7f3d0', fontWeight: 700 }}>
-                    {statusCounts.verified} Verified • {statusCounts.draft_verify} Pre-Filled • {statusCounts.pending} Pending across {GE_QUESTIONS.length} Questions
-                  </span>
+                <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0f172a' }}>
+                  Ready to generate {shortCustomerName}’s Executive Report?
                 </div>
-                <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: '#ffffff' }}>
-                  Ready to Regenerate {customerName}’s Executive Readout from Your Questionnaire Selections?
-                </h3>
-                <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#cbd5e1' }}>
-                  Clicking Submit passes all {GE_QUESTIONS.length} questions, your selected options, workflow telemetry, and 8-source evidence to the Google Gemini API to synthesize a customer-specific McKinsey & Google Executive Readout.
-                </p>
+                <div style={{ fontSize: '0.74rem', color: '#64748b', marginTop: '2px' }}>
+                  {statusCounts.verified} verified · {statusCounts.draft_verify} to review · {statusCounts.pending} pending across {GE_QUESTIONS.length} questions
+                </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                 <button
                   onClick={handleRandomizeCurrentCustomerOptions}
                   style={{
-                    background: 'rgba(255,255,255,0.1)',
-                    color: '#fbcfe8',
-                    border: '1px solid rgba(244, 114, 182, 0.5)',
-                    borderRadius: '10px',
-                    padding: '11px 16px',
-                    fontSize: '0.8rem',
-                    fontWeight: 800,
+                    background: '#f8fafc',
+                    color: '#334155',
+                    border: '1px solid #cbd5e1',
+                    borderRadius: '8px',
+                    padding: '8px 13px',
+                    fontSize: '0.76rem',
+                    fontWeight: 600,
                     cursor: 'pointer'
                   }}
                 >
-                  🔀 Randomize All 82 Options First
+                  🔀 Randomize Answers
                 </button>
                 <button
                   onClick={handleSubmitAndGenerateGeminiReport}
                   disabled={generatingGeminiReport}
                   style={{
-                    background: generatingGeminiReport ? '#475569' : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    background: generatingGeminiReport ? '#94a3b8' : '#059669',
                     color: '#ffffff',
-                    border: '1px solid #6ee7b7',
-                    borderRadius: '10px',
-                    padding: '12px 22px',
-                    fontSize: '0.88rem',
-                    fontWeight: 900,
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '8px 16px',
+                    fontSize: '0.8rem',
+                    fontWeight: 700,
                     cursor: generatingGeminiReport ? 'wait' : 'pointer',
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '8px',
-                    boxShadow: '0 6px 20px rgba(16, 185, 129, 0.4)'
+                    gap: '6px'
                   }}
                 >
-                  {generatingGeminiReport ? '🧠 Gemini API Synthesizing Report...' : '🚀 Submit Questionnaire & Generate Real Report with Gemini API'}
+                  {generatingGeminiReport ? 'Generating...' : '✨ Generate Executive Report'}
                 </button>
               </div>
             </div>
@@ -3630,42 +2961,39 @@ const GeValueRealizationWorkspace = () => {
         )}
 
         {/* ===================================================================
-            VIEW 2: MCKINSEY & GOOGLE CLOUD EXECUTIVE READOUT (5 EXHIBITS + GEMINI API REPORT)
+            VIEW 2: EXECUTIVE REPORT
            =================================================================== */}
         {primaryView === 'report' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
 
-            {/* TOP NON-COMPENSABLE GATE BANNER */}
+            {/* LIGHT GATE STATUS BANNER */}
             <div style={{
-              background: evaluation.anyGateOpen
-                ? 'linear-gradient(90deg, #7f1d1d 0%, #991b1b 50%, #7f1d1d 100%)'
-                : 'linear-gradient(90deg, #064e3b 0%, #047857 50%, #064e3b 100%)',
-              color: '#ffffff',
-              borderRadius: '14px',
-              padding: '14px 20px',
+              background: evaluation.anyGateOpen ? '#fef2f2' : '#ecfdf5',
+              color: evaluation.anyGateOpen ? '#991b1b' : '#065f46',
+              borderRadius: '12px',
+              padding: '12px 18px',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
               flexWrap: 'wrap',
-              gap: '12px',
-              border: evaluation.anyGateOpen ? '1.5px solid #f87171' : '1.5px solid #34d399',
-              boxShadow: '0 6px 20px rgba(15, 23, 42, 0.12)'
+              gap: '10px',
+              border: evaluation.anyGateOpen ? '1px solid #fecaca' : '1px solid #a7f3d0'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
                 <span style={{
-                  background: 'rgba(255,255,255,0.16)',
-                  padding: '6px 12px',
-                  borderRadius: '8px',
-                  fontWeight: 900,
-                  fontSize: '0.78rem',
-                  letterSpacing: '0.04em'
+                  background: evaluation.anyGateOpen ? '#dc2626' : '#059669',
+                  color: '#ffffff',
+                  padding: '4px 10px',
+                  borderRadius: '6px',
+                  fontWeight: 700,
+                  fontSize: '0.72rem'
                 }}>
-                  {evaluation.anyGateOpen ? `🛑 RELEASE GATE: ${evaluation.overallHeadlineVerdict}` : '🟢 ALL 5 GOVERNANCE GATES CLEARED'}
+                  {evaluation.anyGateOpen ? `Gate Open: ${evaluation.overallHeadlineVerdict}` : 'All 5 Gates Cleared'}
                 </span>
-                <span style={{ fontSize: '0.83rem', fontWeight: 600, color: '#f8fafc' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>
                   {evaluation.anyGateOpen
-                    ? `${evaluation.openGatesCount} of 5 Non-Compensable Release Gates are OPEN for ${customerName} (${evaluation.gates.filter((g) => g.triggered).map((g) => g.name).join(' & ')}). High adoption cannot override an open gate.`
-                    : `All 5 Non-Compensable Governance, Compliance, and Finance Reconciliation Gates are verified for ${customerName}.`}
+                    ? `${evaluation.openGatesCount} of 5 release gates open (${evaluation.gates.filter((g) => g.triggered).map((g) => g.name).join(', ')}).`
+                    : `All 5 governance and finance gates verified for ${shortCustomerName}.`}
                 </span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -3673,102 +3001,99 @@ const GeValueRealizationWorkspace = () => {
                   onClick={handleSubmitAndGenerateGeminiReport}
                   disabled={generatingGeminiReport}
                   style={{
-                    background: '#10b981',
-                    color: '#052e16',
+                    background: '#059669',
+                    color: '#ffffff',
                     border: 'none',
-                    borderRadius: '8px',
+                    borderRadius: '7px',
                     padding: '6px 12px',
-                    fontSize: '0.75rem',
-                    fontWeight: 900,
+                    fontSize: '0.74rem',
+                    fontWeight: 700,
                     cursor: generatingGeminiReport ? 'wait' : 'pointer'
                   }}
                 >
-                  {generatingGeminiReport ? '🧠 Synthesizing...' : '🔄 Regenerate Readout with Gemini API'}
+                  {generatingGeminiReport ? 'Generating...' : '✨ Refresh Report'}
                 </button>
                 <button
                   onClick={() => { setPrimaryView('inputs'); setActiveModuleId('L'); }}
                   style={{
                     background: '#ffffff',
                     color: '#0f172a',
-                    border: 'none',
-                    borderRadius: '8px',
+                    border: '1px solid #cbd5e1',
+                    borderRadius: '7px',
                     padding: '6px 12px',
-                    fontSize: '0.75rem',
-                    fontWeight: 800,
+                    fontSize: '0.74rem',
+                    fontWeight: 600,
                     cursor: 'pointer'
                   }}
                 >
-                  Inspect Gate Evidence →
+                  Review Gates →
                 </button>
               </div>
             </div>
 
-            {/* ===============================================================
-                LIVE GEMINI API SYNTHESIZED ASSESSMENT READOUT BANNER (WHEN GENERATED)
-               =============================================================== */}
+            {/* LIGHT GEMINI API SYNTHESIS CARD (WHEN GENERATED) */}
             {dossier.geminiReport && (
               <div style={{
-                background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)',
-                color: '#ffffff',
-                border: '2px solid #38bdf8',
-                borderRadius: '16px',
-                padding: '22px 26px',
-                boxShadow: '0 12px 30px rgba(15, 23, 42, 0.22)'
+                background: '#f8fafc',
+                border: '1px solid #bae6fd',
+                borderLeft: '4px solid #0284c7',
+                borderRadius: '12px',
+                padding: '16px 20px'
               }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', marginBottom: '12px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                    <span style={{ background: '#38bdf8', color: '#0f172a', fontSize: '0.7rem', fontWeight: 900, padding: '3px 10px', borderRadius: '999px', textTransform: 'uppercase' }}>
-                      ✨ Live Google Gemini API Executive Synthesis ({dossier.geminiReport.modelUsed || 'gemini-2.5-flash'})
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ background: '#e0f2fe', color: '#0369a1', fontSize: '0.68rem', fontWeight: 700, padding: '2px 8px', borderRadius: '999px' }}>
+                      ✨ AI Executive Summary ({dossier.geminiReport.modelUsed || 'gemini-2.5-flash'})
                     </span>
-                    <span style={{ fontSize: '0.74rem', color: '#93c5fd', fontFamily: 'monospace' }}>
-                      Synthesized from {dossier.geminiReport.questionCountSubmitted || GE_QUESTIONS.length} Questionnaire Selections • Prefill Mode: {(dossier.geminiReport.prefillMode || activePrefillMode).toUpperCase()} • {dossier.geminiReport.generatedAt?.slice(0, 19).replace('T', ' ')} UTC
+                    <span style={{ fontSize: '0.7rem', color: '#64748b' }}>
+                      {dossier.geminiReport.questionCountSubmitted || GE_QUESTIONS.length} answers · {dossier.geminiReport.generatedAt?.slice(0, 16).replace('T', ' ')}
                     </span>
                   </div>
                   <button
                     onClick={() => setPrimaryView('inputs')}
                     style={{
-                      background: 'rgba(255,255,255,0.1)',
-                      color: '#e2e8f0',
-                      border: '1px solid rgba(255,255,255,0.25)',
-                      borderRadius: '8px',
-                      padding: '5px 11px',
-                      fontSize: '0.73rem',
-                      fontWeight: 700,
+                      background: '#ffffff',
+                      color: '#334155',
+                      border: '1px solid #cbd5e1',
+                      borderRadius: '6px',
+                      padding: '4px 10px',
+                      fontSize: '0.72rem',
+                      fontWeight: 600,
                       cursor: 'pointer'
                     }}
                   >
-                    ✎ Edit Questionnaire Options & Re-Submit
+                    Edit Answers
                   </button>
                 </div>
 
-                <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#f8fafc', lineHeight: 1.4, marginBottom: '14px', borderLeft: '4px solid #38bdf8', paddingLeft: '12px' }}>
+                <div style={{ fontSize: '1.02rem', fontWeight: 700, color: '#0f172a', lineHeight: 1.4, marginBottom: '8px' }}>
                   {dossier.geminiReport.executiveHeadline}
                 </div>
 
                 {dossier.geminiReport.cfoAuditOpinion && (
-                  <div style={{ background: 'rgba(16, 185, 129, 0.14)', border: '1px solid rgba(110, 231, 183, 0.4)', borderRadius: '10px', padding: '10px 14px', fontSize: '0.8rem', color: '#d1fae5' }}>
-                    <strong>🏦 CFO & Governance Audit Opinion:</strong> {dossier.geminiReport.cfoAuditOpinion}
+                  <div style={{ fontSize: '0.78rem', color: '#475569' }}>
+                    <strong>Audit Note:</strong> {dossier.geminiReport.cfoAuditOpinion}
                   </div>
                 )}
               </div>
             )}
 
             {/* ===============================================================
-                EXHIBIT 1: MCKINSEY MINTO ACTION TITLE + SCR + 3 SIGNALS
+                EXHIBIT 1: EXECUTIVE SUMMARY & 3 SIGNALS
                =============================================================== */}
             <div style={{
               background: '#ffffff',
-              border: '1px solid #cbd5e1',
-              borderRadius: '16px',
-              padding: '24px 28px',
-              boxShadow: '0 4px 14px rgba(15,23,42,0.04)'
+              border: '1px solid #e2e8f0',
+              borderRadius: '12px',
+              padding: '20px 22px',
+              boxShadow: '0 1px 3px rgba(15,23,42,0.02)'
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <span style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1d4ed8' }}>
-                  Exhibit 1 • Executive Synthesis (McKinsey Minto Pyramid & 3 Independent Management Signals)
+                <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#2563eb' }}>
+                  Executive Summary
                 </span>
-                <span style={{ fontSize: '0.72rem', fontFamily: 'monospace', color: '#64748b' }}>
-                  Dossier ID: {dossier.id} • SFDC: {dossier.meta?.sfdcAccountId || dossier.meta?.vectorAccountId} • Window: {dossier.meta?.currentWindow}
+                <span style={{ fontSize: '0.7rem', fontFamily: 'monospace', color: '#94a3b8' }}>
+                  {dossier.meta?.sfdcAccountId || dossier.meta?.vectorAccountId} · {dossier.meta?.currentWindow}
                 </span>
               </div>
 
@@ -3780,59 +3105,57 @@ const GeValueRealizationWorkspace = () => {
                 const mauVal = tel.multiApiMau30d ?? tel.mauMultiApi ?? 0;
                 const wauVal = tel.allApiWau7d ?? tel.wauMultiApi ?? fiveCols.col4NonFinancial?.wau ?? 0;
                 const agentReqsVal = tel.agentRequests7d ?? fiveCols.col4NonFinancial?.agent7dRequests ?? 0;
-                const legacyName = dossier.legacyRetirement?.legacyToolName || dossier.meta?.legacyPlatformName || 'Legacy AI / Manual Workflows';
+                const legacyName = dossier.legacyRetirement?.legacyToolName || dossier.meta?.legacyPlatformName || 'Legacy AI';
                 const unassignedProvisioned = Math.max(0, provisionedVal - assignedVal);
 
                 return (
                   <>
                     <h2 style={{
-                      fontSize: '1.3rem',
-                      fontWeight: 800,
+                      fontSize: '1.15rem',
+                      fontWeight: 700,
                       color: '#0f172a',
-                      margin: '0 0 18px 0',
-                      lineHeight: 1.35,
-                      borderLeft: '4px solid #1d4ed8',
-                      paddingLeft: '14px'
+                      margin: '0 0 16px 0',
+                      lineHeight: 1.4
                     }}>
-                      {dossier.geminiReport?.executiveHeadline || `${dossier.meta?.customerName || 'Enterprise Customer'}’s migration to Gemini Enterprise achieved ${fiveCols.col4NonFinancial?.wauOfAssignedPct || 55.0}% weekly active conversion (${formatNumber(wauVal)} WAU / ${formatNumber(assignedVal)} assigned across ${formatNumber(contractedVal)} contracted seats) and ${formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualBase)}/yr in validated capacity (${formatNumber(fiveCols.col2ValidatedCapacity?.hoursMonthlyBase, ' hrs/mo')}), while ${formatCurrency(fiveCols.col3ModeledOpportunity?.base)} in modeled opportunity remains quarantined pending legacy cost reconciliation (L01–L03) and connector validation.`}
+                      {dossier.geminiReport?.executiveHeadline || `${dossier.meta?.customerName || 'Customer'} reached ${fiveCols.col4NonFinancial?.wauOfAssignedPct || 55.0}% weekly active usage (${formatNumber(wauVal)} WAU / ${formatNumber(assignedVal)} assigned) and ${formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualBase)}/yr in validated capacity (${formatNumber(fiveCols.col2ValidatedCapacity?.hoursMonthlyBase, ' hrs/mo')}), with ${formatCurrency(fiveCols.col3ModeledOpportunity?.base)} in pipeline value.`}
                     </h2>
 
-                    {/* 3-Column Situation - Complication - Resolution (SCR) */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px', marginBottom: '20px' }}>
-                      <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderTop: '3px solid #2563eb', borderRadius: '10px', padding: '14px 16px' }}>
-                        <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: '#1d4ed8', marginBottom: '6px' }}>
-                          1. Situation (Verified Multi-Source Telemetry)
+                    {/* 3-Column Situation - Complication - Resolution */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '16px' }}>
+                      <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderTop: '3px solid #2563eb', borderRadius: '8px', padding: '12px 14px' }}>
+                        <div style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', color: '#1d4ed8', marginBottom: '4px' }}>
+                          1. Situation
                         </div>
-                        <p style={{ margin: 0, fontSize: '0.81rem', color: '#334155', lineHeight: 1.5 }}>
+                        <p style={{ margin: 0, fontSize: '0.78rem', color: '#334155', lineHeight: 1.45 }}>
                           {dossier.geminiReport?.situationBeforeMigration || (
                             <>
-                              <strong>{dossier.meta?.customerName}</strong> contracted <strong>{formatNumber(contractedVal)}</strong> Gemini Enterprise seats (<strong>{formatNumber(provisionedVal)}</strong> provisioned) to modernize its legacy baseline (<strong>{legacyName}</strong>). Current cohort assigned <strong>{formatNumber(assignedVal)}</strong> seats, generating <strong>{formatNumber(mauVal)}</strong> Multi-API MAU, <strong>{formatNumber(wauVal)}</strong> WAU, and <strong>{formatNumber(agentReqsVal)}</strong> 7-day agent runs.
+                              <strong>{shortCustomerName}</strong> contracted <strong>{formatNumber(contractedVal)}</strong> seats (<strong>{formatNumber(provisionedVal)}</strong> provisioned) to replace <strong>{legacyName}</strong>. Currently <strong>{formatNumber(assignedVal)}</strong> assigned, driving <strong>{formatNumber(mauVal)}</strong> MAU, <strong>{formatNumber(wauVal)}</strong> WAU, and <strong>{formatNumber(agentReqsVal)}</strong> weekly agent runs.
                             </>
                           )}
                         </p>
                       </div>
 
-                      <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderTop: '3px solid #d97706', borderRadius: '10px', padding: '14px 16px' }}>
-                        <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: '#b45309', marginBottom: '6px' }}>
-                          2. Complication (Cost Bridge & Connector Blockers)
+                      <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderTop: '3px solid #d97706', borderRadius: '8px', padding: '12px 14px' }}>
+                        <div style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', color: '#b45309', marginBottom: '4px' }}>
+                          2. Complication
                         </div>
-                        <p style={{ margin: 0, fontSize: '0.81rem', color: '#334155', lineHeight: 1.5 }}>
+                        <p style={{ margin: 0, fontSize: '0.78rem', color: '#334155', lineHeight: 1.45 }}>
                           {dossier.geminiReport?.complicationAndBlockers || (
                             <>
-                              <strong>{formatNumber(unassignedProvisioned)}</strong> provisioned seats await next-wave assignment gated on enterprise connector ACL governance and legacy cutover ({(Array.isArray(dossier.questionResponses?.A05?.value) ? dossier.questionResponses.A05.value[0] : dossier.questionResponses?.A05?.value) || dossier.questionResponses?.P06?.value || 'Enterprise connector verification active'}). Meanwhile, 12-month legacy invoices (<strong>L01</strong>) and retired spend (<strong>L02</strong>) remain <strong>Evidence Pending</strong>, keeping Gate 4 open.
+                              <strong>{formatNumber(unassignedProvisioned)}</strong> provisioned seats await connector governance and cutover ({(Array.isArray(dossier.questionResponses?.A05?.value) ? dossier.questionResponses.A05.value[0] : dossier.questionResponses?.A05?.value) || dossier.questionResponses?.P06?.value || 'connector review'}). Legacy cost ledger (L01–L02) is still pending Finance sign-off.
                             </>
                           )}
                         </p>
                       </div>
 
-                      <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderTop: '3px solid #059669', borderRadius: '10px', padding: '14px 16px' }}>
-                        <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: '#047857', marginBottom: '6px' }}>
-                          3. Resolution (Joint Value Realization Plan)
+                      <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderTop: '3px solid #059669', borderRadius: '8px', padding: '12px 14px' }}>
+                        <div style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', color: '#047857', marginBottom: '4px' }}>
+                          3. Resolution
                         </div>
-                        <p style={{ margin: 0, fontSize: '0.81rem', color: '#334155', lineHeight: 1.5 }}>
+                        <p style={{ margin: 0, fontSize: '0.78rem', color: '#334155', lineHeight: 1.45 }}>
                           {dossier.geminiReport?.resolutionAndValueRealized || (
                             <>
-                              (1) Reconcile 12-month legacy invoice ledger (<strong>L01–L03</strong>) with {dossier.meta?.customerName} Finance to unlock Column 1 Realized Cash; (2) Ship enterprise connector opt-in controls to scale seat assignment; (3) Complete timed pre/post telemetry on scoping workflows to graduate {formatCurrency(fiveCols.col3ModeledOpportunity?.base)} from Column 3 to Column 2.
+                              (1) Reconcile legacy spend (L01–L03) with Finance; (2) Complete enterprise connector sign-off to assign remaining seats; (3) Validate scoping workflows to unlock {formatCurrency(fiveCols.col3ModeledOpportunity?.base)}.
                             </>
                           )}
                         </p>
@@ -3842,89 +3165,76 @@ const GeValueRealizationWorkspace = () => {
                 );
               })()}
 
-              {/* 3 Independent Management Signals */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1.25fr 1fr 1.15fr', gap: '16px' }}>
-                <div style={{ background: '#0f172a', color: '#ffffff', borderRadius: '12px', padding: '16px 18px' }}>
-                  <div style={{ fontSize: '0.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#7dd3fc', marginBottom: '10px' }}>
-                    Signal 1 • Executive Financial & Capacity Ledger
+              {/* 3 Light Management Signal Cards */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1.25fr 1fr 1.15fr', gap: '12px' }}>
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '14px 16px' }}>
+                  <div style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', color: '#475569', marginBottom: '8px' }}>
+                    Financial Summary
                   </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
-                    <div style={{ background: 'rgba(255,255,255,0.06)', padding: '10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.12)' }}>
-                      <div style={{ fontSize: '0.65rem', color: '#94a3b8' }}>Col 1: Realized Cash</div>
-                      <div style={{ fontSize: '1.05rem', fontWeight: 800, color: fiveCols.col1RealizedCash?.base !== null ? '#6ee7b7' : '#fcd34d', fontFamily: 'monospace', marginTop: '4px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                    <div style={{ background: '#ffffff', padding: '8px 10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                      <div style={{ fontSize: '0.64rem', color: '#64748b' }}>Realized Cash</div>
+                      <div style={{ fontSize: '0.96rem', fontWeight: 800, color: fiveCols.col1RealizedCash?.base !== null ? '#047857' : '#b45309', fontFamily: 'monospace', marginTop: '2px' }}>
                         {formatCurrency(fiveCols.col1RealizedCash?.base)}
                       </div>
-                      <div style={{ fontSize: '0.62rem', color: '#94a3b8', marginTop: '2px' }}>
-                        Gated on L01–L03 Invoices
-                      </div>
                     </div>
 
-                    <div style={{ background: 'rgba(16, 185, 129, 0.14)', padding: '10px', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.4)' }}>
-                      <div style={{ fontSize: '0.65rem', color: '#a7f3d0' }}>Col 2: Validated Capacity</div>
-                      <div style={{ fontSize: '1.12rem', fontWeight: 900, color: '#6ee7b7', fontFamily: 'monospace', marginTop: '4px' }}>
+                    <div style={{ background: '#ecfdf5', padding: '8px 10px', borderRadius: '8px', border: '1px solid #a7f3d0' }}>
+                      <div style={{ fontSize: '0.64rem', color: '#047857' }}>Validated Capacity</div>
+                      <div style={{ fontSize: '0.98rem', fontWeight: 800, color: '#047857', fontFamily: 'monospace', marginTop: '2px' }}>
                         {formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualBase)}/yr
                       </div>
-                      <div style={{ fontSize: '0.62rem', color: '#d1fae5', marginTop: '2px' }}>
-                        {formatNumber(fiveCols.col2ValidatedCapacity?.hoursMonthlyBase, ' hrs/mo')} (Validated WFs)
-                      </div>
                     </div>
 
-                    <div style={{ background: 'rgba(245, 158, 11, 0.14)', padding: '10px', borderRadius: '8px', border: '1px solid rgba(245, 158, 11, 0.4)' }}>
-                      <div style={{ fontSize: '0.65rem', color: '#fde68a' }}>Col 3: Modeled (Quarantined)</div>
-                      <div style={{ fontSize: '1.02rem', fontWeight: 800, color: '#fcd34d', fontFamily: 'monospace', marginTop: '4px' }}>
-                        {formatCurrency(fiveCols.col3ModeledOpportunity?.low)}–{formatCurrency(fiveCols.col3ModeledOpportunity?.high)}
-                      </div>
-                      <div style={{ fontSize: '0.62rem', color: '#fef3c7', marginTop: '2px' }}>
-                        Quarantined Pipeline Value
+                    <div style={{ background: '#fffbeb', padding: '8px 10px', borderRadius: '8px', border: '1px solid #fde68a' }}>
+                      <div style={{ fontSize: '0.64rem', color: '#b45309' }}>Modeled Pipeline</div>
+                      <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#b45309', fontFamily: 'monospace', marginTop: '2px' }}>
+                        {formatCurrency(fiveCols.col3ModeledOpportunity?.base)}
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Signal 2: 0–100 Value & Evidence Index */}
-                <div style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '12px', padding: '16px 18px' }}>
-                  <div style={{ fontSize: '0.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#475569', marginBottom: '10px' }}>
-                    Signal 2 • 0–100 Value & Evidence Index (Dual Score)
+                {/* Signal 2: Score */}
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '14px 16px' }}>
+                  <div style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', color: '#475569', marginBottom: '8px' }}>
+                    Value & Evidence Score
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
                     <div>
-                      <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 700 }}>Raw Performance</div>
-                      <div style={{ fontSize: '1.65rem', fontWeight: 900, color: '#0f172a', fontFamily: 'monospace' }}>
-                        {evaluation.index.rawScore}<span style={{ fontSize: '0.85rem', color: '#64748b' }}>/100</span>
+                      <div style={{ fontSize: '0.66rem', color: '#64748b', fontWeight: 600 }}>Raw Score</div>
+                      <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', fontFamily: 'monospace' }}>
+                        {evaluation.index.rawScore}<span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>/100</span>
                       </div>
                     </div>
-                    <div style={{ height: '38px', width: '1px', background: '#cbd5e1' }} />
+                    <div style={{ height: '32px', width: '1px', background: '#e2e8f0' }} />
                     <div>
-                      <div style={{ fontSize: '0.7rem', color: '#1d4ed8', fontWeight: 800 }}>Evidence-Adjusted</div>
-                      <div style={{ fontSize: '1.65rem', fontWeight: 900, color: '#2563eb', fontFamily: 'monospace' }}>
-                        {evaluation.index.evidenceAdjustedScore}<span style={{ fontSize: '0.85rem', color: '#64748b' }}>/100</span>
+                      <div style={{ fontSize: '0.66rem', color: '#2563eb', fontWeight: 700 }}>Evidence-Adjusted</div>
+                      <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#2563eb', fontFamily: 'monospace' }}>
+                        {evaluation.index.evidenceAdjustedScore}<span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>/100</span>
                       </div>
                     </div>
-                  </div>
-                  <div style={{ fontSize: '0.69rem', color: '#475569', marginTop: '8px', fontWeight: 600 }}>
-                    {evaluation.index.bandLabel} • Confidence Gap: <strong>-{evaluation.index.confidenceGap} pts</strong>
                   </div>
                 </div>
 
-                {/* Signal 3: 5 Non-Compensable Gates */}
-                <div style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '12px', padding: '16px 18px' }}>
-                  <div style={{ fontSize: '0.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#475569', marginBottom: '8px' }}>
-                    Signal 3 • 5 Non-Compensable Governance & CFO Gates
+                {/* Signal 3: 5 Gates */}
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '14px 16px' }}>
+                  <div style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', color: '#475569', marginBottom: '6px' }}>
+                    Release Gates (5)
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     {evaluation.gates.map((g) => (
-                      <div key={g.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.72rem' }}>
-                        <span style={{ fontWeight: 700, color: '#1e293b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '250px' }}>
+                      <div key={g.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.7rem' }}>
+                        <span style={{ fontWeight: 600, color: '#334155', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '220px' }}>
                           {g.name}
                         </span>
                         <span style={{
-                          padding: '2px 7px',
+                          padding: '1px 6px',
                           borderRadius: '999px',
-                          fontSize: '0.65rem',
-                          fontWeight: 800,
+                          fontSize: '0.62rem',
+                          fontWeight: 700,
                           background: !g.triggered ? '#ecfdf5' : '#fef2f2',
-                          color: !g.triggered ? '#047857' : '#dc2626',
-                          border: !g.triggered ? '1px solid #6ee7b7' : '1px solid #fecaca'
+                          color: !g.triggered ? '#047857' : '#dc2626'
                         }}>
                           {g.status}
                         </span>
@@ -3936,8 +3246,7 @@ const GeValueRealizationWorkspace = () => {
             </div>
 
             {/* ===============================================================
-                EXHIBIT 1B: BEFORE vs. AFTER MIGRATION VALUE REALIZATION SCORECARD
-                (LEGACY BASELINE vs. GEMINI ENTERPRISE)
+                EXHIBIT 1B: BEFORE vs. AFTER MIGRATION
                =============================================================== */}
             {(() => {
               const sfdcId = dossier.meta?.sfdcAccountId || dossier.meta?.vectorAccountId || '';
@@ -3950,7 +3259,7 @@ const GeValueRealizationWorkspace = () => {
               const wauBefore = isMerck ? 2100 : Math.max(150, Math.round(wauAfter * 0.36));
               const wauDeltaPct = wauBefore > 0 ? Math.round(((wauAfter - wauBefore) / wauBefore) * 100) : 179;
               const wauMultiplier = wauBefore > 0 ? (wauAfter / wauBefore).toFixed(1) : '2.8';
-              const legacyLabel = isMerck ? 'Homegrown OpenAI (GMax)' : (dossier.legacyRetirement?.legacyToolName || dossier.meta?.legacyPlatformName || 'Legacy AI / Manual');
+              const legacyLabel = isMerck ? 'Legacy OpenAI (GMax)' : (dossier.legacyRetirement?.legacyToolName || dossier.meta?.legacyPlatformName || 'Legacy Baseline');
               const wfList = (evaluation?.evaluatedWorkflows && evaluation.evaluatedWorkflows.length > 0)
                 ? evaluation.evaluatedWorkflows
                 : (dossier.workflows || []);
@@ -3982,153 +3291,123 @@ const GeValueRealizationWorkspace = () => {
 
               const dynamicComparisonRows = isMerck ? [
                 {
-                  dim: '1. Enterprise Reach & Repeat Usage (C02, A01)',
-                  before: '~2,100 active technical/power users; custom web portal only; no Workspace or enterprise search integration',
-                  after: '85,300 contracted → 10,663 Wave 1 assigned → 7,763 Multi-API MAU (72.8%) → 5,867 WAU (55.0% repeat active)',
-                  delta: '+3,767 WAU (+179% / 2.8x active user expansion)',
-                  target: '63,975 assigned (75%) → 32,000+ WAU across Wave 2',
-                  conf: '99% • Tier A',
+                  dim: '1. Active Reach (C02, A01)',
+                  before: '~2,100 users on custom web portal',
+                  after: '85,300 contracted → 10,663 assigned → 7,763 MAU → 5,867 WAU',
+                  delta: '+3,767 WAU (+179% / 2.8x)',
+                  target: '63,975 assigned → 32,000+ WAU',
+                  conf: '99% · Tier A',
                   confColor: '#047857',
                   confBg: '#ecfdf5'
                 },
                 {
-                  dim: '2. Active AI Surfaces & Agentic Depth (C05, A04)',
-                  before: 'Single-surface prompt chat + custom developer RAG scripts; 0 self-service business agents',
-                  after: '3 Unified Surfaces: Gemini Assist (5,386 WAU), Grounded Enterprise Search (4,992 WAU), Custom Agents (1,710 WAU / 12,385 7d runs)',
-                  delta: '+2 New Enterprise Surfaces + 12.4K Weekly Agent Executions',
-                  target: 'SharePoint, Veeva Vault & SAP connectors live enterprise-wide',
-                  conf: '98% • Tier A',
+                  dim: '2. AI Surfaces & Agents (C05, A04)',
+                  before: 'Single chat portal; 0 business agents',
+                  after: 'Assist (5,386 WAU), Search (4,992 WAU), Agents (1,710 WAU / 12.4K runs)',
+                  delta: '+2 Surfaces · 12.4K Runs/wk',
+                  target: 'SharePoint, Veeva & SAP live',
+                  conf: '98% · Tier A',
                   confColor: '#047857',
                   confBg: '#ecfdf5'
                 },
                 {
-                  dim: '3. WF1: Enterprise Search & "Ask HR" / ServiceNow (MER-08)',
-                  before: '22 min / lookup across fragmented portals (Confluence, Jira, HR, ServiceNow); 68% first-pass accuracy',
-                  after: '9 min / lookup with grounded citations across 4,992 users (14,500 tasks/mo); 84% first-pass accuracy',
-                  delta: '-13 min/task (-59.1%) • +16 pts QA • $1.86M/yr (2,513 hrs/mo)',
-                  target: 'Unlock 74,337 Wave 2 seats (+$4.2M/yr capacity)',
-                  conf: '88% • Tier B',
+                  dim: '3. WF1: Enterprise Search (MER-08)',
+                  before: '22 min / lookup; 68% first-pass QA',
+                  after: '9 min / lookup across 4,992 users (14,500 tasks/mo); 84% QA',
+                  delta: '-13 min (-59%) · $1.86M/yr',
+                  target: 'Scale to Wave 2 (+$4.2M/yr)',
+                  conf: '88% · Tier B',
                   confColor: '#1d4ed8',
                   confBg: '#eff6ff'
                 },
                 {
-                  dim: '4. WF2: Global Pricing & Reference Cascade (MER-06 GMAX)',
-                  before: '640 min (10.7 hrs) / pricing cascade via manual spreadsheets & legacy scripts; 62% first-pass QA',
-                  after: '80 min (1.3 hrs) / cascade via Gemini Multi-Agent workflow (45 users, 90 cascades/mo); 88% first-pass QA',
-                  delta: '-560 min/task (-87.5%) • +26 pts QA • $822K/yr (630 hrs/mo)',
-                  target: 'Graduate $100M–$300M commercial pricing case from Col 3',
-                  conf: '84% • Tier B',
+                  dim: '4. WF2: Pricing Cascade (MER-06)',
+                  before: '640 min / cascade; 62% first-pass QA',
+                  after: '80 min / cascade via multi-agent workflow (90/mo); 88% QA',
+                  delta: '-560 min (-88%) · $822K/yr',
+                  target: 'Validate commercial pricing case',
+                  conf: '84% · Tier B',
                   confColor: '#1d4ed8',
                   confBg: '#eff6ff'
                 },
                 {
-                  dim: '5. WF3: Clinical Data Review & Protocol Extraction (MER-04 GxP)',
-                  before: '90 min / clinical protocol section; un-grounded LLM outputs required heavy manual verification (70% QA)',
-                  after: '44 min / protocol section with inline clinical document grounding (85 users, 1,400 tasks/mo); 86% QA',
-                  delta: '-46 min/task (-51.1%) • +16 pts QA • $913K/yr (805 hrs/mo)',
-                  target: 'Complete Veeva MCP GxP CSV validation → scale to 1,000+ R&D seats',
-                  conf: '82% • Tier B',
+                  dim: '5. WF3: Clinical Review (MER-04 GxP)',
+                  before: '90 min / section; 70% first-pass QA',
+                  after: '44 min / section with clinical grounding (1,400/mo); 86% QA',
+                  delta: '-46 min (-51%) · $913K/yr',
+                  target: 'Complete Veeva GxP CSV',
+                  conf: '82% · Tier B',
                   confColor: '#1d4ed8',
                   confBg: '#eff6ff'
                 },
                 {
-                  dim: '6. WF4 (MER-07 HTA Dossier) & WF5 (MER-05 CMC Tech Transfer)',
-                  before: '510 min / HTA dossier section (65% QA) & 330 min / CMC batch packet (60% QA) via manual drafting',
-                  after: '255 min HTA (80% QA) & 185 min CMC (75% QA) in pilot benchmarks ($40M quarantined in Col 3 Modeled)',
-                  delta: '-50.0% (HTA) & -43.9% (CMC) Pilot Cycle Time Reduction',
-                  target: 'Complete timed pre/post study & CSV to move into Col 2 Validated',
-                  conf: '78% • Tier B',
-                  confColor: '#1d4ed8',
-                  confBg: '#eff6ff'
-                },
-                {
-                  dim: '7. Output Trust, Rework Deduction & Governance (Q01–Q05, U09)',
-                  before: 'Custom RAG chunking drift; ~28 min manual SME verification penalty; custom DevOps maintenance (4.5 FTE)',
-                  after: 'Mandatory Vertex Search citations; VPC-SC + Cloud Audit Logs; 82% user preference over legacy GMax',
-                  delta: '-54% Verification Rework • Zero P1 Privacy/Safety Incidents',
-                  target: 'Close A07 per-workflow token telemetry ("Black Box" gap)',
-                  conf: '85% • Tier B',
-                  confColor: '#1d4ed8',
-                  confBg: '#eff6ff'
-                },
-                {
-                  dim: '8. Annualized Platform Run-Rate & Hard Cash Savings (L01–L04)',
-                  before: '$1.85M/yr modeled legacy GMax run-rate (Azure OpenAI API + Vector DB + 4.5 FTE custom engineering)',
-                  after: 'Parallel run active ($0 retired today while GMax chat history bulk export & connector opt-in close; L01–L03 Pending)',
-                  delta: `${formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualBase)}/yr Validated Capacity (Hard Cash Gated on L01–L03)`,
-                  target: '$1.65M/yr hard legacy GMax cost retired post-cutover (4.5 → 0.5 FTE)',
-                  conf: '35% • Tier D',
+                  dim: '6. Legacy Cost Retirement (L01–L04)',
+                  before: '$1.85M/yr legacy GMax run-rate (4.5 FTE)',
+                  after: 'Parallel run active (L01–L03 invoices pending)',
+                  delta: `${formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualBase)}/yr Capacity`,
+                  target: 'Retire $1.65M/yr legacy spend',
+                  conf: '35% · Tier D',
                   confColor: '#475569',
                   confBg: '#f1f5f9'
                 }
               ] : [
                 {
-                  dim: '1. Enterprise Reach & Repeat Usage (C02, A01)',
-                  before: `~${formatNumber(wauBefore)} baseline users on ${legacyLabel}; siloed point tools without unified enterprise grounding`,
+                  dim: '1. Active Reach (C02, A01)',
+                  before: `~${formatNumber(wauBefore)} users on ${legacyLabel}`,
                   after: `${formatNumber(contractedVal)} contracted → ${formatNumber(assignedVal)} assigned → ${formatNumber(mauVal)} MAU → ${formatNumber(wauAfter)} WAU`,
-                  delta: `+${formatNumber(Math.max(0, wauAfter - wauBefore))} WAU (+${wauDeltaPct}% / ${wauMultiplier}x expansion)`,
-                  target: `Scale to ${formatNumber(Math.round((contractedVal || 5000) * 0.75))} active seats`,
-                  conf: '99% • Tier A',
+                  delta: `+${formatNumber(Math.max(0, wauAfter - wauBefore))} WAU (+${wauDeltaPct}%)`,
+                  target: `Scale to ${formatNumber(Math.round((contractedVal || 5000) * 0.75))} seats`,
+                  conf: '99% · Tier A',
                   confColor: '#047857',
                   confBg: '#ecfdf5'
                 },
                 {
-                  dim: '2. Active AI Surfaces & Agentic Depth (C05, A04)',
-                  before: 'Fragmented prompt interfaces & manual search across disconnected repositories',
-                  after: `Gemini Assist (${formatNumber(assistWauVal)} WAU), Enterprise Search (${formatNumber(searchWauVal)} WAU), Agents (${formatNumber(agentsWauVal)} WAU / ${formatNumber(agentReqs7dVal)} 7d runs)`,
-                  delta: `+3 Unified Surfaces + ${formatNumber(agentReqs7dVal)} Weekly Agent Runs`,
-                  target: 'Full enterprise connector mesh live across all business units',
-                  conf: '98% • Tier A',
+                  dim: '2. AI Surfaces & Agents (C05, A04)',
+                  before: 'Disconnected point tools & manual search',
+                  after: `Assist (${formatNumber(assistWauVal)}), Search (${formatNumber(searchWauVal)}), Agents (${formatNumber(agentsWauVal)} WAU / ${formatNumber(agentReqs7dVal)} runs)`,
+                  delta: `+3 Surfaces · ${formatNumber(agentReqs7dVal)} Runs/wk`,
+                  target: 'Full connector mesh live',
+                  conf: '98% · Tier A',
                   confColor: '#047857',
                   confBg: '#ecfdf5'
                 },
                 {
-                  dim: `3. WF1: ${wf1.name || 'Primary Production Workflow'} (${wf1.code || 'WF-01'})`,
-                  before: `${wf1BaseMin} min / task via legacy manual tools; ${wf1BaseQa}% first-pass QA`,
-                  after: `${wf1GemMin} min / task with Gemini Enterprise (${formatNumber(wf1.activeUsers)} users, ${formatNumber(wf1Tasks)} tasks/mo); ${wf1GemQa}% QA`,
-                  delta: `-${wf1BaseMin - wf1GemMin} min/task • +${wf1GemQa - wf1BaseQa} pts QA`,
-                  target: 'Expand across Wave 2 business units',
-                  conf: '88% • Tier B',
+                  dim: `3. WF1: ${wf1.name || 'Primary Workflow'} (${wf1.code || 'WF-01'})`,
+                  before: `${wf1BaseMin} min / task; ${wf1BaseQa}% QA`,
+                  after: `${wf1GemMin} min / task (${formatNumber(wf1.activeUsers)} users, ${formatNumber(wf1Tasks)}/mo); ${wf1GemQa}% QA`,
+                  delta: `-${wf1BaseMin - wf1GemMin} min/task · +${wf1GemQa - wf1BaseQa} pts QA`,
+                  target: 'Expand across Wave 2',
+                  conf: '88% · Tier B',
                   confColor: '#1d4ed8',
                   confBg: '#eff6ff'
                 },
                 {
-                  dim: `4. WF2: ${wf2.name || 'Secondary Agentic Workflow'} (${wf2.code || 'WF-02'})`,
-                  before: `${wf2BaseMin} min / task via legacy process; ${wf2BaseQa}% first-pass QA`,
-                  after: `${wf2GemMin} min / task via Gemini Multi-Agent workflow (${formatNumber(wf2.activeUsers)} users, ${formatNumber(wf2Tasks)} tasks/mo); ${wf2GemQa}% QA`,
-                  delta: `-${wf2BaseMin - wf2GemMin} min/task • +${wf2GemQa - wf2BaseQa} pts QA`,
-                  target: 'Graduate pipeline value from Col 3 Modeled to Col 2 Validated',
-                  conf: '84% • Tier B',
+                  dim: `4. WF2: ${wf2.name || 'Secondary Workflow'} (${wf2.code || 'WF-02'})`,
+                  before: `${wf2BaseMin} min / task; ${wf2BaseQa}% QA`,
+                  after: `${wf2GemMin} min / task (${formatNumber(wf2.activeUsers)} users, ${formatNumber(wf2Tasks)}/mo); ${wf2GemQa}% QA`,
+                  delta: `-${wf2BaseMin - wf2GemMin} min/task · +${wf2GemQa - wf2BaseQa} pts QA`,
+                  target: 'Graduate pipeline value',
+                  conf: '84% · Tier B',
                   confColor: '#1d4ed8',
                   confBg: '#eff6ff'
                 },
                 {
-                  dim: `5. WF3: ${wf3.name || 'Knowledge Grounding Workflow'} (${wf3.code || 'WF-03'})`,
-                  before: `${wf3BaseMin} min / task; high manual SME review burden (${wf3BaseQa}% QA)`,
-                  after: `${wf3GemMin} min / task with inline ACL-grounded citations (${formatNumber(wf3.activeUsers)} users); ${wf3GemQa}% QA`,
-                  delta: `-${wf3BaseMin - wf3GemMin} min/task • Grounded Citations`,
-                  target: 'Complete enterprise connector security & compliance sign-off',
-                  conf: '82% • Tier B',
+                  dim: `5. WF3: ${wf3.name || 'Knowledge Workflow'} (${wf3.code || 'WF-03'})`,
+                  before: `${wf3BaseMin} min / task; ${wf3BaseQa}% QA`,
+                  after: `${wf3GemMin} min / task (${formatNumber(wf3.activeUsers)} users); ${wf3GemQa}% QA`,
+                  delta: `-${wf3BaseMin - wf3GemMin} min/task`,
+                  target: 'Complete security sign-off',
+                  conf: '82% · Tier B',
                   confColor: '#1d4ed8',
                   confBg: '#eff6ff'
                 },
                 {
-                  dim: '6. Output Trust, Rework Deduction & Governance (Q01–Q05, U09)',
-                  before: 'Un-grounded outputs requiring ~25 min manual verification penalty per complex deliverable',
-                  after: 'Mandatory Vertex Search inline citations + Cloud Audit Logs + VPC-SC perimeter enforcement',
-                  delta: '-52% Verification Rework • Zero P1 Privacy/Safety Incidents',
-                  target: 'Close A07 per-workflow token telemetry ("Black Box" gap)',
-                  conf: '85% • Tier B',
-                  confColor: '#1d4ed8',
-                  confBg: '#eff6ff'
-                },
-                {
-                  dim: '7. Annualized Platform Run-Rate & Hard Cash Savings (L01–L04)',
-                  before: `${formatCurrency(dossier.legacyRetirement?.legacyAnnualRunRateModeledUsd || 1200000)}/yr modeled legacy AI & point-tool run-rate`,
-                  after: 'Parallel migration active ($0 retired today while L01–L03 legacy invoice ledger awaits Finance sign-off)',
-                  delta: `${formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualBase)}/yr Validated Capacity (Hard Cash Gated on L01–L03)`,
-                  target: 'Retire legacy point-tool spend post-cutover',
-                  conf: '35% • Tier D',
+                  dim: '6. Legacy Cost Retirement (L01–L04)',
+                  before: `${formatCurrency(dossier.legacyRetirement?.legacyAnnualRunRateModeledUsd || 1200000)}/yr legacy run-rate`,
+                  after: 'Parallel migration active (L01–L03 pending)',
+                  delta: `${formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualBase)}/yr Capacity`,
+                  target: 'Retire legacy spend post-cutover',
+                  conf: '35% · Tier D',
                   confColor: '#475569',
                   confBg: '#f1f5f9'
                 }
@@ -4137,186 +3416,99 @@ const GeValueRealizationWorkspace = () => {
               return (
                 <div style={{
                   background: '#ffffff',
-                  border: '1.5px solid #93c5fd',
-                  borderTop: '5px solid #1d4ed8',
-                  borderRadius: '16px',
-                  padding: '24px 28px',
-                  boxShadow: '0 6px 20px rgba(30, 58, 138, 0.06)'
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '12px',
+                  padding: '20px 22px',
+                  boxShadow: '0 1px 3px rgba(15,23,42,0.02)'
                 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px', marginBottom: '18px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', marginBottom: '14px' }}>
                     <div>
-                      <span style={{ fontSize: '0.72rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1d4ed8' }}>
-                        Exhibit 1B • Before vs. After Migration Value Realization Bridge ({dossier.meta?.currentWindow})
+                      <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#2563eb' }}>
+                        Before vs. After Migration
                       </span>
-                      <h3 style={{ margin: '4px 0 0', fontSize: '1.2rem', fontWeight: 900, color: '#0f172a' }}>
-                        {dossier.meta?.customerName}: {legacyLabel} Baseline vs. Gemini Enterprise (Verified) & Full-Cutover Target
+                      <h3 style={{ margin: '2px 0 0', fontSize: '1.05rem', fontWeight: 700, color: '#0f172a' }}>
+                        {legacyLabel} vs. Gemini Enterprise
                       </h3>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                      <span style={{ background: '#f1f5f9', color: '#475569', border: '1px solid #cbd5e1', borderRadius: '999px', padding: '5px 12px', fontSize: '0.72rem', fontWeight: 800 }}>
-                        ⏪ BEFORE: {legacyLabel}
-                      </span>
-                      <span style={{ color: '#64748b', fontWeight: 900 }}>→</span>
-                      <span style={{ background: '#eff6ff', color: '#1d4ed8', border: '1px solid #93c5fd', borderRadius: '999px', padding: '5px 12px', fontSize: '0.72rem', fontWeight: 800 }}>
-                        ⚡ AFTER (NOW): Gemini Enterprise Verified
-                      </span>
-                      <span style={{ color: '#64748b', fontWeight: 900 }}>→</span>
-                      <span style={{ background: '#ecfdf5', color: '#047857', border: '1px solid #6ee7b7', borderRadius: '999px', padding: '5px 12px', fontSize: '0.72rem', fontWeight: 800 }}>
-                        🚀 TARGET: Full Cutover + Legacy Retired
-                      </span>
-                    </div>
                   </div>
 
-                  {/* 4 Hero Before -> After Delta Strip Cards */}
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px', marginBottom: '20px' }}>
-                    {/* Card 1: Reach & Active Usage */}
-                    <div style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '12px', padding: '14px 16px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                        <span style={{ fontSize: '0.68rem', fontWeight: 800, textTransform: 'uppercase', color: '#475569' }}>
-                          1. Weekly Active Reach (A01)
-                        </span>
-                        <span style={{ background: '#ecfdf5', color: '#047857', border: '1px solid #6ee7b7', borderRadius: '999px', padding: '2px 8px', fontSize: '0.65rem', fontWeight: 800, fontFamily: 'monospace' }}>
-                          99% • Tier A
-                        </span>
+                  {/* 4 Compact KPI Delta Cards */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '16px' }}>
+                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px' }}>
+                      <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#64748b', marginBottom: '6px' }}>Weekly Active Users</div>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+                        <span style={{ fontSize: '0.82rem', color: '#64748b', textDecoration: 'line-through' }}>{formatNumber(wauBefore)}</span>
+                        <span style={{ color: '#94a3b8' }}>→</span>
+                        <span style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1d4ed8', fontFamily: 'monospace' }}>{formatNumber(wauAfter)}</span>
                       </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                        <div style={{ background: '#f1f5f9', padding: '8px 10px', borderRadius: '8px' }}>
-                          <div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>BEFORE (Baseline)</div>
-                          <div style={{ fontSize: '0.98rem', fontWeight: 800, color: '#334155', fontFamily: 'monospace' }}>~{formatNumber(wauBefore)} WAU</div>
-                          <div style={{ fontSize: '0.62rem', color: '#64748b' }}>1 Chat Surface</div>
-                        </div>
-                        <div style={{ fontWeight: 900, color: '#2563eb', fontSize: '1rem' }}>→</div>
-                        <div style={{ background: '#eff6ff', padding: '8px 10px', borderRadius: '8px', border: '1px solid #bfdbfe' }}>
-                          <div style={{ fontSize: '0.62rem', color: '#1d4ed8', fontWeight: 800 }}>AFTER (Gemini)</div>
-                          <div style={{ fontSize: '0.98rem', fontWeight: 900, color: '#1e3a8a', fontFamily: 'monospace' }}>{formatNumber(wauAfter)} WAU</div>
-                          <div style={{ fontSize: '0.62rem', color: '#1d4ed8', fontWeight: 700 }}>3 Unified Surfaces</div>
-                        </div>
+                      <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#047857', marginTop: '4px' }}>+{wauDeltaPct}% ({wauMultiplier}x)</div>
+                    </div>
+
+                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px' }}>
+                      <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#64748b', marginBottom: '6px' }}>Cycle Time (Primary WF)</div>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+                        <span style={{ fontSize: '0.82rem', color: '#64748b', textDecoration: 'line-through' }}>{wf1BaseMin}m</span>
+                        <span style={{ color: '#94a3b8' }}>→</span>
+                        <span style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1d4ed8', fontFamily: 'monospace' }}>{wf1GemMin}m</span>
                       </div>
-                      <div style={{ fontSize: '0.73rem', fontWeight: 800, color: '#047857', background: '#ecfdf5', padding: '5px 9px', borderRadius: '6px', display: 'flex', justifyContent: 'space-between' }}>
-                        <span>Realized Delta:</span>
-                        <span style={{ fontFamily: 'monospace' }}>+{wauDeltaPct}% (+{wauMultiplier}x WAU)</span>
+                      <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#047857', marginTop: '4px' }}>
+                        -{Math.round(((wf1BaseMin - wf1GemMin) / Math.max(1, wf1BaseMin)) * 100)}% faster
                       </div>
                     </div>
 
-                    {/* Card 2: Task Cycle Time */}
-                    <div style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '12px', padding: '14px 16px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                        <span style={{ fontSize: '0.68rem', fontWeight: 800, textTransform: 'uppercase', color: '#475569' }}>
-                          2. Workflow Cycle Time (W03)
-                        </span>
-                        <span style={{ background: '#eff6ff', color: '#1d4ed8', border: '1px solid #93c5fd', borderRadius: '999px', padding: '2px 8px', fontSize: '0.65rem', fontWeight: 800, fontFamily: 'monospace' }}>
-                          84% • Tier B
-                        </span>
+                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px' }}>
+                      <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#64748b', marginBottom: '6px' }}>First-Pass Quality</div>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+                        <span style={{ fontSize: '0.82rem', color: '#64748b', textDecoration: 'line-through' }}>{wf1BaseQa}%</span>
+                        <span style={{ color: '#94a3b8' }}>→</span>
+                        <span style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1d4ed8', fontFamily: 'monospace' }}>{wf1GemQa}%</span>
                       </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                        <div style={{ background: '#f1f5f9', padding: '8px 10px', borderRadius: '8px' }}>
-                          <div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>BEFORE (Baseline)</div>
-                          <div style={{ fontSize: '0.98rem', fontWeight: 800, color: '#334155', fontFamily: 'monospace' }}>{wf1BaseMin} min</div>
-                          <div style={{ fontSize: '0.62rem', color: '#64748b' }}>Primary WF Avg</div>
-                        </div>
-                        <div style={{ fontWeight: 900, color: '#2563eb', fontSize: '1rem' }}>→</div>
-                        <div style={{ background: '#eff6ff', padding: '8px 10px', borderRadius: '8px', border: '1px solid #bfdbfe' }}>
-                          <div style={{ fontSize: '0.62rem', color: '#1d4ed8', fontWeight: 800 }}>AFTER (Gemini)</div>
-                          <div style={{ fontSize: '0.98rem', fontWeight: 900, color: '#1e3a8a', fontFamily: 'monospace' }}>{wf1GemMin} min</div>
-                          <div style={{ fontSize: '0.62rem', color: '#1d4ed8', fontWeight: 700 }}>Grounded & Agentic</div>
-                        </div>
-                      </div>
-                      <div style={{ fontSize: '0.73rem', fontWeight: 800, color: '#047857', background: '#ecfdf5', padding: '5px 9px', borderRadius: '6px', display: 'flex', justifyContent: 'space-between' }}>
-                        <span>Realized Delta:</span>
-                        <span style={{ fontFamily: 'monospace' }}>-{Math.round(((wf1BaseMin - wf1GemMin) / Math.max(1, wf1BaseMin)) * 100)}% Faster ({formatNumber(fiveCols.col2ValidatedCapacity?.hoursMonthlyBase, ' hrs/mo')})</span>
-                      </div>
+                      <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#047857', marginTop: '4px' }}>+{wf1GemQa - wf1BaseQa} pts QA</div>
                     </div>
 
-                    {/* Card 3: Output Quality & Citations */}
-                    <div style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '12px', padding: '14px 16px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                        <span style={{ fontSize: '0.68rem', fontWeight: 800, textTransform: 'uppercase', color: '#475569' }}>
-                          3. First-Pass Quality (W07/Q02)
-                        </span>
-                        <span style={{ background: '#eff6ff', color: '#1d4ed8', border: '1px solid #93c5fd', borderRadius: '999px', padding: '2px 8px', fontSize: '0.65rem', fontWeight: 800, fontFamily: 'monospace' }}>
-                          86% • Tier B
+                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px' }}>
+                      <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#64748b', marginBottom: '6px' }}>Validated Capacity</div>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+                        <span style={{ fontSize: '1.1rem', fontWeight: 800, color: '#047857', fontFamily: 'monospace' }}>
+                          {formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualBase)}/yr
                         </span>
                       </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                        <div style={{ background: '#f1f5f9', padding: '8px 10px', borderRadius: '8px' }}>
-                          <div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>BEFORE (Baseline)</div>
-                          <div style={{ fontSize: '0.98rem', fontWeight: 800, color: '#334155', fontFamily: 'monospace' }}>{wf1BaseQa}% QA</div>
-                          <div style={{ fontSize: '0.62rem', color: '#64748b' }}>High Rework Burden</div>
-                        </div>
-                        <div style={{ fontWeight: 900, color: '#2563eb', fontSize: '1rem' }}>→</div>
-                        <div style={{ background: '#eff6ff', padding: '8px 10px', borderRadius: '8px', border: '1px solid #bfdbfe' }}>
-                          <div style={{ fontSize: '0.62rem', color: '#1d4ed8', fontWeight: 800 }}>AFTER (Gemini)</div>
-                          <div style={{ fontSize: '0.98rem', fontWeight: 900, color: '#1e3a8a', fontFamily: 'monospace' }}>{wf1GemQa}% QA</div>
-                          <div style={{ fontSize: '0.62rem', color: '#1d4ed8', fontWeight: 700 }}>Inline ACL Citations</div>
-                        </div>
-                      </div>
-                      <div style={{ fontSize: '0.73rem', fontWeight: 800, color: '#047857', background: '#ecfdf5', padding: '5px 9px', borderRadius: '6px', display: 'flex', justifyContent: 'space-between' }}>
-                        <span>Realized Delta:</span>
-                        <span style={{ fontFamily: 'monospace' }}>+{wf1GemQa - wf1BaseQa} pts QA ({fiveCols.col4NonFinancial?.preferencePct || 82}% Prefer GE)</span>
-                      </div>
-                    </div>
-
-                    {/* Card 4: Annualized Value Realized */}
-                    <div style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '12px', padding: '14px 16px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                        <span style={{ fontSize: '0.68rem', fontWeight: 800, textTransform: 'uppercase', color: '#475569' }}>
-                          4. Annualized Value (F03/F04)
-                        </span>
-                        <span style={{ background: '#eff6ff', color: '#1d4ed8', border: '1px solid #93c5fd', borderRadius: '999px', padding: '2px 8px', fontSize: '0.65rem', fontWeight: 800, fontFamily: 'monospace' }}>
-                          80% • Tier B
-                        </span>
-                      </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                        <div style={{ background: '#f1f5f9', padding: '8px 10px', borderRadius: '8px' }}>
-                          <div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>BEFORE (Baseline)</div>
-                          <div style={{ fontSize: '0.98rem', fontWeight: 800, color: '#334155', fontFamily: 'monospace' }}>~$0.95M/yr</div>
-                          <div style={{ fontSize: '0.62rem', color: '#b91c1c' }}>vs. {formatCurrency(dossier.legacyRetirement?.legacyAnnualRunRateModeledUsd || 1450000)} Cost</div>
-                        </div>
-                        <div style={{ fontWeight: 900, color: '#2563eb', fontSize: '1rem' }}>→</div>
-                        <div style={{ background: '#ecfdf5', padding: '8px 10px', borderRadius: '8px', border: '1px solid #6ee7b7' }}>
-                          <div style={{ fontSize: '0.62rem', color: '#047857', fontWeight: 800 }}>AFTER (Verified)</div>
-                          <div style={{ fontSize: '0.98rem', fontWeight: 900, color: '#065f46', fontFamily: 'monospace' }}>{formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualBase)}/yr</div>
-                          <div style={{ fontSize: '0.62rem', color: '#047857', fontWeight: 700 }}>Validated Capacity</div>
-                        </div>
-                      </div>
-                      <div style={{ fontSize: '0.73rem', fontWeight: 800, color: '#047857', background: '#ecfdf5', padding: '5px 9px', borderRadius: '6px', display: 'flex', justifyContent: 'space-between' }}>
-                        <span>Pipeline Target:</span>
-                        <span style={{ fontFamily: 'monospace' }}>+{formatCurrency(fiveCols.col3ModeledOpportunity?.base)} Modeled</span>
+                      <div style={{ fontSize: '0.7rem', fontWeight: 600, color: '#64748b', marginTop: '4px' }}>
+                        +{formatCurrency(fiveCols.col3ModeledOpportunity?.base)} modeled
                       </div>
                     </div>
                   </div>
 
-                  {/* Full Side-by-Side Before vs. After Migration Comparison Table */}
+                  {/* Clean Light Side-by-Side Comparison Table */}
                   <div style={{ overflowX: 'auto' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.77rem' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.75rem' }}>
                       <thead>
-                        <tr style={{ background: '#0f172a', color: '#ffffff', textAlign: 'left' }}>
-                          <th style={{ padding: '10px 12px', borderTopLeftRadius: '8px', width: '19%' }}>Value Dimension & Question IDs</th>
-                          <th style={{ padding: '10px 12px', width: '21%', background: '#1e293b' }}>⏪ BEFORE MIGRATION<br /><span style={{ fontSize: '0.66rem', color: '#cbd5e1', fontWeight: 600 }}>{legacyLabel}</span></th>
-                          <th style={{ padding: '10px 12px', width: '23%', background: '#1e3a8a' }}>⚡ AFTER MIGRATION (CURRENT)<br /><span style={{ fontSize: '0.66rem', color: '#93c5fd', fontWeight: 600 }}>Gemini Enterprise (Verified)</span></th>
-                          <th style={{ padding: '10px 12px', width: '16%', background: '#065f46' }}>📈 REALIZED DELTA<br /><span style={{ fontSize: '0.66rem', color: '#a7f3d0', fontWeight: 600 }}>Net Verified Improvement</span></th>
-                          <th style={{ padding: '10px 12px', width: '13%' }}>🚀 POST-CUTOVER TARGET<br /><span style={{ fontSize: '0.66rem', color: '#cbd5e1', fontWeight: 600 }}>Wave 2 + Legacy Retired</span></th>
-                          <th style={{ padding: '10px 12px', borderTopRightRadius: '8px', width: '8%' }}>Evidence Confidence</th>
+                        <tr style={{ background: '#f8fafc', color: '#475569', textAlign: 'left', borderBottom: '1px solid #cbd5e1' }}>
+                          <th style={{ padding: '8px 10px', width: '20%' }}>Dimension</th>
+                          <th style={{ padding: '8px 10px', width: '22%' }}>Before ({legacyLabel})</th>
+                          <th style={{ padding: '8px 10px', width: '24%', color: '#1d4ed8' }}>After (Gemini Enterprise)</th>
+                          <th style={{ padding: '8px 10px', width: '15%', color: '#047857' }}>Net Delta</th>
+                          <th style={{ padding: '8px 10px', width: '11%' }}>Target</th>
+                          <th style={{ padding: '8px 10px', width: '8%', textAlign: 'center' }}>Confidence</th>
                         </tr>
                       </thead>
                       <tbody>
                         {dynamicComparisonRows.map((row, idx) => (
-                          <tr key={idx} style={{ borderBottom: '1px solid #e2e8f0', background: idx % 2 === 0 ? '#ffffff' : '#f8fafc' }}>
-                            <td style={{ padding: '10px 12px', fontWeight: 800, color: '#0f172a', verticalAlign: 'top' }}>{row.dim}</td>
-                            <td style={{ padding: '10px 12px', color: '#475569', background: idx % 2 === 0 ? '#f8fafc' : '#f1f5f9', verticalAlign: 'top' }}>{row.before}</td>
-                            <td style={{ padding: '10px 12px', color: '#1e3a8a', fontWeight: 600, background: idx % 2 === 0 ? '#f8fbff' : '#eff6ff', verticalAlign: 'top' }}>{row.after}</td>
-                            <td style={{ padding: '10px 12px', color: '#065f46', fontWeight: 800, background: idx % 2 === 0 ? '#f2fbf7' : '#ecfdf5', verticalAlign: 'top', fontFamily: 'monospace', fontSize: '0.73rem' }}>{row.delta}</td>
-                            <td style={{ padding: '10px 12px', color: '#334155', verticalAlign: 'top' }}>{row.target}</td>
-                            <td style={{ padding: '10px 12px', verticalAlign: 'top', textAlign: 'center' }}>
+                          <tr key={idx} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                            <td style={{ padding: '8px 10px', fontWeight: 700, color: '#0f172a' }}>{row.dim}</td>
+                            <td style={{ padding: '8px 10px', color: '#64748b' }}>{row.before}</td>
+                            <td style={{ padding: '8px 10px', color: '#1e3a8a', fontWeight: 600 }}>{row.after}</td>
+                            <td style={{ padding: '8px 10px', color: '#047857', fontWeight: 700, fontFamily: 'monospace', fontSize: '0.72rem' }}>{row.delta}</td>
+                            <td style={{ padding: '8px 10px', color: '#475569' }}>{row.target}</td>
+                            <td style={{ padding: '8px 10px', textAlign: 'center' }}>
                               <span style={{
                                 display: 'inline-block',
                                 background: row.confBg,
                                 color: row.confColor,
-                                border: `1px solid ${row.confColor}40`,
                                 borderRadius: '999px',
-                                padding: '3px 8px',
-                                fontSize: '0.67rem',
-                                fontWeight: 800,
+                                padding: '2px 7px',
+                                fontSize: '0.65rem',
+                                fontWeight: 700,
                                 fontFamily: 'monospace',
                                 whiteSpace: 'nowrap'
                               }}>
@@ -4333,31 +3525,31 @@ const GeValueRealizationWorkspace = () => {
             })()}
 
             {/* ===============================================================
-                EXHIBIT 2: CFO COST BRIDGE & 5-COLUMN MECE TABLE + SENSITIVITY SLIDERS
+                EXHIBIT 2: 5-COLUMN VALUE & COST BRIDGE
                =============================================================== */}
             <div style={{
               background: '#ffffff',
-              border: '1px solid #cbd5e1',
-              borderRadius: '16px',
-              padding: '24px 28px',
-              boxShadow: '0 4px 14px rgba(15,23,42,0.04)'
+              border: '1px solid #e2e8f0',
+              borderRadius: '12px',
+              padding: '20px 22px',
+              boxShadow: '0 1px 3px rgba(15,23,42,0.02)'
             }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', marginBottom: '14px' }}>
                 <div>
-                  <span style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1d4ed8' }}>
-                    Exhibit 2 • CFO Cost Bridge & 5-Column MECE Value Realization Table ({shortCustomerName})
+                  <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#2563eb' }}>
+                    Value & Cost Bridge
                   </span>
-                  <h3 style={{ margin: '4px 0 0', fontSize: '1.15rem', fontWeight: 800, color: '#0f172a' }}>
-                    Strict Separation of Realized Hard Cash (Col 1), Validated Capacity (Col 2), and Quarantined Modeled Opportunity (Col 3)
+                  <h3 style={{ margin: '2px 0 0', fontSize: '1.05rem', fontWeight: 700, color: '#0f172a' }}>
+                    5-Column Value Realization Breakdown
                   </h3>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '0.73rem', fontWeight: 800, color: '#475569' }}>CFO Sensitivity Preset:</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ fontSize: '0.72rem', fontWeight: 600, color: '#64748b' }}>Sensitivity:</span>
                   {[
-                    { id: 'low', label: 'Conservative (Low)', rate: 100, cap: 50, attr: 60 },
-                    { id: 'base', label: 'Base (Recommended)', rate: 120, cap: 65, attr: 75 },
-                    { id: 'high', label: 'Optimistic (High)', rate: 150, cap: 85, attr: 90 }
+                    { id: 'low', label: 'Conservative', rate: 100, cap: 50, attr: 60 },
+                    { id: 'base', label: 'Base', rate: 120, cap: 65, attr: 75 },
+                    { id: 'high', label: 'Optimistic', rate: 150, cap: 85, attr: 90 }
                   ].map((preset) => (
                     <button
                       key={preset.id}
@@ -4367,13 +3559,13 @@ const GeValueRealizationWorkspace = () => {
                         defaultAttributionSharePct: preset.attr
                       })}
                       style={{
-                        padding: '6px 11px',
-                        borderRadius: '8px',
-                        border: dossier.costLedger?.defaultLoadedHourlyRate === preset.rate ? '1.5px solid #2563eb' : '1px solid #cbd5e1',
+                        padding: '4px 10px',
+                        borderRadius: '6px',
+                        border: dossier.costLedger?.defaultLoadedHourlyRate === preset.rate ? '1px solid #2563eb' : '1px solid #cbd5e1',
                         background: dossier.costLedger?.defaultLoadedHourlyRate === preset.rate ? '#eff6ff' : '#f8fafc',
-                        color: dossier.costLedger?.defaultLoadedHourlyRate === preset.rate ? '#1d4ed8' : '#334155',
-                        fontSize: '0.74rem',
-                        fontWeight: 800,
+                        color: dossier.costLedger?.defaultLoadedHourlyRate === preset.rate ? '#1d4ed8' : '#475569',
+                        fontSize: '0.72rem',
+                        fontWeight: 600,
                         cursor: 'pointer'
                       }}
                     >
@@ -4383,22 +3575,22 @@ const GeValueRealizationWorkspace = () => {
                 </div>
               </div>
 
-              {/* Interactive Sensitivity Sliders Bar */}
+              {/* Light Sensitivity Sliders Bar */}
               <div style={{
                 background: '#f8fafc',
-                border: '1px solid #cbd5e1',
-                borderRadius: '12px',
-                padding: '14px 18px',
-                marginBottom: '18px',
+                border: '1px solid #e2e8f0',
+                borderRadius: '10px',
+                padding: '10px 14px',
+                marginBottom: '14px',
                 display: 'grid',
                 gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: '16px',
+                gap: '14px',
                 alignItems: 'center'
               }}>
                 <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', fontWeight: 800, color: '#1e293b', marginBottom: '4px' }}>
-                    <span>F01: Blended Loaded Rate</span>
-                    <span style={{ fontFamily: 'monospace', color: '#2563eb' }}>${dossier.costLedger?.defaultLoadedHourlyRate || 120}/hr</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', fontWeight: 600, color: '#334155', marginBottom: '3px' }}>
+                    <span>Hourly Rate</span>
+                    <span style={{ fontFamily: 'monospace', color: '#2563eb', fontWeight: 700 }}>${dossier.costLedger?.defaultLoadedHourlyRate || 120}/hr</span>
                   </div>
                   <input
                     type="range"
@@ -4412,9 +3604,9 @@ const GeValueRealizationWorkspace = () => {
                 </div>
 
                 <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', fontWeight: 800, color: '#1e293b', marginBottom: '4px' }}>
-                    <span>F01: Capacity Valuation Factor</span>
-                    <span style={{ fontFamily: 'monospace', color: '#2563eb' }}>{dossier.costLedger?.capacityValuationFactorPct || 65}%</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', fontWeight: 600, color: '#334155', marginBottom: '3px' }}>
+                    <span>Capacity Factor</span>
+                    <span style={{ fontFamily: 'monospace', color: '#2563eb', fontWeight: 700 }}>{dossier.costLedger?.capacityValuationFactorPct || 65}%</span>
                   </div>
                   <input
                     type="range"
@@ -4428,9 +3620,9 @@ const GeValueRealizationWorkspace = () => {
                 </div>
 
                 <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', fontWeight: 800, color: '#1e293b', marginBottom: '4px' }}>
-                    <span>F03: AI Attribution Share</span>
-                    <span style={{ fontFamily: 'monospace', color: '#2563eb' }}>{dossier.costLedger?.defaultAttributionSharePct || 75}%</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', fontWeight: 600, color: '#334155', marginBottom: '3px' }}>
+                    <span>AI Attribution</span>
+                    <span style={{ fontFamily: 'monospace', color: '#2563eb', fontWeight: 700 }}>{dossier.costLedger?.defaultAttributionSharePct || 75}%</span>
                   </div>
                   <input
                     type="range"
@@ -4443,11 +3635,11 @@ const GeValueRealizationWorkspace = () => {
                   />
                 </div>
 
-                <div style={{ background: '#0f172a', color: '#ffffff', padding: '10px 14px', borderRadius: '10px' }}>
-                  <div style={{ fontSize: '0.65rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 700 }}>
-                    Col 2 Capacity Band (Low / Base / High)
+                <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', padding: '8px 12px', borderRadius: '8px' }}>
+                  <div style={{ fontSize: '0.64rem', color: '#047857', fontWeight: 700 }}>
+                    Capacity Range (Low / Base / High)
                   </div>
-                  <div style={{ fontSize: '0.82rem', fontWeight: 800, fontFamily: 'monospace', color: '#6ee7b7', marginTop: '2px' }}>
+                  <div style={{ fontSize: '0.76rem', fontWeight: 800, fontFamily: 'monospace', color: '#065f46', marginTop: '2px' }}>
                     {formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualLow)} / {formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualBase)} / {formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualHigh)}
                   </div>
                 </div>
@@ -4460,81 +3652,74 @@ const GeValueRealizationWorkspace = () => {
                 const assignedSeatsNum = dossier.adoptionTelemetry?.assignedSeats ?? dossier.adoptionTelemetry?.assignedSeatsWave1 ?? 0;
 
                 return (
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px' }}>
-                    <div style={{ background: '#f8fafc', border: '1.5px solid #cbd5e1', borderTop: '4px solid #0f172a', borderRadius: '12px', padding: '14px' }}>
-                      <div style={{ fontSize: '0.68rem', fontWeight: 800, textTransform: 'uppercase', color: '#0f172a', marginBottom: '4px' }}>
-                        Col 1 • Realized Cash ($)
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px' }}>
+                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderTop: '3px solid #475569', borderRadius: '10px', padding: '12px' }}>
+                      <div style={{ fontSize: '0.66rem', fontWeight: 700, textTransform: 'uppercase', color: '#475569', marginBottom: '4px' }}>
+                        1. Realized Cash
                       </div>
-                      <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#b45309', fontFamily: 'monospace', marginBottom: '8px' }}>
+                      <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#b45309', fontFamily: 'monospace', marginBottom: '6px' }}>
                         {formatCurrency(fiveCols.col1RealizedCash?.base)}
                       </div>
-                      <div style={{ fontSize: '0.73rem', color: '#334155', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        <div>• <strong>L02 Retired Legacy Cost:</strong> {formatCurrency(evaluation.financials.retiredLegacyUsd)}</div>
-                        <div>• <strong>L02 Retained Parallel Cost:</strong> {formatCurrency(evaluation.financials.retainedLegacyUsd)}</div>
-                        <div>• <strong>L03 Gemini Recurring Cost:</strong> {formatCurrency(evaluation.financials.geminiRecurringUsd)}</div>
-                        <div>• <strong>L04 One-Time Migration:</strong> {formatCurrency(evaluation.financials.oneTimeMigrationUsd)}</div>
+                      <div style={{ fontSize: '0.7rem', color: '#475569', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <div>Retired: {formatCurrency(evaluation.financials.retiredLegacyUsd)}</div>
+                        <div>Parallel: {formatCurrency(evaluation.financials.retainedLegacyUsd)}</div>
+                        <div>Gemini: {formatCurrency(evaluation.financials.geminiRecurringUsd)}</div>
                       </div>
                     </div>
 
-                    <div style={{ background: '#ecfdf5', border: '1.5px solid #6ee7b7', borderTop: '4px solid #059669', borderRadius: '12px', padding: '14px' }}>
-                      <div style={{ fontSize: '0.68rem', fontWeight: 800, textTransform: 'uppercase', color: '#047857', marginBottom: '4px' }}>
-                        Col 2 • Validated Capacity
+                    <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderTop: '3px solid #059669', borderRadius: '10px', padding: '12px' }}>
+                      <div style={{ fontSize: '0.66rem', fontWeight: 700, textTransform: 'uppercase', color: '#047857', marginBottom: '4px' }}>
+                        2. Validated Capacity
                       </div>
-                      <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#047857', fontFamily: 'monospace', marginBottom: '8px' }}>
+                      <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#047857', fontFamily: 'monospace', marginBottom: '6px' }}>
                         {formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualBase)}/yr
                       </div>
-                      <div style={{ fontSize: '0.73rem', color: '#065f46', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        <div>• <strong>Monthly Hours Released:</strong> {formatNumber(fiveCols.col2ValidatedCapacity?.hoursMonthlyBase, ' hrs/mo')}</div>
-                        <div>• <strong>Low–High Sensitivity:</strong> {formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualLow)} – {formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualHigh)}</div>
-                        <div>• <strong>Rework Deducted (W04R):</strong> Yes (Verification/Correction included)</div>
-                        <div>• <strong>Active Workflows:</strong> {validatedWfs.length > 0 ? validatedWfs.slice(0, 3).map((w) => `${w.code} (${w.name.slice(0, 18)})`).join(', ') : 'Active Wave 1 Workflows'}</div>
+                      <div style={{ fontSize: '0.7rem', color: '#065f46', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <div>Hours: {formatNumber(fiveCols.col2ValidatedCapacity?.hoursMonthlyBase, ' hrs/mo')}</div>
+                        <div>Range: {formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualLow)}–{formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualHigh)}</div>
+                        <div>Workflows: {validatedWfs.length} active</div>
                       </div>
                     </div>
 
-                    <div style={{ background: '#fffbeb', border: '1.5px solid #fcd34d', borderTop: '4px solid #d97706', borderRadius: '12px', padding: '14px' }}>
-                      <div style={{ fontSize: '0.68rem', fontWeight: 800, textTransform: 'uppercase', color: '#b45309', marginBottom: '4px' }}>
-                        Col 3 • Modeled Opportunity
+                    <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderTop: '3px solid #d97706', borderRadius: '10px', padding: '12px' }}>
+                      <div style={{ fontSize: '0.66rem', fontWeight: 700, textTransform: 'uppercase', color: '#b45309', marginBottom: '4px' }}>
+                        3. Modeled Pipeline
                       </div>
-                      <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#b45309', fontFamily: 'monospace', marginBottom: '8px' }}>
+                      <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#b45309', fontFamily: 'monospace', marginBottom: '6px' }}>
                         {formatCurrency(fiveCols.col3ModeledOpportunity?.base)}
                       </div>
-                      <div style={{ fontSize: '0.73rem', color: '#92400e', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        {modeledWfs.slice(0, 3).map((w) => (
-                          <div key={w.id || w.code}>• <strong>{w.code} {w.name.slice(0, 22)}:</strong> {formatCurrency(w.modeledAnnualValueUsd)} (Scoping)</div>
+                      <div style={{ fontSize: '0.7rem', color: '#92400e', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        {modeledWfs.slice(0, 2).map((w) => (
+                          <div key={w.id || w.code}>{w.code}: {formatCurrency(w.modeledAnnualValueUsd)}</div>
                         ))}
-                        {modeledWfs.length === 0 && (
-                          <div>• <strong>Wave 2 Pipeline Expansion:</strong> {formatCurrency(fiveCols.col3ModeledOpportunity?.base)} (Scoping target)</div>
-                        )}
-                        <div>• <strong>Strict Quarantine:</strong> Never mixed into Col 1 or Col 2</div>
+                        <div>Quarantined until verified</div>
                       </div>
                     </div>
 
-                    <div style={{ background: '#eff6ff', border: '1.5px solid #93c5fd', borderTop: '4px solid #2563eb', borderRadius: '12px', padding: '14px' }}>
-                      <div style={{ fontSize: '0.68rem', fontWeight: 800, textTransform: 'uppercase', color: '#1d4ed8', marginBottom: '4px' }}>
-                        Col 4 • Leading Indicators
+                    <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderTop: '3px solid #2563eb', borderRadius: '10px', padding: '12px' }}>
+                      <div style={{ fontSize: '0.66rem', fontWeight: 700, textTransform: 'uppercase', color: '#1d4ed8', marginBottom: '4px' }}>
+                        4. Usage & Adoption
                       </div>
-                      <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#1d4ed8', fontFamily: 'monospace', marginBottom: '8px' }}>
-                        {fiveCols.col4NonFinancial?.wauOfAssignedPct || 55.0}% WAU / Assigned
+                      <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1d4ed8', fontFamily: 'monospace', marginBottom: '6px' }}>
+                        {fiveCols.col4NonFinancial?.wauOfAssignedPct || 55.0}% WAU
                       </div>
-                      <div style={{ fontSize: '0.73rem', color: '#1e3a8a', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        <div>• <strong>Multi-API MAU:</strong> {formatNumber(fiveCols.col4NonFinancial?.mau)} / {formatNumber(assignedSeatsNum)} Assigned</div>
-                        <div>• <strong>All-API WAU:</strong> {formatNumber(fiveCols.col4NonFinancial?.wau)}</div>
-                        <div>• <strong>7d Agent Requests:</strong> {formatNumber(fiveCols.col4NonFinancial?.agent7dRequests)}</div>
-                        <div>• <strong>User Preference (U09):</strong> {fiveCols.col4NonFinancial?.preferencePct}% prefer Gemini</div>
+                      <div style={{ fontSize: '0.7rem', color: '#1e3a8a', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <div>MAU: {formatNumber(fiveCols.col4NonFinancial?.mau)} / {formatNumber(assignedSeatsNum)}</div>
+                        <div>WAU: {formatNumber(fiveCols.col4NonFinancial?.wau)}</div>
+                        <div>7d Agent Runs: {formatNumber(fiveCols.col4NonFinancial?.agent7dRequests)}</div>
                       </div>
                     </div>
 
-                    <div style={{ background: '#fef2f2', border: '1.5px solid #fca5a5', borderTop: '4px solid #dc2626', borderRadius: '12px', padding: '14px' }}>
-                      <div style={{ fontSize: '0.68rem', fontWeight: 800, textTransform: 'uppercase', color: '#b91c1c', marginBottom: '4px' }}>
-                        Col 5 • Risks & Negative Effects
+                    <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderTop: '3px solid #dc2626', borderRadius: '10px', padding: '12px' }}>
+                      <div style={{ fontSize: '0.66rem', fontWeight: 700, textTransform: 'uppercase', color: '#b91c1c', marginBottom: '4px' }}>
+                        5. Blockers & Risk
                       </div>
-                      <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#b91c1c', fontFamily: 'monospace', marginBottom: '8px' }}>
-                        {fiveCols.col5NegativeEffects?.ongoingBugs} Bugs / {fiveCols.col5NegativeEffects?.cloudBlockers} Blockers
+                      <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#b91c1c', fontFamily: 'monospace', marginBottom: '6px' }}>
+                        {fiveCols.col5NegativeEffects?.cloudBlockers} Blockers
                       </div>
-                      <div style={{ fontSize: '0.73rem', color: '#7f1d1d', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        <div>• <strong>Extra HITL Review Burden:</strong> +{fiveCols.col5NegativeEffects?.extraReviewHoursMonthly} hrs/mo</div>
-                        <div>• <strong>Primary Blocker (A05):</strong> {String((Array.isArray(dossier.questionResponses?.A05?.value) ? dossier.questionResponses.A05.value[0] : dossier.questionResponses?.A05?.value) || dossier.questionResponses?.P06?.value || 'Enterprise connector ACL opt-in').slice(0, 62)}</div>
-                        <div>• <strong>Legacy Cutover (L02):</strong> {(dossier.legacyRetirement?.legacyToolName || dossier.meta?.legacyPlatformName || 'Legacy AI').slice(0, 38)} parallel run</div>
+                      <div style={{ fontSize: '0.7rem', color: '#7f1d1d', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <div>Review overhead: +{fiveCols.col5NegativeEffects?.extraReviewHoursMonthly} hrs/mo</div>
+                        <div>{String((Array.isArray(dossier.questionResponses?.A05?.value) ? dossier.questionResponses.A05.value[0] : dossier.questionResponses?.A05?.value) || 'Connector sign-off').slice(0, 48)}</div>
                       </div>
                     </div>
                   </div>
@@ -4543,108 +3728,84 @@ const GeValueRealizationWorkspace = () => {
             </div>
 
             {/* ===============================================================
-                EXHIBIT 3: PER-WORKFLOW VALUE REGISTER (CAPPED HYBRID WEIGHTING)
+                EXHIBIT 3: WORKFLOW BREAKDOWN
                =============================================================== */}
             <div style={{
               background: '#ffffff',
-              border: '1px solid #cbd5e1',
-              borderRadius: '16px',
-              padding: '24px 28px',
-              boxShadow: '0 4px 14px rgba(15,23,42,0.04)'
+              border: '1px solid #e2e8f0',
+              borderRadius: '12px',
+              padding: '20px 22px',
+              boxShadow: '0 1px 3px rgba(15,23,42,0.02)'
             }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
                 <div>
-                  <span style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1d4ed8' }}>
-                    Exhibit 3 • Per-Workflow Value Realization Register ({shortCustomerName} Workflows)
+                  <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#2563eb' }}>
+                    Workflow Breakdown
                   </span>
-                  <h3 style={{ margin: '4px 0 0', fontSize: '1.12rem', fontWeight: 800, color: '#0f172a' }}>
-                    Capped Hybrid Portfolio Weighting (Max 30% Cap per Workflow) & Regulated GxP Workflow Floor
+                  <h3 style={{ margin: '2px 0 0', fontSize: '1.05rem', fontWeight: 700, color: '#0f172a' }}>
+                    {shortCustomerName} Priority Workflows
                   </h3>
                 </div>
-                {evaluation.weakestRegulatedWorkflow && (
-                  <div style={{ display: 'flex', gap: '10px', fontSize: '0.75rem', fontWeight: 800, fontFamily: 'monospace' }}>
-                    <span style={{ background: '#fef3c7', color: '#b45309', padding: '5px 10px', borderRadius: '8px', border: '1px solid #fde68a' }}>
-                      🛡️ Weakest Regulated GxP Floor: {evaluation.weakestRegulatedWorkflow.code} ({evaluation.weakestRegulatedWorkflow.wfAdjPoints} / 35 pts)
-                    </span>
-                  </div>
-                )}
               </div>
 
               <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.79rem' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.76rem' }}>
                   <thead>
-                    <tr style={{ background: '#f8fafc', borderBottom: '2px solid #cbd5e1', textAlign: 'left' }}>
-                      <th style={{ padding: '10px 12px' }}>Workflow</th>
-                      <th style={{ padding: '10px 12px' }}>Stage & GxP</th>
-                      <th style={{ padding: '10px 12px' }}>Active Users / Tasks</th>
-                      <th style={{ padding: '10px 12px' }}>Baseline → Gemini / Task</th>
-                      <th style={{ padding: '10px 12px' }}>First-Pass QA (W07)</th>
-                      <th style={{ padding: '10px 12px' }}>Capped Wt</th>
-                      <th style={{ padding: '10px 12px' }}>MECE Benefit Column</th>
-                      <th style={{ padding: '10px 12px' }}>Validated Capacity / Yr</th>
-                      <th style={{ padding: '10px 12px' }}>Quarterly Decision</th>
+                    <tr style={{ background: '#f8fafc', borderBottom: '1px solid #cbd5e1', textAlign: 'left', color: '#475569' }}>
+                      <th style={{ padding: '8px 10px' }}>Workflow</th>
+                      <th style={{ padding: '8px 10px' }}>Stage</th>
+                      <th style={{ padding: '8px 10px' }}>Users / Tasks</th>
+                      <th style={{ padding: '8px 10px' }}>Minutes / Task</th>
+                      <th style={{ padding: '8px 10px' }}>First-Pass QA</th>
+                      <th style={{ padding: '8px 10px' }}>Weight</th>
+                      <th style={{ padding: '8px 10px' }}>Value / Yr</th>
+                      <th style={{ padding: '8px 10px' }}>Decision</th>
                     </tr>
                   </thead>
                   <tbody>
                     {evaluation.evaluatedWorkflows.map((wf) => (
-                      <tr key={wf.id || wf.code} style={{ borderBottom: '1px solid #e2e8f0' }}>
-                        <td style={{ padding: '10px 12px' }}>
-                          <div style={{ fontWeight: 800, color: '#0f172a' }}>{wf.code}: {wf.name}</div>
-                          <div style={{ fontSize: '0.7rem', color: '#64748b' }}>{wf.functionArea} • Owner: {wf.owner}</div>
+                      <tr key={wf.id || wf.code} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                        <td style={{ padding: '8px 10px' }}>
+                          <div style={{ fontWeight: 700, color: '#0f172a' }}>{wf.code}: {wf.name}</div>
+                          <div style={{ fontSize: '0.68rem', color: '#64748b' }}>{wf.functionArea}</div>
                         </td>
-                        <td style={{ padding: '10px 12px' }}>
+                        <td style={{ padding: '8px 10px' }}>
                           <span style={{
-                            padding: '2px 8px',
-                            borderRadius: '6px',
-                            fontSize: '0.7rem',
-                            fontWeight: 800,
+                            padding: '2px 7px',
+                            borderRadius: '5px',
+                            fontSize: '0.68rem',
+                            fontWeight: 700,
                             background: wf.maturity === 'Scoping' ? '#fef3c7' : '#dcfce7',
                             color: wf.maturity === 'Scoping' ? '#b45309' : '#15803d'
                           }}>
                             {wf.maturity}
                           </span>
-                          {wf.isRegulatedGxp && (
-                            <div style={{ fontSize: '0.66rem', color: wf.gxpValidated ? '#059669' : '#dc2626', fontWeight: 800, marginTop: '3px' }}>
-                              🛡️ {wf.gxpValidated ? 'GxP Validated' : 'GxP CSV Pending'}
-                            </div>
-                          )}
                         </td>
-                        <td style={{ padding: '10px 12px', fontFamily: 'monospace' }}>
-                          {wf.activeUsers !== null ? `${wf.activeUsers.toLocaleString()} users` : 'Pending'}
-                          <div style={{ fontSize: '0.68rem', color: '#64748b' }}>
-                            {wf.completedTasksPerMonth !== null ? `${wf.completedTasksPerMonth.toLocaleString()}/mo` : 'Scoping'}
-                          </div>
+                        <td style={{ padding: '8px 10px', fontFamily: 'monospace' }}>
+                          {wf.activeUsers !== null ? `${wf.activeUsers.toLocaleString()}` : 'Pending'}
+                          <span style={{ color: '#94a3b8' }}> · </span>
+                          {wf.completedTasksPerMonth !== null ? `${wf.completedTasksPerMonth.toLocaleString()}/mo` : 'Scoping'}
                         </td>
-                        <td style={{ padding: '10px 12px', fontFamily: 'monospace' }}>
-                          <span>{wf.baselineMinutes}m → {wf.geminiMinutes}m</span>
-                          <div style={{ fontSize: '0.68rem', color: '#059669', fontWeight: 800 }}>
-                            -{wf.netMinutesSavedPerTask}m (-{wf.effortReductionPct.toFixed(1)}%)
-                          </div>
+                        <td style={{ padding: '8px 10px', fontFamily: 'monospace' }}>
+                          {wf.baselineMinutes}m → {wf.geminiMinutes}m
+                          <span style={{ color: '#059669', fontWeight: 700, marginLeft: '4px' }}>
+                            (-{wf.effortReductionPct.toFixed(0)}%)
+                          </span>
                         </td>
-                        <td style={{ padding: '10px 12px', fontFamily: 'monospace' }}>
+                        <td style={{ padding: '8px 10px', fontFamily: 'monospace' }}>
                           {wf.firstPassBaselinePct}% → {wf.firstPassGeminiPct}%
                         </td>
-                        <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontWeight: 800 }}>
-                          {(wf.portfolioWeight * 100).toFixed(1)}%
+                        <td style={{ padding: '8px 10px', fontFamily: 'monospace', fontWeight: 700 }}>
+                          {(wf.portfolioWeight * 100).toFixed(0)}%
                         </td>
-                        <td style={{ padding: '10px 12px', fontSize: '0.72rem', fontWeight: 700 }}>
-                          {wf.benefitColumn}
-                        </td>
-                        <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontWeight: 800 }}>
+                        <td style={{ padding: '8px 10px', fontFamily: 'monospace', fontWeight: 700 }}>
                           {wf.validatedCapacityValueAnnual > 0 ? (
-                            <span style={{ color: '#047857' }}>
-                              {formatCurrency(wf.validatedCapacityValueAnnual)}/yr
-                              <div style={{ fontSize: '0.66rem', color: '#64748b' }}>
-                                {Math.round(wf.attributedHoursReleasedMonthly || 0).toLocaleString()} hrs/mo
-                              </div>
-                            </span>
+                            <span style={{ color: '#047857' }}>{formatCurrency(wf.validatedCapacityValueAnnual)}/yr</span>
                           ) : (
-                            <span style={{ color: '#b45309', fontSize: '0.72rem' }}>
-                              Quarantined ({formatCurrency(wf.modeledAnnualValueUsd)} Modeled)
-                            </span>
+                            <span style={{ color: '#b45309', fontSize: '0.7rem' }}>{formatCurrency(wf.modeledAnnualValueUsd)} (Modeled)</span>
                           )}
                         </td>
-                        <td style={{ padding: '10px 12px', fontWeight: 800, color: '#1d4ed8', fontSize: '0.74rem' }}>
+                        <td style={{ padding: '8px 10px', fontWeight: 700, color: '#1d4ed8', fontSize: '0.72rem' }}>
                           {wf.quarterlyDecision}
                         </td>
                       </tr>
@@ -4655,7 +3816,7 @@ const GeValueRealizationWorkspace = () => {
             </div>
 
             {/* ===============================================================
-                EXHIBIT 4: ADOPTION FUNNEL, BLOCKERS PARETO & GOOGLE OKR->KPA->KPI SCORECARD
+                EXHIBIT 4: SEAT FUNNEL & SCORECARD
                =============================================================== */}
             {(() => {
               const tel = dossier.adoptionTelemetry || {};
@@ -4672,78 +3833,75 @@ const GeValueRealizationWorkspace = () => {
               const unassignedSeats = Math.max(0, contractedSeats - assignedSeats);
 
               const dynamicBlockers = Array.isArray(dossier.geminiReport?.riskAndBlockerMitigationPlan) && dossier.geminiReport.riskAndBlockerMitigationPlan.length > 0
-                ? dossier.geminiReport.riskAndBlockerMitigationPlan.slice(0, 4).map((b, idx) => ({
-                    title: `${idx + 1}. ${b.blockerId || `Blocker ${idx + 1}`} (${b.severity || 'HIGH'}):`,
-                    detail: `${b.description} — Mitigation: ${b.mitigationAction} (${b.owner})`
+                ? dossier.geminiReport.riskAndBlockerMitigationPlan.slice(0, 3).map((b, idx) => ({
+                    title: `${idx + 1}. ${b.blockerId || `Blocker ${idx + 1}`}:`,
+                    detail: `${b.description} — ${b.mitigationAction}`
                   }))
                 : [
                     {
-                      title: '1. Primary Technical & Connector Blocker (A05 / P06):',
-                      detail: String((Array.isArray(dossier.questionResponses?.A05?.value) ? dossier.questionResponses.A05.value.join(' • ') : dossier.questionResponses?.A05?.value) || dossier.questionResponses?.P06?.value || `Enterprise connector ACL opt-in required across ${shortCustomerName} data sources before scaling ${unassignedSeats.toLocaleString()} unassigned seats.`)
+                      title: '1. Connector Governance (A05):',
+                      detail: String((Array.isArray(dossier.questionResponses?.A05?.value) ? dossier.questionResponses.A05.value[0] : dossier.questionResponses?.A05?.value) || `Connector opt-in needed before scaling ${unassignedSeats.toLocaleString()} unassigned seats.`)
                     },
                     {
-                      title: '2. Legacy AI & Point-Tool Cutover Dependency (L01/L02):',
-                      detail: String(dossier.questionResponses?.L02?.value || `Parallel run with ${dossier.legacyRetirement?.legacyToolName || dossier.meta?.legacyPlatformName || 'Legacy AI'} open while 12-month cost baseline is reconciled.`)
+                      title: '2. Legacy Cost Reconciliation (L01/L02):',
+                      detail: String(dossier.questionResponses?.L02?.value || 'Parallel run active while 12-month legacy spend baseline is reconciled.')
                     },
                     {
-                      title: '3. Identity, Group & Network Perimeter Readiness (P02/P05):',
-                      detail: String(dossier.questionResponses?.P02?.value || 'SSO/SCIM group provisioning and VPC-SC network perimeter governance active.')
-                    },
-                    {
-                      title: '4. Enterprise Workflow Tagging ("Black Box" A07):',
-                      detail: String(dossier.questionResponses?.A07?.value || 'Required to link platform token logs directly to business workflow IDs.')
+                      title: '3. Workflow Telemetry Tagging (A07):',
+                      detail: String(dossier.questionResponses?.A07?.value || 'Link token logs directly to business workflow IDs.')
                     }
                   ];
 
               return (
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.15fr', gap: '18px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.15fr', gap: '16px' }}>
                   <div style={{
                     background: '#ffffff',
-                    border: '1px solid #cbd5e1',
-                    borderRadius: '16px',
-                    padding: '22px 24px',
-                    boxShadow: '0 4px 14px rgba(15,23,42,0.04)'
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '12px',
+                    padding: '20px 22px',
+                    boxShadow: '0 1px 3px rgba(15,23,42,0.02)'
                   }}>
-                    <span style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1d4ed8' }}>
-                      Exhibit 4A • {shortCustomerName} Seat Telemetry Funnel & Top Adoption Blockers
+                    <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#2563eb' }}>
+                      Seat Funnel & Blockers
                     </span>
-                    <h3 style={{ margin: '4px 0 14px', fontSize: '1.05rem', fontWeight: 800, color: '#0f172a' }}>
-                      Assigned Activation ({mauOfAssigned}% MAU / {wauOfAssigned}% WAU); Next Cohort ({unassignedSeats.toLocaleString()} Seats) Gated on Connector & Governance Controls
+                    <h3 style={{ margin: '2px 0 12px', fontSize: '1.02rem', fontWeight: 700, color: '#0f172a' }}>
+                      {mauOfAssigned}% MAU · {wauOfAssigned}% WAU of Assigned Seats
                     </h3>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '18px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '7px', marginBottom: '14px' }}>
                       {[
-                        { label: 'Contracted Seats (C02)', val: contractedSeats, pct: 100, color: '#334155', note: `${shortCustomerName} Agreement` },
-                        { label: 'Provisioned Seats (P03)', val: provisionedSeats, pct: Math.min(100, provPct), color: '#475569', note: `${provPct}% of Contracted` },
-                        { label: 'Assigned Wave 1 Seats (A01)', val: assignedSeats, pct: Math.min(100, assignPct), color: '#2563eb', note: `${assignPct}% Assigned (${unassignedSeats.toLocaleString()} Unassigned)` },
-                        { label: '30-Day Active Multi-API MAU (A01)', val: mauSeats, pct: Math.min(100, mauOfAssigned), color: '#059669', note: `${mauOfAssigned}% of Assigned Seats` },
-                        { label: '7-Day Active All-API WAU (A01)', val: wauSeats, pct: Math.min(100, wauOfAssigned), color: '#0d9488', note: `${wauOfAssigned}% WAU/Assigned` }
+                        { label: 'Contracted Seats', val: contractedSeats, pct: 100, color: '#64748b', note: '100%' },
+                        { label: 'Provisioned Seats', val: provisionedSeats, pct: Math.min(100, provPct), color: '#475569', note: `${provPct}%` },
+                        { label: 'Assigned Seats', val: assignedSeats, pct: Math.min(100, assignPct), color: '#2563eb', note: `${assignPct}%` },
+                        { label: '30-Day MAU', val: mauSeats, pct: Math.min(100, mauOfAssigned), color: '#059669', note: `${mauOfAssigned}% of Assigned` },
+                        { label: '7-Day WAU', val: wauSeats, pct: Math.min(100, wauOfAssigned), color: '#0d9488', note: `${wauOfAssigned}% of Assigned` }
                       ].map((bar) => (
                         <div key={bar.label}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 700, marginBottom: '3px' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.73rem', fontWeight: 600, marginBottom: '2px' }}>
                             <span>{bar.label}</span>
                             <span style={{ fontFamily: 'monospace' }}>{Number(bar.val || 0).toLocaleString()} ({bar.note})</span>
                           </div>
-                          <div style={{ height: '10px', background: '#e2e8f0', borderRadius: '999px', overflow: 'hidden' }}>
-                            <div style={{ width: `${Math.max(8, bar.pct)}%`, height: '100%', background: bar.color, borderRadius: '999px' }} />
+                          <div style={{ height: '8px', background: '#f1f5f9', borderRadius: '999px', overflow: 'hidden' }}>
+                            <div style={{ width: `${Math.max(6, bar.pct)}%`, height: '100%', background: bar.color, borderRadius: '999px' }} />
                           </div>
                         </div>
                       ))}
                     </div>
 
-                    <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '12px' }}>
-                      <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: '#b91c1c', marginBottom: '8px' }}>
-                        Top Verified {shortCustomerName} Engineering & Adoption Blockers ({dossier.meta?.accountTeam?.customerSponsor || dossier.meta?.accountTeam?.googleCal || 'Account Tracker'})
+                    <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '10px' }}>
+                      <div style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', color: '#b91c1c', marginBottom: '6px' }}>
+                        Top Blockers
                       </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.75rem' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '0.73rem' }}>
                         {dynamicBlockers.map((b, idx) => (
                           <div
                             key={idx}
                             style={{
-                              background: idx === 0 ? '#fef2f2' : idx === 1 ? '#fffbeb' : '#f8fafc',
-                              border: idx === 0 ? '1px solid #fecaca' : idx === 1 ? '1px solid #fde68a' : '1px solid #e2e8f0',
-                              padding: '8px 10px',
-                              borderRadius: '8px'
+                              background: '#f8fafc',
+                              border: '1px solid #e2e8f0',
+                              padding: '6px 9px',
+                              borderRadius: '6px',
+                              color: '#334155'
                             }}
                           >
                             <strong>{b.title}</strong> {b.detail}
@@ -4753,42 +3911,36 @@ const GeValueRealizationWorkspace = () => {
                     </div>
                   </div>
 
-                  {/* Right: Google OKR -> KPA -> KPI Scorecard */}
+                  {/* Right: KPA Scorecard */}
                   <div style={{
                     background: '#ffffff',
-                    border: '1px solid #cbd5e1',
-                    borderRadius: '16px',
-                    padding: '22px 24px',
-                    boxShadow: '0 4px 14px rgba(15,23,42,0.04)'
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '12px',
+                    padding: '20px 22px',
+                    boxShadow: '0 1px 3px rgba(15,23,42,0.02)'
                   }}>
-                    <span style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1d4ed8' }}>
-                      Exhibit 4B • Google Cloud OKR → KPA → KPI Scorecard (100 Points)
+                    <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#2563eb' }}>
+                      Scorecard (100 Points)
                     </span>
-                    <h3 style={{ margin: '4px 0 14px', fontSize: '1.05rem', fontWeight: 800, color: '#0f172a' }}>
-                      Raw Performance ({evaluation.index.rawScore}/100) vs. Evidence-Adjusted Realization ({evaluation.index.evidenceAdjustedScore}/100)
+                    <h3 style={{ margin: '2px 0 12px', fontSize: '1.02rem', fontWeight: 700, color: '#0f172a' }}>
+                      Raw ({evaluation.index.rawScore}/100) vs. Evidence-Adjusted ({evaluation.index.evidenceAdjustedScore}/100)
                     </h3>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                       {Object.values(evaluation.kpas).map((kpa) => (
-                        <div key={kpa.id} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '10px 12px' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3px' }}>
-                            <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#0f172a' }}>
+                        <div key={kpa.id} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '8px 10px' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                            <span style={{ fontSize: '0.76rem', fontWeight: 700, color: '#0f172a' }}>
                               {kpa.name} ({kpa.weight} pts)
                             </span>
-                            <div style={{ display: 'flex', gap: '10px', fontFamily: 'monospace', fontSize: '0.76rem', fontWeight: 800 }}>
-                              <span style={{ color: '#475569' }}>Raw: {kpa.rawScore}/{kpa.applicableWeight}</span>
-                              <span style={{ color: '#2563eb' }}>Evidence-Adj: {kpa.adjustedScore}/{kpa.applicableWeight}</span>
+                            <div style={{ display: 'flex', gap: '8px', fontFamily: 'monospace', fontSize: '0.72rem', fontWeight: 700 }}>
+                              <span style={{ color: '#64748b' }}>Raw: {kpa.rawScore}</span>
+                              <span style={{ color: '#2563eb' }}>Adj: {kpa.adjustedScore}</span>
                             </div>
                           </div>
-                          <div style={{ fontSize: '0.68rem', color: '#1d4ed8', fontWeight: 700, marginBottom: '5px' }}>
-                            {kpa.okrTitle}
-                          </div>
-                          <div style={{ height: '8px', background: '#e2e8f0', borderRadius: '999px', overflow: 'hidden', position: 'relative' }}>
+                          <div style={{ height: '6px', background: '#e2e8f0', borderRadius: '999px', overflow: 'hidden', position: 'relative' }}>
                             <div style={{ width: `${kpa.rawPct}%`, height: '100%', background: '#93c5fd', position: 'absolute', left: 0, top: 0 }} />
                             <div style={{ width: `${kpa.adjustedPct}%`, height: '100%', background: '#2563eb', position: 'absolute', left: 0, top: 0 }} />
-                          </div>
-                          <div style={{ fontSize: '0.67rem', color: '#64748b', marginTop: '4px' }}>
-                            {kpa.krSummary}
                           </div>
                         </div>
                       ))}
@@ -4799,131 +3951,114 @@ const GeValueRealizationWorkspace = () => {
             })()}
 
             {/* ===============================================================
-                EXHIBIT 5: JOINT NEXT STEPS & MULTI-PARTY SIGN-OFF BAR (F08)
+                EXHIBIT 5: NEXT STEPS & SIGN-OFF
                =============================================================== */}
             {(() => {
               const roadmapItems = Array.isArray(dossier.geminiReport?.strategicRoadmap30_60_90) && dossier.geminiReport.strategicRoadmap30_60_90.length > 0
-                ? dossier.geminiReport.strategicRoadmap30_60_90.slice(0, 5).map((r, idx) => ({
-                    num: `Action ${idx + 1}`,
+                ? dossier.geminiReport.strategicRoadmap30_60_90.slice(0, 4).map((r, idx) => ({
+                    num: `Step ${idx + 1}`,
                     title: r.action,
                     owner: r.owner,
-                    target: r.horizon || 'Next 30–60d',
+                    target: r.horizon || '30–60d',
                     impact: r.expectedImpact
                   }))
                 : [
                     {
-                      num: 'Action 1',
-                      title: `Close Legacy ${dossier.legacyRetirement?.legacyToolName || dossier.meta?.legacyPlatformName || 'AI'} Cost Ledger (L01–L04, F01)`,
-                      owner: `${dossier.meta?.accountTeam?.customerTechLead || shortCustomerName + ' Lead'} + ${shortCustomerName} Finance`,
+                      num: 'Step 1',
+                      title: 'Reconcile Legacy Spend (L01–L03)',
+                      owner: `${shortCustomerName} Finance`,
                       target: '30 Days',
-                      impact: 'Unlocks Col 1 Realized Cash $ & clears Gate 4 (Baseline Reconciliation)'
+                      impact: 'Unlocks Col 1 Realized Cash'
                     },
                     {
-                      num: 'Action 2',
-                      title: 'Remediate Primary Connector & Provisioning Blocker (A05 / P06)',
-                      owner: `${dossier.meta?.accountTeam?.googleCal || 'Google Cloud CAL'} + ${shortCustomerName} Platform Eng`,
+                      num: 'Step 2',
+                      title: 'Complete Connector Sign-Off (A05)',
+                      owner: `${shortCustomerName} Platform Eng`,
                       target: '45 Days',
-                      impact: `Unblocks ${Math.max(0, (dossier.adoptionTelemetry?.contractedSeats || 0) - (dossier.adoptionTelemetry?.assignedSeats ?? dossier.adoptionTelemetry?.assignedSeatsWave1 ?? 0)).toLocaleString()} unassigned contracted seats`
+                      impact: 'Unblocks Wave 2 seat assignment'
                     },
                     {
-                      num: 'Action 3',
-                      title: 'Execute Legacy Parallel-Run Cutover & History Export',
-                      owner: `${dossier.meta?.accountTeam?.customerTechLead || shortCustomerName + ' Platform Eng'}`,
+                      num: 'Step 3',
+                      title: 'Retire Legacy Parallel Run',
+                      owner: `${shortCustomerName} Tech Lead`,
                       target: '60 Days',
-                      impact: `Allows full retirement of residual ${dossier.legacyRetirement?.legacyToolName || 'legacy'} parallel-run cohorts`
+                      impact: 'Eliminates duplicate platform spend'
                     },
                     {
-                      num: 'Action 4',
-                      title: 'Complete Regulated Workflow Governance & Security Sign-Off',
-                      owner: `${dossier.signOffs?.securityGxp?.owner || shortCustomerName + ' CISO & QA Lead'}`,
-                      target: '60 Days',
-                      impact: `Scales ${(dossier.workflows?.[0]?.code || 'WF-01')} (${dossier.workflows?.[0]?.name || 'Primary Workflow'}) across enterprise`
-                    },
-                    {
-                      num: 'Action 5',
-                      title: 'Complete Timed Pre/Post Study for Scoping Workflows',
-                      owner: `${dossier.meta?.accountTeam?.customerSponsor || shortCustomerName + ' Business Leads'}`,
+                      num: 'Step 4',
+                      title: 'Validate Scoping Workflows',
+                      owner: `${shortCustomerName} Business Leads`,
                       target: '90 Days',
-                      impact: `Graduates ${formatCurrency(fiveCols.col3ModeledOpportunity?.base)} from Col 3 Modeled to Col 2 Validated Capacity`
+                      impact: `Graduates ${formatCurrency(fiveCols.col3ModeledOpportunity?.base)} pipeline`
                     }
                   ];
 
               return (
                 <div style={{
                   background: '#ffffff',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '16px',
-                  padding: '24px 28px',
-                  boxShadow: '0 4px 14px rgba(15,23,42,0.04)'
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '12px',
+                  padding: '20px 22px',
+                  boxShadow: '0 1px 3px rgba(15,23,42,0.02)'
                 }}>
-                  <span style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1d4ed8' }}>
-                    Exhibit 5 • {shortCustomerName} Joint Quarterly Decision Log & Multi-Party Sign-Off Bar (F08)
+                  <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#2563eb' }}>
+                    Action Plan & Sign-Off
                   </span>
-                  <h3 style={{ margin: '4px 0 14px', fontSize: '1.12rem', fontWeight: 800, color: '#0f172a' }}>
-                    {roadmapItems.length} Owner-Tracked Remediation Actions & Formal {shortCustomerName} Stakeholder Sign-Off
+                  <h3 style={{ margin: '2px 0 12px', fontSize: '1.02rem', fontWeight: 700, color: '#0f172a' }}>
+                    Next Steps & Stakeholder Approvals
                   </h3>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(5, Math.max(3, roadmapItems.length))}, 1fr)`, gap: '10px', marginBottom: '20px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(4, Math.max(3, roadmapItems.length))}, 1fr)`, gap: '10px', marginBottom: '16px' }}>
                     {roadmapItems.map((act) => (
-                      <div key={act.num} style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '10px', padding: '12px' }}>
-                        <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#2563eb', textTransform: 'uppercase' }}>{act.num} • {act.target}</div>
-                        <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#0f172a', margin: '4px 0' }}>{act.title}</div>
-                        <div style={{ fontSize: '0.7rem', color: '#475569', marginBottom: '6px' }}>👤 {act.owner}</div>
-                        <div style={{ fontSize: '0.68rem', color: '#047857', background: '#ecfdf5', padding: '5px 7px', borderRadius: '6px', fontWeight: 600 }}>
-                          🎯 {act.impact}
-                        </div>
+                      <div key={act.num} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '10px 12px' }}>
+                        <div style={{ fontSize: '0.66rem', fontWeight: 700, color: '#2563eb' }}>{act.num} · {act.target}</div>
+                        <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#0f172a', margin: '3px 0' }}>{act.title}</div>
+                        <div style={{ fontSize: '0.68rem', color: '#64748b', marginBottom: '4px' }}>👤 {act.owner}</div>
+                        <div style={{ fontSize: '0.68rem', color: '#047857', fontWeight: 600 }}>{act.impact}</div>
                       </div>
                     ))}
                   </div>
 
-                  <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '16px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                      <span style={{ fontSize: '0.76rem', fontWeight: 800, color: '#0f172a' }}>
-                        Multi-Party Value Realization Sign-Off Ledger (Click any stakeholder card to toggle sign-off during live {shortCustomerName} review)
-                      </span>
-                    </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
-                      {[
-                        { key: 'businessSponsor', title: '1. Executive Business Sponsor' },
-                        { key: 'platformAnalytics', title: '2. Platform & Analytics Lead' },
-                        { key: 'finance', title: `3. ${shortCustomerName} Finance / FinOps Controller` },
-                        { key: 'securityGxp', title: '4. Security, Privacy & Governance QA' }
-                      ].map((item) => {
-                        const s = dossier.signOffs?.[item.key] || {};
-                        const isSigned = s.status === 'Signed Off' || s.status === 'Approved with Caveat';
-                        return (
-                          <div
-                            key={item.key}
-                            onClick={() => toggleSignOffRole(item.key)}
-                            style={{
-                              padding: '12px 14px',
-                              borderRadius: '10px',
-                              border: isSigned ? '2px solid #059669' : '1.5px dashed #cbd5e1',
-                              background: isSigned ? '#ecfdf5' : '#f8fafc',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                              <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#475569', textTransform: 'uppercase' }}>
-                                {item.title}
-                              </span>
-                              <span style={{
-                                fontSize: '0.66rem',
-                                fontWeight: 800,
-                                padding: '2px 7px',
-                                borderRadius: '999px',
-                                background: isSigned ? '#059669' : '#fef3c7',
-                                color: isSigned ? '#ffffff' : '#b45309'
-                              }}>
-                                {s.status || 'Pending Review'}
-                              </span>
-                            </div>
-                            <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0f172a' }}>{s.owner}</div>
-                            <div style={{ fontSize: '0.68rem', color: '#64748b', marginTop: '2px' }}>{s.caveat}</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', borderTop: '1px solid #f1f5f9', paddingTop: '12px' }}>
+                    {[
+                      { key: 'businessSponsor', title: 'Business Sponsor' },
+                      { key: 'platformAnalytics', title: 'Platform Lead' },
+                      { key: 'finance', title: 'Finance Controller' },
+                      { key: 'securityGxp', title: 'Security & Governance' }
+                    ].map((item) => {
+                      const s = dossier.signOffs?.[item.key] || {};
+                      const isSigned = s.status === 'Signed Off' || s.status === 'Approved with Caveat';
+                      return (
+                        <div
+                          key={item.key}
+                          onClick={() => toggleSignOffRole(item.key)}
+                          style={{
+                            padding: '10px 12px',
+                            borderRadius: '8px',
+                            border: isSigned ? '1px solid #6ee7b7' : '1px solid #e2e8f0',
+                            background: isSigned ? '#ecfdf5' : '#f8fafc',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3px' }}>
+                            <span style={{ fontSize: '0.68rem', fontWeight: 700, color: '#475569' }}>
+                              {item.title}
+                            </span>
+                            <span style={{
+                              fontSize: '0.62rem',
+                              fontWeight: 700,
+                              padding: '1px 6px',
+                              borderRadius: '999px',
+                              background: isSigned ? '#059669' : '#fef3c7',
+                              color: isSigned ? '#ffffff' : '#b45309'
+                            }}>
+                              {s.status || 'Pending'}
+                            </span>
                           </div>
-                        );
-                      })}
-                    </div>
+                          <div style={{ fontSize: '0.76rem', fontWeight: 700, color: '#0f172a' }}>{s.owner}</div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               );
@@ -4932,34 +4067,31 @@ const GeValueRealizationWorkspace = () => {
         )}
 
         {/* ===================================================================
-            VIEW 3: PROVENANCE & CONTRADICTION GUARDRAILS
+            VIEW 3: GUARDRAILS
            =================================================================== */}
         {primaryView === 'math' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <div style={{
               background: '#ffffff',
-              border: '1px solid #cbd5e1',
-              borderRadius: '16px',
-              padding: '24px 28px'
+              border: '1px solid #e2e8f0',
+              borderRadius: '12px',
+              padding: '18px 20px'
             }}>
-              <span style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1d4ed8' }}>
-                Automated Cross-Module Contradiction & Sanity Checks ({shortCustomerName})
-              </span>
-              <h2 style={{ margin: '4px 0 12px', fontSize: '1.22rem', fontWeight: 800, color: '#0f172a' }}>
-                Real-Time Contradiction Detector Across Modules C, P, A, L, W, U, and F
-              </h2>
+              <h3 style={{ margin: '0 0 10px', fontSize: '1rem', fontWeight: 700, color: '#0f172a' }}>
+                Cross-Module Consistency Checks ({shortCustomerName})
+              </h3>
               {evaluation.contradictions?.length === 0 ? (
-                <div style={{ background: '#ecfdf5', border: '1px solid #6ee7b7', color: '#047857', padding: '14px 18px', borderRadius: '10px', fontWeight: 700, fontSize: '0.84rem' }}>
-                  ✓ Zero cross-module contradictions detected in current {dossier.meta?.customerName} dossier state.
+                <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', color: '#047857', padding: '10px 14px', borderRadius: '8px', fontWeight: 600, fontSize: '0.8rem' }}>
+                  ✓ No contradictions detected across modules.
                 </div>
               ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   {evaluation.contradictions.map((c) => (
-                    <div key={c.id} style={{ background: '#fffbeb', border: '1px solid #fcd34d', padding: '12px 16px', borderRadius: '10px' }}>
-                      <div style={{ fontSize: '0.76rem', fontWeight: 800, color: '#b45309' }}>
+                    <div key={c.id} style={{ background: '#fffbeb', border: '1px solid #fde68a', padding: '10px 14px', borderRadius: '8px' }}>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#b45309' }}>
                         ⚠️ [{c.severity}] {c.modules} — {c.title}
                       </div>
-                      <div style={{ fontSize: '0.8rem', color: '#78350f', marginTop: '4px' }}>{c.detail}</div>
+                      <div style={{ fontSize: '0.76rem', color: '#78350f', marginTop: '2px' }}>{c.detail}</div>
                     </div>
                   ))}
                 </div>
@@ -4968,34 +4100,30 @@ const GeValueRealizationWorkspace = () => {
 
             <div style={{
               background: '#ffffff',
-              border: '1px solid #cbd5e1',
-              borderRadius: '16px',
-              padding: '24px 28px'
+              border: '1px solid #e2e8f0',
+              borderRadius: '12px',
+              padding: '18px 20px'
             }}>
-              <h3 style={{ margin: '0 0 10px', fontSize: '1.1rem', fontWeight: 800, color: '#0f172a' }}>
-                🔒 Entity Lock & Non-Relevant Data Quarantine Rules ({dossier.meta?.customerName})
+              <h3 style={{ margin: '0 0 10px', fontSize: '1rem', fontWeight: 700, color: '#0f172a' }}>
+                Customer Data Isolation ({dossier.meta?.customerName})
               </h3>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', fontSize: '0.8rem' }}>
-                <div style={{ background: '#ecfdf5', border: '1px solid #6ee7b7', borderRadius: '10px', padding: '14px' }}>
-                  <div style={{ fontWeight: 800, color: '#047857', marginBottom: '6px' }}>
-                    ✅ Allowed Primary Sources (Locked to {dossier.meta?.customerName} `{dossier.meta?.sfdcAccountId || dossier.meta?.vectorAccountId}`)
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '0.76rem' }}>
+                <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '8px', padding: '12px' }}>
+                  <div style={{ fontWeight: 700, color: '#047857', marginBottom: '4px' }}>
+                    ✓ Active Customer Sources ({dossier.meta?.sfdcAccountId || dossier.meta?.vectorAccountId})
                   </div>
-                  <ul style={{ margin: 0, paddingLeft: '18px', color: '#065f46', lineHeight: 1.6 }}>
-                    <li><strong>NorthAM Agent Acceleration Workbook.xlsx:</strong> Row `{dossier.meta?.customerName}` (`{dossier.meta?.sfdcAccountId || dossier.meta?.vectorAccountId}`), `{formatNumber(dossier.adoptionTelemetry?.contractedSeats)}` contracted, `{formatNumber(dossier.adoptionTelemetry?.provisionedSeats)}` provisioned, `{formatNumber(dossier.adoptionTelemetry?.assignedSeats ?? dossier.adoptionTelemetry?.assignedSeatsWave1)}` assigned, `{formatNumber(dossier.adoptionTelemetry?.allApiWau7d ?? dossier.adoptionTelemetry?.wauMultiApi)}` WAU, `{formatNumber(dossier.adoptionTelemetry?.agentRequests7d)}` 7d agent requests.</li>
-                    <li><strong>8-Source Multi-Tenant Evidence Graph:</strong> {dossier.ingestionAudit?.sourcesConnectedCount || 6}/8 primary sources matched (`{dossier.ingestionAudit?.timeWindowLabel || dossier.meta?.currentWindow}`).</li>
-                    <li><strong>Priority Workflow Register:</strong> {(dossier.workflows || []).map((w) => `${w.code} (${w.name})`).join(', ')}, with pre-sales scoping targets strictly quarantined to Column 3 Modeled Opportunity.</li>
-                  </ul>
+                  <div style={{ color: '#065f46', lineHeight: 1.5 }}>
+                    Locked to {dossier.meta?.customerName} ({formatNumber(dossier.adoptionTelemetry?.contractedSeats)} contracted, {formatNumber(dossier.adoptionTelemetry?.assignedSeats ?? dossier.adoptionTelemetry?.assignedSeatsWave1)} assigned, {formatNumber(dossier.adoptionTelemetry?.allApiWau7d ?? dossier.adoptionTelemetry?.wauMultiApi)} WAU).
+                  </div>
                 </div>
 
-                <div style={{ background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: '10px', padding: '14px' }}>
-                  <div style={{ fontWeight: 800, color: '#b91c1c', marginBottom: '6px' }}>
-                    🚫 Hard-Blocked / Quarantined Non-Relevant Sources
+                <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', padding: '12px' }}>
+                  <div style={{ fontWeight: 700, color: '#b91c1c', marginBottom: '4px' }}>
+                    🚫 Quarantined Non-Customer Data
                   </div>
-                  <ul style={{ margin: 0, paddingLeft: '18px', color: '#7f1d1d', lineHeight: 1.6 }}>
-                    <li><strong>Dummy / Synthetic Files:</strong> `Customers Assessment_ Dummy Data .xlsx` and all synthetic templates are hard-blocked.</li>
-                    <li><strong>Other Accounts in Multi-Tenant Workbooks:</strong> All 4,350 non-`{dossier.meta?.sfdcAccountId || dossier.meta?.vectorAccountId}` rows in `NorthAM Agent Acceleration Workbook.xlsx` and `use_case_registry.json` are strictly quarantined.</li>
-                    <li><strong>Strict Customer Isolation:</strong> Zero cross-customer contamination allowed across questions, candidate options, or exhibits.</li>
-                  </ul>
+                  <div style={{ color: '#7f1d1d', lineHeight: 1.5 }}>
+                    Synthetic dummy files and all non-{shortCustomerName} rows in multi-tenant workbooks are excluded.
+                  </div>
                 </div>
               </div>
             </div>
