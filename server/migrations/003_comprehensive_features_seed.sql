@@ -121,7 +121,7 @@ INSERT INTO databricks_features (name, category, short_description, release_date
 ('Single-Node Compute Standard Mode', 'platform', 'Single-node clusters with full security', '2025-08-27', 'Q3 2025', 'GA', 'https://docs.databricks.com/aws/en/compute/single-node.html', 1),
 ('Column Masks Retained on Replace', 'platform', 'Preserve column masks during table replace', '2025-08-28', 'Q3 2025', 'GA', 'https://docs.databricks.com/aws/en/data-governance/unity-catalog/column-masks.html', 1),
 ('Serverless Workspaces Preview', 'platform', 'Fully serverless workspace architecture', '2025-08-29', 'Q3 2025', 'Public Preview', 'https://docs.databricks.com/aws/en/serverless-compute/serverless-workspaces.html', 6),
-('ServiceNow Connector', 'data_engineering', 'Native ServiceNow data ingestion', '2025-08-30', 'Q3 2025', 'GA', 'https://docs.databricks.com/aws/en/connect/servicenow.html', 3);
+('OmniDesk Connector', 'data_engineering', 'Native OmniDesk data ingestion', '2025-08-30', 'Q3 2025', 'GA', 'https://docs.databricks.com/aws/en/connect/omnidesk.html', 3);
 
 -- ==============================================================================
 -- 2024 MAJOR RELEASES (30 features)

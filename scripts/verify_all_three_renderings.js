@@ -1,4 +1,4 @@
-const puppeteer = require('/Users/nitinagga/Documents/PromptCanvas/node_modules/puppeteer');
+const puppeteer = require('puppeteer');
 
 (async () => {
   const browser = await puppeteer.launch({

@@ -485,7 +485,7 @@ DELIVERABLE: Generate a professional executive benchmarking report structured as
     ]
   },
   "methodology": {
-    "dataSource": "ScoreX Global Industry Benchmarking Repository, Gartner Data & Analytics Research, Forrester Wave Analysis",
+    "dataSource": "ScoreX Global Industry Benchmarking Repository, Enterprise Research Data & Analytics Research, Industry Research Wave Analysis",
     "sampleSize": 284,
     "industryScope": "${industry} enterprises (global coverage)",
     "assessmentCriteria": "Six-pillar vendor-neutral maturity framework (Platform & Governance, Data Engineering, Analytics & BI, Machine Learning, Generative AI, Operational Excellence)",

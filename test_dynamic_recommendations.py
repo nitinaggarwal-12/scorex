@@ -56,12 +56,12 @@ REVENUE_CHECKLIST = {
         "System Tables"
     ],
     "partner_services": [
-        "Deloitte",
+        "ApexGlobal",
         "Slalom",
-        "Accenture",
+        "Stratagem",
         "TCS",
         "Wipro",
-        "Cognizant",
+        "NexusCloud",
         "Persistent",
         "Capgemini"
     ],

@@ -58,7 +58,7 @@ A comprehensive web application that helps organizations assess their Databricks
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/nitinaggarwal-12/technical-maturity-assessment.git
+git clone https://github.com/enterprise-architecture/technical-maturity-assessment.git
 cd technical-maturity-assessment
 ```
 
@@ -220,7 +220,7 @@ This project is proprietary and confidential.
 
 ## 👥 Authors
 
-- **Nitin Aggarwal** - Initial work - [nitinaggarwal-12](https://github.com/nitinaggarwal-12)
+- **ScoreX Engineering** - Initial work - [enterprise-architecture](https://github.com/enterprise-architecture)
 
 ## 🙏 Acknowledgments
 
@@ -230,7 +230,7 @@ This project is proprietary and confidential.
 
 ## 📞 Support
 
-For support, email nitin.aggarwal@databricks.com or open an issue in the repository.
+For support, email support@example.com or open an issue in the repository.
 
 ---
 

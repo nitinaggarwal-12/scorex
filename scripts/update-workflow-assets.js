@@ -12,7 +12,7 @@
  * -> What-If Simulator -> Present Deck Mode -> Multi-Format Export
  */
 
-const puppeteer = require('/Users/nitinagga/Documents/PromptCanvas/node_modules/puppeteer');
+const puppeteer = require('puppeteer');
 const GIFEncoder = require('../scratch/node_modules/gif-encoder-2');
 const { createCanvas, loadImage } = require('../scratch/node_modules/canvas');
 const fs = require('fs');

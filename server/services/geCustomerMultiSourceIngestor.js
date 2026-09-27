@@ -2,18 +2,18 @@
  * Universal Customer 360 & Multi-Source Time-Scoped Evidence Ingestor
  * + Live Gemini API Report Synthesizer for Gemini Enterprise Value Realization Assessment
  *
- * Accepts ANY Customer Name or Salesforce Account ID (0014M... / 001Kf...)
+ * Accepts ANY Customer Name or Enterprise Account ID (ACC-1001-... / ACC-1002-...)
  * and a Time Period (startDate -> endDate / preset window), then fetches,
  * filters, cross-links, and reconciles RELEVANT, RELATED, ACCURATE, and COMPLETE
  * evidence across all 8 enterprise sources:
- *   1. Salesforce / Vector (vector.lightning.force.com & Cloud Connect)
+ *   1. Enterprise CRM / Telemetry (crm.enterprise-demo.internal & Cloud Connect)
  *   2. Google Chat (chat.google.com war rooms & FDE/OCE/TAM spaces)
  *   3. Email / Gmail (mail.google.com stakeholder & sponsor threads)
  *   4. Google Drive (drive.google.com shared customer artifact folders)
  *   5. Google Docs (docs.google.com Ramp Plans, Charters & Weekly Sync Notes)
  *   6. Google Sheets (docs.google.com/spreadsheets Use-Case & Blocker Trackers)
  *   7. Google Slides (docs.google.com/presentation SteerCo, CoP & Arch Decks)
- *   8. Moma (moma.corp.google.com Team Roster, Buganizer b/, & Gantry)
+ *   8. Account Hub (telemetry.enterprise-demo.internal Team Roster, Issue Tracker b/, & Delivery Portal)
  */
 
 const fs = require('fs');
@@ -25,49 +25,374 @@ const {
   evaluateGeValueRealization
 } = require('../data/geValueRealizationFramework');
 
-const CATALOG_PATH = path.join(__dirname, '../data/sfdcGeCustomerCatalog.json');
-const MERCK_LINEAGE_PATH = path.join(__dirname, '../data/merckMultiSystemLineage.json');
-
-let cachedCatalog = null;
-let cachedMerckLineage = null;
+const SYNTHETIC_ENTERPRISE_CATALOG = {
+  totalAccountsIndexed: 10,
+  accounts: [
+    {
+      rowNumber: 1,
+      sfdcAccountId: "ACC-1001-AEROVG",
+      accountName: "AeroVanguard Global Logistics",
+      region: "NORTHAM",
+      subRegion: "Global Logistics & Express",
+      rampPlanDocUrl: "https://docs.enterprise-demo.internal/d/ge-ramp-plan-aerovanguard/edit",
+      segment: "Enterprise",
+      contractedSeats: 301354,
+      provisionedSeats: 32300,
+      stage4Deals: 3,
+      assignedSeats: 13803,
+      trackerOngoingIssues: 2,
+      cloudBlockersInReview: 1,
+      wauAllApi: 8900,
+      wauAgent: 1154,
+      wauAssist: 8003,
+      wauSearch: 7508,
+      gwsPaidSeats: 0,
+      mauMultiApi: 9854,
+      wauMultiApi: 8148,
+      dauMultiApi: 1300,
+      agent7dRequests: 13699,
+      implementationDate: "2026-02-15",
+      activation50PctDate: "2026-05-15",
+      activation85PctDate: "2026-08-15",
+      productionDate: "2026-06-30",
+      lastServiceDate: "2029-02-15",
+      hadCorruptedTelemetrySanitized: false,
+      hasDeepUseCasePortfolio: true
+    },
+    {
+      rowNumber: 2,
+      sfdcAccountId: "ACC-1002-BIONOVA",
+      accountName: "BioNova Life Sciences Inc.",
+      region: "NORTHAM",
+      subRegion: "Healthcare & Life Sciences",
+      rampPlanDocUrl: "https://docs.enterprise-demo.internal/d/ge-ramp-plan-bionova/edit",
+      segment: "Enterprise",
+      contractedSeats: 85300,
+      provisionedSeats: 85000,
+      stage4Deals: 4,
+      assignedSeats: 10663,
+      trackerOngoingIssues: 6,
+      cloudBlockersInReview: 2,
+      wauAllApi: 5867,
+      wauAgent: 1710,
+      wauAssist: 5386,
+      wauSearch: 4992,
+      gwsPaidSeats: 0,
+      mauMultiApi: 7763,
+      wauMultiApi: 5037,
+      dauMultiApi: 550,
+      agent7dRequests: 12385,
+      implementationDate: "2026-02-15",
+      activation50PctDate: "2026-05-15",
+      activation85PctDate: "2026-08-15",
+      productionDate: "2026-06-30",
+      lastServiceDate: "2029-02-15",
+      hadCorruptedTelemetrySanitized: false,
+      hasDeepUseCasePortfolio: true
+    },
+    {
+      rowNumber: 3,
+      sfdcAccountId: "ACC-1003-OMNIMRT",
+      accountName: "OmniMart Retail Group",
+      region: "NORTHAM",
+      subRegion: "Retail & Consumer Goods",
+      rampPlanDocUrl: "https://docs.enterprise-demo.internal/d/ge-ramp-plan-omnimart/edit",
+      segment: "Enterprise",
+      contractedSeats: 250000,
+      provisionedSeats: 120000,
+      stage4Deals: 3,
+      assignedSeats: 48500,
+      trackerOngoingIssues: 3,
+      cloudBlockersInReview: 1,
+      wauAllApi: 29400,
+      wauAgent: 4900,
+      wauAssist: 26100,
+      wauSearch: 24800,
+      gwsPaidSeats: 0,
+      mauMultiApi: 38200,
+      wauMultiApi: 25900,
+      dauMultiApi: 4200,
+      agent7dRequests: 41200,
+      implementationDate: "2026-01-20",
+      activation50PctDate: "2026-04-30",
+      activation85PctDate: "2026-07-30",
+      productionDate: "2026-06-15",
+      lastServiceDate: "2029-01-20",
+      hadCorruptedTelemetrySanitized: false,
+      hasDeepUseCasePortfolio: true
+    },
+    {
+      rowNumber: 4,
+      sfdcAccountId: "ACC-1004-SILCORE",
+      accountName: "SiliconCore Microelectronics",
+      region: "NORTHAM",
+      subRegion: "Semiconductors & Industrial Tech",
+      rampPlanDocUrl: "https://docs.enterprise-demo.internal/d/ge-ramp-plan-siliconcore/edit",
+      segment: "Enterprise",
+      contractedSeats: 121000,
+      provisionedSeats: 95000,
+      stage4Deals: 2,
+      assignedSeats: 34200,
+      trackerOngoingIssues: 2,
+      cloudBlockersInReview: 1,
+      wauAllApi: 21150,
+      wauAgent: 3850,
+      wauAssist: 19400,
+      wauSearch: 18200,
+      gwsPaidSeats: 0,
+      mauMultiApi: 27600,
+      wauMultiApi: 18900,
+      dauMultiApi: 3100,
+      agent7dRequests: 29400,
+      implementationDate: "2026-02-01",
+      activation50PctDate: "2026-05-01",
+      activation85PctDate: "2026-08-01",
+      productionDate: "2026-06-20",
+      lastServiceDate: "2029-02-01",
+      hadCorruptedTelemetrySanitized: false,
+      hasDeepUseCasePortfolio: true
+    },
+    {
+      rowNumber: 5,
+      sfdcAccountId: "ACC-1005-APEXGLB",
+      accountName: "ApexGlobal Assurance LLP",
+      region: "NORTHAM",
+      subRegion: "Global Professional Services",
+      rampPlanDocUrl: "https://docs.enterprise-demo.internal/d/ge-ramp-plan-apexglobal/edit",
+      segment: "Enterprise",
+      contractedSeats: 55500,
+      provisionedSeats: 45000,
+      stage4Deals: 2,
+      assignedSeats: 22400,
+      trackerOngoingIssues: 1,
+      cloudBlockersInReview: 0,
+      wauAllApi: 14100,
+      wauAgent: 2600,
+      wauAssist: 12800,
+      wauSearch: 11900,
+      gwsPaidSeats: 0,
+      mauMultiApi: 18500,
+      wauMultiApi: 12400,
+      dauMultiApi: 2100,
+      agent7dRequests: 19800,
+      implementationDate: "2026-02-10",
+      activation50PctDate: "2026-05-10",
+      activation85PctDate: "2026-08-10",
+      productionDate: "2026-06-25",
+      lastServiceDate: "2029-02-10",
+      hadCorruptedTelemetrySanitized: false,
+      hasDeepUseCasePortfolio: true
+    },
+    {
+      rowNumber: 6,
+      sfdcAccountId: "ACC-1006-STRATGM",
+      accountName: "Stratagem Executive Partners",
+      region: "GLOBAL",
+      subRegion: "Global Professional Services",
+      rampPlanDocUrl: "https://docs.enterprise-demo.internal/d/ge-ramp-plan-stratagem/edit",
+      segment: "Enterprise",
+      contractedSeats: 41800,
+      provisionedSeats: 38000,
+      stage4Deals: 2,
+      assignedSeats: 19600,
+      trackerOngoingIssues: 1,
+      cloudBlockersInReview: 0,
+      wauAllApi: 13200,
+      wauAgent: 3100,
+      wauAssist: 12100,
+      wauSearch: 11400,
+      gwsPaidSeats: 0,
+      mauMultiApi: 16800,
+      wauMultiApi: 11900,
+      dauMultiApi: 2400,
+      agent7dRequests: 24500,
+      implementationDate: "2026-01-15",
+      activation50PctDate: "2026-04-15",
+      activation85PctDate: "2026-07-15",
+      productionDate: "2026-06-01",
+      lastServiceDate: "2029-01-15",
+      hadCorruptedTelemetrySanitized: false,
+      hasDeepUseCasePortfolio: true
+    },
+    {
+      rowNumber: 7,
+      sfdcAccountId: "ACC-1007-FINPULS",
+      accountName: "FinPulse Market Intelligence",
+      region: "NORTHAM",
+      subRegion: "Financial Services (FSI)",
+      rampPlanDocUrl: "https://docs.enterprise-demo.internal/d/ge-ramp-plan-finpulse/edit",
+      segment: "Enterprise",
+      contractedSeats: 24600,
+      provisionedSeats: 24000,
+      stage4Deals: 2,
+      assignedSeats: 14200,
+      trackerOngoingIssues: 2,
+      cloudBlockersInReview: 1,
+      wauAllApi: 9150,
+      wauAgent: 1920,
+      wauAssist: 8400,
+      wauSearch: 7950,
+      gwsPaidSeats: 0,
+      mauMultiApi: 11900,
+      wauMultiApi: 8200,
+      dauMultiApi: 1500,
+      agent7dRequests: 15400,
+      implementationDate: "2026-02-20",
+      activation50PctDate: "2026-05-20",
+      activation85PctDate: "2026-08-20",
+      productionDate: "2026-07-01",
+      lastServiceDate: "2029-02-20",
+      hadCorruptedTelemetrySanitized: false,
+      hasDeepUseCasePortfolio: true
+    },
+    {
+      rowNumber: 8,
+      sfdcAccountId: "ACC-1008-VITURA",
+      accountName: "Vitura Biopharma Corp",
+      region: "NORTHAM",
+      subRegion: "Healthcare & Life Sciences",
+      rampPlanDocUrl: "https://docs.enterprise-demo.internal/d/ge-ramp-plan-vitura/edit",
+      segment: "Enterprise",
+      contractedSeats: 19000,
+      provisionedSeats: 18500,
+      stage4Deals: 2,
+      assignedSeats: 9800,
+      trackerOngoingIssues: 2,
+      cloudBlockersInReview: 1,
+      wauAllApi: 6120,
+      wauAgent: 1240,
+      wauAssist: 5600,
+      wauSearch: 5200,
+      gwsPaidSeats: 0,
+      mauMultiApi: 7950,
+      wauMultiApi: 5400,
+      dauMultiApi: 920,
+      agent7dRequests: 9850,
+      implementationDate: "2026-03-01",
+      activation50PctDate: "2026-06-01",
+      activation85PctDate: "2026-09-01",
+      productionDate: "2026-07-15",
+      lastServiceDate: "2029-03-01",
+      hadCorruptedTelemetrySanitized: false,
+      hasDeepUseCasePortfolio: true
+    },
+    {
+      rowNumber: 9,
+      sfdcAccountId: "ACC-1009-WRKSPHR",
+      accountName: "WorkSphere Cloud HCM",
+      region: "NORTHAM",
+      subRegion: "Technology & Enterprise SaaS",
+      rampPlanDocUrl: "https://docs.enterprise-demo.internal/d/ge-ramp-plan-worksphere/edit",
+      segment: "Enterprise",
+      contractedSeats: 15000,
+      provisionedSeats: 14500,
+      stage4Deals: 1,
+      assignedSeats: 8400,
+      trackerOngoingIssues: 1,
+      cloudBlockersInReview: 0,
+      wauAllApi: 5460,
+      wauAgent: 1180,
+      wauAssist: 4980,
+      wauSearch: 4650,
+      gwsPaidSeats: 0,
+      mauMultiApi: 6900,
+      wauMultiApi: 4800,
+      dauMultiApi: 840,
+      agent7dRequests: 8900,
+      implementationDate: "2026-02-25",
+      activation50PctDate: "2026-05-25",
+      activation85PctDate: "2026-08-25",
+      productionDate: "2026-07-10",
+      lastServiceDate: "2029-02-25",
+      hadCorruptedTelemetrySanitized: false,
+      hasDeepUseCasePortfolio: true
+    },
+    {
+      rowNumber: 10,
+      sfdcAccountId: "ACC-1010-BLDRGHT",
+      accountName: "BuildRight Home Centers",
+      region: "NORTHAM",
+      subRegion: "Retail & Consumer Goods",
+      rampPlanDocUrl: "https://docs.enterprise-demo.internal/d/ge-ramp-plan-buildright/edit",
+      segment: "Enterprise",
+      contractedSeats: 12500,
+      provisionedSeats: 12000,
+      stage4Deals: 1,
+      assignedSeats: 6800,
+      trackerOngoingIssues: 1,
+      cloudBlockersInReview: 0,
+      wauAllApi: 4250,
+      wauAgent: 890,
+      wauAssist: 3890,
+      wauSearch: 3610,
+      gwsPaidSeats: 0,
+      mauMultiApi: 5500,
+      wauMultiApi: 3750,
+      dauMultiApi: 690,
+      agent7dRequests: 6750,
+      implementationDate: "2026-03-05",
+      activation50PctDate: "2026-06-05",
+      activation85PctDate: "2026-09-05",
+      productionDate: "2026-07-20",
+      lastServiceDate: "2029-03-05",
+      hadCorruptedTelemetrySanitized: false,
+      hasDeepUseCasePortfolio: true
+    }
+  ],
+  deepProfiles: {
+    "ACC-1001-AEROVG": {
+      sheetName: "AeroVanguard",
+      industry: "Transportation, Supply Chain & Logistics",
+      execSponsor: "Rohan Kapoor (EVP, Chief Digital & Information Officer)",
+      consultingLead: "Strategic Logistics Account Director",
+      fdeLead: "Supply Chain Principal Architect",
+      partner: "Cloud PSO",
+      rag: "Green",
+      aliases: ["AeroVanguard", "AeroVanguard Logistics"],
+      useCases: [
+        { id: "AVG-01", name: "Global Customs & Export Tariff Document Triage", department: "International Customs & Trade Compliance", stage: "Production", estValue: "$9.5M", connectors: "SharePoint, BigQuery, OmniDesk ITSM", blockers: "RuggedEdge handheld scanner auth wrapper" },
+        { id: "AVG-02", name: "Hub Dispatch & Route Exception Prediction Agent", department: "Air & Ground Hub Operations", stage: "Pilot", estValue: "$14.0M", connectors: "BigQuery, Cloud Storage", blockers: "Real-time telemetry feed throttling" }
+      ]
+    },
+    "ACC-1002-BIONOVA": {
+      sheetName: "BioNova",
+      industry: "Healthcare & Life Sciences (HCLS)",
+      execSponsor: "Marcus Vance (CIO)",
+      consultingLead: "Vikram Desai (HCLS Advisory Lead)",
+      fdeLead: "Claire Montgomery (FDE Lead)",
+      partner: "Cloud PSO",
+      rag: "Green",
+      aliases: ["BioNova", "BioNova Pharma", "BioNova Life Sciences"],
+      useCases: [
+        { id: "BNV-08", name: "Enterprise Knowledge Search & Ask HR Assistant", department: "Enterprise-Wide & Global Support", stage: "Scaled", estValue: "$22.5M", connectors: "SharePoint, OmniDesk ITSM, BigQuery", blockers: "Legacy NovaAssist chat export" },
+        { id: "BNV-06", name: "NOVA-AI Global Pricing & Reference Cascade Agent", department: "Commercial / Global Market Access", stage: "Pilot", estValue: "$150M", connectors: "BigQuery Gold Layer, CoreERP", blockers: "Finance attribution sign-off" },
+        { id: "BNV-04", name: "Automated Clinical Data Review & Protocol Extraction", department: "Clinical Operations / R&D", stage: "Pilot", estValue: "$18.5M", connectors: "RegVault DMS, SharePoint", blockers: "RegVault MCP GxP CSV validation" }
+      ]
+    }
+  }
+};
 
 function loadCatalog() {
-  if (cachedCatalog) return cachedCatalog;
-  try {
-    if (fs.existsSync(CATALOG_PATH)) {
-      cachedCatalog = JSON.parse(fs.readFileSync(CATALOG_PATH, 'utf8'));
-      return cachedCatalog;
-    }
-  } catch (e) {
-    console.warn('Could not load sfdcGeCustomerCatalog.json:', e.message);
-  }
-  cachedCatalog = { totalAccountsIndexed: 0, deepProfiles: {}, accounts: [] };
-  return cachedCatalog;
+  return SYNTHETIC_ENTERPRISE_CATALOG;
 }
 
-function loadMerckLineage() {
-  if (cachedMerckLineage) return cachedMerckLineage;
-  try {
-    if (fs.existsSync(MERCK_LINEAGE_PATH)) {
-      cachedMerckLineage = JSON.parse(fs.readFileSync(MERCK_LINEAGE_PATH, 'utf8'));
-      return cachedMerckLineage;
-    }
-  } catch (e) {
-    console.warn('Could not load merckMultiSystemLineage.json:', e.message);
-  }
-  cachedMerckLineage = [];
-  return cachedMerckLineage;
+function loadBioNovaLineage() {
+  return [
+    { sfdcCaseNumber: "CS-801101", sfdcRecordId: "REC-801101", gantryRequestId: "ENG-260515-9XKA", lastUpdated: "2026-08-15" },
+    { sfdcCaseNumber: "CS-801102", sfdcRecordId: "REC-801102", gantryRequestId: "ENG-260804-7BQP", lastUpdated: "2026-08-28" },
+    { sfdcCaseNumber: "CS-801103", sfdcRecordId: "REC-801103", gantryRequestId: "ENG-260910-4M21", lastUpdated: "2026-09-10" }
+  ];
 }
 
 const ALL_SOURCE_TYPES = [
-  { id: 'salesforce', label: 'Salesforce / Vector', icon: '☁️', domain: 'vector.lightning.force.com' },
+  { id: 'salesforce', label: 'Enterprise CRM / Telemetry', icon: '☁️', domain: 'crm.enterprise-demo.internal' },
   { id: 'chat', label: 'Google Chat', icon: '💬', domain: 'chat.google.com' },
   { id: 'email', label: 'Gmail / Email', icon: '✉️', domain: 'mail.google.com' },
   { id: 'drive', label: 'Google Drive', icon: '📁', domain: 'drive.google.com' },
   { id: 'docs', label: 'Google Docs', icon: '📝', domain: 'docs.google.com/document' },
   { id: 'sheets', label: 'Google Sheets', icon: '📊', domain: 'docs.google.com/spreadsheets' },
   { id: 'slides', label: 'Google Slides', icon: '📽️', domain: 'docs.google.com/presentation' },
-  { id: 'moma', label: 'Moma / Buganizer / Gantry', icon: '🏛️', domain: 'moma.corp.google.com' }
+  { id: 'moma', label: 'Governance & Issue Tracker', icon: '🏛️', domain: 'telemetry.enterprise-demo.internal' }
 ];
 
 const TIME_PRESETS = {
@@ -115,25 +440,25 @@ const TIME_PRESETS = {
 
 function inferIndustryFromSubRegion(subRegion = '', name = '') {
   const s = `${subRegion} ${name}`.toLowerCase();
-  if (s.includes('hcls') || s.includes('health') || s.includes('pharma') || s.includes('merck') || s.includes('pfizer') || s.includes('clinical') || s.includes('oncology') || s.includes('bayer') || s.includes('cardinal')) {
+  if (s.includes('hcls') || s.includes('health') || s.includes('pharma') || s.includes('bionova') || s.includes('vitura') || s.includes('clinical') || s.includes('oncology') || s.includes('biogenix') || s.includes('medsupply')) {
     return 'Healthcare & Life Sciences (HCLS)';
   }
-  if (s.includes('retail') || s.includes('walmart') || s.includes('home depot') || s.includes('mars') || s.includes('lowe') || s.includes('target')) {
+  if (s.includes('retail') || s.includes('omnimart') || s.includes('buildright') || s.includes('consumercorp') || s.includes('buildmart') || s.includes('primemart')) {
     return 'Retail & Consumer Goods';
   }
-  if (s.includes('fs') || s.includes('bank') || s.includes('fargo') || s.includes('s&p') || s.includes('financial') || s.includes('sompo') || s.includes('citi') || s.includes('capital')) {
+  if (s.includes('fs') || s.includes('bank') || s.includes('sterlingvault') || s.includes('finpulse') || s.includes('financial') || s.includes('vanguardinsure') || s.includes('apexbank') || s.includes('capital')) {
     return 'Financial Services (FSI)';
   }
-  if (s.includes('fedex') || s.includes('express') || s.includes('supply') || s.includes('logistics') || s.includes('ups')) {
+  if (s.includes('aerovanguard') || s.includes('express') || s.includes('supply') || s.includes('logistics') || s.includes('ups')) {
     return 'Transportation, Supply Chain & Logistics';
   }
-  if (s.includes('intel') || s.includes('samsung') || s.includes('hitachi') || s.includes('bosch') || s.includes('semi') || s.includes('honeywell')) {
+  if (s.includes('siliconcore') || s.includes('novatech') || s.includes('induscore') || s.includes('mechaworks') || s.includes('semi') || s.includes('aerocontrols')) {
     return 'Semiconductors & Industrial Tech';
   }
-  if (s.includes('kpmg') || s.includes('mckinsey') || s.includes('deloitte') || s.includes('accenture') || s.includes('cognizant') || s.includes('tata') || s.includes('hcl')) {
+  if (s.includes('apexglobal') || s.includes('stratagem') || s.includes('vanguardadvisory') || s.includes('nexuspartners') || s.includes('coretech') || s.includes('globalsys') || s.includes('enterprisesys')) {
     return 'Global Professional & IT Services';
   }
-  if (s.includes('meta') || s.includes('verizon') || s.includes('tmeg') || s.includes('scp') || s.includes('software') || s.includes('ukg')) {
+  if (s.includes('socialsphere') || s.includes('teleconnect') || s.includes('tmeg') || s.includes('scp') || s.includes('software') || s.includes('worksphere')) {
     return 'Technology, Media & Enterprise SaaS';
   }
   if (s.includes('ps') || s.includes('department') || s.includes('governo')) {
@@ -143,35 +468,35 @@ function inferIndustryFromSubRegion(subRegion = '', name = '') {
 }
 
 function inferLegacyBaselineName(accountName = '', industry = '', sfdcId = '') {
-  if (sfdcId === '0014M00001hZEwfQAG') {
-    return 'GMax / GPTEAL (Homegrown OpenAI GPT-4o + 300 Early Pilot Seats)';
+  if (sfdcId === 'ACC-1002-BIONOVA') {
+    return 'NovaAssist / NOVA-AI (Homegrown OpenAI GPT-4o + 300 Early Pilot Seats)';
   }
   const n = accountName.toLowerCase();
-  if (n.includes('federal express') || n.includes('fedex')) {
+  if (n.includes('aerovanguard')) {
     return 'Legacy Manual Station Dispatch, Static Paper SOPs & Fragmented Claims Search';
   }
-  if (n.includes('walmart')) {
+  if (n.includes('omnimart')) {
     return 'Legacy Retail Intranet Search & Disconnected Store/Merchant Lookup Tools';
   }
-  if (n.includes('intel')) {
+  if (n.includes('siliconcore')) {
     return 'Legacy Disconnected Silicon/EDA Knowledge Portals & Manual HR/Sales Triage';
   }
-  if (n.includes('kpmg')) {
+  if (n.includes('apexglobal')) {
     return 'Legacy Manual Tax/Audit Document Translation & Fragmented S2P/SOC Triage';
   }
-  if (n.includes('pfizer')) {
+  if (n.includes('vitura')) {
     return 'Legacy Offline CRA Spreadsheets, Fragmented Clinical Search & Manual R&D Triage';
   }
-  if (n.includes('home depot')) {
+  if (n.includes('buildright')) {
     return 'Legacy Store Associate Lookup & Manual Marketing/Supply Chain Helpdesk';
   }
-  if (n.includes('s&p global')) {
-    return 'Legacy Fragmented Sales/Market Intel Portals & Manual Onboarding Search';
+  if (n.includes('finpulse')) {
+    return 'Legacy Fragmented Sales/Market SiliconCore Portals & Manual Onboarding Search';
   }
-  if (n.includes('ukg') || n.includes('kronos')) {
+  if (n.includes('worksphere') || n.includes('worksphere')) {
     return 'Legacy Manual Bryte Skill Evaluation & Disconnected PS Operations';
   }
-  if (n.includes('mckinsey')) {
+  if (n.includes('stratagem')) {
     return 'Legacy Firm Knowledge Search & Disconnected Engagement Research Tools';
   }
   return `Legacy Disconnected Enterprise Search & Manual Department Workflows (${accountName})`;
@@ -205,7 +530,7 @@ function enrichAccountSummary(acc, deepProfile) {
 }
 
 /**
- * Search Salesforce / Vector accounts by Customer Name, Alias, or 18-char Salesforce ID (001...)
+ * Search Enterprise CRM / Telemetry accounts by Customer Name, Alias, or 18-char Enterprise CRM ID (001...)
  */
 function searchSalesforceCustomers(query = '', limit = 25) {
   const catalog = loadCatalog();
@@ -228,7 +553,7 @@ function searchSalesforceCustomers(query = '', limit = 25) {
 
     let score = 0;
     if (idLower === q) score = 1000;
-    else if (idLower.startsWith(q) && q.startsWith('001')) score = 900;
+    else if (idLower.startsWith(q) && (q.startsWith('acc-') || q.startsWith('001'))) score = 900;
     else if (nameLower === q || aliases.includes(q)) score = 850;
     else if (nameLower.startsWith(q) || aliases.some(al => al.startsWith(q))) score = 700;
     else if (nameLower.includes(q) || aliases.some(al => al.includes(q))) score = 500;
@@ -249,7 +574,7 @@ function searchSalesforceCustomers(query = '', limit = 25) {
 }
 
 /**
- * Picks a random Salesforce customer from the 4,351-account catalog.
+ * Picks a random Enterprise CRM customer from the 4,351-account catalog.
  * Prioritizes accounts with active telemetry or deep portfolios so random assessments have rich multi-source data.
  */
 function pickRandomSalesforceCustomer(poolMode = 'active_enterprise', excludeSfdcId = '') {
@@ -271,7 +596,7 @@ function pickRandomSalesforceCustomer(poolMode = 'active_enterprise', excludeSfd
 }
 
 /**
- * Resolves a customer query (either Salesforce Account ID `001...` or Customer Name)
+ * Resolves a customer query (either Enterprise Account ID `001...` or Customer Name)
  * into a canonical Account Record + Lookalike Entity Disambiguation list.
  */
 function resolveSalesforceAccount(customerInput = '') {
@@ -280,24 +605,24 @@ function resolveSalesforceAccount(customerInput = '') {
   const deepProfiles = catalog.deepProfiles || {};
   let clean = String(customerInput || '').trim();
 
-  // If formatted like "Federal Express Corporation (0014M00001hfHuqQAE)", extract the 18-char SFDC ID first
-  const embeddedIdMatch = clean.match(/\b(001[A-Za-z0-9]{15})\b/);
+  // If formatted like "AeroVanguard Global Logistics (ACC-1001-AEROVG)", extract the 18-char SFDC ID first
+  const embeddedIdMatch = clean.match(/\b(ACC-\d{4}-[A-Z0-9]+|001[A-Za-z0-9]{15})\b/);
   if (embeddedIdMatch) {
     clean = embeddedIdMatch[1];
   }
 
   if (!clean) {
-    const merck = accounts.find(a => a.sfdcAccountId === '0014M00001hZEwfQAG') || accounts[0];
+    const bionova = accounts.find(a => a.sfdcAccountId === 'ACC-1002-BIONOVA') || accounts[0];
     return {
-      resolved: enrichAccountSummary(merck, deepProfiles[merck.sfdcAccountId]),
+      resolved: enrichAccountSummary(bionova, deepProfiles[bionova.sfdcAccountId]),
       disambiguatedSiblings: accounts
-        .filter(a => a.sfdcAccountId !== merck.sfdcAccountId && a.accountName.toLowerCase().includes('merck'))
+        .filter(a => a.sfdcAccountId !== bionova.sfdcAccountId && a.accountName.toLowerCase().includes('bionova'))
         .map(a => enrichAccountSummary(a, deepProfiles[a.sfdcAccountId])),
       isCustomSynthesized: false
     };
   }
 
-  // 1. Exact Salesforce ID match
+  // 1. Exact Enterprise CRM ID match
   const exactId = accounts.find(a => a.sfdcAccountId.toLowerCase() === clean.toLowerCase());
   if (exactId) {
     const rootWord = exactId.accountName.split(/[\s,&.]+/)[0].toLowerCase();
@@ -325,10 +650,10 @@ function resolveSalesforceAccount(customerInput = '') {
   }
 
   // 3. Dynamic Customer Synthesis if user enters an unlisted customer name or new 001... ID
-  const isSfdcIdFormat = /^001[A-Za-z0-9]{12,15}$/.test(clean);
+  const isSfdcIdFormat = /^(ACC-\d{4}-[A-Z0-9]+|001[A-Za-z0-9]{12,15})$/i.test(clean);
   const customId = isSfdcIdFormat
     ? clean
-    : `0014M00001${Buffer.from(clean).toString('hex').slice(0, 8).toUpperCase().padEnd(8, 'X')}`;
+    : `ACC-9999-${Buffer.from(clean).toString('hex').slice(0, 6).toUpperCase().padEnd(6, 'X')}`;
   const customName = isSfdcIdFormat ? `Enterprise Customer (${clean})` : clean;
   const ind = inferIndustryFromSubRegion('', customName);
 
@@ -345,7 +670,7 @@ function resolveSalesforceAccount(customerInput = '') {
       provisionedSeats: 15000,
       stage4Deals: 1,
       assignedSeats: 4200,
-      buganizerOngoingIssues: 3,
+      trackerOngoingIssues: 3,
       cloudBlockersInReview: 1,
       wauAllApi: 2310,
       wauAgent: 540,
@@ -425,7 +750,7 @@ function fetchMultiSourceEvidenceForCustomer(account, options = {}) {
     ? options.sources
     : ALL_SOURCE_TYPES.map(s => s.id);
 
-  const isMerck = account.sfdcAccountId === '0014M00001hZEwfQAG';
+  const isBioNova = account.sfdcAccountId === 'ACC-1002-BIONOVA';
   const shortSlug = account.accountName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 24);
 
   const rawItems = [];
@@ -440,7 +765,7 @@ function fetchMultiSourceEvidenceForCustomer(account, options = {}) {
     quarantinedItems.push({
       id: `quar_entity_${lk.sfdcAccountId}`,
       source: 'salesforce',
-      sourceLabel: 'Salesforce / Vector',
+      sourceLabel: 'Enterprise CRM / Telemetry',
       title: `Excluded Lookalike Legal Entity: ${lk.accountName} (SFDC ID: ${lk.sfdcAccountId} • ${lk.region} • ${lk.contractedSeats.toLocaleString()} seats)`,
       timestamp: endDate,
       reasonCode: 'WRONG_LEGAL_ENTITY',
@@ -468,10 +793,10 @@ function fetchMultiSourceEvidenceForCustomer(account, options = {}) {
     rawItems.push({
       id: `sfdc_vector_${account.sfdcAccountId}`,
       source: 'salesforce',
-      sourceLabel: 'Salesforce / Vector',
+      sourceLabel: 'Enterprise CRM / Telemetry',
       artifactType: 'System-of-Record Telemetry',
-      title: `Salesforce Vector Account Telemetry (${account.accountName} • ${account.sfdcAccountId})`,
-      url: `https://vector.lightning.force.com/lightning/r/Account/${account.sfdcAccountId}/view`,
+      title: `Enterprise CRM Vector Account Telemetry (${account.accountName} • ${account.sfdcAccountId})`,
+      url: `https://crm.enterprise-demo.internal/accounts/${account.sfdcAccountId}/view`,
       timestamp: account.implementationDate || '2026-05-03',
       isEvergreenContract: true,
       confidenceTier: 'A',
@@ -485,22 +810,22 @@ function fetchMultiSourceEvidenceForCustomer(account, options = {}) {
     rawItems.push({
       id: `sfdc_cases_${account.sfdcAccountId}`,
       source: 'salesforce',
-      sourceLabel: 'Salesforce / Vector',
+      sourceLabel: 'Enterprise CRM / Telemetry',
       artifactType: 'Support Cases & Cloud Connect Blockers',
-      title: `Vector Support Cases & Cloud Connect Consumption Blockers (${account.buganizerOngoingIssues} Active Tickets / ${account.cloudBlockersInReview} CBs)`,
-      url: `https://vector.lightning.force.com/lightning/cmp/c__NavigateToDisplaySupportCases?c__recordId=${account.sfdcAccountId}`,
+      title: `Vector Support Cases & Cloud Connect Consumption Blockers (${account.trackerOngoingIssues} Active Tickets / ${account.cloudBlockersInReview} CBs)`,
+      url: `https://crm.enterprise-demo.internal/accounts/${account.sfdcAccountId}/cases`,
       timestamp: endDate,
       isEvergreenContract: false,
       confidenceTier: 'A',
       confidencePct: 96,
       owner: `${account.fdeLead} / Support Engineering`,
       mappedQuestions: ['A05', 'P05', 'Q03', 'Q04'],
-      extractedSummary: `Active Support Cases & Cloud Connect blockers tracked for ${account.accountName} (${account.sfdcAccountId}): ${account.buganizerOngoingIssues} ongoing engineering issues and ${account.cloudBlockersInReview} Cloud Blockers in review.`,
+      extractedSummary: `Active Support Cases & Cloud Connect blockers tracked for ${account.accountName} (${account.sfdcAccountId}): ${account.trackerOngoingIssues} ongoing engineering issues and ${account.cloudBlockersInReview} Cloud Blockers in review.`,
       relatedIds: [account.sfdcAccountId]
     });
 
-    if (isMerck) {
-      const lineage = loadMerckLineage().filter(r => r.sfdcCaseNumber || r.sfdcRecordId);
+    if (isBioNova) {
+      const lineage = loadBioNovaLineage().filter(r => r.sfdcCaseNumber || r.sfdcRecordId);
       let inWindowCases = 0;
       let outWindowCases = 0;
       for (const rec of lineage) {
@@ -509,27 +834,27 @@ function fetchMultiSourceEvidenceForCustomer(account, options = {}) {
         else outWindowCases++;
       }
       rawItems.push({
-        id: 'sfdc_merck_verified_cases',
+        id: 'sfdc_bionova_verified_cases',
         source: 'salesforce',
-        sourceLabel: 'Salesforce / Vector',
-        artifactType: 'Verified 500Kf... Support Case Lineage',
-        title: `Merck Vector Support Cases (${inWindowCases} Cases Active in Window [${startDate} → ${endDate}])`,
-        url: 'https://vector.lightning.force.com/lightning/cmp/c__NavigateToDisplaySupportCases?c__recordId=0014M00001hZEwfQAG',
+        sourceLabel: 'Enterprise CRM / Telemetry',
+        artifactType: 'Verified REC-801... Support Case Lineage',
+        title: `BioNova Vector Support Cases (${inWindowCases} Cases Active in Window [${startDate} → ${endDate}])`,
+        url: 'https://crm.enterprise-demo.internal/accounts',
         timestamp: endDate,
         isEvergreenContract: true,
         confidenceTier: 'A',
         confidencePct: 98,
-        owner: 'Nitin Aggarwal (@nitinagga) / Brendan Doohan (@bdoohan)',
+        owner: 'Jordan Hayes (@jhayes) / Liam OConnor (@loconnor)',
         mappedQuestions: ['A05', 'Q03', 'Q04', 'V07'],
-        extractedSummary: `${inWindowCases} verified Salesforce Support Cases (500Kf... record IDs including Case 73385661, Case 75001483 A2A 401, Case 75117943 Voice STT, Case 73068402 OneDrive Excel merge, Case 73857033 GPTeal Branding) active within ${startDate} to ${endDate}.`,
-        relatedIds: ['500Kf00000uq1yQIAQ', '500Kf00000uwL4tIAE', '500Kf00000uq89xIAA', '500Kf00000us50jIAA']
+        extractedSummary: `${inWindowCases} verified Enterprise Support Cases (REC-801... record IDs including Case 73385661, Case 75001483 A2A 401, Case 75117943 Voice STT, Case 73068402 OneDrive Excel merge, Case 73857033 NovaAssist Branding) active within ${startDate} to ${endDate}.`,
+        relatedIds: ['REC-801100', 'REC-801100', 'REC-801100', 'REC-801100']
       });
       if (outWindowCases > 0) {
         quarantinedItems.push({
           id: 'quar_sfdc_cases_window',
           source: 'salesforce',
-          sourceLabel: 'Salesforce / Vector',
-          title: `${outWindowCases} Historical Salesforce Support Cases Outside Window (${startDate} → ${endDate})`,
+          sourceLabel: 'Enterprise CRM / Telemetry',
+          title: `${outWindowCases} Historical Enterprise Support Cases Outside Window (${startDate} → ${endDate})`,
           timestamp: startDate,
           reasonCode: 'OUTSIDE_TIME_WINDOW',
           reasonDetail: `Filtered out ${outWindowCases} support cases whose last update timestamp fell outside [${startDate}, ${endDate}].`,
@@ -585,8 +910,8 @@ function fetchMultiSourceEvidenceForCustomer(account, options = {}) {
       source: 'sheets',
       sourceLabel: 'Google Sheets',
       artifactType: 'NorthAM Agent Acceleration Workbook (Vector Extract)',
-      title: `NorthAM Agent Acceleration Workbook.xlsx → Import of GE Customers Extract (Row #${account.rowNumber}: ${account.accountName})`,
-      url: 'file:///Users/nitinagga/Documents/NorthAM%20Agent%20Acceleration%20Workbook.xlsx',
+      title: `Enterprise_Agent_Acceleration_Workbook.xlsx → Import of GE Customers Extract (Row #${account.rowNumber}: ${account.accountName})`,
+      url: 'https://docs.enterprise-demo.internal/artifacts/enterprise-workbook',
       timestamp: '2026-07-17',
       isEvergreenContract: true,
       confidenceTier: 'A',
@@ -608,8 +933,8 @@ function fetchMultiSourceEvidenceForCustomer(account, options = {}) {
         source: 'sheets',
         sourceLabel: 'Google Sheets',
         artifactType: 'Strategic Account Agentic Use-Case Portfolio Sheet',
-        title: `NorthAM Agent Acceleration Workbook.xlsx → "${deepProfile.sheetName}" Tab (${geUseCases.length} Gemini Enterprise Workflows)`,
-        url: 'file:///Users/nitinagga/Documents/NorthAM%20Agent%20Acceleration%20Workbook.xlsx',
+        title: `Enterprise_Agent_Acceleration_Workbook.xlsx → "${deepProfile.sheetName}" Tab (${geUseCases.length} Gemini Enterprise Workflows)`,
+        url: 'https://docs.enterprise-demo.internal/artifacts/enterprise-workbook',
         timestamp: '2026-07-17',
         isEvergreenContract: true,
         confidenceTier: 'B',
@@ -650,21 +975,21 @@ function fetchMultiSourceEvidenceForCustomer(account, options = {}) {
       }
     }
 
-    if (isMerck) {
+    if (isBioNova) {
       rawItems.push({
-        id: 'sheets_merck_blockers_zack',
+        id: 'sheets_bionova_blockers',
         source: 'sheets',
         sourceLabel: 'Google Sheets',
         artifactType: 'Customer Blocker & Bug Matrix (Sheet A & Sheet B)',
-        title: 'MERCK GE_ Cloud Blockers - Zack.xlsx & Product Bugs UI/UX Branding Tracker',
-        url: 'https://docs.google.com/spreadsheets/d/1F06hN2zF0BmSe9HiNda7o7vdoJrWPkqA-TC_NknHEWg/edit?gid=1090443010',
+        title: 'BioNova_Cloud_Blockers_Tracker.xlsx & Product Bugs UI/UX Branding Tracker',
+        url: 'https://docs.enterprise-demo.internal/spreadsheets/d/bionova-blockers-matrix',
         timestamp: '2026-06-02',
         isEvergreenContract: false,
         confidenceTier: 'A',
         confidencePct: 95,
-        owner: 'Zachary Pinner (Merck IT) & Nitin Aggarwal',
+        owner: 'Lucas Sterling (BioNova IT) & Jordan Hayes',
         mappedQuestions: ['A05', 'A07', 'C07', 'L02', 'L05', 'P05', 'P06', 'Q03', 'Q04', 'V07'],
-        extractedSummary: 'Tracks Merck Wave-1 operational blockers: (1) GMax bulk chat history export gating legacy retirement (L02), (2) Veeva/SAP/SharePoint opt-in controls, (3) WIF group sharing & Private Endpoint.',
+        extractedSummary: 'Tracks BioNova Wave-1 operational blockers: (1) NovaAssist bulk chat history export gating legacy retirement (L02), (2) RegVault/CoreERP/SharePoint opt-in controls, (3) WIF group sharing & Private Endpoint.',
         relatedIds: ['Sheet-A-gid-1090443010', 'Sheet-B-gid-661823547']
       });
     }
@@ -672,39 +997,39 @@ function fetchMultiSourceEvidenceForCustomer(account, options = {}) {
 
   // SOURCE 4: GOOGLE DRIVE
   if (requestedSources.includes('drive')) {
-    if (isMerck) {
+    if (isBioNova) {
       rawItems.push(
         {
-          id: 'drive_merck_gmax_charter',
+          id: 'drive_bionova_nova_charter',
           source: 'drive',
           sourceLabel: 'Google Drive',
           artifactType: 'PDF Capability & Design Charter',
-          title: 'GMAX Pricing Agent - Capability and Design Charter.pdf & Merck GMA Architecture Discussion.pdf',
-          url: 'file:///Users/nitinagga/Documents/GMAX%20Pricing%20Agent/GMAX%20Pricing%20Agent%20-%20Capability%20and%20Design%20Charter.pdf',
+          title: 'NovaAssist_Pricing_Agent_Capability_Charter.pdf & BioNova_Architecture_Discussion.pdf',
+          url: 'https://docs.enterprise-demo.internal/artifacts/enterprise-workbook',
           timestamp: '2026-07-01',
           isEvergreenContract: false,
           confidenceTier: 'B',
           confidencePct: 88,
           owner: 'Global Market Access Lead / Google PSO ($590K SOW)',
           mappedQuestions: ['W01', 'W04', 'W07', 'W08', 'L04', 'Q01', 'V06', 'V08'],
-          extractedSummary: 'Documents MER-06 GMAX Global Pricing & Reference Cascade Agent on ADK + Gemini + BigQuery Gold Layer: compresses multi-week manual Excel IRP/MFN simulations to ~2.5 hrs ($100M–$300M charter target quarantined in Col 3).',
-          relatedIds: ['MER-06', 'WF2']
+          extractedSummary: 'Documents BNV-06 NOVA-AI Global Pricing & Reference Cascade Agent on ADK + Gemini + BigQuery Gold Layer: compresses multi-week manual Excel IRP/MFN simulations to ~2.5 hrs ($100M–$300M charter target quarantined in Col 3).',
+          relatedIds: ['BNV-06', 'WF2']
         },
         {
-          id: 'drive_merck_preview_452587034549',
+          id: 'drive_bionova_preview_710492831045',
           source: 'drive',
           sourceLabel: 'Google Drive',
           artifactType: 'GCP Project Preview Allowlist PDF',
-          title: 'Merck Preview 452587034549.pdf & Merck Preview 990806474523.pdf (72 Allowlist Features)',
-          url: 'file:///Users/nitinagga/Documents/Merck%20Preview%20452587034549.pdf',
+          title: 'BioNova_Preview_710492831045.pdf & BioNova_Preview_820194736201.pdf (72 Allowlist Features)',
+          url: 'https://docs.enterprise-demo.internal/artifacts/enterprise-workbook',
           timestamp: '2026-05-15',
           isEvergreenContract: false,
           confidenceTier: 'A',
           confidencePct: 96,
-          owner: 'Nitin Aggarwal / Trusted Tester Program',
+          owner: 'Jordan Hayes / Trusted Tester Program',
           mappedQuestions: ['C06', 'L03', 'L06', 'P04', 'P05'],
-          extractedSummary: 'Verifies Merck GCP project numbers 452587034549 (mmcg-did-rgpt-5872) and 990806474523 across 72 preview feature requests and connector allowlists.',
-          relatedIds: ['452587034549', '990806474523']
+          extractedSummary: 'Verifies BioNova GCP project numbers 710492831045 (bionova-ai-prod-4102) and 820194736201 across 72 preview feature requests and connector allowlists.',
+          relatedIds: ['710492831045', '820194736201']
         }
       );
     } else {
@@ -729,39 +1054,39 @@ function fetchMultiSourceEvidenceForCustomer(account, options = {}) {
 
   // SOURCE 5: GOOGLE SLIDES
   if (requestedSources.includes('slides')) {
-    if (isMerck) {
+    if (isBioNova) {
       rawItems.push(
         {
-          id: 'slides_merck_cop',
+          id: 'slides_bionova_cop',
           source: 'slides',
           sourceLabel: 'Google Slides',
           artifactType: 'Community of Practice & Enablement Deck',
-          title: 'Community of Practice for Gemini Adoption at Merck (1).pdf & MRK-GOOG AI Project Ideas.pptx',
-          url: 'file:///Users/nitinagga/Documents/Community%20of%20Practice%20for%20Gemini%20Adoption%20at%20Merck%20(1).pdf',
+          title: 'BioNova_Gemini_Community_of_Practice_Readout.pdf & BioNova_AI_Project_Portfolio.pptx',
+          url: 'https://docs.enterprise-demo.internal/artifacts/enterprise-workbook',
           timestamp: '2026-05-14',
           isEvergreenContract: false,
           confidenceTier: 'B',
           confidencePct: 86,
-          owner: 'Merck AI Enablement & CoP Leads',
+          owner: 'BioNova AI Enablement & CoP Leads',
           mappedQuestions: ['A06', 'P01', 'P07', 'U01', 'U02', 'U03', 'U04', 'U05', 'U06', 'U07', 'U08', 'U09', 'U10', 'V01'],
-          extractedSummary: 'Documents Merck Community of Practice (CoP) prompt engineering sessions, BU AI Champions network, and 30-day employee pulse survey benchmarks (4.25/5.0 Gemini vs. 3.23/5.0 Legacy GMax).',
-          relatedIds: ['MRK-CoP-2026', 'MRK-GOOG-PPTX']
+          extractedSummary: 'Documents BioNova Community of Practice (CoP) prompt engineering sessions, BU AI Champions network, and 30-day employee pulse survey benchmarks (4.25/5.0 Gemini vs. 3.23/5.0 Legacy NovaAssist).',
+          relatedIds: ['BNV-CoP-2026', 'BNV-PORTFOLIO-PPTX']
         },
         {
-          id: 'slides_merck_gmax_deck',
+          id: 'slides_bionova_nova_deck',
           source: 'slides',
           sourceLabel: 'Google Slides',
           artifactType: 'Executive Value & Architecture Readout Deck',
-          title: 'Merck GMAx Access IQ.pptx — Executive Commercial & Market Access Briefing',
-          url: 'file:///Users/nitinagga/Documents/Merck%20GMAx%20Access%20IQ.pptx',
+          title: 'BioNova_Market_Access_IQ.pptx — Executive Commercial & Market Access Briefing',
+          url: 'https://docs.enterprise-demo.internal/artifacts/enterprise-workbook',
           timestamp: '2026-05-06',
           isEvergreenContract: false,
           confidenceTier: 'B',
           confidencePct: 84,
-          owner: 'Arnab Biswas / Commercial Market Access Team',
+          owner: 'Vikram Desai / Commercial Market Access Team',
           mappedQuestions: ['C11', 'F07', 'W01', 'W08', 'V03', 'V06'],
-          extractedSummary: 'Executive presentation detailing Global Market Access (GMAX) pricing cascade workflows, HTA dossier acceleration (Project AHEAD), and executive KPI priorities.',
-          relatedIds: ['MER-06', 'MER-07']
+          extractedSummary: 'Executive presentation detailing Global Market Access (NOVA-AI) pricing cascade workflows, HTA dossier acceleration (Project AHEAD), and executive KPI priorities.',
+          relatedIds: ['BNV-06', 'BNV-07']
         }
       );
     } else {
@@ -790,7 +1115,7 @@ function fetchMultiSourceEvidenceForCustomer(account, options = {}) {
       ?.filter(u => u.blockers && u.blockers !== 'N/A' && u.blockers !== 'NA')
       ?.slice(0, 3)
       ?.map(u => `${u.id}: ${u.blockers}`)
-      ?.join(' • ') || `${account.buganizerOngoingIssues} active engineering items & connector sync updates`;
+      ?.join(' • ') || `${account.trackerOngoingIssues} active engineering items & connector sync updates`;
 
     rawItems.push({
       id: `chat_warroom_${account.sfdcAccountId}`,
@@ -853,52 +1178,52 @@ function fetchMultiSourceEvidenceForCustomer(account, options = {}) {
     rawItems.push({
       id: `moma_account_hub_${account.sfdcAccountId}`,
       source: 'moma',
-      sourceLabel: 'Moma / Buganizer / Gantry',
-      artifactType: 'Moma Account Governance & Buganizer/Gantry Index',
-      title: `Moma Account Hub & Buganizer/Gantry Escalation Index (${account.accountName} • ${account.sfdcAccountId})`,
-      url: `https://moma.corp.google.com/search?q=${encodeURIComponent(account.sfdcAccountId)}`,
+      sourceLabel: 'Governance & Issue Tracker',
+      artifactType: 'Account Hub Account Governance & Issue Tracker Index',
+      title: `Account Hub Account Hub & Issue Tracker Escalation Index (${account.accountName} • ${account.sfdcAccountId})`,
+      url: `https://telemetry.enterprise-demo.internal/accounts/${account.sfdcAccountId}`,
       timestamp: endDate,
       isEvergreenContract: true,
       confidenceTier: 'A',
       confidencePct: 97,
       owner: `${account.consultingLead} / ${account.fdeLead}`,
       mappedQuestions: ['C01', 'C03', 'P08', 'Q03', 'Q04', 'G04'],
-      extractedSummary: `Verified Moma account team governance (CAL: ${account.consultingLead}, FDE: ${account.fdeLead}, Sponsor: ${account.execSponsor}, Partner: ${account.partner}) + ${account.buganizerOngoingIssues} Buganizer issues & ${account.cloudBlockersInReview} Cloud Blockers.`,
-      relatedIds: [account.sfdcAccountId, 'b.corp.google.com', 'gantry-portal']
+      extractedSummary: `Verified Account Hub account team governance (CAL: ${account.consultingLead}, FDE: ${account.fdeLead}, Sponsor: ${account.execSponsor}, Partner: ${account.partner}) + ${account.trackerOngoingIssues} Issue Tracker issues & ${account.cloudBlockersInReview} Cloud Blockers.`,
+      relatedIds: [account.sfdcAccountId, 'issues.enterprise-demo.internal', 'gantry-portal']
     });
 
-    if (isMerck) {
-      const allLineage = loadMerckLineage();
+    if (isBioNova) {
+      const allLineage = loadBioNovaLineage();
       const inWinLineage = allLineage.filter(r => isDateWithinWindow(r.lastUpdated || r.createdDate, startDate, endDate));
       const outWinLineage = allLineage.filter(r => !isDateWithinWindow(r.lastUpdated || r.createdDate, startDate, endDate));
       const gantryInWin = inWinLineage.filter(r => r.gantryRequestId);
 
       rawItems.push({
-        id: 'moma_merck_162_lineage',
+        id: 'portal_bionova_lineage',
         source: 'moma',
-        sourceLabel: 'Moma / Buganizer / Gantry',
-        artifactType: 'Forensic Buganizer CR/CB/Engg + Gantry Lineage',
-        title: `Merck End-to-End Buganizer & Gantry Lineage (${inWinLineage.length} Records Active in [${startDate} → ${endDate}], ${gantryInWin.length} in Gantry)`,
-        url: 'https://gantry-portal-985325316162.cr.gclb.goog/issues?tab=issues&display_id=GANTRY-260515-4NWO',
+        sourceLabel: 'Governance & Issue Tracker',
+        artifactType: 'Forensic Issue Tracker CR/CB/Engg + Delivery Portal Lineage',
+        title: `BioNova End-to-End Issue Tracker & Delivery Lineage (${inWinLineage.length} Records Active in [${startDate} → ${endDate}], ${gantryInWin.length} in Delivery Portal)`,
+        url: 'https://delivery.enterprise-demo.internal/issues',
         timestamp: endDate,
         isEvergreenContract: false,
         confidenceTier: 'A',
         confidencePct: 98,
-        owner: '@nitinagga / @bdoohan / @murphrp',
+        owner: '@jhayes / @loconnor / @mreed',
         mappedQuestions: ['A05', 'P05', 'Q02', 'Q03', 'Q04', 'V07'],
-        extractedSummary: `${inWinLineage.length} verified Buganizer & Gantry lineage records active in [${startDate} → ${endDate}] across GANTRY-260515-4NWO, GANTRY-260804-FGWP, and GANTRY-260910-C447.`,
-        relatedIds: ['GANTRY-260515-4NWO', 'GANTRY-260804-FGWP', 'GANTRY-260910-C447', 'b/537896804', 'b/561514077']
+        extractedSummary: `${inWinLineage.length} verified Issue Tracker & Delivery lineage records active in [${startDate} → ${endDate}] across ENG-260515-9XKA, ENG-260804-7BQP, and ENG-260910-4M21.`,
+        relatedIds: ['ENG-260515-9XKA', 'ENG-260804-7BQP', 'ENG-260910-4M21', 'ISS-904120', 'ISS-904125']
       });
 
       if (outWinLineage.length > 0) {
         quarantinedItems.push({
           id: 'quar_moma_lineage_window',
           source: 'moma',
-          sourceLabel: 'Moma / Buganizer / Gantry',
-          title: `${outWinLineage.length} Historical Buganizer/Gantry Tickets Outside Selected Time Window (${startDate} → ${endDate})`,
+          sourceLabel: 'Governance & Issue Tracker',
+          title: `${outWinLineage.length} Historical Issue Tracker Tickets Outside Selected Time Window (${startDate} → ${endDate})`,
           timestamp: startDate,
           reasonCode: 'OUTSIDE_TIME_WINDOW',
-          reasonDetail: `Excluded ${outWinLineage.length} historical Buganizer/Gantry records whose lastUpdated date fell outside [${startDate}, ${endDate}].`,
+          reasonDetail: `Excluded ${outWinLineage.length} historical Issue Tracker records whose lastUpdated date fell outside [${startDate}, ${endDate}].`,
           preventedImpact: 'Ensures active blocker telemetry in Q04 and A05 is strictly scoped to the user-selected time period.'
         });
       }
@@ -939,12 +1264,12 @@ function fetchMultiSourceEvidenceForCustomer(account, options = {}) {
 
 /**
  * Builds the Priority Workflows array (W01–W13) for ANY customer from their deep use-case sheet
- * (or synthesizes industry-grounded workflows from their Salesforce/Vector telemetry if not one of the 9 deep tabs).
+ * (or synthesizes industry-grounded workflows from their Enterprise CRM/Vector telemetry if not one of the 9 deep tabs).
  */
 function buildCustomerWorkflows(account, deepProfile, windowInfo, prefillMode = 'evidence') {
-  if (account.sfdcAccountId === '0014M00001hZEwfQAG' && prefillMode === 'evidence') {
-    const merckDraft = createInitialGeDossier('merck_draft');
-    return merckDraft.workflows.map(wf => ({
+  if (account.sfdcAccountId === 'ACC-1002-BIONOVA' && prefillMode === 'evidence') {
+    const bionovaDraft = createInitialGeDossier('bionova_draft');
+    return bionovaDraft.workflows.map(wf => ({
       ...wf,
       currentPeriod: `${windowInfo.currentWindowLabel} (Gemini Enterprise)`
     }));
@@ -1046,7 +1371,7 @@ function buildCustomerWorkflows(account, deepProfile, windowInfo, prefillMode = 
         gxpValidated: maturity === 'Scaled',
         confidenceTier: confTier,
         verificationStatus: maturity === 'Scaled' ? 'verified' : (maturity === 'Pilot' ? 'draft_verify' : 'pending'),
-        sourceProvenance: `NorthAM Agent Acceleration Workbook.xlsx → "${deepProfile.sheetName}" Tab (${uc.id}: ${uc.name} • Stage: ${uc.stage || 'Scoping'})`,
+        sourceProvenance: `Enterprise_Agent_Acceleration_Workbook.xlsx → "${deepProfile.sheetName}" Tab (${uc.id}: ${uc.name} • Stage: ${uc.stage || 'Scoping'})`,
         quarterlyDecision: maturity === 'Scaled' ? 'Scale' : (uc.blockers && uc.blockers !== 'N/A' && uc.blockers !== 'NA' ? 'Improve / Unblock' : 'Validate further'),
         nextAction: uc.blockers && uc.blockers !== 'N/A' && uc.blockers !== 'NA'
           ? `Resolve blocker: ${uc.blockers.slice(0, 140)}`
@@ -1064,7 +1389,7 @@ function buildCustomerWorkflows(account, deepProfile, windowInfo, prefillMode = 
     });
   }
 
-  // Fallback for any of the other 4,342 Salesforce GE accounts using their real Vector seat & surface telemetry
+  // Fallback for any of the other 4,342 Enterprise CRM GE accounts using their real Vector seat & surface telemetry
   return [
     {
       id: `wf_${account.sfdcAccountId.slice(-6)}_1`,
@@ -1177,11 +1502,11 @@ function buildCustomerWorkflows(account, deepProfile, windowInfo, prefillMode = 
 
 /**
  * Dynamically builds 100% Customer-Specific Question Responses AND Candidate Options
- * for all 82 questions (C01-G05) with zero Merck leftovers when a non-Merck customer is active!
+ * for all 82 questions (C01-G05) with zero BioNova leftovers when a non-BioNova customer is active!
  */
 function buildCustomerQuestionResponses(account, deepProfile, workflows, windowInfo, questionSourceMap, prefillMode = 'evidence') {
-  const isMerck = account.sfdcAccountId === '0014M00001hZEwfQAG';
-  const baseDossier = createInitialGeDossier('merck_draft');
+  const isBioNova = account.sfdcAccountId === 'ACC-1002-BIONOVA';
+  const baseDossier = createInitialGeDossier('bionova_draft');
   const baseResponses = baseDossier.questionResponses || {};
 
   const custName = account.accountName;
@@ -1195,7 +1520,7 @@ function buildCustomerQuestionResponses(account, deepProfile, workflows, windowI
   const wauSearch = account.wauSearch || 0;
   const wauAgent = account.wauAgent || 0;
   const agentReqs = account.agent7dRequests || 0;
-  const bugs = account.buganizerOngoingIssues || 0;
+  const bugs = account.trackerOngoingIssues || 0;
   const wauPct = assigned > 0 ? ((wau / assigned) * 100).toFixed(1) : '0.0';
   const legacyName = account.legacyBaselineName || `Legacy Enterprise Baseline (${custName})`;
 
@@ -1223,17 +1548,17 @@ function buildCustomerQuestionResponses(account, deepProfile, workflows, windowI
   const hasSharePoint = connectorArray.some(c => /sharepoint|onedrive|m365|teams|outlook/i.test(c)) || true;
   const wfSummaryShort = workflows.slice(0, 4).map(w => `${w.code} ${w.name.slice(0, 32)}`).join(', ');
   const primaryBlocker1 = rawBlockers[0]
-    || (isMerck
-      ? 'Connector gaps (Veeva Vault / SAP / SharePoint opt-in controls)'
+    || (isBioNova
+      ? 'Connector gaps (RegVault DMS / CoreERP / SharePoint opt-in controls)'
       : `Enterprise connector & UI integration requirements (${connectorArray.slice(0, 3).join(', ') || 'SharePoint, BigQuery, Cloud Storage'})`);
   const primaryBlocker2 = rawBlockers[1]
-    || (isMerck
+    || (isBioNova
       ? 'Permissions / WIF group limits & Private Endpoint access'
       : `Seat activation & frontline role onboarding (${assigned.toLocaleString()} assigned of ${contracted.toLocaleString()} contracted seats)`);
   const primaryBlocker3 = rawBlockers[2]
-    || (isMerck
-      ? 'Alternative tools & Legacy GMax chat history export dependency'
-      : `Workflow task telemetry tagging & Scoping-to-Production validation gates (${bugs} open Buganizer items)`);
+    || (isBioNova
+      ? 'Alternative tools & Legacy NovaAssist chat history export dependency'
+      : `Workflow task telemetry tagging & Scoping-to-Production validation gates (${bugs} open Issue Tracker items)`);
 
   const isRegulatedIndustry = /hcls|pharma|health|clinical|fsi|bank/i.test(account.industry);
 
@@ -1274,26 +1599,26 @@ function buildCustomerQuestionResponses(account, deepProfile, workflows, windowI
       ]
     },
     C05: {
-      val: isMerck
+      val: isBioNova
         ? ['GxP (Manufacturing / Quality / CSV)', 'Clinical Operations (GCP)', 'Medical / Scientific Information', 'Data Privacy / Works Council', 'Commercial / Promotional (MLR)']
         : (isRegulatedIndustry
             ? ['Data Privacy / Works Council', 'Enterprise Security & Audit Compliance', 'Regulated Domain Review']
             : ['Data Privacy / Works Council', 'Enterprise Security & SOC2/ISO Governance']),
-      opts: isMerck
+      opts: isBioNova
         ? ['GxP (Manufacturing / Quality / CSV)', 'Clinical Operations (GCP)', 'Medical / Scientific Information', 'Data Privacy / Works Council', 'Commercial / Promotional (MLR)', 'None']
         : ['Data Privacy / Works Council', 'Enterprise Security & SOC2/ISO Governance', 'Regulated Domain Review', 'Customer PII / Financial Controls', 'None']
     },
     C06: {
-      val: isMerck
-        ? ['Microsoft 365 / SharePoint / OneDrive', 'ServiceNow (OOTB & MCP)', 'Veeva Vault (Regulatory / Clinical)', 'BigQuery / Enterprise Data Lakehouse', 'Custom Agents / ADK / API']
+      val: isBioNova
+        ? ['Microsoft 365 / SharePoint / OneDrive', 'OmniDesk ITSM (OOTB & MCP)', 'RegVault DMS (Regulatory / Clinical)', 'BigQuery / Enterprise Data Lakehouse', 'Custom Agents / ADK / API']
         : [
             ...(hasSharePoint ? ['Microsoft 365 / SharePoint / OneDrive / Teams'] : []),
             ...(hasBigQuery ? ['BigQuery / Google Cloud Storage / Data Lakehouse'] : []),
             ...(connectorArray.slice(0, 2).map(c => `Enterprise Connector: ${c}`)),
             'Custom Agents / ADK / API'
           ],
-      opts: isMerck
-        ? ['Microsoft 365 / SharePoint / OneDrive', 'ServiceNow (OOTB & MCP)', 'Veeva Vault (Regulatory / Clinical)', 'BigQuery / Enterprise Data Lakehouse', 'Custom Agents / ADK / API', 'Standalone web app']
+      opts: isBioNova
+        ? ['Microsoft 365 / SharePoint / OneDrive', 'OmniDesk ITSM (OOTB & MCP)', 'RegVault DMS (Regulatory / Clinical)', 'BigQuery / Enterprise Data Lakehouse', 'Custom Agents / ADK / API', 'Standalone web app']
         : [
             'Microsoft 365 / SharePoint / OneDrive / Teams',
             'BigQuery / Google Cloud Storage / Data Lakehouse',
@@ -1389,14 +1714,14 @@ function buildCustomerQuestionResponses(account, deepProfile, workflows, windowI
       ]
     },
     P05: {
-      val: isMerck
-        ? 'M365/SharePoint & BigQuery Actively Used; ServiceNow MCP in Pilot; Veeva Vault & SAP Blocked/In-Flight'
+      val: isBioNova
+        ? 'M365/SharePoint & BigQuery Actively Used; OmniDesk ITSM MCP in Pilot; RegVault DMS & CoreERP Blocked/In-Flight'
         : `${connectorArray.slice(0, 3).join(', ') || 'BigQuery, Cloud Storage, SharePoint & OneDrive'} Actively Used / In Pilot; Frontline & Custom Connector Wrappers In-Flight`,
-      opts: isMerck
+      opts: isBioNova
         ? [
-            'M365/SharePoint & BigQuery Actively Used; ServiceNow MCP in Pilot; Veeva Vault & SAP Blocked/In-Flight',
+            'M365/SharePoint & BigQuery Actively Used; OmniDesk ITSM MCP in Pilot; RegVault DMS & CoreERP Blocked/In-Flight',
             'M365/SharePoint Only Connected; All Other Enterprise Connectors Pending',
-            'All Enterprise Connectors (M365, ServiceNow, Veeva, SAP) Live in Production'
+            'All Enterprise Connectors (M365, OmniDesk ITSM, RegVault, CoreERP) Live in Production'
           ]
         : [
             `${connectorArray.slice(0, 3).join(', ') || 'BigQuery, Cloud Storage, SharePoint & OneDrive'} Actively Used / In Pilot; Frontline & Custom Connector Wrappers In-Flight`,
@@ -1770,9 +2095,9 @@ function buildCustomerQuestionResponses(account, deepProfile, workflows, windowI
       ]
     },
     Q04: {
-      val: `99.9% uptime; P50 <2.2s (Search/Assist), P95 <6.5s (Agents); ${bugs} Buganizer items actively tracked`,
+      val: `99.9% uptime; P50 <2.2s (Search/Assist), P95 <6.5s (Agents); ${bugs} Issue Tracker items actively tracked`,
       opts: [
-        `99.9% uptime; P50 <2.2s (Search/Assist), P95 <6.5s (Agents); ${bugs} Buganizer items actively tracked`,
+        `99.9% uptime; P50 <2.2s (Search/Assist), P95 <6.5s (Agents); ${bugs} Issue Tracker items actively tracked`,
         'Exceeds all latency and ticket MTTR targets with zero open bugs',
         'Meets minimum availability with occasional cross-cloud query latency spikes'
       ]
@@ -1786,14 +2111,14 @@ function buildCustomerQuestionResponses(account, deepProfile, workflows, windowI
       ]
     },
     Q06: {
-      val: isMerck
-        ? 'Yes — Regulated workflows (MER-04 Clinical, MER-05 CMC, MER-13 Regulatory) scoped in pilot; formal GxP CSV validation required prior to scale (Gate 3 Active)'
+      val: isBioNova
+        ? 'Yes — Regulated workflows (BNV-04 Clinical, BNV-05 CMC, BNV-13 Regulatory) scoped in pilot; formal GxP CSV validation required prior to scale (Gate 3 Active)'
         : (isRegulatedIndustry
             ? `Yes — Regulated workflows (${workflows.slice(0, 2).map(w => w.name.slice(0, 28)).join(', ')}) scoped in pilot/scoping; formal compliance sign-off required prior to scale (Gate 3 Active)`
             : `No regulated GxP workflows in Wave-1 scope for ${custName} (Human-in-the-loop enterprise governance active)`),
       opts: [
-        isMerck
-          ? 'Yes — Regulated workflows (MER-04 Clinical, MER-05 CMC, MER-13 Regulatory) scoped in pilot; formal GxP CSV validation required prior to scale (Gate 3 Active)'
+        isBioNova
+          ? 'Yes — Regulated workflows (BNV-04 Clinical, BNV-05 CMC, BNV-13 Regulatory) scoped in pilot; formal GxP CSV validation required prior to scale (Gate 3 Active)'
           : `Yes — Regulated workflows (${workflows.slice(0, 2).map(w => w.name.slice(0, 28)).join(', ')}) scoped in pilot/scoping; formal compliance sign-off required prior to scale (Gate 3 Active)`,
         `Yes — All regulated/compliance workflows formally validated with ${custName} QA audit trail sign-off`,
         `No regulated GxP workflows in Wave-1 scope for ${custName} (Human-in-the-loop enterprise governance active)`
@@ -1878,11 +2203,11 @@ function buildCustomerQuestionResponses(account, deepProfile, workflows, windowI
       ]
     },
     V01: {
-      val: isMerck
+      val: isBioNova
         ? 'Literature triage & 500+ paper structured extraction (CoP & R&D pilots)'
         : `Primary domain knowledge & operational synthesis accelerated (${workflows[0]?.name || 'Enterprise Search'})`,
       opts: [
-        isMerck
+        isBioNova
           ? 'Literature triage & 500+ paper structured extraction (CoP & R&D pilots)'
           : `Primary domain knowledge & operational synthesis accelerated (${workflows[0]?.name || 'Enterprise Search'})`,
         'Hypothesis development & multi-source research triage',
@@ -1890,11 +2215,11 @@ function buildCustomerQuestionResponses(account, deepProfile, workflows, windowI
       ]
     },
     V02: {
-      val: isMerck
+      val: isBioNova
         ? 'Human-reviewed drafting & clinical data review configuration (100% HITL gate)'
         : `Human-reviewed operational recommendations (${workflows[1]?.name || workflows[0]?.name || 'Core Workflow'} — 100% HITL gate)`,
       opts: [
-        isMerck
+        isBioNova
           ? 'Human-reviewed drafting & clinical data review configuration (100% HITL gate)'
           : `Human-reviewed operational recommendations (${workflows[1]?.name || workflows[0]?.name || 'Core Workflow'} — 100% HITL gate)`,
         'Reference search only',
@@ -1918,24 +2243,24 @@ function buildCustomerQuestionResponses(account, deepProfile, workflows, windowI
       ]
     },
     V05: {
-      val: isMerck
-        ? 'CMC Tech Transfer & QMS/SOP contextualization (MER-05 in Scoping; controlled records require QA sign-off)'
+      val: isBioNova
+        ? 'CMC Tech Transfer & QMS/SOP contextualization (BNV-05 in Scoping; controlled records require QA sign-off)'
         : `SOP, Field & Operational Manual Contextualization (${workflows.find(w => /sop|manual|safety|facility|ops/i.test(w.name))?.name || workflows[0]?.name} — QA sign-off enforced)`,
       opts: [
-        isMerck
-          ? 'CMC Tech Transfer & QMS/SOP contextualization (MER-05 in Scoping; controlled records require QA sign-off)'
+        isBioNova
+          ? 'CMC Tech Transfer & QMS/SOP contextualization (BNV-05 in Scoping; controlled records require QA sign-off)'
           : `SOP, Field & Operational Manual Contextualization (${workflows.find(w => /sop|manual|safety|facility|ops/i.test(w.name))?.name || workflows[0]?.name} — QA sign-off enforced)`,
         'Reference lookup only',
         'Direct write to controlled operational records'
       ]
     },
     V06: {
-      val: isMerck
-        ? 'Internal global pricing simulation (MER-06 GMAX) & internal market access drafting with human approval'
+      val: isBioNova
+        ? 'Internal global pricing simulation (BNV-06 NOVA-AI) & internal market access drafting with human approval'
         : `Internal commercial / customer workflow simulation (${workflows[1]?.name || workflows[0]?.name}) with mandatory human approval`,
       opts: [
-        isMerck
-          ? 'Internal global pricing simulation (MER-06 GMAX) & internal market access drafting with human approval'
+        isBioNova
+          ? 'Internal global pricing simulation (BNV-06 NOVA-AI) & internal market access drafting with human approval'
           : `Internal commercial / customer workflow simulation (${workflows[1]?.name || workflows[0]?.name}) with mandatory human approval`,
         'External customer publication without human review',
         'Not applicable'
@@ -2015,9 +2340,9 @@ function buildCustomerQuestionResponses(account, deepProfile, workflows, windowI
 
     const evidenceSourceLabel = primarySource
       ? `${primarySource.sourceLabel}: ${primarySource.title}`
-      : `Salesforce Vector (${sfdcId}: ${custName}) & 8-Source Assessment Ledger`;
+      : `Enterprise CRM Vector (${sfdcId}: ${custName}) & 8-Source Assessment Ledger`;
 
-    const ownerLabel = isMerck
+    const ownerLabel = isBioNova
       ? baseResp.owner
       : (primarySource?.owner || `${account.consultingLead} / ${account.fdeLead}`);
 
@@ -2155,7 +2480,7 @@ function ingestCustomerMultiSourceDossier(params = {}) {
     resolution = resolveSalesforceAccount(randAcc.sfdcAccountId);
     account = resolution.resolved;
   } else {
-    const lookupKey = sfdcAccountId || customerQuery || '0014M00001hZEwfQAG';
+    const lookupKey = sfdcAccountId || customerQuery || 'ACC-1002-BIONOVA';
     resolution = resolveSalesforceAccount(lookupKey);
     account = resolution.resolved;
   }
@@ -2185,8 +2510,8 @@ function ingestCustomerMultiSourceDossier(params = {}) {
     sources
   });
 
-  const isMerck = account.sfdcAccountId === '0014M00001hZEwfQAG';
-  const baseDossier = createInitialGeDossier('merck_draft');
+  const isBioNova = account.sfdcAccountId === 'ACC-1002-BIONOVA';
+  const baseDossier = createInitialGeDossier('bionova_draft');
 
   const workflows = buildCustomerWorkflows(account, deepProfile, windowInfo, prefillMode);
 
@@ -2208,12 +2533,12 @@ function ingestCustomerMultiSourceDossier(params = {}) {
     prefillMode
   );
 
-  const dossierId = isMerck && prefillMode === 'evidence'
-    ? 'inst_merck_ge_value_realization'
+  const dossierId = isBioNova && prefillMode === 'evidence'
+    ? 'inst_bionova_ge_value_realization'
     : `ge_vr_${account.sfdcAccountId.toLowerCase()}`;
 
-  const accountLeadsList = isMerck
-    ? ['Zachary Pinner (Platform/IT)', 'Nicole Harapesova (R&D/Clinical)', 'Arnab Biswas (Google CAL)']
+  const accountLeadsList = isBioNova
+    ? ['Lucas Sterling (Platform/IT)', 'Elena Rostova (R&D/Clinical)', 'Vikram Desai (Google CAL)']
     : [
         `${account.consultingLead} (Google CAL)`,
         `${account.fdeLead} (Technical Lead)`,
@@ -2226,14 +2551,14 @@ function ingestCustomerMultiSourceDossier(params = {}) {
   const customerDossier = {
     ...baseDossier,
     id: dossierId,
-    mode: prefillMode === 'clean' ? 'clean' : (isMerck ? 'merck_draft' : 'sfdc_multi_source'),
+    mode: prefillMode === 'clean' ? 'clean' : (isBioNova ? 'bionova_draft' : 'sfdc_multi_source'),
     prefillMode,
     meta: {
       ...baseDossier.meta,
       customerName: account.accountName,
       vectorAccountId: account.sfdcAccountId,
-      gcpProjectId: isMerck
-        ? '452587034549 (mmcg-did-rgpt-5872) / 990806474523'
+      gcpProjectId: isBioNova
+        ? '710492831045 (bionova-ai-prod-4102) / 820194736201'
         : `gcp-ge-${account.sfdcAccountId.slice(-8).toLowerCase()}`,
       legacySystemName: legacyName,
       legacyPlatformName: legacyName,
@@ -2241,10 +2566,10 @@ function ingestCustomerMultiSourceDossier(params = {}) {
       targetPlatformName: targetName,
       executiveSponsor: account.execSponsor,
       accountLeads: accountLeadsList,
-      customerLeads: isMerck
+      customerLeads: isBioNova
         ? baseDossier.meta.customerLeads
         : `${account.execSponsor} (Sponsor), ${account.accountName} Enterprise Architecture & Platform Leads`,
-      googleLeads: isMerck
+      googleLeads: isBioNova
         ? baseDossier.meta.googleLeads
         : `${account.consultingLead} (CAL), ${account.fdeLead} (FDE), Partner: ${account.partner}`,
       industry: account.industry,
@@ -2264,7 +2589,7 @@ function ingestCustomerMultiSourceDossier(params = {}) {
     },
     legacyRetirement: {
       legacyToolName: legacyName,
-      legacyAnnualRunRateModeledUsd: isMerck ? 1850000 : Math.max(450000, Math.round((account.assignedSeats || 2500) * 95))
+      legacyAnnualRunRateModeledUsd: isBioNova ? 1850000 : Math.max(450000, Math.round((account.assignedSeats || 2500) * 95))
     },
     adoptionTelemetry: {
       contractedSeats: account.contractedSeats,
@@ -2290,13 +2615,13 @@ function ingestCustomerMultiSourceDossier(params = {}) {
         agent: account.wauAgent,
         agentRolling7dRequests: account.agent7dRequests
       },
-      legacyGmaxEligible: isMerck ? 15000 : Math.max(500, Math.round(account.assignedSeats * 0.65)),
-      legacyGmaxWau: isMerck ? 3200 : Math.max(150, Math.round(account.wauAllApi * 0.45)),
-      buganizerOngoingIssues: account.buganizerOngoingIssues,
+      legacyBaselineEligible: isBioNova ? 15000 : Math.max(500, Math.round(account.assignedSeats * 0.65)),
+      legacyBaselineWau: isBioNova ? 3200 : Math.max(150, Math.round(account.wauAllApi * 0.45)),
+      trackerOngoingIssues: account.trackerOngoingIssues,
       cloudBlockersInReview: account.cloudBlockersInReview
     },
     workflows,
-    geographies: isMerck
+    geographies: isBioNova
       ? baseDossier.geographies
       : [
           {
@@ -2313,7 +2638,7 @@ function ingestCustomerMultiSourceDossier(params = {}) {
             poolingRule: 'Primary benchmark cohort'
           }
         ],
-    signOffs: isMerck
+    signOffs: isBioNova
       ? baseDossier.signOffs
       : {
           businessSponsor: { owner: account.execSponsor, status: 'Pending Review', date: windowInfo.endDate, caveat: 'Awaiting Wave-1 Cost Bridge & Pilot readout' },
@@ -2371,7 +2696,7 @@ function ingestCustomerMultiSourceDossier(params = {}) {
       },
       related: {
         status: 'VERIFIED',
-        summary: `Cross-linked ${windowInfo.activeItems.length} multi-source records across Salesforce (${account.sfdcAccountId}), Google Docs Ramp Plan, Sheets Use-Case Trackers (${workflows.length} workflows), Drive, Slides, Chat, Email, and Moma/Buganizer.`
+        summary: `Cross-linked ${windowInfo.activeItems.length} multi-source records across Enterprise CRM (${account.sfdcAccountId}), Google Docs Ramp Plan, Sheets Use-Case Trackers (${workflows.length} workflows), Drive, Slides, Chat, Email, and Account Hub/Issue Tracker.`
       },
       accurate: {
         status: 'VERIFIED',
@@ -2393,7 +2718,7 @@ function ingestCustomerMultiSourceDossier(params = {}) {
  * and 8-source customer telemetry to regenerate the custom Executive Value Realization Report.
  */
 async function generateGeminiAssessmentReport(dossierInput = {}) {
-  const dossier = dossierInput || createInitialGeDossier('merck_draft');
+  const dossier = dossierInput || createInitialGeDossier('bionova_draft');
   const evaluation = evaluateGeValueRealization(dossier);
   const meta = dossier.meta || {};
   const telemetry = dossier.adoptionTelemetry || {};
@@ -2412,15 +2737,15 @@ async function generateGeminiAssessmentReport(dossierInput = {}) {
     return `- ${w.code} (${w.name}) | Dept: ${w.functionArea} | Stage: ${w.maturity} | Active Users: ${w.activeUsers ?? 'Pending'} | Tasks/Mo: ${w.completedTasksPerMonth ?? 'Pending'} | Baseline: ${w.baselineMinutes || 0}m -> Gemini: ${w.geminiMinutes || 0}m (Net Saved: ${w.netMinutesSavedPerTask || 0}m, -${(w.effortReductionPct || 0).toFixed(1)}%) | Cycle: ${w.cycleTimeBaselineHours}h -> ${w.cycleTimeGeminiHours}h | Column: ${w.benefitColumn || w.realizationClass} | Modeled Value: $${((w.modeledAnnualValueUsd || 0) / 1e6).toFixed(2)}M | Next Action: ${w.nextAction || ''}`;
   }).join('\n');
 
-  const systemInstruction = `You are a Senior Partner at McKinsey & Company and Principal Value Engineering Architect at Google Cloud.
-You are generating a board-ready, CFO-defensible Gemini Enterprise Value Realization Executive Readout for a specific enterprise customer based on their Salesforce Account telemetry, 8-source ingested evidence, and all 82 questionnaire responses submitted by the user.
-Strictly ground every insight in the exact customer name, Salesforce ID, seat/WAU numbers, workflows, blockers, and selected question options provided in the prompt. Never mention any other customer.`;
+  const systemInstruction = `You are a Senior Partner at Stratagem Executive Advisory and Principal Value Engineering Architect at Google Cloud.
+You are generating a board-ready, CFO-defensible Gemini Enterprise Value Realization Executive Readout for a specific enterprise customer based on their Enterprise CRM Account telemetry, 8-source ingested evidence, and all 82 questionnaire responses submitted by the user.
+Strictly ground every insight in the exact customer name, Enterprise CRM ID, seat/WAU numbers, workflows, blockers, and selected question options provided in the prompt. Never mention any other customer.`;
 
   const prompt = `Generate a comprehensive, executive-grade Gemini Enterprise Value Realization Report JSON for the following customer assessment submission:
 
 CUSTOMER & SALESFORCE ENTITY:
 - Customer Name: ${meta.customerName || 'Enterprise Customer'}
-- Salesforce Account ID: ${meta.vectorAccountId || 'N/A'}
+- Enterprise Account ID: ${meta.vectorAccountId || 'N/A'}
 - Industry: ${meta.industry || 'Enterprise'} | Region: ${meta.region || 'NORTHAM'}
 - Executive Sponsor: ${meta.executiveSponsor || 'CIO / VP Enterprise AI'}
 - Account Leads: ${(meta.accountLeads || []).join(', ')}
@@ -2435,7 +2760,7 @@ HARD ADOPTION & TELEMETRY METRICS:
 - Active All-API WAU: ${(telemetry.wauAllApi || 0).toLocaleString()} (${fiveCols.col4NonFinancial?.wauOfAssignedPct || 0}% of Assigned)
 - Multi-API MAU: ${(telemetry.mauMultiApi || 0).toLocaleString()}
 - Surface WAU Breakdown: Assist ${(telemetry.featureWau?.assist || 0).toLocaleString()} | Search ${(telemetry.featureWau?.search || 0).toLocaleString()} | Agent ${(telemetry.featureWau?.agent || 0).toLocaleString()} (${(telemetry.featureWau?.agentRolling7dRequests || 0).toLocaleString()} 7d requests)
-- Ongoing Buganizer Issues: ${telemetry.buganizerOngoingIssues || 0} | Cloud Blockers: ${telemetry.cloudBlockersInReview || 0}
+- Ongoing Issue Tracker Issues: ${telemetry.trackerOngoingIssues || 0} | Cloud Blockers: ${telemetry.cloudBlockersInReview || 0}
 
 DETERMINISTIC SCORE & 5-COLUMN CFO LEDGER:
 - Overall Verdict: ${evaluation.overallHeadlineVerdict} (${evaluation.openGatesCount} Open Gates)
@@ -2452,7 +2777,7 @@ ${formattedQuestions}
 
 Return ONLY valid JSON with this exact schema:
 {
-  "executiveHeadline": "<1-2 sentence McKinsey governing thesis citing the customer's exact name, SFDC ID, WAU/Assigned %, Col 2 Validated Capacity, Col 3 Modeled Opportunity, and open governance gates>",
+  "executiveHeadline": "<1-2 sentence Stratagem governing thesis citing the customer's exact name, SFDC ID, WAU/Assigned %, Col 2 Validated Capacity, Col 3 Modeled Opportunity, and open governance gates>",
   "situationBeforeMigration": "<Detailed paragraph describing the pre-migration baseline at this customer, citing their legacy system, manual bottlenecks, and baseline metrics from C07, C08, P01, W03, W04>",
   "complicationAndBlockers": "<Detailed paragraph explaining the exact operational, technical, connector, device, and Finance sign-off blockers identified in A05, P05, L01-L02, Q03-Q06 for this customer>",
   "resolutionAndValueRealized": "<Detailed paragraph quantifying the before-vs-after transformation achieved on Gemini Enterprise across WAU adoption (A01-A04), workflow time & cycle compression (W01-W08), and 5-column CFO value separation>",
@@ -2540,12 +2865,12 @@ Return ONLY valid JSON with this exact schema:
     aiSynthesis = {
       executiveHeadline: `${custName} (${sfdcId}) has activated ${(telemetry.wauAllApi || 0).toLocaleString()} weekly active users across ${(telemetry.assignedSeatsWave1 || 0).toLocaleString()} Wave-1 assigned seats (${fiveCols.col4NonFinancial?.wauOfAssignedPct || 0}% WAU conversion), releasing ${(fiveCols.col2ValidatedCapacity?.hoursMonthlyBase || 0).toLocaleString()} validated capacity hours/month ($${((fiveCols.col2ValidatedCapacity?.valueAnnualBase || 0) / 1000).toFixed(0)}K/yr Col 2) while quarantining $${((fiveCols.col3ModeledOpportunity?.base || 0) / 1e6).toFixed(2)}M in Col 3 Modeled Opportunity across ${workflows.length} workflows.`,
       situationBeforeMigration: `Prior to migrating to Google Cloud Gemini Enterprise, ${custName} relied on ${meta.legacyPlatformName || 'fragmented legacy search and manual workflows'}. Baseline assessment responses ([C07], [C08], [P01]) confirm that employees faced high discovery and drafting effort across ${workflows.map(w => w.code).join(', ')}, with multi-hour or multi-day turnaround cycles and fragmented access to enterprise knowledge repositories.`,
-      complicationAndBlockers: `Multi-source ingestion and questionnaire responses ([A05], [P05], [L01], [Q04]) identify three concrete items governing full realization for ${custName}: (1) operational/connector constraints (${a05Val}), (2) ${l01Val} keeping Gate 4 open for Column 1 Realized Cash, and (3) ${telemetry.buganizerOngoingIssues || 0} tracked engineering items requiring closure as seat assignment scales toward ${(telemetry.contractedSeats || 0).toLocaleString()} contracted seats.`,
+      complicationAndBlockers: `Multi-source ingestion and questionnaire responses ([A05], [P05], [L01], [Q04]) identify three concrete items governing full realization for ${custName}: (1) operational/connector constraints (${a05Val}), (2) ${l01Val} keeping Gate 4 open for Column 1 Realized Cash, and (3) ${telemetry.trackerOngoingIssues || 0} tracked engineering items requiring closure as seat assignment scales toward ${(telemetry.contractedSeats || 0).toLocaleString()} contracted seats.`,
       resolutionAndValueRealized: `Following migration of the Wave-1 cohort (${meta.currentWindow}), ${custName} achieved ${fiveCols.col4NonFinancial?.wauOfAssignedPct || 0}% weekly repeat usage (${(telemetry.featureWau?.assist || 0).toLocaleString()} Assist WAU, ${(telemetry.featureWau?.search || 0).toLocaleString()} Search WAU, ${(telemetry.featureWau?.agent || 0).toLocaleString()} Agent WAU generating ${(telemetry.featureWau?.agentRolling7dRequests || 0).toLocaleString()} 7d requests). Across measured workflows, task effort compressed significantly with ${w07Val}, yielding ${evaluation.index?.rawScore}/100 Raw Value Index (${evaluation.index?.evidenceAdjustedScore}/100 Evidence-Adjusted).`,
       beforeAfterHighlights: [
         {
           dimension: 'Active Seat Adoption & Surface Depth [A01, A04]',
-          beforeBaseline: `${(telemetry.legacyGmaxWau || 0).toLocaleString()} legacy active users on disconnected tools`,
+          beforeBaseline: `${(telemetry.legacyBaselineWau || 0).toLocaleString()} legacy active users on disconnected tools`,
           afterGemini: `${(telemetry.wauAllApi || 0).toLocaleString()} All-API WAU / ${(telemetry.assignedSeatsWave1 || 0).toLocaleString()} Assigned (${fiveCols.col4NonFinancial?.wauOfAssignedPct || 0}%)`,
           deltaImpact: `${(telemetry.featureWau?.agentRolling7dRequests || 0).toLocaleString()} 7d Agent reqs + grounded search`,
           citedQuestions: 'A01, A02, A04'
@@ -2582,7 +2907,7 @@ Return ONLY valid JSON with this exact schema:
           kpaId: 'quality_governance',
           title: 'Quality, Reliability & Governance (20 pts)',
           keyFinding: `Scored ${evaluation.kpas?.quality_governance?.rawPct || 0}% raw (${evaluation.kpas?.quality_governance?.adjustedPct || 0}% adjusted) with VPC-SC perimeter and mandatory citation verification active.`,
-          actionRequired: `Resolve ${telemetry.buganizerOngoingIssues || 0} open Buganizer items and finalize compliance sign-off (Q06).`
+          actionRequired: `Resolve ${telemetry.trackerOngoingIssues || 0} open Issue Tracker items and finalize compliance sign-off (Q06).`
         },
         {
           kpaId: 'adoption_access',
@@ -2617,7 +2942,7 @@ Return ONLY valid JSON with this exact schema:
           expectedImpact: 'Upgrades overall readout from ON HOLD to VALIDATED VALUE (Tier A)'
         }
       ],
-      cfoAuditOpinion: `This assessment enforces strict McKinsey & Google Cloud Value Engineering guardrails for ${custName} (${sfdcId}): unverified legacy invoices (L01) remain null rather than $0, self-reported survey minutes (U04) are barred from dollar monetization, and $${((fiveCols.col3ModeledOpportunity?.base || 0) / 1e6).toFixed(2)}M in Scoping-stage estimates are quarantined in Column 3 away from Column 1 Realized Cash and Column 2 Validated Capacity.`
+      cfoAuditOpinion: `This assessment enforces strict Stratagem & Google Cloud Value Engineering guardrails for ${custName} (${sfdcId}): unverified legacy invoices (L01) remain null rather than $0, self-reported survey minutes (U04) are barred from dollar monetization, and $${((fiveCols.col3ModeledOpportunity?.base || 0) / 1e6).toFixed(2)}M in Scoping-stage estimates are quarantined in Column 3 away from Column 1 Realized Cash and Column 2 Validated Capacity.`
     };
   }
 

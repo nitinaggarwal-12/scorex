@@ -1,8 +1,8 @@
 import os
 import re
 
-SERVER_FILE = "/Users/nitinagga/Documents/scorex/server/services/masterBlueprintCatalog.js"
-CLIENT_FILE = "/Users/nitinagga/Documents/scorex/client/src/services/masterBlueprintCatalog.js"
+SERVER_FILE = "server/services/masterBlueprintCatalog.js"
+CLIENT_FILE = "client/src/services/masterBlueprintCatalog.js"
 
 from scratch.test_xml_builders import (
     build_legacy_genai_xml,

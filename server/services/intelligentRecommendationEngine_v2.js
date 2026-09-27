@@ -195,7 +195,7 @@ class IntelligentRecommendationEngine {
         category: 'data_engineering'
       },
       'saas': {
-        features: ['Lakeflow Connect', 'Partner Connect', 'Fivetran Integration', 'Salesforce Connector', 'ServiceNow Connector'],
+        features: ['Lakeflow Connect', 'Partner Connect', 'Fivetran Integration', 'Enterprise CRM Connector', 'OmniDesk Connector'],
         solution: 'Connect SaaS applications with Lakeflow Connect for zero-code integration, reducing time-to-insight from weeks to hours',
         category: 'data_engineering'
       },
@@ -1126,7 +1126,7 @@ class IntelligentRecommendationEngine {
         `Adoption Strategy: Start with one business domain as a pilot (e.g., ${domainPilot}), then scale horizontally`,
         `Assessment: Run a Security, Compliance & Governance Assessment to benchmark against ${domainCompliance}`,
         `Industry Outlook: Review emerging regulations (e.g., AI Act, Data Privacy) and benchmark governance models across ${domainPeers}`,
-        'Partner / SI Engagement: Engage SI partners (e.g., Deloitte, Slalom, Accenture) for governance rollout and cross-workspace architecture design',
+        'Partner / SI Engagement: Engage SI partners (e.g., ApexGlobal Advisory, Stratagem Partners, Nexus Cloud Consulting) for governance rollout and cross-workspace architecture design',
         'Change Management: Create a governance council; publish policies, catalog taxonomy, and data ownership matrix'
       ],
       data_engineering: [
@@ -1135,7 +1135,7 @@ class IntelligentRecommendationEngine {
         `Adoption & Pilot: Identify 1-2 high-value pipelines for modernization (e.g., ${domainPipelineExample}) as lighthouse examples`,
         'Assessment: Conduct a Pipeline Reliability & Cost Optimization Assessment to quantify gains from migration',
         `Industry Outlook: Highlight interoperability trends — ${domainDataStandards}`,
-        'Partner / SI Engagement: Leverage ETL modernization partners (e.g., TCS, Cognizant, Wipro) for workload migration support',
+        'Partner / SI Engagement: Leverage ETL modernization partners (e.g., Vanguard Systems, Horizon Integrators, CoreTech Services) for workload migration support',
         'Governance Alignment: Define data ownership and stewardship roles per pipeline domain',
         'Change Management: Create documentation and reusable templates for new pipelines; standardize intake and approval workflows'
       ],
@@ -1155,7 +1155,7 @@ class IntelligentRecommendationEngine {
         `Adoption: Select one business use case (e.g., ${domainMLUseCase}) for MLflow deployment pilot`,
         'Assessment: Perform an ML Governance & Readiness Assessment focusing on model lineage, explainability, and audit',
         `Industry Outlook: Review state of MLOps adoption and ${domainMLCompliance}`,
-        'Partner / SI Engagement: Engage AI partners (ZS, IQVIA, Deloitte AI) for co-development or validation support',
+        'Partner / SI Engagement: Engage AI partners (BioPulse Analytics, LifeSci Partners, ApexGlobal AI) for co-development or validation support',
         'Change Management: Form an internal "Model Review Board" to standardize approval and transition criteria',
         'Measurement: Track metrics like model re-training frequency, deployment cycle time, and business ROI'
       ],

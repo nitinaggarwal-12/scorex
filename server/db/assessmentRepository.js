@@ -122,18 +122,6 @@ class AssessmentRepository {
       return normalizeReleaseState(fromFile);
     }
 
-    // Check starter seeds if not found
-    try {
-      const fs = require('fs');
-      const seedsPath = path.join(__dirname, 'seeds/starterAssessments.json');
-      if (fs.existsSync(seedsPath)) {
-        const starterData = JSON.parse(fs.readFileSync(seedsPath, 'utf8'));
-        if (starterData[id]) {
-          return normalizeReleaseState(starterData[id]);
-        }
-      }
-    } catch (_) {}
-
     return null;
   }
 
@@ -141,13 +129,9 @@ class AssessmentRepository {
    * Seed built-in starter enterprise assessments if database is empty
    */
   async seedStarterAssessments() {
-    const fs = require('fs');
-    const seedsPath = path.join(__dirname, 'seeds/starterAssessments.json');
-    if (!fs.existsSync(seedsPath)) return [];
-
     try {
-      const starterData = JSON.parse(fs.readFileSync(seedsPath, 'utf8'));
-      const assessments = Object.values(starterData);
+      const sampleAssessmentGenerator = require('../utils/sampleAssessmentGenerator');
+      const assessments = sampleAssessmentGenerator.generateMultipleSamples(6);
       const seeded = [];
 
       for (const item of assessments) {
@@ -166,7 +150,7 @@ class AssessmentRepository {
         }
       }
 
-      console.log(`[AssessmentRepo] Loaded ${seeded.length} starter enterprise assessments`);
+      console.log(`[AssessmentRepo] Loaded ${seeded.length} synthetic starter enterprise assessments`);
       return seeded;
     } catch (err) {
       console.warn('[AssessmentRepo] Failed to seed starter assessments:', err.message);

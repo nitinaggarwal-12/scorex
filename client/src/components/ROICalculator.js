@@ -707,7 +707,7 @@ const ROICalculator = ({ results, assessment }) => {
       <InfoBox>
         <FiInfo size={20} style={{ flexShrink: 0, marginTop: '2px' }} />
         <InfoText>
-          <strong>How we calculate ROI:</strong> Based on industry benchmarks from Forrester Total Economic Impact studies and enterprise data architecture case studies. 
+          <strong>How we calculate ROI:</strong> Based on industry benchmarks from Industry Research Total Economic Impact studies and enterprise data architecture case studies. 
           Actual results vary by organization. Conservative scenario uses lower-bound estimates, Realistic uses median values, and Optimistic uses upper-quartile results.
         </InfoText>
       </InfoBox>

@@ -1,10 +1,10 @@
--- Seed: Assign Martin (Consumer) to TrustBank Assessment
+-- Seed: Assign Martin (Consumer) to SterlingVault Assessment
 -- This ensures Martin can see the assessment he's supposed to complete
 
--- First, let's find Martin's user ID and the TrustBank assessment
--- Assuming Martin's email is something like martin@trustbank.com or similar
+-- First, let's find Martin's user ID and the SterlingVault assessment
+-- Assuming Martin's email is something like martin@sterlingvault.example.com or similar
 
--- Insert assignment for Martin as a consumer on TrustBank assessment
+-- Insert assignment for Martin as a consumer on SterlingVault assessment
 -- Replace with actual IDs from your database
 INSERT INTO user_assignments (assessment_id, user_id, assigned_by, role, status, notes)
 SELECT 
@@ -13,10 +13,10 @@ SELECT
     1, -- Assigned by admin (user_id = 1)
     'consumer',
     'assigned',
-    'Initial assignment for TrustBank Corporation assessment'
+    'Initial assignment for SterlingVault Financial Corp assessment'
 FROM assessments a
 CROSS JOIN users u
-WHERE a.assessment_name LIKE '%TrustBank%' 
+WHERE a.assessment_name LIKE '%SterlingVault%' 
   AND u.email LIKE '%martin%'
   AND NOT EXISTS (
     SELECT 1 FROM user_assignments ua 

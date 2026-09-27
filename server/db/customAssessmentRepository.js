@@ -800,7 +800,7 @@ const STARTER_PRODUCTION_TEMPLATES = [
                 "Manual incident triage processes for cloud cost anomalies taking days to resolve",
                 "Lack of automated playbooks (e.g. terminating orphaned disks, scaling down idle clusters)",
                 "Absence of historical post-mortem tracking for cost incidents across cloud environments",
-                "No programmatic integration with PagerDuty or ServiceNow for high-severity cost events",
+                "No programmatic integration with PagerDuty or OmniDesk for high-severity cost events",
                 "Missing automated rollback triggers when new deployments cause unexpected resource consumption"
               ],
               "businessPainPoints": [

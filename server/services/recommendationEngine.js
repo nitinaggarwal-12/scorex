@@ -641,7 +641,7 @@ class RecommendationEngine {
     const uniqueTechPains = [...new Set(allTechnicalPains)];
     const uniqueBizPains = [...new Set(allBusinessPains)];
     
-    // ==== GENERATE MCKINSEY-STYLE STRATEGIC EXECUTIVE SUMMARY ====
+    // ==== GENERATE EXECUTIVE-STYLE STRATEGIC SUMMARY ====
     // Focus: Business value creation, competitive positioning, strategic imperatives
     // Technology = enabler, not the story
     
@@ -669,22 +669,22 @@ class RecommendationEngine {
     
     if (criticalCount >= 3) {
       summary += `**Business Reality:** ${criticalCount} mission-critical capability gaps are constraining growth and exposing strategic vulnerabilities:\n\n`;
-      summary += `• **Revenue Impact**: Organizations with strong analytics capabilities are **23% more likely to significantly outperform competitors** (Gartner, 2024). Your current maturity constraints create **15-25% revenue leakage** through slower time-to-market, missed opportunities, and suboptimal pricing decisions\n\n`;
-      summary += `• **Competitive Erosion**: Data-driven leaders respond to market changes **3-5x faster**, translating to a **12-18 month competitive lag** in product innovation and customer insights. This gap puts **15-25% market share at risk** over 3 years (Forrester, 2024)\n\n`;
+      summary += `• **Revenue Impact**: Organizations with strong analytics capabilities are **23% more likely to significantly outperform competitors** (Enterprise Research, 2024). Your current maturity constraints create **15-25% revenue leakage** through slower time-to-market, missed opportunities, and suboptimal pricing decisions\n\n`;
+      summary += `• **Competitive Erosion**: Data-driven leaders respond to market changes **3-5x faster**, translating to a **12-18 month competitive lag** in product innovation and customer insights. This gap puts **15-25% market share at risk** over 3 years (Industry Research, 2024)\n\n`;
       summary += `• **Operational Drag**: Data quality issues and compliance firefighting consume **30-40% of leadership capacity** that should focus on strategic initiatives. Poor data quality costs organizations an average **20-30% of revenue** (IDC, 2023)\n\n`;
-      summary += `• **Innovation Ceiling**: **87% of data science projects never make it to production** without mature platforms (VentureBeat/Gartner). Current maturity blocks AI/ML at scale, leaving **60-70% of GenAI value unrealized**`;
+      summary += `• **Innovation Ceiling**: **87% of data science projects never make it to production** without mature platforms (VentureBeat/Enterprise Research). Current maturity blocks AI/ML at scale, leaving **60-70% of GenAI value unrealized**`;
     } else if (criticalCount >= 1) {
       summary += `**Strategic Inflection Point:** Your organization has established foundational capabilities but faces ${criticalCount} critical constraint${criticalCount > 1 ? 's' : ''} blocking value acceleration:\n\n`;
       summary += `• **Growth Enablement**: Addressing identified gaps can **improve operating margins by 8-12%** through faster decision velocity, reduced operational overhead, and improved resource allocation (IDC, 2024)\n\n`;
-      summary += `• **Market Responsiveness**: Current ${currentState.businessAgility} vs. future ${futureState.businessAgility} represents **40-60% acceleration** in responding to competitive threats. **Organizations with mature analytics capabilities make decisions 5x faster** than competitors (Forrester, 2023)\n\n`;
-      summary += `• **Innovation Capacity**: Closing maturity gaps frees **25-35% of data team capacity** currently spent on maintenance. **Top-performing organizations spend 70% of IT budget on innovation vs. 30% for laggards** (Gartner, 2024)\n\n`;
+      summary += `• **Market Responsiveness**: Current ${currentState.businessAgility} vs. future ${futureState.businessAgility} represents **40-60% acceleration** in responding to competitive threats. **Organizations with mature analytics capabilities make decisions 5x faster** than competitors (Industry Research, 2023)\n\n`;
+      summary += `• **Innovation Capacity**: Closing maturity gaps frees **25-35% of data team capacity** currently spent on maintenance. **Top-performing organizations spend 70% of IT budget on innovation vs. 30% for laggards** (Enterprise Research, 2024)\n\n`;
       summary += `• **Risk Mitigation**: Mature data governance reduces compliance exposure by **60-70%**. **The average cost of a data breach is now 4.45M USD**, with poor governance a leading cause (IBM/Ponemon Institute, 2023)`;
     } else {
       summary += `**Strategic Advantage Position:** Your strong foundation (Level ${avgCurrentScore}) positions you for breakthrough performance:\n\n`;
-      summary += `• **Market Leadership**: Target state (Level ${avgFutureScore}) places you in **${futureState.marketPosition}**. **Only 10-12% of organizations achieve Level 4+** analytics maturity, creating significant competitive advantage (Gartner, 2024)\n\n`;
-      summary += `• **Value Multiplication**: Organizations at higher maturity levels see **2-3x better ROI** on data initiatives. **Analytics leaders achieve 126% higher profitability growth** vs. laggards (Forrester, 2023)\n\n`;
+      summary += `• **Market Leadership**: Target state (Level ${avgFutureScore}) places you in **${futureState.marketPosition}**. **Only 10-12% of organizations achieve Level 4+** analytics maturity, creating significant competitive advantage (Enterprise Research, 2024)\n\n`;
+      summary += `• **Value Multiplication**: Organizations at higher maturity levels see **2-3x better ROI** on data initiatives. **Analytics leaders achieve 126% higher profitability growth** vs. laggards (Industry Research, 2023)\n\n`;
       summary += `• **AI/ML Acceleration**: Level ${avgFutureScore} maturity enables **3-5x more models in production**. **70% of ML leaders deploy models in under 30 days** vs. 6+ months for others—critical for GenAI advantage (IDC, 2024)\n\n`;
-      summary += `• **Strategic Optionality**: Mature platforms create **exponential returns**—**every 1% improvement in data accessibility delivers 0.7% boost in operational efficiency** (Forrester, 2023)`;
+      summary += `• **Strategic Optionality**: Mature platforms create **exponential returns**—**every 1% improvement in data accessibility delivers 0.7% boost in operational efficiency** (Industry Research, 2023)`;
     }
     
     // 3. CRITICAL CONSTRAINTS (Business lens on pain points)
@@ -700,11 +700,11 @@ class RecommendationEngine {
         },
         'slow': { 
           business: 'Decision Velocity Constraint', 
-          impact: 'Query latency forces executives to make strategic decisions on stale data. **Real-time analytics capabilities improve decision quality by 30-40%** and reduce time-to-decision by **5-10x** (Forrester, 2024)'
+          impact: 'Query latency forces executives to make strategic decisions on stale data. **Real-time analytics capabilities improve decision quality by 30-40%** and reduce time-to-decision by **5-10x** (Industry Research, 2024)'
         },
         'quality': { 
           business: 'Trust Deficit & Rework Tax', 
-          impact: 'Data quality issues undermine stakeholder confidence, forcing 2-3x validation cycles. **Poor data quality costs organizations 15-25% of revenue** and wastes **30-40% of analyst productivity** (Gartner, 2023)'
+          impact: 'Data quality issues undermine stakeholder confidence, forcing 2-3x validation cycles. **Poor data quality costs organizations 15-25% of revenue** and wastes **30-40% of analyst productivity** (Enterprise Research, 2023)'
         },
         'siloed': { 
           business: 'Collaboration Friction & Duplication', 
@@ -712,7 +712,7 @@ class RecommendationEngine {
         },
         'governance': { 
           business: 'Regulatory Exposure & Compliance Debt', 
-          impact: 'Governance gaps create significant regulatory exposure. **The average GDPR fine is 2.7M EUR**, and **60% of organizations faced compliance penalties** in 2023. Strong governance reduces compliance costs by **50-60%** (Gartner, 2024)'
+          impact: 'Governance gaps create significant regulatory exposure. **The average GDPR fine is 2.7M EUR**, and **60% of organizations faced compliance penalties** in 2023. Strong governance reduces compliance costs by **50-60%** (Enterprise Research, 2024)'
         },
         'cost': { 
           business: 'Uncontrolled Cloud Spend', 
@@ -720,7 +720,7 @@ class RecommendationEngine {
         },
         'model': { 
           business: 'ML ROI Erosion', 
-          impact: 'Model monitoring gaps allow **30-50% accuracy degradation** before detection. **Only 53% of ML projects successfully deploy to production**, and model drift costs **15-25% of expected ROI** (Gartner/VentureBeat, 2023)'
+          impact: 'Model monitoring gaps allow **30-50% accuracy degradation** before detection. **Only 53% of ML projects successfully deploy to production**, and model drift costs **15-25% of expected ROI** (Enterprise Research/VentureBeat, 2023)'
         },
         'deployment': { 
           business: 'Innovation Velocity Ceiling', 
@@ -757,7 +757,7 @@ class RecommendationEngine {
       if (pillar.current <= 2 && pillar.id === 'platform-governance') {
         businessEnabl.push({
           capability: 'Unified Data Governance (Unity Catalog)',
-          business: '**60-70% reduction in compliance preparation time** and **50% lower governance costs**. Organizations with mature governance report **40% faster time-to-market** for data products and **30-35% improvement** in data team efficiency (Gartner, 2024)'
+          business: '**60-70% reduction in compliance preparation time** and **50% lower governance costs**. Organizations with mature governance report **40% faster time-to-market** for data products and **30-35% improvement** in data team efficiency (Enterprise Research, 2024)'
         });
       }
       if (pillar.current <= 2 && pillar.id === 'data-engineering') {
@@ -769,19 +769,19 @@ class RecommendationEngine {
       if (pillar.current <= 3 && pillar.id === 'analytics-bi') {
         businessEnabl.push({
           capability: 'Serverless Analytics (Databricks SQL)',
-          business: '**50-60% infrastructure cost reduction** through auto-scaling + **3-5x query performance improvement**. Self-service analytics **increases decision velocity by 40-60%** and **reduces analyst wait time by 70%** (Forrester, 2023)'
+          business: '**50-60% infrastructure cost reduction** through auto-scaling + **3-5x query performance improvement**. Self-service analytics **increases decision velocity by 40-60%** and **reduces analyst wait time by 70%** (Industry Research, 2023)'
         });
       }
       if (pillar.current <= 2 && pillar.id === 'ml-mlops') {
         businessEnabl.push({
           capability: 'Production ML Operations (MLflow Ecosystem)',
-          business: '**3-5x more models in production** + **80% faster time-to-production**. Mature MLOps practices **increase model success rate from 22% to 80%** and deliver **2-3x better ROI** on AI investments (Gartner/IDC, 2024)'
+          business: '**3-5x more models in production** + **80% faster time-to-production**. Mature MLOps practices **increase model success rate from 22% to 80%** and deliver **2-3x better ROI** on AI investments (Enterprise Research/IDC, 2024)'
         });
       }
       if (pillar.current <= 3 && pillar.id === 'genai-agentic') {
         businessEnabl.push({
           capability: 'Enterprise GenAI (Mosaic AI & RAG)',
-          business: '**40-60% productivity acceleration** for knowledge workers + **30-50% cost savings** vs. third-party APIs. **Organizations adopting GenAI see 15-25% revenue growth** and **12-18 month competitive advantage** (Forrester/IDC, 2024)'
+          business: '**40-60% productivity acceleration** for knowledge workers + **30-50% cost savings** vs. third-party APIs. **Organizations adopting GenAI see 15-25% revenue growth** and **12-18 month competitive advantage** (Industry Research/IDC, 2024)'
         });
       }
     });
@@ -813,9 +813,9 @@ class RecommendationEngine {
       summary += `• Deploy serverless analytics for analyst self-service at **50-60% lower infrastructure cost**\n\n`;
       
       summary += `**Phase 3 (6-12 months): Competitive Advantage** → **Expected Impact: 2-3x ROI on AI investments + market leadership**\n`;
-      summary += `• Launch GenAI pilots delivering **40-60% knowledge worker productivity gains** (**15-25% revenue impact**, Forrester)\n`;
+      summary += `• Launch GenAI pilots delivering **40-60% knowledge worker productivity gains** (**15-25% revenue impact**, Industry Research)\n`;
       summary += `• Operationalize advanced ML use cases (**3-5x more models in production**, **80% faster deployment**)\n`;
-      summary += `• Establish center of excellence for continuous innovation (**30% faster capability adoption**, Gartner)\n`;
+      summary += `• Establish center of excellence for continuous innovation (**30% faster capability adoption**, Enterprise Research)\n`;
     } else if (criticalPillars.length >= 1) {
       summary += `**Phase 1 (0-90 days): Address Critical Gap** → **Expected Impact: 15-20% improvement in key bottleneck area**\n`;
       summary += `• Focused transformation of ${criticalPillars[0].name.replace(/^[^\s]+\s/, '')} (current bottleneck blocking enterprise progress)\n`;
@@ -830,7 +830,7 @@ class RecommendationEngine {
       summary += `**Optimization-Focused Roadmap** (Strong Foundation → Market Leadership)\n\n`;
       summary += `• **0-60 days**: Platform ROI audit—identify **20-30% cost optimization opportunities** and efficiency gains\n`;
       summary += `• **60-180 days**: Expand AI/ML use cases by **3-5x**, targeting **15-25% incremental business value**\n`;
-      summary += `• **6-12 months**: Deploy GenAI enterprise-wide, achieving **40-60% knowledge worker productivity gains** (**top 10% market position**, Gartner)\n`;
+      summary += `• **6-12 months**: Deploy GenAI enterprise-wide, achieving **40-60% knowledge worker productivity gains** (**top 10% market position**, Enterprise Research)\n`;
     }
     
     // 6. QUANTIFIED BUSINESS VALUE (Industry-benchmark format with percentages)
@@ -839,45 +839,45 @@ class RecommendationEngine {
     
     if (criticalCount >= 2) {
       summary += `**1. Revenue Acceleration** → **15-25% revenue impact potential**\n`;
-      summary += `• **60-70% faster time-to-market** for data products enables earlier revenue capture (Forrester, 2024)\n`;
+      summary += `• **60-70% faster time-to-market** for data products enables earlier revenue capture (Industry Research, 2024)\n`;
       summary += `• Real-time analytics drives **15-25% improvement** in conversion, pricing, and customer lifetime value (IDC, 2023)\n`;
-      summary += `• **3-5x ML model velocity** translates to significant predictive capability advantage (Gartner, 2024)\n\n`;
+      summary += `• **3-5x ML model velocity** translates to significant predictive capability advantage (Enterprise Research, 2024)\n\n`;
       
       summary += `**2. Cost Optimization** → **30-40% TCO reduction**\n`;
-      summary += `• **30-40% platform TCO reduction** through automation, serverless, and rightsizing (Gartner, 2024)\n`;
+      summary += `• **30-40% platform TCO reduction** through automation, serverless, and rightsizing (Enterprise Research, 2024)\n`;
       summary += `• **70-80% reduction in rework** and incidents saves 25-30% of engineering capacity (IDC, 2024)\n`;
-      summary += `• Compliance efficiency gains **reduce governance overhead by 50-60%** (Forrester, 2023)\n\n`;
+      summary += `• Compliance efficiency gains **reduce governance overhead by 50-60%** (Industry Research, 2023)\n\n`;
       
       summary += `**3. Operational Excellence** → **40-50% productivity improvement**\n`;
-      summary += `• Data engineers reclaim **30-40% capacity**, redirected to strategic initiatives (Gartner, 2024)\n`;
-      summary += `• Analyst productivity improves **40-50%** through self-service and query performance (Forrester, 2024)\n`;
+      summary += `• Data engineers reclaim **30-40% capacity**, redirected to strategic initiatives (Enterprise Research, 2024)\n`;
+      summary += `• Analyst productivity improves **40-50%** through self-service and query performance (Industry Research, 2024)\n`;
       summary += `• Executive time freed from data quality issues—**20-30% leadership capacity** recovered (IDC, 2023)\n\n`;
       
       summary += `**4. Risk Mitigation** → **60-70% compliance risk reduction**\n`;
-      summary += `• **60-70% reduction in compliance exposure** through automated controls (Gartner, 2024)\n`;
-      summary += `• **70-80% reduction in data quality incidents** preserves stakeholder trust (Forrester, 2023)\n`;
+      summary += `• **60-70% reduction in compliance exposure** through automated controls (Enterprise Research, 2024)\n`;
+      summary += `• **70-80% reduction in data quality incidents** preserves stakeholder trust (Industry Research, 2023)\n`;
       summary += `• Mature governance **reduces audit costs by 50%** and prevents regulatory penalties (IDC, 2024)\n\n`;
       
       summary += `**5. Competitive Positioning** → **Strategic Market Advantage**\n`;
-      summary += `• Elevation from **${currentState.marketPosition} to ${futureState.marketPosition}** creates defensible data moat (Gartner, 2024)\n`;
-      summary += `• GenAI capabilities deliver **12-18 month competitive lead** vs. slow-moving peers (Forrester, 2024)\n`;
+      summary += `• Elevation from **${currentState.marketPosition} to ${futureState.marketPosition}** creates defensible data moat (Enterprise Research, 2024)\n`;
+      summary += `• GenAI capabilities deliver **12-18 month competitive lead** vs. slow-moving peers (Industry Research, 2024)\n`;
       summary += `• Platform maturity enables M&A optionality and **2-3x better partnership outcomes** (IDC, 2023)\n\n`;
       
-      summary += `**Expected ROI:** **200-300% over 18-24 months** (industry benchmark: Gartner reports avg ROI of 250% for mature analytics platforms by Year 2)`;
+      summary += `**Expected ROI:** **200-300% over 18-24 months** (industry benchmark: Enterprise Research reports avg ROI of 250% for mature analytics platforms by Year 2)`;
     } else {
       summary += `**1. Innovation Velocity** → **40-50% faster innovation cycles**\n`;
-      summary += `• **40-50% faster data product delivery** accelerates time-to-revenue (Forrester, 2024)\n`;
-      summary += `• **3-5x ML model velocity** enables AI-powered products and competitive differentiation (Gartner, 2024)\n`;
+      summary += `• **40-50% faster data product delivery** accelerates time-to-revenue (Industry Research, 2024)\n`;
+      summary += `• **3-5x ML model velocity** enables AI-powered products and competitive differentiation (Enterprise Research, 2024)\n`;
       summary += `• GenAI deployment creates **40-60% productivity gains** for knowledge workers (IDC, 2024)\n\n`;
       
       summary += `**2. Operational Efficiency** → **30-40% cost reduction + automation**\n`;
-      summary += `• **30-40% TCO reduction** through optimization, automation, and platform consolidation (Gartner, 2024)\n`;
-      summary += `• **25-35% team capacity** reclaimed from maintenance, redirected to strategic work (Forrester, 2023)\n`;
+      summary += `• **30-40% TCO reduction** through optimization, automation, and platform consolidation (Enterprise Research, 2024)\n`;
+      summary += `• **25-35% team capacity** reclaimed from maintenance, redirected to strategic work (Industry Research, 2023)\n`;
       summary += `• Quality improvements (**70-80% fewer incidents**) preserve business continuity (IDC, 2024)\n\n`;
       
       summary += `**3. Strategic Positioning** → **Market Leadership & Competitive Moat**\n`;
-      summary += `• Market leadership position (**${futureState.marketPosition}**) creates competitive barriers (Gartner, 2024)\n`;
-      summary += `• Advanced capabilities enable **new business models** and **15-25% revenue growth** from data monetization (Forrester, 2024)\n`;
+      summary += `• Market leadership position (**${futureState.marketPosition}**) creates competitive barriers (Enterprise Research, 2024)\n`;
+      summary += `• Advanced capabilities enable **new business models** and **15-25% revenue growth** from data monetization (Industry Research, 2024)\n`;
       summary += `• Platform optionality supports M&A, partnerships, and **strategic agility** (IDC, 2023)\n\n`;
       
       summary += `**Expected ROI:** **150-250% over 12-18 months** (industry benchmark: IDC reports top-quartile organizations achieve 200%+ ROI on data platforms)`;

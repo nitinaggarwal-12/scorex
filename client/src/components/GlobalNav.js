@@ -1210,10 +1210,10 @@ const GlobalNav = () => {
         </TrackIconBox>
         <TrackContent>
           <TrackTopRow>
-            <TrackTitle>GE Value Realization (Merck)</TrackTitle>
+            <TrackTitle>GE Value Realization (BioNova)</TrackTitle>
             <TrackBadge $bg="rgba(37, 99, 235, 0.12)" $color="#1d4ed8" $border="rgba(37, 99, 235, 0.28)">CFO & OKR Bridge</TrackBadge>
           </TrackTopRow>
-          <TrackSubtitle>Merck & Co., Inc. • 85,300 Seats • McKinsey & Google Readout</TrackSubtitle>
+          <TrackSubtitle>BioNova Life Sciences • 85,300 Seats • Executive Value Readout</TrackSubtitle>
         </TrackContent>
       </TrySampleOption>
 
@@ -1277,7 +1277,7 @@ const GlobalNav = () => {
           </MegaMenuSectionHeader>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '6px 12px' }}>
-            {/* Track 0: GE Value Realization (Merck Gemini Enterprise Migration) */}
+            {/* Track 0: GE Value Realization (Enterprise Gemini Migration) */}
             <MegaMenuTrackItem onClick={() => runNav('/ge-value-realization?tab=inputs')}>
               <TrackIconBox $bg="rgba(37, 99, 235, 0.12)" $color="#1d4ed8" $border="rgba(37, 99, 235, 0.28)">
                 <FiTrendingUp />
@@ -1292,12 +1292,12 @@ const GlobalNav = () => {
                       navigate('/ge-value-realization?tab=report');
                     }}
                     style={{ fontSize: '0.64rem', fontWeight: 700, padding: '2px 6px', borderRadius: '5px', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', cursor: 'pointer', flexShrink: 0 }}
-                    title="Open Merck McKinsey & Google Executive Value Realization Readout"
+                    title="Open Executive Value Realization Readout"
                   >
-                    📊 Merck Report
+                    📊 Sample Report
                   </span>
                 </TrackTopRow>
-                <TrackSubtitle>Merck OpenAI → Gemini migration value bridge • 75 Qs</TrackSubtitle>
+                <TrackSubtitle>Enterprise legacy AI → Gemini migration value bridge • 82 Qs</TrackSubtitle>
               </TrackContent>
             </MegaMenuTrackItem>
 

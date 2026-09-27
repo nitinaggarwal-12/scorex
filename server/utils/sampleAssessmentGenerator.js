@@ -11,15 +11,15 @@ class SampleAssessmentGenerator {
       // Technology Companies
       'Nexus Technologies', 'DataStream Solutions', 'CloudFirst Innovations', 
       'Quantum Analytics Corp', 'ByteForge Systems', 'Synapse AI Labs',
-      'TechNova Enterprises', 'CoreLogic Software', 'InfraScale Global',
+      'TechNova Enterprises', 'CoreVortex Software', 'InfraScale Global',
       
       // Financial Services
-      'Silverline Financial Group', 'Apex Capital Management', 'TrustBank Corporation',
+      'Silverline Financial Group', 'Apex Capital Management', 'SterlingVault Financial Corp',
       'Summit Investment Partners', 'Heritage Credit Union', 'Pinnacle Asset Management',
       
       // Healthcare & Life Sciences
       'MedTech Innovations', 'HealthBridge Systems', 'BioGenesis Research',
-      'CareFirst Medical Group', 'LifeScience Analytics', 'Wellness Data Corp',
+      'CareVantage Medical Group', 'LifeScience Analytics', 'Wellness Data Corp',
       
       // Retail & E-commerce
       'GlobalMart Retail', 'ShopSphere Digital', 'NextGen Commerce',

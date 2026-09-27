@@ -14,7 +14,7 @@ import {
 import {
   GE_MODULES,
   GE_QUESTIONS,
-  DEFAULT_MERCK_WORKFLOWS,
+  DEFAULT_BIONOVA_WORKFLOWS,
   getCustomerContextualQuestionText,
   getQuestionOptionsWithConfidence,
   createInitialGeDossier,
@@ -52,16 +52,16 @@ const SIMPLE_MODULE_LABELS = {
 };
 
 const STRATEGIC_QUICK_ACCOUNTS = [
-  { sfdcId: '0014M00001hfHuqQAE', shortName: 'FedEx', seats: '301K' },
-  { sfdcId: '0014M00001hZEwfQAG', shortName: 'Merck', seats: '85.3K' },
-  { sfdcId: '0014M00001hM6t4QAC', shortName: 'Walmart', seats: '1.17M' },
-  { sfdcId: '0014M00001hJwOQQA0', shortName: 'Intel', seats: '130K' },
-  { sfdcId: '0014M00001h4UQoQAM', shortName: 'KPMG', seats: '55.5K' },
-  { sfdcId: '0014M00001hYyluQAC', shortName: 'McKinsey', seats: '41.8K' },
-  { sfdcId: '0014M00001htywIQAQ', shortName: 'S&P Global', seats: '24.6K' },
-  { sfdcId: '0014M00001hctyiQAA', shortName: 'Pfizer', seats: '19.0K' },
-  { sfdcId: '0014M00001hmeiwQAA', shortName: 'UKG', seats: '15.0K' },
-  { sfdcId: '0014M00001hPA7cQAG', shortName: 'Home Depot', seats: '8.9K' }
+  { sfdcId: 'ACC-1001-AEROVG', shortName: 'AeroVanguard', seats: '301K' },
+  { sfdcId: 'ACC-1002-BIONOVA', shortName: 'BioNova', seats: '85.3K' },
+  { sfdcId: 'ACC-1003-OMNIMRT', shortName: 'OmniMart', seats: '250K' },
+  { sfdcId: 'ACC-1004-SILCORE', shortName: 'SiliconCore', seats: '121K' },
+  { sfdcId: 'ACC-1005-APEXGLB', shortName: 'ApexGlobal', seats: '55.5K' },
+  { sfdcId: 'ACC-1006-STRATGM', shortName: 'Stratagem', seats: '41.8K' },
+  { sfdcId: 'ACC-1007-FINPULS', shortName: 'FinPulse', seats: '24.6K' },
+  { sfdcId: 'ACC-1008-VITURA', shortName: 'Vitura', seats: '19.0K' },
+  { sfdcId: 'ACC-1009-WRKSPHR', shortName: 'WorkSphere', seats: '15.0K' },
+  { sfdcId: 'ACC-1010-BLDRGHT', shortName: 'BuildRight', seats: '12.5K' }
 ];
 
 const TIME_WINDOW_PRESETS = [
@@ -88,7 +88,7 @@ const simplifyOptionLabel = (rawText) => {
     return parts.slice(-2).join(' → ').replace(/\([^)]*\)/g, '').trim();
   }
 
-  // Long colon-prefixed bug/blocker descriptions: "Fed-001 (Mis-Delivery Prediction Agent): Zebra handheld scanners..."
+  // Long colon-prefixed bug/blocker descriptions: "AVG-001 (Mis-Delivery Prediction Agent): RuggedEdge handheld scanners..."
   if (/^[A-Za-z]+-\d+\s*\(([^)]+)\):/i.test(s)) {
     const m = s.match(/^([A-Za-z]+-\d+)\s*\(([^)]+)\):\s*(.+)$/i);
     if (m) return `${m[2]} (${m[1]})`;
@@ -110,7 +110,7 @@ const simplifyOptionLabel = (rawText) => {
 
   // Clean up remaining verbose phrases
   s = s
-    .replace(/Federal Express Corporation|Merck & Co\., Inc\.|Walmart Inc\.|Intel Corporation|KPMG LLP|McKinsey & Company|S&P Global Inc\.|Pfizer Inc\.|UKG Inc\.|The Home Depot/gi, '')
+    .replace(/AeroVanguard Global Logistics|BioNova Life Sciences Inc\.|OmniMart Retail Group|SiliconCore Microelectronics|ApexGlobal Assurance LLP|Stratagem Executive Partners|FinPulse Market Intelligence|Vitura Biopharma Corp|WorkSphere Cloud HCM|BuildRight Home Centers/gi, '')
     .replace(/\s{2,}/g, ' ')
     .trim();
 
@@ -139,13 +139,13 @@ const GeValueRealizationWorkspace = () => {
   const initialPrimaryView = searchParams.get('tab') === 'report' ? 'report' : 'inputs';
   const initialPeriodParam = searchParams.get('period') || 'ytd_2026';
 
-  const [dossier, setDossier] = useState(() => createInitialGeDossier('fedex_default'));
+  const [dossier, setDossier] = useState(() => createInitialGeDossier('aerovanguard_default'));
   const [primaryView, setPrimaryView] = useState(initialPrimaryView); // 'inputs' | 'report'
   const [activeModuleId, setActiveModuleId] = useState('A');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeWorkflowIdx, setActiveWorkflowIdx] = useState(0);
 
-  const [selectedSfdcId, setSelectedSfdcId] = useState('0014M00001hfHuqQAE');
+  const [selectedSfdcId, setSelectedSfdcId] = useState('ACC-1001-AEROVG');
   const [timePreset, setTimePreset] = useState(initialPeriodParam);
   const [ingestingCustomer, setIngestingCustomer] = useState(false);
   const [generatingGeminiReport, setGeneratingGeminiReport] = useState(false);
@@ -267,7 +267,7 @@ const GeValueRealizationWorkspace = () => {
     let mounted = true;
     const loadInitial = async () => {
       try {
-        const targetId = routeDossierId || 'fedex_default';
+        const targetId = routeDossierId || 'aerovanguard_default';
         const res = await axios.get(`/api/ge-value-realization/dossiers/${targetId}`);
         if (mounted && res.data?.success && res.data?.dossier) {
           setDossier(res.data.dossier);
@@ -342,7 +342,7 @@ const GeValueRealizationWorkspace = () => {
 
   const handleAddWorkflow = () => {
     const nextNum = (dossier.workflows?.length || 0) + 1;
-    const baseTemplate = DEFAULT_MERCK_WORKFLOWS[0];
+    const baseTemplate = DEFAULT_BIONOVA_WORKFLOWS[0];
     const newWf = {
       ...JSON.parse(JSON.stringify(baseTemplate)),
       id: `wf_custom_${nextNum}`,

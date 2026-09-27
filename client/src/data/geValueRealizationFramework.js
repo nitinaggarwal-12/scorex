@@ -1,6 +1,6 @@
 /**
  * GE Value Realization Assessment Framework & Deterministic Calculation Engine
- * (Merck & Co., Inc. — Homegrown OpenAI [GMax] to Gemini Enterprise Migration)
+ * (BioNova Life Sciences Inc. — Homegrown OpenAI [NovaAssist] to Gemini Enterprise Migration)
  *
  * Implements:
  * - 75 Questions across 10 Modules (C, P, A, L, W, U, Q, F, V, G)
@@ -9,7 +9,7 @@
  *   1) Deterministic Financial & Capacity Ledger (5 MECE Columns + Low/Base/High Sensitivity)
  *   2) 0-100 Weighted Value & Evidence Index (Raw vs. Evidence-Adjusted, Capped Hybrid Workflow Rollup)
  *   3) 5 Non-Compensable Governance Gates + Cross-Module Contradiction Detector
- * - Pre-staged Merck & Co., Inc. (0014M00001hZEwfQAG) Dossier + Clean Intake Template
+ * - Pre-staged BioNova Life Sciences Inc. (ACC-1002-BIONOVA) Dossier + Clean Intake Template
  */
 
 const EVIDENCE_FACTORS = {
@@ -372,13 +372,13 @@ const GE_QUESTIONS = [
   {
     id: 'C06', module: 'C', weight: 0, inputType: 'multi_select',
     question: 'What is the integration pattern?',
-    requiredEntry: 'Standalone app; Microsoft 365/SharePoint/OneDrive; Salesforce; other enterprise sources; custom agents/API; multiple',
+    requiredEntry: 'Standalone app; Microsoft 365/SharePoint/OneDrive; Enterprise CRM; other enterprise sources; custom agents/API; multiple',
     routingConsequence: 'Enable connector and agent questions (P05, V07, V08) for deployed capabilities only.',
-    options: ['Standalone web app', 'Microsoft 365 / SharePoint / OneDrive', 'Salesforce', 'ServiceNow (OOTB & MCP)', 'Veeva Vault (Regulatory / Clinical)', 'BigQuery / Enterprise Data Lakehouse', 'Custom Agents / ADK / API', 'Multiple enterprise integrations']
+    options: ['Standalone web app', 'Microsoft 365 / SharePoint / OneDrive', 'Enterprise CRM', 'OmniDesk ITSM (OOTB & MCP)', 'RegVault DMS (Regulatory / Clinical)', 'BigQuery / Enterprise Data Lakehouse', 'Custom Agents / ADK / API', 'Multiple enterprise integrations']
   },
   {
     id: 'C07', module: 'C', weight: 0, inputType: 'single_select',
-    question: 'What is the state of the previous system (Legacy GMax / OpenAI)?',
+    question: 'What is the state of the previous system (Legacy NovaAssist / OpenAI)?',
     requiredEntry: 'Fully decommissioned; parallel run; retained for subset; unknown',
     routingConsequence: 'Parallel run requires cost and usage attribution and date-bounded separation from L02 retired savings; decommissioned requires retirement evidence.',
     options: ['Fully decommissioned', 'Parallel run (Coexistence during transition)', 'Retained for specific subset', 'Unknown']
@@ -401,7 +401,7 @@ const GE_QUESTIONS = [
     id: 'C10', module: 'C', weight: 0, inputType: 'multi_select',
     question: 'What data access is approved by customer data owners?',
     requiredEntry: 'Aggregated analytics; pseudonymous event data; opt-in survey; timed observation; finance cost data; none',
-    routingConsequence: 'Only issue instruments and joins that Merck data owners approve; aggregate reporting where Works Council / privacy rules require.',
+    routingConsequence: 'Only issue instruments and joins that BioNova data owners approve; aggregate reporting where Works Council / privacy rules require.',
     options: ['Aggregated platform analytics', 'Pseudonymous event data', 'Opt-in employee pulse survey', 'Timed workflow observation study', 'Finance cost & invoice data', 'None']
   },
   {
@@ -415,7 +415,7 @@ const GE_QUESTIONS = [
   // ================= P. PROGRAM & MIGRATION SCOPE (P01-P08) =================
   {
     id: 'P01', module: 'P', weight: 0, inputType: 'multi_select_rank', rankLimit: 3,
-    question: 'Why was the migration from GMax (OpenAI) to Gemini Enterprise undertaken?',
+    question: 'Why was the migration from NovaAssist (OpenAI) to Gemini Enterprise undertaken?',
     requiredEntry: 'Multi-select: lower cost; broader access; better answer quality; enterprise search; agents/workflows; security/governance; supportability; vendor strategy; other. Rank top three.',
     options: ['Enterprise search & grounding', 'Agents / multi-step workflows', 'Broader employee access (85k scale)', 'Better answer quality & citations', 'Lower total cost of ownership', 'Security, VPC-SC & governance', 'Supportability & managed connectors', 'Strategic Google Cloud alliance', 'Other (specify)']
   },
@@ -433,23 +433,23 @@ const GE_QUESTIONS = [
   },
   {
     id: 'P04', module: 'P', weight: 0, inputType: 'capability_matrix',
-    question: 'Which capabilities existed in each platform (Legacy GMax vs. Gemini Enterprise)?',
+    question: 'Which capabilities existed in each platform (Legacy NovaAssist vs. Gemini Enterprise)?',
     requiredEntry: 'Matrix for chat; enterprise search; grounded answers; connectors; document analysis; agents; research; creation; APIs: old only / both / Gemini only / neither / unknown.',
-    matrixRows: ['Conversational Chat', 'Enterprise Search', 'Grounded Answers w/ Citations', 'Enterprise Connectors (M365/ServiceNow/Veeva)', 'Long-Context Document Analysis', 'Autonomous / ADK Agents', 'Deep Research V2', 'Multimodal Content Creation / Canvas', 'Developer APIs & MCP'],
-    matrixCols: ['Old (GMax) Only', 'Both Platforms', 'Gemini Only', 'Neither', 'Unknown']
+    matrixRows: ['Conversational Chat', 'Enterprise Search', 'Grounded Answers w/ Citations', 'Enterprise Connectors (M365/OmniDesk ITSM/RegVault)', 'Long-Context Document Analysis', 'Autonomous / ADK Agents', 'Deep Research V2', 'Multimodal Content Creation / Canvas', 'Developer APIs & MCP'],
+    matrixCols: ['Old (NovaAssist) Only', 'Both Platforms', 'Gemini Only', 'Neither', 'Unknown']
   },
   {
     id: 'P05', module: 'P', weight: 0, inputType: 'connector_matrix',
     question: 'Which enterprise systems were connected and usable?',
-    requiredEntry: 'For each Microsoft 365/SharePoint/OneDrive, Salesforce, internal knowledge, other: connected; permission tested; indexed; actively used; blocked; not planned. Enter go-live date.',
-    matrixRows: ['Microsoft 365 / SharePoint / OneDrive', 'ServiceNow (OOTB & Cloud Run MCP)', 'BigQuery / GMAX Gold Layer', 'Veeva Vault (Regulatory & Clinical)', 'SAP / Ariba / LIMS / PAS-X MES', 'Salesforce / Commercial CRM'],
+    requiredEntry: 'For each Microsoft 365/SharePoint/OneDrive, Enterprise CRM, internal knowledge, other: connected; permission tested; indexed; actively used; blocked; not planned. Enter go-live date.',
+    matrixRows: ['Microsoft 365 / SharePoint / OneDrive', 'OmniDesk ITSM (OOTB & Cloud Run MCP)', 'BigQuery / NOVA-AI Gold Layer', 'RegVault DMS (Regulatory & Clinical)', 'CoreERP / SupplySuite / LIMS / BioMES', 'Enterprise CRM / Commercial CRM'],
     matrixCols: ['Actively Used', 'Permission Tested / Pilot', 'Connected / Indexed', 'Blocked (Cloud Blocker)', 'Not Planned']
   },
   {
     id: 'P06', module: 'P', weight: 0, inputType: 'single_select',
-    question: 'What happened to legacy GMax users and workflows?',
+    question: 'What happened to legacy NovaAssist users and workflows?',
     requiredEntry: 'Completely moved; partially moved; still on legacy; abandoned; replaced by another tool; unknown. Enter counts and exceptions.',
-    options: ['Partially moved (Wave 1 active on GE; GMax retained pending chat history export)', 'Completely moved to Gemini Enterprise', 'Still primarily on legacy tool', 'Replaced by another third-party tool', 'Abandoned', 'Unknown']
+    options: ['Partially moved (Wave 1 active on GE; NovaAssist retained pending chat history export)', 'Completely moved to Gemini Enterprise', 'Still primarily on legacy tool', 'Replaced by another third-party tool', 'Abandoned', 'Unknown']
   },
   {
     id: 'P07', module: 'P', weight: 0, inputType: 'multi_select',
@@ -498,9 +498,9 @@ const GE_QUESTIONS = [
     question: 'What prevents or blocks broader use?',
     requiredEntry: 'Multi-select: awareness; access; connector gaps; permissions; relevance; latency; trust; training; unclear use case; policy; alternative tools; no blocker. Rank and enter affected user count.',
     options: [
-      'Connector gaps (Veeva Vault / SAP / SharePoint opt-in controls)',
+      'Connector gaps (RegVault DMS / CoreERP / SharePoint opt-in controls)',
       'Permissions / WIF group limits & Private Endpoint access',
-      'Alternative tools & Legacy GMax chat history export dependency',
+      'Alternative tools & Legacy NovaAssist chat history export dependency',
       'Unclear workflow observability / task tagging',
       'Awareness & role-specific prompt training',
       'Latency on complex cross-cloud queries',
@@ -532,12 +532,12 @@ const GE_QUESTIONS = [
   // ================= L. LEGACY & GEMINI COST (L01-L06, 20 PTS) =================
   {
     id: 'L01', module: 'L', weight: 4, kpaId: 'platform_economics', inputType: 'cost_ledger', rubricType: 'cost_inventory',
-    question: 'What were annual legacy GMax (OpenAI) platform costs?',
+    question: 'What were annual legacy NovaAssist (OpenAI) platform costs?',
     requiredEntry: 'Actual $ by OpenAI/model/API, cloud/hosting/storage, search/connectors, monitoring/security, licenses, vendor support, contractor, internal support and engineering hours × approved rate. Scored on completeness/reconciliation.'
   },
   {
     id: 'L02', module: 'L', weight: 5, kpaId: 'platform_economics', inputType: 'cost_ledger', rubricType: 'retired_cost',
-    question: 'Which legacy GMax costs have ended or will end?',
+    question: 'Which legacy NovaAssist costs have ended or will end?',
     requiredEntry: 'Per cost: retired; contractually committed until date; partly retained; redeployed capacity; unknown. Enter amount and effective date. Scored on actual avoidable cost retired.'
   },
   {
@@ -556,7 +556,7 @@ const GE_QUESTIONS = [
     question: 'Are there costs from service degradation, workarounds, or unmet needs?',
     requiredEntry: 'None; workaround; extra license/tool; productivity loss; unresolved. Enter volume and actual cost.',
     options: [
-      'Workaround effort during parallel run (manual GMax chat export & Veeva/SharePoint connector staging)',
+      'Workaround effort during parallel run (manual NovaAssist chat export & RegVault/SharePoint connector staging)',
       'None — zero service degradation or workaround cost',
       'Extra third-party license/tool retained due to feature gap',
       'Material unresolved productivity loss',
@@ -568,7 +568,7 @@ const GE_QUESTIONS = [
     question: 'How are platform costs apportioned across cohorts and workflows?',
     requiredEntry: 'Enterprise total; per active user; per licensed user; per workflow; per transaction; other. Enter billing period, currency and assumption owner.',
     options: [
-      'Per assigned/active seat for core GE + direct GCP project/consumption tracking for ADK agents (452587034549)',
+      'Per assigned/active seat for core GE + direct GCP project/consumption tracking for ADK agents (710492831045)',
       'Enterprise total lump sum only',
       'Per licensed seat across all 85,300 contracted users',
       'Per transaction / API call',
@@ -690,11 +690,11 @@ const GE_QUESTIONS = [
   {
     id: 'U01', module: 'U', weight: 1, kpaId: 'user_experience', inputType: 'single_select', rubricType: 'adoption',
     question: 'Which tools did sampled employees use for their primary task in the last 30 days?',
-    requiredEntry: 'Legacy GMax; Gemini Enterprise; both; another AI tool; no AI. Frequency: never; monthly; weekly; 2–3 days/week; 4+ days/week.',
+    requiredEntry: 'Legacy NovaAssist; Gemini Enterprise; both; another AI tool; no AI. Frequency: never; monthly; weekly; 2–3 days/week; 4+ days/week.',
     options: [
-      'Gemini Enterprise primary (≥2–3 days/wk) with <20% legacy GMax co-use',
-      'Both Legacy GMax and Gemini Enterprise in parallel (Coexistence cohort)',
-      'Primarily Legacy GMax or another AI tool (M365 Copilot)',
+      'Gemini Enterprise primary (≥2–3 days/wk) with <20% legacy NovaAssist co-use',
+      'Both Legacy NovaAssist and Gemini Enterprise in parallel (Coexistence cohort)',
+      'Primarily Legacy NovaAssist or another AI tool (M365 Copilot)',
       'No AI tool used in last 30 days (Routed to blockers)'
     ]
   },
@@ -724,7 +724,7 @@ const GE_QUESTIONS = [
   },
   {
     id: 'U06', module: 'U', weight: 2, kpaId: 'user_experience', inputType: 'rating_matrix_1_5', rubricType: 'experience',
-    question: 'Rate answer relevance, source findability, accuracy, speed, ease, and confidence (1–5 scale, Legacy GMax vs. Gemini Enterprise).',
+    question: 'Rate answer relevance, source findability, accuracy, speed, ease, and confidence (1–5 scale, Legacy NovaAssist vs. Gemini Enterprise).',
     requiredEntry: 'Separate 1–5 scale for legacy and Gemini: 1 very poor to 5 excellent; not used.'
   },
   {
@@ -738,7 +738,7 @@ const GE_QUESTIONS = [
     question: 'Have users seen an incorrect, unsafe, or inaccessible result in the last 30 days?',
     requiredEntry: 'Never; once; monthly; weekly; daily; prefer not to say. Enter type (not sensitive content) and whether reported.',
     options: [
-      'Rarely / Once (Minor unindexed SharePoint/Veeva source gaps; zero privacy/safety leaks)',
+      'Rarely / Once (Minor unindexed SharePoint/RegVault source gaps; zero privacy/safety leaks)',
       'Never',
       'Monthly (Bounded hallucination or stale document retrieval)',
       'Weekly / Daily (Material quality or permission defect)'
@@ -754,7 +754,7 @@ const GE_QUESTIONS = [
     id: 'U10', module: 'U', weight: 0, kpaId: 'user_experience', inputType: 'multi_select_rank', rankLimit: 2,
     question: 'What do employees report is still missing? (Rank top two)',
     requiredEntry: 'Multi-select: source coverage; permissions; workflow action; better accuracy; faster responses; training; support; no gap; other. Rank top two.',
-    options: ['Source coverage (Veeva Vault, SAP, historical GMax chats)', 'Permissions & connector opt-in simplicity', 'Direct workflow actions / write-back', 'Role-specific prompt templates & training', 'Better accuracy on complex tables', 'Faster response latency', 'Support routing (Hotjar / Merck helpdesk link)', 'No gap']
+    options: ['Source coverage (RegVault DMS, CoreERP, historical NovaAssist chats)', 'Permissions & connector opt-in simplicity', 'Direct workflow actions / write-back', 'Role-specific prompt templates & training', 'Better accuracy on complex tables', 'Faster response latency', 'Support routing (PulseFeedback / BioNova helpdesk link)', 'No gap']
   },
 
   // ================= Q. QUALITY, RISK & GOVERNANCE (Q01-Q06, 20 PTS) =================
@@ -763,8 +763,8 @@ const GE_QUESTIONS = [
     question: 'How is answer and agent output quality systematically tested?',
     requiredEntry: 'No test; user feedback; sampled human review; blinded old/new comparison; held-out benchmark. Enter sample size, rubric, reviewer and dates.',
     options: [
-      'Held-out golden benchmark + Gemini Auditor + SME human review (GMAX Pricing & Clinical pilots)',
-      'Blinded old (GMax) vs. new (Gemini) SME evaluation',
+      'Held-out golden benchmark + Gemini Auditor + SME human review (NOVA-AI Pricing & Clinical pilots)',
+      'Blinded old (NovaAssist) vs. new (Gemini) SME evaluation',
       'Sampled human review on pilot cohorts',
       'Ad-hoc user thumbs up/down feedback only',
       'No systematic testing'
@@ -797,7 +797,7 @@ const GE_QUESTIONS = [
     question: 'What are platform availability, P50/P95 latency, and support MTTR results?',
     requiredEntry: 'Actual uptime, P50/P95 latency by task class, failure rate, support tickets, MTTR and affected users, before/after.',
     options: [
-      '99.9% uptime; P50 <2.2s (Search/Assist), P95 <6.5s (Agents); 24 Buganizer items actively tracked',
+      '99.9% uptime; P50 <2.2s (Search/Assist), P95 <6.5s (Agents); 24 Issue Tracker items actively tracked',
       'Exceeds all latency and ticket MTTR targets with zero open bugs',
       'Meets minimum availability with occasional cross-cloud query latency spikes',
       'Below minimum SLA or severe outage'
@@ -819,7 +819,7 @@ const GE_QUESTIONS = [
     question: 'Were any regulated or GxP-adjacent workflows affected, and are they validated?',
     requiredEntry: 'Yes validated; yes unvalidated; no; unknown. Capture classification, validation owner and permissible use (Unvalidated production use triggers Gate 3).',
     options: [
-      'Yes — Regulated workflows (MER-04 Clinical, MER-05 CMC, MER-13 Regulatory) scoped in pilot; formal GxP CSV validation required prior to scale (Gate 3 Active)',
+      'Yes — Regulated workflows (BNV-04 Clinical, BNV-05 CMC, BNV-13 Regulatory) scoped in pilot; formal GxP CSV validation required prior to scale (Gate 3 Active)',
       'Yes — All regulated workflows formally validated with 21 CFR Part 11 / Annex 11 audit trail sign-off',
       'No regulated or GxP-adjacent workflows in scope (Human-in-the-loop non-GxP only)',
       'Yes — Unvalidated regulated use in production (Severe Gate 3 Violation)'
@@ -829,17 +829,17 @@ const GE_QUESTIONS = [
   // ================= F. FINANCE VALIDATION & EXECUTIVE OUTCOMES (F01-F08) =================
   {
     id: 'F01', module: 'F', weight: 0, inputType: 'finance_rates',
-    question: 'What loaded hourly rates ($/hr) and realization rules (0–100%) are approved by Merck Finance?',
+    question: 'What loaded hourly rates ($/hr) and realization rules (0–100%) are approved by BioNova Finance?',
     requiredEntry: 'Rate by role; eligible cost category; realization factor 0–100%; approver and effective dates.'
   },
   {
     id: 'F02', module: 'F', weight: 0, inputType: 'multi_select',
-    question: 'What counts as an approved financial or capacity benefit under Merck CFO rules?',
+    question: 'What counts as an approved financial or capacity benefit under BioNova CFO rules?',
     requiredEntry: 'Cash released; budget avoided; capacity with demonstrated throughput; modeled opportunity; nonfinancial only. Define documentary threshold for each.',
     options: [
       'Column 1 (Realized Cash): Requires terminated legacy contract/invoice (L02) or signed budget/contractor reduction (W10)',
       'Column 2 (Validated Capacity): Requires measured W04 task time reduction + W07 quality parity; reported in hours & capacity eq.',
-      'Column 3 (Modeled Opportunity): Pre-production pilots (GMAX Pricing, AHEAD, Ask HR) reported separately from realized ROI',
+      'Column 3 (Modeled Opportunity): Pre-production pilots (NOVA-AI Pricing, AHEAD, Ask HR) reported separately from realized ROI',
       'Column 4 (Nonfinancial Indicators): WAU, search completion, cycle speed, and citation accuracy'
     ]
   },
@@ -883,9 +883,9 @@ const GE_QUESTIONS = [
   },
   {
     id: 'F07', module: 'F', weight: 0, inputType: 'multi_select_rank', rankLimit: 5,
-    question: 'Which executive outcomes does Merck leadership prioritize? (Rank top five)',
+    question: 'Which executive outcomes does BioNova leadership prioritize? (Rank top five)',
     requiredEntry: 'Rank top five: net cost; cash savings; capacity; throughput; quality; search success; governance; employee experience; innovation; adoption.',
-    options: ['Throughput & cycle-time compression (R&D / Commercial)', 'Search success & enterprise knowledge findability', 'Quality, citation accuracy & GxP governance', 'Active repeat adoption across 85k seats', 'Net platform cost & GMax retirement savings', 'Released engineering & clinical capacity', 'Employee experience & CoP velocity', 'Commercial pricing & launch innovation']
+    options: ['Throughput & cycle-time compression (R&D / Commercial)', 'Search success & enterprise knowledge findability', 'Quality, citation accuracy & GxP governance', 'Active repeat adoption across 85k seats', 'Net platform cost & NovaAssist retirement savings', 'Released engineering & clinical capacity', 'Employee experience & CoP velocity', 'Commercial pricing & launch innovation']
   },
   {
     id: 'F08', module: 'F', weight: 0, inputType: 'signoff_matrix',
@@ -896,19 +896,19 @@ const GE_QUESTIONS = [
   // ================= V. INDUSTRY & PHARMA ADD-ON MODULE (V01-V08) =================
   {
     id: 'V01', module: 'V', weight: 0, linkedQuestions: ['W07', 'W09'], inputType: 'single_select',
-    question: 'Research / Discovery: Which research output is accelerated (MER-01 Co-Scientist / Literature Triage)?',
+    question: 'Research / Discovery: Which research output is accelerated (BNV-01 Co-Scientist / Literature Triage)?',
     requiredEntry: 'Literature triage; hypothesis development; knowledge discovery; protocol drafting; other. Record baseline/current elapsed time, accepted outputs, and review burden.',
     options: ['Literature triage & 500+ paper structured extraction (CoP & R&D pilots)', 'Hypothesis development & target validation', 'Protocol drafting', 'Not in current GE scope']
   },
   {
     id: 'V02', module: 'V', weight: 0, linkedQuestions: ['W07', 'Q02', 'Q06'], inputType: 'single_select',
-    question: 'Clinical Operations: Does AI influence study documentation or site operations (MER-04)?',
+    question: 'Clinical Operations: Does AI influence study documentation or site operations (BNV-04)?',
     requiredEntry: 'No; drafting only; human-reviewed recommendation; decision support; autonomous action. Record approval gate, error rate and rework.',
     options: ['Human-reviewed drafting & clinical data review configuration (100% HITL gate)', 'Autonomous action on clinical records (Triggers Gate 3 if unvalidated)', 'Reference search only', 'Not in scope']
   },
   {
     id: 'V03', module: 'V', weight: 0, linkedQuestions: ['W07', 'Q02'], inputType: 'single_select',
-    question: 'Medical / Scientific Information: How are medical and HTA answers substantiated (MER-07 AHEAD)?',
+    question: 'Medical / Scientific Information: How are medical and HTA answers substantiated (BNV-07 AHEAD)?',
     requiredEntry: 'Approved-source retrieval; source verification; medical review; escalation; not applicable. Record first-pass accuracy, correction and escalation counts.',
     options: ['Approved-source retrieval + mandatory hyperlink verification + medical/HTA review', 'Unverified generative drafting', 'Not applicable']
   },
@@ -920,15 +920,15 @@ const GE_QUESTIONS = [
   },
   {
     id: 'V05', module: 'V', weight: 0, linkedQuestions: ['W07', 'W09', 'Q06'], inputType: 'single_select',
-    question: 'Manufacturing / Quality: Does output touch deviations, CAPA, SOPs, or CMC tech transfer (MER-05)?',
+    question: 'Manufacturing / Quality: Does output touch deviations, CAPA, SOPs, or CMC tech transfer (BNV-05)?',
     requiredEntry: 'No; reference lookup; drafting; quality recommendation; controlled record. Record review effort, cycle time, quality events and controls.',
-    options: ['CMC Tech Transfer & QMS/SOP contextualization (MER-05 in Scoping; controlled records require QA sign-off)', 'Reference lookup only', 'Direct write to controlled batch records']
+    options: ['CMC Tech Transfer & QMS/SOP contextualization (BNV-05 in Scoping; controlled records require QA sign-off)', 'Reference lookup only', 'Direct write to controlled batch records']
   },
   {
     id: 'V06', module: 'V', weight: 0, linkedQuestions: ['W07', 'W09'], inputType: 'single_select',
-    question: 'Commercial / Market Access: Does output touch pricing simulations or promotional content (MER-06 GMAX)?',
+    question: 'Commercial / Market Access: Does output touch pricing simulations or promotional content (BNV-06 NOVA-AI)?',
     requiredEntry: 'No; internal research; drafting; approved-content adaptation; external publication. Record review and approval cycles.',
-    options: ['Internal global pricing simulation (MER-06 GMAX) & internal market access drafting with human approval', 'External promotional publication without MLR review', 'Not applicable']
+    options: ['Internal global pricing simulation (BNV-06 NOVA-AI) & internal market access drafting with human approval', 'External promotional publication without MLR review', 'Not applicable']
   },
   {
     id: 'V07', module: 'V', weight: 0, linkedQuestions: ['A03', 'Q03'], inputType: 'single_select',
@@ -940,7 +940,7 @@ const GE_QUESTIONS = [
     id: 'V08', module: 'V', weight: 0, linkedQuestions: ['W09', 'Q02', 'Q03'], inputType: 'single_select',
     question: 'Agents / Actions: What level of autonomy can deployed Gemini Enterprise agents take?',
     requiredEntry: 'Read only; draft; update record with approval; update record automatically; external action. Record completion, rollback, exception and human approval rates.',
-    options: ['Read-only retrieval, simulation & draft generation with mandatory human approval (ServiceNow MCP & GMAX Pricing)', 'Update enterprise records automatically without human review', 'Read-only search only']
+    options: ['Read-only retrieval, simulation & draft generation with mandatory human approval (OmniDesk ITSM MCP & NOVA-AI Pricing)', 'Update enterprise records automatically without human review', 'Read-only search only']
   },
 
   // ================= G. GEOGRAPHY ADD-ON MODULE (G01-G05) =================
@@ -960,13 +960,13 @@ const GE_QUESTIONS = [
     id: 'G03', module: 'G', weight: 0, linkedQuestions: ['W03'], inputType: 'single_select',
     question: 'Are content and outcomes comparable across non-English languages (ES, FR, DE, JA)?',
     requiredEntry: 'Validated equivalent; partly comparable; local use cases differ; untested. Record sample and owner.',
-    options: ['Partly comparable — English validated; ES/FR/DE/JA localization roadmap tracked with Carsten Hinz', 'Validated equivalent across all languages', 'Untested']
+    options: ['Partly comparable — English validated; ES/FR/DE/JA localization roadmap tracked with Henrik Lindqvist', 'Validated equivalent across all languages', 'Untested']
   },
   {
     id: 'G04', module: 'G', weight: 0, linkedQuestions: ['A01', 'A02'], inputType: 'multi_select',
     question: 'Are local privacy, data residency, or Works Council restrictions material?',
     requiredEntry: 'None; access; privacy; data residency; works council/employee monitoring; regulated use; other. Capture approved measurement method.',
-    options: ['EU / German Works Council (k-anonymity aggregated telemetry rule)', 'Data residency / regional routing logic (Laurence Chiu)', 'Regulated pharma GxP market rules', 'None']
+    options: ['EU / German Works Council (k-anonymity aggregated telemetry rule)', 'Data residency / regional routing logic (Adrian Chen)', 'Regulated pharma GxP market rules', 'None']
   },
   {
     id: 'G05', module: 'G', weight: 0, linkedQuestions: ['A01', 'W02'], inputType: 'single_select',
@@ -977,24 +977,24 @@ const GE_QUESTIONS = [
 ];
 
 /**
- * Default Priority Workflows for Merck & Co., Inc. (0014M00001hZEwfQAG)
+ * Default Priority Workflows for BioNova Life Sciences Inc. (ACC-1002-BIONOVA)
  * Strictly distinguishes Scaled vs. Pilot vs. Scoping (quarantining Scoping to Column 3 Modeled Opportunity)
  */
-const DEFAULT_MERCK_WORKFLOWS = [
+const DEFAULT_BIONOVA_WORKFLOWS = [
   {
     id: 'wf_enterprise_search',
     code: 'WF1',
-    name: 'Enterprise Knowledge Search & "Ask HR" / ServiceNow Assistant (MER-08)',
+    name: 'Enterprise Knowledge Search & "Ask HR" / OmniDesk ITSM Assistant (BNV-08)',
     functionArea: 'Enterprise-Wide & Global Support',
     classification: 'search',
-    owner: 'Zachary Pinner / Global Support Lead',
+    owner: 'Lucas Sterling / Global Support Lead',
     maturity: 'Scaled', // W13: Scaled | Pilot | Scoping | Blocked
     portfolioWeightCap: 0.30, // Capped at 30% so high search volume does not drown out regulated workflows
     eligibleUsers: 10663,
     activeUsers: 4992,
     completedTasksPerMonth: 14500,
     comparisonMethod: 'Timed pilot comparison study on representative task sample',
-    baselinePeriod: 'Jan 15 – Mar 15, 2026 (Legacy GMax)',
+    baselinePeriod: 'Jan 15 – Mar 15, 2026 (Legacy NovaAssist)',
     currentPeriod: 'Mar 16 – May 15, 2026 (Gemini Enterprise)',
     sampleSize: 320,
     numericState: 'actual', // actual | pending | unknown | na
@@ -1022,22 +1022,22 @@ const DEFAULT_MERCK_WORKFLOWS = [
     realizationFactorPct: 0, // 0% cash realization (unredeployed time stays in Col 2 Capacity)
     capacityConversionFactorPct: 65,
     attributionSharePct: 80,
-    modeledAnnualValueUsd: 22500000, // $20M-$25M MER-08 target kept in Col 3 Modeled Opportunity
+    modeledAnnualValueUsd: 22500000, // $20M-$25M BNV-08 target kept in Col 3 Modeled Opportunity
     isRegulatedGxp: false,
     gxpValidated: true,
     confidenceTier: 'B',
     verificationStatus: 'draft_verify', // verified | draft_verify | pending
-    sourceProvenance: 'NorthAM Agent Acceleration Workbook.xlsx (Row 11: 4,992 Search WAU / 5,386 Assist WAU; MER-08 Ask HR)',
+    sourceProvenance: 'Enterprise_Agent_Acceleration_Workbook.xlsx (Row 11: 4,992 Search WAU / 5,386 Assist WAU; BNV-08 Ask HR)',
     quarterlyDecision: 'Scale',
-    nextAction: 'Expand seat assignment from 10,663 toward 85,000 as SharePoint opt-in & GMax chat export close',
+    nextAction: 'Expand seat assignment from 10,663 toward 85,000 as SharePoint opt-in & NovaAssist chat export close',
     outcomeScores: {
       W01: 4, W02: 4, W03: 3, W04: 3, W05: 3, W06: 3, W07: 3, W08: 3, W09: 3, W10: 2, W11: 2, W12: 3, W13: 4, Q01: 3, Q02: 3
     }
   },
   {
-    id: 'wf_gmax_pricing',
+    id: 'wf_nova_pricing',
     code: 'WF2',
-    name: 'MER-06: GMAX Global Pricing & Reference Cascade Agent (IRP / MFN)',
+    name: 'BNV-06: NOVA-AI Global Pricing & Reference Cascade Agent (IRP / MFN)',
     functionArea: 'Commercial / Global Market Access',
     classification: 'agent action',
     owner: 'Global Market Access Lead / PSO',
@@ -1080,9 +1080,9 @@ const DEFAULT_MERCK_WORKFLOWS = [
     gxpValidated: true,
     confidenceTier: 'B',
     verificationStatus: 'draft_verify',
-    sourceProvenance: 'GMAX Pricing Agent - Capability and Design Charter.pdf & Merck GMA Architecture Discussion.pdf',
+    sourceProvenance: 'NovaAssist_Pricing_Agent_Capability_Charter.pdf & BioNova_Architecture_Discussion.pdf',
     quarterlyDecision: 'Validate further',
-    nextAction: 'Obtain Merck Finance sign-off on 0.5% price retention attribution (F01/F03) & finalize BigQuery Gold Layer',
+    nextAction: 'Obtain BioNova Finance sign-off on 0.5% price retention attribution (F01/F03) & finalize BigQuery Gold Layer',
     outcomeScores: {
       W01: 4, W02: 3, W03: 3, W04: 4, W05: 3, W06: 3, W07: 4, W08: 4, W09: 3, W10: 2, W11: 2, W12: 3, W13: 3, Q01: 4, Q02: 4
     }
@@ -1090,10 +1090,10 @@ const DEFAULT_MERCK_WORKFLOWS = [
   {
     id: 'wf_clinical_review',
     code: 'WF3',
-    name: 'MER-04: Automated Clinical Data Review & Protocol Extraction',
+    name: 'BNV-04: Automated Clinical Data Review & Protocol Extraction',
     functionArea: 'Clinical Operations / R&D (GxP Regulated)',
     classification: 'analysis',
-    owner: 'Nicole Harapesova / Clinical Ops Lead',
+    owner: 'Elena Rostova / Clinical Ops Lead',
     maturity: 'Pilot',
     portfolioWeightCap: 0.20,
     eligibleUsers: 1000,
@@ -1130,12 +1130,12 @@ const DEFAULT_MERCK_WORKFLOWS = [
     attributionSharePct: 75,
     modeledAnnualValueUsd: 18500000,
     isRegulatedGxp: true,
-    gxpValidated: false, // Triggers Gate 3 (Regulated GxP validation & Veeva Vault MCP pending)
+    gxpValidated: false, // Triggers Gate 3 (Regulated GxP validation & RegVault DMS MCP pending)
     confidenceTier: 'B',
     verificationStatus: 'draft_verify',
-    sourceProvenance: 'NorthAM Agent Acceleration Workbook.xlsx (MER-04: 1,000 staff @ 70% manual) & Veeva Cloud Blocker Log',
+    sourceProvenance: 'Enterprise_Agent_Acceleration_Workbook.xlsx (BNV-04: 1,000 staff @ 70% manual) & RegVault Cloud Blocker Log',
     quarterlyDecision: 'Improve / Unblock',
-    nextAction: 'Unblock Veeva Vault MCP connector & complete 21 CFR Part 11 / GxP CSV validation prior to full 1,000-seat scale',
+    nextAction: 'Unblock RegVault DMS MCP connector & complete 21 CFR Part 11 / GxP CSV validation prior to full 1,000-seat scale',
     outcomeScores: {
       W01: 4, W02: 3, W03: 3, W04: 3, W05: 3, W06: 3, W07: 3, W08: 3, W09: 3, W10: 2, W11: 1, W12: 2, W13: 2, Q01: 3, Q02: 3
     }
@@ -1143,7 +1143,7 @@ const DEFAULT_MERCK_WORKFLOWS = [
   {
     id: 'wf_project_ahead',
     code: 'WF4',
-    name: 'MER-07: Project AHEAD — Automated HTA Dossier Generation',
+    name: 'BNV-07: Project AHEAD — Automated HTA Dossier Generation',
     functionArea: 'Commercial / Regulatory Market Access',
     classification: 'drafting',
     owner: 'Market Access Dossier Lead / PSO',
@@ -1186,9 +1186,9 @@ const DEFAULT_MERCK_WORKFLOWS = [
     gxpValidated: false,
     confidenceTier: 'C',
     verificationStatus: 'pending',
-    sourceProvenance: 'NorthAM Agent Acceleration Workbook.xlsx (MER-07) & Merck GMA Architecture Discussion.pdf (p.2)',
+    sourceProvenance: 'Enterprise_Agent_Acceleration_Workbook.xlsx (BNV-07) & BioNova_Architecture_Discussion.pdf (p.2)',
     quarterlyDecision: 'Validate further',
-    nextAction: 'Execute timed pre/post dossier drafting study (W03/W04) once OneSearch/IQVIA data feeds are connected',
+    nextAction: 'Execute timed pre/post dossier drafting study (W03/W04) once OneSearch/ClinMetrics data feeds are connected',
     outcomeScores: {
       W01: 3, W02: 2, W03: 1, W04: 3, W05: 2, W06: 2, W07: 2, W08: 3, W09: 2, W10: 1, W11: 1, W12: 2, W13: 1, Q01: 2, Q02: 2
     }
@@ -1196,7 +1196,7 @@ const DEFAULT_MERCK_WORKFLOWS = [
   {
     id: 'wf_cmc_tech_transfer',
     code: 'WF5',
-    name: 'MER-05: CMC R&D-to-Manufacturing Tech Transfer Contextualization',
+    name: 'BNV-05: CMC R&D-to-Manufacturing Tech Transfer Contextualization',
     functionArea: 'Manufacturing / CMC Quality (GxP)',
     classification: 'analysis',
     owner: 'CMC Manufacturing Lead / Delta FDE',
@@ -1207,7 +1207,7 @@ const DEFAULT_MERCK_WORKFLOWS = [
     completedTasksPerMonth: null, // Evidence Pending
     comparisonMethod: 'Modeled / scoping target only',
     baselinePeriod: 'Historical 24-Month CMC Transfer Cycle',
-    currentPeriod: 'Q2 2026 Scoping (SAP/LIMS/PAS-X/Mantis)',
+    currentPeriod: 'Q2 2026 Scoping (CoreERP/LIMS/BioMES/Cloud DataHub)',
     sampleSize: 0,
     numericState: 'pending',
     stages: {
@@ -1239,19 +1239,19 @@ const DEFAULT_MERCK_WORKFLOWS = [
     gxpValidated: false,
     confidenceTier: 'D',
     verificationStatus: 'pending',
-    sourceProvenance: 'NorthAM Agent Acceleration Workbook.xlsx (MER-05: 24-mo to 9-mo CMC target; SAP connector feature request)',
+    sourceProvenance: 'Enterprise_Agent_Acceleration_Workbook.xlsx (BNV-05: 24-mo to 9-mo CMC target; CoreERP connector feature request)',
     quarterlyDecision: 'Improve / Unblock',
-    nextAction: 'Establish BigQuery bridge to AWS Mantis, LIMS, Werum PAS-X & QMS; define GxP CSV boundary',
+    nextAction: 'Establish BigQuery bridge to Legacy Cloud DataHub, LIMS, BioMES & QMS; define GxP CSV boundary',
     outcomeScores: {
       W01: 3, W02: 1, W03: 1, W04: 2, W05: 2, W06: 1, W07: 2, W08: 2, W09: 2, W10: 1, W11: 0, W12: 2, W13: 1, Q01: 1, Q02: 2
     }
   }
 ];
 
-const DEFAULT_MERCK_GEOGRAPHIES = [
+const DEFAULT_BIONOVA_GEOGRAPHIES = [
   {
     id: 'geo_northam',
-    region: 'NORTHAM (US — Rahway, NJ & North America)',
+    region: 'NORTHAM (US — Cambridge, MA & North America)',
     language: 'English',
     launchDate: '2026-02-15',
     eligibleSeats: 85000,
@@ -1259,7 +1259,7 @@ const DEFAULT_MERCK_GEOGRAPHIES = [
     wau: 5867,
     mau: 7763,
     worksCouncilRestriction: 'None (Standard US Enterprise Governance)',
-    comparabilityStatus: 'Validated Primary Baseline (Vector 0014M00001hZEwfQAG)',
+    comparabilityStatus: 'Validated Primary Baseline (Vector ACC-1002-BIONOVA)',
     poolingRule: 'Primary benchmark cohort'
   },
   {
@@ -1272,7 +1272,7 @@ const DEFAULT_MERCK_GEOGRAPHIES = [
     wau: null,
     mau: null,
     worksCouncilRestriction: 'EU / Works Council k-anonymity (min N=15 per cell; no individual event tracking)',
-    comparabilityStatus: 'Localization roadmap (ES/FR/DE) tracked with Carsten Hinz',
+    comparabilityStatus: 'Localization roadmap (ES/FR/DE) tracked with Henrik Lindqvist',
     poolingRule: 'Report separately until language parity & Works Council review complete'
   },
   {
@@ -1291,38 +1291,38 @@ const DEFAULT_MERCK_GEOGRAPHIES = [
 ];
 
 /**
- * Builds the default pre-staged Merck & Co., Inc. (0014M00001hZEwfQAG) dossier
+ * Builds the default pre-staged BioNova Life Sciences Inc. (ACC-1002-BIONOVA) dossier
  * OR a clean zero-assumption customer intake dossier when mode === 'clean'
  */
-function createInitialGeDossier(mode = 'fedex_default') {
+function createInitialGeDossier(mode = 'aerovanguard_default') {
   const isClean = mode === 'clean';
-  const isFedex = mode === 'fedex_default';
+  const isAeroVanguard = mode === 'aerovanguard_default';
 
-  if (isFedex) {
+  if (isAeroVanguard) {
     return {
-      id: 'ge_vr_0014m00001hfhuqqae',
+      id: 'ge_vr_acc-1001-aerovg',
       typeKey: 'ge_value_realization',
       mode: 'multi_source_ingested',
       meta: {
-        customerName: 'Federal Express Corporation',
-        vectorAccountId: '0014M00001hfHuqQAE',
-        gcpProjectId: 'fedex-ge-logistics-prod-01',
+        customerName: 'AeroVanguard Global Logistics',
+        vectorAccountId: 'ACC-1001-AEROVG',
+        gcpProjectId: 'aerovanguard-ge-logistics-prod-01',
         industry: 'Global Logistics, Air/Ground Express & Supply Chain',
-        regionPrimary: 'NORTHAM (Memphis, TN HQ + Global Hubs)',
-        legacySystemName: 'M365 Copilot Pilot + Disconnected SharePoint/ServiceNow Search',
-        legacyPlatformName: 'M365 Copilot Pilot + Disconnected SharePoint/ServiceNow Search',
+        regionPrimary: 'NORTHAM (Atlanta, GA HQ + Global Hubs)',
+        legacySystemName: 'M365 Copilot Pilot + Disconnected SharePoint/OmniDesk ITSM Search',
+        legacyPlatformName: 'M365 Copilot Pilot + Disconnected SharePoint/OmniDesk ITSM Search',
         targetSystemName: 'Google Cloud Gemini Enterprise (10,000 Contracted Seats)',
-        executiveSponsor: 'Vishal Talwar (EVP, Chief Digital & Information Officer)',
+        executiveSponsor: 'Rohan Kapoor (EVP, Chief Digital & Information Officer)',
         customerLeads: 'Enterprise AI & Digital Operations Platform Lead, Global Logistics Ops Director',
-        googleLeads: 'FedEx Strategic Account Director, Google Cloud Supply Chain Principal Architect',
+        googleLeads: 'AeroVanguard Strategic Account Director, Google Cloud Supply Chain Principal Architect',
         accountTeam: {
-          customerSponsor: 'Vishal Talwar (EVP, Chief Digital & Information Officer)',
+          customerSponsor: 'Rohan Kapoor (EVP, Chief Digital & Information Officer)',
           customerTechLead: 'Enterprise AI & Digital Operations Platform Lead',
-          googleCal: 'FedEx Strategic Account Director',
+          googleCal: 'AeroVanguard Strategic Account Director',
           googleCeLead: 'Google Cloud Supply Chain Principal Architect'
         },
         assessmentTier: 'Enterprise Standard',
-        tierOverrideReason: 'High over-assignment density (138% assigned vs contracted) & Zebra mobile handheld edge blocker.',
+        tierOverrideReason: 'High over-assignment density (138% assigned vs contracted) & RuggedEdge mobile handheld edge blocker.',
         baselineWindow: 'Jan 15, 2026 – Mar 15, 2026 (60 Days)',
         currentWindow: 'Mar 16, 2026 – May 15, 2026 (60 Days)',
         cutoverDate: '2026-06-30',
@@ -1381,17 +1381,17 @@ function createInitialGeDossier(mode = 'fedex_default') {
           agent: 1154,
           agentRolling7dRequests: 13699
         },
-        buganizerOngoingIssues: 0,
+        trackerOngoingIssues: 0,
         cloudBlockersInReview: 1
       },
       legacyRetirement: {
-        legacyToolName: 'M365 Copilot Pilot + Disconnected SharePoint/ServiceNow Search',
+        legacyToolName: 'M365 Copilot Pilot + Disconnected SharePoint/OmniDesk ITSM Search',
         legacyAnnualRunRateModeledUsd: 1950000
       },
       workflows: [
         {
-          ...DEFAULT_MERCK_WORKFLOWS[0],
-          id: 'wf_fedex_1',
+          ...DEFAULT_BIONOVA_WORKFLOWS[0],
+          id: 'wf_aerovanguard_1',
           code: 'WF1',
           name: 'Global Customs & Export Tariff Document Triage',
           functionArea: 'International Customs & Trade Compliance',
@@ -1434,30 +1434,30 @@ function createInitialGeDossier(mode = 'fedex_default') {
         }
       },
       signOffs: {
-        businessSponsor: { owner: 'Vishal Talwar (EVP, CDIO)', status: 'Pending Review', date: '2026-05-20', caveat: 'Awaiting Wave-1 Cost Bridge & Zebra mobile edge roadmap' },
+        businessSponsor: { owner: 'Rohan Kapoor (EVP, CDIO)', status: 'Pending Review', date: '2026-05-20', caveat: 'Awaiting Wave-1 Cost Bridge & RuggedEdge mobile edge roadmap' },
         platformAnalytics: { owner: 'Enterprise AI & Digital Operations Platform Lead', status: 'Approved with Caveat', date: '2026-05-18', caveat: 'Vector WAU/MAU verified (8,900 WAU / 13,803 assigned)' },
-        finance: { owner: 'Federal Express Corporation Finance Controller', status: 'Pending Review', date: '', caveat: 'Awaiting L01 legacy invoices & F01 loaded rate sign-off' },
-        securityGxp: { owner: 'FedEx InfoSec & Compliance QA', status: 'Approved with Caveat', date: '2026-05-18', caveat: 'VPC-SC & citations verified; Zebra mobile edge auth in progress' }
+        finance: { owner: 'AeroVanguard Global Logistics Finance Controller', status: 'Pending Review', date: '', caveat: 'Awaiting L01 legacy invoices & F01 loaded rate sign-off' },
+        securityGxp: { owner: 'AeroVanguard InfoSec & Compliance QA', status: 'Approved with Caveat', date: '2026-05-18', caveat: 'VPC-SC & citations verified; RuggedEdge mobile edge auth in progress' }
       },
       questionResponses: buildDefaultQuestionResponses(false)
     };
   }
 
   return {
-    id: isClean ? `ge_vr_clean_${Date.now()}` : 'inst_merck_ge_value_realization',
+    id: isClean ? `ge_vr_clean_${Date.now()}` : 'inst_bionova_ge_value_realization',
     typeKey: 'ge_value_realization',
-    mode: isClean ? 'clean' : 'merck_draft',
+    mode: isClean ? 'clean' : 'bionova_draft',
     meta: {
-      customerName: isClean ? '' : 'Merck & Co., Inc.',
-      vectorAccountId: isClean ? '' : '0014M00001hZEwfQAG',
-      gcpProjectId: isClean ? '' : '452587034549 (mmcg-did-rgpt-5872) / 990806474523',
-      legacySystemName: isClean ? 'Legacy Homegrown OpenAI' : 'GMax / GPTEAL (Homegrown OpenAI GPT-4o + 300 Early Pilot Seats)',
+      customerName: isClean ? '' : 'BioNova Life Sciences Inc.',
+      vectorAccountId: isClean ? '' : 'ACC-1002-BIONOVA',
+      gcpProjectId: isClean ? '' : '710492831045 (bionova-ai-prod-4102) / 820194736201',
+      legacySystemName: isClean ? 'Legacy Homegrown OpenAI' : 'NovaAssist / NOVA-AI (Homegrown OpenAI GPT-4o + 300 Early Pilot Seats)',
       targetSystemName: 'Google Cloud Gemini Enterprise (85,300 Contracted Seats)',
-      executiveSponsor: isClean ? '' : 'Dave Williams, CIO',
-      customerLeads: isClean ? '' : 'Zachary Pinner (Platform/IT), Nicole Harapesova (R&D/Clinical), Vincent Firmansyah',
-      googleLeads: isClean ? '' : 'Nitin Aggarwal (OCE GE HCLS), Arnab Biswas (Consulting), Bernadette Carson (FDE)',
+      executiveSponsor: isClean ? '' : 'Marcus Vance, CIO',
+      customerLeads: isClean ? '' : 'Lucas Sterling (Platform/IT), Elena Rostova (R&D/Clinical), Devon Thorne',
+      googleLeads: isClean ? '' : 'Jordan Hayes (OCE GE HCLS), Vikram Desai (Consulting), Claire Montgomery (FDE)',
       assessmentTier: 'Regulated / Complex',
-      tierOverrideReason: 'Auto-escalated to Regulated / Complex due to GxP Clinical (MER-04), CMC Manufacturing (MER-05), and Multi-System ADK Agents (MER-06).',
+      tierOverrideReason: 'Auto-escalated to Regulated / Complex due to GxP Clinical (BNV-04), CMC Manufacturing (BNV-05), and Multi-System ADK Agents (BNV-06).',
       baselineWindow: 'Jan 15, 2026 – Mar 15, 2026 (60 Days)',
       currentWindow: 'Mar 16, 2026 – May 15, 2026 (60 Days)',
       cutoverDate: '2026-06-30',
@@ -1478,7 +1478,7 @@ function createInitialGeDossier(mode = 'fedex_default') {
     // Platform Economics & Cost Bridge Ledger (L01-L06, F01-F06)
     costLedger: {
       currency: 'USD',
-      // L01: Legacy GMax Annual Costs (Strictly null/pending until Merck Finance provides actual invoices!)
+      // L01: Legacy NovaAssist Annual Costs (Strictly null/pending until BioNova Finance provides actual invoices!)
       legacyAnnualApiCost: null,
       legacyAnnualHostingSearchCost: null,
       legacyAnnualSupportFteCost: null,
@@ -1503,7 +1503,7 @@ function createInitialGeDossier(mode = 'fedex_default') {
       sensitivityHighMultiplier: 1.25
     },
 
-    // Adoption & Access Telemetry (A01-A07 — Verified from Vector Extract 0014M00001hZEwfQAG)
+    // Adoption & Access Telemetry (A01-A07 — Verified from Vector Extract ACC-1002-BIONOVA)
     adoptionTelemetry: {
       contractedSeats: isClean ? null : 85300,
       provisionedSeats: isClean ? null : 85000,
@@ -1528,16 +1528,16 @@ function createInitialGeDossier(mode = 'fedex_default') {
         agent: isClean ? null : 1710,
         agentRolling7dRequests: isClean ? null : 12385
       },
-      legacyGmaxEligible: isClean ? null : 15000,
-      legacyGmaxWau: isClean ? null : 3200,
-      buganizerOngoingIssues: isClean ? null : 24,
+      legacyBaselineEligible: isClean ? null : 15000,
+      legacyBaselineWau: isClean ? null : 3200,
+      trackerOngoingIssues: isClean ? null : 24,
       cloudBlockersInReview: isClean ? null : 2
     },
 
     // Repeatable Priority Workflows (W01-W13)
     workflows: isClean ? [
       {
-        ...DEFAULT_MERCK_WORKFLOWS[0],
+        ...DEFAULT_BIONOVA_WORKFLOWS[0],
         id: 'wf_clean_1',
         name: 'Priority Workflow 1',
         activeUsers: null,
@@ -1546,10 +1546,10 @@ function createInitialGeDossier(mode = 'fedex_default') {
         verificationStatus: 'pending',
         confidenceTier: 'D'
       }
-    ] : JSON.parse(JSON.stringify(DEFAULT_MERCK_WORKFLOWS)),
+    ] : JSON.parse(JSON.stringify(DEFAULT_BIONOVA_WORKFLOWS)),
 
     // Geographies (G01-G05)
-    geographies: isClean ? [] : JSON.parse(JSON.stringify(DEFAULT_MERCK_GEOGRAPHIES)),
+    geographies: isClean ? [] : JSON.parse(JSON.stringify(DEFAULT_BIONOVA_GEOGRAPHIES)),
 
     // Employee Survey Summary (U01-U10)
     employeeSurvey: {
@@ -1571,10 +1571,10 @@ function createInitialGeDossier(mode = 'fedex_default') {
 
     // Multi-Party Sign-Off (F08 & P08)
     signOffs: {
-      businessSponsor: { owner: 'Dave Williams (CIO)', status: 'Pending Review', date: '2026-05-20', caveat: 'Awaiting Wave-1 Cost Bridge & GMAX Pilot readout' },
-      platformAnalytics: { owner: 'Zachary Pinner', status: 'Approved with Caveat', date: '2026-05-18', caveat: 'Vector WAU/MAU verified; A07 workflow tagging & GMax chat export in progress' },
-      finance: { owner: 'Merck Finance Controller', status: 'Pending Review', date: '', caveat: 'Awaiting L01 GMax invoices & F01 loaded rate sign-off' },
-      securityGxp: { owner: 'Mark / Dru (Security) & GxP QA', status: 'Approved with Caveat', date: '2026-05-18', caveat: 'VPC-SC & citations verified; Gate 3 open until MER-04/13 Veeva GxP CSV closes' }
+      businessSponsor: { owner: 'Marcus Vance (CIO)', status: 'Pending Review', date: '2026-05-20', caveat: 'Awaiting Wave-1 Cost Bridge & NOVA-AI Pilot readout' },
+      platformAnalytics: { owner: 'Lucas Sterling', status: 'Approved with Caveat', date: '2026-05-18', caveat: 'Vector WAU/MAU verified; A07 workflow tagging & NovaAssist chat export in progress' },
+      finance: { owner: 'BioNova Finance Controller', status: 'Pending Review', date: '', caveat: 'Awaiting L01 NovaAssist invoices & F01 loaded rate sign-off' },
+      securityGxp: { owner: 'Enterprise Security Leads (Security) & GxP QA', status: 'Approved with Caveat', date: '2026-05-18', caveat: 'VPC-SC & citations verified; Gate 3 open until BNV-04/13 RegVault GxP CSV closes' }
     },
 
     // Per-Question Responses, Outcome Scores (0-4), Confidence Tiers (A-D), and Verification States
@@ -1610,7 +1610,7 @@ function getPreStagedValue(qId) {
     C03: 'Tier 1 Strategic Alliance ($10M+ ACV / 85k Seats)',
     C04: '6+ countries / global multi-language',
     C05: ['GxP (Manufacturing / Quality / CSV)', 'Clinical Operations (GCP)', 'Medical / Scientific Information', 'Data Privacy / Works Council', 'Commercial / Promotional (MLR)'],
-    C06: ['Microsoft 365 / SharePoint / OneDrive', 'ServiceNow (OOTB & MCP)', 'Veeva Vault (Regulatory / Clinical)', 'BigQuery / Enterprise Data Lakehouse', 'Custom Agents / ADK / API'],
+    C06: ['Microsoft 365 / SharePoint / OneDrive', 'OmniDesk ITSM (OOTB & MCP)', 'RegVault DMS (Regulatory / Clinical)', 'BigQuery / Enterprise Data Lakehouse', 'Custom Agents / ADK / API'],
     C07: 'Parallel run (Coexistence during transition)',
     C08: 'Survey recall / pilot timed study only',
     C09: '4–8 workflows (Enterprise Standard)',
@@ -1619,68 +1619,68 @@ function getPreStagedValue(qId) {
     P01: ['Enterprise search & grounding', 'Agents / multi-step workflows', 'Broader employee access (85k scale)'],
     P02: 'Phased by function & wave (300 pilot → 10.6k Wave 1 → 85k)',
     P03: '85,300 Contracted / 85,000 Provisioned / 10,663 Wave-1 Assigned (Vector Extract)',
-    P04: 'Chat, Doc Analysis & APIs in Both; Grounded Search, Managed Connectors (M365/ServiceNow/Veeva), ADK Agents & Deep Research in Gemini Only',
-    P05: 'M365/SharePoint & BigQuery Actively Used; ServiceNow MCP in Pilot; Veeva Vault & SAP Blocked/In-Flight',
-    P06: 'Partially moved (Wave 1 active on GE; GMax retained pending chat history export)',
+    P04: 'Chat, Doc Analysis & APIs in Both; Grounded Search, Managed Connectors (M365/OmniDesk ITSM/RegVault), ADK Agents & Deep Research in Gemini Only',
+    P05: 'M365/SharePoint & BigQuery Actively Used; OmniDesk ITSM MCP in Pilot; RegVault DMS & CoreERP Blocked/In-Flight',
+    P06: 'Partially moved (Wave 1 active on GE; NovaAssist retained pending chat history export)',
     P07: ['Community of Practice (CoP) prompt engineering rollout', 'Data platform modernization (BigQuery Gold Layer)', 'Other AI tools in parallel (M365 Copilot / domain tools)'],
-    P08: 'Named Owners Identified (Dave Williams, Zachary Pinner, Nicole Harapesova, Mark/Dru, Merck Finance); Finance Claim Sign-Off Pending',
+    P08: 'Named Owners Identified (Marcus Vance, Lucas Sterling, Elena Rostova, Enterprise Security Leads, BioNova Finance); Finance Claim Sign-Off Pending',
     A01: '85,300 Contracted → 85,000 Provisioned → 10,663 Assigned → 7,763 MAU → 5,867 WAU (55.0% of Assigned)',
     A02: 'Cohort & feature telemetry tracked (Assist 5,386 / Search 4,992 / Agent 1,710 WAU); role/tenure drilldown pending IdP join',
     A03: '61–80%',
     A04: ['Conversational Assist / Chat (5,386 WAU)', 'Enterprise Search (4,992 WAU)', 'Sources & Grounded Citations', 'Document Analysis & Summarization', 'Custom Agents / ADK (1,710 WAU • 12,385 7d reqs)'],
-    A05: ['Connector gaps (Veeva Vault / SAP / SharePoint opt-in controls)', 'Permissions / WIF group limits & Private Endpoint access', 'Alternative tools & Legacy GMax chat history export dependency'],
+    A05: ['Connector gaps (RegVault DMS / CoreERP / SharePoint opt-in controls)', 'Permissions / WIF group limits & Private Endpoint access', 'Alternative tools & Legacy NovaAssist chat history export dependency'],
     A06: ['Community of Practice (CoP) monthly live sessions & showcases', 'Embedded BU AI Champions network', 'Centralized SharePoint/Confluence Prompt & Use Case Library', 'Role-specific FDE / PSO workshop coaching'],
     A07: 'Sampled pilot study + agent endpoint telemetry (Enterprise-wide workflow tagging identified as "Black Box" gap to close)',
-    L01: 'Evidence Pending — Awaiting Merck Finance GMax (Azure OpenAI + Vector DB + Support FTE) 12-mo invoice ledger',
-    L02: 'Parallel Run — GMax retirement gated on closing Bulk Chat History Export blocker',
-    L03: 'Evidence Pending — Awaiting Merck Procurement allocation of 85k GE seat commitment & GCP Project 452587034549 run-rate',
+    L01: 'Evidence Pending — Awaiting BioNova Finance NovaAssist (Azure OpenAI + Vector DB + Support FTE) 12-mo invoice ledger',
+    L02: 'Parallel Run — NovaAssist retirement gated on closing Bulk Chat History Export blocker',
+    L03: 'Evidence Pending — Awaiting BioNova Procurement allocation of 85k GE seat commitment & GCP Project 710492831045 run-rate',
     L04: null,
-    L05: 'Workaround effort during parallel run (manual GMax chat export & Veeva/SharePoint connector staging)',
-    L06: 'Per assigned/active seat for core GE + direct GCP project/consumption tracking for ADK agents (452587034549)',
-    W01: '5 Priority Workflows Defined (WF1 Search/Ask HR, WF2 GMAX Pricing, WF3 Clinical/Reg, WF4 AHEAD, WF5 CMC) with Named Owners',
+    L05: 'Workaround effort during parallel run (manual NovaAssist chat export & RegVault/SharePoint connector staging)',
+    L06: 'Per assigned/active seat for core GE + direct GCP project/consumption tracking for ADK agents (710492831045)',
+    W01: '5 Priority Workflows Defined (WF1 Search/Ask HR, WF2 NOVA-AI Pricing, WF3 Clinical/Reg, WF4 AHEAD, WF5 CMC) with Named Owners',
     W02: 'Telemetry-Backed Active Users & Monthly Task Volumes Recorded for Scaled/Pilot Workflows (WF1–WF3); WF4–WF5 Quarantined in Scoping',
     W04: '6-Stage Task Effort Decomposition Recorded (Discovery, Drafting, Verification, Correction, Approval, Handoff) with HITL Review Deduction',
     W11: 'Unmonetized in Col 1 Cash (Kept in Col 2 Validated Capacity at 65% Factor & Col 3 Modeled Opportunity until Finance Sign-Off)',
-    U01: 'Both Legacy GMax and Gemini Enterprise in parallel (Coexistence cohort)',
+    U01: 'Both Legacy NovaAssist and Gemini Enterprise in parallel (Coexistence cohort)',
     U02: ['R&D / Discovery Scientists', 'Clinical Operations & Medical Writing', 'Commercial & Market Access Analysts', 'Manufacturing / CMC / Quality Engineers', 'Global Support Functions (HR, Finance, IT, Procurement)'],
     U03: '75%+ of attempts',
     U04: '11–30 min faster per task',
     U05: 'Reinvested into higher-priority work & deeper analysis',
-    U06: 'Gemini Mean: 4.25 / 5.0 vs. Legacy GMax Mean: 3.23 / 5.0 (+1.02 pt gain across 6 dimensions)',
+    U06: 'Gemini Mean: 4.25 / 5.0 vs. Legacy NovaAssist Mean: 3.23 / 5.0 (+1.02 pt gain across 6 dimensions)',
     U07: 'Always / Usually (High verification discipline on regulated & commercial tasks)',
-    U08: 'Rarely / Once (Minor unindexed SharePoint/Veeva source gaps; zero privacy/safety leaks)',
+    U08: 'Rarely / Once (Minor unindexed SharePoint/RegVault source gaps; zero privacy/safety leaks)',
     U09: 'Definitely yes (≥80% positive preference)',
-    U10: ['Source coverage (Veeva Vault, SAP, historical GMax chats)', 'Permissions & connector opt-in simplicity'],
-    Q01: 'Held-out golden benchmark + Gemini Auditor + SME human review (GMAX Pricing & Clinical pilots)',
+    U10: ['Source coverage (RegVault DMS, CoreERP, historical NovaAssist chats)', 'Permissions & connector opt-in simplicity'],
+    Q01: 'Held-out golden benchmark + Gemini Auditor + SME human review (NOVA-AI Pricing & Clinical pilots)',
     Q02: 'Zero critical safety/privacy events; hallucination rate <2% with mandatory hyperlink citation policy',
     Q03: 'VPC-SC & core ACLs passed; user/group connector visibility & NotebookLM sharing in bounded remediation',
-    Q04: '99.9% uptime; P50 <2.2s (Search/Assist), P95 <6.5s (Agents); 24 Buganizer items actively tracked',
+    Q04: '99.9% uptime; P50 <2.2s (Search/Assist), P95 <6.5s (Agents); 24 Issue Tracker items actively tracked',
     Q05: 'Controls defined & tested (VPC-SC, zero model training, citation grounding, HITL review); formal GxP sign-off in progress',
-    Q06: 'Yes — Regulated workflows (MER-04 Clinical, MER-05 CMC, MER-13 Regulatory) scoped in pilot; formal GxP CSV validation required prior to scale (Gate 3 Active)',
+    Q06: 'Yes — Regulated workflows (BNV-04 Clinical, BNV-05 CMC, BNV-13 Regulatory) scoped in pilot; formal GxP CSV validation required prior to scale (Gate 3 Active)',
     F01: 'Blended Loaded Rate: $120/hr (Support $95/hr, Clinical/CMC $135/hr, Commercial $145/hr) • Cash Realization: 0% (Pending) • Capacity Factor: 65%',
     F02: [
       'Column 1 (Realized Cash): Requires terminated legacy contract/invoice (L02) or signed budget/contractor reduction (W10)',
       'Column 2 (Validated Capacity): Requires measured W04 task time reduction + W07 quality parity; reported in hours & capacity eq.',
-      'Column 3 (Modeled Opportunity): Pre-production pilots (GMAX Pricing, AHEAD, Ask HR) reported separately from realized ROI'
+      'Column 3 (Modeled Opportunity): Pre-production pilots (NOVA-AI Pricing, AHEAD, Ask HR) reported separately from realized ROI'
     ],
     F03: '75% Attribution Share to Gemini Enterprise (Accounting for 22% Multi-Tool Co-Use & CoP Training Confounders)',
     F04: 'Tier B (0.75x) for Adoption & Pilot Time Studies; Tier C/D for Scoping Value & Pending Legacy Invoices',
     F05: 'No — W04 verification minutes auto-linked to W07; cycle time (W08) not double-monetized with task hours (W04)',
     F06: 'Comparable 60-day pre/post cohort window + Annualized Run-Rate + First-Year Net Value (deducting L04)',
-    F07: ['Throughput & cycle-time compression (R&D / Commercial)', 'Search success & enterprise knowledge findability', 'Quality, citation accuracy & GxP governance', 'Active repeat adoption across 85k seats', 'Net platform cost & GMax retirement savings'],
-    F08: 'Platform & Security Approved with Caveats (2/4); Executive Sponsor & Merck Finance Pending Final Cost Bridge (Gate 4)',
+    F07: ['Throughput & cycle-time compression (R&D / Commercial)', 'Search success & enterprise knowledge findability', 'Quality, citation accuracy & GxP governance', 'Active repeat adoption across 85k seats', 'Net platform cost & NovaAssist retirement savings'],
+    F08: 'Platform & Security Approved with Caveats (2/4); Executive Sponsor & BioNova Finance Pending Final Cost Bridge (Gate 4)',
     V01: 'Literature triage & 500+ paper structured extraction (CoP & R&D pilots)',
     V02: 'Human-reviewed drafting & clinical data review configuration (100% HITL gate)',
     V03: 'Approved-source retrieval + mandatory hyperlink verification + medical/HTA review',
     V04: 'No regulated PV case decisions in Wave 1 (VPC-SC isolated; AE policy banner active)',
-    V05: 'CMC Tech Transfer & QMS/SOP contextualization (MER-05 in Scoping; controlled records require QA sign-off)',
-    V06: 'Internal global pricing simulation (MER-06 GMAX) & internal market access drafting with human approval',
+    V05: 'CMC Tech Transfer & QMS/SOP contextualization (BNV-05 in Scoping; controlled records require QA sign-off)',
+    V06: 'Internal global pricing simulation (BNV-06 NOVA-AI) & internal market access drafting with human approval',
     V07: 'Usually — SharePoint/OneDrive bug resolved; user/group connector visibility opt-in under verification',
-    V08: 'Read-only retrieval, simulation & draft generation with mandatory human approval (ServiceNow MCP & GMAX Pricing)',
+    V08: 'Read-only retrieval, simulation & draft generation with mandatory human approval (OmniDesk ITSM MCP & NOVA-AI Pricing)',
     G01: 'US/NORTHAM Wave 1 Live (Q1–Q2 2026); EMEA/APAC/LATAM phased waves tracked',
     G02: 'Segmented by NORTHAM (primary 10,663 assigned wave) vs. International cohorts',
-    G03: 'Partly comparable — English validated; ES/FR/DE/JA localization roadmap tracked with Carsten Hinz',
-    G04: ['EU / German Works Council (k-anonymity aggregated telemetry rule)', 'Data residency / regional routing logic (Laurence Chiu)', 'Regulated pharma GxP market rules'],
+    G03: 'Partly comparable — English validated; ES/FR/DE/JA localization roadmap tracked with Henrik Lindqvist',
+    G04: ['EU / German Works Council (k-anonymity aggregated telemetry rule)', 'Data residency / regional routing logic (Adrian Chen)', 'Regulated pharma GxP market rules'],
     G05: 'Report NORTHAM Wave 1 primary; pool international waves only after localization & Works Council parity'
   };
   return defaults[qId] !== undefined ? defaults[qId] : 'Defined in Workflow Register (W01–W13)';
@@ -1695,8 +1695,8 @@ function getPreStagedOutcomeScore(qId) {
   const scores = {
     // Platform Economics (L01-L06 = 20 pts)
     L01: 2, // 2/4 on inventory structure; invoice actuals pending
-    L02: 1, // 1/4 because parallel run retains GMax until chat export closes
-    L03: 3, // 3/4 contract seats & project 452587034549 known; dollar sign-off pending
+    L02: 1, // 1/4 because parallel run retains NovaAssist until chat export closes
+    L03: 3, // 3/4 contract seats & project 710492831045 known; dollar sign-off pending
     L04: 2, // 2/4 transition effort tracked
     L05: 2, // 2/4 net neutral workaround effort
     L06: 3, // 3/4 seat + project allocation rule defined
@@ -1709,10 +1709,10 @@ function getPreStagedOutcomeScore(qId) {
     A06: 4, // Community of Practice (CoP) + Champions + Prompt Library live
     A07: 2, // Pilot mapping done; enterprise "Black Box" observability gap open
     // Quality, Risk & Governance (Q01-Q06 = 20 pts)
-    Q01: 3, // Golden benchmark + Gemini Auditor on GMAX & Clinical
+    Q01: 3, // Golden benchmark + Gemini Auditor on NOVA-AI & Clinical
     Q02: 4, // Zero critical safety/privacy leaks; mandatory citation grounding
     Q03: 3, // VPC-SC passed; connector opt-in visibility in bounded remediation
-    Q04: 3, // Service targets met; 24 Buganizer items tracked
+    Q04: 3, // Service targets met; 24 Issue Tracker items tracked
     Q05: 3, // Controls tested for pilot scope
     Q06: 2, // Regulated workflows identified; GxP CSV validation incomplete (Gate 3)
     // Employee Experience (U01-U10 = 10 pts)
@@ -1732,10 +1732,10 @@ function getPreStagedOutcomeScore(qId) {
 
 /**
  * Exact 0–100% Confidence Score per question based on internal portal/doc grounding:
- * - Tier A (90–100%): Hard telemetry, contract records, or Buganizer/blocker logs (28 Qs)
- * - Tier B (75–89%): Grounded in CE use-case portfolio (MER-04..13), pilot studies, & weekly sync docs (34 Qs)
+ * - Tier A (90–100%): Hard telemetry, contract records, or Issue Tracker/blocker logs (28 Qs)
+ * - Tier B (75–89%): Grounded in CE use-case portfolio (BNV-04..13), pilot studies, & weekly sync docs (34 Qs)
  * - Tier C (40–74%): Directional CoP feedback / pulse survey recall or workaround estimate (14 Qs)
- * - Tier D (0–39%): Strictly Merck-internal Finance invoices or formal multi-party sign-off pending (6 Qs)
+ * - Tier D (0–39%): Strictly BioNova-internal Finance invoices or formal multi-party sign-off pending (6 Qs)
  */
 const QUESTION_CONFIDENCE_PCT_MAP = {
   // Module C (9 Tier A, 2 Tier B)
@@ -1780,35 +1780,35 @@ function getPreStagedVerificationStatus(qId) {
 }
 
 function getPreStagedOwner(qId) {
-  if (qId.startsWith('A') || qId.startsWith('P')) return 'Zachary Pinner (Merck IT / Platform)';
-  if (qId.startsWith('L') || qId.startsWith('F')) return 'Merck Finance & Procurement / Arnab Biswas';
-  if (qId.startsWith('Q') || qId.startsWith('V')) return 'Nicole Harapesova / Mark & Dru (Security & GxP QA)';
-  if (qId.startsWith('U')) return 'Nitin Aggarwal / CoP Survey Lead';
-  return 'Zachary Pinner / Program Office';
+  if (qId.startsWith('A') || qId.startsWith('P')) return 'Lucas Sterling (BioNova IT / Platform)';
+  if (qId.startsWith('L') || qId.startsWith('F')) return 'BioNova Finance & Procurement / Vikram Desai';
+  if (qId.startsWith('Q') || qId.startsWith('V')) return 'Elena Rostova / Enterprise Security Leads (Security & GxP QA)';
+  if (qId.startsWith('U')) return 'Jordan Hayes / CoP Survey Lead';
+  return 'Lucas Sterling / Program Office';
 }
 
 function getPreStagedEvidenceSource(qId) {
   if (['A01', 'A02', 'A04', 'P02', 'P03', 'C02', 'C03', 'G01'].includes(qId)) {
-    return 'NorthAM Agent Acceleration Workbook.xlsx → Import of GE Customers Extract (Row 11: 0014M00001hZEwfQAG)';
+    return 'Enterprise_Agent_Acceleration_Workbook.xlsx → Import of GE Customers Extract (Row 11: ACC-1002-BIONOVA)';
   }
   if (['A05', 'P05', 'P06', 'C04', 'C07', 'C08', 'Q03', 'Q04', 'A07', 'L05', 'V07'].includes(qId)) {
-    return 'MERCK GE_ Cloud Blockers - Zack.xlsx & MERCK GE Cloud Blockers Product Bugs UI_UX Branding.xlsx';
+    return 'BioNova_Cloud_Blockers_Tracker.xlsx & BioNova_Product_UX_Tracker.xlsx';
   }
   if (['A06', 'P01', 'P07', 'U01', 'U02', 'U03', 'U04', 'U05', 'U06', 'U07', 'U08', 'U09', 'U10', 'V01'].includes(qId)) {
-    return 'Community of Practice for Gemini Adoption at Merck (1).pdf & CoP Pulse Readout';
+    return 'BioNova_Gemini_Community_of_Practice_Readout.pdf & CoP Pulse Readout';
   }
   if (['C05', 'C06', 'C09', 'W01', 'W02', 'W03', 'W04', 'W05', 'W06', 'W07', 'W08', 'W09', 'W12', 'W13', 'Q01', 'Q02', 'Q05', 'Q06', 'V02', 'V03', 'V04', 'V05', 'V06', 'V08'].includes(qId)) {
-    return 'Merck CE Use-Case Tracker (MER-04 Clinical, MER-05 CMC, MER-06 GMAX, MER-07 AHEAD, MER-08 Ask HR, MER-13 Reg)';
+    return 'BioNova CE Use-Case Tracker (BNV-04 Clinical, BNV-05 CMC, BNV-06 NOVA-AI, BNV-07 AHEAD, BNV-08 Ask HR, BNV-13 Reg)';
   }
   if (['L01', 'L02', 'L03', 'L04', 'F01', 'F08', 'W10', 'W11'].includes(qId)) {
-    return 'Evidence Pending — Requires Merck Finance Invoice Ledger & Controller Sign-Off';
+    return 'Evidence Pending — Requires BioNova Finance Invoice Ledger & Controller Sign-Off';
   }
-  return 'Merck GE Assessment Dossier (0014M00001hZEwfQAG • GCP Project 452587034549)';
+  return 'BioNova GE Assessment Dossier (ACC-1002-BIONOVA • GCP Project 710492831045)';
 }
 
 function getPreStagedNotes(qId) {
   if (qId === 'A01') return 'Verified from Vector extract: 85,300 contracted, 85,000 provisioned, 10,663 assigned, 7,763 Multi-API MAU, 5,867 All-API WAU.';
-  if (qId === 'A05') return 'Top blockers from Zack Pinner sheet: (1) Veeva/SAP/SharePoint opt-in controls, (2) GMax chat history bulk export, (3) WIF group limit & Private Endpoint.';
+  if (qId === 'A05') return 'Top blockers from Lucas Sterling sheet: (1) RegVault/CoreERP/SharePoint opt-in controls, (2) NovaAssist chat history bulk export, (3) WIF group limit & Private Endpoint.';
   if (qId === 'L01') return 'Unanswered numeric field kept null per guardrail (never defaulted to $0).';
   return '';
 }
@@ -1831,17 +1831,17 @@ const FALLBACK_STRUCTURED_OPTIONS = {
     'Unknown / Pending HR Denominator Audit'
   ],
   P04: [
-    'Chat, Doc Analysis & APIs in Both; Grounded Search, Managed Connectors (M365/ServiceNow/Veeva), ADK Agents & Deep Research in Gemini Only',
+    'Chat, Doc Analysis & APIs in Both; Grounded Search, Managed Connectors (M365/OmniDesk ITSM/RegVault), ADK Agents & Deep Research in Gemini Only',
     'Conversational Chat & Basic Search in Both; Custom Agents in Gemini Only',
-    'Full capability parity across Legacy GMax and Gemini Enterprise'
+    'Full capability parity across Legacy NovaAssist and Gemini Enterprise'
   ],
   P05: [
-    'M365/SharePoint & BigQuery Actively Used; ServiceNow MCP in Pilot; Veeva Vault & SAP Blocked/In-Flight',
+    'M365/SharePoint & BigQuery Actively Used; OmniDesk ITSM MCP in Pilot; RegVault DMS & CoreERP Blocked/In-Flight',
     'M365/SharePoint Only Connected; All Other Enterprise Connectors Pending',
-    'All Enterprise Connectors (M365, ServiceNow, Veeva, SAP) Live in Production'
+    'All Enterprise Connectors (M365, OmniDesk ITSM, RegVault, CoreERP) Live in Production'
   ],
   P08: [
-    'Named Owners Identified (Dave Williams, Zachary Pinner, Nicole Harapesova, Mark/Dru, Merck Finance); Finance Claim Sign-Off Pending',
+    'Named Owners Identified (Marcus Vance, Lucas Sterling, Elena Rostova, Enterprise Security Leads, BioNova Finance); Finance Claim Sign-Off Pending',
     'All 5 Governance Domain Owners Formally Signed Off',
     'Governance Owners Unassigned / Disputed'
   ],
@@ -1851,27 +1851,27 @@ const FALLBACK_STRUCTURED_OPTIONS = {
     'Pending Regional Cohort Breakdown'
   ],
   L01: [
-    'Evidence Pending — Awaiting Merck Finance GMax (Azure OpenAI + Vector DB + Support FTE) 12-mo invoice ledger',
-    'Preliminary Scoping Estimate: $1.8M–$2.4M/yr Legacy GMax API + Hosting + Engineering Support',
-    'Audited 12-Month Merck Finance Legacy GMax Invoice Ledger Reconciled'
+    'Evidence Pending — Awaiting BioNova Finance NovaAssist (Azure OpenAI + Vector DB + Support FTE) 12-mo invoice ledger',
+    'Preliminary Scoping Estimate: $1.8M–$2.4M/yr Legacy NovaAssist API + Hosting + Engineering Support',
+    'Audited 12-Month BioNova Finance Legacy NovaAssist Invoice Ledger Reconciled'
   ],
   L02: [
-    'Parallel Run — GMax retirement gated on closing Bulk Chat History Export blocker',
-    'Partial Legacy GMax API Spend Retired Following Wave-1 Cutover',
-    '100% Avoidable Legacy GMax Run-Rate Decommissioned & Verified by Merck Finance'
+    'Parallel Run — NovaAssist retirement gated on closing Bulk Chat History Export blocker',
+    'Partial Legacy NovaAssist API Spend Retired Following Wave-1 Cutover',
+    '100% Avoidable Legacy NovaAssist Run-Rate Decommissioned & Verified by BioNova Finance'
   ],
   L03: [
-    'Evidence Pending — Awaiting Merck Procurement allocation of 85k GE seat commitment & GCP Project 452587034549 run-rate',
-    'Apportioned by Active Wave-1 Assigned Seats (10,663 / 85,000) + Direct GCP Project 452587034549 Billing',
-    'Full 85,300-Seat Enterprise Contract Reconciled with Merck Procurement'
+    'Evidence Pending — Awaiting BioNova Procurement allocation of 85k GE seat commitment & GCP Project 710492831045 run-rate',
+    'Apportioned by Active Wave-1 Assigned Seats (10,663 / 85,000) + Direct GCP Project 710492831045 Billing',
+    'Full 85,300-Seat Enterprise Contract Reconciled with BioNova Procurement'
   ],
   L04: [
-    'Google PSO SOWs Known ($590K GMAX + $750K AHEAD = $1.34M); Internal Merck IT Transition Hours Pending',
-    'Full One-Time Migration & Parallel-Run Transition Ledger Reconciled by Merck Finance',
+    'Google PSO SOWs Known ($590K NOVA-AI + $750K AHEAD = $1.34M); Internal BioNova IT Transition Hours Pending',
+    'Full One-Time Migration & Parallel-Run Transition Ledger Reconciled by BioNova Finance',
     'Unknown / Unmeasured Transition Spend'
   ],
   W01: [
-    '5 Priority Workflows Defined (WF1 Search/Ask HR, WF2 GMAX Pricing, WF3 Clinical/Reg, WF4 AHEAD, WF5 CMC) with Named Owners',
+    '5 Priority Workflows Defined (WF1 Search/Ask HR, WF2 NOVA-AI Pricing, WF3 Clinical/Reg, WF4 AHEAD, WF5 CMC) with Named Owners',
     '3 Active Pilot/Scaled Workflows Only (WF1, WF2, WF3); Scoping Workflows Excluded',
     'Workflow Owners & Definitions Pending'
   ],
@@ -1891,13 +1891,13 @@ const FALLBACK_STRUCTURED_OPTIONS = {
     'Nonfinancial KPI Tracking Only'
   ],
   U06: [
-    'Gemini Mean: 4.25 / 5.0 vs. Legacy GMax Mean: 3.23 / 5.0 (+1.02 pt gain across 6 dimensions)',
-    'Moderate Improvement: Gemini Mean 3.8 / 5.0 vs. Legacy GMax Mean 3.3 / 5.0',
-    'Neutral / Comparable Rating Between Legacy GMax and Gemini Enterprise'
+    'Gemini Mean: 4.25 / 5.0 vs. Legacy NovaAssist Mean: 3.23 / 5.0 (+1.02 pt gain across 6 dimensions)',
+    'Moderate Improvement: Gemini Mean 3.8 / 5.0 vs. Legacy NovaAssist Mean 3.3 / 5.0',
+    'Neutral / Comparable Rating Between Legacy NovaAssist and Gemini Enterprise'
   ],
   F01: [
     'Blended Loaded Rate: $120/hr (Support $95/hr, Clinical/CMC $135/hr, Commercial $145/hr) • Cash Realization: 0% (Pending) • Capacity Factor: 65%',
-    'Merck Finance Controller Signed-Off Rate Card & Cash Realization Factor (>0%)',
+    'BioNova Finance Controller Signed-Off Rate Card & Cash Realization Factor (>0%)',
     'Unmonetized Hours Only (No Loaded Hourly Rate Applied)'
   ],
   F03: [
@@ -1906,20 +1906,20 @@ const FALLBACK_STRUCTURED_OPTIONS = {
     '100% Attribution Share to Gemini Enterprise (Zero Confounder Haircut)'
   ],
   F08: [
-    'Platform & Security Approved with Caveats (2/4); Executive Sponsor & Merck Finance Pending Final Cost Bridge (Gate 4)',
+    'Platform & Security Approved with Caveats (2/4); Executive Sponsor & BioNova Finance Pending Final Cost Bridge (Gate 4)',
     'All 4 Governance Domains (Sponsor, Platform, Finance, Security/GxP) Formally Signed Off',
     'Pending Initial Executive Steering Review'
   ]
 };
 
 /**
- * Dynamically adapts question prompt text to the active customer so non-Merck customers
- * never display Merck/GMax-specific references in question titles.
+ * Dynamically adapts question prompt text to the active customer so non-BioNova customers
+ * never display BioNova/NovaAssist-specific references in question titles.
  */
 function getCustomerContextualQuestionText(question, dossier = null) {
   if (!question) return '';
-  const isMerck = !dossier || !dossier.meta?.vectorAccountId || dossier.meta?.vectorAccountId === '0014M00001hZEwfQAG';
-  if (isMerck) return question.question;
+  const isBioNova = !dossier || !dossier.meta?.vectorAccountId || dossier.meta?.vectorAccountId === 'ACC-1002-BIONOVA';
+  if (isBioNova) return question.question;
 
   const custName = dossier.meta?.customerName || 'Enterprise Customer';
   const legacyName = dossier.meta?.legacyPlatformName || dossier.meta?.legacySystemName || 'Legacy Baseline';
@@ -1944,23 +1944,23 @@ function getCustomerContextualQuestionText(question, dossier = null) {
     V06: `Commercial / Customer Operations: Does output touch pricing, claims, or customer workflows (${wf2Name})?`
   };
 
-  return map[question.id] || question.question.replace(/Merck/g, custName).replace(/GMax \(OpenAI\)|Legacy GMax|GMax/g, legacyName);
+  return map[question.id] || question.question.replace(/BioNova/g, custName).replace(/NovaAssist \(OpenAI\)|Legacy NovaAssist|NovaAssist/g, legacyName);
 }
 
 /**
  * Dynamically adapts requiredEntry / routingConsequence helper text to the active customer
- * so non-Merck customers never display "Legacy GMax" or "Merck" in question helper text.
+ * so non-BioNova customers never display "Legacy NovaAssist" or "BioNova" in question helper text.
  */
 function getCustomerContextualRequiredEntry(question, dossier = null) {
   if (!question || !question.requiredEntry) return '';
-  const isMerck = !dossier || !dossier.meta?.vectorAccountId || dossier.meta?.vectorAccountId === '0014M00001hZEwfQAG';
-  if (isMerck) return question.requiredEntry;
+  const isBioNova = !dossier || !dossier.meta?.vectorAccountId || dossier.meta?.vectorAccountId === 'ACC-1002-BIONOVA';
+  if (isBioNova) return question.requiredEntry;
   const custName = dossier.meta?.customerName || 'Enterprise Customer';
   const legacyName = dossier.meta?.legacyPlatformName || dossier.meta?.legacySystemName || 'Legacy Baseline';
   return String(question.requiredEntry)
-    .replace(/Legacy GMax/g, legacyName)
-    .replace(/GMax/g, legacyName)
-    .replace(/Merck/g, custName);
+    .replace(/Legacy NovaAssist/g, legacyName)
+    .replace(/NovaAssist/g, legacyName)
+    .replace(/BioNova/g, custName);
 }
 
 /**
@@ -2014,8 +2014,8 @@ function getQuestionOptionsWithConfidence(question, resp = {}, dossier = null) {
     });
   }
 
-  // 2. Fallback for local default Merck or Clean dossier
-  const custName = dossier?.meta?.customerName || 'Merck & Co., Inc.';
+  // 2. Fallback for local default BioNova or Clean dossier
+  const custName = dossier?.meta?.customerName || 'BioNova Life Sciences Inc.';
   const rawOptions = (Array.isArray(question.options) && question.options.length > 0)
     ? question.options
     : (FALLBACK_STRUCTURED_OPTIONS[question.id] || []);
@@ -2025,8 +2025,8 @@ function getQuestionOptionsWithConfidence(question, resp = {}, dossier = null) {
   const evidenceSource = resp.evidenceUrl || getPreStagedEvidenceSource(question.id);
 
   return rawOptions.map((rawOptText, idx) => {
-    const optText = custName !== 'Merck & Co., Inc.'
-      ? String(rawOptText).replace(/Merck/g, custName).replace(/GMax/g, 'Legacy Baseline')
+    const optText = custName !== 'BioNova Life Sciences Inc.'
+      ? String(rawOptText).replace(/BioNova/g, custName).replace(/NovaAssist/g, 'Legacy Baseline')
       : rawOptText;
     const selectedNow = isOptionSelected(optText, currentVal);
     const backedByInternalPortal = isOptionSelected(optText, preStagedVal) || (question.id === 'L04' && idx === 0);
@@ -2088,14 +2088,14 @@ function getQuestionOptionsWithConfidence(question, resp = {}, dossier = null) {
  * (3) 5 Non-Compensable Gates, and (4) Cross-Module Contradiction Warnings.
  */
 function evaluateGeValueRealization(dossier) {
-  const safeDossier = dossier || createInitialGeDossier('merck_draft');
-  const workflows = Array.isArray(safeDossier.workflows) ? safeDossier.workflows : DEFAULT_MERCK_WORKFLOWS;
+  const safeDossier = dossier || createInitialGeDossier('bionova_draft');
+  const workflows = Array.isArray(safeDossier.workflows) ? safeDossier.workflows : DEFAULT_BIONOVA_WORKFLOWS;
   const qMap = safeDossier.questionResponses || {};
   const cost = safeDossier.costLedger || {};
   const telemetry = safeDossier.adoptionTelemetry || {};
   const kr = safeDossier.agreedKrTargets || {};
-  const custName = safeDossier.meta?.customerName || 'Merck & Co., Inc.';
-  const isMerck = !safeDossier.meta?.vectorAccountId || safeDossier.meta?.vectorAccountId === '0014M00001hZEwfQAG';
+  const custName = safeDossier.meta?.customerName || 'BioNova Life Sciences Inc.';
+  const isBioNova = !safeDossier.meta?.vectorAccountId || safeDossier.meta?.vectorAccountId === 'ACC-1002-BIONOVA';
 
   // =========================================================================
   // 1. EVALUATE WORKFLOW-LEVEL METRICS & CAPPED HYBRID PORTFOLIO WEIGHTS
@@ -2342,7 +2342,7 @@ function evaluateGeValueRealization(dossier) {
       name: 'Gate 1: Unauthorized Access or Material Privacy Incident',
       triggered: q03Val.includes('Confirmed inappropriate access') || q02Val.includes('Triggers Gate 1'),
       status: (q03Val.includes('Confirmed inappropriate access') || q02Val.includes('Triggers Gate 1')) ? 'OPEN' : 'CLEAR',
-      owner: isMerck ? 'Mark / Dru (Merck Security) & Zachary Pinner' : `${custName} Security & Platform Architecture`,
+      owner: isBioNova ? 'Enterprise Security Leads (BioNova Security) & Lucas Sterling' : `${custName} Security & Platform Architecture`,
       remediation: `VPC-SC perimeter & zero-training enforced for ${custName}; connector group visibility under verification.`,
       questionLinks: ['Q02', 'Q03', 'V07']
     },
@@ -2351,7 +2351,7 @@ function evaluateGeValueRealization(dossier) {
       name: 'Gate 2: Severe Unresolved Quality or Safety Defect',
       triggered: q02Val.includes('Severe unresolved') || evaluatedWorkflows.some(w => Number(w.criticalErrorPct) > 5),
       status: (q02Val.includes('Severe unresolved') || evaluatedWorkflows.some(w => Number(w.criticalErrorPct) > 5)) ? 'OPEN' : 'CLEAR',
-      owner: isMerck ? 'Nicole Harapesova & BU Workflow Leads' : `${leadOwner} & BU Workflow Leads`,
+      owner: isBioNova ? 'Elena Rostova & BU Workflow Leads' : `${leadOwner} & BU Workflow Leads`,
       remediation: 'Mandatory hyperlink citation grounding policy active; HITL verification built into W04 workflow stages.',
       questionLinks: ['Q01', 'Q02', 'W07', 'W12']
     },
@@ -2360,9 +2360,9 @@ function evaluateGeValueRealization(dossier) {
       name: 'Gate 3: Unvalidated Regulated / Compliance Use Beyond Approved Scope',
       triggered: hasUnvalidatedRegulatedWf || q06Val.includes('Gate 3'),
       status: (hasUnvalidatedRegulatedWf || q06Val.includes('Gate 3')) ? 'OPEN' : 'CLEAR',
-      owner: isMerck ? 'Nicole Harapesova / GxP QA Validation Owner' : `${custName} Compliance & QA Validation Lead`,
-      remediation: isMerck
-        ? 'Complete Veeva Vault MCP connector qualification and 21 CFR Part 11 / Annex 11 CSV sign-off for MER-04 & MER-05 prior to production scale.'
+      owner: isBioNova ? 'Elena Rostova / GxP QA Validation Owner' : `${custName} Compliance & QA Validation Lead`,
+      remediation: isBioNova
+        ? 'Complete RegVault DMS MCP connector qualification and 21 CFR Part 11 / Annex 11 CSV sign-off for BNV-04 & BNV-05 prior to production scale.'
         : `Complete connector & compliance qualification for ${custName} pilot workflows prior to full production scale.`,
       questionLinks: ['Q06', 'V02', 'V04', 'V05']
     },
@@ -2371,7 +2371,7 @@ function evaluateGeValueRealization(dossier) {
       name: 'Gate 4: Reconcilable Legacy Baseline for Claimed Financial Savings',
       triggered: !hasReconciledCostBridge,
       status: !hasReconciledCostBridge ? 'OPEN' : 'CLEAR',
-      owner: isMerck ? 'Merck Finance Controller & Zachary Pinner' : `${custName} Finance Controller & ${leadOwner}`,
+      owner: isBioNova ? 'BioNova Finance Controller & Lucas Sterling' : `${custName} Finance Controller & ${leadOwner}`,
       remediation: `Enter 12-month legacy baseline cost ledger (L01), confirm legacy retirement schedule (L02), and sign off F01 loaded rates with ${custName} Finance.`,
       questionLinks: ['L01', 'L02', 'L03', 'C08', 'F01']
     },
@@ -2493,7 +2493,7 @@ function evaluateGeValueRealization(dossier) {
         },
         col5NegativeEffects: {
           extraReviewHoursMonthly: Number((totalReviewExtraMinutesPerMonth / 60).toFixed(1)),
-          ongoingBugs: telemetry.buganizerOngoingIssues,
+          ongoingBugs: telemetry.trackerOngoingIssues,
           cloudBlockers: telemetry.cloudBlockersInReview
         }
       }
@@ -2511,8 +2511,8 @@ export {
   KPA_DEFINITIONS,
   RUBRIC_TEMPLATES,
   GE_QUESTIONS,
-  DEFAULT_MERCK_WORKFLOWS,
-  DEFAULT_MERCK_GEOGRAPHIES,
+  DEFAULT_BIONOVA_WORKFLOWS,
+  DEFAULT_BIONOVA_GEOGRAPHIES,
   QUESTION_CONFIDENCE_PCT_MAP,
   getPreStagedConfidenceScorePct,
   getCustomerContextualQuestionText,

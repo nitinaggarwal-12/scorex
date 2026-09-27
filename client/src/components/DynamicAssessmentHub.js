@@ -854,20 +854,20 @@ const DynamicAssessmentHub = () => {
               </TypeFooter>
             </TypeCard>
 
-            {/* Specialized: GE Value Realization (Merck Gemini Enterprise Migration) */}
+            {/* Specialized: GE Value Realization (Enterprise Gemini Migration) */}
             <TypeCard style={{ borderColor: '#3b82f6', boxShadow: '0 8px 24px rgba(37, 99, 235, 0.08)' }}>
               <div>
                 <CardTopRow>
                   <TypeBadge $bg="rgba(37, 99, 235, 0.15)" $color="#2563eb">CFO & Value Bridge</TypeBadge>
                   <StatusTag $status="production">Production Ready</StatusTag>
                 </CardTopRow>
-                <TypeTitle>GE Value Realization (Merck Migration)</TypeTitle>
+                <TypeTitle>GE Value Realization (BioNova Migration)</TypeTitle>
                 <TypeDesc>
-                  Zero-hallucination value realization assessment for migrating homegrown OpenAI (GMax/GPTEAL) to Google Gemini Enterprise across 85,300 seats, 5 workflows, and a 5-Column CFO Cost Bridge.
+                  Zero-hallucination value realization assessment for migrating legacy AI (NovaAssist / NOVA-AI) to Google Gemini Enterprise across 85,300 seats, 5 workflows, and a 5-Column CFO Cost Bridge.
                 </TypeDesc>
                 <MetaPillsRow>
                   <MetaPill><FiLayers /> 10 Modules (C–G)</MetaPill>
-                  <MetaPill><FiTarget /> 75 Qs + 5 Workflows</MetaPill>
+                  <MetaPill><FiTarget /> 82 Qs + 5 Workflows</MetaPill>
                   <MetaPill><FiClock /> 3 Input Modes</MetaPill>
                 </MetaPillsRow>
               </div>
@@ -877,11 +877,11 @@ const DynamicAssessmentHub = () => {
                     <FiPlay /> Open Inputs (3 Modes)
                   </LaunchBtn>
                   <SampleBtn onClick={() => navigate('/ge-value-realization?tab=report')}>
-                    📊 McKinsey / Google Report
+                    📊 Executive Value Report
                   </SampleBtn>
                 </ActionButtonsRow>
                 <SecondaryActionsRow>
-                  <span style={{ fontSize: '0.8rem', color: '#2563eb', fontWeight: '700' }}>✓ Pre-Staged w/ Real Merck Telemetry (`0014M00001hZEwfQAG`)</span>
+                  <span style={{ fontSize: '0.8rem', color: '#2563eb', fontWeight: '700' }}>✓ Pre-Staged w/ Synthetic Enterprise Telemetry (`ACC-1002-BIONOVA`)</span>
                 </SecondaryActionsRow>
               </TypeFooter>
             </TypeCard>

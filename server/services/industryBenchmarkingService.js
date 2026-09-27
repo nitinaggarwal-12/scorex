@@ -387,7 +387,7 @@ DELIVERABLE: Generate a professional executive benchmarking report with the foll
   },
 
   "methodology": {
-    "dataSource": "Industry Benchmarking Database, Gartner Research, Forrester Wave Analysis",
+    "dataSource": "Industry Benchmarking Database, Enterprise Research Research, Industry Research Wave Analysis",
     "sampleSize": <realistic number 100-500>,
     "industryScope": "${industry} organizations globally",
     "assessmentCriteria": "Six-pillar data platform maturity framework",
@@ -556,7 +556,7 @@ CRITICAL REQUIREMENTS:
     console.log('[IndustryBenchmarking] Customer Score:', customerScore);
     console.log('[IndustryBenchmarking] Pillar Scores:', JSON.stringify(pillarScores));
     
-    // Industry-specific benchmarks based on Gartner/Forrester research
+    // Industry-specific benchmarks based on Global Industry Research research
     const industryBenchmarks = {
       'Financial Services': { avg: 3.4, top10: 4.3, top25: 3.9, median: 3.2, regulatoryFocus: true },
       'Life Sciences': { avg: 3.2, top10: 4.2, top25: 3.7, median: 3.0, regulatoryFocus: true },
@@ -740,7 +740,7 @@ CRITICAL REQUIREMENTS:
         ]
       },
       methodology: {
-        dataSource: 'Gartner Data & Analytics Summit 2024, Forrester Wave Analysis, IDC MarketScape',
+        dataSource: 'Enterprise Research Data & Analytics Summit 2024, Industry Research Wave Analysis, IDC MarketScape',
         sampleSize: 284,
         industryScope: `${industry} organizations with 1,000+ employees, global coverage`,
         assessmentCriteria: 'Six-pillar data platform maturity framework (governance, engineering, analytics, ML, GenAI, operations)',

@@ -4,10 +4,17 @@ node_modules/
 # Production build
 client/build/
 
-# Runtime data files (may contain assessment, auth, feedback, or customer PII)
+# Runtime data files, exports, caches & backups (strictly code-only repository)
 /data/
 !client/src/data/
 server/data/*.json
+server/data/**/*.json
+server/db/seeds/starterAssessments.json
+db-sync/*.csv
+db-sync/*.json
+*.csv
+*.bak
+*.backup
 *.db
 *.sqlite
 *.sqlite3
@@ -16,6 +23,8 @@ server/data/*.json
 .env
 .env.local
 .env.*
+!.env.template
+!env.example
 *.key
 *.pem
 *gcp-key*.json

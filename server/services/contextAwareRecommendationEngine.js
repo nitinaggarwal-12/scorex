@@ -24,7 +24,7 @@ class ContextAwareRecommendationEngine {
       manual_provisioning: {
         features: ['Workspace Federation', 'Account Console API', 'Terraform Cloud Provider'],
         recommendations: [
-          'Automate workspace provisioning: Use Account API `/accounts/{account_id}/workspaces` → POST with config JSON → Integrate with ServiceNow/Jira for approval workflow',
+          'Automate workspace provisioning: Use Account API `/accounts/{account_id}/workspaces` → POST with config JSON → Integrate with OmniDesk/Jira for approval workflow',
           'Deploy Terraform workspace module: Define azurerm_databricks_workspace resource → Configure private link → Apply with approval gates in GitLab CI',
           'Enable self-service portal: Build internal tool calling Platform Management API → User fills form → Backend creates workspace with predefined policies'
         ],

@@ -271,7 +271,7 @@ const IaCBlueprintCard = ({
       icon: '🔵',
       requiredRole: 'roles/aiplatform.admin & roles/cloudkms.admin',
       launchText: '🚀 Launch in Google Cloud Shell',
-      launchUrl: `https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/nitinaggarwal-12/scorex.git&cloudshell_workspace=terraform/gcp-genai&cloudshell_tutorial=README.md`,
+      launchUrl: `https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/enterprise-architecture/scorex.git&cloudshell_workspace=terraform/gcp-genai&cloudshell_tutorial=README.md`,
       terraformCode: `# ScoreX Auto-Generated Terraform: Vertex AI & Gemini Enterprise Mesh
 terraform {
   required_version = ">= 1.5.0"
@@ -364,7 +364,7 @@ provider "azurerm" {
       icon: '🔵',
       requiredRole: 'roles/editor & roles/resourcemanager.projectIamAdmin',
       launchText: '🚀 Launch in Google Cloud Shell',
-      launchUrl: `https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/nitinaggarwal-12/scorex.git&cloudshell_workspace=terraform/gcp&cloudshell_tutorial=README.md`,
+      launchUrl: `https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/enterprise-architecture/scorex.git&cloudshell_workspace=terraform/gcp&cloudshell_tutorial=README.md`,
       terraformCode: `# ScoreX Auto-Generated Terraform: GCP Open Lakehouse 3.0
 terraform {
   required_version = ">= 1.5.0"

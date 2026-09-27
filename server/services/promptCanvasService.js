@@ -2,7 +2,7 @@
  * PromptCanvas Integration Service for ScoreX (3-Stage Architecture Progression)
  *
  * Connects ScoreX directly to the live PromptCanvas server (`POST http://localhost:3001/api/generate`)
- * and `/Users/nitinagga/Documents/PromptCanvas/templates/master_blueprints/xml/`
+ * and `./promptcanvas/templates/master_blueprints/xml/`
  * to generate 3 bespoke, rich visual Draw.io XML architecture diagrams for EVERY assessment:
  *
  *  1. CURRENT STATE (As-Is Baseline):
@@ -29,8 +29,8 @@ const { extractAssessmentTelemetry } = require('./dynamicAssessmentDiagramCompil
 
 const PROMPTCANVAS_BASE_URL = process.env.PROMPTCANVAS_URL || 'https://promptcanvas-blk2as46eq-uc.a.run.app';
 const PROMPTCANVAS_BUNDLED_DIR = path.join(__dirname, '../data/promptcanvas_blueprints');
-const PROMPTCANVAS_XML_DIR = '/Users/nitinagga/Documents/PromptCanvas/templates/master_blueprints/xml';
-const PROMPTCANVAS_TEMPLATES_DIR = '/Users/nitinagga/Documents/PromptCanvas/templates';
+const PROMPTCANVAS_XML_DIR = './promptcanvas/templates/master_blueprints/xml';
+const PROMPTCANVAS_TEMPLATES_DIR = './promptcanvas/templates';
 const PROMPTCANVAS_CACHE_DIR = path.join(__dirname, '../data/promptcanvas_cache');
 
 if (!fs.existsSync(PROMPTCANVAS_CACHE_DIR)) {

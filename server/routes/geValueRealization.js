@@ -9,8 +9,8 @@ const {
   KPA_DEFINITIONS,
   RUBRIC_TEMPLATES,
   GE_QUESTIONS,
-  DEFAULT_MERCK_WORKFLOWS,
-  DEFAULT_MERCK_GEOGRAPHIES,
+  DEFAULT_BIONOVA_WORKFLOWS,
+  DEFAULT_BIONOVA_GEOGRAPHIES,
   createInitialGeDossier,
   evaluateGeValueRealization
 } = require('../data/geValueRealizationFramework');
@@ -31,9 +31,9 @@ function loadServerDossiers() {
     if (fs.existsSync(DOSSIERS_FILE)) {
       const parsed = JSON.parse(fs.readFileSync(DOSSIERS_FILE, 'utf8'));
       if (parsed && Object.keys(parsed).length > 0) {
-        const fedexEntry = parsed['ge_vr_0014m00001hfhuqqae'] || parsed['inst_fedex_ge_value_realization'];
-        const hasCandidateOptions = Array.isArray(fedexEntry?.questionResponses?.C01?.candidateOptions);
-        const hasNormalizedTelemetry = fedexEntry?.adoptionTelemetry?.geminiAssistWau7d !== undefined;
+        const primaryEntry = parsed['ge_vr_acc-1001-aerovg'] || parsed['inst_aerovanguard_ge_value_realization'];
+        const hasCandidateOptions = Array.isArray(primaryEntry?.questionResponses?.C01?.candidateOptions);
+        const hasNormalizedTelemetry = primaryEntry?.adoptionTelemetry?.geminiAssistWau7d !== undefined;
         if (hasCandidateOptions && hasNormalizedTelemetry) {
           return parsed;
         }
@@ -42,19 +42,19 @@ function loadServerDossiers() {
   } catch (e) {
     console.warn('Could not read ge_value_realization_dossiers.json:', e.message);
   }
-  const seededFedEx = ingestCustomerMultiSourceDossier({
-    sfdcAccountId: '0014M00001hfHuqQAE',
+  const seededAeroVanguard = ingestCustomerMultiSourceDossier({
+    sfdcAccountId: 'ACC-1001-AEROVG',
     timePreset: 'ytd_2026',
     prefillMode: 'evidence'
   });
-  const seededMerck = ingestCustomerMultiSourceDossier({
-    sfdcAccountId: '0014M00001hZEwfQAG',
+  const seededBioNova = ingestCustomerMultiSourceDossier({
+    sfdcAccountId: 'ACC-1002-BIONOVA',
     timePreset: 'ytd_2026',
     prefillMode: 'evidence'
   });
   const initialMap = {
-    [seededFedEx.id]: seededFedEx,
-    [seededMerck.id]: seededMerck
+    [seededAeroVanguard.id]: seededAeroVanguard,
+    [seededBioNova.id]: seededBioNova
   };
   saveServerDossiers(initialMap);
   return initialMap;
@@ -80,8 +80,8 @@ router.get('/framework', (req, res) => {
       KPA_DEFINITIONS,
       RUBRIC_TEMPLATES,
       GE_QUESTIONS,
-      DEFAULT_MERCK_WORKFLOWS,
-      DEFAULT_MERCK_GEOGRAPHIES,
+      DEFAULT_BIONOVA_WORKFLOWS,
+      DEFAULT_BIONOVA_GEOGRAPHIES,
       ALL_SOURCE_TYPES,
       TIME_PRESETS
     }
@@ -89,7 +89,7 @@ router.get('/framework', (req, res) => {
 });
 
 /**
- * Search Salesforce / Vector GE Customers by Customer Name, Alias, Industry, or 18-char Salesforce Account ID (001...)
+ * Search Enterprise GE Customers by Customer Name, Alias, Industry, or Account ID (ACC-...)
  */
 router.get('/customers/search', (req, res) => {
   try {
@@ -110,7 +110,7 @@ router.get('/customers/search', (req, res) => {
 });
 
 /**
- * Pick a random customer from the 4,351-account Salesforce / Vector GE catalog
+ * Pick a random customer from the synthetic enterprise catalog
  */
 router.get('/customers/random', (req, res) => {
   try {
@@ -127,7 +127,7 @@ router.get('/customers/random', (req, res) => {
 });
 
 /**
- * Ingest & Reconcile Multi-Source Evidence for ANY Salesforce Customer Name or Account ID (001...)
+ * Ingest & Reconcile Multi-Source Evidence for ANY Enterprise Customer Name or Account ID (ACC-...)
  * filtered by Time Period (startDate -> endDate / timePreset) across all 8 Enterprise Sources,
  * and populate the 82-question questionnaire (supports prefillMode: 'evidence' | 'random' | 'clean').
  */
@@ -182,7 +182,7 @@ router.post('/generate-gemini-report', async (req, res) => {
     const updatedDossier = await generateGeminiAssessmentReport(incomingDossier);
 
     const dossiers = loadServerDossiers();
-    const id = updatedDossier.id || 'ge_vr_0014m00001hfhuqqae';
+    const id = updatedDossier.id || 'ge_vr_acc-1001-aerovg';
     dossiers[id] = updatedDossier;
     saveServerDossiers(dossiers);
 
@@ -215,9 +215,16 @@ router.get('/dossiers/:id', (req, res) => {
     const id = req.params.id;
     let dossier = dossiers[id];
 
-    if (!dossier && (id === 'inst_merck_ge_value_realization' || id === 'merck_ge_vr_2026_q2' || id === 'merck')) {
-      dossier = ingestCustomerMultiSourceDossier({
-        sfdcAccountId: '0014M00001hZEwfQAG',
+    if (!dossier && (id === 'aerovanguard_default' || id === 'inst_aerovanguard_ge_value_realization')) {
+      dossier = dossiers['ge_vr_acc-1001-aerovg'] || ingestCustomerMultiSourceDossier({
+        sfdcAccountId: 'ACC-1001-AEROVG',
+        timePreset: 'ytd_2026'
+      });
+      dossiers[dossier.id] = dossier;
+      saveServerDossiers(dossiers);
+    } else if (!dossier && (id === 'inst_bionova_ge_value_realization' || id === 'bionova_ge_vr_2026_q2' || id === 'bionova')) {
+      dossier = dossiers['ge_vr_acc-1002-bionova'] || ingestCustomerMultiSourceDossier({
+        sfdcAccountId: 'ACC-1002-BIONOVA',
         timePreset: 'ytd_2026'
       });
       dossiers[dossier.id] = dossier;
@@ -226,7 +233,7 @@ router.get('/dossiers/:id', (req, res) => {
       dossier = createInitialGeDossier('clean');
       dossier.id = 'clean_intake';
       dossier.evaluation = evaluateGeValueRealization(dossier);
-    } else if (!dossier && id.startsWith('ge_vr_001')) {
+    } else if (!dossier && id.startsWith('ge_vr_')) {
       const extractedSfdcId = id.replace(/^ge_vr_/i, '');
       dossier = ingestCustomerMultiSourceDossier({
         sfdcAccountId: extractedSfdcId,
@@ -269,7 +276,7 @@ router.post('/dossiers/:id', (req, res) => {
     const dossiers = loadServerDossiers();
     const id = req.params.id;
     const incoming = req.body || {};
-    const existing = dossiers[id] || createInitialGeDossier(incoming.mode || 'merck_draft');
+    const existing = dossiers[id] || createInitialGeDossier(incoming.mode || 'bionova_draft');
 
     const updated = {
       ...existing,
@@ -292,7 +299,7 @@ router.post('/dossiers/:id', (req, res) => {
 
 router.post('/evaluate', (req, res) => {
   try {
-    const dossier = req.body || createInitialGeDossier('merck_draft');
+    const dossier = req.body || createInitialGeDossier('bionova_draft');
     const evaluation = evaluateGeValueRealization(dossier);
     return res.json({
       success: true,

@@ -1,6 +1,6 @@
 import pptxgen from 'pptxgenjs';
 
-// Executive High-Contrast Luxury Slide Theme (McKinsey / Gartner Grade)
+// Executive High-Contrast Luxury Slide Theme (Executive Advisory Grade)
 const PPTX_THEME = {
   navyDark: '0B132B',      // Slate Navy 950
   navyMedium: '1C2541',    // Slate Navy 900
