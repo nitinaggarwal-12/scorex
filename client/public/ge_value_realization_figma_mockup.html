@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Figma Design Spec — GE Value Realization (Inputs & Stratagem/Google Executive Outputs)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --canvas-bg: #0b0f19;
+      --artboard-bg: #f8fafc;
+      --surface: #ffffff;
+      --ink-900: #0f172a;
+      --ink-700: #334155;
+      --ink-500: #64748b;
+      --ink-400: #94a3b8;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --primary: #2563eb;
+      --primary-dark: #1e40af;
+      --indigo: #4f46e5;
+      --emerald: #059669;
+      --emerald-bg: #ecfdf5;
+      --emerald-border: #a7f3d0;
+      --amber: #d97706;
+      --amber-bg: #fffbeb;
+      --amber-border: #fde68a;
+      --rose: #e11d48;
+      --rose-bg: #fff1f2;
+      --rose-border: #fecdd3;
+      --mck-navy: #051c2c;
+      --mck-blue: #005eb8;
+      --mck-cyan: #00a9e0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--canvas-bg);
+      background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+      background-size: 24px 24px;
+      color: var(--ink-900);
+      padding: 40px;
+    }
+
+    .figma-canvas-header {
+      max-width: 1600px;
+      margin: 0 auto 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 20px 28px;
+      color: #f8fafc;
+    }
+
+    .figma-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #4f46e5, #06b6d4);
+      color: #fff;
+      font-weight: 800;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 999px;
+    }
+
+    .artboard-wrapper {
+      max-width: 1600px;
+      margin: 0 auto 56px;
+    }
+
+    .artboard-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #94a3b8;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      padding: 0 4px;
+    }
+
+    .artboard-label strong {
+      color: #38bdf8;
+    }
+
+    .artboard {
+      width: 1600px;
+      background: var(--artboard-bg);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.12);
+    }
+
+    /* Top App Chrome */
+    .app-topbar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #051c2c 0%, #005eb8 100%);
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 15px;
+    }
+
+    .brand-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--ink-900);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-sub {
+      font-size: 11.5px;
+      color: var(--ink-500);
+      font-weight: 500;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+    }
+
+    .pill-blue { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+    .pill-emerald { background: var(--emerald-bg); color: var(--emerald); border-color: var(--emerald-border); }
+    .pill-amber { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-border); }
+    .pill-rose { background: var(--rose-bg); color: var(--rose); border-color: var(--rose-border); }
+    .pill-slate { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
+    .pill-purple { background: #f5f3ff; color: #6d28d9; border-color: #ddd6fe; }
+
+    .segmented-control {
+      display: inline-flex;
+      background: #f1f5f9;
+      padding: 3px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .seg-btn {
+      padding: 6px 12px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--ink-700);
+      border-radius: 7px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .seg-btn.active {
+      background: #ffffff;
+      color: var(--primary);
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1);
+    }
+
+    .seg-btn.active-dark {
+      background: var(--mck-navy);
+      color: #ffffff;
+    }
+
+    /* Main 2-Col Input Grid */
+    .workspace-body {
+      display: grid;
+      grid-template-columns: 310px 1fr;
+      min-height: 820px;
+    }
+
+    .sidebar {
+      background: #ffffff;
+      border-right: 1px solid var(--border);
+      padding: 18px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .sidebar-section-title {
+      font-size: 10.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--ink-500);
+      padding: 0 8px;
+      margin-bottom: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 10px;
+      border-radius: 9px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--ink-700);
+      border: 1px solid transparent;
+      margin-bottom: 3px;
+    }
+
+    .nav-item.active {
+      background: #eff6ff;
+      color: var(--primary-dark);
+      border-color: #bfdbfe;
+      font-weight: 700;
+    }
+
+    .nav-item-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .module-code {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: #f1f5f9;
+      color: var(--ink-700);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-item.active .module-code {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .main-pane {
+      padding: 20px 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Workflow Repeater Bar */
+    .workflow-bar {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .wf-tabs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .wf-tab {
+      padding: 6px 11px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      color: var(--ink-700);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .wf-tab.active {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+    }
+
+    /* Question Card */
+    .q-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .q-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .q-id-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 4px 9px;
+      border-radius: 7px;
+      background: #1e293b;
+      color: #38bdf8;
+      flex-shrink: 0;
+    }
+
+    .q-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--ink-900);
+      line-height: 1.35;
+    }
+
+    .q-sub {
+      font-size: 12px;
+      color: var(--ink-500);
+      margin-top: 2px;
+    }
+
+    /* BioNova Tracker Evidence Hint */
+    .hint-banner {
+      background: linear-gradient(90deg, #fffbeb 0%, #fef3c7 100%);
+      border: 1px solid #fcd34d;
+      border-left: 4px solid #d97706;
+      border-radius: 10px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 12px;
+      color: #78350f;
+    }
+
+    .hint-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .btn-xs {
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid transparent;
+    }
+
+    .btn-xs-amber { background: #d97706; color: #fff; }
+    .btn-xs-ghost { background: rgba(255,255,255,0.7); color: #78350f; border-color: #fbbf24; }
+
+    /* Data Table / Matrix */
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .matrix-table th {
+      background: #f1f5f9;
+      color: var(--ink-700);
+      font-weight: 800;
+      text-align: left;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .matrix-table td {
+      padding: 7px 12px;
+      border: 1px solid var(--border);
+      color: var(--ink-900);
+      font-weight: 500;
+    }
+
+    .matrix-table tr.total-row td {
+      background: #f8fafc;
+      font-weight: 800;
+      border-top: 2px solid var(--border-strong);
+    }
+
+    .num-input {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 78px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1.5px solid #cbd5e1;
+      background: #ffffff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink-900);
+    }
+
+    /* Rubric Strip */
+    .rubric-strip {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    .rubric-cell {
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 7px 9px;
+      font-size: 11px;
+      color: var(--ink-500);
+    }
+
+    .rubric-cell.selected {
+      background: #eff6ff;
+      border: 1.5px solid var(--primary);
+      color: var(--ink-900);
+      font-weight: 700;
+    }
+
+    .rubric-score-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      font-size: 11px;
+      color: var(--primary);
+      margin-bottom: 2px;
+    }
+
+    /* Evidence Footer Contract */
+    .evidence-footer {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 12px;
+      display: grid;
+      grid-template-columns: 1.2fr 1.1fr 1.2fr 1fr 1.1fr;
+      gap: 10px;
+      align-items: center;
+      font-size: 11px;
+    }
+
+    .ev-field-label {
+      font-size: 9.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--ink-500);
+      letter-spacing: 0.05em;
+      margin-bottom: 2px;
+    }
+
+    .ev-field-val {
+      font-weight: 700;
+      color: var(--ink-900);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Ranked Option Chips */
+    .chip-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .opt-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 12px;
+      border-radius: 9px;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-700);
+    }
+
+    .opt-chip.selected {
+      border-color: var(--primary);
+      background: #eff6ff;
+      color: var(--primary-dark);
+      font-weight: 700;
+    }
+
+    .rank-circle {
+      width: 19px;
+      height: 19px;
+      border-radius: 999px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 10.5px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Stratagem Executive Report Styling */
+    .mck-banner-gate {
+      background: linear-gradient(90deg, #fff1f2 0%, #ffe4e6 100%);
+      border: 1.5px solid #fda4af;
+      border-left: 6px solid #e11d48;
+      border-radius: 12px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .mck-exhibit-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 22px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    .mck-kicker {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--mck-blue);
+      margin-bottom: 3px;
+    }
+
+    .mck-action-title {
+      font-size: 15.5px;
+      font-weight: 800;
+      color: var(--mck-navy);
+      line-height: 1.35;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #051c2c;
+    }
+
+    .scr-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .scr-box {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--mck-navy);
+      border-radius: 8px;
+      padding: 11px 14px;
+    }
+
+    .scr-box.complication { border-top-color: #d97706; }
+    .scr-box.resolution { border-top-color: #059669; }
+
+    .scr-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+      color: var(--mck-navy);
+    }
+
+    .scr-list {
+      list-style: none;
+      font-size: 11.5px;
+      color: var(--ink-700);
+      line-height: 1.45;
+    }
+
+    .scr-list li {
+      margin-bottom: 4px;
+    }
+
+    .signals-3col {
+      display: grid;
+      grid-template-columns: 1.15fr 1.15fr 1fr;
+      gap: 14px;
+    }
+
+    .signal-card {
+      background: #051c2c;
+      color: #ffffff;
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .signal-card.light {
+      background: #ffffff;
+      color: var(--ink-900);
+      border: 1.5px solid var(--border-strong);
+    }
+
+    .waterfall-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 7px;
+      font-size: 11.5px;
+    }
+
+    .wf-label {
+      width: 220px;
+      font-weight: 600;
+      color: var(--ink-700);
+      flex-shrink: 0;
+    }
+
+    .wf-bar-track {
+      flex: 1;
+      height: 18px;
+      background: #f1f5f9;
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .wf-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+    }
+
+    .wf-val {
+      width: 95px;
+      text-align: right;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 11.5px;
+    }
+
+    .footnote {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+      font-size: 10.5px;
+      color: var(--ink-500);
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="figma-canvas-header">
+    <div>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+        <span class="figma-badge">Figma UI Spec • 4 Artboards</span>
+        <span style="font-size:12px; color:#94a3b8; font-family:'JetBrains Mono', monospace;">1600px Desktop Canvas • Stratagem & Google Cloud Value Engineering Standard</span>
+      </div>
+      <h1 style="font-size:22px; font-weight:800; letter-spacing:-0.02em;">BioNova Life Sciences Inc. (ACC-1002-BIONOVA) — Gemini Enterprise Value Realization Workspace</h1>
+    </div>
+    <div style="text-align:right; font-size:12px; color:#cbd5e1;">
+      <div><strong>Inputs:</strong> Role/Module Worksheet • 1-by-1 Focus Wizard • All-in-One Audit Grid</div>
+      <div><strong>Outputs:</strong> Stratagem SCR & Waterfall Bridge • 5-Col MECE Value Table • OKR→KPA→KPI • Decision Log</div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       ARTBOARD 1: INPUT WORKSPACE (SECTION / ROLE PAGE MODE + W04 MATRIX)
+       ===================================================================== -->
+  <div class="artboard-wrapper" id="artboard-1">
+    <div class="artboard-label">
+      <span><strong>ARTBOARD 01 / INPUTS (DEFAULT VIEW)</strong> — Role & Module Section Page + Repeatable Workflow Tabs + 6-Stage W04 Task Matrix</span>
+      <span>1600 × 940 px</span>
+    </div>
+    <div class="artboard">
+      <!-- App Topbar -->
+      <div class="app-topbar">
+        <div class="brand-group">
+          <div class="brand-icon">GE</div>
+          <div>
+            <div class="brand-title">
+              GE Value Realization Assessment
+              <span class="pill pill-purple">Tier: Regulated / Complex</span>
+              <span class="pill pill-blue">BioNova Life Sciences Inc. (ACC-1002-BIONOVA)</span>
+            </div>
+            <div class="brand-sub">Homegrown OpenAI (NovaAssist) → Gemini Enterprise Migration • Comparable 30–90 Day Window • Zero-Hallucination Deterministic Ledger</div>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:10px;">
+          <!-- View Mode Switcher -->
+          <div class="segmented-control">
+            <div class="seg-btn active">📑 Section Page (6–13 Qs)</div>
+            <div class="seg-btn">🎯 1-by-1 Focus Wizard</div>
+            <div class="seg-btn">📋 All-in-One Audit Grid</div>
+          </div>
+          <!-- Main Tab Switcher -->
+          <div class="segmented-control">
+            <div class="seg-btn active-dark">✏️ 1. Input Questionnaires</div>
+            <div class="seg-btn">📊 2. Executive Readout (Stratagem/Google)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-Toolbar: Data Mode + Verification Status Filter + PII Guardrail -->
+      <div style="background:#f1f5f9; border-bottom:1px solid var(--border); padding:9px 24px; display:flex; align-items:center; justify-content:space-between; font-size:11.5px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-weight:800; color:var(--ink-700);">FILTER QUESTIONS:</span>
+          <span class="pill pill-slate" style="background:#0f172a; color:#fff; border-color:#0f172a;">All in Section (13)</span>
+          <span class="pill pill-amber">🟡 Verify with BioNova (6)</span>
+          <span class="pill pill-slate">⚪ Evidence Pending (3)</span>
+          <span class="pill pill-emerald">🟢 Customer Verified (4)</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span style="color:#b91c1c; font-weight:700;">🔒 Guardrail: Do not enter patient, employee, or confidential document contents. Unanswered numbers stay missing (never 0).</span>
+        </div>
+      </div>
+
+      <div class="workspace-body">
+        <!-- Left Navigation Sidebar: Switch by 6 Respondent Roles OR 10 Modules -->
+        <div class="sidebar">
+          <div>
+            <div class="segmented-control" style="width:100%; margin-bottom:12px;">
+              <div class="seg-btn active" style="flex:1; justify-content:center;">By 10 Modules</div>
+              <div class="seg-btn" style="flex:1; justify-content:center;">By 6 Roles</div>
+            </div>
+
+            <div class="sidebar-section-title">Enterprise Configuration & Scope</div>
+            <div class="nav-item">
+              <div class="nav-item-left"><span class="module-code">C</span> Adaptive Config (C01–C11)</div>
+              <span class="pill pill-emerald">11/11</span>
+            </div>
+            <div class="nav-item">
+              <div class="nav-item-left"><span class="module-code">P</span> Program Scope (P01–P08)</div>
+              <span class="pill pill-amber">6/8</span>
+            </div>
+
+            <div class="sidebar-section-title" style="margin-top:10px;">Scored Value KPAs (100 Pts)</div>
+            <div class="nav-item">
+              <div class="nav-item-left"><span class="module-code">A</span> Adoption & Access (15 pts)</div>
+              <span class="pill pill-emerald">11.2/15</span>
+            </div>
+            <div class="nav-item">
+              <div class="nav-item-left"><span class="module-code">L</span> Legacy & GE Cost (20 pts)</div>
+              <span class="pill pill-amber">Pend L01</span>
+            </div>
+            <div class="nav-item active">
+              <div class="nav-item-left"><span class="module-code">W</span> Workflow Records (35 pts)</div>
+              <span class="pill pill-blue">5 WFs</span>
+            </div>
+            <div class="nav-item">
+              <div class="nav-item-left"><span class="module-code">U</span> Employee Survey (10 pts)</div>
+              <span class="pill pill-slate">n=420</span>
+            </div>
+            <div class="nav-item">
+              <div class="nav-item-left"><span class="module-code">Q</span> Quality, Risk & GxP (20 pts)</div>
+              <span class="pill pill-amber">12.5/20</span>
+            </div>
+
+            <div class="sidebar-section-title" style="margin-top:10px;">Validation & Add-On Modules</div>
+            <div class="nav-item">
+              <div class="nav-item-left"><span class="module-code">F</span> Finance Sign-Off (F01–F08)</div>
+              <span class="pill pill-amber">Pending</span>
+            </div>
+            <div class="nav-item">
+              <div class="nav-item-left"><span class="module-code">V</span> Pharma Verticals (V01–V08)</div>
+              <span class="pill pill-purple">6 Active</span>
+            </div>
+            <div class="nav-item">
+              <div class="nav-item-left"><span class="module-code">G</span> Geography Waves (G01–G05)</div>
+              <span class="pill pill-slate">4 Regions</span>
+            </div>
+          </div>
+
+          <!-- Live Mini Score Box -->
+          <div style="margin-top:auto; background:#0f172a; color:#fff; border-radius:12px; padding:12px 14px; font-size:11.5px;">
+            <div style="font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:#38bdf8; font-weight:800; margin-bottom:4px;">Live Telemetry & Index Preview</div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:3px;"><span>Raw Outcome Index:</span><strong>76.2 / 100</strong></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:3px;"><span>Evidence-Adjusted:</span><strong style="color:#fbbf24;">58.4 / 100</strong></div>
+            <div style="display:flex; justify-content:space-between;"><span>Open Safety/Data Gates:</span><strong style="color:#fb7185;">2 Open (Hold)</strong></div>
+          </div>
+        </div>
+
+        <!-- Main Question Pane -->
+        <div class="main-pane">
+          <!-- Repeatable Workflow Selector Bar -->
+          <div class="workflow-bar">
+            <div class="wf-tabs">
+              <span style="font-size:11px; font-weight:800; color:var(--ink-500); text-transform:uppercase; margin-right:4px;">Repeatable Workflow (W01–W13):</span>
+              <div class="wf-tab">WF1: Enterprise Search (4,992 WAU)</div>
+              <div class="wf-tab">WF2: BNV-06 NOVA-AI Pricing (Pilot)</div>
+              <div class="wf-tab active">WF3: BNV-04 Clinical Data Review (GxP)</div>
+              <div class="wf-tab">WF4: BNV-07 Project AHEAD HTA</div>
+              <div class="wf-tab">WF5: BNV-05 CMC Tech Transfer</div>
+            </div>
+            <span class="pill pill-blue" style="cursor:pointer;">+ Add Priority Workflow</span>
+          </div>
+
+          <!-- QUESTION CARD 1: W04 (6-Stage Task Effort Matrix) -->
+          <div class="q-card">
+            <div class="q-header">
+              <div style="display:flex; gap:12px; align-items:flex-start;">
+                <span class="q-id-badge">W04</span>
+                <div>
+                  <div class="q-title">How long did one completed task take before and after?</div>
+                  <div class="q-sub">Actual minutes for discovery, drafting, verification, correction, approval, and handoff for each platform; median and spread where possible.</div>
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+                <span class="pill pill-slate">Weight: 5.0 pts (Workflow Outcomes)</span>
+                <span class="pill pill-amber">🟡 Internal Draft — Verify with BioNova</span>
+              </div>
+            </div>
+
+            <!-- BioNova Tracker Evidence Hint -->
+            <div class="hint-banner">
+              <div>
+                <strong>💡 BioNova Tracker Candidate Evidence (NorthAM Agent Acceleration Workbook.xlsx → Row BNV-04 & CoP Study):</strong>
+                1,000 clinical staff spend 70% of time on manual review of Word protocols & RegVault EDC CRFs; pilot showed ~70% extraction speedup, but QA verification minutes must be confirmed with Clinical Ops owner.
+              </div>
+              <div class="hint-actions">
+                <span class="btn-xs btn-xs-amber">✓ Loaded as Draft</span>
+                <span class="btn-xs btn-xs-ghost">Mark Customer Verified</span>
+              </div>
+            </div>
+
+            <!-- Numeric Status Guardrail Toggle -->
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+              <div style="display:flex; align-items:center; gap:8px; font-size:11.5px;">
+                <span style="font-weight:800; color:var(--ink-700);">NUMERIC ENTRY STATE:</span>
+                <span class="pill pill-blue" style="border-width:1.5px;">● Actual Measured Minutes</span>
+                <span class="pill pill-slate">○ Evidence Pending (Null)</span>
+                <span class="pill pill-slate">○ Unknown (Null)</span>
+                <span class="pill pill-slate">○ Not Applicable (Exclude Weight)</span>
+              </div>
+              <span style="font-size:11px; color:var(--emerald); font-weight:700;">⚡ Auto-Linked to W07 Review Burden (Prevents Double-Counting)</span>
+            </div>
+
+            <!-- 6-Stage Before/After Task Matrix -->
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th>Task Sub-Stage (W04)</th>
+                  <th>Baseline: Legacy NovaAssist / Manual (Min)</th>
+                  <th>Current: Gemini Enterprise (Min)</th>
+                  <th>Stage Delta (Min)</th>
+                  <th>Stage Observation / Review Note</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>1. Discovery & Source Retrieval</strong></td>
+                  <td><span class="num-input">22 <span>m</span></span></td>
+                  <td><span class="num-input">6 <span>m</span></span></td>
+                  <td style="color:var(--emerald); font-weight:700;">-16 min (-72.7%)</td>
+                  <td>Grounded search across clinical protocol PDFs & study tables</td>
+                </tr>
+                <tr>
+                  <td><strong>2. Initial Drafting / Extraction</strong></td>
+                  <td><span class="num-input">38 <span>m</span></span></td>
+                  <td><span class="num-input">11 <span>m</span></span></td>
+                  <td style="color:var(--emerald); font-weight:700;">-27 min (-71.1%)</td>
+                  <td>Structured table extraction using CoP Protocol Extraction prompt</td>
+                </tr>
+                <tr>
+                  <td><strong>3. Verification & Citation Check</strong></td>
+                  <td><span class="num-input">12 <span>m</span></span></td>
+                  <td><span class="num-input">15 <span>m</span></span></td>
+                  <td style="color:var(--rose); font-weight:700;">+3 min (+25.0%)</td>
+                  <td>Mandatory human-in-the-loop source citation verification (V02/Q06)</td>
+                </tr>
+                <tr>
+                  <td><strong>4. Correction & Rework</strong></td>
+                  <td><span class="num-input">10 <span>m</span></span></td>
+                  <td><span class="num-input">5 <span>m</span></span></td>
+                  <td style="color:var(--emerald); font-weight:700;">-5 min (-50.0%)</td>
+                  <td>Fewer formatting defects compared to manual copy-paste</td>
+                </tr>
+                <tr>
+                  <td><strong>5. Approval Gate & 6. Handoff</strong></td>
+                  <td><span class="num-input">8 <span>m</span></span></td>
+                  <td><span class="num-input">7 <span>m</span></span></td>
+                  <td style="color:var(--emerald); font-weight:700;">-1 min (-12.5%)</td>
+                  <td>RegVault DMS MCP connector still pending GA (manual upload step remains)</td>
+                </tr>
+                <tr class="total-row">
+                  <td>TOTAL MEDIAN TASK EFFORT (IQR Spread)</td>
+                  <td>90.0 min (±18m IQR)</td>
+                  <td>44.0 min (±9m IQR)</td>
+                  <td style="color:var(--emerald);">46.0 min saved (51.1%)</td>
+                  <td>⚡ 1,400 tasks/mo (W02) × 46m / 60 = <strong>1,073.3 Gross Hrs/Mo</strong></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- 0-4 Outcome Rubric Bar -->
+            <div>
+              <div style="font-size:10.5px; font-weight:800; color:var(--ink-500); text-transform:uppercase; margin-bottom:5px;">
+                Deterministic 0–4 Outcome Score Rubric (Pre-Agreed KR Target: ≥25% Effort Reduction at Equal/Better Quality)
+              </div>
+              <div class="rubric-strip">
+                <div class="rubric-cell"><div class="rubric-score-num">0 pts</div>Meaningful worsening or severe unmitigated issue</div>
+                <div class="rubric-cell"><div class="rubric-score-num">1 pt</div>Worse / slightly negative (+1% to +20% time)</div>
+                <div class="rubric-cell"><div class="rubric-score-num">2 pts</div>No material change (±5% of baseline)</div>
+                <div class="rubric-cell selected"><div class="rubric-score-num">● 3 pts (Selected)</div>Meets target (51.1% reduction; RegVault step pending)</div>
+                <div class="rubric-cell"><div class="rubric-score-num">4 pts</div>Exceeds exceptional target with full system sign-off</div>
+              </div>
+            </div>
+
+            <!-- Per-Question Mandatory Evidence Contract Footer -->
+            <div class="evidence-footer">
+              <div>
+                <div class="ev-field-label">Comparable 30–90d Window</div>
+                <div class="ev-field-val">Old: Jan–Feb 26 | New: Mar–May 26</div>
+              </div>
+              <div>
+                <div class="ev-field-label">Cohort & Sample Size</div>
+                <div class="ev-field-val">Clinical Ops Pilot (n = 85 tasks)</div>
+              </div>
+              <div>
+                <div class="ev-field-label">Accountable Owner & Status</div>
+                <div class="ev-field-val">Elena Rostova • 🟡 Pending Sign-off</div>
+              </div>
+              <div>
+                <div class="ev-field-label">Confidence Tier (F04)</div>
+                <div class="ev-field-val" style="color:var(--primary);">Tier B: Sampled Study (0.75x)</div>
+              </div>
+              <div>
+                <div class="ev-field-label">Points Contribution</div>
+                <div class="ev-field-val">Raw: 3.75/5.0 → <strong>Adj: 2.81 / 5.0</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- QUESTION CARD 2: A05 (Multi-Select + Ranked Blockers + Other) -->
+          <div class="q-card" style="padding:14px 20px;">
+            <div class="q-header">
+              <div style="display:flex; gap:12px; align-items:flex-start;">
+                <span class="q-id-badge">A05</span>
+                <div>
+                  <div class="q-title">What prevents use? (Multi-select, Rank Top Blockers & Enter Affected User Count)</div>
+                  <div class="q-sub">Pre-staged from BIONOVA GE_ Cloud Blockers - Jordan.xlsx (24 Buganizer issues, 2 Cloud Blockers in review).</div>
+                </div>
+              </div>
+              <span class="pill pill-emerald">🟢 Verified Artifact (Jordan Blocker Log)</span>
+            </div>
+            <div class="chip-grid">
+              <div class="opt-chip selected"><span class="rank-circle">#1</span> Connector gaps (RegVault DMS / CoreERP / SharePoint opt-in) • 4,200 users</div>
+              <div class="opt-chip selected"><span class="rank-circle">#2</span> Permissions / WIF group limits & Private Endpoint • 2,800 users</div>
+              <div class="opt-chip selected"><span class="rank-circle">#3</span> Alternative tools / Legacy NovaAssist chat history export • 3,100 users</div>
+              <div class="opt-chip">Awareness</div>
+              <div class="opt-chip">Latency</div>
+              <div class="opt-chip">Trust</div>
+              <div class="opt-chip">Training</div>
+              <div class="opt-chip" style="border-style:dashed;">+ Other (specify): Localization (ES/FR/DE/JA)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       ARTBOARD 2: 1-BY-1 FOCUS WIZARD MODE & COMPACT ALL-ON-ONE-PAGE GRID
+       ===================================================================== -->
+  <div class="artboard-wrapper" id="artboard-2">
+    <div class="artboard-label">
+      <span><strong>ARTBOARD 02 / INPUTS (ALTERNATE VIEWS)</strong> — (A) 1-Question-at-a-Time Live Interview Focus Mode & (B) All-on-One-Page Bulk Audit Grid</span>
+      <span>1600 × 760 px</span>
+    </div>
+    <div class="artboard" style="padding:22px 26px; display:grid; grid-template-columns: 1fr 1.15fr; gap:22px;">
+      <!-- Left Half: 1-Question-at-a-Time Focus Mode -->
+      <div style="background:#ffffff; border:1px solid var(--border); border-radius:14px; padding:18px 20px; display:flex; flex-direction:column; justify-content:space-between;">
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border);">
+            <span class="pill pill-blue">🎯 Mode 2: 1-Question-at-a-Time Focus Wizard (Screen-Share Mode)</span>
+            <span style="font-size:11.5px; font-weight:700; color:var(--ink-500);">Role: Procurement & Finance • Question 2 of 6</span>
+          </div>
+
+          <div style="display:flex; gap:10px; align-items:center; margin-bottom:8px;">
+            <span class="q-id-badge">L02</span>
+            <span style="font-size:15px; font-weight:800;">Which legacy NovaAssist (OpenAI) costs have ended or will end?</span>
+          </div>
+          <p style="font-size:12px; color:var(--ink-500); margin-bottom:14px;">
+            Scored on actual avoidable cost retired (5 pts). Costs during parallel run [Mar–Jun 2026] are isolated in L04 so they are never double-counted.
+          </p>
+
+          <table class="matrix-table" style="margin-bottom:14px;">
+            <thead>
+              <tr>
+                <th>Legacy Cost Category (L01/L02)</th>
+                <th>Disposition Status</th>
+                <th>Annual Run Rate ($)</th>
+                <th>Effective Retirement Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>OpenAI / Azure GPT-4o API Tokens</strong></td>
+                <td><span class="pill pill-amber">Partly Retained (Parallel Run)</span></td>
+                <td><span class="pill pill-slate">Evidence Pending (Finance)</span></td>
+                <td>Target: Post-Chat Export (Q3 '26)</td>
+              </tr>
+              <tr>
+                <td><strong>Legacy Search / Vector Hosting</strong></td>
+                <td><span class="pill pill-amber">Contract Committed Until Date</span></td>
+                <td><span class="pill pill-slate">Evidence Pending (Finance)</span></td>
+                <td>Target: Dec 31, 2026</td>
+              </tr>
+              <tr>
+                <td><strong>Internal NovaAssist Support FTEs</strong></td>
+                <td><span class="pill pill-blue">Redeployed to GE / ADK</span></td>
+                <td><span class="pill pill-slate">Capacity Only (Not Cash)</span></td>
+                <td>Redeployed May 2026</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="hint-banner" style="margin-bottom:12px;">
+            <div>
+              <strong>⚠️ Anti-Hallucination Contradiction Guard:</strong> Because <code>C07 = Parallel Run</code> and <code>NovaAssist Chat History Export</code> is still open in Jordan's blocker sheet, the engine blocks claiming 100% retired cash savings until decommissioning is verified.
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; padding-top:12px; border-top:1px solid var(--border);">
+          <span class="pill pill-slate" style="padding:8px 14px;">← Previous (L01: Legacy Cost Inventory)</span>
+          <span style="font-size:11.5px; font-weight:700; color:var(--ink-500);">Step 2 of 6 in Finance Form</span>
+          <span class="pill pill-blue" style="background:var(--primary); color:#fff; padding:8px 16px;">Save & Next Question (L03) →</span>
+        </div>
+      </div>
+
+      <!-- Right Half: All-on-One-Page Bulk Audit Grid -->
+      <div style="background:#ffffff; border:1px solid var(--border); border-radius:14px; padding:18px 20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid var(--border);">
+          <span class="pill pill-purple">📋 Mode 3: Compact All-on-One-Page Audit & Verification Grid</span>
+          <div style="display:flex; gap:6px;">
+            <span class="pill pill-amber">Filter: Needs BioNova Verification (18)</span>
+            <span class="pill pill-emerald">Bulk Verify Selected</span>
+          </div>
+        </div>
+
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Module / Question Summary</th>
+              <th>Current Value / Entry</th>
+              <th>Source / Provenance</th>
+              <th>Verification State</th>
+              <th>Conf.</th>
+              <th>Pts (Raw→Adj)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>P03</strong></td>
+              <td>Eligible & Provisioned Population</td>
+              <td>85,300 sold / 85,000 prov / 10,663 asgn</td>
+              <td>Vector Extract (Row 11)</td>
+              <td><span class="pill pill-emerald">🟢 Verified Telemetry</span></td>
+              <td>A (1.0)</td>
+              <td>Routing</td>
+            </tr>
+            <tr>
+              <td><strong>A01</strong></td>
+              <td>MAU / WAU / DAU Cohort Funnel</td>
+              <td>7,763 MAU • 5,867 WAU • 550 DAU</td>
+              <td>Vector Extract (Row 11)</td>
+              <td><span class="pill pill-emerald">🟢 Verified Telemetry</span></td>
+              <td>A (1.0)</td>
+              <td>3.0 → 3.0 / 4</td>
+            </tr>
+            <tr>
+              <td><strong>A04</strong></td>
+              <td>Feature Usage (Assist/Search/Agent)</td>
+              <td>Assist: 5,386 • Search: 4,992 • Agent: 1,710</td>
+              <td>Vector Extract (Row 11)</td>
+              <td><span class="pill pill-emerald">🟢 Verified Telemetry</span></td>
+              <td>A (1.0)</td>
+              <td>1.0 → 1.0 / 1</td>
+            </tr>
+            <tr>
+              <td><strong>A07</strong></td>
+              <td>Workflow Usage Mapping Method</td>
+              <td>Unavailable ("Black Box" gap noted May 26)</td>
+              <td>Jordan Meeting Notes</td>
+              <td><span class="pill pill-amber">🟡 Verify Remediation</span></td>
+              <td>C (0.4)</td>
+              <td>0.5 → 0.2 / 2</td>
+            </tr>
+            <tr>
+              <td><strong>L01</strong></td>
+              <td>Annual Legacy NovaAssist Run-Rate ($)</td>
+              <td><em>Evidence Pending (Awaiting Invoices)</em></td>
+              <td>BioNova Finance Input</td>
+              <td><span class="pill pill-slate">⚪ Evidence Pending</span></td>
+              <td>D (0.0)</td>
+              <td>0.0 → 0.0 / 4</td>
+            </tr>
+            <tr>
+              <td><strong>W04</strong></td>
+              <td>WF3 Clinical Review Min/Task</td>
+              <td>90m → 44m (-46m net incl. +3m QA)</td>
+              <td>BNV-04 + CoP Study</td>
+              <td><span class="pill pill-amber">🟡 Confirm w/ Owner</span></td>
+              <td>B (0.75)</td>
+              <td>3.8 → 2.8 / 5</td>
+            </tr>
+            <tr>
+              <td><strong>W08</strong></td>
+              <td>WF2 NOVA-AI Pricing Cycle Time</td>
+              <td>12 mos → 15 mins ($100M–$300M model)</td>
+              <td>NOVA-AI Charter PDF</td>
+              <td><span class="pill pill-amber">🟡 Pilot (Col 3 Only)</span></td>
+              <td>B (0.75)</td>
+              <td>1.5 → 1.1 / 2</td>
+            </tr>
+            <tr>
+              <td><strong>Q06</strong></td>
+              <td>Regulated / GxP Workflow Validation</td>
+              <td>Yes — Unvalidated (BNV-04/05/13 in pilot)</td>
+              <td>QA / RegVault Blocker</td>
+              <td><span class="pill pill-rose">🛑 Gate 3 Triggered</span></td>
+              <td>B (0.75)</td>
+              <td>1.0 → 0.8 / 2</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       ARTBOARD 3: OUTPUTS PART 1 (STRATAGEM SCR + GATES + CFO WATERFALL + 5-COL MECE)
+       ===================================================================== -->
+  <div class="artboard-wrapper" id="artboard-3">
+    <div class="artboard-label">
+      <span><strong>ARTBOARD 03 / EXECUTIVE REPORT (PAGE 1)</strong> — Non-Compensable Gate Banner + Stratagem SCR Brief + CFO Cost Bridge + 5-Column MECE Value Table</span>
+      <span>1600 × 940 px</span>
+    </div>
+    <div class="artboard">
+      <!-- Report Top Header -->
+      <div class="app-topbar" style="background:var(--mck-navy); color:#fff; border-bottom:none;">
+        <div class="brand-group">
+          <div class="brand-icon" style="background:#005eb8; color:#fff;">McK</div>
+          <div>
+            <div class="brand-title" style="color:#fff;">
+              BIONOVA LIFE SCIENCES INC. — GEMINI ENTERPRISE MIGRATION VALUE REALIZATION READOUT
+              <span class="pill pill-amber">STATUS: ON HOLD / NEEDS INVESTIGATION (2 GATES OPEN)</span>
+            </div>
+            <div class="brand-sub" style="color:#94a3b8;">Executive Sponsor: Marcus Vance (CIO) • Leads: Jordan Hayes, Elena Rostova • Vector ID: ACC-1002-BIONOVA • GCP Project: 710492831045</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <span class="pill pill-slate" style="background:rgba(255,255,255,0.1); color:#fff; border-color:rgba(255,255,255,0.2);">🔍 Formula & Provenance Audit ON</span>
+          <span class="pill pill-blue" style="background:#00a9e0; color:#051c2c; border:none; padding:6px 12px;">🖨️ Export Stratagem / Google Board PDF</span>
+        </div>
+      </div>
+
+      <div style="padding:20px 26px; display:flex; flex-direction:column; gap:16px;">
+        <!-- Non-Compensable Gate Alert Banner -->
+        <div class="mck-banner-gate">
+          <div>
+            <div style="font-size:12.5px; font-weight:900; color:#9f1239; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:3px;">
+              🛑 Non-Compensable Governance Gate Active — Overall Result Labeled "On Hold / Needs Investigation"
+            </div>
+            <div style="font-size:12px; color:#881337;">
+              Per Scoring Rule: A high index cannot override open gates. <strong>Gate 3 (Regulated GxP Scope):</strong> Clinical (BNV-04) & Regulatory (BNV-13) workflows require RegVault MCP QA sign-off. <strong>Gate 4 (Baseline Reconciliation):</strong> Legacy NovaAssist annual invoice (L01) & post-chat-export cutover date (L02) pending Finance entry.
+            </div>
+          </div>
+          <span class="pill pill-rose" style="flex-shrink:0; font-size:11.5px; padding:6px 12px;">2 of 5 Gates Open • Value Claim Unvalidated</span>
+        </div>
+
+        <!-- EXHIBIT 1: Stratagem SCR + 3 Independent Headline Signals -->
+        <div class="mck-exhibit-card">
+          <div class="mck-kicker">EXHIBIT 1 • EXECUTIVE SYNTHESIS & THREE INDEPENDENT MANAGEMENT SIGNALS</div>
+          <div class="mck-action-title">
+            Gemini Enterprise has reached 5,867 WAU (55% of 10,663 assigned Wave-1 seats) and 4,200 hrs/mo of validated capacity, while hard-dollar NovaAssist retirement and $120M+ in agent value await 3 technical unblocks and Finance sign-off
+          </div>
+
+          <div class="scr-grid">
+            <div class="scr-box">
+              <div class="scr-title">1. Situation (Verified Baseline)</div>
+              <ul class="scr-list">
+                <li>• <strong>85,300</strong> GE seats contracted; <strong>85,000</strong> provisioned; <strong>10,663</strong> assigned in Wave 1.</li>
+                <li>• Strong pull across <strong>Assist (5,386 WAU)</strong>, <strong>Search (4,992 WAU)</strong>, and <strong>Agents (1,710 WAU / 12,385 7d requests)</strong>.</li>
+                <li>• Community of Practice (CoP) launched across 8+ BUs with 5 priority workflows under assessment.</li>
+              </ul>
+            </div>
+            <div class="scr-box complication">
+              <div class="scr-title" style="color:#b45309;">2. Complication (Gaps & Blockers)</div>
+              <ul class="scr-list">
+                <li>• Legacy <strong>NovaAssist runs in parallel</strong> until chat-history bulk export closes, delaying L02 cash retirement.</li>
+                <li>• <strong>"Black Box" observability gap (A07)</strong> prevents direct telemetry tagging of prompts to workflows.</li>
+                <li>• High-value commercial/R&D agents (NOVA-AI Pricing, AHEAD, BNV-04) are in <strong>Pilot/Scoping</strong> (Col 3).</li>
+              </ul>
+            </div>
+            <div class="scr-box resolution">
+              <div class="scr-title" style="color:#047857;">3. Resolution (90-Day Value Plan)</div>
+              <ul class="scr-list">
+                <li>• <strong>Track 1 (IT/Google):</strong> Close NovaAssist chat export, SharePoint visibility, and RegVault MCP blockers.</li>
+                <li>• <strong>Track 2 (Business/QA):</strong> Complete timed pre/post W04 studies & GxP CSV sign-off for BNV-04/06/07.</li>
+                <li>• <strong>Track 3 (Finance):</strong> Enter L01/L03 invoices and lock F01 loaded hourly rates & realization %.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 3 Independent Signals -->
+          <div class="signals-3col">
+            <div class="signal-card">
+              <div>
+                <div style="font-size:10px; font-weight:800; color:#38bdf8; text-transform:uppercase; letter-spacing:0.07em;">Signal 1 • Financial & Capacity Ledger</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px;">
+                  <div>
+                    <div style="font-size:10.5px; color:#94a3b8;">Realized Cash (Col 1)</div>
+                    <div style="font-size:20px; font-weight:900; color:#fbbf24;">Pending L02</div>
+                    <div style="font-size:10px; color:#cbd5e1;">Awaiting NovaAssist decomm.</div>
+                  </div>
+                  <div>
+                    <div style="font-size:10.5px; color:#94a3b8;">Validated Capacity (Col 2)</div>
+                    <div style="font-size:20px; font-weight:900; color:#34d399;">4,210 hrs/mo</div>
+                    <div style="font-size:10px; color:#cbd5e1;">Search + Clinical Pilot</div>
+                  </div>
+                </div>
+              </div>
+              <div style="margin-top:10px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.15); display:flex; justify-content:space-between; font-size:11px;">
+                <span>Modeled Pipeline (Col 3): <strong>$120M–$325M/yr</strong></span>
+                <span style="color:#38bdf8;">[Formula Trace →]</span>
+              </div>
+            </div>
+
+            <div class="signal-card light">
+              <div>
+                <div style="font-size:10px; font-weight:800; color:var(--mck-blue); text-transform:uppercase; letter-spacing:0.07em;">Signal 2 • 0–100 Weighted Value & Evidence Index</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px;">
+                  <div>
+                    <div style="font-size:10.5px; color:var(--ink-500);">Evidence-Adjusted Score</div>
+                    <div style="font-size:22px; font-weight:900; color:var(--mck-navy);">58.4 <span style="font-size:13px; color:var(--ink-500);">/ 100</span></div>
+                    <div style="font-size:10px; color:var(--amber); font-weight:700;">40–59: Mixed / Weakly Substantiated</div>
+                  </div>
+                  <div>
+                    <div style="font-size:10.5px; color:var(--ink-500);">Unadjusted Raw Outcome</div>
+                    <div style="font-size:22px; font-weight:900; color:var(--primary);">76.2 <span style="font-size:13px; color:var(--ink-500);">/ 100</span></div>
+                    <div style="font-size:10px; color:var(--ink-500);">-17.8 pt gap = Tier B/C evidence</div>
+                  </div>
+                </div>
+              </div>
+              <div style="margin-top:10px; padding-top:8px; border-top:1px solid var(--border); display:flex; justify-content:space-between; font-size:11px; color:var(--ink-700);">
+                <span>Applicable Coverage: <strong>94%</strong></span>
+                <span>Data Completeness: <strong>78% (16 Pending)</strong></span>
+              </div>
+            </div>
+
+            <div class="signal-card light">
+              <div style="font-size:10px; font-weight:800; color:var(--rose); text-transform:uppercase; letter-spacing:0.07em; margin-bottom:6px;">Signal 3 • 5 Non-Compensable Gates</div>
+              <div style="display:flex; flex-direction:column; gap:4px; font-size:11px;">
+                <div style="display:flex; justify-content:space-between;"><span>1. Unauthorized Access / Privacy:</span><strong style="color:var(--emerald);">✓ CLEAR</strong></div>
+                <div style="display:flex; justify-content:space-between;"><span>2. Severe Unresolved Safety/Quality:</span><strong style="color:var(--emerald);">✓ CLEAR</strong></div>
+                <div style="display:flex; justify-content:space-between;"><span>3. Unvalidated Regulated GxP Use:</span><strong style="color:var(--rose);">🛑 OPEN (Q06)</strong></div>
+                <div style="display:flex; justify-content:space-between;"><span>4. Reconcilable Cost/Time Baseline:</span><strong style="color:var(--rose);">🛑 OPEN (L01)</strong></div>
+                <div style="display:flex; justify-content:space-between;"><span>5. Duplicate Financial Benefit:</span><strong style="color:var(--emerald);">✓ CLEAR (F05)</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EXHIBIT 1B: BEFORE vs. AFTER MIGRATION VALUE REALIZATION SCORECARD -->
+        <div class="mck-exhibit-card" style="border: 1.5px solid #93c5fd; border-top: 4px solid #1d4ed8;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <div>
+              <div class="mck-kicker" style="color:#1d4ed8;">EXHIBIT 1B • BEFORE vs. AFTER MIGRATION VALUE REALIZATION BRIDGE (30–90 DAY COMPARABLE COHORT)</div>
+              <div class="mck-action-title" style="margin-bottom:0;">
+                Homegrown OpenAI (NovaAssist Baseline) vs. Gemini Enterprise (Wave 1 Verified): +2.8x Active Users, -60.0% Cycle Time, +19.8 pts First-Pass QA, and $3.60M/yr Validated Capacity
+              </div>
+            </div>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <span class="pill pill-slate">⏪ BEFORE: Legacy OpenAI (NovaAssist)</span>
+              <span>→</span>
+              <span class="pill pill-blue">⚡ AFTER: Gemini Enterprise (Wave 1)</span>
+              <span>→</span>
+              <span class="pill pill-emerald">🚀 TARGET: Wave 2 + NovaAssist Retired</span>
+            </div>
+          </div>
+
+          <table class="data-table" style="font-size:11px;">
+            <thead>
+              <tr style="background:#0f172a; color:#fff;">
+                <th style="color:#fff; width:19%;">Value Dimension & Q-IDs</th>
+                <th style="color:#cbd5e1; background:#1e293b; width:21%;">⏪ BEFORE MIGRATION (Homegrown OpenAI / NovaAssist)</th>
+                <th style="color:#93c5fd; background:#1e3a8a; width:23%;">⚡ AFTER MIGRATION (Gemini Enterprise Wave 1)</th>
+                <th style="color:#6ee7b7; background:#065f46; width:17%;">📈 REALIZED DELTA (Net Improvement)</th>
+                <th style="color:#e2e8f0; width:12%;">🚀 POST-CUTOVER TARGET</th>
+                <th style="color:#fff; width:8%;">Confidence</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1. Weekly Active Reach (A01)</strong></td>
+                <td>~2,100 WAU; single custom chat app; no Workspace/Search surface</td>
+                <td><strong>5,867 WAU / 7,763 MAU</strong> (55.0% of 10,663 Wave 1 assigned seats)</td>
+                <td><strong style="color:#047857;">+3,767 WAU (+179% / 2.8x Reach)</strong></td>
+                <td>63,975 assigned → 32K+ WAU</td>
+                <td><span class="pill pill-emerald">99% Tier A</span></td>
+              </tr>
+              <tr>
+                <td><strong>2. AI Surfaces & Agents (A04)</strong></td>
+                <td>1 surface (NovaAssist Chat + custom developer RAG scripts)</td>
+                <td><strong>3 Surfaces:</strong> Assist (5,386), Search (4,992), Agents (1,710 WAU / 12.4K runs)</td>
+                <td><strong style="color:#047857;">+2 New Surfaces + 12.4K Runs/Wk</strong></td>
+                <td>SharePoint, RegVault & CoreERP live</td>
+                <td><span class="pill pill-emerald">98% Tier A</span></td>
+              </tr>
+              <tr>
+                <td><strong>3. WF1: Enterprise Search (BNV-08)</strong></td>
+                <td><strong>22 min / task</strong> across fragmented portals; <strong>68%</strong> first-pass QA</td>
+                <td><strong>9 min / task</strong> w/ grounded citations (4,992 users, 14.5K/mo); <strong>84%</strong> QA</td>
+                <td><strong style="color:#047857;">-13m (-59.1%) • +16 pts QA • $1.86M/yr</strong></td>
+                <td>+$4.2M/yr across Wave 2</td>
+                <td><span class="pill pill-blue">88% Tier B</span></td>
+              </tr>
+              <tr>
+                <td><strong>4. WF2: NOVA-AI Pricing Cascade (BNV-06)</strong></td>
+                <td><strong>640 min (10.7h) / cascade</strong> manual scripts; <strong>62%</strong> first-pass QA</td>
+                <td><strong>80 min (1.3h) / cascade</strong> Multi-Agent (45 users, 90/mo); <strong>88%</strong> QA</td>
+                <td><strong style="color:#047857;">-560m (-87.5%) • +26 pts QA • $822K/yr</strong></td>
+                <td>Graduate $100M–$300M Col 3</td>
+                <td><span class="pill pill-blue">84% Tier B</span></td>
+              </tr>
+              <tr>
+                <td><strong>5. WF3: Clinical Protocol Review (BNV-04)</strong></td>
+                <td><strong>90 min / section</strong> un-grounded LLM; heavy SME rework (<strong>70%</strong> QA)</td>
+                <td><strong>44 min / section</strong> w/ clinical citations (85 users, 1,400/mo); <strong>86%</strong> QA</td>
+                <td><strong style="color:#047857;">-46m (-51.1%) • +16 pts QA • $913K/yr</strong></td>
+                <td>RegVault GxP CSV → 1,000 seats</td>
+                <td><span class="pill pill-blue">82% Tier B</span></td>
+              </tr>
+              <tr>
+                <td><strong>6. Platform Cost & Cash Bridge (L01–L04)</strong></td>
+                <td><strong>$1.85M/yr</strong> modeled NovaAssist run-rate (Azure OpenAI + Vector DB + 4.5 FTE)</td>
+                <td>Parallel run active ($0 retired yet while NovaAssist chat export closes)</td>
+                <td><strong style="color:#047857;">$3.60M/yr Validated Capacity (Cash Gated)</strong></td>
+                <td>Retire $1.65M/yr legacy NovaAssist</td>
+                <td><span class="pill pill-slate">35% Tier D</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- EXHIBIT 2: CFO Cost Bridge + 5-Column MECE Value Table -->
+        <div class="mck-exhibit-card">
+          <div class="mck-kicker">EXHIBIT 2 • ENTERPRISE MIGRATION COST BRIDGE & 5-COLUMN MECE VALUE REALIZATION LEDGER</div>
+          <div class="mck-action-title">
+            Strict 5-column quarantine separates verified capacity (4,210 hrs/mo) and scoping pipeline ($120M–$325M) from hard P&L cash savings until NovaAssist retirement and Finance rates are signed
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1.25fr; gap:20px;">
+            <!-- Left: Waterfall Bridge -->
+            <div>
+              <div style="font-size:11px; font-weight:800; color:var(--ink-700); text-transform:uppercase; margin-bottom:8px;">
+                Platform Cost & Realized Value Bridge (Annualized Run-Rate)
+              </div>
+              <div class="waterfall-row">
+                <div class="wf-label">1. Legacy NovaAssist Run-Rate (L01)</div>
+                <div class="wf-bar-track"><div class="wf-bar-fill" style="width:75%; background:#64748b;"></div></div>
+                <div class="wf-val" style="color:var(--amber);">Pending L01</div>
+              </div>
+              <div class="waterfall-row">
+                <div class="wf-label">2. Less: Retained Parallel Run (L02)</div>
+                <div class="wf-bar-track"><div class="wf-bar-fill" style="width:35%; margin-left:40%; background:#f59e0b;"></div></div>
+                <div class="wf-val" style="color:var(--amber);">Parallel Run</div>
+              </div>
+              <div class="waterfall-row">
+                <div class="wf-label">3. Less: Gemini Recurring (L03)</div>
+                <div class="wf-bar-track"><div class="wf-bar-fill" style="width:45%; background:#2563eb;"></div></div>
+                <div class="wf-val" style="color:var(--primary);">Pending L03</div>
+              </div>
+              <div class="waterfall-row">
+                <div class="wf-label">4. + Validated Workflow Cash (W10)</div>
+                <div class="wf-bar-track"><div class="wf-bar-fill" style="width:15%; background:#10b981;"></div></div>
+                <div class="wf-val" style="color:var(--emerald);">$0 (Col 2/3)</div>
+              </div>
+              <div class="waterfall-row">
+                <div class="wf-label">5. - Adverse / Rework Costs (L05/W12)</div>
+                <div class="wf-bar-track"><div class="wf-bar-fill" style="width:10%; background:#e11d48;"></div></div>
+                <div class="wf-val" style="color:var(--rose);">QA +3m/task</div>
+              </div>
+              <div style="margin-top:10px; background:#f8fafc; border:1px solid var(--border); border-radius:8px; padding:8px 12px; font-size:11px; display:flex; justify-content:space-between;">
+                <span><strong>Sensitivity Sliders (F01/F03):</strong> Loaded Rate: <code>$115/hr</code> • Realization: <code>0% (Cash) / 65% (Cap)</code> • Attribution: <code>75%</code></span>
+              </div>
+            </div>
+
+            <!-- Right: 5-Column MECE Table -->
+            <div>
+              <table class="matrix-table">
+                <thead>
+                  <tr>
+                    <th>5 Required Reporting Columns</th>
+                    <th>Low (Conservative)</th>
+                    <th>Base (Current Ledger)</th>
+                    <th>High (Full Ramp)</th>
+                    <th>Evidence & Gate Rule</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>1. Realized Cash ($)</strong></td>
+                    <td>$0 (Pending L02)</td>
+                    <td><strong>$0 (Pending L02)</strong></td>
+                    <td>Retired NovaAssist Δ</td>
+                    <td>Requires L02 invoice + W10 budget cut</td>
+                  </tr>
+                  <tr>
+                    <td><strong>2. Validated Capacity (Hrs & $)</strong></td>
+                    <td>3,150 hrs/mo</td>
+                    <td><strong>4,210 hrs/mo ($3.8M eq)</strong></td>
+                    <td>6,800 hrs/mo</td>
+                    <td>Measured W04 delta; unredeployed ≠ cash</td>
+                  </tr>
+                  <tr>
+                    <td><strong>3. Modeled Opportunity ($)</strong></td>
+                    <td>$100M / yr</td>
+                    <td><strong>$145M / yr (Pilot/Scope)</strong></td>
+                    <td>$325M / yr</td>
+                    <td>BNV-06 Pricing ($100–300M) + BNV-08 HR</td>
+                  </tr>
+                  <tr>
+                    <td><strong>4. Nonfinancial Indicators</strong></td>
+                    <td colspan="3"><strong>5,867 WAU</strong> (55% of assigned) • <strong>51.1%</strong> clinical extraction speedup • <strong>12,385</strong> 7d agent reqs</td>
+                    <td>Vector Telemetry (Tier A) + Pilot (Tier B)</td>
+                  </tr>
+                  <tr>
+                    <td><strong>5. Risks & Negative Effects</strong></td>
+                    <td colspan="3" style="color:var(--rose);"><strong>+3 min/task</strong> clinical QA review • <strong>24</strong> Buganizer issues • RegVault/SharePoint ACL gaps</td>
+                    <td>Deducted from gross hours; triggers Gate 3</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="footnote">
+            <span>Source: BioNova Vector Extract (ACC-1002-BIONOVA), NOVA-AI Pricing Charter, Jordan Cloud Blocker Sheet.</span>
+            <span>Guardrail: Questionnaire index points (58.4/100) are never multiplied or converted into dollars.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       ARTBOARD 4: OUTPUTS PART 2 (WORKFLOW REGISTER + FUNNEL + OKR/KPA + DECISIONS)
+       ===================================================================== -->
+  <div class="artboard-wrapper" id="artboard-4">
+    <div class="artboard-label">
+      <span><strong>ARTBOARD 04 / EXECUTIVE REPORT (PAGE 2)</strong> — Per-Workflow Register + Adoption Funnel + Google OKR→KPA→KPI Scorecard + Quarterly Decisions (F08)</span>
+      <span>1600 × 920 px</span>
+    </div>
+    <div class="artboard" style="padding:22px 26px; display:flex; flex-direction:column; gap:16px;">
+      <!-- EXHIBIT 3: Per-Workflow Value Register -->
+      <div class="mck-exhibit-card">
+        <div class="mck-kicker">EXHIBIT 3 • PER-WORKFLOW VALUE REGISTER & CAPPED HYBRID PORTFOLIO ROLLUP (W01–W13, V01–V08)</div>
+        <div class="mck-action-title">
+          Across 5 priority BioNova workflows, Enterprise Search is scaled in production while NOVA-AI Pricing and Clinical Review show strong pilot velocity but require Finance & GxP sign-off
+        </div>
+
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th>Workflow ID & Name (W01)</th>
+              <th>Function & Vertical</th>
+              <th>Maturity (W13)</th>
+              <th>Active Users / Vol (W02)</th>
+              <th>Task Effort Delta (W04/W08)</th>
+              <th>Benefit Bucket & Formula</th>
+              <th>Conf. (F04)</th>
+              <th>Portfolio Wt*</th>
+              <th>Score (Raw→Adj)</th>
+              <th>Qtr Decision</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>WF1: Enterprise Search & Assist</strong></td>
+              <td>Enterprise-Wide (V07)</td>
+              <td><span class="pill pill-emerald">Scaled</span></td>
+              <td>4,992 Search / 5,386 Assist WAU</td>
+              <td>22m → 9m (-13m/task)</td>
+              <td><strong>Col 2 (Capacity):</strong> 3,136 hrs/mo</td>
+              <td>B (0.75)</td>
+              <td>30% (Capped)</td>
+              <td>28.0 → 21.0 / 35</td>
+              <td><span class="pill pill-emerald">🟢 Scale to 85k</span></td>
+            </tr>
+            <tr>
+              <td><strong>WF2: BNV-06 NOVA-AI Pricing Agent</strong></td>
+              <td>Commercial Market Access (V06/V08)</td>
+              <td><span class="pill pill-blue">Pilot</span></td>
+              <td>45 analysts (G7 IRP/MFN)</td>
+              <td>12 mos → 15 mins cycle</td>
+              <td><strong>Col 3 (Modeled):</strong> $100M–$300M/yr</td>
+              <td>B (0.75)</td>
+              <td>20%</td>
+              <td>26.5 → 19.9 / 35</td>
+              <td><span class="pill pill-blue">🔵 Validate F01</span></td>
+            </tr>
+            <tr>
+              <td><strong>WF3: BNV-04 Clinical Data Review</strong></td>
+              <td>Clinical Ops / R&D (V01/V02/Q06)</td>
+              <td><span class="pill pill-amber">Pilot / Scope</span></td>
+              <td>85 pilot (1,000 eligible)</td>
+              <td>90m → 44m (-46m net)</td>
+              <td><strong>Col 2 (Capacity):</strong> 1,073 hrs/mo</td>
+              <td>B (0.75)</td>
+              <td>20%</td>
+              <td>24.5 → 18.4 / 35</td>
+              <td><span class="pill pill-amber">🟡 Unblock RegVault</span></td>
+            </tr>
+            <tr>
+              <td><strong>WF4: BNV-07 Project AHEAD (HTA)</strong></td>
+              <td>Regulatory / Commercial (V03/V06)</td>
+              <td><span class="pill pill-amber">Scoping</span></td>
+              <td>60 dossier authors</td>
+              <td>Target -50% dossier prep</td>
+              <td><strong>Col 3 (Modeled):</strong> Scoping</td>
+              <td>C (0.40)</td>
+              <td>15%</td>
+              <td>21.0 → 8.4 / 35</td>
+              <td><span class="pill pill-blue">🔵 Timed Study</span></td>
+            </tr>
+            <tr>
+              <td><strong>WF5: BNV-05 CMC Tech Transfer</strong></td>
+              <td>Manufacturing / Quality (V05/Q06)</td>
+              <td><span class="pill pill-slate">Scoping</span></td>
+              <td>180 CMC engineers</td>
+              <td>Target 24mo → 9mo (-60%)</td>
+              <td><strong>Col 3 (Modeled):</strong> Scoping</td>
+              <td>D (0.00)</td>
+              <td>15%</td>
+              <td>17.5 → 0.0 / 35</td>
+              <td><span class="pill pill-amber">🟡 CoreERP/LIMS MCP</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Bottom Split: Google OKR->KPA->KPI Scorecard + Quarterly Action & Sign-Off Log -->
+      <div style="display:grid; grid-template-columns: 1.15fr 1fr; gap:18px;">
+        <!-- EXHIBIT 4: Google OKR -> KPA -> KPI Measurement Hierarchy -->
+        <div class="mck-exhibit-card">
+          <div class="mck-kicker">EXHIBIT 4 • GOOGLE OKR → KPA → KPI MEASUREMENT CONTRACT (100 POINTS)</div>
+          <div class="mck-action-title" style="font-size:14px;">
+            Adoption (11.2/15) leads KPA maturity; Platform Economics (8.5/20) awaits Finance invoice reconciliation
+          </div>
+          <table class="matrix-table">
+            <thead>
+              <tr>
+                <th>KPA (Weight) & Linked OKR</th>
+                <th>Primary KPI</th>
+                <th>Baseline → Actual (Target)</th>
+                <th>Raw Score</th>
+                <th>Evid.-Adj Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1. Platform Economics (20)</strong><br><span style="font-size:10px; color:var(--ink-500);">O1: Defensible migration economics</span></td>
+                <td>Retired Cost & Payback (L01–L06)</td>
+                <td>NovaAssist Pending → Parallel Run (≤12m)</td>
+                <td>14.0 / 20</td>
+                <td><strong>8.5 / 20</strong> (Tier C/D)</td>
+              </tr>
+              <tr>
+                <td><strong>2. Workflow Outcomes (35)</strong><br><span style="font-size:10px; color:var(--ink-500);">O2: Improve priority work</span></td>
+                <td>Median Effort & First-Pass % (W04/W07)</td>
+                <td>90m → 44m (-51.1% vs ≥25% KR)</td>
+                <td>26.5 / 35</td>
+                <td><strong>18.2 / 35</strong> (Tier B/C)</td>
+              </tr>
+              <tr>
+                <td><strong>3. Adoption & Access (15)</strong><br><span style="font-size:10px; color:var(--ink-500);">O3: Expand repeat active use</span></td>
+                <td>WAU / Assigned Seats (A01–A07)</td>
+                <td>300 pilot → 5,867 / 10,663 (55.0%)</td>
+                <td>12.8 / 15</td>
+                <td><strong>11.2 / 15</strong> (Tier A/B)</td>
+              </tr>
+              <tr>
+                <td><strong>4. Quality, Risk & GxP (20)</strong><br><span style="font-size:10px; color:var(--ink-500);">O4: Operate safely in scope</span></td>
+                <td>Defect Rate & ACL Pass (Q01–Q06)</td>
+                <td>VPC-SC + Citations ON; RegVault Open</td>
+                <td>15.0 / 20</td>
+                <td><strong>12.5 / 20</strong> (Gate 3)</td>
+              </tr>
+              <tr>
+                <td><strong>5. Employee Experience (10)</strong><br><span style="font-size:10px; color:var(--ink-500);">O3/O4: Task usefulness & trust</span></td>
+                <td>Preference & Perceived Speed (U01–U10)</td>
+                <td>CoP Pulse (4.1/5.0; full survey pending)</td>
+                <td>7.9 / 10</td>
+                <td><strong>8.0 / 10</strong> (Tier B)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- EXHIBIT 5: Agreed Next Steps & Multi-Party Sign-Off (F08) -->
+        <div class="mck-exhibit-card" style="display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="mck-kicker">EXHIBIT 5 • JOINT BIONOVA & GOOGLE NEXT STEPS & MULTI-PARTY SIGN-OFF (F08)</div>
+            <div class="mck-action-title" style="font-size:14px;">
+              4 immediate joint actions required to close Gates 3 & 4 and convert pilot value into Finance-signed ROI
+            </div>
+            <table class="matrix-table" style="margin-bottom:12px;">
+              <thead>
+                <tr>
+                  <th>Action Item (From BioNova Blocker & Value Log)</th>
+                  <th>Accountable Owner</th>
+                  <th>Target Date</th>
+                  <th>Unlocks</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>1. Close NovaAssist Chat History Bulk Export & SharePoint Opt-In</strong></td>
+                  <td>Jordan Hayes / Google Eng</td>
+                  <td>Q2 2026</td>
+                  <td>Gate 4 + L02 Cash</td>
+                </tr>
+                <tr>
+                  <td><strong>2. Complete RegVault DMS MCP & GxP Validation for BNV-04/13</strong></td>
+                  <td>Elena Rostova / Mahesh K.</td>
+                  <td>Q2–Q3 2026</td>
+                  <td>Gate 3 + Clinical Scale</td>
+                </tr>
+                <tr>
+                  <td><strong>3. Reconcile L01/L03 Cost Ledger & Approve F01 Loaded Rates</strong></td>
+                  <td>BioNova Finance / Adrian Sterling</td>
+                  <td>Q2 2026</td>
+                  <td>Col 1 Realized ROI %</td>
+                </tr>
+                <tr>
+                  <td><strong>4. Enable Workflow Telemetry Tagging (A07) & CoP Pulse Survey</strong></td>
+                  <td>Nitin Aggarwal / Jordan Pinner</td>
+                  <td>Q2 2026</td>
+                  <td>Tier A/B Confidence</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- F08 Multi-Party Sign-Off Strip -->
+          <div style="background:#051c2c; color:#fff; border-radius:10px; padding:10px 14px; display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; font-size:11px;">
+            <div>
+              <div style="color:#38bdf8; font-size:9.5px; font-weight:800; text-transform:uppercase;">Business Sponsor</div>
+              <div style="font-weight:700;">Marcus Vance (CIO)</div>
+              <div style="color:#fbbf24; font-size:10px;">🟡 Pending Review</div>
+            </div>
+            <div>
+              <div style="color:#38bdf8; font-size:9.5px; font-weight:800; text-transform:uppercase;">Platform & Analytics</div>
+              <div style="font-weight:700;">Jordan Hayes</div>
+              <div style="color:#34d399; font-size:10px;">🟢 Telemetry Verified</div>
+            </div>
+            <div>
+              <div style="color:#38bdf8; font-size:9.5px; font-weight:800; text-transform:uppercase;">BioNova Finance (F08)</div>
+              <div style="font-weight:700;">Finance Controller</div>
+              <div style="color:#fbbf24; font-size:10px;">🟡 Awaiting L01/F01</div>
+            </div>
+            <div>
+              <div style="color:#38bdf8; font-size:9.5px; font-weight:800; text-transform:uppercase;">Security & GxP QA</div>
+              <div style="font-weight:700;">Mark / Dru / QA Lead</div>
+              <div style="color:#fb7185; font-size:10px;">🛑 Caveat: Gate 3 Open</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

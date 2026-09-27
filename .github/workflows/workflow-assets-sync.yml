@@ -1,0 +1,39 @@
+name: ScoreX Workflow Assets Sync & Integrity Guard
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  verify-workflow-assets:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: |
+          npm install
+          cd client && npm install
+
+      - name: Build Application
+        run: |
+          CI=false npm run build
+
+      - name: Verify Workflow Assets Integrity
+        run: |
+          test -f client/public/workflows/01_cloud_architect_workflow.gif || exit 1
+          test -f client/public/workflows/02_vp_engineering_author_workflow.gif || exit 1
+          test -f client/public/workflows/03_ciso_secops_workflow.gif || exit 1
+          test -f client/public/workflows/04_csuite_finops_workflow.gif || exit 1
+          test -f client/public/workflows/frames/01_cloud_architect_workflow/manifest.json || exit 1
+          echo "✅ All persona workflow asset files & frame manifests verified!"

@@ -1,0 +1,73 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-01-22",
+  "total_questions": 100,
+  "description": "Curated Databricks Knowledge Base - 100 Expert Q&As",
+  "categories": {
+    "platform_governance": 15,
+    "data_engineering": 20,
+    "analytics_bi": 15,
+    "machine_learning": 20,
+    "generative_ai": 20,
+    "operational_excellence": 10
+  },
+  "questions": [
+    {
+      "id": 1,
+      "question": "What is Unity Catalog?",
+      "answer": "**Unity Catalog** is Databricks' unified governance solution for data and AI assets across clouds. It provides a single place to manage access control, audit, lineage, and data discovery.\n\n**Key Features:**\n• Centralized governance across AWS, Azure, and GCP\n• Fine-grained access control (table, column, row-level)\n• Automated data lineage tracking\n• Built-in search and discovery\n• Audit logging for compliance\n\n**Why it matters:** Eliminates governance silos and provides enterprise-grade security without sacrificing productivity.",
+      "category": "platform_governance",
+      "pillar": "platform_governance",
+      "complexity": "beginner",
+      "keywords": ["unity catalog", "governance", "security", "access control"],
+      "tags": ["governance", "security", "catalog", "essential"],
+      "official_docs_link": "https://docs.databricks.com/en/data-governance/unity-catalog/index.html"
+    },
+    {
+      "id": 2,
+      "question": "How does Unity Catalog differ from Hive Metastore?",
+      "answer": "**Unity Catalog** is a major upgrade:\n\n**Unity Catalog:**\n• Multi-cloud (AWS, Azure, GCP)\n• Column & row-level security\n• Automatic data lineage\n• Centralized for entire organization\n• Modern lakehouse architecture\n\n**Hive Metastore:**\n• Single workspace only\n• Table-level security\n• Manual lineage tracking\n• Per-workspace isolation\n• Legacy Hadoop design\n\n**Migration:** Databricks provides zero-downtime migration tools.",
+      "category": "platform_governance",
+      "pillar": "platform_governance",
+      "complexity": "intermediate",
+      "keywords": ["unity catalog", "hive metastore", "migration", "comparison"],
+      "tags": ["governance", "migration", "architecture"],
+      "official_docs_link": "https://docs.databricks.com/en/data-governance/unity-catalog/migrate.html"
+    },
+    {
+      "id": 3,
+      "question": "What are the three levels of Unity Catalog namespace?",
+      "answer": "Unity Catalog uses a **three-level namespace**:\n\n**1. Catalog** (Top Level)\n• Highest organization level\n• Typically one per business unit/environment\n• Example: `prod_catalog`, `dev_catalog`\n\n**2. Schema** (Database)\n• Logical grouping of tables\n• Example: `sales_data`, `customer_analytics`\n\n**3. Table/View**\n• Actual data assets\n• Example: `transactions`, `user_profiles`\n\n**Full Path:** `catalog.schema.table`\n**Example:** `prod.sales.transactions`\n\n**Benefits:** Clear hierarchy, easy permission management, supports multi-tenancy",
+      "category": "platform_governance",
+      "pillar": "platform_governance",
+      "complexity": "beginner",
+      "keywords": ["unity catalog", "namespace", "catalog", "schema", "organization"],
+      "tags": ["governance", "architecture", "essential"],
+      "official_docs_link": "https://docs.databricks.com/en/data-governance/unity-catalog/index.html"
+    },
+    {
+      "id": 4,
+      "question": "What is Delta Lake?",
+      "answer": "**Delta Lake** is an open-source storage framework that brings ACID transactions to data lakes.\n\n**Key Features:**\n• **ACID Transactions** - Data reliability\n• **Time Travel** - Query historical versions\n• **Schema Evolution** - Handle schema changes\n• **Unified Batch & Streaming** - One framework\n• **Scalable Metadata** - Petabyte-scale support\n\n**Why Delta Lake:**\n• Prevents data corruption\n• Enables reliable pipelines\n• Simplifies data management\n• Industry standard (Linux Foundation)\n\n**Use Case:** Every data engineering pipeline should use Delta format for reliability.",
+      "category": "data_engineering",
+      "pillar": "data_engineering",
+      "complexity": "beginner",
+      "keywords": ["delta lake", "acid", "transactions", "data lake"],
+      "tags": ["data engineering", "essential", "storage"],
+      "official_docs_link": "https://docs.databricks.com/en/delta/index.html"
+    },
+    {
+      "id": 5,
+      "question": "What is Delta Live Tables (DLT)?",
+      "answer": "**Delta Live Tables** is a declarative framework for building reliable, maintainable data pipelines.\n\n**Key Features:**\n• **Declarative**: Define WHAT, not HOW\n• **Auto-Scaling**: Automatic compute management\n• **Data Quality**: Built-in expectations\n• **Dependency Management**: Automatic orchestration\n• **Continuous Processing**: Real-time & batch\n\n**Example:**\n```python\n@dlt.table\ndef customers_cleaned():\n  return (\n    dlt.read(\"customers_raw\")\n      .filter(col(\"email\").isNotNull())\n  )\n```\n\n**Benefits:** 10x faster pipeline development, automatic error handling, built-in monitoring",
+      "category": "data_engineering",
+      "pillar": "data_engineering",
+      "complexity": "intermediate",
+      "keywords": ["delta live tables", "dlt", "pipelines", "etl"],
+      "tags": ["data engineering", "pipelines", "automation"],
+      "official_docs_link": "https://docs.databricks.com/en/delta-live-tables/index.html"
+    }
+  ]
+}
+
+

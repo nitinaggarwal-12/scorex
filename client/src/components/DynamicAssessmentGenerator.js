@@ -1,0 +1,997 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  FiCpu, 
+  FiCheckCircle, 
+  FiPlay, 
+  FiAward, 
+  FiLayers, 
+  FiEdit2, 
+  FiPlus, 
+  FiTrash2, 
+  FiArrowRight,
+  FiHelpCircle,
+  FiShield,
+  FiDollarSign,
+  FiDatabase,
+  FiActivity,
+  FiGrid,
+  FiClock,
+  FiUser
+} from 'react-icons/fi';
+import { HiSparkles } from 'react-icons/hi';
+import toast from 'react-hot-toast';
+import dynamicAssessmentService from '../services/dynamicAssessmentService';
+
+const Container = styled.div`
+  min-height: 100vh;
+  background: #f8fafc;
+  color: #0f172a;
+  padding: 108px 36px 60px;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    padding: 92px 16px 40px;
+  }
+`;
+
+const ContentWrapper = styled.div`
+  max-width: 1560px;
+  margin: 0 auto;
+  width: 100%;
+`;
+
+const HeaderSection = styled.div`
+  text-align: center;
+  margin-bottom: 40px;
+`;
+
+const Badge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  color: #c084fc;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+`;
+
+const Title = styled.h1`
+  font-size: 2.75rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+`;
+
+const Subtitle = styled.p`
+  font-size: 1.125rem;
+  color: #475569;
+  max-width: 750px;
+  margin: 0 auto;
+  line-height: 1.6;
+`;
+
+const PromptCard = styled.div`
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 36px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  margin-bottom: 40px;
+
+  @media (max-width: 768px) {
+    padding: 20px 16px;
+    border-radius: 18px;
+    margin-bottom: 24px;
+  }
+`;
+
+const TextArea = styled.textarea`
+  width: 100%;
+  min-height: 120px;
+  background: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 16px;
+  padding: 18px;
+  color: #0f172a;
+  font-size: 1rem;
+  line-height: 1.6;
+  resize: vertical;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: #6366f1;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  }
+
+  &::placeholder {
+    color: #94a3b8;
+  }
+`;
+
+const PresetGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+  margin-top: 18px;
+  margin-bottom: 24px;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const PresetChip = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: #334155;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 48px;
+
+  &:hover {
+    background: #eef2ff;
+    border-color: #6366f1;
+    color: #4f46e5;
+    transform: translateY(-2px);
+  }
+
+  svg {
+    color: #6366f1;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+`;
+
+const ControlsRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+`;
+
+const MetaInputs = styled.div`
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex: 1;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    width: 100%;
+  }
+`;
+
+const Input = styled.input`
+  background: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: #0f172a;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+  flex: 1;
+  min-height: 44px;
+
+  &:focus {
+    outline: none;
+    border-color: #6366f1;
+    background: #ffffff;
+  }
+
+  &::placeholder {
+    color: #94a3b8;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+`;
+
+const TierSection = styled.div`
+  margin: 20px 0 24px;
+`;
+
+const TierSectionLabel = styled.div`
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #475569;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const TierSelectorGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+
+  @media (max-width: 860px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const TierCard = styled.div`
+  background: ${props => props.$selected ? '#eef2ff' : '#f8fafc'};
+  border: 2px solid ${props => props.$selected ? '#6366f1' : '#e2e8f0'};
+  border-radius: 14px;
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  box-shadow: ${props => props.$selected ? '0 4px 14px rgba(99, 102, 241, 0.18)' : 'none'};
+
+  &:hover {
+    border-color: #6366f1;
+    background: ${props => props.$selected ? '#eef2ff' : '#ffffff'};
+    transform: translateY(-2px);
+  }
+`;
+
+const TierHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+`;
+
+const TierTitle = styled.div`
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: ${props => props.$selected ? '#4f46e5' : '#0f172a'};
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const TierBadge = styled.span`
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  background: ${props => props.$highlight ? 'rgba(16, 185, 129, 0.2)' : 'rgba(148, 163, 184, 0.15)'};
+  color: ${props => props.$highlight ? '#34d399' : '#94a3b8'};
+  border: 1px solid ${props => props.$highlight ? 'rgba(16, 185, 129, 0.4)' : 'rgba(255, 255, 255, 0.1)'};
+`;
+
+const TierDesc = styled.div`
+  font-size: 0.82rem;
+  color: #475569;
+  line-height: 1.45;
+  margin-bottom: 10px;
+`;
+
+const TierStats = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.76rem;
+  color: ${props => props.$selected ? '#c7d2fe' : '#64748b'};
+  font-weight: 600;
+`;
+
+const GenerateButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 28px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+  transition: all 0.2s ease;
+  min-height: 48px;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(99, 102, 241, 0.6);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+`;
+
+const FrameworkPreview = styled.div`
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 36px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  margin-bottom: 40px;
+
+  @media (max-width: 768px) {
+    padding: 20px 16px;
+    border-radius: 18px;
+  }
+`;
+
+const FrameworkHeader = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 24px;
+  margin-bottom: 32px;
+  gap: 24px;
+  flex-wrap: wrap;
+`;
+
+const FrameworkInfo = styled.div`
+  flex: 1;
+`;
+
+const FrameworkTitle = styled.h2`
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 8px;
+`;
+
+const FrameworkDesc = styled.p`
+  font-size: 1.05rem;
+  color: #94a3b8;
+  line-height: 1.6;
+`;
+
+const ActionsGroup = styled.div`
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+`;
+
+const SecondaryButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  padding: 12px 22px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+`;
+
+const PrimaryButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: none;
+  color: #ffffff;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(16, 185, 129, 0.45);
+  }
+`;
+
+const DimensionsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 24px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const DimensionCard = styled.div`
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 24px;
+`;
+
+const DimensionHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+`;
+
+const DimensionTitle = styled.h3`
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #38bdf8;
+`;
+
+const QuestionCount = styled.span`
+  font-size: 0.8rem;
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+`;
+
+const DimensionDesc = styled.p`
+  font-size: 0.9rem;
+  color: #94a3b8;
+  margin-bottom: 16px;
+  line-height: 1.5;
+`;
+
+const QuestionList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const QuestionItem = styled.div`
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 0.875rem;
+  color: #e2e8f0;
+  border-left: 3px solid #818cf8;
+`;
+
+// Start Assessment Modal
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+`;
+
+const ModalContent = styled.div`
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 24px;
+  padding: 36px;
+  max-width: 550px;
+  width: 100%;
+  color: white;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+`;
+
+const FormGroup = styled.div`
+  margin-bottom: 20px;
+`;
+
+const Label = styled.label`
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #cbd5e1;
+  margin-bottom: 8px;
+`;
+
+const PRESET_PROMPTS = [
+  {
+    title: "Cloud Security & Zero Trust Architecture",
+    prompt: "Create a comprehensive Cloud Security & Zero Trust readiness assessment covering identity isolation, network segmentation, secrets management, automated compliance, and threat observability.",
+    icon: FiShield
+  },
+  {
+    title: "FinOps & Cloud Cost Optimization",
+    prompt: "Design a FinOps and Cloud Cost Optimization maturity assessment covering spend visibility, unit economics, automated rightsizing, rate optimization commitments, and organizational FinOps culture.",
+    icon: FiDollarSign
+  },
+  {
+    title: "Agentic AI & Multi-Agent Architecture",
+    prompt: "Design an Agentic AI Architecture readiness assessment covering autonomous agent orchestration, tool integration protocols, evaluation guardrails, memory/context caching, and human-in-the-loop controls.",
+    icon: FiCpu
+  },
+  {
+    title: "Data Mesh & Domain Governance",
+    prompt: "Create a Data Mesh maturity assessment evaluating domain-oriented data ownership, data-as-a-product standards, self-serve data platform infrastructure, and federated computational governance.",
+    icon: FiDatabase
+  },
+  {
+    title: "Healthcare HIPAA & FHIR Data Readiness",
+    prompt: "Design a Healthcare & Life Sciences Data Readiness assessment covering HIPAA/HITRUST compliance, FHIR interoperability, clinical data de-identification, and real-world evidence analytics.",
+    icon: FiActivity
+  }
+];
+
+const DynamicAssessmentGenerator = () => {
+  const navigate = useNavigate();
+  const [prompt, setPrompt] = useState('');
+  const [industry, setIndustry] = useState('');
+  const [targetAudience, setTargetAudience] = useState('');
+  const [selectedTier, setSelectedTier] = useState('deep_dive'); // 'rapid' | 'deep_dive' | 'comprehensive'
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedFramework, setGeneratedFramework] = useState(null);
+  
+  // Modal state for starting assessment
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [customerName, setCustomerName] = useState('');
+  const [useCase, setUseCase] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
+  const [isStarting, setIsStarting] = useState(false);
+
+  const handleGenerate = async (customPrompt) => {
+    const textToUse = customPrompt || prompt;
+    if (!textToUse || !textToUse.trim()) {
+      toast.error('Please enter a description or select an assessment prompt');
+      return;
+    }
+
+    setIsGenerating(true);
+    setGeneratedFramework(null);
+
+    try {
+      toast.loading('Generating custom assessment framework with Gemini 3.8...', { id: 'generating' });
+      const response = await dynamicAssessmentService.generateFramework(textToUse.trim(), {
+        industry,
+        targetAudience,
+        tier: selectedTier
+      });
+
+      if (response.success && response.framework) {
+        setGeneratedFramework(response.framework);
+        toast.success(`Assessment framework "${response.framework.title}" generated!`, { id: 'generating' });
+      } else {
+        toast.error('Could not generate framework. Please try again.', { id: 'generating' });
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.error || 'Failed to generate assessment', { id: 'generating' });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handlePromoteAsType = async () => {
+    if (!generatedFramework) return;
+
+    try {
+      toast.loading('Promoting framework as official Assessment Type...', { id: 'promoting' });
+      const response = await dynamicAssessmentService.saveAssessmentType({
+        title: generatedFramework.title,
+        subtitle: generatedFramework.subtitle,
+        description: generatedFramework.description,
+        icon: generatedFramework.icon || 'FiAward',
+        badge: generatedFramework.badge || 'Custom',
+        color: generatedFramework.color || '#6366f1',
+        framework: generatedFramework,
+        isPromoted: true
+      });
+
+      if (response.success) {
+        toast.success(`"${generatedFramework.title}" is now live in the Assessments menu!`, { id: 'promoting' });
+        // Force refresh or notify
+        window.dispatchEvent(new Event('assessment-types-updated'));
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to promote assessment type', { id: 'promoting' });
+    }
+  };
+
+  const handleStartAssessment = async () => {
+    if (!customerName || !customerName.trim()) {
+      toast.error('Please enter Organization / Customer name');
+      return;
+    }
+
+    setIsStarting(true);
+    try {
+      const safeTypeKey = (generatedFramework?.typeKey || generatedFramework?.title || 'custom_assessment')
+        .toLowerCase()
+        .replace(/[^a-z0-9_]+/g, '_')
+        .replace(/^_+|_+$/g, '') || `custom_${Date.now()}`;
+
+      const instance = await dynamicAssessmentService.createInstance({
+        customerName: customerName.trim(),
+        useCase: useCase.trim() || generatedFramework?.title || 'Enterprise Architecture Assessment',
+        contactEmail: contactEmail.trim(),
+        typeKey: safeTypeKey,
+        frameworkSnapshot: {
+          ...generatedFramework,
+          typeKey: safeTypeKey
+        }
+      });
+
+      if (instance && instance.id) {
+        toast.success('Assessment session created!');
+        setIsModalOpen(false);
+        navigate(`/assessments/run/instance/${instance.id}`);
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to start assessment');
+    } finally {
+      setIsStarting(false);
+    }
+  };
+
+  const handleSuggestQuestionsForDim = async (dimIdx, dim) => {
+    try {
+      toast.loading(`AI drafting more questions for "${dim.name}"...`, { id: `ai-q-${dimIdx}` });
+      const res = await dynamicAssessmentService.suggestDimensionQuestions(
+        dim.name,
+        dim.description,
+        industry,
+        targetAudience
+      );
+
+      if (res && res.questions && res.questions.length > 0) {
+        setGeneratedFramework(prev => {
+          const next = JSON.parse(JSON.stringify(prev));
+          const currentQs = next.dimensions[dimIdx].questions || [];
+          next.dimensions[dimIdx].questions = [...currentQs, ...res.questions];
+          return next;
+        });
+        toast.success(`✨ Added ${res.questions.length} AI-generated questions to ${dim.name}!`, { id: `ai-q-${dimIdx}` });
+      } else {
+        toast.error('No additional questions generated', { id: `ai-q-${dimIdx}` });
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to suggest questions', { id: `ai-q-${dimIdx}` });
+    }
+  };
+
+  const handleTrySample = async () => {
+    if (!generatedFramework) return;
+    try {
+      toast.loading(`Spinning up sample for "${generatedFramework.title}"...`, { id: 'sample-run' });
+      const result = await dynamicAssessmentService.generateSampleForType(generatedFramework.typeKey);
+      toast.success('Sample assessment loaded!', { id: 'sample-run' });
+      navigate(`/assessments/run/instance/${result.instanceId}`);
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to generate sample assessment', { id: 'sample-run' });
+    }
+  };
+
+  const handleOpenStartModal = () => {
+    if (!customerName) setCustomerName('Enterprise Client Corp');
+    if (!useCase && generatedFramework) setUseCase(`${generatedFramework.title} Initiative`);
+    if (!contactEmail) setContactEmail('lead.evaluator@enterprise.com');
+    setIsModalOpen(true);
+  };
+
+  return (
+    <Container>
+      <ContentWrapper>
+        <HeaderSection>
+          <Badge>
+            <HiSparkles /> Powered by Google Gemini 3.8 Flash
+          </Badge>
+          <Title>AI Assessment Generator</Title>
+          <Subtitle>
+            Describe any architecture, domain, technology stack, or business discipline.
+            Gemini 3.8 will architect a complete, tailored maturity assessment with dimensional questions, scoring criteria, and actionable recommendations.
+          </Subtitle>
+        </HeaderSection>
+
+        {/* Prompt Input Card */}
+        <PromptCard>
+          <TextArea 
+            placeholder="e.g. Create a FinOps and Cloud Cost Optimization assessment covering visibility, compute rightsizing, anomaly detection, rate commitments, and FinOps culture..."
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+          />
+
+          <PresetGrid>
+            {PRESET_PROMPTS.map((preset, idx) => {
+              const IconComponent = preset.icon;
+              return (
+                <PresetChip 
+                  key={idx}
+                  onClick={() => {
+                    setPrompt(preset.prompt);
+                    handleGenerate(preset.prompt);
+                  }}
+                >
+                  <IconComponent />
+                  <span>{preset.title}</span>
+                </PresetChip>
+              );
+            })}
+          </PresetGrid>
+
+          {/* Assessment Depth Tier Selector */}
+          <TierSection>
+            <TierSectionLabel>
+              <FiLayers color="#818cf8" /> Assessment Diagnostic Depth Tier:
+            </TierSectionLabel>
+            <TierSelectorGrid>
+              <TierCard 
+                $selected={selectedTier === 'rapid'}
+                onClick={() => setSelectedTier('rapid')}
+              >
+                <TierHeader>
+                  <TierTitle $selected={selectedTier === 'rapid'}>
+                    ⚡ Tier 1: Rapid Diagnostic
+                  </TierTitle>
+                  <TierBadge>Fast Pulse</TierBadge>
+                </TierHeader>
+                <TierDesc>
+                  6 to 8 questions focused on core high-priority bottlenecks and rapid risk heatmaps.
+                </TierDesc>
+                <TierStats $selected={selectedTier === 'rapid'}>
+                  <span>⏱️ ~8 Mins</span>
+                  <span>•</span>
+                  <span>📋 6–8 Questions</span>
+                </TierStats>
+              </TierCard>
+
+              <TierCard 
+                $selected={selectedTier === 'deep_dive'}
+                onClick={() => setSelectedTier('deep_dive')}
+              >
+                <TierHeader>
+                  <TierTitle $selected={selectedTier === 'deep_dive'}>
+                    🎯 Tier 2: Deep-Dive (Recommended)
+                  </TierTitle>
+                  <TierBadge $highlight={true}>⭐ Recommended</TierBadge>
+                </TierHeader>
+                <TierDesc>
+                  10 to 14 questions covering 5 pillars with 3-phase transformation roadmap and FinOps NPV ROI.
+                </TierDesc>
+                <TierStats $selected={selectedTier === 'deep_dive'}>
+                  <span>⏱️ ~15 Mins</span>
+                  <span>•</span>
+                  <span>📋 10–14 Questions</span>
+                </TierStats>
+              </TierCard>
+
+              <TierCard 
+                $selected={selectedTier === 'comprehensive'}
+                onClick={() => setSelectedTier('comprehensive')}
+              >
+                <TierHeader>
+                  <TierTitle $selected={selectedTier === 'comprehensive'}>
+                    🏢 Tier 3: Enterprise Audit
+                  </TierTitle>
+                  <TierBadge>Due Diligence</TierBadge>
+                </TierHeader>
+                <TierDesc>
+                  24 to 32 questions across 6+ pillars for complete board-level architecture audit.
+                </TierDesc>
+                <TierStats $selected={selectedTier === 'comprehensive'}>
+                  <span>⏱️ ~45 Mins</span>
+                  <span>•</span>
+                  <span>📋 24–32 Questions</span>
+                </TierStats>
+              </TierCard>
+            </TierSelectorGrid>
+          </TierSection>
+
+          <ControlsRow>
+            <MetaInputs>
+              <Input 
+                placeholder="Industry (Optional, e.g. Healthcare)"
+                value={industry}
+                onChange={(e) => setIndustry(e.target.value)}
+              />
+              <Input 
+                placeholder="Target Audience (e.g. CTO, Architects)"
+                value={targetAudience}
+                onChange={(e) => setTargetAudience(e.target.value)}
+              />
+            </MetaInputs>
+
+            <GenerateButton 
+              disabled={isGenerating || !prompt.trim()}
+              onClick={() => handleGenerate(prompt)}
+            >
+              <HiSparkles />
+              {isGenerating ? 'Architecting Framework...' : 'Generate Assessment'}
+            </GenerateButton>
+          </ControlsRow>
+        </PromptCard>
+
+        {/* Framework Preview */}
+        {generatedFramework && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <FrameworkPreview>
+              <div style={{ background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '12px', padding: '12px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+                <span style={{ color: '#6ee7b7', fontSize: '0.9rem', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                  ✓ Framework automatically saved to Assessment Catalog & Templates registry.
+                </span>
+                <button
+                  onClick={() => navigate('/assessments/custom-hub')}
+                  style={{ background: 'none', border: 'none', color: '#38bdf8', fontSize: '0.88rem', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                >
+                  View All Templates →
+                </button>
+              </div>
+
+              <FrameworkHeader>
+                <FrameworkInfo>
+                  <Badge style={{ background: 'rgba(56, 189, 248, 0.2)', borderColor: 'rgba(56, 189, 248, 0.4)', color: '#38bdf8' }}>
+                    {generatedFramework.badge || 'Custom Assessment'}
+                  </Badge>
+                  <FrameworkTitle>{generatedFramework.title}</FrameworkTitle>
+                  <FrameworkDesc>{generatedFramework.description}</FrameworkDesc>
+                </FrameworkInfo>
+
+                <ActionsGroup>
+                  <SecondaryButton onClick={handleTrySample}>
+                    🧪 Try Sample
+                  </SecondaryButton>
+                  <SecondaryButton onClick={handlePromoteAsType}>
+                    <FiAward />
+                    Pin to Nav Menu
+                  </SecondaryButton>
+                  <PrimaryButton onClick={handleOpenStartModal}>
+                    <FiPlay />
+                    Start Assessment Now
+                  </PrimaryButton>
+                </ActionsGroup>
+              </FrameworkHeader>
+
+              <h4 style={{ fontSize: '1.25rem', marginBottom: '20px', color: '#e2e8f0' }}>
+                Framework Dimensions & Capabilities ({generatedFramework.dimensions.length} Dimensions)
+              </h4>
+
+              <DimensionsGrid>
+                {generatedFramework.dimensions.map((dim, idx) => (
+                  <DimensionCard key={dim.id || idx}>
+                    <DimensionHeader>
+                      <DimensionTitle>{dim.name}</DimensionTitle>
+                      <QuestionCount>{dim.questions?.length || 0} Questions</QuestionCount>
+                    </DimensionHeader>
+                    <DimensionDesc>{dim.description}</DimensionDesc>
+
+                    <QuestionList>
+                      {(dim.questions || []).map((q, qIdx) => (
+                        <QuestionItem key={q.id || qIdx}>
+                          <strong>Q{qIdx + 1}:</strong> {q.text}
+                        </QuestionItem>
+                      ))}
+                    </QuestionList>
+
+                    <div style={{ marginTop: '14px', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                      <button
+                        onClick={() => handleSuggestQuestionsForDim(idx, dim)}
+                        style={{
+                          background: 'rgba(99, 102, 241, 0.15)',
+                          border: '1px solid rgba(139, 92, 246, 0.4)',
+                          color: '#c084fc',
+                          borderRadius: '8px',
+                          padding: '6px 12px',
+                          fontSize: '0.78rem',
+                          fontWeight: '700',
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px'
+                        }}
+                      >
+                        <HiSparkles /> AI Suggest More Questions
+                      </button>
+                    </div>
+                  </DimensionCard>
+                ))}
+              </DimensionsGrid>
+            </FrameworkPreview>
+          </motion.div>
+        )}
+
+        {/* Start Assessment Modal */}
+        <AnimatePresence>
+          {isModalOpen && (
+            <ModalOverlay onClick={() => setIsModalOpen(false)}>
+              <ModalContent onClick={(e) => e.stopPropagation()}>
+                <h2 style={{ fontSize: '1.75rem', fontWeight: '700', marginBottom: '8px' }}>
+                  Start Assessment
+                </h2>
+                <p style={{ color: '#94a3b8', marginBottom: '24px', fontSize: '0.95rem' }}>
+                  Configure the target organization and use case for this assessment run.
+                </p>
+
+                <FormGroup>
+                  <Label>Customer / Organization Name *</Label>
+                  <Input 
+                    style={{ width: '100%' }}
+                    placeholder="e.g. Acme Financial Services"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    autoFocus
+                  />
+                </FormGroup>
+
+                <FormGroup>
+                  <Label>Use Case / Initiative (Optional)</Label>
+                  <Input 
+                    style={{ width: '100%' }}
+                    placeholder="e.g. Hybrid Cloud Zero Trust Migration"
+                    value={useCase}
+                    onChange={(e) => setUseCase(e.target.value)}
+                  />
+                </FormGroup>
+
+                <FormGroup>
+                  <Label>Contact Email (Optional)</Label>
+                  <Input 
+                    style={{ width: '100%' }}
+                    type="email"
+                    placeholder="architect@organization.com"
+                    value={contactEmail}
+                    onChange={(e) => setContactEmail(e.target.value)}
+                  />
+                </FormGroup>
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '28px' }}>
+                  <SecondaryButton onClick={() => setIsModalOpen(false)}>
+                    Cancel
+                  </SecondaryButton>
+                  <PrimaryButton onClick={handleStartAssessment} disabled={isStarting}>
+                    {isStarting ? 'Starting...' : 'Launch Assessment'}
+                    <FiArrowRight />
+                  </PrimaryButton>
+                </div>
+              </ModalContent>
+            </ModalOverlay>
+          )}
+        </AnimatePresence>
+      </ContentWrapper>
+    </Container>
+  );
+};
+
+export default DynamicAssessmentGenerator;

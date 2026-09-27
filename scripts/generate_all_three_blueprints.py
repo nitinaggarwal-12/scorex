@@ -1,0 +1,488 @@
+import os
+
+# ==============================================================================
+# BLUEPRINT 2: FINOPS CHARGEBACK & CAPACITY GOVERNOR
+# ==============================================================================
+def generate_finops_xml():
+    return """<mxfile host="app.diagrams.net" modified="2026-09-09T17:50:00.000Z" agent="ScoreX Enterprise Architecture Engine" version="24.7.5">
+  <diagram id="finops_target_state_chargeback" name="Target State: Automated FinOps Chargeback &amp; Cloud Capacity Governor">
+    <mxGraphModel dx="1600" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="920" background="#0B111E" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- MAIN TITLE -->
+        <mxCell id="main_title" value="&lt;b style=&quot;font-size:28px;color:#FFFFFF;letter-spacing:-0.5px;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;&quot;&gt;Target State: Automated FinOps Chargeback &amp;amp; Cloud Capacity Governor&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="40" y="32" width="1200" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- ROW 1: 1. Multi-Cloud Cost Ingestion -->
+        <mxCell id="row1_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#101827;strokeColor=#1E293B;strokeWidth=1.5;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="95" width="1520" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_row1" value="&lt;b style=&quot;font-size:16px;color:#FFFFFF;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;&quot;&gt;1. Multi-Cloud&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Cost Ingestion&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="60" y="145" width="160" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: Partitioned BigQuery FOCUS 1.0 -->
+        <mxCell id="card_focus" value="&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; style=&quot;width:100%;height:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:40px;text-align:center;vertical-align:middle;&quot;&gt;&lt;div style=&quot;width:32px;height:32px;border-radius:50%;background:#1E293B;display:flex;align-items:center;justify-content:center;font-size:18px;color:#38BDF8;&quot;&gt;📊&lt;/div&gt;&lt;/td&gt;&lt;td style=&quot;padding-left:12px;vertical-align:middle;&quot;&gt;&lt;b style=&quot;font-size:14.5px;color:#FFFFFF;&quot;&gt;Partitioned BigQuery&lt;br&gt;FOCUS 1.0&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Unified Billing Export&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=left;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="270" y="135" width="240" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Multi-Cloud Ingestion Target Box (aws, Azure, GCP, Cloud) -->
+        <mxCell id="box_clouds" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="540" y="125" width="180" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_clouds" value="&lt;table style=&quot;width:100%;height:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:13px;color:#F97316;font-weight:bold;&quot;&gt;aws&lt;/td&gt;&lt;td style=&quot;font-size:13px;color:#38BDF8;font-weight:bold;&quot;&gt;Azure&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:13px;color:#38BDF8;font-weight:bold;&quot;&gt;GCP&lt;/td&gt;&lt;td style=&quot;font-size:13px;color:#EAB308;font-weight:bold;&quot;&gt;☁️&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="box_clouds">
+          <mxGeometry x="0" y="0" width="180" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Connectors Focus -> Clouds (Step 1 and Step 2) -->
+        <mxCell id="e_focus_step1" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 1&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_focus" target="box_clouds">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="525" y="150"/>
+              <mxPoint x="525" y="150"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_focus_step2" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 2&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_focus" target="box_clouds">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="525" y="190"/>
+              <mxPoint x="525" y="190"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Card: Real-time Pricing API -->
+        <mxCell id="card_pricing" value="&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; style=&quot;width:100%;height:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:32px;text-align:center;&quot;&gt;&lt;span style=&quot;font-size:20px;color:#38BDF8;&quot;&gt;⚙️&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;padding-left:8px;&quot;&gt;&lt;b style=&quot;font-size:14px;color:#FFFFFF;&quot;&gt;Real-time&lt;br&gt;Pricing API&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=left;verticalAlign=middle;padding=6;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="750" y="145" width="160" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_clouds_pricing" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="box_clouds" target="card_pricing">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Badge: FOCUS 1.0 Schema Standardization -->
+        <mxCell id="badge_focus" value="&lt;b style=&quot;font-size:12px;color:#34D399;&quot;&gt;✓ FOCUS 1.0&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Schema&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Standardization&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064E3B;strokeColor=#10B981;strokeWidth=1.5;align=left;verticalAlign=middle;padding=12;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="950" y="130" width="160" height="90" as="geometry"/>
+        </mxCell>
+
+
+        <!-- ROW 2: 2. Continuous Allocation & Metering -->
+        <mxCell id="row2_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#101827;strokeColor=#1E293B;strokeWidth=1.5;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="275" width="1520" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_row2" value="&lt;b style=&quot;font-size:16px;color:#FFFFFF;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;&quot;&gt;2. Continuous&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Allocation &amp;amp;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Metering&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="60" y="325" width="160" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: GKE Autopilot + OpenCost -->
+        <mxCell id="card_gke" value="&lt;div style=&quot;padding:8px;&quot;&gt;&lt;div style=&quot;display:flex;align-items:center;gap:6px;&quot;&gt;&lt;span style=&quot;font-size:16px;color:#38BDF8;&quot;&gt;⎈&lt;/span&gt;&lt;b style=&quot;font-size:14px;color:#FFFFFF;&quot;&gt;GKE Autopilot&lt;/b&gt;&lt;/div&gt;&lt;div style=&quot;margin-top:10px;display:flex;align-items:center;gap:6px;&quot;&gt;&lt;span style=&quot;font-size:16px;color:#34D399;&quot;&gt;🍃&lt;/span&gt;&lt;span style=&quot;font-size:13px;color:#34D399;font-weight:bold;&quot;&gt;OpenCost&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=left;verticalAlign=middle;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="270" y="315" width="180" height="90" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: EKS Pod-Level Metering + OpenCost & Kubecost -->
+        <mxCell id="card_eks" value="&lt;div style=&quot;padding:8px;&quot;&gt;&lt;div style=&quot;display:flex;align-items:center;gap:6px;&quot;&gt;&lt;span style=&quot;font-size:16px;color:#F97316;&quot;&gt;⎈&lt;/span&gt;&lt;b style=&quot;font-size:14px;color:#FFFFFF;&quot;&gt;EKS Pod-Level Metering&lt;/b&gt;&lt;/div&gt;&lt;div style=&quot;margin-top:10px;display:flex;align-items:center;gap:6px;&quot;&gt;&lt;span style=&quot;font-size:16px;color:#F97316;&quot;&gt;🔥&lt;/span&gt;&lt;span style=&quot;font-size:13px;color:#F97316;font-weight:bold;&quot;&gt;OpenCost &amp;amp; Kubecost&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=left;verticalAlign=middle;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="480" y="315" width="220" height="90" as="geometry"/>
+        </mxCell>
+
+        <!-- Connector Focus -> GKE (Step 2) -->
+        <mxCell id="e_focus_gke" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 2&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_focus" target="card_gke">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- Connector Focus -> EKS (Step 2) -->
+        <mxCell id="e_focus_eks" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_focus" target="card_eks">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="490" y="260"/>
+              <mxPoint x="590" y="260"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Tag Items -->
+        <mxCell id="tag1" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;&quot;&gt;&lt;span style=&quot;font-size:16px;&quot;&gt;🏷️&lt;/span&gt;&lt;b style=&quot;font-size:13px;color:#FFFFFF;&quot;&gt;Business Unit Tag&lt;br&gt;Enforcement&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=left;verticalAlign=middle;padding=6;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="740" y="310" width="170" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="tag2" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;&quot;&gt;&lt;span style=&quot;font-size:16px;&quot;&gt;🏷️&lt;/span&gt;&lt;b style=&quot;font-size:13px;color:#FFFFFF;&quot;&gt;Automated Label&lt;br&gt;Hygiene&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=left;verticalAlign=middle;padding=6;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="740" y="365" width="170" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_eks_tag1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_eks" target="tag1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_eks_tag2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_eks" target="tag2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Badge: 100% Granular Pod-Level Attribution -->
+        <mxCell id="badge_pod" value="&lt;b style=&quot;font-size:12px;color:#EAB308;&quot;&gt;✓ 100% Granular&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Pod-Level&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Attribution&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#292008;strokeColor=#EAB308;strokeWidth=1.5;align=left;verticalAlign=middle;padding=12;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="950" y="315" width="160" height="90" as="geometry"/>
+        </mxCell>
+
+
+        <!-- ROW 3: 3. Proactive Compute Governance & Optimization -->
+        <mxCell id="row3_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#101827;strokeColor=#1E293B;strokeWidth=1.5;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="465" width="1520" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_row3" value="&lt;b style=&quot;font-size:16px;color:#FFFFFF;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;&quot;&gt;3. Proactive Compute&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Governance &amp;amp;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Optimization&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="60" y="515" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: 15-Minute Idle Compute Auto-Termination -->
+        <mxCell id="card_killswitch" value="&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; style=&quot;width:100%;height:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:32px;text-align:center;&quot;&gt;&lt;span style=&quot;font-size:18px;color:#38BDF8;&quot;&gt;{•}&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;padding-left:8px;&quot;&gt;&lt;b style=&quot;font-size:13.5px;color:#FFFFFF;&quot;&gt;15-Minute Idle Compute&lt;br&gt;Auto-Termination&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Cloud Functions&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=left;verticalAlign=middle;padding=6;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="270" y="505" width="220" height="85" as="geometry"/>
+        </mxCell>
+
+        <!-- Connectors from GKE -> Row 3 -->
+        <mxCell id="e_gke_kill" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 3&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_gke" target="card_killswitch">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: Automated CUD Reservation Slot Commitments -->
+        <mxCell id="card_cud" value="&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; style=&quot;width:100%;height:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:32px;text-align:center;&quot;&gt;&lt;span style=&quot;font-size:18px;color:#38BDF8;&quot;&gt;💳&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;padding-left:8px;&quot;&gt;&lt;b style=&quot;font-size:13.5px;color:#FFFFFF;&quot;&gt;Automated CUD&lt;br&gt;Reservation Slot&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Commitments&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=left;verticalAlign=middle;padding=6;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="510" y="505" width="180" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_kill_cud" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_killswitch" target="card_cud">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_gke_cud" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 4&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_gke" target="card_cud">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="400" y="440"/>
+              <mxPoint x="550" y="440"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Card: Rightsizing Policy Engine -->
+        <mxCell id="card_rightsizing" value="&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; style=&quot;width:100%;height:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:32px;text-align:center;&quot;&gt;&lt;span style=&quot;font-size:18px;color:#38BDF8;&quot;&gt;⚙️&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;padding-left:8px;&quot;&gt;&lt;b style=&quot;font-size:13.5px;color:#FFFFFF;&quot;&gt;Rightsizing&lt;br&gt;Policy Engine&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=left;verticalAlign=middle;padding=6;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="720" y="515" width="160" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_cud_rightsizing" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_cud" target="card_rightsizing">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Badge: 15-Min Auto-Termination Kill-Switches -->
+        <mxCell id="badge_killswitch" value="&lt;b style=&quot;font-size:12px;color:#34D399;&quot;&gt;✓ 15-Min Auto-&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Termination&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Kill-Switches&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064E3B;strokeColor=#10B981;strokeWidth=1.5;align=left;verticalAlign=middle;padding=12;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="950" y="505" width="160" height="90" as="geometry"/>
+        </mxCell>
+
+
+        <!-- ROW 4: 4. Executive FinOps Dashboards & Anomaly Alerting -->
+        <mxCell id="row4_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#101827;strokeColor=#1E293B;strokeWidth=1.5;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="655" width="1520" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_row4" value="&lt;b style=&quot;font-size:16px;color:#FFFFFF;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;&quot;&gt;4. Executive FinOps&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Dashboards &amp;amp;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Anomaly Alerting&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="60" y="705" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: Looker Executive FinOps Studio -->
+        <mxCell id="card_looker_finops" value="&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; style=&quot;width:100%;height:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:32px;text-align:center;&quot;&gt;&lt;span style=&quot;font-size:18px;color:#38BDF8;&quot;&gt;📊&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;padding-left:8px;&quot;&gt;&lt;b style=&quot;font-size:13.5px;color:#FFFFFF;&quot;&gt;Looker Executive&lt;br&gt;FinOps Studio:&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Unit Economics&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=left;verticalAlign=middle;padding=6;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="270" y="700" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_kill_looker" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 5&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_killswitch" target="card_looker_finops">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: BigQuery ML Automated Spend Anomaly Alerts -->
+        <mxCell id="card_bqml_alerts" value="&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; style=&quot;width:100%;height:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:32px;text-align:center;&quot;&gt;&lt;span style=&quot;font-size:18px;color:#38BDF8;&quot;&gt;📊&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;padding-left:8px;&quot;&gt;&lt;b style=&quot;font-size:13.5px;color:#FFFFFF;&quot;&gt;BigQuery ML&lt;br&gt;Automated Spend&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Anomaly Alerts&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=left;verticalAlign=middle;padding=6;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="510" y="700" width="190" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_looker_bqml" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_looker_finops" target="card_bqml_alerts">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_rightsizing_bqml" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 6&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_rightsizing" target="card_bqml_alerts">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="800" y="620"/>
+              <mxPoint x="605" y="620"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Alert Destinations: Outbound Slack & PagerDuty -->
+        <mxCell id="alert_slack" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;&quot;&gt;&lt;span style=&quot;font-size:16px;&quot;&gt;💬&lt;/span&gt;&lt;b style=&quot;font-size:12.5px;color:#FFFFFF;&quot;&gt;Outbound Slack&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=left;verticalAlign=middle;padding=6;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="740" y="695" width="170" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="alert_pagerduty" value="&lt;div style=&quot;display:flex;align-items:center;gap:6px;&quot;&gt;&lt;span style=&quot;font-size:16px;color:#10B981;&quot;&gt;P&lt;/span&gt;&lt;b style=&quot;font-size:12.5px;color:#FFFFFF;&quot;&gt;PagerDuty&lt;br&gt;Budget Alerts&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=left;verticalAlign=middle;padding=6;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="740" y="745" width="170" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_bqml_slack" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_bqml_alerts" target="alert_slack">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_bqml_pd" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_bqml_alerts" target="alert_pagerduty">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Badge: Proactive ML Anomaly Detection -->
+        <mxCell id="badge_anomaly" value="&lt;b style=&quot;font-size:12px;color:#EAB308;&quot;&gt;✓ Proactive ML&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Anomaly&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Detection&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#292008;strokeColor=#EAB308;strokeWidth=1.5;align=left;verticalAlign=middle;padding=12;arcSize=14;" vertex="1" parent="1">
+          <mxGeometry x="950" y="695" width="160" height="90" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>"""
+
+
+# ==============================================================================
+# BLUEPRINT 3: AUTONOMOUS HUB-AND-SPOKE AGENT MESH & MCP GATEWAY
+# ==============================================================================
+def generate_agentic_mcp_xml():
+    return """<mxfile host="app.diagrams.net" modified="2026-09-09T17:50:00.000Z" agent="ScoreX Enterprise Architecture Engine" version="24.7.5">
+  <diagram id="agentic_target_state_mcp_mesh" name="Target State: Autonomous Hub-and-Spoke Agent Mesh &amp; MCP Gateway">
+    <mxGraphModel dx="1600" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="920" background="#0B111E" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- MAIN TITLE -->
+        <mxCell id="main_title" value="&lt;b style=&quot;font-size:28px;color:#FFFFFF;letter-spacing:-0.5px;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;&quot;&gt;Target State: Autonomous Hub-and-Spoke Agent Mesh &amp;amp; MCP Gateway&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="40" y="32" width="1200" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Request Ingress on Left -->
+        <mxCell id="user_request" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:32px;&quot;&gt;👤&lt;/div&gt;&lt;b style=&quot;font-size:14px;color:#FFFFFF;&quot;&gt;Request&lt;/b&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="20" y="450" width="80" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ========================================================================= -->
+        <!-- COLUMN 1: Ingestion & Security Perimeter                                  -->
+        <!-- ========================================================================= -->
+        <mxCell id="col1_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#101827;strokeColor=#1E293B;strokeWidth=1.5;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="120" y="95" width="220" height="750" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_col1" value="&lt;b style=&quot;font-size:15px;color:#FFFFFF;&quot;&gt;Ingestion &amp;amp;&lt;br&gt;Security Perimeter&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="130" y="115" width="200" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: Apigee Enterprise AI Gateway -->
+        <mxCell id="card_apigee" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:24px;color:#F97316;margin-bottom:4px;&quot;&gt;♾️&lt;/div&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Apigee&lt;/span&gt;&lt;br&gt;&lt;b style=&quot;font-size:14px;color:#FFFFFF;&quot;&gt;Apigee Enterprise&lt;br&gt;AI Gateway&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="140" y="220" width="180" height="110" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: Google Cloud Model Armor WAF -->
+        <mxCell id="card_model_armor" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:24px;color:#38BDF8;margin-bottom:4px;&quot;&gt;🛡️&lt;/div&gt;&lt;b style=&quot;font-size:14px;color:#FFFFFF;&quot;&gt;Google Cloud&lt;br&gt;Model Armor WAF&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="140" y="435" width="180" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: VPC Service Controls -->
+        <mxCell id="card_vpc" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:24px;color:#38BDF8;margin-bottom:4px;&quot;&gt;🔒&lt;/div&gt;&lt;b style=&quot;font-size:14px;color:#FFFFFF;&quot;&gt;VPC&lt;br&gt;Service Controls&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="140" y="640" width="180" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Connectors Col 1 -->
+        <mxCell id="e_req_armor" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 1&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="user_request" target="card_model_armor">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_apigee_armor" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 1&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_apigee" target="card_model_armor">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_armor_vpc" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 2&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_model_armor" target="card_vpc">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+
+        <!-- ========================================================================= -->
+        <!-- COLUMN 2: Autonomous Multi-Agent Mesh                                     -->
+        <!-- ========================================================================= -->
+        <mxCell id="col2_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#101827;strokeColor=#1E293B;strokeWidth=1.5;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="360" y="95" width="370" height="750" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_col2" value="&lt;b style=&quot;font-size:15px;color:#FFFFFF;&quot;&gt;Autonomous&lt;br&gt;Multi-Agent Mesh&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="410" y="115" width="270" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Value Unlock Top Badge -->
+        <mxCell id="badge_token_discount" value="&lt;div style=&quot;font-size:10px;color:#34D399;font-weight:bold;&quot;&gt;VALUE UNLOCK BADGES&lt;/div&gt;&lt;b style=&quot;font-size:12px;color:#34D399;&quot;&gt;✓ 75% Input Token Discount&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;(Context Caching)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064E3B;strokeColor=#10B981;strokeWidth=1.5;align=center;verticalAlign=middle;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="385" y="180" width="320" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Central Hub: Gemini 2.5/3.1 Super-Orchestrator -->
+        <mxCell id="card_orchestrator" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:26px;color:#38BDF8;margin-bottom:6px;&quot;&gt;✨&lt;/div&gt;&lt;b style=&quot;font-size:15px;color:#FFFFFF;&quot;&gt;Gemini 2.5/3.1&lt;br&gt;Super-Orchestrator&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="380" y="420" width="170" height="130" as="geometry"/>
+        </mxCell>
+
+        <!-- Sub-Agent 1: Code Gen -->
+        <mxCell id="card_sub_codegen" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Sub-Agent&lt;br&gt;Worker&lt;/span&gt;&lt;br&gt;&lt;b style=&quot;font-size:13px;color:#FFFFFF;&quot;&gt;Code Gen&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=6;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="580" y="320" width="130" height="75" as="geometry"/>
+        </mxCell>
+        <!-- Sub-Agent 2: Analytics -->
+        <mxCell id="card_sub_analytics" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Sub-Agent&lt;/span&gt;&lt;br&gt;&lt;b style=&quot;font-size:13px;color:#FFFFFF;&quot;&gt;Analytics&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=6;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="580" y="445" width="130" height="75" as="geometry"/>
+        </mxCell>
+        <!-- Sub-Agent 3: SQL Agent -->
+        <mxCell id="card_sub_sql" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;span style=&quot;font-size:11px;color:#94A3B8;&quot;&gt;Sub-Agent&lt;/span&gt;&lt;br&gt;&lt;b style=&quot;font-size:13px;color:#FFFFFF;&quot;&gt;SQL Agent&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=6;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="580" y="565" width="130" height="75" as="geometry"/>
+        </mxCell>
+
+        <!-- Connections from Orchestrator to Sub-Agents -->
+        <mxCell id="e_orch_codegen" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_orchestrator" target="card_sub_codegen">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_orch_analytics" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_orchestrator" target="card_sub_analytics">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_orch_sql" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_orchestrator" target="card_sub_sql">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Connector Model Armor -> Orchestrator -->
+        <mxCell id="e_armor_orch" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_model_armor" target="card_orchestrator">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Value Unlock Bottom Badge -->
+        <mxCell id="badge_context_window" value="&lt;div style=&quot;font-size:10px;color:#34D399;font-weight:bold;&quot;&gt;VALUE UNLOCK&lt;/div&gt;&lt;b style=&quot;font-size:12px;color:#34D399;&quot;&gt;✓ 2M Long-Context&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Window&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064E3B;strokeColor=#10B981;strokeWidth=1.5;align=center;verticalAlign=middle;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="430" y="760" width="220" height="55" as="geometry"/>
+        </mxCell>
+
+
+        <!-- ========================================================================= -->
+        <!-- COLUMN 3: Model Context Protocol (MCP) & Context Caching                  -->
+        <!-- ========================================================================= -->
+        <mxCell id="col3_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#101827;strokeColor=#1E293B;strokeWidth=1.5;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="750" y="95" width="300" height="750" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_col3" value="&lt;b style=&quot;font-size:15px;color:#FFFFFF;&quot;&gt;Model Context Protocol (MCP)&lt;br&gt;&amp;amp; Context Caching&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="760" y="115" width="280" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: Standardized MCP Tool Gateway -->
+        <mxCell id="card_mcp" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:24px;color:#38BDF8;margin-bottom:4px;&quot;&gt;🎛️&lt;/div&gt;&lt;b style=&quot;font-size:14px;color:#FFFFFF;&quot;&gt;Standardized&lt;br&gt;MCP Tool Gateway&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="790" y="240" width="220" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: Vertex AI Prompt Context Caching -->
+        <mxCell id="card_context_cache" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:24px;color:#38BDF8;margin-bottom:4px;&quot;&gt;⚡&lt;/div&gt;&lt;b style=&quot;font-size:14px;color:#FFFFFF;&quot;&gt;Vertex AI Prompt&lt;br&gt;Context Caching&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;(75% token discount)&lt;/span&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="790" y="440" width="220" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: Vertex AI Vector Search Grounding -->
+        <mxCell id="card_vector_search" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:24px;color:#38BDF8;margin-bottom:4px;&quot;&gt;🕸️&lt;/div&gt;&lt;b style=&quot;font-size:14px;color:#FFFFFF;&quot;&gt;Vertex AI Vector&lt;br&gt;Search Grounding&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="790" y="605" width="220" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Connectors Col 3 -->
+        <mxCell id="e_mcp_cache_step3" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 3&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_mcp" target="card_context_cache">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="860" y="390"/>
+              <mxPoint x="860" y="390"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_mcp_cache_step4" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 4&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_mcp" target="card_context_cache">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="940" y="390"/>
+              <mxPoint x="940" y="390"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_vector_cache_step5" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 5&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_vector_search" target="card_context_cache">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Connectors from Sub-Agents into Col 3 -->
+        <mxCell id="e_codegen_mcp" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_sub_codegen" target="card_mcp">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_analytics_cache" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_sub_analytics" target="card_context_cache">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_sql_cache" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_sub_sql" target="card_context_cache">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Loopback: Vector Search -> Orchestrator -->
+        <mxCell id="e_vector_orch" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_vector_search" target="card_orchestrator">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="730" y="730"/>
+              <mxPoint x="465" y="730"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Value Unlock Bottom Badge -->
+        <mxCell id="badge_zero_trust" value="&lt;div style=&quot;font-size:10px;color:#34D399;font-weight:bold;&quot;&gt;VALUE UNLOCK&lt;/div&gt;&lt;b style=&quot;font-size:12px;color:#34D399;&quot;&gt;✓ Zero-Trust Sandboxed&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Tool Execution&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064E3B;strokeColor=#10B981;strokeWidth=1.5;align=center;verticalAlign=middle;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="770" y="760" width="260" height="55" as="geometry"/>
+        </mxCell>
+
+
+        <!-- ========================================================================= -->
+        <!-- COLUMN 4: Governed Enterprise Consumption                                 -->
+        <!-- ========================================================================= -->
+        <mxCell id="col4_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#101827;strokeColor=#1E293B;strokeWidth=1.5;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="1070" y="95" width="250" height="750" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_col4" value="&lt;b style=&quot;font-size:15px;color:#FFFFFF;&quot;&gt;Governed Enterprise&lt;br&gt;Consumption&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="115" width="230" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: Sub-500ms TTFT Streaming Chat -->
+        <mxCell id="card_ttft" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;b style=&quot;font-size:14px;color:#FFFFFF;&quot;&gt;Sub-500ms TTFT&lt;br&gt;Streaming Chat&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="250" width="190" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Connector MCP -> TTFT labeled Step 6 -->
+        <mxCell id="e_mcp_ttft" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 6&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_mcp" target="card_ttft">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: Automated Evaluation Gates -->
+        <mxCell id="card_eval_gates" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:24px;color:#34D399;margin-bottom:4px;&quot;&gt;📈&lt;/div&gt;&lt;b style=&quot;font-size:14px;color:#FFFFFF;&quot;&gt;Automated&lt;br&gt;Evaluation Gates&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="440" width="190" height="95" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_ttft_gates" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 5&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_ttft" target="card_eval_gates">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Card: HITL Approval -->
+        <mxCell id="card_hitl" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;b style=&quot;font-size:14px;color:#FFFFFF;&quot;&gt;HITL Approval&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#182234;strokeColor=#2E3D56;strokeWidth=1.5;align=center;verticalAlign=middle;padding=8;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="650" width="190" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_gates_hitl" value="&lt;span style=&quot;font-size:10.5px;color:#94A3B8;&quot;&gt;Step 6&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;labelBackgroundColor=#0B111E;" edge="1" parent="1" source="card_eval_gates" target="card_hitl">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Return Loop from HITL -> TTFT -->
+        <mxCell id="e_hitl_ttft_return" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#52617A;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="card_hitl" target="card_ttft">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1080" y="685"/>
+              <mxPoint x="1080" y="290"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Value Unlock Bottom Badge -->
+        <mxCell id="badge_agent_ttft" value="&lt;div style=&quot;font-size:10px;color:#34D399;font-weight:bold;&quot;&gt;VALUE UNLOCK&lt;/div&gt;&lt;b style=&quot;font-size:12px;color:#34D399;&quot;&gt;✓ Sub-Second Agent TTFT&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064E3B;strokeColor=#10B981;strokeWidth=1.5;align=center;verticalAlign=middle;arcSize=20;" vertex="1" parent="1">
+          <mxGeometry x="1075" y="760" width="240" height="55" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>"""
+
+if __name__ == '__main__':
+    finops_xml = generate_finops_xml()
+    with open('scratch/04_finops_target_state_chargeback.drawio.xml', 'w') as f:
+        f.write(finops_xml)
+    with open('client/public/blueprints/04_finops_target_state_chargeback.drawio.xml', 'w') as f:
+        f.write(finops_xml)
+    with open('client/build/blueprints/04_finops_target_state_chargeback.drawio.xml', 'w') as f:
+        f.write(finops_xml)
+
+    agentic_xml = generate_agentic_mcp_xml()
+    with open('scratch/02_genai_target_state_mcp_mesh.drawio.xml', 'w') as f:
+        f.write(agentic_xml)
+    with open('client/public/blueprints/02_genai_target_state_mcp_mesh.drawio.xml', 'w') as f:
+        f.write(agentic_xml)
+    with open('client/build/blueprints/02_genai_target_state_mcp_mesh.drawio.xml', 'w') as f:
+        f.write(agentic_xml)
+
+    print("Successfully generated exact FinOps and Agentic MCP XML blueprints!")

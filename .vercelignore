@@ -1,0 +1,16 @@
+node_modules
+.git
+.env
+.env.local
+npm-debug.log
+.DS_Store
+*.log
+server/data/assessments.json
+client/node_modules
+build.sh
+start.sh
+render.yaml
+nixpacks.toml
+railway.json
+Procfile
+

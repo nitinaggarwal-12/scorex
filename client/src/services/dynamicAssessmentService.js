@@ -1,0 +1,303 @@
+import axios from 'axios';
+
+/**
+ * Dynamic Assessment Service
+ * Connects frontend to backend Gemini 3.7 dynamic assessment engine and repository
+ */
+class DynamicAssessmentService {
+  /**
+   * AI-generate framework from natural language prompt
+   */
+  async generateFramework(prompt, options = {}) {
+    const response = await axios.post('/api/dynamic-assessments/generate-framework', {
+      prompt,
+      industry: options.industry,
+      targetAudience: options.targetAudience,
+      focusAreas: options.focusAreas,
+      tier: options.tier
+    });
+    return response.data;
+  }
+
+  /**
+   * Fetch all assessment types (templates) with optional status filter
+   */
+  async getAssessmentTypes(promotedOnly = false, status = null) {
+    const response = await axios.get('/api/dynamic-assessments/types', {
+      params: { promotedOnly, status }
+    });
+    return response.data?.types || [];
+  }
+
+  /**
+   * Fetch single assessment type by key
+   */
+  async getAssessmentTypeByKey(typeKey) {
+    const response = await axios.get(`/api/dynamic-assessments/types/${typeKey}`);
+    return response.data?.type || null;
+  }
+
+  /**
+   * Save / Promote assessment framework as a reusable type
+   */
+  async saveAssessmentType(typeData) {
+    const response = await axios.post('/api/dynamic-assessments/types', typeData);
+    return response.data;
+  }
+
+  /**
+   * Update assessment type
+   */
+  async updateAssessmentType(id, updates) {
+    const response = await axios.put(`/api/dynamic-assessments/types/${id}`, updates);
+    return response.data;
+  }
+
+  /**
+   * Toggle promotion status for an assessment type
+   */
+  async togglePromotion(id, isPromoted) {
+    const response = await axios.put(`/api/dynamic-assessments/types/${id}/promote`, {
+      isPromoted
+    });
+    return response.data;
+  }
+
+  /**
+   * Delete an assessment type
+   */
+  async deleteAssessmentType(id) {
+    const response = await axios.delete(`/api/dynamic-assessments/types/${id}`);
+    return response.data;
+  }
+
+  /**
+   * Generate instant realistic sample assessment instance for an assessment type
+   */
+  async generateSampleForType(typeKey) {
+    const response = await axios.post(`/api/dynamic-assessments/types/${typeKey}/sample`);
+    return response.data;
+  }
+
+  /**
+   * Fetch sample assessment suite for "Try Sample" dropdown
+   */
+  async getSamplesList() {
+    const response = await axios.get('/api/dynamic-assessments/samples-list');
+    return response.data?.samples || [];
+  }
+
+  /**
+   * Create dynamic assessment instance
+   */
+  async createInstance(instanceData) {
+    const response = await axios.post('/api/dynamic-assessments/instances', instanceData);
+    return response.data?.instance;
+  }
+
+  /**
+   * Fetch dynamic assessment instance by ID
+   */
+  async getInstance(id) {
+    const response = await axios.get(`/api/dynamic-assessments/instances/${id}`);
+    return response.data?.instance;
+  }
+
+  /**
+   * Fetch all dynamic assessment instances
+   */
+  async getInstances(filters = {}) {
+    const response = await axios.get('/api/dynamic-assessments/instances', {
+      params: filters
+    });
+    return response.data?.instances || [];
+  }
+
+  /**
+   * Update assessment instance responses
+   */
+  async updateInstance(id, updateData) {
+    const response = await axios.put(`/api/dynamic-assessments/instances/${id}`, updateData);
+    return response.data;
+  }
+
+  /**
+   * Update and persist Architecture Diagrams (Draw.io XML) for an assessment instance
+   */
+  async updateArchitectureDiagrams(id, architectureDiagrams) {
+    const response = await axios.put(`/api/dynamic-assessments/instances/${id}/diagrams`, {
+      architectureDiagrams
+    });
+    return response.data;
+  }
+
+  /**
+   * Delete dynamic assessment instance
+   */
+  async deleteInstance(id) {
+    const response = await axios.delete(`/api/dynamic-assessments/instances/${id}`);
+    return response.data;
+  }
+
+  /**
+   * Clone dynamic assessment instance for quarterly reassessment
+   */
+  async cloneInstance(id, suffix = 'Next Quarter') {
+    const response = await axios.post(`/api/dynamic-assessments/instances/${id}/clone`, {
+      suffix
+    });
+    return response.data;
+  }
+
+  /**
+   * Batch delete dynamic assessment instances
+   */
+  async batchDeleteInstances(ids) {
+    const response = await axios.post('/api/dynamic-assessments/instances/batch-delete', { ids });
+    return response.data;
+  }
+
+  /**
+   * Batch clone dynamic assessment instances
+   */
+  async batchCloneInstances(ids, suffix = 'Next Quarter') {
+    const response = await axios.post('/api/dynamic-assessments/instances/batch-clone', { ids, suffix });
+    return response.data;
+  }
+
+  /**
+   * Trigger AI Executive Report Generation with Gemini 3.7
+   */
+  async generateReport(id) {
+    const response = await axios.post(`/api/dynamic-assessments/instances/${id}/generate-report`);
+    return response.data;
+  }
+
+  /**
+   * Generate bespoke Architecture Diagrams using Gemini 3.7 Flash API
+   */
+  async generateArchitectureDiagrams(id, customInstructions = '') {
+    const response = await axios.post(`/api/dynamic-assessments/instances/${id}/generate-diagrams`, {
+      customInstructions
+    });
+    return response.data;
+  }
+
+  /**
+   * Promote an instance's framework directly as a new Assessment Type
+   */
+  async promoteInstanceAsType(id, overrides = {}) {
+    const response = await axios.post(`/api/dynamic-assessments/instances/${id}/promote-as-type`, overrides);
+    return response.data;
+  }
+
+  /**
+   * Fetch all customers overview
+   */
+  async getCustomers() {
+    const response = await axios.get('/api/dynamic-assessments/customers');
+    return response.data?.customers || [];
+  }
+
+  /**
+   * Fetch all assessments for a specific customer
+   */
+  async getCustomerAssessments(customerName) {
+    const response = await axios.get(`/api/dynamic-assessments/customer/${encodeURIComponent(customerName)}`);
+    return response.data?.assessments || [];
+  }
+
+  /**
+   * Generate or retrieve shareable public token for assessment
+   */
+  async getShareLink(id, passcode = null) {
+    const response = await axios.post(`/api/dynamic-assessments/instances/${id}/share-link`, { passcode });
+    return response.data;
+  }
+
+  /**
+   * Fetch public report data using share token without login
+   */
+  async getPublicReport(token, passcode = null) {
+    const headers = {};
+    if (passcode) {
+      headers['x-report-passcode'] = passcode;
+    }
+    const response = await axios.get(`/api/dynamic-assessments/public/report/${token}`, { headers });
+    return response.data;
+  }
+
+  /**
+   * Fork assessment template as custom variant
+   */
+  async forkAssessmentType(id, newTitle) {
+    const response = await axios.post(`/api/dynamic-assessments/types/${id}/fork`, { newTitle });
+    return response.data;
+  }
+
+  /**
+   * Compare two assessments side-by-side with dimensional deltas
+   */
+  async compareAssessments(baseId, targetId) {
+    const response = await axios.get('/api/dynamic-assessments/compare', {
+      params: { baseId, targetId }
+    });
+    return response.data;
+  }
+
+  /**
+   * AI-suggest evaluation questions for a custom dimension
+   */
+  async suggestDimensionQuestions(dimensionName, dimensionDescription, industry = '', targetRole = '') {
+    const response = await axios.post('/api/dynamic-assessments/suggest-questions', {
+      dimensionName,
+      dimensionDescription,
+      industry,
+      targetRole
+    });
+    return response.data;
+  }
+
+  /**
+   * Get Customer Multi-Assessment Portfolio Rollup
+   */
+  async getCustomerPortfolioRollup(customerName) {
+    const response = await axios.get(`/api/dynamic-assessments/customer/${encodeURIComponent(customerName)}/portfolio-rollup`);
+    return response.data;
+  }
+
+  /**
+   * Get Industry Benchmarking Comparison for an assessment instance
+   */
+  async getBenchmarks(instanceId, industry = 'Retail & E-Commerce') {
+    const response = await axios.get(`/api/dynamic-assessments/instances/${instanceId}/benchmarks`, {
+      params: { industry }
+    });
+    return response.data;
+  }
+
+  /**
+   * Auto-populate from uploaded architecture document or diagram
+   */
+  async autoPopulateFromDoc(file, instanceId = null, metadata = {}) {
+    const formData = new FormData();
+    formData.append('file', file);
+    if (metadata.customerName) formData.append('customerName', metadata.customerName);
+    if (metadata.organizationName) formData.append('organizationName', metadata.organizationName);
+    if (metadata.industry) formData.append('industry', metadata.industry);
+    if (metadata.useCase) formData.append('useCase', metadata.useCase);
+
+    const endpoint = instanceId
+      ? `/api/assessment/${instanceId}/auto-populate-from-doc`
+      : '/api/assessments/auto-populate-from-doc';
+
+    const response = await axios.post(endpoint, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 180000
+    });
+    return response.data;
+  }
+}
+
+const dynamicAssessmentService = new DynamicAssessmentService();
+export default dynamicAssessmentService;

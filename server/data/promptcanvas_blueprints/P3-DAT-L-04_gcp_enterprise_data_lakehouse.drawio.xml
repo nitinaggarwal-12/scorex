@@ -1,0 +1,409 @@
+<mxfile host="embed.diagrams.net">
+  <diagram id="modern_data_stack_lakehouse" name="GCP Enterprise Data Lakehouse &amp; Gemini Agentic Mesh (P3-DAT-L-04)">
+    <!-- pc-semantic-icons-v1 -->
+<!-- pc-semantic-icons-v2 -->
+<mxGraphModel dx="1400" dy="950" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1360" pageHeight="700" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- ==================== TOP TITLE BANNER & HEADER ==================== -->
+        <mxCell id="top_cloud_logo" value="&lt;span style=&quot;font-size:24px;&quot;&gt; &lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="25" y="6" width="35" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="main_title" value="&lt;b style=&quot;font-size:18.5px;color:#0F172A;letter-spacing:-0.2px;&quot;&gt;GCP ENTERPRISE DATA LAKEHOUSE &amp; GEMINI AGENTIC COGNITIVE MESH&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="68" y="6" width="1050" height="24" as="geometry"/>
+        </mxCell>
+        <mxCell id="main_subtitle" value="&lt;span style=&quot;font-size:11px;color:#475569;font-weight:600;&quot;&gt;End-to-End Modern Data Stack: Multimodal Ingestion, Dataplex Governance, BigLake Apache Iceberg, Gemini Agentic AI &amp; Enterprise Serving Apps&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="68" y="30" width="1050" height="18" as="geometry"/>
+        </mxCell>
+
+        <!-- Top Right Gemini Logo -->
+        <mxCell id="top_gemini_brand" value="&lt;b style=&quot;font-size:18px;color:#2563EB;&quot;&gt;Gemini&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7.5px;color:#475569;&quot;&gt;Agentic Intelligence&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1190" y="6" width="135" height="40" as="geometry"/>
+        </mxCell>
+
+
+        <!-- ==================== COLUMN 1: SOURCE SYSTEMS & REAL-TIME FEEDS ==================== -->
+        <!-- x = 20 .. 185 (width = 165) -->
+        <mxCell id="col1_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;" vertex="1" parent="1">
+          <mxGeometry x="20" y="52" width="165" height="575" as="geometry"/>
+        </mxCell>
+        <mxCell id="col1_hdr" value="&lt;b style=&quot;font-size:8.5px;color:#0F172A;&quot;&gt;SOURCE SYSTEMS &amp;&lt;br&gt;REAL-TIME EVENT FEEDS&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="25" y="55" width="155" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- 1. Enterprise Event & Telemetry Streams -->
+        <mxCell id="card_ge_iot_sources" value="&lt;table style=&quot;width:100%;height:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:30px;vertical-align:middle;text-align:center;padding:0 5px 0 0;&quot;&gt;&lt;img src=&quot;data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Crect%20width%3D%2248%22%20height%3D%2248%22%20rx%3D%2210%22%20fill%3D%22%23D97706%22%2F%3E%3Ccircle%20cx%3D%2213%22%20cy%3D%2224%22%20r%3D%225%22%20fill%3D%22%23FEF3C7%22%2F%3E%3Ccircle%20cx%3D%2235%22%20cy%3D%2215%22%20r%3D%225%22%20fill%3D%22%23FEF3C7%22%2F%3E%3Ccircle%20cx%3D%2235%22%20cy%3D%2233%22%20r%3D%225%22%20fill%3D%22%23FEF3C7%22%2F%3E%3Cpath%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%20d%3D%22M18%2024h8l5-8M26%2024l5%208%22%2F%3E%3C%2Fsvg%3E&quot; width=&quot;22&quot; height=&quot;22&quot; style=&quot;object-fit:contain;&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;text-align:left;min-width:0;&quot;&gt;&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:18px;&quot;&gt;  &lt;span style=&quot;color:#0284C7;font-size:11px;font-weight:bold;&quot;&gt;EVENTS&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7px;font-weight:bold;color:#0F172A;&quot;&gt;Real-Time Event Telemetry&lt;br&gt;&lt;span style=&quot;font-size:5.5px;color:#475569;font-weight:normal;&quot;&gt;Product Clickstreams, API Webhooks,&lt;br&gt;Application Logs &amp; Streaming Telemetry&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#93C5FD;strokeWidth=1.2;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1">
+          <mxGeometry x="26" y="84" width="153" height="75" as="geometry"/>
+        </mxCell>
+
+        <!-- 2. Relational & Transactional DBs -->
+        <mxCell id="card_db_sources" value="&lt;table style=&quot;width:100%;height:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:30px;vertical-align:middle;text-align:center;padding:0 5px 0 0;&quot;&gt;&lt;img src=&quot;data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Crect%20width%3D%2248%22%20height%3D%2248%22%20rx%3D%228%22%20fill%3D%22%23C74634%22%2F%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M14.5%2015C9.3%2015%205%2019%205%2024s4.3%209%209.5%209h19c5.2%200%209.5-4%209.5-9s-4.3-9-9.5-9h-19zm0%205h19c2.5%200%204.5%201.8%204.5%204s-2%204-4.5%204h-19c-2.5%200-4.5-1.8-4.5-4s2-4%204.5-4z%22%2F%3E%3C%2Fsvg%3E&quot; width=&quot;22&quot; height=&quot;22&quot; style=&quot;object-fit:contain;&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;text-align:left;min-width:0;&quot;&gt;&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:16px;&quot;&gt;  &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7px;font-weight:bold;color:#0F172A;&quot;&gt;Transactional Databases&lt;br&gt;&lt;span style=&quot;font-size:5.5px;color:#475569;font-weight:normal;&quot;&gt;Cloud SQL (PostgreSQL, MySQL),&lt;br&gt;Cloud Spanner &amp; Oracle OLTP&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1">
+          <mxGeometry x="26" y="165" width="153" height="75" as="geometry"/>
+        </mxCell>
+
+        <!-- 3. Enterprise SaaS Applications -->
+        <mxCell id="card_saas_sources" value="&lt;table style=&quot;width:100%;height:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:30px;vertical-align:middle;text-align:center;padding:0 5px 0 0;&quot;&gt;&lt;img src=&quot;data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2224%22%20r%3D%2222%22%20fill%3D%22%2300A1E0%22%2F%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M21%2016c1.5-2.4%204.1-4%207-4%204.4%200%208%203.6%208%208%200%20.4%200%20.7-.1%201.1%202.4.9%204.1%203.2%204.1%205.9%200%203.6-2.9%206.5-6.5%206.5h-19c-3%200-5.5-2.5-5.5-5.5%200-2.6%201.8-4.7%204.3-5.3.4-3.8%203.7-6.7%207.7-6.7z%22%2F%3E%3C%2Fsvg%3E&quot; width=&quot;22&quot; height=&quot;22&quot; style=&quot;object-fit:contain;&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;text-align:left;min-width:0;&quot;&gt;&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:16px;&quot;&gt;  🟢&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7px;font-weight:bold;color:#0F172A;&quot;&gt;Enterprise SaaS &amp; ERP&lt;br&gt;&lt;span style=&quot;font-size:5.5px;color:#475569;font-weight:normal;&quot;&gt;Enterprise CRM, SAP S/4HANA,&lt;br&gt;OmniDesk, Zendesk, Workday&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1">
+          <mxGeometry x="26" y="246" width="153" height="75" as="geometry"/>
+        </mxCell>
+
+        <!-- 4. Files, Logs & Object Stores -->
+        <mxCell id="card_files_sources" value="&lt;table style=&quot;width:100%;height:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:30px;vertical-align:middle;text-align:center;padding:0 5px 0 0;&quot;&gt;&lt;img src=&quot;data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Crect%20width%3D%2248%22%20height%3D%2248%22%20rx%3D%228%22%20fill%3D%22%23232F3E%22%2F%3E%3Cpath%20fill%3D%22%23FF9900%22%20d%3D%22M14%2026.5c-2.4%200-4.3-.8-5.7-2.3l2.2-2.4c.9%201%202.2%201.6%203.5%201.6%201.8%200%202.8-1%202.8-2.6v-.3c-.8.5-1.9.8-3.1.8-3.2%200-5.5-1.8-5.5-4.8%200-3.3%202.6-5.1%206.1-5.1%201.7%200%203%20.5%203.9%201.4v-1.1h3.3v10.8c0%202.5-.9%204.3-2.6%205.3-1.3.8-3.1%201.2-4.9%201.2zm1.7-8.8c0-1.6-1.1-2.6-2.9-2.6-1.8%200-2.8%201-2.8%202.3%200%201.3%201%202.2%202.7%202.2.9%200%201.8-.3%202.5-.7v-1.2zm10.7%208.5l-3.8-14.4h3.6l2.3%2010.5%202.5-10.5h3.4l2.5%2010.5%202.3-10.5h3.6l-3.8%2014.4h-3.6l-2.7-10.7-2.7%2010.7h-3.6zm-17%209.8c8.8%203.5%2018.8%202.2%2026.2-2.6.4-.3.9.2.6.6-7.8%205.6-18.8%206.9-27.4%202.8-.5-.2-.1-.9.6-.8zm27.4-1.3c.3-.4%201.9-1.2%202.3-.9.4.3-.2%202-1%202.8-.6.6-1.8.8-2.1.4-.3-.3.2-1.8.8-2.3z%22%2F%3E%3C%2Fsvg%3E&quot; width=&quot;22&quot; height=&quot;22&quot; style=&quot;object-fit:contain;&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;text-align:left;min-width:0;&quot;&gt;&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:16px;&quot;&gt;  &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7px;font-weight:bold;color:#0F172A;&quot;&gt;Unstructured Files &amp; Logs&lt;br&gt;&lt;span style=&quot;font-size:5.5px;color:#475569;font-weight:normal;&quot;&gt;Multi-Cloud S3/Blob, Syslog,&lt;br&gt;PDFs, Audio, 4K Optical Images&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1">
+          <mxGeometry x="26" y="327" width="153" height="75" as="geometry"/>
+        </mxCell>
+
+        <!-- 5. Streaming Event Buses -->
+        <mxCell id="card_kafka_sources" value="&lt;table style=&quot;width:100%;height:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:30px;vertical-align:middle;text-align:center;padding:0 5px 0 0;&quot;&gt;&lt;img src=&quot;data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Crect%20width%3D%2248%22%20height%3D%2248%22%20rx%3D%228%22%20fill%3D%22%23231F20%22%2F%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2214%22%20r%3D%224%22%20fill%3D%22%23FFFFFF%22%2F%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2230%22%20r%3D%224%22%20fill%3D%22%23FFFFFF%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2230%22%20r%3D%224%22%20fill%3D%22%23FFFFFF%22%2F%3E%3Cpath%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%222.5%22%20d%3D%22M24%2014L16%2030M24%2014L32%2030%22%2F%3E%3C%2Fsvg%3E&quot; width=&quot;22&quot; height=&quot;22&quot; style=&quot;object-fit:contain;&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;text-align:left;min-width:0;&quot;&gt;&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:16px;&quot;&gt; &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7px;font-weight:bold;color:#0F172A;&quot;&gt;External Event Streams&lt;br&gt;&lt;span style=&quot;font-size:5.5px;color:#475569;font-weight:normal;&quot;&gt;Apache Kafka, RabbitMQ,&lt;br&gt;MQTT Sparkplug B Edge Feeds&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1">
+          <mxGeometry x="26" y="408" width="153" height="75" as="geometry"/>
+        </mxCell>
+
+        <!-- 6. Ingress Security Gateway -->
+        <mxCell id="card_source_gateway" value="&lt;table style=&quot;width:100%;height:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:30px;vertical-align:middle;text-align:center;padding:0 5px 0 0;&quot;&gt;&lt;img src=&quot;data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Crect%20width%3D%2248%22%20height%3D%2248%22%20rx%3D%2210%22%20fill%3D%22%231E3A8A%22%2F%3E%3Crect%20x%3D%2213%22%20y%3D%2222%22%20width%3D%2222%22%20height%3D%2216%22%20rx%3D%223%22%20fill%3D%22%2393C5FD%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%223.2%22%20d%3D%22M17%2022v-5a7%207%200%200114%200v5%22%2F%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2230%22%20r%3D%222.5%22%20fill%3D%22%231E3A8A%22%2F%3E%3C%2Fsvg%3E&quot; width=&quot;22&quot; height=&quot;22&quot; style=&quot;object-fit:contain;&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;text-align:left;min-width:0;&quot;&gt;&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:14px;color:#1E40AF;&quot;&gt; &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:6.5px;font-weight:bold;color:#0F172A;&quot;&gt;mTLS &amp; Identity Gateway&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;Hardware TPM &amp; JWT Auth&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#93C5FD;strokeWidth=1;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
+          <mxGeometry x="26" y="489" width="153" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="lbl_col1_status" value="&lt;span style=&quot;font-size:6px;color:#1E3A8A;font-weight:bold;&quot;&gt;Hybrid &amp; Multi-Cloud Ingress&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="26" y="605" width="153" height="14" as="geometry"/>
+        </mxCell>
+
+
+        <!-- ==================== COLUMN 2: INGESTION & STREAMING FABRIC ==================== -->
+        <!-- x = 193 .. 383 (width = 190) -->
+        <mxCell id="col2_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#BFDBFE;strokeWidth=1.2;" vertex="1" parent="1">
+          <mxGeometry x="193" y="52" width="190" height="575" as="geometry"/>
+        </mxCell>
+        <mxCell id="col2_hdr" value="&lt;b style=&quot;font-size:8.5px;color:#1E3A8A;&quot;&gt;INGESTION &amp;&lt;br&gt;STREAMING FABRIC&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="198" y="55" width="180" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- Batch & CDC Ingestion Frame -->
+        <mxCell id="box_batch_ingest" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;" vertex="1" parent="1">
+          <mxGeometry x="198" y="84" width="180" height="175" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_batch_hdr" value="&lt;b style=&quot;font-size:7.5px;color:#1D4ED8;&quot;&gt;Batch &amp; Serverless CDC Ingestion&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="202" y="86" width="172" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_storage_transfer" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:16px;color:#2563EB;&quot;&gt; &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:6.5px;font-weight:bold;color:#0F172A;&quot;&gt;Storage Transfer Service&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;Multi-Cloud S3/Azure to GCS&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
+          <mxGeometry x="204" y="106" width="168" height="42" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_datastream_cdc" value="&lt;table style=&quot;width:100%;height:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:30px;vertical-align:middle;text-align:center;padding:0 5px 0 0;&quot;&gt;&lt;img src=&quot;data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Cpath%20fill%3D%22%23EA4335%22%20d%3D%22M24%209.5c3.54%200%206.71%201.22%209.21%203.6l6.85-6.85C35.9%202.38%2030.47%200%2024%200%2014.62%200%206.51%205.38%202.56%2013.22l7.98%206.19C12.43%2013.72%2017.74%209.5%2024%209.5z%22%2F%3E%3Cpath%20fill%3D%22%234285F4%22%20d%3D%22M46.98%2024.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58%202.96-2.26%205.48-4.78%207.18l7.73%206c4.51-4.18%207.09-10.36%207.09-17.65z%22%2F%3E%3Cpath%20fill%3D%22%23FBBC05%22%20d%3D%22M10.53%2028.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92%2016.46%200%2020.12%200%2024c0%203.88.92%207.54%202.56%2010.78l7.97-6.19z%22%2F%3E%3Cpath%20fill%3D%22%2334A853%22%20d%3D%22M24%2048c6.48%200%2011.93-2.13%2015.89-5.81l-7.73-6c-2.15%201.45-4.92%202.3-8.16%202.3-6.26%200-11.57-4.22-13.47-9.91l-7.98%206.19C6.51%2042.62%2014.62%2048%2024%2048z%22%2F%3E%3C%2Fsvg%3E&quot; width=&quot;22&quot; height=&quot;22&quot; style=&quot;object-fit:contain;&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;text-align:left;min-width:0;&quot;&gt;&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:16px;color:#2563EB;&quot;&gt; &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:6.5px;font-weight:bold;color:#0F172A;&quot;&gt;Datastream (Serverless CDC)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;Zero-Downtime Replication to BigQuery&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
+          <mxGeometry x="204" y="154" width="168" height="44" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_batch_pipeline_flow" value="&lt;table style=&quot;width:100%;height:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:30px;vertical-align:middle;text-align:center;padding:0 5px 0 0;&quot;&gt;&lt;img src=&quot;data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Crect%20width%3D%2248%22%20height%3D%2248%22%20rx%3D%228%22%20fill%3D%22%23E25A1C%22%2F%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M24%2010l4%209%209%204-9%204-4%209-4-9-9-4%209-4%204-9zm8%2017l2%204%204%202-4%202-2%204-2-4-4-2%204-2%202-4z%22%2F%3E%3C%2Fsvg%3E&quot; width=&quot;22&quot; height=&quot;22&quot; style=&quot;object-fit:contain;&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;text-align:left;min-width:0;&quot;&gt;&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:14px;color:#2563EB;&quot;&gt; &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:6px;font-weight:bold;color:#0F172A;&quot;&gt;Cloud Data Fusion / Dataflow Batch&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;Visual ETL &amp; Schema Transformation&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
+          <mxGeometry x="204" y="204" width="168" height="44" as="geometry"/>
+        </mxCell>
+
+        <!-- Real-Time Streaming Ingestion Frame -->
+        <mxCell id="box_stream_ingest" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.2;" vertex="1" parent="1">
+          <mxGeometry x="198" y="268" width="180" height="175" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_stream_hdr" value="&lt;b style=&quot;font-size:7.5px;color:#1D4ED8;&quot;&gt;Real-Time Streaming Ingestion&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="202" y="270" width="172" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_pubsub_main" value="&lt;table style=&quot;width:100%;height:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:30px;vertical-align:middle;text-align:center;padding:0 5px 0 0;&quot;&gt;&lt;img src=&quot;data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Crect%20width%3D%2248%22%20height%3D%2248%22%20rx%3D%228%22%20fill%3D%22%23231F20%22%2F%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2214%22%20r%3D%224%22%20fill%3D%22%23FFFFFF%22%2F%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2230%22%20r%3D%224%22%20fill%3D%22%23FFFFFF%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2230%22%20r%3D%224%22%20fill%3D%22%23FFFFFF%22%2F%3E%3Cpath%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%222.5%22%20d%3D%22M24%2014L16%2030M24%2014L32%2030%22%2F%3E%3C%2Fsvg%3E&quot; width=&quot;22&quot; height=&quot;22&quot; style=&quot;object-fit:contain;&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;text-align:left;min-width:0;&quot;&gt;&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:18px;color:#2563EB;&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7px;font-weight:bold;color:#0F172A;&quot;&gt;Cloud Pub/Sub (Global)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;Ordered Multi-Region Event Streams&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=#3B82F6;strokeWidth=1.2;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
+          <mxGeometry x="204" y="290" width="168" height="46" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_dataflow_stream" value="&lt;table style=&quot;width:100%;height:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:30px;vertical-align:middle;text-align:center;padding:0 5px 0 0;&quot;&gt;&lt;img src=&quot;data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Crect%20width%3D%2248%22%20height%3D%2248%22%20rx%3D%228%22%20fill%3D%22%23E25A1C%22%2F%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M24%2010l4%209%209%204-9%204-4%209-4-9-9-4%209-4%204-9zm8%2017l2%204%204%202-4%202-2%204-2-4-4-2%204-2%202-4z%22%2F%3E%3C%2Fsvg%3E&quot; width=&quot;22&quot; height=&quot;22&quot; style=&quot;object-fit:contain;&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;text-align:left;min-width:0;&quot;&gt;&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:18px;color:#2563EB;&quot;&gt; &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7px;font-weight:bold;color:#0F172A;&quot;&gt;Cloud Dataflow (Apache Beam)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;Sub-100ms Sliding Window &amp; Exactly-Once&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=#3B82F6;strokeWidth=1.2;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
+          <mxGeometry x="204" y="342" width="168" height="46" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_bigquery_storage_api" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:16px;color:#2563EB;&quot;&gt; &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:6.5px;font-weight:bold;color:#0F172A;&quot;&gt;BigQuery Storage Write API&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;High-Throughput Streaming Ingestion&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
+          <mxGeometry x="204" y="394" width="168" height="42" as="geometry"/>
+        </mxCell>
+
+        <!-- 3. Automated Gemini Ingestion Validator -->
+        <mxCell id="card_gemini_ingest_guard" value="&lt;table style=&quot;width:100%;height:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:30px;vertical-align:middle;text-align:center;padding:0 5px 0 0;&quot;&gt;&lt;img src=&quot;data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2224%22%20r%3D%2222%22%20fill%3D%22%231E293B%22%2F%3E%3Cpath%20fill%3D%22%2338BDF8%22%20d%3D%22M24%208c0%208.8-7.2%2016-16%2016%208.8%200%2016%207.2%2016%2016%200-8.8%207.2-16%2016-16-8.8%200-16-7.2-16-16z%22%2F%3E%3C%2Fsvg%3E&quot; width=&quot;22&quot; height=&quot;22&quot; style=&quot;object-fit:contain;&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;text-align:left;min-width:0;&quot;&gt;&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:16px;color:#059669;&quot;&gt; &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:6.5px;font-weight:bold;color:#166534;&quot;&gt;Gemini Agentic Ingestion Guard&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;Detects corrupted payloads, schema drift &amp; PII violations in real-time&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#86EFAC;strokeWidth=1.2;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
+          <mxGeometry x="198" y="452" width="180" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="lbl_col2_status" value="&lt;span style=&quot;font-size:6px;color:#1E3A8A;font-weight:bold;&quot;&gt;Zero-Downtime Serverless CDC &amp; Streaming&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="198" y="605" width="180" height="14" as="geometry"/>
+        </mxCell>
+
+
+        <!-- ==================== COLUMN 3: GCP ENTERPRISE DATA LAKEHOUSE (BIGLAKE & DATAPLEX) ==================== -->
+        <!-- x = 391 .. 691 (width = 300) -->
+        <mxCell id="col3_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="391" y="52" width="300" height="575" as="geometry"/>
+        </mxCell>
+        <mxCell id="col3_hdr" value="&lt;b style=&quot;font-size:9px;color:#0F172A;&quot;&gt;GCP ENTERPRISE DATA LAKEHOUSE&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#475569;&quot;&gt;(BigLake, Cloud Storage &amp; BigQuery Compute)&lt;/span&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="396" y="55" width="290" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- Tier 1: Medallion Architecture on Cloud Storage -->
+        <mxCell id="box_lake_medallion" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.2;" vertex="1" parent="1">
+          <mxGeometry x="398" y="84" width="286" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_lake_medallion_hdr" value="&lt;b style=&quot;font-size:8px;color:#1D4ED8;&quot;&gt; Cloud Storage Medallion Lake (Apache Iceberg / Delta)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="404" y="86" width="275" height="16" as="geometry"/>
+        </mxCell>
+
+        <!-- 3 Zones: Raw, Staged, Curated -->
+        <mxCell id="pill_raw_bronze" value="&lt;b style=&quot;font-size:6.5px;color:#92400E;&quot;&gt; Raw (Bronze)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;Immutable Raw JSON, Avro, 4K Images&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#FDE68A;strokeWidth=1;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
+          <mxGeometry x="404" y="106" width="86" height="42" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="pill_staged_silver" value="&lt;b style=&quot;font-size:6.5px;color:#1E3A8A;&quot;&gt; Staged (Silver)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;Deduplicated, Schema-Enforced Iceberg&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=#93C5FD;strokeWidth=1;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
+          <mxGeometry x="498" y="106" width="90" height="42" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="pill_curated_gold" value="&lt;b style=&quot;font-size:6.5px;color:#166534;&quot;&gt; Curated (Gold)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;Dimensional Marts &amp; Star Schemas&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#86EFAC;strokeWidth=1;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
+          <mxGeometry x="594" y="106" width="84" height="42" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_medallion_sub" value="&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;BigLake Unified Metastore: Open Parquet/Iceberg format querying with zero copy&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="404" y="152" width="275" height="15" as="geometry"/>
+        </mxCell>
+
+        <!-- Tier 2: Governed & Secured Fabric (Dataplex / BigLake) -->
+        <mxCell id="box_dataplex_fabric" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.2;" vertex="1" parent="1">
+          <mxGeometry x="398" y="202" width="286" height="115" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_dataplex_hdr" value="&lt;b style=&quot;font-size:8px;color:#1E40AF;&quot;&gt; Governed &amp; Secured Layer (Dataplex / BigLake)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="404" y="204" width="275" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_dp_catalog" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt;Universal Data Catalog&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Business Glossary, Search &amp; Automated End-to-End Lineage Tracking&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
+          <mxGeometry x="404" y="222" width="274" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_dp_quality" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt;Automated Data Quality &amp; Profiling&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Continuous SLA Checks, Anomaly Alerts &amp; Schema Drift Guard&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
+          <mxGeometry x="404" y="254" width="274" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_dp_security_mask" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt;Centralized Fine-Grained Security&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Row-Level (RLS), Column-Level (CLS) &amp; Dynamic Data Masking&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
+          <mxGeometry x="404" y="286" width="274" height="28" as="geometry"/>
+        </mxCell>
+
+        <!-- Tier 3: BigQuery Unified Data Warehouse & Vector Engine -->
+        <mxCell id="box_bigquery_core" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="398" y="325" width="286" height="185" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_bq_core_hdr" value="&lt;b style=&quot;font-size:8.5px;color:#1D4ED8;&quot;&gt; BigQuery Enterprise Warehouse &amp; Vector Engine&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="404" y="328" width="275" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_bq_serverless_sql" value="&lt;b style=&quot;font-size:6.5px;color:#0F172A;&quot;&gt;Serverless Petabyte-Scale SQL Engine&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Auto-scaling slots, partitioned &amp; clustered column storage&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
+          <mxGeometry x="404" y="348" width="274" height="32" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_bq_vector_search" value="&lt;b style=&quot;font-size:6.5px;color:#0F172A;&quot;&gt;BigQuery Vector Search &amp; Embeddings (VECTOR_SEARCH)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Sub-second vector cosine/L2 search on petabytes of text &amp; multimodal data&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#93C5FD;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
+          <mxGeometry x="404" y="384" width="274" height="34" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_bq_bi_engine" value="&lt;b style=&quot;font-size:6.5px;color:#0F172A;&quot;&gt;BigQuery BI Engine (In-Memory Accelerator)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Sub-millisecond query response for interactive Looker dashboards&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
+          <mxGeometry x="404" y="422" width="274" height="34" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_bq_ml_engine" value="&lt;b style=&quot;font-size:6.5px;color:#0F172A;&quot;&gt;BigQuery ML &amp; Vertex AI Integration&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Direct SQL calls to Gemini 3.7 Flash (ML.GENERATE_TEXT)&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#86EFAC;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
+          <mxGeometry x="404" y="460" width="274" height="34" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="lbl_col3_status" value="&lt;span style=&quot;font-size:6px;color:#1E3A8A;font-weight:bold;&quot;&gt;Unified Multi-Modal Lakehouse Storage &amp; Governance&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="398" y="605" width="286" height="14" as="geometry"/>
+        </mxCell>
+
+
+        <!-- ==================== COLUMN 4: TRANSFORMATION, ORCHESTRATION & GEMINI AI CORE ==================== -->
+        <!-- x = 699 .. 989 (width = 290) -->
+        <mxCell id="col4_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#FDE68A;strokeWidth=1.2;" vertex="1" parent="1">
+          <mxGeometry x="699" y="52" width="290" height="575" as="geometry"/>
+        </mxCell>
+        <mxCell id="col4_hdr" value="&lt;b style=&quot;font-size:8.5px;color:#92400E;&quot;&gt;TRANSFORMATION, ORCHESTRATION&lt;br&gt;&amp; GEMINI INTELLIGENCE CORE&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="704" y="55" width="280" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- Transformation Box (dbt & Dataflow) -->
+        <mxCell id="box_transform_layer" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#F59E0B;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="704" y="84" width="280" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_trans_hdr" value="&lt;b style=&quot;font-size:8px;color:#0F172A;&quot;&gt; ELT / ETL Transformation &amp; Modeling&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="710" y="86" width="270" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_dbt_bigquery" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt;dbt on BigQuery / Dataform&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Modular SQL Modeling, Automated Tests &amp; Documentation&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
+          <mxGeometry x="710" y="106" width="268" height="38" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_composer_dag" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt;Cloud Composer (Managed Airflow)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Enterprise DAG Scheduling, SLA Alerts &amp; Cross-Cloud Dependencies&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
+          <mxGeometry x="710" y="148" width="268" height="38" as="geometry"/>
+        </mxCell>
+
+        <!-- Gemini Agentic AI Core Frame -->
+        <mxCell id="box_gemini_agent_core" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="704" y="202" width="280" height="308" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_gemini_core_hdr" value="&lt;b style=&quot;font-size:8.5px;color:#1D4ED8;&quot;&gt; Gemini Agentic AI &amp; Intelligence Core&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="710" y="204" width="270" height="18" as="geometry"/>
+        </mxCell>
+
+        <!-- 1. Gemini Pro / Ultra Foundation Reasoner -->
+        <mxCell id="card_gemini_models_lake" value="&lt;table style=&quot;width:100%;height:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:30px;vertical-align:middle;text-align:center;padding:0 5px 0 0;&quot;&gt;&lt;img src=&quot;data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2224%22%20r%3D%2222%22%20fill%3D%22%231E293B%22%2F%3E%3Cpath%20fill%3D%22%2338BDF8%22%20d%3D%22M24%208c0%208.8-7.2%2016-16%2016%208.8%200%2016%207.2%2016%2016%200-8.8%207.2-16%2016-16-8.8%200-16-7.2-16-16z%22%2F%3E%3C%2Fsvg%3E&quot; width=&quot;22&quot; height=&quot;22&quot; style=&quot;object-fit:contain;&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;text-align:left;min-width:0;&quot;&gt;&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:18px;color:#2563EB;&quot;&gt; &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7px;font-weight:bold;color:#0F172A;&quot;&gt;Gemini 3.7 Flash &amp; Pro Reasoner&lt;br&gt;&lt;span style=&quot;font-size:5.5px;color:#475569;font-weight:normal;&quot;&gt;2M+ Token Context Window, Multimodal Audio/Visual Understanding&lt;br&gt;&amp; Deep Analytical Reasoning over Petabyte Datasets&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#93C5FD;strokeWidth=1.2;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1">
+          <mxGeometry x="710" y="226" width="268" height="68" as="geometry"/>
+        </mxCell>
+
+        <!-- 2. Vertex AI Agent Builder & Multi-Agent Mesh -->
+        <mxCell id="card_vertex_agent_mesh_lake" value="&lt;table style=&quot;width:100%;height:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:30px;vertical-align:middle;text-align:center;padding:0 5px 0 0;&quot;&gt;&lt;img src=&quot;data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Cpath%20fill%3D%22%23EA4335%22%20d%3D%22M24%209.5c3.54%200%206.71%201.22%209.21%203.6l6.85-6.85C35.9%202.38%2030.47%200%2024%200%2014.62%200%206.51%205.38%202.56%2013.22l7.98%206.19C12.43%2013.72%2017.74%209.5%2024%209.5z%22%2F%3E%3Cpath%20fill%3D%22%234285F4%22%20d%3D%22M46.98%2024.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58%202.96-2.26%205.48-4.78%207.18l7.73%206c4.51-4.18%207.09-10.36%207.09-17.65z%22%2F%3E%3Cpath%20fill%3D%22%23FBBC05%22%20d%3D%22M10.53%2028.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92%2016.46%200%2020.12%200%2024c0%203.88.92%207.54%202.56%2010.78l7.97-6.19z%22%2F%3E%3Cpath%20fill%3D%22%2334A853%22%20d%3D%22M24%2048c6.48%200%2011.93-2.13%2015.89-5.81l-7.73-6c-2.15%201.45-4.92%202.3-8.16%202.3-6.26%200-11.57-4.22-13.47-9.91l-7.98%206.19C6.51%2042.62%2014.62%2048%2024%2048z%22%2F%3E%3C%2Fsvg%3E&quot; width=&quot;22&quot; height=&quot;22&quot; style=&quot;object-fit:contain;&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;text-align:left;min-width:0;&quot;&gt;&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:16px;color:#D97706;&quot;&gt;  &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:6.5px;font-weight:bold;color:#0F172A;&quot;&gt;Vertex AI Agent Builder (Multi-Agent Swarm)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;• Text-to-SQL Semantic Agent • Anomaly Investigation Agent&lt;br&gt;• Data Quality Remediation Agent • Automated Executive Summarizer&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#F59E0B;strokeWidth=1.2;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1">
+          <mxGeometry x="710" y="300" width="268" height="65" as="geometry"/>
+        </mxCell>
+
+        <!-- 3. Vertex AI Search & Grounding Engine -->
+        <mxCell id="card_vertex_search_grounding" value="&lt;table style=&quot;width:100%;height:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:30px;vertical-align:middle;text-align:center;padding:0 5px 0 0;&quot;&gt;&lt;img src=&quot;data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Cpath%20fill%3D%22%23EA4335%22%20d%3D%22M24%209.5c3.54%200%206.71%201.22%209.21%203.6l6.85-6.85C35.9%202.38%2030.47%200%2024%200%2014.62%200%206.51%205.38%202.56%2013.22l7.98%206.19C12.43%2013.72%2017.74%209.5%2024%209.5z%22%2F%3E%3Cpath%20fill%3D%22%234285F4%22%20d%3D%22M46.98%2024.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58%202.96-2.26%205.48-4.78%207.18l7.73%206c4.51-4.18%207.09-10.36%207.09-17.65z%22%2F%3E%3Cpath%20fill%3D%22%23FBBC05%22%20d%3D%22M10.53%2028.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92%2016.46%200%2020.12%200%2024c0%203.88.92%207.54%202.56%2010.78l7.97-6.19z%22%2F%3E%3Cpath%20fill%3D%22%2334A853%22%20d%3D%22M24%2048c6.48%200%2011.93-2.13%2015.89-5.81l-7.73-6c-2.15%201.45-4.92%202.3-8.16%202.3-6.26%200-11.57-4.22-13.47-9.91l-7.98%206.19C6.51%2042.62%2014.62%2048%2024%2048z%22%2F%3E%3C%2Fsvg%3E&quot; width=&quot;22&quot; height=&quot;22&quot; style=&quot;object-fit:contain;&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;text-align:left;min-width:0;&quot;&gt;&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:16px;color:#2563EB;&quot;&gt; &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:6.5px;font-weight:bold;color:#0F172A;&quot;&gt;Vertex AI Search &amp; Enterprise Grounding&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;Fact-checking generated queries against BigLake golden metadata&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1">
+          <mxGeometry x="710" y="370" width="268" height="52" as="geometry"/>
+        </mxCell>
+
+        <!-- 4. Vertex AI Model Evaluation & Telemetry -->
+        <mxCell id="card_vertex_lake_monitoring" value="&lt;table style=&quot;width:100%;height:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:30px;vertical-align:middle;text-align:center;padding:0 5px 0 0;&quot;&gt;&lt;img src=&quot;data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Crect%20width%3D%2248%22%20height%3D%2248%22%20rx%3D%2210%22%20fill%3D%22%237C3AED%22%2F%3E%3Cpath%20fill%3D%22%23DDD6FE%22%20d%3D%22M24%208l13%205v10c0%209-5.5%2015.8-13%2018-7.5-2.2-13-9-13-18V13l13-5z%22%2F%3E%3Cpath%20fill%3D%22%235B21B6%22%20d%3D%22M24%2014c0%205.5-4.5%2010-10%2010%205.5%200%2010%204.5%2010%2010%200-5.5%204.5-10%2010-10-5.5%200-10-4.5-10-10z%22%2F%3E%3C%2Fsvg%3E&quot; width=&quot;22&quot; height=&quot;22&quot; style=&quot;object-fit:contain;&quot;/&gt;&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;text-align:left;min-width:0;&quot;&gt;&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:14px;color:#059669;&quot;&gt; &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:6.5px;font-weight:bold;color:#166534;&quot;&gt;Continuous Model Monitoring &amp; Drift Guard&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;&quot;&gt;Tracks agent execution accuracy &amp; auto-tunes prompt templates&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#86EFAC;strokeWidth=1;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
+          <mxGeometry x="710" y="428" width="268" height="48" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="lbl_col4_status" value="&lt;span style=&quot;font-size:6px;color:#92400E;font-weight:bold;&quot;&gt;Autonomous Multi-Agent AI &amp; Orchestration&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="704" y="605" width="280" height="14" as="geometry"/>
+        </mxCell>
+
+
+        <!-- ==================== COLUMN 5: SERVING, ACTIONS & GE APPLICATION COCKPIT ==================== -->
+        <!-- x = 997 .. 1337 (width = 340) -->
+        <mxCell id="col5_bg" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFF1F2;strokeColor=#FECDD3;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="997" y="52" width="340" height="575" as="geometry"/>
+        </mxCell>
+        <mxCell id="col5_hdr" value="&lt;b style=&quot;font-size:8.5px;color:#9F1239;&quot;&gt;SERVING, ACTION LAYER &amp;&lt;br&gt;ENTERPRISE AI APPLICATION HUB&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1002" y="55" width="330" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- 1. Looker BI & Conversational Analytics -->
+        <mxCell id="box_looker_suite" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#22C55E;strokeWidth=1.2;" vertex="1" parent="1">
+          <mxGeometry x="1003" y="84" width="328" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_looker_hdr" value="&lt;b style=&quot;font-size:8px;color:#166534;&quot;&gt; Looker BI &amp; Conversational Analytics Suite&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="86" width="315" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_looker_dash" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt;Looker Enterprise Dashboards&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Real-Time Executive KPIs, Certified Metrics &amp; FinOps Attribution&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="106" width="314" height="38" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_looker_gemini_nlq" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt;Looker Conversational AI (Duet/Gemini NLQ)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Ask questions in plain English -&gt; Instant Looker charts &amp; deep root-cause analysis&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#86EFAC;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="148" width="314" height="38" as="geometry"/>
+        </mxCell>
+
+        <!-- 2. Enterprise AI & CoE Application Hub -->
+        <mxCell id="box_ge_app_suite" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#60A5FA;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="1003" y="202" width="328" height="175" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_ge_app_hdr" value="&lt;table style=&quot;width:100%;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:13px;color:#0284C7;font-weight:bold;&quot;&gt; ENTERPRISE AI HUB&lt;/td&gt;&lt;td style=&quot;text-align:right;font-size:7px;color:#475569;&quot;&gt;CoE &amp; Agentic Serving Cockpit&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="204" width="315" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- 4 Action Buttons inside Enterprise AI Hub -->
+        <mxCell id="btn_ge_sched_maint" value="&lt;b style=&quot;font-size:6.5px;color:#0F172A;&quot;&gt; GOVERNED RAG KNOWLEDGE COPILOT&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;ACL-Aware Grounded Enterprise Search &amp; Guardrail Validation&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#93C5FD;strokeWidth=1;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="228" width="314" height="32" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="btn_ge_opt_speed" value="&lt;b style=&quot;font-size:6.5px;color:#0F172A;&quot;&gt; REAL-TIME ML DECISION AUTOMATION&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Low-Latency Feature Store Scoring &amp; Automated Business Actions&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#93C5FD;strokeWidth=1;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="264" width="314" height="32" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="btn_ge_order_parts" value="&lt;b style=&quot;font-size:6.5px;color:#0F172A;&quot;&gt; DATA &amp; AI CoE REUSABLE ASSET MARKETPLACE&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Certified Data Products, Feature Sets &amp; Approved Prompt Templates&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#93C5FD;strokeWidth=1;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="300" width="314" height="32" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="btn_ge_retrain_model" value="&lt;b style=&quot;font-size:6.5px;color:#166534;&quot;&gt; CLOSED-LOOP DRIFT &amp; GUARDRAIL RE-TRAINING&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Automated ML/LLM evaluation, RLHF telemetry &amp; CI/CD re-deployment&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#86EFAC;strokeWidth=1.2;align=center;verticalAlign=middle;padding=1;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="336" width="314" height="34" as="geometry"/>
+        </mxCell>
+
+        <!-- Downstream Eventarc & Serverless Push Execution -->
+        <mxCell id="box_downstream_dispatch" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.2;" vertex="1" parent="1">
+          <mxGeometry x="1003" y="385" width="328" height="125" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_dispatch_hdr" value="&lt;b style=&quot;font-size:8px;color:#0F172A;&quot;&gt; Serverless Action Handlers &amp; FinOps Governance&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="387" width="315" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_cloud_run_lake" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt;Cloud Run Microservices&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Asynchronous Eventarc webhook consumers for external systems&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="406" width="314" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_fcm_lake" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt;Automated SLA &amp; FinOps Chargeback Engine&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Real-time unit cost attribution &amp; automated budget quota enforcement&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="440" width="314" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_emergency_stop_lake" value="&lt;b style=&quot;font-size:6px;color:#DC2626;&quot;&gt; Automated DLP &amp; Safety Circuit Breaker&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Sub-15ms PII redaction &amp; prompt-injection cutoff on policy violation&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#F87171;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="474" width="314" height="30" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="lbl_col5_status" value="&lt;span style=&quot;font-size:6px;color:#9F1239;font-weight:bold;&quot;&gt;Automated Enterprise Actions &amp; Real-Time Cockpit&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1003" y="605" width="328" height="14" as="geometry"/>
+        </mxCell>
+
+
+        <!-- ==================== FLOW ARROWS BETWEEN TIERS ==================== -->
+        <!-- Sources -> Ingestion -->
+        <mxCell id="e_src_to_ingest" value="" style="edgeStyle=none;html=1;strokeColor=#0F172A;strokeWidth=1.5;endArrow=classic;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="185" y="290" as="sourcePoint"/>
+            <mxPoint x="193" y="290" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Ingestion -> Lakehouse -->
+        <mxCell id="e_ingest_to_lake" value="" style="edgeStyle=none;html=1;strokeColor=#0F172A;strokeWidth=1.5;endArrow=classic;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="383" y="290" as="sourcePoint"/>
+            <mxPoint x="391" y="290" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Lakehouse -> Transformations & Gemini Core -->
+        <mxCell id="e_lake_to_gemini" value="" style="edgeStyle=none;html=1;strokeColor=#0F172A;strokeWidth=1.5;endArrow=classic;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="691" y="290" as="sourcePoint"/>
+            <mxPoint x="699" y="290" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Gemini Core -> Looker & GE App -->
+        <mxCell id="e_gemini_to_serving" value="" style="edgeStyle=none;html=1;strokeColor=#0F172A;strokeWidth=1.5;endArrow=classic;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="989" y="290" as="sourcePoint"/>
+            <mxPoint x="997" y="290" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Closed Loop Re-Train Line from GE App to Gemini & Dataplex -->
+        <mxCell id="e_retrain_lake_loop" value="&lt;b style=&quot;font-size:6px;color:#166534;&quot;&gt;Closed-Loop Model Retraining &amp; Schema Refinement Vector&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#166534;strokeWidth=1.8;endArrow=classic;dashed=1;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1010" y="353" as="sourcePoint"/>
+            <mxPoint x="541" y="494" as="targetPoint"/>
+            <Array as="points">
+              <mxPoint x="990" y="353"/>
+              <mxPoint x="990" y="555"/>
+              <mxPoint x="541" y="555"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+
+        <!-- ==================== BOTTOM HORIZONTAL BAR: UNIFIED GOVERNANCE & SECURITY ==================== -->
+        <!-- x = 20 .. 1337 (width = 1317) -->
+        <mxCell id="bar_btm_lake_gov" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#93C5FD;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="20" y="632" width="1317" height="58" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_btm_lake_title" value="&lt;b style=&quot;font-size:10.5px;color:#1E3A8A;&quot;&gt; UNIFIED GOVERNANCE, ZERO-TRUST SECURITY &amp; QUALITY PERIMETER&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:6px;color:#475569;&quot;&gt;Enterprise Multi-Tier Compliance Baseline Spanning Ingestion, Storage, Gemini AI &amp; Serving&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="35" y="636" width="380" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- 6 Governance Badges across bottom -->
+        <mxCell id="lake_gov_iam" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt; Cloud IAM &amp; ABAC&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Least Privilege Policy&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="425" y="639" width="135" height="42" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="lake_gov_vpcsc" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt; VPC Service Controls&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Zero Data Exfiltration&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="570" y="639" width="145" height="42" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="lake_gov_cmek" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt; Cloud KMS CMEK&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;FIPS 140-2 Level 3 HSM&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="725" y="639" width="135" height="42" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="lake_gov_scc" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt; Security Command Center&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Threat Detection &amp; Posture&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="870" y="639" width="145" height="42" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="lake_gov_dataplex" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt; Dataplex Fabric&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Catalog, Lineage &amp; DLP&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1025" y="639" width="145" height="42" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="lake_gov_audit" value="&lt;b style=&quot;font-size:6px;color:#0F172A;&quot;&gt; Cloud Audit Logs&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Chronicle SIEM Streaming&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="639" width="145" height="42" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
