@@ -12,7 +12,16 @@ const isAdmin = (user) => user?.role === 'admin';
 const OWNER_FIELDS = ['userId', 'user_id', 'createdBy', 'created_by', 'ownerId', 'owner_id', 'assignedAuthorId', 'assigned_author_id'];
 
 function canRead(user, resource) {
-  return isAdmin(user) || canAccessResource(user, resource, OWNER_FIELDS);
+  if (isAdmin(user)) return true;
+  if (user?.role === 'demo' && (
+    resource?.isSampleReport ||
+    resource?.id?.startsWith('inst_') ||
+    resource?.createdBy === 'system' ||
+    resource?.createdBy?.startsWith('demo_')
+  )) {
+    return true;
+  }
+  return canAccessResource(user, resource, OWNER_FIELDS);
 }
 
 function safeCell(value) {

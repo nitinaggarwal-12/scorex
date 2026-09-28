@@ -16,4 +16,14 @@ data/snapshots/
 *.log
 npm-debug.log*
 .DS_Store
-.agents/*.shadow_backup
+.agents/
+.gemini/
+.cursorrules
+.datacloud_skills_manifest
+skills
+AGENTS.md
+GEMINI.md
+CLAUDE.md
+hooks.json
+skills.json
+skills.md

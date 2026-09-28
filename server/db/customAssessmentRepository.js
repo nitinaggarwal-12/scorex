@@ -333,7 +333,7 @@ const STARTER_PRODUCTION_TEMPLATES = [
                 "Wasted annual cloud AI budget on over-provisioned LLM intelligence for simple tasks",
                 "Inability to maintain healthy unit economics as active user count grows exponentially",
                 "Financial risk of quota exhaustion causing service degradation for premium enterprise customers",
-                "Lack of agility in leveraging lower-cost lightweight models (e.g. Gemini 2.0 Flash) as they launch",
+                "Lack of agility in leveraging lower-cost lightweight models (e.g. Gemini 3.8 Flash) as they launch",
                 "Erosion of product profit margins due to unoptimized inference cost per user session"
               ]
             }

@@ -1426,19 +1426,38 @@ Return valid JSON only.`;
   }
 });
 
-// 13. Customer Multi-Assessment Portfolio Executive Rollup
-router.get('/customer/:customerName/portfolio-rollup', async (req, res) => {
+function matchesCustomerFuzzy(storedName, queryName) {
+  const cName = String(storedName || '').trim().toLowerCase();
+  const needle = String(queryName || '').trim().toLowerCase();
+  if (!cName) return false;
+  if (!needle) return true;
+  if (cName === needle || cName.includes(needle) || needle.includes(cName)) return true;
+  const stopWords = new Set(['the', 'and', 'inc', 'llc', 'corp', 'group', 'global', 'financial', 'services', 'enterprise', 'holdings']);
+  const queryTokens = needle.split(/[^a-z0-9]+/).filter(t => t.length >= 3 && !stopWords.has(t));
+  return queryTokens.length > 0 && queryTokens.some(t => cName.includes(t));
+}
+
+// 13a. Fetch all assessments for a specific customer (fuzzy match)
+router.get('/customer/:customerName', async (req, res) => {
   try {
     const { customerName } = req.params;
     const rawResult = await customAssessmentRepo.getAllInstances();
     const allInstances = Array.isArray(rawResult) ? rawResult : (rawResult.items || []);
-    const needle = String(customerName || '').trim().toLowerCase();
+    const assessments = allInstances.filter(i => matchesCustomerFuzzy(i.customerName, customerName));
+    res.json({ success: true, customerName, assessments });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Failed to fetch customer assessments' });
+  }
+});
 
-    const customerInstances = allInstances.filter(i => {
-      const cName = String(i.customerName || '').trim().toLowerCase();
-      if (!cName || !needle) return false;
-      return cName === needle || cName.includes(needle) || needle.includes(cName);
-    });
+// 13b. Customer Multi-Assessment Portfolio Executive Rollup (supports both path param and query param)
+router.get(['/customer/:customerName/portfolio-rollup', '/portfolio-rollup'], async (req, res) => {
+  try {
+    const customerName = req.params.customerName || req.query.customerName || '';
+    const rawResult = await customAssessmentRepo.getAllInstances();
+    const allInstances = Array.isArray(rawResult) ? rawResult : (rawResult.items || []);
+
+    const customerInstances = allInstances.filter(i => matchesCustomerFuzzy(i.customerName, customerName));
 
     if (customerInstances.length === 0) {
       return res.json({

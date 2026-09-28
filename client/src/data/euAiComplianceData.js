@@ -1996,7 +1996,7 @@ export const SAMPLE_HIGH_RISK_HR_EVALUATION = {
     q2: {
       level1OptionId: '2.1',
       level2OptionId: '2.1.1',
-      notes: 'Underlying model is Google Gemini 1.5 Pro on Vertex AI (EU Frankfurt region). Enterprise agreement includes copyright indemnification and technical documentation SLA.'
+      notes: 'Underlying model is Google Gemini 3.1 Pro on Vertex AI (EU Frankfurt region). Enterprise agreement includes copyright indemnification and technical documentation SLA.'
     },
     q3: {
       level1OptionId: '3.1',

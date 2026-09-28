@@ -804,7 +804,8 @@ const AssessmentsListNew = () => {
         ? dynamicInstances.value
             .filter(item => {
               const id = String(item.id || '');
-              return id.startsWith('inst_') || item.status === 'completed';
+              const hasResponses = Object.keys(item.responses || {}).length > 0;
+              return id.startsWith('inst_') || item.status === 'completed' || hasResponses;
             })
             .map(item => normalizeAssessmentRecord(item, 'dynamic'))
         : [];
@@ -876,17 +877,15 @@ const AssessmentsListNew = () => {
       if (family === 'dynamic') {
         await dynamicAssessmentService.cloneInstance(id, 'Next Quarter');
         toast.success('Dynamic blueprint cloned for next quarter review!', { id: 'clone' });
-      } else if (family === 'genai') {
+      } else if (family === 'ge_value_realization') {
         const headers = authService.getAuthHeader ? authService.getAuthHeader() : {};
-        await axios.post('/api/genai-readiness/assessments', {
-          customerName: `${assessment.organization_name || 'Organization'} (Copy)`,
-          responses: assessment.responses || {},
-          scores: assessment.scores || {},
-          totalScore: assessment.totalScore || 0,
-          maxScore: assessment.maxScore || 100,
-          maturityLevel: assessment.maturityLevel || 'Developing'
+        const newId = `ge_vr_${Date.now().toString(36)}`;
+        await axios.post(`/api/ge-value-realization/dossiers/${newId}`, {
+          ...assessment,
+          id: newId,
+          meta: { ...(assessment.meta || {}), customerName: `${assessment.organization_name || 'Enterprise'} (Copy)` }
         }, { headers });
-        toast.success('GenAI Readiness assessment cloned!', { id: 'clone' });
+        toast.success(`GE Value Realization Dossier cloned (${newId})!`, { id: 'clone' });
       } else if (family === 'eu_ai_act') {
         const headers = authService.getAuthHeader ? authService.getAuthHeader() : {};
         const newId = `EU-AI-${new Date().getFullYear()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
@@ -930,8 +929,8 @@ const AssessmentsListNew = () => {
       const headers = authService.getAuthHeader ? authService.getAuthHeader() : {};
       if (family === 'dynamic') {
         await dynamicAssessmentService.deleteInstance(assessmentId);
-      } else if (family === 'genai') {
-        await axios.delete(`/api/genai-readiness/assessments/${assessmentId}`, { headers });
+      } else if (family === 'ge_value_realization') {
+        await axios.delete(`/api/ge-value-realization/dossiers/${assessmentId}`, { headers });
       } else if (family === 'eu_ai_act') {
         await axios.delete(`/api/eu-ai-compliance/dossiers/${assessmentId}`, { headers });
       } else {
@@ -948,15 +947,9 @@ const AssessmentsListNew = () => {
   // Handle Excel Export
   const handleExportToExcel = async (assessment, e) => {
     e?.stopPropagation();
-    const family = assessment.assessmentFamily || (assessment.isDynamic ? 'dynamic' : 'classic');
     
     try {
       toast.loading(`Generating Excel file for ${assessment.assessment_name}...`, { id: 'excel-export' });
-      if (family === 'genai') {
-        window.open(`/api/genai-readiness/assessments/${assessment.id}/excel`, '_blank');
-        toast.success(`✅ GenAI Readiness Excel downloaded!`, { id: 'excel-export' });
-        return;
-      }
       const blob = await excelService.exportAssessment(assessment.id);
       const fileName = `${(assessment.assessment_name || 'Assessment').replace(/[^a-zA-Z0-9_-]/g, '_')}_${assessment.id}_${new Date().toISOString().split('T')[0]}.xlsx`;
       
