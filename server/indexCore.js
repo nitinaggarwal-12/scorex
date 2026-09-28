@@ -83,12 +83,17 @@ const { requireAdmin } = require('./middleware/auth');
 // Mount routes
 app.use('/api/auth/sso', ssoRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/users', (req, res, next) => {
+  req.url = '/users' + (req.url === '/' ? '' : req.url);
+  return authRoutes(req, res, next);
+});
 app.use('/api/assignments', assignmentRoutes);
 app.use('/api/author', require('./routes/authorValidation')); // Enhanced Author features
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/custom-questions', customQuestionsRoutes);
+app.use('/api/questions', customQuestionsRoutes);
 app.use('/api/assessment-excel', excelRoutes);
 app.use('/api/question-edits', questionEditsRoutes);
 app.use('/api/question-assignments', questionAssignmentsRoutes);
@@ -97,7 +102,9 @@ app.use('/api/genai-readiness', genaiReadinessRoutes);
 app.use('/api/dynamic-assessments', dynamicAssessmentsRoutes);
 app.use('/api/audio', audioRoutes);
 app.use('/api/eu-ai-compliance', euAiComplianceRoutes);
+app.use('/api/eu-ai-act', euAiComplianceRoutes);
 app.use('/api/ge-value-realization', geValueRealizationRoutes);
+app.use('/api/value-realization', geValueRealizationRoutes);
 
 // Admin endpoint to release/unrelease assessment results
 app.post('/api/admin/release-results/:assessmentId', requireAuth, requireAdmin, async (req, res) => {
@@ -211,7 +218,8 @@ app.get('/status', async (req, res) => {
       },
       features: {
         liveDataEnabled: process.env.USE_LIVE_DATA === 'true',
-        openAIConfigured: !!process.env.OPENAI_API_KEY,
+        geminiConfigured: !!process.env.GEMINI_API_KEY,
+        canonicalEngines: ['Dynamic Assessment Blueprints', 'GE Value Realization', 'EU AI Act Statutory Compliance']
       }
     });
   } catch (error) {
@@ -1080,10 +1088,37 @@ app.post(['/api/assessments/auto-populate-from-doc', '/api/assessment/:id/auto-p
       });
     }
 
+    // Also persist to canonical Engine 1 (customAssessmentRepository) so /assessments/report/:id works natively
+    try {
+      const customRepo = require('./db/customAssessmentRepository');
+      const dynEngine = require('./services/dynamicAssessmentEngine');
+      const typeDef = await customRepo.getAssessmentTypeByKey('enterprise_data_ai_maturity');
+      if (typeDef) {
+        const scoreResult = dynEngine.calculateScores(extractedData.responses || {}, typeDef);
+        await customRepo.createInstance({
+          id: targetId,
+          typeId: typeDef.id,
+          typeKey: typeDef.typeKey,
+          customerName: extractedData.organizationName || req.body.organizationName || 'Enterprise Organization',
+          useCase: extractedData.industry || req.body.industry || 'Architecture Assessment',
+          assessorEmail: req.body.contactEmail || 'architect@enterprise.com',
+          frameworkSnapshot: typeDef,
+          responses: extractedData.responses || {},
+          scores: scoreResult.categoryScores,
+          totalScore: scoreResult.overallScore || extractedData.overallMaturityEstimate || 3.2,
+          maxScore: 5.0,
+          maturityLevel: scoreResult.maturityLevel || 'Level 3: Defined',
+          status: 'completed'
+        });
+      }
+    } catch (dynErr) {
+      console.warn('Notice creating dynamic assessment instance from document:', dynErr.message);
+    }
+
     res.json({
       success: true,
       assessmentId: targetId,
-      redirectUrl: `/results/${targetId}`,
+      redirectUrl: `/assessments/report/${targetId}`,
       organizationName: extractedData.organizationName,
       industry: extractedData.industry,
       detectedTechnologies: extractedData.detectedTechnologies || [],
@@ -1186,7 +1221,7 @@ app.post('/api/assessment/:id/submit', async (req, res) => {
       }
     });
 
-    // 3. Asynchronously trigger live Gemini 3.7 AI report & blueprint generation in the background
+    // 3. Asynchronously trigger live Gemini 3.8 Flash AI report & blueprint generation in the background
     (async () => {
       try {
         const dynamicEngine = require('./services/dynamicAssessmentEngine');

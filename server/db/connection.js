@@ -46,24 +46,23 @@ class DatabaseConnection {
     try {
       console.log('🔌 Connecting to PostgreSQL database...');
       
-      // Check for individual Lakebase environment variables first (Databricks Apps)
-      const lakebaseHost = process.env.LAKEBASE_HOST;
-      const lakebasePort = process.env.LAKEBASE_PORT;
-      const lakebaseDatabase = process.env.LAKEBASE_DATABASE;
-      const lakebaseUser = process.env.LAKEBASE_USER;
-      const lakebasePassword = process.env.LAKEBASE_PASSWORD;
+      // Check for individual PostgreSQL environment variables first
+      const pgHost = process.env.PGHOST;
+      const pgPort = process.env.PGPORT;
+      const pgDatabase = process.env.PGDATABASE;
+      const pgUser = process.env.PGUSER;
+      const pgPassword = process.env.PGPASSWORD;
       
       let poolConfig;
       
-      if (lakebaseHost && lakebaseDatabase && lakebaseUser && lakebasePassword) {
-        // Use individual environment variables (Databricks Apps)
-        console.log('📊 Using Lakebase environment variables');
+      if (pgHost && pgDatabase && pgUser && pgPassword) {
+        console.log('📊 Using individual PG* environment variables');
         poolConfig = {
-          host: lakebaseHost,
-          port: parseInt(lakebasePort) || 5432,
-          database: lakebaseDatabase,
-          user: lakebaseUser,
-          password: lakebasePassword,
+          host: pgHost,
+          port: parseInt(pgPort) || 5432,
+          database: pgDatabase,
+          user: pgUser,
+          password: pgPassword,
           ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
           max: 20,
           idleTimeoutMillis: 30000,
@@ -72,7 +71,7 @@ class DatabaseConnection {
         console.log(`📊 Connecting to: ${poolConfig.host}:${poolConfig.port}/${poolConfig.database}`);
         console.log(`👤 User: ${poolConfig.user}`);
       } else {
-        // Fall back to DATABASE_URL (Railway)
+        // Fall back to DATABASE_URL (Railway / Cloud SQL)
         const databaseUrl = process.env.DATABASE_URL;
         
         if (!databaseUrl) {

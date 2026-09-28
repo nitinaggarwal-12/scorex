@@ -557,6 +557,7 @@ const DynamicAssessmentGenerator = () => {
   const [selectedTier, setSelectedTier] = useState('deep_dive'); // 'rapid' | 'deep_dive' | 'comprehensive'
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedFramework, setGeneratedFramework] = useState(null);
+  const [conversationalReply, setConversationalReply] = useState(null);
   
   // Modal state for starting assessment
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -573,17 +574,20 @@ const DynamicAssessmentGenerator = () => {
     }
 
     setIsGenerating(true);
-    setGeneratedFramework(null);
+    setConversationalReply(null);
 
     try {
-      toast.loading('Generating custom assessment framework with Gemini 3.8...', { id: 'generating' });
+      toast.loading('Analyzing prompt with Gemini 3.8 Flash...', { id: 'generating' });
       const response = await dynamicAssessmentService.generateFramework(textToUse.trim(), {
         industry,
         targetAudience,
         tier: selectedTier
       });
 
-      if (response.success && response.framework) {
+      if (response.isConversational && response.conversationalReply) {
+        setConversationalReply(response);
+        toast.dismiss('generating');
+      } else if (response.success && response.framework) {
         setGeneratedFramework(response.framework);
         toast.success(`Assessment framework "${response.framework.title}" generated!`, { id: 'generating' });
       } else {
@@ -839,6 +843,58 @@ const DynamicAssessmentGenerator = () => {
             </GenerateButton>
           </ControlsRow>
         </PromptCard>
+
+        {/* Conversational Guard Reply Card (Zero Mutation) */}
+        {conversationalReply && (
+          <div style={{
+            background: '#ffffff',
+            border: '1.5px solid #c7d2fe',
+            borderRadius: '18px',
+            padding: '22px 26px',
+            marginBottom: '28px',
+            boxShadow: '0 4px 16px rgba(79, 70, 229, 0.08)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+              <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#4f46e5', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                ✨ ScoreX AI Blueprint Compiler Copilot • Conversational Guidance (Zero Mutation)
+              </span>
+              <button
+                onClick={() => setConversationalReply(null)}
+                style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontWeight: 700 }}
+              >
+                ✕
+              </button>
+            </div>
+            <p style={{ margin: '0 0 12px', color: '#1e293b', fontSize: '0.95rem', lineHeight: 1.6 }}>
+              {String(conversationalReply.conversationalReply || '').replace(/\*\*/g, '')}
+            </p>
+            {Array.isArray(conversationalReply.suggestedActions) && conversationalReply.suggestedActions.length > 0 && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {conversationalReply.suggestedActions.map((act, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setPrompt(act);
+                      handleGenerate(act);
+                    }}
+                    style={{
+                      background: '#eef2ff',
+                      border: '1px solid #c7d2fe',
+                      borderRadius: '999px',
+                      padding: '6px 14px',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      color: '#4338ca',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {act}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Framework Preview */}
         {generatedFramework && (

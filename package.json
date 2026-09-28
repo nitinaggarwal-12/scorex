@@ -17,6 +17,8 @@
     "db:migrate": "node server/run-migrations.js",
     "migrate:json": "node server/db/migrate.js",
     "test": "node --test tests/security/*.test.js",
+    "quality-gate": "node scripts/stop_quality_gate.mjs",
+    "forensic-audit": "npm run build --prefix client && cp -r client/public/workflows client/build/workflows && node scratch/run_forensic_audit_after.js",
     "update:workflows": "node scripts/update-workflow-assets.js",
     "update:workflows:remote": "TEST_URL=https://scorex.up.railway.app node scripts/update-workflow-assets.js"
   },
@@ -36,7 +38,6 @@
     "form-data": "^4.0.6",
     "mammoth": "^1.12.2",
     "nodemailer": "^9.0.5",
-    "openai": "^6.3.0",
     "pg": "^8.16.3",
     "uuid": "^11.1.1"
   },
@@ -70,13 +71,15 @@
     "nodemon": "^3.0.1"
   },
   "keywords": [
-    "databricks",
+    "scorex",
+    "gemini",
+    "deepmind",
     "maturity",
     "assessment",
-    "analytics",
-    "data"
+    "value-realization",
+    "eu-ai-act"
   ],
-  "author": "Databricks Maturity Assessment Team",
+  "author": "ScoreX Enterprise Architecture Team",
   "license": "MIT",
   "engines": {
     "node": "20.x",

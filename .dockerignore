@@ -15,5 +15,11 @@ db-sync
 data/*.backup
 data/snapshots
 dev.db
-.agents/*.shadow_backup
-
+.agents
+.gemini
+AGENTS.md
+GEMINI.md
+CLAUDE.md
+hooks.json
+skills.json
+skills.md

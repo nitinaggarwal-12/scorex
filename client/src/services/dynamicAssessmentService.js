@@ -2,7 +2,7 @@ import axios from 'axios';
 
 /**
  * Dynamic Assessment Service
- * Connects frontend to backend Gemini 3.7 dynamic assessment engine and repository
+ * Connects frontend to backend Gemini 3.8 Flash dynamic assessment engine and repository
  */
 class DynamicAssessmentService {
   /**
@@ -166,7 +166,7 @@ class DynamicAssessmentService {
   }
 
   /**
-   * Trigger AI Executive Report Generation with Gemini 3.7
+   * Trigger AI Executive Report Generation with Gemini 3.8 Flash
    */
   async generateReport(id) {
     const response = await axios.post(`/api/dynamic-assessments/instances/${id}/generate-report`);
@@ -174,7 +174,7 @@ class DynamicAssessmentService {
   }
 
   /**
-   * Generate bespoke Architecture Diagrams using Gemini 3.7 Flash API
+   * Generate bespoke Architecture Diagrams using Gemini 3.8 Flash API
    */
   async generateArchitectureDiagrams(id, customInstructions = '') {
     const response = await axios.post(`/api/dynamic-assessments/instances/${id}/generate-diagrams`, {

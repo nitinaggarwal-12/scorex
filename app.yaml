@@ -8,16 +8,15 @@ env:
     value: production
   - name: PORT
     value: "8080"
-  - name: LAKEBASE_HOST
+  - name: PGHOST
     value: your-postgres-host.example.com
-  - name: LAKEBASE_PORT
+  - name: PGPORT
     value: "5432"
-  - name: LAKEBASE_DATABASE
-    value: databricks_postgres
-  - name: LAKEBASE_USER
+  - name: PGDATABASE
+    value: scorex_postgres
+  - name: PGUSER
     value: support@example.com
-  - name: LAKEBASE_PASSWORD
-    value: "{{secrets/maturity-assessment/LAKEBASE_TOKEN}}"
+  - name: PGPASSWORD
+    value: "{{secrets/scorex/PGPASSWORD}}"
   - name: SESSION_SECRET
-    value: "{{secrets/maturity-assessment/SESSION_SECRET}}"
-
+    value: "{{secrets/scorex/SESSION_SECRET}}"

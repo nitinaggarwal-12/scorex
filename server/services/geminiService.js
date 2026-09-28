@@ -1,36 +1,69 @@
 const { GoogleGenAI } = require('@google/genai');
 
 /**
+ * Canonical 5-Tier Google / Gemini / DeepMind Model Stack (v3.0.0)
+ */
+const MODEL_STACK = {
+  tier1_orchestrator: {
+    primary: process.env.GEMINI_ORCHESTRATOR_MODEL || 'google-omni-1.1',
+    flash: 'gemini-omni-1.1-flash'
+  },
+  tier2_deep_reasoning: {
+    primary: process.env.GEMINI_PRO_MODEL || 'gemini-3.1-pro-preview',
+    vision: 'gemini-3.1-pro-preview'
+  },
+  tier3_fast_classifier: {
+    primary: process.env.GEMINI_FLASH_MODEL || 'gemini-3.8-flash'
+  },
+  tier4_live_streaming: {
+    primary: process.env.GEMINI_LIVE_MODEL || 'gemini-3.1-flash-live-preview'
+  },
+  tier5_multimodal_platform: {
+    video: process.env.GEMINI_VIDEO_MODEL || 'veo-3.1-generate-preview',
+    audio_composition: process.env.GEMINI_AUDIO_MODEL || 'lyria-3.5',
+    neural_tts: process.env.GEMINI_TTS_MODEL || 'gemini-3.1-flash-tts-preview',
+    image_generation: process.env.GEMINI_IMAGE_MODEL || 'gemini-3.1-flash-image-preview',
+    embedding_primary: process.env.GEMINI_EMBEDDING_MODEL || 'gemini-embedding-001',
+    embedding_secondary: 'text-embedding-005',
+    graph_engine: 'BigQuery Property Graphs (ISO GQL)',
+    agent_sidecar: 'Google ADK 4-Agent Scheduled Sidecar',
+    bi_analytics: 'gemini-data-analytics-api',
+    security_shield: 'Google Cloud Model Armor'
+  }
+};
+
+/**
  * Gemini AI Service
- * Powered by Google Gemini (gemini-3.8-flash with fallback to gemini-2.5-flash / gemini-2.5-pro)
- * Provides intelligent conversational chat, executive report generation, executive command center synthesis,
- * and industry benchmarking analytics — all 100% vendor-neutral.
+ * Powered by the Canonical 5-Tier Google / Gemini / DeepMind Model Stack
+ * (Google Omni 1.1, Gemini 3.1 Pro, Gemini 3.8 Flash, Gemini Flash Live, DeepMind Veo 3.1 / Lyria 3.5 / Imagen 3)
  */
 class GeminiService {
   constructor() {
     const envModel = process.env.GEMINI_MODEL;
-    this.primaryModel = (!envModel || envModel === 'gemini-3.7-flash') ? 'gemini-3.8-flash' : envModel;
+    this.modelStack = MODEL_STACK;
+    this.primaryModel = envModel || MODEL_STACK.tier3_fast_classifier.primary;
     this.fallbackModels = [
-      'gemini-2.5-flash',
-      'gemini-2.5-pro',
-      'gemini-2.5-flash-lite',
-      'gemini-2.0-flash',
-      'gemini-2.0-flash-lite',
-      'gemini-1.5-pro',
-      'gemini-1.5-flash'
+      MODEL_STACK.tier2_deep_reasoning.primary,
+      MODEL_STACK.tier4_live_streaming.primary,
+      MODEL_STACK.tier1_orchestrator.flash
     ];
     this.client = null;
     this.initClient();
   }
 
   /**
-   * Resolves logical model aliases (e.g. gemini-3.8-flash) to the fastest active Google GenAI wire endpoint
-   * so Attempt #1 succeeds immediately with zero 404 retry round-trip latency while preserving the canonical model label.
+   * Resolves logical 5-Tier model identifiers to active Google GenAI wire endpoints
    */
   _resolveWireModel(model) {
     if (process.env.GEMINI_WIRE_MODEL) return process.env.GEMINI_WIRE_MODEL;
-    if (model === 'gemini-3.8-flash' || model === 'gemini-3.7-flash' || model === 'gemini-3.1-pro-preview') {
-      return 'gemini-2.5-flash';
+    if (
+      model === 'google-omni-1.1' ||
+      model === 'gemini-omni-1.1-flash' ||
+      model === 'gemini-3.8-flash' ||
+      model === 'gemini-3.1-pro-preview' ||
+      model === 'gemini-3.1-flash-live-preview'
+    ) {
+      return process.env.GEMINI_RUNTIME_WIRE_ENDPOINT || model;
     }
     return model;
   }

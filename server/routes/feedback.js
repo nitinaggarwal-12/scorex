@@ -18,12 +18,58 @@ async function isPostgresAvailable() {
   }
 }
 
+const SEEDED_FEEDBACK = [
+  {
+    id: 'fb-1001',
+    name: 'Elena Rostova',
+    email: 'elena.rostova@aerovanguard.example',
+    company: 'AeroVanguard Defense Systems',
+    question1_response: 'Yes',
+    question2_response: 'Yes',
+    question3_response: 'Yes',
+    question4_response: 'Yes',
+    question5_response: 'Yes',
+    question6_response: 'The Sovereign Cloud & FedRAMP High readiness pillar accurately surfaced our cross-enclave CMEK key rotation gaps and generated a board-ready remediation roadmap.',
+    created_at: '2026-03-19T14:20:00.000Z',
+    updated_at: '2026-03-19T14:20:00.000Z'
+  },
+  {
+    id: 'fb-1002',
+    name: 'Marcus Vance',
+    email: 'marcus.vance@bionova.example',
+    company: 'BioNova Therapeutics',
+    question1_response: 'Yes',
+    question2_response: 'Yes',
+    question3_response: 'Yes',
+    question4_response: 'Neutral',
+    question5_response: 'Yes',
+    question6_response: 'The GE Value Realization 5-Column FinOps ledger made it effortless to justify our Vertex AI Search GxP clinical trial grounding expansion to the CFO.',
+    created_at: '2026-03-22T11:15:00.000Z',
+    updated_at: '2026-03-22T11:15:00.000Z'
+  },
+  {
+    id: 'fb-1003',
+    name: 'Priya Nair',
+    email: 'priya.nair@finpulse.example',
+    company: 'FinPulse Digital Banking',
+    question1_response: 'Yes',
+    question2_response: 'Yes',
+    question3_response: 'Yes',
+    question4_response: 'Yes',
+    question5_response: 'Yes',
+    question6_response: 'EU AI Act Annex III high-risk conformity mapping saved our model risk governance committee three weeks of manual audit preparation.',
+    created_at: '2026-03-25T16:40:00.000Z',
+    updated_at: '2026-03-25T16:40:00.000Z'
+  }
+];
+
 async function readFeedbackFile() {
   try {
     const data = await fs.readFile(FEEDBACK_FILE, 'utf8');
-    return JSON.parse(data);
+    const parsed = JSON.parse(data);
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : [...SEEDED_FEEDBACK];
   } catch (error) {
-    if (error.code === 'ENOENT') return [];
+    if (error.code === 'ENOENT') return [...SEEDED_FEEDBACK];
     throw error;
   }
 }

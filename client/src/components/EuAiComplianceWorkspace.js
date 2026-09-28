@@ -451,7 +451,7 @@ const QuestionnaireGrid = styled.div`
   gap: 28px;
 
   @media (min-width: 1024px) {
-    grid-template-columns: 320px 1fr;
+    grid-template-columns: 360px 1fr;
     align-items: start;
   }
 `;
@@ -1897,7 +1897,7 @@ export default function EuAiComplianceWorkspace() {
   const [syncingServer, setSyncingServer] = useState(false);
 
   // Independent Multi-Model LLM Live API Audit State
-  const [auditorModel, setAuditorModel] = useState('gemini-2.5-pro');
+  const [auditorModel, setAuditorModel] = useState('google-omni-1.1');
   const [liveAuditReport, setLiveAuditReport] = useState(null);
   const [runningLiveAudit, setRunningLiveAudit] = useState(false);
   const [showWeightJustificationTable, setShowWeightJustificationTable] = useState(false);
@@ -2791,17 +2791,19 @@ export default function EuAiComplianceWorkspace() {
                     <SectionNumBadge $active={isSectionActive} $done={isSectionDone}>
                       {isSectionDone ? '✓' : s.id}
                     </SectionNumBadge>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', minWidth: 0 }}>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
                         <span style={{ 
                           fontSize: '0.65rem', 
                           fontWeight: '800', 
                           color: isSectionActive ? '#2563eb' : '#64748b', 
-                          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace' 
+                          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+                          whiteSpace: 'nowrap',
+                          flexShrink: 0
                         }}>
                           SEC-0{s.id}
                         </span>
-                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: isSectionActive ? '700' : '500' }}>
+                        <span style={{ lineHeight: 1.32, fontWeight: isSectionActive ? '700' : '600' }}>
                           {s.title}
                         </span>
                       </div>
@@ -3360,9 +3362,10 @@ export default function EuAiComplianceWorkspace() {
                     onChange={(e) => setAuditorModel(e.target.value)}
                     style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '7px 12px', fontSize: '0.78rem', fontWeight: '700', color: '#0f172a', cursor: 'pointer' }}
                   >
-                    <option value="gemini-2.5-pro">Auditor Model: Gemini 2.5 Pro (Deep Statutory Reasoning)</option>
-                    <option value="gemini-2.5-flash">Auditor Model: Gemini 2.5 Flash (Rapid Contradiction Cross-Check)</option>
-                    <option value="gemini-3.1-pro-preview">Auditor Model: Gemini 3.1 Pro Preview (Multi-Framework Consensus)</option>
+                    <option value="google-omni-1.1">Auditor Model: Google Omni 1.1 (Chief Forensic Statutory Judge)</option>
+                    <option value="gemini-3.1-pro-preview">Auditor Model: Gemini 3.1 Pro (Deep Statutory Reasoning & Annex IV)</option>
+                    <option value="gemini-3.8-flash">Auditor Model: Gemini 3.8 Flash (Rapid Contradiction Cross-Check)</option>
+                    <option value="gemini-3.1-flash-live-preview">Auditor Model: Gemini Flash Live (Real-Time Interactive Audit)</option>
                   </select>
 
                   <ActionButton
@@ -4466,9 +4469,10 @@ export default function EuAiComplianceWorkspace() {
                     onChange={(e) => setAuditorModel(e.target.value)}
                     style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '4px 8px', fontSize: '0.75rem', fontWeight: '700' }}
                   >
-                    <option value="gemini-2.5-pro">Auditor: Gemini 2.5 Pro</option>
-                    <option value="gemini-2.5-flash">Auditor: Gemini 2.5 Flash</option>
-                    <option value="gemini-3.1-pro-preview">Auditor: Gemini 3.1 Pro Preview</option>
+                    <option value="google-omni-1.1">Auditor: Google Omni 1.1</option>
+                    <option value="gemini-3.1-pro-preview">Auditor: Gemini 3.1 Pro</option>
+                    <option value="gemini-3.8-flash">Auditor: Gemini 3.8 Flash</option>
+                    <option value="gemini-3.1-flash-live-preview">Auditor: Gemini Flash Live</option>
                   </select>
                   <button
                     type="button"

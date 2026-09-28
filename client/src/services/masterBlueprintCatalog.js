@@ -20,12 +20,12 @@ function buildLegacyDataDependencyMapXml() {
         <mxCell id="main_title" value="&lt;b style=&quot;font-size:16.5px;color:#0F172A;letter-spacing:-0.2px;&quot;&gt;GOOGLE CLOUD DISCOVERY &amp;amp; ASSESSMENT: LEGACY SILOS TO MODERN MIGRATION WAVES&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="65" y="10" width="1050" height="22" as="geometry"/>
         </mxCell>
-        <mxCell id="main_subtitle" value="&lt;span style=&quot;font-size:9px;color:#475569;font-weight:700;letter-spacing:0.1px;&quot;&gt;StratoZone Collector Appliance, Google Cloud Migration Center, Sensitive Data Protection (DLP), &amp;amp; Gemini 3.7 Flash Architecture Reasoning&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="main_subtitle" value="&lt;span style=&quot;font-size:9px;color:#475569;font-weight:700;letter-spacing:0.1px;&quot;&gt;StratoZone Collector Appliance, Google Cloud Migration Center, Sensitive Data Protection (DLP), &amp;amp; Gemini 3.8 Flash Architecture Reasoning&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="65" y="32" width="1050" height="16" as="geometry"/>
         </mxCell>
         
-        <!-- Gemini 3.7 Flash Badge -->
-        <mxCell id="top_gemini_badge" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:12.5px;font-weight:bold;color:#38BDF8;&quot;&gt;✨ Gemini 3.7 Flash&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:8px;color:#94A3B8;font-weight:600;&quot;&gt;Discovery &amp;amp; Migration Engine&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;strokeWidth=1.5;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+        <!-- Gemini 3.8 Flash Badge -->
+        <mxCell id="top_gemini_badge" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:12.5px;font-weight:bold;color:#38BDF8;&quot;&gt;✨ Gemini 3.8 Flash&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:8px;color:#94A3B8;font-weight:600;&quot;&gt;Discovery &amp;amp; Migration Engine&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;strokeWidth=1.5;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
           <mxGeometry x="1380" y="8" width="195" height="42" as="geometry"/>
         </mxCell>
 
@@ -176,8 +176,8 @@ function buildLegacyDataDependencyMapXml() {
           <mxGeometry x="990" y="345" width="170" height="120" as="geometry"/>
         </mxCell>
 
-        <!-- 3.4 Gemini 3.7 Flash Architecture Reasoning -->
-        <mxCell id="card_gemini_reasoning" value="&lt;b style=&quot;font-size:10.5px;color:#2563EB;&quot;&gt;✨ Gemini 3.7 Flash&lt;br&gt;Architecture Reasoning&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7.5px;color:#475569;&quot;&gt;• Automated 6Rs Migration Track Classification&lt;br&gt;• Wave Schedule &amp;amp; Dependency Optimization&lt;br&gt;• Legacy Monolith Code Refactoring Plan&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=1.5;align=center;verticalAlign=middle;padding=6;" vertex="1" parent="1">
+        <!-- 3.4 Gemini 3.8 Flash Architecture Reasoning -->
+        <mxCell id="card_gemini_reasoning" value="&lt;b style=&quot;font-size:10.5px;color:#2563EB;&quot;&gt;✨ Gemini 3.8 Flash&lt;br&gt;Architecture Reasoning&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7.5px;color:#475569;&quot;&gt;• Automated 6Rs Migration Track Classification&lt;br&gt;• Wave Schedule &amp;amp; Dependency Optimization&lt;br&gt;• Legacy Monolith Code Refactoring Plan&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=1.5;align=center;verticalAlign=middle;padding=6;" vertex="1" parent="1">
           <mxGeometry x="790" y="485" width="370" height="275" as="geometry"/>
         </mxCell>
 
@@ -249,7 +249,7 @@ function buildLegacyDataDependencyMapXml() {
 
         <!-- ==================== FOOTER LEGEND ==================== -->
         <!-- x = 25 .. 1575 (width = 1550, height = 36) -->
-        <mxCell id="footer_legend" value="&lt;table style=&quot;width:100%;font-size:7.5px;color:#334155;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td&gt;&lt;b style=&quot;color:#0F172A;&quot;&gt;Migration Architecture Legend:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;🔴 &lt;b&gt;On-Prem Legacy Silos &amp;amp; Monoliths&lt;/b&gt;&lt;/td&gt;&lt;td&gt;🟠 &lt;b&gt;Legacy Non-Deterministic Monoliths&lt;/b&gt;&lt;/td&gt;&lt;td&gt;🟡 &lt;b&gt;Legacy Spaghetti Integration Matrix&lt;/b&gt;&lt;/td&gt;&lt;td&gt;🔵 &lt;b&gt;Sensitive Data Protection (DLP) &amp;amp; Discovery&lt;/b&gt;&lt;/td&gt;&lt;td&gt;🟢 &lt;b&gt;Clear, Optimized Transformation Waves&lt;/b&gt;&lt;/td&gt;&lt;td&gt;✨ &lt;b style=&quot;color:#1D4ED8;&quot;&gt;Powered by Gemini 3.7 Flash&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="footer_legend" value="&lt;table style=&quot;width:100%;font-size:7.5px;color:#334155;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td&gt;&lt;b style=&quot;color:#0F172A;&quot;&gt;Migration Architecture Legend:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;🔴 &lt;b&gt;On-Prem Legacy Silos &amp;amp; Monoliths&lt;/b&gt;&lt;/td&gt;&lt;td&gt;🟠 &lt;b&gt;Legacy Non-Deterministic Monoliths&lt;/b&gt;&lt;/td&gt;&lt;td&gt;🟡 &lt;b&gt;Legacy Spaghetti Integration Matrix&lt;/b&gt;&lt;/td&gt;&lt;td&gt;🔵 &lt;b&gt;Sensitive Data Protection (DLP) &amp;amp; Discovery&lt;/b&gt;&lt;/td&gt;&lt;td&gt;🟢 &lt;b&gt;Clear, Optimized Transformation Waves&lt;/b&gt;&lt;/td&gt;&lt;td&gt;✨ &lt;b style=&quot;color:#1D4ED8;&quot;&gt;Powered by Gemini 3.8 Flash&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="25" y="785" width="1550" height="36" as="geometry"/>
         </mxCell>
 
@@ -1659,7 +1659,7 @@ function buildGcpDataLakehouseWbsXml() {
         <mxCell id="card_bq_bi_engine" value="&lt;b style=&quot;font-size:6.5px;color:#0F172A;&quot;&gt;BigQuery BI Engine (In-Memory Accelerator)&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Sub-millisecond query response for interactive Looker dashboards&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
           <mxGeometry x="404" y="422" width="274" height="34" as="geometry"/>
         </mxCell>
-        <mxCell id="card_bq_ml_engine" value="&lt;b style=&quot;font-size:6.5px;color:#0F172A;&quot;&gt;BigQuery ML &amp;amp; Vertex AI Integration&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Direct SQL calls to Gemini 3.7 Flash (ML.GENERATE_TEXT)&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#86EFAC;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
+        <mxCell id="card_bq_ml_engine" value="&lt;b style=&quot;font-size:6.5px;color:#0F172A;&quot;&gt;BigQuery ML &amp;amp; Vertex AI Integration&lt;br&gt;&lt;span style=&quot;font-size:5px;color:#475569;font-weight:normal;&quot;&gt;Direct SQL calls to Gemini 3.8 Flash (ML.GENERATE_TEXT)&lt;/span&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#86EFAC;strokeWidth=1;align=left;verticalAlign=middle;padding=2;" vertex="1" parent="1">
           <mxGeometry x="404" y="460" width="274" height="34" as="geometry"/>
         </mxCell>
 
@@ -1699,8 +1699,8 @@ function buildGcpDataLakehouseWbsXml() {
           <mxGeometry x="710" y="204" width="270" height="18" as="geometry"/>
         </mxCell>
 
-        <!-- 1. Gemini 3.7 Flash / Pro Foundation Reasoner -->
-        <mxCell id="card_gemini_models_lake" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:18px;color:#2563EB;&quot;&gt;✨ 🧠&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7px;font-weight:bold;color:#0F172A;&quot;&gt;Gemini 3.7 Flash &amp;amp; Pro Reasoner&lt;br&gt;&lt;span style=&quot;font-size:5.5px;color:#475569;font-weight:normal;&quot;&gt;2M+ Token Context Window, Multimodal Audio/Visual Understanding&lt;br&gt;&amp;amp; Deep Analytical Reasoning over Petabyte Datasets&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#93C5FD;strokeWidth=1.2;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1">
+        <!-- 1. Gemini 3.8 Flash / Pro Foundation Reasoner -->
+        <mxCell id="card_gemini_models_lake" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:18px;color:#2563EB;&quot;&gt;✨ 🧠&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:7px;font-weight:bold;color:#0F172A;&quot;&gt;Gemini 3.8 Flash &amp;amp; Pro Reasoner&lt;br&gt;&lt;span style=&quot;font-size:5.5px;color:#475569;font-weight:normal;&quot;&gt;2M+ Token Context Window, Multimodal Audio/Visual Understanding&lt;br&gt;&amp;amp; Deep Analytical Reasoning over Petabyte Datasets&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#93C5FD;strokeWidth=1.2;align=center;verticalAlign=middle;padding=2;" vertex="1" parent="1">
           <mxGeometry x="710" y="226" width="268" height="68" as="geometry"/>
         </mxCell>
 
@@ -3074,7 +3074,7 @@ function buildGcpLandingZoneVpcXml() {
         </mxCell>
 
         <!-- 2.4 Private Service Connect (PSC) Hub -->
-        <mxCell id="card_psc_hub" value="&lt;table style=&quot;width:100%;text-align:left;padding:4px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:11px;font-weight:bold;color:#1D4ED8;&quot;&gt;🔌 Private Service Connect (PSC) Hub&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:9.5px;color:#1E293B;line-height:1.35;padding-top:4px;&quot;&gt;&lt;b style=&quot;color:#1E40AF;&quot;&gt;Consumer Endpoints (10.100.0.0/24)&lt;/b&gt;&lt;br&gt;• Dedicated PSC IP for Vertex AI Inference&lt;br&gt;• Cloud SQL Private Endpoint (PostgreSQL)&lt;br&gt;• BigQuery &amp;amp; Storage Restricted VIPs&lt;br&gt;• Zero Public Egress • Internal SSL Peering&lt;br&gt;• Vertex AI Gemini 3.7 Endpoint Gateway&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=#1D4ED8;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <mxCell id="card_psc_hub" value="&lt;table style=&quot;width:100%;text-align:left;padding:4px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:11px;font-weight:bold;color:#1D4ED8;&quot;&gt;🔌 Private Service Connect (PSC) Hub&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:9.5px;color:#1E293B;line-height:1.35;padding-top:4px;&quot;&gt;&lt;b style=&quot;color:#1E40AF;&quot;&gt;Consumer Endpoints (10.100.0.0/24)&lt;/b&gt;&lt;br&gt;• Dedicated PSC IP for Vertex AI Inference&lt;br&gt;• Cloud SQL Private Endpoint (PostgreSQL)&lt;br&gt;• BigQuery &amp;amp; Storage Restricted VIPs&lt;br&gt;• Zero Public Egress • Internal SSL Peering&lt;br&gt;• Vertex AI Gemini 3.8 Flash Endpoint Gateway&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=#1D4ED8;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="330" y="488" width="290" height="272" as="geometry"/>
         </mxCell>
 
@@ -3129,8 +3129,8 @@ function buildGcpLandingZoneVpcXml() {
           <mxGeometry x="655" y="445" width="295" height="115" as="geometry"/>
         </mxCell>
 
-        <!-- 3.4 Vertex AI Gemini 3.7 Endpoints -->
-        <mxCell id="card_vertex_endpoints" value="&lt;table style=&quot;width:100%;text-align:left;padding:4px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:11px;font-weight:bold;color:#7E22CE;&quot;&gt;✨ Vertex AI Gemini 3.7 Private Endpoints&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:9.5px;color:#334155;line-height:1.3;padding-top:4px;&quot;&gt;• VPC-SC Protected Internal Peering Gateway&lt;br&gt;• Zero Public Internet Traversal (100% Private)&lt;br&gt;• Sub-50ms Foundation Model Inference Latency&lt;br&gt;• CMEK Hardware Encryption for Embeddings&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAF5FF;strokeColor=#A855F7;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
+        <!-- 3.4 Vertex AI Gemini 3.8 Flash Endpoints -->
+        <mxCell id="card_vertex_endpoints" value="&lt;table style=&quot;width:100%;text-align:left;padding:4px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:11px;font-weight:bold;color:#7E22CE;&quot;&gt;✨ Vertex AI Gemini 3.8 Flash Private Endpoints&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:9.5px;color:#334155;line-height:1.3;padding-top:4px;&quot;&gt;• VPC-SC Protected Internal Peering Gateway&lt;br&gt;• Zero Public Internet Traversal (100% Private)&lt;br&gt;• Sub-50ms Foundation Model Inference Latency&lt;br&gt;• CMEK Hardware Encryption for Embeddings&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAF5FF;strokeColor=#A855F7;strokeWidth=1.5;align=left;verticalAlign=top;padding=6;" vertex="1" parent="1">
           <mxGeometry x="655" y="575" width="295" height="185" as="geometry"/>
         </mxCell>
 
@@ -3329,7 +3329,7 @@ function buildThreatModelingStrideXml() {
         </mxCell>
         
         <!-- Gemini Security Analyst Badge (Dark HUD Glassmorphic Pill) -->
-        <mxCell id="top_gemini_badge" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:12.5px;font-weight:bold;color:#38BDF8;&quot;&gt;✨ Gemini 3.7 Flash&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:8px;color:#94A3B8;font-weight:600;&quot;&gt;Security Analyst&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;strokeWidth=1.5;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+        <mxCell id="top_gemini_badge" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:12.5px;font-weight:bold;color:#38BDF8;&quot;&gt;✨ Gemini 3.8 Flash&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:8px;color:#94A3B8;font-weight:600;&quot;&gt;Security Analyst&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;strokeWidth=1.5;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
           <mxGeometry x="1425" y="8" width="150" height="42" as="geometry"/>
         </mxCell>
 
@@ -3799,7 +3799,7 @@ function buildAiTrismGuardrailsXml() {
 
         <!-- ==================== EXTERNAL AI MODELS & CLOUD FOUNDATION ==================== -->
         <!-- External AI Models Box -->
-        <mxCell id="ext_ai_models_box" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:11px;font-weight:bold;color:#0F172A;&quot;&gt;✨ Vertex AI Foundation Models&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:8.5px;color:#475569;padding-top:2px;&quot;&gt;Gemini 3.7 Pro / Flash (Zero-Data Retention)&lt;br&gt;Dedicated PSC Private Endpoint (VPC-SC)&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAF5FF;strokeColor=#A855F7;strokeWidth=1.5;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1">
+        <mxCell id="ext_ai_models_box" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:11px;font-weight:bold;color:#0F172A;&quot;&gt;✨ Vertex AI Foundation Models&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:8.5px;color:#475569;padding-top:2px;&quot;&gt;Gemini 3.1 Pro / Flash (Zero-Data Retention)&lt;br&gt;Dedicated PSC Private Endpoint (VPC-SC)&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAF5FF;strokeColor=#A855F7;strokeWidth=1.5;align=center;verticalAlign=middle;padding=4;" vertex="1" parent="1">
           <mxGeometry x="810" y="190" width="265" height="65" as="geometry"/>
         </mxCell>
 
@@ -4415,7 +4415,7 @@ function buildEnterpriseAgentRuntimeXml(cust = "Enterprise Organization", archCt
 
         <!-- ==================== COLUMN 3 CARDS ==================== -->
         <!-- Col 3 Row 1: Vertex AI Gemini Platform -->
-        <mxCell id="card_vertex_gemini" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;padding:8px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:top;&quot;&gt;&lt;div style=&quot;display:flex;align-items:center;gap:8px;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:google-gemini.svg&quot; width=&quot;24&quot; height=&quot;24&quot;/&gt;&lt;span style=&quot;font-size:12px;font-weight:800;color:#0F172A;&quot;&gt;Vertex AI Gemini 2.5 / 3.7 Platform&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size:8px;color:#64748B;margin-top:2px;font-weight:600;&quot;&gt;Multi-Modal Reasoning Core &amp;amp; Agent Supervisor&lt;/div&gt;&lt;div style=&quot;margin-top:8px;font-size:8.5px;color:#334155;line-height:1.4;&quot;&gt;• &lt;b&gt;2M Native Context:&lt;/b&gt; Eliminates chunking loss across massive enterprise corpora&lt;br/&gt;• &lt;b&gt;Multi-Modal Native:&lt;/b&gt; Unified audio, video, vision &amp;amp; structured tabular parsing&lt;br/&gt;• &lt;b&gt;Parallel Function Calling:&lt;/b&gt; Sub-second multi-step agent tool invocation&lt;/div&gt;&lt;div style=&quot;margin-top:8px;&quot;&gt;&lt;span style=&quot;background:#DCFCE7;color:#166534;border:1px solid #86EFAC;padding:2px 8px;border-radius:12px;font-size:8px;font-weight:700;&quot;&gt;✓ 2M Token Native Context (Zero Lossy Slicing)&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#10B981;strokeWidth=2;align=left;verticalAlign=top;" vertex="1" parent="1">
+        <mxCell id="card_vertex_gemini" value="&lt;table style=&quot;width:100%;height:100%;text-align:left;padding:8px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:top;&quot;&gt;&lt;div style=&quot;display:flex;align-items:center;gap:8px;&quot;&gt;&lt;img src=&quot;https://api.iconify.design/logos:google-gemini.svg&quot; width=&quot;24&quot; height=&quot;24&quot;/&gt;&lt;span style=&quot;font-size:12px;font-weight:800;color:#0F172A;&quot;&gt;Vertex AI Gemini 3.1 Pro / 3.8 Flash Platform&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size:8px;color:#64748B;margin-top:2px;font-weight:600;&quot;&gt;Multi-Modal Reasoning Core &amp;amp; Agent Supervisor&lt;/div&gt;&lt;div style=&quot;margin-top:8px;font-size:8.5px;color:#334155;line-height:1.4;&quot;&gt;• &lt;b&gt;2M Native Context:&lt;/b&gt; Eliminates chunking loss across massive enterprise corpora&lt;br/&gt;• &lt;b&gt;Multi-Modal Native:&lt;/b&gt; Unified audio, video, vision &amp;amp; structured tabular parsing&lt;br/&gt;• &lt;b&gt;Parallel Function Calling:&lt;/b&gt; Sub-second multi-step agent tool invocation&lt;/div&gt;&lt;div style=&quot;margin-top:8px;&quot;&gt;&lt;span style=&quot;background:#DCFCE7;color:#166534;border:1px solid #86EFAC;padding:2px 8px;border-radius:12px;font-size:8px;font-weight:700;&quot;&gt;✓ 2M Token Native Context (Zero Lossy Slicing)&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#10B981;strokeWidth=2;align=left;verticalAlign=top;" vertex="1" parent="1">
           <mxGeometry x="820" y="110" width="320" height="180" as="geometry"/>
         </mxCell>
 
@@ -4845,11 +4845,11 @@ function buildAgenticRagWidescreenXml() {
           <mxGeometry x="622" y="128" width="164" height="65" as="geometry"/>
         </mxCell>
 
-        <!-- The Reasoner: Gemini 3.7 Flash (LLM) Centerpiece -->
+        <!-- The Reasoner: Gemini 3.8 Flash (LLM) Centerpiece -->
         <mxCell id="reasoner_box" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.5;" vertex="1" parent="1">
           <mxGeometry x="270" y="200" width="516" height="240" as="geometry"/>
         </mxCell>
-        <mxCell id="lbl_reasoner_title" value="&lt;b style=&quot;font-size:8.5px;color:#0F172A;&quot;&gt;The Reasoner: Gemini 3.7 Flash (Cognitive Planning Engine)&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="lbl_reasoner_title" value="&lt;b style=&quot;font-size:8.5px;color:#0F172A;&quot;&gt;The Reasoner: Gemini 3.8 Flash (Cognitive Planning Engine)&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="280" y="204" width="496" height="16" as="geometry"/>
         </mxCell>
 
@@ -5175,11 +5175,11 @@ function buildCognitiveRagXml() {
           <mxGeometry x="622" y="128" width="164" height="65" as="geometry"/>
         </mxCell>
 
-        <!-- The Reasoner: Gemini 3.7 Flash (LLM) Centerpiece -->
+        <!-- The Reasoner: Gemini 3.8 Flash (LLM) Centerpiece -->
         <mxCell id="reasoner_box" value="" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.5;" vertex="1" parent="1">
           <mxGeometry x="270" y="200" width="516" height="240" as="geometry"/>
         </mxCell>
-        <mxCell id="lbl_reasoner_title" value="&lt;b style=&quot;font-size:8.5px;color:#0F172A;&quot;&gt;The Reasoner: Gemini 3.7 Flash (Cognitive Planning Engine)&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="lbl_reasoner_title" value="&lt;b style=&quot;font-size:8.5px;color:#0F172A;&quot;&gt;The Reasoner: Gemini 3.8 Flash (Cognitive Planning Engine)&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="280" y="204" width="496" height="16" as="geometry"/>
         </mxCell>
 
@@ -5934,13 +5934,13 @@ function buildValueStreamMapXml() {
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
-        <!-- STAGE 2: PROMPTCANVAS GEMINI 3.7 FLASH COMPILATION -->
-        <mxCell id="stage2_box" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:12px;font-weight:bold;color:#0F172A;background:#E0F2FE;padding:6px;border-bottom:1px solid #7DD3FC;&quot;&gt;STAGE 2: AI Spec Compilation&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#0369A1;font-weight:bold;&quot;&gt;Gemini 3.7 Flash + 2D Collision Healing&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;color:#334155;padding:8px 4px;text-align:left;line-height:1.3;&quot;&gt;&amp;bull; AST Graph Spec Generation&lt;br&gt;&amp;bull; 2D Bounding Box Collision Fix&lt;br&gt;&amp;bull; Draw.io XML Synthesis&lt;br&gt;&amp;bull; 6-Point Preflight Healing&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0284C7;strokeWidth=2;align=center;verticalAlign=top;" vertex="1" parent="1">
+        <!-- STAGE 2: PROMPTCANVAS GEMINI 3.8 FLASH FLASH COMPILATION -->
+        <mxCell id="stage2_box" value="&lt;table style=&quot;width:100%;text-align:center;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:12px;font-weight:bold;color:#0F172A;background:#E0F2FE;padding:6px;border-bottom:1px solid #7DD3FC;&quot;&gt;STAGE 2: AI Spec Compilation&lt;br&gt;&lt;span style=&quot;font-size:10px;color:#0369A1;font-weight:bold;&quot;&gt;Gemini 3.8 Flash + 2D Collision Healing&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:10px;color:#334155;padding:8px 4px;text-align:left;line-height:1.3;&quot;&gt;&amp;bull; AST Graph Spec Generation&lt;br&gt;&amp;bull; 2D Bounding Box Collision Fix&lt;br&gt;&amp;bull; Draw.io XML Synthesis&lt;br&gt;&amp;bull; 6-Point Preflight Healing&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0284C7;strokeWidth=2;align=center;verticalAlign=top;" vertex="1" parent="1">
           <mxGeometry x="345" y="250" width="195" height="135" as="geometry" />
         </mxCell>
 
         <!-- Stage 2 Data Box -->
-        <mxCell id="stage2_databox" value="&lt;table style=&quot;width:100%;font-size:9.5px;color:#0F172A;border-collapse:collapse;&quot;&gt;&lt;tr style=&quot;background:#BAE6FD;&quot;&gt;&lt;td colspan=&quot;2&quot; style=&quot;padding:3px;font-weight:bold;text-align:center;border-bottom:1px solid #0284C7;&quot;&gt;Stage 2 VSM Metrics&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;padding:2px 4px;font-weight:bold;&quot;&gt;Process Time (PT):&lt;/td&gt;&lt;td style=&quot;padding:2px 4px;text-align:right;color:#0284C7;font-weight:bold;&quot;&gt;12 sec&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&quot;background:#F8FAFC;&quot;&gt;&lt;td style=&quot;padding:2px 4px;font-weight:bold;&quot;&gt;Lead Time (LT):&lt;/td&gt;&lt;td style=&quot;padding:2px 4px;text-align:right;font-weight:bold;&quot;&gt;45 sec&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;padding:2px 4px;font-weight:bold;&quot;&gt;% Complete &amp;amp; Acc:&lt;/td&gt;&lt;td style=&quot;padding:2px 4px;text-align:right;color:#16A34A;font-weight:bold;&quot;&gt;99%&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&quot;background:#F8FAFC;&quot;&gt;&lt;td style=&quot;padding:2px 4px;font-weight:bold;&quot;&gt;Operator / Engine:&lt;/td&gt;&lt;td style=&quot;padding:2px 4px;text-align:right;font-weight:bold;color:#0284C7;&quot;&gt;Gemini 3.7 Flash&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;padding:2px 4px;font-weight:bold;&quot;&gt;Availability:&lt;/td&gt;&lt;td style=&quot;padding:2px 4px;text-align:right;&quot;&gt;99.99% Cloud API&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0284C7;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="stage2_databox" value="&lt;table style=&quot;width:100%;font-size:9.5px;color:#0F172A;border-collapse:collapse;&quot;&gt;&lt;tr style=&quot;background:#BAE6FD;&quot;&gt;&lt;td colspan=&quot;2&quot; style=&quot;padding:3px;font-weight:bold;text-align:center;border-bottom:1px solid #0284C7;&quot;&gt;Stage 2 VSM Metrics&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;padding:2px 4px;font-weight:bold;&quot;&gt;Process Time (PT):&lt;/td&gt;&lt;td style=&quot;padding:2px 4px;text-align:right;color:#0284C7;font-weight:bold;&quot;&gt;12 sec&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&quot;background:#F8FAFC;&quot;&gt;&lt;td style=&quot;padding:2px 4px;font-weight:bold;&quot;&gt;Lead Time (LT):&lt;/td&gt;&lt;td style=&quot;padding:2px 4px;text-align:right;font-weight:bold;&quot;&gt;45 sec&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;padding:2px 4px;font-weight:bold;&quot;&gt;% Complete &amp;amp; Acc:&lt;/td&gt;&lt;td style=&quot;padding:2px 4px;text-align:right;color:#16A34A;font-weight:bold;&quot;&gt;99%&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&quot;background:#F8FAFC;&quot;&gt;&lt;td style=&quot;padding:2px 4px;font-weight:bold;&quot;&gt;Operator / Engine:&lt;/td&gt;&lt;td style=&quot;padding:2px 4px;text-align:right;font-weight:bold;color:#0284C7;&quot;&gt;Gemini 3.8 Flash&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;padding:2px 4px;font-weight:bold;&quot;&gt;Availability:&lt;/td&gt;&lt;td style=&quot;padding:2px 4px;text-align:right;&quot;&gt;99.99% Cloud API&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0284C7;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="345" y="400" width="195" height="110" as="geometry" />
         </mxCell>
 
@@ -6377,7 +6377,7 @@ function build6RsMigrationMatrixXml() {
         <mxCell id="lbl_refactor_hdr" value="&lt;b style=&quot;font-size:12px;color:#6D28D9;&quot;&gt;Refactor&lt;/b&gt;&lt;br&gt;&lt;b style=&quot;font-size:10px;color:#0F172A;&quot;&gt;(Re-architect)&lt;/b&gt;&lt;br&gt;&lt;i style=&quot;font-size:8.5px;color:#475569;&quot;&gt;Cloud-Native AI.&lt;br&gt;Maximum Agility &amp;amp; ROI.&lt;/i&gt;" style="text;html=1;align=center;verticalAlign=top;fillColor=none;strokeColor=none;" vertex="1" parent="1">
           <mxGeometry x="995" y="66" width="135" height="52" as="geometry"/>
         </mxCell>
-        <mxCell id="card_ref_target" value="&lt;b style=&quot;font-size:9.5px;color:#6D28D9;&quot;&gt;GCP Target:&lt;/b&gt;&lt;br&gt;&lt;b style=&quot;font-size:9px;color:#0F172A;&quot;&gt;Cloud Run + Vertex AI&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8px;color:#64748B;&quot;&gt;Serverless &amp;amp; Gemini 3.7&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7C3AED;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="card_ref_target" value="&lt;b style=&quot;font-size:9.5px;color:#6D28D9;&quot;&gt;GCP Target:&lt;/b&gt;&lt;br&gt;&lt;b style=&quot;font-size:9px;color:#0F172A;&quot;&gt;Cloud Run + Vertex AI&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8px;color:#64748B;&quot;&gt;Serverless &amp;amp; Gemini 3.8 Flash&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7C3AED;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="1003" y="125" width="119" height="52" as="geometry"/>
         </mxCell>
         <mxCell id="card_ref_w1" value="&lt;div style=&quot;font-size:7.5px;background:#F3E8FF;color:#6D28D9;font-weight:bold;padding:1px 4px;border-radius:3px;margin-bottom:2px;&quot;&gt;Wave 3 • Analytics&lt;/div&gt;&lt;b style=&quot;font-size:8.5px;color:#0F172A;&quot;&gt;Nightly ETL Batch&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8px;color:#475569;&quot;&gt;Cloud Dataflow (Beam)&lt;br&gt;BigQuery BigLake Marts&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
@@ -6386,7 +6386,7 @@ function build6RsMigrationMatrixXml() {
         <mxCell id="card_ref_w2" value="&lt;div style=&quot;font-size:7.5px;background:#F3E8FF;color:#6D28D9;font-weight:bold;padding:1px 4px;border-radius:3px;margin-bottom:2px;&quot;&gt;Wave 3 • Core Micro&lt;/div&gt;&lt;b style=&quot;font-size:8.5px;color:#0F172A;&quot;&gt;Order &amp;amp; Payment API&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8px;color:#475569;&quot;&gt;Cloud Run + Pub/Sub&lt;br&gt;AlloyDB pgvector SAGA&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="1003" y="252" width="119" height="60" as="geometry"/>
         </mxCell>
-        <mxCell id="card_ref_w3" value="&lt;div style=&quot;font-size:7.5px;background:#F1F5F9;color:#475569;font-weight:bold;padding:1px 4px;border-radius:3px;margin-bottom:2px;&quot;&gt;AI Innovation&lt;/div&gt;&lt;b style=&quot;font-size:8.5px;color:#0F172A;&quot;&gt;Agentic RAG Engine&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8px;color:#475569;&quot;&gt;Gemini 3.7 Flash + MCP&lt;br&gt;Real-Time Copilot Hub&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="card_ref_w3" value="&lt;div style=&quot;font-size:7.5px;background:#F1F5F9;color:#475569;font-weight:bold;padding:1px 4px;border-radius:3px;margin-bottom:2px;&quot;&gt;AI Innovation&lt;/div&gt;&lt;b style=&quot;font-size:8.5px;color:#0F172A;&quot;&gt;Agentic RAG Engine&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8px;color:#475569;&quot;&gt;Gemini 3.8 Flash + MCP&lt;br&gt;Real-Time Copilot Hub&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="1003" y="320" width="119" height="60" as="geometry"/>
         </mxCell>
         <mxCell id="card_ref_roi" value="&lt;b style=&quot;font-size:8.5px;color:#6D28D9;&quot;&gt;Expected ROI:&lt;/b&gt;&lt;br&gt;&lt;b style=&quot;font-size:11px;color:#16A34A;&quot;&gt;-62% OpEx&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7.5px;color:#64748B;&quot;&gt;Instant Auto-Scaling&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#86EFAC;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
@@ -7471,7 +7471,7 @@ function buildLogicalAiConfigTenantXml() {
         </mxCell>
 
         <!-- Stack of Config Components -->
-        <mxCell id="cfg_model" value="&lt;b style=&quot;font-size:8.5px;color:#0F172A;&quot;&gt;Model Selection&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:7.5px;color:#475569;&quot;&gt;(Gemini 3.7 Flash)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=middle;spacingLeft=8;arcSize=3;" vertex="1" parent="1">
+        <mxCell id="cfg_model" value="&lt;b style=&quot;font-size:8.5px;color:#0F172A;&quot;&gt;Model Selection&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:7.5px;color:#475569;&quot;&gt;(Gemini 3.8 Flash)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=middle;spacingLeft=8;arcSize=3;" vertex="1" parent="1">
           <mxGeometry x="852" y="178" width="180" height="32" as="geometry"/>
         </mxCell>
         <mxCell id="cfg_sys" value="&lt;b style=&quot;font-size:8.5px;color:#0F172A;&quot;&gt;System Instructions&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;align=left;verticalAlign=middle;spacingLeft=8;arcSize=3;" vertex="1" parent="1">
@@ -7536,7 +7536,7 @@ function buildLogicalAiConfigTenantXml() {
         <mxCell id="lbl_prod_config_title" value="&lt;b style=&quot;font-size:9px;color:#0F172A;&quot;&gt;Logical AI Config&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=top;fillColor=none;strokeColor=none;" vertex="1" parent="1">
           <mxGeometry x="280" y="470" width="120" height="14" as="geometry"/>
         </mxCell>
-        <mxCell id="pcfg_model" value="&lt;font style=&quot;font-size:7.5px;color:#0F172A;&quot;&gt;Model Selection (Gemini 3.7 Flash)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#E2E8F0;align=left;verticalAlign=middle;spacingLeft=4;" vertex="1" parent="1">
+        <mxCell id="pcfg_model" value="&lt;font style=&quot;font-size:7.5px;color:#0F172A;&quot;&gt;Model Selection (Gemini 3.8 Flash)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#E2E8F0;align=left;verticalAlign=middle;spacingLeft=4;" vertex="1" parent="1">
           <mxGeometry x="280" y="488" width="182" height="20" as="geometry"/>
         </mxCell>
         <mxCell id="pcfg_sys" value="&lt;font style=&quot;font-size:7.5px;color:#0F172A;&quot;&gt;System Instructions&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#E2E8F0;align=left;verticalAlign=middle;spacingLeft=4;" vertex="1" parent="1">
@@ -7781,7 +7781,7 @@ function buildDataResidencySovereignMapXml() {
         </mxCell>
 
         <!-- EU Restricted GCP APIs & Vertex AI -->
-        <mxCell id="box_restricted_api_eu" value="&lt;table style=&quot;width:100%;padding:4px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:11px;font-weight:bold;color:#0F172A;&quot;&gt;🧠 Vertex AI Local Sovereign Inference&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:8.5px;color:#334155;line-height:1.3;padding-top:2px;&quot;&gt;• Gemini 3.7 In-Region Execution&lt;br&gt;• Zero-Data Retention SLA&lt;br&gt;• EU Customer-Managed Keys (CMEK)&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#93C5FD;strokeWidth=1.2;align=left;verticalAlign=top;padding=4;" vertex="1" parent="1">
+        <mxCell id="box_restricted_api_eu" value="&lt;table style=&quot;width:100%;padding:4px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:11px;font-weight:bold;color:#0F172A;&quot;&gt;🧠 Vertex AI Local Sovereign Inference&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:8.5px;color:#334155;line-height:1.3;padding-top:2px;&quot;&gt;• Gemini 3.8 Flash In-Region Execution&lt;br&gt;• Zero-Data Retention SLA&lt;br&gt;• EU Customer-Managed Keys (CMEK)&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#93C5FD;strokeWidth=1.2;align=left;verticalAlign=top;padding=4;" vertex="1" parent="1">
           <mxGeometry x="350" y="195" width="250" height="110" as="geometry"/>
         </mxCell>
 
@@ -7819,7 +7819,7 @@ function buildDataResidencySovereignMapXml() {
         </mxCell>
 
         <!-- US Restricted GCP APIs & Vertex AI -->
-        <mxCell id="box_restricted_api_us" value="&lt;table style=&quot;width:100%;padding:4px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:11px;font-weight:bold;color:#0F172A;&quot;&gt;🧠 Vertex AI Local Sovereign Inference&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:8.5px;color:#334155;line-height:1.3;padding-top:2px;&quot;&gt;• Gemini 3.7 US Local Execution&lt;br&gt;• HIPAA Enforced BAA Perimeter&lt;br&gt;• US Cloud KMS CMEK Isolation&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#93C5FD;strokeWidth=1.2;align=left;verticalAlign=top;padding=4;" vertex="1" parent="1">
+        <mxCell id="box_restricted_api_us" value="&lt;table style=&quot;width:100%;padding:4px;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;font-size:11px;font-weight:bold;color:#0F172A;&quot;&gt;🧠 Vertex AI Local Sovereign Inference&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;font-size:8.5px;color:#334155;line-height:1.3;padding-top:2px;&quot;&gt;• Gemini 3.8 Flash US Local Execution&lt;br&gt;• HIPAA Enforced BAA Perimeter&lt;br&gt;• US Cloud KMS CMEK Isolation&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#93C5FD;strokeWidth=1.2;align=left;verticalAlign=top;padding=4;" vertex="1" parent="1">
           <mxGeometry x="350" y="535" width="250" height="110" as="geometry"/>
         </mxCell>
 
@@ -8563,7 +8563,7 @@ function buildLegacyGenAiStackXml(cust = "Enterprise Organization", archCtx = nu
         </mxCell>
 
         <!-- ==================== BOTTOM PROCESS FLOW & LEGEND ==================== -->
-        <mxCell id="strip_footer" value="&lt;table style=&quot;width:100%;font-size:9.5px;color:#334155;line-height:1.2;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;padding-left:12px;&quot;&gt;&lt;b style=&quot;color:#DC2626;&quot;&gt;🚨 CURRENT BASELINE PROCESS FLOW:&lt;/b&gt; &lt;span style=&quot;color:#991B1B;font-weight:bold;&quot;&gt;Step 1:&lt;/span&gt; Siloed Client Scripts &amp;amp; Tokens ➔ &lt;span style=&quot;color:#991B1B;font-weight:bold;&quot;&gt;Step 2:&lt;/span&gt; Fragile Public Egress (Lack Rate Limiting) ➔ &lt;span style=&quot;color:#991B1B;font-weight:bold;&quot;&gt;Step 3:&lt;/span&gt; Unsandboxed Scrapers &amp;amp; 8k Context Fragmentation ➔ &lt;span style=&quot;color:#991B1B;font-weight:bold;&quot;&gt;Step 4:&lt;/span&gt; Unindexed Vector Dumps ➔ &lt;span style=&quot;color:#991B1B;font-weight:bold;&quot;&gt;Step 5:&lt;/span&gt; Unmonitored Chat UIs &amp;amp; Tool Failure Loops &amp;nbsp;|&amp;nbsp; &lt;b style=&quot;color:#15803D;&quot;&gt;✓ TARGET MODERNIZATION:&lt;/b&gt; Vertex AI Gemini 2.5/3.7, Model Armor TRiSM, Context Caching &amp;amp; BigLake Grounding.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;" vertex="1" parent="1">
+        <mxCell id="strip_footer" value="&lt;table style=&quot;width:100%;font-size:9.5px;color:#334155;line-height:1.2;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;padding-left:12px;&quot;&gt;&lt;b style=&quot;color:#DC2626;&quot;&gt;🚨 CURRENT BASELINE PROCESS FLOW:&lt;/b&gt; &lt;span style=&quot;color:#991B1B;font-weight:bold;&quot;&gt;Step 1:&lt;/span&gt; Siloed Client Scripts &amp;amp; Tokens ➔ &lt;span style=&quot;color:#991B1B;font-weight:bold;&quot;&gt;Step 2:&lt;/span&gt; Fragile Public Egress (Lack Rate Limiting) ➔ &lt;span style=&quot;color:#991B1B;font-weight:bold;&quot;&gt;Step 3:&lt;/span&gt; Unsandboxed Scrapers &amp;amp; 8k Context Fragmentation ➔ &lt;span style=&quot;color:#991B1B;font-weight:bold;&quot;&gt;Step 4:&lt;/span&gt; Unindexed Vector Dumps ➔ &lt;span style=&quot;color:#991B1B;font-weight:bold;&quot;&gt;Step 5:&lt;/span&gt; Unmonitored Chat UIs &amp;amp; Tool Failure Loops &amp;nbsp;|&amp;nbsp; &lt;b style=&quot;color:#15803D;&quot;&gt;✓ TARGET MODERNIZATION:&lt;/b&gt; Vertex AI Gemini 3.1 Pro / 3.8 Flash, Model Armor TRiSM, Context Caching &amp;amp; BigLake Grounding.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;" vertex="1" parent="1">
           <mxGeometry x="30" y="805" width="1500" height="38" as="geometry"/>
         </mxCell>
       </root>
@@ -9134,7 +9134,7 @@ function buildLegacyAgenticXml(cust = 'Enterprise Organization') {
         </mxCell>
 
         <!-- BOTTOM STRIP -->
-        <mxCell id="strip_footer_agt" value="&lt;table style=&quot;width:100%;font-size:9.5px;color:#202124;&quot;&gt;&lt;tr&gt;&lt;td&gt;&lt;b style=&quot;color:#C5221F;&quot;&gt;Agentic Fragility Summary:&lt;/b&gt; &lt;span style=&quot;color:#1A237E;&quot;&gt;Siloed Bots Without Mesh&lt;/span&gt; &amp;nbsp;➔&amp;nbsp; &lt;span style=&quot;color:#C5221F;&quot;&gt;Ad-Hoc JSON Function Calling (No MCP)&lt;/span&gt; &amp;nbsp;➔&amp;nbsp; &lt;span style=&quot;color:#B06000;&quot;&gt;Context Amnesia &amp;amp; Zero HITL&lt;/span&gt; &amp;nbsp;|&amp;nbsp; &lt;b style=&quot;color:#137333;&quot;&gt;Target Architecture:&lt;/b&gt; Gemini 3.7 Super-Orchestrator Hub, Model Context Protocol (MCP) Microservices, Model Armor TRiSM Shield, &amp;amp; Human-in-the-Loop Review Gates.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#FCA5A5;strokeWidth=1;align=left;spacingLeft=12;" vertex="1" parent="1">
+        <mxCell id="strip_footer_agt" value="&lt;table style=&quot;width:100%;font-size:9.5px;color:#202124;&quot;&gt;&lt;tr&gt;&lt;td&gt;&lt;b style=&quot;color:#C5221F;&quot;&gt;Agentic Fragility Summary:&lt;/b&gt; &lt;span style=&quot;color:#1A237E;&quot;&gt;Siloed Bots Without Mesh&lt;/span&gt; &amp;nbsp;➔&amp;nbsp; &lt;span style=&quot;color:#C5221F;&quot;&gt;Ad-Hoc JSON Function Calling (No MCP)&lt;/span&gt; &amp;nbsp;➔&amp;nbsp; &lt;span style=&quot;color:#B06000;&quot;&gt;Context Amnesia &amp;amp; Zero HITL&lt;/span&gt; &amp;nbsp;|&amp;nbsp; &lt;b style=&quot;color:#137333;&quot;&gt;Target Architecture:&lt;/b&gt; Google Omni 1.1 & Gemini 3.1 Pro Super-Orchestrator Hub, Model Context Protocol (MCP) Microservices, Model Armor TRiSM Shield, &amp;amp; Human-in-the-Loop Review Gates.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#FCA5A5;strokeWidth=1;align=left;spacingLeft=12;" vertex="1" parent="1">
           <mxGeometry x="25" y="790" width="1550" height="42" as="geometry"/>
         </mxCell>
       </root>
@@ -9332,7 +9332,7 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
         )
         .replace(
           /✨ Intelligence Core \(Foundation Models\)/g,
-          '&lt;img src=&quot;https://api.iconify.design/logos:google-gemini.svg&quot; width=&quot;18&quot; height=&quot;18&quot;/&gt;&amp;nbsp;Google Vertex AI Intelligence Core (Gemini 2.5 / 3.7)'
+          '&lt;img src=&quot;https://api.iconify.design/logos:google-gemini.svg&quot; width=&quot;18&quot; height=&quot;18&quot;/&gt;&amp;nbsp;Google Vertex AI Intelligence Core (Gemini 3.1 Pro / 3.8 Flash)'
         )
         .replace(
           /Cloud Run Container • Fastify \/ React SSR/g,
@@ -9367,12 +9367,12 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
       targetStateXml: customizeXml(buildEnterpriseAgentRuntimeXml(cust, archCtx), 'target', 'Vertex AI & Gemini Runtime'),
       transformations: [
         "Migrate brittle OpenAI API calls to Apigee Enterprise AI Gateway with VPC Service Controls (P4-AI-P-04)",
-        "Replace 8k lossy RAG chunking with Vertex AI Gemini 2.5/3.7 native 2M long-context window processing",
+        "Replace 8k lossy RAG chunking with Vertex AI Gemini 3.1 Pro / 3.8 Flash native 2M long-context window processing",
         "Enable Vertex AI Context Caching for 75% input token discount and sub-200ms latency on cached system prompts",
         "Deploy Google Cloud Model Armor and Model Context Protocol (MCP) tool mesh for sandboxed multi-agent defense"
       ],
       blueprintKeys: ["P4-AI-P-04", "P3-AI-L-02", "ARCH-MCP-06", "P4-GOV-L-07"],
-      modelUsed: "gemini-3.7-flash",
+      modelUsed: "gemini-3.8-flash",
       generatedAt: new Date().toISOString()
     };
   }
@@ -9394,7 +9394,7 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
         "Implement automated CUD optimization and real-time billing anomaly alerts with BigQuery ML forecasting"
       ],
       blueprintKeys: ["P2-GOV-C-01", "P5-AI-L-05", "P3-APP-C-01"],
-      modelUsed: "gemini-3.7-flash",
+      modelUsed: "gemini-3.8-flash",
       generatedAt: new Date().toISOString()
     };
   }
@@ -9410,13 +9410,13 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
       targetSubtitle: `Target Maturity Level ${tgt}/5.0 (Optimized) • P3-AI-L-03 Agent Mesh • ARCH-MCP-06 MCP Gateway`,
       targetStateXml: customizeXml(buildHubAndSpokeAgentConfigXml(), 'target', 'Hub-and-Spoke Agent Mesh'),
       transformations: [
-        "Deploy centralized Hub-and-Spoke Agent Mesh with Gemini 3.7 Super-Orchestrator and specialized sub-agents (P3-AI-L-03)",
+        "Deploy centralized Hub-and-Spoke Agent Mesh with Google Omni 1.1 & Gemini 3.1 Pro Super-Orchestrator and specialized sub-agents (P3-AI-L-03)",
         "Standardize tool execution on Model Context Protocol (MCP) microservices with Apigee governance (ARCH-MCP-06)",
         "Implement circular ReAct reasoning loop with Vertex AI Vector Search grounding and sub-500ms TTFT (P3-AI-L-02)",
         "Integrate Model Armor prompt injection shielding and human-in-the-loop (HITL) review gates for high-stakes actions"
       ],
       blueprintKeys: ["P3-AI-L-03", "ARCH-MCP-06", "P4-AI-P-04", "P4-GOV-L-06"],
-      modelUsed: "gemini-3.7-flash",
+      modelUsed: "gemini-3.8-flash",
       generatedAt: new Date().toISOString()
     };
   }
@@ -9438,7 +9438,7 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
         "Deploy Looker Semantic Layer and Dataplex Universal Catalog with automated row/column masking"
       ],
       blueprintKeys: ["P3-DAT-L-04", "P4-DAT-P-13", "P3-APP-C-01", "P3-DAT-C-06"],
-      modelUsed: "gemini-3.7-flash",
+      modelUsed: "gemini-3.8-flash",
       generatedAt: new Date().toISOString()
     };
   }
@@ -9460,7 +9460,7 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
         "Enforce hardware-backed Cloud KMS HSM CMEK encryption and Chronicle 24/7 AI security monitoring"
       ],
       blueprintKeys: ["ARCH-SEC-04", "P4-SEC-P-01", "P4-GOV-L-07", "P4-SEC-P-02"],
-      modelUsed: "gemini-3.7-flash",
+      modelUsed: "gemini-3.8-flash",
       generatedAt: new Date().toISOString()
     };
   }
@@ -9482,7 +9482,7 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
         "Standardize enterprise prompt templates and automated regression benchmarks in CI/CD"
       ],
       blueprintKeys: ["P4-GOV-L-06", "P3-AI-L-02", "P4-AI-P-04", "P4-GOV-L-07"],
-      modelUsed: "gemini-3.7-flash",
+      modelUsed: "gemini-3.8-flash",
       generatedAt: new Date().toISOString()
     };
   }
@@ -9508,7 +9508,7 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
   const dynamicTransformations = sortedByGapDesc.slice(0, 4).map(p => {
     const n = p.name.toLowerCase();
     if (n.includes('generative') || n.includes('genai') || n.includes('agent')) {
-      return `[+${p.gap.toFixed(1)} Gap • ${p.name} (${p.currentScore.toFixed(1)} → ${p.futureScore.toFixed(1)})]: Upgrade isolated LLM sandboxes to Vertex AI Gemini 2.5/3.7 (2M Context), Vector Search RAG Grounding, and Model Armor TRiSM guardrails`;
+      return `[+${p.gap.toFixed(1)} Gap • ${p.name} (${p.currentScore.toFixed(1)} → ${p.futureScore.toFixed(1)})]: Upgrade isolated LLM sandboxes to Vertex AI Gemini 3.1 Pro / 3.8 Flash (2M Context), Vector Search RAG Grounding, and Model Armor TRiSM guardrails`;
     }
     if (n.includes('machine learning') || n.includes('mlops') || n.includes('model')) {
       return `[+${p.gap.toFixed(1)} Gap • ${p.name} (${p.currentScore.toFixed(1)} → ${p.futureScore.toFixed(1)})]: Transition manual notebook workflows to Vertex AI Feature Store, automated Vertex Pipelines CI/CD/CT, and continuous drift monitoring`;
@@ -9931,7 +9931,7 @@ function buildDynamicStateArchitectureXml(mode, framework = {}, metadata = {}, s
         }
       } else {
         iconUrl = 'https://api.iconify.design/logos:google-gemini.svg';
-        comp1Title = 'Vertex AI Gemini 2.5 / 3.7 (2M Context + Caching)';
+        comp1Title = 'Vertex AI Gemini 3.1 Pro / 3.8 Flash (2M Context + Caching)';
         comp1Sub = 'Multimodal reasoning with 75% context cache savings & Apigee AI Gateway';
         comp2Title = 'Vertex AI Vector Search & Grounded Enterprise RAG';
         comp2Sub = 'Sub-10ms hybrid semantic search with real-time BigLake ACL inheritance';
@@ -10181,7 +10181,7 @@ function getMermaidDiagram(framework = {}, isTarget = true) {
       Proxy --> Shield[Model Armor TRiSM Shield]
     end
     subgraph Vertex["Google Vertex AI & Gemini Enterprise"]
-      Shield --> Gemini[Gemini 2.5 / 3.7 Flash Engine]
+      Shield --> Gemini[Gemini 3.1 Pro / 3.8 Flash Flash Engine]
       Gemini --> Cache[(2M Context Caching - 75% Discount)]
       Gemini --> MCP[Sandboxed MCP Tool Microservices]
     end
@@ -10225,7 +10225,7 @@ function getMermaidDiagram(framework = {}, isTarget = true) {
     return isTarget
       ? `flowchart LR
     subgraph Orchestrator["Super-Orchestrator Hub"]
-      Hub[Gemini 3.7 Flash Super-Orchestrator]
+      Hub[Gemini 3.8 Flash Super-Orchestrator]
     end
     subgraph Mesh["Compound Agentic Mesh Bus"]
       Hub --> A1[Customer Support Sub-Agent]
@@ -10333,7 +10333,7 @@ function getMermaidDiagram(framework = {}, isTarget = true) {
       D --> E[BigLake Apache Iceberg]
       B --> F[BigQuery Serverless SQL]
       E --> F
-      F --> G[Vertex AI Gemini 3.7]
+      F --> G[Vertex AI Gemini 3.8 Flash]
     end
     subgraph Serving["Governance & Serving"]
       G --> H[Looker Studio BI]

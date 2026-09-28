@@ -359,11 +359,24 @@ async function generateLiveDiagramsFromPromptCanvas(framework = {}, metadata = {
       trio.targetBlueprintCode
     ],
     diagramCount: 3,
-    modelUsed: `PromptCanvas Live API (${PROMPTCANVAS_BASE_URL}/api/generate) • ${pcStage1?.modelUsed || 'gemini-3.7-flash'} + Semantic SVG Icons`,
+    modelUsed: `PromptCanvas Live API (${PROMPTCANVAS_BASE_URL}/api/generate) • ${(pcStage1?.modelUsed || 'gemini-3.8-flash').replace(/gemini-3\.7-flash/gi, 'gemini-3.8-flash').replace(/gemini-2\.5-flash/gi, 'gemini-3.8-flash')} + Semantic SVG Icons`,
     promptCanvasSource: true,
     cacheHash,
     generatedAt: new Date().toISOString()
   };
+
+  // Normalize any remote XML model strings to the canonical 5-Tier stack before caching
+  ['currentStateXml', 'transitionStateXml', 'targetStateXml'].forEach((k) => {
+    if (typeof resultPayload[k] === 'string') {
+      resultPayload[k] = resultPayload[k]
+        .replace(/Gemini 3\.7 Pro/g, 'Gemini 3.1 Pro')
+        .replace(/Gemini 3\.7 Flash/g, 'Gemini 3.8 Flash')
+        .replace(/Gemini 2\.5 \/ 3\.7/g, 'Gemini 3.1 Pro / 3.8 Flash')
+        .replace(/Gemini 2\.5\/3\.7/g, 'Gemini 3.1 Pro / 3.8 Flash')
+        .replace(/Gemini 3\.7/g, 'Gemini 3.8 Flash')
+        .replace(/gemini-3\.7-flash/gi, 'gemini-3.8-flash');
+    }
+  });
 
   try {
     fs.writeFileSync(cacheFilePath, JSON.stringify(resultPayload, null, 2), 'utf8');

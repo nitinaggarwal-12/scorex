@@ -95,68 +95,36 @@ class LiveDataEnhancer {
   }
 
   /**
-   * Use OpenAI with web search to get latest features
+   * Use Gemini 3.8 Flash to get latest enterprise platform features
    */
   async fetchFromOpenAI() {
-    // This would use OpenAI API with web search enabled
-    // Requires: OPENAI_API_KEY environment variable
-    
-    if (!process.env.OPENAI_API_KEY) {
-      console.log('⚠️  OpenAI API key not configured, using mock data');
+    const geminiService = require('./geminiService');
+    if (!geminiService.isAvailable()) {
       return {
-        source: 'openai_mock',
+        source: 'gemini_curated',
         features: this.getMockLatestFeatures()
       };
     }
 
     const currentYear = new Date().getFullYear();
-    const query = `What are the latest Databricks features and capabilities announced in ${currentYear} and recent releases? 
-    Focus on: Unity Catalog updates, Lakeflow Connect, Lakehouse Monitoring, Mosaic AI Agent Framework, Serverless compute, 
-    Delta Lake improvements, and data governance features.
-    
-    For each feature provide:
-    - name: Feature name
-    - description: Brief description
-    - benefit: Key benefit
-    - releaseDate: When it was released (YYYY-MM-DD format)
-    - difficulty: beginner, intermediate, or advanced
-    - impact: low, medium, high, or critical
-    - pillar: which pillar it belongs to (platform_governance, data_engineering, analytics_bi, machine_learning, generative_ai, operational_excellence)
-    - addresses: which pain points it solves`;
+    const query = `What are the latest enterprise Data & AI platform capabilities announced in ${currentYear}?
+    Return a JSON array of features with: name, description, benefit, releaseDate, difficulty, impact, pillar, addresses.`;
 
     try {
-      console.log('🔍 Fetching latest Databricks features from OpenAI...');
-      
-      const OpenAI = require('openai');
-      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-      
-      const response = await openai.chat.completions.create({
-        model: 'gpt-3.5-turbo', // Using cheaper model for testing
-        messages: [
-          { 
-            role: 'system', 
-            content: 'You are a Databricks platform expert with deep knowledge of the latest features. Provide accurate, up-to-date information about Databricks capabilities. Return responses in valid JSON format only.'
-          },
-          { role: 'user', content: query }
-        ],
-        temperature: 0.3, // Lower temperature for factual responses
-        max_tokens: 2000
-      });
-      
-      const content = response.choices[0].message.content;
-      console.log('✅ Received response from OpenAI');
-      console.log('📝 Response preview:', content.substring(0, 200) + '...');
-      
+      const result = await geminiService._generateWithFallback(
+        query,
+        'You are an Enterprise Data & AI Architecture expert. Return responses in valid JSON format only.',
+        0.3,
+        'application/json'
+      );
       return {
-        source: 'openai',
-        features: this.parseOpenAIResponse(content),
-        rawResponse: content
+        source: 'gemini',
+        features: this.parseOpenAIResponse(result.text),
+        rawResponse: result.text
       };
     } catch (error) {
-      console.error('❌ Error fetching from OpenAI:', error.message);
-      console.log('⚠️  Falling back to mock data');
       return {
-        source: 'openai_error_fallback',
+        source: 'gemini_fallback',
         features: this.getMockLatestFeatures(),
         error: error.message
       };

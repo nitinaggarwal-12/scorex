@@ -12,14 +12,19 @@
  * -> What-If Simulator -> Present Deck Mode -> Multi-Format Export
  */
 
-const puppeteer = require('puppeteer');
+let puppeteer;
+try {
+  puppeteer = require('puppeteer');
+} catch (_) {
+  puppeteer = require('puppeteer-core');
+}
 const GIFEncoder = require('../scratch/node_modules/gif-encoder-2');
 const { createCanvas, loadImage } = require('../scratch/node_modules/canvas');
 const fs = require('fs');
 const path = require('path');
 
 const BASE_URL = process.env.TEST_URL || 'http://localhost:5001';
-const INST_ID = process.env.SAMPLE_ID || 'bb883a5f-cb0f-4dc4-be5d-79e84d23ef49';
+const INST_ID = process.env.SAMPLE_ID || 'inst_openai_to_gemini_enterprise_migration_demo';
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const FRAMES_BASE_DIR = path.join(process.cwd(), 'client/public/workflows/frames');
@@ -124,9 +129,17 @@ async function saveFramesAndGif(personaKey, personaName, steps, width = 960, hei
       buffer: await page.screenshot()
     });
 
-    // 2. Question 1 Rating Sliders
-    await page.goto(`${BASE_URL}/assessments/runner/openai_to_gemini_enterprise_migration`, { waitUntil: 'networkidle2' });
-    await sleep(1500);
+    // 2. Question 1 Rating Sliders (Fixed route: /assessments/run/...)
+    await page.goto(`${BASE_URL}/assessments/run/openai_to_gemini_enterprise_migration`, { waitUntil: 'networkidle2' });
+    await sleep(1800);
+    await page.evaluate(() => {
+      const cards = Array.from(document.querySelectorAll('div, button')).filter(el =>
+        el.innerText && (el.innerText.includes('2. Experiment') || el.innerText.includes('4. Optimize'))
+      );
+      if (cards[0]) cards[0].click();
+      if (cards[1]) cards[1].click();
+    });
+    await sleep(900);
     architectSteps.push({
       title: '2. Q1: Drag Maturity Sliders',
       desc: 'Evaluate Current Baseline (L2.5) vs Desired Target Horizon (L4.5) on Prompt & API Parity.',
@@ -134,12 +147,16 @@ async function saveFramesAndGif(personaKey, personaName, steps, width = 960, hei
       buffer: await page.screenshot()
     });
 
-    // 3. Q1 Select 5 Pain Points & Context Notes
+    // 3. Q1 Select Pain Points & Context Notes
     await page.evaluate(() => {
       const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-      checkboxes.forEach((cb, idx) => { if (idx < 3) cb.click(); });
+      checkboxes.forEach((cb, idx) => { if (idx < 4) cb.click(); });
       const textarea = document.querySelector('textarea');
-      if (textarea) textarea.value = '42 production microservices running hardcoded OpenAI API keys, experiencing $185k/mo unmanaged cost spikes.';
+      if (textarea) {
+        textarea.value = '42 production microservices running hardcoded OpenAI API keys, experiencing $185k/mo unmanaged cost spikes.';
+        textarea.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+      window.scrollTo(0, 260);
     });
     await sleep(1000);
     architectSteps.push({
@@ -151,8 +168,9 @@ async function saveFramesAndGif(personaKey, personaName, steps, width = 960, hei
 
     // 4. Next Question: Q2 Long-Context & Chunked RAG
     await page.evaluate(() => {
-      const nextBtn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Next Question') || b.innerText.includes('Next'));
-      if (nextBtn) nextBtn.click();
+      window.scrollTo(0, 0);
+      const q2Btn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.trim() === 'Q2' || b.innerText.includes('Next Question') || b.innerText.includes('Next'));
+      if (q2Btn) q2Btn.click();
     });
     await sleep(1200);
     architectSteps.push({
@@ -162,12 +180,13 @@ async function saveFramesAndGif(personaKey, personaName, steps, width = 960, hei
       buffer: await page.screenshot()
     });
 
-    // 5. Submit Assessment & Trigger Gemini Synthesis
+    // 5. Auto-Prefill All 10 Questions & Ready to Submit
     await page.evaluate(() => {
-      const submitBtn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Generate Report') || b.innerText.includes('Submit') || b.innerText.includes('Complete'));
-      if (submitBtn) submitBtn.click();
+      const prefillBtn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Auto-Prefill'));
+      if (prefillBtn) prefillBtn.click();
+      window.scrollTo(0, 420);
     });
-    await sleep(1000);
+    await sleep(1200);
     architectSteps.push({
       title: '5. Submit Assessment & Synthesize',
       desc: 'Click Submit to trigger Gemini 3.7 Flash synthesis of Draw.io XML and ROI models.',
@@ -199,7 +218,7 @@ async function saveFramesAndGif(personaKey, personaName, steps, width = 960, hei
     await page.evaluate(() => {
       window.scrollTo(0, 0);
       const btns = Array.from(document.querySelectorAll('button'));
-      const tab = btns.find(b => b.innerText.includes('Architecture Evolution'));
+      const tab = btns.find(b => b.innerText.includes('Target Architecture') || b.innerText.includes('Architecture'));
       if (tab) tab.click();
     });
     await sleep(1500);
@@ -234,7 +253,7 @@ async function saveFramesAndGif(personaKey, personaName, steps, width = 960, hei
     await page.evaluate(() => {
       window.scrollTo(0, 0);
       const btns = Array.from(document.querySelectorAll('button'));
-      const tab = btns.find(b => b.innerText.includes('Financial Impact & TCO'));
+      const tab = btns.find(b => b.innerText.includes('Financial ROI') || b.innerText.includes('Financial'));
       if (tab) tab.click();
     });
     await sleep(1500);
@@ -251,7 +270,7 @@ async function saveFramesAndGif(personaKey, personaName, steps, width = 960, hei
     await page.evaluate(() => {
       window.scrollTo(0, 0);
       const btns = Array.from(document.querySelectorAll('button'));
-      const tab = btns.find(b => b.innerText.includes('Roadmap & Persona Blueprints'));
+      const tab = btns.find(b => b.innerText.includes('Roadmap & Blueprints') || b.innerText.includes('Roadmap'));
       if (tab) tab.click();
     });
     await sleep(1500);
@@ -264,11 +283,14 @@ async function saveFramesAndGif(personaKey, personaName, steps, width = 960, hei
 
     // 13. Tab 5: Granular Question Responses Audit (Light Theme)
     await page.evaluate(() => {
+      window.scrollTo(0, 0);
       const btns = Array.from(document.querySelectorAll('button'));
-      const tab = btns.find(b => b.innerText.includes('Question Responses Audit'));
+      const tab = btns.find(b => b.innerText.includes('Question Audit') || b.innerText.includes('Question Responses Audit'));
       if (tab) tab.click();
     });
     await sleep(1500);
+    await page.evaluate(() => window.scrollTo(0, 260));
+    await sleep(800);
     architectSteps.push({
       title: '13. Tab 5: Granular Question Audit (Light)',
       desc: 'Review all questions, rating baselines, technical friction tags, and operational notes.',
@@ -276,7 +298,7 @@ async function saveFramesAndGif(personaKey, personaName, steps, width = 960, hei
       buffer: await page.screenshot()
     });
 
-    // 14. What-If Simulator & 16:9 Present Deck Mode
+    // 14. 16:9 Present Deck Mode
     await page.evaluate(() => {
       window.scrollTo(0, 0);
       const presentBtn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Present Deck'));
@@ -293,7 +315,7 @@ async function saveFramesAndGif(personaKey, personaName, steps, width = 960, hei
     await saveFramesAndGif('01_cloud_architect_workflow', 'Cloud Architect Workflow', architectSteps);
 
     // =========================================================================
-    // 2. VP ENGINEERING & ASSESSMENT AUTHOR (8 Steps)
+    // 2. VP ENGINEERING & ASSESSMENT AUTHOR (6 Steps)
     // =========================================================================
     console.log('\n--- 2/4: Recording VP Engineering & Author E2E Workflow ---');
     const authorSteps = [];
@@ -309,9 +331,13 @@ async function saveFramesAndGif(personaKey, personaName, steps, width = 960, hei
 
     await page.evaluate(() => {
       const txt = document.querySelector('textarea');
-      if (txt) txt.value = 'Design a FinOps and Cloud Cost Optimization assessment covering BigQuery slot commitments, compute rightsizing, and anomaly alerts.';
-      const tiers = Array.from(document.querySelectorAll('div')).filter(d => d.innerText && d.innerText.includes('Tier 2: Deep-Dive'));
+      if (txt) {
+        txt.value = 'Design a FinOps and Cloud Cost Optimization assessment covering BigQuery slot commitments, compute rightsizing, and anomaly alerts.';
+        txt.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+      const tiers = Array.from(document.querySelectorAll('div, button')).filter(d => d.innerText && d.innerText.includes('Tier 2'));
       if (tiers.length) tiers[0].click();
+      window.scrollTo(0, 220);
     });
     await sleep(1000);
     authorSteps.push({
@@ -331,8 +357,15 @@ async function saveFramesAndGif(personaKey, personaName, steps, width = 960, hei
     });
 
     await page.evaluate(() => {
-      const editBtn = document.querySelector('button[title*="Edit"]') || Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Edit'));
-      if (editBtn) editBtn.click();
+      const addBtn = Array.from(document.querySelectorAll('button')).find(b =>
+        b.innerText && (b.innerText.includes('Add Custom Question') || b.innerText.includes('Edit'))
+      );
+      if (addBtn) {
+        addBtn.click();
+      } else {
+        const iconBtns = Array.from(document.querySelectorAll('button')).filter(b => !b.innerText.trim() && b.querySelector('svg'));
+        if (iconBtns[2]) iconBtns[2].click();
+      }
     });
     await sleep(1000);
     authorSteps.push({
@@ -344,6 +377,8 @@ async function saveFramesAndGif(personaKey, personaName, steps, width = 960, hei
 
     await page.goto(`${BASE_URL}/assessments`, { waitUntil: 'networkidle2' });
     await sleep(1500);
+    await page.evaluate(() => window.scrollTo(0, 380));
+    await sleep(800);
     authorSteps.push({
       title: '5. Semantic Version Increments (v2.0 -> v2.1)',
       desc: 'Publishing edits automatically increments framework versions to preserve audit trails.',
@@ -363,12 +398,12 @@ async function saveFramesAndGif(personaKey, personaName, steps, width = 960, hei
     await saveFramesAndGif('02_vp_engineering_author_workflow', 'VP Engineering & Author', authorSteps);
 
     // =========================================================================
-    // 3. CISO & ENTERPRISE SECOPS LEAD (6 Steps)
+    // 3. CISO & ENTERPRISE SECOPS LEAD (4 Steps)
     // =========================================================================
     console.log('\n--- 3/4: Recording CISO & SecOps E2E Workflow ---');
     const cisoSteps = [];
 
-    await page.goto(`${BASE_URL}/assessments/report/${INST_ID}`, { waitUntil: 'networkidle2' });
+    await page.goto(`${BASE_URL}/assessments/report/inst_enterprise_ai_zero_trust_security_demo`, { waitUntil: 'networkidle2' });
     await sleep(1500);
     await page.evaluate(() => window.scrollTo(0, 750));
     await sleep(800);
@@ -382,7 +417,7 @@ async function saveFramesAndGif(personaKey, personaName, steps, width = 960, hei
     await page.evaluate(() => {
       window.scrollTo(0, 0);
       const btns = Array.from(document.querySelectorAll('button'));
-      const tab = btns.find(b => b.innerText.includes('Question Responses Audit'));
+      const tab = btns.find(b => b.innerText.includes('Question Audit'));
       if (tab) tab.click();
     });
     await sleep(1500);
@@ -398,7 +433,7 @@ async function saveFramesAndGif(personaKey, personaName, steps, width = 960, hei
     await page.evaluate(() => {
       window.scrollTo(0, 0);
       const btns = Array.from(document.querySelectorAll('button'));
-      const tab = btns.find(b => b.innerText.includes('Architecture Evolution'));
+      const tab = btns.find(b => b.innerText.includes('Target Architecture'));
       if (tab) tab.click();
     });
     await sleep(1500);
@@ -414,13 +449,14 @@ async function saveFramesAndGif(personaKey, personaName, steps, width = 960, hei
     await page.evaluate(() => {
       window.scrollTo(0, 0);
       const btns = Array.from(document.querySelectorAll('button'));
-      const tab = btns.find(b => b.innerText.includes('Roadmap & Persona Blueprints'));
+      const tab = btns.find(b => b.innerText.includes('Roadmap & Blueprints'));
       if (tab) tab.click();
     });
     await sleep(1500);
     await page.evaluate(() => {
-      const secBtn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Architect & SecOps Playbook'));
+      const secBtn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Architect & SecOps Playbook') || b.innerText.includes('SecOps'));
       if (secBtn) secBtn.click();
+      window.scrollTo(0, 320);
     });
     await sleep(1000);
     cisoSteps.push({
@@ -433,23 +469,28 @@ async function saveFramesAndGif(personaKey, personaName, steps, width = 960, hei
     await saveFramesAndGif('03_ciso_secops_workflow', 'CISO & SecOps Lead', cisoSteps);
 
     // =========================================================================
-    // 4. C-SUITE EXECUTIVE & FINOPS DIRECTOR (6 Steps)
+    // 4. C-SUITE EXECUTIVE & FINOPS DIRECTOR (5 Steps)
     // =========================================================================
     console.log('\n--- 4/4: Recording C-Suite Executive & FinOps E2E Workflow ---');
     const execSteps = [];
 
-    await page.goto(`${BASE_URL}/assessments/report/${INST_ID}`, { waitUntil: 'networkidle2' });
+    await page.goto(`${BASE_URL}/assessments/report/inst_finops_cloud_cost_optimization_demo`, { waitUntil: 'networkidle2' });
     await sleep(1500);
+    await page.evaluate(() => {
+      const voiceBtn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('AI Voice Brief') || b.innerText.includes('Voice Brief'));
+      if (voiceBtn) voiceBtn.click();
+    });
+    await sleep(1000);
     execSteps.push({
       title: '1. AI Executive Audio Briefing',
       desc: 'Listen to a 90-second synthesized C-suite narrative summarizing key ROI and risk mitigations.',
-      action: 'Header: Click "Play Briefing"',
+      action: 'Header: Click "AI Voice Brief"',
       buffer: await page.screenshot()
     });
 
     await page.evaluate(() => {
       const btns = Array.from(document.querySelectorAll('button'));
-      const tab = btns.find(b => b.innerText.includes('Financial Impact & TCO'));
+      const tab = btns.find(b => b.innerText.includes('Financial ROI') || b.innerText.includes('Financial'));
       if (tab) tab.click();
     });
     await sleep(1500);
@@ -464,7 +505,7 @@ async function saveFramesAndGif(personaKey, personaName, steps, width = 960, hei
 
     await page.evaluate(() => {
       window.scrollTo(0, 0);
-      const simBtn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('What-If Scenario Simulator'));
+      const simBtn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('What-If Simulator'));
       if (simBtn) simBtn.click();
     });
     await sleep(1500);
@@ -475,11 +516,6 @@ async function saveFramesAndGif(personaKey, personaName, steps, width = 960, hei
       buffer: await page.screenshot()
     });
 
-    await page.evaluate(() => {
-      const closeBtn = document.querySelector('button[aria-label="Close"]') || Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Close') || b.innerText.includes('×'));
-      if (closeBtn) closeBtn.click();
-    });
-    await sleep(800);
     await page.evaluate(() => {
       const presentBtn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Present Deck'));
       if (presentBtn) presentBtn.click();
@@ -492,15 +528,22 @@ async function saveFramesAndGif(personaKey, personaName, steps, width = 960, hei
       buffer: await page.screenshot()
     });
 
+    await page.keyboard.press('Escape');
+    await sleep(600);
     await page.evaluate(() => {
-      const exitBtn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Exit') || b.innerText.includes('Close') || b.innerText.includes('Back'));
-      if (exitBtn) exitBtn.click();
+      const closeBtn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Close') || b.innerText.includes('✕') || b.innerText.includes('×'));
+      if (closeBtn) closeBtn.click();
+    });
+    await sleep(600);
+    await page.evaluate(() => {
+      const exportBtn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Export & Cloud Hub'));
+      if (exportBtn) exportBtn.click();
     });
     await sleep(1000);
     execSteps.push({
       title: '5. 1-Click Deliverables Export',
       desc: 'Export executive PDF, Excel financial model, CSV datasets, Draw.io XML graph, and ZIP bundle.',
-      action: 'Header: Click "Executive PDF" / "Excel" / "Bundle"',
+      action: 'Header: Click "Export & Cloud Hub"',
       buffer: await page.screenshot()
     });
 

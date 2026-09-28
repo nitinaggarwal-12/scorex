@@ -280,8 +280,8 @@ const BENCHMARK_PROFILES = {
   retail: { name: 'Retail & eCommerce', score: 3.5, color: '#f59e0b' }
 };
 
-// Helper: Split long label into up to 3 balanced lines without clipping
-function wrapLabel(text, maxChars = 15) {
+// Helper: Split long label into balanced lines without clipping
+function wrapLabel(text, maxChars = 22) {
   if (!text) return ['Dimension'];
   if (text.length <= maxChars) return [text];
   const words = text.split(' ');
@@ -299,7 +299,7 @@ function wrapLabel(text, maxChars = 15) {
   }
   if (current) lines.push(current);
   if (lines.length > 3) {
-    return [lines[0], lines[1], lines.slice(2).join(' ').substring(0, maxChars + 2) + '…'];
+    return [lines[0], lines[1], lines.slice(2).join(' ')];
   }
   return lines;
 }
@@ -650,7 +650,7 @@ const DynamicRadarChart = ({
               if (cosA > 0.2) textAnchor = 'start';
               else if (cosA < -0.2) textAnchor = 'end';
 
-              const lines = wrapLabel(dim.name, 15);
+              const lines = wrapLabel(dim.name, 22);
               const isHovered = hoveredIdx === idx;
               const startDy = lines.length === 1 ? 0 : lines.length === 2 ? -6 : -12;
 
@@ -707,7 +707,7 @@ const DynamicRadarChart = ({
                       {dim.name}
                     </span>
                     <span className="desc">
-                      {dim.description ? `${dim.description.substring(0, 60)}...` : 'Core capability evaluation'}
+                      {dim.description || 'Core capability evaluation'}
                     </span>
                   </DimLeft>
 

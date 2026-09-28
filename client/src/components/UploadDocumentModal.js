@@ -342,7 +342,7 @@ const UploadDocumentModal = ({ isOpen, onClose, targetAssessmentId = null }) => 
       setTimeout(() => {
         onClose();
         if (result.assessmentId) {
-          navigate(`/results/${result.assessmentId}`);
+          navigate(result.redirectUrl || `/assessments/report/${result.assessmentId}`);
         }
       }, 1500);
     } catch (err) {
@@ -477,7 +477,7 @@ const UploadDocumentModal = ({ isOpen, onClose, targetAssessmentId = null }) => 
                 Extracted architecture profile for <b>{extractedSummary.organizationName}</b> ({extractedSummary.industry}). 
                 Identified {extractedSummary.detectedTechnologies?.length || 0} technologies and synthesized bespoke architecture blueprints.
               </p>
-              <SubmitBtn onClick={() => navigate(`/results/${extractedSummary.assessmentId}`)}>
+              <SubmitBtn onClick={() => navigate(extractedSummary.redirectUrl || `/assessments/report/${extractedSummary.assessmentId}`)}>
                 View Complete Assessment Report →
               </SubmitBtn>
             </ExtractionPreview>

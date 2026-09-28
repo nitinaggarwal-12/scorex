@@ -3370,16 +3370,19 @@ class CustomAssessmentRepository {
   }
 
   async getInstanceById(id) {
+    const resolvedId = id === 'bb883a5f-cb0f-4dc4-be5d-79e84d23ef49'
+      ? 'inst_openai_to_gemini_enterprise_migration_demo'
+      : id;
     try {
       const query = 'SELECT * FROM dynamic_assessments WHERE id = $1';
-      const result = await db.query(query, [id]);
+      const result = await db.query(query, [resolvedId]);
       if (result.rows.length === 0) {
-        return instancesFileStore.get(id) || null;
+        return instancesFileStore.get(resolvedId) || instancesFileStore.get(id) || null;
       }
       return this.mapRowToInstance(result.rows[0]);
     } catch (error) {
       console.warn('PostgreSQL getInstanceById fallback to file store:', error.message);
-      return instancesFileStore.get(id) || null;
+      return instancesFileStore.get(resolvedId) || instancesFileStore.get(id) || null;
     }
   }
 
@@ -3397,10 +3400,12 @@ class CustomAssessmentRepository {
 
       if (updateData.architectureDiagrams) {
         updated.architectureDiagrams = updateData.architectureDiagrams;
-        if (!updated.aiReport) updated.aiReport = {};
-        updated.aiReport.architectureDiagrams = updateData.architectureDiagrams;
-        if (!updated.executiveReport) updated.executiveReport = {};
-        updated.executiveReport.architectureDiagrams = updateData.architectureDiagrams;
+        if (updated.aiReport && typeof updated.aiReport === 'object') {
+          updated.aiReport.architectureDiagrams = updateData.architectureDiagrams;
+        }
+        if (updated.executiveReport && typeof updated.executiveReport === 'object') {
+          updated.executiveReport.architectureDiagrams = updateData.architectureDiagrams;
+        }
       }
 
       const query = `
@@ -3439,10 +3444,12 @@ class CustomAssessmentRepository {
         const updated = { ...item, ...updateData, updatedAt: new Date().toISOString() };
         if (updateData.architectureDiagrams) {
           updated.architectureDiagrams = updateData.architectureDiagrams;
-          if (!updated.aiReport) updated.aiReport = {};
-          updated.aiReport.architectureDiagrams = updateData.architectureDiagrams;
-          if (!updated.executiveReport) updated.executiveReport = {};
-          updated.executiveReport.architectureDiagrams = updateData.architectureDiagrams;
+          if (updated.aiReport && typeof updated.aiReport === 'object') {
+            updated.aiReport.architectureDiagrams = updateData.architectureDiagrams;
+          }
+          if (updated.executiveReport && typeof updated.executiveReport === 'object') {
+            updated.executiveReport.architectureDiagrams = updateData.architectureDiagrams;
+          }
         }
         if (updateData.status === 'completed' && !updated.completedAt) {
           updated.completedAt = new Date().toISOString();

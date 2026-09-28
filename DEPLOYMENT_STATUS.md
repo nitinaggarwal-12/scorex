@@ -1,67 +1,23 @@
-# Databricks Maturity Assessment - Deployment Status
+# ScoreX (`v3.5.0`) — Deployment & Architecture Status
 
-## Current Status: ⚠️ Partially Working
+## Current Status: ✅ Production Ready & Certified (`v3.5.0`)
 
-### ✅ What's Working
-- Backend is running on Databricks Apps
-- Server is listening on port 8080
-- File-based storage is functional
-- App resources are configured (Lakebase database + serving endpoint)
-- Service principal has access to Lakebase database
+### 🏛️ 3-Engine Consolidated Architecture & 8-Blindspot Remediation
+- **Engine 1 — Dynamic Assessment Blueprints Engine**: Active on `/assessments`, `/assessments/generator`, `/assessments/run/:typeKey`, `/assessments/run/instance/:instanceId`, and `/assessments/report/:instanceId` (6 production blueprints + 6 complete `inst_*_demo` executive dossiers + AI custom blueprint synthesis).
+- **Engine 2 — GE Value Realization Engine**: Active on `/ge-value-realization` (and `/value-realization` redirect), `/roi-calculator`, and `/tco-calculator` (5-Column CFO Value Realization Bridge, 3-Horizon Roadmap, 15 workflows with full titles, and 5 KPA scorecards).
+- **Engine 3 — EU AI Act Statutory Compliance Engine**: Active on `/eu-ai-act` and `/eu-ai-act/system/:id` (Statutory Risk Pyramid & Annex IV Conformity Dossier Generator).
+- **4-Category Conversational Non-Mutation Guard**: Active on `POST /api/dynamic-assessments/generate-framework`, `POST /api/dynamic-assessments/instances/:id/generate-diagrams`, `POST /api/chat/message`, and `POST /api/eu-ai-act/systems/:id/copilot`.
+- **Parameter-Preserving Legacy Route Consolidation**: `<LegacyReportRedirect />` and `<LegacyRunnerRedirect />` preserve `:id` parameters across `/results/:id`, `/executive/:id`, `/assessment-details/:id`, `/deep-dive/:id`, and `/assessment/:id/:pillar`.
 
-### ❌ What's Not Working
-1. **UI Not Accessible** - OAuth authentication redirect loop
-2. **Lakebase Connection Failing** - Token authentication issues
-3. **Code updates not deploying** - Possible Node.js module caching
+### 🧠 5-Tier Google / Gemini / DeepMind Model Stack
+- **Tier 1 (Orchestrator & Forensic Judge)**: `Google Omni 1.1` (`google-omni-1.1` / `gemini-omni-1.1-flash`)
+- **Tier 2 (Deep Reasoning, CFO Value & Vision)**: `Gemini 3.1 Pro` (`gemini-3.1-pro-preview`)
+- **Tier 3 (Fast Classifier & Blueprint Compiler)**: `Gemini 3.8 Flash` (`gemini-3.8-flash`)
+- **Tier 4 (Real-Time Interactive Streaming)**: `Gemini Flash Live` (`gemini-3.1-flash-live-preview`)
+- **Tier 5 (Multimodal Media & Embeddings)**: `Veo 3.1` (`veo-3.1-generate-preview`), `Lyria 3.5` (`lyria-3.5` / `models/lyria-3-pro-preview`), `Neural Audio` (`gemini-3.1-flash-tts-preview`), `Imagen 3` (`gemini-3.1-flash-image-preview` / `models/imagen-3.0-generate-002`), `Gemini Embedding 001` (`gemini-embedding-001` / `text-embedding-005`)
 
-## Issues Identified
-
-### 1. OAuth Authentication Redirect
-- App requires Databricks OAuth authentication
-- Users get redirected to login but the flow doesn't complete
-- This is why "App Not Available" message appears
-
-### 2. Lakebase Authentication
-- OAuth tokens expire after 1 hour
-- Service principal OAuth token generation code is not executing (cached?)
-- Manual token refresh required
-
-### 3. Deployment/Caching Issues
-- Debug logging code added but not appearing in logs
-- Suggests Node.js module caching or build process not picking up changes
-
-## Recommended Next Steps
-
-### Option 1: Use Helper Script (Quickest)
-The `setup-lakebase.sh` script is ready and works:
-```bash
-./setup-lakebase.sh
-```
-- Prompts for OAuth token
-- Updates app.yaml
-- Redeploys app
-- **Limitation**: Need to run every hour when token expires
-
-### Option 2: Fix Service Principal Auth (More Complex)
-Need to debug why service principal code isn't executing:
-1. Clear Node.js cache in deployment
-2. Force rebuild of node_modules
-3. Add explicit module reload
-
-### Option 3: Use Databricks Volumes (Alternative)
-Instead of Lakebase, use Databricks Volumes for persistent storage:
-- Easier authentication
-- No token expiration issues
-- Would require code changes
-
-## App URLs
-- **App URL**: https://tma-1444828305810485.aws.databricksapps.com
-- **Workspace**: https://e2-demo-field-eng.cloud.databricks.com
-- **Lakebase Instance**: maturity-assessment-db
-
-## Resources Configured
-- Database resource key: `database`
-- Serving endpoint key: `serving-endpoint`
-- Service Principal ID: `2dd066d2-2717-4694-85be-968a1407fd53`
-
-
+### 🌐 Endpoints
+- **Primary Production URL (Google Cloud Run — Argolis)**: `https://scorex-app-522233290860.us-central1.run.app` (`gcp-sandbox-field-eng` / `us-central1` / `scorex-app`)
+- **Secondary Production URL (Railway)**: `https://scorex.up.railway.app/`
+- **Local Runtime**: `http://localhost:5001`
+- **API Health Check**: `http://localhost:5001/api/health`

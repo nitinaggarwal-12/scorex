@@ -187,7 +187,7 @@ const CommandPalette = () => {
       title: 'Generate New Assessment with AI',
       subtitle: 'Create bespoke multi-dimension maturity framework',
       icon: FiPlus,
-      action: () => navigate('/assessments/generate')
+      action: () => navigate('/assessments/ai-generator')
     },
     {
       id: 'all-assessments',

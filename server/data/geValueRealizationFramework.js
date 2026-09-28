@@ -185,6 +185,7 @@ const KPA_DEFINITIONS = [
   {
     id: 'platform_economics',
     name: 'Platform Economics',
+    title: 'Platform Economics',
     weight: 20,
     okrId: 'O1',
     okrTitle: 'O1: Realize defensible migration economics',
@@ -195,6 +196,7 @@ const KPA_DEFINITIONS = [
   {
     id: 'workflow_outcomes',
     name: 'Workflow Outcomes',
+    title: 'Workflow Outcomes',
     weight: 35,
     okrId: 'O2',
     okrTitle: 'O2: Improve meaningful priority work',
@@ -205,6 +207,7 @@ const KPA_DEFINITIONS = [
   {
     id: 'adoption_access',
     name: 'Adoption & Access',
+    title: 'Adoption & Access',
     weight: 15,
     okrId: 'O3',
     okrTitle: 'O3: Expand useful, repeat adoption',
@@ -215,6 +218,7 @@ const KPA_DEFINITIONS = [
   {
     id: 'quality_governance',
     name: 'Quality, Reliability & Governance',
+    title: 'Quality, Reliability & Governance',
     weight: 20,
     okrId: 'O4',
     okrTitle: 'O4: Operate safely and reliably in approved scope',
@@ -225,6 +229,7 @@ const KPA_DEFINITIONS = [
   {
     id: 'user_experience',
     name: 'Employee Experience',
+    title: 'Employee Experience',
     weight: 10,
     okrId: 'O3',
     okrTitle: 'O3/O4: Improve task usefulness and user confidence',

@@ -764,7 +764,7 @@ const GeValueRealizationWorkspace = () => {
                           cursor: 'pointer'
                         }}
                       >
-                        {wf.code}: {wf.name.split(':')[0].slice(0, 26)}
+                        {wf.name && wf.name.startsWith(wf.code) ? wf.name : `${wf.code}: ${wf.name || ''}`}
                       </button>
                     ))}
                     <button
@@ -1106,7 +1106,7 @@ const GeValueRealizationWorkspace = () => {
                     {evaluation.evaluatedWorkflows.map((wf) => (
                       <tr key={wf.id || wf.code} style={{ borderBottom: '1px solid #f1f5f9' }}>
                         <td style={{ padding: '9px 6px', fontWeight: 600, color: '#0f172a' }}>
-                          {wf.code}: {wf.name.split(':')[0]}
+                          {wf.name && wf.name.startsWith(wf.code) ? wf.name : `${wf.code}: ${wf.name || ''}`}
                         </td>
                         <td style={{ padding: '9px 6px' }}>
                           <span style={{
@@ -1151,7 +1151,7 @@ const GeValueRealizationWorkspace = () => {
                   {Object.values(evaluation.kpas).map((kpa) => (
                     <div key={kpa.id}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', marginBottom: '4px' }}>
-                        <span style={{ fontWeight: 600, color: '#334155' }}>{kpa.title}</span>
+                        <span style={{ fontWeight: 600, color: '#334155' }}>{kpa.title || kpa.name}</span>
                         <span style={{ fontWeight: 700, color: '#0f172a', fontFamily: 'monospace' }}>
                           {kpa.adjustedScore} / {kpa.weight}
                         </span>

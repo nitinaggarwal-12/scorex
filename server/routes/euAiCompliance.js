@@ -9,7 +9,7 @@ router.use(requireAuth);
 /**
  * POST /api/eu-ai-compliance/generate-synthesis
  * Generates an executive legal synthesis, statutory risk analysis,
- * enforcement timeline, and Annex IV technical file draft using Gemini 3.7.
+ * enforcement timeline, and Annex IV technical file draft using Gemini 3.8 Flash.
  */
 router.post('/generate-synthesis', async (req, res) => {
   try {
@@ -54,12 +54,13 @@ router.post('/generate-audio-briefing', async (req, res) => {
 });
 
 /**
- * POST /api/eu-ai-compliance/copilot-chat
+ * POST /api/eu-ai-compliance/copilot-chat (and /systems/:id/copilot alias)
  * In-workspace legal & MLOps regulatory copilot.
  */
-router.post('/copilot-chat', async (req, res) => {
+router.post(['/copilot-chat', '/systems/:id/copilot'], async (req, res) => {
   try {
-    const { message, conversationHistory, context } = req.body;
+    const message = req.body?.message || req.body?.prompt || req.body?.query;
+    const { conversationHistory, context } = req.body || {};
     if (!message || typeof message !== 'string') {
       return res.status(400).json({ success: false, error: 'Message is required' });
     }
@@ -87,7 +88,7 @@ router.post('/live-audit', async (req, res) => {
   try {
     const { auditorModel, meta, answers, evaluation } = req.body;
     const auditReport = await euAiGeminiService.runIndependentLiveAudit(
-      auditorModel || 'gemini-2.5-pro',
+      auditorModel || 'google-omni-1.1',
       meta || {},
       answers || {},
       evaluation || {}
@@ -132,13 +133,26 @@ function saveServerDossiers(dossiers) {
 }
 
 /**
- * GET /api/eu-ai-compliance/dossiers
+ * GET /api/eu-ai-compliance/dossiers (and /catalog alias)
  * List all saved EU AI Act compliance dossiers for My Assessments & Portfolio views.
  */
-router.get('/dossiers', (req, res) => {
+router.get(['/dossiers', '/catalog'], (req, res) => {
   try {
     const dossiers = loadServerDossiers();
-    return res.json({ success: true, dossiers: Object.values(dossiers) });
+    const list = Object.values(dossiers);
+    return res.json({
+      success: true,
+      count: list.length,
+      dossiers: list,
+      statutoryChapters: [
+        { id: 'art-5', title: 'Article 5 — Prohibited AI Practices Screening', weight: 20 },
+        { id: 'art-6', title: 'Article 6 & Annex III — High-Risk Classification', weight: 15 },
+        { id: 'art-9-15', title: 'Articles 9–15 — High-Risk Provider Obligations & Technical File', weight: 30 },
+        { id: 'art-50', title: 'Article 50 — Transparency & Watermarking Obligations', weight: 10 },
+        { id: 'art-51-55', title: 'Articles 51–55 — GPAI & Systemic Risk Models', weight: 15 },
+        { id: 'annex-iv', title: 'Annex IV — Conformity Assessment & EU Declaration', weight: 10 }
+      ]
+    });
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
   }

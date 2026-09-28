@@ -948,7 +948,7 @@ const AudioBriefingPlayer = ({ instance, report, theme = "light" }) => {
       {
         act: 'Act IV',
         chapterTitle: 'The Awakening',
-        text: `Imagine what happens next... The target state unlocks Google Vertex AI Gemini 3.7 with Context Caching, shattering latency and slashing token costs by an astonishing seventy-five percent, paired with the unifying power of BigLake!`
+        text: `Imagine what happens next... The target state unlocks Google Vertex AI Gemini 3.8 Flash with Context Caching, shattering latency and slashing token costs by an astonishing seventy-five percent, paired with the unifying power of BigLake!`
       },
       {
         act: 'Act V',

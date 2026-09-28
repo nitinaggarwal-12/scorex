@@ -116,7 +116,7 @@ export class ExecutivePDFExporter {
       gap: +(futScore - curScore).toFixed(1),
       level: {
         level: curScore >= 4.2 ? 'Optimized' : curScore >= 3.4 ? 'Managed' : curScore >= 2.6 ? 'Defined' : 'Developing',
-        description: aiReport.executiveSummary || this.results.overall?.level?.description || 'Architecture transformation roadmap synthesized with Gemini 3.7 Flash Reasoning Engine.'
+        description: aiReport.executiveSummary || this.results.overall?.level?.description || 'Architecture transformation roadmap synthesized with Gemini 3.8 Flash Reasoning Engine.'
       }
     };
   }
@@ -205,7 +205,7 @@ export class ExecutivePDFExporter {
       // Center: Platform & Engine Attribution
       this.doc.setFont('helvetica', 'normal');
       this.doc.setTextColor(COLORS.textMuted);
-      this.doc.text('ScoreX Platform • Gemini 3.7 Reasoning', this.pageWidth / 2, this.pageHeight - 14, { align: 'center' });
+      this.doc.text('ScoreX Platform • Gemini 3.8 Flash Reasoning', this.pageWidth / 2, this.pageHeight - 14, { align: 'center' });
 
       // Right: Page number
       this.doc.setFont('helvetica', 'bold');
@@ -414,7 +414,7 @@ export class ExecutivePDFExporter {
       ['Target Organization', org, 'Assessment Date', dateStr],
       ['Engagement Scope', assessTitle, 'Architecture Pillars', `${dimsCount} Evaluated Dimensions`],
       ['Total Questions Evaluated', `${questionsCount} Rigorous Questions`, 'Validation Standard', 'Google Cloud Well-Architected Framework'],
-      ['AI Architecture Model', 'Gemini 3.7 Reasoning Engine', 'Classification', 'Confidential - Executive Use Only']
+      ['AI Architecture Model', 'Gemini 3.8 Flash Reasoning Engine', 'Classification', 'Confidential - Executive Use Only']
     ];
 
     autoTable(this.doc, {
@@ -1417,7 +1417,7 @@ export const generateDynamicPDFReport = (instance, report) => {
         gap: +(tgtOverall - curOverall).toFixed(1),
         level: {
           level: scores.maturityLevel || instance?.maturityLevel || 'Defined',
-          description: aiReport.executiveSummary || 'Architecture transformation roadmap synthesized with Gemini 3.7 Flash.'
+          description: aiReport.executiveSummary || 'Architecture transformation roadmap synthesized with Gemini 3.8 Flash.'
         }
       },
       categoryDetails,

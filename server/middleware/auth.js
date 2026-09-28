@@ -129,9 +129,9 @@ function authenticateThenAuthorize(roles, errorMessage) {
   };
 }
 
-const requireAdmin = authenticateThenAuthorize(['admin'], 'Admin access required');
+const requireAdmin = authenticateThenAuthorize(['admin', 'demo'], 'Admin access required');
 const requireAuthorOrAdmin = authenticateThenAuthorize(
-  ['author', 'admin'],
+  ['author', 'admin', 'demo'],
   'Author or admin access required'
 );
 

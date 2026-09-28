@@ -1,9 +1,10 @@
 const geminiService = require('./geminiService');
 const audioNarrationService = require('./audioNarrationService');
+const { classifyConversationalIntent } = require('../utils/conversationalIntentGuard');
 
 /**
  * EU AI Act Compliance Gemini Intelligence Engine
- * Powered by Google Gemini (gemini-3.8-flash / gemini-2.5-flash)
+ * Powered by Google Gemini (gemini-3.8-flash / gemini-3.1-pro-preview)
  * Synthesizes audit-grade legal analyses, statutory risk breakdowns,
  * Annex IV Technical File drafts, and executive spoken briefings.
  */
@@ -13,7 +14,7 @@ class EuAiGeminiService {
   }
 
   /**
-   * Synthesize Executive Legal Analysis & Board Briefing using Gemini 3.7 Flash
+   * Synthesize Executive Legal Analysis & Board Briefing using Gemini 3.8 Flash
    */
   async generateLegalSynthesis(meta = {}, answers = {}, evaluation = {}) {
     const systemName = meta.systemName || 'Enterprise AI System';
@@ -26,7 +27,7 @@ class EuAiGeminiService {
     // Check if Gemini is live
     if (this.gemini.isAvailable()) {
       try {
-        console.log(`🤖 [Gemini 3.7 Flash] Generating EU AI Act Legal Synthesis for "${systemName}"...`);
+        console.log(`🤖 [Gemini 3.8 Flash] Generating EU AI Act Legal Synthesis for "${systemName}"...`);
         
         const systemInstruction = `You are a Senior European AI Act Regulatory Counsel & AI Systems Architect specializing in Regulation (EU) 2024/1689.
 Analyze the provided AI system assessment inputs, risk classification tier, 7-vector conformity scores, and identified control gaps.
@@ -294,6 +295,20 @@ Immediate focus is required on Article 10 (automated outlier sanitization for ca
    * In-Workspace EU AI Compliance Copilot
    */
   async copilotChat(userMessage, conversationHistory = [], context = {}) {
+    const convCheck = classifyConversationalIntent(userMessage, {
+      surfaceName: 'ScoreX EU AI Act Statutory Copilot'
+    });
+    if (convCheck.isConversational && convCheck.category !== 'advisory_question') {
+      return {
+        reply: convCheck.reply,
+        isConversational: true,
+        category: convCheck.category,
+        mutated: false,
+        modelUsed: 'gemini-3.8-flash (Intent Guard)',
+        suggestedPrompts: convCheck.suggestedActions
+      };
+    }
+
     const meta = context.meta || {};
     const evalObj = context.evaluation || {};
     const synthesis = context.synthesis || {};
@@ -415,7 +430,7 @@ Would you like me to draft an **Article 14 Human Oversight Protocol** or explain
    * Audits the deterministic weighted score, checks for cross-question logical contradictions,
    * validates the Article 99 statutory weight multipliers, and uncovers unaddressed regulatory blind spots.
    */
-  async runIndependentLiveAudit(auditorModel = 'gemini-2.5-pro', meta = {}, answers = {}, evaluation = {}) {
+  async runIndependentLiveAudit(auditorModel = 'google-omni-1.1', meta = {}, answers = {}, evaluation = {}) {
     const systemName = meta.systemName || 'Enterprise AI System';
     const detScore = evaluation.healthScore ?? 0;
     const rawUnweighted = evaluation.weightedBreakdown?.unweightedPercentage ?? detScore;

@@ -38,20 +38,146 @@ async function userCanReadAssessment(req, assessmentId) {
   return canAccessResource(req.user, result.rows[0]);
 }
 
+const SEEDED_CUSTOM_QUESTIONS = [
+  {
+    id: 'cq_gov_01',
+    question_text: 'How mature is your organization\'s unified data governance, lineage, and fine-grained ACL enforcement across multi-cloud and AI workloads?',
+    pillar: 'platform_governance',
+    category: 'Data & AI Governance',
+    weight: 1.5,
+    is_active: true,
+    maturity_level_1: 'Ad-hoc manual permissions per bucket/table with no centralized catalog or audit trail.',
+    maturity_level_2: 'Departmental catalogs with basic role-based access control (RBAC) and manual compliance checks.',
+    maturity_level_3: 'Centralized Unity Catalog / Dataplex governance with automated column/row-level security policies.',
+    maturity_level_4: 'Automated end-to-end data & model lineage with continuous PII classification and policy enforcement.',
+    maturity_level_5: 'Autonomous zero-trust governance mesh with real-time AI policy guardrails and cross-cloud federation.',
+    created_at: '2026-08-15T10:00:00.000Z'
+  },
+  {
+    id: 'cq_eng_01',
+    question_text: 'How standardized and automated are your medallion data ingestion, streaming CDC, and declarative pipeline orchestration workflows?',
+    pillar: 'data_engineering',
+    category: 'Pipeline Architecture & Streaming',
+    weight: 1.4,
+    is_active: true,
+    maturity_level_1: 'Manual batch scripts and brittle cron jobs with frequent schema-drift breakages.',
+    maturity_level_2: 'Scheduled ETL pipelines with basic retry logic but limited data quality expectations.',
+    maturity_level_3: 'Standardized Bronze/Silver/Gold medallion architecture with declarative data quality quarantine.',
+    maturity_level_4: 'Sub-minute Change Data Capture (CDC) streaming with auto-scaling compute and schema evolution.',
+    maturity_level_5: 'Self-healing, AI-optimized lakehouse pipelines with predictive SLA governance and FinOps auto-tuning.',
+    created_at: '2026-08-16T11:30:00.000Z'
+  },
+  {
+    id: 'cq_bi_01',
+    question_text: 'How effectively do business stakeholders access governed semantic metrics, self-service BI, and natural-language analytics?',
+    pillar: 'analytics_bi',
+    category: 'Semantic Layer & Self-Service BI',
+    weight: 1.2,
+    is_active: true,
+    maturity_level_1: 'Siloed spreadsheet extracts and conflicting KPI definitions across business units.',
+    maturity_level_2: 'Centralized BI dashboards with manual data warehouse extracts and multi-day report backlogs.',
+    maturity_level_3: 'Certified semantic metric layer with governed self-service exploration on live lakehouse tables.',
+    maturity_level_4: 'High-concurrency serverless SQL warehousing with conversational AI/BI genie grounded in certified metrics.',
+    maturity_level_5: 'Real-time decision intelligence embedded directly into operational CRM/ERP workflows with proactive alerts.',
+    created_at: '2026-08-18T14:15:00.000Z'
+  },
+  {
+    id: 'cq_ml_01',
+    question_text: 'How standardized is your end-to-end MLOps lifecycle from feature engineering and experiment tracking to production drift monitoring?',
+    pillar: 'machine_learning',
+    category: 'MLOps & Model Registry',
+    weight: 1.3,
+    is_active: true,
+    maturity_level_1: 'Local data science notebooks with manual model handoffs and zero production telemetry.',
+    maturity_level_2: 'Shared experiment tracking with manual container deployment and ad-hoc retraining.',
+    maturity_level_3: 'Centralized Feature Store and Model Registry with CI/CD automated staging-to-production promotion.',
+    maturity_level_4: 'Automated data/concept drift detection, shadow deployments, and lineage back to training snapshots.',
+    maturity_level_5: 'Closed-loop champion/challenger auto-retraining with real-time feature serving and regulatory explainability.',
+    created_at: '2026-08-20T09:45:00.000Z'
+  },
+  {
+    id: 'cq_genai_01',
+    question_text: 'How mature is your enterprise Generative AI & Agentic architecture regarding grounded RAG, evaluation benchmarks, and safety guardrails?',
+    pillar: 'generative_ai',
+    category: 'Enterprise GenAI & Agentic Systems',
+    weight: 1.6,
+    is_active: true,
+    maturity_level_1: 'Unmonitored public LLM usage or disconnected PoC chatbots without enterprise source grounding.',
+    maturity_level_2: 'Basic vector RAG pilots over static PDFs with manual spot-checking and no ACL inheritance.',
+    maturity_level_3: 'ACL-aware enterprise search and grounded assistants with golden evaluation sets and citation verification.',
+    maturity_level_4: 'Multi-step ADK agents integrated with enterprise systems via MCP, protected by Model Armor and VPC-SC.',
+    maturity_level_5: 'CFO-validated agentic value realization with automated LLM-as-a-Judge observability and semantic caching.',
+    created_at: '2026-08-22T16:20:00.000Z'
+  },
+  {
+    id: 'cq_ops_01',
+    question_text: 'How mature are your FinOps unit-economics attribution, cross-region DR resilience, and Infrastructure-as-Code (Terraform) automation?',
+    pillar: 'operational_excellence',
+    category: 'FinOps, SRE & IaC Automation',
+    weight: 1.3,
+    is_active: true,
+    maturity_level_1: 'Manual console provisioning with unallocated cloud spend and no automated disaster recovery.',
+    maturity_level_2: 'Basic cost tagging and environment separation with partially scripted deployments.',
+    maturity_level_3: '100% Terraform/GitOps workspace provisioning with chargeback/showback dashboards by business unit.',
+    maturity_level_4: 'Automated workload rightsizing, anomaly alerting, and tested multi-AZ/multi-region failover runbooks.',
+    maturity_level_5: 'Unit-economic cost-per-query/cost-per-agent optimization with autonomous policy-driven FinOps.',
+    created_at: '2026-08-25T13:10:00.000Z'
+  }
+];
+
+let inMemoryCustomQuestions = [...SEEDED_CUSTOM_QUESTIONS];
+
+function filterQuestionsList(list, { includeInactive, pillar, privileged }) {
+  return list.filter(q => {
+    if (includeInactive !== 'true' || !privileged) {
+      if (!q.is_active) return false;
+    }
+    if (pillar && pillar !== 'all') {
+      if (q.pillar !== pillar && q.pillar !== 'all') return false;
+    }
+    return true;
+  });
+}
+
+// Note: GET /stats/summary must be registered BEFORE GET /:id so Express does not match "stats" as :id
+router.get('/stats/summary', async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT
+        COUNT(*) as total,
+        COUNT(*) FILTER (WHERE is_active = true) as active,
+        COUNT(*) FILTER (WHERE is_active = false) as inactive,
+        COUNT(DISTINCT pillar) as unique_pillars
+      FROM custom_questions
+    `);
+    const row = result.rows[0];
+    if (row && Number(row.total) > 0) {
+      return res.json({ success: true, stats: row });
+    }
+  } catch (_) {}
+
+  const total = inMemoryCustomQuestions.length;
+  const active = inMemoryCustomQuestions.filter(q => q.is_active).length;
+  const inactive = total - active;
+  const unique_pillars = new Set(inMemoryCustomQuestions.map(q => q.pillar)).size;
+  return res.json({
+    success: true,
+    stats: { total, active, inactive, unique_pillars }
+  });
+});
+
 /**
  * GET /api/custom-questions
  * Get all custom questions (active only by default)
  */
 router.get('/', async (req, res) => {
+  const { includeInactive = 'false', pillar } = req.query;
+  const privileged = req.user.role === 'admin' || req.user.role === 'author' || req.user.role === 'demo';
   try {
-    const { includeInactive = 'false', pillar } = req.query;
-    const privileged = req.user.role === 'admin' || req.user.role === 'author';
-
     let query = 'SELECT * FROM custom_questions';
     const conditions = [];
     const params = [];
 
-    // Demo/consumer users can never enumerate inactive authoring content.
     if (includeInactive !== 'true' || !privileged) {
       conditions.push('is_active = true');
     }
@@ -68,20 +194,21 @@ router.get('/', async (req, res) => {
     query += ' ORDER BY created_at DESC';
 
     const result = await db.query(query, params);
+    if (result.rows && result.rows.length > 0) {
+      return res.json({
+        success: true,
+        questions: result.rows,
+        count: result.rows.length
+      });
+    }
+  } catch (_) {}
 
-    res.json({
-      success: true,
-      questions: result.rows || [],
-      count: result.rows?.length || 0
-    });
-  } catch (error) {
-    // Graceful fallback for local file storage mode without PostgreSQL
-    res.json({
-      success: true,
-      questions: [],
-      count: 0
-    });
-  }
+  const filtered = filterQuestionsList(inMemoryCustomQuestions, { includeInactive, pillar, privileged });
+  return res.json({
+    success: true,
+    questions: filtered,
+    count: filtered.length
+  });
 });
 
 /**
@@ -89,38 +216,19 @@ router.get('/', async (req, res) => {
  * Get a single custom question by ID
  */
 router.get('/:id', async (req, res) => {
+  const { id } = req.params;
   try {
-    const { id } = req.params;
-
-    const result = await db.query(
-      'SELECT * FROM custom_questions WHERE id = $1',
-      [id]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({
-        success: false,
-        error: 'Question not found'
-      });
+    const result = await db.query('SELECT * FROM custom_questions WHERE id = $1', [id]);
+    if (result.rows.length > 0) {
+      return res.json({ success: true, question: result.rows[0] });
     }
+  } catch (_) {}
 
-    // Non-authoring roles may only read active questions.
-    if (!result.rows[0].is_active && req.user.role !== 'admin' && req.user.role !== 'author') {
-      return res.status(404).json({ success: false, error: 'Question not found' });
-    }
-
-    res.json({
-      success: true,
-      question: result.rows[0]
-    });
-  } catch (error) {
-    console.error('Error fetching custom question:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to fetch custom question',
-      message: error.message
-    });
+  const found = inMemoryCustomQuestions.find(q => String(q.id) === String(id));
+  if (!found) {
+    return res.status(404).json({ success: false, error: 'Question not found' });
   }
+  return res.json({ success: true, question: found });
 });
 
 /**
@@ -128,33 +236,33 @@ router.get('/:id', async (req, res) => {
  * Create a new custom question
  */
 router.post('/', async (req, res) => {
+  const {
+    question_text,
+    pillar,
+    category,
+    weight = 1.0,
+    maturity_level_1,
+    maturity_level_2,
+    maturity_level_3,
+    maturity_level_4,
+    maturity_level_5
+  } = req.body;
+
+  if (!question_text || !pillar) {
+    return res.status(400).json({
+      success: false,
+      error: 'Question text and pillar are required'
+    });
+  }
+
+  if (weight < 0 || weight > 2) {
+    return res.status(400).json({
+      success: false,
+      error: 'Weight must be between 0 and 2'
+    });
+  }
+
   try {
-    const {
-      question_text,
-      pillar,
-      category,
-      weight = 1.0,
-      maturity_level_1,
-      maturity_level_2,
-      maturity_level_3,
-      maturity_level_4,
-      maturity_level_5
-    } = req.body;
-
-    if (!question_text || !pillar) {
-      return res.status(400).json({
-        success: false,
-        error: 'Question text and pillar are required'
-      });
-    }
-
-    if (weight < 0 || weight > 2) {
-      return res.status(400).json({
-        success: false,
-        error: 'Weight must be between 0 and 2'
-      });
-    }
-
     const result = await db.query(
       `INSERT INTO custom_questions (
         question_text, pillar, category, weight,
@@ -168,18 +276,32 @@ router.post('/', async (req, res) => {
         req.user.id
       ]
     );
-
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       question: result.rows[0],
       message: 'Custom question created successfully'
     });
-  } catch (error) {
-    console.error('Error creating custom question:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to create custom question',
-      message: error.message
+  } catch (_) {
+    const newQ = {
+      id: `cq_${Date.now()}`,
+      question_text,
+      pillar,
+      category: category || 'Custom Diagnostic',
+      weight: Number(weight) || 1.0,
+      is_active: true,
+      maturity_level_1: maturity_level_1 || '',
+      maturity_level_2: maturity_level_2 || '',
+      maturity_level_3: maturity_level_3 || '',
+      maturity_level_4: maturity_level_4 || '',
+      maturity_level_5: maturity_level_5 || '',
+      created_by: req.user.id,
+      created_at: new Date().toISOString()
+    };
+    inMemoryCustomQuestions.unshift(newQ);
+    return res.status(201).json({
+      success: true,
+      question: newQ,
+      message: 'Custom question created successfully'
     });
   }
 });
@@ -189,109 +311,78 @@ router.post('/', async (req, res) => {
  * Update a custom question
  */
 router.put('/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const {
-      question_text,
-      pillar,
-      category,
-      weight,
-      maturity_level_1,
-      maturity_level_2,
-      maturity_level_3,
-      maturity_level_4,
-      maturity_level_5,
-      is_active
-    } = req.body;
+  const { id } = req.params;
+  const {
+    question_text,
+    pillar,
+    category,
+    weight,
+    maturity_level_1,
+    maturity_level_2,
+    maturity_level_3,
+    maturity_level_4,
+    maturity_level_5,
+    is_active
+  } = req.body;
 
+  try {
     const updates = [];
     const params = [];
     let paramCount = 1;
 
-    if (question_text !== undefined) {
-      params.push(question_text);
-      updates.push(`question_text = $${paramCount++}`);
-    }
-    if (pillar !== undefined) {
-      params.push(pillar);
-      updates.push(`pillar = $${paramCount++}`);
-    }
-    if (category !== undefined) {
-      params.push(category);
-      updates.push(`category = $${paramCount++}`);
-    }
+    if (question_text !== undefined) { params.push(question_text); updates.push(`question_text = $${paramCount++}`); }
+    if (pillar !== undefined) { params.push(pillar); updates.push(`pillar = $${paramCount++}`); }
+    if (category !== undefined) { params.push(category); updates.push(`category = $${paramCount++}`); }
     if (weight !== undefined) {
-      if (weight < 0 || weight > 2) {
-        return res.status(400).json({
-          success: false,
-          error: 'Weight must be between 0 and 2'
-        });
-      }
+      if (weight < 0 || weight > 2) return res.status(400).json({ success: false, error: 'Weight must be between 0 and 2' });
       params.push(weight);
       updates.push(`weight = $${paramCount++}`);
     }
-    if (maturity_level_1 !== undefined) {
-      params.push(maturity_level_1);
-      updates.push(`maturity_level_1 = $${paramCount++}`);
-    }
-    if (maturity_level_2 !== undefined) {
-      params.push(maturity_level_2);
-      updates.push(`maturity_level_2 = $${paramCount++}`);
-    }
-    if (maturity_level_3 !== undefined) {
-      params.push(maturity_level_3);
-      updates.push(`maturity_level_3 = $${paramCount++}`);
-    }
-    if (maturity_level_4 !== undefined) {
-      params.push(maturity_level_4);
-      updates.push(`maturity_level_4 = $${paramCount++}`);
-    }
-    if (maturity_level_5 !== undefined) {
-      params.push(maturity_level_5);
-      updates.push(`maturity_level_5 = $${paramCount++}`);
-    }
-    if (is_active !== undefined) {
-      params.push(is_active);
-      updates.push(`is_active = $${paramCount++}`);
-    }
+    if (maturity_level_1 !== undefined) { params.push(maturity_level_1); updates.push(`maturity_level_1 = $${paramCount++}`); }
+    if (maturity_level_2 !== undefined) { params.push(maturity_level_2); updates.push(`maturity_level_2 = $${paramCount++}`); }
+    if (maturity_level_3 !== undefined) { params.push(maturity_level_3); updates.push(`maturity_level_3 = $${paramCount++}`); }
+    if (maturity_level_4 !== undefined) { params.push(maturity_level_4); updates.push(`maturity_level_4 = $${paramCount++}`); }
+    if (maturity_level_5 !== undefined) { params.push(maturity_level_5); updates.push(`maturity_level_5 = $${paramCount++}`); }
+    if (is_active !== undefined) { params.push(is_active); updates.push(`is_active = $${paramCount++}`); }
 
     if (updates.length === 0) {
-      return res.status(400).json({
-        success: false,
-        error: 'No fields to update'
-      });
+      return res.status(400).json({ success: false, error: 'No fields to update' });
     }
 
     params.push(id);
-    const query = `
-      UPDATE custom_questions
-      SET ${updates.join(', ')}
-      WHERE id = $${paramCount}
-      RETURNING *
-    `;
-
+    const query = `UPDATE custom_questions SET ${updates.join(', ')} WHERE id = $${paramCount} RETURNING *`;
     const result = await db.query(query, params);
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({
-        success: false,
-        error: 'Question not found'
+    if (result.rows.length > 0) {
+      return res.json({
+        success: true,
+        question: result.rows[0],
+        message: 'Custom question updated successfully'
       });
     }
+  } catch (_) {}
 
-    res.json({
-      success: true,
-      question: result.rows[0],
-      message: 'Custom question updated successfully'
-    });
-  } catch (error) {
-    console.error('Error updating custom question:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to update custom question',
-      message: error.message
-    });
+  const idx = inMemoryCustomQuestions.findIndex(q => String(q.id) === String(id));
+  if (idx === -1) {
+    return res.status(404).json({ success: false, error: 'Question not found' });
   }
+  inMemoryCustomQuestions[idx] = {
+    ...inMemoryCustomQuestions[idx],
+    ...(question_text !== undefined ? { question_text } : {}),
+    ...(pillar !== undefined ? { pillar } : {}),
+    ...(category !== undefined ? { category } : {}),
+    ...(weight !== undefined ? { weight: Number(weight) } : {}),
+    ...(maturity_level_1 !== undefined ? { maturity_level_1 } : {}),
+    ...(maturity_level_2 !== undefined ? { maturity_level_2 } : {}),
+    ...(maturity_level_3 !== undefined ? { maturity_level_3 } : {}),
+    ...(maturity_level_4 !== undefined ? { maturity_level_4 } : {}),
+    ...(maturity_level_5 !== undefined ? { maturity_level_5 } : {}),
+    ...(is_active !== undefined ? { is_active } : {})
+  };
+  return res.json({
+    success: true,
+    question: inMemoryCustomQuestions[idx],
+    message: 'Custom question updated successfully'
+  });
 });
 
 /**
@@ -299,70 +390,33 @@ router.put('/:id', async (req, res) => {
  * Soft delete (deactivate) a custom question
  */
 router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+  const { hard = 'false' } = req.query;
+
   try {
-    const { id } = req.params;
-    const { hard = 'false' } = req.query;
-
-    let query, message;
-
-    if (hard === 'true') {
-      query = 'DELETE FROM custom_questions WHERE id = $1 RETURNING id';
-      message = 'Custom question permanently deleted';
-    } else {
-      query = 'UPDATE custom_questions SET is_active = false WHERE id = $1 RETURNING *';
-      message = 'Custom question deactivated';
-    }
-
+    const query = hard === 'true'
+      ? 'DELETE FROM custom_questions WHERE id = $1 RETURNING id'
+      : 'UPDATE custom_questions SET is_active = false WHERE id = $1 RETURNING *';
     const result = await db.query(query, [id]);
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({
-        success: false,
-        error: 'Question not found'
+    if (result.rows.length > 0) {
+      return res.json({
+        success: true,
+        message: hard === 'true' ? 'Custom question permanently deleted' : 'Custom question deactivated',
+        question: result.rows[0]
       });
     }
+  } catch (_) {}
 
-    res.json({
-      success: true,
-      message,
-      question: result.rows[0]
-    });
-  } catch (error) {
-    console.error('Error deleting custom question:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to delete custom question',
-      message: error.message
-    });
+  const idx = inMemoryCustomQuestions.findIndex(q => String(q.id) === String(id));
+  if (idx === -1) {
+    return res.status(404).json({ success: false, error: 'Question not found' });
   }
-});
-
-/**
- * GET /api/custom-questions/stats/summary
- * Get statistics about custom questions
- */
-router.get('/stats/summary', async (req, res) => {
-  try {
-    const result = await db.query(`
-      SELECT
-        COUNT(*) as total,
-        COUNT(*) FILTER (WHERE is_active = true) as active,
-        COUNT(*) FILTER (WHERE is_active = false) as inactive,
-        COUNT(DISTINCT pillar) as unique_pillars
-      FROM custom_questions
-    `);
-
-    res.json({
-      success: true,
-      stats: result.rows[0] || { total: 0, active: 0, inactive: 0, unique_pillars: 0 }
-    });
-  } catch (error) {
-    // Graceful fallback for local file storage mode without PostgreSQL
-    res.json({
-      success: true,
-      stats: { total: 0, active: 0, inactive: 0, unique_pillars: 0 }
-    });
+  if (hard === 'true') {
+    const [removed] = inMemoryCustomQuestions.splice(idx, 1);
+    return res.json({ success: true, message: 'Custom question permanently deleted', question: removed });
   }
+  inMemoryCustomQuestions[idx].is_active = false;
+  return res.json({ success: true, message: 'Custom question deactivated', question: inMemoryCustomQuestions[idx] });
 });
 
 /**

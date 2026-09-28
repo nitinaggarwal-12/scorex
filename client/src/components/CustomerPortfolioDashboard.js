@@ -202,7 +202,7 @@ const CustomerPortfolioDashboard = () => {
           </BackButton>
 
           <button
-            onClick={() => navigate('/assessments/generate')}
+            onClick={() => navigate('/assessments/ai-generator')}
             style={{
               background: 'linear-gradient(135deg, #6366f1, #a855f7)',
               color: '#ffffff',

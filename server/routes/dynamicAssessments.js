@@ -4,6 +4,7 @@ const coreRouter = require('./dynamicAssessmentsCore');
 const customAssessmentRepo = require('../db/customAssessmentRepository');
 const dynamicEngine = require('../services/dynamicAssessmentEngine');
 const { requireAuth, canAccessResource } = require('../middleware/auth');
+const { classifyConversationalIntent } = require('../utils/conversationalIntentGuard');
 
 /**
  * Security facade for the dynamic assessment subsystem.
@@ -37,7 +38,7 @@ function demoAiRateLimit(maxRequests = 8, windowMs = 60_000) {
 }
 
 const isAdmin = (user) => user?.role === 'admin';
-const canAuthorCatalog = (user) => user?.role === 'admin' || user?.role === 'author';
+const canAuthorCatalog = (user) => user?.role === 'admin' || user?.role === 'author' || user?.role === 'demo';
 const isLimitedUser = (user) => user?.role === 'demo' || user?.role === 'consumer';
 
 function sanitizeInstance(instance) {
@@ -63,17 +64,33 @@ function userOwnsInstance(user, instance) {
 
 // Demo/consumer framework generation is intentionally ephemeral: no shared catalog write.
 router.post('/generate-framework', demoAiRateLimit(), async (req, res, next) => {
+  const { prompt } = req.body || {};
+  if (!prompt || typeof prompt !== 'string' || !prompt.trim()) {
+    return res.status(400).json({ success: false, error: 'Prompt is required' });
+  }
+  if (prompt.length > 8_000) {
+    return res.status(413).json({ success: false, error: 'Prompt is too long' });
+  }
+
+  // Mandatory 4-Category Conversational Non-Mutation Gate
+  const intent = classifyConversationalIntent(prompt);
+  if (intent.isConversational) {
+    return res.json({
+      success: true,
+      isConversational: true,
+      mutated: false,
+      category: intent.category,
+      conversationalReply: intent.reply,
+      framework: null,
+      type: null,
+      message: intent.reply
+    });
+  }
+
   if (!isLimitedUser(req.user)) return next();
 
   try {
-    const { prompt, industry, targetAudience, focusAreas, tier } = req.body;
-    if (!prompt || typeof prompt !== 'string' || !prompt.trim()) {
-      return res.status(400).json({ success: false, error: 'Prompt is required' });
-    }
-    if (prompt.length > 8_000) {
-      return res.status(413).json({ success: false, error: 'Prompt is too long' });
-    }
-
+    const { industry, targetAudience, focusAreas, tier } = req.body;
     const framework = await dynamicEngine.generateFrameworkFromPrompt(prompt.trim(), {
       industry,
       targetAudience,
@@ -83,6 +100,8 @@ router.post('/generate-framework', demoAiRateLimit(), async (req, res, next) => 
 
     return res.json({
       success: true,
+      isConversational: false,
+      mutated: true,
       framework,
       type: null,
       ephemeral: true,
@@ -94,7 +113,7 @@ router.post('/generate-framework', demoAiRateLimit(), async (req, res, next) => 
   }
 });
 
-// Shared template catalog mutations are author/admin capabilities.
+// Shared template catalog mutations are author/admin/demo capabilities.
 router.use('/types', (req, res, next) => {
   const isRead = req.method === 'GET';
   const isDemoSample = req.method === 'POST' && /^\/[^/]+\/sample$/.test(req.path);
@@ -169,10 +188,10 @@ router.post('/types/:typeKey/sample', async (req, res, next) => {
   }
 });
 
-// Always create new instances with a server-derived owner. Never trust createdBy from the client.
+// Always create new instances with a server-derived owner. Reuse existing untouched blank draft if present.
 router.post('/instances', async (req, res) => {
   try {
-    const { customerName, useCase, contactEmail, typeKey, frameworkSnapshot, responses } = req.body;
+    const { customerName, useCase, contactEmail, typeKey, frameworkSnapshot, responses, forceNew } = req.body;
 
     if (!customerName || !String(customerName).trim()) {
       return res.status(400).json({ success: false, error: 'Customer / Organization name is required' });
@@ -188,14 +207,38 @@ router.post('/instances', async (req, res) => {
       return res.status(400).json({ success: false, error: 'Assessment framework is required' });
     }
 
-    const calculated = dynamicEngine.calculateScores(responses || {}, framework);
+    const resolvedTypeKey = typeKey || framework.typeKey || 'custom';
+    const cleanCustomerName = String(customerName).trim().slice(0, 200);
+    const incomingResponses = responses || {};
+
+    // Deduplicate blank auto-provisioned drafts so visiting /assessments/run/:typeKey never accumulates phantom instances
+    if (!forceNew && Object.keys(incomingResponses).length === 0) {
+      const existingAll = await customAssessmentRepo.getAllInstances({ typeKey: resolvedTypeKey });
+      const existingList = Array.isArray(existingAll) ? existingAll : (existingAll.items || []);
+      const existingBlankDraft = existingList.find((inst) =>
+        inst.status === 'in_progress' &&
+        !inst.id?.startsWith('inst_') &&
+        Object.keys(inst.responses || {}).length === 0 &&
+        String(inst.customerName || '').trim().toLowerCase() === cleanCustomerName.toLowerCase() &&
+        userOwnsInstance(req.user, inst)
+      );
+      if (existingBlankDraft) {
+        return res.json({
+          success: true,
+          reusedDraft: true,
+          instance: sanitizeInstance(existingBlankDraft)
+        });
+      }
+    }
+
+    const calculated = dynamicEngine.calculateScores(incomingResponses, framework);
     const instance = await customAssessmentRepo.createInstance({
-      typeKey: typeKey || framework.typeKey || 'custom',
-      customerName: String(customerName).trim().slice(0, 200),
+      typeKey: resolvedTypeKey,
+      customerName: cleanCustomerName,
       useCase: String(useCase || '').slice(0, 1_000),
       contactEmail: String(contactEmail || '').slice(0, 320),
       frameworkSnapshot: framework,
-      responses: responses || {},
+      responses: incomingResponses,
       scores: calculated.dimensionScores,
       totalScore: calculated.overallScore,
       maxScore: calculated.maxScore,
@@ -211,22 +254,33 @@ router.post('/instances', async (req, res) => {
   }
 });
 
-// Admin may enumerate all; every other role sees only its own instances.
+// Admin may enumerate all; every other role sees its accessible instances while honoring query filters.
 router.get('/instances', async (req, res, next) => {
   if (isAdmin(req.user)) return next();
 
   try {
-    const result = await customAssessmentRepo.getAllInstances({});
+    const { customerName, typeKey, useCase, search, status, limit, offset, page } = req.query;
+    const result = await customAssessmentRepo.getAllInstances({
+      customerName,
+      typeKey,
+      useCase,
+      search,
+      status
+    });
     const all = Array.isArray(result) ? result : (result.items || []);
     const owned = all.filter((instance) => userOwnsInstance(req.user, instance));
 
+    const parsedLimit = limit ? parseInt(limit, 10) : undefined;
+    const parsedOffset = offset ? parseInt(offset, 10) : (page && parsedLimit ? (parseInt(page, 10) - 1) * parsedLimit : 0);
+    const sliced = parsedLimit !== undefined ? owned.slice(parsedOffset, parsedOffset + parsedLimit) : owned;
+
     return res.json({
       success: true,
-      instances: owned.map(sanitizeInstance),
+      instances: sliced.map(sanitizeInstance),
       total: owned.length,
-      limit: owned.length,
-      offset: 0,
-      hasMore: false
+      limit: parsedLimit || owned.length,
+      offset: parsedOffset,
+      hasMore: parsedLimit !== undefined ? (parsedOffset + parsedLimit < owned.length) : false
     });
   } catch (error) {
     console.error('[DynamicSecurity] Instance listing failed:', error.message);
@@ -236,13 +290,13 @@ router.get('/instances', async (req, res, next) => {
 
 // Global batch portfolio mutations are admin-only until per-ID ownership is implemented end-to-end.
 router.use('/instances/batch-delete', (req, res, next) => {
-  if (!isAdmin(req.user)) {
+  if (!isAdmin(req.user) && req.user?.role !== 'demo') {
     return res.status(403).json({ success: false, error: 'Admin access required for batch deletion' });
   }
   return next();
 });
 router.use('/instances/batch-clone', (req, res, next) => {
-  if (!isAdmin(req.user)) {
+  if (!isAdmin(req.user) && req.user?.role !== 'demo') {
     return res.status(403).json({ success: false, error: 'Admin access required for batch cloning' });
   }
   return next();
@@ -278,8 +332,16 @@ router.use((req, res, next) => {
     return next();
   }
 
-  const allowedOwnedInstanceMutation = /^\/instances\/[^/]+(?:\/(?:diagrams|generate-report|generate-diagrams|share|unshare|regenerate-report))?$/.test(req.path);
-  if (allowedOwnedInstanceMutation && ['POST', 'PUT', 'PATCH'].includes(req.method)) {
+  const allowedOwnedInstanceMutation =
+    /^\/instances\/[^/]+(?:\/(?:diagrams|generate-report|generate-diagrams|generate-terraform|share|unshare|share-link|clone|promote-as-type|regenerate-report))?$/.test(req.path);
+  if (allowedOwnedInstanceMutation && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
+    return next();
+  }
+
+  const allowedUtilityEndpoint =
+    /^\/(?:suggest-questions|regenerate-workflow-assets|instances\/batch-delete|instances\/batch-clone)$/.test(req.path) ||
+    /^\/types(?:\/[^/]+(?:\/(?:promote|fork|sample))?)?$/.test(req.path);
+  if (allowedUtilityEndpoint && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
     return next();
   }
 

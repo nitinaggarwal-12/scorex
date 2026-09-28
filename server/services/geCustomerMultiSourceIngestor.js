@@ -349,9 +349,71 @@ const SYNTHETIC_ENTERPRISE_CATALOG = {
       partner: "Cloud PSO",
       rag: "Green",
       aliases: ["AeroVanguard", "AeroVanguard Logistics"],
+      questionScoreOverrides: { A01: 4, A03: 4, A05: 3, L01: 2, L02: 2, L03: 3, Q01: 4, Q03: 4, Q04: 4, U04: 4, U06: 4, F01: 3 },
       useCases: [
-        { id: "AVG-01", name: "Global Customs & Export Tariff Document Triage", department: "International Customs & Trade Compliance", stage: "Production", estValue: "$9.5M", connectors: "SharePoint, BigQuery, OmniDesk ITSM", blockers: "RuggedEdge handheld scanner auth wrapper" },
-        { id: "AVG-02", name: "Hub Dispatch & Route Exception Prediction Agent", department: "Air & Ground Hub Operations", stage: "Pilot", estValue: "$14.0M", connectors: "BigQuery, Cloud Storage", blockers: "Real-time telemetry feed throttling" }
+        {
+          id: "AVG-01",
+          name: "Global Customs & Export Tariff Document Triage",
+          department: "International Customs & Trade Compliance",
+          stage: "Scaled",
+          estValue: "$9.5M",
+          connectors: "SharePoint, BigQuery, OmniDesk ITSM",
+          blockers: "RuggedEdge handheld scanner auth wrapper",
+          approvedHourlyRate: 118,
+          cycleTimeBaselineHours: 18.0,
+          cycleTimeGeminiHours: 1.5,
+          stages: {
+            discovery: { baseline: 32, gemini: 7 },
+            drafting: { baseline: 44, gemini: 11 },
+            verification: { baseline: 18, gemini: 12 },
+            correction: { baseline: 14, gemini: 5 },
+            approval: { baseline: 8, gemini: 5 },
+            handoff: { baseline: 4, gemini: 2 }
+          },
+          outcomeScores: { W01: 4, W02: 4, W03: 4, W04: 4, W05: 3, W06: 4, W07: 4, W08: 4, W09: 4, W10: 3, W11: 3, W12: 4, W13: 4, Q01: 4, Q02: 4 }
+        },
+        {
+          id: "AVG-02",
+          name: "Hub Dispatch & Route Exception Prediction Agent",
+          department: "Air & Ground Hub Operations",
+          stage: "Pilot",
+          estValue: "$14.0M",
+          connectors: "BigQuery, Cloud Storage, Weather & Flight Telemetry",
+          blockers: "Real-time telemetry feed throttling during peak sortation",
+          approvedHourlyRate: 132,
+          cycleTimeBaselineHours: 36.0,
+          cycleTimeGeminiHours: 3.2,
+          stages: {
+            discovery: { baseline: 48, gemini: 14 },
+            drafting: { baseline: 58, gemini: 19 },
+            verification: { baseline: 22, gemini: 16 },
+            correction: { baseline: 16, gemini: 9 },
+            approval: { baseline: 11, gemini: 7 },
+            handoff: { baseline: 6, gemini: 3 }
+          },
+          outcomeScores: { W01: 4, W02: 3, W03: 3, W04: 4, W05: 3, W06: 3, W07: 3, W08: 4, W09: 3, W10: 2, W11: 2, W12: 3, W13: 3, Q01: 3, Q02: 4 }
+        },
+        {
+          id: "AVG-03",
+          name: "Freight Claims & Cargo Damage Dispute Resolution Assistant",
+          department: "Global Claims & Customer Recovery",
+          stage: "Pilot",
+          estValue: "$6.8M",
+          connectors: "OmniDesk ITSM, Cloud Storage, Waybill Archive",
+          blockers: "Automated carrier subrogation write-back approval gate",
+          approvedHourlyRate: 105,
+          cycleTimeBaselineHours: 72.0,
+          cycleTimeGeminiHours: 8.5,
+          stages: {
+            discovery: { baseline: 28, gemini: 6 },
+            drafting: { baseline: 36, gemini: 10 },
+            verification: { baseline: 15, gemini: 11 },
+            correction: { baseline: 10, gemini: 4 },
+            approval: { baseline: 7, gemini: 5 },
+            handoff: { baseline: 4, gemini: 2 }
+          },
+          outcomeScores: { W01: 4, W02: 3, W03: 3, W04: 3, W05: 3, W06: 3, W07: 3, W08: 4, W09: 3, W10: 2, W11: 2, W12: 3, W13: 3, Q01: 3, Q02: 3 }
+        }
       ]
     },
     "ACC-1002-BIONOVA": {
@@ -367,6 +429,614 @@ const SYNTHETIC_ENTERPRISE_CATALOG = {
         { id: "BNV-08", name: "Enterprise Knowledge Search & Ask HR Assistant", department: "Enterprise-Wide & Global Support", stage: "Scaled", estValue: "$22.5M", connectors: "SharePoint, OmniDesk ITSM, BigQuery", blockers: "Legacy NovaAssist chat export" },
         { id: "BNV-06", name: "NOVA-AI Global Pricing & Reference Cascade Agent", department: "Commercial / Global Market Access", stage: "Pilot", estValue: "$150M", connectors: "BigQuery Gold Layer, CoreERP", blockers: "Finance attribution sign-off" },
         { id: "BNV-04", name: "Automated Clinical Data Review & Protocol Extraction", department: "Clinical Operations / R&D", stage: "Pilot", estValue: "$18.5M", connectors: "RegVault DMS, SharePoint", blockers: "RegVault MCP GxP CSV validation" }
+      ]
+    },
+    "ACC-1003-OMNIMRT": {
+      sheetName: "OmniMart",
+      industry: "Retail & Consumer Goods",
+      execSponsor: "elena.vance@omnimart.example (EVP, Chief Retail Technology Officer)",
+      consultingLead: "Retail & Consumer Strategic CAL",
+      fdeLead: "Omnichannel AI Lead Architect",
+      partner: "Retail Cloud Studio",
+      rag: "Green",
+      aliases: ["OmniMart", "OmniMart Retail", "OmniMart Group"],
+      questionScoreOverrides: { A01: 4, A02: 4, A03: 4, A04: 4, A05: 3, L01: 3, L02: 3, L03: 4, L05: 3, Q01: 4, Q02: 4, Q03: 4, U03: 4, U04: 4, F01: 3 },
+      useCases: [
+        {
+          id: "OMN-01",
+          name: "Store Associate Inventory & Planogram Visual Assist",
+          department: "Store Operations & Frontline Merchandising",
+          stage: "Scaled",
+          estValue: "$18.4M",
+          connectors: "BigQuery Retail Lakehouse, Zebra Handheld Portal, SharePoint",
+          blockers: "Store Wi-Fi edge caching for seasonal planogram PDFs",
+          approvedHourlyRate: 88,
+          cycleTimeBaselineHours: 3.2,
+          cycleTimeGeminiHours: 0.4,
+          stages: {
+            discovery: { baseline: 11, gemini: 2 },
+            drafting: { baseline: 4, gemini: 1 },
+            verification: { baseline: 3, gemini: 1 },
+            correction: { baseline: 2, gemini: 1 },
+            approval: { baseline: 0, gemini: 0 },
+            handoff: { baseline: 1, gemini: 1 }
+          },
+          outcomeScores: { W01: 4, W02: 4, W03: 4, W04: 4, W05: 4, W06: 4, W07: 4, W08: 4, W09: 4, W10: 3, W11: 3, W12: 4, W13: 4, Q01: 4, Q02: 4 }
+        },
+        {
+          id: "OMN-02",
+          name: "Category Merchant Supplier Cost & Margin Negotiation Agent",
+          department: "Global Merchandising & Category Management",
+          stage: "Scaled",
+          estValue: "$24.0M",
+          connectors: "BigQuery, SAP Retail ERP, Supplier Contract Vault",
+          blockers: "Automated rebate clawback ledger reconciliation",
+          approvedHourlyRate: 128,
+          cycleTimeBaselineHours: 42.0,
+          cycleTimeGeminiHours: 5.5,
+          stages: {
+            discovery: { baseline: 39, gemini: 9 },
+            drafting: { baseline: 47, gemini: 14 },
+            verification: { baseline: 19, gemini: 13 },
+            correction: { baseline: 12, gemini: 6 },
+            approval: { baseline: 9, gemini: 6 },
+            handoff: { baseline: 4, gemini: 3 }
+          },
+          outcomeScores: { W01: 4, W02: 4, W03: 4, W04: 4, W05: 3, W06: 4, W07: 4, W08: 4, W09: 4, W10: 3, W11: 3, W12: 3, W13: 4, Q01: 4, Q02: 4 }
+        },
+        {
+          id: "OMN-03",
+          name: "Private-Label Product Copy & Omnichannel Localization Studio",
+          department: "Digital Commerce & Brand Marketing",
+          stage: "Pilot",
+          estValue: "$7.9M",
+          connectors: "Product PIM, Digital Asset Manager, BigQuery",
+          blockers: "French-Canadian & Spanish packaging compliance sign-off",
+          approvedHourlyRate: 108,
+          cycleTimeBaselineHours: 28.0,
+          cycleTimeGeminiHours: 3.0,
+          stages: {
+            discovery: { baseline: 18, gemini: 4 },
+            drafting: { baseline: 34, gemini: 8 },
+            verification: { baseline: 12, gemini: 8 },
+            correction: { baseline: 9, gemini: 4 },
+            approval: { baseline: 6, gemini: 4 },
+            handoff: { baseline: 3, gemini: 2 }
+          },
+          outcomeScores: { W01: 4, W02: 3, W03: 3, W04: 4, W05: 3, W06: 3, W07: 3, W08: 3, W09: 3, W10: 2, W11: 2, W12: 3, W13: 3, Q01: 3, Q02: 4 }
+        }
+      ]
+    },
+    "ACC-1004-SILCORE": {
+      sheetName: "SiliconCore",
+      industry: "Semiconductors & Industrial Tech",
+      execSponsor: "Dr. Kenji Takahashi (SVP, Silicon Engineering & CIO)",
+      consultingLead: "Semiconductor & High-Tech CAL",
+      fdeLead: "EDA & Fab AI Principal Architect",
+      partner: "Industrial AI Partners",
+      rag: "Green",
+      aliases: ["SiliconCore", "SiliconCore Microelectronics"],
+      questionScoreOverrides: { A01: 4, A03: 3, A05: 3, L01: 2, L02: 2, L03: 3, L06: 4, Q01: 4, Q02: 4, Q03: 4, Q05: 4, U06: 4, U07: 4, F01: 2 },
+      useCases: [
+        {
+          id: "SLC-01",
+          name: "RTL Verification Failure Log & Post-Silicon Errata Triage",
+          department: "Pre/Post-Silicon Validation Engineering",
+          stage: "Scaled",
+          estValue: "$21.5M",
+          connectors: "BigQuery Waveform Logs, GitLab Enterprise, Bugzilla/Jira",
+          blockers: "Air-gapped IP core repository ACL federation",
+          approvedHourlyRate: 165,
+          cycleTimeBaselineHours: 32.0,
+          cycleTimeGeminiHours: 4.5,
+          stages: {
+            discovery: { baseline: 52, gemini: 11 },
+            drafting: { baseline: 38, gemini: 10 },
+            verification: { baseline: 26, gemini: 18 },
+            correction: { baseline: 18, gemini: 8 },
+            approval: { baseline: 10, gemini: 7 },
+            handoff: { baseline: 5, gemini: 3 }
+          },
+          outcomeScores: { W01: 4, W02: 4, W03: 4, W04: 4, W05: 3, W06: 4, W07: 4, W08: 4, W09: 4, W10: 3, W11: 2, W12: 3, W13: 4, Q01: 4, Q02: 4 }
+        },
+        {
+          id: "SLC-02",
+          name: "Wafer Fab Yield Excursion & Cleanroom Tool Maintenance Copilot",
+          department: "Foundry Operations & Yield Engineering",
+          stage: "Pilot",
+          estValue: "$16.2M",
+          connectors: "MES Telemetry Lake, Equipment SOP Vault, BigQuery",
+          blockers: "Sub-Fab SECS/GEM streaming connector latency",
+          approvedHourlyRate: 155,
+          cycleTimeBaselineHours: 14.0,
+          cycleTimeGeminiHours: 2.0,
+          stages: {
+            discovery: { baseline: 34, gemini: 8 },
+            drafting: { baseline: 29, gemini: 9 },
+            verification: { baseline: 18, gemini: 13 },
+            correction: { baseline: 11, gemini: 5 },
+            approval: { baseline: 8, gemini: 6 },
+            handoff: { baseline: 4, gemini: 2 }
+          },
+          outcomeScores: { W01: 4, W02: 3, W03: 3, W04: 3, W05: 3, W06: 3, W07: 3, W08: 3, W09: 3, W10: 2, W11: 2, W12: 3, W13: 3, Q01: 3, Q02: 4 }
+        },
+        {
+          id: "SLC-03",
+          name: "Customer Reference Board Schematic & Datasheet Technical Q&A",
+          department: "Field Applications Engineering (FAE)",
+          stage: "Scaled",
+          estValue: "$8.4M",
+          connectors: "SharePoint Technical Library, Customer Portal, CRM",
+          blockers: "NDA-scoped customer errata document tagging",
+          approvedHourlyRate: 145,
+          cycleTimeBaselineHours: 8.0,
+          cycleTimeGeminiHours: 0.8,
+          stages: {
+            discovery: { baseline: 19, gemini: 4 },
+            drafting: { baseline: 14, gemini: 4 },
+            verification: { baseline: 7, gemini: 4 },
+            correction: { baseline: 4, gemini: 2 },
+            approval: { baseline: 2, gemini: 1 },
+            handoff: { baseline: 2, gemini: 1 }
+          },
+          outcomeScores: { W01: 4, W02: 4, W03: 3, W04: 4, W05: 3, W06: 4, W07: 4, W08: 4, W09: 3, W10: 2, W11: 2, W12: 3, W13: 4, Q01: 3, Q02: 4 }
+        }
+      ]
+    },
+    "ACC-1005-APEXGLB": {
+      sheetName: "ApexGlobal",
+      industry: "Global Professional & IT Services",
+      execSponsor: "Victoria Sterling (Global Managing Partner, Audit & Tax Innovation)",
+      consultingLead: "Professional Services Strategic CAL",
+      fdeLead: "Tax & Assurance AI Lead Architect",
+      partner: "Apex Internal Tech Studio",
+      rag: "Green",
+      aliases: ["ApexGlobal", "ApexGlobal Assurance", "ApexGlobal LLP"],
+      questionScoreOverrides: { A01: 4, A02: 3, A03: 4, A05: 3, L01: 3, L02: 2, L03: 3, Q01: 4, Q02: 4, Q03: 4, Q06: 3, U04: 3, U06: 4, F01: 3 },
+      useCases: [
+        {
+          id: "APX-01",
+          name: "Cross-Border Tax Treaty & Transfer Pricing Memo Synthesis",
+          department: "International Tax & Transfer Pricing Practice",
+          stage: "Scaled",
+          estValue: "$15.8M",
+          connectors: "Global Tax Research Vault, SharePoint, Client Matter DMS",
+          blockers: "Partner wet-signature archival integration",
+          approvedHourlyRate: 185,
+          cycleTimeBaselineHours: 36.0,
+          cycleTimeGeminiHours: 4.5,
+          stages: {
+            discovery: { baseline: 42, gemini: 9 },
+            drafting: { baseline: 64, gemini: 16 },
+            verification: { baseline: 24, gemini: 17 },
+            correction: { baseline: 16, gemini: 7 },
+            approval: { baseline: 12, gemini: 8 },
+            handoff: { baseline: 5, gemini: 3 }
+          },
+          outcomeScores: { W01: 4, W02: 4, W03: 4, W04: 4, W05: 3, W06: 4, W07: 4, W08: 4, W09: 4, W10: 3, W11: 3, W12: 3, W13: 4, Q01: 4, Q02: 4 }
+        },
+        {
+          id: "APX-02",
+          name: "Statutory Audit Workpaper Tie-Out & Footnote Variance Agent",
+          department: "Global Audit & Assurance",
+          stage: "Pilot",
+          estValue: "$19.5M",
+          connectors: "Audit Workpaper Platform, BigQuery Trial Balance, SharePoint",
+          blockers: "PCAOB immutable audit trail sign-off for automated tickmarks",
+          approvedHourlyRate: 175,
+          cycleTimeBaselineHours: 48.0,
+          cycleTimeGeminiHours: 6.5,
+          stages: {
+            discovery: { baseline: 36, gemini: 8 },
+            drafting: { baseline: 48, gemini: 13 },
+            verification: { baseline: 28, gemini: 20 },
+            correction: { baseline: 18, gemini: 8 },
+            approval: { baseline: 14, gemini: 10 },
+            handoff: { baseline: 4, gemini: 3 }
+          },
+          outcomeScores: { W01: 4, W02: 3, W03: 3, W04: 3, W05: 3, W06: 3, W07: 4, W08: 3, W09: 3, W10: 2, W11: 2, W12: 3, W13: 3, Q01: 4, Q02: 4 }
+        },
+        {
+          id: "APX-03",
+          name: "SOC2 / ISO27001 Control Evidence Mapping & RFP Responder",
+          department: "Cyber Risk & Third-Party Assurance",
+          stage: "Scaled",
+          estValue: "$7.2M",
+          connectors: "SharePoint Evidence Vault, GRC Portal, OmniDesk",
+          blockers: "Multi-tenant client Chinese-wall Matter ID enforcement",
+          approvedHourlyRate: 160,
+          cycleTimeBaselineHours: 16.0,
+          cycleTimeGeminiHours: 2.0,
+          stages: {
+            discovery: { baseline: 24, gemini: 5 },
+            drafting: { baseline: 31, gemini: 8 },
+            verification: { baseline: 11, gemini: 7 },
+            correction: { baseline: 7, gemini: 3 },
+            approval: { baseline: 5, gemini: 3 },
+            handoff: { baseline: 3, gemini: 2 }
+          },
+          outcomeScores: { W01: 4, W02: 4, W03: 3, W04: 4, W05: 3, W06: 4, W07: 3, W08: 4, W09: 3, W10: 3, W11: 2, W12: 3, W13: 4, Q01: 3, Q02: 4 }
+        }
+      ]
+    },
+    "ACC-1006-STRATGM": {
+      sheetName: "Stratagem",
+      industry: "Global Professional & IT Services",
+      execSponsor: "Julian Vance-Thorne (Senior Partner & Chief Knowledge Officer)",
+      consultingLead: "Global Advisory Strategic CAL",
+      fdeLead: "Knowledge Graph & Agentic Research Lead",
+      partner: "Stratagem Digital Labs",
+      rag: "Green",
+      aliases: ["Stratagem", "Stratagem Partners", "Stratagem Executive Partners"],
+      questionScoreOverrides: { A01: 4, A02: 4, A03: 4, A04: 4, A05: 4, A06: 4, L01: 3, L02: 3, L03: 4, L05: 4, Q01: 4, Q02: 4, Q03: 4, Q04: 4, U03: 4, U04: 4, U06: 4, U09: 4, F01: 3, F03: 4 },
+      useCases: [
+        {
+          id: "STR-01",
+          name: "Global Sanitized Engagement Vignette & Expert Finder Search",
+          department: "Firmwide Knowledge Management & Practice Operations",
+          stage: "Scaled",
+          estValue: "$18.0M",
+          connectors: "Firm Knowledge Graph, SharePoint, Practice Deck Repository",
+          blockers: "Automated client code-name redaction pipeline for M&A cases",
+          approvedHourlyRate: 210,
+          cycleTimeBaselineHours: 6.0,
+          cycleTimeGeminiHours: 0.6,
+          stages: {
+            discovery: { baseline: 21, gemini: 4 },
+            drafting: { baseline: 12, gemini: 3 },
+            verification: { baseline: 6, gemini: 3 },
+            correction: { baseline: 3, gemini: 1 },
+            approval: { baseline: 1, gemini: 1 },
+            handoff: { baseline: 2, gemini: 1 }
+          },
+          outcomeScores: { W01: 4, W02: 4, W03: 4, W04: 4, W05: 4, W06: 4, W07: 4, W08: 4, W09: 4, W10: 4, W11: 3, W12: 4, W13: 4, Q01: 4, Q02: 4 }
+        },
+        {
+          id: "STR-02",
+          name: "Private Equity Commercial Due Diligence (CDD) Market Synthesizer",
+          department: "Private Equity & Corporate Finance Practice",
+          stage: "Scaled",
+          estValue: "$26.5M",
+          connectors: "BigQuery Market Data, S&P/Transcript Feeds, Data Room DMS",
+          blockers: "Clean-team VDR ephemeral token expiry handling",
+          approvedHourlyRate: 235,
+          cycleTimeBaselineHours: 48.0,
+          cycleTimeGeminiHours: 6.0,
+          stages: {
+            discovery: { baseline: 54, gemini: 11 },
+            drafting: { baseline: 68, gemini: 17 },
+            verification: { baseline: 25, gemini: 16 },
+            correction: { baseline: 18, gemini: 7 },
+            approval: { baseline: 10, gemini: 6 },
+            handoff: { baseline: 5, gemini: 3 }
+          },
+          outcomeScores: { W01: 4, W02: 4, W03: 4, W04: 4, W05: 4, W06: 4, W07: 4, W08: 4, W09: 4, W10: 3, W11: 3, W12: 4, W13: 4, Q01: 4, Q02: 4 }
+        },
+        {
+          id: "STR-03",
+          name: "Board SteerCo Storyboard & Value Bridge Model Generator",
+          department: "Strategy & Transformation Delivery",
+          stage: "Pilot",
+          estValue: "$11.2M",
+          connectors: "Google Slides, Google Sheets, BigQuery Benchmark Benchmarks",
+          blockers: "Custom corporate slide master XML layout lock",
+          approvedHourlyRate: 210,
+          cycleTimeBaselineHours: 24.0,
+          cycleTimeGeminiHours: 3.5,
+          stages: {
+            discovery: { baseline: 26, gemini: 6 },
+            drafting: { baseline: 49, gemini: 12 },
+            verification: { baseline: 14, gemini: 9 },
+            correction: { baseline: 11, gemini: 4 },
+            approval: { baseline: 8, gemini: 5 },
+            handoff: { baseline: 4, gemini: 2 }
+          },
+          outcomeScores: { W01: 4, W02: 3, W03: 3, W04: 4, W05: 3, W06: 4, W07: 3, W08: 4, W09: 4, W10: 3, W11: 2, W12: 3, W13: 3, Q01: 4, Q02: 4 }
+        }
+      ]
+    },
+    "ACC-1007-FINPULS": {
+      sheetName: "FinPulse",
+      industry: "Financial Services (FSI)",
+      execSponsor: "Nadia Al-Mansoor (Chief Data & AI Officer)",
+      consultingLead: "Capital Markets & FSI Strategic CAL",
+      fdeLead: "Quantitative Research & Compliance AI Lead",
+      partner: "Cloud PSO FSI",
+      rag: "Amber",
+      aliases: ["FinPulse", "FinPulse Market Intelligence"],
+      questionScoreOverrides: { A01: 3, A03: 3, A05: 2, L01: 2, L02: 1, L03: 2, Q01: 3, Q02: 4, Q03: 3, Q06: 2, U04: 3, U06: 3, F01: 2 },
+      useCases: [
+        {
+          id: "FNP-01",
+          name: "SEC 10-K/10-Q Covenant & Credit Rating Drift Surveillance Agent",
+          department: "Global Credit Ratings & Fixed Income Research",
+          stage: "Scaled",
+          estValue: "$14.5M",
+          connectors: "BigQuery EDGAR Lake, Ratings Quantitative DB, SharePoint",
+          blockers: "SEC Rule 17g-7 model methodology disclosure sign-off",
+          approvedHourlyRate: 168,
+          cycleTimeBaselineHours: 20.0,
+          cycleTimeGeminiHours: 2.2,
+          stages: {
+            discovery: { baseline: 37, gemini: 7 },
+            drafting: { baseline: 43, gemini: 11 },
+            verification: { baseline: 22, gemini: 15 },
+            correction: { baseline: 13, gemini: 6 },
+            approval: { baseline: 9, gemini: 7 },
+            handoff: { baseline: 4, gemini: 2 }
+          },
+          outcomeScores: { W01: 4, W02: 4, W03: 3, W04: 4, W05: 3, W06: 3, W07: 4, W08: 4, W09: 3, W10: 2, W11: 2, W12: 3, W13: 4, Q01: 4, Q02: 4 }
+        },
+        {
+          id: "FNP-02",
+          name: "Earnings Call Transcript Sentiment & Guidance Revision Extractor",
+          department: "Equity & Market Intelligence Desk",
+          stage: "Pilot",
+          estValue: "$11.8M",
+          connectors: "Low-Latency Transcript Feed, BigQuery, Analyst Workbench",
+          blockers: "MNPI compliance wall entitlement synchronization",
+          approvedHourlyRate: 162,
+          cycleTimeBaselineHours: 6.5,
+          cycleTimeGeminiHours: 0.7,
+          stages: {
+            discovery: { baseline: 17, gemini: 3 },
+            drafting: { baseline: 23, gemini: 6 },
+            verification: { baseline: 12, gemini: 8 },
+            correction: { baseline: 7, gemini: 3 },
+            approval: { baseline: 5, gemini: 4 },
+            handoff: { baseline: 2, gemini: 1 }
+          },
+          outcomeScores: { W01: 3, W02: 3, W03: 3, W04: 3, W05: 3, W06: 3, W07: 3, W08: 4, W09: 3, W10: 2, W11: 2, W12: 3, W13: 3, Q01: 3, Q02: 4 }
+        },
+        {
+          id: "FNP-03",
+          name: "Institutional Client Data Feed Entitlement & Contract Triage",
+          department: "Institutional Sales & Licensing Operations",
+          stage: "Scoping",
+          estValue: "$6.4M",
+          connectors: "Enterprise CRM, Contract CLM, Billing Ledger",
+          blockers: "Redistribution clause parser precision benchmark (<1% false negative)",
+          approvedHourlyRate: 130,
+          cycleTimeBaselineHours: 30.0,
+          cycleTimeGeminiHours: 4.0,
+          stages: {
+            discovery: { baseline: 29, gemini: 7 },
+            drafting: { baseline: 33, gemini: 9 },
+            verification: { baseline: 16, gemini: 11 },
+            correction: { baseline: 11, gemini: 5 },
+            approval: { baseline: 8, gemini: 6 },
+            handoff: { baseline: 4, gemini: 2 }
+          },
+          outcomeScores: { W01: 3, W02: 2, W03: 2, W04: 2, W05: 2, W06: 2, W07: 3, W08: 2, W09: 2, W10: 1, W11: 1, W12: 3, W13: 1, Q01: 3, Q02: 3 }
+        }
+      ]
+    },
+    "ACC-1008-VITURA": {
+      sheetName: "Vitura",
+      industry: "Healthcare & Life Sciences (HCLS)",
+      execSponsor: "Dr. Sorel Lindholm (EVP, Global Clinical Development & Digital)",
+      consultingLead: "Biopharma R&D Strategic CAL",
+      fdeLead: "Clinical Trial & Regulatory AI Architect",
+      partner: "LifeSciences Cloud Delivery",
+      rag: "Amber",
+      aliases: ["Vitura", "Vitura Biopharma", "Vitura Corp"],
+      questionScoreOverrides: { A01: 3, A03: 3, A05: 2, L01: 1, L02: 1, L03: 2, Q01: 3, Q02: 3, Q03: 3, Q06: 2, U04: 3, U06: 3, F01: 2 },
+      useCases: [
+        {
+          id: "VTR-01",
+          name: "Clinical Site Monitoring Visit Report (MVR) & Protocol Deviation Triage",
+          department: "Global Clinical Trial Operations (CRA Network)",
+          stage: "Scaled",
+          estValue: "$12.6M",
+          connectors: "CTMS Vault, eTMF Repository, SharePoint",
+          blockers: "21 CFR Part 11 electronic signature write-back qualification",
+          approvedHourlyRate: 142,
+          cycleTimeBaselineHours: 48.0,
+          cycleTimeGeminiHours: 6.0,
+          stages: {
+            discovery: { baseline: 33, gemini: 8 },
+            drafting: { baseline: 51, gemini: 14 },
+            verification: { baseline: 21, gemini: 15 },
+            correction: { baseline: 15, gemini: 7 },
+            approval: { baseline: 11, gemini: 8 },
+            handoff: { baseline: 5, gemini: 3 }
+          },
+          outcomeScores: { W01: 4, W02: 3, W03: 3, W04: 4, W05: 3, W06: 3, W07: 3, W08: 3, W09: 3, W10: 2, W11: 2, W12: 3, W13: 4, Q01: 3, Q02: 3 }
+        },
+        {
+          id: "VTR-02",
+          name: "FDA / EMA Health Authority Information Request (HA-IR) Rapid Drafter",
+          department: "Global Regulatory Affairs & Submissions",
+          stage: "Pilot",
+          estValue: "$16.0M",
+          connectors: "RegVault eCTD Archive, Nonclinical Study Reports, BigQuery",
+          blockers: "Annex 11 CSV validation for automated table-to-text citations",
+          approvedHourlyRate: 158,
+          cycleTimeBaselineHours: 96.0,
+          cycleTimeGeminiHours: 14.0,
+          stages: {
+            discovery: { baseline: 62, gemini: 15 },
+            drafting: { baseline: 78, gemini: 22 },
+            verification: { baseline: 34, gemini: 24 },
+            correction: { baseline: 24, gemini: 11 },
+            approval: { baseline: 16, gemini: 12 },
+            handoff: { baseline: 6, gemini: 4 }
+          },
+          outcomeScores: { W01: 4, W02: 3, W03: 3, W04: 3, W05: 3, W06: 3, W07: 3, W08: 3, W09: 3, W10: 2, W11: 2, W12: 2, W13: 3, Q01: 3, Q02: 3 }
+        },
+        {
+          id: "VTR-03",
+          name: "Medical Science Liaison (MSL) Scientific Exchange & KOL Literature Search",
+          department: "Global Medical Affairs",
+          stage: "Pilot",
+          estValue: "$5.8M",
+          connectors: "PubMed / Congress Abstracts Lake, Approved Medical Response DB",
+          blockers: "Off-label query guardrail escalation workflow in EMEA",
+          approvedHourlyRate: 148,
+          cycleTimeBaselineHours: 12.0,
+          cycleTimeGeminiHours: 1.5,
+          stages: {
+            discovery: { baseline: 22, gemini: 5 },
+            drafting: { baseline: 18, gemini: 5 },
+            verification: { baseline: 9, gemini: 6 },
+            correction: { baseline: 5, gemini: 2 },
+            approval: { baseline: 4, gemini: 3 },
+            handoff: { baseline: 2, gemini: 1 }
+          },
+          outcomeScores: { W01: 3, W02: 3, W03: 3, W04: 3, W05: 3, W06: 3, W07: 3, W08: 3, W09: 3, W10: 2, W11: 1, W12: 3, W13: 3, Q01: 3, Q02: 3 }
+        }
+      ]
+    },
+    "ACC-1009-WRKSPHR": {
+      sheetName: "WorkSphere",
+      industry: "Technology, Media & Enterprise SaaS",
+      execSponsor: "Devon K. Mercer (Chief Customer & Product Operations Officer)",
+      consultingLead: "Enterprise SaaS Strategic CAL",
+      fdeLead: "SaaS Support & Agentic Workflows Architect",
+      partner: "WorkSphere Internal AI Team",
+      rag: "Green",
+      aliases: ["WorkSphere", "WorkSphere Cloud", "WorkSphere HCM"],
+      questionScoreOverrides: { A01: 4, A02: 4, A03: 4, A04: 4, A05: 3, L01: 3, L02: 3, L03: 3, L06: 4, Q01: 4, Q02: 4, Q03: 4, U03: 4, U04: 4, U06: 4, F01: 3 },
+      useCases: [
+        {
+          id: "WKS-01",
+          name: "L2/L3 Payroll & Benefits Configuration Ticket Deflection Agent",
+          department: "Global Customer Support & Cloud SRE",
+          stage: "Scaled",
+          estValue: "$11.4M",
+          connectors: "OmniDesk ITSM, Tenant Config Graph, Knowledge Base",
+          blockers: "Multi-region payroll tax rule hotfix indexing lag (<15m)",
+          approvedHourlyRate: 112,
+          cycleTimeBaselineHours: 14.0,
+          cycleTimeGeminiHours: 1.2,
+          stages: {
+            discovery: { baseline: 25, gemini: 5 },
+            drafting: { baseline: 22, gemini: 5 },
+            verification: { baseline: 10, gemini: 6 },
+            correction: { baseline: 6, gemini: 2 },
+            approval: { baseline: 3, gemini: 2 },
+            handoff: { baseline: 2, gemini: 1 }
+          },
+          outcomeScores: { W01: 4, W02: 4, W03: 4, W04: 4, W05: 4, W06: 4, W07: 4, W08: 4, W09: 4, W10: 3, W11: 3, W12: 4, W13: 4, Q01: 4, Q02: 4 }
+        },
+        {
+          id: "WKS-02",
+          name: "Professional Services HCM Tenant Migration & Schema Mapper",
+          department: "Global Professional Services & Implementation",
+          stage: "Pilot",
+          estValue: "$9.2M",
+          connectors: "BigQuery Migration Staging, Legacy HRIS Connectors, Git",
+          blockers: "Custom union collective-bargaining rule validation scripts",
+          approvedHourlyRate: 138,
+          cycleTimeBaselineHours: 40.0,
+          cycleTimeGeminiHours: 6.0,
+          stages: {
+            discovery: { baseline: 41, gemini: 10 },
+            drafting: { baseline: 53, gemini: 15 },
+            verification: { baseline: 23, gemini: 15 },
+            correction: { baseline: 17, gemini: 7 },
+            approval: { baseline: 9, gemini: 6 },
+            handoff: { baseline: 5, gemini: 3 }
+          },
+          outcomeScores: { W01: 4, W02: 3, W03: 3, W04: 4, W05: 3, W06: 3, W07: 4, W08: 4, W09: 3, W10: 3, W11: 2, W12: 3, W13: 3, Q01: 4, Q02: 4 }
+        },
+        {
+          id: "WKS-03",
+          name: "Enterprise Account Executive Deal Desk & Security Questionnaire Agent",
+          department: "Global Revenue Operations & Deal Desk",
+          stage: "Scaled",
+          estValue: "$6.5M",
+          connectors: "Enterprise CRM, Trust Center Vault, SharePoint",
+          blockers: "FedRAMP High addendum redline escalation routing",
+          approvedHourlyRate: 124,
+          cycleTimeBaselineHours: 18.0,
+          cycleTimeGeminiHours: 2.0,
+          stages: {
+            discovery: { baseline: 16, gemini: 3 },
+            drafting: { baseline: 27, gemini: 7 },
+            verification: { baseline: 11, gemini: 7 },
+            correction: { baseline: 6, gemini: 2 },
+            approval: { baseline: 5, gemini: 3 },
+            handoff: { baseline: 2, gemini: 1 }
+          },
+          outcomeScores: { W01: 4, W02: 4, W03: 3, W04: 4, W05: 3, W06: 4, W07: 4, W08: 4, W09: 4, W10: 3, W11: 2, W12: 4, W13: 4, Q01: 3, Q02: 4 }
+        }
+      ]
+    },
+    "ACC-1010-BLDRGHT": {
+      sheetName: "BuildRight",
+      industry: "Retail & Consumer Goods",
+      execSponsor: "Garrett Vance (SVP, Store Operations & Supply Chain IT)",
+      consultingLead: "Home Improvement & Retail CAL",
+      fdeLead: "Pro-Contractor & Supply Chain AI Lead",
+      partner: "Cloud PSO Retail",
+      rag: "Green",
+      aliases: ["BuildRight", "BuildRight Home Centers"],
+      questionScoreOverrides: { A01: 3, A03: 3, A05: 3, L01: 2, L02: 2, L03: 3, Q01: 3, Q02: 4, Q03: 3, U03: 3, U04: 3, U06: 3, F01: 2 },
+      useCases: [
+        {
+          id: "BLD-01",
+          name: "Pro-Contractor Blueprint Take-Off & Lumber/Materials BOM Estimator",
+          department: "Pro Desk & Commercial Contractor Sales",
+          stage: "Scaled",
+          estValue: "$10.8M",
+          connectors: "BigQuery SKU Pricing, Regional Inventory API, Pro CRM",
+          blockers: "Municipal building-code snow/wind load table integration",
+          approvedHourlyRate: 96,
+          cycleTimeBaselineHours: 16.0,
+          cycleTimeGeminiHours: 1.8,
+          stages: {
+            discovery: { baseline: 31, gemini: 6 },
+            drafting: { baseline: 39, gemini: 9 },
+            verification: { baseline: 16, gemini: 11 },
+            correction: { baseline: 12, gemini: 5 },
+            approval: { baseline: 6, gemini: 4 },
+            handoff: { baseline: 3, gemini: 2 }
+          },
+          outcomeScores: { W01: 4, W02: 4, W03: 3, W04: 4, W05: 3, W06: 4, W07: 3, W08: 4, W09: 4, W10: 3, W11: 2, W12: 3, W13: 4, Q01: 3, Q02: 4 }
+        },
+        {
+          id: "BLD-02",
+          name: "Store Aisle Associate Repair & Installation Troubleshooting Assistant",
+          department: "In-Store Operations & Customer Experience",
+          stage: "Pilot",
+          estValue: "$7.4M",
+          connectors: "SharePoint Vendor Manuals, SKU Catalog, Zebra Mobile App",
+          blockers: "Garden center & lumber yard cellular dead-zone fallback",
+          approvedHourlyRate: 78,
+          cycleTimeBaselineHours: 2.5,
+          cycleTimeGeminiHours: 0.3,
+          stages: {
+            discovery: { baseline: 10, gemini: 2 },
+            drafting: { baseline: 5, gemini: 1 },
+            verification: { baseline: 3, gemini: 2 },
+            correction: { baseline: 1, gemini: 0 },
+            approval: { baseline: 0, gemini: 0 },
+            handoff: { baseline: 1, gemini: 1 }
+          },
+          outcomeScores: { W01: 4, W02: 3, W03: 3, W04: 3, W05: 3, W06: 3, W07: 3, W08: 4, W09: 3, W10: 2, W11: 2, W12: 3, W13: 3, Q01: 3, Q02: 4 }
+        },
+        {
+          id: "BLD-03",
+          name: "Regional Flatbed Distribution & Weather-Driven Stock Allocation Agent",
+          department: "Supply Chain & Regional Distribution Centers",
+          stage: "Scoping",
+          estValue: "$8.9M",
+          connectors: "BigQuery Demand Forecast, TMS Dispatch, NOAA Weather Feed",
+          blockers: "Legacy AS/400 yard management write-back connector",
+          approvedHourlyRate: 114,
+          cycleTimeBaselineHours: 24.0,
+          cycleTimeGeminiHours: 3.5,
+          stages: {
+            discovery: { baseline: 27, gemini: 6 },
+            drafting: { baseline: 35, gemini: 10 },
+            verification: { baseline: 17, gemini: 12 },
+            correction: { baseline: 12, gemini: 5 },
+            approval: { baseline: 8, gemini: 6 },
+            handoff: { baseline: 4, gemini: 2 }
+          },
+          outcomeScores: { W01: 3, W02: 2, W03: 2, W04: 2, W05: 2, W06: 2, W07: 3, W08: 3, W09: 2, W10: 2, W11: 1, W12: 3, W13: 2, Q01: 3, Q02: 3 }
+        }
       ]
     }
   }
@@ -1309,23 +1979,24 @@ function buildCustomerWorkflows(account, deepProfile, windowInfo, prefillMode = 
         ? null
         : (isSearch ? activeUsers * 3 : activeUsers * 2);
 
-      const stages = isSearch
+      const defaultStages = isSearch
         ? {
-            discovery: { baseline: 14, gemini: 3 },
-            drafting: { baseline: 6, gemini: 2 },
-            verification: { baseline: 3, gemini: 2 },
+            discovery: { baseline: 14 + idx * 2, gemini: 3 },
+            drafting: { baseline: 6 + idx, gemini: 2 },
+            verification: { baseline: 3 + idx, gemini: 2 },
             correction: { baseline: 2, gemini: 1 },
             approval: { baseline: 0, gemini: 0 },
             handoff: { baseline: 1, gemini: 1 }
           }
         : {
-            discovery: { baseline: 45, gemini: 12 },
-            drafting: { baseline: 60, gemini: 18 },
-            verification: { baseline: 20, gemini: 18 },
-            correction: { baseline: 15, gemini: 8 },
-            approval: { baseline: 10, gemini: 8 },
-            handoff: { baseline: 5, gemini: 4 }
+            discovery: { baseline: 42 + idx * 5, gemini: 11 + idx },
+            drafting: { baseline: 56 + idx * 4, gemini: 16 + idx * 2 },
+            verification: { baseline: 20 + idx * 2, gemini: 15 + idx },
+            correction: { baseline: 14 + idx * 2, gemini: 7 + idx },
+            approval: { baseline: 9 + idx, gemini: 6 + idx },
+            handoff: { baseline: 5, gemini: 3 }
           };
+      const stages = uc.stages || defaultStages;
 
       const modeledAnnualValueUsd = parseModeledValueUsd(uc.estValue, (6 - idx) * 6500000);
       const confTier = maturity === 'Scaled' ? 'A' : (maturity === 'Pilot' ? 'B' : 'C');
@@ -1353,16 +2024,16 @@ function buildCustomerWorkflows(account, deepProfile, windowInfo, prefillMode = 
         iqrBaseline: isSearch ? 6 : 25,
         iqrGemini: isSearch ? 3 : 10,
         outputUsedPct: maturity === 'Scoping' ? '50–74%' : '75–89%',
-        firstPassBaselinePct: 66,
-        firstPassGeminiPct: 85,
-        reworkBaselinePct: 22,
-        reworkGeminiPct: 9,
+        firstPassBaselinePct: 64 + ((idx * 3) % 7),
+        firstPassGeminiPct: 84 + ((idx * 2) % 6),
+        reworkBaselinePct: 20 + ((idx * 2) % 5),
+        reworkGeminiPct: 8 + (idx % 3),
         criticalErrorPct: 0.1,
-        citationsVerifiedPct: 95,
-        cycleTimeBaselineHours: isSearch ? 3.5 : 48.0,
-        cycleTimeGeminiHours: isSearch ? 0.5 : 4.0,
+        citationsVerifiedPct: 95 + (idx % 3),
+        cycleTimeBaselineHours: uc.cycleTimeBaselineHours ?? (isSearch ? 3.5 : 48.0),
+        cycleTimeGeminiHours: uc.cycleTimeGeminiHours ?? (isSearch ? 0.5 : 4.0),
         realizationClass: maturity === 'Scoping' ? 'modeled_only' : 'capacity_only',
-        approvedHourlyRate: 115,
+        approvedHourlyRate: uc.approvedHourlyRate || 115,
         realizationFactorPct: 0,
         capacityConversionFactorPct: maturity === 'Scoping' ? 0 : 65,
         attributionSharePct: 75,
@@ -1376,7 +2047,7 @@ function buildCustomerWorkflows(account, deepProfile, windowInfo, prefillMode = 
         nextAction: uc.blockers && uc.blockers !== 'N/A' && uc.blockers !== 'NA'
           ? `Resolve blocker: ${uc.blockers.slice(0, 140)}`
           : `Advance ${uc.id} from ${maturity} toward production scale with ${account.accountName} Finance & Sponsor sign-off`,
-        outcomeScores: {
+        outcomeScores: uc.outcomeScores || {
           W01: 4,
           W02: maturity === 'Scaled' ? 4 : (maturity === 'Pilot' ? 3 : 2),
           W03: maturity === 'Scoping' ? 1 : 3,
@@ -2347,7 +3018,8 @@ function buildCustomerQuestionResponses(account, deepProfile, workflows, windowI
       : (primarySource?.owner || `${account.consultingLead} / ${account.fdeLead}`);
 
     const baseConfPct = primarySource?.confidencePct || baseResp.confidenceScorePct || 85;
-    const baseOutcomeScore = baseResp.outcomeScore ?? 3;
+    const scoreOverride = deepProfile?.questionScoreOverrides?.[qId];
+    const baseOutcomeScore = scoreOverride !== undefined ? scoreOverride : (baseResp.outcomeScore ?? 3);
 
     // Build customer-specific candidateOptions with per-option confidence
     const portalBackedVal = spec.val;
@@ -2718,10 +3390,31 @@ function ingestCustomerMultiSourceDossier(params = {}) {
  * and 8-source customer telemetry to regenerate the custom Executive Value Realization Report.
  */
 async function generateGeminiAssessmentReport(dossierInput = {}) {
-  const dossier = dossierInput || createInitialGeDossier('bionova_draft');
+  let dossier = dossierInput;
+  if (!dossier || !dossier.meta || !Array.isArray(dossier.workflows) || dossier.workflows.length === 0) {
+    const acctId = dossier?.sfdcAccountId || dossier?.meta?.vectorAccountId || 'ACC-1001-AEROVG';
+    dossier = ingestCustomerMultiSourceDossier({
+      sfdcAccountId: acctId,
+      customerQuery: dossier?.customerQuery || '',
+      timePreset: dossier?.timePreset || 'ytd_2026',
+      prefillMode: dossier?.prefillMode || 'evidence'
+    });
+  }
   const evaluation = evaluateGeValueRealization(dossier);
   const meta = dossier.meta || {};
-  const telemetry = dossier.adoptionTelemetry || {};
+  const rawTelemetry = dossier.adoptionTelemetry || {};
+  const telemetry = {
+    ...rawTelemetry,
+    assignedSeatsWave1: rawTelemetry.assignedSeatsWave1 ?? rawTelemetry.assignedSeats ?? 0,
+    wauAllApi: rawTelemetry.wauAllApi ?? rawTelemetry.allApiWau7d ?? 0,
+    mauMultiApi: rawTelemetry.mauMultiApi ?? rawTelemetry.multiApiMau30d ?? 0,
+    featureWau: {
+      assist: rawTelemetry.featureWau?.assist ?? rawTelemetry.geminiAssistWau7d ?? rawTelemetry.wauGeminiAssist ?? 0,
+      search: rawTelemetry.featureWau?.search ?? rawTelemetry.enterpriseSearchWau7d ?? rawTelemetry.wauEnterpriseSearch ?? 0,
+      agent: rawTelemetry.featureWau?.agent ?? rawTelemetry.agentsWau7d ?? rawTelemetry.wauAgents ?? 0,
+      agentRolling7dRequests: rawTelemetry.featureWau?.agentRolling7dRequests ?? rawTelemetry.agentRequests7d ?? 0
+    }
+  };
   const qMap = dossier.questionResponses || {};
   const workflows = dossier.workflows || [];
   const fiveCols = evaluation.financials?.fiveColumns || {};

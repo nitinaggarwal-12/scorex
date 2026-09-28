@@ -774,11 +774,7 @@ const GlobalNav = () => {
 
   const handleLoginSuccess = (user) => {
     setCurrentUser(user);
-    if (user.role === 'consumer') {
-      navigate('/my-assessments');
-    } else if (user.role === 'author' || user.role === 'admin') {
-      navigate('/insights-dashboard');
-    }
+    navigate('/assessments');
   };
 
   const closeMobileMenu = () => {
@@ -821,51 +817,8 @@ const GlobalNav = () => {
     closeMobileMenu();
     setTrySampleDropdownOpen(false);
     setAssessmentsDropdownOpen(false);
-    try {
-      toast.loading('Loading Gen AI Readiness Executive Report...', { id: 'genai-sample' });
-      const listRes = await fetch('/api/genai-readiness/assessments');
-      const listData = await listRes.json();
-      const items = Array.isArray(listData) ? listData : (listData?.assessments || []);
-      if (items.length > 0 && items[0]?.id) {
-        toast.success('Gen AI Readiness Report loaded!', { id: 'genai-sample' });
-        navigate(`/genai-readiness/report/${items[0].id}`);
-        return;
-      }
-      const fwRes = await fetch('/api/genai-readiness/framework');
-      const fw = await fwRes.json();
-      const responses = {};
-      const scores = {};
-      let total = 0;
-      (fw.dimensions || []).forEach((dim, dIdx) => {
-        let dimScore = 0;
-        (dim.questions || []).forEach((q, qIdx) => {
-          const val = q.options?.[Math.min((q.options?.length || 1) - 1, ((dIdx + qIdx) % 2) + 2)]?.value || 10;
-          responses[q.id] = val;
-          dimScore += val;
-        });
-        scores[dim.id] = { name: dim.name, score: dimScore, maxScore: dim.maxPoints || 50, percentage: Math.round((dimScore / (dim.maxPoints || 50)) * 100) };
-        total += dimScore;
-      });
-      const createRes = await fetch('/api/genai-readiness/assessments', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          customerName: 'Global Retail Corp',
-          responses,
-          scores,
-          totalScore: total,
-          maxScore: fw.totalPoints || 300,
-          maturityLevel: 'Scaling & Governed',
-          completedAt: new Date().toISOString()
-        })
-      });
-      const created = await createRes.json();
-      toast.success('Gen AI Readiness Report loaded!', { id: 'genai-sample' });
-      navigate(`/genai-readiness/report/${created.id}`);
-    } catch (e) {
-      toast.dismiss('genai-sample');
-      navigate('/genai-readiness');
-    }
+    toast.success('Opening Gemini Enterprise Migration Executive Report...');
+    navigate('/assessments/report/inst_openai_to_gemini_enterprise_migration_demo');
   };
 
   const handleTrySampleDynamic = async (typeKey, title) => {
@@ -873,6 +826,7 @@ const GlobalNav = () => {
     setTrySampleDropdownOpen(false);
     setAssessmentsDropdownOpen(false);
     const canonicalDemoMap = {
+      enterprise_data_ai_maturity: 'inst_enterprise_data_ai_maturity_demo',
       openai_to_gemini_enterprise_migration: 'inst_openai_to_gemini_enterprise_migration_demo',
       finops_cloud_cost_optimization: 'inst_finops_cloud_cost_optimization_demo',
       agentic_ai_mesh_mcp_banking_readiness: 'inst_agentic_ai_mesh_mcp_banking_readiness_demo',
@@ -897,227 +851,13 @@ const GlobalNav = () => {
 
   const handleTrySample = handleTrySampleCore;
 
-  const handleExploreAsGuest = (redirectPath = '/insights-dashboard') => {
+  const handleExploreAsGuest = (redirectPath = '/assessments') => {
     closeMobileMenu();
     const guestUser = authService.createGuestSession();
     localStorage.setItem('scorex_disclaimer_accepted', 'true');
     setCurrentUser(guestUser);
     toast.success('Guest Mode Activated (No Sign In Required)');
     navigate(redirectPath);
-  };
-
-  // Generate UNIQUE, question-specific customer comments
-  // 🔥 CRITICAL: Uses TRUE randomness + timestamp to ensure NO TWO ASSESSMENTS ARE EVER THE SAME
-  const generateRealisticComment = (pillarId, dimensionId, questionId, currentState, timestamp) => {
-    // Comprehensive dimension-specific comment library (low maturity = 1-2)
-    const dimensionComments = {
-      // PLATFORM & GOVERNANCE
-      'environment_architecture': [
-        "Single workspace for all teams. No isolation between dev/prod. Need multi-workspace strategy with centralized metadata catalog for governance.",
-        "Workspaces created ad-hoc. Inconsistent naming. Want standardized workspace provisioning with Terraform and tagging for cost tracking.",
-        "Every team has own workspace. No standards. Need centralized architecture with catalog federation and workspace templates for consistency.",
-        "Dev and prod in same workspace. Security concern. Want separate workspaces with catalog-level isolation and promotion workflows."
-      ],
-      'identity_security': [
-        "Manual user provisioning via cloud directory. No SCIM. Want automated sync and group-based unified catalog permissions with audit logs.",
-        "Admin rights granted liberally. No principle of least privilege. Need RBAC with unified catalog and secrets management with secure key vaults.",
-        "Passwords hardcoded in notebooks. Security risk. Want managed secrets with cloud KMS integration and automatic secret rotation for compliance.",
-        "No audit trail for data access. Compliance concern. Need unified catalog audit logs with automated HIPAA compliance reporting and access reviews."
-      ],
-      'governance_compliance': [
-        "No centralized data catalog. Users don't know what data exists. Want unified catalog for discovery and lineage with PII tagging.",
-        "Compliance team manually reviews code quarterly. Need automated scans for PII/PHI and unified catalog data classification tags with certifications.",
-        "Data lineage tracked in spreadsheets. Audit nightmare. Want unified catalog automatic lineage tracking and impact analysis for regulatory compliance.",
-        "PII scattered across tables. GDPR risk. Need unified catalog with automated PII detection, classification tags, and deletion workflows for privacy compliance."
-      ],
-      'observability_monitoring': [
-        "No visibility into cluster usage. Surprises in cloud bills. Want cluster event logs and system tables for usage attribution by team.",
-        "Jobs fail silently. Alerts reactive. Need automated workflows with email alerts and integration with PagerDuty for production pipelines.",
-        "Query performance unpredictable. No metrics. Want system tables dashboard with query profiles, bottleneck identification, and optimization recommendations.",
-        "Pipeline SLAs missed without warning. Need proactive monitoring with system tables, automated alerts, and Slack notifications for operations team."
-      ],
-      'cost_management': [
-        "Cloud costs ballooning. No understanding of spend drivers. Want budget alerts and system tables for chargeback to business units with tags.",
-        "Teams oversize clusters by default. No right-sizing. Need automated recommendations and spot instance policies for non-critical workloads to reduce costs.",
-        "No visibility into compute spend. CFO asking questions. Want system tables cost dashboard with spend by team and budget alerts for accountability.",
-        "Clusters left running overnight. Waste discovered post-mortem. Need auto-termination policies, idle cluster detection, and budget guardrails for cost control."
-      ],
-      
-      // DATA ENGINEERING
-      'ingestion_strategy': [
-        "Manual SFTP transfers nightly. Batch loads via notebooks. Want Auto Loader for real-time streaming ingestion with schema evolution and checkpoints.",
-        "Data engineers write custom Python scripts per source. No reusability. Need standardized connectors and streaming ingestion templates for common sources like S3.",
-        "Kinesis streams ingested via custom Spark code. Complex error handling. Want continuous ingestion with automatic schema inference and exactly-once semantics for reliability.",
-        "Files land in cloud storage, manual tracking of which processed. Want continuous auto-ingestion with checkpoint management and incremental processing for operational efficiency."
-      ],
-      'lakehouse_architecture': [
-        "Parquet files in cloud storage with no ACID guarantees. Delete operations problematic. Want Delta Lake for ACID transactions and time travel for audits.",
-        "Raw zone, curated zone managed manually. No clear medallion architecture. Need Delta Lake with Bronze/Silver/Gold layers and declarative pipelines for automation.",
-        "Multiple formats (Parquet, ORC, Avro). Schema drift issues. Want Delta Lake with automatic schema evolution and unified format for consistency.",
-        "No data versioning. Can't rollback bad loads. Need Delta Lake time travel with vacuum control and version retention policies for data governance."
-      ],
-      'pipeline_orchestration': [
-        "Airflow orchestrates Spark submits. Complex dependencies hard to manage. Want declarative workflows with native integration and task dependencies for observability.",
-        "Notebooks run manually or via cron. No visibility into failures. Need automated pipeline jobs with retries, alerting, and lineage tracking for production pipelines.",
-        "Jenkins triggers notebook runs. No native monitoring. Want declarative workflows with built-in alerting, retry logic, and failure notifications for production reliability.",
-        "Pipeline failures discovered by end users. No proactive alerts. Need automated pipeline jobs with SLA tracking, email notifications, and PagerDuty integration for operational excellence."
-      ],
-      'data_quality': [
-        "No data quality checks. Issues found by analysts downstream. Want DLT expectations (expect_or_fail, expect_or_drop) to catch issues early at ingestion.",
-        "Manual SQL checks in notebooks. Inconsistent across teams. Need Lakehouse Monitoring for automated data quality metrics and anomaly detection dashboards.",
-        "Bad data reaches production dashboards. Customer complaints. Want DLT with quarantine tables and Lakehouse Monitoring for proactive quality gates.",
-        "No visibility into data freshness or completeness. Need Lakehouse Monitoring with SLA tracking, automated alerts, and data quality scorecards for operations."
-      ],
-      'performance_scalability': [
-        "Pipelines take 6+ hours. Business wants hourly refreshes. Need Photon acceleration and partition tuning with Z-ordering for query performance improvement.",
-        "Clusters manually sized. Either over-provisioned or run out of memory. Want auto-scaling clusters and serverless compute for cost efficiency and elasticity.",
-        "Jobs fail with OOM errors. Trial and error sizing. Want serverless compute with automatic resource management and Photon for predictable performance.",
-        "Data volumes growing 3x per year. Current pipelines don't scale. Need liquid clustering, Photon acceleration, and serverless for elastic growth."
-      ],
-      
-      // ANALYTICS & BI
-      'analytic_performance': [
-        "Analysts wait 5+ minutes per query. Frustration growing. Want serverless SQL warehouses for sub-second queries and query caching for reusability.",
-        "Same aggregations re-computed hourly. Inefficient. Need materialized views and query result caching to reduce compute costs and improve response times.",
-        "Dashboards timeout during business hours. Resource contention. Want serverless SQL with auto-scaling for consistent performance.",
-        "PowerBI extracts take 30+ minutes. Analysts frustrated. Need Serverless SQL with query optimization, clustering, and caching for fast BI integration."
-      ],
-      'semantic_layer': [
-        "Fact tables have 200+ columns. Star schema unclear. Want dimensional modeling best practices and slowly changing dimension (SCD) patterns for historical accuracy.",
-        "Every team creates own metrics. Inconsistent revenue numbers. Need centralized semantic layer with unified catalog and SQL UDFs for metric standardization and governance.",
-        "Analysts join 10+ tables for simple report. Complex SQL. Want curated data marts with pre-joined dimensions and governed views for self-service simplicity.",
-        "Metric definitions vary by department. Trust issues. Need unified catalog with tagged semantic layer and SQL functions for single source of truth."
-      ],
-      'bi_reporting': [
-        "Analysts export to Excel then pivot. No real-time dashboards. Want modern SQL dashboards with auto-refresh and embedding for business stakeholders.",
-        "PowerBI connects to raw tables. Slow and fragile. Need SQL warehouse endpoint with optimized execution and aggregation tables for fast BI integration and reliability.",
-        "Tableau extracts refresh overnight. Stale data by morning. Want live connection and optimized query engines for real-time BI dashboards.",
-        "Reports built in notebooks, manually regenerated. Want SQL dashboards with scheduling, parameterization, and email delivery for executive reporting."
-      ],
-      'self_service_analytics': [
-        "Analysts wait on data engineers for every query. Bottleneck. Want self-service SQL with saved queries and natural language assist for ad-hoc analysis.",
-        "Business users can't explore data independently. No access control. Need unified catalog row/column security and granular permissions for safe self-service access.",
-        "SQL skills vary widely. Advanced users frustrated, novices stuck. Want AI query assistance and query templates for different skill levels.",
-        "Data requests backlogged 2 weeks. Business agility suffering. Need governed self-service and AI/BI for analyst autonomy without engineering bottleneck."
-      ],
-      'data_sharing': [
-        "Notebooks emailed as HTML. No version control. Want Git integration and notebook versioning for collaboration and reproducibility.",
-        "Each analyst has own copy of queries. Duplication and drift. Need shared queries library in SQL workspace and comments for institutional knowledge sharing.",
-        "Partners request data extracts monthly. Manual CSV exports. Want open data sharing protocols for secure, automated data sharing with external organizations and real-time updates.",
-        "Cross-team collaboration difficult. Different workspaces and catalogs. Need unified catalog federation and open sharing for seamless internal and external collaboration."
-      ],
-      
-      // MACHINE LEARNING
-      'ml_lifecycle': [
-        "ML experiments tracked in spreadsheets. Can't reproduce results. Want MLOps tracking for experiment tracking with hyperparameter logging and model versioning for reproducibility.",
-        "Model artifacts stored in cloud storage with manual naming. No lineage. Need centralized Model Registry for version control and model lineage with unified catalog integration.",
-        "Data scientists can't find past experiments. Rework common. Want MLOps platforms with experiment search, comparison views, and automated metric tracking for productivity.",
-        "Model performance degrades in production, no history to compare. Need model monitoring, drift detection, and automated alerting for quality assurance."
-      ],
-      'ml_deployment': [
-        "Models deployed via custom servers. Manual scaling. Want Managed Model Serving with autoscaling endpoints and A/B testing for production inference workloads.",
-        "Data scientists retrain models monthly via notebook runs. No automation. Need automated retraining pipelines and trigger-based deployment for MLOps.",
-        "Model deployment takes 2 weeks. Business value delayed. Want Managed Model Serving with one-click deployment and automated testing for rapid productionization.",
-        "Production models run on outdated data. Stale predictions. Need automated retraining pipelines with scheduled jobs and Feature Store for always-fresh models."
-      ],
-      'feature_engineering': [
-        "Feature engineering code duplicated in notebooks. Inconsistency across models. Want Centralized Feature Store for unified feature definitions and online/offline serving.",
-        "Training features differ from inference. Causes model drift. Need Feature Store with point-in-time lookups for training-serving skew prevention and consistency.",
-        "Feature computation expensive, re-run for every model. Want Feature Store with precomputed features and online serving for cost efficiency and low latency.",
-        "No visibility into feature usage across models. Want Feature Store with lineage tracking, usage analytics, and feature discovery for reusability and governance."
-      ],
-      'ml_governance': [
-        "No model approval process. Models deployed to prod ad-hoc. Want Model Registry with stage transitions and approval workflows for governance compliance.",
-        "Can't explain model decisions. Regulatory concern. Need model monitoring dashboards and explainability tools for regulatory compliance reporting.",
-        "No model risk assessment. Compliance gaps. Want model governance with model documentation, bias testing, and approval gates for regulated ML deployments.",
-        "Models in production, but who owns them? Need Model Registry with ownership tags, SLA tracking, and automated deprecation policies for operational accountability."
-      ],
-      'ml_scale': [
-        "Single-node scikit-learn. Datasets growing beyond memory. Want distributed training with Spark MLlib or PyTorch Distributed for large-scale model training on big data.",
-        "Hyperparameter tuning takes days. Blocking experimentation. Need parallel trials and hyperparameter optimization for faster experimentation cycles.",
-        "GPU clusters expensive and underutilized. Want efficient distributed training and GPU pooling for cost-effective scale.",
-        "Training jobs fail on large datasets. OOM errors common. Need distributed training and model parallelism for petabyte-scale data."
-      ],
-      
-      // GENERATIVE AI
-      'genai_strategy': [
-        "No GenAI initiative. CIO asking for roadmap. Want GenAI architecture workshop to identify high-impact use cases like RAG for knowledge base search.",
-        "Experimenting with public models for customer support. Security concerns. Need Enterprise Foundation Models for on-platform inference with data residency and guardrails.",
-        "Business units using shadow AI. Governance risk. Want centralized GenAI platform with approved models and usage tracking for enterprise control.",
-        "GenAI POCs not scaling to production. Need scalable GenAI infrastructure with Vector Search, Model Serving, and MLOps for productionizing LLM applications."
-      ],
-      'data_readiness': [
-        "Documentation scattered in Confluence and SharePoint. No vector embeddings. Want Vector Search index for semantic retrieval and RAG application on internal knowledge base.",
-        "PDFs and Word docs not searchable semantically. Need chunking strategy and Vector Search with hybrid search (keyword + semantic) for enterprise document retrieval.",
-        "Knowledge base outdated, manually maintained. Want automated ingestion with Vector Search, embedding generation, and incremental updates for always-current RAG.",
-        "Unstructured data in cloud storage, no metadata. Want automated document parsing, Vector Search indexing, and unified catalog tagging for governed GenAI data."
-      ],
-      'genai_architecture': [
-        "Prompt engineering in Python notebooks. No reusability. Want AI Playground for prompt iteration and versioning with evaluation metrics and comparison views.",
-        "Calling external API directly. Cost and latency concerns. Need Managed Model Serving with provisioned throughput for Foundation Models and reduced latency for production apps.",
-        "RAG app in single notebook. Not production-ready. Want Model Serving, Vector Search, and monitoring for enterprise-grade GenAI applications.",
-        "LLM prompts hardcoded. No A/B testing. Need prompt management, versioning, and experiment tracking for systematic optimization."
-      ],
-      'genai_quality': [
-        "No way to measure RAG quality. Anecdotal feedback only. Want automated evaluation metrics (retrieval precision, answer relevance, faithfulness) for systematic assessment.",
-        "Prompt changes break production. No regression testing. Need automated LLM evaluation pipelines with golden test sets for continuous quality monitoring.",
-        "LLM outputs inconsistent. User frustration. Want evaluation frameworks, judge models, and quality thresholds for reliable GenAI responses.",
-        "Can't compare different prompts or models. Need A/B testing, evaluation metrics dashboard, and benchmark selection for continuous improvement."
-      ],
-      'genai_governance': [
-        "No guardrails on LLM outputs. Risk of hallucinations. Want AI Gateway monitoring for toxicity detection and output filtering with guardrail policies.",
-        "Concerns about bias in GenAI responses. Need bias testing framework and evaluation metrics for fairness audits and responsible AI governance with stakeholder review.",
-        "No PII protection in LLM workflows. Privacy risk. Want unified catalog with PII detection, masking policies, and audit logs for compliant GenAI applications.",
-        "LLM costs unpredictable. Budget overruns. Need usage tracking, cost attribution, and budget alerts for financial control of GenAI operations."
-      ],
-      
-      // OPERATIONAL EXCELLENCE
-      'center_of_excellence': [
-        "No central team. Every project figures out architecture independently. Want CoE with office hours and communication channel for support escalation and best practices sharing.",
-        "Platform capabilities unknown. Marketing team doesn't know about Vector Search for personalization. Need quarterly showcase and use case library for internal evangelism.",
-        "Support requests go to external vendor. Slow response. Want internal CoE with platform architects, office hours, and escalation paths for faster issue resolution.",
-        "No governance council. Inconsistent patterns. Need CoE with architecture review board, standards documentation, and approval workflows for platform governance."
-      ],
-      'collaboration_culture': [
-        "Teams work in silos. Work not shared. Want centralized repositories with Git integration and shared workspace folders for knowledge sharing and collaboration.",
-        "Best practices lost when engineers leave. Need documentation wiki and community channels for institutional knowledge and peer support.",
-        "No cross-team code review. Quality varies. Want Git pull requests, code review workflows, and shared libraries for quality assurance.",
-        "Teams duplicate work unknowingly. Need shared workspace with discovery tools, asset tagging, and quarterly demos for cross-pollination and reuse."
-      ],
-      'enablement_training': [
-        "Tribal knowledge. Key engineers are single point of failure. Want documentation site with runbooks and best practices repository for platform patterns and troubleshooting.",
-        "Teams reinvent the wheel. No code reuse. Need curated template library for common patterns (pipelines, MLOps, security) with example implementations and GitHub integration.",
-        "New users overwhelmed. No learning path. Want structured training academy program, hands-on labs, and certification milestones for skill development.",
-        "Advanced users hit plateau. No continuous learning. Need lunch-and-learn sessions, conference attendance, and sandbox environment for innovation and skill growth."
-      ],
-      'cost_value': [
-        "No visibility into platform usage or ROI. CFO asks for justification. Want system tables dashboard for active users, cost per business unit, and business impact metrics.",
-        "Clusters idle overnight. Wasted spend. Need automated cluster termination policies, chargeback model, and usage alerts with recommendations for cost optimization.",
-        "Can't justify platform expansion. Need business case with ROI metrics, time-to-insight improvements, and cost avoidance from legacy retirement for executive buy-in.",
-        "Budget overruns mid-quarter. No forecasting. Want cost trends, workload forecasting, and budget alerts with auto-scaling policies for predictability."
-      ],
-      'innovation_culture': [
-        "15% of data team uses modern platform. Most still on legacy tools. Want onboarding program and success metrics to track adoption velocity with executive dashboard.",
-        "New hires take 3 weeks to become productive. No training. Need structured training academy and internal bootcamp curriculum with certification tracking for faster ramp-up.",
-        "Innovation requests backlogged. No experimentation time. Want hackathons, sandbox environments, and dedicated innovation time for exploring modern data & AI capabilities.",
-        "Teams fear breaking production. Risk-averse culture. Need dev/staging environments, CI/CD pipelines, and rollback procedures for safe experimentation and innovation."
-      ]
-    };
-    
-    // Get comments for this specific dimension
-    const comments = dimensionComments[dimensionId] || [
-      "Currently using manual processes. Need automation and best practices implementation with modern platform capabilities for operational efficiency.",
-      "Early stage adoption. Looking to scale with modern architecture features and proper governance for enterprise-grade data and AI workloads."
-    ];
-    
-    // 🔥 CRITICAL FIX: Use TRUE randomness + timestamp seed
-    // NO deterministic hashing - every assessment MUST be unique!
-    // Combine timestamp, questionId, and Math.random() for absolute uniqueness
-    const timestampSeed = timestamp + questionId.charCodeAt(0);
-    const randomSeed = Math.random() * timestampSeed;
-    const commentIndex = Math.floor(randomSeed % comments.length);
-    
-    return comments[commentIndex];
   };
 
   const getTrackVisuals = (type) => {
@@ -1131,6 +871,7 @@ const GlobalNav = () => {
     else if (iconName === 'HiDatabase' || key.includes('lakehouse') || key.includes('bigquery')) IconComponent = FiDatabase;
     else if (iconName === 'HiShieldCheck' || key.includes('security') || key.includes('zero_trust') || key.includes('eu_ai') || key.includes('compliance')) IconComponent = FiShield;
     else if (iconName === 'FiCpu' || key.includes('agentic') || key.includes('mesh')) IconComponent = FiShare2;
+    else if (key.includes('enterprise_data_ai_maturity')) IconComponent = FiBarChart2;
 
     let displayTitle = type.title || '';
     if (displayTitle === 'Autonomous Multi-Agent AI Mesh Architecture & MCP Readiness') {
@@ -1141,6 +882,8 @@ const GlobalNav = () => {
       displayTitle = 'Gemini Enterprise Migration';
     } else if (displayTitle === 'Enterprise AI & Zero-Trust Security Assessment') {
       displayTitle = 'Enterprise AI & Zero-Trust Security';
+    } else if (displayTitle === 'Enterprise Data & AI Maturity Assessment') {
+      displayTitle = 'Enterprise Data & AI Maturity';
     }
 
     let displayBadge = type.badge || 'Custom';
@@ -1149,7 +892,10 @@ const GlobalNav = () => {
 
     let microSubtitle = type.subtitle || 'Enterprise architecture & readiness evaluation';
     let demoSubtitle = microSubtitle;
-    if (key.includes('gemini')) {
+    if (key.includes('enterprise_data_ai_maturity')) {
+      microSubtitle = 'Enterprise data, MLOps & cloud governance • 60 Qs';
+      demoSubtitle = 'ConnectPlus Telecom • 6-Pillar Executive Maturity Report';
+    } else if (key.includes('gemini')) {
       microSubtitle = 'Vertex AI modernization & token cost arbitrage';
       demoSubtitle = 'Quantum FinTech Global • Vertex AI Migration Report';
     } else if (key.includes('finops')) {
@@ -1176,33 +922,8 @@ const GlobalNav = () => {
     <TrySampleMenu $isOpen={trySampleDropdownOpen}>
       <TrySampleHeader>
         <span>⚡ 1-Click Pre-Seeded Executive Reports</span>
-        <span style={{ fontSize: '0.64rem', color: '#2563eb', background: '#eff6ff', padding: '2px 6px', borderRadius: '999px', fontWeight: 700 }}>8 Live Demos</span>
+        <span style={{ fontSize: '0.64rem', color: '#2563eb', background: '#eff6ff', padding: '2px 6px', borderRadius: '999px', fontWeight: 700 }}>{2 + promotedTypes.length} Live Demos</span>
       </TrySampleHeader>
-      <TrySampleOption onClick={handleTrySampleCore}>
-        <TrackIconBox $bg="rgba(255, 107, 53, 0.12)" $color="#ff6b35" $border="rgba(255, 107, 53, 0.25)">
-          <FiBarChart2 />
-        </TrackIconBox>
-        <TrackContent>
-          <TrackTopRow>
-            <TrackTitle>Enterprise Data & AI Maturity</TrackTitle>
-            <TrackBadge $bg="rgba(255, 107, 53, 0.12)" $color="#ea580c" $border="rgba(255, 107, 53, 0.28)">Core 6-Pillar</TrackBadge>
-          </TrackTopRow>
-          <TrackSubtitle>ConnectPlus Telecom • 60-Question Executive Report</TrackSubtitle>
-        </TrackContent>
-      </TrySampleOption>
-
-      <TrySampleOption onClick={handleTrySampleGenAI}>
-        <TrackIconBox $bg="rgba(124, 58, 237, 0.12)" $color="#7c3aed" $border="rgba(124, 58, 237, 0.28)">
-          <FiCpu />
-        </TrackIconBox>
-        <TrackContent>
-          <TrackTopRow>
-            <TrackTitle>Gen AI Readiness Assessment</TrackTitle>
-            <TrackBadge $bg="rgba(124, 58, 237, 0.12)" $color="#7c3aed" $border="rgba(124, 58, 237, 0.28)">LLM & RAG</TrackBadge>
-          </TrackTopRow>
-          <TrackSubtitle>Global Retail Corp • 6-Dimension Readiness Readout</TrackSubtitle>
-        </TrackContent>
-      </TrySampleOption>
 
       <TrySampleOption onClick={() => { setTrySampleDropdownOpen(false); navigate('/ge-value-realization?tab=report'); }}>
         <TrackIconBox $bg="rgba(37, 99, 235, 0.12)" $color="#2563eb" $border="rgba(37, 99, 235, 0.28)">
@@ -1272,12 +993,12 @@ const GlobalNav = () => {
           <MegaMenuSectionHeader style={{ marginBottom: '8px' }}>
             <span>⚡ Diagnostic Frameworks (Click Title to Start • Click Badge for Sample Report)</span>
             <span style={{ fontSize: '0.64rem', color: '#2563eb', background: '#eff6ff', padding: '2px 8px', borderRadius: '999px', fontWeight: 700 }}>
-              {4 + promotedList.length} Tracks
+              {2 + promotedList.length} Tracks
             </span>
           </MegaMenuSectionHeader>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '6px 12px' }}>
-            {/* Track 0: GE Value Realization (Enterprise Gemini Migration) */}
+            {/* Specialized Engine 1: GE Value Realization (Enterprise Gemini Migration) */}
             <MegaMenuTrackItem onClick={() => runNav('/ge-value-realization?tab=inputs')}>
               <TrackIconBox $bg="rgba(37, 99, 235, 0.12)" $color="#1d4ed8" $border="rgba(37, 99, 235, 0.28)">
                 <FiTrendingUp />
@@ -1301,47 +1022,7 @@ const GlobalNav = () => {
               </TrackContent>
             </MegaMenuTrackItem>
 
-            {/* Track 1: Data & AI Maturity */}
-            <MegaMenuTrackItem onClick={() => runNav('/start')}>
-              <TrackIconBox $bg="rgba(37, 99, 235, 0.1)" $color="#2563eb" $border="rgba(37, 99, 235, 0.22)">
-                <FiBarChart2 />
-              </TrackIconBox>
-              <TrackContent>
-                <TrackTopRow>
-                  <TrackTitle>Data & AI Maturity</TrackTitle>
-                  <span
-                    onClick={(e) => { e.stopPropagation(); handleTrySampleCore(); }}
-                    style={{ fontSize: '0.64rem', fontWeight: 700, padding: '2px 6px', borderRadius: '5px', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', cursor: 'pointer', flexShrink: 0 }}
-                    title="Open pre-seeded Executive Report"
-                  >
-                    📊 Sample Report
-                  </span>
-                </TrackTopRow>
-                <TrackSubtitle>Enterprise data, MLOps & cloud governance • 60 Qs</TrackSubtitle>
-              </TrackContent>
-            </MegaMenuTrackItem>
-
-            {/* Track 2: Gen AI Readiness */}
-            <MegaMenuTrackItem onClick={() => runNav('/genai-readiness')}>
-              <TrackIconBox $bg="rgba(124, 58, 237, 0.1)" $color="#7c3aed" $border="rgba(124, 58, 237, 0.22)">
-                <FiCpu />
-              </TrackIconBox>
-              <TrackContent>
-                <TrackTopRow>
-                  <TrackTitle>Gen AI Readiness</TrackTitle>
-                  <span
-                    onClick={(e) => { e.stopPropagation(); handleTrySampleGenAI(); }}
-                    style={{ fontSize: '0.64rem', fontWeight: 700, padding: '2px 6px', borderRadius: '5px', background: '#f5f3ff', color: '#6d28d9', border: '1px solid #ddd6fe', cursor: 'pointer', flexShrink: 0 }}
-                    title="Open pre-seeded GenAI Readiness Report"
-                  >
-                    📊 Sample Report
-                  </span>
-                </TrackTopRow>
-                <TrackSubtitle>Prompt engineering, vector RAG & guardrails • 30 Qs</TrackSubtitle>
-              </TrackContent>
-            </MegaMenuTrackItem>
-
-            {/* Track 3: EU AI Act Compliance */}
+            {/* Specialized Engine 2: EU AI Act Compliance */}
             <MegaMenuTrackItem onClick={() => runNav('/eu-ai-compliance')}>
               <TrackIconBox $bg="rgba(16, 185, 129, 0.1)" $color="#059669" $border="rgba(16, 185, 129, 0.25)">
                 <FiShield />
@@ -1365,7 +1046,7 @@ const GlobalNav = () => {
               </TrackContent>
             </MegaMenuTrackItem>
 
-            {/* Promoted Dynamic Assessment Tracks */}
+            {/* Canonical Dynamic Assessment Blueprints */}
             {promotedList.map((type) => {
               const { IconComponent, displayTitle, microSubtitle, color } = getTrackVisuals(type);
               return (
@@ -1501,7 +1182,7 @@ const GlobalNav = () => {
                 {renderAssessmentsMegaMenu(!currentUser)}
               </DropdownContainer>
 
-              {/* 2. Portfolio & Analytics Dropdown (5 Distinct MECE Views) */}
+              {/* 2. Portfolio & Analytics Dropdown */}
               <DropdownContainer 
                 className="dropdown-container"
                 onMouseEnter={() => {
@@ -1514,7 +1195,7 @@ const GlobalNav = () => {
               >
                 <NavLink 
                   onClick={() => {
-                    handleNavigate('/insights-dashboard');
+                    handleNavigate('/assessments');
                     setPortfolioDropdownOpen(false);
                   }}
                   style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}
@@ -1522,44 +1203,27 @@ const GlobalNav = () => {
                   Portfolio
                   <FiChevronDown size={13} style={{ transform: portfolioDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
                 </NavLink>
-                <DropdownMenu $isOpen={portfolioDropdownOpen} style={{ minWidth: '310px', left: 0, right: 'auto', padding: '10px 0' }}>
-                  <DropdownHeader>📊 Executive Analytics & Benchmarks</DropdownHeader>
-                  <DropdownItem onClick={() => { handleNavigate('/insights-dashboard'); setPortfolioDropdownOpen(false); }}>
-                    <FiTrendingUp style={{ color: '#10b981' }} />
+                <DropdownMenu $isOpen={portfolioDropdownOpen} style={{ minWidth: '320px', left: 0, right: 'auto', padding: '10px 0' }}>
+                  <DropdownHeader>🗂️ Canonical Portfolio & Analytics</DropdownHeader>
+                  <DropdownItem onClick={() => { handleNavigate('/assessments'); setPortfolioDropdownOpen(false); }}>
+                    <FiList style={{ color: '#0d9488' }} />
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
-                      <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.84rem' }}>Executive Portfolio Dashboard</span>
-                      <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Multi-organization maturity & ROI telemetry</span>
+                      <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.84rem' }}>Assessment Portfolio & Directory</span>
+                      <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Browse, filter & manage all evaluations across 3 engines</span>
                     </div>
                   </DropdownItem>
-                  <DropdownItem onClick={() => { handleNavigate('/executive-dashboard'); setPortfolioDropdownOpen(false); }}>
-                    <FiAward style={{ color: '#4f46e5' }} />
+                  <DropdownItem onClick={() => { handleNavigate('/customer-portfolio/ConnectPlus%20Telecom'); setPortfolioDropdownOpen(false); }}>
+                    <FiTrendingUp style={{ color: '#10b981' }} />
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
-                      <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.84rem' }}>C-Suite Command Center</span>
-                      <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Board readiness & strategic decision cockpit</span>
+                      <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.84rem' }}>Customer Account Portfolio</span>
+                      <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Multi-assessment account rollup & maturity radar</span>
                     </div>
                   </DropdownItem>
                   <DropdownItem onClick={() => { handleNavigate('/assessments/compare'); setPortfolioDropdownOpen(false); }}>
                     <FiBarChart2 style={{ color: '#2563eb' }} />
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
-                      <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.84rem' }}>Side-by-Side Comparison</span>
+                      <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.84rem' }}>Side-by-Side Progression Diff</span>
                       <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Compare baseline vs target horizon or reassessments</span>
-                    </div>
-                  </DropdownItem>
-                  <DropdownItem onClick={() => { handleNavigate('/industry-benchmarks'); setPortfolioDropdownOpen(false); }}>
-                    <FiDatabase style={{ color: '#0ea5e9' }} />
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
-                      <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.84rem' }}>Industry Peer Benchmarks</span>
-                      <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Cross-industry percentile cohort rankings</span>
-                    </div>
-                  </DropdownItem>
-
-                  <DropdownDivider />
-                  <DropdownHeader>🗂️ Evaluation Directory</DropdownHeader>
-                  <DropdownItem onClick={() => { handleNavigate('/assessments'); setPortfolioDropdownOpen(false); }}>
-                    <FiList style={{ color: '#0d9488' }} />
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
-                      <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.84rem' }}>Assessment Directory & History</span>
-                      <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Browse, filter & manage all completed evaluations</span>
                     </div>
                   </DropdownItem>
                 </DropdownMenu>
@@ -1585,17 +1249,17 @@ const GlobalNav = () => {
                 </NavLink>
                 <DropdownMenu $isOpen={resourcesDropdownOpen} style={{ minWidth: '320px', left: 0, right: 'auto', padding: '10px 0' }}>
                   <DropdownHeader>💰 Financial & Value Modelers</DropdownHeader>
-                  <DropdownItem onClick={() => { handleNavigate('/tco-calculator'); setResourcesDropdownOpen(false); }}>
+                  <DropdownItem onClick={() => { handleNavigate('/assessments/report/inst_finops_cloud_cost_optimization_demo'); setResourcesDropdownOpen(false); }}>
                     <FiTrendingUp style={{ color: '#059669' }} />
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
-                      <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.84rem' }}>TCO & Cloud Economics Modeler</span>
+                      <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.84rem' }}>FinOps & Cloud Economics Readout</span>
                       <span style={{ fontSize: '0.72rem', color: '#64748b' }}>3-year total cost of ownership & slot arbitrage</span>
                     </div>
                   </DropdownItem>
-                  <DropdownItem onClick={() => { handleNavigate('/roi-calculator'); setResourcesDropdownOpen(false); }}>
+                  <DropdownItem onClick={() => { handleNavigate('/ge-value-realization?tab=report'); setResourcesDropdownOpen(false); }}>
                     <FiAward style={{ color: '#2563eb' }} />
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
-                      <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.84rem' }}>ROI & Value Realization Modeler</span>
+                      <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.84rem' }}>GE Value Realization & CFO Bridge</span>
                       <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Board-level payback period & NPV business case</span>
                     </div>
                   </DropdownItem>
@@ -1637,7 +1301,7 @@ const GlobalNav = () => {
                   AI Compiler
                 </SecondaryCTAButton>
 
-                {/* Assignments Dropdown (Admin/Author only) with Hover Trigger */}
+                {/* Governance & Admin Dropdown (Admin/Author only) with Hover Trigger */}
                 {(currentUser.role === 'admin' || currentUser.role === 'author') && (
                   <DropdownContainer 
                     className="dropdown-container"
@@ -1649,39 +1313,32 @@ const GlobalNav = () => {
                       onClick={() => setAssignmentsDropdownOpen(!assignmentsDropdownOpen)}
                     >
                       <FiList size={14} />
-                      Assignments
+                      Governance
                       <FiChevronDown size={14} className="chevron" />
                     </DropdownButton>
                     <DropdownMenu $isOpen={assignmentsDropdownOpen}>
                       <DropdownItem onClick={() => {
-                        navigate('/my-assignments');
+                        navigate('/question-assignments');
                         setAssignmentsDropdownOpen(false);
                       }}>
                         <FiFileText />
-                        View Assignments
-                      </DropdownItem>
-                      <DropdownItem onClick={() => {
-                        navigate('/assign-assessment');
-                        setAssignmentsDropdownOpen(false);
-                      }}>
-                        <FiUserPlus />
-                        Assign Users
+                        Question Assignments
                       </DropdownItem>
                       {currentUser.role === 'admin' && (
                         <>
                           <DropdownItem onClick={() => {
-                            navigate('/question-assignments');
+                            navigate('/admin/questions');
                             setAssignmentsDropdownOpen(false);
                           }}>
-                            <FiFileText />
-                            Assign Questions
+                            <FiLayers />
+                            Question Bank & Pillars
                           </DropdownItem>
                           <DropdownItem onClick={() => {
                             navigate('/user-management');
                             setAssignmentsDropdownOpen(false);
                           }}>
                             <FiUsers />
-                            Manage Users
+                            Manage Users & Roles
                           </DropdownItem>
                         </>
                       )}
@@ -1792,14 +1449,6 @@ const GlobalNav = () => {
                         <DropdownDivider />
                       </>
                     )}
-                <DropdownItem onClick={() => {
-                  setAdminDropdownOpen(false);
-                  
-                }}>
-                      <FiLock />
-                      Change Password
-                    </DropdownItem>
-                    <DropdownDivider />
                     <DropdownItem onClick={() => {
                       handleLogout();
                       setAdminDropdownOpen(false);
@@ -1888,28 +1537,20 @@ const GlobalNav = () => {
       {/* Mobile Menu */}
       <MobileMenu $isOpen={mobileMenuOpen}>
         <MobileNavLink onClick={handleLogoClick}>Home</MobileNavLink>
-        <MobileNavLink onClick={() => handleNavigate('/deep-dive')}>Deep Dive</MobileNavLink>
-        <MobileNavLink onClick={() => handleNavigate('/pitch-deck')}>Pitch Deck</MobileNavLink>
-        <MobileNavLink onClick={() => handleNavigate('/user-guide')}>User Guide</MobileNavLink>
-        <MobileNavLink onClick={() => handleNavigate('/workflow-walkthrough')}>Workflow Demo</MobileNavLink>
+        <MobileNavLink onClick={() => handleNavigate('/assessments/custom-hub')}>Assessment Hub</MobileNavLink>
+        <MobileNavLink onClick={() => handleNavigate('/assessments')}>Portfolio Directory</MobileNavLink>
+        <MobileNavLink onClick={() => handleNavigate('/deep-dive')}>Methodology Rubric</MobileNavLink>
+        <MobileNavLink onClick={() => handleNavigate('/workflow-walkthrough')}>Interactive Tour</MobileNavLink>
         
         {currentUser ? (
           <>
-            <MobileSecondaryCTAButton onClick={() => handleNavigate('/assessments/custom-hub')}>
-              <FiLayers size={16} style={{ color: '#818cf8' }} />
-              Assessment Catalog & Templates
-            </MobileSecondaryCTAButton>
             <MobileSecondaryCTAButton onClick={() => handleNavigate('/assessments/ai-generator')}>
               <HiSparkles size={16} style={{ color: '#c084fc' }} />
               AI Assessment Generator
             </MobileSecondaryCTAButton>
-            <MobileSecondaryCTAButton onClick={() => handleNavigate('/my-assessments')}>
-              <FiFileText size={16} />
-              My Assessments
-            </MobileSecondaryCTAButton>
-            <MobileSecondaryCTAButton onClick={() => handleNavigate('/genai-readiness')}>
-              <FiCpu size={16} />
-              Gen AI Readiness
+            <MobileSecondaryCTAButton onClick={() => handleNavigate('/ge-value-realization')}>
+              <FiTrendingUp size={16} style={{ color: '#2563eb' }} />
+              GE Value Realization
             </MobileSecondaryCTAButton>
             <MobileSecondaryCTAButton onClick={() => handleNavigate('/eu-ai-compliance')}>
               <FiShield size={16} style={{ color: '#059669' }} />
@@ -1917,9 +1558,6 @@ const GlobalNav = () => {
             </MobileSecondaryCTAButton>
             {currentUser.role !== 'consumer' && (
               <>
-                <MobileSecondaryCTAButton onClick={() => handleNavigate('/insights-dashboard')}>
-                  Dashboard
-                </MobileSecondaryCTAButton>
                 <MobileSecondaryCTAButton onClick={() => setMobileTrySampleOpen(!mobileTrySampleOpen)}>
                   <FiPlay size={16} />
                   Try Sample Assessments
@@ -1927,8 +1565,7 @@ const GlobalNav = () => {
                 </MobileSecondaryCTAButton>
                 {mobileTrySampleOpen && (
                   <div style={{ background: '#f8fafc', padding: '8px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <MobileSubLink onClick={handleTrySampleCore}>• Enterprise Data & AI Maturity (ConnectPlus)</MobileSubLink>
-                    <MobileSubLink onClick={handleTrySampleGenAI}>• Gen AI Readiness (Global Retail)</MobileSubLink>
+                    <MobileSubLink onClick={() => handleNavigate('/ge-value-realization?tab=report')}>• GE Value Realization (BioNova)</MobileSubLink>
                     <MobileSubLink onClick={() => handleNavigate('/eu-ai-compliance?demo=high-risk-hr')}>• EU AI Act Compliance (ApexHire HR)</MobileSubLink>
                     {promotedTypes.map(t => (
                       <MobileSubLink key={t.typeKey} onClick={() => handleTrySampleDynamic(t.typeKey, t.title)}>
@@ -1940,22 +1577,16 @@ const GlobalNav = () => {
               </>
             )}
             {(currentUser.role === 'admin' || currentUser.role === 'author') && (
-              <MobileSecondaryCTAButton onClick={() => handleNavigate('/my-assignments')}>
+              <MobileSecondaryCTAButton onClick={() => handleNavigate('/question-assignments')}>
                 <FiFileText size={16} />
-                View Assignments
+                Question Assignments
               </MobileSecondaryCTAButton>
             )}
             {currentUser.role === 'admin' && (
-              <>
-                <MobileSecondaryCTAButton onClick={() => handleNavigate('/question-assignments')}>
-                  <FiFileText size={16} />
-                  Assign Questions
-                </MobileSecondaryCTAButton>
-                <MobileSecondaryCTAButton onClick={() => handleNavigate('/user-management')}>
-                  <FiUsers size={16} />
-                  Manage Assignments
-                </MobileSecondaryCTAButton>
-              </>
+              <MobileSecondaryCTAButton onClick={() => handleNavigate('/user-management')}>
+                <FiUsers size={16} />
+                Manage Users
+              </MobileSecondaryCTAButton>
             )}
             <MobileSecondaryCTAButton onClick={handleLogout}>
               <FiLogOut size={16} />
@@ -1966,9 +1597,9 @@ const GlobalNav = () => {
           <>
             <MobileSecondaryCTAButton onClick={() => {
               closeMobileMenu();
-              handleExploreAsGuest('/dashboard');
+              handleExploreAsGuest('/assessments');
             }}>
-              Dashboard
+              Portfolio Directory
             </MobileSecondaryCTAButton>
             <MobileSecondaryCTAButton onClick={() => setMobileTrySampleOpen(!mobileTrySampleOpen)}>
               <FiPlay size={16} />
@@ -1977,8 +1608,8 @@ const GlobalNav = () => {
             </MobileSecondaryCTAButton>
             {mobileTrySampleOpen && (
               <div style={{ background: '#f8fafc', padding: '8px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <MobileSubLink onClick={handleTrySampleCore}>• Enterprise Data & AI Maturity (ConnectPlus)</MobileSubLink>
-                <MobileSubLink onClick={handleTrySampleGenAI}>• Gen AI Readiness (Global Retail)</MobileSubLink>
+                <MobileSubLink onClick={() => handleNavigate('/ge-value-realization?tab=report')}>• GE Value Realization (BioNova)</MobileSubLink>
+                <MobileSubLink onClick={() => handleNavigate('/eu-ai-compliance?demo=high-risk-hr')}>• EU AI Act Compliance (ApexHire HR)</MobileSubLink>
                 {promotedTypes.map(t => (
                   <MobileSubLink key={t.typeKey} onClick={() => handleTrySampleDynamic(t.typeKey, t.title)}>
                     • {t.title}

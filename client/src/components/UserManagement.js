@@ -721,10 +721,10 @@ const UserManagement = () => {
               <AssignButton
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => navigate('/assign-assessment')}
+                onClick={() => navigate('/question-assignments')}
               >
                 <FiSend />
-                Assign Assessment
+                Question Assignments
               </AssignButton>
               
               {isAdmin && (

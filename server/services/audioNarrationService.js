@@ -340,7 +340,7 @@ class AudioNarrationService {
         ssml: `<speak>
           <prosody rate="102%" pitch="+1st">
             Imagine what happens next... <break time="300ms"/>
-            The target state unlocks <emphasis level="strong">Google Vertex A.I. Gemini 3.7 with Context Caching</emphasis>, <break time="200ms"/>
+            The target state unlocks <emphasis level="strong">Google Vertex A.I. Gemini 3.8 Flash with Context Caching</emphasis>, <break time="200ms"/>
             shattering latency and slashing token costs by an astonishing <emphasis level="strong">seventy-five percent</emphasis>, <break time="200ms"/>
             paired with the unifying power of Big Lake!
           </prosody>
@@ -398,7 +398,7 @@ class AudioNarrationService {
         chapterTitle: 'The Modernization Payoff',
         speaker: 'Victoria (Strategy Partner)',
         persona: 'victoria',
-        text: `And that's where the financial upside is massive. By modernizing to Google Vertex A.I. Gemini 3.7 with Context Caching and Big Lake, we project up to a seventy-five percent reduction in token costs and instant query latency.`
+        text: `And that's where the financial upside is massive. By modernizing to Google Vertex A.I. Gemini 3.8 Flash with Context Caching and Big Lake, we project up to a seventy-five percent reduction in token costs and instant query latency.`
       },
       {
         act: 'Act V',
@@ -625,10 +625,10 @@ class AudioNarrationService {
     }
 
     const modelsToTry = [
-      'gemini-2.5-flash-preview-tts',
+      'lyria-3.5',
       'gemini-3.1-flash-tts-preview',
-      'gemini-2.5-flash-native-audio-latest',
-      'gemini-2.5-flash'
+      'gemini-3.1-flash-live-preview',
+      'gemini-3.8-flash'
     ];
 
     let lastError = null;

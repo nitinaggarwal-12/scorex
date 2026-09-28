@@ -3,6 +3,7 @@ const router = express.Router();
 const pool = require('../db/connection');
 const { v4: uuidv4 } = require('uuid');
 const geminiService = require('../services/geminiService');
+const { classifyConversationalIntent } = require('../utils/conversationalIntentGuard');
 
 // In-memory conversation fallback store
 const memoryConversations = new Map();
@@ -67,7 +68,7 @@ router.post('/conversation/start', async (req, res) => {
   }
 });
 
-// Send a message and get AI response (Powered by Gemini 3.7 Flash)
+// Send a message and get AI response (Powered by Gemini 3.8 Flash)
 router.post('/message', async (req, res) => {
   try {
     const { conversationId, message, sessionId, userEmail, context } = req.body;
@@ -107,6 +108,31 @@ router.post('/message', async (req, res) => {
       const msgs = memoryMessages.get(convId) || [];
       msgs.push({ role: 'user', content: message, created_at: new Date().toISOString() });
       memoryMessages.set(convId, msgs);
+    }
+
+    // 4-Category Conversational Non-Mutation Gate (greeting, identity, courtesy, short_ambiguous)
+    const convCheck = classifyConversationalIntent(message, {
+      surfaceName: 'ScoreX AI Advisor Copilot'
+    });
+    if (convCheck.isConversational && convCheck.category !== 'advisory_question') {
+      if (pgReady) {
+        await pool.query(
+          `INSERT INTO chat_messages (conversation_id, role, content) VALUES ($1, $2, $3)`,
+          [convId, 'assistant', convCheck.reply]
+        );
+      } else {
+        const msgs = memoryMessages.get(convId) || [];
+        msgs.push({ role: 'assistant', content: convCheck.reply, created_at: new Date().toISOString() });
+        memoryMessages.set(convId, msgs);
+      }
+      return res.json({
+        conversationId: convId,
+        response: convCheck.reply,
+        isConversational: true,
+        category: convCheck.category,
+        mutated: false,
+        suggestedQuestions: convCheck.suggestedActions
+      });
     }
 
     // Get conversation context
@@ -164,10 +190,10 @@ router.post('/message', async (req, res) => {
     let aiResponse = null;
     let suggestedQuestions = null;
 
-    // 🌟 1. Try Gemini 3.7 Flash first if API key is provided
+    // 🌟 1. Try Gemini 3.8 Flash first if API key is provided
     if (geminiService.isAvailable()) {
       try {
-        console.log('🤖 Generating response with Gemini 3.7 Flash AI...');
+        console.log('🤖 Generating response with Gemini 3.8 Flash AI...');
         const geminiResult = await geminiService.generateChatResponse(
           message,
           history,
@@ -1164,7 +1190,7 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
   
   // Questions about pillars (general) - MOVED UP for priority
   if (messageLower.includes('pillar') || messageLower.includes('categories') || messageLower.includes('areas') || messageLower.includes('6 pillars')) {
-    return respond("**The 6 Assessment Pillars:**\n\n🏛️ **[Platform & Governance](/deep-dive#platform-governance)**\nSecurity, compliance, unified catalog, access control\n\n🔷 **[Data Engineering](/deep-dive#data-engineering)**\nData pipelines, ETL, lakehouse table formats, data quality\n\n📊 **[Analytics & BI](/deep-dive#analytics-bi)**\nReporting, dashboards, SQL analytics, visualization\n\n🤖 **[Machine Learning](/deep-dive#machine-learning)**\nML models, MLOps, experiment tracking, model deployment\n\n✨ **[Generative AI](/deep-dive#generative-ai)**\nLLMs, AI applications, AI gateway, RAG patterns\n\n⚙️ **[Operational Excellence](/deep-dive#operational-excellence)**\nMonitoring, cost optimization, reliability\n\n📚 [View Full Deep Dive](/deep-dive) - Detailed explanation of all pillars\n🚀 [Start Assessment](/assessment/start) - Begin now");
+    return respond("**The 6 Assessment Pillars:**\n\n🏛️ **[Platform & Governance](/deep-dive#platform-governance)**\nSecurity, compliance, unified catalog, access control\n\n🔷 **[Data Engineering](/deep-dive#data-engineering)**\nData pipelines, ETL, lakehouse table formats, data quality\n\n📊 **[Analytics & BI](/deep-dive#analytics-bi)**\nReporting, dashboards, SQL analytics, visualization\n\n🤖 **[Machine Learning](/deep-dive#machine-learning)**\nML models, MLOps, experiment tracking, model deployment\n\n✨ **[Generative AI](/deep-dive#generative-ai)**\nLLMs, AI applications, AI gateway, RAG patterns\n\n⚙️ **[Operational Excellence](/deep-dive#operational-excellence)**\nMonitoring, cost optimization, reliability\n\n📚 [View Full Deep Dive](/deep-dive) - Detailed explanation of all pillars\n🚀 [Start Assessment](/assessments/custom-hub) - Begin now");
   }
   
   // ===== PAGE-SPECIFIC CONTEXT RESPONSES =====
@@ -1308,7 +1334,7 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
   
   // REPORTS / RESULTS
   if (messageLower.includes('report') && !messageLower.includes('maturity report')) {
-    return respond("**Your Assessment Reports:** 📊\n\n**Main Reports:**\n📈 [Maturity Report](/results) - Detailed scores & analysis\n🎯 [Executive Dashboard](/executive-dashboard) - C-level summary\n💡 [Insights Dashboard](/insights-dashboard) - Analytics & trends\n📊 [Industry Benchmarks](/industry-benchmarks) - Compare with peers\n\n**Features:**\n• 🎬 Slideshow mode for presentations\n• 🖨️ Print to PDF\n• ✏️ Edit & customize content\n• 📤 Export to Excel\n\n**Not started yet?**\n🚀 [Start Assessment](/assessment/start)\n🎯 [Try Sample First](/try-sample)");
+    return respond("**Your Assessment Reports:** 📊\n\n**Main Reports:**\n📈 [Maturity Report](/results) - Detailed scores & analysis\n🎯 [Executive Dashboard](/executive-dashboard) - C-level summary\n💡 [Insights Dashboard](/insights-dashboard) - Analytics & trends\n📊 [Industry Benchmarks](/industry-benchmarks) - Compare with peers\n\n**Features:**\n• 🎬 Slideshow mode for presentations\n• 🖨️ Print to PDF\n• ✏️ Edit & customize content\n• 📤 Export to Excel\n\n**Not started yet?**\n🚀 [Start Assessment](/assessments/custom-hub)\n🎯 [Try Sample First](/try-sample)");
   }
   
   // EXPORT / EXCEL
@@ -1319,11 +1345,11 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
   // ===== GENERAL KNOWLEDGE RESPONSES =====
   
   if (messageLower.includes('platform') && (messageLower.includes('feature') || messageLower.includes('product') || messageLower.includes('capability'))) {
-    return respond("**Key Enterprise Data & AI Platform Capabilities:**\n\n**Data Engineering:**\n• [Modern Lakehouse Formats](/deep-dive#data-engineering) - ACID transactions, time travel\n• Declarative Pipelines - Automated data engineering & quality expectations\n• Streaming & Auto-scaling Ingestion - Continuous real-time loading\n\n**Governance:**\n• [Unified Catalog](/deep-dive#platform-governance) - Cross-cloud data and AI governance\n• Automated Data Lineage - End-to-end data flow tracking\n• Fine-Grained Access Controls - Row/column level security & attribute masking\n\n**ML & AI:**\n• [MLOps Platform](/deep-dive#machine-learning) - Experiment tracking & model registry\n• Managed Model Serving - Real-time and batch model inference\n• [AI Gateway & RAG](/deep-dive#generative-ai) - Secure GenAI development & evaluation\n\n**Analytics:**\n• Vectorized Query Engines - High-speed query acceleration\n• Serverless SQL Warehouses - Auto-scaling on-demand compute\n\n📚 [Learn More - Deep Dive](/deep-dive)\n🚀 [Start Assessment](/assessment/start)");
+    return respond("**Key Enterprise Data & AI Platform Capabilities:**\n\n**Data Engineering:**\n• [Modern Lakehouse Formats](/deep-dive#data-engineering) - ACID transactions, time travel\n• Declarative Pipelines - Automated data engineering & quality expectations\n• Streaming & Auto-scaling Ingestion - Continuous real-time loading\n\n**Governance:**\n• [Unified Catalog](/deep-dive#platform-governance) - Cross-cloud data and AI governance\n• Automated Data Lineage - End-to-end data flow tracking\n• Fine-Grained Access Controls - Row/column level security & attribute masking\n\n**ML & AI:**\n• [MLOps Platform](/deep-dive#machine-learning) - Experiment tracking & model registry\n• Managed Model Serving - Real-time and batch model inference\n• [AI Gateway & RAG](/deep-dive#generative-ai) - Secure GenAI development & evaluation\n\n**Analytics:**\n• Vectorized Query Engines - High-speed query acceleration\n• Serverless SQL Warehouses - Auto-scaling on-demand compute\n\n📚 [Learn More - Deep Dive](/deep-dive)\n🚀 [Start Assessment](/assessments/custom-hub)");
   }
   
   if (messageLower.includes('how to start') || messageLower.includes('how do i start') || messageLower.includes('begin')) {
-    return respond("**Ready to start your assessment?** 🚀\n\n**Option 1: Start Fresh**\n[Start New Assessment](/assessment/start) - Begin your maturity assessment now\n\n**Option 2: Try a Demo**\n[Try Sample Assessment](/try-sample) - See how it works with pre-filled data\n\n**Option 3: Learn More First**\n[Deep Dive Guide](/deep-dive) - Understand what we assess\n[User Guide](/user-guide) - Complete walkthrough\n\n**Quick Overview:**\n• 6 pillars, 15-20 minutes\n• Rate current & target maturity (1-5)\n• Auto-saves, resume anytime\n• Get instant reports & recommendations\n\nWhich option works best for you?");
+    return respond("**Ready to start your assessment?** 🚀\n\n**Option 1: Start Fresh**\n[Start New Assessment](/assessments/custom-hub) - Begin your maturity assessment now\n\n**Option 2: Try a Demo**\n[Try Sample Assessment](/try-sample) - See how it works with pre-filled data\n\n**Option 3: Learn More First**\n[Deep Dive Guide](/deep-dive) - Understand what we assess\n[User Guide](/user-guide) - Complete walkthrough\n\n**Quick Overview:**\n• 6 pillars, 15-20 minutes\n• Rate current & target maturity (1-5)\n• Auto-saves, resume anytime\n• Get instant reports & recommendations\n\nWhich option works best for you?");
   }
   
   // Handle "Does it work with existing code?" and compatibility questions
@@ -1376,15 +1402,15 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
   
   // Smart default response with contextual links
   const contextualLinks = {
-    home: "**Quick Actions:**\n🚀 [Start New Assessment](/assessment/start)\n📊 [View My Dashboard](/dashboard)\n🎯 [Try Sample Assessment](/try-sample)\n📚 [Learn More - Deep Dive](/deep-dive)\n📖 [User Guide](/user-guide)",
+    home: "**Quick Actions:**\n🚀 [Start New Assessment](/assessments/custom-hub)\n📊 [View My Dashboard](/dashboard)\n🎯 [Try Sample Assessment](/try-sample)\n📚 [Learn More - Deep Dive](/deep-dive)\n📖 [User Guide](/user-guide)",
     assessment: "**Assessment Help:**\n❓ [What are the 6 pillars?](/deep-dive)\n💾 [How to save progress?](/user-guide#saving)\n📝 [Understanding maturity levels](/deep-dive#maturity-framework)\n🏠 [Back to Home](/)",
     maturity_report: "**Report Actions:**\n📥 [Export to PDF](#) (Print button in slideshow)\n📊 [View Dashboard](/dashboard)\n🎯 [Executive Summary](/executive-dashboard)\n📈 [Industry Benchmarks](/industry-benchmarks)\n🔍 [Deep Dive Analysis](/deep-dive)",
     executive_dashboard: "**Executive Tools:**\n📊 [Full Maturity Report](/results)\n📈 [Industry Benchmarks](/industry-benchmarks)\n💡 [Insights Dashboard](/insights-dashboard)\n🏠 [Back to Home](/)",
     insights_dashboard: "**Analytics:**\n📊 [Maturity Report](/results)\n🎯 [Executive Dashboard](/executive-dashboard)\n📈 [Industry Benchmarks](/industry-benchmarks)\n🏠 [Back to Home](/)",
     industry_benchmarks: "**Benchmarking:**\n📊 [Your Maturity Report](/results)\n🎯 [Executive Dashboard](/executive-dashboard)\n💡 [Insights Dashboard](/insights-dashboard)\n🏠 [Back to Home](/)",
-    deep_dive: "**Learn More:**\n🚀 [Start Assessment](/assessment/start)\n📖 [User Guide](/user-guide)\n🎯 [Try Sample](/try-sample)\n🏠 [Back to Home](/)",
-    user_guide: "**Resources:**\n🚀 [Start Assessment](/assessment/start)\n📚 [Deep Dive](/deep-dive)\n🎯 [Try Sample](/try-sample)\n💬 [Give Feedback](/feedback)\n🏠 [Back to Home](/)",
-    dashboard: "**Dashboard Actions:**\n🚀 [Start New Assessment](/assessment/start)\n📊 [View All Assessments](/dashboard)\n📈 [Export to Excel](#) (Click Excel icon)\n🏠 [Back to Home](/)",
+    deep_dive: "**Learn More:**\n🚀 [Start Assessment](/assessments/custom-hub)\n📖 [User Guide](/user-guide)\n🎯 [Try Sample](/try-sample)\n🏠 [Back to Home](/)",
+    user_guide: "**Resources:**\n🚀 [Start Assessment](/assessments/custom-hub)\n📚 [Deep Dive](/deep-dive)\n🎯 [Try Sample](/try-sample)\n💬 [Give Feedback](/feedback)\n🏠 [Back to Home](/)",
+    dashboard: "**Dashboard Actions:**\n🚀 [Start New Assessment](/assessments/custom-hub)\n📊 [View All Assessments](/dashboard)\n📈 [Export to Excel](#) (Click Excel icon)\n🏠 [Back to Home](/)",
     admin: "**Admin Tools:**\n👥 [Manage Users](/admin/users)\n📋 [Manage Assessments](/admin/assessments)\n❓ [Custom Questions](/admin/questions)\n💬 [View Feedback](/admin/feedback)\n🏠 [Back to Home](/)"
   };
   

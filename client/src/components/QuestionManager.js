@@ -1547,7 +1547,7 @@ const QuestionManager = () => {
                             // Navigate to the assessment's specific pillar page with question ID
                             // Add 'custom_' prefix to match the format used in assessment questions
                             const questionId = `custom_${viewingQuestion?.id}`;
-                            navigate(`/assessment/${assignment.assessment_id}/${viewingQuestion?.pillar || 'platform_governance'}?questionId=${questionId}`);
+                            navigate(`/assessments/run/instance/${assignment.assessment_id}?questionId=${questionId}`);
                           }}
                           style={{
                             padding: '16px',

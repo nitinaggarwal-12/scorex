@@ -124,7 +124,7 @@ export const exportAssessmentToPPTX = async (instance, report) => {
         x: 0.5, y: 5.3, w: 4.5, h: 0.25,
         fontSize: 8, bold: true, color: PPTX_THEME.textMuted, fontFace: 'Arial'
       });
-      slide.addText('ScoreX Engine • Google Gemini 3.7 Pro Reasoning', {
+      slide.addText('ScoreX Engine • Google Gemini 3.1 Pro Reasoning', {
         x: 3.5, y: 5.3, w: 3.0, h: 0.25,
         fontSize: 8, color: PPTX_THEME.textMuted, align: 'center', fontFace: 'Arial'
       });
@@ -177,7 +177,7 @@ export const exportAssessmentToPPTX = async (instance, report) => {
       x: 1.0, y: 3.6, w: 3.65, h: 0.22,
       fontSize: 8.5, bold: true, color: '38BDF8', fontFace: 'Arial'
     });
-    slide1.addText(`Enterprise:  ${org}\nInitiative:  ${industry.length > 55 ? industry.substring(0, 52) + '...' : industry}\nAI Reasoning:  Google Gemini 3.7 Pro`, {
+    slide1.addText(`Enterprise:  ${org}\nInitiative:  ${industry.length > 55 ? industry.substring(0, 52) + '...' : industry}\nAI Reasoning:  Google Gemini 3.1 Pro`, {
       x: 1.0, y: 3.88, w: 3.65, h: 1.0,
       fontSize: 9.5, color: 'E2E8F0', fontFace: 'Arial', lineSpacingMultiple: 1.2
     });

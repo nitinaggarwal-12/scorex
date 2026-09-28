@@ -180,7 +180,7 @@ const Footer = () => {
         <FooterCTA>
           <h4>Get Started</h4>
           <p>Start your free assessment today and unlock insights.</p>
-          <button onClick={() => navigate('/start')}>Start Assessment</button>
+          <button onClick={() => navigate('/assessments/run/enterprise_data_ai_maturity')}>Start Assessment</button>
         </FooterCTA>
       </FooterContent>
 

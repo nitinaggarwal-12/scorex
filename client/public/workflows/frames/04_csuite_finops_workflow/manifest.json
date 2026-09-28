@@ -4,7 +4,7 @@
     "frameSrc": "/workflows/frames/04_csuite_finops_workflow/frame_01.png",
     "title": "1. AI Executive Audio Briefing",
     "description": "Listen to a 90-second synthesized C-suite narrative summarizing key ROI and risk mitigations.",
-    "targetAction": "Header: Click \"Play Briefing\""
+    "targetAction": "Header: Click \"AI Voice Brief\""
   },
   {
     "index": 2,
@@ -32,6 +32,6 @@
     "frameSrc": "/workflows/frames/04_csuite_finops_workflow/frame_05.png",
     "title": "5. 1-Click Deliverables Export",
     "description": "Export executive PDF, Excel financial model, CSV datasets, Draw.io XML graph, and ZIP bundle.",
-    "targetAction": "Header: Click \"Executive PDF\" / \"Excel\" / \"Bundle\""
+    "targetAction": "Header: Click \"Export & Cloud Hub\""
   }
 ]

@@ -34,7 +34,8 @@ function loadServerDossiers() {
         const primaryEntry = parsed['ge_vr_acc-1001-aerovg'] || parsed['inst_aerovanguard_ge_value_realization'];
         const hasCandidateOptions = Array.isArray(primaryEntry?.questionResponses?.C01?.candidateOptions);
         const hasNormalizedTelemetry = primaryEntry?.adoptionTelemetry?.geminiAssistWau7d !== undefined;
-        if (hasCandidateOptions && hasNormalizedTelemetry) {
+        const hasExpandedWorkflows = Array.isArray(primaryEntry?.workflows) && primaryEntry.workflows.length >= 3;
+        if (hasCandidateOptions && hasNormalizedTelemetry && hasExpandedWorkflows) {
           return parsed;
         }
       }
@@ -91,7 +92,7 @@ router.get('/framework', (req, res) => {
 /**
  * Search Enterprise GE Customers by Customer Name, Alias, Industry, or Account ID (ACC-...)
  */
-router.get('/customers/search', (req, res) => {
+router.get(['/customers/search', '/catalog'], (req, res) => {
   try {
     const q = req.query.q || '';
     const limit = Math.min(100, Math.max(5, parseInt(req.query.limit, 10) || 25));
@@ -101,6 +102,7 @@ router.get('/customers/search', (req, res) => {
       query: q,
       count: customers.length,
       customers,
+      syntheticAccounts: customers,
       allSources: ALL_SOURCE_TYPES,
       timePresets: TIME_PRESETS
     });
@@ -131,7 +133,7 @@ router.get('/customers/random', (req, res) => {
  * filtered by Time Period (startDate -> endDate / timePreset) across all 8 Enterprise Sources,
  * and populate the 82-question questionnaire (supports prefillMode: 'evidence' | 'random' | 'clean').
  */
-router.post('/ingest-customer', (req, res) => {
+router.post(['/ingest-customer', '/ingest-customer-sources'], (req, res) => {
   try {
     const {
       customerQuery = '',
@@ -176,7 +178,7 @@ router.post('/ingest-customer', (req, res) => {
 /**
  * Submit All 82 Questions & Selected Options to Gemini API to Regenerate the Executive Value Realization Report
  */
-router.post('/generate-gemini-report', async (req, res) => {
+router.post(['/generate-gemini-report', '/generate-report'], async (req, res) => {
   try {
     const incomingDossier = req.body?.dossier || req.body || {};
     const updatedDossier = await generateGeminiAssessmentReport(incomingDossier);
@@ -190,6 +192,7 @@ router.post('/generate-gemini-report', async (req, res) => {
       success: true,
       dossier: updatedDossier,
       geminiReport: updatedDossier.geminiReport,
+      report: updatedDossier.geminiReport,
       evaluation: updatedDossier.evaluation
     });
   } catch (err) {

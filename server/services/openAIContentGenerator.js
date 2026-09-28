@@ -4,32 +4,18 @@ const geminiService = require('./geminiService');
 
 class OpenAIContentGenerator {
   constructor() {
-    this.openai = null;
-    this.isInitialized = false;
+    this.isInitialized = geminiService.isAvailable();
     this.recommendationEngine = new RecommendationEngine();
-    
-    // Initialize OpenAI if API key is available
-    if (process.env.OPENAI_API_KEY) {
-      try {
-        const OpenAI = require('openai');
-        this.openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-        this.isInitialized = true;
-        console.log('✅ OpenAI Content Generator initialized');
-      } catch (error) {
-        console.error('❌ Failed to initialize OpenAI:', error.message);
-        this.isInitialized = false;
-      }
-    }
   }
 
   /**
-   * Generate complete assessment results using Gemini (gemini-3.8-flash) or OpenAI
+   * Generate complete assessment results using Gemini 3.8 Flash / Gemini 3.1 Pro
    * @param {object} assessment - Full assessment object with responses
    * @param {string} pillarId - Optional: specific pillar to generate results for
    * @returns {object} Complete results structure
    */
   async generateAssessmentContent(assessment, pillarId = null) {
-    // 🌟 1. Primary: Use Google Gemini (gemini-3.8-flash) if available
+    // 🌟 1. Primary: Use Google Gemini (gemini-3.8-flash / gemini-3.1-pro-preview) if available
     if (geminiService.isAvailable()) {
       try {
         console.log(`🤖 Generating ${pillarId ? 'pillar' : 'overall'} content with Gemini (gemini-3.8-flash) for assessment ${assessment.id}`);
@@ -68,51 +54,7 @@ class OpenAIContentGenerator {
       }
     }
 
-    if (!this.isInitialized) {
-      return this.generateFallbackContent(assessment, pillarId);
-    }
-
-    try {
-      console.log(`🤖 Generating ${pillarId ? 'pillar' : 'overall'} content for assessment ${assessment.id}`);
-      console.log(`   Organization: ${assessment.organizationName}`);
-      console.log(`   Industry: ${assessment.industry}`);
-      console.log(`   Total responses: ${Object.keys(assessment.responses || {}).length}`);
-      
-      const prompt = pillarId 
-        ? this.buildPillarPrompt(assessment, pillarId)
-        : this.buildOverallPrompt(assessment);
-      
-      console.log(`📝 Prompt length: ${prompt.length} characters`);
-      console.log(`🔑 Assessment ID in prompt: ${assessment.id}`);
-      
-      const response = await this.openai.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'system',
-            content: this.getSystemPrompt()
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 4000,
-        response_format: { type: 'json_object' }
-      });
-
-      const content = JSON.parse(response.choices[0].message.content);
-      console.log('✅ AI content generated successfully');
-      
-      return pillarId 
-        ? this.formatPillarResults(content, assessment, pillarId)
-        : this.formatOverallResults(content, assessment);
-      
-    } catch (error) {
-      console.error('❌ Error generating content from AI generator:', error.message);
-      return this.generateFallbackContent(assessment, pillarId);
-    }
+    return this.generateFallbackContent(assessment, pillarId);
   }
 
   /**

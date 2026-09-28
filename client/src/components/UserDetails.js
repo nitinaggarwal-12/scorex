@@ -429,7 +429,7 @@ const UserDetails = () => {
             assignments.map((assignment) => (
               <AssignmentCard key={assignment.id}>
                 <AssignmentHeader>
-                  <AssessmentName onClick={() => navigate(`/assessment-details/${assignment.assessment_id}`)}>
+                  <AssessmentName onClick={() => navigate(`/assessments/report/${assignment.assessment_id}`)}>
                     {assignment.assessment_name}
                   </AssessmentName>
                   <StatusBadge $status={assignment.status}>

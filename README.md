@@ -1,239 +1,88 @@
-# Databricks Technical Maturity Assessment Platform
+# ScoreX — Enterprise Data, AI Maturity, Value Realization & Statutory Compliance Platform (`v3.5.0`)
 
-Enterprise-grade assessment platform for evaluating and improving Databricks technical maturity across 6 key pillars.
-
-## 🎯 Overview
-
-A comprehensive web application that helps organizations assess their Databricks maturity, identify gaps, and receive intelligent, pillar-specific recommendations for improvement.
-
-## ✨ Key Features
-
-### Assessment Framework
-- **6 Pillar Assessment**: Platform Governance, Data Engineering, Analytics & BI, Machine Learning, Generative AI, Operational Excellence
-- **60 Questions**: 10 questions per pillar covering current state, future vision, pain points, and notes
-- **Maturity Scoring**: 5-level maturity scale (Initial → Experiment → Develop → Optimize → Innovate)
-- **Custom Questions**: Add pillar-specific questions with full assessment capabilities
-
-### Intelligent Recommendations
-- **Pillar-Specific Features**: Each pillar shows only relevant Databricks features
-- **Pain Point Mapping**: 300+ pain points mapped to specific solutions
-- **Contextual Next Steps**: Actionable recommendations based on maturity gaps
-- **Industry Benchmarking**: Compare against industry standards
-
-### Reporting & Analytics
-- **Executive Command Center**: High-level strategic overview with dynamic roadmap
-- **Deep Dive Report**: Detailed technical analysis per pillar
-- **Industry Benchmarking**: Competitive positioning and peer comparison
-- **Insights Dashboard**: Cross-pillar analytics and trends
-
-### Collaboration Features
-- **User Management**: Admin, Author, Consumer roles with RBAC
-- **Question Assignments**: Assign specific questions to users
-- **Assessment History**: Track changes and version control
-- **Excel Import/Export**: Bulk edit assessments offline
-
-### User Experience
-- **Interactive Chatbot**: Context-aware assistance across all pages
-- **Slideshow Mode**: Present reports with professional slides
-- **Print Functionality**: Generate PDF reports
-- **Feedback System**: Capture user feedback with analytics
-- **User Guide**: Comprehensive documentation and training
-
-## 🚀 Tech Stack
-
-- **Frontend**: React 18, React Router, Recharts
-- **Backend**: Node.js, Express
-- **Database**: PostgreSQL
-- **Deployment**: Railway
-- **Authentication**: Session-based with bcrypt
-
-## 📦 Installation
-
-### Prerequisites
-- Node.js 18+
-- PostgreSQL 14+
-- npm or yarn
-
-### Local Setup
-
-1. **Clone the repository**
-```bash
-git clone https://github.com/enterprise-architecture/technical-maturity-assessment.git
-cd technical-maturity-assessment
-```
-
-2. **Install dependencies**
-```bash
-npm install
-cd client && npm install && cd ..
-```
-
-3. **Configure environment**
-```bash
-cp env.example .env
-# Edit .env with your PostgreSQL credentials
-```
-
-4. **Initialize database**
-```bash
-npm run db:setup
-```
-
-5. **Start the application**
-```bash
-# Development mode (separate terminals)
-npm run server  # Backend on port 5001
-npm run client  # Frontend on port 3000
-
-# Or use the convenience script
-./start-local.sh
-```
-
-6. **Access the application**
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:5001
-- Health Check: http://localhost:5001/api/health
-
-## 🔧 Configuration
-
-### Environment Variables
-
-```bash
-# Database
-DATABASE_URL=postgresql://user:password@localhost:5432/maturity_assessment
-
-# Server
-PORT=5001
-NODE_ENV=development
-
-# Email (optional)
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your-email@gmail.com
-SMTP_PASS=your-app-password
-EMAIL_FROM=noreply@yourdomain.com
-
-# OpenAI (optional - for enhanced content generation)
-OPENAI_API_KEY=your-openai-key
-```
-
-## 📚 Usage
-
-### For Administrators
-1. **Create Assessment**: Start new assessment with selected pillars
-2. **Manage Users**: Add authors and consumers
-3. **Assign Questions**: Delegate specific questions to team members
-4. **Custom Questions**: Add organization-specific questions
-5. **View Reports**: Access all reports and analytics
-
-### For Authors
-1. **Complete Assessments**: Answer assigned questions
-2. **Track Progress**: Monitor completion status
-3. **Collaborate**: Work with team on shared assessments
-
-### For Consumers
-1. **View Reports**: Access completed assessment reports
-2. **Benchmarking**: Compare against industry standards
-3. **Export**: Download reports as PDF or Excel
-
-## 🏗️ Architecture
-
-```
-databricks-maturity-assessment/
-├── client/                 # React frontend
-│   ├── src/
-│   │   ├── components/    # React components
-│   │   ├── services/      # API services
-│   │   └── data/          # Assessment framework
-├── server/                # Node.js backend
-│   ├── routes/           # API endpoints
-│   ├── services/         # Business logic
-│   ├── db/               # Database layer
-│   ├── data/             # Pillar definitions
-│   └── migrations/       # Database migrations
-└── railway.json          # Railway deployment config
-```
-
-## 🔐 Security
-
-- **Authentication**: Session-based with secure cookies
-- **Password Hashing**: bcrypt with salt rounds
-- **SQL Injection Protection**: Parameterized queries
-- **XSS Protection**: Input sanitization
-- **CORS**: Configured for production domains
-
-## 🚢 Deployment
-
-### Railway (Recommended)
-
-1. **Connect Repository**: Link to Railway
-2. **Configure Environment**: Set environment variables
-3. **Deploy**: Automatic deployment on push
-
-Live URL: https://scorex.up.railway.app/
-
-### Manual Deployment
-
-```bash
-# Build frontend
-cd client && npm run build
-
-# Start production server
-npm start
-```
-
-## 🧪 Testing
-
-```bash
-# Run tests
-npm test
-
-# Test email configuration
-node test-email-config.js
-
-# Test database connection
-node server/db/connection.js
-```
-
-## 📊 Database Schema
-
-- **assessments**: Assessment metadata and responses
-- **users**: User accounts and roles
-- **question_assignments**: Question-level assignments
-- **custom_questions**: Organization-specific questions
-- **question_edits**: Edit history and versioning
-- **feedback**: User feedback and analytics
-- **chat_conversations**: Chatbot interactions
-- **knowledge_base**: FAQ and documentation
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📝 License
-
-This project is proprietary and confidential.
-
-## 👥 Authors
-
-- **ScoreX Engineering** - Initial work - [enterprise-architecture](https://github.com/enterprise-architecture)
-
-## 🙏 Acknowledgments
-
-- Databricks for the maturity framework
-- React and Node.js communities
-- Railway for hosting infrastructure
-
-## 📞 Support
-
-For support, email support@example.com or open an issue in the repository.
+Enterprise-grade platform for evaluating technical maturity, CFO value realization, and statutory AI regulatory compliance across **3 Canonical Assessment Engines**, powered by the **5-Tier Google / Gemini / DeepMind Model Stack** and deployed on **Google Cloud Run (Argolis: `https://scorex-app-522233290860.us-central1.run.app`)**.
 
 ---
 
-**Built with ❤️ for Databricks customers**
+## 🏛️ 3 Canonical Assessment Engines
 
+1. **Engine 1 — Dynamic Assessment Blueprints Engine** (`/assessments`, `/assessments/generator`, `/assessments/run/:typeKey`, `/assessments/run/instance/:instanceId`, `/assessments/report/:instanceId`)
+   - **6 Production-Ready Enterprise Frameworks & Complete Demo Dossiers**:
+     - `enterprise_data_ai_maturity` (`inst_enterprise_data_ai_demo` — ConnectPlus Telecom): Enterprise Data & AI Technical Maturity (6 Pillars / 30 Weighted Dimensions)
+     - `genai_rag_readiness` (`inst_genai_rag_demo` — Apex Financial Partners): GenAI & Agentic RAG Production Readiness
+     - `finops_cost_governance` (`inst_finops_demo` — Helios Retail Group): Cloud & AI FinOps Cost Governance
+     - `cloud_migration_modernization` (`inst_cloud_migration_demo` — NovaBio Health Systems): Enterprise Cloud Migration & Lakehouse Modernization
+     - `zero_trust_cyber_resilience` (`inst_zero_trust_demo` — ConnectPlus Telecom): Zero-Trust Security & Cyber Resilience
+     - `mlops_agentic_ai_governance` (`inst_mlops_agentic_demo` — Apex Financial Partners): MLOps & Agentic AI Lifecycle Governance
+   - **Infinite AI Custom Blueprint Generator**: Synthesize new domain-specific maturity rubrics in `< 2.5s` via `Gemini 3.8 Flash` (`gemini-3.8-flash`) and `Gemini 3.1 Pro` (`gemini-3.1-pro-preview`), protected by the 4-Category Conversational Non-Mutation Guard (`server/utils/conversationalIntentGuard.js`).
+   - **Multimodal Evidence & Architecture Decompilation**: Upload PDFs, architecture diagrams, or spreadsheets to auto-populate maturity scores, Draw.io architecture blueprints, and executive reports.
 
+2. **Engine 2 — GE Value Realization Engine** (`/ge-value-realization`, `/roi-calculator`, `/tco-calculator`, with `/value-realization` redirecting to `/ge-value-realization`)
+   - **5-Column CFO Value Realization Bridge**: Business Objective $\rightarrow$ Strategic KPI $\rightarrow$ Baseline vs. Target $\rightarrow$ AI Capability Enabler $\rightarrow$ Risk-Adjusted Annualized Value ($M).
+   - **3-Horizon Value Roadmap & 5-KPA Scorecard**: Quick Wins (0–3 Months), Foundation Scale (3–9 Months), and Autonomous Transformation (9–18 Months) across all 5 Key Process Areas (`KPA-01`..`KPA-05`) and 15 industry workflows.
+   - **Integrated ROI & TCO Calculators**: Interactive `/roi-calculator` and `/tco-calculator` financial modeling.
+
+3. **Engine 3 — EU AI Act Statutory Compliance Engine** (`/eu-ai-act`, `/eu-ai-act/system/:id`)
+   - **Statutory Risk Pyramid Classification**: Regulation (EU) 2024/1689 Article 5 (Prohibited), Article 6 & Annex III (High-Risk), Article 50 (Transparency), and Articles 51–55 (GPAI / Systemic Risk).
+   - **Annex IV Conformity Dossier Generator**: Automated technical documentation, conformity checklists, and penalty exposure calculation via `Gemini 3.1 Pro` (`gemini-3.1-pro-preview`) and audited by `Google Omni 1.1` (`google-omni-1.1`).
+
+---
+
+## 🧠 Canonical 5-Tier Google / Gemini / DeepMind Model Stack
+
+| Tier | Role & Capability | Canonical Model IDs |
+| :--- | :--- | :--- |
+| **Tier 1** | **Master Orchestrator & Multimodal Forensic Judge** | `Google Omni 1.1` (`google-omni-1.1` / `gemini-omni-1.1-flash`) |
+| **Tier 2** | **Deep Reasoning, CFO Value Synthesis, Annex IV & Vision** | `Gemini 3.1 Pro` (`gemini-3.1-pro-preview` with `thinkingConfig` + `responseSchema`) |
+| **Tier 3** | **High-Throughput Classifier, Evidence Extraction & Blueprint Compiler** | `Gemini 3.8 Flash` (`gemini-3.8-flash` with Function Calling) |
+| **Tier 4** | **Real-Time Bidirectional & Sub-Second Copilot Streaming** | `Gemini Flash Live` (`gemini-3.1-flash-live-preview`) |
+| **Tier 5** | **Native DeepMind Multimodal Media, Embeddings & Enterprise Mesh** | `Google DeepMind Veo 3.1` (`veo-3.1-generate-preview`), `DeepMind Lyria 3.5` (`lyria-3.5` / `models/lyria-3-pro-preview`), `Google DeepMind Neural Audio` (`gemini-3.1-flash-tts-preview`), `Google DeepMind Imagen 3` (`gemini-3.1-flash-image-preview` / `models/imagen-3.0-generate-002`), `Gemini Embedding 001` & `Text Embedding 005` (`gemini-embedding-001` / `text-embedding-005`), `BigQuery Property Graphs (ISO GQL)`, `Google ADK Sidecar`, `Gemini Data Analytics API`, `Google Cloud Model Armor` |
+
+---
+
+## 🚀 Tech Stack & Cloud Deployment
+
+- **Frontend**: React 18, React Router v6, Recharts, Framer Motion, Lucide Icons, PPTX/PDF/Excel/Word Executive Exporters
+- **Backend**: Node.js, Express, `@google/genai` Unified 5-Tier Gemini Service (`server/services/geminiService.js`), 4-Category Conversational Non-Mutation Guard (`server/utils/conversationalIntentGuard.js`)
+- **Database**: PostgreSQL (`PGHOST` / `PGDATABASE: scorex_postgres`) & Deterministic File-Backed Store (`data/dynamic_assessments.json`, `db-sync/export-data.json`)
+- **Primary Deployment (Google Cloud Run — Argolis)**: `https://scorex-app-522233290860.us-central1.run.app` (Project: `gcp-sandbox-field-eng`, Region: `us-central1`, Service: `scorex-app`)
+- **Secondary Deployment (Railway)**: `https://scorex.up.railway.app/`
+
+---
+
+## 📦 Local Setup & Execution
+
+```bash
+# 1. Install dependencies
+npm install
+npm install --prefix client
+
+# 2. Configure environment
+cp env.example .env
+# Add GEMINI_API_KEY and optional model overrides in .env
+
+# 3. Build React production bundle & sync static workflows
+npm run build --prefix client
+cp -r client/public/workflows client/build/workflows
+
+# 4. Start server on port 5001
+PORT=5001 node server/index.js
+```
+
+---
+
+## 🧪 End-to-End Forensic & Quality Gate Verification
+
+Run the automated Harness Engineering Stop Quality Gate and E2E Forensic Audit:
+
+```bash
+node scripts/stop_quality_gate.mjs
+node scratch/run_e2e_forensic_blindspot_audit.mjs
+```
+
+---
+
+## 🔐 Privacy & Universal Single-Source Governance (`v3.5.0`)
+
+- **100% Fictitious Enterprise Demo Personas**: Seeded portfolios use strictly synthetic benchmark organizations (`ConnectPlus Telecom`, `Apex Financial Partners`, `Helios Retail Group`, `NovaBio Health Systems`).
+- **Universal Single-Source Governance Lockstep**: `AGENTS.md`, `GEMINI.md`, `CLAUDE.md`, `.agents/AGENTS.md`, `skills.md`, `skills.json`, `hooks.json`, and `.agents/hooks.json` are symlinked directly to `/Users/nitinagga/.gemini/config/` with zero discrepancy.

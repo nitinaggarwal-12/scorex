@@ -612,7 +612,7 @@ const REFERENCE_BLUEPRINTS = [
     domain: 'Agentic AI',
     tier: 'P3-AI-L-03 / ARCH-MCP-06',
     badge: 'MCP Tool Gateway',
-    description: 'Gemini 3.7 Super-Orchestrator Hub, Model Context Protocol (MCP) tool gateway, Tangential ReAct ring, and HITL approval gates.',
+    description: 'Google Omni 1.1 & Gemini 3.1 Pro Super-Orchestrator Hub, Model Context Protocol (MCP) tool gateway, Tangential ReAct ring, and HITL approval gates.',
     title: 'Hub-and-Spoke Multi-Agent Mesh & MCP Gateway',
     subtitle: 'P3-AI-L-03 Agent Bus + ARCH-MCP-06 Standardized Tools',
     builder: buildHubAndSpokeAgentConfigXml
@@ -1547,7 +1547,7 @@ const ArchitectureComparisonDiagram = ({
                 <b>Legacy Friction:</b> 500-token arbitrary slicing, unmanaged third-party SaaS index ($4,200/mo), high hallucination rate.
               </div>
               <div style={{ fontSize: '0.78rem', color: '#15803D', lineHeight: '1.35' }}>
-                <b>Target Solution:</b> Vertex AI Gemini 2.5/3.7 native 2M context + BigLake zero-copy vector grounding.
+                <b>Target Solution:</b> Vertex AI Gemini 3.1 Pro / 3.8 Flash native 2M context + BigLake zero-copy vector grounding.
               </div>
             </div>
 
@@ -1662,7 +1662,7 @@ const ArchitectureComparisonDiagram = ({
         </div>
       </StrategicBenefitsFooter>
 
-      {/* GEMINI 3.7 REGENERATE PROMPT MODAL */}
+      {/* GEMINI 3.8 FLASH REGENERATE PROMPT MODAL */}
       <AnimatePresence>
         {isModalOpen && (
           <ModalOverlay

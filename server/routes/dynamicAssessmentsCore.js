@@ -5,10 +5,12 @@ const customAssessmentRepo = require('../db/customAssessmentRepository');
 const dynamicEngine = require('../services/dynamicAssessmentEngine');
 const masterBlueprintCatalog = require('../services/masterBlueprintCatalog');
 const notificationService = require('../services/notificationService');
+const geminiService = require('../services/geminiService');
+const { classifyConversationalIntent } = require('../utils/conversationalIntentGuard');
 
 /**
  * Dynamic Assessment Routes
- * Powered by Google Gemini (gemini-3.7-flash)
+ * Powered by Google Gemini (gemini-3.8-flash)
  */
 
 // In-Memory Sliding-Window Rate Limiter for Gemini AI Endpoints
@@ -16,9 +18,22 @@ const aiRateLimitStore = new Map(); // ip -> Array of timestamps
 
 const aiRateLimiter = (maxRequests = 15, windowMs = 60000) => {
   return (req, res, next) => {
+    const candidatePrompt =
+      req.body?.prompt ||
+      req.body?.customInstructions ||
+      req.body?.customPrompt ||
+      req.body?.instructions;
+    if (candidatePrompt && typeof candidatePrompt === 'string') {
+      const intent = classifyConversationalIntent(candidatePrompt);
+      if (intent.isConversational) {
+        return next();
+      }
+    }
+
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown-ip';
+    const bucketKey = `${ip}:${req.path}`;
     const now = Date.now();
-    const timestamps = (aiRateLimitStore.get(ip) || []).filter(ts => now - ts < windowMs);
+    const timestamps = (aiRateLimitStore.get(bucketKey) || []).filter(ts => now - ts < windowMs);
 
     if (timestamps.length >= maxRequests) {
       const oldest = timestamps[0];
@@ -32,7 +47,7 @@ const aiRateLimiter = (maxRequests = 15, windowMs = 60000) => {
     }
 
     timestamps.push(now);
-    aiRateLimitStore.set(ip, timestamps);
+    aiRateLimitStore.set(bucketKey, timestamps);
     next();
   };
 };
@@ -52,6 +67,20 @@ router.post('/generate-framework', aiRateLimiter(15, 60000), async (req, res) =>
     const { prompt, industry, targetAudience, focusAreas, tier } = req.body;
     if (!prompt || typeof prompt !== 'string' || !prompt.trim()) {
       return res.status(400).json({ success: false, error: 'Prompt is required' });
+    }
+
+    const intent = classifyConversationalIntent(prompt);
+    if (intent.isConversational) {
+      return res.json({
+        success: true,
+        isConversational: true,
+        mutated: false,
+        category: intent.category,
+        conversationalReply: intent.reply,
+        framework: null,
+        type: null,
+        message: intent.reply
+      });
     }
 
     const framework = await dynamicEngine.generateFrameworkFromPrompt(prompt.trim(), {
@@ -79,6 +108,8 @@ router.post('/generate-framework', aiRateLimiter(15, 60000), async (req, res) =>
 
     res.json({
       success: true,
+      isConversational: false,
+      mutated: true,
       framework,
       type: savedType,
       message: 'Assessment framework generated and saved to Templates Catalog.'
@@ -499,26 +530,17 @@ router.get('/instances/:id', async (req, res) => {
       dimensionScores: instance.dimensionScores || instance.executiveReport?.dimensionScores || []
     };
 
-    const existingDiags = instance.architectureDiagrams || instance.executiveReport?.architectureDiagrams;
-    if (existingDiags && existingDiags.promptCanvasSource && existingDiags.transitionStateXml) {
+    const existingDiags =
+      instance.architectureDiagrams ||
+      instance.aiReport?.architectureDiagrams ||
+      instance.executiveReport?.architectureDiagrams;
+    if (existingDiags && existingDiags.currentStateXml) {
       instance.architectureDiagrams = existingDiags;
-    } else {
-      try {
-        const promptCanvasService = require('../services/promptCanvasService');
-        const liveDiags = await promptCanvasService.generateLiveDiagramsFromPromptCanvas(fw, metadata, scores);
-        instance.architectureDiagrams = liveDiags;
-        if (!instance.executiveReport) instance.executiveReport = {};
-        instance.executiveReport.architectureDiagrams = liveDiags;
-        await customAssessmentRepo.updateInstance(instance.id, {
-          architectureDiagrams: liveDiags,
-          executiveReport: instance.executiveReport
-        }).catch(() => {});
-      } catch (pcErr) {
-        const blueprints = masterBlueprintCatalog.getMasterArchitectureDiagrams(fw, metadata, scores);
-        instance.architectureDiagrams = blueprints;
-        if (!instance.executiveReport) instance.executiveReport = {};
-        instance.executiveReport.architectureDiagrams = blueprints;
-      }
+    } else if (instance.status === 'completed') {
+      const blueprints = masterBlueprintCatalog.getMasterArchitectureDiagrams(fw, metadata, scores);
+      instance.architectureDiagrams = blueprints;
+      if (!instance.executiveReport) instance.executiveReport = {};
+      instance.executiveReport.architectureDiagrams = blueprints;
     }
 
     res.json({
@@ -830,15 +852,35 @@ router.post('/instances/:id/generate-report', aiRateLimiter(15, 60000), async (r
   }
 });
 
-// 7. Bespoke Architecture Diagrams Generation via Gemini 3.7 Flash
+// 7. Bespoke Architecture Diagrams Generation via Gemini 3.8 Flash
 router.post('/instances/:id/generate-diagrams', aiRateLimiter(15, 60000), async (req, res) => {
   try {
     const { id } = req.params;
-    const { customInstructions } = req.body;
+    const customInstructions =
+      req.body?.customInstructions ||
+      req.body?.customPrompt ||
+      req.body?.prompt ||
+      req.body?.instructions;
 
     const instance = await customAssessmentRepo.getInstanceById(id);
     if (!instance) {
       return res.status(404).json({ success: false, error: 'Assessment instance not found' });
+    }
+
+    if (customInstructions && typeof customInstructions === 'string' && customInstructions.trim()) {
+      const intent = classifyConversationalIntent(customInstructions);
+      if (intent.isConversational) {
+        return res.json({
+          success: true,
+          isConversational: true,
+          mutated: false,
+          category: intent.category,
+          conversationalReply: intent.reply,
+          diagrams: instance.architectureDiagrams || instance.aiReport?.architectureDiagrams || null,
+          instance: sanitizeInstance(instance),
+          message: intent.reply
+        });
+      }
     }
 
     const calculated = dynamicEngine.calculateScores(instance.responses, instance.frameworkSnapshot);
@@ -869,9 +911,11 @@ router.post('/instances/:id/generate-diagrams', aiRateLimiter(15, 60000), async 
 
     res.json({
       success: true,
+      isConversational: false,
+      mutated: true,
       diagrams,
       instance: sanitizeInstance(updated),
-      message: 'Bespoke architecture diagrams generated with Gemini 3.7 Flash'
+      message: 'Bespoke architecture diagrams generated with Gemini 3.8 Flash'
     });
   } catch (error) {
     console.error('Error generating bespoke architecture diagrams:', error);
@@ -886,7 +930,7 @@ router.post('/instances/:id/generate-diagrams', aiRateLimiter(15, 60000), async 
 router.get('/instances/:id/benchmarks', async (req, res) => {
   try {
     const { id } = req.params;
-    const { industry = 'Retail & E-Commerce' } = req.query;
+    const { industry = 'Retail & E-Commerce', ai } = req.query;
 
     const instance = await customAssessmentRepo.getInstanceById(id);
     if (!instance) {
@@ -961,7 +1005,7 @@ router.get('/instances/:id/benchmarks', async (req, res) => {
       modelUsed: 'gemini-3.8-flash'
     };
 
-    if (geminiService.isAvailable()) {
+    if (ai === 'true' && geminiService.isAvailable()) {
       try {
         const benchPrompt = `Generate a concise JSON Industry Peer Benchmarking readout for "${instance.customerName || 'Enterprise Client'}" in the "${industry}" sector (Overall Maturity: ${overallScore}/5.0, ${percentile}th Percentile, Competitive Tier: ${competitiveTier}).
 Leading Pillars vs Industry Median (${targetBench.median}): ${leadDimensions.map(d => `${d.dimensionName} (${d.customerScore})`).join(', ') || 'None'}
@@ -1015,8 +1059,19 @@ router.post('/instances/:id/generate-terraform', async (req, res) => {
     }
 
     const org = instance.customerName || 'Enterprise Organization';
+    const slug = org.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'enterprise';
     const recs = (instance.aiReport?.prioritizedRecommendations || []).map(r => `${r.title} (${r.expectedImpact || ''})`).join('; ');
-    const prompt = `Generate bespoke production-grade Terraform HCL (main.tf) blueprints for customer "${org}" (Initiative: "${instance.useCase || instance.frameworkSnapshot?.title || 'Cloud & AI Modernization'}", Maturity Score: ${instance.totalScore || 3.0}/5.0).
+
+    const fallbackTerraform = {
+      gcp: `terraform {\n  required_providers {\n    google = { source = "hashicorp/google", version = "~> 6.0" }\n  }\n}\n\nprovider "google" {\n  project = "${slug}-prod-ai"\n  region  = "us-central1"\n}\n\nresource "google_kms_key_ring" "ai_keyring" {\n  name     = "${slug}-cmek-ring"\n  location = "us-central1"\n}\n\nresource "google_bigquery_dataset" "lakehouse" {\n  dataset_id                 = "${slug.replace(/-/g, '_')}_iceberg_gold"\n  location                   = "US"\n  delete_contents_on_destroy = false\n}\n\nresource "google_vertex_ai_endpoint" "gemini_gateway" {\n  name         = "${slug}-gemini-3-8-flash"\n  display_name = "${org} Gemini 3.8 Enterprise Gateway"\n  location     = "us-central1"\n}`,
+      aws: `provider "aws" {\n  region = "us-east-1"\n}\n\nresource "aws_iam_openid_connect_provider" "gcp_workload_federation" {\n  url             = "https://accounts.google.com"\n  client_id_list  = ["sts.googleapis.com"]\n  thumbprint_list = ["08745487e891c19e3078c1f2a07e452950ef36f6"]\n}\n\nresource "aws_s3_bucket" "omni_federated_lake" {\n  bucket = "${slug}-biglake-omni-iceberg"\n}`,
+      azure: `provider "azurerm" {\n  features {}\n}\n\nresource "azurerm_resource_group" "cross_cloud_ai" {\n  name     = "rg-${slug}-ai-federation"\n  location = "East US"\n}\n\nresource "azurerm_federated_identity_credential" "vertex_federation" {\n  name                = "fc-${slug}-vertex-bridge"\n  resource_group_name = azurerm_resource_group.cross_cloud_ai.name\n  parent_id           = azurerm_resource_group.cross_cloud_ai.id\n  audience            = ["api://AzureADTokenExchange"]\n  issuer              = "https://accounts.google.com"\n  subject             = "system:serviceaccount:${slug}:vertex-agent"\n}`,
+      modelUsed: 'gemini-3.8-flash'
+    };
+
+    if (req.body?.liveAi === true && geminiService.isAvailable()) {
+      try {
+        const prompt = `Generate bespoke production-grade Terraform HCL (main.tf) blueprints for customer "${org}" (Initiative: "${instance.useCase || instance.frameworkSnapshot?.title || 'Cloud & AI Modernization'}", Maturity Score: ${instance.totalScore || 3.0}/5.0).
 Key Architectural Recommendations to provision: ${recs || 'Vertex AI Gemini 3.8 Flash endpoint, KMS CMEK encryption, BigQuery/BigLake Iceberg lakehouse, VPC Service Controls perimeter'}.
 
 Return ONLY valid JSON matching this schema:
@@ -1027,17 +1082,23 @@ Return ONLY valid JSON matching this schema:
   "modelUsed": "gemini-3.8-flash"
 }`;
 
-    const aiRes = await geminiService._generateWithFallback(
-      prompt,
-      'You are a Principal Cloud Infrastructure Architect powered by Google Gemini 3.8 Flash. Output valid JSON only.',
-      0.5,
-      'application/json'
-    );
-    const parsed = JSON.parse(aiRes.text.match(/\{[\s\S]*\}/)?.[0] || aiRes.text);
-    parsed.modelUsed = aiRes.modelUsed || 'gemini-3.8-flash';
-    res.json({ success: true, terraform: parsed });
+        const aiRes = await geminiService._generateWithFallback(
+          prompt,
+          'You are a Principal Cloud Infrastructure Architect powered by Google Gemini 3.8 Flash. Output valid JSON only.',
+          0.5,
+          'application/json'
+        );
+        const parsed = JSON.parse(aiRes.text.match(/\{[\s\S]*\}/)?.[0] || aiRes.text);
+        parsed.modelUsed = aiRes.modelUsed || 'gemini-3.8-flash';
+        return res.json({ success: true, terraform: parsed });
+      } catch (aiErr) {
+        console.warn('Terraform Gemini 3.8 Flash synthesis fallback:', aiErr.message);
+      }
+    }
+
+    return res.json({ success: true, terraform: fallbackTerraform });
   } catch (err) {
-    console.warn('Terraform Gemini 3.8 Flash generation fallback:', err.message);
+    console.warn('Terraform generation error:', err.message);
     res.status(500).json({ success: false, error: err.message });
   }
 });
@@ -1369,17 +1430,24 @@ Return valid JSON only.`;
 router.get('/customer/:customerName/portfolio-rollup', async (req, res) => {
   try {
     const { customerName } = req.params;
-    const allInstances = await customAssessmentRepo.getAllInstances();
-    const customerInstances = allInstances.filter(
-      i => (i.customerName || '').toLowerCase() === customerName.toLowerCase()
-    );
+    const rawResult = await customAssessmentRepo.getAllInstances();
+    const allInstances = Array.isArray(rawResult) ? rawResult : (rawResult.items || []);
+    const needle = String(customerName || '').trim().toLowerCase();
+
+    const customerInstances = allInstances.filter(i => {
+      const cName = String(i.customerName || '').trim().toLowerCase();
+      if (!cName || !needle) return false;
+      return cName === needle || cName.includes(needle) || needle.includes(cName);
+    });
 
     if (customerInstances.length === 0) {
       return res.json({
         success: true,
         customerName,
         totalAssessments: 0,
+        completedAssessments: 0,
         averageMaturity: 0,
+        portfolio: [],
         portfolioRollup: []
       });
     }
@@ -1411,11 +1479,12 @@ router.get('/customer/:customerName/portfolio-rollup', async (req, res) => {
 
     res.json({
       success: true,
-      customerName,
+      customerName: customerInstances[0]?.customerName || customerName,
       totalAssessments: customerInstances.length,
       completedAssessments: completedCount,
       averageMaturity,
-      portfolio
+      portfolio,
+      portfolioRollup: portfolio
     });
   } catch (error) {
     console.error('Error computing portfolio rollup:', error);
