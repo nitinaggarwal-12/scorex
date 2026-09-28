@@ -265,27 +265,30 @@ const FinancialImpactCard = ({
           ]
       );
 
-  // Calculate gaps dynamically per dimension
-  const dimensionCalculations = dimensionsList.map((dim, idx) => {
+  const hasSubmittedScores = Number(overallCurrent) > 0;
+
+  // Calculate gaps dynamically per dimension strictly from submitted scores
+  const dimensionCalculations = dimensionsList.map((dim) => {
     const p = pillarScores[dim.id] || pillarScores[dim.name];
-    let curr = 2.5;
-    let tgt = 4.2;
+    let curr = 0;
+    let tgt = 0;
 
     if (p) {
       if (typeof p === 'number') {
         curr = p;
+        tgt = curr > 0 ? Math.min(5, Number((curr + 1.5).toFixed(1))) : 0;
       } else if (typeof p === 'object') {
-        curr = p.score || p.current || p.currentScore || 2.5;
-        tgt = p.future || p.targetScore || p.futureScore || Math.min(5, curr + 1.8);
+        curr = Number(p.score ?? p.current ?? p.currentScore ?? 0);
+        tgt = Number(p.future ?? p.targetScore ?? p.futureScore ?? (curr > 0 ? Math.min(5, curr + 1.5) : 0));
       }
-    } else {
-      curr = typeof overallCurrent === 'number' ? overallCurrent : 2.5;
-      tgt = typeof overallTarget === 'number' ? overallTarget : 4.2;
+    } else if (hasSubmittedScores) {
+      curr = Number(overallCurrent || 0);
+      tgt = Number(overallTarget || Math.min(5, curr + 1.5));
     }
 
-    const gap = Math.max(0.2, tgt - curr);
-    const weightFactor = 105000 + ((idx * 31) % 4) * 20000;
-    const savings = Math.round(gap * weightFactor * m);
+    const gap = curr > 0 ? Math.max(0, Number((tgt - curr).toFixed(2))) : 0;
+    const perUnitDimensionBaselineUsd = 100000;
+    const savings = curr > 0 ? Math.round(gap * perUnitDimensionBaselineUsd * m) : 0;
 
     return {
       id: dim.id,
@@ -295,8 +298,10 @@ const FinancialImpactCard = ({
       gap,
       savings,
       amount: savings,
-      desc: dim.description || `Optimizing ${dim.name} baseline efficiency and architecture automation.`,
-      driver: `Efficiency delta: +${Math.round(gap * 28)}% • Automated governance & cost control`
+      desc: dim.description || `Optimizing ${dim.name} baseline efficiency and architecture automation from measured score (${curr}/5.0 → ${tgt}/5.0).`,
+      driver: curr > 0
+        ? `Measured gap: ${gap.toFixed(1)} pts • Efficiency delta: +${Math.round(gap * 20)}%`
+        : 'Input Pending — Complete dimension questions to model financial impact'
     };
   });
 
@@ -305,30 +310,38 @@ const FinancialImpactCard = ({
     ? Math.round(Number(financialAnalysis.annualSavingsUsd) * m)
     : null;
 
-  const totalAnnualSavings = geminiAnnualSavings || dimensionCalculations.reduce((acc, d) => acc + d.savings, 0) || Math.round(350000 * m);
-  const threeYearValue = Array.isArray(financialAnalysis?.threeYearValueProjection) && financialAnalysis.threeYearValueProjection.length > 0
-    ? Math.round(financialAnalysis.threeYearValueProjection.reduce((acc, yr) => acc + (Number(yr.valueM) || 1.2) * 1000000, 0) * m)
-    : totalAnnualSavings * 3;
+  const totalAnnualSavings = hasSubmittedScores
+    ? (geminiAnnualSavings ?? dimensionCalculations.reduce((acc, d) => acc + d.savings, 0))
+    : 0;
+  const threeYearValue = hasSubmittedScores
+    ? (Array.isArray(financialAnalysis?.threeYearValueProjection) && financialAnalysis.threeYearValueProjection.length > 0
+        ? Math.round(financialAnalysis.threeYearValueProjection.reduce((acc, yr) => acc + (Number(yr.valueM) || 0) * 1000000, 0) * m)
+        : totalAnnualSavings * 3)
+    : 0;
 
-  const avgGap = dimensionCalculations.length > 0
+  const avgGap = hasSubmittedScores && dimensionCalculations.length > 0
     ? dimensionCalculations.reduce((acc, d) => acc + d.gap, 0) / dimensionCalculations.length
-    : 1.5;
-  const dollarAtRiskMitigated = Math.round(avgGap * 360000 * m);
+    : 0;
+  const dollarAtRiskMitigated = hasSubmittedScores ? Math.round(avgGap * 300000 * m) : 0;
 
-  // Dynamic implementation cost and net ROI grounded in Live Gemini or gap severity
-  const implementationCost = Math.round(totalAnnualSavings * (0.28 + (avgGap / 5.0) * 0.40));
-  const netThreeYearBenefit = Math.max(50000, threeYearValue - implementationCost);
-  const calculatedRoi = Math.round((netThreeYearBenefit / Math.max(1, implementationCost)) * 100);
-  const roiMultiple = avgGap > 1.2 ? Math.max(120, calculatedRoi) : Math.max(35, calculatedRoi);
-  const paybackMonths = financialAnalysis?.paybackMonths
-    ? Number(financialAnalysis.paybackMonths).toFixed(1)
-    : Math.max(2.1, Math.min(18.0, Number(((implementationCost / Math.max(1, totalAnnualSavings)) * 12).toFixed(1)))).toFixed(1);
-  const tcoReductionPct = financialAnalysis?.tcoReductionPct || Math.round(25 + avgGap * 9);
+  // Dynamic implementation cost and net ROI grounded in Live Gemini or measured gap severity
+  const implementationCost = hasSubmittedScores ? Math.round(totalAnnualSavings * 0.35) : 0;
+  const netThreeYearBenefit = hasSubmittedScores ? Math.max(0, threeYearValue - implementationCost) : 0;
+  const calculatedRoi = implementationCost > 0 ? Math.round((netThreeYearBenefit / implementationCost) * 100) : 0;
+  const roiMultiple = hasSubmittedScores ? calculatedRoi : 0;
+  const paybackMonths = hasSubmittedScores
+    ? (financialAnalysis?.paybackMonths
+        ? Number(financialAnalysis.paybackMonths).toFixed(1)
+        : (totalAnnualSavings > 0 ? Number(((implementationCost / totalAnnualSavings) * 12).toFixed(1)).toFixed(1) : '0.0'))
+    : '0.0';
+  const tcoReductionPct = hasSubmittedScores
+    ? (financialAnalysis?.tcoReductionPct ?? Math.round(avgGap * 12))
+    : 0;
 
-  const breakdownDrivers = Array.isArray(financialAnalysis?.valueDrivers) && financialAnalysis.valueDrivers.length > 0
+  const breakdownDrivers = hasSubmittedScores && Array.isArray(financialAnalysis?.valueDrivers) && financialAnalysis.valueDrivers.length > 0
     ? financialAnalysis.valueDrivers.map((vd, idx) => ({
         name: vd.category || `Value Driver ${idx + 1}`,
-        amount: Math.round((totalAnnualSavings / financialAnalysis.valueDrivers.length) * (idx === 0 ? 1.15 : idx === 1 ? 0.95 : 0.9)),
+        amount: Math.round(totalAnnualSavings / financialAnalysis.valueDrivers.length),
         desc: vd.rationale || vd.description || 'Quantified architectural efficiency and FinOps value driver.',
         driver: vd.impact || `TCO Reduction: ${tcoReductionPct}%`
       }))
@@ -357,11 +370,13 @@ const FinancialImpactCard = ({
                 borderRadius: '999px',
                 letterSpacing: '0.03em'
               }}>
-                ⚡ LIVE GEMINI 3.8 FLASH CFO MODEL
+                ⚡ INPUT-LOCKED CFO MODEL (AUDITED BY GEMINI 3.1 PRO)
               </span>
             </div>
             <Subtitle>
-              {financialAnalysis?.executiveFinancialNarrative || `Projected ROI, cost avoidance, and operational value dynamically synthesized from your maturity gap (${avgGap.toFixed(1)}/5.0).`}
+              {hasSubmittedScores
+                ? (financialAnalysis?.executiveFinancialNarrative || `Projected ROI, cost avoidance, and operational value calculated strictly from your submitted maturity gap (${avgGap.toFixed(2)}/5.0).`)
+                : 'Input Pending — Answer assessment questions to calculate your input-locked financial impact.'}
             </Subtitle>
           </div>
         </TitleBlock>

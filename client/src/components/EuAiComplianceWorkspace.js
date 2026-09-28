@@ -3362,10 +3362,9 @@ export default function EuAiComplianceWorkspace() {
                     onChange={(e) => setAuditorModel(e.target.value)}
                     style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '7px 12px', fontSize: '0.78rem', fontWeight: '700', color: '#0f172a', cursor: 'pointer' }}
                   >
-                    <option value="google-omni-1.1">Auditor Model: Google Omni 1.1 (Chief Forensic Statutory Judge)</option>
-                    <option value="gemini-3.1-pro-preview">Auditor Model: Gemini 3.1 Pro (Deep Statutory Reasoning & Annex IV)</option>
-                    <option value="gemini-3.8-flash">Auditor Model: Gemini 3.8 Flash (Rapid Contradiction Cross-Check)</option>
-                    <option value="gemini-3.1-flash-live-preview">Auditor Model: Gemini Flash Live (Real-Time Interactive Audit)</option>
+                    <option value="google-omni-1.1">Independent Judge: Google Omni 1.1 (Chief Forensic Statutory Judge)</option>
+                    <option value="gemini-3.1-pro-preview">Independent Judge: Gemini 3.1 Pro (Deep Statutory Reasoning & Annex IV)</option>
+                    <option value="gemini-3.1-flash-live-preview">Independent Judge: Gemini Flash Live (Real-Time Interactive Audit)</option>
                   </select>
 
                   <ActionButton
@@ -4469,10 +4468,9 @@ export default function EuAiComplianceWorkspace() {
                     onChange={(e) => setAuditorModel(e.target.value)}
                     style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '4px 8px', fontSize: '0.75rem', fontWeight: '700' }}
                   >
-                    <option value="google-omni-1.1">Auditor: Google Omni 1.1</option>
-                    <option value="gemini-3.1-pro-preview">Auditor: Gemini 3.1 Pro</option>
-                    <option value="gemini-3.8-flash">Auditor: Gemini 3.8 Flash</option>
-                    <option value="gemini-3.1-flash-live-preview">Auditor: Gemini Flash Live</option>
+                    <option value="google-omni-1.1">Independent Judge: Google Omni 1.1</option>
+                    <option value="gemini-3.1-pro-preview">Independent Judge: Gemini 3.1 Pro</option>
+                    <option value="gemini-3.1-flash-live-preview">Independent Judge: Gemini Flash Live</option>
                   </select>
                   <button
                     type="button"

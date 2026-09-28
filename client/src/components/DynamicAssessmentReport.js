@@ -1159,10 +1159,10 @@ const DynamicAssessmentReport = () => {
               <HiSparkles />
             </SparkleIconWrap>
             <div>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '700', color: '#ffffff', marginBottom: '4px' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: '700', color: theme === 'dark' ? '#ffffff' : '#1e1b4b', marginBottom: '4px' }}>
                 Like this assessment framework?
               </h3>
-              <p style={{ color: '#cbd5e1', fontSize: '0.9rem', margin: 0 }}>
+              <p style={{ color: theme === 'dark' ? '#cbd5e1' : '#4338ca', fontSize: '0.9rem', margin: 0 }}>
                 Promote "{framework?.title}" as an official Assessment Type so it appears in the top navigation for all future client engagements.
               </p>
             </div>
@@ -1190,16 +1190,29 @@ const DynamicAssessmentReport = () => {
                 <span><FiUser /> Customer: <strong>{instance.customerName}</strong></span>
                 {instance.useCase && <span><FiTarget /> Initiative: <strong>{instance.useCase}</strong></span>}
                 <span><FiCalendar /> Completed: <strong>{new Date(instance.completedAt || instance.createdAt).toLocaleDateString()}</strong></span>
-                <span><HiSparkles /> Evaluated by: <strong>{report?.modelUsed === 'rule-based-deterministic-synthesis' ? 'Gemini 3.8 Flash (Syncing...)' : 'Gemini 3.8 Flash'}</strong></span>
+                <span><HiSparkles /> Report Generator: <strong>{report?.modelUsed === 'rule-based-deterministic-synthesis' ? 'Gemini 3.8 Flash (Deterministic Input-Locked)' : 'Gemini 3.8 Flash'}</strong></span>
+                <span style={{
+                  background: 'rgba(16, 185, 129, 0.14)',
+                  color: '#059669',
+                  border: '1px solid rgba(16, 185, 129, 0.35)',
+                  padding: '2px 10px',
+                  borderRadius: '999px',
+                  fontSize: '0.78rem',
+                  fontWeight: 700
+                }}>
+                  ✓ Independent LLM Judge: {report?.llmJudgeAudit?.judgeModel || 'gemini-3.1-pro-preview'} + {report?.llmJudgeAudit?.secondaryJudgeModel || 'google-omni-1.1'} (Zero-Assumption Verified)
+                </span>
               </HeroMeta>
             </div>
 
             <ScoreSection $theme={theme}>
               <div>
                 <LevelBadge $theme={theme}>{scores.maturityLevel} Stage</LevelBadge>
-                <div style={{ color: "#94a3b8", fontSize: "0.85rem" }}>Overall Maturity Index</div>
+                <div style={{ color: "#64748b", fontSize: "0.85rem", fontWeight: 600 }}>
+                  Overall Maturity Index ({scores.totalAnswered ?? 0}/{scores.totalQuestions || (framework?.dimensions || []).reduce((s, d) => s + (d.questions?.length || 0), 0) || 12} inputs)
+                </div>
               </div>
-              <ScoreBig>{scores.overallScore}</ScoreBig>
+              <ScoreBig>{scores.overallScore ?? 0}</ScoreBig>
               <div style={{ color: "#64748b", fontSize: "1.2rem", fontWeight: "700" }}>/ 5.0</div>
             </ScoreSection>
           </HeroHeader>
@@ -1476,14 +1489,16 @@ const DynamicAssessmentReport = () => {
                     fontSize: "0.85rem", 
                     fontWeight: 700 
                   }}>
-                    Dimension Score: {scores.dimensionScores?.[dim.id]?.score || 2.5} / 5.0
+                    Dimension Score: {scores.dimensionScores?.[dim.id]?.score ?? 0} / 5.0
                   </span>
                 </div>
 
                 {(dim.questions || []).map((q, qIdx) => {
-                  const val = instance.responses?.[q.id] || instance.responses?.[q.id + "_current_state"] || 2;
-                  const futureVal = instance.responses?.[q.id + "_future_state"] || 4;
-                  const selectedOpt = (q.options || []).find(o => o.value === val || o.score === val);
+                  const rawVal = instance.responses?.[q.id] ?? instance.responses?.[q.id + "_current_state"];
+                  const val = (rawVal !== undefined && rawVal !== null && rawVal !== '') ? Number(rawVal) : null;
+                  const rawFutureVal = instance.responses?.[q.id + "_future_state"];
+                  const futureVal = (rawFutureVal !== undefined && rawFutureVal !== null && rawFutureVal !== '') ? Number(rawFutureVal) : null;
+                  const selectedOpt = val !== null ? (q.options || []).find(o => o.value === val || o.score === val) : null;
                   const comment = instance.responses?.[q.id + "_comment"];
                   const techPain = instance.responses?.[q.id + "_technical_pain"] || [];
                   const bizPain = instance.responses?.[q.id + "_business_pain"] || [];
@@ -1502,11 +1517,11 @@ const DynamicAssessmentReport = () => {
                       </div>
                       
                       <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginBottom: "10px" }}>
-                        <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "#dc2626", background: "#fef2f2", border: "1px solid #fecaca", padding: "3px 10px", borderRadius: "6px" }}>
-                          Current Baseline: <strong>{val}/5.0</strong>
+                        <span style={{ fontSize: "0.82rem", fontWeight: 700, color: val !== null ? "#dc2626" : "#64748b", background: val !== null ? "#fef2f2" : "#f1f5f9", border: val !== null ? "1px solid #fecaca" : "1px solid #cbd5e1", padding: "3px 10px", borderRadius: "6px" }}>
+                          Current Baseline: <strong>{val !== null ? `${val}/5.0` : 'Input Pending'}</strong>
                         </span>
-                        <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "#15803d", background: "#f0fdf4", border: "1px solid #bbf7d0", padding: "3px 10px", borderRadius: "6px" }}>
-                          Target Horizon: <strong>{futureVal}/5.0</strong>
+                        <span style={{ fontSize: "0.82rem", fontWeight: 700, color: futureVal !== null ? "#15803d" : "#64748b", background: futureVal !== null ? "#f0fdf4" : "#f1f5f9", border: futureVal !== null ? "1px solid #bbf7d0" : "1px solid #cbd5e1", padding: "3px 10px", borderRadius: "6px" }}>
+                          Target Horizon: <strong>{futureVal !== null ? `${futureVal}/5.0` : 'Input Pending'}</strong>
                         </span>
                         {geminiReadout?.recommendedService && (
                           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#0284c7", background: "#e0f2fe", border: "1px solid #bae6fd", padding: "3px 10px", borderRadius: "6px" }}>

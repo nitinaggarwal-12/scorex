@@ -1544,12 +1544,29 @@ function createInitialGeDossier(mode = 'aerovanguard_default') {
       {
         ...DEFAULT_BIONOVA_WORKFLOWS[0],
         id: 'wf_clean_1',
+        code: 'WF1',
         name: 'Priority Workflow 1',
+        businessUnit: 'Pending Input',
+        owner: 'Pending Input',
+        maturity: 'Scoping',
         activeUsers: null,
         completedTasksPerMonth: null,
         numericState: 'pending',
         verificationStatus: 'pending',
-        confidenceTier: 'D'
+        confidenceTier: 'D',
+        stages: {
+          discovery: { baseline: 0, gemini: 0 },
+          synthesis: { baseline: 0, gemini: 0 },
+          drafting: { baseline: 0, gemini: 0 },
+          review: { baseline: 0, gemini: 0 },
+          rework: { baseline: 0, gemini: 0 },
+          handoff: { baseline: 0, gemini: 0 }
+        },
+        cycleTimeBaselineHours: null,
+        cycleTimeGeminiHours: null,
+        realizedCashSavingsAnnualUsd: 0,
+        modeledAnnualValueUsd: 0,
+        outcomeScores: {}
       }
     ] : JSON.parse(JSON.stringify(DEFAULT_BIONOVA_WORKFLOWS)),
 
@@ -1564,7 +1581,10 @@ function createInitialGeDossier(mode = 'aerovanguard_default') {
       coUseOtherAiToolPct: isClean ? null : 22.0, // Used to check F03 attribution ceiling
       perceivedMinutesSavedMedian: isClean ? null : 24, // Never monetized!
       wouldChooseGeminiAgainPct: isClean ? null : 82.0,
-      ratings: {
+      meanLegacyScore: isClean ? null : 3.23,
+      meanGeminiScore: isClean ? null : 4.25,
+      preferencePct: isClean ? null : 82.0,
+      ratings: isClean ? {} : {
         relevance: { legacy: 3.2, gemini: 4.3 },
         findability: { legacy: 2.9, gemini: 4.2 },
         accuracy: { legacy: 3.4, gemini: 4.3 },
@@ -1575,7 +1595,12 @@ function createInitialGeDossier(mode = 'aerovanguard_default') {
     },
 
     // Multi-Party Sign-Off (F08 & P08)
-    signOffs: {
+    signOffs: isClean ? {
+      businessSponsor: { owner: 'Pending Assignment', status: 'Pending Review', date: '', caveat: 'Awaiting customer input & workflow scoping' },
+      platformAnalytics: { owner: 'Pending Assignment', status: 'Pending Review', date: '', caveat: 'Awaiting telemetry ingestion (A01–A07)' },
+      finance: { owner: 'Pending Assignment', status: 'Pending Review', date: '', caveat: 'Awaiting L01 legacy invoices & F01 loaded rate sign-off' },
+      securityGxp: { owner: 'Pending Assignment', status: 'Pending Review', date: '', caveat: 'Awaiting security & governance questionnaire (Q01–Q06)' }
+    } : {
       businessSponsor: { owner: 'Marcus Vance (CIO)', status: 'Pending Review', date: '2026-05-20', caveat: 'Awaiting Wave-1 Cost Bridge & NOVA-AI Pilot readout' },
       platformAnalytics: { owner: 'Lucas Sterling', status: 'Approved with Caveat', date: '2026-05-18', caveat: 'Vector WAU/MAU verified; A07 workflow tagging & NovaAssist chat export in progress' },
       finance: { owner: 'BioNova Finance Controller', status: 'Pending Review', date: '', caveat: 'Awaiting L01 NovaAssist invoices & F01 loaded rate sign-off' },
@@ -2190,10 +2215,12 @@ function evaluateGeValueRealization(dossier) {
     let wfAdjPoints = 0;
     for (const [qId, qWt] of Object.entries(wfWeights)) {
       const qResp = qMap[qId];
-      const baseWfScore = Number(wf.outcomeScores?.[qId] ?? 2);
-      const oScore = qResp?.outcomeScore !== undefined ? Number((baseWfScore + Number(qResp.outcomeScore)) / 2) : baseWfScore;
+      const isWfPending = wf.numericState === 'pending' && (!qResp || qResp.numericState === 'pending' || qResp.value === null || qResp.value === '');
+      const hasExplicitWfScore = wf.outcomeScores && wf.outcomeScores[qId] !== undefined && wf.outcomeScores[qId] !== null;
+      const baseWfScore = isWfPending ? 0 : (hasExplicitWfScore ? Number(wf.outcomeScores[qId]) : Number(qResp?.outcomeScore ?? 0));
+      const oScore = isWfPending ? 0 : (hasExplicitWfScore && qResp?.outcomeScore !== undefined ? Number((baseWfScore + Number(qResp.outcomeScore)) / 2) : baseWfScore);
       const qConfFactor = qResp?.confidenceTier ? (EVIDENCE_FACTORS[qResp.confidenceTier]?.factor ?? wfConfFactor) : wfConfFactor;
-      const effectiveFactor = (wfConfFactor + qConfFactor) / 2;
+      const effectiveFactor = isWfPending ? 0 : (wfConfFactor + qConfFactor) / 2;
       const raw = qWt * (Math.min(4, Math.max(0, oScore)) / 4);
       wfRawPoints += raw;
       wfAdjPoints += raw * effectiveFactor;

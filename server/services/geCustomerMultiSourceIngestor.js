@@ -3183,7 +3183,7 @@ function ingestCustomerMultiSourceDossier(params = {}) {
   });
 
   const isBioNova = account.sfdcAccountId === 'ACC-1002-BIONOVA';
-  const baseDossier = createInitialGeDossier('bionova_draft');
+  const baseDossier = createInitialGeDossier(prefillMode === 'clean' ? 'clean' : 'bionova_draft');
 
   const workflows = buildCustomerWorkflows(account, deepProfile, windowInfo, prefillMode);
 
@@ -3570,9 +3570,15 @@ Return ONLY valid JSON with this exact schema:
         },
         {
           dimension: `Priority Workflow Compression (${workflows[0]?.code || 'WF1'}) [W04, W08]`,
-          beforeBaseline: `${workflows[0]?.stages?.discovery?.baseline + workflows[0]?.stages?.drafting?.baseline || 20}+ min manual discovery & drafting (${workflows[0]?.cycleTimeBaselineHours || 4}h cycle)`,
-          afterGemini: `${workflows[0]?.stages?.discovery?.gemini + workflows[0]?.stages?.drafting?.gemini || 5} min with Gemini citations (${workflows[0]?.cycleTimeGeminiHours || 0.5}h cycle)`,
-          deltaImpact: `${(evaluation.evaluatedWorkflows?.[0]?.effortReductionPct || 59).toFixed(1)}% net task effort reduction`,
+          beforeBaseline: (workflows[0]?.stages?.discovery?.baseline || workflows[0]?.stages?.drafting?.baseline)
+            ? `${(workflows[0]?.stages?.discovery?.baseline || 0) + (workflows[0]?.stages?.drafting?.baseline || 0)} min manual discovery & drafting (${workflows[0]?.cycleTimeBaselineHours ?? 'Pending '}h cycle)`
+            : 'Input Pending (W04 baseline stage minutes)',
+          afterGemini: (workflows[0]?.stages?.discovery?.gemini || workflows[0]?.stages?.drafting?.gemini)
+            ? `${(workflows[0]?.stages?.discovery?.gemini || 0) + (workflows[0]?.stages?.drafting?.gemini || 0)} min with Gemini citations (${workflows[0]?.cycleTimeGeminiHours ?? 'Pending '}h cycle)`
+            : 'Input Pending (W04 Gemini stage minutes)',
+          deltaImpact: evaluation.evaluatedWorkflows?.[0]?.effortReductionPct != null && evaluation.evaluatedWorkflows?.[0]?.baselineMinutes > 0
+            ? `${Number(evaluation.evaluatedWorkflows[0].effortReductionPct).toFixed(1)}% net task effort reduction`
+            : 'Input Pending (awaiting W04 timed observation)',
           citedQuestions: 'W01, W04, W07, W08'
         },
         {
@@ -3611,7 +3617,7 @@ Return ONLY valid JSON with this exact schema:
         {
           kpaId: 'user_experience',
           title: 'Employee Experience (10 pts)',
-          keyFinding: `Pulse survey responses ([U01–U10]) record ${qMap.U06?.value || '4.25/5.0 Gemini vs 3.23/5.0 Legacy'} and ${qMap.U09?.value || '≥80% preference'}.`,
+          keyFinding: `Pulse survey responses ([U01–U10]) record ${qMap.U06?.value || 'Input Pending (U06)'} and ${qMap.U09?.value || 'Input Pending (U09)'}.`,
           actionRequired: 'Expand role-specific prompt templates and Business Unit AI Champions coaching.'
         }
       ],
@@ -3639,6 +3645,27 @@ Return ONLY valid JSON with this exact schema:
     };
   }
 
+  let llmJudgeAudit = null;
+  try {
+    llmJudgeAudit = await geminiService.runIndependentLlmJudgeAudit({
+      engineName: 'GE Value Realization Engine (60-Question Framework)',
+      generatorModel: modelUsed,
+      preferredJudgeModel: 'gemini-3.1-pro-preview',
+      secondaryJudgeModel: 'google-omni-1.1',
+      customerName: meta.customerName || 'Enterprise Customer',
+      inputFacts: {
+        answeredCount: evaluation.index?.answeredCount ?? 0,
+        totalQuestions: GE_QUESTIONS.length,
+        rawScore: evaluation.index?.rawScore ?? 0,
+        evidenceAdjustedScore: evaluation.index?.evidenceAdjustedScore ?? 0,
+        hasReconciledCostBridge: evaluation.financials?.hasReconciledCostBridge ?? false
+      },
+      generatedReport: aiSynthesis
+    });
+  } catch (judgeErr) {
+    console.warn('Independent LLM Judge audit fallback notice:', judgeErr.message);
+  }
+
   const updatedDossier = {
     ...dossier,
     evaluation,
@@ -3646,10 +3673,11 @@ Return ONLY valid JSON with this exact schema:
       ...aiSynthesis,
       generatedAt: new Date().toISOString(),
       modelUsed,
+      llmJudgeAudit,
       customerName: meta.customerName,
       sfdcAccountId: meta.vectorAccountId,
       questionsAnalyzedCount: GE_QUESTIONS.length,
-      answeredQuestionsCount: evaluation.index?.answeredCount || GE_QUESTIONS.length,
+      answeredQuestionsCount: evaluation.index?.answeredCount ?? 0,
       rawScore: evaluation.index?.rawScore,
       evidenceAdjustedScore: evaluation.index?.evidenceAdjustedScore
     }

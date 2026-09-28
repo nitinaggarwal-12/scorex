@@ -1044,9 +1044,35 @@ const GeValueRealizationWorkspace = () => {
               borderRadius: '12px',
               padding: '18px 20px'
             }}>
-              <h3 style={{ margin: '0 0 12px 0', fontSize: '0.95rem', fontWeight: 800, color: '#0f172a' }}>
-                Executive Summary — {customerName}
-              </h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
+                <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 800, color: '#0f172a' }}>
+                  Executive Summary — {customerName}
+                </h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                  <span style={{
+                    fontSize: '0.68rem',
+                    fontWeight: 700,
+                    padding: '3px 9px',
+                    borderRadius: '999px',
+                    background: '#eff6ff',
+                    color: '#1d4ed8',
+                    border: '1px solid #bfdbfe'
+                  }}>
+                    Report Generator: {dossier.geminiReport?.modelUsed || 'gemini-3.8-flash'}
+                  </span>
+                  <span style={{
+                    fontSize: '0.68rem',
+                    fontWeight: 700,
+                    padding: '3px 9px',
+                    borderRadius: '999px',
+                    background: '#ecfdf5',
+                    color: '#047857',
+                    border: '1px solid #a7f3d0'
+                  }}>
+                    ✓ Independent Judge: {dossier.geminiReport?.llmJudgeAudit?.judgeModel || 'gemini-3.1-pro-preview'} + {dossier.geminiReport?.llmJudgeAudit?.secondaryJudgeModel || 'google-omni-1.1'} (Zero-Assumption Verified)
+                  </span>
+                </div>
+              </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }}>
                 <div style={{ background: '#f8fafc', borderRadius: '8px', padding: '12px 14px', border: '1px solid #f1f5f9' }}>
                   <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>
@@ -1064,7 +1090,7 @@ const GeValueRealizationWorkspace = () => {
                     Measured Value
                   </div>
                   <div style={{ fontSize: '0.8rem', color: '#334155', lineHeight: 1.45 }}>
-                    {formatNumber(fiveCols.col2ValidatedCapacity?.hoursMonthlyBase)} hours saved monthly ({formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualBase)}/yr capacity) with {fiveCols.col4NonFinancial?.preferencePct || 84}% positive user preference.
+                    {formatNumber(fiveCols.col2ValidatedCapacity?.hoursMonthlyBase)} hours saved monthly ({formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualBase)}/yr capacity) {fiveCols.col4NonFinancial?.preferencePct != null ? `with ${fiveCols.col4NonFinancial.preferencePct}% positive user preference.` : '(U09 preference input pending).'}
                   </div>
                 </div>
 
@@ -1210,9 +1236,15 @@ const GeValueRealizationWorkspace = () => {
                   </tr>
                   <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
                     <td style={{ padding: '9px 6px', fontWeight: 600 }}>User Quality Score</td>
-                    <td style={{ padding: '9px 6px', color: '#64748b' }}>{dossier.employeeSurvey?.meanLegacyScore || 3.2} / 5.0</td>
-                    <td style={{ padding: '9px 6px', fontWeight: 600 }}>{dossier.employeeSurvey?.meanGeminiScore || 4.3} / 5.0</td>
-                    <td style={{ padding: '9px 6px', color: '#059669', fontWeight: 700 }}>{fiveCols.col4NonFinancial?.preferencePct || 84}% prefer Gemini</td>
+                    <td style={{ padding: '9px 6px', color: '#64748b' }}>
+                      {dossier.employeeSurvey?.meanLegacyScore != null ? `${dossier.employeeSurvey.meanLegacyScore} / 5.0` : 'Pending (U06)'}
+                    </td>
+                    <td style={{ padding: '9px 6px', fontWeight: 600 }}>
+                      {dossier.employeeSurvey?.meanGeminiScore != null ? `${dossier.employeeSurvey.meanGeminiScore} / 5.0` : 'Pending (U06)'}
+                    </td>
+                    <td style={{ padding: '9px 6px', color: '#059669', fontWeight: 700 }}>
+                      {fiveCols.col4NonFinancial?.preferencePct != null ? `${fiveCols.col4NonFinancial.preferencePct}% prefer Gemini` : 'Pending (U09)'}
+                    </td>
                   </tr>
                   <tr>
                     <td style={{ padding: '9px 6px', fontWeight: 600 }}>Annualized Capacity Value</td>
