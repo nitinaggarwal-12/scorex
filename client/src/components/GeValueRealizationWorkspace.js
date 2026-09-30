@@ -20,8 +20,6 @@ import {
   createInitialGeDossier,
   evaluateGeValueRealization
 } from '../data/geValueRealizationFramework';
-import AudioBriefingPlayer from './AudioBriefingPlayer';
-import OmniCriticReviewCard from './OmniCriticReviewCard';
 
 const formatCurrency = (val, showPending = true) => {
   if (val === null || val === undefined || Number.isNaN(Number(val))) {
@@ -414,19 +412,23 @@ const GeValueRealizationWorkspace = () => {
       <div style={{
         background: '#ffffff',
         borderBottom: '1px solid #e2e8f0',
-        padding: '12px 28px',
+        padding: '12px clamp(16px, 1.8vw, 28px)',
         position: 'sticky',
         top: '64px',
-        zIndex: 30
+        zIndex: 30,
+        width: '100%',
+        boxSizing: 'border-box'
       }}>
         <div style={{
-          maxWidth: '1600px',
+          width: '100%',
+          maxWidth: '100%',
           margin: '0 auto',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
-          gap: '12px'
+          gap: '12px',
+          boxSizing: 'border-box'
         }}>
           {/* Left: Customer Selector + Time Window */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
@@ -640,7 +642,7 @@ const GeValueRealizationWorkspace = () => {
       {/* =====================================================================
           MAIN WORKSPACE CONTAINER (WIDE, AIRY, LIGHT)
          ===================================================================== */}
-      <div style={{ maxWidth: '1600px', margin: '18px auto 0', padding: '0 28px' }}>
+      <div style={{ width: '100%', maxWidth: '100%', margin: '18px auto 0', padding: '0 clamp(16px, 1.8vw, 28px)', boxSizing: 'border-box' }}>
 
         {/* ===================================================================
             VIEW 1: QUESTIONNAIRE (CLEAN SIDEBAR + 2-COLUMN COMPACT CARDS)
@@ -987,72 +989,6 @@ const GeValueRealizationWorkspace = () => {
            =================================================================== */}
         {primaryView === 'report' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-
-            {/* Google Omni 1.1 Audio Storytelling Player for GE Value Realization */}
-            <AudioBriefingPlayer
-              instance={{
-                id: dossier.id || 'ge-value-realization',
-                customerName,
-                typeKey: 'ge_value_realization',
-                totalScore: Number(((evaluation.index.evidenceAdjustedScore || 68) / 20).toFixed(1)),
-                maturityLevel: evaluation.index.tierLabel || 'Value Scaling'
-              }}
-              report={{
-                executiveSummary: dossier.geminiReport?.situationText || `${customerName} achieved an evidence-adjusted GE Value Realization Index of ${evaluation.index.evidenceAdjustedScore}/100 with ${formatNumber(fiveCols.col2ValidatedCapacity?.hoursMonthlyBase)} monthly hours saved (${formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualBase)}/yr capacity value).`,
-                calculatedScores: {
-                  overallScore: Number(((evaluation.index.evidenceAdjustedScore || 68) / 20).toFixed(1)),
-                  overallTarget: 4.5,
-                  maturityLevel: evaluation.index.tierLabel || 'Value Scaling',
-                  dimensionScores: Object.fromEntries(
-                    Object.values(evaluation.kpas || {}).map((kpa) => [
-                      kpa.id,
-                      {
-                        name: kpa.title || kpa.name,
-                        score: Number(((kpa.adjustedPct || 65) / 20).toFixed(1)),
-                        targetScore: 4.5,
-                        percentage: Math.round(kpa.adjustedPct || 65)
-                      }
-                    ])
-                  )
-                },
-                recommendations: [
-                  { title: 'Expand Wave 1 Active Seat Assignment & Connector Unblocking', priority: 'Critical' },
-                  { title: 'Complete CFO Sign-Off on Legacy License Retirement & Hard Dollar Capture', priority: 'High' },
-                  { title: 'Scale Top Validated Workflows Across Enterprise Business Units', priority: 'High' }
-                ]
-              }}
-              theme="light"
-            />
-
-            {/* Google Omni 1.1 Multi-Dimensional UI/UX & Technical Critic Review */}
-            <OmniCriticReviewCard
-              instance={{
-                id: dossier.id || 'ge-value-realization',
-                customerName,
-                typeKey: 'ge_value_realization',
-                totalScore: Number(((evaluation.index.evidenceAdjustedScore || 68) / 20).toFixed(1)),
-                responses: dossier.answers || {}
-              }}
-              framework={{
-                typeKey: 'ge_value_realization',
-                title: 'Gemini Enterprise Value Realization & ROI Diagnostic (4-Pillar GE Vernova Model)',
-                dimensions: Object.values(evaluation.kpas || {}).map((kpa) => ({
-                  id: kpa.id,
-                  name: kpa.title || kpa.name,
-                  questions: [1, 2, 3]
-                }))
-              }}
-              report={{
-                executiveSummary: dossier.geminiReport?.situationText || `${customerName} Value Realization Executive Readout`,
-                recommendations: [
-                  { title: 'Expand Wave 1 Active Seat Assignment', priority: 'Critical' },
-                  { title: 'Complete CFO Sign-Off on Legacy License Retirement', priority: 'High' },
-                  { title: 'Scale Top Validated Workflows', priority: 'High' }
-                ]
-              }}
-              theme="light"
-              engineName="Engine 2: GE Value Realization"
-            />
 
             {/* Row 1: 4 Clean KPI Cards */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>

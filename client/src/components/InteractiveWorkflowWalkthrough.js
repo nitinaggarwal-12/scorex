@@ -31,7 +31,9 @@ const PageContainer = styled.div`
   min-height: 100vh;
   background: #f8fafc;
   color: #0f172a;
-  padding: 82px 32px 60px;
+  padding: 82px clamp(16px, 1.8vw, 28px) 60px;
+  width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
 
   @media (max-width: 768px) {
@@ -40,9 +42,10 @@ const PageContainer = styled.div`
 `;
 
 const ContentWrapper = styled.div`
-  max-width: 1560px;
+  max-width: 100%;
   margin: 0 auto;
   width: 100%;
+  box-sizing: border-box;
 `;
 
 const CompactHeader = styled.div`

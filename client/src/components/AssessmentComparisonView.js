@@ -18,21 +18,25 @@ const Container = styled.div`
   min-height: 100vh;
   background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
   color: #0f172a;
-  padding: 104px 40px 80px;
+  padding: 88px clamp(16px, 1.8vw, 28px) 80px;
+  width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
 
   @media (max-width: 1024px) {
-    padding: 96px 24px 60px;
+    padding: 88px 20px 60px;
   }
 
   @media (max-width: 768px) {
-    padding: 90px 16px 60px;
+    padding: 84px 14px 60px;
   }
 `;
 
 const ContentWrap = styled.div`
-  max-width: 1440px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
+  box-sizing: border-box;
 `;
 
 const HeaderNav = styled.div`

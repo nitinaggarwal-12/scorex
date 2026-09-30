@@ -36,8 +36,6 @@ import IaCBlueprintCard from './IaCBlueprintCard';
 import DynamicRadarChart from './DynamicRadarChart';
 import ExecutiveHeatmapMatrix from './ExecutiveHeatmapMatrix';
 import IndustryPeerBenchmarkingCard from './IndustryPeerBenchmarkingCard';
-import AudioBriefingPlayer from './AudioBriefingPlayer';
-import OmniCriticReviewCard from './OmniCriticReviewCard';
 import PresentationModeModal from './PresentationModeModal';
 import UnifiedDocumentPreviewModal from './UnifiedDocumentPreviewModal';
 import AssessmentChangelogPanel from './AssessmentChangelogPanel';
@@ -110,11 +108,13 @@ const Container = styled.div`
   min-height: 100vh;
   background: ${props => props.$theme === 'dark' ? 'linear-gradient(135deg, #0b0f19 0%, #111827 50%, #171b30 100%)' : '#f8fafc'};
   color: ${props => props.$theme === 'dark' ? '#f3f4f6' : '#0f172a'};
-  padding: 108px 36px 60px;
+  padding: 88px clamp(16px, 1.8vw, 28px) 60px;
+  width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
 
   @media (max-width: 768px) {
-    padding: 92px 16px 40px;
+    padding: 84px 14px 40px;
   }
 
   /* 🖨️ EXECUTIVE PRINT & PDF STYLES */
@@ -137,9 +137,10 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
-  max-width: 1560px;
+  max-width: 100%;
   margin: 0 auto;
   width: 100%;
+  box-sizing: border-box;
 `;
 
 const PromoteBanner = styled.div`
@@ -945,36 +946,6 @@ const DynamicAssessmentReport = () => {
               <span>⚡</span> Gemini 3.8 Flash
             </button>
 
-            {/* 2. AI Voice Briefing Action */}
-            <button
-              style={{
-                background: 'linear-gradient(135deg, #7c3aed, #6d28d9)',
-                border: 'none',
-                color: '#ffffff',
-                padding: '8px 16px',
-                borderRadius: '10px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                cursor: 'pointer',
-                fontWeight: '800',
-                fontSize: '0.85rem',
-                boxShadow: '0 4px 14px rgba(124, 58, 237, 0.3)'
-              }}
-              onClick={() => {
-                const playerEl = document.getElementById('audio-briefing-player');
-                if (playerEl) {
-                  playerEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                  playerEl.style.transform = 'scale(1.02)';
-                  setTimeout(() => { playerEl.style.transform = 'scale(1)'; }, 600);
-                }
-                toast('🎙️ DeepMind Emotional Audio Engine active! Use the player below to customize voices & language.', { icon: '🎙️' });
-              }}
-              title="Listen to DeepMind Neural Voice Briefing with 4,000+ Voices & 30+ Languages"
-            >
-              <span>🎙️</span> AI Voice Brief
-            </button>
-
             {/* 3. What-If Simulator Action */}
             <button
               style={{
@@ -1189,9 +1160,6 @@ const DynamicAssessmentReport = () => {
         </PromoteBanner>
         )}
 
-        {/* AI Voice / Audio Narrative Briefing (Google Omni 1.1) */}
-        <AudioBriefingPlayer instance={instance} report={report} theme={theme} />
-
         {/* Hero Card */}
         <HeroCard $theme={theme}>
           <HeroHeader>
@@ -1231,15 +1199,6 @@ const DynamicAssessmentReport = () => {
             </ScoreSection>
           </HeroHeader>
         </HeroCard>
-
-        {/* Google Omni 1.1 Multi-Dimensional UI/UX & Technical Critic Review */}
-        <OmniCriticReviewCard
-          instance={instance}
-          framework={framework}
-          report={report}
-          theme={theme}
-          engineName="Engine 1: Dynamic Blueprint"
-        />
 
         {/* Executive Segmented Tab Navigation */}
         <ExecutiveTabContainer $theme={theme} className="no-print">

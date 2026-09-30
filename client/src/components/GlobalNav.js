@@ -35,9 +35,10 @@ const NavContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 1600px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 0 36px;
+  padding: 0 clamp(16px, 1.8vw, 28px);
+  box-sizing: border-box;
 
   @media (max-width: 1024px) {
     padding: 0 24px;

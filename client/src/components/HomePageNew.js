@@ -52,16 +52,18 @@ const HeroGradientBG = styled.div`
 `;
 
 const HeroHeader = styled.header`
-  max-width: 1600px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 96px 48px;
+  padding: 80px clamp(16px, 2.5vw, 40px);
+  box-sizing: border-box;
 
   @media (max-width: 1024px) {
-    padding: 72px 32px;
+    padding: 64px 24px;
   }
 
   @media (max-width: 768px) {
-    padding: 64px 20px;
+    padding: 56px 16px;
   }
 `;
 
@@ -301,16 +303,18 @@ const BenefitsCard = styled.div`
 
 // Content Sections
 const Section = styled.section`
-  max-width: 1600px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 96px 48px;
+  padding: 80px clamp(16px, 2.5vw, 40px);
+  box-sizing: border-box;
 
   @media (max-width: 1024px) {
-    padding: 72px 32px;
+    padding: 64px 24px;
   }
 
   @media (max-width: 768px) {
-    padding: 64px 20px;
+    padding: 56px 16px;
   }
 
   &.alt-bg {
@@ -558,16 +562,18 @@ const Footer = styled.footer`
 `;
 
 const FooterContent = styled.div`
-  max-width: 1600px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   gap: 48px;
   margin-bottom: 48px;
-  padding: 0 48px;
+  padding: 0 clamp(16px, 2.5vw, 40px);
+  box-sizing: border-box;
 
   @media (max-width: 1024px) {
-    padding: 0 32px;
+    padding: 0 24px;
   }
 
   @media (max-width: 768px) {
@@ -676,13 +682,15 @@ const FooterCTA = styled.div`
 `;
 
 const FooterBottom = styled.div`
-  max-width: 1400px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
   padding-top: 32px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   text-align: center;
   font-size: 0.875rem;
   color: rgba(255, 255, 255, 0.5);
+  box-sizing: border-box;
 `;
 
 // Slideshow styles removed per user request

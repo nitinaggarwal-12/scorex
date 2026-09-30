@@ -70,7 +70,6 @@ import {
   EU_AI_CATEGORY_PRESETS
 } from '../data/euAiComplianceData';
 import { evaluateCompliance } from '../services/euAiScoringEngine';
-import OmniCriticReviewCard from './OmniCriticReviewCard';
 
 // ==========================================
 // STYLED COMPONENTS (Zero Void, Full Desktop)
@@ -82,6 +81,9 @@ const WorkspaceWrapper = styled.div`
   color: #0f172a;
   padding-top: 68px; /* GlobalNav clearance */
   padding-bottom: 80px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
   @media print {
@@ -106,9 +108,11 @@ const TopStickyBar = styled.div`
 `;
 
 const TopBarInner = styled.div`
-  max-width: 1600px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 14px 24px md:padding: 16px 32px;
+  padding: 14px clamp(16px, 1.8vw, 28px);
+  box-sizing: border-box;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -399,9 +403,11 @@ const NavTab = styled.button`
 `;
 
 const ContentContainer = styled.div`
-  max-width: 1600px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 24px 20px md:padding: 32px 36px;
+  padding: 20px clamp(16px, 1.8vw, 28px);
+  box-sizing: border-box;
 `;
 
 const ProgressBanner = styled.div`
@@ -2531,23 +2537,6 @@ export default function EuAiComplianceWorkspace() {
 
             <ActionButton 
               $secondary
-              onClick={() => {
-                if (isPlayingAudio) {
-                  stopCurrentAudio();
-                } else {
-                  handleGenerateAudioBriefing(currentAct);
-                }
-              }}
-              disabled={loadingAudio}
-              title="Play 3-Act Executive Audio Briefing"
-              style={{ padding: '7px 12px', fontSize: '0.82rem', borderRadius: '8px' }}
-            >
-              <FiMic size={14} style={{ color: isPlayingAudio ? '#ef4444' : '#4f46e5' }} />
-              {loadingAudio ? 'Audio...' : (isPlayingAudio ? 'Pause' : 'Briefing')}
-            </ActionButton>
-
-            <ActionButton 
-              $secondary
               onClick={() => setCopilotOpen(true)}
               title="Open In-Workspace Regulatory Copilot"
               style={{ padding: '7px 12px', fontSize: '0.82rem', borderRadius: '8px' }}
@@ -3483,117 +3472,6 @@ export default function EuAiComplianceWorkspace() {
               )}
             </div>
 
-            {/* Executive Audio Briefing Bar */}
-            <AudioBriefingCard>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800' }}>
-                    <FiMic size={18} />
-                  </div>
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                      <span style={{ fontSize: '0.92rem', fontWeight: '800', color: '#f8fafc' }}>
-                        Executive Audio Briefing • Google Omni 1.1
-                      </span>
-                      <span style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: '999px', background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', fontWeight: '800', border: '1px solid rgba(56, 189, 248, 0.4)' }}>
-                        🎙️ google-omni-1.1 • DeepMind Neural Voice (Fenrir)
-                      </span>
-                    </div>
-                    <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
-                      Google Omni 1.1 3-Act board narrative: Statutory Classification • Enforcement Deadlines • Action Directives
-                    </span>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <button
-                    type="button"
-                    onClick={() => setShowAudioScript(!showAudioScript)}
-                    style={{ background: 'transparent', border: '1px solid #334155', borderRadius: '8px', color: '#cbd5e1', padding: '5px 12px', fontSize: '0.76rem', cursor: 'pointer' }}
-                  >
-                    {showAudioScript ? 'Hide Spoken Script' : 'View Spoken Script'}
-                  </button>
-                  <ActionButton
-                    $audio
-                    style={{ padding: '6px 14px', fontSize: '0.8rem' }}
-                    onClick={() => {
-                      if (isPlayingAudio) {
-                        stopCurrentAudio();
-                      } else {
-                        handleGenerateAudioBriefing(currentAct);
-                      }
-                    }}
-                    disabled={loadingAudio}
-                  >
-                    {isPlayingAudio ? <FiPause size={14} /> : <FiPlay size={14} />}
-                    {loadingAudio ? 'Generating...' : (isPlayingAudio ? 'Pause' : `Play Act ${currentAct}`)}
-                  </ActionButton>
-                </div>
-              </div>
-
-              <AudioActsRow>
-                {[
-                  { num: 1, title: 'Act 1: Statutory Verdict', desc: 'Classification & Prohibitions' },
-                  { num: 2, title: 'Act 2: Regulatory Exposure', desc: 'Technical Gaps & Fines' },
-                  { num: 3, title: 'Act 3: Board Action Plan', desc: 'Remediation Roadmap' }
-                ].map(act => (
-                  <AudioActPill
-                    key={act.num}
-                    $active={currentAct === act.num}
-                    onClick={() => {
-                      if (isPlayingAudio && currentAct === act.num) {
-                        stopCurrentAudio();
-                      } else {
-                        handleGenerateAudioBriefing(act.num);
-                      }
-                    }}
-                  >
-                    <span style={{ fontWeight: '800' }}>{act.title}</span>
-                    <span style={{ opacity: 0.7, fontSize: '0.72rem', marginLeft: '6px' }}>• {act.desc}</span>
-                  </AudioActPill>
-                ))}
-              </AudioActsRow>
-
-              {showAudioScript && (
-                <AudioScriptContainer>
-                  {audioData?.acts?.find(a => a.act === currentAct)?.script || (
-                    <span>
-                      "Board members and executive leadership: Following our conformity evaluation under Regulation (EU) 2024/1689, '{meta.systemName}' qualifies as a High-Risk AI System under Annex III, Point 4. While no Article 5 prohibited practices were identified, immediate remediation is required across Article 12 automatic event logging and Article 14 human oversight protocols prior to the August 2026 statutory enforcement deadline..."
-                    </span>
-                  )}
-                </AudioScriptContainer>
-              )}
-            </AudioBriefingCard>
-
-            {/* Google Omni 1.1 Multi-Dimensional UI/UX & Technical Critic Audit */}
-            <OmniCriticReviewCard
-              instance={{
-                id: meta.documentId || 'eu-ai-act',
-                customerName: meta.systemName || 'EU AI System Evaluation',
-                typeKey: 'eu_ai_act',
-                totalScore: Number(((evaluation.overallReadinessPct || 64) / 20).toFixed(1)),
-                responses: answers || {}
-              }}
-              framework={{
-                typeKey: 'eu_ai_act',
-                title: 'EU AI Act Conformity Assessment (Regulation EU 2024/1689)',
-                dimensions: EU_AI_SECTIONS.map((s) => ({
-                  id: `sec_${s.id}`,
-                  name: s.title,
-                  questions: [1, 2, 3, 4, 5, 6]
-                }))
-              }}
-              report={{
-                executiveSummary: synthesis?.executiveSummary || `Statutory conformity evaluation for ${meta.systemName} under Regulation (EU) 2024/1689.`,
-                recommendations: (evaluation.remediationTasks || []).slice(0, 4).map((t) => ({
-                  title: t.title,
-                  priority: t.severity || 'Critical'
-                }))
-              }}
-              theme="light"
-              engineName="Engine 3: EU AI Act Compliance"
-            />
-
             {/* Gemini 3.8 Flash AI Legal Synthesis */}
             <GeminiSynthesisContainer>
               <SynthesisHeaderBar>
@@ -4066,35 +3944,6 @@ export default function EuAiComplianceWorkspace() {
                 <span style={{ fontSize: '0.78rem', color: '#64748b' }}>Date: {meta.evaluationDate}</span>
               </div>
             </ReportHeaderBlock>
-
-            {/* Google Omni 1.1 Multi-Dimensional UI/UX & Technical Critic Review */}
-            <OmniCriticReviewCard
-              instance={{
-                id: meta.documentId || 'eu-ai-act',
-                customerName: meta.systemName || 'EU AI System Evaluation',
-                typeKey: 'eu_ai_act',
-                totalScore: Number(((evaluation.overallReadinessPct || 64) / 20).toFixed(1)),
-                responses: answers || {}
-              }}
-              framework={{
-                typeKey: 'eu_ai_act',
-                title: 'EU AI Act Conformity Assessment (Regulation EU 2024/1689)',
-                dimensions: EU_AI_SECTIONS.map((s) => ({
-                  id: `sec_${s.id}`,
-                  name: s.title,
-                  questions: [1, 2, 3, 4, 5, 6]
-                }))
-              }}
-              report={{
-                executiveSummary: synthesis?.executiveSummary || `Statutory conformity evaluation for ${meta.systemName} under Regulation (EU) 2024/1689.`,
-                recommendations: (evaluation.remediationTasks || []).slice(0, 4).map((t) => ({
-                  title: t.title,
-                  priority: t.severity || 'Critical'
-                }))
-              }}
-              theme="light"
-              engineName="Engine 3: EU AI Act Compliance"
-            />
 
             {/* Executive Summary & System Metadata */}
             <div>

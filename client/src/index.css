@@ -80,9 +80,11 @@ code {
 
 /* Global styles */
 .container {
-  max-width: 1600px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 0 48px;
+  padding: 0 clamp(16px, 2vw, 32px);
+  box-sizing: border-box;
 }
 
 @media (max-width: 1024px) {

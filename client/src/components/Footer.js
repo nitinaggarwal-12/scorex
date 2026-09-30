@@ -18,16 +18,18 @@ const FooterContainer = styled.footer`
 `;
 
 const FooterContent = styled.div`
-  max-width: 1600px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   gap: 48px;
   margin-bottom: 48px;
-  padding: 0 48px;
+  padding: 0 clamp(16px, 2vw, 32px);
+  box-sizing: border-box;
 
   @media (max-width: 1024px) {
-    padding: 0 32px;
+    padding: 0 24px;
   }
 
   @media (max-width: 768px) {
@@ -136,9 +138,11 @@ const FooterCTA = styled.div`
 `;
 
 const FooterBottom = styled.div`
-  max-width: 1600px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 32px 48px 0;
+  padding: 32px clamp(16px, 2vw, 32px) 0;
+  box-sizing: border-box;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   text-align: center;
   font-size: 0.875rem;

@@ -42,18 +42,20 @@ const PageContainer = styled.div`
 `;
 
 const ContentContainer = styled.div`
-  max-width: 1600px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 40px 48px;
+  padding: 28px clamp(16px, 1.8vw, 28px);
+  box-sizing: border-box;
   position: relative;
   z-index: 1;
 
   @media (max-width: 1024px) {
-    padding: 32px 24px;
+    padding: 24px 20px;
   }
 
   @media (max-width: 768px) {
-    padding: 24px 16px;
+    padding: 20px 14px;
   }
 `;
 
@@ -1336,55 +1338,6 @@ const AssessmentsListNew = () => {
             </PrimaryButton>
           </div>
         </HeaderSection>
-
-        {/* Google Omni 1.1 Critic & 4-Pillar Specialized AI Model Stack Strip */}
-        <div
-          data-testid="hub-omni-model-stack-banner"
-          style={{
-            background: '#ffffff',
-            border: '1.5px solid #e2e8f0',
-            borderRadius: '14px',
-            padding: '14px 18px',
-            marginBottom: '16px',
-            boxShadow: '0 2px 10px rgba(15, 23, 42, 0.04)'
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', marginBottom: '10px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '0.72rem', fontWeight: 800, background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', padding: '3px 10px', borderRadius: '999px' }}>
-                ✓ Google Omni 1.1 Critic Certified (96/100)
-              </span>
-              <span style={{ fontSize: '0.84rem', fontWeight: 800, color: '#0f172a' }}>
-                Active 4-Pillar Specialized AI Architecture Across All 3 Assessment Engines
-              </span>
-            </div>
-            <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600 }}>
-              Zero Cross-Domain Hallucinations • Domain-Locked Topologies • Live Support Copilot
-            </span>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '10px' }}>
-            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '9px 12px' }}>
-              <div style={{ fontSize: '0.66rem', fontWeight: 800, color: '#7c3aed', textTransform: 'uppercase' }}>🎙️ Audio Storytelling</div>
-              <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0f172a', marginTop: '2px' }}>Google Omni 1.1 (google-omni-1.1)</div>
-              <div style={{ fontSize: '0.7rem', color: '#64748b' }}>5-Act Board Narrative &amp; Dual-Host Podcast</div>
-            </div>
-            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '9px 12px' }}>
-              <div style={{ fontSize: '0.66rem', fontWeight: 800, color: '#d97706', textTransform: 'uppercase' }}>🍌 Architecture Diagrams</div>
-              <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0f172a', marginTop: '2px' }}>Nano Banana 2 (nano-banana-2)</div>
-              <div style={{ fontSize: '0.7rem', color: '#64748b' }}>gemini-3.1-flash-image-preview + Draw.io XML</div>
-            </div>
-            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '9px 12px' }}>
-              <div style={{ fontSize: '0.66rem', fontWeight: 800, color: '#059669', textTransform: 'uppercase' }}>⚡ Live Support Agent</div>
-              <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0f172a', marginTop: '2px' }}>Gemini 3.8 Flash Live Preview</div>
-              <div style={{ fontSize: '0.7rem', color: '#64748b' }}>gemini-3.8-flash-live-preview Multi-Engine Copilot</div>
-            </div>
-            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '9px 12px' }}>
-              <div style={{ fontSize: '0.66rem', fontWeight: 800, color: '#2563eb', textTransform: 'uppercase' }}>👁️ UI/UX &amp; Technical Critic</div>
-              <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0f172a', marginTop: '2px' }}>Google Omni 1.1 Critic Engine</div>
-              <div style={{ fontSize: '0.7rem', color: '#64748b' }}>Visual, Technical, Relevancy &amp; Anti-Hallucination</div>
-            </div>
-          </div>
-        </div>
 
         {/* Suite Filter Bar */}
         <div style={{

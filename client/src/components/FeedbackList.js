@@ -11,8 +11,10 @@ const PageContainer = styled.div`
 `;
 
 const Header = styled.div`
-  max-width: 1400px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto 40px;
+  box-sizing: border-box;
 `;
 
 const Title = styled.h1`
@@ -28,12 +30,14 @@ const Subtitle = styled.p`
 `;
 
 const AnalyticsSection = styled.div`
-  max-width: 1400px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto 40px;
   background: white;
   border-radius: 20px;
   padding: 30px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
 `;
 
 const AnalyticsTitle = styled.h2`
@@ -289,11 +293,13 @@ const BarValue = styled.div`
 `;
 
 const FeedbackGrid = styled.div`
-  max-width: 1400px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 24px;
+  box-sizing: border-box;
 `;
 
 const FeedbackCard = styled(motion.div)`
