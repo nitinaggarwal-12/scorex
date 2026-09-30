@@ -132,6 +132,15 @@ class DynamicAssessmentService {
   }
 
   /**
+   * Append an audit changelog event (user_added, comment_added, status_changed, etc.)
+   * and persist the corresponding mutation on the assessment instance.
+   */
+  async appendChangelogEntry(id, payload) {
+    const response = await axios.post(`/api/dynamic-assessments/instances/${id}/changelog`, payload);
+    return response.data;
+  }
+
+  /**
    * Delete dynamic assessment instance
    */
   async deleteInstance(id) {

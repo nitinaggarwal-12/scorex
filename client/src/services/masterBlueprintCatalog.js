@@ -3,6 +3,7 @@
  * Authentic, production-grade Draw.io XML architectures sourced directly from PromptCanvas Master Builders.
  */
 
+import { compileAll3GroundedDiagrams } from './template05DiagramCompiler';
 
 // ===== Sourced from build_master_legacy_data_dependency.ts =====
 function buildLegacyDataDependencyMapXml() {
@@ -9199,8 +9200,13 @@ function extractArchitectureContext(responses = {}, metadata = {}) {
 
 /**
  * Dispatch bespoke, high-craft PromptCanvas Draw.io XML blueprints tailored to the assessment framework
+ * using the canonical Template 05 3-Zone (Left: As-Is Current State, Middle: Transition Bridge, Right: To-Be Future State) layout.
  */
 function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {}) {
+  return compileAll3GroundedDiagrams(framework, metadata, scores);
+}
+
+function getLegacyMasterArchitectureDiagramsUnused(framework = {}, metadata = {}, scores = {}) {
   const key = (framework.typeKey || "").toLowerCase();
   const title = (framework.title || "").toLowerCase();
   const rawCust = metadata.customerName && metadata.customerName !== 'Not specified' ? metadata.customerName : 'Enterprise Organization';
@@ -9355,139 +9361,6 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
     return res;
   };
 
-  // 1. OPENAI TO GEMINI ENTERPRISE MIGRATION
-  if (isOpenAI) {
-    return {
-      currentTitle: `Current Baseline: Fragile OpenAI Endpoints & High Token Costs (${cust})`,
-      currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • ARCH-GENAI-01 OpenAI Wrapper • Unmanaged API Keys`,
-      curReasoning: "Proprietary SDK hardcoding, unmanaged public egress endpoints, lack of prompt caching, and 8k token context fragmentation cause high token burn and vendor lock-in.",
-      currentStateXml: customizeXml(buildLegacyGenAiStackXml(cust, archCtx), 'current', 'OpenAI Legacy Stack'),
-      targetTitle: `Target State: Google Vertex AI & Gemini Enterprise Agent Platform (${cust})`,
-      targetSubtitle: `Target Maturity Level ${tgt}/5.0 (Optimized) • P4-AI-P-04 Agent Runtime • 2M Context • Model Armor`,
-      targetStateXml: customizeXml(buildEnterpriseAgentRuntimeXml(cust, archCtx), 'target', 'Vertex AI & Gemini Runtime'),
-      transformations: [
-        "Migrate brittle OpenAI API calls to Apigee Enterprise AI Gateway with VPC Service Controls (P4-AI-P-04)",
-        "Replace 8k lossy RAG chunking with Vertex AI Gemini 3.1 Pro / 3.8 Flash native 2M long-context window processing",
-        "Enable Vertex AI Context Caching for 75% input token discount and sub-200ms latency on cached system prompts",
-        "Deploy Google Cloud Model Armor and Model Context Protocol (MCP) tool mesh for sandboxed multi-agent defense"
-      ],
-      blueprintKeys: ["P4-AI-P-04", "P3-AI-L-02", "ARCH-MCP-06", "P4-GOV-L-07"],
-      modelUsed: "gemini-3.8-flash",
-      generatedAt: new Date().toISOString()
-    };
-  }
-
-  // 2. FINOPS & CLOUD COST OPTIMIZATION
-  if (isFinOps) {
-    return {
-      currentTitle: `Current Baseline: Uncontrolled Multi-Cloud Spend & Idle Waste (${cust})`,
-      currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • P2-GOV-C-01 Waste Breakdown • 40% Untagged Resources`,
-      curReasoning: "Missing resource tagging, static 24/7 cluster over-provisioning, unmanaged Kubernetes pods, and uncoordinated on-demand spend lead to severe cloud financial waste.",
-      currentStateXml: customizeXml(buildLegacyFinOpsWasteXml(cust), 'current', 'FinOps Legacy Gaps'),
-      targetTitle: `Target State: Automated FinOps Chargeback & Capacity Governor (${cust})`,
-      targetSubtitle: `Target Maturity Level ${tgt}/5.0 (Optimized) • P2-GOV-C-01 FinOps Model • P5-AI-L-05 Quota Governor`,
-      targetStateXml: customizeXml(buildPristineFinopsXml(), 'target', 'FinOps & Chargeback Model'),
-      transformations: [
-        "Automate multi-cloud billing export to partitioned BigQuery FOCUS 1.0 schema for 100% cost transparency (P2-GOV-C-01)",
-        "Deploy OpenCost / Kubecost pod-level metering on GKE Autopilot to establish exact business unit chargeback",
-        "Enforce automated resource rightsizing and 15-minute idle compute kill-switches with Cloud Functions",
-        "Implement automated CUD optimization and real-time billing anomaly alerts with BigQuery ML forecasting"
-      ],
-      blueprintKeys: ["P2-GOV-C-01", "P5-AI-L-05", "P3-APP-C-01"],
-      modelUsed: "gemini-3.8-flash",
-      generatedAt: new Date().toISOString()
-    };
-  }
-
-  // 3. AUTONOMOUS MULTI-AGENT AI MESH & MCP
-  if (isAgenticMesh) {
-    return {
-      currentTitle: `Current Baseline: Siloed Single-Threaded Chatbots & Tool Fragility (${cust})`,
-      currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • ARCH-AGT-01 Fragmented Bots • Point-to-Point Scripts`,
-      curReasoning: "Isolated departmental chatbots, hardcoded prompt templates, uncoordinated backend integrations, and absence of standardized tool protocols prevent enterprise scale.",
-      currentStateXml: customizeXml(buildLegacyAgenticXml(cust), 'current', 'Siloed Chatbots'),
-      targetTitle: `Target State: Autonomous Hub-and-Spoke Agent Mesh & MCP Gateway (${cust})`,
-      targetSubtitle: `Target Maturity Level ${tgt}/5.0 (Optimized) • P3-AI-L-03 Agent Mesh • ARCH-MCP-06 MCP Gateway`,
-      targetStateXml: customizeXml(buildHubAndSpokeAgentConfigXml(), 'target', 'Hub-and-Spoke Agent Mesh'),
-      transformations: [
-        "Deploy centralized Hub-and-Spoke Agent Mesh with Google Omni 1.1 & Gemini 3.1 Pro Super-Orchestrator and specialized sub-agents (P3-AI-L-03)",
-        "Standardize tool execution on Model Context Protocol (MCP) microservices with Apigee governance (ARCH-MCP-06)",
-        "Implement circular ReAct reasoning loop with Vertex AI Vector Search grounding and sub-500ms TTFT (P3-AI-L-02)",
-        "Integrate Model Armor prompt injection shielding and human-in-the-loop (HITL) review gates for high-stakes actions"
-      ],
-      blueprintKeys: ["P3-AI-L-03", "ARCH-MCP-06", "P4-AI-P-04", "P4-GOV-L-06"],
-      modelUsed: "gemini-3.8-flash",
-      generatedAt: new Date().toISOString()
-    };
-  }
-
-  // 4. EDW / SNOWFLAKE / TERADATA TO BIGQUERY
-  if (isLakehouse) {
-    return {
-      currentTitle: `Current Baseline: Siloed Proprietary EDW & Egress Friction (${cust})`,
-      currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • ARCH-EDW-02 Legacy EDW Silos • 24h Batch Bottlenecks`,
-      curReasoning: "Proprietary database lock-in (Teradata/Snowflake/Oracle), high inter-cloud egress fees, 24-hour batch replication lag, and disjoint data catalogs create operational bottlenecks.",
-      currentStateXml: customizeXml(buildLegacyEdwSiloXml(cust), 'current', 'Legacy EDW Silos'),
-      targetTitle: `Target State: GCP Enterprise Data Lakehouse & BigLake Medallion Mesh (${cust})`,
-      targetSubtitle: `Target Maturity Level ${tgt}/5.0 (Optimized) • P3-DAT-L-04 Medallion Fabric • BigLake Iceberg`,
-      targetStateXml: customizeXml(buildDataLakehouseXml(), 'target', 'BigLake Enterprise Lakehouse'),
-      transformations: [
-        "Replace legacy batch ETL with Datastream CDC and BigQuery Storage Write API for real-time replication (P4-DAT-P-13)",
-        "Adopt BigLake Apache Iceberg open table formats (P3-DAT-L-04) to eliminate proprietary data lock-in and egress fees",
-        "Consolidate compute on BigQuery Editions autoscaling slots and BigQuery Omni for cross-cloud querying",
-        "Deploy Looker Semantic Layer and Dataplex Universal Catalog with automated row/column masking"
-      ],
-      blueprintKeys: ["P3-DAT-L-04", "P4-DAT-P-13", "P3-APP-C-01", "P3-DAT-C-06"],
-      modelUsed: "gemini-3.8-flash",
-      generatedAt: new Date().toISOString()
-    };
-  }
-
-  // 5. ENTERPRISE AI & ZERO-TRUST SECURITY
-  if (isSecurity) {
-    return {
-      currentTitle: `Current Baseline: Shadow AI Exposure & STRIDE Threat Vectors (${cust})`,
-      currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • ARCH-SEC-04 STRIDE Threat Matrix • Unfiltered Prompts`,
-      curReasoning: "Unfiltered LLM API access, static API keys in code repositories, lack of prompt injection firewalls, and manual SOC2 audit compliance create high security risk.",
-      currentStateXml: customizeXml(buildThreatModelingStrideXml(), 'current', 'STRIDE Threat Model'),
-      targetTitle: `Target State: Zero-Trust Secure AI Deployment & TRiSM Defense Shield (${cust})`,
-      targetSubtitle: `Target Maturity Level ${tgt}/5.0 (Optimized) • P4-SEC-P-01 Secure Topology • P4-GOV-L-07 TRiSM`,
-      targetStateXml: customizeXml(buildSecureDeploymentTopologyXml(), 'target', 'Zero-Trust AI SASE & Deployment'),
-      transformations: [
-        "Establish Zero-Trust SASE perimeter with Cloud Armor WAF and Identity-Aware Proxy (IAP) (P4-SEC-P-01)",
-        "Enforce AI TRiSM guardrails with Cloud DLP automated surrogate tokenization and Model Armor (P4-GOV-L-07)",
-        "Implement Private GKE Autopilot clusters with gVisor sandboxing and Binary Authorization attestation",
-        "Enforce hardware-backed Cloud KMS HSM CMEK encryption and Chronicle 24/7 AI security monitoring"
-      ],
-      blueprintKeys: ["ARCH-SEC-04", "P4-SEC-P-01", "P4-GOV-L-07", "P4-SEC-P-02"],
-      modelUsed: "gemini-3.8-flash",
-      generatedAt: new Date().toISOString()
-    };
-  }
-
-  // 6. GENAI ENTERPRISE READINESS
-  if (isGenAIReadiness) {
-    return {
-      currentTitle: `Current Baseline: Fragmented Departmental AI Sandboxes (${cust})`,
-      currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • ARCH-GENAI-01 Departmental POCs • Ad-Hoc Evaluation`,
-      curReasoning: "Disjointed departmental POCs, unbenchmarked LLM accuracy, lack of centralized model evaluation, and absent guardrails prevent production deployment.",
-      currentStateXml: customizeXml(buildLegacyGenAiStackXml(cust, archCtx), 'current', 'Departmental POCs'),
-      targetTitle: `Target State: Enterprise GenAI Platform & Automated Evaluation Suite (${cust})`,
-      targetSubtitle: `Target Maturity Level ${tgt}/5.0 (Optimized) • P4-GOV-L-06 Evaluation Suite • Vertex Model Garden`,
-      targetStateXml: customizeXml(buildEnterpriseAgentRuntimeXml(cust, archCtx), 'target', 'Enterprise GenAI & Multi-Agent Platform'),
-      transformations: [
-        "Deploy enterprise GenAI gateway with Vertex AI Model Garden for multi-model access (P4-GOV-L-06)",
-        "Implement automated LLM evaluation pipeline for hallucination detection, factuality, and safety metrics",
-        "Deploy cognitive agentic RAG with Vertex Vector Search and multimodal embeddings (P3-AI-L-02)",
-        "Standardize enterprise prompt templates and automated regression benchmarks in CI/CD"
-      ],
-      blueprintKeys: ["P4-GOV-L-06", "P3-AI-L-02", "P4-AI-P-04", "P4-GOV-L-07"],
-      modelUsed: "gemini-3.8-flash",
-      generatedAt: new Date().toISOString()
-    };
-  }
-
-  // 7. DYNAMIC SCORE-DRIVEN ENTERPRISE DATA & AI MATURITY ARCHITECTURE (DEFAULT & UNIVERSAL LIVE COMPILER)
   const livePillars = extractLivePillarMetrics(framework, metadata, scores);
   const sortedByCurrentAsc = [...livePillars].sort((a, b) => a.currentScore - b.currentScore);
   const sortedByCurrentDesc = [...livePillars].sort((a, b) => b.currentScore - a.currentScore);
@@ -9503,8 +9376,170 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
   const computedAvgTgt = livePillars.length > 0
     ? (livePillars.reduce((acc, p) => acc + p.futureScore, 0) / livePillars.length).toFixed(1)
     : tgt;
+  const computedAvgMid = ((Number(computedAvgCur) + Number(computedAvgTgt)) / 2).toFixed(1);
   const overallDelta = (Number(computedAvgTgt) - Number(computedAvgCur)).toFixed(1);
 
+  const transitionTitle = `2. Transition State (Current → Future Bridge): ${cust} Phased Modernization (${computedAvgCur} → ${computedAvgMid}/5.0)`;
+  const transitionSubtitle = `Zero-Downtime Strangler Fig Bridge (${computedAvgCur} → ${computedAvgMid}/5.0) • Priority #1: ${weakest.name} (${weakest.currentScore.toFixed(1)}/5.0)`;
+  const transitionStateXml = buildDynamicTransitionBridgeXml(framework, metadata, scores, archCtx, livePillars);
+
+  // 1. OPENAI TO GEMINI ENTERPRISE MIGRATION
+  if (isOpenAI) {
+    return {
+      currentTitle: `Current Baseline: Fragile OpenAI Endpoints & High Token Costs (${cust})`,
+      currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • ARCH-GENAI-01 OpenAI Wrapper • Unmanaged API Keys`,
+      curReasoning: "Proprietary SDK hardcoding, unmanaged public egress endpoints, lack of prompt caching, and 8k token context fragmentation cause high token burn and vendor lock-in.",
+      currentStateXml: customizeXml(buildLegacyGenAiStackXml(cust, archCtx), 'current', 'OpenAI Legacy Stack'),
+      transitionTitle,
+      transitionSubtitle,
+      transitionStateXml,
+      targetTitle: `Target State: Google Vertex AI & Gemini Enterprise Agent Platform (${cust})`,
+      targetSubtitle: `Target Maturity Level ${tgt}/5.0 (Optimized) • P4-AI-P-04 Agent Runtime • 2M Context • Model Armor`,
+      targetStateXml: customizeXml(buildEnterpriseAgentRuntimeXml(cust, archCtx), 'target', 'Vertex AI & Gemini Runtime'),
+      transformations: [
+        "Migrate brittle OpenAI API calls to Apigee Enterprise AI Gateway with VPC Service Controls (P4-AI-P-04)",
+        "Replace 8k lossy RAG chunking with Vertex AI Gemini 3.1 Pro / 3.8 Flash native 2M long-context window processing",
+        "Enable Vertex AI Context Caching for 75% input token discount and sub-200ms latency on cached system prompts",
+        "Deploy Google Cloud Model Armor and Model Context Protocol (MCP) tool mesh for sandboxed multi-agent defense"
+      ],
+      blueprintKeys: ["P4-AI-P-04", "P3-AI-L-02", "ARCH-MCP-06", "P4-GOV-L-07"],
+      modelUsed: "gemini-3.8-flash",
+      promptCanvasSource: true,
+      generatedAt: new Date().toISOString()
+    };
+  }
+
+  // 2. FINOPS & CLOUD COST OPTIMIZATION
+  if (isFinOps) {
+    return {
+      currentTitle: `Current Baseline: Uncontrolled Multi-Cloud Spend & Idle Waste (${cust})`,
+      currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • P2-GOV-C-01 Waste Breakdown • 40% Untagged Resources`,
+      curReasoning: "Missing resource tagging, static 24/7 cluster over-provisioning, unmanaged Kubernetes pods, and uncoordinated on-demand spend lead to severe cloud financial waste.",
+      currentStateXml: customizeXml(buildLegacyFinOpsWasteXml(cust), 'current', 'FinOps Legacy Gaps'),
+      transitionTitle,
+      transitionSubtitle,
+      transitionStateXml,
+      targetTitle: `Target State: Automated FinOps Chargeback & Capacity Governor (${cust})`,
+      targetSubtitle: `Target Maturity Level ${tgt}/5.0 (Optimized) • P2-GOV-C-01 FinOps Model • P5-AI-L-05 Quota Governor`,
+      targetStateXml: customizeXml(buildPristineFinopsXml(), 'target', 'FinOps & Chargeback Model'),
+      transformations: [
+        "Automate multi-cloud billing export to partitioned BigQuery FOCUS 1.0 schema for 100% cost transparency (P2-GOV-C-01)",
+        "Deploy OpenCost / Kubecost pod-level metering on GKE Autopilot to establish exact business unit chargeback",
+        "Enforce automated resource rightsizing and 15-minute idle compute kill-switches with Cloud Functions",
+        "Implement automated CUD optimization and real-time billing anomaly alerts with BigQuery ML forecasting"
+      ],
+      blueprintKeys: ["P2-GOV-C-01", "P5-AI-L-05", "P3-APP-C-01"],
+      modelUsed: "gemini-3.8-flash",
+      promptCanvasSource: true,
+      generatedAt: new Date().toISOString()
+    };
+  }
+
+  // 3. AUTONOMOUS MULTI-AGENT AI MESH & MCP
+  if (isAgenticMesh) {
+    return {
+      currentTitle: `Current Baseline: Siloed Single-Threaded Chatbots & Tool Fragility (${cust})`,
+      currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • ARCH-AGT-01 Fragmented Bots • Point-to-Point Scripts`,
+      curReasoning: "Isolated departmental chatbots, hardcoded prompt templates, uncoordinated backend integrations, and absence of standardized tool protocols prevent enterprise scale.",
+      currentStateXml: customizeXml(buildLegacyAgenticXml(cust), 'current', 'Siloed Chatbots'),
+      transitionTitle,
+      transitionSubtitle,
+      transitionStateXml,
+      targetTitle: `Target State: Autonomous Hub-and-Spoke Agent Mesh & MCP Gateway (${cust})`,
+      targetSubtitle: `Target Maturity Level ${tgt}/5.0 (Optimized) • P3-AI-L-03 Agent Mesh • ARCH-MCP-06 MCP Gateway`,
+      targetStateXml: customizeXml(buildHubAndSpokeAgentConfigXml(), 'target', 'Hub-and-Spoke Agent Mesh'),
+      transformations: [
+        "Deploy centralized Hub-and-Spoke Agent Mesh with Google Omni 1.1 & Gemini 3.1 Pro Super-Orchestrator and specialized sub-agents (P3-AI-L-03)",
+        "Standardize tool execution on Model Context Protocol (MCP) microservices with Apigee governance (ARCH-MCP-06)",
+        "Implement circular ReAct reasoning loop with Vertex AI Vector Search grounding and sub-500ms TTFT (P3-AI-L-02)",
+        "Integrate Model Armor prompt injection shielding and human-in-the-loop (HITL) review gates for high-stakes actions"
+      ],
+      blueprintKeys: ["P3-AI-L-03", "ARCH-MCP-06", "P4-AI-P-04", "P4-GOV-L-06"],
+      modelUsed: "gemini-3.8-flash",
+      promptCanvasSource: true,
+      generatedAt: new Date().toISOString()
+    };
+  }
+
+  // 4. EDW / SNOWFLAKE / TERADATA TO BIGQUERY
+  if (isLakehouse) {
+    return {
+      currentTitle: `Current Baseline: Siloed Proprietary EDW & Egress Friction (${cust})`,
+      currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • ARCH-EDW-02 Legacy EDW Silos • 24h Batch Bottlenecks`,
+      curReasoning: "Proprietary database lock-in (Teradata/Snowflake/Oracle), high inter-cloud egress fees, 24-hour batch replication lag, and disjoint data catalogs create operational bottlenecks.",
+      currentStateXml: customizeXml(buildLegacyEdwSiloXml(cust), 'current', 'Legacy EDW Silos'),
+      transitionTitle,
+      transitionSubtitle,
+      transitionStateXml,
+      targetTitle: `Target State: GCP Enterprise Data Lakehouse & BigLake Medallion Mesh (${cust})`,
+      targetSubtitle: `Target Maturity Level ${tgt}/5.0 (Optimized) • P3-DAT-L-04 Medallion Fabric • BigLake Iceberg`,
+      targetStateXml: customizeXml(buildDataLakehouseXml(), 'target', 'BigLake Enterprise Lakehouse'),
+      transformations: [
+        "Replace legacy batch ETL with Datastream CDC and BigQuery Storage Write API for real-time replication (P4-DAT-P-13)",
+        "Adopt BigLake Apache Iceberg open table formats (P3-DAT-L-04) to eliminate proprietary data lock-in and egress fees",
+        "Consolidate compute on BigQuery Editions autoscaling slots and BigQuery Omni for cross-cloud querying",
+        "Deploy Looker Semantic Layer and Dataplex Universal Catalog with automated row/column masking"
+      ],
+      blueprintKeys: ["P3-DAT-L-04", "P4-DAT-P-13", "P3-APP-C-01", "P3-DAT-C-06"],
+      modelUsed: "gemini-3.8-flash",
+      promptCanvasSource: true,
+      generatedAt: new Date().toISOString()
+    };
+  }
+
+  // 5. ENTERPRISE AI & ZERO-TRUST SECURITY
+  if (isSecurity) {
+    return {
+      currentTitle: `Current Baseline: Shadow AI Exposure & STRIDE Threat Vectors (${cust})`,
+      currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • ARCH-SEC-04 STRIDE Threat Matrix • Unfiltered Prompts`,
+      curReasoning: "Unfiltered LLM API access, static API keys in code repositories, lack of prompt injection firewalls, and manual SOC2 audit compliance create high security risk.",
+      currentStateXml: customizeXml(buildThreatModelingStrideXml(), 'current', 'STRIDE Threat Model'),
+      transitionTitle,
+      transitionSubtitle,
+      transitionStateXml,
+      targetTitle: `Target State: Zero-Trust Secure AI Deployment & TRiSM Defense Shield (${cust})`,
+      targetSubtitle: `Target Maturity Level ${tgt}/5.0 (Optimized) • P4-SEC-P-01 Secure Topology • P4-GOV-L-07 TRiSM`,
+      targetStateXml: customizeXml(buildSecureDeploymentTopologyXml(), 'target', 'Zero-Trust AI SASE & Deployment'),
+      transformations: [
+        "Establish Zero-Trust SASE perimeter with Cloud Armor WAF and Identity-Aware Proxy (IAP) (P4-SEC-P-01)",
+        "Enforce AI TRiSM guardrails with Cloud DLP automated surrogate tokenization and Model Armor (P4-GOV-L-07)",
+        "Implement Private GKE Autopilot clusters with gVisor sandboxing and Binary Authorization attestation",
+        "Enforce hardware-backed Cloud KMS HSM CMEK encryption and Chronicle 24/7 AI security monitoring"
+      ],
+      blueprintKeys: ["ARCH-SEC-04", "P4-SEC-P-01", "P4-GOV-L-07", "P4-SEC-P-02"],
+      modelUsed: "gemini-3.8-flash",
+      promptCanvasSource: true,
+      generatedAt: new Date().toISOString()
+    };
+  }
+
+  // 6. GENAI ENTERPRISE READINESS
+  if (isGenAIReadiness) {
+    return {
+      currentTitle: `Current Baseline: Fragmented Departmental AI Sandboxes (${cust})`,
+      currentSubtitle: `Maturity Level ${lvl}/5.0 (Developing) • ARCH-GENAI-01 Departmental POCs • Ad-Hoc Evaluation`,
+      curReasoning: "Disjointed departmental POCs, unbenchmarked LLM accuracy, lack of centralized model evaluation, and absent guardrails prevent production deployment.",
+      currentStateXml: customizeXml(buildLegacyGenAiStackXml(cust, archCtx), 'current', 'Departmental POCs'),
+      transitionTitle,
+      transitionSubtitle,
+      transitionStateXml,
+      targetTitle: `Target State: Enterprise GenAI Platform & Automated Evaluation Suite (${cust})`,
+      targetSubtitle: `Target Maturity Level ${tgt}/5.0 (Optimized) • P4-GOV-L-06 Evaluation Suite • Vertex Model Garden`,
+      targetStateXml: customizeXml(buildEnterpriseAgentRuntimeXml(cust, archCtx), 'target', 'Enterprise GenAI & Multi-Agent Platform'),
+      transformations: [
+        "Deploy enterprise GenAI gateway with Vertex AI Model Garden for multi-model access (P4-GOV-L-06)",
+        "Implement automated LLM evaluation pipeline for hallucination detection, factuality, and safety metrics",
+        "Deploy cognitive agentic RAG with Vertex Vector Search and multimodal embeddings (P3-AI-L-02)",
+        "Standardize enterprise prompt templates and automated regression benchmarks in CI/CD"
+      ],
+      blueprintKeys: ["P4-GOV-L-06", "P3-AI-L-02", "P4-AI-P-04", "P4-GOV-L-07"],
+      modelUsed: "gemini-3.8-flash",
+      promptCanvasSource: true,
+      generatedAt: new Date().toISOString()
+    };
+  }
+
+  // 7. DYNAMIC SCORE-DRIVEN ENTERPRISE DATA & AI MATURITY ARCHITECTURE (DEFAULT & UNIVERSAL LIVE COMPILER)
   const dynamicTransformations = sortedByGapDesc.slice(0, 4).map(p => {
     const n = p.name.toLowerCase();
     if (n.includes('generative') || n.includes('genai') || n.includes('agent')) {
@@ -9530,12 +9565,16 @@ function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {
     currentSubtitle: `Evaluated Baseline ${computedAvgCur}/5.0 • Strongest: ${strongest.name} (${strongest.currentScore.toFixed(1)}) • Bottlenecks: ${weakest.name} (${weakest.currentScore.toFixed(1)}) & ${secondWeakest.name} (${secondWeakest.currentScore.toFixed(1)})`,
     curReasoning: `Dynamic architectural telemetry compiled from ${cust}'s live assessment scores: ${strongest.name} (${strongest.currentScore.toFixed(1)}/5.0) operates at Established maturity, whereas ${weakest.name} (${weakest.currentScore.toFixed(1)}/5.0, +${weakest.gap.toFixed(1)} gap) and ${secondWeakest.name} (${secondWeakest.currentScore.toFixed(1)}/5.0, +${secondWeakest.gap.toFixed(1)} gap) create downstream production bottlenecks.`,
     currentStateXml: buildDynamicStateArchitectureXml('current', framework, metadata, scores, archCtx, livePillars),
+    transitionTitle,
+    transitionSubtitle,
+    transitionStateXml,
     targetTitle: `Target State: Unified Cloud, Data & Agentic AI Blueprint (${cust} • ${computedAvgTgt}/5.0)`,
     targetSubtitle: `Target Maturity ${computedAvgTgt}/5.0 (+${overallDelta} Overall Leap) • Priority Remediation: ${weakest.name} (+${weakest.gap.toFixed(1)}) & ${secondWeakest.name} (+${secondWeakest.gap.toFixed(1)})`,
     targetStateXml: buildDynamicStateArchitectureXml('target', framework, metadata, scores, archCtx, livePillars),
     transformations: dynamicTransformations,
-    blueprintKeys: ["DYN-CUR-6P", "DYN-TGT-6P", "P3-DAT-L-04", "P3-AI-L-03", "P4-GOV-L-07"],
+    blueprintKeys: ["DYN-CUR-6P", "DYN-TRANS-6P", "DYN-TGT-6P", "P3-DAT-L-04", "P3-AI-L-03", "P4-GOV-L-07"],
     modelUsed: "gemini-3.8-flash-dynamic-compiler",
+    promptCanvasSource: true,
     generatedAt: new Date().toISOString()
   };
 }
@@ -9632,6 +9671,65 @@ function extractLivePillarMetrics(framework = {}, metadata = {}, scores = {}) {
       gap: Number(Math.max(0, fut - cur).toFixed(1))
     };
   });
+}
+
+/**
+ * Compile Stage 2 Phased Transition Bridge Draw.io XML (Current -> Midpoint -> Target)
+ * mapping each pillar's As-Is Baseline & Customer Pain Points -> Phased Coexistence & Recommendation Bridge -> Wave 1-3 Milestone.
+ */
+function buildDynamicTransitionBridgeXml(framework = {}, metadata = {}, scores = {}, archCtx = {}, livePillarsInput = null) {
+  const pillars = (livePillarsInput && livePillarsInput.length > 0)
+    ? livePillarsInput.slice(0, 6)
+    : extractLivePillarMetrics(framework, metadata, scores).slice(0, 6);
+
+  const esc = (s) => String(s || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+
+  const rawCustName = metadata.customerName && metadata.customerName !== 'Not specified' ? metadata.customerName : 'Apex Global Enterprise';
+  const cust = esc(rawCustName);
+  const avgCur = (pillars.reduce((a, p) => a + p.currentScore, 0) / (pillars.length || 1)).toFixed(1);
+  const avgTgt = (pillars.reduce((a, p) => a + p.futureScore, 0) / (pillars.length || 1)).toFixed(1);
+  const avgMid = ((Number(avgCur) + Number(avgTgt)) / 2).toFixed(1);
+
+  const sortedByGap = [...pillars].sort((a, b) => (b.gap - a.gap) || (a.currentScore - b.currentScore));
+  const rankMap = new Map();
+  sortedByGap.forEach((p, i) => rankMap.set(p.id || p.name, i + 1));
+
+  let lanesXml = '';
+  pillars.forEach((p, idx) => {
+    const y = 104 + idx * 116;
+    const rank = rankMap.get(p.id || p.name) || (idx + 1);
+    const isPriority1 = rank === 1;
+    const midScore = ((p.currentScore + p.futureScore) / 2).toFixed(1);
+    const laneFill = isPriority1 ? '#FEF2F2' : (idx % 2 === 0 ? '#F8FAFC' : '#FFFFFF');
+    const laneStroke = isPriority1 ? '#E11D48' : '#CBD5E1';
+    const waveNum = rank <= 2 ? '1 (Months 1-3)' : (rank <= 4 ? '2 (Months 3-6)' : '3 (Months 6-12)');
+
+    lanesXml += `
+        <mxCell id="s2_lane_${idx}" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=${laneFill};strokeColor=${laneStroke};strokeWidth=${isPriority1 ? '2' : '1.2'};" vertex="1" parent="1">
+          <mxGeometry x="20" y="${y}" width="1552" height="106" as="geometry"/>
+        </mxCell>
+        <mxCell id="s2_left_${idx}" value="&lt;b style=&quot;font-size:9.5px;color:#0F172A;&quot;&gt;${idx + 1}. ${esc(p.name)} (${p.currentScore.toFixed(1)}/5.0)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8px;color:#475569;&quot;&gt;• Current Gap: +${p.gap.toFixed(1)} to Target (${p.futureScore.toFixed(1)}/5.0)&lt;br&gt;• Pain Point: &lt;b style=&quot;color:#991B1B;&quot;&gt;${p.currentScore < 2.5 ? 'Critical Production Bottleneck &amp; Manual Silos' : 'Fragmented Tooling &amp; Governance Drift'}&lt;/b&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;strokeWidth=1.2;align=left;verticalAlign=middle;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="32" y="${y + 10}" width="370" height="86" as="geometry"/>
+        </mxCell>
+        <mxCell id="s2_mid_${idx}" value="&lt;b style=&quot;font-size:9.5px;color:${isPriority1 ? '#9F1239' : '#92400E'};&quot;&gt;Priority #${rank} Transition Bridge: Zero-Downtime Strangler Fig (${p.currentScore.toFixed(1)} &#8594; ${midScore}/5.0)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8px;color:#1E293B;&quot;&gt;• Wraps &amp;amp; decouples legacy ${esc(p.name)} workloads without SLA disruption&lt;br&gt;• Executes dual-run parity validation &amp;amp; automated policy guardrails&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=${isPriority1 ? '#FFE4E6' : '#FFFBEB'};strokeColor=${isPriority1 ? '#E11D48' : '#F59E0B'};strokeWidth=1.5;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="455" y="${y + 10}" width="615" height="86" as="geometry"/>
+        </mxCell>
+        <mxCell id="s2_right_${idx}" value="&lt;b style=&quot;font-size:9.5px;color:#1E40AF;&quot;&gt;Wave ${waveNum} Milestone (${midScore} &#8594; ${p.futureScore.toFixed(1)}/5.0)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8px;color:#0F172A;&quot;&gt;• Realizes prioritized ${esc(p.name)} recommendation&lt;br&gt;• 100% pain-point elimination on Google Cloud &amp;amp; Vertex AI&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=1.3;align=left;verticalAlign=middle;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="1125" y="${y + 10}" width="435" height="86" as="geometry"/>
+        </mxCell>
+        <mxCell id="s2_e1_${idx}" value="Dual-Run" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D97706;strokeWidth=1.6;endArrow=block;endFill=1;fontSize=7.5;fontColor=#92400E;" edge="1" parent="1" source="s2_left_${idx}" target="s2_mid_${idx}">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="s2_e2_${idx}" value="Cutover" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.6;endArrow=block;endFill=1;fontSize=7.5;fontColor=#1E40AF;" edge="1" parent="1" source="s2_mid_${idx}" target="s2_right_${idx}">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>`;
+  });
+
+  return `<mxfile host="embed.diagrams.net" modified="${new Date().toISOString()}" agent="ScoreX-NanoBanana2-Compiler" version="24.0.0" type="device"><diagram id="stage2_transition_bridge" name="Stage 2: Transition Bridge"><mxGraphModel dx="1600" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" background="#FFFFFF" math="0" shadow="0"><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="s2_banner" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#334155;strokeWidth=1.5;" vertex="1" parent="1"><mxGeometry x="20" y="14" width="1552" height="52" as="geometry"/></mxCell><mxCell id="s2_title" value="&lt;b style=&quot;font-size:14.5px;color:#FFFFFF;&quot;&gt;STAGE 2: PHASED TRANSITION BRIDGE — ${cust.toUpperCase()} (${avgCur} &#8594; ${avgMid} &#8594; ${avgTgt}/5.0)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="34" y="18" width="1180" height="22" as="geometry"/></mxCell><mxCell id="s2_subtitle" value="&lt;span style=&quot;font-size:9.5px;color:#FDE047;&quot;&gt;Zero-Downtime Strangler Fig &amp;amp; Coexistence Roadmap • Prioritized by Pillar Maturity Gap • Nano Banana 2 Synthesized&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="34" y="38" width="1180" height="20" as="geometry"/></mxCell><mxCell id="s2_badge" value="&lt;b style=&quot;font-size:11px;color:#FEF08A;&quot;&gt;BRIDGE STATE: ${avgMid} / 5.0&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8px;color:#FFFFFF;&quot;&gt;Phased Cutover Waves 1-3&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#92400E;strokeColor=#F59E0B;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1320" y="19" width="238" height="42" as="geometry"/></mxCell><mxCell id="s2_col_h1" value="&lt;b style=&quot;font-size:10px;color:#475569;&quot;&gt;1. AS-IS BASELINE &amp;amp; CUSTOMER PAIN POINTS (${avgCur}/5.0)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1F5F9;strokeColor=#CBD5E1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="32" y="72" width="370" height="24" as="geometry"/></mxCell><mxCell id="s2_col_h2" value="&lt;b style=&quot;font-size:10px;color:#92400E;&quot;&gt;2. PHASED COEXISTENCE &amp;amp; STRANGLER FIG BRIDGE (${avgCur} &#8594; ${avgMid}/5.0)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#F59E0B;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="455" y="72" width="615" height="24" as="geometry"/></mxCell><mxCell id="s2_col_h3" value="&lt;b style=&quot;font-size:10px;color:#1E40AF;&quot;&gt;3. WAVE 1-3 TARGET MILESTONE &amp;amp; RECOMMENDATIONS (${avgMid} &#8594; ${avgTgt}/5.0)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=#3B82F6;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1125" y="72" width="435" height="24" as="geometry"/></mxCell>${lanesXml}</root></mxGraphModel></diagram></mxfile>`;
 }
 
 /**

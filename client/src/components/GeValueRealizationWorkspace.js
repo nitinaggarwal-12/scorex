@@ -20,6 +20,8 @@ import {
   createInitialGeDossier,
   evaluateGeValueRealization
 } from '../data/geValueRealizationFramework';
+import AudioBriefingPlayer from './AudioBriefingPlayer';
+import OmniCriticReviewCard from './OmniCriticReviewCard';
 
 const formatCurrency = (val, showPending = true) => {
   if (val === null || val === undefined || Number.isNaN(Number(val))) {
@@ -985,6 +987,72 @@ const GeValueRealizationWorkspace = () => {
            =================================================================== */}
         {primaryView === 'report' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+
+            {/* Google Omni 1.1 Audio Storytelling Player for GE Value Realization */}
+            <AudioBriefingPlayer
+              instance={{
+                id: dossier.id || 'ge-value-realization',
+                customerName,
+                typeKey: 'ge_value_realization',
+                totalScore: Number(((evaluation.index.evidenceAdjustedScore || 68) / 20).toFixed(1)),
+                maturityLevel: evaluation.index.tierLabel || 'Value Scaling'
+              }}
+              report={{
+                executiveSummary: dossier.geminiReport?.situationText || `${customerName} achieved an evidence-adjusted GE Value Realization Index of ${evaluation.index.evidenceAdjustedScore}/100 with ${formatNumber(fiveCols.col2ValidatedCapacity?.hoursMonthlyBase)} monthly hours saved (${formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualBase)}/yr capacity value).`,
+                calculatedScores: {
+                  overallScore: Number(((evaluation.index.evidenceAdjustedScore || 68) / 20).toFixed(1)),
+                  overallTarget: 4.5,
+                  maturityLevel: evaluation.index.tierLabel || 'Value Scaling',
+                  dimensionScores: Object.fromEntries(
+                    Object.values(evaluation.kpas || {}).map((kpa) => [
+                      kpa.id,
+                      {
+                        name: kpa.title || kpa.name,
+                        score: Number(((kpa.adjustedPct || 65) / 20).toFixed(1)),
+                        targetScore: 4.5,
+                        percentage: Math.round(kpa.adjustedPct || 65)
+                      }
+                    ])
+                  )
+                },
+                recommendations: [
+                  { title: 'Expand Wave 1 Active Seat Assignment & Connector Unblocking', priority: 'Critical' },
+                  { title: 'Complete CFO Sign-Off on Legacy License Retirement & Hard Dollar Capture', priority: 'High' },
+                  { title: 'Scale Top Validated Workflows Across Enterprise Business Units', priority: 'High' }
+                ]
+              }}
+              theme="light"
+            />
+
+            {/* Google Omni 1.1 Multi-Dimensional UI/UX & Technical Critic Review */}
+            <OmniCriticReviewCard
+              instance={{
+                id: dossier.id || 'ge-value-realization',
+                customerName,
+                typeKey: 'ge_value_realization',
+                totalScore: Number(((evaluation.index.evidenceAdjustedScore || 68) / 20).toFixed(1)),
+                responses: dossier.answers || {}
+              }}
+              framework={{
+                typeKey: 'ge_value_realization',
+                title: 'Gemini Enterprise Value Realization & ROI Diagnostic (4-Pillar GE Vernova Model)',
+                dimensions: Object.values(evaluation.kpas || {}).map((kpa) => ({
+                  id: kpa.id,
+                  name: kpa.title || kpa.name,
+                  questions: [1, 2, 3]
+                }))
+              }}
+              report={{
+                executiveSummary: dossier.geminiReport?.situationText || `${customerName} Value Realization Executive Readout`,
+                recommendations: [
+                  { title: 'Expand Wave 1 Active Seat Assignment', priority: 'Critical' },
+                  { title: 'Complete CFO Sign-Off on Legacy License Retirement', priority: 'High' },
+                  { title: 'Scale Top Validated Workflows', priority: 'High' }
+                ]
+              }}
+              theme="light"
+              engineName="Engine 2: GE Value Realization"
+            />
 
             {/* Row 1: 4 Clean KPI Cards */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>

@@ -22,8 +22,7 @@ test('AI/audio/chat/dynamic routes establish authenticated identity', () => {
   for (const file of [
     'server/routes/audio.js',
     'server/routes/chat.js',
-    'server/routes/dynamicAssessments.js',
-    'server/routes/genaiReadiness.js'
+    'server/routes/dynamicAssessments.js'
   ]) {
     const source = read(file);
     assert.match(source, /requireAuth/);

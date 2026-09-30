@@ -70,6 +70,7 @@ import {
   EU_AI_CATEGORY_PRESETS
 } from '../data/euAiComplianceData';
 import { evaluateCompliance } from '../services/euAiScoringEngine';
+import OmniCriticReviewCard from './OmniCriticReviewCard';
 
 // ==========================================
 // STYLED COMPONENTS (Zero Void, Full Desktop)
@@ -1709,7 +1710,7 @@ export default function EuAiComplianceWorkspace() {
   const [copilotMessages, setCopilotMessages] = useState([
     {
       role: 'assistant',
-      text: 'Greetings. I am your EU AI Act Regulatory Copilot powered by Gemini 3.8 Flash. I have full context of your evaluation for "' + (meta.systemName || 'this system') + '". How can I assist with Article 9–15 requirements, Article 26 deployer obligations, fine liability calculation, or Annex IV technical documentation?',
+      text: 'Greetings. I am your EU AI Act Regulatory Copilot powered by Gemini 3.8 Flash Live Preview (gemini-3.8-flash-live-preview). I have full context of your evaluation for "' + (meta.systemName || 'this system') + '". How can I assist with Article 9–15 requirements, Article 26 deployer obligations, fine liability calculation, or Annex IV technical documentation?',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
@@ -3490,16 +3491,16 @@ export default function EuAiComplianceWorkspace() {
                     <FiMic size={18} />
                   </div>
                   <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                       <span style={{ fontSize: '0.92rem', fontWeight: '800', color: '#f8fafc' }}>
-                        Executive Audio Briefing
+                        Executive Audio Briefing • Google Omni 1.1
                       </span>
                       <span style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: '999px', background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', fontWeight: '800', border: '1px solid rgba(56, 189, 248, 0.4)' }}>
-                        DeepMind Neural Voice (Fenrir)
+                        🎙️ google-omni-1.1 • DeepMind Neural Voice (Fenrir)
                       </span>
                     </div>
                     <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
-                      3-Act board narrative: Statutory Classification • Enforcement Deadlines • Action Directives
+                      Google Omni 1.1 3-Act board narrative: Statutory Classification • Enforcement Deadlines • Action Directives
                     </span>
                   </div>
                 </div>
@@ -3563,6 +3564,35 @@ export default function EuAiComplianceWorkspace() {
                 </AudioScriptContainer>
               )}
             </AudioBriefingCard>
+
+            {/* Google Omni 1.1 Multi-Dimensional UI/UX & Technical Critic Audit */}
+            <OmniCriticReviewCard
+              instance={{
+                id: meta.documentId || 'eu-ai-act',
+                customerName: meta.systemName || 'EU AI System Evaluation',
+                typeKey: 'eu_ai_act',
+                totalScore: Number(((evaluation.overallReadinessPct || 64) / 20).toFixed(1)),
+                responses: answers || {}
+              }}
+              framework={{
+                typeKey: 'eu_ai_act',
+                title: 'EU AI Act Conformity Assessment (Regulation EU 2024/1689)',
+                dimensions: EU_AI_SECTIONS.map((s) => ({
+                  id: `sec_${s.id}`,
+                  name: s.title,
+                  questions: [1, 2, 3, 4, 5, 6]
+                }))
+              }}
+              report={{
+                executiveSummary: synthesis?.executiveSummary || `Statutory conformity evaluation for ${meta.systemName} under Regulation (EU) 2024/1689.`,
+                recommendations: (evaluation.remediationTasks || []).slice(0, 4).map((t) => ({
+                  title: t.title,
+                  priority: t.severity || 'Critical'
+                }))
+              }}
+              theme="light"
+              engineName="Engine 3: EU AI Act Compliance"
+            />
 
             {/* Gemini 3.8 Flash AI Legal Synthesis */}
             <GeminiSynthesisContainer>
@@ -4036,6 +4066,35 @@ export default function EuAiComplianceWorkspace() {
                 <span style={{ fontSize: '0.78rem', color: '#64748b' }}>Date: {meta.evaluationDate}</span>
               </div>
             </ReportHeaderBlock>
+
+            {/* Google Omni 1.1 Multi-Dimensional UI/UX & Technical Critic Review */}
+            <OmniCriticReviewCard
+              instance={{
+                id: meta.documentId || 'eu-ai-act',
+                customerName: meta.systemName || 'EU AI System Evaluation',
+                typeKey: 'eu_ai_act',
+                totalScore: Number(((evaluation.overallReadinessPct || 64) / 20).toFixed(1)),
+                responses: answers || {}
+              }}
+              framework={{
+                typeKey: 'eu_ai_act',
+                title: 'EU AI Act Conformity Assessment (Regulation EU 2024/1689)',
+                dimensions: EU_AI_SECTIONS.map((s) => ({
+                  id: `sec_${s.id}`,
+                  name: s.title,
+                  questions: [1, 2, 3, 4, 5, 6]
+                }))
+              }}
+              report={{
+                executiveSummary: synthesis?.executiveSummary || `Statutory conformity evaluation for ${meta.systemName} under Regulation (EU) 2024/1689.`,
+                recommendations: (evaluation.remediationTasks || []).slice(0, 4).map((t) => ({
+                  title: t.title,
+                  priority: t.severity || 'Critical'
+                }))
+              }}
+              theme="light"
+              engineName="Engine 3: EU AI Act Compliance"
+            />
 
             {/* Executive Summary & System Metadata */}
             <div>
@@ -4785,8 +4844,8 @@ export default function EuAiComplianceWorkspace() {
                       <h3 style={{ fontSize: '0.95rem', fontWeight: '800', margin: 0, color: '#f8fafc' }}>
                         EU AI Act Regulatory Copilot
                       </h3>
-                      <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
-                        Powered by Gemini 3.8 Flash • Zero-Hallucination
+                      <span style={{ fontSize: '0.72rem', color: '#38bdf8', fontWeight: 700 }}>
+                        ⚡ Gemini 3.8 Flash Live Preview (gemini-3.8-flash-live-preview) • Zero-Hallucination
                       </span>
                     </div>
                   </div>

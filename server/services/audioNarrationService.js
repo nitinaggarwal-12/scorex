@@ -237,8 +237,9 @@ class AudioNarrationService {
       .replace(/\bBigQuery\b/g, 'Big Query')
       .replace(/\bBigLake\b/g, 'Big Lake')
       .replace(/\bVertex AI\b/g, 'Vertex A.I.')
-      .replace(/\bGemini 3\.7\b/g, 'Gemini three point seven')
-      .replace(/\bGemini 2\.0\b/g, 'Gemini two point zero')
+      .replace(/\bOmni 1\.1\b/gi, 'Omni one point one')
+      .replace(/\bGemini 3\.8\b/gi, 'Gemini three point eight')
+      .replace(/\bNano Banana 2\b/gi, 'Nano Banana two')
       .replace(/#{1,6}\s+/g, '')
       .replace(/\*\*(.*?)\*\*/g, '$1')
       .replace(/\*(.*?)\*/g, '$1')
@@ -279,56 +280,145 @@ class AudioNarrationService {
   }
 
   /**
-   * 🎬 Gemini SSML Audio Director:
-   * Generates a 5-Act theatrical script with SSML emotional markup, pauses, and pitch drift.
+   * Resolve framework-grounded conflict and awakening narratives for Omni 1.1 Audio Storytelling
+   */
+  _resolveFrameworkNarrativeContext(instance, report) {
+    const typeKey = String(instance?.typeKey || report?.typeKey || instance?.frameworkId || '').toLowerCase();
+    const framework = instance?.frameworkSnapshot?.title || instance?.typeName || report?.typeName || instance?.useCase || 'Enterprise Architecture';
+    const rawDims = Array.isArray(report?.dimensions)
+      ? report.dimensions
+      : Array.isArray(instance?.dimensionScores)
+      ? instance.dimensionScores
+      : [];
+    const sortedDims = [...rawDims].sort((a, b) => (a.score ?? 0) - (b.score ?? 0));
+    const weakestDim = sortedDims[0]?.name || 'Core Architectural Foundation';
+    const weakestScore = sortedDims[0]?.score ?? null;
+    const strongestDim = sortedDims[sortedDims.length - 1]?.name || 'Strategic Target Capability';
+    const strongestScore = sortedDims[sortedDims.length - 1]?.score ?? null;
+
+    if (typeKey.includes('finops') || framework.toLowerCase().includes('finops')) {
+      return {
+        typeKey: 'finops_cost_governance',
+        framework,
+        weakestDim,
+        strongestDim,
+        conflictText: `Beneath the surface of daily cloud operations, financial frictions were quietly compounding... Unallocated multi-cloud spend, idle compute clusters, under-utilized committed use discounts, and unmonitored A.I. token burn were eroding unit economics, with ${weakestDim}${weakestScore !== null ? ` scoring ${weakestScore} percent` : ''} as the primary bottleneck.`,
+        awakeningText: `Imagine what happens next... By activating automated Cloud FinOps governance, dynamic workload rightsizing, commitment optimization, and intelligent model-tier routing with context caching, ${strongestDim}${strongestScore !== null ? ` at ${strongestScore} percent` : ''} anchors a thirty-five to fifty percent reduction in unit cloud and A.I. run-rate costs!`
+      };
+    }
+    if (typeKey.includes('zero_trust') || typeKey.includes('security') || framework.toLowerCase().includes('zero-trust')) {
+      return {
+        typeKey: 'zero_trust_cyber_resilience',
+        framework,
+        weakestDim,
+        strongestDim,
+        conflictText: `Beneath the surface of daily operations, critical security exposures were quietly mounting... Implicit network trust zones, fragmented identity perimeters, unencrypted data movement, and unguarded prompt surfaces were placing enterprise resilience at risk, centered on ${weakestDim}${weakestScore !== null ? ` at ${weakestScore} percent` : ''}.`,
+        awakeningText: `Imagine what happens next... The target state enforces cryptographic Zero-Trust micro-perimeters, V.P.C. Service Controls, Customer-Managed Encryption Keys, Confidential Computing, and Google Cloud Model Armor—neutralizing exfiltration vectors while building upon ${strongestDim}!`
+      };
+    }
+    if (typeKey.includes('migration') || framework.toLowerCase().includes('migration')) {
+      return {
+        typeKey: 'cloud_migration_modernization',
+        framework,
+        weakestDim,
+        strongestDim,
+        conflictText: `Beneath the surface of legacy infrastructure, modernization debt was quietly compounding... Monolithic application dependencies, brittle batch ETL scripts, manual provisioning, and cutover risks in ${weakestDim}${weakestScore !== null ? ` (${weakestScore} percent)` : ''} were constraining release velocity.`,
+        awakeningText: `Imagine what happens next... Through automated 6-R wave orchestration, Strangler-Fig microservice refactoring, declarative Terraform landing zones, and Zero-E.T.L. change-data-capture streaming, your teams unlock cloud-native elasticity anchored by ${strongestDim}!`
+      };
+    }
+    if (typeKey.includes('mlops') || typeKey.includes('agentic') || framework.toLowerCase().includes('mlops')) {
+      return {
+        typeKey: 'mlops_agentic_ai_governance',
+        framework,
+        weakestDim,
+        strongestDim,
+        conflictText: `Beneath the surface of rapid experimentation, operational A.I. risks were quietly mounting... Disconnected feature pipelines, manual model deployments, unmonitored concept drift, and ungoverned agent tool calls in ${weakestDim}${weakestScore !== null ? ` (${weakestScore} percent)` : ''} were blocking production scale.`,
+        awakeningText: `Imagine what happens next... By establishing a unified Feature Store, automated CI/CD model registries, continuous drift and bias telemetry, and governed Model Context Protocol gateways, your organization scales autonomous agentic workflows safely from ${strongestDim}!`
+      };
+    }
+    if (typeKey.includes('eu_ai') || framework.toLowerCase().includes('eu ai act')) {
+      return {
+        typeKey: 'eu_ai_act',
+        framework,
+        weakestDim,
+        strongestDim,
+        conflictText: `Across regulated European markets, statutory compliance obligations under Regulation 2024/1689 were rapidly converging... Gaps in Article 9 risk management, Article 10 data governance, and Annex IV technical documentation around ${weakestDim} required immediate forensic remediation.`,
+        awakeningText: `Imagine what happens next... With automated Article 6 risk classification, immutable Article 12 audit logging, Article 14 human-in-the-loop oversight, and cryptographic Annex IV conformity dossiers, your A.I. portfolio achieves full regulatory readiness!`
+      };
+    }
+    if (typeKey.includes('ge_value') || framework.toLowerCase().includes('value realization')) {
+      return {
+        typeKey: 'ge_value_realization',
+        framework,
+        weakestDim,
+        strongestDim,
+        conflictText: `Across engineering and business units, seat utilization variance and unquantified productivity cycles in ${weakestDim} were obscuring the true financial return of enterprise generative A.I. investments.`,
+        awakeningText: `Imagine what happens next... By aligning Gemini Enterprise seat telemetry, automated workflow acceleration, and token FinOps governance around ${strongestDim}, the organization unlocks verifiable multi-year Net Present Value and rapid payback!`
+      };
+    }
+    return {
+      typeKey: typeKey || 'enterprise_data_ai_maturity',
+      framework,
+      weakestDim,
+      strongestDim,
+      conflictText: `Beneath the surface of daily operations, architectural frictions were quietly mounting in ${weakestDim}${weakestScore !== null ? ` (${weakestScore} percent)` : ''}... Fragmented data silos, manual governance handoffs, and unoptimized A.I. pipelines were placing engineering velocity at risk.`,
+      awakeningText: `Imagine what happens next... The target architecture unifies open lakehouse governance, declarative streaming pipelines, and Google Omni 1.1 multimodal intelligence with Context Caching—building upon your strength in ${strongestDim}${strongestScore !== null ? ` (${strongestScore} percent)` : ''} to slash latency and accelerate innovation!`
+    };
+  }
+
+  /**
+   * 🎬 Google Omni 1.1 (google-omni-1.1 / gemini-omni-1.1-flash) SSML Audio Storytelling Director:
+   * Generates a 5-Act theatrical script grounded in the exact assessment framework, scores, and recommendations.
    */
   async buildDirectorScript(instance, report, style = 'storyteller', persona = 'jonathan') {
-    const customer = instance?.customerName || 'your organization';
-    const framework = instance?.frameworkSnapshot?.title || instance?.useCase || 'Enterprise Architecture';
-    const score = report?.overallScore || instance?.totalScore || 3.2;
-    const stage = report?.maturityLevel || instance?.maturityLevel || 'Defined';
-    const summary = this.naturalizeTextForSpeech(report?.executiveSummary || 'Your architecture exhibits robust core foundations with immediate high-impact modernization frontiers.');
-    const rawRecommendations = (report?.prioritizedRecommendations || report?.prioritizedActions || []).slice(0, 3);
-
-    const recs = rawRecommendations.map(r => this.naturalizeTextForSpeech(r.title || r.recommendation || r.action || 'Strategic Modernization Wave'));
+    const customer = instance?.customerName || report?.customerName || 'your organization';
+    const ctx = this._resolveFrameworkNarrativeContext(instance, report);
+    const rawScore = report?.overallScore ?? instance?.overallScore ?? instance?.totalScore ?? 68;
+    const scoreDisplay = Number(rawScore) <= 5 ? `${rawScore} out of 5.0` : `${rawScore} percent`;
+    const stage = report?.maturityStage || report?.maturityLevel || instance?.maturityLevel || 'Developing';
+    const summary = this.naturalizeTextForSpeech(
+      report?.executiveSummary ||
+      `Google Omni 1.1 evaluated ${customer} across ${ctx.framework}, identifying ${ctx.strongestDim} as the core anchor and ${ctx.weakestDim} as the primary modernization priority.`
+    );
+    const rawRecommendations = (report?.recommendations || report?.prioritizedRecommendations || report?.prioritizedActions || []).slice(0, 3);
+    const recs = rawRecommendations.map(r => this.naturalizeTextForSpeech(r.title || r.recommendation || r.action || `Modernize ${ctx.weakestDim}`));
 
     return [
       {
         act: 'Act I',
         chapterTitle: 'The Landscape',
-        text: `Picture this... In an era where data velocity defines market dominance, the leadership at ${customer} embarked on a vital journey: to evaluate the true architectural frontiers of ${framework}.`,
+        storyEngine: 'google-omni-1.1',
+        text: `Picture this... In an era where architectural precision defines market leadership, the executive team at ${customer} embarked on a decisive mission: to benchmark and transform their capabilities across ${ctx.framework}.`,
         ssml: `<speak>
           <prosody rate="92%" pitch="-1st">
             Picture this... <break time="350ms"/>
-            In an era where data velocity defines market dominance, <break time="200ms"/>
-            the leadership at <emphasis level="moderate">${customer}</emphasis> embarked on a vital journey: <break time="250ms"/>
-            to evaluate the true architectural frontiers of ${framework}.
+            In an era where architectural precision defines market leadership, <break time="200ms"/>
+            the executive team at <emphasis level="moderate">${customer}</emphasis> embarked on a decisive mission: <break time="250ms"/>
+            to benchmark and transform their capabilities across ${ctx.framework}.
           </prosody>
         </speak>`
       },
       {
         act: 'Act II',
         chapterTitle: 'The Conflict',
-        text: `Beneath the surface of daily operations, subtle frictions were quietly mounting... Fragile legacy batch scripts, unmonitored A.I. prompt token burn, and fragmented silos were silently placing engineering velocity at risk.`,
+        storyEngine: 'google-omni-1.1',
+        text: this.naturalizeTextForSpeech(ctx.conflictText),
         ssml: `<speak>
           <prosody rate="94%" pitch="-2st">
-            Beneath the surface of daily operations, <break time="200ms"/>
-            subtle frictions were quietly mounting... <break time="400ms"/>
-            Fragile legacy batch scripts, <break time="150ms"/>
-            unmonitored A.I. prompt token burn, <break time="150ms"/>
-            and fragmented silos were silently placing engineering velocity at risk.
+            ${this.naturalizeTextForSpeech(ctx.conflictText)}
           </prosody>
         </speak>`
       },
       {
         act: 'Act III',
         chapterTitle: 'The Epiphany',
-        text: `Then came the moment of clarity... Our comprehensive audit evaluated your overall maturity at ${score} out of 5.0, firmly placing the organization at the ${stage} stage. ${summary}`,
+        storyEngine: 'google-omni-1.1',
+        text: `Then came the moment of clarity... Powered by Google Omni one point one, our comprehensive diagnostic evaluated ${customer} at ${scoreDisplay}, placing the organization in the ${stage} tier. ${summary}`,
         ssml: `<speak>
           <prosody rate="96%" pitch="+0st">
             Then came the moment of clarity... <break time="350ms"/>
-            Our comprehensive audit evaluated your overall maturity at <emphasis level="strong">${score} out of 5.0</emphasis>, <break time="200ms"/>
-            firmly placing the organization at the <emphasis level="moderate">${stage}</emphasis> stage. <break time="300ms"/>
+            Powered by Google Omni one point one, our comprehensive diagnostic evaluated ${customer} at <emphasis level="strong">${scoreDisplay}</emphasis>, <break time="200ms"/>
+            placing the organization in the <emphasis level="moderate">${stage}</emphasis> tier. <break time="300ms"/>
             ${summary}
           </prosody>
         </speak>`
@@ -336,25 +426,24 @@ class AudioNarrationService {
       {
         act: 'Act IV',
         chapterTitle: 'The Awakening',
-        text: `Imagine what happens next... The target state unlocks Google Vertex A.I. Gemini three point seven with Context Caching, shattering latency and slashing token costs by an astonishing seventy-five percent, paired with the unifying power of Big Lake!`,
+        storyEngine: 'google-omni-1.1',
+        text: this.naturalizeTextForSpeech(ctx.awakeningText),
         ssml: `<speak>
           <prosody rate="102%" pitch="+1st">
-            Imagine what happens next... <break time="300ms"/>
-            The target state unlocks <emphasis level="strong">Google Vertex A.I. Gemini 3.8 Flash with Context Caching</emphasis>, <break time="200ms"/>
-            shattering latency and slashing token costs by an astonishing <emphasis level="strong">seventy-five percent</emphasis>, <break time="200ms"/>
-            paired with the unifying power of Big Lake!
+            ${this.naturalizeTextForSpeech(ctx.awakeningText)}
           </prosody>
         </speak>`
       },
       {
         act: 'Act V',
         chapterTitle: 'The Horizon',
-        text: `The path forward is clear... ${recs.length > 0 ? recs.map((r, i) => `Chapter ${i + 1}: ${r}.`).join(' ') : 'Initiate immediate targeted modernization waves.'} The blueprint is illuminated. The horizon is yours to claim. Chapter One begins today.`,
+        storyEngine: 'google-omni-1.1',
+        text: `The path forward is clear... ${recs.length > 0 ? recs.map((r, i) => `Priority ${i + 1}: ${r}.`).join(' ') : `Prioritize immediate hardening of ${ctx.weakestDim}.`} The Nano Banana two blueprint is illuminated. The horizon is yours to claim. Chapter One begins today.`,
         ssml: `<speak>
           <prosody rate="93%" pitch="-1st">
             The path forward is clear... <break time="300ms"/>
-            ${recs.length > 0 ? recs.map((r, i) => `Chapter ${i + 1}... <break time="150ms"/> <emphasis level="moderate">${r}</emphasis>... <break time="250ms"/>`).join(' ') : 'Initiate immediate targeted modernization waves... <break time="250ms"/>'}
-            The blueprint is illuminated. <break time="300ms"/>
+            ${recs.length > 0 ? recs.map((r, i) => `Priority ${i + 1}... <break time="150ms"/> <emphasis level="moderate">${r}</emphasis>... <break time="250ms"/>`).join(' ') : `Prioritize immediate hardening of ${ctx.weakestDim}... <break time="250ms"/>`}
+            The Nano Banana two blueprint is illuminated. <break time="300ms"/>
             The horizon is yours to claim. <break time="350ms"/>
             <prosody pitch="-2st">Chapter One begins today.</prosody>
           </prosody>
@@ -364,12 +453,14 @@ class AudioNarrationService {
   }
 
   /**
-   * 🎙️ Dual-Host Podcast Co-Host Dialogue Generator (NotebookLM / Boardroom Style)
+   * 🎙️ Dual-Host Podcast Co-Host Dialogue Generator (Google Omni 1.1 Boardroom Style)
    */
   async buildPodcastDialogueScript(instance, report) {
-    const customer = instance?.customerName || 'the organization';
-    const score = report?.overallScore || instance?.totalScore || 3.2;
-    const stage = report?.maturityLevel || instance?.maturityLevel || 'Defined';
+    const customer = instance?.customerName || report?.customerName || 'the organization';
+    const ctx = this._resolveFrameworkNarrativeContext(instance, report);
+    const rawScore = report?.overallScore ?? instance?.overallScore ?? instance?.totalScore ?? 68;
+    const scoreDisplay = Number(rawScore) <= 5 ? `${rawScore} out of 5.0` : `${rawScore} percent`;
+    const stage = report?.maturityStage || report?.maturityLevel || instance?.maturityLevel || 'Developing';
 
     return [
       {
@@ -377,35 +468,40 @@ class AudioNarrationService {
         chapterTitle: 'The Opening Exchange',
         speaker: 'Jonathan (Chief Architect)',
         persona: 'jonathan',
-        text: `Welcome to the executive architectural briefing for ${customer}. Today, we're unpacking the complete data and A.I. maturity audit. Victoria, when you look across their foundational tier, what immediately jumps out?`
+        storyEngine: 'google-omni-1.1',
+        text: `Welcome to the Google Omni 1.1 executive briefing for ${customer}. Today, we're unpacking their ${ctx.framework} assessment. Victoria, looking across their telemetry, where is the strongest foundation and where is the friction?`
       },
       {
         act: 'Act II',
         chapterTitle: 'The Hidden Gaps',
         speaker: 'Victoria (Strategy Partner)',
         persona: 'victoria',
-        text: `Thanks Jonathan. What really stands out is the classic modernization paradox. Their engineering teams are shipping rapidly, but underneath, unmonitored prompt token burn and legacy batch silos are silently adding friction to the bottom line.`
+        storyEngine: 'google-omni-1.1',
+        text: `Thanks Jonathan. Their standout strength is ${ctx.strongestDim}, which gives them a real launchpad. However, ${ctx.weakestDim} is currently acting as the primary bottleneck holding back end-to-end velocity.`
       },
       {
         act: 'Act III',
         chapterTitle: 'The Audit Score',
         speaker: 'Jonathan (Chief Architect)',
         persona: 'jonathan',
-        text: `Precisely. Our assessment establishes their overall enterprise score at ${score} out of 5.0, squarely in the ${stage} tier. It proves the core data pipeline is solid, but the next horizon demands intelligent unified governance.`
+        storyEngine: 'google-omni-1.1',
+        text: `Exactly. Our diagnostic establishes ${customer}'s composite maturity at ${scoreDisplay}, placing them in the ${stage} tier for ${ctx.framework}. Every score traces directly to verified assessment inputs.`
       },
       {
         act: 'Act IV',
         chapterTitle: 'The Modernization Payoff',
         speaker: 'Victoria (Strategy Partner)',
         persona: 'victoria',
-        text: `And that's where the financial upside is massive. By modernizing to Google Vertex A.I. Gemini 3.8 Flash with Context Caching and Big Lake, we project up to a seventy-five percent reduction in token costs and instant query latency.`
+        storyEngine: 'google-omni-1.1',
+        text: `${this.naturalizeTextForSpeech(ctx.awakeningText)}`
       },
       {
         act: 'Act V',
         chapterTitle: 'The Executive Call to Action',
         speaker: 'Jonathan (Chief Architect)',
         persona: 'jonathan',
-        text: `The roadmap is locked, the technical blueprints are generated, and Phase One starts today. Let's build the future together.`
+        storyEngine: 'google-omni-1.1',
+        text: `With the Nano Banana 2 target architecture and phased roadmap locked in, Phase One begins with remediating ${ctx.weakestDim}. Let's execute.`
       }
     ];
   }
@@ -625,8 +721,11 @@ class AudioNarrationService {
     }
 
     const modelsToTry = [
+      'google-omni-1.1',
+      'gemini-omni-1.1-flash',
       'lyria-3.5',
       'gemini-3.1-flash-tts-preview',
+      'gemini-3.8-flash-live-preview',
       'gemini-3.1-flash-live-preview',
       'gemini-3.8-flash'
     ];

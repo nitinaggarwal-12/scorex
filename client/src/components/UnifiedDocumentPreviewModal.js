@@ -327,11 +327,16 @@ const DocumentPaper = styled.div`
   color: #0f172a;
   padding: 48px 60px;
   border-radius: 12px;
-  max-width: 960px;
+  max-width: 1080px;
   margin: 0 auto;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   font-family: 'Calibri', 'Arial', sans-serif;
   line-height: 1.6;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    padding: 20px 14px;
+  }
 
   h1 {
     font-size: 2rem;
@@ -1232,8 +1237,8 @@ export const UnifiedDocumentPreviewModal = ({
           {/* 2. SHEETS / EXCEL PREVIEW */}
           {activeDocType === 'sheets' && (
             <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div style={{ display: "flex", gap: "8px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px" }}>
+                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                   <DocTab $active={activeSheetTab === 'summary'} $accentColor="#10b981" onClick={() => setActiveSheetTab('summary')}>
                     📋 Sheet 1: Executive Summary
                   </DocTab>
@@ -1242,6 +1247,9 @@ export const UnifiedDocumentPreviewModal = ({
                   </DocTab>
                   <DocTab $active={activeSheetTab === 'roadmap'} $accentColor="#10b981" onClick={() => setActiveSheetTab('roadmap')}>
                     🗺️ Sheet 3: Action Roadmap
+                  </DocTab>
+                  <DocTab $active={activeSheetTab === 'changelog'} $accentColor="#10b981" onClick={() => setActiveSheetTab('changelog')}>
+                    🕒 Sheet 4: Audit Changelog ({(instance?.changelog || report?.changelog || []).length})
                   </DocTab>
                 </div>
 
@@ -1311,7 +1319,8 @@ export const UnifiedDocumentPreviewModal = ({
                     {dimensions
                       .filter(d => d.name.toLowerCase().includes(searchTerm.toLowerCase()))
                       .map((dim, idx) => {
-                        const cur = Number(scores[dim.id] || scores[dim.name] || 2.8);
+                        const rawScore = scores[dim.id]?.score ?? scores[dim.id] ?? scores[dim.name] ?? 2.8;
+                        const cur = Number(rawScore);
                         const tgt = 4.2;
                         const gap = (tgt - cur).toFixed(1);
                         return (
@@ -1369,17 +1378,56 @@ export const UnifiedDocumentPreviewModal = ({
                   </tbody>
                 </SheetTable>
               )}
+
+              {activeSheetTab === 'changelog' && (
+                <SheetTable>
+                  <thead>
+                    <tr>
+                      <th>TIMESTAMP</th>
+                      <th>WHO (ACTOR &amp; ROLE)</th>
+                      <th>ACTION TYPE</th>
+                      <th>TARGET SCOPE</th>
+                      <th>WHAT CHANGED (PREVIOUS → NEW VALUE &amp; SUMMARY)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(instance?.changelog || report?.changelog || []).map((entry, idx) => (
+                      <tr key={entry.id || idx}>
+                        <td style={{ whiteSpace: 'nowrap', fontSize: '0.78rem' }}>
+                          {entry.timestamp ? new Date(entry.timestamp).toLocaleString() : 'Logged'}
+                        </td>
+                        <td>
+                          <strong>{entry.actorName || 'Lead Cloud Architect'}</strong><br />
+                          <span style={{ fontSize: '0.75rem', color: '#2563eb' }}>{entry.actorRole || 'Reviewer'}</span>
+                        </td>
+                        <td>
+                          <span style={{ background: '#eff6ff', color: '#1d4ed8', padding: '2px 8px', borderRadius: '4px', fontWeight: 700, fontSize: '0.74rem', textTransform: 'uppercase' }}>
+                            {entry.actionType || entry.category || 'Audit'}
+                          </span>
+                        </td>
+                        <td><strong>{entry.targetScope}</strong></td>
+                        <td>
+                          <div style={{ fontSize: '0.78rem', color: '#0f172a', marginBottom: '2px' }}>
+                            <strong>{entry.previousValue || 'None'} → {entry.newValue || 'Updated'}</strong>
+                          </div>
+                          <div style={{ fontSize: '0.78rem', color: '#475569' }}>{entry.summary}</div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </SheetTable>
+              )}
             </div>
           )}
 
           {/* 3. DOCS / WORD PREVIEW */}
           {activeDocType === 'docs' && (
-            <DocumentPaper>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
+            <DocumentPaper data-testid="google-docs-preview-paper">
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px", marginBottom: "16px" }}>
                 <div>
                   <h1 style={{ margin: "0 0 6px 0" }}>ScoreX Executive Advisory Briefing</h1>
                   <span style={{ color: "#64748b", fontSize: "0.95rem" }}>
-                    Google Cloud Enterprise Architecture & Modernization Strategy • {new Date().toLocaleDateString()}
+                    Google Cloud Enterprise Architecture &amp; Modernization Strategy • {new Date().toLocaleDateString()}
                   </span>
                 </div>
                 <ActionButton 
@@ -1397,10 +1445,11 @@ export const UnifiedDocumentPreviewModal = ({
                 <strong>Target Organization:</strong> {org}<br />
                 <strong>Initiative:</strong> {framework?.title || 'Data & AI Architecture Modernization'}<br />
                 <strong>Maturity Baseline:</strong> <span style={{ color: "#1d4ed8", fontWeight: 700 }}>{overallScore} / 5.0 ({maturityStage})</span><br />
+                <strong>Lifecycle Status:</strong> <span style={{ color: "#047857", fontWeight: 700 }}>{(instance?.status || 'completed').toUpperCase()}</span><br />
                 <strong>Projected 3-Yr ROI:</strong> <span style={{ color: "#047857", fontWeight: 700 }}>$2.3M - $4.2M (35-50% TCO Savings)</span>
               </div>
 
-              <h2>1. Executive Summary & Strategic Rationale</h2>
+              <h2>1. Executive Summary &amp; Strategic Rationale</h2>
               <p>
                 This memorandum establishes the formal modernization strategy for <strong>{org}</strong> on Google Cloud Platform. 
                 Based on diagnostic assessment across {dimensions.length} architectural dimensions, ScoreX has outlined prioritized migration 
@@ -1408,24 +1457,29 @@ export const UnifiedDocumentPreviewModal = ({
               </p>
 
               <h2>2. Architectural Dimension Scores</h2>
-              <table style={{ width: "100%", borderCollapse: "collapse", margin: "16px 0", fontSize: "0.9rem" }}>
-                <thead>
-                  <tr style={{ background: "#0b132b", color: "#ffffff" }}>
-                    <th style={{ padding: "8px 12px", textAlign: "left" }}>Pillar</th>
-                    <th style={{ padding: "8px 12px", textAlign: "left" }}>Current Score</th>
-                    <th style={{ padding: "8px 12px", textAlign: "left" }}>Target Horizon</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {dimensions.map((dim, idx) => (
-                    <tr key={idx} style={{ borderBottom: "1px solid #cbd5e1", background: idx % 2 === 0 ? '#ffffff' : '#f8fafc' }}>
-                      <td style={{ padding: "8px 12px" }}><strong>{dim.name}</strong></td>
-                      <td style={{ padding: "8px 12px", color: "#1d4ed8", fontWeight: 700 }}>{scores[dim.id] || scores[dim.name] || '2.8'} / 5.0</td>
-                      <td style={{ padding: "8px 12px", color: "#047857", fontWeight: 700 }}>4.2+ / 5.0</td>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", margin: "16px 0", fontSize: "0.9rem" }}>
+                  <thead>
+                    <tr style={{ background: "#0b132b", color: "#ffffff" }}>
+                      <th style={{ padding: "8px 12px", textAlign: "left" }}>Pillar</th>
+                      <th style={{ padding: "8px 12px", textAlign: "left" }}>Current Score</th>
+                      <th style={{ padding: "8px 12px", textAlign: "left" }}>Target Horizon</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {dimensions.map((dim, idx) => {
+                      const rawScore = scores[dim.id]?.score ?? scores[dim.id] ?? scores[dim.name] ?? '2.8';
+                      return (
+                        <tr key={idx} style={{ borderBottom: "1px solid #cbd5e1", background: idx % 2 === 0 ? '#ffffff' : '#f8fafc' }}>
+                          <td style={{ padding: "8px 12px" }}><strong>{dim.name}</strong></td>
+                          <td style={{ padding: "8px 12px", color: "#1d4ed8", fontWeight: 700 }}>{typeof rawScore === 'number' ? rawScore.toFixed(1) : rawScore} / 5.0</td>
+                          <td style={{ padding: "8px 12px", color: "#047857", fontWeight: 700 }}>4.2+ / 5.0</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
 
               <h2>3. Priority Transformation Recommendations</h2>
               {recs.slice(0, 5).map((r, idx) => (
@@ -1435,6 +1489,78 @@ export const UnifiedDocumentPreviewModal = ({
                   <span style={{ fontSize: "0.82rem", color: "#047857", fontWeight: 700 }}>Timeline: {r.timeline || 'Phase 1 (Days 0-30)'}</span>
                 </div>
               ))}
+
+              <h2>4. Active Assessment Collaborators &amp; Governance Roster</h2>
+              <p style={{ fontSize: "0.9rem", color: "#475569", marginBottom: "10px" }}>
+                Authorized architects, security reviewers, and executive sponsors participating in this assessment workspace:
+              </p>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", margin: "12px 0", fontSize: "0.85rem" }}>
+                  <thead>
+                    <tr style={{ background: "#1e293b", color: "#ffffff" }}>
+                      <th style={{ padding: "8px 12px", textAlign: "left" }}>Collaborator Name</th>
+                      <th style={{ padding: "8px 12px", textAlign: "left" }}>Role</th>
+                      <th style={{ padding: "8px 12px", textAlign: "left" }}>Email</th>
+                      <th style={{ padding: "8px 12px", textAlign: "left" }}>Permission</th>
+                      <th style={{ padding: "8px 12px", textAlign: "left" }}>Added By</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(instance?.collaborators || report?.collaborators || []).map((c, idx) => (
+                      <tr key={c.id || idx} style={{ borderBottom: "1px solid #cbd5e1", background: idx % 2 === 0 ? '#ffffff' : '#f8fafc' }}>
+                        <td style={{ padding: "8px 12px" }}><strong>{c.name}</strong></td>
+                        <td style={{ padding: "8px 12px", color: "#1d4ed8", fontWeight: 700 }}>{c.role}</td>
+                        <td style={{ padding: "8px 12px" }}>{c.email}</td>
+                        <td style={{ padding: "8px 12px" }}>{c.permission || 'Contributor'}</td>
+                        <td style={{ padding: "8px 12px", color: "#64748b" }}>{c.addedBy || 'Lead Architect'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <h2>5. Immutable Governance &amp; Audit Changelog (Who Changed What)</h2>
+              <p style={{ fontSize: "0.9rem", color: "#475569", marginBottom: "10px" }}>
+                Complete chronological record of user additions, verbatim architect comments, status transitions, score evaluations, and Template 05 architecture blueprint updates:
+              </p>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", margin: "12px 0", fontSize: "0.82rem" }} data-testid="google-docs-changelog-table">
+                  <thead>
+                    <tr style={{ background: "#0b132b", color: "#ffffff" }}>
+                      <th style={{ padding: "8px 10px", textAlign: "left" }}>Timestamp</th>
+                      <th style={{ padding: "8px 10px", textAlign: "left" }}>Who (User &amp; Role)</th>
+                      <th style={{ padding: "8px 10px", textAlign: "left" }}>Change Type</th>
+                      <th style={{ padding: "8px 10px", textAlign: "left" }}>Target Scope</th>
+                      <th style={{ padding: "8px 10px", textAlign: "left" }}>What Changed (Previous → New Value &amp; Summary)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(instance?.changelog || report?.changelog || []).map((entry, idx) => (
+                      <tr key={entry.id || idx} style={{ borderBottom: "1px solid #cbd5e1", background: idx % 2 === 0 ? '#ffffff' : '#f8fafc' }}>
+                        <td style={{ padding: "8px 10px", whiteSpace: "nowrap", color: "#475569" }}>
+                          {entry.timestamp ? new Date(entry.timestamp).toLocaleString() : 'Logged'}
+                        </td>
+                        <td style={{ padding: "8px 10px" }}>
+                          <strong>{entry.actorName || 'Lead Cloud Architect'}</strong><br />
+                          <span style={{ fontSize: "0.75rem", color: "#1d4ed8" }}>{entry.actorRole || 'Reviewer'}</span>
+                        </td>
+                        <td style={{ padding: "8px 10px", fontWeight: 700, textTransform: "uppercase", color: "#0f172a" }}>
+                          {entry.actionType || entry.category || 'Audit'}
+                        </td>
+                        <td style={{ padding: "8px 10px", fontWeight: 700 }}>
+                          {entry.targetScope || 'Assessment'}
+                        </td>
+                        <td style={{ padding: "8px 10px" }}>
+                          <div style={{ fontWeight: 700, color: "#0f172a", marginBottom: "2px" }}>
+                            {entry.previousValue && entry.previousValue !== 'None' ? `${entry.previousValue} → ` : ''}{entry.newValue}
+                          </div>
+                          <div style={{ color: "#334155" }}>{entry.summary}</div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </DocumentPaper>
           )}
 

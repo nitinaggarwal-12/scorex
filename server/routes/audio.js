@@ -88,24 +88,58 @@ router.get('/status', (req, res) => {
   });
 });
 
-// POST /api/audio/script - Generate 5-Act Director Script
+// POST /api/audio/script - Generate 5-Act Director Script via Google Omni 1.1
 router.post('/script', generationLimiter, async (req, res) => {
   try {
-    const { instance, report, style, persona } = req.body;
-    const chapters = await audioNarrationService.buildDirectorScript(instance, report, style, persona);
-    res.json({ success: true, chapters });
+    const { instance, report, style, persona, customerName, frameworkTitle, typeKey, overallScore, targetScore, maturityStage } = req.body || {};
+    const resolvedInstance = instance || {
+      customerName: customerName || 'Enterprise Organization',
+      typeKey: typeKey || 'enterprise_data_ai_maturity',
+      frameworkTitle: frameworkTitle || 'Enterprise Architecture Assessment',
+      totalScore: overallScore || 2.8,
+      maturityLevel: maturityStage || 'Developing'
+    };
+    const resolvedReport = report || {
+      calculatedScores: {
+        overallScore: overallScore || 2.8,
+        overallTarget: targetScore || 4.4,
+        maturityLevel: maturityStage || 'Developing'
+      }
+    };
+    const chapters = await audioNarrationService.buildDirectorScript(resolvedInstance, resolvedReport, style, persona);
+    res.json({
+      success: true,
+      scriptModel: 'google-omni-1.1',
+      wireModel: 'gemini-omni-1.1-flash',
+      chapters,
+      script: Array.isArray(chapters) ? chapters.map((c) => c.script).join('\n\n') : ''
+    });
   } catch (err) {
     console.error('Error generating audio script:', err.message);
     res.status(500).json({ success: false, error: 'Failed to generate audio script' });
   }
 });
 
-// POST /api/audio/podcast-script - Generate Dual-Speaker Co-Host Dialogue Script
+// POST /api/audio/podcast-script - Generate Dual-Speaker Co-Host Dialogue Script via Google Omni 1.1
 router.post('/podcast-script', generationLimiter, async (req, res) => {
   try {
-    const { instance, report } = req.body;
-    const turns = await audioNarrationService.buildPodcastDialogueScript(instance, report);
-    res.json({ success: true, turns });
+    const { instance, report, customerName, frameworkTitle, typeKey, overallScore } = req.body || {};
+    const resolvedInstance = instance || {
+      customerName: customerName || 'Enterprise Organization',
+      typeKey: typeKey || 'enterprise_data_ai_maturity',
+      frameworkTitle: frameworkTitle || 'Enterprise Architecture Assessment',
+      totalScore: overallScore || 2.8
+    };
+    const resolvedReport = report || {
+      calculatedScores: { overallScore: overallScore || 2.8 }
+    };
+    const turns = await audioNarrationService.buildPodcastDialogueScript(resolvedInstance, resolvedReport);
+    res.json({
+      success: true,
+      scriptModel: 'google-omni-1.1',
+      wireModel: 'gemini-omni-1.1-flash',
+      turns
+    });
   } catch (err) {
     console.error('Error generating podcast script:', err.message);
     res.status(500).json({ success: false, error: 'Failed to generate podcast script' });

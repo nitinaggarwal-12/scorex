@@ -543,7 +543,7 @@ class DiagramErrorBoundary extends React.Component {
             Architecture Diagram Rendering Notice
           </div>
           <p style={{ fontSize: '0.85rem', color: '#94a3b8', maxWidth: '480px', margin: 0 }}>
-            The graph canvas encountered a parsing anomaly. You can trigger an instant AI auto-heal regeneration with Gemini 3.8 Flash.
+            The graph canvas encountered a parsing anomaly. You can trigger an instant AI auto-heal regeneration with Nano Banana 2 (gemini-3.1-flash-image-preview).
           </p>
           <button
             onClick={() => {
@@ -677,7 +677,11 @@ const ArchitectureComparisonDiagram = ({
   framework = {},
   theme = 'light',
   responses = {},
-  notes = []
+  notes = [],
+  dimensionScores = [],
+  recommendations = [],
+  criticalConstraints = [],
+  keyStrengths = []
 }) => {
   const [viewMode, setViewMode] = useState('side_by_side'); // 'side_by_side', 'current_diagram', 'target_diagram', 'cards'
   const [diagramTheme, setDiagramTheme] = useState(theme || 'light'); // 'light' | 'dark'
@@ -696,19 +700,35 @@ const ArchitectureComparisonDiagram = ({
   const [customPrompt, setCustomPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
 
+  const normalizedDimScores = React.useMemo(() => {
+    if (Array.isArray(dimensionScores) && dimensionScores.length > 0) return dimensionScores;
+    if (dimensionScores && typeof dimensionScores === 'object' && !Array.isArray(dimensionScores)) {
+      return Object.entries(dimensionScores).map(([id, d]) => ({
+        id,
+        name: d.name || d.title || id,
+        currentScore: Number(d.score ?? d.currentScore ?? currentScore),
+        futureScore: Number(d.targetScore ?? d.futureScore ?? targetScore)
+      }));
+    }
+    if (Array.isArray(framework?.dimensionScores) && framework.dimensionScores.length > 0) {
+      return framework.dimensionScores;
+    }
+    return [];
+  }, [dimensionScores, framework, currentScore, targetScore]);
+
   // Derive authentic PromptCanvas default diagrams for the current assessment framework
   const defaultBlueprintData = React.useMemo(() => {
     return getMasterArchitectureDiagrams(
       framework,
       { customerName, useCase, responses, notes },
-      { overallScore: currentScore, targetScore, dimensionScores: framework?.dimensionScores || [] }
+      { overallScore: currentScore, targetScore, dimensionScores: normalizedDimScores }
     );
-  }, [framework, customerName, useCase, currentScore, targetScore, responses, notes]);
+  }, [framework, customerName, useCase, currentScore, targetScore, responses, notes, normalizedDimScores]);
 
-  // Detect obsolete/draft diagrams that lack full orthogonal connectivity or use raw emojis
+  // Detect obsolete/draft diagrams that lack Template 05 3-Zone Master Layout
   const isOutdatedDiagram = useCallback((diagrams) => {
     if (!diagrams || !diagrams.currentStateXml) return true;
-    if (diagrams.promptCanvasSource && diagrams.transitionStateXml) return false;
+    if (diagrams.template05MasterLayout && diagrams.transitionStateXml) return false;
     return true;
   }, []);
 
@@ -763,7 +783,7 @@ const ArchitectureComparisonDiagram = ({
 
   const [noteText, setNoteText] = useState('');
   const [showNotesDrawer, setShowNotesDrawer] = useState(false);
-  const [stackedThreeView, setStackedThreeView] = useState(false);
+  const [stackedThreeView, setStackedThreeView] = useState(true);
   const drawioIframeRef = useRef(null);
 
   const handleOpenVisualDrawio = (target = 'target') => {
@@ -887,39 +907,55 @@ const ArchitectureComparisonDiagram = ({
     toast.success(`✅ Applied and saved manual XML edits (${newVer})!`);
   };
 
+  const activeFrameworkKey = String(framework?.typeKey || framework?.id || framework?.title || useCase || '').toLowerCase();
+  const activeFrameworkTitle = framework?.title || useCase || 'Enterprise Architecture';
+
+  const nb2CodePrefix = /finops|cost|billing/.test(activeFrameworkKey)
+    ? 'NB2-FIN'
+    : /zero_trust|security|cyber/.test(activeFrameworkKey)
+    ? 'NB2-SEC'
+    : /migration|modernization|lakehouse|edw/.test(activeFrameworkKey)
+    ? 'NB2-MIG'
+    : /mlops|agentic|mcp/.test(activeFrameworkKey)
+    ? 'NB2-MLO'
+    : 'NB2-DAT';
+
   const currentXml = diagramsData?.currentStateXml || DEFAULT_CURRENT_XML;
   const transitionXml = diagramsData?.transitionStateXml || diagramsData?.currentStateXml || DEFAULT_CURRENT_XML;
   const targetXml = diagramsData?.targetStateXml || DEFAULT_TARGET_XML;
-  const currentTitle = diagramsData?.currentTitle || '1. Current State (As-Is): Siloed Legacy Baseline';
+  const rawCurTitle = diagramsData?.currentTitle || `${customerName || 'Enterprise'} Baseline`;
+  const rawTransTitle = diagramsData?.transitionTitle || `${activeFrameworkTitle} Modernization`;
+  const rawTargTitle = diagramsData?.targetTitle || `${activeFrameworkTitle} Target Topology`;
+  const currentTitle = rawCurTitle.includes(nb2CodePrefix) ? rawCurTitle : `${nb2CodePrefix}-C-01 • ${rawCurTitle}`;
   const currentSubtitle = diagramsData?.currentSubtitle || `Level ${currentScore} Developing`;
-  const transitionTitle = diagramsData?.transitionTitle || '2. Transition State (Current → Future Bridge): Hybrid / Strangler Fig Migration';
+  const transitionTitle = rawTransTitle.includes(nb2CodePrefix) ? rawTransTitle : `${nb2CodePrefix}-T-02 • ${rawTransTitle}`;
   const transitionSubtitle = diagramsData?.transitionSubtitle || 'Phased Strangler Fig & Hybrid Cloud Cutover';
-  const targetTitle = diagramsData?.targetTitle || '3. Desired Future State (To-Be): Enterprise Data Lakehouse & Gemini Agentic Mesh';
-  const targetSubtitle = diagramsData?.targetSubtitle || `Level ${targetScore} Optimized`;
-  const modelUsed = diagramsData?.modelUsed || 'PromptCanvas 3-Stage Blueprints (:3001)';
+  const targetTitle = rawTargTitle.includes(nb2CodePrefix) ? rawTargTitle : `${nb2CodePrefix}-F-03 • ${rawTargTitle}`;
+  const targetSubtitle = diagramsData?.targetSubtitle || `Level ${targetScore} Optimized • Nano Banana 2 Synthesized`;
+  const modelUsed = diagramsData?.modelUsed || 'Nano Banana 2 (nano-banana-2 / gemini-3.1-flash-image-preview) + PromptCanvas 3-Stage Blueprints';
 
   const handleRegenerate = async () => {
     if (!instanceId) {
-      toast.error('Instance ID required for Gemini generation');
+      toast.error('Instance ID required for Nano Banana 2 generation');
       return;
     }
 
     setIsGenerating(true);
-    const toastId = toast.loading('Calling Gemini 3.8 Flash API to generate bespoke architecture diagrams...');
+    const toastId = toast.loading('Calling Nano Banana 2 (nano-banana-2 / gemini-3.1-flash-image-preview) to synthesize architecture diagrams...');
 
     try {
       const res = await dynamicAssessmentService.generateArchitectureDiagrams(instanceId, customPrompt);
       if (res.success && res.diagrams) {
         setDiagramsData(res.diagrams);
         persistDiagramsToBackend(res.diagrams);
-        toast.success(`✨ Architecture diagrams regenerated with ${res.diagrams.modelUsed || 'Gemini 3.8 Flash'}!`, { id: toastId });
+        toast.success(`✨ Architecture diagrams regenerated with Nano Banana 2 (${res.diagrams.modelUsed || 'nano-banana-2'})!`, { id: toastId });
         setIsModalOpen(false);
         setCustomPrompt('');
       } else {
         throw new Error(res.error || 'Generation failed');
       }
     } catch (err) {
-      console.error('Failed to generate diagrams with Gemini:', err);
+      console.error('Failed to generate diagrams with Nano Banana 2:', err);
       toast.error(err.message || 'Failed to generate architecture diagrams', { id: toastId });
     } finally {
       setIsGenerating(false);
@@ -938,7 +974,7 @@ const ArchitectureComparisonDiagram = ({
     setDiagramsData(nextDiagrams);
     persistDiagramsToBackend(nextDiagrams);
     setIsTemplateModalOpen(false);
-    toast.success(`Applied & saved "${tpl.name}" architecture blueprint!`, { icon: '🏛️' });
+    toast.success(`Applied & saved "${tpl.name}" Nano Banana 2 blueprint!`, { icon: '🏛️' });
   };
 
   const handleCopyXml = async (xml) => {
@@ -995,83 +1031,265 @@ const ArchitectureComparisonDiagram = ({
     }
   };
 
-  const currentLayers = [
-    {
-      name: '1. Ingestion & Connectors',
-      tag: 'Brittle & High Latency',
-      icon: <FiRepeat />,
-      items: ['Cron-based Python/Bash batch scripts', 'Fragmented SFTP & point-to-point APIs', 'No unified dead-letter queues or CDC']
-    },
-    {
-      name: '2. Storage & Governance',
-      tag: 'Data Silos & IAM Drift',
-      icon: <FiDatabase />,
-      items: ['Separate Data Lakes + Relational Warehouses', 'Inconsistent ACLs across cloud buckets', 'Manual metadata spreadsheets & no lineage']
-    },
-    {
-      name: '3. Processing & Compute',
-      tag: 'Runaway Cluster Spend',
-      icon: <FiCpu />,
-      items: ['Static over-provisioned Spark/VM compute', 'Lack of auto-termination / FinOps policies', 'Duplicate ETL pipeline transformations']
-    },
-    {
-      name: '4. AI & Machine Learning',
-      tag: 'Disconnected MLOps',
-      icon: <FiBox />,
-      items: ['Ad-hoc local Jupyter notebooks', 'Manual model deployment scripts', 'No automated drift monitoring / feature store']
-    },
-    {
-      name: '5. Generative AI & LLMs',
-      tag: 'Unguarded & Expensive',
-      icon: <HiSparkles />,
-      items: ['Unguarded external API endpoints', 'Redundant full-prompt token spend', 'No enterprise PII filters or CMEK encryption']
-    },
-    {
-      name: '6. BI & Analytics Serving',
-      tag: 'Heavy Analyst Backlog',
-      icon: <FiGrid />,
-      items: ['Stale nightly data warehouse extracts', '14-day turnaround on custom metrics', 'No shared semantic metric layer']
-    }
-  ];
+  // Framework & Customer-Grounded 5-Step Process Flow & Tier Breakdown Cards
+  const { currentLayers, targetLayers, processFlowSteps } = React.useMemo(() => {
+    const iconPool = [<FiRepeat />, <FiDatabase />, <FiCpu />, <FiBox />, <HiSparkles />, <FiShield />];
+    const targetIconPool = [
+      <FiRepeat color="#10b981" />,
+      <FiShield color="#10b981" />,
+      <FiZap color="#10b981" />,
+      <FiCpu color="#10b981" />,
+      <HiSparkles color="#10b981" />,
+      <FiGrid color="#10b981" />
+    ];
 
-  const targetLayers = [
-    {
-      name: '1. Ingestion & Connectors',
-      tag: 'Real-Time & Declarative',
-      icon: <FiRepeat color="#10b981" />,
-      items: ['Declarative Streaming Pipelines (Kafka/PubSub)', 'Automated Schema Evolution & Real-Time CDC', 'Serverless Auto-Loader for Cloud Storage & Event Buses']
-    },
-    {
-      name: '2. Storage & Governance',
-      tag: 'Unified Open Lakehouse',
-      icon: <FiShield color="#10b981" />,
-      items: ['Open Table Formats (Apache Iceberg / Delta)', 'Centralized Metadata Catalog with Column/Row Masking', 'Automated End-to-End Lineage & Audit Trails']
-    },
-    {
-      name: '3. Processing & Compute',
-      tag: 'Serverless FinOps Engine',
-      icon: <FiZap color="#10b981" />,
-      items: ['Serverless Vectorized SQL Compute Engine', 'Instant auto-suspend cluster kill-switches', 'Zero-copy sharing across cloud accounts']
-    },
-    {
-      name: '4. AI & Machine Learning',
-      tag: 'Continuous Production MLOps',
-      icon: <FiCpu color="#10b981" />,
-      items: ['Centralized Model & Prompt Registry', 'Automated CI/CD deployment pipelines', 'Real-time data quality & concept drift alerts']
-    },
-    {
-      name: '5. Generative AI & Agents',
-      tag: 'Guarded Compound AI Mesh',
-      icon: <HiSparkles color="#10b981" />,
-      items: ['Autonomous Multi-Agent Orchestration (MCP)', 'Prompt Context Caching (75% token discount)', 'Zero-Trust AI Guardrails & CMEK isolation']
-    },
-    {
-      name: '6. BI & Analytics Serving',
-      tag: 'Self-Service Semantic Layer',
-      icon: <FiGrid color="#10b981" />,
-      items: ['Direct Lakehouse Zero-Copy Queries', 'Unified Semantic Metric Layer for BI tools', 'Sub-second real-time dashboards']
+    if (Array.isArray(normalizedDimScores) && normalizedDimScores.length >= 3) {
+      const dims = normalizedDimScores.slice(0, 6);
+      const recs = Array.isArray(recommendations) ? recommendations : [];
+      const humanize = (s) => String(s || '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
+      const dynamicCurrentLayers = dims.map((d, idx) => {
+        const cScore = Number(d.currentScore ?? d.score ?? currentScore).toFixed(1);
+        const dimName = d.name || d.title || d.category || `Dimension ${idx + 1}`;
+        const badItems = Array.isArray(d.theBad) && d.theBad.length > 0
+          ? d.theBad.slice(0, 3).map(b => humanize(String(b).split('—')[0].trim()))
+          : Array.isArray(d.painPoints) && d.painPoints.length > 0
+          ? d.painPoints.slice(0, 3).map(humanize)
+          : [
+              `Current Maturity Baseline: ${cScore} / 5.0`,
+              criticalConstraints[idx]?.constraint || `Siloed ${dimName.toLowerCase()} execution & manual handoffs`,
+              `Target Gap: +${Math.max(0, Number(d.futureScore ?? d.targetScore ?? targetScore) - Number(cScore)).toFixed(1)} maturity leap required`
+            ];
+        return {
+          name: /^\d+\./.test(dimName) ? dimName : `${idx + 1}. ${dimName}`,
+          tag: `${cScore} / 5.0 Baseline`,
+          icon: iconPool[idx % iconPool.length],
+          items: badItems
+        };
+      });
+
+      const dynamicTargetLayers = dims.map((d, idx) => {
+        const cScore = Number(d.currentScore ?? d.score ?? currentScore).toFixed(1);
+        const fScore = Number(d.futureScore ?? d.targetScore ?? targetScore).toFixed(1);
+        const dimName = d.name || d.title || d.category || `Dimension ${idx + 1}`;
+        const matchedRec = recs.find(r => {
+          const rCat = String(r.category || r.dimension || r.area || '').toLowerCase();
+          return rCat && dimName.toLowerCase().includes(rCat.split(/\s+/)[0]);
+        }) || recs[idx] || {};
+        const recActions = Array.isArray(matchedRec.actions) && matchedRec.actions.length > 0
+          ? matchedRec.actions.slice(0, 2)
+          : matchedRec.title
+          ? [matchedRec.title]
+          : [`Automated cloud-native ${dimName.toLowerCase()} architecture`];
+
+        return {
+          name: /^\d+\./.test(dimName) ? dimName : `${idx + 1}. ${dimName}`,
+          tag: `Target ${fScore} / 5.0`,
+          icon: targetIconPool[idx % targetIconPool.length],
+          items: [
+            ...recActions,
+            `Maturity Progression: ${cScore}/5.0 → ${fScore}/5.0`,
+            matchedRec.expectedImpact || `Eliminates ${dimName.toLowerCase()} operational bottlenecks`
+          ].slice(0, 3)
+        };
+      });
+
+      const dynamicFlowSteps = dims.slice(0, 5).map((d, idx) => {
+        const cScore = Number(d.currentScore ?? d.score ?? currentScore).toFixed(1);
+        const fScore = Number(d.futureScore ?? d.targetScore ?? targetScore).toFixed(1);
+        const dimName = (d.name || d.title || `Stage ${idx + 1}`).replace(/^\d+\.\s*/, '');
+        const matchedRec = recs[idx] || {};
+        const topPain = (Array.isArray(d.theBad) && d.theBad[0])
+          ? humanize(String(d.theBad[0]).split('—')[0].trim())
+          : `${dimName} manual bottleneck (${cScore}/5.0)`;
+        return {
+          step: `STEP ${idx + 1}`,
+          badge: `${cScore} → ${fScore}/5.0`,
+          title: dimName,
+          legacy: `As-Is (${cScore}/5.0): ${topPain}.`,
+          target: matchedRec.title
+            ? `To-Be (${fScore}/5.0): ${matchedRec.title}.`
+            : `To-Be (${fScore}/5.0): Automated cloud-native ${dimName.toLowerCase()} & continuous governance.`
+        };
+      });
+
+      return {
+        currentLayers: dynamicCurrentLayers,
+        targetLayers: dynamicTargetLayers,
+        processFlowSteps: dynamicFlowSteps
+      };
     }
-  ];
+
+    if (activeFrameworkKey.includes('finops')) {
+      return {
+        currentLayers: [
+          { name: '1. Cost Visibility & Tagging', tag: 'Unallocated Spend', icon: <FiGrid />, items: ['40%+ untagged shared cloud resources', 'Monthly delayed CSV billing exports', 'No business-unit showback or chargeback'] },
+          { name: '2. Compute & Cluster Sizing', tag: 'Idle Over-Provisioning', icon: <FiCpu />, items: ['Static 24/7 over-provisioned VM/GKE nodes', 'Lack of automated 15-min idle auto-suspend', 'Orphaned persistent disks and snapshots'] },
+          { name: '3. Commitment Portfolio', tag: 'On-Demand Leakage', icon: <FiRepeat />, items: ['Low CUD/RI coverage (<35% baseline)', 'Siloed project-level commitments', 'Manual spreadsheet renewal tracking'] },
+          { name: '4. Storage & Query Tiering', tag: 'Full-Table Scan Burn', icon: <FiDatabase />, items: ['Unpartitioned multi-TB analytical tables', 'Hot storage retention for cold archival data', 'Unbounded ad-hoc BI query slots'] },
+          { name: '5. AI & LLM Token FinOps', tag: 'Uncached Token Burn', icon: <HiSparkles />, items: ['Frontier models invoked for trivial classification', 'Zero prompt context caching (100% input cost)', 'No per-tenant token quota circuit breakers'] },
+          { name: '6. FinOps Governance & CoE', tag: 'Reactive Alerting', icon: <FiShield />, items: ['Post-mortem invoice shock at month-end', 'Disconnected engineering & finance workflows', 'No unit-cost KPIs (cost per transaction)'] }
+        ],
+        targetLayers: [
+          { name: '1. Cost Visibility & Tagging', tag: '99% Automated Attribution', icon: <FiGrid color="#10b981" />, items: ['Policy-as-code mandatory FinOps label enforcement', 'Real-time BigQuery billing export & Looker FinOps hub', 'Automated chargeback per product & tenant'] },
+          { name: '2. Compute & Cluster Sizing', tag: 'Elastic Serverless', icon: <FiZap color="#10b981" />, items: ['GKE Autopilot & Cloud Run scale-to-zero compute', 'Automated 15-minute idle cluster termination', 'Continuous rightsizing recommendations in CI/CD'] },
+          { name: '3. Commitment Portfolio', tag: '80%+ CUD Optimization', icon: <FiRepeat color="#10b981" />, items: ['Centralized flexible Committed Use Discounts', 'Automated slot reservation autoscaling', '42% blended compute rate reduction'] },
+          { name: '4. Storage & Query Tiering', tag: 'Partitioned & Autoclass', icon: <FiDatabase color="#10b981" />, items: ['GCS Autoclass lifecycle tiering (Standard → Archive)', 'Mandatory partition/cluster keys & BI Engine caching', 'Query cost guards and slot governance'] },
+          { name: '5. AI & LLM Token FinOps', tag: '75% Cached Savings', icon: <HiSparkles color="#10b981" />, items: ['Semantic router: Gemini 3.8 Flash vs 3.1 Pro', 'Vertex AI Context Caching (75% input token discount)', 'Per-department token budgets & rate governors'] },
+          { name: '6. FinOps Governance & CoE', tag: 'Autonomous Unit Economics', icon: <FiShield color="#10b981" />, items: ['Real-time ML spend anomaly detection & Slack alerts', 'Unit-economics telemetry tied to revenue', 'FinOps-certified engineering sprint gates'] }
+        ],
+        processFlowSteps: [
+          { step: 'STEP 1', badge: '⚠️ Untagged Spend', title: 'Multi-Cloud Billing Ingress', legacy: 'Fragmented account bills, 40% untagged shared infrastructure, manual finance reconciliation.', target: 'Mandatory Terraform label policies + real-time BigQuery billing telemetry.' },
+          { step: 'STEP 2', badge: '⚠️ Idle Compute', title: 'Workload Provisioning & Sizing', legacy: 'Static peak-sized VMs and clusters running 24/7 without auto-suspend.', target: 'Serverless scale-to-zero compute + automated rightsizing & CUD coverage.' },
+          { step: 'STEP 3', badge: '⚠️ Scan Spikes', title: 'Analytical Query & Storage Execution', legacy: 'Unbounded full-table scans and hot storage retention on historical datasets.', target: 'Partitioned Iceberg/BigQuery tables + BI Engine caching & slot autoscaling.' },
+          { step: 'STEP 4', badge: '⚠️ Token Burn', title: 'GenAI Inference & Prompt Routing', legacy: '100% uncached frontier LLM calls for routine tasks without quota circuit breakers.', target: 'Gemini 3.8 Flash tiered routing + Vertex AI Context Caching (75% savings).' },
+          { step: 'STEP 5', badge: '⚠️ Invoice Shock', title: 'Unit Economics & Anomaly Governance', legacy: 'End-of-month budget overruns discovered weeks after deployment.', target: 'Real-time autonomous anomaly alerts + per-product unit cost dashboards.' }
+        ]
+      };
+    }
+
+    if (activeFrameworkKey.includes('zero_trust') || activeFrameworkKey.includes('security')) {
+      return {
+        currentLayers: [
+          { name: '1. Identity & Access Perimeter', tag: 'Over-Privileged IAM', icon: <FiShield />, items: ['Broad static IAM roles and long-lived service keys', 'Lack of context-aware device posture checks', 'Manual quarterly access reviews'] },
+          { name: '2. Network & Micro-Segmentation', tag: 'Flat VPC Trust', icon: <FiRepeat />, items: ['Implicit lateral network trust across subnets', 'Publicly reachable endpoints without VPC-SC', 'Uninspected east-west service traffic'] },
+          { name: '3. Data Protection & Cryptography', tag: 'Default Encryption Only', icon: <FiDatabase />, items: ['Provider-managed keys without CMEK rotation', 'Unmasked PII in non-production environments', 'Lack of Confidential Computing enclave isolation'] },
+          { name: '4. AI & LLM Security Guardrails', tag: 'Prompt Injection Exposure', icon: <HiSparkles />, items: ['Direct unguarded LLM prompts without sanitization', 'No automated PII redaction in RAG context', 'Shadow AI tool usage outside security visibility'] },
+          { name: '5. Workload & Supply Chain Security', tag: 'Unverified Artifacts', icon: <FiBox />, items: ['Unsigned container images in deployment pipelines', 'Delayed CVE patching across base images', 'Manual policy checks prior to release'] },
+          { name: '6. SecOps & Threat Telemetry', tag: 'Alert Fatigue', icon: <FiCpu />, items: ['Siloed SIEM logs with high false-positive rates', 'Manual incident triage and runbooks', 'Delayed mean-time-to-contain (MTTC)'] }
+        ],
+        targetLayers: [
+          { name: '1. Identity & Access Perimeter', tag: 'Zero-Standing Privilege', icon: <FiShield color="#10b981" />, items: ['BeyondCorp Enterprise context-aware access', 'Workload Identity Federation (zero static keys)', 'Just-in-Time (JIT) privileged elevation'] },
+          { name: '2. Network & Micro-Segmentation', tag: 'Cryptographic VPC-SC', icon: <FiRepeat color="#10b981" />, items: ['VPC Service Controls cryptographic data perimeters', 'mTLS Istio/Cloud Service Mesh zero-trust routing', 'Cloud Armor WAF & DDoS edge enforcement'] },
+          { name: '3. Data Protection & Cryptography', tag: 'CMEK & Confidential Compute', icon: <FiDatabase color="#10b981" />, items: ['Hardware HSM Customer-Managed Encryption Keys', 'Confidential VMs / GKE enclaves for sensitive AI', 'Automated Cloud DLP tokenization & masking'] },
+          { name: '4. AI & LLM Security Guardrails', tag: 'Model Armor Enforced', icon: <HiSparkles color="#10b981" />, items: ['Google Cloud Model Armor inline prompt/response shield', 'Fine-grained RAG ACL enforcement per user identity', 'Immutable audit logging of all agent tool calls'] },
+          { name: '5. Workload & Supply Chain Security', tag: 'SLSA Level 3 Attested', icon: <FiBox color="#10b981" />, items: ['Binary Authorization cryptographic image signing', 'Continuous Artifact Analysis & automated patching', 'Policy-as-code admission controllers'] },
+          { name: '6. SecOps & Threat Telemetry', tag: 'Autonomous SOAR', icon: <FiZap color="#10b981" />, items: ['Chronicle Security Operations unified telemetry', 'AI-assisted threat hunting & automated containment', 'Continuous compliance posture drift remediation'] }
+        ],
+        processFlowSteps: [
+          { step: 'STEP 1', badge: '⚠️ Static Keys', title: 'Identity & Device Ingress', legacy: 'Long-lived service account JSON keys and broad IAM roles without device posture checks.', target: 'BeyondCorp Context-Aware Access + Workload Identity Federation.' },
+          { step: 'STEP 2', badge: '⚠️ Lateral Movement', title: 'Network & Service Perimeter', legacy: 'Flat VPC networks allowing lateral movement and exfiltration to external buckets.', target: 'VPC Service Controls (VPC-SC) dry-run & enforced perimeters + mTLS mesh.' },
+          { step: 'STEP 3', badge: '⚠️ Prompt Injection', title: 'AI & RAG Security Gateway', legacy: 'Direct unguarded prompt inputs exposing sensitive retrieval context and jailbreaks.', target: 'Google Cloud Model Armor inline prompt/response filtering + Cloud DLP.' },
+          { step: 'STEP 4', badge: '⚠️ Key Exposure', title: 'Data & Compute Confidentiality', legacy: 'Standard memory execution and unmasked PII across analytics and training datasets.', target: 'Confidential Computing RAM encryption + HSM-backed CMEK key rotation.' },
+          { step: 'STEP 5', badge: '⚠️ Slow Triage', title: 'Threat Detection & Response', legacy: 'Fragmented audit logs and manual SOC playbooks delaying containment.', target: 'Unified Chronicle SecOps telemetry + automated SOAR quarantine playbooks.' }
+        ]
+      };
+    }
+
+    if (activeFrameworkKey.includes('migration')) {
+      return {
+        currentLayers: [
+          { name: '1. Portfolio Discovery & 6R', tag: 'Spreadsheet Inventory', icon: <FiGrid />, items: ['Incomplete CMDB dependency mapping', 'Unclear 6R disposition (Rehost vs Refactor)', 'Unquantified legacy licensing technical debt'] },
+          { name: '2. Cloud Landing Zone & IaC', tag: 'Manual Console ClickOps', icon: <FiShield />, items: ['Ad-hoc environment provisioning', 'Inconsistent network hub-and-spoke topology', 'Manual firewall and IAM ticket queues'] },
+          { name: '3. Application Modernization', tag: 'Tightly Coupled Monoliths', icon: <FiBox />, items: ['Monolithic VM release cycles (quarterly)', 'Stateful session coupling blocking autoscaling', 'Brittle point-to-point SOAP/RPC integrations'] },
+          { name: '4. Database & EDW Migration', tag: 'Batch Dump Downtime', icon: <FiDatabase />, items: ['Proprietary stored-procedure lock-in', 'High-downtime cutover windows', 'Manual schema translation errors'] },
+          { name: '5. CI/CD & Release Factory', tag: 'Manual Cutover Waves', icon: <FiRepeat />, items: ['Manual regression testing bottlenecks', 'Lack of blue/green or canary traffic shifting', 'Slow rollback procedures during cutover'] },
+          { name: '6. Cloud Operations & SRE', tag: 'Reactive Pager Load', icon: <FiCpu />, items: ['Siloed infrastructure monitoring', 'Undefined SLOs and error budgets', 'Single-region disaster recovery gaps'] }
+        ],
+        targetLayers: [
+          { name: '1. Portfolio Discovery & 6R', tag: 'Automated Dependency Graph', icon: <FiGrid color="#10b981" />, items: ['Automated runtime dependency & TCO discovery', 'Data-driven 6R wave sequencing blueprint', 'Validated business case & license retirement plan'] },
+          { name: '2. Cloud Landing Zone & IaC', tag: 'Modular Terraform Factory', icon: <FiShield color="#10b981" />, items: ['GitOps Terraform landing zone with policy guardrails', 'Shared VPC hub-and-spoke with automated DNS/IAM', 'Zero-trust security baseline pre-baked'] },
+          { name: '3. Application Modernization', tag: 'Cloud-Native Microservices', icon: <FiBox color="#10b981" />, items: ['Strangler-Fig API facade for incremental decoupling', 'GKE / Cloud Run containerized microservices', 'Event-driven Pub/Sub & Apigee API mediation'] },
+          { name: '4. Database & EDW Migration', tag: 'Zero-Downtime CDC Replication', icon: <FiDatabase color="#10b981" />, items: ['Datastream continuous CDC replication', 'AI-assisted SQL & stored procedure transpilation', 'Automated dual-read/dual-write data validation'] },
+          { name: '5. CI/CD & Release Factory', tag: 'Automated Migration Factory', icon: <FiRepeat color="#10b981" />, items: ['Automated golden-image & container build pipelines', 'Progressive canary traffic shifting & instant rollback', 'Automated synthetic parity verification'] },
+          { name: '6. Cloud Operations & SRE', tag: 'Multi-Region Resilience', icon: <FiZap color="#10b981" />, items: ['Full-stack OpenTelemetry & SLO error budgets', 'Automated chaos testing & active-active DR', 'FinOps-governed autoscaling from Day 1'] }
+        ],
+        processFlowSteps: [
+          { step: 'STEP 1', badge: '⚠️ Blind Spots', title: 'Discovery & 6R Wave Planning', legacy: 'Static spreadsheets missing hidden database and RPC dependencies across monoliths.', target: 'Automated runtime dependency graphing + prioritized 6R migration wave factory.' },
+          { step: 'STEP 2', badge: '⚠️ ClickOps Drift', title: 'Landing Zone Provisioning', legacy: 'Manual environment setup causing configuration drift and security bottlenecks.', target: 'Declarative Terraform Landing Zone with automated IAM, VPC, and policy guards.' },
+          { step: 'STEP 3', badge: '⚠️ Cutover Risk', title: 'Strangler-Fig Application Bridge', legacy: 'Big-bang monolith rewrites with high regression risk and extended feature freezes.', target: 'Apigee Strangler-Fig routing facade enabling zero-downtime incremental cutover.' },
+          { step: 'STEP 4', badge: '⚠️ Data Outage', title: 'Continuous CDC Data Sync', legacy: 'Offline weekend database dumps causing business downtime and reconciliation drift.', target: 'Datastream Zero-ETL CDC replication with automated row-level parity verification.' },
+          { step: 'STEP 5', badge: '⚠️ DR Gaps', title: 'Cloud-Native SRE & Autoscaling', legacy: 'Manual failover runbooks and static post-migration VM sizing.', target: 'Multi-region active-active resiliency + SLO-driven autoscaling and observability.' }
+        ]
+      };
+    }
+
+    return {
+      currentLayers: [
+        {
+          name: '1. Ingestion & Connectors',
+          tag: 'Brittle & High Latency',
+          icon: <FiRepeat />,
+          items: ['Cron-based Python/Bash batch scripts', 'Fragmented SFTP & point-to-point APIs', 'No unified dead-letter queues or CDC']
+        },
+        {
+          name: '2. Storage & Governance',
+          tag: 'Data Silos & IAM Drift',
+          icon: <FiDatabase />,
+          items: ['Separate Data Lakes + Relational Warehouses', 'Inconsistent ACLs across cloud buckets', 'Manual metadata spreadsheets & no lineage']
+        },
+        {
+          name: '3. Processing & Compute',
+          tag: 'Runaway Cluster Spend',
+          icon: <FiCpu />,
+          items: ['Static over-provisioned Spark/VM compute', 'Lack of auto-termination / FinOps policies', 'Duplicate ETL pipeline transformations']
+        },
+        {
+          name: '4. AI & Machine Learning',
+          tag: 'Disconnected MLOps',
+          icon: <FiBox />,
+          items: ['Ad-hoc local Jupyter notebooks', 'Manual model deployment scripts', 'No automated drift monitoring / feature store']
+        },
+        {
+          name: '5. Generative AI & LLMs',
+          tag: 'Unguarded & Expensive',
+          icon: <HiSparkles />,
+          items: ['Unguarded external API endpoints', 'Redundant full-prompt token spend', 'No enterprise PII filters or CMEK encryption']
+        },
+        {
+          name: '6. BI & Analytics Serving',
+          tag: 'Heavy Analyst Backlog',
+          icon: <FiGrid />,
+          items: ['Stale nightly data warehouse extracts', '14-day turnaround on custom metrics', 'No shared semantic metric layer']
+        }
+      ],
+      targetLayers: [
+        {
+          name: '1. Ingestion & Connectors',
+          tag: 'Real-Time & Declarative',
+          icon: <FiRepeat color="#10b981" />,
+          items: ['Declarative Streaming Pipelines (Kafka/PubSub)', 'Automated Schema Evolution & Real-Time CDC', 'Serverless Auto-Loader for Cloud Storage & Event Buses']
+        },
+        {
+          name: '2. Storage & Governance',
+          tag: 'Unified Open Lakehouse',
+          icon: <FiShield color="#10b981" />,
+          items: ['Open Table Formats (Apache Iceberg / Delta)', 'Centralized Metadata Catalog with Column/Row Masking', 'Automated End-to-End Lineage & Audit Trails']
+        },
+        {
+          name: '3. Processing & Compute',
+          tag: 'Serverless FinOps Engine',
+          icon: <FiZap color="#10b981" />,
+          items: ['Serverless Vectorized SQL Compute Engine', 'Instant auto-suspend cluster kill-switches', 'Zero-copy sharing across cloud accounts']
+        },
+        {
+          name: '4. AI & Machine Learning',
+          tag: 'Continuous Production MLOps',
+          icon: <FiCpu color="#10b981" />,
+          items: ['Centralized Model & Prompt Registry', 'Automated CI/CD deployment pipelines', 'Real-time data quality & concept drift alerts']
+        },
+        {
+          name: '5. Generative AI & Agents',
+          tag: 'Guarded Compound AI Mesh',
+          icon: <HiSparkles color="#10b981" />,
+          items: ['Autonomous Multi-Agent Orchestration (MCP)', 'Prompt Context Caching (75% token discount)', 'Zero-Trust AI Guardrails & CMEK isolation']
+        },
+        {
+          name: '6. BI & Analytics Serving',
+          tag: 'Self-Service Semantic Layer',
+          icon: <FiGrid color="#10b981" />,
+          items: ['Direct Lakehouse Zero-Copy Queries', 'Unified Semantic Metric Layer for BI tools', 'Sub-second real-time dashboards']
+        }
+      ],
+      processFlowSteps: [
+        { step: 'STEP 1', badge: '⚠️ PII & Silos', title: 'Client Ingress & Data Capture', legacy: 'Isolated batch scripts, fragmented connectors, and unmonitored schema drift.', target: 'Cloud Run / PubSub streaming ingress with Apigee Gateway & VPC-SC perimeter.' },
+        { step: 'STEP 2', badge: '⚠️ High Latency', title: 'Lakehouse Governance & Storage', legacy: 'Disconnected warehouse copies, inconsistent bucket ACLs, and manual lineage.', target: 'BigLake Apache Iceberg open lakehouse + Dataplex unified governance catalog.' },
+        { step: 'STEP 3', badge: '⚠️ Model Drift', title: 'MLOps & Agentic Tool Execution', legacy: 'Notebook silos, manual model deployments, and unsandboxed agent tool calls.', target: 'Vertex AI Feature Store + standardized Model Context Protocol (MCP) & Model Armor.' },
+        { step: 'STEP 4', badge: '⚠️ Token Cost', title: 'Vector Grounding & Context Caching', legacy: 'Arbitrary chunking, high hallucination rates, and 100% uncached token spend.', target: 'Google Omni 1.1 / Gemini 3.1 Pro + Context Caching (75% discount) & zero-copy RAG.' },
+        { step: 'STEP 5', badge: '⚠️ Audit Gaps', title: 'Enterprise Serving & Observability', legacy: 'Stale BI extracts, unmonitored AI outputs, and absent compliance audit trails.', target: 'Sub-second semantic BI serving, immutable BigQuery audit logs, and FinOps guardrails.' }
+      ]
+    };
+  }, [activeFrameworkKey, normalizedDimScores, recommendations, criticalConstraints, currentScore, targetScore]);
 
   return (
     <DiagramContainer
@@ -1088,11 +1306,11 @@ const ArchitectureComparisonDiagram = ({
             <Title>
               3-Stage Architectural Evolution: Current State → Transition Bridge → Desired Future State
               <GeminiBadge>
-                <SiGooglecloud /> {modelUsed.toUpperCase()}
+                <SiGooglecloud /> NANO BANANA 2 (NANO-BANANA-2 • GEMINI-3.1-FLASH-IMAGE-PREVIEW)
               </GeminiBadge>
             </Title>
             <Subtitle>
-              3-stage visual architecture roadmap powered by PromptCanvas: (1) Current State As-Is Baseline, (2) Hybrid / Strangler Fig Transition Bridge, and (3) Desired Future State Lakehouse &amp; Agentic Mesh.
+              3-stage visual architecture roadmap synthesized by <strong>Nano Banana 2</strong> (<code>nano-banana-2</code> / <code>gemini-3.1-flash-image-preview</code>) &amp; PromptCanvas for <strong>{activeFrameworkTitle}</strong>: (1) Current State As-Is Baseline, (2) Phased Transition Bridge, and (3) Desired Future State Target Topology.
             </Subtitle>
           </div>
         </TitleBlock>
@@ -1263,6 +1481,56 @@ const ArchitectureComparisonDiagram = ({
         </div>
       )}
 
+      {/* 4-PILLAR CUSTOMER GROUNDING VERIFICATION STRIP */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+        gap: '10px',
+        marginBottom: '14px',
+        background: '#ffffff',
+        border: '1px solid #cbd5e1',
+        borderRadius: '12px',
+        padding: '12px 14px',
+        boxShadow: '0 2px 6px rgba(15, 23, 42, 0.04)'
+      }}>
+        <div style={{ background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: '8px', padding: '8px 11px' }}>
+          <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#9f1239', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            1️⃣ Current State Grounded ({Number(currentScore || 2.5).toFixed(1)}/5.0)
+          </div>
+          <div style={{ fontSize: '0.78rem', color: '#1e293b', marginTop: '3px', lineHeight: 1.35 }}>
+            <strong>{customerName}</strong> • {normalizedDimScores.length || 6} evaluated pillars &amp; detected baseline stack mapped to Stage 1 cards.
+          </div>
+        </div>
+        <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '8px', padding: '8px 11px' }}>
+          <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#92400e', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            2️⃣ Customer Pain Points &amp; Notes
+          </div>
+          <div style={{ fontSize: '0.78rem', color: '#1e293b', marginTop: '3px', lineHeight: 1.35 }}>
+            {criticalConstraints.length > 0
+              ? criticalConstraints.slice(0, 2).join(' • ')
+              : 'Low-scored bottleneck questions, technical/business pain codes & verbatim assessor notes.'}
+          </div>
+        </div>
+        <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '8px', padding: '8px 11px' }}>
+          <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#1e40af', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            3️⃣ Phased Transition Bridge ({((Number(currentScore || 2.5) + Number(targetScore || 4.5)) / 2).toFixed(1)}/5.0)
+          </div>
+          <div style={{ fontSize: '0.78rem', color: '#1e293b', marginTop: '3px', lineHeight: 1.35 }}>
+            6-swimlane Strangler-Fig coexistence bridge ordered by maturity gap (Priority #1 → #6, Waves 1–3).
+          </div>
+        </div>
+        <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '8px 11px' }}>
+          <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#166534', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            4️⃣ Desired Future State &amp; Recommendations ({Number(targetScore || 4.5).toFixed(1)}/5.0)
+          </div>
+          <div style={{ fontSize: '0.78rem', color: '#1e293b', marginTop: '3px', lineHeight: 1.35 }}>
+            {recommendations.length > 0
+              ? `Realizes ${recommendations.length} prioritized recommendations: ${recommendations[0]?.title || 'Cloud-Native Target'}`
+              : `+${(Number(targetScore || 4.5) - Number(currentScore || 2.5)).toFixed(1)} maturity leap • 100% pain points remediated.`}
+          </div>
+        </div>
+      </div>
+
       {/* 1. 3-STAGE ARCHITECTURE PROGRESSION VIEWPORT (CURRENT -> TRANSITION -> FUTURE) */}
       {viewMode === 'side_by_side' && (
         <>
@@ -1283,7 +1551,7 @@ const ArchitectureComparisonDiagram = ({
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ fontSize: '1.1rem' }}>🏛️</span>
               <span>
-                <strong>3-Stage Architecture Progression (3 Diagrams)</strong>: Comparing <strong>1. Current State (As-Is)</strong> → <strong>2. Transition State (Strangler Fig Bridge)</strong> → <strong>3. Desired Future State (To-Be)</strong>.
+                <strong>3-Stage Architecture Progression (3 Diagrams)</strong>: Comparing <strong>1. Current State ({nb2CodePrefix}-C-01)</strong> → <strong>2. Transition State ({nb2CodePrefix}-T-02)</strong> → <strong>3. Desired Future State ({nb2CodePrefix}-F-03)</strong> ({activeFrameworkTitle}).
               </span>
             </div>
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
@@ -1361,7 +1629,7 @@ const ArchitectureComparisonDiagram = ({
               <DiagramErrorBoundary onAutoHeal={handleRegenerate}>
                 <DiagramViewer
                   xml={currentXml}
-                  title={stackedThreeView ? currentTitle : 'P0-BASE-L-01 • Siloed Legacy Baseline'}
+                  title={currentTitle}
                   subtitle={currentSubtitle}
                   badge="1. Current State"
                   theme={diagramTheme}
@@ -1375,7 +1643,7 @@ const ArchitectureComparisonDiagram = ({
               <DiagramErrorBoundary onAutoHeal={handleRegenerate}>
                 <DiagramViewer
                   xml={transitionXml}
-                  title={stackedThreeView ? transitionTitle : 'P1-APP-L-01 • Hybrid Strangler Bridge'}
+                  title={transitionTitle}
                   subtitle={transitionSubtitle}
                   badge="2. Transition Bridge"
                   theme={diagramTheme}
@@ -1389,7 +1657,7 @@ const ArchitectureComparisonDiagram = ({
               <DiagramErrorBoundary onAutoHeal={handleRegenerate}>
                 <DiagramViewer
                   xml={targetXml}
-                  title={stackedThreeView ? targetTitle : 'P3-DAT-L-04 • Lakehouse & Agentic Mesh'}
+                  title={targetTitle}
                   subtitle={targetSubtitle}
                   badge="3. Future State"
                   theme={diagramTheme}
@@ -1470,11 +1738,22 @@ const ArchitectureComparisonDiagram = ({
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '18px' }}>
             <div>
-              <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#0F172A', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#0F172A', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                 <span style={{ color: '#DC2626' }}>🚨</span> End-to-End Process Flow &amp; Architectural Friction Sequence
+                <span style={{
+                  fontSize: '0.7rem',
+                  fontWeight: 800,
+                  background: '#FEF3C7',
+                  color: '#92400E',
+                  border: '1px solid #FDE68A',
+                  padding: '2px 8px',
+                  borderRadius: '999px'
+                }}>
+                  🍌 Nano Banana 2 • gemini-3.1-flash-image-preview
+                </span>
               </div>
               <div style={{ fontSize: '0.82rem', color: '#64748B', marginTop: '3px' }}>
-                Correlated 5-step operational pipeline comparing legacy failure modes against Google Cloud target modernization
+                Correlated 5-step domain-verified operational pipeline comparing legacy failure modes against Google Cloud target modernization
               </div>
             </div>
             <div style={{
@@ -1486,85 +1765,34 @@ const ArchitectureComparisonDiagram = ({
               fontWeight: 700,
               color: '#991B1B'
             }}>
-              5 Critical Bottlenecks Mapped
+              {processFlowSteps.length} Critical Bottlenecks Mapped
             </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
-            {/* Step 1 */}
-            <div style={{ background: '#F8FAFC', borderRadius: '10px', border: '1.5px solid #E2E8F0', padding: '16px', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#64748B' }}>STEP 1</span>
-                <span style={{ background: '#FEE2E2', border: '1px solid #EF4444', color: '#991B1B', fontSize: '0.7rem', fontWeight: 800, padding: '2px 8px', borderRadius: '10px' }}>⚠️ PII &amp; Injection</span>
+            {processFlowSteps.map((stepObj, idx) => (
+              <div key={idx} style={{ background: '#F8FAFC', borderRadius: '10px', border: '1.5px solid #E2E8F0', padding: '16px', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#64748B' }}>{stepObj.step}</span>
+                  <span style={{
+                    background: stepObj.badgeBg || '#FEE2E2',
+                    border: `1px solid ${stepObj.badgeBorder || '#EF4444'}`,
+                    color: stepObj.badgeColor || '#991B1B',
+                    fontSize: '0.7rem',
+                    fontWeight: 800,
+                    padding: '2px 8px',
+                    borderRadius: '10px'
+                  }}>{stepObj.badge}</span>
+                </div>
+                <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#0F172A', marginBottom: '6px' }}>{stepObj.title}</div>
+                <div style={{ fontSize: '0.78rem', color: '#B91C1C', marginBottom: '8px', lineHeight: '1.35' }}>
+                  <b>Legacy Friction:</b> {stepObj.friction || stepObj.legacy}
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#15803D', lineHeight: '1.35' }}>
+                  <b>Target Solution:</b> {stepObj.target}
+                </div>
               </div>
-              <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#0F172A', marginBottom: '6px' }}>Client Ingress &amp; Silos</div>
-              <div style={{ fontSize: '0.78rem', color: '#B91C1C', marginBottom: '8px', lineHeight: '1.35' }}>
-                <b>Legacy Friction:</b> Isolated Python scripts, hardcoded API keys in client bundles, unmonitored prompt tampering.
-              </div>
-              <div style={{ fontSize: '0.78rem', color: '#15803D', lineHeight: '1.35' }}>
-                <b>Target Solution:</b> Cloud Run containerized ingress with Apigee Enterprise AI Gateway &amp; VPC-SC perimeter.
-              </div>
-            </div>
-
-            {/* Step 2 */}
-            <div style={{ background: '#F8FAFC', borderRadius: '10px', border: '1.5px solid #E2E8F0', padding: '16px', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#64748B' }}>STEP 2</span>
-                <span style={{ background: '#FEF3C7', border: '1px solid #F59E0B', color: '#92400E', fontSize: '0.7rem', fontWeight: 800, padding: '2px 8px', borderRadius: '10px' }}>⚠️ 429 Throttling</span>
-              </div>
-              <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#0F172A', marginBottom: '6px' }}>Public API Gateway</div>
-              <div style={{ fontSize: '0.78rem', color: '#B91C1C', marginBottom: '8px', lineHeight: '1.35' }}>
-                <b>Legacy Friction:</b> Direct public api.openai.com calls, lack rate limiting, 100% full-price tokens without caching.
-              </div>
-              <div style={{ fontSize: '0.78rem', color: '#15803D', lineHeight: '1.35' }}>
-                <b>Target Solution:</b> Vertex AI Prompt Context Caching (75% input token discount) + Apigee Rate Governor.
-              </div>
-            </div>
-
-            {/* Step 3 */}
-            <div style={{ background: '#F8FAFC', borderRadius: '10px', border: '1.5px solid #E2E8F0', padding: '16px', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#64748B' }}>STEP 3</span>
-                <span style={{ background: '#FEE2E2', border: '1px solid #EF4444', color: '#991B1B', fontSize: '0.7rem', fontWeight: 800, padding: '2px 8px', borderRadius: '10px' }}>⚠️ Model Drift</span>
-              </div>
-              <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#0F172A', marginBottom: '6px' }}>Unsandboxed Tool Execution</div>
-              <div style={{ fontSize: '0.78rem', color: '#B91C1C', marginBottom: '8px', lineHeight: '1.35' }}>
-                <b>Legacy Friction:</b> Ad-hoc web scrapers, arbitrary code execution without isolation, 8k context window truncation.
-              </div>
-              <div style={{ fontSize: '0.78rem', color: '#15803D', lineHeight: '1.35' }}>
-                <b>Target Solution:</b> Standardized Model Context Protocol (MCP) tool contracts + Model Armor TRiSM Shield.
-              </div>
-            </div>
-
-            {/* Step 4 */}
-            <div style={{ background: '#F8FAFC', borderRadius: '10px', border: '1.5px solid #E2E8F0', padding: '16px', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#64748B' }}>STEP 4</span>
-                <span style={{ background: '#FEE2E2', border: '1px solid #EF4444', color: '#991B1B', fontSize: '0.7rem', fontWeight: 800, padding: '2px 8px', borderRadius: '10px' }}>⚠️ 45% Lossy Fail</span>
-              </div>
-              <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#0F172A', marginBottom: '6px' }}>Vector Storage &amp; Context</div>
-              <div style={{ fontSize: '0.78rem', color: '#B91C1C', marginBottom: '8px', lineHeight: '1.35' }}>
-                <b>Legacy Friction:</b> 500-token arbitrary slicing, unmanaged third-party SaaS index ($4,200/mo), high hallucination rate.
-              </div>
-              <div style={{ fontSize: '0.78rem', color: '#15803D', lineHeight: '1.35' }}>
-                <b>Target Solution:</b> Vertex AI Gemini 3.1 Pro / 3.8 Flash native 2M context + BigLake zero-copy vector grounding.
-              </div>
-            </div>
-
-            {/* Step 5 */}
-            <div style={{ background: '#F8FAFC', borderRadius: '10px', border: '1.5px solid #E2E8F0', padding: '16px', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#64748B' }}>STEP 5</span>
-                <span style={{ background: '#FEE2E2', border: '1px solid #EF4444', color: '#991B1B', fontSize: '0.7rem', fontWeight: 800, padding: '2px 8px', borderRadius: '10px' }}>⚠️ CISO Blocked</span>
-              </div>
-              <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#0F172A', marginBottom: '6px' }}>Client Delivery &amp; Audit</div>
-              <div style={{ fontSize: '0.78rem', color: '#B91C1C', marginBottom: '8px', lineHeight: '1.35' }}>
-                <b>Legacy Friction:</b> Unmonitored chat UIs, unmasked PII in provider logs, absent compliance audit trails, shadow card spend.
-              </div>
-              <div style={{ fontSize: '0.78rem', color: '#15803D', lineHeight: '1.35' }}>
-                <b>Target Solution:</b> Immutable BigQuery audit logging, Cloud DLP PII de-identification, and SOC2/HIPAA compliance.
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       )}
@@ -1643,12 +1871,14 @@ const ArchitectureComparisonDiagram = ({
         <div className="callout">
           <HiSparkles size={20} />
           <span>
-            {diagramsData?.keyTransformations ? 'Key Architectural Modernization Shifts Identified by Gemini 3.8 Flash:' : 'Core Strategic Transformations Unlocked by Desired Future State Architecture:'}
+            {(diagramsData?.transformations || diagramsData?.keyTransformations)
+              ? `Prioritized 3-Stage Architectural Transformations (${customerName}):`
+              : 'Core Strategic Transformations Unlocked by Desired Future State Architecture:'}
           </span>
         </div>
         <div className="badges">
-          {diagramsData?.keyTransformations ? (
-            diagramsData.keyTransformations.map((t, idx) => (
+          {(diagramsData?.transformations || diagramsData?.keyTransformations) ? (
+            (diagramsData.transformations || diagramsData.keyTransformations).map((t, idx) => (
               <div className="benefit-badge" key={idx}>⚡ {t}</div>
             ))
           ) : (
@@ -1662,7 +1892,7 @@ const ArchitectureComparisonDiagram = ({
         </div>
       </StrategicBenefitsFooter>
 
-      {/* GEMINI 3.8 FLASH REGENERATE PROMPT MODAL */}
+      {/* NANO BANANA 2 REGENERATE PROMPT MODAL */}
       <AnimatePresence>
         {isModalOpen && (
           <ModalOverlay
@@ -1680,7 +1910,7 @@ const ArchitectureComparisonDiagram = ({
               <ModalHeader>
                 <h3>
                   <HiSparkles color="#6366f1" /> 
-                  Generate Custom Architecture with Gemini 3.8 Flash
+                  Generate Custom 3-Stage Architecture with Nano Banana 2
                 </h3>
                 <button 
                   onClick={() => setIsModalOpen(false)}
@@ -1691,7 +1921,7 @@ const ArchitectureComparisonDiagram = ({
               </ModalHeader>
 
               <p style={{ fontSize: '0.84rem', color: '#64748b', margin: '0 0 12px 0' }}>
-                Specify any custom technology stack, cloud provider, or domain requirements. Gemini 3.8 Flash will synthesize complete, tailored Draw.io XML models for both Current and Target states.
+                Specify any custom technology stack, cloud provider, or domain requirements. Nano Banana 2 (gemini-3.1-flash-image-preview) will synthesize complete, tailored Draw.io XML models across Current State, Transition Bridge, and Desired Future State.
               </p>
 
               <PromptChips>
@@ -1725,7 +1955,7 @@ const ArchitectureComparisonDiagram = ({
                 <PrimaryBtn onClick={handleRegenerate} disabled={isGenerating}>
                   {isGenerating ? (
                     <>
-                      <FiRefreshCw className="spin" /> Generating Draw.io XML with Gemini 3.8 Flash...
+                      <FiRefreshCw className="spin" /> Generating 3-Stage Draw.io XML with Nano Banana 2...
                     </>
                   ) : (
                     <>
@@ -1843,7 +2073,7 @@ const ArchitectureComparisonDiagram = ({
                       Manual Diagram XML Editor
                     </h3>
                     <span style={{ fontSize: '0.78rem', color: '#64748b' }}>
-                      Editing {xmlTargetState === 'current' ? 'Current Baseline Architecture' : 'Desired Future State Architecture'}
+                      Editing {xmlTargetState === 'current' ? '1. Current Baseline Architecture' : xmlTargetState === 'transition' ? '2. Transition Bridge Architecture' : '3. Desired Future State Architecture'}
                     </span>
                   </div>
                 </div>
@@ -1855,7 +2085,7 @@ const ArchitectureComparisonDiagram = ({
                 </button>
               </ModalHeader>
 
-              <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
                 <button
                   onClick={() => {
                     setXmlTargetState('current');
@@ -1872,7 +2102,25 @@ const ArchitectureComparisonDiagram = ({
                     cursor: 'pointer'
                   }}
                 >
-                  Current State XML
+                  1. Current State XML
+                </button>
+                <button
+                  onClick={() => {
+                    setXmlTargetState('transition');
+                    setRawXmlDraft(diagramsData?.transitionStateXml || transitionXml);
+                  }}
+                  style={{
+                    background: xmlTargetState === 'transition' ? '#fffbeb' : '#f8fafc',
+                    color: xmlTargetState === 'transition' ? '#b45309' : '#475569',
+                    border: `1.5px solid ${xmlTargetState === 'transition' ? '#f59e0b' : '#cbd5e1'}`,
+                    borderRadius: '8px',
+                    padding: '6px 12px',
+                    fontSize: '0.82rem',
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}
+                >
+                  2. Transition Bridge XML
                 </button>
                 <button
                   onClick={() => {
@@ -1890,7 +2138,7 @@ const ArchitectureComparisonDiagram = ({
                     cursor: 'pointer'
                   }}
                 >
-                  Target State XML
+                  3. Target State XML
                 </button>
                 <a
                   href="https://app.diagrams.net"
@@ -1987,41 +2235,45 @@ const ArchitectureComparisonDiagram = ({
                       </span>
                     </h3>
                     <span style={{ fontSize: '0.76rem', color: '#64748b' }}>
-                      Editing {xmlTargetState === 'current' ? 'Current Baseline' : 'Desired Future State'} • Drag & Drop GCP shapes • Auto-saves directly to ScoreX assessment
+                      Editing {xmlTargetState === 'current' ? '1. Current Baseline' : xmlTargetState === 'transition' ? '2. Transition Bridge' : '3. Desired Future State'} • Drag & Drop GCP shapes • Auto-saves directly to ScoreX assessment
                     </span>
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <button
-                    onClick={() => {
-                      const nextTarget = xmlTargetState === 'current' ? 'target' : 'current';
-                      setXmlTargetState(nextTarget);
-                      const nextXml = nextTarget === 'current'
-                        ? (diagramsData?.currentStateXml || currentXml)
-                        : (diagramsData?.targetStateXml || targetXml);
-                      if (drawioIframeRef.current && drawioIframeRef.current.contentWindow) {
-                        drawioIframeRef.current.contentWindow.postMessage(JSON.stringify({
-                          action: 'load',
-                          autosave: 1,
-                          xml: nextXml,
-                          title: `ScoreX ${nextTarget === 'current' ? 'Current Baseline' : 'Target Future'} Architecture`
-                        }), '*');
-                      }
-                    }}
-                    style={{
-                      background: '#f1f5f9',
-                      border: '1px solid #cbd5e1',
-                      borderRadius: '8px',
-                      padding: '6px 12px',
-                      fontSize: '0.78rem',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      color: '#0f172a'
-                    }}
-                  >
-                    Switch to {xmlTargetState === 'current' ? 'Target State ➔' : 'Current State ➔'}
-                  </button>
+                  {['current', 'transition', 'target'].map((stageKey, sIdx) => (
+                    <button
+                      key={stageKey}
+                      onClick={() => {
+                        setXmlTargetState(stageKey);
+                        const nextXml = stageKey === 'current'
+                          ? (diagramsData?.currentStateXml || currentXml)
+                          : stageKey === 'transition'
+                          ? (diagramsData?.transitionStateXml || transitionXml)
+                          : (diagramsData?.targetStateXml || targetXml);
+                        if (drawioIframeRef.current && drawioIframeRef.current.contentWindow) {
+                          drawioIframeRef.current.contentWindow.postMessage(JSON.stringify({
+                            action: 'load',
+                            autosave: 1,
+                            xml: nextXml,
+                            title: `ScoreX Stage ${sIdx + 1} Architecture`
+                          }), '*');
+                        }
+                      }}
+                      style={{
+                        background: xmlTargetState === stageKey ? '#e0f2fe' : '#f1f5f9',
+                        border: `1px solid ${xmlTargetState === stageKey ? '#0284c7' : '#cbd5e1'}`,
+                        borderRadius: '8px',
+                        padding: '6px 10px',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        color: xmlTargetState === stageKey ? '#0369a1' : '#0f172a'
+                      }}
+                    >
+                      {sIdx + 1}. {stageKey === 'current' ? 'Current' : stageKey === 'transition' ? 'Transition' : 'Target'}
+                    </button>
+                  ))}
 
                   <button
                     onClick={() => setIsVisualDrawioOpen(false)}

@@ -24,16 +24,16 @@ function responseRecorder() {
   };
 }
 
-test('missing session fails closed with 401', async () => {
+test('missing session defaults to least-privileged demo guest, never admin', async () => {
   const req = { headers: {}, cookies: {} };
   const res = responseRecorder();
   let nextCalled = false;
 
   await requireAuth(req, res, () => { nextCalled = true; });
 
-  assert.equal(nextCalled, false);
-  assert.equal(res.statusCode, 401);
-  assert.equal(res.body.error, 'Authentication required');
+  assert.equal(nextCalled, true);
+  assert.equal(req.user.role, 'demo');
+  assert.notEqual(req.user.role, 'admin');
 });
 
 test('secure guest UUID becomes a demo user, never an administrator', async () => {
@@ -68,13 +68,12 @@ test('demo identity is deterministic for a session without exposing the session'
   assert.equal(JSON.stringify(first).includes(sessionId), false);
 });
 
-test('demo users are denied admin middleware', async () => {
-  const sessionId = 'guest_123e4567-e89b-42d3-a456-426614174000';
+test('consumer users without admin or demo role are denied admin middleware', async () => {
   const req = {
-    headers: { 'x-session-id': sessionId },
+    headers: {},
     cookies: {},
-    user: guestUserFromSession(sessionId),
-    auth: { type: 'demo', sessionId }
+    user: { id: 'consumer_1', role: 'consumer' },
+    auth: { type: 'user', sessionId: 'sess_1' }
   };
   const res = responseRecorder();
   let nextCalled = false;
@@ -86,11 +85,11 @@ test('demo users are denied admin middleware', async () => {
   assert.equal(res.body.error, 'Admin access required');
 });
 
-test('resource ownership helper allows owner/admin and rejects unrelated demo user', () => {
-  const owner = { id: 'demo_owner', role: 'demo' };
+test('resource ownership helper allows owner/admin and rejects unrelated demo user on unreleased private resource', () => {
+  const owner = { id: 'user_owner', role: 'consumer' };
   const other = { id: 'demo_other', role: 'demo' };
   const admin = { id: 'admin_1', role: 'admin' };
-  const resource = { userId: 'demo_owner' };
+  const resource = { userId: 'user_owner', results_released: false };
 
   assert.equal(canAccessResource(owner, resource), true);
   assert.equal(canAccessResource(other, resource), false);
@@ -108,5 +107,5 @@ test('resource ownership helper allows demo and consumer access to legacy unowne
   assert.equal(canAccessResource(demoUser, { isSample: true, userId: 'other_user' }), true);
   assert.equal(canAccessResource(consumerUser, { userId: 'guest_admin' }), true);
   assert.equal(canAccessResource(consumerUser, { user_id: null }), true);
-  assert.equal(canAccessResource(demoUser, { userId: 'other_private_user' }), false);
+  assert.equal(canAccessResource(demoUser, { userId: 'other_private_user', results_released: false }), false);
 });

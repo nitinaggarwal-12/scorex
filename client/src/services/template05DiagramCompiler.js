@@ -1176,7 +1176,7 @@ function compileAll3GroundedDiagrams(framework = {}, metadata = {}, scores = {})
   };
 }
 
-module.exports = {
+export {
   extractAssessmentTelemetry,
   compileTemplate05MasterDiagramXml,
   compileStage1CurrentStateXml,

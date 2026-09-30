@@ -15,8 +15,13 @@ const ViewerContainer = styled.div`
 export function sanitizeDrawioXmlAttributes(xml) {
   if (!xml) return xml;
   
-  // 1. Clean broken attribute & tag closing artifacts (e.g. /="geometry"/>, as="geometry"/&gt;, etc.)
+  // 1. Clean broken attribute & tag closing artifacts and heal double-escaped HTML entities
   let cleaned = xml
+    .replace(/&amp;lt;/g, '&lt;')
+    .replace(/&amp;gt;/g, '&gt;')
+    .replace(/&amp;quot;/g, '&quot;')
+    .replace(/&amp;apos;/g, '&apos;')
+    .replace(/&amp;#/g, '&#')
     .replace(/\/&gt;/g, '/>')
     .replace(/\/&amp;gt;/g, '/>')
     .replace(/\/="[^"]*"/g, '')
@@ -38,7 +43,12 @@ export function sanitizeDrawioXmlAttributes(xml) {
 
   // 4. Fix unescaped raw '<' and inner double quotes inside value attributes
   cleaned = cleaned.replace(/\bvalue="([\s\S]*?)"(?=\s+[a-zA-Z_:][a-zA-Z0-9_:-]*=|\s*\/?>)/g, function(match, valContent) {
-    const sanitized = valContent
+    const normalizedVal = valContent
+      .replace(/&amp;lt;/g, '&lt;')
+      .replace(/&amp;gt;/g, '&gt;')
+      .replace(/&amp;quot;/g, '&quot;')
+      .replace(/&amp;apos;/g, '&apos;');
+    const sanitized = normalizedVal
       .replace(/&quot;/g, "'")
       .replace(/"/g, "'")
       .replace(/<(\/?[a-zA-Z0-9]+(?:\s+[^>]*)?)>/g, '&lt;$1&gt;')
@@ -246,12 +256,12 @@ export default function DiagramViewer({
     .mxgraph > div > svg {
       ${fullScaleScroll
         ? `width: 1600px !important; min-width: 1600px !important; height: 1100px !important; min-height: 1100px !important; margin: auto !important; display: block !important;`
-        : `width: 100% !important; max-width: 100% !important; height: 100% !important; max-height: 100% !important; margin: auto !important; display: block !important; object-fit: contain !important; overflow: visible !important;`}
+        : `width: 100% !important; max-width: 100% !important; min-width: 0 !important; height: 100% !important; max-height: 100% !important; min-height: 0 !important; margin: auto !important; display: block !important; object-fit: contain !important; overflow: visible !important;`}
     }
     .mxgraph > div {
       ${fullScaleScroll
         ? `width: 1600px !important; min-width: 1600px !important; height: 1100px !important; min-height: 1100px !important; display: block;`
-        : `width: 100%; max-width: 100%; height: 100%; max-height: 100%; display: flex; align-items: center; justify-content: center;`}
+        : `width: 100%; max-width: 100%; min-width: 0; height: 100%; max-height: 100%; min-height: 0; display: flex; align-items: center; justify-content: center;`}
     }
     foreignObject, foreignObject div, foreignObject span, foreignObject b, foreignObject p {
       box-sizing: border-box !important;
@@ -341,10 +351,65 @@ export default function DiagramViewer({
       container.setAttribute('data-mxgraph', JSON.stringify(configObj));
     }
 
+    function normalizeSvgViewport() {
+      if (${fullScaleScroll ? 'true' : 'false'}) return;
+      const root = document.getElementById('diagram-container');
+      if (!root) return;
+      const svg = root.querySelector('svg');
+      if (!svg) return;
+      try {
+        const bbox = svg.getBBox();
+        if (bbox && bbox.width > 0 && bbox.height > 0) {
+          const pad = 16;
+          const vx = Math.floor(bbox.x - pad);
+          const vy = Math.floor(bbox.y - pad);
+          const vw = Math.ceil(bbox.width + pad * 2);
+          const vh = Math.ceil(bbox.height + pad * 2);
+          svg.setAttribute('viewBox', vx + ' ' + vy + ' ' + vw + ' ' + vh);
+          svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+        } else {
+          const minW = parseFloat(svg.style.minWidth) || 1600;
+          const minH = parseFloat(svg.style.minHeight) || 840;
+          svg.setAttribute('viewBox', '0 0 ' + Math.ceil(minW) + ' ' + Math.ceil(minH));
+          svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+        }
+      } catch (err) {}
+      svg.style.minWidth = '0px';
+      svg.style.minHeight = '0px';
+      svg.style.width = '100%';
+      svg.style.height = '100%';
+      svg.style.maxWidth = '100%';
+      svg.style.maxHeight = '100%';
+      if (svg.parentElement && svg.parentElement !== root) {
+        svg.parentElement.style.minWidth = '0px';
+        svg.parentElement.style.minHeight = '0px';
+        svg.parentElement.style.width = '100%';
+        svg.parentElement.style.height = '100%';
+        svg.parentElement.style.maxWidth = '100%';
+        svg.parentElement.style.maxHeight = '100%';
+      }
+      root.style.minWidth = '0px';
+      root.style.minHeight = '0px';
+      root.style.width = '100%';
+      root.style.height = '100%';
+      root.style.maxWidth = '100%';
+      root.style.maxHeight = '100%';
+    }
+
+    if (container && typeof MutationObserver !== 'undefined') {
+      const obs = new MutationObserver(function() {
+        normalizeSvgViewport();
+      });
+      obs.observe(container, { childList: true, subtree: true });
+    }
+
     function triggerRender() {
       if (window.GraphViewer && typeof window.GraphViewer.processElements === 'function') {
         try {
           window.GraphViewer.processElements();
+          normalizeSvgViewport();
+          setTimeout(normalizeSvgViewport, 80);
+          setTimeout(normalizeSvgViewport, 250);
         } catch (e) {
           console.warn('[DiagramViewer] processElements warning:', e);
         }

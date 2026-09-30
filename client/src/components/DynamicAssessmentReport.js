@@ -37,8 +37,10 @@ import DynamicRadarChart from './DynamicRadarChart';
 import ExecutiveHeatmapMatrix from './ExecutiveHeatmapMatrix';
 import IndustryPeerBenchmarkingCard from './IndustryPeerBenchmarkingCard';
 import AudioBriefingPlayer from './AudioBriefingPlayer';
+import OmniCriticReviewCard from './OmniCriticReviewCard';
 import PresentationModeModal from './PresentationModeModal';
 import UnifiedDocumentPreviewModal from './UnifiedDocumentPreviewModal';
+import AssessmentChangelogPanel from './AssessmentChangelogPanel';
 import { exportDynamicAssessmentToExcel } from '../services/excelExportService';
 import { generateDynamicPDFReport } from '../services/pdfExportService';
 import { exportAssessmentToPPTX } from '../services/pptxExportService';
@@ -786,35 +788,35 @@ const DynamicAssessmentReport = () => {
                 onClick={async () => {
                   try {
                     toast.loading('Generating sample FinOps report...', { id: 'sample-gen' });
-                    const res = await dynamicAssessmentService.generateSampleInstance('finops_cloud_cost_optimization');
+                    const res = await dynamicAssessmentService.generateSampleInstance('finops_cost_governance');
                     await dynamicAssessmentService.generateReport(res.instanceId);
                     toast.dismiss('sample-gen');
                     navigate(`/assessments/report/${res.instanceId}`);
                   } catch (e) {
-                    navigate('/assessments/run/finops_cloud_cost_optimization');
+                    navigate('/assessments/run/finops_cost_governance');
                   }
                 }}
                 style={{ background: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '14px', padding: '16px', color: '#ffffff', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '4px' }}
               >
-                <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#38bdf8' }}>💰 FinOps Sample Report</span>
+                <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#38bdf8' }}>💰 FinOps Cost Governance Report</span>
                 <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Instant 1-Click Launch</span>
               </button>
 
               <button 
                 onClick={async () => {
                   try {
-                    toast.loading('Generating sample Gemini report...', { id: 'sample-gen' });
-                    const res = await dynamicAssessmentService.generateSampleInstance('openai_to_gemini_enterprise_migration');
+                    toast.loading('Generating sample GenAI & RAG report...', { id: 'sample-gen' });
+                    const res = await dynamicAssessmentService.generateSampleInstance('genai_rag_readiness');
                     await dynamicAssessmentService.generateReport(res.instanceId);
                     toast.dismiss('sample-gen');
                     navigate(`/assessments/report/${res.instanceId}`);
                   } catch (e) {
-                    navigate('/assessments/run/openai_to_gemini_enterprise_migration');
+                    navigate('/assessments/run/genai_rag_readiness');
                   }
                 }}
                 style={{ background: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '14px', padding: '16px', color: '#ffffff', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '4px' }}
               >
-                <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#a855f7' }}>🤖 Gemini Enterprise Migration Report</span>
+                <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#a855f7' }}>🤖 GenAI &amp; Agentic RAG Readiness Report</span>
                 <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Instant 1-Click Launch</span>
               </button>
             </div>
@@ -1151,8 +1153,20 @@ const DynamicAssessmentReport = () => {
           )}
         </AnimatePresence>
 
-        {/* Promote to Assessment Type Banner */}
-        {!isPromoted && !framework?.isPromoted && !['openai_to_gemini_enterprise_migration', 'finops_cloud_cost_optimization', 'enterprise_ai_zero_trust_security', 'edw_lakehouse_to_bigquery_modernization', 'agentic_ai_mesh_mcp_banking_readiness'].includes(framework?.typeKey) && (
+        {/* Promote to Assessment Type Banner (only for custom non-built-in frameworks) */}
+        {!isPromoted && !framework?.isPromoted && ![
+          'enterprise_data_ai_maturity',
+          'genai_rag_readiness',
+          'finops_cost_governance',
+          'cloud_migration_modernization',
+          'zero_trust_cyber_resilience',
+          'mlops_agentic_ai_governance',
+          'openai_to_gemini_enterprise_migration',
+          'finops_cloud_cost_optimization',
+          'enterprise_ai_zero_trust_security',
+          'edw_lakehouse_to_bigquery_modernization',
+          'agentic_ai_mesh_mcp_banking_readiness'
+        ].includes(framework?.typeKey) && (
         <PromoteBanner>
           <PromoteInfo>
             <SparkleIconWrap>
@@ -1175,7 +1189,7 @@ const DynamicAssessmentReport = () => {
         </PromoteBanner>
         )}
 
-                {/* AI Voice / Audio Narrative Briefing */}
+        {/* AI Voice / Audio Narrative Briefing (Google Omni 1.1) */}
         <AudioBriefingPlayer instance={instance} report={report} theme={theme} />
 
         {/* Hero Card */}
@@ -1218,6 +1232,15 @@ const DynamicAssessmentReport = () => {
           </HeroHeader>
         </HeroCard>
 
+        {/* Google Omni 1.1 Multi-Dimensional UI/UX & Technical Critic Review */}
+        <OmniCriticReviewCard
+          instance={instance}
+          framework={framework}
+          report={report}
+          theme={theme}
+          engineName="Engine 1: Dynamic Blueprint"
+        />
+
         {/* Executive Segmented Tab Navigation */}
         <ExecutiveTabContainer $theme={theme} className="no-print">
           <ExecutiveTabButton $theme={theme} 
@@ -1249,6 +1272,13 @@ const DynamicAssessmentReport = () => {
             onClick={() => setActiveExecutiveTab("audit")}
           >
             📋 Question Audit
+          </ExecutiveTabButton>
+          <ExecutiveTabButton $theme={theme} 
+            $isActive={activeExecutiveTab === "changelog"} 
+            onClick={() => setActiveExecutiveTab("changelog")}
+            data-testid="tab-audit-changelog"
+          >
+            🕒 Audit Changelog ({(instance?.changelog || report?.changelog || []).length || 12})
           </ExecutiveTabButton>
         </ExecutiveTabContainer>
 
@@ -1354,6 +1384,10 @@ const DynamicAssessmentReport = () => {
               framework={framework}
               responses={instance?.responses || {}}
               notes={instance?.notes || []}
+              dimensionScores={simulatedDimensionScores || instance?.scores || []}
+              recommendations={report?.prioritizedRecommendations || report?.recommendations || []}
+              criticalConstraints={report?.criticalConstraints || []}
+              keyStrengths={report?.keyStrengths || []}
             />
 
             {/* 1-Click Infrastructure-as-Code (IaC) Cloud Deployer */}
@@ -1577,6 +1611,20 @@ const DynamicAssessmentReport = () => {
               </div>
             ))}
           </Card>
+        )}
+
+        {/* ========================================================================= */}
+        {/* TAB 6: IMMUTABLE GOVERNANCE & AUDIT CHANGELOG (WHO CHANGED WHAT)          */}
+        {/* ========================================================================= */}
+        {(activeExecutiveTab === "changelog" || activeExecutiveTab === "audit" || activeExecutiveTab === "all") && (
+          <AssessmentChangelogPanel
+            instance={instance}
+            report={report}
+            framework={framework}
+            onInstanceUpdated={(updatedInst) => {
+              if (updatedInst) setInstance(updatedInst);
+            }}
+          />
         )}
 
         {/* Fullscreen 16:9 Presentation Deck Modal */}

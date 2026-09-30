@@ -333,15 +333,15 @@ router.use((req, res, next) => {
   }
 
   const allowedOwnedInstanceMutation =
-    /^\/instances\/[^/]+(?:\/(?:diagrams|generate-report|generate-diagrams|generate-terraform|share|unshare|share-link|clone|promote-as-type|regenerate-report))?$/.test(req.path);
+    /^\/instances\/[^/]+(?:\/(?:diagrams|generate-report|generate-diagrams|generate-terraform|omni-critic|share|unshare|share-link|clone|promote-as-type|regenerate-report))?$/.test(req.path);
   if (allowedOwnedInstanceMutation && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
     return next();
   }
 
   const allowedUtilityEndpoint =
-    /^\/(?:suggest-questions|regenerate-workflow-assets|instances\/batch-delete|instances\/batch-clone)$/.test(req.path) ||
+    /^\/(?:suggest-questions|regenerate-workflow-assets|omni-critic-audit|instances\/batch-delete|instances\/batch-clone)$/.test(req.path) ||
     /^\/types(?:\/[^/]+(?:\/(?:promote|fork|sample))?)?$/.test(req.path);
-  if (allowedUtilityEndpoint && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
+  if (allowedUtilityEndpoint && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.path ? req.method : req.method)) {
     return next();
   }
 

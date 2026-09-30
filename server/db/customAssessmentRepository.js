@@ -3408,6 +3408,30 @@ class CustomAssessmentRepository {
         }
       }
 
+      if (updateData.changelog) {
+        updated.changelog = updateData.changelog;
+        if (updated.aiReport && typeof updated.aiReport === 'object') {
+          updated.aiReport.changelog = updateData.changelog;
+        } else {
+          updated.aiReport = { ...(updated.aiReport || {}), changelog: updateData.changelog };
+        }
+        if (updated.executiveReport && typeof updated.executiveReport === 'object') {
+          updated.executiveReport.changelog = updateData.changelog;
+        }
+      }
+
+      if (updateData.collaborators) {
+        updated.collaborators = updateData.collaborators;
+        if (updated.aiReport && typeof updated.aiReport === 'object') {
+          updated.aiReport.collaborators = updateData.collaborators;
+        } else {
+          updated.aiReport = { ...(updated.aiReport || {}), collaborators: updateData.collaborators };
+        }
+        if (updated.executiveReport && typeof updated.executiveReport === 'object') {
+          updated.executiveReport.collaborators = updateData.collaborators;
+        }
+      }
+
       const query = `
         UPDATE dynamic_assessments
         SET responses = $1, scores = $2, total_score = $3, max_score = $4,
@@ -3449,6 +3473,18 @@ class CustomAssessmentRepository {
           }
           if (updated.executiveReport && typeof updated.executiveReport === 'object') {
             updated.executiveReport.architectureDiagrams = updateData.architectureDiagrams;
+          }
+        }
+        if (updateData.changelog) {
+          updated.changelog = updateData.changelog;
+          if (updated.aiReport && typeof updated.aiReport === 'object') {
+            updated.aiReport.changelog = updateData.changelog;
+          }
+        }
+        if (updateData.collaborators) {
+          updated.collaborators = updateData.collaborators;
+          if (updated.aiReport && typeof updated.aiReport === 'object') {
+            updated.aiReport.collaborators = updateData.collaborators;
           }
         }
         if (updateData.status === 'completed' && !updated.completedAt) {
@@ -3649,6 +3685,8 @@ class CustomAssessmentRepository {
     if (!row) return null;
     const aiReport = typeof row.ai_report === 'string' ? JSON.parse(row.ai_report) : (row.ai_report || null);
     const diagrams = aiReport?.architectureDiagrams || row.architecture_diagrams || null;
+    const changelog = aiReport?.changelog || row.changelog || [];
+    const collaborators = aiReport?.collaborators || row.collaborators || [];
     return {
       id: row.id,
       typeKey: row.type_key,
@@ -3665,6 +3703,8 @@ class CustomAssessmentRepository {
       aiReport,
       architectureDiagrams: diagrams,
       executiveReport: aiReport,
+      changelog,
+      collaborators,
       version: row.version ? parseInt(row.version, 10) : 1,
       createdBy: row.created_by,
       createdAt: row.created_at,

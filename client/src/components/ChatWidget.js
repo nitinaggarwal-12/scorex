@@ -477,27 +477,60 @@ const ChatWidget = () => {
     });
   };
 
-  // Get current page context
+  // Get current page context across all 3 ScoreX Assessment Engines
   const getPageContext = () => {
     const path = location.pathname;
     const search = location.search;
-    
-    // Extract assessment ID from URL if present
-    const assessmentIdMatch = path.match(/\/results\/([^/]+)/);
-    const assessmentId = assessmentIdMatch ? assessmentIdMatch[1] : null;
-    
-    // Determine page type
+    const params = new URLSearchParams(search);
+
+    // Extract assessment / instance ID from any ScoreX route
+    const resultsMatch = path.match(/\/results\/([^/]+)/);
+    const dynamicReportMatch = path.match(/\/assessments\/report\/([^/]+)/);
+    const dynamicInstanceMatch = path.match(/\/assessments\/run\/instance\/([^/]+)/);
+    const dynamicTypeMatch = path.match(/\/assessments\/run\/([^/]+)/);
+
+    const assessmentId =
+      (dynamicReportMatch && dynamicReportMatch[1]) ||
+      (dynamicInstanceMatch && dynamicInstanceMatch[1]) ||
+      (resultsMatch && resultsMatch[1]) ||
+      params.get('id') ||
+      params.get('instanceId') ||
+      null;
+
     let pageType = 'home';
-    let pageData = {};
-    
+    let pageData = {
+      assessmentId,
+      instanceId: assessmentId,
+      aiSupportModel: 'gemini-3.8-flash-live-preview'
+    };
+
     if (path === '/') {
       pageType = 'home';
+    } else if (dynamicReportMatch) {
+      pageType = 'dynamic_assessment_report';
+      pageData = {
+        ...pageData,
+        assessmentId: dynamicReportMatch[1],
+        instanceId: dynamicReportMatch[1]
+      };
+    } else if (dynamicInstanceMatch || dynamicTypeMatch) {
+      pageType = 'dynamic_assessment_runner';
+      pageData = {
+        ...pageData,
+        typeKey: dynamicTypeMatch ? dynamicTypeMatch[1] : null
+      };
+    } else if (path === '/assessments') {
+      pageType = 'assessments_hub';
+    } else if (path.startsWith('/ge-value-realization')) {
+      pageType = 'ge_value_realization';
+    } else if (path.startsWith('/eu-ai-compliance')) {
+      pageType = 'eu_ai_compliance';
     } else if (path.startsWith('/assessment')) {
       pageType = 'assessment';
-      // Try to get current assessment data
       const currentAssessment = JSON.parse(localStorage.getItem('currentAssessment') || 'null');
       if (currentAssessment) {
         pageData = {
+          ...pageData,
           assessmentId: currentAssessment.id,
           organization: currentAssessment.organization,
           progress: currentAssessment.progress
@@ -505,16 +538,16 @@ const ChatWidget = () => {
       }
     } else if (path.startsWith('/results')) {
       pageType = 'maturity_report';
-      pageData = { assessmentId };
+      pageData = { ...pageData, assessmentId };
     } else if (path.startsWith('/executive-command-center')) {
       pageType = 'executive_dashboard';
-      pageData = { assessmentId };
+      pageData = { ...pageData, assessmentId };
     } else if (path.startsWith('/insights-dashboard')) {
       pageType = 'insights_dashboard';
-      pageData = { assessmentId };
+      pageData = { ...pageData, assessmentId };
     } else if (path.startsWith('/industry-benchmarks')) {
       pageType = 'industry_benchmarks';
-      pageData = { assessmentId };
+      pageData = { ...pageData, assessmentId };
     } else if (path.startsWith('/deep-dive')) {
       pageType = 'deep_dive';
     } else if (path.startsWith('/dashboard')) {
@@ -526,7 +559,7 @@ const ChatWidget = () => {
     } else if (path.startsWith('/admin')) {
       pageType = 'admin';
     }
-    
+
     return { pageType, pageData, path };
   };
 
@@ -538,23 +571,47 @@ const ChatWidget = () => {
     scrollToBottom();
   }, [messages, isTyping, suggestedQuestions]);
 
-  // Initialize with suggested questions when opening
+  // Initialize with suggested questions when opening or changing route
   useEffect(() => {
     if (isOpen && messages.length === 0) {
       const context = getPageContext();
       const initialQuestions = getInitialSuggestedQuestions(context.pageType);
       setSuggestedQuestions(initialQuestions);
     }
-  }, [isOpen]);
+  }, [isOpen, location.pathname]);
 
   // Get initial suggested questions based on page type
   const getInitialSuggestedQuestions = (pageType) => {
     const questionsByPage = {
       home: [
         "How do I start an assessment?",
-        "What are the 6 pillars?",
-        "How long does it take?",
+        "What assessment frameworks are available?",
+        "How does the AI Model Stack work?",
         "Can I save and resume later?"
+      ],
+      assessments_hub: [
+        "Which assessment framework should I choose?",
+        "What did the Omni 1.1 Critic audit find?",
+        "How do I filter assessments by domain?",
+        "How do I launch a Custom AI Blueprint?"
+      ],
+      dynamic_assessment_report: [
+        "What are the top maturity gaps in this report?",
+        "Explain the Nano Banana 2 target architecture",
+        "Summarize the Omni 1.1 Critic audit score",
+        "What are the 90-day priority actions?"
+      ],
+      dynamic_assessment_runner: [
+        "How should I score current vs target maturity?",
+        "How does AI Auto-Suggest work for answers?",
+        "Can I attach architecture evidence files?",
+        "How is the maturity gap calculated?"
+      ],
+      ge_value_realization: [
+        "How is Value Realization (Pillar 4) weighted at 40%?",
+        "Which capabilities are currently At Risk?",
+        "Explain the 4-Pillar GE Vernova scoring model",
+        "How do I generate the Executive Readout?"
       ],
       assessment: [
         "How do I rate maturity levels?",
@@ -726,8 +783,21 @@ const ChatWidget = () => {
           >
             <ChatHeader>
               <div>
-                <ChatTitle>Maturity Assistant</ChatTitle>
-                <ChatSubtitle>Ask me anything about the assessment</ChatSubtitle>
+                <ChatTitle style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                  <span>ScoreX Live Support Agent</span>
+                  <span style={{
+                    fontSize: '0.66rem',
+                    fontWeight: 800,
+                    background: 'rgba(16, 185, 129, 0.22)',
+                    color: '#a7f3d0',
+                    border: '1px solid rgba(52, 211, 153, 0.45)',
+                    padding: '2px 7px',
+                    borderRadius: '999px'
+                  }}>
+                    ⚡ gemini-3.8-flash-live-preview
+                  </span>
+                </ChatTitle>
+                <ChatSubtitle>Gemini 3.8 Flash Live Preview • Multi-Engine Assessment Copilot</ChatSubtitle>
               </div>
               <HeaderButtons>
                 <IconButton onClick={handleMinimize} title="Minimize">
@@ -742,10 +812,10 @@ const ChatWidget = () => {
             <ChatMessages>
               {messages.length === 0 ? (
                 <WelcomeMessage>
-                  <WelcomeIcon>👋</WelcomeIcon>
+                  <WelcomeIcon>⚡</WelcomeIcon>
                   <WelcomeText>
-                    Hi! I'm your Data & AI Maturity Assessment assistant. 
-                    Click a question below or type your own!
+                    Hi! I'm your <strong>ScoreX Support Agent</strong> powered by <strong>Gemini 3.8 Flash Live Preview</strong>.
+                    Ask me about any Dynamic Blueprint, GE Value Realization, or EU AI Act assessment!
                   </WelcomeText>
                 </WelcomeMessage>
               ) : (

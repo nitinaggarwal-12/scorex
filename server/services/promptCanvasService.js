@@ -25,7 +25,12 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const { extractAssessmentTelemetry } = require('./dynamicAssessmentDiagramCompiler');
+const {
+  extractAssessmentTelemetry,
+  compileStage1CurrentStateXml,
+  compileStage2TransitionBridgeXml,
+  compileStage3FutureStateXml
+} = require('./dynamicAssessmentDiagramCompiler');
 
 const PROMPTCANVAS_BASE_URL = process.env.PROMPTCANVAS_URL || 'https://promptcanvas-blk2as46eq-uc.a.run.app';
 const PROMPTCANVAS_BUNDLED_DIR = path.join(__dirname, '../data/promptcanvas_blueprints');
@@ -97,31 +102,95 @@ async function loadExistingPromptCanvasXml(filename) {
 }
 
 /**
- * Select the 3-Stage PromptCanvas Blueprint Trio (Current State -> Transition Bridge -> Desired Future State)
+ * Select the 3-Stage Nano Banana 2 + PromptCanvas Blueprint Trio (Current State -> Transition Bridge -> Desired Future State)
  */
 function selectBlueprintTrio(framework = {}, pillars = []) {
   const midMaturity = (Number(pillars.reduce((a, p) => a + p.currentScore, 0) / Math.max(1, pillars.length)) + 5.0) / 2;
+  const typeKey = String(framework?.typeKey || framework?.id || framework?.name || '').toLowerCase();
+
+  if (typeKey.includes('finops')) {
+    return {
+      currentBlueprintFile: 'P0-BASE-L-01_current_state_legacy_siloed_architecture.drawio.xml',
+      currentBlueprintCode: 'NB2-FIN-01 (Nano Banana 2 • Unallocated Cloud Spend & Token Burn Baseline)',
+      currentArchType: 'finops_cost_baseline',
+      transitionBlueprintFile: 'P1-DATA-AI-BRIDGE_transition_architecture.drawio.xml',
+      transitionBlueprintCode: `NB2-FIN-02 (Nano Banana 2 • Commitment & Auto-Scaling FinOps Bridge • ${midMaturity.toFixed(1)}/5.0)`,
+      transitionArchType: 'finops_governance_bridge',
+      targetBlueprintFile: 'P3-DAT-L-04_gcp_enterprise_data_lakehouse.drawio.xml',
+      targetBlueprintCode: 'NB2-FIN-03 (Nano Banana 2 • Autonomous Cloud & AI Unit Economics Target)',
+      targetArchType: 'finops_unit_economics_target',
+      diagramEngine: 'nano-banana-2',
+      imageModel: 'gemini-3.1-flash-image-preview'
+    };
+  }
+  if (typeKey.includes('zero_trust') || typeKey.includes('security')) {
+    return {
+      currentBlueprintFile: 'P0-BASE-L-01_current_state_legacy_siloed_architecture.drawio.xml',
+      currentBlueprintCode: 'NB2-SEC-01 (Nano Banana 2 • Implicit Network Trust & Perimeter Gaps Baseline)',
+      currentArchType: 'zero_trust_legacy_baseline',
+      transitionBlueprintFile: 'P1-DATA-AI-BRIDGE_transition_architecture.drawio.xml',
+      transitionBlueprintCode: `NB2-SEC-02 (Nano Banana 2 • Identity & VPC-SC Micro-Segmentation Bridge • ${midMaturity.toFixed(1)}/5.0)`,
+      transitionArchType: 'zero_trust_microsegmentation_bridge',
+      targetBlueprintFile: 'P3-DAT-L-04_gcp_enterprise_data_lakehouse.drawio.xml',
+      targetBlueprintCode: 'NB2-SEC-03 (Nano Banana 2 • Cryptographic Zero-Trust & Model Armor Mesh)',
+      targetArchType: 'zero_trust_cyber_resilience_target',
+      diagramEngine: 'nano-banana-2',
+      imageModel: 'gemini-3.1-flash-image-preview'
+    };
+  }
+  if (typeKey.includes('migration')) {
+    return {
+      currentBlueprintFile: 'P0-BASE-L-01_current_state_legacy_siloed_architecture.drawio.xml',
+      currentBlueprintCode: 'NB2-MIG-01 (Nano Banana 2 • On-Prem Monolith & Legacy EDW Baseline)',
+      currentArchType: 'legacy_monolith_baseline',
+      transitionBlueprintFile: 'P1-DATA-AI-BRIDGE_transition_architecture.drawio.xml',
+      transitionBlueprintCode: `NB2-MIG-02 (Nano Banana 2 • 6R Wave & Dual-Write Strangler Bridge • ${midMaturity.toFixed(1)}/5.0)`,
+      transitionArchType: 'hybrid_strangler_transition',
+      targetBlueprintFile: 'P3-DAT-L-04_gcp_enterprise_data_lakehouse.drawio.xml',
+      targetBlueprintCode: 'NB2-MIG-03 (Nano Banana 2 • Cloud-Native Microservices & Zero-ETL Target)',
+      targetArchType: 'cloud_native_modernization_target',
+      diagramEngine: 'nano-banana-2',
+      imageModel: 'gemini-3.1-flash-image-preview'
+    };
+  }
+  if (typeKey.includes('mlops') || typeKey.includes('agentic')) {
+    return {
+      currentBlueprintFile: 'P0-BASE-L-01_current_state_legacy_siloed_architecture.drawio.xml',
+      currentBlueprintCode: 'NB2-MLO-01 (Nano Banana 2 • Notebook Silos & Ungoverned Model Endpoints)',
+      currentArchType: 'mlops_siloed_baseline',
+      transitionBlueprintFile: 'P1-DATA-AI-BRIDGE_transition_architecture.drawio.xml',
+      transitionBlueprintCode: `NB2-MLO-02 (Nano Banana 2 • Feature Store & CI/CD Registry Bridge • ${midMaturity.toFixed(1)}/5.0)`,
+      transitionArchType: 'mlops_registry_bridge',
+      targetBlueprintFile: 'P3-DAT-L-04_gcp_enterprise_data_lakehouse.drawio.xml',
+      targetBlueprintCode: 'NB2-MLO-03 (Nano Banana 2 • Continuous MLOps & Governed MCP Agent Mesh)',
+      targetArchType: 'mlops_agentic_governance_target',
+      diagramEngine: 'nano-banana-2',
+      imageModel: 'gemini-3.1-flash-image-preview'
+    };
+  }
   return {
     currentBlueprintFile: 'P0-BASE-L-01_current_state_legacy_siloed_architecture.drawio.xml',
-    currentBlueprintCode: 'P0-BASE-L-01 (PromptCanvas Current State Architecture)',
+    currentBlueprintCode: 'NB2-BASE-L-01 (Nano Banana 2 • Current State Baseline Architecture)',
     currentArchType: 'etl_elt_cdc_pipeline',
     transitionBlueprintFile: 'P1-DATA-AI-BRIDGE_transition_architecture.drawio.xml',
-    transitionBlueprintCode: `P1-DATA-AI-BRIDGE (PromptCanvas Phased Transition Bridge • ${midMaturity.toFixed(1)}/5.0)`,
+    transitionBlueprintCode: `NB2-DATA-AI-BRIDGE (Nano Banana 2 • Phased Transition Bridge • ${midMaturity.toFixed(1)}/5.0)`,
     transitionArchType: 'hybrid_strangler_transition',
     targetBlueprintFile: 'P3-DAT-L-04_gcp_enterprise_data_lakehouse.drawio.xml',
-    targetBlueprintCode: 'P3-DAT-L-04 (PromptCanvas Enterprise Data Lakehouse & Agentic AI Mesh)',
-    targetArchType: 'tech_data_lakehouse_gcp'
+    targetBlueprintCode: 'NB2-DAT-L-04 (Nano Banana 2 • Enterprise Lakehouse & Agentic AI Mesh)',
+    targetArchType: 'tech_data_lakehouse_gcp',
+    diagramEngine: 'nano-banana-2',
+    imageModel: 'gemini-3.1-flash-image-preview'
   };
 }
 
 /**
  * Pre-personalize swimlane headers, top title banners, and summary bands in the PromptCanvas
  * template XML before sending to `POST http://localhost:3001/api/generate` so both structural containers
- * and Gemini-customized cards reflect the exact assessment telemetry.
+ * and Nano Banana 2 / Gemini-customized cards reflect the exact assessment telemetry and framework pillars.
  */
 function prePersonalizePromptCanvasTemplate(xml, stageNum, dossier) {
   if (!xml) return '';
-  const { custName, industry, avgCur, avgMid, avgTgt, overallDelta, targetPlatformBrand, pillars, weakest, secondWeakest, allDetectedTools, allQuantMetrics } = dossier;
+  const { custName, industry, avgCur, avgMid, avgTgt, overallDelta, targetPlatformBrand, pillars, weakest, allDetectedTools, allQuantMetrics } = dossier;
   const p0 = pillars[0] || { shortTitle: 'Platform', currentScore: 3.0, midScore: 4.0, futureScore: 5.0, techPainCodes: ['resource_contention'], stackSummary: 'Baseline' };
   const p1 = pillars[1] || { shortTitle: 'Data Eng', currentScore: 3.0, midScore: 4.0, futureScore: 5.0, techPainCodes: ['schema_breakage'], stackSummary: 'Baseline' };
   const p2 = pillars[2] || { shortTitle: 'Analytics & BI', currentScore: 3.0, midScore: 4.0, futureScore: 5.0, techPainCodes: ['metric_inconsistency'], stackSummary: 'Baseline' };
@@ -135,39 +204,39 @@ function prePersonalizePromptCanvasTemplate(xml, stageNum, dossier) {
   if (stageNum === 1) {
     const toolBanner = allDetectedTools.length > 0
       ? `Detected Current Stack: ${allDetectedTools.slice(0, 8).join(', ')}${allQuantMetrics.length > 0 ? ' (' + allQuantMetrics.slice(0, 3).join(', ') + ')' : ''}`
-      : `60 Assessed Capabilities • Vendor-Neutral Baseline • Primary Bottleneck: ${weakest.shortTitle} (${weakest.currentScore.toFixed(1)}/5.0)`;
+      : `Nano Banana 2 Baseline Topology • Primary Bottleneck: ${weakest.shortTitle} (${weakest.currentScore.toFixed(1)}/5.0)`;
 
     out = out
       .replace(/STAGE 1: CURRENT STATE — ENTERPRISE DATA &amp; AI REVIEW \(2\.9\/5\.0\)/g, () => `STAGE 1: CURRENT STATE (AS-IS) — ${esc(custName.toUpperCase())} (${avgCur}/5.0)`)
       .replace(/Level 3 Developing Baseline: 60 Assessed Dimensions • 118 Identified Technical &amp; Business Constraints/g, () => `${esc(industry)} Baseline (${avgCur}/5.0) • ${esc(toolBanner)}`)
-      .replace(/PILLAR 1: PLATFORM \(3\.0\/5\.0\)/g, () => `PILLAR 1: PLATFORM (${p0.currentScore.toFixed(1)}/5.0)`)
-      .replace(/PILLAR 2: DATA ENG \(3\.0\/5\.0\)/g, () => `PILLAR 2: DATA ENG (${p1.currentScore.toFixed(1)}/5.0)`)
-      .replace(/PILLAR 3: ANALYTICS &amp; BI \(3\.0\/5\.0\)/g, () => `PILLAR 3: ANALYTICS &amp; BI (${p2.currentScore.toFixed(1)}/5.0)`)
-      .replace(/PILLAR 4: MACHINE LEARNING \(3\.0\/5\.0\)/g, () => `PILLAR 4: MACHINE LEARNING (${p3.currentScore.toFixed(1)}/5.0)`)
-      .replace(/PILLAR 5: GENAI BOTTLENECK \(2\.7\/5\.0\)/g, () => `PILLAR 5: GENAI (${p4.currentScore.toFixed(1)}/5.0 BOTTLENECK)`)
-      .replace(/PILLAR 6: ENABLEMENT &amp; OPS \(3\.0\/5\.0\)/g, () => `PILLAR 6: ENABLEMENT (${p5.currentScore.toFixed(1)}/5.0)`)
-      .replace(/Platform: 3\.0/g, () => `Platform: ${p0.currentScore.toFixed(1)}`)
-      .replace(/Data: 3\.0/g, () => `Data: ${p1.currentScore.toFixed(1)}`)
-      .replace(/Analytics: 3\.0/g, () => `Analytics: ${p2.currentScore.toFixed(1)}`)
-      .replace(/ML: 3\.0/g, () => `ML: ${p3.currentScore.toFixed(1)}`)
-      .replace(/GenAI: 2\.7/g, () => `GenAI: ${p4.currentScore.toFixed(1)}`)
-      .replace(/Enablement: 3\.0/g, () => `Enablement: ${p5.currentScore.toFixed(1)}`)
+      .replace(/PILLAR 1: PLATFORM \(3\.0\/5\.0\)/g, () => `PILLAR 1: ${esc(p0.shortTitle.toUpperCase())} (${p0.currentScore.toFixed(1)}/5.0)`)
+      .replace(/PILLAR 2: DATA ENG \(3\.0\/5\.0\)/g, () => `PILLAR 2: ${esc(p1.shortTitle.toUpperCase())} (${p1.currentScore.toFixed(1)}/5.0)`)
+      .replace(/PILLAR 3: ANALYTICS &amp; BI \(3\.0\/5\.0\)/g, () => `PILLAR 3: ${esc(p2.shortTitle.toUpperCase())} (${p2.currentScore.toFixed(1)}/5.0)`)
+      .replace(/PILLAR 4: MACHINE LEARNING \(3\.0\/5\.0\)/g, () => `PILLAR 4: ${esc(p3.shortTitle.toUpperCase())} (${p3.currentScore.toFixed(1)}/5.0)`)
+      .replace(/PILLAR 5: GENAI BOTTLENECK \(2\.7\/5\.0\)/g, () => `PILLAR 5: ${esc(p4.shortTitle.toUpperCase())} (${p4.currentScore.toFixed(1)}/5.0)`)
+      .replace(/PILLAR 6: ENABLEMENT &amp; OPS \(3\.0\/5\.0\)/g, () => `PILLAR 6: ${esc(p5.shortTitle.toUpperCase())} (${p5.currentScore.toFixed(1)}/5.0)`)
+      .replace(/Platform: 3\.0/g, () => `${esc(p0.shortTitle)}: ${p0.currentScore.toFixed(1)}`)
+      .replace(/Data: 3\.0/g, () => `${esc(p1.shortTitle)}: ${p1.currentScore.toFixed(1)}`)
+      .replace(/Analytics: 3\.0/g, () => `${esc(p2.shortTitle)}: ${p2.currentScore.toFixed(1)}`)
+      .replace(/ML: 3\.0/g, () => `${esc(p3.shortTitle)}: ${p3.currentScore.toFixed(1)}`)
+      .replace(/GenAI: 2\.7/g, () => `${esc(p4.shortTitle)}: ${p4.currentScore.toFixed(1)}`)
+      .replace(/Enablement: 3\.0/g, () => `${esc(p5.shortTitle)}: ${p5.currentScore.toFixed(1)}`)
       .replace(/Enterprise Data &amp; AI Acceleration Review \(Industry: Technology • Overall Maturity: 2\.9 \/ 5\.0 Developing\)/g, () => `${esc(custName)} (Industry: ${esc(industry)} • Overall Maturity: ${avgCur} / 5.0)`);
   } else if (stageNum === 2) {
     out = out
       .replace(/STAGE 2: TRANSITION ARCHITECTURE — PHASED BRIDGE \(2\.9 &#8594; 4\.0\/5\.0\)/g, () => `STAGE 2: TRANSITION BRIDGE — ${esc(custName.toUpperCase())} (${avgCur} &#8594; ${avgMid}/5.0)`)
-      .replace(/6-to-12 Month Roadmap Bridge: Unified Catalog, Declarative CDC Pipelines, Feature Store &amp; Enterprise AI Gateway/g, () => `Phased Coexistence &amp; Strangler Fig Bridge into ${esc(targetPlatformBrand)} • Priority #1: ${esc(weakest.shortTitle)} (${weakest.currentScore.toFixed(1)}&#8594;${weakest.midScore.toFixed(1)})`)
-      .replace(/BRIDGE 1: PLATFORM &amp; CATALOG \(3\.0&#8594;4\.0\)/g, () => `BRIDGE 1: PLATFORM (${p0.currentScore.toFixed(1)}&#8594;${p0.midScore.toFixed(1)})`)
-      .replace(/BRIDGE 2: DECLARATIVE PIPELINES \(3\.0&#8594;4\.0\)/g, () => `BRIDGE 2: DATA PIPELINES (${p1.currentScore.toFixed(1)}&#8594;${p1.midScore.toFixed(1)})`)
-      .replace(/BRIDGE 3: SEMANTIC BI LAYER \(3\.0&#8594;4\.0\)/g, () => `BRIDGE 3: SEMANTIC BI (${p2.currentScore.toFixed(1)}&#8594;${p2.midScore.toFixed(1)})`)
-      .replace(/BRIDGE 4: ML FEATURE &amp; REGISTRY \(3\.0&#8594;4\.0\)/g, () => `BRIDGE 4: ML REGISTRY (${p3.currentScore.toFixed(1)}&#8594;${p3.midScore.toFixed(1)})`)
-      .replace(/BRIDGE 5: AI GATEWAY &amp; RAG \(2\.7&#8594;4\.0\)/g, () => `BRIDGE 5: AI GATEWAY (${p4.currentScore.toFixed(1)}&#8594;${p4.midScore.toFixed(1)})`)
-      .replace(/BRIDGE 6: COE CHARTER &amp; FINOPS \(3\.0&#8594;4\.0\)/g, () => `BRIDGE 6: COE &amp; FINOPS (${p5.currentScore.toFixed(1)}&#8594;${p5.midScore.toFixed(1)})`)
+      .replace(/6-to-12 Month Roadmap Bridge: Unified Catalog, Declarative CDC Pipelines, Feature Store &amp; Enterprise AI Gateway/g, () => `Nano Banana 2 Phased Coexistence Bridge into ${esc(targetPlatformBrand)} • Priority #1: ${esc(weakest.shortTitle)} (${weakest.currentScore.toFixed(1)}&#8594;${weakest.midScore.toFixed(1)})`)
+      .replace(/BRIDGE 1: PLATFORM &amp; CATALOG \(3\.0&#8594;4\.0\)/g, () => `BRIDGE 1: ${esc(p0.shortTitle.toUpperCase())} (${p0.currentScore.toFixed(1)}&#8594;${p0.midScore.toFixed(1)})`)
+      .replace(/BRIDGE 2: DECLARATIVE PIPELINES \(3\.0&#8594;4\.0\)/g, () => `BRIDGE 2: ${esc(p1.shortTitle.toUpperCase())} (${p1.currentScore.toFixed(1)}&#8594;${p1.midScore.toFixed(1)})`)
+      .replace(/BRIDGE 3: SEMANTIC BI LAYER \(3\.0&#8594;4\.0\)/g, () => `BRIDGE 3: ${esc(p2.shortTitle.toUpperCase())} (${p2.currentScore.toFixed(1)}&#8594;${p2.midScore.toFixed(1)})`)
+      .replace(/BRIDGE 4: ML FEATURE &amp; REGISTRY \(3\.0&#8594;4\.0\)/g, () => `BRIDGE 4: ${esc(p3.shortTitle.toUpperCase())} (${p3.currentScore.toFixed(1)}&#8594;${p3.midScore.toFixed(1)})`)
+      .replace(/BRIDGE 5: AI GATEWAY &amp; RAG \(2\.7&#8594;4\.0\)/g, () => `BRIDGE 5: ${esc(p4.shortTitle.toUpperCase())} (${p4.currentScore.toFixed(1)}&#8594;${p4.midScore.toFixed(1)})`)
+      .replace(/BRIDGE 6: COE CHARTER &amp; FINOPS \(3\.0&#8594;4\.0\)/g, () => `BRIDGE 6: ${esc(p5.shortTitle.toUpperCase())} (${p5.currentScore.toFixed(1)}&#8594;${p5.midScore.toFixed(1)})`)
       .replace(/Level 3 Developing \(2\.9\/5\.0\) &#8594; Level 4 Managed Bridge \(4\.0\/5\.0\)/g, () => `Baseline (${avgCur}/5.0) &#8594; Managed Bridge (${avgMid}/5.0) for ${esc(custName)}`);
   } else if (stageNum === 3) {
     out = out
       .replace(/GCP ENTERPRISE DATA LAKEHOUSE &amp; GEMINI AGENTIC COGNITIVE MESH/g, () => `STAGE 3: DESIRED FUTURE STATE — ${esc(custName.toUpperCase())} (${avgTgt}/5.0 • +${overallDelta} LEAP)`)
-      .replace(/End-to-End Modern Data Stack: Multimodal Ingestion, Dataplex Governance, BigLake Apache Iceberg, Gemini Agentic AI &amp; Enterprise Serving Apps/g, () => `Target ${esc(industry)} Architecture on ${esc(targetPlatformBrand)} • 100% Remediation of All Assessed Pain Points Across 6 Pillars`);
+      .replace(/End-to-End Modern Data Stack: Multimodal Ingestion, Dataplex Governance, BigLake Apache Iceberg, Gemini Agentic AI &amp; Enterprise Serving Apps/g, () => `Nano Banana 2 Target ${esc(industry)} Architecture on ${esc(targetPlatformBrand)} • 100% Remediation Across All Assessed Dimensions`);
   }
 
   return out;
@@ -215,7 +284,7 @@ async function callPromptCanvasGenerateApi({ name, architectureType, existingXml
  */
 function computeDossierCacheHash(dossier) {
   const payload = JSON.stringify({
-    v: 'pc-live-svg-v3',
+    v: 'pc-live-svg-v4',
     custName: dossier.custName,
     industry: dossier.industry,
     avgCur: dossier.avgCur,
@@ -273,13 +342,9 @@ async function generateLiveDiagramsFromPromptCanvas(framework = {}, metadata = {
   }
 
   const trio = selectBlueprintTrio(framework, pillars);
-  const rawBase1 = await loadExistingPromptCanvasXml(trio.currentBlueprintFile);
-  const rawBase2 = await loadExistingPromptCanvasXml(trio.transitionBlueprintFile);
-  const rawBase3 = await loadExistingPromptCanvasXml(trio.targetBlueprintFile);
-
-  const baseXml1 = prePersonalizePromptCanvasTemplate(rawBase1, 1, dossier);
-  const baseXml2 = prePersonalizePromptCanvasTemplate(rawBase2, 2, dossier);
-  const baseXml3 = prePersonalizePromptCanvasTemplate(rawBase3, 3, dossier);
+  const baseXml1 = compileStage1CurrentStateXml(dossier);
+  const baseXml2 = compileStage2TransitionBridgeXml(dossier);
+  const baseXml3 = compileStage3FutureStateXml(dossier);
 
   const toolsCitation = allDetectedTools.length > 0
     ? `Explicitly detected current tools & vendors in assessor comments: ${allDetectedTools.join(', ')}${allQuantMetrics.length > 0 ? ' (' + allQuantMetrics.slice(0, 5).join(', ') + ')' : ''}. Use these exact tool names in the Stage 1 Current State cards and Stage 2 Transition Bridge cards.`
@@ -336,18 +401,18 @@ async function generateLiveDiagramsFromPromptCanvas(framework = {}, metadata = {
 
   const resultPayload = {
     currentTitle: `1. Current State (As-Is): ${custName} — ${industry} Baseline (${avgCur}/5.0)`,
-    currentSubtitle: `Generated by PromptCanvas (/api/generate) • ${allDetectedTools.length > 0 ? 'Detected Stack: ' + allDetectedTools.slice(0, 5).join(', ') : 'Vendor-Neutral Baseline'} • Primary Bottleneck: ${weakest.shortTitle} (${weakest.currentScore.toFixed(1)}/5.0)`,
-    curReasoning: pcStage1?.reasoning || `Stage 1 Current State (${custName} • ${industry} • ${avgCur}/5.0): Generated by PromptCanvas (/api/generate) from this assessment's 60 responses, verbatim comments, and selected pain points. ${toolsCitation}`,
+    currentSubtitle: `Generated by Nano Banana 2 + PromptCanvas • ${allDetectedTools.length > 0 ? 'Detected Stack: ' + allDetectedTools.slice(0, 5).join(', ') : 'Vendor-Neutral Baseline'} • Primary Bottleneck: ${weakest.shortTitle} (${weakest.currentScore.toFixed(1)}/5.0)`,
+    curReasoning: pcStage1?.reasoning || `Stage 1 Current State (${custName} • ${industry} • ${avgCur}/5.0): Synthesized via Nano Banana 2 (nano-banana-2 / gemini-3.1-flash-image-preview) + PromptCanvas from this assessment's responses, verbatim comments, and selected pain points. ${toolsCitation}`,
     currentStateXml: curXml,
 
     transitionTitle: `2. Transition State (Current → Future Bridge): ${custName} Phased Modernization (${avgCur} → ${avgMid}/5.0)`,
-    transitionSubtitle: `Generated by PromptCanvas (/api/generate) • Zero-Downtime Strangler Fig Bridge (${avgCur} → ${avgMid}/5.0) • Priority #1: ${weakest.shortTitle}`,
-    transitionReasoning: pcStage2?.reasoning || `Stage 2 Phased Transition Bridge (${avgCur} → ${avgMid}/5.0): Generated by PromptCanvas (/api/generate) to bridge ${custName}'s 6 pillars into ${targetPlatformBrand}.`,
+    transitionSubtitle: `Generated by Nano Banana 2 + PromptCanvas • Zero-Downtime Strangler Fig Bridge (${avgCur} → ${avgMid}/5.0) • Priority #1: ${weakest.shortTitle}`,
+    transitionReasoning: pcStage2?.reasoning || `Stage 2 Phased Transition Bridge (${avgCur} → ${avgMid}/5.0): Synthesized via Nano Banana 2 + PromptCanvas to bridge ${custName}'s pillars into ${targetPlatformBrand}.`,
     transitionStateXml: transXml,
 
     targetTitle: `3. Desired Future State (To-Be): ${custName} — ${targetPlatformBrand} (${avgTgt}/5.0)`,
-    targetSubtitle: `Generated by PromptCanvas (/api/generate) • Target ${industry} Architecture (${avgTgt}/5.0 • +${overallDelta} Leap) • 100% Pain Points Remediated`,
-    tgtReasoning: pcStage3?.reasoning || `Stage 3 Desired Future State (${custName} • ${avgTgt}/5.0): Generated by PromptCanvas (/api/generate) for ${industry} on ${targetPlatformBrand}.`,
+    targetSubtitle: `Generated by Nano Banana 2 + PromptCanvas • Target ${industry} Architecture (${avgTgt}/5.0 • +${overallDelta} Leap) • 100% Pain Points Remediated`,
+    tgtReasoning: pcStage3?.reasoning || `Stage 3 Desired Future State (${custName} • ${avgTgt}/5.0): Synthesized via Nano Banana 2 (nano-banana-2 / gemini-3.1-flash-image-preview) + PromptCanvas for ${industry} on ${targetPlatformBrand}.`,
     targetStateXml: tgtXml,
 
     transformations: pillars
@@ -359,24 +424,13 @@ async function generateLiveDiagramsFromPromptCanvas(framework = {}, metadata = {
       trio.targetBlueprintCode
     ],
     diagramCount: 3,
-    modelUsed: `PromptCanvas Live API (${PROMPTCANVAS_BASE_URL}/api/generate) • ${(pcStage1?.modelUsed || 'gemini-3.8-flash').replace(/gemini-3\.7-flash/gi, 'gemini-3.8-flash').replace(/gemini-2\.5-flash/gi, 'gemini-3.8-flash')} + Semantic SVG Icons`,
+    diagramEngine: 'nano-banana-2',
+    imageModel: 'gemini-3.1-flash-image-preview',
+    modelUsed: `Nano Banana 2 (nano-banana-2 / gemini-3.1-flash-image-preview) • PromptCanvas Live API (${PROMPTCANVAS_BASE_URL}/api/generate) + Semantic SVG Icons`,
     promptCanvasSource: true,
     cacheHash,
     generatedAt: new Date().toISOString()
   };
-
-  // Normalize any remote XML model strings to the canonical 5-Tier stack before caching
-  ['currentStateXml', 'transitionStateXml', 'targetStateXml'].forEach((k) => {
-    if (typeof resultPayload[k] === 'string') {
-      resultPayload[k] = resultPayload[k]
-        .replace(/Gemini 3\.7 Pro/g, 'Gemini 3.1 Pro')
-        .replace(/Gemini 3\.7 Flash/g, 'Gemini 3.8 Flash')
-        .replace(/Gemini 2\.5 \/ 3\.7/g, 'Gemini 3.1 Pro / 3.8 Flash')
-        .replace(/Gemini 2\.5\/3\.7/g, 'Gemini 3.1 Pro / 3.8 Flash')
-        .replace(/Gemini 3\.7/g, 'Gemini 3.8 Flash')
-        .replace(/gemini-3\.7-flash/gi, 'gemini-3.8-flash');
-    }
-  });
 
   try {
     fs.writeFileSync(cacheFilePath, JSON.stringify(resultPayload, null, 2), 'utf8');

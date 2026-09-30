@@ -3,6 +3,7 @@
  * Authentic, production-grade Draw.io XML architectures sourced directly from PromptCanvas Master Builders.
  */
 
+const { compileAll3GroundedDiagrams } = require('./dynamicAssessmentDiagramCompiler');
 
 // ===== Sourced from build_master_legacy_data_dependency.ts =====
 function buildLegacyDataDependencyMapXml() {
@@ -9199,8 +9200,13 @@ function extractArchitectureContext(responses = {}, metadata = {}) {
 
 /**
  * Dispatch bespoke, high-craft PromptCanvas Draw.io XML blueprints tailored to the assessment framework
+ * using the canonical Template 05 3-Zone (Left: As-Is Current State, Middle: Transition Bridge, Right: To-Be Future State) layout.
  */
 function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {}) {
+  return compileAll3GroundedDiagrams(framework, metadata, scores);
+}
+
+function getLegacyMasterArchitectureDiagramsUnused(framework = {}, metadata = {}, scores = {}) {
   const key = (framework.typeKey || "").toLowerCase();
   const title = (framework.title || "").toLowerCase();
   const rawCust = metadata.customerName && metadata.customerName !== 'Not specified' ? metadata.customerName : 'Enterprise Organization';
