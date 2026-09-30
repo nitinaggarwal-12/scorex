@@ -22,10 +22,13 @@
 - **Tier 5 (Multimodal Media & Embeddings)**: `Veo 3.1` (`veo-3.1-generate-preview`), `Lyria 3.5` (`lyria-3.5` / `models/lyria-3-pro-preview`), `Neural Audio` (`gemini-3.1-flash-tts-preview`), `Imagen 3` (`gemini-3.1-flash-image-preview` / `models/imagen-3.0-generate-002`), `Gemini Embedding 001` (`gemini-embedding-001` / `text-embedding-005`)
 
 ### 🌐 Endpoints
-- **Active Google Cloud Run Deployment (`nitina-ggarwal-sandbox-647724`)**: `https://scorex-app-887605034827.us-central1.run.app` / `https://scorex-app-a2x6y5b6ra-uc.a.run.app` (`us-central1` / `scorex-app`, revision `scorex-app-00005-fth`, commit `b1cb4eb` — Template `05` 3-Zone Architecture Layout, Immutable Audit Changelog & Mobile Responsive UI)
-- **Argolis Google Cloud Run Endpoint (`gcp-sandbox-field-eng`)**: `https://scorex-app-522233290860.us-central1.run.app`
+- **Primary Argolis Google Cloud Run Deployment (`nitinagga-ge-2` / `admin@nitinagga.altostrat.com`)**:
+  - `https://scorex-638420508320.us-central1.run.app` (`scorex` revision `scorex-00010-svh`, `ingress: all`, publicly accessible)
+  - `https://scorex-blk2as46eq-uc.a.run.app` (`scorex` canonical alias)
+  - `https://scorex-app-638420508320.us-central1.run.app` (`scorex-app` revision `scorex-app-00001-zw8`, `ingress: all`, publicly accessible)
 - **Secondary Production URL (Railway)**: `https://scorex.up.railway.app/`
 - **Local Runtime**: `http://localhost:5001`
-- **API Health Check**: `http://localhost:5001/api/health`
+- **API Health Check**: `https://scorex-638420508320.us-central1.run.app/api/health`
+
 
 
