@@ -11,6 +11,7 @@ import { createGlobalStyle } from 'styled-components';
 import GlobalNav from './components/GlobalNav';
 import LoadingSpinner from './components/LoadingSpinner';
 import ChatWidget from './components/ChatWidget';
+import UniversalObjectEditor from './components/UniversalObjectEditor';
 import * as assessmentService from './services/assessmentService';
 import authService from './services/authService';
 
@@ -570,6 +571,7 @@ function App() {
         </ChunkErrorBoundary>
 
         <ChatWidget />
+        <UniversalObjectEditor />
         <Suspense fallback={null}>
           <CommandPalette />
         </Suspense>

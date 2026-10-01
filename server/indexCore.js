@@ -68,6 +68,7 @@ const dynamicAssessmentsRoutes = require('./routes/dynamicAssessments');
 const audioRoutes = require('./routes/audio');
 const euAiComplianceRoutes = require('./routes/euAiCompliance');
 const geValueRealizationRoutes = require('./routes/geValueRealization');
+const instanceVersionsRoutes = require('./routes/instanceVersions');
 const ssoRoutes = require('./routes/sso');
 const { requireAdmin } = require('./middleware/auth');
 
@@ -95,6 +96,7 @@ app.use('/api/eu-ai-compliance', euAiComplianceRoutes);
 app.use('/api/eu-ai-act', euAiComplianceRoutes);
 app.use('/api/ge-value-realization', geValueRealizationRoutes);
 app.use('/api/value-realization', geValueRealizationRoutes);
+app.use('/api/instance-versions', instanceVersionsRoutes);
 
 // Admin endpoint to release/unrelease assessment results
 app.post('/api/admin/release-results/:assessmentId', requireAuth, requireAdmin, async (req, res) => {

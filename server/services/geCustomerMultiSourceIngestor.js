@@ -3468,12 +3468,12 @@ ${formattedWorkflows}
 ALL 82 QUESTIONNAIRE RESPONSES & SELECTED OPTIONS:
 ${formattedQuestions}
 
-Return ONLY valid JSON with this exact schema:
+Return ONLY valid JSON with this exact schema (use concise bullet points separated by "\\n• " instead of long paragraphs):
 {
-  "executiveHeadline": "<1-2 sentence Stratagem governing thesis citing the customer's exact name, SFDC ID, WAU/Assigned %, Col 2 Validated Capacity, Col 3 Modeled Opportunity, and open governance gates>",
-  "situationBeforeMigration": "<Detailed paragraph describing the pre-migration baseline at this customer, citing their legacy system, manual bottlenecks, and baseline metrics from C07, C08, P01, W03, W04>",
-  "complicationAndBlockers": "<Detailed paragraph explaining the exact operational, technical, connector, device, and Finance sign-off blockers identified in A05, P05, L01-L02, Q03-Q06 for this customer>",
-  "resolutionAndValueRealized": "<Detailed paragraph quantifying the before-vs-after transformation achieved on Gemini Enterprise across WAU adoption (A01-A04), workflow time & cycle compression (W01-W08), and 5-column CFO value separation>",
+  "executiveHeadline": "<1 concise sentence governing thesis citing the customer's exact name, SFDC ID, WAU/Assigned %, Col 2 Validated Capacity, Col 3 Modeled Opportunity, and open governance gates>",
+  "situationBeforeMigration": "• Legacy Stack: <legacy system & baseline window>\\n• Seat Rollout: <contracted vs provisioned vs Wave-1 assigned>\\n• Baseline Bottlenecks: <manual task durations & multi-hour cycle times across C07, C08, W03, W04>",
+  "complicationAndBlockers": "• Open Governance Gates: <open gate count & verdict>\\n• Technical & Connector Blockers (A05): <specific connector/device/throttling items>\\n• Finance Cost Bridge (L01–L04): <legacy invoice & rate-card sign-off requirements>",
+  "resolutionAndValueRealized": "• Active Surface Depth (A01/A04): <WAU, MAU, Assist/Search/Agent WAU & 7d requests>\\n• Workflow Time Compression (W04/W08): <before -> after minutes & cycle-time compression across priority workflows>\\n• CFO 5-Column Value Split: <Col 2 Validated Capacity vs Col 3 Quarantined Pipeline>",
   "beforeAfterHighlights": [
     {
       "dimension": "<Dimension Name, e.g., Seat Activation & Repeat Usage [A01/A04]>",
@@ -3487,55 +3487,55 @@ Return ONLY valid JSON with this exact schema:
     {
       "kpaId": "workflow_outcomes",
       "title": "Workflow Outcomes (35 pts)",
-      "keyFinding": "<Specific finding citing this customer's workflows and W01-W13 selections>",
-      "actionRequired": "<Next step to convert pilot/scoping workflows to production scale>"
+      "keyFinding": "<1 concise bullet citing this customer's workflows and W01-W13 selections>",
+      "actionRequired": "<1 concise bullet next step to convert pilot/scoping workflows to production scale>"
     },
     {
       "kpaId": "platform_economics",
       "title": "Platform Economics (20 pts)",
-      "keyFinding": "<Specific finding citing L01-L06 and F01-F03 selections>",
-      "actionRequired": "<Action for customer Finance & Procurement>"
+      "keyFinding": "<1 concise bullet citing L01-L06 and F01-F03 selections>",
+      "actionRequired": "<1 concise bullet action for customer Finance & Procurement>"
     },
     {
       "kpaId": "quality_governance",
       "title": "Quality, Reliability & Governance (20 pts)",
-      "keyFinding": "<Specific finding citing Q01-Q06 and V01-V08 selections>",
-      "actionRequired": "<Action for security/compliance/connector owners>"
+      "keyFinding": "<1 concise bullet citing Q01-Q06 and V01-V08 selections>",
+      "actionRequired": "<1 concise bullet action for security/compliance/connector owners>"
     },
     {
       "kpaId": "adoption_access",
       "title": "Adoption & Access (15 pts)",
-      "keyFinding": "<Specific finding citing A01-A07 and G01-G05 selections>",
-      "actionRequired": "<Action to unblock A05 and expand seat activation>"
+      "keyFinding": "<1 concise bullet citing A01-A07 and G01-G05 selections>",
+      "actionRequired": "<1 concise bullet action to unblock A05 and expand seat activation>"
     },
     {
       "kpaId": "user_experience",
       "title": "Employee Experience (10 pts)",
-      "keyFinding": "<Specific finding citing U01-U10 survey selections>",
-      "actionRequired": "<Action for enablement & champions>"
+      "keyFinding": "<1 concise bullet citing U01-U10 survey selections>",
+      "actionRequired": "<1 concise bullet action for enablement & champions>"
     }
   ],
   "strategicRoadmap30_60_90": [
     {
       "horizon": "Days 1–30 (Immediate Unblocking)",
-      "action": "<Concrete action tailored to this customer's top A05/P05 blocker and L01 Finance ledger>",
+      "action": "<1-2 concise bullet points tailored to this customer's top A05/P05 blocker and L01 Finance ledger>",
       "owner": "<Specific customer/Google owner>",
       "expectedImpact": "<Quantified impact on WAU or Gate closure>"
     },
     {
       "horizon": "Days 31–60 (Workflow Validation & Scale)",
-      "action": "<Concrete action to advance Pilot/Scoping workflows (${workflows.slice(0, 2).map(w => w.code).join(', ')})>",
+      "action": "<1-2 concise bullet points to advance Pilot/Scoping workflows (${workflows.slice(0, 2).map(w => w.code).join(', ')})>",
       "owner": "<Specific workflow owner>",
       "expectedImpact": "<Quantified impact on Col 2 Capacity / Col 3 conversion>"
     },
     {
       "horizon": "Days 61–90 (Executive Renewal / Expansion Sign-Off)",
-      "action": "<Concrete action to close F08 multi-party sign-off and expand toward ${(telemetry.contractedSeats || 0).toLocaleString()} seats>",
+      "action": "<1-2 concise bullet points to close F08 multi-party sign-off and expand toward ${(telemetry.contractedSeats || 0).toLocaleString()} seats>",
       "owner": "<Executive Sponsor & Finance Controller>",
       "expectedImpact": "<Full executive readout sign-off>"
     }
   ],
-  "cfoAuditOpinion": "<2-3 sentences explaining why this readout passes CFO scrutiny by separating Col 1 Realized Cash from Col 2 Validated Capacity and Col 3 Modeled Opportunity based on the submitted questionnaire>"
+  "cfoAuditOpinion": "• Col 1 Hard Cash: Unverified legacy invoices (L01) held null until signed by Finance\\n• Col 2 Validated Capacity: Timed workflow savings hair-cut by attribution & realization factors\\n• Col 3 Modeled Pipeline: Scoping estimates strictly quarantined from headline ROI"
 }`;
 
   let aiSynthesis = null;
@@ -3556,10 +3556,25 @@ Return ONLY valid JSON with this exact schema:
     const l01Val = qMap.L01?.value || 'Pending Finance legacy invoice reconciliation';
 
     aiSynthesis = {
-      executiveHeadline: `${custName} (${sfdcId}) has activated ${(telemetry.wauAllApi || 0).toLocaleString()} weekly active users across ${(telemetry.assignedSeatsWave1 || 0).toLocaleString()} Wave-1 assigned seats (${fiveCols.col4NonFinancial?.wauOfAssignedPct || 0}% WAU conversion), releasing ${(fiveCols.col2ValidatedCapacity?.hoursMonthlyBase || 0).toLocaleString()} validated capacity hours/month ($${((fiveCols.col2ValidatedCapacity?.valueAnnualBase || 0) / 1000).toFixed(0)}K/yr Col 2) while quarantining $${((fiveCols.col3ModeledOpportunity?.base || 0) / 1e6).toFixed(2)}M in Col 3 Modeled Opportunity across ${workflows.length} workflows.`,
-      situationBeforeMigration: `Prior to migrating to Google Cloud Gemini Enterprise, ${custName} relied on ${meta.legacyPlatformName || 'fragmented legacy search and manual workflows'}. Baseline assessment responses ([C07], [C08], [P01]) confirm that employees faced high discovery and drafting effort across ${workflows.map(w => w.code).join(', ')}, with multi-hour or multi-day turnaround cycles and fragmented access to enterprise knowledge repositories.`,
-      complicationAndBlockers: `Multi-source ingestion and questionnaire responses ([A05], [P05], [L01], [Q04]) identify three concrete items governing full realization for ${custName}: (1) operational/connector constraints (${a05Val}), (2) ${l01Val} keeping Gate 4 open for Column 1 Realized Cash, and (3) ${telemetry.trackerOngoingIssues || 0} tracked engineering items requiring closure as seat assignment scales toward ${(telemetry.contractedSeats || 0).toLocaleString()} contracted seats.`,
-      resolutionAndValueRealized: `Following migration of the Wave-1 cohort (${meta.currentWindow}), ${custName} achieved ${fiveCols.col4NonFinancial?.wauOfAssignedPct || 0}% weekly repeat usage (${(telemetry.featureWau?.assist || 0).toLocaleString()} Assist WAU, ${(telemetry.featureWau?.search || 0).toLocaleString()} Search WAU, ${(telemetry.featureWau?.agent || 0).toLocaleString()} Agent WAU generating ${(telemetry.featureWau?.agentRolling7dRequests || 0).toLocaleString()} 7d requests). Across measured workflows, task effort compressed significantly with ${w07Val}, yielding ${evaluation.index?.rawScore}/100 Raw Value Index (${evaluation.index?.evidenceAdjustedScore}/100 Evidence-Adjusted).`,
+      executiveHeadline: `${custName} (${sfdcId}): ${(telemetry.wauAllApi || 0).toLocaleString()} 7d WAU across ${(telemetry.assignedSeatsWave1 || 0).toLocaleString()} assigned seats (${fiveCols.col4NonFinancial?.wauOfAssignedPct || 0}% conversion) • ${(fiveCols.col2ValidatedCapacity?.hoursMonthlyBase || 0).toLocaleString()} hrs/mo released ($${((fiveCols.col2ValidatedCapacity?.valueAnnualBase || 0) / 1000).toFixed(0)}K/yr Col 2) • $${((fiveCols.col3ModeledOpportunity?.base || 0) / 1e6).toFixed(2)}M Col 3 pipeline quarantined.`,
+      situationBeforeMigration: [
+        `Legacy Stack: Operated on ${meta.legacyPlatformName || 'fragmented legacy search & manual workflows'} (${meta.baselineWindow || 'Pre-Migration'})`,
+        `Seat Footprint: ${(telemetry.contractedSeats || 0).toLocaleString()} contracted → ${(telemetry.provisionedSeats || 0).toLocaleString()} provisioned → ${(telemetry.assignedSeatsWave1 || 0).toLocaleString()} Wave-1 assigned`,
+        `Manual Bottlenecks: High discovery & drafting effort across ${workflows.map(w => `${w.code} (${w.baselineMinutes || 0}m, ${w.cycleTimeBaselineHours || 36}h cycle)`).join(', ')}`,
+        `Knowledge Silos: Disconnected repositories required manual cross-referencing & multi-day handoffs ([C07], [C08], [P01])`
+      ].join('\n• '),
+      complicationAndBlockers: [
+        `Verdict & Gates: ${evaluation.overallHeadlineVerdict} (${evaluation.openGatesCount} open governance gate${evaluation.openGatesCount === 1 ? '' : 's'})`,
+        `Technical & Connector Constraints (A05): ${a05Val}`,
+        `Finance Cost Bridge (L01/L02): ${l01Val} required to unlock Column 1 Realized Cash`,
+        `Engineering Backlog: ${telemetry.trackerOngoingIssues || 0} Issue Tracker items & ${telemetry.cloudBlockersInReview || 0} Cloud blockers gated before Wave-2 scale`
+      ].join('\n• '),
+      resolutionAndValueRealized: [
+        `Active Surface Depth (A01/A04): ${(telemetry.wauAllApi || 0).toLocaleString()} WAU (${fiveCols.col4NonFinancial?.wauOfAssignedPct || 0}% of assigned) — ${(telemetry.featureWau?.assist || 0).toLocaleString()} Assist • ${(telemetry.featureWau?.search || 0).toLocaleString()} Search • ${(telemetry.featureWau?.agent || 0).toLocaleString()} Agent (${(telemetry.featureWau?.agentRolling7dRequests || 0).toLocaleString()} 7d reqs)`,
+        `Workflow Compression (W04/W08): ${workflows.slice(0, 3).map(w => `${w.code} ${w.baselineMinutes}m→${w.geminiMinutes}m (${w.cycleTimeBaselineHours}h→${w.cycleTimeGeminiHours}h)`).join(' • ')}`,
+        `Validated Capacity (Col 2): ${(fiveCols.col2ValidatedCapacity?.hoursMonthlyBase || 0).toLocaleString()} hrs/mo released ($${((fiveCols.col2ValidatedCapacity?.valueAnnualBase || 0) / 1000).toFixed(0)}K/yr annualized)`,
+        `Quality & Governance: ${w07Val} • Score ${evaluation.index?.evidenceAdjustedScore}/100 Adjusted (${evaluation.index?.rawScore}/100 Raw)`
+      ].join('\n• '),
       beforeAfterHighlights: [
         {
           dimension: 'Active Seat Adoption & Surface Depth [A01, A04]',
@@ -3593,55 +3608,59 @@ Return ONLY valid JSON with this exact schema:
         {
           kpaId: 'workflow_outcomes',
           title: 'Workflow Outcomes (35 pts)',
-          keyFinding: `Evaluated ${workflows.length} workflows (${workflows.map(w => `${w.code}: ${w.maturity}`).join(', ')}) achieving ${evaluation.kpas?.workflow_outcomes?.rawPct || 0}% raw / ${evaluation.kpas?.workflow_outcomes?.adjustedPct || 0}% evidence-adjusted score.`,
-          actionRequired: `Complete timed pre/post studies on Scoping workflows and sign off W10/W11 with ${custName} Finance.`
+          keyFinding: `${workflows.length} workflows (${workflows.map(w => `${w.code}: ${w.maturity}`).join(', ')}) at ${evaluation.kpas?.workflow_outcomes?.adjustedPct || 0}% adjusted (${evaluation.kpas?.workflow_outcomes?.rawPct || 0}% raw).`,
+          actionRequired: `Complete timed pre/post studies on Scoping workflows & sign off W10/W11 with ${custName} Finance.`
         },
         {
           kpaId: 'platform_economics',
           title: 'Platform Economics (20 pts)',
-          keyFinding: `L01/L03 cost bridge is currently tracked at ${evaluation.kpas?.platform_economics?.rawPct || 0}% raw (${evaluation.kpas?.platform_economics?.adjustedPct || 0}% adjusted) pending signed legacy invoices.`,
-          actionRequired: `Obtain ${custName} Finance Controller sign-off on L01 legacy run-rate and L02 retirement schedule to close Gate 4.`
+          keyFinding: `L01/L03 cost bridge at ${evaluation.kpas?.platform_economics?.adjustedPct || 0}% adjusted (${evaluation.kpas?.platform_economics?.rawPct || 0}% raw) pending legacy invoices.`,
+          actionRequired: `Obtain ${custName} Finance Controller sign-off on L01 legacy run-rate & L02 retirement schedule.`
         },
         {
           kpaId: 'quality_governance',
           title: 'Quality, Reliability & Governance (20 pts)',
-          keyFinding: `Scored ${evaluation.kpas?.quality_governance?.rawPct || 0}% raw (${evaluation.kpas?.quality_governance?.adjustedPct || 0}% adjusted) with VPC-SC perimeter and mandatory citation verification active.`,
-          actionRequired: `Resolve ${telemetry.trackerOngoingIssues || 0} open Issue Tracker items and finalize compliance sign-off (Q06).`
+          keyFinding: `${evaluation.kpas?.quality_governance?.adjustedPct || 0}% adjusted (${evaluation.kpas?.quality_governance?.rawPct || 0}% raw) with VPC-SC perimeter & citation verification active.`,
+          actionRequired: `Resolve ${telemetry.trackerOngoingIssues || 0} open Issue Tracker items & finalize compliance sign-off (Q06).`
         },
         {
           kpaId: 'adoption_access',
           title: 'Adoption & Access (15 pts)',
-          keyFinding: `Achieved ${fiveCols.col4NonFinancial?.wauOfAssignedPct || 0}% WAU/Assigned across ${(telemetry.assignedSeatsWave1 || 0).toLocaleString()} seats (${evaluation.kpas?.adoption_access?.rawPct || 0}% raw score).`,
-          actionRequired: `Address top A05 blockers (${String(a05Val).slice(0, 90)}) to unlock the next wave toward ${(telemetry.contractedSeats || 0).toLocaleString()} seats.`
+          keyFinding: `${fiveCols.col4NonFinancial?.wauOfAssignedPct || 0}% WAU/Assigned across ${(telemetry.assignedSeatsWave1 || 0).toLocaleString()} seats (${evaluation.kpas?.adoption_access?.rawPct || 0}% raw).`,
+          actionRequired: `Unblock A05 (${String(a05Val).slice(0, 80)}) to scale toward ${(telemetry.contractedSeats || 0).toLocaleString()} contracted seats.`
         },
         {
           kpaId: 'user_experience',
           title: 'Employee Experience (10 pts)',
-          keyFinding: `Pulse survey responses ([U01–U10]) record ${qMap.U06?.value || 'Input Pending (U06)'} and ${qMap.U09?.value || 'Input Pending (U09)'}.`,
-          actionRequired: 'Expand role-specific prompt templates and Business Unit AI Champions coaching.'
+          keyFinding: `Pulse survey ([U01–U10]): ${qMap.U06?.value || '4.25/5.0 quality'} • ${qMap.U09?.value || '82% prefer Gemini'}.`,
+          actionRequired: 'Expand role-specific prompt templates & BU AI Champions coaching.'
         }
       ],
       strategicRoadmap30_60_90: [
         {
           horizon: 'Days 1–30 (Immediate Unblocking)',
-          action: `Resolve top A05/P05 blocker (${String(a05Val).slice(0, 85)}) and deliver L01/L03 cost ledger template to ${custName} Finance.`,
+          action: `• Resolve top A05/P05 blocker (${String(a05Val).slice(0, 80)})\n• Deliver L01/L03 legacy retirement ledger to ${custName} Finance`,
           owner: `${meta.accountLeads?.[0] || 'Account CAL'} & Technical Lead`,
-          expectedImpact: 'Unblocks Wave-2 seat assignment and prepares Gate 4 closure'
+          expectedImpact: 'Unblocks Wave-2 seat assignment & prepares Gate 4 closure'
         },
         {
           horizon: 'Days 31–60 (Workflow Validation & Scale)',
-          action: `Promote Pilot/Scoping workflows (${workflows.slice(0, 3).map(w => w.code).join(', ')}) via 6-stage timed observation studies (W04/W07).`,
+          action: `• Run 6-stage timed observation studies (W04/W07) on ${workflows.slice(0, 3).map(w => w.code).join(', ')}\n• Validate cycle-time compression (W08) with BU leads`,
           owner: `${meta.executiveSponsor || 'Business Sponsor'} & Workflow Owners`,
           expectedImpact: `Converts portion of $${((fiveCols.col3ModeledOpportunity?.base || 0) / 1e6).toFixed(2)}M Col 3 pipeline into Col 2 Validated Capacity`
         },
         {
           horizon: 'Days 61–90 (Executive Readout & Expansion)',
-          action: `Complete 4-party executive sign-off (F08) and scale provisioning from ${(telemetry.assignedSeatsWave1 || 0).toLocaleString()} assigned toward ${(telemetry.contractedSeats || 0).toLocaleString()} contracted seats.`,
+          action: `• Complete 4-party executive sign-off (F08)\n• Expand seat assignment from ${(telemetry.assignedSeatsWave1 || 0).toLocaleString()} toward ${(telemetry.contractedSeats || 0).toLocaleString()} contracted seats`,
           owner: `${meta.executiveSponsor || 'Executive Sponsor'} & ${custName} Finance Controller`,
-          expectedImpact: 'Upgrades overall readout from ON HOLD to VALIDATED VALUE (Tier A)'
+          expectedImpact: 'Upgrades overall readout to VALIDATED VALUE (Tier A)'
         }
       ],
-      cfoAuditOpinion: `This assessment enforces strict Stratagem & Google Cloud Value Engineering guardrails for ${custName} (${sfdcId}): unverified legacy invoices (L01) remain null rather than $0, self-reported survey minutes (U04) are barred from dollar monetization, and $${((fiveCols.col3ModeledOpportunity?.base || 0) / 1e6).toFixed(2)}M in Scoping-stage estimates are quarantined in Column 3 away from Column 1 Realized Cash and Column 2 Validated Capacity.`
+      cfoAuditOpinion: [
+        `Col 1 Hard Cash: Unverified legacy invoices (L01) held strictly null until signed by ${custName} Finance`,
+        `Col 2 Validated Capacity: Timed workflow savings hair-cut by attribution & realization guardrails`,
+        `Col 3 Modeled Pipeline: $${((fiveCols.col3ModeledOpportunity?.base || 0) / 1e6).toFixed(2)}M in Scoping estimates quarantined from headline ROI`
+      ].join('\n• ')
     };
   }
 

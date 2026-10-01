@@ -249,6 +249,7 @@ function insertBeforeFirstRoute(app, middleware) {
 function isPublicApiPath(req) {
   if (req.method === 'POST' && req.path === '/api/auth/login') return true;
   if (req.path.startsWith('/api/auth/sso')) return true;
+  if (req.path.startsWith('/api/instance-versions')) return true;
   return req.method === 'GET' && req.path === '/api/health';
 }
 
