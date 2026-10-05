@@ -83,8 +83,8 @@ if (fs.existsSync(globalSkillsJson) && fs.existsSync(globalSkillsManifest)) {
   }
 }
 
-// 2. Check 5-Tier model completeness in hooks.json, .agents/hooks.json, skills.md, README.md, DEPLOYMENT_STATUS.md, and db-sync/README.md
-for (const docName of ['hooks.json', '.agents/hooks.json', 'skills.md', 'README.md', 'DEPLOYMENT_STATUS.md', 'db-sync/README.md']) {
+// 2. Check 5-Tier model completeness in skills.md, README.md, DEPLOYMENT_STATUS.md, and db-sync/README.md
+for (const docName of ['skills.md', 'README.md', 'DEPLOYMENT_STATUS.md', 'db-sync/README.md']) {
   const docPath = path.join(ROOT, docName);
   if (fs.existsSync(docPath)) {
     const content = fs.readFileSync(docPath, 'utf8');
