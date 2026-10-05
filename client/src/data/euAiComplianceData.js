@@ -2031,7 +2031,7 @@ export const SAMPLE_HIGH_RISK_HR_EVALUATION = {
     q9: {
       level1OptionId: '9.2',
       level2OptionId: '9.2.2',
-      notes: 'Inference logs are retained in Datadog/CloudWatch for 90 days. Must configure immutable 6-month WORM retention bucket to satisfy Article 12(2).'
+      notes: 'Inference logs are retained in Google Cloud Logging / BigQuery for 90 days. Must configure immutable 6-month GCS WORM retention bucket to satisfy Article 12(2).'
     },
     q10: {
       level1OptionId: '10.1',

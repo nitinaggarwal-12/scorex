@@ -756,6 +756,7 @@ const GlobalNav = () => {
     const handleClickOutside = (e) => {
       if (!e.target.closest('.dropdown-container')) {
         setAssessmentsDropdownOpen(false);
+        setPortfolioDropdownOpen(false);
         setAssignmentsDropdownOpen(false);
         setAdminDropdownOpen(false);
         setTrySampleDropdownOpen(false);
@@ -926,7 +927,7 @@ const GlobalNav = () => {
         <span style={{ fontSize: '0.64rem', color: '#2563eb', background: '#eff6ff', padding: '2px 6px', borderRadius: '999px', fontWeight: 700 }}>{2 + promotedTypes.length} Live Demos</span>
       </TrySampleHeader>
 
-      <TrySampleOption onClick={() => { setTrySampleDropdownOpen(false); navigate('/ge-value-realization?tab=report'); }}>
+      <TrySampleOption onClick={() => { setTrySampleDropdownOpen(false); navigate('/ge-value-realization/inst_bionova_ge_value_realization?tab=report'); }}>
         <TrackIconBox $bg="rgba(37, 99, 235, 0.12)" $color="#2563eb" $border="rgba(37, 99, 235, 0.28)">
           <FiTrendingUp />
         </TrackIconBox>
@@ -1196,8 +1197,10 @@ const GlobalNav = () => {
               >
                 <NavLink 
                   onClick={() => {
-                    handleNavigate('/assessments');
-                    setPortfolioDropdownOpen(false);
+                    setPortfolioDropdownOpen(prev => !prev);
+                    setAssessmentsDropdownOpen(false);
+                    setResourcesDropdownOpen(false);
+                    setTrySampleDropdownOpen(false);
                   }}
                   style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}
                 >
@@ -1481,6 +1484,7 @@ const GlobalNav = () => {
                       onClick={(e) => {
                         e.stopPropagation();
                         setAdminDropdownOpen(false);
+                        navigate('/assessments/ai-generator');
                       }}
                     >
                       <FiMail />

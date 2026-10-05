@@ -60,11 +60,31 @@ const PrefillButton = styled.button`
 
 const Container = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: ${props => props.$dark
+    ? 'linear-gradient(135deg, #0b0f19 0%, #111827 50%, #1e293b 100%)'
+    : 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)'};
+  color: ${props => props.$dark ? '#f8fafc' : '#1e293b'};
   display: flex;
   overflow: hidden;
   padding-top: 68px; /* Fixed GlobalNav offset */
   position: relative;
+  transition: background 0.25s ease, color 0.25s ease;
+
+  ${props => props.$dark && `
+    aside, main > div > div, main > div:last-child {
+      background-color: #0f172a;
+      border-color: #1e293b;
+      color: #f8fafc;
+    }
+    h1, h2, h3 {
+      color: #f8fafc;
+    }
+    textarea, input[type="text"] {
+      background: #1e293b;
+      border-color: #334155;
+      color: #f8fafc;
+    }
+  `}
 `;
 
 /* =========================================================
@@ -781,7 +801,11 @@ const DynamicAssessmentRunner = () => {
   const [instance, setInstance] = useState(null);
   const [framework, setFramework] = useState(null);
   const [responses, setResponses] = useState({});
-  const [activeDimIdx, setActiveDimIdx] = useState(0);
+  const [activeDimIdx, setActiveDimIdx] = useState(() => {
+    const dimParam = new URLSearchParams(window.location.search).get('dimensionIdx');
+    const parsed = parseInt(dimParam, 10);
+    return !Number.isNaN(parsed) && parsed >= 0 ? parsed : 0;
+  });
   const [activeQIdx, setActiveQIdx] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [savedStatus, setSavedStatus] = useState('saved');
@@ -876,19 +900,8 @@ const DynamicAssessmentRunner = () => {
             const matchedType = (types || []).find(t => t.typeKey === id || t.id === id);
             if (matchedType && matchedType.framework && matchedType.framework.dimensions) {
               setFramework(matchedType.framework);
-              const user = JSON.parse(localStorage.getItem('user') || '{}');
-              const newInst = await dynamicAssessmentService.createInstance({
-                typeKey: matchedType.typeKey,
-                customerName: user.organization || 'Enterprise Organization',
-                useCase: matchedType.title || 'Enterprise Architecture Modernization',
-                frameworkSnapshot: matchedType.framework,
-                responses: {}
-              });
-              if (newInst?.id) {
-                setInstance(newInst);
-                navigate(`/assessments/run/instance/${newInst.id}`, { replace: true });
-                return;
-              }
+              navigate(`/assessments/run/${matchedType.typeKey}`, { replace: true });
+              return;
             }
           } catch (typeCheckErr) {
             console.warn('Type match check failed:', typeCheckErr);
@@ -903,24 +916,6 @@ const DynamicAssessmentRunner = () => {
         const type = await dynamicAssessmentService.getAssessmentTypeByKey(typeKey);
         if (type && type.framework && type.framework.dimensions) {
           setFramework(type.framework);
-          try {
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
-            const newInst = await dynamicAssessmentService.createInstance({
-              typeKey: type.typeKey || typeKey,
-              customerName: user.organization || 'Enterprise Organization',
-              useCase: type.title || 'Enterprise Architecture Modernization',
-              frameworkSnapshot: type.framework,
-              responses: {}
-            });
-            if (newInst && newInst.id) {
-              setInstance(newInst);
-              loadedResponses = newInst.responses || {};
-              // Ensure every assessment run has a unique URL ID in address bar
-              navigate(`/assessments/run/instance/${newInst.id}`, { replace: true });
-            }
-          } catch (createErr) {
-            console.warn('Instance auto-provisioning deferred to submission:', createErr);
-          }
         } else {
           setLoadError(`Assessment template "${typeKey}" was not found.`);
         }
@@ -965,18 +960,33 @@ const DynamicAssessmentRunner = () => {
 
   const performAutoSave = useCallback(async (updatedResponses) => {
     saveLocalBackup(updatedResponses);
-    if (!instance?.id) return;
+    if (!updatedResponses || Object.keys(updatedResponses).length === 0) return;
     setSavedStatus('saving');
     try {
-      await dynamicAssessmentService.updateInstance(instance.id, {
-        responses: updatedResponses
-      });
+      if (!instance?.id) {
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const newInst = await dynamicAssessmentService.createInstance({
+          typeKey: typeKey || framework?.typeKey || 'custom',
+          customerName: (user.organization && user.organization !== 'ScoreX Demo Workspace') ? user.organization : 'Enterprise Organization',
+          useCase: framework?.title || 'Enterprise Architecture Modernization',
+          frameworkSnapshot: framework,
+          responses: updatedResponses
+        });
+        if (newInst?.id) {
+          setInstance(newInst);
+          navigate(`/assessments/run/instance/${newInst.id}`, { replace: true });
+        }
+      } else {
+        await dynamicAssessmentService.updateInstance(instance.id, {
+          responses: updatedResponses
+        });
+      }
       setSavedStatus('saved');
     } catch (err) {
       console.warn('Autosave buffered in local offline storage:', err);
       setSavedStatus('saved');
     }
-  }, [instance, saveLocalBackup]);
+  }, [instance, typeKey, framework, navigate, saveLocalBackup]);
 
   const debouncedAutoSave = useCallback((updatedResponses) => {
     setSavedStatus('saving');
@@ -990,20 +1000,11 @@ const DynamicAssessmentRunner = () => {
   }, [performAutoSave, saveLocalBackup]);
 
   const handleSelectCurrentState = (qId, score) => {
-    if (score >= 5) {
-      toast.error("Current baseline state cannot be Level 5 (Transform) because Future Target State must be strictly higher.", {
-        icon: "⚠️",
-        duration: 3500,
-        position: "top-center"
-      });
-      return;
-    }
-
     const currentFuture = responses[`${qId}_future_state`];
-    // Strict rule: Future state MUST be strictly higher than Current State (Future >= Current + 1)
+    // Future state is at least Current + 1 for levels 1-4, or 5 (Sustained Transform) when Current is already Level 5
     const minRequiredFuture = Math.min(5, score + 1);
-    const newFuture = (currentFuture !== undefined && Number(currentFuture) > score) 
-      ? Number(currentFuture) 
+    const newFuture = (currentFuture !== undefined && (score >= 5 ? Number(currentFuture) === 5 : Number(currentFuture) > score))
+      ? Number(currentFuture)
       : minRequiredFuture;
 
     const updated = {
@@ -1023,8 +1024,9 @@ const DynamicAssessmentRunner = () => {
         ? Number(responses[`${qId}_current_state`]) 
         : null;
 
-    if (currentBaseline !== null && score <= currentBaseline) {
-      toast.error(`Target Future State (${score}/5.0) must be strictly higher than Current Baseline (${currentBaseline}/5.0)`, {
+    const isInvalidTarget = currentBaseline !== null && (currentBaseline >= 5 ? score < 5 : score <= currentBaseline);
+    if (isInvalidTarget) {
+      toast.error(`Target Future State (${score}/5.0) must be higher than Current Baseline (${currentBaseline}/5.0)`, {
         icon: "⚠️",
         duration: 3500,
         position: "top-center"
@@ -1209,12 +1211,7 @@ const DynamicAssessmentRunner = () => {
     setResponses(prefilled);
     toast.success(`✨ Prefilled with realistic '${profile.name}' enterprise responses & pain points!`);
 
-    if (instance?.id) {
-      await dynamicAssessmentService.updateInstance(instance.id, {
-        responses: prefilled
-      });
-      setSavedStatus('saved');
-    }
+    await performAutoSave(prefilled);
   };
 
   const handleFinishAndGenerateReport = async () => {
@@ -1227,7 +1224,7 @@ const DynamicAssessmentRunner = () => {
         const user = JSON.parse(localStorage.getItem('user') || '{}');
         targetInstance = await dynamicAssessmentService.createInstance({
           typeKey: typeKey || framework?.typeKey || 'custom',
-          customerName: user.organization || 'Enterprise Organization',
+          customerName: (user.organization && user.organization !== 'ScoreX Demo Workspace') ? user.organization : 'Enterprise Organization',
           useCase: framework?.title || 'Enterprise Architecture Modernization',
           frameworkSnapshot: framework,
           responses: responses
@@ -1555,7 +1552,7 @@ const DynamicAssessmentRunner = () => {
   }
 
   return (
-    <Container>
+    <Container $dark={isDarkMode}>
       {/* 1. DESKTOP LEFT SIDEBAR */}
       <DesktopSidebar>
         {renderNavContent()}
@@ -1849,7 +1846,7 @@ const DynamicAssessmentRunner = () => {
                         : responses[`${currentQ.id}_current_state`] !== undefined 
                           ? Number(responses[`${currentQ.id}_current_state`]) 
                           : null;
-                      const isNotStrictlyHigher = currentBaseline !== null && score <= currentBaseline;
+                      const isNotStrictlyHigher = currentBaseline !== null && (currentBaseline >= 5 ? score < 5 : score <= currentBaseline);
 
                       return (
                         <MaturityOptionCard
@@ -1857,7 +1854,7 @@ const DynamicAssessmentRunner = () => {
                           $selected={isSelected}
                           $disabled={isNotStrictlyHigher}
                           disabled={isNotStrictlyHigher}
-                          title={isNotStrictlyHigher ? `Target horizon must be strictly higher than Current Baseline (${currentBaseline}/5.0)` : ""}
+                          title={isNotStrictlyHigher ? `Target horizon must be higher than Current Baseline (${currentBaseline}/5.0)` : ""}
                           onClick={() => !isNotStrictlyHigher && handleSelectFutureState(currentQ.id, score)}
                         >
                           <OptionStageTag $selected={isSelected} style={isNotStrictlyHigher ? { color: "#94a3b8" } : {}}>

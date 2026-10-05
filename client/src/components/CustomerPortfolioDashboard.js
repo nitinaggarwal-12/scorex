@@ -20,8 +20,8 @@ import LoadingSpinner from './LoadingSpinner';
 
 const Container = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #0b0f19 0%, #111827 50%, #171b30 100%);
-  color: #f8fafc;
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  color: #0f172a;
   padding: 88px clamp(16px, 1.8vw, 28px) 80px;
   width: 100%;
   max-width: 100%;
@@ -53,9 +53,9 @@ const HeaderNav = styled.div`
 `;
 
 const BackButton = styled.button`
-  background: rgba(30, 41, 59, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #cbd5e1;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #334155;
   border-radius: 10px;
   padding: 8px 16px;
   font-size: 0.85rem;
@@ -65,21 +65,22 @@ const BackButton = styled.button`
   align-items: center;
   gap: 6px;
   transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
 
   &:hover {
-    background: rgba(51, 65, 85, 0.9);
-    color: #ffffff;
+    background: #f8fafc;
+    border-color: #94a3b8;
+    color: #0f172a;
   }
 `;
 
 const HeroCard = styled(motion.div)`
-  background: rgba(15, 23, 42, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 20px;
   padding: 32px;
   margin-bottom: 32px;
-  backdrop-filter: blur(16px);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
 `;
 
 const StatsGrid = styled.div`
@@ -90,8 +91,8 @@ const StatsGrid = styled.div`
 `;
 
 const StatCard = styled.div`
-  background: rgba(30, 41, 59, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 14px;
   padding: 20px;
   display: flex;
@@ -100,8 +101,8 @@ const StatCard = styled.div`
 
   .label {
     font-size: 0.8rem;
-    color: #94a3b8;
-    font-weight: 600;
+    color: #64748b;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
@@ -109,12 +110,12 @@ const StatCard = styled.div`
   .value {
     font-size: 1.8rem;
     font-weight: 800;
-    color: #ffffff;
+    color: #0f172a;
   }
 
   .sub {
     font-size: 0.8rem;
-    color: #38bdf8;
+    color: #2563eb;
     font-weight: 600;
   }
 `;
@@ -130,20 +131,20 @@ const PortfolioGrid = styled.div`
 `;
 
 const AssessmentCard = styled(motion.div)`
-  background: rgba(15, 23, 42, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 18px;
   padding: 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  backdrop-filter: blur(14px);
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
   transition: all 0.25s ease;
 
   &:hover {
-    border-color: rgba(99, 102, 241, 0.5);
+    border-color: #93c5fd;
     transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
   }
 `;
 
@@ -151,9 +152,9 @@ const ScoreBadge = styled.div`
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  color: #34d399;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #059669;
   border-radius: 8px;
   padding: 4px 10px;
   font-size: 0.85rem;
@@ -208,7 +209,7 @@ const CustomerPortfolioDashboard = () => {
           <button
             onClick={() => navigate('/assessments/ai-generator')}
             style={{
-              background: 'linear-gradient(135deg, #6366f1, #a855f7)',
+              background: 'linear-gradient(135deg, #2563eb, #4f46e5)',
               color: '#ffffff',
               border: 'none',
               borderRadius: '10px',
@@ -228,14 +229,14 @@ const CustomerPortfolioDashboard = () => {
         {/* Enterprise Portfolio Hero */}
         <HeroCard initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '12px' }}>
-            <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem' }}>
+            <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg, #2563eb, #4f46e5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem' }}>
               <FiBriefcase color="#fff" />
             </div>
             <div>
-              <h1 style={{ fontSize: '1.85rem', fontWeight: 800, margin: 0, color: '#ffffff' }}>
+              <h1 style={{ fontSize: '1.85rem', fontWeight: 800, margin: 0, color: '#0f172a' }}>
                 {customerName} Enterprise Architecture Portfolio
               </h1>
-              <p style={{ color: '#94a3b8', margin: '4px 0 0 0', fontSize: '0.9rem' }}>
+              <p style={{ color: '#64748b', margin: '4px 0 0 0', fontSize: '0.9rem' }}>
                 Holistic multi-domain maturity posture across cloud, data, security, and AI initiatives.
               </p>
             </div>
@@ -263,7 +264,7 @@ const CustomerPortfolioDashboard = () => {
         </HeroCard>
 
         {/* Portfolio List */}
-        <h2 style={{ fontSize: '1.35rem', fontWeight: 700, margin: '0 0 20px 0', color: '#ffffff' }}>
+        <h2 style={{ fontSize: '1.35rem', fontWeight: 700, margin: '0 0 20px 0', color: '#0f172a' }}>
           Active & Completed Modernization Initiatives ({portfolio.length})
         </h2>
 
@@ -277,7 +278,7 @@ const CustomerPortfolioDashboard = () => {
             >
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-                  <span style={{ fontSize: '0.75rem', background: 'rgba(99, 102, 241, 0.2)', color: '#c084fc', border: '1px solid rgba(139, 92, 246, 0.4)', padding: '3px 8px', borderRadius: '6px', fontWeight: 700 }}>
+                  <span style={{ fontSize: '0.75rem', background: '#eef2ff', color: '#4338ca', border: '1px solid #c7d2fe', padding: '3px 8px', borderRadius: '6px', fontWeight: 700 }}>
                     {item.status === 'completed' ? 'Completed' : 'In Progress'}
                   </span>
 
@@ -288,15 +289,15 @@ const CustomerPortfolioDashboard = () => {
                   )}
                 </div>
 
-                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 6px 0', color: '#ffffff' }}>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 6px 0', color: '#0f172a' }}>
                   {item.title}
                 </h3>
-                <p style={{ color: '#94a3b8', fontSize: '0.85rem', margin: '0 0 16px 0', lineHeight: 1.4 }}>
+                <p style={{ color: '#64748b', fontSize: '0.85rem', margin: '0 0 16px 0', lineHeight: 1.4 }}>
                   {item.useCase}
                 </p>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '16px', borderTop: '1px solid #f1f5f9' }}>
                 <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
                   Updated {new Date(item.updatedAt).toLocaleDateString()}
                 </span>
@@ -304,13 +305,13 @@ const CustomerPortfolioDashboard = () => {
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <button
                     onClick={() => navigate(`/assessments/report/${item.id}`)}
-                    style={{ background: 'rgba(59, 130, 246, 0.15)', border: '1px solid rgba(59, 130, 246, 0.3)', color: '#60a5fa', borderRadius: '8px', padding: '6px 12px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    style={{ background: '#eff6ff', border: '1px solid #bfdbfe', color: '#2563eb', borderRadius: '8px', padding: '6px 12px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
                   >
                     <FiFileText /> Report
                   </button>
                   <button
                     onClick={() => navigate(`/assessments/run/instance/${item.id}`)}
-                    style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#ffffff', borderRadius: '8px', padding: '6px 12px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}
+                    style={{ background: '#f8fafc', border: '1px solid #cbd5e1', color: '#334155', borderRadius: '8px', padding: '6px 12px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}
                   >
                     Edit
                   </button>

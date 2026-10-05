@@ -650,10 +650,23 @@ const DynamicAssessmentHub = () => {
 
   const handleOpenStartModal = (type) => {
     setStartModalType(type);
+    const savedUser = (() => {
+      try {
+        return JSON.parse(localStorage.getItem('user') || 'null');
+      } catch {
+        return null;
+      }
+    })();
+    const orgDefault = (savedUser?.organization && savedUser.organization !== 'ScoreX Demo Workspace')
+      ? savedUser.organization
+      : 'Enterprise Organization';
+    const emailDefault = (savedUser?.email && savedUser.email !== 'demo.guest@scorex.local')
+      ? savedUser.email
+      : '';
     setModalForm({
-      customerName: 'Enterprise Client Corp',
+      customerName: orgDefault,
       useCase: type.framework?.title ? `${type.framework.title} Initiative` : 'Digital Transformation',
-      contactEmail: 'lead.evaluator@enterprise.com'
+      contactEmail: emailDefault
     });
   };
 
@@ -684,12 +697,26 @@ const DynamicAssessmentHub = () => {
     }
   };
 
+  const CANONICAL_SAMPLE_REPORTS = {
+    enterprise_data_ai_maturity: 'inst_data_ai_maturity_demo',
+    openai_to_gemini_enterprise_migration: 'inst_openai_gemini_demo',
+    finops_cloud_cost_optimization: 'inst_finops_demo',
+    agentic_ai_mesh_mcp_banking_readiness: 'inst_banking_mcp_demo',
+    edw_lakehouse_to_bigquery_modernization: 'inst_edw_bq_demo',
+    enterprise_ai_zero_trust_security: 'inst_zero_trust_demo'
+  };
+
   const handleTrySample = async (type) => {
+    const canonicalId = CANONICAL_SAMPLE_REPORTS[type?.typeKey];
+    if (canonicalId) {
+      navigate(`/assessments/report/${canonicalId}`);
+      return;
+    }
     try {
       toast.loading(`Spinning up sample for "${type.title}"...`, { id: 'sample-run' });
       const result = await dynamicAssessmentService.generateSampleForType(type.typeKey);
       toast.success('Sample assessment loaded!', { id: 'sample-run' });
-      navigate(`/assessments/run/instance/${result.instanceId}`);
+      navigate(`/assessments/report/${result.instanceId}`);
     } catch (err) {
       console.error(err);
       toast.error('Failed to generate sample assessment', { id: 'sample-run' });
@@ -812,10 +839,10 @@ const DynamicAssessmentHub = () => {
               </div>
               <TypeFooter>
                 <ActionButtonsRow>
-                  <LaunchBtn onClick={() => navigate('/ge-value-realization?tab=inputs')}>
+                  <LaunchBtn onClick={() => navigate('/ge-value-realization/inst_bionova_ge_value_realization?tab=inputs')}>
                     <FiPlay /> Open Inputs (3 Modes)
                   </LaunchBtn>
-                  <SampleBtn onClick={() => navigate('/ge-value-realization?tab=report')}>
+                  <SampleBtn onClick={() => navigate('/ge-value-realization/inst_bionova_ge_value_realization?tab=report')}>
                     📊 Executive Value Report
                   </SampleBtn>
                 </ActionButtonsRow>

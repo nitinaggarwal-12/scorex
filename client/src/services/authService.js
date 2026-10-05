@@ -36,7 +36,7 @@ function buildDemoUser(existingUser = {}) {
     firstName: 'Demo',
     lastName: 'Guest',
     role: 'demo',
-    organization: 'ScoreX Demo Workspace',
+    organization: 'Enterprise Organization',
     isDemo: true,
     testMode: false
   };

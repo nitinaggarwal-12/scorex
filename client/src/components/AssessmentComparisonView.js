@@ -194,6 +194,30 @@ const MatrixTableCard = styled.div`
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
 `;
 
+const DimensionHeaderRow = styled.div`
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 2fr;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 0.76rem;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+  gap: 12px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1.4fr 1fr 1fr;
+    span:nth-child(4),
+    span:nth-child(5) {
+      display: none;
+    }
+  }
+`;
+
 const DimensionRow = styled.div`
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr 2fr;
@@ -207,7 +231,11 @@ const DimensionRow = styled.div`
   }
 
   @media (max-width: 900px) {
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    > div:nth-child(4),
+    > div:nth-child(5) {
+      grid-column: span 1;
+    }
   }
 `;
 
@@ -232,14 +260,45 @@ const AssessmentComparisonView = () => {
     }
   }, [baseId, targetId]);
 
+  const getReportPathForInstance = (inst) => {
+    if (!inst?.id) return '/assessments';
+    if (inst.assessmentFamily === 'ge_value_realization' || inst.id.startsWith('ge_vr_') || inst.id.includes('_ge_value_realization')) {
+      return `/ge-value-realization/${inst.id}?tab=report`;
+    }
+    if (inst.assessmentFamily === 'eu_ai_act' || inst.id.startsWith('EUAIA-') || inst.id.startsWith('EU-AI-')) {
+      return `/eu-ai-compliance/${inst.id}?tab=report`;
+    }
+    return `/assessments/report/${inst.id}`;
+  };
+
   const fetchInitialData = async () => {
     try {
       setLoading(true);
-      const instances = await dynamicAssessmentService.getInstances();
-      const validInstances = Array.isArray(instances) ? instances : [];
-      setAllAssessments(validInstances);
+      const [instances, geRes, euRes] = await Promise.all([
+        dynamicAssessmentService.getInstances().catch(() => []),
+        fetch('/api/ge-value-realization/dossiers').then(r => r.json()).catch(() => ({ dossiers: [] })),
+        fetch('/api/eu-ai-compliance/dossiers').then(r => r.json()).catch(() => ({ dossiers: [] }))
+      ]);
+      const validDynamic = Array.isArray(instances) ? instances : [];
+      const validGe = (geRes?.dossiers || []).map(d => ({
+        id: d.id,
+        assessmentFamily: 'ge_value_realization',
+        customerName: d.meta?.customerName || 'Enterprise Account',
+        useCase: 'GE Value Realization (82Q)',
+        createdAt: d.updatedAt || new Date().toISOString()
+      }));
+      const validEu = (euRes?.dossiers || []).map(d => ({
+        id: d.id || d.meta?.documentId,
+        assessmentFamily: 'eu_ai_act',
+        customerName: d.meta?.department || d.meta?.systemName || 'EU AI System',
+        useCase: `${d.meta?.systemName || 'EU AI Act Dossier'} (Reg 2024/1689)`,
+        createdAt: d.updatedAt || d.meta?.evaluationDate || new Date().toISOString()
+      })).filter(d => d.id);
 
-      const defaultId = validInstances[0]?.id || '';
+      const combined = [...validDynamic, ...validGe, ...validEu];
+      setAllAssessments(combined);
+
+      const defaultId = combined[0]?.id || '';
       const initialBase = searchParams.get('base') || defaultId;
       const initialTarget = searchParams.get('target') || defaultId;
 
@@ -300,7 +359,7 @@ const AssessmentComparisonView = () => {
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
             {baseInst?.id && (
               <button
-                onClick={() => navigate(`/assessments/report/${baseInst.id}`)}
+                onClick={() => navigate(getReportPathForInstance(baseInst))}
                 style={{ background: '#eff6ff', border: '1px solid #bfdbfe', color: '#1d4ed8', padding: '8px 14px', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem' }}
               >
                 <FiFileText /> View Baseline Report
@@ -308,7 +367,7 @@ const AssessmentComparisonView = () => {
             )}
             {targetInst?.id && !isSameAssessment && (
               <button
-                onClick={() => navigate(`/assessments/report/${targetInst.id}`)}
+                onClick={() => navigate(getReportPathForInstance(targetInst))}
                 style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', color: '#047857', padding: '8px 14px', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem' }}
               >
                 <FiFileText /> View Target Report
@@ -435,13 +494,13 @@ const AssessmentComparisonView = () => {
               Dimensional Delta Breakdown
             </h2>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 2fr', padding: '12px 16px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', fontWeight: 800, fontSize: '0.76rem', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
+            <DimensionHeaderRow>
               <span>Dimension</span>
               <span>Baseline (Period A)</span>
               <span>Target (Period B)</span>
               <span>Net Delta</span>
               <span>Progression Velocity</span>
-            </div>
+            </DimensionHeaderRow>
 
             {comparison.dimensionDeltas.map(dim => {
               const deltaVal = Number(dim.delta || 0);

@@ -122,7 +122,7 @@ const FooterCTA = styled.div`
   button {
     width: 100%;
     padding: 12px 20px;
-    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
     color: white;
     border: none;
     border-radius: 8px;
@@ -132,7 +132,7 @@ const FooterCTA = styled.div`
     transition: all 0.2s;
 
     &:hover {
-      opacity: 0.9;
+      opacity: 0.92;
     }
   }
 `;
@@ -156,40 +156,49 @@ const FooterBottom = styled.div`
 const Footer = () => {
   const navigate = useNavigate();
 
+  const handleSectionLink = (sectionId) => {
+    const el = document.getElementById(sectionId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      navigate('/', { state: { scrollTo: sectionId } });
+    }
+  };
+
   return (
     <FooterContainer>
       <FooterContent>
         <FooterBrand>
-          <h3>ScoreX Enterprise Data & AI Maturity</h3>
+          <h3>ScoreX — Enterprise AI, FinOps &amp; Regulatory Readiness</h3>
           <p>
-            A comprehensive vendor-neutral framework to evaluate, benchmark, and accelerate your modern enterprise data & AI journey. 
-            Built by practitioners, for practitioners.
+            A unified 3-engine platform for Dynamic Architecture Blueprints, Gemini Enterprise Value Realization (82Q), and EU AI Act (Regulation 2024/1689) Statutory Compliance.
           </p>
           <div className="security">
             <FiShield />
-            <span>Enterprise-grade security & privacy</span>
+            <span>Enterprise-grade security, auditability &amp; zero-hallucination grounding</span>
           </div>
         </FooterBrand>
 
         <FooterLinks>
-          <h4>Resources</h4>
+          <h4>Platform &amp; Engines</h4>
           <ul>
-            <li><button onClick={() => navigate('/')}>Why Assessment</button></li>
-            <li><button onClick={() => navigate('/')}>Assessment Pillars</button></li>
-            <li><button onClick={() => navigate('/')}>How It Works</button></li>
-            <li><button onClick={() => navigate('/assessments')}>Past Assessments</button></li>
+            <li><button onClick={() => handleSectionLink('pillars')}>6 Maturity Pillars</button></li>
+            <li><button onClick={() => navigate('/assessments/hub')}>Dynamic Blueprints Hub</button></li>
+            <li><button onClick={() => navigate('/ge-value-realization')}>GE Value Realization (82Q)</button></li>
+            <li><button onClick={() => navigate('/eu-ai-compliance')}>EU AI Act Dossier (20Q)</button></li>
+            <li><button onClick={() => navigate('/assessments')}>My Assessments Portfolio</button></li>
           </ul>
         </FooterLinks>
 
         <FooterCTA>
           <h4>Get Started</h4>
-          <p>Start your free assessment today and unlock insights.</p>
+          <p>Launch a 15-minute guided assessment or explore executive readouts.</p>
           <button onClick={() => navigate('/assessments/run/enterprise_data_ai_maturity')}>Start Assessment</button>
         </FooterCTA>
       </FooterContent>
 
       <FooterBottom>
-        <p>&copy; 2025 Data & AI Technical Maturity Assessment Platform. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} ScoreX — Enterprise AI, FinOps &amp; Regulatory Readiness Platform. All rights reserved.</p>
       </FooterBottom>
     </FooterContainer>
   );

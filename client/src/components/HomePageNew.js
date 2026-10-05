@@ -22,6 +22,7 @@ import {
   FiAward
 } from 'react-icons/fi';
 import * as assessmentService from '../services/assessmentService';
+import Footer from './Footer';
 
 // =======================
 // STYLED COMPONENTS
@@ -551,150 +552,6 @@ const CTAButton = styled(motion.button)`
   }
 `;
 
-const Footer = styled.footer`
-  background: #0f172a;
-  color: rgba(255, 255, 255, 0.8);
-  padding: 64px 24px 32px;
-
-  @media (max-width: 768px) {
-    padding: 48px 20px 24px;
-  }
-`;
-
-const FooterContent = styled.div`
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  gap: 48px;
-  margin-bottom: 48px;
-  padding: 0 clamp(16px, 2.5vw, 40px);
-  box-sizing: border-box;
-
-  @media (max-width: 1024px) {
-    padding: 0 24px;
-  }
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 32px;
-    padding: 0 20px;
-  }
-`;
-
-const FooterBrand = styled.div`
-  h3 {
-    font-size: 1.25rem;
-    color: white;
-    font-weight: 700;
-    margin-bottom: 12px;
-  }
-
-  p {
-    font-size: 0.938rem;
-    line-height: 1.6;
-    margin-bottom: 20px;
-  }
-
-  .security {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.875rem;
-    color: #86efac;
-
-    svg {
-      color: #86efac;
-    }
-  }
-`;
-
-const FooterLinks = styled.div`
-  h4 {
-    font-size: 0.875rem;
-    color: white;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 16px;
-  }
-
-  ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  li {
-    margin-bottom: 12px;
-
-    a, button {
-      color: rgba(255, 255, 255, 0.7);
-      text-decoration: none;
-      font-size: 0.938rem;
-      transition: color 0.2s;
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-      font-family: inherit;
-
-      &:hover {
-        color: white;
-      }
-    }
-  }
-`;
-
-const FooterCTA = styled.div`
-  h4 {
-    font-size: 0.875rem;
-    color: white;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 16px;
-  }
-
-  p {
-    font-size: 0.875rem;
-    margin-bottom: 16px;
-    line-height: 1.5;
-  }
-
-  button {
-    width: 100%;
-    padding: 12px 20px;
-    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-
-    &:hover {
-      opacity: 0.9;
-    }
-  }
-`;
-
-const FooterBottom = styled.div`
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  padding-top: 32px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  text-align: center;
-  font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.5);
-  box-sizing: border-box;
-`;
-
-// Slideshow styles removed per user request
-
 // =======================
 // COMPONENT
 // =======================
@@ -800,7 +657,7 @@ const HomePageNew = () => {
 
               <div style={{ display: 'flex', gap: '14px', marginTop: '28px', flexWrap: 'wrap' }}>
                 <button 
-                  onClick={() => navigate('/assessments/run/openai_to_gemini_enterprise_migration')}
+                  onClick={() => navigate('/assessments/run/enterprise_data_ai_maturity')}
                   style={{
                     background: 'linear-gradient(135deg, #6366f1, #a855f7)',
                     color: '#ffffff',
@@ -837,6 +694,44 @@ const HomePageNew = () => {
                   }}
                 >
                   ✨ Custom AI Generator
+                </button>
+              </div>
+              <div style={{ display: 'flex', gap: '10px', marginTop: '14px', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => navigate('/ge-value-realization')}
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.2)',
+                    border: '1px solid rgba(147, 197, 253, 0.45)',
+                    color: '#e0f2fe',
+                    fontWeight: 700,
+                    fontSize: '0.84rem',
+                    padding: '8px 14px',
+                    borderRadius: '999px',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  📈 Engine 2: GE Value Realization (82Q) →
+                </button>
+                <button
+                  onClick={() => navigate('/eu-ai-compliance')}
+                  style={{
+                    background: 'rgba(245, 158, 11, 0.2)',
+                    border: '1px solid rgba(253, 224, 71, 0.45)',
+                    color: '#fef3c7',
+                    fontWeight: 700,
+                    fontSize: '0.84rem',
+                    padding: '8px 14px',
+                    borderRadius: '999px',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  🇪🇺 Engine 3: EU AI Act Dossier (20Q) →
                 </button>
               </div>
             </HeroText>
@@ -1081,7 +976,7 @@ const HomePageNew = () => {
               <span className="dimension-tag">Observability & Monitoring</span>
               <span className="dimension-tag">Cost Management</span>
             </div>
-            <button className="explore-btn" onClick={() => navigate('/assessments/run/enterprise_data_ai_maturity')}>
+            <button className="explore-btn" onClick={() => navigate('/assessments/run/enterprise_data_ai_maturity?dimensionIdx=0')}>
               Explore questions →
             </button>
           </PillarCard>
@@ -1107,7 +1002,7 @@ const HomePageNew = () => {
               <span className="dimension-tag">Data Quality</span>
               <span className="dimension-tag">Performance & Scalability</span>
             </div>
-            <button className="explore-btn" onClick={() => navigate('/assessments/run/enterprise_data_ai_maturity')}>
+            <button className="explore-btn" onClick={() => navigate('/assessments/run/enterprise_data_ai_maturity?dimensionIdx=1')}>
               Explore questions →
             </button>
           </PillarCard>
@@ -1133,7 +1028,7 @@ const HomePageNew = () => {
               <span className="dimension-tag">Self-Service Enablement</span>
               <span className="dimension-tag">Collaboration & Sharing</span>
             </div>
-            <button className="explore-btn" onClick={() => navigate('/assessments/run/enterprise_data_ai_maturity')}>
+            <button className="explore-btn" onClick={() => navigate('/assessments/run/enterprise_data_ai_maturity?dimensionIdx=2')}>
               Explore questions →
             </button>
           </PillarCard>
@@ -1159,7 +1054,7 @@ const HomePageNew = () => {
               <span className="dimension-tag">ML Lifecycle Governance</span>
               <span className="dimension-tag">Business Impact</span>
             </div>
-            <button className="explore-btn" onClick={() => navigate('/assessments/run/enterprise_data_ai_maturity')}>
+            <button className="explore-btn" onClick={() => navigate('/assessments/run/enterprise_data_ai_maturity?dimensionIdx=3')}>
               Explore questions →
             </button>
           </PillarCard>
@@ -1185,7 +1080,7 @@ const HomePageNew = () => {
               <span className="dimension-tag">Evaluation & Quality Control</span>
               <span className="dimension-tag">Responsible AI</span>
             </div>
-            <button className="explore-btn" onClick={() => navigate('/assessments/run/enterprise_data_ai_maturity')}>
+            <button className="explore-btn" onClick={() => navigate('/assessments/run/enterprise_data_ai_maturity?dimensionIdx=4')}>
               Explore questions →
             </button>
           </PillarCard>
@@ -1211,7 +1106,7 @@ const HomePageNew = () => {
               <span className="dimension-tag">Financial Management</span>
               <span className="dimension-tag">Innovation & Improvement</span>
             </div>
-            <button className="explore-btn" onClick={() => navigate('/assessments/run/enterprise_data_ai_maturity')}>
+            <button className="explore-btn" onClick={() => navigate('/assessments/run/enterprise_data_ai_maturity?dimensionIdx=5')}>
               Explore questions →
             </button>
           </PillarCard>
@@ -1234,42 +1129,8 @@ const HomePageNew = () => {
         </CTAContent>
       </CTABand>
 
-      {/* Footer */}
-      <Footer>
-        <FooterContent>
-          <FooterBrand>
-            <h3>ScoreX Enterprise Data & AI Maturity</h3>
-            <p>
-              A comprehensive vendor-neutral framework to evaluate, benchmark, and accelerate your data & AI transformation. 
-              Built by practitioners, for practitioners.
-            </p>
-            <div className="security">
-              <FiShield />
-              <span>Enterprise-grade security & privacy</span>
-            </div>
-          </FooterBrand>
-
-          <FooterLinks>
-            <h4>Resources</h4>
-            <ul>
-              <li><button onClick={() => scrollToSection('why-assessment')}>Why Assessment</button></li>
-              <li><button onClick={() => scrollToSection('pillars')}>Assessment Pillars</button></li>
-              <li><button onClick={() => scrollToSection('how-it-works')}>How It Works</button></li>
-              <li><button onClick={() => navigate('/assessments')}>Past Assessments</button></li>
-            </ul>
-          </FooterLinks>
-
-          <FooterCTA>
-            <h4>Get Started</h4>
-            <p>Start your free assessment today and unlock insights.</p>
-            <button onClick={() => navigate('/assessments/run/enterprise_data_ai_maturity')}>Start Assessment</button>
-          </FooterCTA>
-        </FooterContent>
-
-        <FooterBottom>
-          <p>&copy; 2025 Data & AI Technical Maturity Assessment Platform. All rights reserved.</p>
-        </FooterBottom>
-      </Footer>
+      {/* Shared Unified Footer */}
+      <Footer />
     </PageContainer>
   );
 };

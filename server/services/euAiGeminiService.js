@@ -151,7 +151,7 @@ Immediate focus is required on Article 10 (automated outlier sanitization for ca
           article: 'Article 12(2)',
           title: 'Event Log Retention Period Deficit',
           severity: 'HIGH',
-          finding: 'Current observability retention is set to 90 days in Datadog/CloudWatch, failing to satisfy the mandatory 6-month statutory retention rule for high-risk systems.',
+          finding: 'Current observability retention is set to 90 days in Google Cloud Logging / BigQuery, failing to satisfy the mandatory 6-month statutory retention rule for high-risk systems.',
           regulatoryImpact: 'Statutory violation under Article 12(2) for inability to provide market surveillance authorities with post-market traceability logs.'
         },
         {

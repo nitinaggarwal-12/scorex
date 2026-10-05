@@ -28,8 +28,8 @@ const REQUIRED_MODELS = [
   'text-embedding-005'
 ];
 
-// Global forbidden models across all SKILL.md and markdown docs
-const GLOBAL_FORBIDDEN_MODEL_REGEX = /Gemini 3\.7|gemini-3\.7|gemini-2\.0-flash|gemini-1\.5-pro|gemini-1\.5-flash|gemini-2\.5-flash-preview-tts|gpt-4o-mini|OPENAI_API_KEY|OPENAI_MODEL/i;
+// Global forbidden models and stale blueprint keys across all SKILL.md and markdown docs
+const GLOBAL_FORBIDDEN_MODEL_REGEX = /Gemini 3\.7|gemini-3\.7|gemini-2\.0-flash|gemini-1\.5-pro|gemini-1\.5-flash|gemini-2\.5-flash-preview-tts|gpt-4o-mini|OPENAI_API_KEY|OPENAI_MODEL|genai_rag_readiness|finops_cost_governance|cloud_migration_modernization|zero_trust_cyber_resilience|mlops_agentic_ai_governance/i;
 // Strict ScoreX runtime code forbidden regex (also bans legacy e2-demo-field-eng & LAKEBASE_*)
 const SCOREX_CODE_FORBIDDEN_REGEX = /Gemini 3\.7|gemini-3\.7|gemini-2\.5-pro|gemini-2\.5-flash|gemini-2\.0-flash|gemini-1\.5-pro|gemini-1\.5-flash|gpt-4o-mini|OPENAI_API_KEY|OPENAI_MODEL|e2-demo-field-eng|LAKEBASE_HOST|databricks_postgres/i;
 
@@ -54,7 +54,9 @@ const lockstepPairs = [
   ['CLAUDE.md', path.join(CONFIG_DIR, 'AGENTS.md')],
   ['.agents/AGENTS.md', path.join(CONFIG_DIR, 'AGENTS.md')],
   ['skills.md', path.join(CONFIG_DIR, 'skills.md')],
+  ['.agents/skills.md', path.join(CONFIG_DIR, 'skills.md')],
   ['skills.json', path.join(CONFIG_DIR, 'skills.json')],
+  ['.agents/skills.json', path.join(CONFIG_DIR, 'skills.json')],
 ];
 
 for (const [relLocal, globalTarget] of lockstepPairs) {
@@ -81,8 +83,8 @@ if (fs.existsSync(globalSkillsJson) && fs.existsSync(globalSkillsManifest)) {
   }
 }
 
-// 2. Check 5-Tier model completeness in hooks.json, skills.md, and README.md
-for (const docName of ['.agents/hooks.json', 'skills.md', 'README.md']) {
+// 2. Check 5-Tier model completeness in hooks.json, .agents/hooks.json, skills.md, README.md, DEPLOYMENT_STATUS.md, and db-sync/README.md
+for (const docName of ['hooks.json', '.agents/hooks.json', 'skills.md', 'README.md', 'DEPLOYMENT_STATUS.md', 'db-sync/README.md']) {
   const docPath = path.join(ROOT, docName);
   if (fs.existsSync(docPath)) {
     const content = fs.readFileSync(docPath, 'utf8');
@@ -92,9 +94,10 @@ for (const docName of ['.agents/hooks.json', 'skills.md', 'README.md']) {
   }
 }
 
-// 3. Scan global SKILL.md files and ScoreX docs for forbidden/deprecated models
+// 3. Scan global SKILL.md files and ScoreX docs for forbidden/deprecated models & stale blueprint keys
 const globalAndDocFiles = [
   ...walk(path.join(CONFIG_DIR, 'skills'), /\.md$/),
+  path.join(ROOT, 'skills.md'),
   path.join(ROOT, 'README.md'),
   path.join(ROOT, 'DEPLOYMENT_STATUS.md'),
   path.join(ROOT, 'db-sync/README.md'),
@@ -103,7 +106,7 @@ const globalAndDocFiles = [
 ].filter((f) => fs.existsSync(f));
 
 for (const file of globalAndDocFiles) {
-  const content = fs.readFileSync(file, 'utf8');
+  const content = fs.readFileSync(file, 'utf8').replace(/zero\s+`?gemini-2\.5-flash-preview-tts`?/gi, '');
   if (GLOBAL_FORBIDDEN_MODEL_REGEX.test(content)) {
     failures.push(`Forbidden/deprecated model string found in ${file}`);
   }

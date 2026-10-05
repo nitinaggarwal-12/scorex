@@ -183,12 +183,22 @@ const LegacyReportRedirect = ({ fallbackId = 'inst_enterprise_data_ai_maturity_d
   return <Navigate to={`/assessments/report/${targetId}`} replace />;
 };
 
-const LegacyRunnerRedirect = () => {
-  const { assessmentId } = useParams();
-  if (!assessmentId || assessmentId === 'new' || assessmentId === 'enterprise_data_ai_maturity') {
-    return <Navigate to="/assessments/run/enterprise_data_ai_maturity" replace />;
+const LegacyRunnerRedirect = ({ fallbackTypeKey = 'enterprise_data_ai_maturity' }) => {
+  const params = useParams();
+  const rawId = params.assessmentId || params.id;
+  if (!rawId || rawId === 'new' || rawId === fallbackTypeKey) {
+    return <Navigate to={`/assessments/run/${fallbackTypeKey}`} replace />;
   }
-  return <Navigate to={`/assessments/run/instance/${assessmentId}`} replace />;
+  return <Navigate to={`/assessments/run/instance/${rawId}`} replace />;
+};
+
+const LegacyCompareRedirect = () => {
+  const params = useParams();
+  const rawId = params.assessmentId || params.id;
+  if (!rawId) {
+    return <Navigate to="/assessments/compare" replace />;
+  }
+  return <Navigate to={`/assessments/compare?base=${encodeURIComponent(rawId)}&target=${encodeURIComponent(rawId)}`} replace />;
 };
 
 // Global Print Styles - Applied across all components
@@ -413,6 +423,24 @@ function App() {
             />
 
             <Route 
+              path="/eu-ai-act/:id" 
+              element={
+                <ProtectedRoute>
+                  <EuAiComplianceWorkspace />
+                </ProtectedRoute>
+              } 
+            />
+
+            <Route 
+              path="/eu-ai-act/system/:id" 
+              element={
+                <ProtectedRoute>
+                  <EuAiComplianceWorkspace />
+                </ProtectedRoute>
+              } 
+            />
+
+            <Route 
               path="/eu-ai-compliance/:id" 
               element={
                 <ProtectedRoute>
@@ -543,12 +571,12 @@ function App() {
             <Route path="/assessment-details/:assessmentId" element={<LegacyReportRedirect />} />
             <Route path="/deep-dive/:assessmentId" element={<LegacyReportRedirect />} />
             <Route path="/edit-questions/:assessmentId" element={<LegacyRunnerRedirect />} />
-            <Route path="/history/:assessmentId" element={<Navigate to="/assessments/compare" replace />} />
+            <Route path="/history/:assessmentId" element={<LegacyCompareRedirect />} />
             <Route path="/benchmarks" element={<Navigate to="/assessments/report/inst_enterprise_data_ai_maturity_demo" replace />} />
             <Route path="/benchmarks/:assessmentId" element={<LegacyReportRedirect />} />
             <Route path="/industry-benchmarks" element={<Navigate to="/assessments/report/inst_enterprise_data_ai_maturity_demo" replace />} />
             <Route path="/genai-readiness" element={<Navigate to="/assessments/run/openai_to_gemini_enterprise_migration" replace />} />
-            <Route path="/genai-readiness/edit/:id" element={<Navigate to="/assessments/run/openai_to_gemini_enterprise_migration" replace />} />
+            <Route path="/genai-readiness/edit/:id" element={<LegacyRunnerRedirect fallbackTypeKey="openai_to_gemini_enterprise_migration" />} />
             <Route path="/genai-readiness/list" element={<Navigate to="/assessments" replace />} />
             <Route path="/genai-readiness/report/:id" element={<LegacyReportRedirect fallbackId="inst_openai_to_gemini_enterprise_migration_demo" />} />
             <Route path="/assign-assessment" element={<Navigate to="/question-assignments" replace />} />

@@ -1065,30 +1065,38 @@ const ALL_SOURCE_TYPES = [
   { id: 'moma', label: 'Governance & Issue Tracker', icon: '🏛️', domain: 'telemetry.enterprise-demo.internal' }
 ];
 
+function getIsoDateDaysAgo(daysAgo = 0) {
+  const d = new Date();
+  d.setDate(d.getDate() - daysAgo);
+  return d.toISOString().split('T')[0];
+}
+
+const TODAY_ISO = getIsoDateDaysAgo(0);
+
 const TIME_PRESETS = {
   last_30d: {
     id: 'last_30d',
-    label: 'Last 30 Days (Aug 27 – Sep 26, 2026)',
-    startDate: '2026-08-27',
-    endDate: '2026-09-26',
-    baselineWindowLabel: 'Jul 28, 2026 – Aug 26, 2026 (Prior 30 Days)',
-    currentWindowLabel: 'Aug 27, 2026 – Sep 26, 2026 (Last 30 Days)'
+    label: `Last 30 Days (${getIsoDateDaysAgo(30)} → ${TODAY_ISO})`,
+    startDate: getIsoDateDaysAgo(30),
+    endDate: TODAY_ISO,
+    baselineWindowLabel: `${getIsoDateDaysAgo(60)} – ${getIsoDateDaysAgo(31)} (Prior 30 Days)`,
+    currentWindowLabel: `${getIsoDateDaysAgo(30)} – ${TODAY_ISO} (Last 30 Days)`
   },
   last_60d: {
     id: 'last_60d',
-    label: 'Last 60 Days (Jul 28 – Sep 26, 2026)',
-    startDate: '2026-07-28',
-    endDate: '2026-09-26',
-    baselineWindowLabel: 'May 29, 2026 – Jul 27, 2026 (Prior 60 Days)',
-    currentWindowLabel: 'Jul 28, 2026 – Sep 26, 2026 (Last 60 Days)'
+    label: `Last 60 Days (${getIsoDateDaysAgo(60)} → ${TODAY_ISO})`,
+    startDate: getIsoDateDaysAgo(60),
+    endDate: TODAY_ISO,
+    baselineWindowLabel: `${getIsoDateDaysAgo(120)} – ${getIsoDateDaysAgo(61)} (Prior 60 Days)`,
+    currentWindowLabel: `${getIsoDateDaysAgo(60)} – ${TODAY_ISO} (Last 60 Days)`
   },
   last_90d: {
     id: 'last_90d',
-    label: 'Last 90 Days / Q3 2026 (Jun 28 – Sep 26, 2026)',
-    startDate: '2026-06-28',
-    endDate: '2026-09-26',
-    baselineWindowLabel: 'Mar 30, 2026 – Jun 27, 2026 (Prior 90 Days)',
-    currentWindowLabel: 'Jun 28, 2026 – Sep 26, 2026 (Last 90 Days)'
+    label: `Last 90 Days (${getIsoDateDaysAgo(90)} → ${TODAY_ISO})`,
+    startDate: getIsoDateDaysAgo(90),
+    endDate: TODAY_ISO,
+    baselineWindowLabel: `${getIsoDateDaysAgo(180)} – ${getIsoDateDaysAgo(91)} (Prior 90 Days)`,
+    currentWindowLabel: `${getIsoDateDaysAgo(90)} – ${TODAY_ISO} (Last 90 Days)`
   },
   migration_wave_1: {
     id: 'migration_wave_1',
@@ -1100,11 +1108,11 @@ const TIME_PRESETS = {
   },
   ytd_2026: {
     id: 'ytd_2026',
-    label: 'Full Program YTD 2026 (Jan 01 – Sep 26, 2026)',
+    label: `Full Program YTD 2026 (2026-01-01 → ${TODAY_ISO})`,
     startDate: '2026-01-01',
-    endDate: '2026-09-26',
+    endDate: TODAY_ISO,
     baselineWindowLabel: 'FY 2025 Legacy Pre-Migration Baseline',
-    currentWindowLabel: 'Jan 01, 2026 – Sep 26, 2026 (YTD 2026)'
+    currentWindowLabel: `2026-01-01 – ${TODAY_ISO} (YTD 2026)`
   }
 };
 
@@ -1415,7 +1423,7 @@ function fetchMultiSourceEvidenceForCustomer(account, options = {}) {
   const deepProfile = catalog.deepProfiles?.[account.sfdcAccountId] || null;
   const preset = TIME_PRESETS[options.timePreset] || null;
   const startDate = options.startDate || preset?.startDate || '2026-01-01';
-  const endDate = options.endDate || preset?.endDate || '2026-09-26';
+  const endDate = options.endDate || preset?.endDate || TODAY_ISO;
   const requestedSources = Array.isArray(options.sources) && options.sources.length > 0
     ? options.sources
     : ALL_SOURCE_TYPES.map(s => s.id);

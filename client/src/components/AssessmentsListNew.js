@@ -142,15 +142,15 @@ const Button = styled(motion.button)`
 `;
 
 const PrimaryButton = styled(Button)`
-  background: linear-gradient(135deg, #00A972 0%, #008c5f 100%);
+  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
   color: white;
   border: none;
-  box-shadow: 0 2px 8px rgba(0, 169, 114, 0.25);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
 
   &:hover {
-    background: linear-gradient(135deg, #008c5f 0%, #007550 100%);
+    background: linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 169, 114, 0.35);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
   }
 
   &:active {
@@ -216,8 +216,8 @@ const SearchBox = styled.div`
 
     &:focus {
       outline: none;
-      border-color: #00A972;
-      box-shadow: 0 0 0 3px rgba(0, 169, 114, 0.1);
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
     }
 
     &::placeholder {
@@ -263,7 +263,7 @@ const Tab = styled.button`
   box-shadow: ${props => props.$active ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'};
 
   &:hover {
-    color: ${props => props.$active ? '#1e293b' : '#FF3621'};
+    color: ${props => props.$active ? '#1e293b' : '#2563eb'};
   }
 
   @media (max-width: 768px) {
@@ -288,8 +288,8 @@ const Dropdown = styled.select`
 
   &:focus {
     outline: none;
-    border-color: #00A972;
-    box-shadow: 0 0 0 3px rgba(0, 169, 114, 0.1);
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
   }
 
   @media (max-width: 768px) {
@@ -445,7 +445,7 @@ const AssessmentCard = styled(motion.div)`
 
   .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #00A972 0%, #008c5f 100%);
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
     border-radius: 3px;
     transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -487,12 +487,12 @@ const StatusBadge = styled.span`
     switch (props.$status) {
       case 'completed':
         return `
-          background: #00A972;
+          background: #10b981;
           color: white;
         `;
       case 'in_progress':
         return `
-          background: #1B3B6F;
+          background: #2563eb;
           color: white;
         `;
       case 'not_started':
@@ -751,8 +751,8 @@ const AssessmentsListNew = () => {
       completedCategories = ['generative_ai', 'platform_governance', 'operational_excellence'];
     } else if (family === 'eu_ai_act') {
       const answeredCount = Object.keys(raw.answers || {}).length;
-      const isComplete = Boolean(raw.synthesis || answeredCount >= 8);
-      progress = isComplete ? 100 : Math.min(95, Math.round((answeredCount / 10) * 100));
+      const isComplete = Boolean(answeredCount >= 20 || (raw.synthesis && answeredCount >= 18));
+      progress = isComplete ? 100 : Math.min(95, Math.round((answeredCount / 20) * 100));
       status = isComplete ? 'completed' : (progress > 0 ? 'in_progress' : 'not_started');
       completedCategories = isComplete ? ['platform_governance', 'generative_ai'] : (progress > 0 ? ['platform_governance'] : []);
     }
@@ -935,6 +935,8 @@ const AssessmentsListNew = () => {
         await axios.delete(`/api/ge-value-realization/dossiers/${assessmentId}`, { headers });
       } else if (family === 'eu_ai_act') {
         await axios.delete(`/api/eu-ai-compliance/dossiers/${assessmentId}`, { headers });
+        localStorage.removeItem(`scorex_eu_ai_compliance_${assessmentId}`);
+        localStorage.removeItem(`scorex_eu_ai_synthesis_${assessmentId}`);
       } else {
         await assessmentService.deleteAssessment(assessmentId);
       }
@@ -1082,18 +1084,34 @@ const AssessmentsListNew = () => {
       toast.loading(`Deleting ${selectedIds.size} assessments...`, { id: 'batch-delete' });
       const ids = Array.from(selectedIds);
       const dynamicIds = [];
+      const geVrIds = [];
+      const euAiIds = [];
       const classicIds = [];
 
       assessments.forEach(a => {
         const aId = a.id || a.assessmentId;
         if (ids.includes(aId)) {
-          if (a.isDynamic) dynamicIds.push(aId);
+          const family = a.assessmentFamily || (a.isDynamic ? 'dynamic' : 'classic');
+          if (family === 'dynamic') dynamicIds.push(aId);
+          else if (family === 'ge_value_realization') geVrIds.push(aId);
+          else if (family === 'eu_ai_act') euAiIds.push(aId);
           else classicIds.push(aId);
         }
       });
 
+      const headers = authService.getAuthHeader ? authService.getAuthHeader() : {};
       if (dynamicIds.length > 0) {
         await dynamicAssessmentService.batchDeleteInstances(dynamicIds);
+      }
+      if (geVrIds.length > 0) {
+        await Promise.all(geVrIds.map(id => axios.delete(`/api/ge-value-realization/dossiers/${id}`, { headers })));
+      }
+      if (euAiIds.length > 0) {
+        await Promise.all(euAiIds.map(async (id) => {
+          localStorage.removeItem(`scorex_eu_ai_compliance_${id}`);
+          localStorage.removeItem(`scorex_eu_ai_synthesis_${id}`);
+          await axios.delete(`/api/eu-ai-compliance/dossiers/${id}`, { headers });
+        }));
       }
       if (classicIds.length > 0) {
         await Promise.all(classicIds.map(id => assessmentService.deleteAssessment(id)));
@@ -1114,18 +1132,44 @@ const AssessmentsListNew = () => {
       toast.loading(`Cloning ${selectedIds.size} assessments...`, { id: 'batch-clone' });
       const ids = Array.from(selectedIds);
       const dynamicIds = [];
+      const geVrItems = [];
+      const euAiItems = [];
       const classicItems = [];
 
       assessments.forEach(a => {
         const aId = a.id || a.assessmentId;
         if (ids.includes(aId)) {
-          if (a.isDynamic) dynamicIds.push(aId);
+          const family = a.assessmentFamily || (a.isDynamic ? 'dynamic' : 'classic');
+          if (family === 'dynamic') dynamicIds.push(aId);
+          else if (family === 'ge_value_realization') geVrItems.push(a);
+          else if (family === 'eu_ai_act') euAiItems.push(a);
           else classicItems.push(a);
         }
       });
 
+      const headers = authService.getAuthHeader ? authService.getAuthHeader() : {};
       if (dynamicIds.length > 0) {
         await dynamicAssessmentService.batchCloneInstances(dynamicIds, 'Quarterly Clone');
+      }
+      if (geVrItems.length > 0) {
+        await Promise.all(geVrItems.map(a => {
+          const newId = `ge_vr_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 5)}`;
+          return axios.post(`/api/ge-value-realization/dossiers/${newId}`, {
+            ...a,
+            id: newId,
+            meta: { ...(a.meta || {}), customerName: `${a.organization_name || 'Enterprise'} (Copy)` }
+          }, { headers });
+        }));
+      }
+      if (euAiItems.length > 0) {
+        await Promise.all(euAiItems.map(a => {
+          const newId = `EU-AI-${new Date().getFullYear()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+          return axios.post(`/api/eu-ai-compliance/dossiers/${newId}`, {
+            meta: { ...(a.meta || {}), systemName: `${a.meta?.systemName || a.assessment_name} (Copy)` },
+            answers: a.answers || {},
+            synthesis: a.synthesis || null
+          }, { headers });
+        }));
       }
       if (classicItems.length > 0) {
         await Promise.all(classicItems.map(a => assessmentService.cloneAssessment(a.id || a.assessmentId, {

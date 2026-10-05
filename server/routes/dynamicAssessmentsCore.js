@@ -1853,6 +1853,112 @@ router.post('/types/:id/fork', async (req, res) => {
   }
 });
 
+// Helper to resolve an instance from Dynamic Blueprints, GE Value Realization, or EU AI Act Dossiers
+async function resolveMultiEngineInstance(rawId) {
+  if (!rawId) return null;
+  const direct = await customAssessmentRepo.getInstanceById(rawId);
+  if (direct) return direct;
+
+  const fs = require('fs');
+  const path = require('path');
+
+  // Check Engine 2: GE Value Realization Dossiers
+  try {
+    const gePath = path.join(__dirname, '../../data/ge_value_realization_dossiers.json');
+    if (fs.existsSync(gePath)) {
+      const geMap = JSON.parse(fs.readFileSync(gePath, 'utf8'));
+      const aliasId = rawId === 'inst_aerovanguard_ge_value_realization'
+        ? 'ge_vr_acc-1001-aerovg'
+        : rawId === 'inst_bionova_ge_value_realization'
+          ? 'ge_vr_acc-1002-bionova'
+          : rawId;
+      const geDossier = geMap[aliasId] || geMap[rawId];
+      if (geDossier) {
+        const evalScore = Number(geDossier.evaluation?.compositeScore || geDossier.evaluation?.overallScore || 76);
+        const normScore = Math.max(1.0, Math.min(5.0, Number((evalScore / 20).toFixed(2))));
+        const targetNorm = Math.min(5.0, Number((normScore + 1.1).toFixed(2)));
+        const kpaScores = geDossier.evaluation?.kpaScores || {};
+        const dims = [
+          { id: 'dim_ge_adoption', name: 'License & WAU Adoption Telemetry', score: Number(((kpaScores.adoption || evalScore) / 20).toFixed(2)) || normScore },
+          { id: 'dim_ge_productivity', name: 'Engineering & Cycle-Time Velocity', score: Number(((kpaScores.productivity || evalScore + 4) / 20).toFixed(2)) || normScore },
+          { id: 'dim_ge_quality', name: 'Verification & Output Quality', score: Number(((kpaScores.quality || evalScore - 2) / 20).toFixed(2)) || normScore },
+          { id: 'dim_ge_governance', name: 'Governance, DLP & Audit Controls', score: Number(((kpaScores.governance || evalScore + 2) / 20).toFixed(2)) || normScore },
+          { id: 'dim_ge_economics', name: 'Hard-Dollar Savings & Net ROI', score: Number(((kpaScores.economics || evalScore + 5) / 20).toFixed(2)) || normScore },
+          { id: 'dim_ge_scale', name: 'Multi-Workflow Production Scale', score: normScore }
+        ];
+        const scoresObj = {};
+        dims.forEach(d => {
+          const s = Math.max(1.0, Math.min(5.0, d.score));
+          scoresObj[d.id] = { score: s, targetScore: Math.min(5.0, Number((s + 1.0).toFixed(2))) };
+        });
+        return {
+          id: rawId,
+          assessmentFamily: 'ge_value_realization',
+          customerName: geDossier.meta?.customerName || 'Enterprise Account',
+          useCase: 'Gemini Enterprise Value Realization (82Q)',
+          createdAt: geDossier.updatedAt || new Date().toISOString(),
+          responses: {},
+          scores: scoresObj,
+          overallScore: normScore,
+          overallTarget: targetNorm,
+          frameworkSnapshot: {
+            id: 'ge_value_realization',
+            title: 'Gemini Enterprise Value Realization Framework',
+            dimensions: dims.map(d => ({ id: d.id, name: d.name, weight: 16.67, questions: [] }))
+          }
+        };
+      }
+    }
+  } catch (e) {
+    // Continue to EU AI check
+  }
+
+  // Check Engine 3: EU AI Act Compliance Dossiers
+  try {
+    const euPath = path.join(__dirname, '../../data/eu_ai_dossiers.json');
+    if (fs.existsSync(euPath)) {
+      const euMap = JSON.parse(fs.readFileSync(euPath, 'utf8'));
+      const euDossier = euMap[rawId];
+      if (euDossier) {
+        const ansCount = Object.keys(euDossier.answers || {}).length;
+        const baseScore = ansCount >= 18 ? 3.4 : Math.max(1.8, Math.min(4.5, Number((1.5 + (ansCount / 20) * 2.5).toFixed(2))));
+        const dims = [
+          { id: 'dim_eu_art5', name: 'Art. 5 Prohibited AI Screening', score: Math.min(5.0, Number((baseScore + 0.6).toFixed(2))) },
+          { id: 'dim_eu_art6', name: 'Art. 6 & Annex III Classification', score: baseScore },
+          { id: 'dim_eu_art9_15', name: 'Arts. 9–15 Risk, Data & Oversight', score: Math.max(1.2, Number((baseScore - 0.5).toFixed(2))) },
+          { id: 'dim_eu_art50', name: 'Art. 50 Transparency & Watermarking', score: Math.min(5.0, Number((baseScore + 0.2).toFixed(2))) },
+          { id: 'dim_eu_gpai', name: 'Arts. 51–55 GPAI & Systemic Risk', score: baseScore },
+          { id: 'dim_eu_annex4', name: 'Annex IV Technical File & Conformity', score: Math.max(1.2, Number((baseScore - 0.4).toFixed(2))) }
+        ];
+        const scoresObj = {};
+        dims.forEach(d => {
+          scoresObj[d.id] = { score: d.score, targetScore: Math.min(5.0, Number((d.score + 1.2).toFixed(2))) };
+        });
+        return {
+          id: rawId,
+          assessmentFamily: 'eu_ai_act',
+          customerName: euDossier.meta?.department || euDossier.meta?.systemName || 'EU AI System',
+          useCase: `${euDossier.meta?.systemName || 'EU AI Act Dossier'} (Regulation 2024/1689)`,
+          createdAt: euDossier.updatedAt || euDossier.meta?.evaluationDate || new Date().toISOString(),
+          responses: {},
+          scores: scoresObj,
+          overallScore: baseScore,
+          overallTarget: Math.min(5.0, Number((baseScore + 1.2).toFixed(2))),
+          frameworkSnapshot: {
+            id: 'eu_ai_act',
+            title: 'EU AI Act (Regulation 2024/1689) Statutory Readiness',
+            dimensions: dims.map(d => ({ id: d.id, name: d.name, weight: 16.67, questions: [] }))
+          }
+        };
+      }
+    }
+  } catch (e) {
+    // Ignore
+  }
+
+  return null;
+}
+
 // 11. Side-by-Side Assessment Comparison & Progress Delta Engine
 router.get('/compare', async (req, res) => {
   try {
@@ -1862,16 +1968,20 @@ router.get('/compare', async (req, res) => {
     }
 
     const [baseInstance, targetInstance] = await Promise.all([
-      customAssessmentRepo.getInstanceById(baseId),
-      customAssessmentRepo.getInstanceById(targetId)
+      resolveMultiEngineInstance(baseId),
+      resolveMultiEngineInstance(targetId)
     ]);
 
     if (!baseInstance || !targetInstance) {
       return res.status(404).json({ success: false, error: 'One or both assessment instances could not be found' });
     }
 
-    const baseCalculated = dynamicEngine.calculateScores(baseInstance.responses, baseInstance.frameworkSnapshot);
-    const targetCalculated = dynamicEngine.calculateScores(targetInstance.responses, targetInstance.frameworkSnapshot);
+    const baseCalculated = baseInstance.assessmentFamily
+      ? { dimensionScores: baseInstance.scores, overallScore: baseInstance.overallScore, overallTarget: baseInstance.overallTarget, maturityLevel: baseInstance.overallScore >= 3.5 ? 'Advanced' : 'Developing' }
+      : dynamicEngine.calculateScores(baseInstance.responses, baseInstance.frameworkSnapshot);
+    const targetCalculated = targetInstance.assessmentFamily
+      ? { dimensionScores: targetInstance.scores, overallScore: targetInstance.overallScore, overallTarget: targetInstance.overallTarget, maturityLevel: targetInstance.overallScore >= 3.5 ? 'Advanced' : 'Developing' }
+      : dynamicEngine.calculateScores(targetInstance.responses, targetInstance.frameworkSnapshot);
 
     const isSameInstance = baseId === targetId;
     const dimensions = targetInstance.frameworkSnapshot?.dimensions || baseInstance.frameworkSnapshot?.dimensions || [];

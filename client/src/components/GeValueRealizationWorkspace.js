@@ -64,11 +64,20 @@ const STRATEGIC_QUICK_ACCOUNTS = [
   { sfdcId: 'ACC-1010-BLDRGHT', shortName: 'BuildRight', seats: '12.5K' }
 ];
 
+const getDynamicDateOffset = (daysAgo = 0) => {
+  const d = new Date();
+  d.setDate(d.getDate() - daysAgo);
+  return d.toISOString().split('T')[0];
+};
+
+const CURRENT_YEAR = new Date().getFullYear();
+const TODAY_ISO = getDynamicDateOffset(0);
+
 const TIME_WINDOW_PRESETS = [
-  { id: 'ytd_2026', label: 'YTD 2026', startDate: '2026-01-01', endDate: '2026-09-26' },
-  { id: 'last_90d', label: 'Last 90 Days', startDate: '2026-06-28', endDate: '2026-09-26' },
-  { id: 'last_60d', label: 'Last 60 Days', startDate: '2026-07-28', endDate: '2026-09-26' },
-  { id: 'last_30d', label: 'Last 30 Days', startDate: '2026-08-27', endDate: '2026-09-26' }
+  { id: 'ytd_2026', label: `YTD ${CURRENT_YEAR}`, startDate: `${CURRENT_YEAR}-01-01`, endDate: TODAY_ISO },
+  { id: 'last_90d', label: 'Last 90 Days', startDate: getDynamicDateOffset(90), endDate: TODAY_ISO },
+  { id: 'last_60d', label: 'Last 60 Days', startDate: getDynamicDateOffset(60), endDate: TODAY_ISO },
+  { id: 'last_30d', label: 'Last 30 Days', startDate: getDynamicDateOffset(30), endDate: TODAY_ISO }
 ];
 
 /**
@@ -267,12 +276,16 @@ const GeValueRealizationWorkspace = () => {
     let mounted = true;
     const loadInitial = async () => {
       try {
-        const targetId = routeDossierId || 'aerovanguard_default';
+        const accountParam = searchParams.get('account') || searchParams.get('sfdcId') || searchParams.get('customer') || '';
+        const isBioNovaParam = /bionova|1002/i.test(accountParam) || /bionova|1002/i.test(routeDossierId || '');
+        const targetId = routeDossierId || (isBioNovaParam ? 'inst_bionova_ge_value_realization' : 'aerovanguard_default');
         const res = await axios.get(`/api/ge-value-realization/dossiers/${targetId}`);
         if (mounted && res.data?.success && res.data?.dossier) {
           setDossier(res.data.dossier);
           if (res.data.dossier.meta?.vectorAccountId) {
             setSelectedSfdcId(res.data.dossier.meta.vectorAccountId);
+          } else if (isBioNovaParam) {
+            setSelectedSfdcId('ACC-1002-BIONOVA');
           }
         }
       } catch (err) {
@@ -281,7 +294,7 @@ const GeValueRealizationWorkspace = () => {
     };
     loadInitial();
     return () => { mounted = false; };
-  }, [routeDossierId]);
+  }, [routeDossierId, searchParams]);
 
   const evaluation = useMemo(() => evaluateGeValueRealization(dossier), [dossier]);
 
@@ -343,14 +356,17 @@ const GeValueRealizationWorkspace = () => {
   const handleAddWorkflow = () => {
     const nextNum = (dossier.workflows?.length || 0) + 1;
     const baseTemplate = DEFAULT_BIONOVA_WORKFLOWS[0];
+    const totalWau = Number(dossier.adoptionTelemetry?.geminiAssistWau28d || dossier.licenseInventory?.totalAssignedSeats || 200);
+    const derivedActiveUsers = Math.max(15, Math.round(totalWau * 0.12));
+    const derivedTasks = derivedActiveUsers * 4;
     const newWf = {
       ...JSON.parse(JSON.stringify(baseTemplate)),
       id: `wf_custom_${nextNum}`,
       code: `WF${nextNum}`,
-      name: `Workflow #${nextNum}`,
+      name: `${dossier.meta?.customerName || 'Enterprise'} Workflow #${nextNum}`,
       maturity: 'Pilot',
-      activeUsers: 120,
-      completedTasksPerMonth: 450,
+      activeUsers: derivedActiveUsers,
+      completedTasksPerMonth: derivedTasks,
       numericState: 'actual'
     };
     setDossier((prev) => ({
@@ -490,17 +506,17 @@ const GeValueRealizationWorkspace = () => {
       : null;
 
     return {
-      legacyLabel: legacyMean !== null ? `${legacyMean} / 5.0` : '3.23 / 5.0 (Baseline)',
-      geminiLabel: geminiMean !== null ? `${geminiMean} / 5.0` : '4.25 / 5.0 (Measured)',
-      deltaPts: deltaPts !== null ? `+${deltaPts} pt lift` : '+1.02 pt lift',
-      preferenceLabel: prefPct !== null ? `${prefPct}% prefer Gemini` : '82% prefer Gemini',
+      legacyLabel: legacyMean !== null ? `${legacyMean} / 5.0` : 'Input Pending',
+      geminiLabel: geminiMean !== null ? `${geminiMean} / 5.0` : 'Input Pending',
+      deltaPts: deltaPts !== null ? `+${deltaPts} pt lift` : 'Input Pending',
+      preferenceLabel: prefPct !== null ? `${prefPct}% prefer Gemini` : 'Input Pending',
       ratings: ratingsObj || {
-        relevance: { legacy: 3.2, gemini: 4.3 },
-        findability: { legacy: 2.9, gemini: 4.2 },
-        accuracy: { legacy: 3.4, gemini: 4.3 },
-        speed: { legacy: 3.3, gemini: 4.4 },
-        ease: { legacy: 3.5, gemini: 4.2 },
-        confidence: { legacy: 3.1, gemini: 4.1 }
+        relevance: { legacy: null, gemini: null },
+        findability: { legacy: null, gemini: null },
+        accuracy: { legacy: null, gemini: null },
+        speed: { legacy: null, gemini: null },
+        ease: { legacy: null, gemini: null },
+        confidence: { legacy: null, gemini: null }
       }
     };
   }, [dossier.employeeSurvey, dossier.questionResponses, fiveCols.col4NonFinancial]);
@@ -862,10 +878,13 @@ const GeValueRealizationWorkspace = () => {
             VIEW 1: QUESTIONNAIRE (CLEAN SIDEBAR + 2-COLUMN COMPACT CARDS)
            =================================================================== */}
         {primaryView === 'inputs' && (
-          <div style={{ display: 'grid', gridTemplateColumns: '210px 1fr', gap: '20px', alignItems: 'start' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', alignItems: 'flex-start' }}>
 
             {/* Left Sidebar: Simple Section List + Search */}
             <div style={{
+              flex: '1 1 210px',
+              maxWidth: '240px',
+              minWidth: '200px',
               background: '#ffffff',
               border: '1px solid #e2e8f0',
               borderRadius: '12px',
@@ -932,7 +951,7 @@ const GeValueRealizationWorkspace = () => {
             </div>
 
             {/* Right Main Column */}
-            <div>
+            <div style={{ flex: '999 1 480px', minWidth: 0 }}>
               {/* Compact Section Header */}
               <div style={{
                 display: 'flex',
@@ -2139,7 +2158,13 @@ const GeValueRealizationWorkspace = () => {
                             {dim}
                           </div>
                           <div style={{ fontSize: '0.76rem', fontWeight: 700, color: '#0f172a', fontFamily: 'monospace', marginTop: '2px' }}>
-                            <span style={{ color: '#94a3b8' }}>{scores?.legacy ?? 3.2}</span> → <span style={{ color: '#059669' }}>{scores?.gemini ?? 4.3}/5.0</span>
+                            {(scores?.legacy !== null && scores?.legacy !== undefined && scores?.gemini !== null && scores?.gemini !== undefined) ? (
+                              <>
+                                <span style={{ color: '#94a3b8' }}>{scores.legacy}</span> → <span style={{ color: '#059669' }}>{scores.gemini}/5.0</span>
+                              </>
+                            ) : (
+                              <span style={{ color: '#94a3b8' }}>Input Pending</span>
+                            )}
                           </div>
                         </div>
                       ))}

@@ -39,6 +39,8 @@ import IndustryPeerBenchmarkingCard from './IndustryPeerBenchmarkingCard';
 import PresentationModeModal from './PresentationModeModal';
 import UnifiedDocumentPreviewModal from './UnifiedDocumentPreviewModal';
 import AssessmentChangelogPanel from './AssessmentChangelogPanel';
+import AudioBriefingPlayer from './AudioBriefingPlayer';
+import OmniCriticReviewCard from './OmniCriticReviewCard';
 import { exportDynamicAssessmentToExcel } from '../services/excelExportService';
 import { generateDynamicPDFReport } from '../services/pdfExportService';
 import { exportAssessmentToPPTX } from '../services/pptxExportService';
@@ -788,36 +790,30 @@ const DynamicAssessmentReport = () => {
               <button 
                 onClick={async () => {
                   try {
-                    toast.loading('Generating sample FinOps report...', { id: 'sample-gen' });
-                    const res = await dynamicAssessmentService.generateSampleInstance('finops_cost_governance');
-                    await dynamicAssessmentService.generateReport(res.instanceId);
-                    toast.dismiss('sample-gen');
-                    navigate(`/assessments/report/${res.instanceId}`);
+                    navigate('/assessments/report/inst_finops_demo');
                   } catch (e) {
-                    navigate('/assessments/run/finops_cost_governance');
+                    const res = await dynamicAssessmentService.generateSampleForType('finops_cloud_cost_optimization');
+                    navigate(`/assessments/report/${res.instanceId}`);
                   }
                 }}
                 style={{ background: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '14px', padding: '16px', color: '#ffffff', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '4px' }}
               >
-                <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#38bdf8' }}>💰 FinOps Cost Governance Report</span>
+                <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#38bdf8' }}>💰 Cloud FinOps &amp; Unit Economics Report</span>
                 <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Instant 1-Click Launch</span>
               </button>
 
               <button 
                 onClick={async () => {
                   try {
-                    toast.loading('Generating sample GenAI & RAG report...', { id: 'sample-gen' });
-                    const res = await dynamicAssessmentService.generateSampleInstance('genai_rag_readiness');
-                    await dynamicAssessmentService.generateReport(res.instanceId);
-                    toast.dismiss('sample-gen');
-                    navigate(`/assessments/report/${res.instanceId}`);
+                    navigate('/assessments/report/inst_openai_gemini_demo');
                   } catch (e) {
-                    navigate('/assessments/run/genai_rag_readiness');
+                    const res = await dynamicAssessmentService.generateSampleForType('openai_to_gemini_enterprise_migration');
+                    navigate(`/assessments/report/${res.instanceId}`);
                   }
                 }}
                 style={{ background: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '14px', padding: '16px', color: '#ffffff', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '4px' }}
               >
-                <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#a855f7' }}>🤖 GenAI &amp; Agentic RAG Readiness Report</span>
+                <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#a855f7' }}>🤖 OpenAI to Gemini Migration Report</span>
                 <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Instant 1-Click Launch</span>
               </button>
             </div>
@@ -886,14 +882,42 @@ const DynamicAssessmentReport = () => {
         <div className="no-print" style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
             <button 
-              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: '#94a3b8', padding: '9px 16px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: '600', transition: 'all 0.2s ease' }}
+              style={{
+                background: theme === 'light' ? '#ffffff' : 'rgba(255,255,255,0.06)',
+                border: theme === 'light' ? '1.5px solid #cbd5e1' : '1px solid rgba(255,255,255,0.12)',
+                color: theme === 'light' ? '#334155' : '#94a3b8',
+                boxShadow: theme === 'light' ? '0 1px 3px rgba(15,23,42,0.05)' : 'none',
+                padding: '9px 16px',
+                borderRadius: '10px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                transition: 'all 0.2s ease'
+              }}
               onClick={() => navigate('/assessments')}
             >
               <FiArrowLeft /> Back to Assessments Hub
             </button>
 
             <button 
-              style={{ background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2))', border: '1.5px solid rgba(139, 92, 246, 0.5)', color: '#c084fc', padding: '9px 18px', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: '700', transition: 'all 0.2s ease', boxShadow: '0 4px 14px rgba(99, 102, 241, 0.25)' }}
+              style={{
+                background: theme === 'light' ? 'linear-gradient(135deg, #eef2ff, #f5f3ff)' : 'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2))',
+                border: theme === 'light' ? '1.5px solid #a5b4fc' : '1.5px solid rgba(139, 92, 246, 0.5)',
+                color: theme === 'light' ? '#4338ca' : '#c084fc',
+                padding: '9px 18px',
+                borderRadius: '10px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                fontWeight: '700',
+                transition: 'all 0.2s ease',
+                boxShadow: theme === 'light' ? '0 2px 8px rgba(79, 70, 229, 0.12)' : '0 4px 14px rgba(99, 102, 241, 0.25)'
+              }}
               onClick={() => navigate(`/assessments/run/instance/${id}`)}
               title="Go back to modify your answers, add operational notes, or refine ratings"
             >
@@ -1102,6 +1126,22 @@ const DynamicAssessmentReport = () => {
 
                     <DropdownItemBtn 
                       $theme={theme} 
+                      $accentColor="#6366f1"
+                      onClick={() => { setIsExportDropdownOpen(false); handleShareLink(); }}
+                    >
+                      <span style={{ fontSize: "1.1rem" }}>🔗</span> Copy Public Share Link
+                    </DropdownItemBtn>
+
+                    <DropdownItemBtn 
+                      $theme={theme} 
+                      $accentColor="#f59e0b"
+                      onClick={() => { setIsExportDropdownOpen(false); setIsPresentationOpen(true); }}
+                    >
+                      <span style={{ fontSize: "1.1rem" }}>🎬</span> Fullscreen 16:9 Slide Deck
+                    </DropdownItemBtn>
+
+                    <DropdownItemBtn 
+                      $theme={theme} 
                       onClick={() => { setIsExportDropdownOpen(false); window.print(); }}
                     >
                       <span style={{ fontSize: "1.1rem" }}>🖨️</span> Print / Save Page
@@ -1246,6 +1286,9 @@ const DynamicAssessmentReport = () => {
         {/* ========================================================================= */}
         {(activeExecutiveTab === "overview" || activeExecutiveTab === "all") && (
           <div>
+            {/* Multi-Persona 5-Act Executive Audio Briefing Player */}
+            <AudioBriefingPlayer instance={instance} report={report} theme={theme} />
+
             {/* Multi-Axis Polar Radar & Dimensional Gap Topology */}
             <DynamicRadarChart theme={theme}
               dimensions={framework?.dimensions || []}
@@ -1259,6 +1302,9 @@ const DynamicAssessmentReport = () => {
               dimensionScores={simulatedDimensionScores}
               responses={instance.responses || {}}
             />
+
+            {/* Independent Multi-Model LLM Critic & Grounding Audit */}
+            <OmniCriticReviewCard instance={instance} framework={framework} report={report} />
 
             {/* Two Column Section: Executive Summary & Dimension Scores */}
             <TwoColGrid>

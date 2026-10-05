@@ -24,8 +24,8 @@ const Overlay = styled(motion.div)`
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(8px);
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(6px);
   z-index: 9999;
   display: flex;
   align-items: flex-start;
@@ -34,14 +34,14 @@ const Overlay = styled(motion.div)`
 `;
 
 const PaletteCard = styled(motion.div)`
-  background: #0f172a;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 20px;
   width: 90%;
   max-width: 640px;
   overflow: hidden;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
-  color: #f8fafc;
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.22);
+  color: #0f172a;
 `;
 
 const SearchInputRow = styled.div`
@@ -49,15 +49,16 @@ const SearchInputRow = styled.div`
   align-items: center;
   gap: 12px;
   padding: 18px 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
 
   input {
     flex: 1;
     background: transparent;
     border: none;
     outline: none;
-    font-size: 1.1rem;
-    color: #ffffff;
+    font-size: 1.05rem;
+    color: #0f172a;
     font-weight: 500;
 
     &::placeholder {
@@ -88,14 +89,14 @@ const ResultItem = styled.div`
   padding: 10px 14px;
   border-radius: 10px;
   cursor: pointer;
-  background: ${props => props.$selected ? 'rgba(99, 102, 241, 0.2)' : 'transparent'};
-  border: 1px solid ${props => props.$selected ? 'rgba(139, 92, 246, 0.4)' : 'transparent'};
-  color: ${props => props.$selected ? '#ffffff' : '#cbd5e1'};
+  background: ${props => props.$selected ? '#eff6ff' : 'transparent'};
+  border: 1px solid ${props => props.$selected ? '#bfdbfe' : 'transparent'};
+  color: ${props => props.$selected ? '#1e40af' : '#334155'};
   transition: all 0.15s ease;
 
   &:hover {
-    background: rgba(99, 102, 241, 0.15);
-    color: #ffffff;
+    background: #f1f5f9;
+    color: #0f172a;
   }
 
   .left {
@@ -107,11 +108,12 @@ const ResultItem = styled.div`
   .title {
     font-weight: 600;
     font-size: 0.9rem;
+    color: #0f172a;
   }
 
   .subtitle {
     font-size: 0.78rem;
-    color: #94a3b8;
+    color: #64748b;
   }
 `;
 
@@ -120,8 +122,8 @@ const Footer = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 12px 20px;
-  background: #090d16;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
   font-size: 0.75rem;
   color: #64748b;
 
@@ -216,6 +218,13 @@ const CommandPalette = () => {
       subtitle: 'Evaluates model latency, routing gateways & agent security',
       icon: FiCpu,
       action: () => navigate('/assessments/run/openai_to_gemini_enterprise_migration')
+    },
+    {
+      id: 'ge-value-realization',
+      title: 'Gemini Enterprise Value Realization Workspace (82Q)',
+      subtitle: 'Multi-source evidence ingestion (8 sources), CFO ledger & 3-year ROI',
+      icon: FiTrendingUp,
+      action: () => navigate('/ge-value-realization')
     },
     {
       id: 'eu-ai-compliance',
@@ -314,37 +323,42 @@ const CommandPalette = () => {
                 allItems.map((item, idx) => {
                   const Icon = item.icon;
                   const isSelected = idx === selectedIndex;
+                  const showCategory = idx === 0 || allItems[idx - 1].category !== item.category;
 
                   return (
-                    <ResultItem
-                      key={item.id}
-                      $selected={isSelected}
-                      onClick={() => handleSelect(item)}
-                      onMouseEnter={() => setSelectedIndex(idx)}
-                    >
-                      <div className="left">
-                        <div style={{
-                          width: '32px',
-                          height: '32px',
-                          borderRadius: '8px',
-                          background: isSelected ? 'rgba(99, 102, 241, 0.4)' : 'rgba(255, 255, 255, 0.08)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: isSelected ? '#ffffff' : '#818cf8'
-                        }}>
-                          <Icon size={16} />
-                        </div>
-                        <div>
-                          <div className="title">{item.title}</div>
-                          <div className="subtitle">{item.subtitle}</div>
-                        </div>
-                      </div>
-
-                      {isSelected && (
-                        <FiCornerDownLeft size={14} color="#818cf8" />
+                    <React.Fragment key={item.id}>
+                      {showCategory && item.category && (
+                        <ResultCategory>{item.category}</ResultCategory>
                       )}
-                    </ResultItem>
+                      <ResultItem
+                        $selected={isSelected}
+                        onClick={() => handleSelect(item)}
+                        onMouseEnter={() => setSelectedIndex(idx)}
+                      >
+                        <div className="left">
+                          <div style={{
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: '8px',
+                            background: isSelected ? '#2563eb' : '#f1f5f9',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: isSelected ? '#ffffff' : '#2563eb'
+                          }}>
+                            <Icon size={16} />
+                          </div>
+                          <div>
+                            <div className="title">{item.title}</div>
+                            <div className="subtitle">{item.subtitle}</div>
+                          </div>
+                        </div>
+
+                        {isSelected && (
+                          <FiCornerDownLeft size={14} color="#2563eb" />
+                        )}
+                      </ResultItem>
+                    </React.Fragment>
                   );
                 })
               )}
@@ -352,9 +366,9 @@ const CommandPalette = () => {
 
             <Footer>
               <div className="keys">
-                <span><kbd style={{ background: '#1e293b', padding: '2px 5px', borderRadius: '4px', border: '1px solid #334155' }}>↑↓</kbd> Navigate</span>
-                <span><kbd style={{ background: '#1e293b', padding: '2px 5px', borderRadius: '4px', border: '1px solid #334155' }}>↵</kbd> Select</span>
-                <span><kbd style={{ background: '#1e293b', padding: '2px 5px', borderRadius: '4px', border: '1px solid #334155' }}>Esc</kbd> Close</span>
+                <span><kbd style={{ background: '#ffffff', color: '#334155', padding: '2px 5px', borderRadius: '4px', border: '1px solid #cbd5e1' }}>↑↓</kbd> Navigate</span>
+                <span><kbd style={{ background: '#ffffff', color: '#334155', padding: '2px 5px', borderRadius: '4px', border: '1px solid #cbd5e1' }}>↵</kbd> Select</span>
+                <span><kbd style={{ background: '#ffffff', color: '#334155', padding: '2px 5px', borderRadius: '4px', border: '1px solid #cbd5e1' }}>Esc</kbd> Close</span>
               </div>
               <span>ScoreX Omnibar ⚡</span>
             </Footer>

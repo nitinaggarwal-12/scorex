@@ -526,11 +526,15 @@ const QuestionCard = styled.div`
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 18px;
-  padding: 24px md:padding: 28px;
+  padding: 24px;
   box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
   display: flex;
   flex-direction: column;
   gap: 20px;
+
+  @media (min-width: 768px) {
+    padding: 28px;
+  }
 `;
 
 const QuestionHeader = styled.div`
@@ -947,11 +951,15 @@ const ReportPaperCard = styled.div`
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 18px;
-  padding: 36px md:padding: 48px;
+  padding: 36px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
   gap: 36px;
+
+  @media (min-width: 768px) {
+    padding: 48px;
+  }
 
   @media print {
     border: none;
@@ -1734,11 +1742,18 @@ export default function EuAiComplianceWorkspace() {
         setActiveTab(requestedTab === 'assessment' ? 'questionnaire' : requestedTab === 'dossier' ? 'report' : requestedTab);
       }
 
-      const savedSynthesis = localStorage.getItem('scorex_eu_ai_synthesis');
+      const targetSynthesisKey = routeParamId
+        ? `scorex_eu_ai_synthesis_${routeParamId}`
+        : (isDemo ? 'scorex_eu_ai_synthesis_EUAIA-2026-HR4902' : null);
+      const savedSynthesis = targetSynthesisKey ? localStorage.getItem(targetSynthesisKey) : null;
       if (savedSynthesis) {
         try {
           setSynthesis(JSON.parse(savedSynthesis));
-        } catch (e) {}
+        } catch (e) {
+          setSynthesis(null);
+        }
+      } else {
+        setSynthesis(null);
       }
 
       // Case 1: Visiting /eu-ai-compliance without an ID in the URL
@@ -1758,7 +1773,7 @@ export default function EuAiComplianceWorkspace() {
           navigate(`/eu-ai-compliance/${sampleId}${window.location.search}`, { replace: true });
           return;
         } else {
-          // User started a new assessment -> generate fresh unique ID and redirect
+          // User started a new assessment -> generate fresh unique ID in memory without polluting storage until first edit
           const newId = generateUniqueDossierId();
           const freshMeta = {
             systemName: 'New Enterprise AI System Evaluation',
@@ -1772,11 +1787,7 @@ export default function EuAiComplianceWorkspace() {
           setMeta(freshMeta);
           setAnswers({});
           setTaskStatusOverrides({});
-          localStorage.setItem(`scorex_eu_ai_compliance_${newId}`, JSON.stringify({
-            meta: freshMeta,
-            answers: {},
-            taskStatusOverrides: {}
-          }));
+          setSynthesis(null);
           navigate(`/eu-ai-compliance/${newId}${window.location.search}`, { replace: true });
           return;
         }
@@ -1801,6 +1812,16 @@ export default function EuAiComplianceWorkspace() {
             answers: matchedPreset.answers,
             taskStatusOverrides: {}
           }));
+        }
+        if (!savedSynthesis) {
+          axios.get(`/api/eu-ai-compliance/dossiers/${routeParamId}`)
+            .then(res => {
+              if (res.data?.success && res.data?.dossier?.synthesis) {
+                setSynthesis(res.data.dossier.synthesis);
+                localStorage.setItem(`scorex_eu_ai_synthesis_${routeParamId}`, JSON.stringify(res.data.dossier.synthesis));
+              }
+            })
+            .catch(() => {});
         }
         if (isDemo && !requestedTab) {
           setActiveTab('dashboard');
@@ -1827,7 +1848,10 @@ export default function EuAiComplianceWorkspace() {
                 setMeta(d.meta || { documentId: routeParamId, systemName: 'Shared Enterprise AI System' });
                 setAnswers(d.answers || {});
                 setTaskStatusOverrides(d.taskStatusOverrides || {});
-                if (d.synthesis) setSynthesis(d.synthesis);
+                if (d.synthesis) {
+                  setSynthesis(d.synthesis);
+                  localStorage.setItem(`scorex_eu_ai_synthesis_${routeParamId}`, JSON.stringify(d.synthesis));
+                }
                 if (d.financialConfig) {
                   if (d.financialConfig.globalTurnoverMillions) setGlobalTurnoverMillions(d.financialConfig.globalTurnoverMillions);
                   if (typeof d.financialConfig.isSme === 'boolean') setIsSme(d.financialConfig.isSme);
@@ -1837,7 +1861,7 @@ export default function EuAiComplianceWorkspace() {
               }
             })
             .catch(() => {
-              // If not found on server, initialize new blank dossier for this ID
+              // If not found on server, initialize new blank dossier in memory (persisted on first user answer/edit)
               const freshMeta = {
                 systemName: 'New Enterprise AI System Evaluation',
                 version: 'v1.0.0',
@@ -1849,11 +1873,7 @@ export default function EuAiComplianceWorkspace() {
               setMeta(freshMeta);
               setAnswers({});
               setTaskStatusOverrides({});
-              localStorage.setItem(`scorex_eu_ai_compliance_${routeParamId}`, JSON.stringify({
-                meta: freshMeta,
-                answers: {},
-                taskStatusOverrides: {}
-              }));
+              setSynthesis(null);
             });
         }
       }
@@ -2257,8 +2277,16 @@ export default function EuAiComplianceWorkspace() {
         evaluation
       });
       if (res.data && res.data.success && res.data.synthesis) {
+        const docId = meta?.documentId || routeParamId || 'EUAIA-2026-DEFAULT';
         setSynthesis(res.data.synthesis);
-        localStorage.setItem('scorex_eu_ai_synthesis', JSON.stringify(res.data.synthesis));
+        localStorage.setItem(`scorex_eu_ai_synthesis_${docId}`, JSON.stringify(res.data.synthesis));
+        axios.post(`/api/eu-ai-compliance/dossiers/${docId}`, {
+          meta,
+          answers,
+          taskStatusOverrides,
+          synthesis: res.data.synthesis,
+          financialConfig: { globalTurnoverMillions, isSme, includeConcurrentGdprNis2 }
+        }).catch(() => {});
         toast.success('✅ Gemini 3.8 Flash Legal Synthesis Generated!', { id: toastId });
         if (activeTab === 'questionnaire') {
           setActiveTab('dashboard');

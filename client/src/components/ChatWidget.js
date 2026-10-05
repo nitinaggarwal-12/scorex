@@ -488,10 +488,14 @@ const ChatWidget = () => {
     const dynamicReportMatch = path.match(/\/assessments\/report\/([^/]+)/);
     const dynamicInstanceMatch = path.match(/\/assessments\/run\/instance\/([^/]+)/);
     const dynamicTypeMatch = path.match(/\/assessments\/run\/([^/]+)/);
+    const geVrMatch = path.match(/\/ge-value-realization\/([^/?]+)/);
+    const euAiMatch = path.match(/\/eu-ai-(?:compliance|act)\/(?:system\/)?([^/?]+)/);
 
     const assessmentId =
       (dynamicReportMatch && dynamicReportMatch[1]) ||
       (dynamicInstanceMatch && dynamicInstanceMatch[1]) ||
+      (geVrMatch && geVrMatch[1]) ||
+      (euAiMatch && euAiMatch[1]) ||
       (resultsMatch && resultsMatch[1]) ||
       params.get('id') ||
       params.get('instanceId') ||
@@ -523,7 +527,7 @@ const ChatWidget = () => {
       pageType = 'assessments_hub';
     } else if (path.startsWith('/ge-value-realization')) {
       pageType = 'ge_value_realization';
-    } else if (path.startsWith('/eu-ai-compliance')) {
+    } else if (path.startsWith('/eu-ai-compliance') || path.startsWith('/eu-ai-act')) {
       pageType = 'eu_ai_compliance';
     } else if (path.startsWith('/assessment')) {
       pageType = 'assessment';
@@ -608,10 +612,16 @@ const ChatWidget = () => {
         "How is the maturity gap calculated?"
       ],
       ge_value_realization: [
-        "How is Value Realization (Pillar 4) weighted at 40%?",
-        "Which capabilities are currently At Risk?",
-        "Explain the 4-Pillar GE Vernova scoring model",
-        "How do I generate the Executive Readout?"
+        "How does 8-source telemetry ingestion work?",
+        "How is Net Annualized Hard-Dollar ROI calculated?",
+        "Explain the 82-question / 10-module GE framework",
+        "How do I switch between AeroVanguard and BioNova?"
+      ],
+      eu_ai_compliance: [
+        "Is this system High-Risk under Article 6 & Annex III?",
+        "What are our Article 9–15 provider obligations?",
+        "How is Article 99 statutory fine exposure calculated?",
+        "How do I generate the Annex IV Technical Dossier?"
       ],
       assessment: [
         "How do I rate maturity levels?",
