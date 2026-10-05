@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-const API_URL = (process.env.NODE_ENV === 'production' || (window.location.hostname === 'localhost' && window.location.port !== '3000'))
-  ? '/api/assessment-excel'
-  : 'http://localhost:5001/api/assessment-excel';
+const API_BASE = process.env.REACT_APP_API_URL ||
+  (window.location.hostname === 'localhost' && window.location.port === '3000' ? 'http://localhost:5001/api' : '/api');
+const API_URL = `${API_BASE}/assessment-excel`;
 
 const excelService = {
   /**

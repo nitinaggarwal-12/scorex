@@ -109,24 +109,68 @@ router.post('/live-audit', async (req, res) => {
 // In-memory + disk-backed dossier persistence for multi-stakeholder sharing
 const fs = require('fs');
 const path = require('path');
-const DOSSIERS_FILE = path.join(__dirname, '../../data/eu_ai_dossiers.json');
+const BUNDLED_DOSSIERS_FILE = path.join(__dirname, '../../data/eu_ai_dossiers.json');
+
+function getDossiersFile() {
+  const dataDir = process.env.DATA_DIR || path.join(__dirname, '../../data');
+  return path.join(dataDir, 'eu_ai_dossiers.json');
+}
+
+function buildDefaultEuAiSeed() {
+  try {
+    if (fs.existsSync(BUNDLED_DOSSIERS_FILE)) {
+      const bundled = JSON.parse(fs.readFileSync(BUNDLED_DOSSIERS_FILE, 'utf8'));
+      if (bundled && Object.keys(bundled).length > 0) {
+        return bundled;
+      }
+    }
+  } catch (_) {}
+  return {
+    'EUAIA-2026-HR4902': {
+      id: 'EUAIA-2026-HR4902',
+      meta: {
+        systemName: 'ApexHire AI Candidate Screening & Scoring Engine',
+        version: 'v2.4.1-prod',
+        leadEvaluator: 'Helena Vance, Lead AI Compliance Counsel & MLOps Architect',
+        department: 'Global Talent Acquisition & People Analytics',
+        evaluationDate: '2026-10-05',
+        documentId: 'EUAIA-2026-HR4902'
+      },
+      answers: {
+        q1: { level1OptionId: '1.1', level2OptionId: '1.1.1', notes: 'Deployed within documented parameters.' },
+        q5: { level1OptionId: '5.1', level2OptionId: '5.1.1', notes: 'Classified under Annex III, Item 4(a).' }
+      },
+      taskStatusOverrides: {},
+      synthesis: null,
+      financialConfig: { globalTurnoverMillions: 2500, isSme: false, includeConcurrentGdprNis2: true },
+      updatedAt: new Date().toISOString()
+    }
+  };
+}
 
 function loadServerDossiers() {
+  const dossiersFile = getDossiersFile();
   try {
-    if (fs.existsSync(DOSSIERS_FILE)) {
-      return JSON.parse(fs.readFileSync(DOSSIERS_FILE, 'utf8'));
+    if (fs.existsSync(dossiersFile)) {
+      const parsed = JSON.parse(fs.readFileSync(dossiersFile, 'utf8'));
+      if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+        return parsed;
+      }
     }
   } catch (e) {
     console.warn('Could not read eu_ai_dossiers.json:', e.message);
   }
-  return {};
+  const seeded = buildDefaultEuAiSeed();
+  saveServerDossiers(seeded);
+  return seeded;
 }
 
 function saveServerDossiers(dossiers) {
   try {
-    const dir = path.dirname(DOSSIERS_FILE);
+    const dossiersFile = getDossiersFile();
+    const dir = path.dirname(dossiersFile);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(DOSSIERS_FILE, JSON.stringify(dossiers, null, 2), 'utf8');
+    fs.writeFileSync(dossiersFile, JSON.stringify(dossiers, null, 2), 'utf8');
   } catch (e) {
     console.warn('Could not write eu_ai_dossiers.json:', e.message);
   }
@@ -164,10 +208,17 @@ router.get(['/dossiers', '/catalog'], (req, res) => {
  */
 router.get('/dossiers/:id', (req, res) => {
   try {
-    const { id } = req.params;
+    const id = String(req.params.id || '').trim();
+    const normId = id.toLowerCase();
     const dossiers = loadServerDossiers();
-    if (dossiers[id]) {
-      return res.json({ success: true, dossier: dossiers[id] });
+    const matched =
+      dossiers[id] ||
+      dossiers[id.toUpperCase()] ||
+      ((normId === 'default' || normId === 'eu_ai_default_instance' || normId === 'euaia-2026-hr4902')
+        ? dossiers['EUAIA-2026-HR4902']
+        : null);
+    if (matched) {
+      return res.json({ success: true, dossier: matched });
     }
     return res.status(404).json({ success: false, error: 'Dossier not found on server' });
   } catch (err) {

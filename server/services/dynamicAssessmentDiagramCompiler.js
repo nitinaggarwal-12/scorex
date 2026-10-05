@@ -239,6 +239,12 @@ function extractAuthenticNoteSnippet(commentsList = []) {
  * Build the complete Per-Assessment Telemetry Dossier across all 6 pillars.
  */
 function extractAssessmentTelemetry(framework = {}, metadata = {}, scores = {}) {
+  const unwrappedFw = (framework && framework.framework && typeof framework.framework === 'object')
+    ? framework.framework
+    : (framework || {});
+  const fwTypeKey = String(unwrappedFw.typeKey || framework?.typeKey || unwrappedFw.id || framework?.id || '').toLowerCase();
+  const fwTitle = unwrappedFw.title || framework?.title || 'Enterprise Cloud, Data & AI Transformation';
+
   const custName = (metadata.customerName && metadata.customerName !== 'Not specified')
     ? metadata.customerName
     : (metadata.assessmentName && metadata.assessmentName !== 'Not specified'
@@ -246,8 +252,8 @@ function extractAssessmentTelemetry(framework = {}, metadata = {}, scores = {}) 
       : 'Enterprise Organization');
   const industry = (metadata.industry && metadata.industry !== 'Not specified')
     ? metadata.industry
-    : (framework.badge || 'Enterprise Cloud & AI');
-  const useCase = metadata.useCase || framework.title || 'Enterprise Cloud, Data & AI Transformation';
+    : (unwrappedFw.badge || framework?.badge || 'Enterprise Cloud & AI');
+  const useCase = metadata.useCase || fwTitle;
   const responses = metadata.responses || {};
   const rawDims = Array.isArray(scores.dimensionScores)
     ? scores.dimensionScores
@@ -265,8 +271,8 @@ function extractAssessmentTelemetry(framework = {}, metadata = {}, scores = {}) 
     ? 'Databricks Lakehouse & Vertex AI'
     : 'Google Cloud BigQuery, Dataplex & Vertex AI';
 
-  const frameworkAreas = Array.isArray(framework.areas) ? framework.areas : [];
-  const frameworkDims = Array.isArray(framework.dimensions) ? framework.dimensions : [];
+  const frameworkAreas = Array.isArray(unwrappedFw.areas) ? unwrappedFw.areas : [];
+  const frameworkDims = Array.isArray(unwrappedFw.dimensions) ? unwrappedFw.dimensions : [];
   const rawGlobalNotes = Array.isArray(metadata.notes)
     ? metadata.notes.map(n => (typeof n === 'string' ? n : (n?.text || n?.content || ''))).filter(Boolean)
     : (typeof metadata.notes === 'string' && metadata.notes.trim() ? [metadata.notes.trim()] : []);
@@ -276,28 +282,42 @@ function extractAssessmentTelemetry(framework = {}, metadata = {}, scores = {}) 
 
   const resolveDomainBridgeAndTarget = (titleStr, fallbackDef) => {
     const lower = String(titleStr || '').toLowerCase();
-    if (/cost|visibility|allocation|taxonomy|billing/.test(lower)) {
+    // 1. Check specific security, governance, DLP, IAM, SIEM, and compliance domains first (before generic 'data')
+    if (/security|zero-trust|zero standing|governance|lineage|iam|pam|compliance|dlp|tokenization|armor|siem|soar|shadow ai|entitlements/.test(lower)) {
+      if (/siem|soar|audit/.test(lower)) {
+        return {
+          bridge: 'Chronicle SecOps & SLSA L3 Binary Auth Bridge',
+          target: 'Autonomous SOAR & Immutable WORM Audit'
+        };
+      }
+      if (/dlp|tokenization|pii|phi/.test(lower)) {
+        return {
+          bridge: 'Cloud DLP Surrogate Tokenization Bridge',
+          target: 'Zero-Copy PII/PHI Masking & HSM CMEK'
+        };
+      }
+      if (/armor|injection|runtime safety/.test(lower)) {
+        return {
+          bridge: 'Model Armor Inline Prompt/Response Shield',
+          target: 'Zero-Trust AI TRiSM & Guardrail Enforcement'
+        };
+      }
+      if (/lineage|data quality/.test(lower)) {
+        return {
+          bridge: 'Dataplex Universal Catalog & Auto-Lineage',
+          target: 'Governed ABAC Policy Tags & DQ SLAs'
+        };
+      }
       return {
-        bridge: 'FOCUS Billing Export & Tag Enforcement',
-        target: 'BigQuery FinOps Hub & 99.4% Tagging'
+        bridge: 'Identity Federation & VPC-SC Perimeter Bridge',
+        target: 'VPC-SC + Cloud KMS CMEK & Zero-Standing IAM'
       };
     }
-    if (/compute|kubernetes|gke|right-sizing|autoscal/.test(lower)) {
+    // 2. FinOps & Cloud Economics sub-domains
+    if (/commitment|rate optim|reserved|cud/.test(lower)) {
       return {
-        bridge: 'GKE Rightsizing & CUD Transition',
-        target: 'GKE Autopilot & Idle Auto-Suspend'
-      };
-    }
-    if (/lakehouse|storage|tiering|edw|warehouse|data/.test(lower)) {
-      return {
-        bridge: 'Dual-Read CDC & Partition Lifecycle',
-        target: 'BigLake Iceberg & GCS Autoclass'
-      };
-    }
-    if (/token|gpu|ai|genai|llm|inference|agent|model/.test(lower)) {
-      return {
-        bridge: 'AI Gateway & Prompt Caching Bridge',
-        target: 'Vertex AI Gemini 3.8 & Model Armor'
+        bridge: 'Flexible CUD Portfolio & Slot Autoscaling',
+        target: '85%+ CUD Coverage & Automated Rate Arbitrage'
       };
     }
     if (/unit economics|showback|chargeback|finops|roi/.test(lower)) {
@@ -306,10 +326,55 @@ function extractAssessmentTelemetry(framework = {}, metadata = {}, scores = {}) 
         target: 'Looker FinOps Portal & Unit Telemetry'
       };
     }
-    if (/security|zero-trust|governance|iam|compliance/.test(lower)) {
+    if (/cost|visibility|allocation|taxonomy|billing|token economics/.test(lower)) {
       return {
-        bridge: 'Identity Federation & Perimeter Audit',
-        target: 'VPC-SC + Cloud KMS CMEK & DLP'
+        bridge: 'FOCUS Billing Export & Tag Enforcement',
+        target: 'BigQuery FinOps Hub & 99.4% Tagging'
+      };
+    }
+    if (/compute|kubernetes|gke|right-?sizing|autoscal|anomaly/.test(lower)) {
+      return {
+        bridge: 'GKE Rightsizing & Idle Auto-Suspend Bridge',
+        target: 'GKE Autopilot & Autonomous Anomaly Guard'
+      };
+    }
+    // 3. Agentic Mesh, MCP, Context & Observability sub-domains
+    if (/mcp|tool abstraction|protocol/.test(lower)) {
+      return {
+        bridge: 'Standardized MCP Gateway & Apigee Tool Proxy',
+        target: 'Governed MCP Tool Mesh & Zero-Trust A2A'
+      };
+    }
+    if (/state persistence|memory|long-context|chunked rag/.test(lower)) {
+      return {
+        bridge: 'Gemini 2M Long-Context & Episodic Memory Bridge',
+        target: 'AlloyDB/Spanner Agent Memory & Vertex Vector RAG'
+      };
+    }
+    if (/telemetry|observability|continuous evaluation/.test(lower)) {
+      return {
+        bridge: 'OpenTelemetry Agent Tracing & Eval Gate Bridge',
+        target: 'Vertex AI GenAI Eval & Drift Auto-Remediation'
+      };
+    }
+    // 4. Lakehouse, Storage, SQL Analytics & ELT sub-domains
+    if (/sql analytics|reservation/.test(lower)) {
+      return {
+        bridge: 'BigQuery Editions Slot Autoscaling Bridge',
+        target: 'BigQuery Vectorized SQL & BI Engine'
+      };
+    }
+    if (/lakehouse|storage|tiering|edw|warehouse|elt|cdc|federation|data/.test(lower)) {
+      return {
+        bridge: 'Dual-Read CDC & Partition Lifecycle Bridge',
+        target: 'BigLake Iceberg & GCS Autoclass'
+      };
+    }
+    // 5. General AI / LLM / Prompt / Agent sub-domains
+    if (/prompt|token|gpu|ai|genai|llm|inference|agent|model/.test(lower)) {
+      return {
+        bridge: 'AI Gateway & Prompt Caching Bridge',
+        target: 'Vertex AI Gemini 3.8 & Model Armor'
       };
     }
     return {
@@ -492,37 +557,57 @@ function extractAssessmentTelemetry(framework = {}, metadata = {}, scores = {}) 
     };
   });
 
-  // Ensure we always have 6 pillar slots for Template 05 symmetry
+  const evaluatedPillars = enrichedPillars.length > 0 ? [...enrichedPillars] : [];
+  const avgCur = evaluatedPillars.length > 0
+    ? (evaluatedPillars.reduce((a, p) => a + p.currentScore, 0) / evaluatedPillars.length).toFixed(1)
+    : '2.6';
+  const avgTgt = evaluatedPillars.length > 0
+    ? (evaluatedPillars.reduce((a, p) => a + p.futureScore, 0) / evaluatedPillars.length).toFixed(1)
+    : '4.6';
+  const avgMid = ((Number(avgCur) + Number(avgTgt)) / 2).toFixed(1);
+  const overallDelta = (Number(avgTgt) - Number(avgCur)).toFixed(1);
+
+  const evalByGapDesc = [...evaluatedPillars].sort((a, b) => (b.gap - a.gap) || (a.currentScore - b.currentScore));
+  const weakest = evalByGapDesc[0] || enrichedPillars[0];
+  const secondWeakest = evalByGapDesc[1] || weakest;
+  const strongest = [...evaluatedPillars].sort((a, b) => b.currentScore - a.currentScore)[0] || weakest;
+
+  // Ensure we always have 6 pillar slots for Template 05 visual symmetry without skewing evaluated averages
   while (enrichedPillars.length < 6) {
     const fb = PILLAR_DEFS[enrichedPillars.length];
+    const domainTitles = resolveDomainBridgeAndTarget( `${fwTypeKey} ${useCase} ${fb.cleanName}`, fb);
+    const derivedCur = Number(avgCur);
+    const derivedFut = Number(avgTgt);
+    const derivedMid = Number(avgMid);
+    const derivedGap = Number(Math.max(0, derivedFut - derivedCur).toFixed(1));
     enrichedPillars.push({
       ...fb,
-      currentScore: 2.6,
-      midScore: 3.6,
-      futureScore: 4.6,
-      gap: 2.0,
-      levelName: 'Developing',
+      defaultBridgeTitle: domainTitles.bridge,
+      defaultTargetTitle: domainTitles.target,
+      currentScore: derivedCur,
+      midScore: derivedMid,
+      futureScore: derivedFut,
+      gap: derivedGap,
+      isSyntheticSymmetrySlot: true,
+      levelName: derivedCur >= 3.5 ? 'Established' : derivedCur >= 2.5 ? 'Developing' : 'Initial / Siloed',
       detectedTools: [],
       quantFootprint: [],
       hasExplicitVendorTools: false,
       stackSummary: fb.defaultNeutralStack,
-      theGood: ['Baseline Established'],
-      theBad: ['Manual Bottlenecks'],
-      techPainCodes: ['Siloed Workflows'],
-      bizPainCodes: ['High Operational Cost'],
-      noteSnippet: 'Evaluated via framework baseline.'
+      theGood: [`Composite ${avgCur}/5.0 Baseline`],
+      theBad: [weakest?.techPainCodes?.[1] || weakest?.techPainCodes?.[0] || 'Cross-Team Silos'],
+      techPainCodes: [weakest?.techPainCodes?.[1] || `${fb.cleanName} Drift (${avgCur}/5)`],
+      bizPainCodes: ['Cross-Pillar Governance Overhead'],
+      noteSnippet: weakest?.noteSnippet || 'Evaluated via framework composite baseline.'
     });
   }
 
-  const avgCur = (enrichedPillars.reduce((a, p) => a + p.currentScore, 0) / enrichedPillars.length).toFixed(1);
-  const avgTgt = (enrichedPillars.reduce((a, p) => a + p.futureScore, 0) / enrichedPillars.length).toFixed(1);
-  const avgMid = ((Number(avgCur) + Number(avgTgt)) / 2).toFixed(1);
-  const overallDelta = (Number(avgTgt) - Number(avgCur)).toFixed(1);
-
-  const byGapDesc = [...enrichedPillars].sort((a, b) => (b.gap - a.gap) || (a.currentScore - b.currentScore));
-  const weakest = byGapDesc[0];
-  const secondWeakest = byGapDesc[1];
-  const strongest = [...enrichedPillars].sort((a, b) => b.currentScore - a.currentScore)[0];
+  const byGapDesc = [...enrichedPillars].sort((a, b) => {
+    if (Boolean(a.isSyntheticSymmetrySlot) !== Boolean(b.isSyntheticSymmetrySlot)) {
+      return a.isSyntheticSymmetrySlot ? 1 : -1;
+    }
+    return (b.gap - a.gap) || (a.currentScore - b.currentScore);
+  });
 
   byGapDesc.forEach((p, rankIdx) => {
     const target = enrichedPillars.find(ep => ep.key === p.key);
@@ -533,6 +618,7 @@ function extractAssessmentTelemetry(framework = {}, metadata = {}, scores = {}) 
   const allQuantMetrics = [...new Set(enrichedPillars.flatMap(p => p.quantFootprint))];
 
   return {
+    fwTypeKey,
     custName,
     industry,
     useCase,
@@ -951,12 +1037,34 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
         </mxCell>
 `;
 
+  const domainSignal = `${dossier.fwTypeKey || ''} ${useCase || ''}`.toLowerCase();
+  const isFinOpsDomain = /finops|cost|billing|token economics/.test(domainSignal);
+  const isSecurityDomain = /zero_trust|security|trism|ciso|dlp|siem/.test(domainSignal);
+  const isAgenticDomain = /agentic|mcp|multi-agent/.test(domainSignal);
+  const isGeminiMigDomain = /openai|gemini|migration/.test(domainSignal) && !/edw|lakehouse/.test(domainSignal);
+  const isLakehouseDomain = /edw|lakehouse|bigquery|modernization/.test(domainSignal);
+
   const toBeCylinders = [
-    { name: 'Unified Data Lake', sub: '(BigQuery / BigLake Iceberg)' },
-    { name: `${truncateText(p1.cleanName, 14)} Hub`, sub: '(Real-Time Streaming)' },
-    { name: `${truncateText(p2.cleanName, 14)} Store`, sub: '(Governed Semantic)' },
-    { name: 'Metadata & Lineage', sub: '(Dataplex Catalog)' },
-    { name: 'AI/ML Feature Store', sub: '& Vector Search DB' }
+    {
+      name: isFinOpsDomain ? 'FOCUS 1.0 Billing' : isSecurityDomain ? 'Immutable Audit Log' : 'Unified Data Lake',
+      sub: isFinOpsDomain ? '(BigQuery FinOps Hub)' : isSecurityDomain ? '(Chronicle WORM Lake)' : '(BigQuery / BigLake Iceberg)'
+    },
+    {
+      name: `${truncateText(p1.cleanName, 14)} Hub`,
+      sub: `(${truncateText(p1.defaultTargetTitle, 20)})`
+    },
+    {
+      name: `${truncateText(p2.cleanName, 14)} Store`,
+      sub: `(${truncateText(p2.defaultTargetTitle, 20)})`
+    },
+    {
+      name: `${truncateText(p3.cleanName, 14)} Vault`,
+      sub: `(${truncateText(p3.defaultTargetTitle, 20)})`
+    },
+    {
+      name: `${truncateText(p4.cleanName, 14)} Index`,
+      sub: `(${truncateText(p4.defaultTargetTitle, 20)})`
+    }
   ];
 
   toBeCylinders.forEach((cyl, idx) => {
@@ -967,14 +1075,46 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
         </mxCell>`;
   });
 
-  // Tier 4 (Right): 5 Integration & Event Mesh Cards
-  const toBeIntegration = [
-    { name: 'API Gateway & Mgmt', sub: '(Apigee / Cloud Endpoints)' },
-    { name: 'Event Streaming', sub: '(Cloud Pub/Sub)' },
-    { name: 'Data Integration', sub: '(Dataflow / Datastream)' },
-    { name: 'MCP / A2A Mesh', sub: '(Agent Tool Protocol)' },
-    { name: 'Partner & Ecosystem', sub: '(Zero-Trust Federation)' }
-  ];
+  // Tier 4 (Right): 5 Domain-Dynamic Integration & Event Mesh Cards
+  const toBeIntegration = isFinOpsDomain
+    ? [
+        { name: 'Billing Export Stream', sub: '(BigQuery FOCUS 1.0)' },
+        { name: 'Pod Cost Metering', sub: '(GKE OpenCost / Labels)' },
+        { name: 'Token Quota Router', sub: '(Apigee + Context Cache)' },
+        { name: 'Anomaly Event Bus', sub: '(Pub/Sub + BQML Alerts)' },
+        { name: 'CUD & Slot Governor', sub: '(Autoscaling Reservations)' }
+      ]
+    : isSecurityDomain
+    ? [
+        { name: 'Zero-Trust Edge Proxy', sub: '(Cloud Armor WAF + IAP)' },
+        { name: 'Inline AI Shield', sub: '(Google Model Armor)' },
+        { name: 'PII / PHI Tokenization', sub: '(Cloud DLP De-ID Stream)' },
+        { name: 'SIEM / SOAR Telemetry', sub: '(Chronicle SecOps Bus)' },
+        { name: 'Workload Federation', sub: '(Zero Static IAM Keys)' }
+      ]
+    : isAgenticDomain
+    ? [
+        { name: 'Super-Orchestrator Bus', sub: '(Gemini 3.8 Agent Hub)' },
+        { name: 'MCP Tool Gateway', sub: '(Standardized Tool RPC)' },
+        { name: 'Agent-to-Agent (A2A)', sub: '(Pub/Sub Event Mesh)' },
+        { name: 'Episodic Memory Sync', sub: '(AlloyDB + Vector RAG)' },
+        { name: 'HITL Approval Gate', sub: '(Policy & Audit Guard)' }
+      ]
+    : isGeminiMigDomain
+    ? [
+        { name: 'Apigee AI Gateway', sub: '(OpenAI-to-Gemini Proxy)' },
+        { name: '2M Context Caching', sub: '(75% Input Token Savings)' },
+        { name: 'Vertex Vector RAG', sub: '(ACL-Synchronized Index)' },
+        { name: 'MCP Tool Microservices', sub: '(Sandboxed Function Mesh)' },
+        { name: 'Automated Eval Gate', sub: '(Vertex GenAI Eval CI/CD)' }
+      ]
+    : [
+        { name: 'API Gateway & Mgmt', sub: '(Apigee / Cloud Endpoints)' },
+        { name: 'Event Streaming', sub: '(Cloud Pub/Sub)' },
+        { name: 'Data Integration', sub: '(Dataflow / Datastream)' },
+        { name: 'MCP / A2A Mesh', sub: '(Agent Tool Protocol)' },
+        { name: 'Partner & Ecosystem', sub: '(Zero-Trust Federation)' }
+      ];
 
   toBeIntegration.forEach((ig, idx) => {
     const ix = 892 + idx * 137;
@@ -989,18 +1129,18 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
         <mxCell id="r_gcp_box" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#93C5FD;strokeWidth=1.4;" vertex="1" parent="1">
           <mxGeometry x="892" y="494" width="678" height="94" as="geometry"/>
         </mxCell>
-        <mxCell id="r_gcp_hdr" value="&lt;b style=&quot;font-size:8.5px;color:#1E3A8A;letter-spacing:0.3px;&quot;&gt;GOOGLE CLOUD PLATFORM (ELASTIC SERVERLESS FOUNDATION)&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="r_gcp_hdr" value="&lt;b style=&quot;font-size:8.5px;color:#1E3A8A;letter-spacing:0.3px;&quot;&gt;GOOGLE CLOUD PLATFORM (${escapeXml(useCase.toUpperCase()).slice(0, 48)})&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="900" y="496" width="660" height="18" as="geometry"/>
         </mxCell>
 `;
 
   const gcpCards = [
-    { name: 'Compute', sub: '(GKE / Cloud Run)' },
-    { name: 'Storage', sub: '(Cloud Storage)' },
-    { name: 'Databases', sub: '(Spanner / AlloyDB)' },
-    { name: 'Analytics', sub: '(BigQuery)' },
-    { name: 'AI / ML', sub: '(Vertex AI / Gemini)' },
-    { name: 'Global Regions', sub: '& Multi-Zone HA' }
+    { name: 'Compute', sub: isFinOpsDomain ? '(GKE Autopilot Scale-0)' : '(GKE / Cloud Run)' },
+    { name: 'Storage', sub: isLakehouseDomain ? '(BigLake Iceberg + GCS)' : '(Cloud Storage Autoclass)' },
+    { name: 'Databases', sub: isAgenticDomain ? '(Spanner / AlloyDB AI)' : '(Spanner / AlloyDB)' },
+    { name: 'Analytics', sub: isFinOpsDomain ? '(BigQuery FOCUS 1.0)' : '(BigQuery Editions)' },
+    { name: 'AI / ML', sub: isGeminiMigDomain ? '(Gemini 3.8 • 2M Cache)' : '(Vertex AI / Gemini)' },
+    { name: 'Resilience', sub: `(${avgTgt}/5.0 Multi-Zone HA)` }
   ];
 
   gcpCards.forEach((gc, idx) => {
@@ -1015,10 +1155,10 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
   const toBeSecurity = [
     { name: 'Zero Trust Security', sub: 'VPC Service Controls' },
     { name: 'IAM & Least Privilege', sub: 'Workload Identity' },
-    { name: 'Encryption (CMEK)', sub: 'At Rest & In Transit' },
-    { name: 'Audit Logging', sub: '& Real-Time SLOs' },
-    { name: 'Data Privacy & DLP', sub: 'PII Tokenization' },
-    { name: 'Regulatory Compliance', sub: 'Automated Guardrails' }
+    { name: 'Encryption (CMEK)', sub: isSecurityDomain ? 'HSM + Confidential VM' : 'At Rest & In Transit' },
+    { name: 'Audit & Observability', sub: isAgenticDomain ? 'Agent Trajectory Logs' : '& Real-Time SLOs' },
+    { name: 'Data Privacy & DLP', sub: 'PII / PHI Tokenization' },
+    { name: 'AI Safety & Compliance', sub: `Model Armor (${p4.futureScore}/5)` }
   ];
 
   toBeSecurity.forEach((sc, idx) => {
@@ -1032,9 +1172,15 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
         </mxCell>`;
   });
 
+  const stageSummaryText = isStage1
+    ? `Stage 1 Baseline Diagnostic (${avgCur}/5.0): Primary bottleneck in ${weakest.cleanName} (${weakest.currentScore}/5.0) across ${allDetectedTools.slice(0, 3).join(', ') || 'legacy stack'}.`
+    : isStage2
+    ? `Stage 2 Phased Coexistence (${avgCur} → ${avgMid}/5.0): Priority #1 bridge executes ${weakest.defaultBridgeTitle} with zero SLA disruption.`
+    : `100% of ${custName}'s identified pain points across all dimensions are remediated via ${targetPlatformBrand} (${avgTgt}/5.0).`;
+
   // Bottom Target Summary Strip inside To-Be Zone
   xml += `
-        <mxCell id="r_summary_strip" value="&lt;b style=&quot;font-size:7.8px;color:#065F46;&quot;&gt;[TARGET STATE GUARANTEE (${avgTgt}/5.0)]:&lt;/b&gt; &lt;span style=&quot;font-size:7.4px;color:#0F172A;&quot;&gt;100% of ${escapeXml(custName)}&apos;s identified pain points across all 6 dimensions are remediated via ${escapeXml(targetPlatformBrand)}.&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#86EFAC;strokeWidth=1.1;align=left;verticalAlign=middle;spacingLeft=8;" vertex="1" parent="1">
+        <mxCell id="r_summary_strip" value="&lt;b style=&quot;font-size:7.8px;color:#065F46;&quot;&gt;[${isStage1 ? 'STAGE 1 AS-IS DIAGNOSTIC' : isStage2 ? 'STAGE 2 BRIDGE MILESTONE' : `TARGET STATE GUARANTEE (${avgTgt}/5.0)`}]:&lt;/b&gt; &lt;span style=&quot;font-size:7.4px;color:#0F172A;&quot;&gt;${escapeXml(stageSummaryText)}&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#86EFAC;strokeWidth=1.1;align=left;verticalAlign=middle;spacingLeft=8;" vertex="1" parent="1">
           <mxGeometry x="892" y="688" width="678" height="50" as="geometry"/>
         </mxCell>
 
@@ -1042,16 +1188,22 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
         <mxCell id="b_enablers_box" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.3;" vertex="1" parent="1">
           <mxGeometry x="20" y="758" width="834" height="92" as="geometry"/>
         </mxCell>
-        <mxCell id="b_enablers_hdr" value="&lt;b style=&quot;font-size:8.5px;color:#0F172A;letter-spacing:0.4px;&quot;&gt;KEY TECHNOLOGY ENABLERS&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="b_enablers_hdr" value="&lt;b style=&quot;font-size:8.5px;color:#0F172A;letter-spacing:0.4px;&quot;&gt;KEY TECHNOLOGY ENABLERS (${escapeXml(custName.toUpperCase())})&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="30" y="760" width="814" height="18" as="geometry"/>
         </mxCell>
 `;
 
-  const enablers = [
-    'Google Cloud', 'Vertex AI', 'BigQuery', 'Cloud Storage',
-    'Dataflow', 'Pub/Sub', 'Kubernetes (GKE)', 'Cloud API Gateway',
-    'Looker', 'Dataplex', 'Gemini 3.8', 'MCP / A2A'
-  ];
+  const enablers = isFinOpsDomain
+    ? ['BigQuery FOCUS', 'GKE Autopilot', 'Vertex Caching', 'Looker FinOps', 'Cloud Billing', 'OpenCost', 'Slot Autoscaler', 'CUD Optimizer', 'BQML Alerts', 'Terraform', 'Apigee Quotas', 'Dataplex']
+    : isSecurityDomain
+    ? ['VPC-SC', 'Model Armor', 'Cloud DLP', 'Cloud KMS HSM', 'Chronicle SIEM', 'BeyondCorp IAP', 'Cloud Armor', 'Workload ID', 'Binary Auth', 'Confidential VM', 'Dataplex ABAC', 'SCC Enterprise']
+    : isAgenticDomain
+    ? ['Gemini 3.8', 'Vertex Agent', 'MCP Gateway', 'A2A Protocol', 'AlloyDB AI', 'Vector Search', 'Apigee Gateway', 'Cloud Pub/Sub', 'Model Armor', 'OpenTelemetry', 'BigQuery', 'Cloud Run']
+    : [
+        'Google Cloud', 'Vertex AI', 'BigQuery', 'BigLake Iceberg',
+        'Dataflow CDC', 'Cloud Pub/Sub', 'GKE Autopilot', 'Apigee AI',
+        'Looker BI', 'Dataplex', 'Gemini 3.8', 'Model Armor'
+      ];
 
   enablers.forEach((en, idx) => {
     const ex = 28 + idx * 68;
@@ -1065,17 +1217,17 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
         <mxCell id="b_outcomes_box" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.3;" vertex="1" parent="1">
           <mxGeometry x="882" y="758" width="698" height="92" as="geometry"/>
         </mxCell>
-        <mxCell id="b_outcomes_hdr" value="&lt;b style=&quot;font-size:8.5px;color:#0F172A;letter-spacing:0.4px;&quot;&gt;OUTCOMES&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="b_outcomes_hdr" value="&lt;b style=&quot;font-size:8.5px;color:#0F172A;letter-spacing:0.4px;&quot;&gt;QUANTIFIED TARGET OUTCOMES (${escapeXml(custName.toUpperCase())})&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="892" y="760" width="678" height="18" as="geometry"/>
         </mxCell>
 `;
 
   const outcomes = [
-    { title: 'AI & Product Innovation', sub: `+${overallDelta} Maturity Leap` },
-    { title: 'Operational Excellence', sub: `${avgCur} → ${avgTgt}/5.0 SLA` },
-    { title: 'Real-Time Insights', sub: 'Sub-Second BI & RAG' },
-    { title: 'Trusted by Partners', sub: 'Zero-Trust Compliance' },
-    { title: 'Sustainable FinOps Growth', sub: '35–48% TCO Savings' }
+    { title: truncateText(weakest.cleanName, 20), sub: `${weakest.currentScore} → ${weakest.futureScore}/5.0 (#1 Fix)` },
+    { title: 'Overall Maturity Leap', sub: `${avgCur} → ${avgTgt}/5.0 (+${overallDelta})` },
+    { title: 'Transition Midpoint', sub: `Bridge ${avgMid}/5.0 SLA` },
+    { title: 'Zero-Trust Governance', sub: `${p3.currentScore} → ${p3.futureScore}/5.0 Target` },
+    { title: 'Sustainable FinOps ROI', sub: dossier.allQuantMetrics?.[0] ? `Optimizes ${dossier.allQuantMetrics[0]}` : '35–48% TCO Savings' }
   ];
 
   outcomes.forEach((oc, idx) => {
@@ -1106,7 +1258,7 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
         <mxCell id="b_leg_flows" value="&lt;b style=&quot;font-size:8px;color:#2563EB;&quot;&gt;&#8594; Data / Process Flow&lt;/b&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b style=&quot;font-size:8px;color:#DC2626;&quot;&gt;&#8674; Manual / Batch / File Flow (As-Is Friction)&lt;/b&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b style=&quot;font-size:8px;color:#16A34A;&quot;&gt;&#8594; Real-Time / Automated Cloud Flow&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="535" y="864" width="760" height="24" as="geometry"/>
         </mxCell>
-        <mxCell id="b_leg_ver" value="&lt;span style=&quot;font-size:8px;color:#64748B;font-weight:600;&quot;&gt;Template 05 Master • v1.0 — ${escapeXml(custName)}&lt;/span&gt;" style="text;html=1;align=right;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="b_leg_ver" value="&lt;span style=&quot;font-size:8px;color:#64748B;font-weight:600;&quot;&gt;Template 05 Master (${stageFocus.toUpperCase()}) • v1.0 — ${escapeXml(custName)}&lt;/span&gt;" style="text;html=1;align=right;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="1310" y="864" width="256" height="24" as="geometry"/>
         </mxCell>
       </root>
@@ -1135,7 +1287,7 @@ function compileStage3FutureStateXml(dossier) {
  */
 function compileAll3GroundedDiagrams(framework = {}, metadata = {}, scores = {}) {
   const dossier = extractAssessmentTelemetry(framework, metadata, scores);
-  const { custName, industry, avgCur, avgMid, avgTgt, overallDelta, targetPlatformBrand, pillars, weakest, allDetectedTools } = dossier;
+  const { custName, industry, avgCur, avgMid, avgTgt, overallDelta, targetPlatformBrand, pillars, weakest } = dossier;
 
   const currentStateXml = compileStage1CurrentStateXml(dossier);
   const transitionStateXml = compileStage2TransitionBridgeXml(dossier);

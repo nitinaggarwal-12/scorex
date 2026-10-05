@@ -2895,7 +2895,103 @@ class CustomAssessmentRepository {
       STARTER_PRODUCTION_TEMPLATES.forEach(tpl => {
         typesFileStore.set(tpl.typeKey, tpl);
       });
-      console.log('✅ Synchronized 4 golden production assessment starter templates in registry.');
+
+      const defaultOptions = [
+        { value: 1, score: 1, label: 'Level 1 — Ad-Hoc / Siloed: Manual processes and uncoordinated local scripts' },
+        { value: 2, score: 2, label: 'Level 2 — Developing / Opportunistic: Initial pilot automation with partial visibility' },
+        { value: 3, score: 3, label: 'Level 3 — Defined / Standardized: Documented standards and centralized platform controls' },
+        { value: 4, score: 4, label: 'Level 4 — Managed / Quantified: Automated policy enforcement, SLA telemetry & FinOps' },
+        { value: 5, score: 5, label: 'Level 5 — Optimizing / Autonomous: Self-healing, zero-trust cloud-native & AI-driven' }
+      ];
+
+      const flagshipTemplate = {
+        id: 'tpl_enterprise_data_ai_maturity',
+        typeKey: 'enterprise_data_ai_maturity',
+        title: 'Enterprise Data & AI Maturity Assessment (6 Pillars)',
+        subtitle: 'Flagship Multi-Dimensional Data, MLOps, Governance & Cloud Platform Maturity',
+        description: 'Comprehensive 6-pillar maturity blueprint evaluating Platform Governance, Data Architecture, Analytics & BI, AI/MLOps, Zero-Trust Security, and Cloud Economics & FinOps.',
+        icon: 'FiLayers',
+        badge: 'Flagship 6-Pillar Blueprint',
+        color: '#2563eb',
+        status: 'production',
+        isPublished: true,
+        isPromoted: true,
+        createdBy: 'system',
+        createdAt: '2026-01-15T00:00:00.000Z',
+        updatedAt: new Date().toISOString(),
+        framework: {
+          id: 'fw_enterprise_data_ai_maturity',
+          typeKey: 'enterprise_data_ai_maturity',
+          title: 'Enterprise Data & AI Maturity Assessment (6 Pillars)',
+          subtitle: 'Flagship Multi-Dimensional Data, MLOps, Governance & Cloud Platform Maturity',
+          badge: 'Flagship 6-Pillar Blueprint',
+          dimensions: [
+            {
+              id: 'platform_governance',
+              name: '1. Platform Governance & Operations',
+              description: 'Multi-workspace architecture, IAM federation, lineage catalog & operational SLAs',
+              weight: 1,
+              questions: [
+                { id: 'pg_q1', text: 'Workspace & Environment Isolation Architecture', weight: 1, options: defaultOptions, technicalPainPoints: ['Shared Service Accounts', 'Manual Environment Promotion'], businessPainPoints: ['Audit Compliance Risk'] },
+                { id: 'pg_q2', text: 'Automated Lineage, Cataloging & Governance Controls', weight: 1, options: defaultOptions, technicalPainPoints: ['Siloed Metadata Catalogs', 'Opaque Table Lineage'], businessPainPoints: ['Slow Impact Analysis'] }
+              ]
+            },
+            {
+              id: 'data_architecture',
+              name: '2. Data Architecture & Management',
+              description: 'Streaming CDC ingestion, open lakehouse storage & automated data quality gates',
+              weight: 1,
+              questions: [
+                { id: 'da_q1', text: 'Medallion Lakehouse & Open Table Format Standardization', weight: 1, options: defaultOptions, technicalPainPoints: ['Proprietary Storage Lock-In', 'Duplicate Data Marts'], businessPainPoints: ['High Storage Overhead'] },
+                { id: 'da_q2', text: 'Real-Time Streaming Ingestion & Automated Quality Gates', weight: 1, options: defaultOptions, technicalPainPoints: ['Fragile Nightly Batch ETL', '24h Replication Lag'], businessPainPoints: ['Stale Executive KPIs'] }
+              ]
+            },
+            {
+              id: 'analytics_bi',
+              name: '3. Analytics & Business Intelligence',
+              description: 'Serverless SQL concurrency, governed semantic layer & self-service BI democratization',
+              weight: 1,
+              questions: [
+                { id: 'ab_q1', text: 'Serverless SQL Warehouse & Sub-Second BI Concurrency', weight: 1, options: defaultOptions, technicalPainPoints: ['BI Query Queuing', 'Static CSV Extracts'], businessPainPoints: ['Delayed Decision Velocity'] },
+                { id: 'ab_q2', text: 'Enterprise Semantic Layer & Certified Metric Governance', weight: 1, options: defaultOptions, technicalPainPoints: ['Conflicting Departmental KPIs', 'Spreadsheet Shadow BI'], businessPainPoints: ['Executive Metric Distrust'] }
+              ]
+            },
+            {
+              id: 'ai_mlops',
+              name: '4. AI, Machine Learning & MLOps',
+              description: 'Model registry, feature store, GenAI RAG pipelines & continuous evaluation',
+              weight: 1,
+              questions: [
+                { id: 'am_q1', text: 'Unified Model Registry, Feature Store & Automated Retraining', weight: 1, options: defaultOptions, technicalPainPoints: ['Isolated Notebook Models', 'Training-Serving Skew'], businessPainPoints: ['Long Model Time-to-Market'] },
+                { id: 'am_q2', text: 'Production GenAI RAG Grounding & LLM Evaluation Harness', weight: 1, options: defaultOptions, technicalPainPoints: ['Unverified Hallucinations', 'Manual Prompt Tuning'], businessPainPoints: ['GenAI Pilot Stagnation'] }
+              ]
+            },
+            {
+              id: 'security_compliance',
+              name: '5. Security, Compliance & Privacy',
+              description: 'Row/column masking, CMEK encryption, PII tokenization & audit logging',
+              weight: 1,
+              questions: [
+                { id: 'sc_q1', text: 'Fine-Grained ABAC, Row/Column Masking & PII Tokenization', weight: 1, options: defaultOptions, technicalPainPoints: ['Coarse Table-Level Grants', 'Unmasked PII in Logs'], businessPainPoints: ['GDPR / HIPAA Exposure'] },
+                { id: 'sc_q2', text: 'Zero-Trust Network Perimeter, CMEK & Continuous Audit Logs', weight: 1, options: defaultOptions, technicalPainPoints: ['Public Endpoint Exposure', 'Static API Keys'], businessPainPoints: ['Exfiltration Blast Radius'] }
+              ]
+            },
+            {
+              id: 'cost_finops',
+              name: '6. Cloud Economics & FinOps',
+              description: 'Unit economics telemetry, workload chargeback, commitments & idle autoscaling',
+              weight: 1,
+              questions: [
+                { id: 'cf_q1', text: 'Automated Chargeback Attribution & Unit Cost Telemetry', weight: 1, options: defaultOptions, technicalPainPoints: ['Untagged Shared Spend', 'Monthly Invoice Shocks'], businessPainPoints: ['Unattributed Cloud Margin Erosion'] },
+                { id: 'cf_q2', text: 'Serverless Autoscaling, Spot/Commitment Rate Optimization', weight: 1, options: defaultOptions, technicalPainPoints: ['Idle Over-Provisioned Clusters', 'Low CUD Coverage'], businessPainPoints: ['Wasted Compute Budget'] }
+              ]
+            }
+          ]
+        }
+      };
+      typesFileStore.set(flagshipTemplate.typeKey, flagshipTemplate);
+
+      console.log('✅ Synchronized 6 golden production assessment starter templates in registry.');
     } catch (e) {
       console.warn('Could not seed starter templates:', e.message);
     }
@@ -3210,7 +3306,8 @@ class CustomAssessmentRepository {
       'cloud_security_zero_trust_architecture': 'enterprise_ai_zero_trust_security',
       'ciso_enterprise_ai_security_shadow_gateway': 'enterprise_ai_zero_trust_security',
       'cloud-security': 'enterprise_ai_zero_trust_security',
-      'enterprise_data_ai_maturity': 'edw_lakehouse_to_bigquery_modernization'
+      'core_data_ai_maturity': 'enterprise_data_ai_maturity',
+      'flagship_data_ai_maturity': 'enterprise_data_ai_maturity'
     };
     const resolvedKey = LEGACY_TYPE_ALIASES[typeKey] || typeKey;
     const normalized = String(resolvedKey || '').replace(/_+/g, '_');
@@ -3370,9 +3467,16 @@ class CustomAssessmentRepository {
   }
 
   async getInstanceById(id) {
-    const resolvedId = id === 'bb883a5f-cb0f-4dc4-be5d-79e84d23ef49'
-      ? 'inst_openai_to_gemini_enterprise_migration_demo'
-      : id;
+    const SHORTHAND_INSTANCE_ALIASES = {
+      'bb883a5f-cb0f-4dc4-be5d-79e84d23ef49': 'inst_openai_to_gemini_enterprise_migration_demo',
+      'inst_finops_demo': 'inst_finops_cloud_cost_optimization_demo',
+      'inst_openai_gemini_demo': 'inst_openai_to_gemini_enterprise_migration_demo',
+      'inst_agentic_banking_demo': 'inst_agentic_ai_mesh_mcp_banking_readiness_demo',
+      'inst_edw_bigquery_demo': 'inst_edw_lakehouse_to_bigquery_modernization_demo',
+      'inst_security_demo': 'inst_enterprise_ai_zero_trust_security_demo',
+      'inst_enterprise_data_ai_demo': 'inst_enterprise_data_ai_maturity_demo'
+    };
+    const resolvedId = SHORTHAND_INSTANCE_ALIASES[id] || id;
     try {
       const query = 'SELECT * FROM dynamic_assessments WHERE id = $1';
       const result = await db.query(query, [resolvedId]);

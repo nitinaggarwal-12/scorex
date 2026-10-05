@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-const API_URL = (process.env.NODE_ENV === 'production' || (window.location.hostname === 'localhost' && window.location.port !== '3000'))
-  ? '/api/question-edits'
-  : 'http://localhost:5001/api/question-edits';
+const API_BASE = process.env.REACT_APP_API_URL ||
+  (window.location.hostname === 'localhost' && window.location.port === '3000' ? 'http://localhost:5001/api' : '/api');
+const API_URL = `${API_BASE}/question-edits`;
 
 /**
  * Get all question edits for an assessment

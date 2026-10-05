@@ -249,7 +249,7 @@ function insertBeforeFirstRoute(app, middleware) {
 function isPublicApiPath(req) {
   if (req.method === 'POST' && req.path === '/api/auth/login') return true;
   if (req.path.startsWith('/api/auth/sso')) return true;
-  if (req.path.startsWith('/api/instance-versions')) return true;
+  if (req.method === 'GET' && req.path.startsWith('/api/instance-versions')) return true;
   return req.method === 'GET' && req.path === '/api/health';
 }
 
@@ -329,7 +329,7 @@ function parseConfiguredBuildTargets() {
 
 function getBuildTargets(req) {
   const current = getBuildInfo(req);
-  const productionUrl = safeHttpUrl(process.env.SCOREX_MAIN_URL) || 'https://scorex.up.railway.app';
+  const productionUrl = safeHttpUrl(process.env.SCOREX_MAIN_URL) || 'https://scorex-248990048888.cr.gclb.goog';
   const targets = [
     { label: 'Production', branch: 'main', url: productionUrl },
     ...parseConfiguredBuildTargets(),
@@ -346,6 +346,8 @@ function getBuildTargets(req) {
 }
 
 function installSecurity(app) {
+  if (!app || app.__scorexSecurityInstalled) return;
+  app.__scorexSecurityInstalled = true;
   wrapRepositoryOwnership();
   removePermissiveCors(app);
 

@@ -10,9 +10,16 @@ client/node_modules
 .vercel
 .railway
 server/data/assessments.json
+server/data/feedback.json
+data/users.json
+data/sessions.json
+data/assessments.json
+data/assignments.json
+data/notifications.json
+data/instance_object_versions.json
 scratch
 db-sync
-data/*.backup
+data/*.backup*
 data/snapshots
 dev.db
 .agents

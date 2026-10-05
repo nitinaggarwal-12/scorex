@@ -24,12 +24,16 @@ const {
   generateGeminiAssessmentReport
 } = require('../services/geCustomerMultiSourceIngestor');
 
-const DOSSIERS_FILE = path.join(__dirname, '../../data/ge_value_realization_dossiers.json');
+function getDossiersFile() {
+  const dataDir = process.env.DATA_DIR || path.join(__dirname, '../../data');
+  return path.join(dataDir, 'ge_value_realization_dossiers.json');
+}
 
 function loadServerDossiers() {
+  const dossiersFile = getDossiersFile();
   try {
-    if (fs.existsSync(DOSSIERS_FILE)) {
-      const parsed = JSON.parse(fs.readFileSync(DOSSIERS_FILE, 'utf8'));
+    if (fs.existsSync(dossiersFile)) {
+      const parsed = JSON.parse(fs.readFileSync(dossiersFile, 'utf8'));
       if (parsed && Object.keys(parsed).length > 0) {
         const primaryEntry = parsed['ge_vr_acc-1001-aerovg'] || parsed['inst_aerovanguard_ge_value_realization'];
         const hasCandidateOptions = Array.isArray(primaryEntry?.questionResponses?.C01?.candidateOptions);
@@ -63,9 +67,10 @@ function loadServerDossiers() {
 
 function saveServerDossiers(dossiers) {
   try {
-    const dir = path.dirname(DOSSIERS_FILE);
+    const dossiersFile = getDossiersFile();
+    const dir = path.dirname(dossiersFile);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(DOSSIERS_FILE, JSON.stringify(dossiers, null, 2), 'utf8');
+    fs.writeFileSync(dossiersFile, JSON.stringify(dossiers, null, 2), 'utf8');
   } catch (e) {
     console.warn('Could not write ge_value_realization_dossiers.json:', e.message);
   }
@@ -215,30 +220,45 @@ router.get('/dossiers', (req, res) => {
 router.get('/dossiers/:id', (req, res) => {
   try {
     const dossiers = loadServerDossiers();
-    const id = req.params.id;
-    let dossier = dossiers[id];
+    const id = String(req.params.id || '').trim();
+    const normId = id.toLowerCase();
+    let dossier = dossiers[id] || dossiers[normId];
 
-    if (!dossier && (id === 'aerovanguard_default' || id === 'inst_aerovanguard_ge_value_realization')) {
+    if (
+      !dossier &&
+      (normId === 'aerovanguard_default' ||
+        normId === 'inst_aerovanguard_ge_value_realization' ||
+        normId === 'acc-1001-aerovg' ||
+        normId === 'ge_vr_acc-1001-aerovg')
+    ) {
       dossier = dossiers['ge_vr_acc-1001-aerovg'] || ingestCustomerMultiSourceDossier({
         sfdcAccountId: 'ACC-1001-AEROVG',
         timePreset: 'ytd_2026'
       });
       dossiers[dossier.id] = dossier;
       saveServerDossiers(dossiers);
-    } else if (!dossier && (id === 'inst_bionova_ge_value_realization' || id === 'bionova_ge_vr_2026_q2' || id === 'bionova')) {
+    } else if (
+      !dossier &&
+      (normId === 'inst_bionova_ge_value_realization' ||
+        normId === 'bionova_ge_vr_2026_q2' ||
+        normId === 'bionova' ||
+        normId === 'acc-1002-bionova' ||
+        normId === 'ge_vr_acc-1002-bionova')
+    ) {
       dossier = dossiers['ge_vr_acc-1002-bionova'] || ingestCustomerMultiSourceDossier({
         sfdcAccountId: 'ACC-1002-BIONOVA',
         timePreset: 'ytd_2026'
       });
       dossiers[dossier.id] = dossier;
       saveServerDossiers(dossiers);
-    } else if (!dossier && id === 'clean_intake') {
+    } else if (!dossier && normId === 'clean_intake') {
       dossier = createInitialGeDossier('clean');
       dossier.id = 'clean_intake';
       dossier.evaluation = evaluateGeValueRealization(dossier);
-    } else if (!dossier && id.startsWith('ge_vr_')) {
-      const extractedSfdcId = id.replace(/^ge_vr_/i, '');
-      dossier = ingestCustomerMultiSourceDossier({
+    } else if (!dossier && (normId.startsWith('ge_vr_') || normId.startsWith('acc-'))) {
+      const extractedSfdcId = id.replace(/^ge_vr_/i, '').toUpperCase();
+      const canonicalKey = `ge_vr_${extractedSfdcId.toLowerCase()}`;
+      dossier = dossiers[canonicalKey] || ingestCustomerMultiSourceDossier({
         sfdcAccountId: extractedSfdcId,
         timePreset: 'ytd_2026'
       });

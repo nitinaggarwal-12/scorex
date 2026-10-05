@@ -2,12 +2,71 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const path = require('path');
+const { requireAuth } = require('../middleware/auth');
 
 const defaultDataDir = fs.existsSync(path.join(__dirname, '..', '..', 'data'))
   ? path.join(__dirname, '..', '..', 'data')
   : path.join(__dirname, '..', 'data');
 const DATA_DIR = process.env.DATA_DIR || defaultDataDir;
 const VERSIONS_FILE = path.join(DATA_DIR, 'instance_object_versions.json');
+
+/**
+ * Strips dangerous HTML tags, event handler attributes, and executable URI schemes
+ * to prevent Stored XSS when persisting or rendering object HTML overrides.
+ */
+function sanitizeHtmlFragment(rawHtml) {
+  if (!rawHtml || typeof rawHtml !== 'string') return '';
+  return rawHtml
+    .replace(/<\s*(script|iframe|object|embed|applet|meta|link|base|form)[^>]*>[\s\S]*?<\s*\/\s*\1\s*>/gi, '')
+    .replace(/<\s*(script|iframe|object|embed|applet|meta|link|base|form)[^>]*\/?>/gi, '')
+    .replace(/\s+on[a-z0-9_-]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+    .replace(/\b(href|src|xlink:href|action|formaction)\s*=\s*(["']?)\s*(?:javascript|vbscript|data\s*:\s*text\/html)[^"'\s>]*\2/gi, '$1="#"');
+}
+
+function sanitizeVersionState(state, fallbackState = {}) {
+  const safeEdited = {};
+  const rawEdited = (state && typeof state.editedObjects === 'object' && state.editedObjects) || fallbackState.editedObjects || {};
+  for (const [objId, payload] of Object.entries(rawEdited)) {
+    const cleanId = String(objId || '').trim().slice(0, 180);
+    if (!cleanId || !payload || typeof payload !== 'object') continue;
+    safeEdited[cleanId] = {
+      ...payload,
+      html: sanitizeHtmlFragment(payload.html || '')
+    };
+  }
+
+  const rawAdded = Array.isArray(state?.addedObjects) ? state.addedObjects : (fallbackState.addedObjects || []);
+  const safeAdded = rawAdded
+    .filter((item) => item && typeof item === 'object')
+    .map((item) => ({
+      ...item,
+      id: String(item.id || '').trim().slice(0, 180),
+      targetObjectId: String(item.targetObjectId || '').trim().slice(0, 180),
+      objectType: String(item.objectType || 'Card').trim().slice(0, 80),
+      html: sanitizeHtmlFragment(item.html || '')
+    }));
+
+  const rawCloned = Array.isArray(state?.clonedObjects) ? state.clonedObjects : (fallbackState.clonedObjects || []);
+  const safeCloned = rawCloned
+    .filter((item) => item && typeof item === 'object')
+    .map((item) => ({
+      ...item,
+      id: String(item.id || '').trim().slice(0, 180),
+      sourceObjectId: String(item.sourceObjectId || '').trim().slice(0, 180),
+      objectType: String(item.objectType || 'Card').trim().slice(0, 80),
+      html: sanitizeHtmlFragment(item.html || '')
+    }));
+
+  const rawDeleted = Array.isArray(state?.deletedObjectIds) ? state.deletedObjectIds : (fallbackState.deletedObjectIds || []);
+  const safeDeleted = rawDeleted.map((id) => String(id || '').trim().slice(0, 180)).filter(Boolean);
+
+  return {
+    editedObjects: safeEdited,
+    addedObjects: safeAdded,
+    clonedObjects: safeCloned,
+    deletedObjectIds: safeDeleted
+  };
+}
 
 function loadVersionStore() {
   try {
@@ -95,7 +154,7 @@ router.get('/:instanceKey', (req, res) => {
  * Commits an object-level edit, save, add, clone, or delete operation as a NEW version
  * on the target instance only, leaving the v1.0 Master Template untouched.
  */
-router.post('/:instanceKey/commit', (req, res) => {
+router.post('/:instanceKey/commit', requireAuth, (req, res) => {
   try {
     const store = loadVersionStore();
     const record = ensureInstanceRecord(store, req.params.instanceKey);
@@ -120,13 +179,8 @@ router.post('/:instanceKey/commit', (req, res) => {
     };
 
     const nextState = state && typeof state === 'object'
-      ? {
-          editedObjects: state.editedObjects || prevState.editedObjects || {},
-          addedObjects: Array.isArray(state.addedObjects) ? state.addedObjects : (prevState.addedObjects || []),
-          clonedObjects: Array.isArray(state.clonedObjects) ? state.clonedObjects : (prevState.clonedObjects || []),
-          deletedObjectIds: Array.isArray(state.deletedObjectIds) ? state.deletedObjectIds : (prevState.deletedObjectIds || [])
-        }
-      : { ...prevState };
+      ? sanitizeVersionState(state, prevState)
+      : sanitizeVersionState(prevState);
 
     const actionVerbMap = {
       edit: 'Edited',
@@ -180,7 +234,7 @@ router.post('/:instanceKey/commit', (req, res) => {
  * POST /api/instance-versions/:instanceKey/select-version
  * Switches the active version for this instance (e.g. back to v1.0 Master Baseline or to v1.2).
  */
-router.post('/:instanceKey/select-version', (req, res) => {
+router.post('/:instanceKey/select-version', requireAuth, (req, res) => {
   try {
     const store = loadVersionStore();
     const record = ensureInstanceRecord(store, req.params.instanceKey);

@@ -38,7 +38,7 @@ async function sendAssignmentEmail(consumer, author, assessmentId, assessmentNam
     return false;
   }
   
-  const assessmentUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/assessment/${assessmentId}/platform_governance`;
+  const assessmentUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/assessments/run/instance/${assessmentId}`;
   
   const isReminder = customMessage && customMessage.includes('reminder');
   

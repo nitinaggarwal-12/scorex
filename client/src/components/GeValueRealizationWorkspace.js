@@ -274,10 +274,10 @@ const GeValueRealizationWorkspace = () => {
 
   useEffect(() => {
     let mounted = true;
+    const accountParam = searchParams.get('account') || searchParams.get('sfdcId') || searchParams.get('customer') || '';
+    const isBioNovaParam = /bionova|1002/i.test(accountParam) || /bionova|1002/i.test(routeDossierId || '');
     const loadInitial = async () => {
       try {
-        const accountParam = searchParams.get('account') || searchParams.get('sfdcId') || searchParams.get('customer') || '';
-        const isBioNovaParam = /bionova|1002/i.test(accountParam) || /bionova|1002/i.test(routeDossierId || '');
         const targetId = routeDossierId || (isBioNovaParam ? 'inst_bionova_ge_value_realization' : 'aerovanguard_default');
         const res = await axios.get(`/api/ge-value-realization/dossiers/${targetId}`);
         if (mounted && res.data?.success && res.data?.dossier) {
@@ -289,7 +289,10 @@ const GeValueRealizationWorkspace = () => {
           }
         }
       } catch (err) {
-        // Fallback to local default
+        if (mounted) {
+          setDossier(createInitialGeDossier(isBioNovaParam ? 'bionova_draft' : 'aerovanguard_default'));
+          setSelectedSfdcId(isBioNovaParam ? 'ACC-1002-BIONOVA' : 'ACC-1001-AEROVG');
+        }
       }
     };
     loadInitial();

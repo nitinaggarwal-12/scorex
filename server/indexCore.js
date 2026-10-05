@@ -48,7 +48,7 @@ app.get(['/health', '/healthz', '/api/health'], (req, res) => {
     success: true,
     message: 'ScoreX Enterprise API is live and healthy',
     timestamp: new Date().toISOString(),
-    version: '3.5.0'
+    version: '3.7.0'
   });
 });
 
@@ -2885,12 +2885,6 @@ app.post('/api/assessment/:id/audit-event', async (req, res) => {
   }
 });
 
-// Serve scratch screenshots and artifacts directly
-const scratchPath = path.join(__dirname, '../scratch');
-if (fs.existsSync(scratchPath)) {
-  app.use('/scratch', express.static(scratchPath));
-}
-
 // Serve React app for all non-API routes
 const buildPath = path.join(__dirname, '../client/build');
 
@@ -2929,8 +2923,12 @@ if (fs.existsSync(buildPath)) {
   });
 }
 
-// Start server (only if not in serverless environment)
-if (process.env.VERCEL !== '1') {
+// Install global security hardening BEFORE binding the server socket
+const { installSecurity } = require('./security/hardening');
+installSecurity(app);
+
+// Start server (only if not in serverless environment or test harness)
+if (process.env.VERCEL !== '1' && process.env.SCOREX_DISABLE_LISTEN !== '1') {
   const db = require('./db/connection');
   
   // Start listening immediately on 0.0.0.0 to guarantee instant port binding

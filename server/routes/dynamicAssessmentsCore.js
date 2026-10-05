@@ -2337,7 +2337,9 @@ router.post('/regenerate-workflow-assets', async (req, res) => {
   try {
     const fs = require('fs');
     const path = require('path');
-    const framesBaseDir = path.join(__dirname, '../../client/public/workflows/frames');
+    const publicFramesDir = path.join(__dirname, '../../client/public/workflows/frames');
+    const buildFramesDir = path.join(__dirname, '../../client/build/workflows/frames');
+    const framesBaseDir = fs.existsSync(publicFramesDir) ? publicFramesDir : buildFramesDir;
     const personas = ['01_cloud_architect_workflow', '02_vp_engineering_author_workflow', '03_ciso_secops_workflow', '04_csuite_finops_workflow'];
     
     const manifests = {};

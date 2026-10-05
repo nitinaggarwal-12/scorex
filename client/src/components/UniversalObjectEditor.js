@@ -29,11 +29,13 @@ function resolveActiveInstanceKey(pathname, search) {
   const cleanPath = String(pathname || '/').replace(/\/+$/, '') || '/';
   const params = new URLSearchParams(search || '');
 
-  // Check if GE Value Realization customer selector is present in DOM
+  // Check if GE Value Realization route has a specific dossier ID or customer selector in DOM
   if (cleanPath.startsWith('/ge-value-realization') || cleanPath.startsWith('/value-realization')) {
-    const selectEl = document.querySelector('select');
-    const selectedVal = selectEl?.value || params.get('customer') || 'acc-1001-aerovg';
-    return `ge_vr_${String(selectedVal).toLowerCase().replace(/[^a-z0-9_-]/g, '_')}`;
+    const geRouteMatch = cleanPath.match(/\/(?:ge-value-realization|value-realization)\/([^/]+)/);
+    const selectEl = document.querySelector('select[data-customer-selector="true"]') || document.querySelector('select');
+    const selectedVal = geRouteMatch?.[1] || params.get('customer') || params.get('account') || selectEl?.value || 'acc-1001-aerovg';
+    const normalized = String(selectedVal).toLowerCase().replace(/^ge_vr_/, '').replace(/[^a-z0-9_-]/g, '_');
+    return `ge_vr_${normalized}`;
   }
 
   // Extract :id from /assessments/report/:id or /assessments/run/instance/:id
@@ -226,6 +228,15 @@ export default function UniversalObjectEditor() {
     // 1. Remove any previously injected added/cloned DOM nodes from earlier version renders
     document.querySelectorAll('[data-scorex-injected="true"]').forEach((node) => node.remove());
 
+    const sanitizeClientHtmlFragment = (rawHtml) => {
+      if (!rawHtml || typeof rawHtml !== 'string') return '';
+      return rawHtml
+        .replace(/<\s*(script|iframe|object|embed|applet|meta|link|base|form)[^>]*>[\s\S]*?<\s*\/\s*\1\s*>/gi, '')
+        .replace(/<\s*(script|iframe|object|embed|applet|meta|link|base|form)[^>]*\/?>/gi, '')
+        .replace(/\s+on[a-z0-9_-]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+        .replace(/\b(href|src|xlink:href|action|formaction)\s*=\s*(["']?)\s*(?:javascript|vbscript|data\s*:\s*text\/html)[^"'\s>]*\2/gi, '$1="#"');
+    };
+
     // 2. Restore all known baseline elements first so switching to v1.0 Master cleanly resets everything
     baselineHtmlMapRef.current.forEach((baselineHtml, objId) => {
       const el = document.querySelector(`[data-scorex-obj-id="${CSS.escape(objId)}"]`);
@@ -245,7 +256,7 @@ export default function UniversalObjectEditor() {
         if (!baselineHtmlMapRef.current.has(objId)) {
           baselineHtmlMapRef.current.set(objId, el.innerHTML);
         }
-        el.innerHTML = payload.html;
+        el.innerHTML = sanitizeClientHtmlFragment(payload.html);
         el.setAttribute('data-scorex-customized', 'edited');
       }
     });
@@ -261,7 +272,7 @@ export default function UniversalObjectEditor() {
         wrapper.setAttribute('data-scorex-obj-type', item.objectType || 'Card');
         wrapper.setAttribute('data-scorex-injected', 'true');
         wrapper.setAttribute('data-scorex-customized', 'added');
-        wrapper.innerHTML = item.html;
+        wrapper.innerHTML = sanitizeClientHtmlFragment(item.html);
         anchor.insertAdjacentElement('afterend', wrapper);
       }
     });
@@ -277,7 +288,7 @@ export default function UniversalObjectEditor() {
         cloneEl.setAttribute('data-scorex-obj-type', item.objectType || 'Card');
         cloneEl.setAttribute('data-scorex-injected', 'true');
         cloneEl.setAttribute('data-scorex-customized', 'cloned');
-        cloneEl.innerHTML = item.html;
+        cloneEl.innerHTML = sanitizeClientHtmlFragment(item.html);
         source.insertAdjacentElement('afterend', cloneEl);
       }
     });
@@ -413,7 +424,10 @@ export default function UniversalObjectEditor() {
       try {
         const res = await fetch(`/api/instance-versions/${encodeURIComponent(instanceKey)}/commit`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Session-Id': localStorage.getItem('sessionId') || ''
+          },
           body: JSON.stringify({
             actionType,
             objectId,
@@ -802,7 +816,10 @@ export default function UniversalObjectEditor() {
     try {
       await fetch(`/api/instance-versions/${encodeURIComponent(instanceKey)}/select-version`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Session-Id': localStorage.getItem('sessionId') || ''
+        },
         body: JSON.stringify({ versionId: verId })
       });
     } catch (_) {
