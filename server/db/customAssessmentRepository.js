@@ -3473,8 +3473,11 @@ class CustomAssessmentRepository {
       'inst_openai_gemini_demo': 'inst_openai_to_gemini_enterprise_migration_demo',
       'inst_agentic_banking_demo': 'inst_agentic_ai_mesh_mcp_banking_readiness_demo',
       'inst_edw_bigquery_demo': 'inst_edw_lakehouse_to_bigquery_modernization_demo',
+      'inst_edw_lakehouse_demo': 'inst_edw_lakehouse_to_bigquery_modernization_demo',
       'inst_security_demo': 'inst_enterprise_ai_zero_trust_security_demo',
-      'inst_enterprise_data_ai_demo': 'inst_enterprise_data_ai_maturity_demo'
+      'inst_zero_trust_demo': 'inst_enterprise_ai_zero_trust_security_demo',
+      'inst_enterprise_data_ai_demo': 'inst_enterprise_data_ai_maturity_demo',
+      'inst_enterprise_maturity_demo': 'inst_enterprise_data_ai_maturity_demo'
     };
     const resolvedId = SHORTHAND_INSTANCE_ALIASES[id] || id;
     try {

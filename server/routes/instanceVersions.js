@@ -23,6 +23,15 @@ function sanitizeHtmlFragment(rawHtml) {
     .replace(/\b(href|src|xlink:href|action|formaction)\s*=\s*(["']?)\s*(?:javascript|vbscript|data\s*:\s*text\/html)[^"'\s>]*\2/gi, '$1="#"');
 }
 
+function sanitizeObjectStrings(obj) {
+  if (!obj || typeof obj !== 'object') return {};
+  const out = {};
+  for (const [k, v] of Object.entries(obj)) {
+    out[k] = typeof v === 'string' ? sanitizeHtmlFragment(v) : v;
+  }
+  return out;
+}
+
 function sanitizeVersionState(state, fallbackState = {}) {
   const safeEdited = {};
   const rawEdited = (state && typeof state.editedObjects === 'object' && state.editedObjects) || fallbackState.editedObjects || {};
@@ -30,8 +39,8 @@ function sanitizeVersionState(state, fallbackState = {}) {
     const cleanId = String(objId || '').trim().slice(0, 180);
     if (!cleanId || !payload || typeof payload !== 'object') continue;
     safeEdited[cleanId] = {
-      ...payload,
-      html: sanitizeHtmlFragment(payload.html || '')
+      ...sanitizeObjectStrings(payload),
+      html: sanitizeHtmlFragment(payload.html || payload.htmlContent || '')
     };
   }
 
@@ -39,22 +48,22 @@ function sanitizeVersionState(state, fallbackState = {}) {
   const safeAdded = rawAdded
     .filter((item) => item && typeof item === 'object')
     .map((item) => ({
-      ...item,
+      ...sanitizeObjectStrings(item),
       id: String(item.id || '').trim().slice(0, 180),
       targetObjectId: String(item.targetObjectId || '').trim().slice(0, 180),
       objectType: String(item.objectType || 'Card').trim().slice(0, 80),
-      html: sanitizeHtmlFragment(item.html || '')
+      html: sanitizeHtmlFragment(item.html || item.htmlContent || '')
     }));
 
   const rawCloned = Array.isArray(state?.clonedObjects) ? state.clonedObjects : (fallbackState.clonedObjects || []);
   const safeCloned = rawCloned
     .filter((item) => item && typeof item === 'object')
     .map((item) => ({
-      ...item,
+      ...sanitizeObjectStrings(item),
       id: String(item.id || '').trim().slice(0, 180),
       sourceObjectId: String(item.sourceObjectId || '').trim().slice(0, 180),
       objectType: String(item.objectType || 'Card').trim().slice(0, 80),
-      html: sanitizeHtmlFragment(item.html || '')
+      html: sanitizeHtmlFragment(item.html || item.htmlContent || '')
     }));
 
   const rawDeleted = Array.isArray(state?.deletedObjectIds) ? state.deletedObjectIds : (fallbackState.deletedObjectIds || []);
