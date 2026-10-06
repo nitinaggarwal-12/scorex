@@ -70,6 +70,12 @@ if (rawInput.trim()) {
         console.error(`❌ [pre_tool_guard] BLOCKED: Attempted to write deprecated model or confidential string into ${targetFile}.`);
         process.exit(2);
       }
+      if (targetFile.endsWith('dynamicAssessmentDiagramCompiler.js') || targetFile.endsWith('template05DiagramCompiler.js')) {
+        if (/\.split\(\/\[\\s-\]\+\/\)/.test(codeContent) || /\[TARGET STATE GUARANTEE \(/.test(codeContent)) {
+          console.error(`❌ [pre_tool_guard] BLOCKED: Intra-word hyphen splitting (.split(/[\\s-]+/)) or legacy [TARGET STATE GUARANTEE] banner detected in ${baseName}.`);
+          process.exit(2);
+        }
+      }
     }
   } catch (_) {
     // Non-JSON stdin or standalone invocation

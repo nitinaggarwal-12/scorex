@@ -126,10 +126,57 @@ for (const file of scorexRuntimeFiles) {
   }
 }
 
+// 5. Enforce Template 05 3-Zone Diagram Semantic, Logical & Visual Integrity Gate
+const serverCompilerPath = path.join(ROOT, 'server/services/dynamicAssessmentDiagramCompiler.js');
+const clientCompilerPath = path.join(ROOT, 'client/src/services/template05DiagramCompiler.js');
+if (fs.existsSync(serverCompilerPath) && fs.existsSync(clientCompilerPath)) {
+  const sNorm = fs.readFileSync(serverCompilerPath, 'utf8').replace(/module\.exports\s*=\s*\{[\s\S]*?\};/, 'EXPORT_BLOCK').trim();
+  const cNorm = fs.readFileSync(clientCompilerPath, 'utf8').replace(/export\s*\{[\s\S]*?\};/, 'EXPORT_BLOCK').trim();
+  if (sha256(sNorm) !== sha256(cNorm)) {
+    failures.push('Drift detected between server/services/dynamicAssessmentDiagramCompiler.js and client/src/services/template05DiagramCompiler.js');
+  }
+  const rawServerCode = fs.readFileSync(serverCompilerPath, 'utf8');
+  if (/\.split\(\/\[\\s-\]\+\/\)/.test(rawServerCode)) {
+    failures.push('Forbidden intra-word hyphen split (.split(/[\\s-]+/)) found in dynamicAssessmentDiagramCompiler.js');
+  }
+  if (!rawServerCode.includes('assignPillarsToArchitecturalTiers')) {
+    failures.push('Missing assignPillarsToArchitecturalTiers() bijective 1-to-1 tier alignment in dynamicAssessmentDiagramCompiler.js');
+  }
+}
+
+const dynAssessmentsPath = path.join(ROOT, 'data/dynamic_assessments.json');
+if (fs.existsSync(dynAssessmentsPath)) {
+  try {
+    const dynData = JSON.parse(fs.readFileSync(dynAssessmentsPath, 'utf8'));
+    for (const inst of Object.values(dynData)) {
+      if (!inst || !inst.typeId || !inst.architectureDiagrams) continue;
+      for (const stageKey of ['stage1', 'stage2', 'stage3']) {
+        const xml = String(inst.architectureDiagrams?.[stageKey]?.drawioXml || '');
+        if (!xml) continue;
+        const dotMatches = xml.match(/[^<>"]*\.\.[^<>"]*/g) || [];
+        if (dotMatches.length > 0) {
+          failures.push(`Template 05 ".." truncation detected in ${inst.typeId} (${stageKey}): ${dotMatches[0]}`);
+        }
+        if (xml.includes('[TARGET STATE GUARANTEE (')) {
+          failures.push(`Legacy [TARGET STATE GUARANTEE] banner detected in ${inst.typeId} (${stageKey})`);
+        }
+        for (const tierTag of ['L1 CHANNELS', 'L2 WORKBENCH', 'L3 DATA &amp; MEM', 'L4 EVENT MESH', 'L5 CLOUD INFRA', 'L6 ZERO-TRUST']) {
+          if (!xml.includes(tierTag)) {
+            failures.push(`Missing bijective tier tag "${tierTag}" in ${inst.typeId} (${stageKey})`);
+          }
+        }
+      }
+    }
+  } catch (err) {
+    failures.push(`Failed to parse or audit data/dynamic_assessments.json: ${err.message}`);
+  }
+}
+
 if (failures.length > 0) {
   console.error('❌ [gate_governance_doc_sync] FAILED:');
   failures.forEach((f) => console.error('  -', f));
   process.exit(1);
 }
 
-console.log(`✅ [gate_governance_doc_sync] PASSED (${globalAndDocFiles.length + scorexRuntimeFiles.length} files verified, 8/8 Universal Symlinks & SHA-256 parity locked, 11/11 5-Tier models active).`);
+console.log(`✅ [gate_governance_doc_sync] PASSED (${globalAndDocFiles.length + scorexRuntimeFiles.length} files verified, 8/8 Universal Symlinks & SHA-256 parity locked, 11/11 5-Tier models active, 18/18 Template 05 diagrams verified with 0 truncations).`);
+

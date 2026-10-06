@@ -26,8 +26,8 @@ const PILLAR_DEFS = [
       'proactive_monitoring', 'cost_tracking', 'optimization_practices'
     ],
     defaultNeutralStack: 'Multi-Env (Dev/Stg/Prod) • Shared Compute Clusters • RBAC/IAM Policies',
-    defaultBridgeTitle: 'Unified Metadata Catalog, ABAC & Elastic Workload Isolation Bridge',
-    defaultTargetTitle: 'Zero-Trust Unified Catalog, Serverless Compute & Automated FinOps'
+    defaultBridgeTitle: 'Dataplex Catalog & ABAC Isolation',
+    defaultTargetTitle: 'Zero-Trust Catalog & Auto-FinOps'
   },
   {
     key: 'data_engineering',
@@ -42,8 +42,8 @@ const PILLAR_DEFS = [
       'performance_optimization', 'scalability_demand', 'data_discovery', 'cross_domain_analytics'
     ],
     defaultNeutralStack: 'Bronze/Silver/Gold Medallion Tables • Scheduled Batch & Incremental ETL',
-    defaultBridgeTitle: 'Declarative CDC Streaming & Automated Schema/DQ Expectations Bridge',
-    defaultTargetTitle: 'Sub-Second Auto-CDC Ingestion, Self-Healing DLT & Open Iceberg/Delta'
+    defaultBridgeTitle: 'Datastream CDC & Auto-DQ Pipeline',
+    defaultTargetTitle: 'Sub-Sec Auto-CDC & BigLake Iceberg'
   },
   {
     key: 'analytics_bi',
@@ -57,8 +57,8 @@ const PILLAR_DEFS = [
       'reporting_governance', 'user_empowerment', 'governed_autonomy', 'external_sharing'
     ],
     defaultNeutralStack: 'Certified BI Datasets • Departmental Dashboards • Scheduled Extracts',
-    defaultBridgeTitle: 'Centralized Semantic Metric Store & Serverless SQL Warehouse Bridge',
-    defaultTargetTitle: 'Governed Semantic KPI Layer, Sub-Second BI & Conversational NLQ'
+    defaultBridgeTitle: 'Looker Semantic Layer & BI Engine',
+    defaultTargetTitle: 'Governed KPIs & Conversational BI'
   },
   {
     key: 'machine_learning',
@@ -72,8 +72,8 @@ const PILLAR_DEFS = [
       'data_prep', 'ml_ownership', 'ml_compliance', 'production_delivery', 'ml_scalability'
     ],
     defaultNeutralStack: 'Versioned Model Registry • Notebook Feature Prep • Manual Promotion',
-    defaultBridgeTitle: 'Centralized Online/Offline Feature Store & Automated MLOps CI/CD Bridge',
-    defaultTargetTitle: 'Unified Feature Store, Automated Drift Retraining & Real-Time Serving'
+    defaultBridgeTitle: 'Vertex Feature Store & MLOps CI/CD',
+    defaultTargetTitle: 'Unified Feature Store & Live Serving'
   },
   {
     key: 'generative_ai',
@@ -88,8 +88,8 @@ const PILLAR_DEFS = [
       'genai_monitoring', 'ethical_guardrails', 'genai_transparency'
     ],
     defaultNeutralStack: 'Initial LLM Pilots • Ad-Hoc Prompt Templates • Isolated Vector Indexes',
-    defaultBridgeTitle: 'Enterprise AI Gateway, Governed Vector RAG & Guardrail Policy Bridge',
-    defaultTargetTitle: 'Multi-Agent Cognitive Mesh, ACL-Synchronized RAG & Automated Guardrails'
+    defaultBridgeTitle: 'Apigee AI Gateway & Vector RAG Hub',
+    defaultTargetTitle: 'Multi-Agent Mesh & Model Armor'
   },
   {
     key: 'operational_excellence',
@@ -104,8 +104,8 @@ const PILLAR_DEFS = [
       'continuous_improvement'
     ],
     defaultNeutralStack: 'Baseline SLA Monitoring • Departmental Teams • Periodic Value Reviews',
-    defaultBridgeTitle: 'Federated Data & AI CoE Charter, Reusable Asset Hub & FinOps Telemetry',
-    defaultTargetTitle: 'Enterprise CoE Marketplace, Role-Based AI Academy & Automated ROI Attribution'
+    defaultBridgeTitle: 'Federated AI CoE & FinOps Telemetry',
+    defaultTargetTitle: 'CoE Marketplace & Automated ROI'
   }
 ];
 
@@ -197,16 +197,130 @@ function humanizePainCode(code) {
 function truncateText(str, maxLen = 38) {
   if (!str) return '';
   const s = String(str).replace(/\s+/g, ' ').trim();
-  return s.length > maxLen ? s.slice(0, maxLen - 2) + '..' : s;
+  if (s.length <= maxLen) return s;
+  const sliced = s.slice(0, maxLen - 2).trim();
+  const lastSpace = sliced.lastIndexOf(' ');
+  if (lastSpace >= Math.floor(maxLen * 0.6)) {
+    return sliced.slice(0, lastSpace).replace(/[,;:/—–-]+$/, '') + '..';
+  }
+  return sliced + '..';
 }
 
 function concisePillarLabel(cleanName, maxLen = 16) {
   if (!cleanName) return 'Pillar';
-  const stripped = String(cleanName)
-    .replace(/^\d+\.\s*/, '')
-    .split(/\s*(?:&|\/|,|\band\b|-)\s*/i)[0]
+  const raw = String(cleanName).replace(/^\d+\.\s*/, '').trim();
+  const lower = raw.toLowerCase();
+
+  // Canonical semantic compressions so hyphenated & multi-word domain titles never truncate to single words
+  const knownMappings = [
+    [/shadow ai discovery/i, 'Shadow AI Guard'],
+    [/real-time data loss prevention|data loss prevention/i, 'Real-Time DLP'],
+    [/identity governance|zero standing privilege/i, 'Zero-Trust IAM'],
+    [/model armor|prompt injection defense/i, 'Model Armor'],
+    [/continuous siem\/soar|siem\/soar ingestion/i, 'SIEM & Audit'],
+    [/multi-agent topology/i, 'Multi-Agent Mesh'],
+    [/model context protocol/i, 'MCP Gateway'],
+    [/state persistence,\s*memory/i, 'Agentic Memory'],
+    [/telemetry,\s*observability/i, 'Agent Telemetry'],
+    [/agent identity,\s*entitlements/i, 'Agent IAM & GRC'],
+    [/prompt\s*&\s*api architecture/i, 'Prompt & API'],
+    [/long-context windows/i, '2M Long-Context'],
+    [/token economics/i, 'Token Economics'],
+    [/enterprise security,\s*cmek/i, 'CMEK & Safety'],
+    [/multi-agent mesh/i, 'Agent Tooling'],
+    [/cost visibility/i, 'Cost Visibility'],
+    [/anomaly detection/i, 'K8s Rightsizing'],
+    [/commitment economics/i, 'CUD Rate Optim'],
+    [/storage lifecycle/i, 'Storage Tiering'],
+    [/unit economics/i, 'Unit Economics'],
+    [/open storage/i, 'Open Lakehouse'],
+    [/sql analytics engine/i, 'BQ Slot FinOps'],
+    [/data governance,\s*lineage/i, 'Dataplex Lineage'],
+    [/modern elt,\s*real-time cdc/i, 'Real-Time CDC'],
+    [/bi semantic layer/i, 'Looker Semantic'],
+    [/data mesh coe/i, 'Data Mesh CoE'],
+    [/platform governance\s*&\s*operations|platform\s*&\s*governance/i, 'Platform & Gov'],
+    [/data architecture\s*&\s*management|data engineering/i, 'Data Lakehouse'],
+    [/analytics\s*&\s*business intelligence|analytics\s*&\s*bi/i, 'Analytics & BI'],
+    [/ai,\s*machine learning\s*&\s*mlops|data science\s*&\s*ml/i, 'MLOps & GenAI'],
+    [/security,\s*compliance\s*&\s*privacy/i, 'Zero-Trust Sec'],
+    [/cloud economics\s*&\s*finops/i, 'Cloud FinOps'],
+    [/generative ai/i, 'Generative AI'],
+    [/enablement\s*&\s*finops coe|enablement\s*&\s*coe/i, 'Enablement CoE']
+  ];
+
+  for (const [regex, label] of knownMappings) {
+    if (regex.test(lower)) {
+      return label.length <= maxLen ? label : truncateText(label, maxLen);
+    }
+  }
+
+  // Never split on intra-word hyphens (e.g. Real-Time, Multi-Agent, Long-Context, Zero-Trust)
+  const stripped = raw
+    .replace(/\s*\([^)]*\)/g, '')
+    .split(/\s*(?:&|\/|,|\band\b|\bvs\.?\b)\s*|\s+[-–—]\s+/i)[0]
     .trim();
-  return truncateText(stripped || cleanName, maxLen);
+  return truncateText(stripped || raw, maxLen);
+}
+
+function concisePainPoint(rawPain, fallbackLabel = 'Siloed Baseline', maxLen = 19) {
+  if (!rawPain) return truncateText(fallbackLabel, maxLen);
+  const s = String(rawPain).replace(/\s+/g, ' ').trim();
+  const lower = s.toLowerCase();
+
+  const painMappings = [
+    [/42%\s*untagged|untagged cloud/i, 'Untagged Spend'],
+    [/untagged shared/i, 'Untagged AI Spend'],
+    [/zero prompt cach|reprocessing/i, 'No Context Caching'],
+    [/idle dev\/test|idle.*cluster|static threshold/i, 'Idle K8s & Alerts'],
+    [/on-demand token|volatile credit|fragmented commit/i, 'Low CUD Coverage'],
+    [/uncompacted cold|duplicate copies|millions of/i, 'Cold Storage Sprawl'],
+    [/manual showback|manual cost/i, 'Manual Showback'],
+    [/finops policy/i, 'Manual Cost Gate'],
+    [/pii\/phi in prompts|unredacted rag|sensitive customer data|sensitive data/i, 'Unmasked PII in RAG'],
+    [/unmanaged browser|shadow ai|public openai/i, 'Shadow AI Egress'],
+    [/model traffic|public internet/i, 'Public API Egress'],
+    [/static.*service account|static.*json.*key/i, 'Static IAM Keys'],
+    [/shared service/i, 'Shared Service IAM'],
+    [/standing administrative|permanent admin/i, 'Standing Admin IAM'],
+    [/model armor|indirect prompt injection|jailbreak/i, 'No Prompt Shield'],
+    [/default encryption|without customer-managed|cmek/i, 'No CMEK Key Control'],
+    [/ephemeral console|centralized logging|missing audit|fragmented.*audit|fragmented.*siem|fragmented/i, 'Fragmented SIEM'],
+    [/single-agent|brittle.*prompt chain|technical architecture/i, 'Rigid Agent Chains'],
+    [/hardcoded rest|tool wrapper|brittle custom/i, 'Brittle Tool Loops'],
+    [/validation\s*&|mcp schema/i, 'No MCP Schema Gate'],
+    [/stateless|context lost|episodic memory|deployment consist/i, 'Stateless Agent Ctx'],
+    [/trajectory|agent tracing|observability|high operational/i, 'No Agent Tracing'],
+    [/human-in-the-loop|hitl/i, 'Missing HITL Gate'],
+    [/end-to-end|over-privileged|entitlement/i, 'Over-Scoped Agent'],
+    [/512-token|chunked rag|strict 8k-32k|8k-32k/i, '8k–32k Context Cap'],
+    [/siloed metadata|tribal knowledge|data locked in/i, 'No Column Lineage'],
+    [/openai sdk|vendor lock|vendor-specific/i, 'Locked Legacy SDKs'],
+    [/proprietary sql|teradata|snowflake sql|stored procedure/i, 'Proprietary SQL'],
+    [/proprietary.*format|proprietary storage|proprietary/i, 'Closed Formats'],
+    [/multi-hour batch|batch etl|24 to 48 hours|14-hour nightly/i, '24h Batch ETL Lag'],
+    [/full table scans|slot contention/i, 'Full-Table Scans'],
+    [/schema drift|data quality/i, 'Silent Schema Drift'],
+    [/cross-cloud.*egress|egress fees/i, 'High Egress Costs'],
+    [/isolated notebook/i, 'Notebook Silos'],
+    [/coarse table-level|coarse acl/i, 'Coarse Table ACLs'],
+    [/bi query queuing/i, 'BI Query Queuing'],
+    [/siloed bi|manual sql/i, 'Manual SQL Cutover']
+  ];
+
+  for (const [regex, compressed] of painMappings) {
+    if (regex.test(lower)) {
+      return compressed.length <= maxLen ? compressed : truncateText(compressed, maxLen);
+    }
+  }
+
+  const stripped = s
+    .replace(/^(Lack of|Absence of|Missing|Inability to|Proliferation of|Reliance on|Heavy reliance on|Zero|No|High risk of|Difficulty|Complex|Unmanaged)\s+(automated\s+|centralized\s+|real-time\s+|unified\s+|standardized\s+|enterprise\s+)?/i, '')
+    .replace(/\b(across|requiring|without|causing|leading to|preventing)\b.*$/i, '')
+    .trim();
+
+  const capitalized = stripped ? stripped.charAt(0).toUpperCase() + stripped.slice(1) : s;
+  return truncateText(capitalized, maxLen);
 }
 
 function extractQuantitativeFootprint(commentsList = []) {
@@ -322,99 +436,177 @@ function extractAssessmentTelemetry(framework = {}, metadata = {}, scores = {}) 
 
   const resolveDomainBridgeAndTarget = (titleStr, fallbackDef) => {
     const lower = String(titleStr || '').toLowerCase();
-    // 1. Check specific security, governance, DLP, IAM, SIEM, and compliance domains first (before generic 'data')
-    if (/security|zero-trust|zero standing|governance|lineage|iam|pam|compliance|dlp|tokenization|armor|siem|soar|shadow ai|entitlements/.test(lower)) {
-      if (/siem|soar|audit/.test(lower)) {
-        return {
-          bridge: 'Chronicle SecOps & SLSA L3 Binary Auth Bridge',
-          target: 'Autonomous SOAR & Immutable WORM Audit'
-        };
-      }
-      if (/dlp|tokenization|pii|phi/.test(lower)) {
-        return {
-          bridge: 'Cloud DLP Surrogate Tokenization Bridge',
-          target: 'Zero-Copy PII/PHI Masking & HSM CMEK'
-        };
-      }
-      if (/armor|injection|runtime safety/.test(lower)) {
-        return {
-          bridge: 'Model Armor Inline Prompt/Response Shield',
-          target: 'Zero-Trust AI TRiSM & Guardrail Enforcement'
-        };
-      }
-      if (/lineage|data quality/.test(lower)) {
-        return {
-          bridge: 'Dataplex Universal Catalog & Auto-Lineage',
-          target: 'Governed ABAC Policy Tags & DQ SLAs'
-        };
-      }
+    // 1. Specific Security, DLP, IAM, Model Armor & SIEM pillars
+    if (/siem|soar|audit/.test(lower)) {
       return {
-        bridge: 'Identity Federation & VPC-SC Perimeter Bridge',
-        target: 'VPC-SC + Cloud KMS CMEK & Zero-Standing IAM'
+        bridge: 'Chronicle SecOps & SLSA L3 Auth',
+        target: 'Autonomous SOAR & WORM Audit'
       };
     }
-    // 2. FinOps & Cloud Economics sub-domains
+    if (/dlp|tokenization|pii|phi/.test(lower)) {
+      return {
+        bridge: 'Cloud DLP Surrogate Tokenization',
+        target: 'Zero-Copy PII Masking & HSM CMEK'
+      };
+    }
+    if (/armor|injection|runtime safety/.test(lower)) {
+      return {
+        bridge: 'Model Armor Inline Prompt Shield',
+        target: 'Zero-Trust AI TRiSM & Guardrails'
+      };
+    }
+    if (/shadow ai|perimeter gateway/.test(lower)) {
+      return {
+        bridge: 'Apigee AI Gateway & VPC-SC Bridge',
+        target: 'Zero-Egress VPC-SC & AI Firewall'
+      };
+    }
+    if (/identity governance|zero standing|workload federation|iam\/pam/.test(lower)) {
+      return {
+        bridge: 'Workload Identity & JIT PAM Bridge',
+        target: 'Zero-Standing IAM & OIDC Tokens'
+      };
+    }
+    if (/agent identity|entitlements/.test(lower)) {
+      return {
+        bridge: 'Scoped OAuth & HITL Policy Gate',
+        target: 'Least-Privilege Agent IAM & Audit'
+      };
+    }
+    if (/cmek|enterprise security/.test(lower)) {
+      return {
+        bridge: 'Cloud KMS CMEK & VPC-SC Perimeter',
+        target: 'HSM CMEK, VPC-SC & Model Armor'
+      };
+    }
+    if (/lineage|data quality/.test(lower)) {
+      return {
+        bridge: 'Dataplex Catalog & Auto-Lineage',
+        target: 'Governed ABAC Tags & DQ SLAs'
+      };
+    }
+    // 2. FinOps, Token Economics & Cloud Economics pillars
+    if (/token economics/.test(lower)) {
+      return {
+        bridge: '2M Context Cache & Prov. Throughput',
+        target: '75% Token Savings & Tier Routing'
+      };
+    }
     if (/commitment|rate optim|reserved|cud/.test(lower)) {
       return {
-        bridge: 'Flexible CUD Portfolio & Slot Autoscaling',
-        target: '85%+ CUD Coverage & Automated Rate Arbitrage'
+        bridge: 'Flexible CUDs & Slot Autoscaling',
+        target: '85%+ CUDs & Auto Rate Arbitrage'
       };
     }
-    if (/unit economics|showback|chargeback|finops|roi/.test(lower)) {
+    if (/unit economics|showback|chargeback|finops culture/.test(lower)) {
       return {
-        bridge: 'Departmental Showback & Anomaly Alerts',
-        target: 'Looker FinOps Portal & Unit Telemetry'
+        bridge: 'Departmental Showback & Cost Alerts',
+        target: 'Looker FinOps Hub & Unit Telemetry'
       };
     }
-    if (/cost|visibility|allocation|taxonomy|billing|token economics/.test(lower)) {
+    if (/cost visibility|allocation|taxonomy|billing/.test(lower)) {
       return {
-        bridge: 'FOCUS Billing Export & Tag Enforcement',
-        target: 'BigQuery FinOps Hub & 99.4% Tagging'
+        bridge: 'FOCUS Billing Export & Tag Policy',
+        target: 'BigQuery FinOps Hub & 99.4% Tags'
       };
     }
-    if (/compute|kubernetes|gke|right-?sizing|autoscal|anomaly/.test(lower)) {
+    if (/anomaly detection|rightsizing|compute|kubernetes|gke/.test(lower)) {
       return {
-        bridge: 'GKE Rightsizing & Idle Auto-Suspend Bridge',
-        target: 'GKE Autopilot & Autonomous Anomaly Guard'
+        bridge: 'GKE Rightsizing & Idle Auto-Suspend',
+        target: 'GKE Autopilot & Anomaly Guard'
       };
     }
-    // 3. Agentic Mesh, MCP, Context & Observability sub-domains
+    // 3. Agentic Mesh, MCP, Context & Observability pillars
+    if (/multi-agent topology|dynamic orchestration|multi-agent mesh|autonomous tooling/.test(lower)) {
+      return {
+        bridge: 'Vertex Agent Engine & A2A Router',
+        target: 'Hierarchical Agent Mesh & Tools'
+      };
+    }
     if (/mcp|tool abstraction|protocol/.test(lower)) {
       return {
-        bridge: 'Standardized MCP Gateway & Apigee Tool Proxy',
-        target: 'Governed MCP Tool Mesh & Zero-Trust A2A'
+        bridge: 'Standardized MCP & Apigee Proxy',
+        target: 'Governed MCP Mesh & Zero-Trust A2A'
       };
     }
     if (/state persistence|memory|long-context|chunked rag/.test(lower)) {
       return {
-        bridge: 'Gemini 2M Long-Context & Episodic Memory Bridge',
-        target: 'AlloyDB/Spanner Agent Memory & Vertex Vector RAG'
+        bridge: 'Gemini 2M Context & Episodic Memory',
+        target: 'AlloyDB Memory & Vertex Vector RAG'
       };
     }
     if (/telemetry|observability|continuous evaluation/.test(lower)) {
       return {
-        bridge: 'OpenTelemetry Agent Tracing & Eval Gate Bridge',
-        target: 'Vertex AI GenAI Eval & Drift Auto-Remediation'
+        bridge: 'OpenTelemetry Trace & Eval CI/CD',
+        target: 'Vertex GenAI Eval & Drift Guard'
       };
     }
-    // 4. Lakehouse, Storage, SQL Analytics & ELT sub-domains
+    // 4. Lakehouse, Storage, SQL Analytics & ELT pillars
     if (/sql analytics|reservation/.test(lower)) {
       return {
-        bridge: 'BigQuery Editions Slot Autoscaling Bridge',
+        bridge: 'BigQuery Editions Slot Autoscaler',
         target: 'BigQuery Vectorized SQL & BI Engine'
       };
     }
-    if (/lakehouse|storage|tiering|edw|warehouse|elt|cdc|federation|data/.test(lower)) {
+    if (/open storage|multi-cloud federation/.test(lower)) {
       return {
-        bridge: 'Dual-Read CDC & Partition Lifecycle Bridge',
-        target: 'BigLake Iceberg & GCS Autoclass'
+        bridge: 'BigLake Iceberg & BQ Omni Bridge',
+        target: 'Open Lakehouse & Zero-Egress SQL'
       };
     }
-    // 5. General AI / LLM / Prompt / Agent sub-domains
-    if (/prompt|token|gpu|ai|genai|llm|inference|agent|model/.test(lower)) {
+    if (/modern elt|real-time cdc|in-database ai/.test(lower)) {
       return {
-        bridge: 'AI Gateway & Prompt Caching Bridge',
-        target: 'Vertex AI Gemini 3.8 & Model Armor'
+        bridge: 'Datastream CDC & Dataform SQL ELT',
+        target: 'Sub-Sec Streaming CDC & In-DB BQML'
+      };
+    }
+    if (/storage lifecycle|lakehouse tiering|tiering/.test(lower)) {
+      return {
+        bridge: 'BigLake Partition & Autoclass Tier',
+        target: 'BigLake Iceberg & Coldline Tiering'
+      };
+    }
+    // 5. Enterprise Data & AI Maturity 6-Pillar & General Prompt/Platform pillars
+    if (/platform governance.*operations|platform\s*&\s*governance/.test(lower)) {
+      return {
+        bridge: 'Dataplex Catalog & ABAC Isolation',
+        target: 'Zero-Trust Catalog & Auto-FinOps'
+      };
+    }
+    if (/data architecture.*management|data engineering/.test(lower)) {
+      return {
+        bridge: 'Datastream CDC & Auto-DQ Pipeline',
+        target: 'Sub-Sec Auto-CDC & BigLake Iceberg'
+      };
+    }
+    if (/analytics.*business intelligence|analytics\s*&\s*bi|bi semantic/.test(lower)) {
+      return {
+        bridge: 'Looker Semantic Layer & BI Engine',
+        target: 'Governed KPIs & Conversational BI'
+      };
+    }
+    if (/ai,\s*machine learning|mlops|data science/.test(lower)) {
+      return {
+        bridge: 'Vertex Feature Store & MLOps CI/CD',
+        target: 'Unified Feature Store & Live Serving'
+      };
+    }
+    if (/security,\s*compliance.*privacy/.test(lower)) {
+      return {
+        bridge: 'VPC-SC Perimeter, DLP & KMS CMEK',
+        target: 'Zero-Trust VPC-SC & Model Armor'
+      };
+    }
+    if (/cloud economics.*finops/.test(lower)) {
+      return {
+        bridge: 'FOCUS Billing & CUD Rate Optimizer',
+        target: 'Automated Showback & Token Cache'
+      };
+    }
+    if (/prompt.*api|architecture parity/.test(lower)) {
+      return {
+        bridge: 'Apigee OpenAI-to-Gemini Proxy',
+        target: 'Vertex Gemini 3.8 Native SDK'
       };
     }
     return {
@@ -444,10 +636,11 @@ function extractAssessmentTelemetry(framework = {}, metadata = {}, scores = {}) 
     : PILLAR_DEFS;
 
   const enrichedPillars = dynamicPillarDefs.map((pDef, idx) => {
-    const matchedDim = rawDims.find(d => {
+    const exactIdDim = rawDims.find(d => d.id === pDef.key);
+    const matchedDim = exactIdDim || rawDims[idx] || rawDims.find(d => {
       const idOrName = `${d.id || ''} ${d.name || ''} ${d.category || ''}`.toLowerCase();
-      return pDef.key === d.id || pDef.matchSubstr.some(s => s && idOrName.includes(s));
-    }) || rawDims[idx] || {};
+      return pDef.matchSubstr.some(s => s && idOrName.includes(s));
+    }) || {};
 
     const matchedArea = frameworkAreas.find(a => {
       const aName = `${a.id || ''} ${a.name || ''}`.toLowerCase();
@@ -456,11 +649,19 @@ function extractAssessmentTelemetry(framework = {}, metadata = {}, scores = {}) 
 
     const areaQuestionIds = [];
     const questionLookup = {};
+    const metaTechPains = [];
+    const metaBizPains = [];
     if (Array.isArray(pDef.questionsMeta)) {
       pDef.questionsMeta.forEach(q => {
         if (q && q.id) {
           areaQuestionIds.push(q.id);
           questionLookup[q.id] = q;
+        }
+        if (Array.isArray(q?.technicalPainPoints)) {
+          metaTechPains.push(...q.technicalPainPoints.map(humanizePainCode).filter(Boolean));
+        }
+        if (Array.isArray(q?.businessPainPoints)) {
+          metaBizPains.push(...q.businessPainPoints.map(humanizePainCode).filter(Boolean));
         }
       });
     }
@@ -469,6 +670,9 @@ function extractAssessmentTelemetry(framework = {}, metadata = {}, scores = {}) 
         if (q && q.id) {
           areaQuestionIds.push(q.id);
           questionLookup[q.id] = q;
+        }
+        if (Array.isArray(q?.technicalPainPoints)) {
+          metaTechPains.push(...q.technicalPainPoints.map(humanizePainCode).filter(Boolean));
         }
       });
     }
@@ -480,6 +684,9 @@ function extractAssessmentTelemetry(framework = {}, metadata = {}, scores = {}) 
             if (q && q.id) {
               areaQuestionIds.push(q.id);
               questionLookup[q.id] = q;
+            }
+            if (Array.isArray(q?.technicalPainPoints)) {
+              metaTechPains.push(...q.technicalPainPoints.map(humanizePainCode).filter(Boolean));
             }
           });
         }
@@ -550,9 +757,6 @@ function extractAssessmentTelemetry(framework = {}, metadata = {}, scores = {}) 
     if (pillarComments.length === 0 && globalNotesList.length > 0) {
       pillarComments.push(globalNotesList[idx % globalNotesList.length]);
     }
-    if (explicitTechPains.length === 0 && globalPainPointsPool.length > 0) {
-      explicitTechPains.push(globalPainPointsPool[idx % globalPainPointsPool.length]);
-    }
 
     const cur = curScoresFromResponses.length > 0
       ? Number((curScoresFromResponses.reduce((a, b) => a + b, 0) / curScoresFromResponses.length).toFixed(1))
@@ -563,11 +767,22 @@ function extractAssessmentTelemetry(framework = {}, metadata = {}, scores = {}) 
     const gap = Number(Math.max(0, fut - cur).toFixed(1));
     const mid = Number(((cur + fut) / 2).toFixed(1));
 
-    const combinedTechPains = explicitTechPains.length >= 1
-      ? explicitTechPains
-      : [...explicitTechPains, ...questionDerivedPains];
-    const uniqueTechPains = [...new Set(combinedTechPains.map(humanizePainCode).filter(Boolean))].slice(0, 4);
-    const uniqueBizPains = [...new Set(bizPains.map(humanizePainCode).filter(Boolean))].slice(0, 3);
+    const dimBadList = Array.isArray(matchedDim.theBad) && matchedDim.theBad.length > 0
+      ? matchedDim.theBad.map(b => humanizePainCode(b.split('—')[0].trim())).filter(Boolean)
+      : [];
+
+    // Prioritize pillar-specific pain points over global modulo fallback so badges never repeat across pillars
+    const combinedTechPains = [
+      ...explicitTechPains,
+      ...dimBadList,
+      ...metaTechPains,
+      ...questionDerivedPains
+    ];
+    if (combinedTechPains.length === 0 && globalPainPointsPool.length > idx) {
+      combinedTechPains.push(globalPainPointsPool[idx]);
+    }
+    const uniqueTechPains = [...new Set(combinedTechPains.map(humanizePainCode).filter(Boolean))].slice(0, 6);
+    const uniqueBizPains = [...new Set([...bizPains, ...metaBizPains].map(humanizePainCode).filter(Boolean))].slice(0, 3);
     const detectedTools = extractDetectedTools([...pillarComments, allCommentsText]);
     const quantFootprint = extractQuantitativeFootprint([...pillarComments, allCommentsText]);
     const noteSnippet = extractAuthenticNoteSnippet(pillarComments);
@@ -578,8 +793,8 @@ function extractAssessmentTelemetry(framework = {}, metadata = {}, scores = {}) 
         ? derivedGoodFromQuestions.slice(0, 2)
         : [`Baseline ${cur.toFixed(1)}/5.0 established`]);
 
-    const theBadList = Array.isArray(matchedDim.theBad) && matchedDim.theBad.length > 0
-      ? matchedDim.theBad.map(b => humanizePainCode(b.split('—')[0].trim())).filter(Boolean).slice(0, 3)
+    const theBadList = dimBadList.length > 0
+      ? dimBadList.slice(0, 3)
       : uniqueTechPains.slice(0, 3);
 
     const hasExplicitVendorTools = detectedTools.length > 0;
@@ -600,7 +815,7 @@ function extractAssessmentTelemetry(framework = {}, metadata = {}, scores = {}) 
       stackSummary,
       theGood: theGoodList,
       theBad: theBadList,
-      techPainCodes: uniqueTechPains.length > 0 ? uniqueTechPains : [`${concisePillarLabel(pDef.cleanName, 16)} Silos (${cur.toFixed(1)}/5)`],
+      techPainCodes: uniqueTechPains.length > 0 ? uniqueTechPains : [`${concisePillarLabel(pDef.cleanName, 14)} Silos`],
       bizPainCodes: uniqueBizPains.length > 0 ? uniqueBizPains : ['High Operational Cost', 'Delayed Delivery'],
       noteSnippet
     };
@@ -621,35 +836,83 @@ function extractAssessmentTelemetry(framework = {}, metadata = {}, scores = {}) 
   const secondWeakest = evalByGapDesc[1] || weakest;
   const strongest = [...evaluatedPillars].sort((a, b) => b.currentScore - a.currentScore)[0] || weakest;
 
+  const domainContextSignal = `${fwTypeKey} ${useCase}`.toLowerCase();
+  const coeSlotMeta = /openai|gemini_enterprise_migration|openai_to_gemini/.test(domainContextSignal)
+    ? { shortTitle: '6. GEMINI CoE & EVAL AUTOMATION', cleanName: 'Enablement & FinOps CoE', bridge: 'Prompt Translation & Eval CI/CD Gate', target: 'Gemini CoE & Parity Certification', pain: 'Manual Eval Sheets' }
+    : /finops|cost/.test(domainContextSignal)
+    ? { shortTitle: '6. ENABLEMENT & FINOPS CoE', cleanName: 'Enablement & FinOps CoE', bridge: 'Federated FinOps CoE & Budget Policy', target: 'Self-Service FinOps & Showback SLAs', pain: 'Manual Showback' }
+    : /zero_trust|security|dlp|siem/.test(domainContextSignal)
+    ? { shortTitle: '6. AI TRiSM & SAFETY CoE', cleanName: 'Enablement & FinOps CoE', bridge: 'AI TRiSM Board & Red-Team CI/CD', target: 'Continuous AI Safety Certification', pain: 'Manual GRC Audits' }
+    : /agentic|mcp/.test(domainContextSignal)
+    ? { shortTitle: '6. AGENTIC CoE & SKILL HUB', cleanName: 'Enablement & FinOps CoE', bridge: 'Agentic CoE & Reusable Skill Hub', target: 'Agent Marketplace & HITL Governance', pain: 'Siloed Agent Pilots' }
+    : /edw|lakehouse|bigquery/.test(domainContextSignal)
+    ? { shortTitle: '6. DATA MESH CoE & SQL CUTOVER', cleanName: 'Data Mesh CoE & SQL Cutover', bridge: 'Automated SQL Translation & Data CoE', target: 'Zero-Downtime EDW Offload & Mesh', pain: 'Manual SQL Cutover' }
+    : { shortTitle: PILLAR_DEFS[5].shortTitle, cleanName: PILLAR_DEFS[5].cleanName, bridge: PILLAR_DEFS[5].defaultBridgeTitle, target: PILLAR_DEFS[5].defaultTargetTitle, pain: 'Cross-Team Silos' };
+
   // Ensure we always have 6 pillar slots for Template 05 visual symmetry without skewing evaluated averages
   while (enrichedPillars.length < 6) {
-    const fb = PILLAR_DEFS[enrichedPillars.length];
-    const domainTitles = resolveDomainBridgeAndTarget(`${fwTypeKey} ${useCase} ${fb.cleanName}`, fb);
-    const derivedCur = Number(avgCur);
-    const derivedFut = Number(avgTgt);
-    const derivedMid = Number(avgMid);
+    const slotIdx = enrichedPillars.length;
+    const fb = PILLAR_DEFS[slotIdx];
+    const isLakehouseSlot5 = slotIdx === 4 && /edw|lakehouse|bigquery/.test(domainContextSignal);
+    const slotMeta = isLakehouseSlot5
+      ? {
+          shortTitle: '5. BI SEMANTIC LAYER & LOOKER CONSOLIDATION',
+          cleanName: 'BI Semantic Layer & Looker Consolidation',
+          bridge: 'Looker Semantic Layer & BI Engine',
+          target: 'Governed KPIs & Conversational BI',
+          pain: 'BI Query Queuing'
+        }
+      : coeSlotMeta;
+
+    const extraDim = rawDims[slotIdx];
+    const hasExtraDimScore = isLakehouseSlot5 && extraDim && Number.isFinite(Number(extraDim.currentScore ?? extraDim.score));
+    const derivedCur = hasExtraDimScore ? Number(Number(extraDim.currentScore ?? extraDim.score).toFixed(1)) : Number(avgCur);
+    const derivedFut = hasExtraDimScore ? Number(Number(extraDim.futureScore ?? extraDim.targetScore ?? avgTgt).toFixed(1)) : Number(avgTgt);
+    const derivedMid = Number(((derivedCur + derivedFut) / 2).toFixed(1));
     const derivedGap = Number(Math.max(0, derivedFut - derivedCur).toFixed(1));
     enrichedPillars.push({
       ...fb,
-      defaultBridgeTitle: domainTitles.bridge,
-      defaultTargetTitle: domainTitles.target,
+      shortTitle: slotMeta.shortTitle || fb.shortTitle,
+      cleanName: slotMeta.cleanName || fb.cleanName,
+      defaultBridgeTitle: slotMeta.bridge,
+      defaultTargetTitle: slotMeta.target,
       currentScore: derivedCur,
       midScore: derivedMid,
       futureScore: derivedFut,
       gap: derivedGap,
-      isSyntheticSymmetrySlot: true,
+      isSyntheticSymmetrySlot: !hasExtraDimScore,
       levelName: derivedCur >= 3.5 ? 'Established' : derivedCur >= 2.5 ? 'Developing' : 'Initial / Siloed',
       detectedTools: [],
       quantFootprint: [],
       hasExplicitVendorTools: false,
       stackSummary: fb.defaultNeutralStack,
-      theGood: [`Composite ${avgCur}/5.0 Baseline`],
-      theBad: [weakest?.techPainCodes?.[1] || weakest?.techPainCodes?.[0] || 'Cross-Team Silos'],
-      techPainCodes: [weakest?.techPainCodes?.[1] || `${concisePillarLabel(fb.cleanName, 16)} Drift (${avgCur}/5)`],
+      theGood: [`Composite ${derivedCur.toFixed(1)}/5.0 Baseline`],
+      theBad: [slotMeta.pain],
+      techPainCodes: [slotMeta.pain],
       bizPainCodes: ['Cross-Pillar Governance Overhead'],
       noteSnippet: weakest?.noteSnippet || 'Evaluated via framework composite baseline.'
     });
   }
+
+  // Guarantee 100% unique primary pain labels across all 6 pillars so top pain badges never repeat
+  const usedPainLabels = new Set();
+  enrichedPillars.forEach((p) => {
+    const fallbackPain = `${concisePillarLabel(p.cleanName, 12)} Gap`;
+    let chosenPain = null;
+    for (const rawCandidate of p.techPainCodes) {
+      const candidate = concisePainPoint(rawCandidate, fallbackPain, 19);
+      if (!usedPainLabels.has(candidate.toLowerCase())) {
+        chosenPain = candidate;
+        break;
+      }
+    }
+    if (!chosenPain) {
+      chosenPain = concisePainPoint(fallbackPain, fallbackPain, 19);
+    }
+    usedPainLabels.add(chosenPain.toLowerCase());
+    p.primaryPainLabel = chosenPain;
+    p.techPainCodes = [chosenPain, ...p.techPainCodes.filter(x => x !== chosenPain)];
+  });
 
   const byGapDesc = [...enrichedPillars].sort((a, b) => {
     if (Boolean(a.isSyntheticSymmetrySlot) !== Boolean(b.isSyntheticSymmetrySlot)) {
@@ -763,6 +1026,61 @@ function getEnablerVisualMeta(name = '') {
 }
 
 /**
+ * Bijectively assigns the 6 evaluated pillars onto the 6 horizontal architectural tiers
+ * (0: Channels/CoE, 1: Apps/Workbench, 2: Data/Storage/Memory, 3: Integration/Gateway, 4: Infra/Compute, 5: Security/Governance)
+ * so that every horizontal bridge arrow (Row i -> Bridge 0(i+1) -> Tier i+1) is 100% logically coherent.
+ */
+function assignPillarsToArchitecturalTiers(pillars = []) {
+  const tierRules = [
+    { tierIdx: 0, tag: 'L1 CHANNELS', regex: /unit economics|cloud economics|cost_finops|culture|enablement|coe|portal|channel|experience|adoption/i },
+    { tierIdx: 1, tag: 'L2 WORKBENCH', regex: /prompt.*api|multi-agent topology|model armor|sql analytics|analytics.*bi|analytics.*business|bi semantic|workbench|application/i },
+    { tierIdx: 2, tag: 'L3 DATA & MEM', regex: /storage lifecycle|tiering|data loss prevention|dlp|state persistence|memory|long-context|open storage|lakehouse|data engineering|data architecture/i },
+    { tierIdx: 3, tag: 'L4 EVENT MESH', regex: /cost visibility|shadow ai|perimeter gateway|model context protocol|mcp|multi-agent mesh|autonomous tooling|modern elt|real-time cdc|generative ai|platform governance.*operations/i },
+    { tierIdx: 4, tag: 'L5 CLOUD INFRA', regex: /anomaly detection|rightsizing|siem|soar|telemetry|observability|token economics|data science|machine learning|mlops|ai_mlops|platform/i },
+    { tierIdx: 5, tag: 'L6 ZERO-TRUST', regex: /commitment economics|rate optim|identity governance|zero standing|agent identity|entitlements|enterprise security|security,\s*compliance|security_compliance|cmek|data governance|lineage|platform.*governance/i }
+  ];
+
+  const assigned = new Array(6).fill(null);
+  const usedPillarIndices = new Set();
+
+  // Pass 1: Match each tier to its highest-affinity unassigned pillar
+  tierRules.forEach((rule) => {
+    let bestIdx = -1;
+    let bestScore = 0;
+    pillars.forEach((p, pIdx) => {
+      if (usedPillarIndices.has(pIdx)) return;
+      const text = `${p.key || ''} ${p.cleanName || ''} ${p.defaultBridgeTitle || ''}`;
+      if (rule.regex.test(text)) {
+        const score = (rule.tierIdx === 0 && p.isSyntheticSymmetrySlot) ? 3 : 2;
+        if (score > bestScore) {
+          bestScore = score;
+          bestIdx = pIdx;
+        }
+      }
+    });
+    if (bestIdx !== -1) {
+      assigned[rule.tierIdx] = { pillar: pillars[bestIdx], layerTag: rule.tag };
+      usedPillarIndices.add(bestIdx);
+    }
+  });
+
+  // Pass 2: Fill any remaining tier slots in deterministic order
+  let nextPillarIdx = 0;
+  for (let t = 0; t < 6; t++) {
+    if (!assigned[t]) {
+      while (usedPillarIndices.has(nextPillarIdx) && nextPillarIdx < pillars.length) {
+        nextPillarIdx++;
+      }
+      const fallbackPillar = pillars[nextPillarIdx] || pillars[t] || pillars[0];
+      usedPillarIndices.add(nextPillarIdx);
+      assigned[t] = { pillar: fallbackPillar, layerTag: tierRules[t].tag };
+    }
+  }
+
+  return assigned;
+}
+
+/**
  * MASTER TEMPLATE 05 3-ZONE COMPILER:
  * Left Zone   = AS-IS CURRENT STATE (Red container #FFF5F5, #DC2626 header, 6 rows on aligned 5-column grid with tier-specific shapes & score pills)
  * Middle Zone = TRANSFORMATION BENEFITS & TRANSITION BRIDGE (Blue container #EFF6FF, 6 tier-aligned bridge cards + 6-row horizontal flow arrows)
@@ -784,6 +1102,7 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
     targetPlatformBrand,
     pillars,
     weakest,
+    secondWeakest,
     allDetectedTools
   } = dossier;
 
@@ -815,21 +1134,17 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
   const rightOpacity = isStage3 ? '100' : isStage2 ? '62' : '50';
 
   const domainSignal = `${dossier.fwTypeKey || ''} ${useCase || ''}`.toLowerCase();
-  const isFinOpsDomain = /finops|cost|billing|token economics/.test(domainSignal);
+  const isFinOpsDomain = /finops|cost|billing/.test(domainSignal) && !/openai|gemini|edw|lakehouse/.test(domainSignal);
   const isSecurityDomain = /zero_trust|security|trism|ciso|dlp|siem/.test(domainSignal);
   const isAgenticDomain = /agentic|mcp|multi-agent/.test(domainSignal);
   const isGeminiMigDomain = /openai|gemini|migration/.test(domainSignal) && !/edw|lakehouse/.test(domainSignal);
   const isLakehouseDomain = /edw|lakehouse|bigquery|modernization/.test(domainSignal);
 
-  // Top 6 As-Is Pain Badges (y=86, height=34 -> zero vertical overflow)
-  const asIsPainBadges = [
-    { title: truncateText(p0.techPainCodes[0] || 'Siloed Systems', 18), sub: `${concisePillarLabel(p0.cleanName, 13)} (${p0.currentScore}/5)` },
-    { title: truncateText(p1.techPainCodes[0] || 'Manual Batch ETL', 18), sub: `${concisePillarLabel(p1.cleanName, 13)} (${p1.currentScore}/5)` },
-    { title: truncateText(p2.techPainCodes[0] || 'Data Inconsistency', 18), sub: `${concisePillarLabel(p2.cleanName, 13)} (${p2.currentScore}/5)` },
-    { title: truncateText(p3.techPainCodes[0] || 'Limited Visibility', 18), sub: `${concisePillarLabel(p3.cleanName, 13)} (${p3.currentScore}/5)` },
-    { title: truncateText(p4.techPainCodes[0] || 'High Token / Ops Cost', 18), sub: `${concisePillarLabel(p4.cleanName, 13)} (${p4.currentScore}/5)` },
-    { title: truncateText(p5.techPainCodes[0] || 'Governance Drift', 18), sub: `${concisePillarLabel(p5.cleanName, 13)} (${p5.currentScore}/5)` }
-  ];
+  // Top 6 As-Is Pain Badges (y=86, height=34 -> 100% unique primaryPainLabel per pillar)
+  const asIsPainBadges = [p0, p1, p2, p3, p4, p5].map((p) => ({
+    title: p.primaryPainLabel || concisePainPoint(p.techPainCodes[0], 'Siloed Baseline', 19),
+    sub: `${concisePillarLabel(p.cleanName, 18)} (${p.currentScore}/5)`
+  }));
 
   // Industry & Domain-grounded Channels (distinct personas, never repeating pillar names)
   const indLower = String(industry || '').toLowerCase();
@@ -863,60 +1178,222 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
     : isSecurityDomain
     ? ['Static IAM Keys', 'Unproxied LLM APIs', 'Raw PII Pipelines', 'Siloed SIEM Logs', 'Manual GRC Sheets']
     : isAgenticDomain
-    ? ['LangChain Scripts', 'Hardcoded REST Tools', 'Stateless Chatbots', 'In-Memory Buffers', 'Manual Escalation']
+    ? ['LangChain Scripts', 'Hardcoded REST API', 'Stateless Chatbots', 'In-Memory Buffers', 'Manual Escalation']
     : isGeminiMigDomain
     ? ['OpenAI GPT-4o API', 'Pinecone Vector DB', 'LangChain Wrappers', 'Static Prompt Files', 'Manual Eval Sheets']
+    : isLakehouseDomain
+    ? ['Teradata BTEQ SQL', 'Informatica Batch', 'Snowflake Marts', 'Tableau Extracts', 'Autosys Cron Jobs']
     : [
-        `${concisePillarLabel(p0.cleanName, 11)} Tools`,
-        `${concisePillarLabel(p1.cleanName, 11)} ETL`,
-        `${concisePillarLabel(p2.cleanName, 11)} BI`,
-        `${concisePillarLabel(p3.cleanName, 11)} Lab`,
-        `${concisePillarLabel(p4.cleanName, 11)} APIs`
+        'Legacy Collibra UI',
+        'Informatica Batch',
+        'Siloed Tableau BI',
+        'Local Jupyter Lab',
+        'Static IAM Policies'
       ];
 
   const asIsApps = [
-    { name: truncateText(tList[0] || defaultDomainApps[0], 18), tag: 'LEGACY APP', pill: `Siloed • ${p0.currentScore}/5` },
-    { name: truncateText(tList[1] || defaultDomainApps[1], 18), tag: 'BATCH TOOL', pill: `Batch • ${p1.currentScore}/5` },
-    { name: truncateText(tList[2] || defaultDomainApps[2], 18), tag: 'EXTRACTS', pill: `Static • ${p2.currentScore}/5` },
-    { name: truncateText(tList[3] || defaultDomainApps[3], 18), tag: 'ISOLATED', pill: `Ad-Hoc • ${p3.currentScore}/5` },
-    { name: truncateText(tList[4] || defaultDomainApps[4], 18), tag: 'UNPROXIED', pill: `Manual • ${p4.currentScore}/5` }
+    { name: truncateText(tList[0] || defaultDomainApps[0], 20), tag: 'LEGACY APP', pill: `Siloed • ${p0.currentScore}/5` },
+    { name: truncateText(tList[1] || defaultDomainApps[1], 20), tag: 'BATCH TOOL', pill: `Batch • ${p1.currentScore}/5` },
+    { name: truncateText(tList[2] || defaultDomainApps[2], 20), tag: 'EXTRACTS', pill: `Static • ${p2.currentScore}/5` },
+    { name: truncateText(tList[3] || defaultDomainApps[3], 20), tag: 'ISOLATED', pill: `Ad-Hoc • ${p3.currentScore}/5` },
+    { name: truncateText(tList[4] || defaultDomainApps[4], 20), tag: 'UNPROXIED', pill: `Manual • ${p4.currentScore}/5` }
   ];
 
-  // As-Is Row 3: 5 Aligned Data Cylinders
-  const asIsCylinders = [
-    { name: `${concisePillarLabel(p0.cleanName, 12)} Data`, sub: 'Disparate Silo' },
-    { name: `${concisePillarLabel(p1.cleanName, 12)} Marts`, sub: 'Siloed Copies' },
-    { name: `${concisePillarLabel(p2.cleanName, 12)} Store`, sub: 'Isolated Schema' },
-    { name: 'Unstructured Docs', sub: 'Raw File Shares' },
-    { name: `${concisePillarLabel(p4.cleanName, 12)} Logs`, sub: 'Unindexed Logs' }
-  ];
+  // As-Is Row 3: 5 Aligned Domain-Specific Data Cylinders
+  const asIsCylinders = isFinOpsDomain
+    ? [
+        { name: 'Raw Billing CSVs', sub: 'Siloed Exports' },
+        { name: 'Untagged K8s Logs', sub: '42% Unallocated' },
+        { name: 'Cold Petabytes', sub: 'Uncompacted Tables' },
+        { name: 'Shadow AI Spend', sub: 'Unmetered Tokens' },
+        { name: 'Duplicate Marts', sub: '3x Storage Copy' }
+      ]
+    : isSecurityDomain
+    ? [
+        { name: 'Unmasked PII/PHI', sub: 'Raw RAG Chunks' },
+        { name: 'Default Key Store', sub: 'No Customer CMEK' },
+        { name: 'Local JSON Keys', sub: 'Static Credentials' },
+        { name: 'Ephemeral Logs', sub: 'No WORM Retention' },
+        { name: 'Shadow Prompt Log', sub: 'Public SaaS Leak' }
+      ]
+    : isAgenticDomain
+    ? [
+        { name: 'In-Memory State', sub: 'Lost on Restart' },
+        { name: 'Isolated Vectors', sub: 'Stale Embeddings' },
+        { name: 'Unindexed Logs', sub: 'Zero Trace IDs' },
+        { name: 'Static Prompts', sub: 'Hardcoded Templates' },
+        { name: 'Local SQLite DB', sub: 'Single-Node State' }
+      ]
+    : isGeminiMigDomain
+    ? [
+        { name: '512-Token Chunks', sub: 'Fragile RAG Splits' },
+        { name: 'Pinecone Vectors', sub: 'External Egress' },
+        { name: 'GPT-4 Prompt Repo', sub: 'Model-Locked JSON' },
+        { name: 'Uncached Context', sub: 'Repeated Token Burn' },
+        { name: 'CSV Eval Sheets', sub: 'Manual Spot Checks' }
+      ]
+    : isLakehouseDomain
+    ? [
+        { name: 'Teradata EDW', sub: 'Proprietary Tables' },
+        { name: 'Snowflake Marts', sub: 'Duplicate Storage' },
+        { name: 'Siloed S3 Parquet', sub: 'Uncataloged Files' },
+        { name: 'Staging CSV Drops', sub: 'Nightly Extracts' },
+        { name: 'Isolated BI Cubes', sub: 'Stale Refreshes' }
+      ]
+    : [
+        { name: 'Siloed Governance', sub: 'Disparate Catalog' },
+        { name: 'Legacy EDW Marts', sub: 'Nightly Copies' },
+        { name: 'Isolated BI Cubes', sub: 'Static Extracts' },
+        { name: 'Unstructured Docs', sub: 'Raw File Shares' },
+        { name: 'Unindexed Audit', sub: 'Local Log Files' }
+      ];
 
-  // As-Is Row 4: 5 Aligned Hexagonal Integration Nodes
-  const asIsIntegration = [
-    { name: 'Point-to-Point APIs', sub: truncateText(p0.techPainCodes[0] || 'Brittle Couplings', 17) },
-    { name: 'Batch ETL Scripts', sub: truncateText(p1.quantFootprint[0] || '24h Replication Lag', 17) },
-    { name: 'FTP / SFTP Drops', sub: 'Manual Schema Sync' },
-    { name: 'Uncached RPC Calls', sub: truncateText(p3.techPainCodes[0] || 'No Rate Governance', 17) },
-    { name: 'Manual Handoffs', sub: truncateText(p5.techPainCodes[0] || 'Slow Ticket Triage', 17) }
-  ];
+  // As-Is Row 4: 5 Aligned Domain-Specific Hexagonal Integration Nodes
+  const asIsIntegration = isFinOpsDomain
+    ? [
+        { name: 'Manual CSV Export', sub: 'Monthly Billing Lag' },
+        { name: 'Ad-Hoc Tag Scripts', sub: '42% Missing Labels' },
+        { name: 'Uncached LLM RPCs', sub: 'Zero Context Cache' },
+        { name: 'Static Budget Cron', sub: 'Reactive Email Alert' },
+        { name: 'Siloed Cloud APIs', sub: 'No FOCUS Schema' }
+      ]
+    : isSecurityDomain
+    ? [
+        { name: 'Direct Public DNS', sub: 'Bypasses VPC-SC' },
+        { name: 'Unproxied LLM API', sub: 'No Gateway Shield' },
+        { name: 'Client Regex Mask', sub: 'High False Negative' },
+        { name: 'Manual Key Copy', sub: 'Git Repo Exposure' },
+        { name: 'Unmonitored Hooks', sub: 'Zero SIEM Ingest' }
+      ]
+    : isAgenticDomain
+    ? [
+        { name: 'Brittle Prompt Chain', sub: 'Single-Thread Loop' },
+        { name: 'Hardcoded REST API', sub: 'No MCP Standard' },
+        { name: 'Blocking Sync RPC', sub: 'Timeout Cascades' },
+        { name: 'Custom Tool Glue', sub: 'Fragile JSON Parse' },
+        { name: 'Manual Escalation', sub: 'Slow Ticket Handoff' }
+      ]
+    : isGeminiMigDomain
+    ? [
+        { name: 'Locked OpenAI SDK', sub: 'Hardcoded Endpoints' },
+        { name: 'Custom Retry Loop', sub: '429 Rate Limit Drops' },
+        { name: 'Brittle Chunk ETL', sub: 'Lost Cross-Doc Ctx' },
+        { name: 'Uncached Token RPC', sub: '100% Re-Tokenized' },
+        { name: 'Manual Model Route', sub: 'No Tier Arbitrage' }
+      ]
+    : isLakehouseDomain
+    ? [
+        { name: 'Nightly Batch ETL', sub: '24h Replication Lag' },
+        { name: 'Proprietary BTEQ', sub: '2,400+ Stored Procs' },
+        { name: 'Cross-Cloud Egress', sub: 'High S3/Blob Fees' },
+        { name: 'Cron / Autosys Jobs', sub: 'Brittle Job Chains' },
+        { name: 'Manual Schema Sync', sub: 'Frequent Breakage' }
+      ]
+    : [
+        { name: 'Point-to-Point APIs', sub: p0.primaryPainLabel || 'Brittle Couplings' },
+        { name: 'Batch ETL Scripts', sub: p1.primaryPainLabel || '24h Replication Lag' },
+        { name: 'Manual Schema Sync', sub: p2.primaryPainLabel || 'Schema Drift' },
+        { name: 'Uncached Model RPC', sub: p3.primaryPainLabel || 'No Rate Governance' },
+        { name: 'Manual Handoffs', sub: p4.primaryPainLabel || 'Slow Ticket Triage' }
+      ];
 
-  // As-Is Row 5: 5 Aligned Infrastructure Cards
-  const asIsInfra = [
-    { name: 'Legacy Compute', sub: `${p0.currentScore}/5 Baseline` },
-    { name: 'Static VM / K8s', sub: 'Idle Over-Provision' },
-    { name: 'Proprietary DBs', sub: 'High License Lock-In' },
-    { name: 'Siloed File Shares', sub: 'Unindexed Storage' },
-    { name: 'Manual Backup/DR', sub: 'Delayed RPO / RTO' }
-  ];
+  // As-Is Row 5: 5 Aligned Domain-Specific Infrastructure Cards
+  const asIsInfra = isFinOpsDomain
+    ? [
+        { name: 'Idle Dev/Test K8s', sub: '24/7 Unscaled Nodes' },
+        { name: 'On-Demand GPUs', sub: 'Zero Spot / CUDs' },
+        { name: 'Over-Sized VMs', sub: '18% Avg CPU Util' },
+        { name: 'Unpooled BQ Slots', sub: 'Isolated Silo Caps' },
+        { name: 'Unattached Disks', sub: 'Orphaned Volumes' }
+      ]
+    : isSecurityDomain
+    ? [
+        { name: 'Public Endpoints', sub: 'No Private Peering' },
+        { name: 'Shared Key Vaults', sub: 'No HSM Hardware' },
+        { name: 'Standard Compute', sub: 'Unencrypted RAM' },
+        { name: 'Unverified Images', sub: 'No Binary Auth' },
+        { name: 'Manual Firewalls', sub: 'Permissive Egress' }
+      ]
+    : isAgenticDomain
+    ? [
+        { name: 'Single-Node Pods', sub: 'No Auto-Scaling' },
+        { name: 'Unpooled Quotas', sub: 'Throttled Bursts' },
+        { name: 'Shared Containers', sub: 'No Code Sandbox' },
+        { name: 'Static GPU Pools', sub: 'High Idle Latency' },
+        { name: 'Manual Failover', sub: 'Single-Region Risk' }
+      ]
+    : isGeminiMigDomain
+    ? [
+        { name: 'Pay-As-You-Go API', sub: 'Volatile Token Cost' },
+        { name: 'External Vector VM', sub: 'Cross-Cloud Latency' },
+        { name: 'Rate-Capped Tiers', sub: 'TPM Bottlenecks' },
+        { name: 'Siloed GPU Workers', sub: 'Underutilized VRAM' },
+        { name: 'Manual Region DR', sub: 'No Auto-Failover' }
+      ]
+    : isLakehouseDomain
+    ? [
+        { name: 'Fixed EDW Racks', sub: 'CapEx Appliance Lock' },
+        { name: 'Uncapped Credits', sub: 'Auto-Scale Spikes' },
+        { name: 'Redundant Storage', sub: 'Multi-Bucket Copies' },
+        { name: 'Single-Cloud Lock', sub: 'Zero Federation' },
+        { name: 'Manual Compaction', sub: 'Slow Table Scans' }
+      ]
+    : [
+        { name: 'Legacy Compute', sub: `${p0.currentScore}/5 Baseline` },
+        { name: 'Static VM / K8s', sub: 'Idle Over-Provision' },
+        { name: 'Proprietary DBs', sub: 'High License Lock-In' },
+        { name: 'Siloed File Shares', sub: 'Unindexed Storage' },
+        { name: 'Manual Backup/DR', sub: 'Delayed RPO / RTO' }
+      ];
 
-  // As-Is Row 6: 5 Aligned Security & Governance Cards
-  const asIsSecurity = [
-    { name: 'Siloed Policies', sub: truncateText(p0.techPainCodes[0] || 'Fragmented IAM', 17) },
-    { name: 'Manual Access', sub: 'Role Creep & Keys' },
-    { name: 'Limited Lineage', sub: truncateText(p2.techPainCodes[0] || 'Opaque Queries', 17) },
-    { name: 'PII / Safety Risk', sub: truncateText(p3.techPainCodes[0] || 'Unmasked Prompts', 17) },
-    { name: 'Cost & SLA Drift', sub: truncateText(p4.techPainCodes[0] || 'No Chargeback', 17) }
-  ];
+  // As-Is Row 6: 5 Aligned Domain-Specific Security & Governance Cards
+  const asIsSecurity = isFinOpsDomain
+    ? [
+        { name: '42% Untagged Spend', sub: 'Opaque Cost Centers' },
+        { name: 'Zero Token Quotas', sub: 'Uncapped LLM Loops' },
+        { name: 'No Showback SLAs', sub: 'Monthly Finance Lag' },
+        { name: 'Reactive Alerts', sub: 'Post-Bill Surprises' },
+        { name: 'On-Demand Drift', sub: 'Low CUD Coverage' }
+      ]
+    : isSecurityDomain
+    ? [
+        { name: 'Unmasked PII / PHI', sub: 'Prompt & RAG Leaks' },
+        { name: 'Standing Admin IAM', sub: 'No JIT Expiration' },
+        { name: 'No Prompt Shield', sub: 'Jailbreak Exposure' },
+        { name: 'Provider Keys Only', sub: 'Missing CMEK/EKM' },
+        { name: 'SIEM Blindspots', sub: 'Unlogged AI Calls' }
+      ]
+    : isAgenticDomain
+    ? [
+        { name: 'Shared Agent Keys', sub: 'Excessive Blast Radius' },
+        { name: 'Missing HITL Gate', sub: 'Unchecked Actions' },
+        { name: 'Opaque Tool Calls', sub: 'No Lineage Audit' },
+        { name: 'Unbounded Loops', sub: 'Runaway Token Burn' },
+        { name: 'Policy Drift', sub: 'Manual Compliance' }
+      ]
+    : isGeminiMigDomain
+    ? [
+        { name: 'Public API Egress', sub: 'No VPC-SC Boundary' },
+        { name: 'No Customer CMEK', sub: 'Shared Provider Keys' },
+        { name: 'Heuristic Filters', sub: 'Brittle Regex Rules' },
+        { name: 'Zero Eval CI/CD', sub: 'Unverified Prompts' },
+        { name: 'High Token Burn', sub: 'Zero Context Cache' }
+      ]
+    : isLakehouseDomain
+    ? [
+        { name: 'Tribal Catalog', sub: 'Spreadsheet Docs' },
+        { name: 'No Column Lineage', sub: 'Broken Impact Trace' },
+        { name: 'Silent Data Drift', sub: 'Corrupted KPIs' },
+        { name: 'Fragmented RBAC', sub: 'Per-Engine Policies' },
+        { name: 'Volatile Spend', sub: 'Unpredictable Bills' }
+      ]
+    : [
+        { name: 'Siloed Policies', sub: p0.primaryPainLabel || 'Fragmented IAM' },
+        { name: 'Manual Access', sub: 'Role Creep & Keys' },
+        { name: 'Limited Lineage', sub: p2.primaryPainLabel || 'Opaque Queries' },
+        { name: 'PII / Safety Risk', sub: p3.primaryPainLabel || 'Unmasked Prompts' },
+        { name: 'Cost & SLA Drift', sub: p4.primaryPainLabel || 'No Chargeback' }
+      ];
 
   // 6 Canonical Tier Vertical Centers: aligns Left Zone rows, Middle Bridge cards 01..06, and Right Zone Tier 1..6 containers 1:1!
   const tierSpec = [
@@ -928,16 +1405,18 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
     { idx: 5, boxY: 588, boxH: 80, cardY: 594, cardH: 68, centerY: 628 }
   ];
 
-  // Middle Zone: 6 Transformation Bridge Cards aligned 1:1 with the 6 architectural tiers
-  const bridgeCards = [p0, p1, p2, p3, p4, p5].map((p, idx) => ({
+  // Middle Zone: 6 Transformation Bridge Cards bijectively aligned 1:1 with the 6 horizontal architectural tiers
+  const tierAlignedPillars = assignPillarsToArchitecturalTiers([p0, p1, p2, p3, p4, p5]);
+  const bridgeCards = tierAlignedPillars.map(({ pillar: p, layerTag }, idx) => ({
     badge: `0${idx + 1}`,
-    title: concisePillarLabel(p.cleanName, 17),
+    layerTag,
+    title: concisePillarLabel(p.cleanName, 18),
     scorePill: `${p.currentScore} → ${p.midScore} → ${p.futureScore}`,
-    bridge: truncateText(p.defaultBridgeTitle, 36),
-    remedy: `Fixes ${truncateText(p.techPainCodes[0], 26)}`
+    bridge: truncateText(p.defaultBridgeTitle, 38),
+    remedy: `Fixes ${p.primaryPainLabel || concisePainPoint(p.techPainCodes[0], 'Siloed Baseline', 19)}`
   }));
 
-  const cleanHeaderTitle = `AS-IS / TRANSITION / TO-BE — ${truncateText(custName.toUpperCase(), 32)} (${truncateText(useCase.toUpperCase(), 44)})`;
+  const cleanHeaderTitle = `AS-IS / TRANSITION / TO-BE — ${truncateText(custName.toUpperCase(), 34)} (${truncateText(useCase.toUpperCase(), 68)})`;
 
   let xml = `<mxfile host="embed.diagrams.net" modified="${new Date().toISOString()}" agent="ScoreX-Template05-Master-Compiler" version="24.0.0" type="device">
   <diagram id="template05_${stageFocus}" name="Template 05: As-Is / Transition / To-Be (${escapeXml(custName)})">
@@ -953,7 +1432,7 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
         <mxCell id="t05_title" value="&lt;b style=&quot;font-size:13.5px;color:#0F172A;letter-spacing:-0.2px;&quot;&gt;${escapeXml(cleanHeaderTitle)}&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=nowrap;" vertex="1" parent="1">
           <mxGeometry x="72" y="8" width="1220" height="22" as="geometry"/>
         </mxCell>
-        <mxCell id="t05_subtitle" value="&lt;span style=&quot;font-size:9.8px;color:#475569;font-weight:600;&quot;&gt;Transforming to an Intelligent, Integrated &amp;amp; Compliant Platform • &lt;b style=&quot;color:#1D4ED8;&quot;&gt;${escapeXml(stageLabel)}&lt;/b&gt; • Primary Bottleneck Remediated: ${escapeXml(truncateText(weakest.cleanName, 36))} (${weakest.currentScore} → ${weakest.futureScore}/5.0)&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=nowrap;" vertex="1" parent="1">
+        <mxCell id="t05_subtitle" value="&lt;span style=&quot;font-size:9.8px;color:#475569;font-weight:600;&quot;&gt;Transforming to an Intelligent, Integrated &amp;amp; Compliant Platform • &lt;b style=&quot;color:#1D4ED8;&quot;&gt;${escapeXml(stageLabel)}&lt;/b&gt; • Primary Bottleneck Remediated: ${escapeXml(truncateText(weakest.cleanName, 60))} (${weakest.currentScore} → ${weakest.futureScore}/5.0)&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=nowrap;" vertex="1" parent="1">
           <mxGeometry x="72" y="30" width="1220" height="20" as="geometry"/>
         </mxCell>
         <mxCell id="t05_brand_logo" value="&lt;div style=&quot;text-align:right;&quot;&gt;&lt;b style=&quot;font-size:13px;color:#0F172A;letter-spacing:0.8px;&quot;&gt;&lt;span style=&quot;color:#4285F4;&quot;&gt;&#9670;&lt;/span&gt;&lt;span style=&quot;color:#EA4335;&quot;&gt;&#9670;&lt;/span&gt;&lt;span style=&quot;color:#FBBC05;&quot;&gt;&#9670;&lt;/span&gt;&lt;span style=&quot;color:#34A853;&quot;&gt;&#9670;&lt;/span&gt; ENTERPRISE CLOUD&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8px;color:#64748B;&quot;&gt;Transforming Operations. Accelerating AI Value.&lt;/span&gt;&lt;/div&gt;" style="text;html=1;align=right;verticalAlign=middle;" vertex="1" parent="1">
@@ -1093,7 +1572,7 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
   bridgeCards.forEach((bc, idx) => {
     const ts = tierSpec[idx];
     xml += `
-        <mxCell id="m_card_${idx}" value="&lt;table style=&quot;width:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:28px;vertical-align:middle;&quot;&gt;&lt;div style=&quot;width:24px;height:24px;border-radius:50%;background:#1D4ED8;color:#FFFFFF;font-size:8.5px;font-weight:800;text-align:center;line-height:24px;&quot;&gt;${bc.badge}&lt;/div&gt;&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;text-align:left;&quot;&gt;&lt;b style=&quot;font-size:7.6px;color:#0F172A;&quot;&gt;${escapeXml(bc.title)}&lt;/b&gt; &lt;span style=&quot;background:#DBEAFE;color:#1D4ED8;border-radius:4px;padding:0px 4px;font-size:6.4px;font-weight:800;&quot;&gt;${escapeXml(bc.scorePill)}&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:6.8px;color:#1E40AF;font-weight:700;&quot;&gt;${escapeXml(bc.bridge)}&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:6.3px;color:#475569;&quot;&gt;${escapeXml(bc.remedy)}&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#60A5FA;strokeWidth=1.3;align=left;verticalAlign=middle;spacingLeft=5;spacingRight=5;" vertex="1" parent="1">
+        <mxCell id="m_card_${idx}" value="&lt;table style=&quot;width:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:28px;vertical-align:middle;&quot;&gt;&lt;div style=&quot;width:24px;height:24px;border-radius:50%;background:#1D4ED8;color:#FFFFFF;font-size:8.5px;font-weight:800;text-align:center;line-height:24px;&quot;&gt;${bc.badge}&lt;/div&gt;&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;text-align:left;&quot;&gt;&lt;span style=&quot;background:#EFF6FF;border:1px solid #BFDBFE;color:#1E40AF;border-radius:3px;padding:0px 3px;font-size:5.5px;font-weight:800;margin-right:3px;&quot;&gt;${escapeXml(bc.layerTag)}&lt;/span&gt;&lt;b style=&quot;font-size:7.3px;color:#0F172A;&quot;&gt;${escapeXml(bc.title)}&lt;/b&gt; &lt;span style=&quot;background:#DBEAFE;color:#1D4ED8;border-radius:4px;padding:0px 4px;font-size:6.1px;font-weight:800;&quot;&gt;${escapeXml(bc.scorePill)}&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:6.7px;color:#1E40AF;font-weight:700;&quot;&gt;${escapeXml(bc.bridge)}&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:6.2px;color:#475569;&quot;&gt;${escapeXml(bc.remedy)}&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#60A5FA;strokeWidth=1.3;align=left;verticalAlign=middle;spacingLeft=5;spacingRight=5;" vertex="1" parent="1">
           <mxGeometry x="626" y="${ts.boxY}" width="220" height="${ts.boxH}" as="geometry"/>
         </mxCell>
         <mxCell id="m_flow_in_${idx}" value="" style="endArrow=block;endFill=1;html=1;strokeColor=#2563EB;strokeWidth=1.6;" edge="1" parent="1">
@@ -1129,7 +1608,7 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
 
   // Top 6 Target Value Pills inside Right Zone (y=86, height=34)
   const toBeValuePills = [p0, p1, p2, p3, p4, p5].map((p) => ({
-    title: concisePillarLabel(p.cleanName, 16),
+    title: concisePillarLabel(p.cleanName, 18),
     sub: `Target ${p.futureScore}/5.0 (+${p.gap})`
   }));
 
@@ -1171,11 +1650,11 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
 
   const digitalPlatformApps = [
     { name: 'AI / ML Workbench', tag: 'VERTEX AI', pill: `${p3.futureScore}/5 • Active` },
-    { name: concisePillarLabel(p0.cleanName, 15), tag: 'GOVERNED', pill: `${p0.futureScore}/5 • Policy` },
-    { name: concisePillarLabel(p1.cleanName, 15), tag: 'AUTOMATED', pill: `${p1.futureScore}/5 • Stream` },
+    { name: concisePillarLabel(p0.cleanName, 18), tag: 'GOVERNED', pill: `${p0.futureScore}/5 • Policy` },
+    { name: concisePillarLabel(p1.cleanName, 18), tag: 'AUTOMATED', pill: `${p1.futureScore}/5 • Stream` },
     { name: 'Safety & Guardrails', tag: 'MODEL ARMOR', pill: `${p4.futureScore}/5 • Inline` },
-    { name: concisePillarLabel(p2.cleanName, 15), tag: 'REAL-TIME', pill: `${p2.futureScore}/5 • Live` },
-    { name: concisePillarLabel(p5.cleanName, 15), tag: 'COE PORTAL', pill: `${p5.futureScore}/5 • Self-Svc` }
+    { name: concisePillarLabel(p2.cleanName, 18), tag: 'REAL-TIME', pill: `${p2.futureScore}/5 • Live` },
+    { name: concisePillarLabel(p5.cleanName, 18), tag: 'COE PORTAL', pill: `${p5.futureScore}/5 • Self-Svc` }
   ];
 
   digitalPlatformApps.forEach((dp, idx) => {
@@ -1218,28 +1697,53 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
         </mxCell>
 `;
 
-  const toBeCylinders = [
-    {
-      name: isFinOpsDomain ? 'FOCUS 1.0 Billing' : isSecurityDomain ? 'Immutable Audit Log' : 'Unified Data Lake',
-      sub: isFinOpsDomain ? 'BigQuery FinOps Hub' : isSecurityDomain ? 'Chronicle WORM Lake' : 'BigQuery / BigLake'
-    },
-    {
-      name: `${concisePillarLabel(p1.cleanName, 13)} Hub`,
-      sub: truncateText(p1.defaultTargetTitle, 19)
-    },
-    {
-      name: `${concisePillarLabel(p2.cleanName, 13)} Store`,
-      sub: truncateText(p2.defaultTargetTitle, 19)
-    },
-    {
-      name: `${concisePillarLabel(p3.cleanName, 13)} Vault`,
-      sub: truncateText(p3.defaultTargetTitle, 19)
-    },
-    {
-      name: `${concisePillarLabel(p4.cleanName, 13)} Index`,
-      sub: truncateText(p4.defaultTargetTitle, 19)
-    }
-  ];
+  const toBeCylinders = isFinOpsDomain
+    ? [
+        { name: 'FOCUS 1.0 Billing', sub: 'BigQuery FinOps Hub' },
+        { name: 'GKE Cost Allocation', sub: 'Autopilot + OpenCost' },
+        { name: 'CUD Portfolio Store', sub: '85%+ Flex Coverage' },
+        { name: 'BigLake Cold Tier', sub: 'Autoclass Lifecycle' },
+        { name: 'Unit Economics Mart', sub: 'Looker Showback SLA' }
+      ]
+    : isSecurityDomain
+    ? [
+        { name: 'Immutable Audit Log', sub: 'Chronicle WORM Lake' },
+        { name: 'Tokenized PII Vault', sub: 'Cloud DLP Surrogates' },
+        { name: 'HSM CMEK Key Store', sub: 'Cloud KMS Hardware' },
+        { name: 'Verified Model Repo', sub: 'SLSA L3 Binary Auth' },
+        { name: 'AI Telemetry Lake', sub: 'Zero-Egress VPC-SC' }
+      ]
+    : isAgenticDomain
+    ? [
+        { name: 'Episodic Memory DB', sub: 'AlloyDB AI + Spanner' },
+        { name: 'MCP Tool Registry', sub: 'Governed Schema Hub' },
+        { name: 'Vector RAG Index', sub: 'Vertex Vector Search' },
+        { name: 'Agent Trace Store', sub: 'OpenTelemetry Spans' },
+        { name: 'Entitlement Ledger', sub: 'Scoped OAuth + HITL' }
+      ]
+    : isGeminiMigDomain
+    ? [
+        { name: '2M Context Cache', sub: '75% Token Savings' },
+        { name: 'Vertex Vector RAG', sub: 'Zero-Chunk Grounding' },
+        { name: 'Canonical Prompt DB', sub: 'Gemini 3.8 Schemas' },
+        { name: 'Eval Golden Dataset', sub: 'Continuous CI/CD QA' },
+        { name: 'CMEK Audit Store', sub: 'Zero-Retention Logs' }
+      ]
+    : isLakehouseDomain
+    ? [
+        { name: 'BigLake Open Iceberg', sub: 'Zero-Copy Multi-Cloud' },
+        { name: 'BigQuery Editions', sub: 'Vectorized Slot Pool' },
+        { name: 'Dataplex Catalog', sub: 'Auto-Lineage & ABAC' },
+        { name: 'Streaming CDC Hub', sub: 'Sub-Sec Datastream' },
+        { name: 'Looker Semantic Hub', sub: 'Governed BI Metrics' }
+      ]
+    : [
+        { name: 'Unified Lakehouse', sub: 'BigQuery + BigLake' },
+        { name: 'Dataplex Catalog', sub: 'Lineage & ABAC Tags' },
+        { name: 'Looker Metric Store', sub: 'Semantic BI Engine' },
+        { name: 'Vertex Feature Store', sub: 'Online / Offline ML' },
+        { name: 'FinOps & Audit Hub', sub: 'FOCUS + KMS CMEK' }
+      ];
 
   toBeCylinders.forEach((cyl, idx) => {
     const cx = 902 + idx * 133;
@@ -1303,6 +1807,14 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
         { name: 'MCP Tool Microservices', sub: 'Sandboxed Function Mesh' },
         { name: 'Automated Eval Gate', sub: 'Vertex GenAI Eval CI/CD' }
       ]
+    : isLakehouseDomain
+    ? [
+        { name: 'Datastream CDC', sub: 'Sub-Second Replication' },
+        { name: 'Dataform Declarative', sub: 'Git-Backed SQL ELT' },
+        { name: 'BigQuery Omni Mesh', sub: 'Cross-Cloud Zero-Egress' },
+        { name: 'Pub/Sub Event Bus', sub: 'Streaming Ingestion' },
+        { name: 'Looker Semantic API', sub: 'Governed BI Acceleration' }
+      ]
     : [
         { name: 'API Gateway & Mgmt', sub: 'Apigee / Cloud Endpoints' },
         { name: 'Event Streaming', sub: 'Cloud Pub/Sub' },
@@ -1337,7 +1849,7 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
         <mxCell id="r_gcp_box" value="" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#93C5FD;strokeWidth=1.4;" vertex="1" parent="1">
           <mxGeometry x="892" y="${tierSpec[4].boxY}" width="678" height="${tierSpec[4].boxH}" as="geometry"/>
         </mxCell>
-        <mxCell id="r_gcp_hdr" value="&lt;b style=&quot;font-size:7.8px;color:#1E3A8A;letter-spacing:0.3px;&quot;&gt;TIER 5: GOOGLE CLOUD PLATFORM (${escapeXml(truncateText(useCase.toUpperCase(), 48))})&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="r_gcp_hdr" value="&lt;b style=&quot;font-size:7.8px;color:#1E3A8A;letter-spacing:0.3px;&quot;&gt;TIER 5: GOOGLE CLOUD PLATFORM (${escapeXml(truncateText(useCase.toUpperCase(), 68))})&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="900" y="498" width="660" height="14" as="geometry"/>
         </mxCell>
 `;
@@ -1393,15 +1905,11 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
         </mxCell>`;
   });
 
-  const stageSummaryText = isStage1
-    ? `Stage 1 Baseline Diagnostic (${avgCur}/5.0): Primary bottleneck in ${weakest.cleanName} (${weakest.currentScore}/5.0) across ${allDetectedTools.slice(0, 3).join(', ') || 'legacy stack'}.`
-    : isStage2
-    ? `Stage 2 Phased Coexistence (${avgCur} → ${avgMid}/5.0): Priority #1 bridge executes ${weakest.defaultBridgeTitle} with zero SLA disruption.`
-    : `100% of ${custName}'s identified pain points across all dimensions are remediated via ${targetPlatformBrand} (${avgTgt}/5.0).`;
+  const toBeGuaranteeText = `100% of ${custName}'s identified pain points across all 6 dimensions are remediated on ${targetPlatformBrand}, lifting composite maturity +${overallDelta} points (${avgCur} → ${avgTgt}/5.0) with primary bottleneck ${weakest.cleanName} elevated from ${weakest.currentScore} to ${weakest.futureScore}/5.0.`;
 
   // Bottom Target Summary Strip inside To-Be Zone (y=678, height=60)
   xml += `
-        <mxCell id="r_summary_strip" value="&lt;b style=&quot;font-size:7.8px;color:#065F46;&quot;&gt;[${isStage1 ? 'STAGE 1 AS-IS DIAGNOSTIC' : isStage2 ? 'STAGE 2 BRIDGE MILESTONE' : `TARGET STATE GUARANTEE (${avgTgt}/5.0)`}]:&lt;/b&gt; &lt;span style=&quot;font-size:7.4px;color:#0F172A;&quot;&gt;${escapeXml(stageSummaryText)}&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#34D399;strokeWidth=1.2;align=left;verticalAlign=middle;spacingLeft=8;" vertex="1" parent="1">
+        <mxCell id="r_summary_strip" value="&lt;b style=&quot;font-size:7.8px;color:#065F46;&quot;&gt;[TO-BE TARGET ARCHITECTURE (${avgTgt}/5.0)]:&lt;/b&gt; &lt;span style=&quot;font-size:7.3px;color:#0F172A;&quot;&gt;${escapeXml(toBeGuaranteeText)}&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#34D399;strokeWidth=1.2;align=left;verticalAlign=middle;spacingLeft=8;" vertex="1" parent="1">
           <mxGeometry x="892" y="678" width="678" height="60" as="geometry"/>
         </mxCell>
 
@@ -1420,6 +1928,10 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
     ? ['VPC-SC', 'Model Armor', 'Cloud DLP', 'Cloud KMS HSM', 'Chronicle SIEM', 'BeyondCorp IAP', 'Cloud Armor', 'Workload ID', 'Binary Auth', 'Confidential VM', 'Dataplex ABAC', 'SCC Enterprise']
     : isAgenticDomain
     ? ['Gemini 3.8', 'Vertex Agent', 'MCP Gateway', 'A2A Protocol', 'AlloyDB AI', 'Vector Search', 'Apigee Gateway', 'Cloud Pub/Sub', 'Model Armor', 'OpenTelemetry', 'BigQuery', 'Cloud Run']
+    : isGeminiMigDomain
+    ? ['Gemini 3.8', 'Gemini 3.1 Pro', '2M Ctx Cache', 'Vertex RAG', 'Apigee Proxy', 'GenAI Eval', 'Model Armor', 'Provisioned TP', 'Cloud KMS', 'VPC-SC', 'Vertex Agent', 'BigQuery']
+    : isLakehouseDomain
+    ? ['BQ Editions', 'BigLake Iceberg', 'BigQuery Omni', 'Datastream CDC', 'Dataform ELT', 'Dataplex ABAC', 'BI Engine', 'Looker BI', 'BQML In-DB', 'Cloud Composer', 'GCS Autoclass', 'Cloud KMS']
     : [
         'Google Cloud', 'Vertex AI', 'BigQuery', 'BigLake Iceberg',
         'Dataflow CDC', 'Cloud Pub/Sub', 'GKE Autopilot', 'Apigee AI',
@@ -1444,12 +1956,28 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
         </mxCell>
 `;
 
+  const domainOutcome5 = isFinOpsDomain
+    ? { title: 'Cloud & AI Cost ROI', sub: '35–48% Unit TCO Savings', badge: 'FINOPS IMPACT' }
+    : isSecurityDomain
+    ? { title: 'Zero-Breach AI Posture', sub: '100% PII/PHI & Key Guard', badge: 'ZERO-TRUST SLA' }
+    : isAgenticDomain
+    ? { title: 'Autonomous Velocity', sub: '4.2x Faster Multi-Agent Ops', badge: 'AGENTIC ROI' }
+    : isGeminiMigDomain
+    ? { title: 'Token & Latency ROI', sub: '75% Cache Savings • 2M Ctx', badge: 'MIGRATION ROI' }
+    : isLakehouseDomain
+    ? { title: 'Zero-Egress Analytics', sub: 'Sub-Sec BI • 40% Lower TCO', badge: 'LAKEHOUSE ROI' }
+    : {
+        title: 'Enterprise Value ROI',
+        sub: dossier.allQuantMetrics?.[0] ? `Optimizes ${truncateText(dossier.allQuantMetrics[0], 16)}` : '35–48% TCO & Velocity',
+        badge: 'BUSINESS IMPACT'
+      };
+
   const outcomes = [
     { title: concisePillarLabel(weakest.cleanName, 18), sub: `${weakest.currentScore} → ${weakest.futureScore}/5.0 (#1 Fix)`, badge: 'PRIMARY BOTTLENECK' },
+    { title: concisePillarLabel((secondWeakest || p1).cleanName, 18), sub: `${(secondWeakest || p1).currentScore} → ${(secondWeakest || p1).futureScore}/5.0 (#2 Fix)`, badge: 'SECOND PRIORITY' },
     { title: 'Overall Maturity Leap', sub: `${avgCur} → ${avgTgt}/5.0 (+${overallDelta})`, badge: 'COMPOSITE SCORE' },
-    { title: 'Transition Midpoint', sub: `Bridge ${avgMid}/5.0 SLA`, badge: 'PHASED CUTOVER' },
-    { title: 'Zero-Trust Governance', sub: `${p3.currentScore} → ${p3.futureScore}/5.0 Target`, badge: 'SECURITY & POLICY' },
-    { title: 'Sustainable FinOps ROI', sub: dossier.allQuantMetrics?.[0] ? `Optimizes ${truncateText(dossier.allQuantMetrics[0], 18)}` : '35–48% TCO Savings', badge: 'UNIT ECONOMICS' }
+    { title: 'Wave 1–2 Bridge Target', sub: `${avgCur} → ${avgMid}/5.0 Zero-Downtime`, badge: 'PHASED CUTOVER' },
+    domainOutcome5
   ];
 
   outcomes.forEach((oc, idx) => {

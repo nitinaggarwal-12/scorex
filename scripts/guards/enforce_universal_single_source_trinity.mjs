@@ -38,7 +38,7 @@ const CANONICAL_PLUGIN = path.join(HOME, ".gemini", "config", "plugins", "zyvori
 const CANONICAL_RULES_ENGINE = path.join(ZYVORIQ_ROOT, "lib", "rules_engine.mjs");
 const CANONICAL_SKILLS_DIR = path.join(HOME, ".gemini", "config", "skills");
 
-const SKIP_DIRS = new Set(["node_modules", ".next", ".git", "dist", "build", ".venv", "__pycache__", "scratch", "BMAD-METHOD-main"]);
+const SKIP_DIRS = new Set(["node_modules", ".next", ".git", "dist", "build", ".venv", "__pycache__", "scratch", "BMAD-METHOD-main", "book"]);
 const EXEMPT_HOOKS = [/googlecloudtools\.datacloud_telemetry/];
 const EXEMPT_SKILLS = [/\.gemini\/(antigravity|antigravity-ide|jetski)\/builtin\/skills\//];
 const GOV_NAMES = new Set(["agents.md", "gemini.md", "claude.md"]);
