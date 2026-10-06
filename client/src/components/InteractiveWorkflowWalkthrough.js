@@ -540,7 +540,7 @@ export default function InteractiveWorkflowWalkthrough() {
       sampleUrl: '/assessments/report/inst_finops_cloud_cost_optimization_demo',
       gifUrl: '/workflows/04_csuite_finops_workflow.gif',
       frames: [
-        { title: '1. AI Executive Audio Briefing', desc: 'Listen to a 90-second synthesized C-suite narrative summarizing key ROI and risk mitigations.', action: 'Header: Click "Play Briefing"', img: '/workflows/frames/04_csuite_finops_workflow/frame_01.png' },
+        { title: '1. Executive Strategic Dossier & Scorecard', desc: 'Review synthesized C-suite narrative summarizing key maturity scores, ROI, and risk mitigations.', action: 'Tab 1: Executive Overview & Maturity Radar', img: '/workflows/frames/04_csuite_finops_workflow/frame_01.png' },
         { title: '2. Quantified TCO & 4.6 Mo Payback', desc: 'Examine 3-year net value creation ($1.94M), annual savings ($360k), and rapid capital recovery.', action: 'Tab 3: Financial Impact & TCO Card', img: '/workflows/frames/04_csuite_finops_workflow/frame_02.png' },
         { title: '3. What-If Scenario Simulator', desc: 'Simulate live adjustments in prompt caching discounts and compute right-sizing.', action: 'Modal: Interactive What-If ROI Simulator', img: '/workflows/frames/04_csuite_finops_workflow/frame_03.png' },
         { title: '4. Fullscreen Board Pitch Deck Mode', desc: 'Transform assessment findings into executive board slides ready for executive alignment.', action: 'Header: Click "Present Deck"', img: '/workflows/frames/04_csuite_finops_workflow/frame_04.png' },

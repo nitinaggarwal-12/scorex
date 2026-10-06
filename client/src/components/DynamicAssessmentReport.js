@@ -20,6 +20,8 @@ import {
   FiCheck,
   FiSliders,
   FiEdit3,
+  FiCopy,
+  FiTrash2,
   FiChevronDown
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
@@ -39,7 +41,6 @@ import IndustryPeerBenchmarkingCard from './IndustryPeerBenchmarkingCard';
 import PresentationModeModal from './PresentationModeModal';
 import UnifiedDocumentPreviewModal from './UnifiedDocumentPreviewModal';
 import AssessmentChangelogPanel from './AssessmentChangelogPanel';
-import AudioBriefingPlayer from './AudioBriefingPlayer';
 import OmniCriticReviewCard from './OmniCriticReviewCard';
 import { exportDynamicAssessmentToExcel } from '../services/excelExportService';
 import { generateDynamicPDFReport } from '../services/pdfExportService';
@@ -728,22 +729,58 @@ const DynamicAssessmentReport = () => {
     }
   };
 
+  const handleCloneAssessment = async () => {
+    const targetId = instance?.id || id;
+    if (!targetId) return;
+    try {
+      toast.loading('Cloning assessment...', { id: 'clone-inst' });
+      const res = await dynamicAssessmentService.cloneInstance(targetId, 'Cloned Copy');
+      const newInstance = res?.instance || res;
+      if (newInstance?.id) {
+        toast.success('Assessment cloned successfully!', { id: 'clone-inst' });
+        navigate(`/assessments/report/${newInstance.id}`);
+      } else {
+        toast.error('Failed to clone assessment', { id: 'clone-inst' });
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to clone assessment', { id: 'clone-inst' });
+    }
+  };
+
+  const handleDeleteAssessment = async () => {
+    const targetId = instance?.id || id;
+    if (!targetId) return;
+    if (!window.confirm(`Are you sure you want to delete "${instance?.customerName || framework?.title || 'this assessment'}"?`)) {
+      return;
+    }
+    try {
+      toast.loading('Deleting assessment...', { id: 'delete-inst' });
+      await dynamicAssessmentService.deleteInstance(targetId);
+      toast.success('Assessment deleted successfully!', { id: 'delete-inst' });
+      navigate('/assessments');
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to delete assessment', { id: 'delete-inst' });
+    }
+  };
+
   if (loading) {
     return <AIGenerationProgressModal customerName={instance?.customerName || "Enterprise Organization"} />;
   }
 
   if (isPasscodeRequired) {
     return (
-      <Container style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <Container $theme="light" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Wrapper style={{ maxWidth: '480px', textAlign: 'center' }}>
-          <div style={{ background: 'rgba(15, 23, 42, 0.85)', border: '1px solid rgba(139, 92, 246, 0.4)', borderRadius: '24px', padding: '40px 32px', backdropFilter: 'blur(16px)', boxShadow: '0 25px 50px rgba(0,0,0,0.6)' }}>
+          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '24px', padding: '40px 32px', boxShadow: '0 12px 32px rgba(15, 23, 42, 0.08)' }}>
             <div style={{ width: '60px', height: '60px', borderRadius: '18px', background: 'linear-gradient(135deg, #6366f1, #a855f7)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontSize: '1.75rem' }}>
               🔒
             </div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>
               Confidential Report
             </h2>
-            <p style={{ color: '#94a3b8', fontSize: '0.88rem', marginBottom: '24px', lineHeight: '1.5' }}>
+            <p style={{ color: '#475569', fontSize: '0.88rem', marginBottom: '24px', lineHeight: '1.5' }}>
               This architecture assessment readout is protected by the author. Enter the access PIN or passcode to view findings.
             </p>
 
@@ -753,12 +790,12 @@ const DynamicAssessmentReport = () => {
                 placeholder="Enter Access Passcode..."
                 value={enteredPasscode}
                 onChange={(e) => setEnteredPasscode(e.target.value)}
-                style={{ width: '100%', background: '#090d16', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '12px', padding: '12px 16px', color: '#fff', fontSize: '1.1rem', textAlign: 'center', letterSpacing: '0.25em', marginBottom: '16px', outline: 'none', boxSizing: 'border-box' }}
+                style={{ width: '100%', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '12px', padding: '12px 16px', color: '#0f172a', fontSize: '1.1rem', textAlign: 'center', letterSpacing: '0.25em', marginBottom: '16px', outline: 'none', boxSizing: 'border-box' }}
                 autoFocus
               />
               <button
                 type="submit"
-                style={{ width: '100%', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', border: 'none', borderRadius: '12px', padding: '12px', color: '#fff', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 4px 14px rgba(99, 102, 241, 0.4)' }}
+                style={{ width: '100%', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', border: 'none', borderRadius: '12px', padding: '12px', color: '#fff', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 4px 14px rgba(99, 102, 241, 0.3)' }}
               >
                 Unlock Assessment Report
               </button>
@@ -771,16 +808,16 @@ const DynamicAssessmentReport = () => {
 
   if (loadError || !instance || !report) {
     return (
-      <Container style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <Container $theme="light" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Wrapper style={{ maxWidth: '680px', textAlign: 'center' }}>
-          <div style={{ background: 'rgba(30, 41, 59, 0.7)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '24px', padding: '40px 32px', backdropFilter: 'blur(16px)', boxShadow: '0 20px 50px rgba(0,0,0,0.4)' }}>
-            <div style={{ width: '64px', height: '64px', borderRadius: '18px', background: 'rgba(239, 68, 68, 0.15)', border: '1.5px solid rgba(239, 68, 68, 0.4)', color: '#f87171', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '2rem' }}>
+          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '24px', padding: '40px 32px', boxShadow: '0 12px 32px rgba(15, 23, 42, 0.08)' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '18px', background: '#fef2f2', border: '1.5px solid #fecaca', color: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '2rem' }}>
               <FiAlertTriangle />
             </div>
-            <h2 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#ffffff', marginBottom: '12px' }}>
+            <h2 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#0f172a', marginBottom: '12px' }}>
               Assessment Report Not Found
             </h2>
-            <p style={{ color: '#94a3b8', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '28px' }}>
+            <p style={{ color: '#475569', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '28px' }}>
               {loadError || 'This assessment report is no longer available or was generated in a previous session.'}
               <br />
               You can launch an instant pre-calculated sample report or run a new assessment.
@@ -789,18 +826,18 @@ const DynamicAssessmentReport = () => {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '24px', textAlign: 'left' }}>
               <button 
                 onClick={() => navigate('/assessments/report/inst_finops_cloud_cost_optimization_demo')}
-                style={{ background: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '14px', padding: '16px', color: '#ffffff', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '4px' }}
+                style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '14px', padding: '16px', color: '#0f172a', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '4px' }}
               >
-                <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#38bdf8' }}>💰 Cloud FinOps &amp; Unit Economics Report</span>
-                <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Instant 1-Click Launch</span>
+                <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#2563eb' }}>💰 Cloud FinOps &amp; Unit Economics Report</span>
+                <span style={{ fontSize: '0.78rem', color: '#64748b' }}>Instant 1-Click Launch</span>
               </button>
 
               <button 
                 onClick={() => navigate('/assessments/report/inst_openai_to_gemini_enterprise_migration_demo')}
-                style={{ background: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '14px', padding: '16px', color: '#ffffff', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '4px' }}
+                style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '14px', padding: '16px', color: '#0f172a', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '4px' }}
               >
-                <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#a855f7' }}>🤖 OpenAI to Gemini Migration Report</span>
-                <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Instant 1-Click Launch</span>
+                <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#7c3aed' }}>🤖 OpenAI to Gemini Migration Report</span>
+                <span style={{ fontSize: '0.78rem', color: '#64748b' }}>Instant 1-Click Launch</span>
               </button>
             </div>
 
@@ -866,75 +903,91 @@ const DynamicAssessmentReport = () => {
       <Wrapper>
         {/* Navigation back & action controls */}
         <div className="no-print" style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
             <button 
               style={{
-                background: theme === 'light' ? '#ffffff' : 'rgba(255,255,255,0.06)',
-                border: theme === 'light' ? '1.5px solid #cbd5e1' : '1px solid rgba(255,255,255,0.12)',
-                color: theme === 'light' ? '#334155' : '#94a3b8',
-                boxShadow: theme === 'light' ? '0 1px 3px rgba(15,23,42,0.05)' : 'none',
-                padding: '9px 16px',
+                background: '#ffffff',
+                border: '1.5px solid #cbd5e1',
+                color: '#334155',
+                boxShadow: '0 1px 3px rgba(15,23,42,0.05)',
+                padding: '8px 14px',
                 borderRadius: '10px',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
                 cursor: 'pointer',
-                fontSize: '0.9rem',
+                fontSize: '0.86rem',
                 fontWeight: '600',
                 transition: 'all 0.2s ease'
               }}
               onClick={() => navigate('/assessments')}
             >
-              <FiArrowLeft /> Back to Assessments Hub
+              <FiArrowLeft /> Assessments Hub
             </button>
 
             <button 
               style={{
-                background: theme === 'light' ? 'linear-gradient(135deg, #eef2ff, #f5f3ff)' : 'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2))',
-                border: theme === 'light' ? '1.5px solid #a5b4fc' : '1.5px solid rgba(139, 92, 246, 0.5)',
-                color: theme === 'light' ? '#4338ca' : '#c084fc',
-                padding: '9px 18px',
+                background: '#eef2ff',
+                border: '1.5px solid #a5b4fc',
+                color: '#4338ca',
+                padding: '8px 15px',
                 borderRadius: '10px',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px',
+                gap: '6px',
                 cursor: 'pointer',
-                fontSize: '0.9rem',
-                fontWeight: '700',
-                transition: 'all 0.2s ease',
-                boxShadow: theme === 'light' ? '0 2px 8px rgba(79, 70, 229, 0.12)' : '0 4px 14px rgba(99, 102, 241, 0.25)'
+                fontSize: '0.86rem',
+                fontWeight: '700'
               }}
               onClick={() => navigate(`/assessments/run/instance/${id}`)}
-              title="Go back to modify your answers, add operational notes, or refine ratings"
+              title="Edit assessment responses, notes, and ratings"
             >
-              <FiEdit3 /> ✏️ Edit Responses / Go Back to Questions
+              <FiEdit3 size={14} /> Edit
+            </button>
+
+            <button 
+              style={{
+                background: '#f8fafc',
+                border: '1.5px solid #cbd5e1',
+                color: '#334155',
+                padding: '8px 15px',
+                borderRadius: '10px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                cursor: 'pointer',
+                fontSize: '0.86rem',
+                fontWeight: '700'
+              }}
+              onClick={handleCloneAssessment}
+              title="Clone this assessment into a new copy"
+            >
+              <FiCopy size={14} /> Clone
+            </button>
+
+            <button 
+              style={{
+                background: '#fef2f2',
+                border: '1.5px solid #fecaca',
+                color: '#dc2626',
+                padding: '8px 15px',
+                borderRadius: '10px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                cursor: 'pointer',
+                fontSize: '0.86rem',
+                fontWeight: '700'
+              }}
+              onClick={handleDeleteAssessment}
+              title="Delete this assessment"
+            >
+              <FiTrash2 size={14} /> Delete
             </button>
           </div>
 
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-            {/* 1. Theme Toggle */}
-            <button 
-              style={{ 
-                background: theme === 'light' ? '#ffffff' : 'rgba(255, 255, 255, 0.08)', 
-                border: theme === 'light' ? '1.5px solid #cbd5e1' : '1px solid rgba(255, 255, 255, 0.15)', 
-                color: theme === 'light' ? '#0f172a' : '#ffffff', 
-                padding: '8px 14px', 
-                borderRadius: '10px', 
-                display: 'inline-flex', 
-                alignItems: 'center', 
-                gap: '6px', 
-                cursor: 'pointer', 
-                fontWeight: '700',
-                fontSize: '0.85rem',
-                boxShadow: theme === 'light' ? '0 2px 6px rgba(0,0,0,0.05)' : 'none'
-              }}
-              onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-              title="Toggle between Light and Dark Mode"
-            >
-              {theme === 'light' ? '🌙 Dark' : '☀️ Light'}
-            </button>
-
-            {/* 1b. Live Gemini 3.8 Flash Regenerate Action */}
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+            {/* Live Gemini 3.8 Flash Regenerate Action */}
             <button
               style={{
                 background: 'linear-gradient(135deg, #059669, #10b981)',
@@ -1272,9 +1325,6 @@ const DynamicAssessmentReport = () => {
         {/* ========================================================================= */}
         {(activeExecutiveTab === "overview" || activeExecutiveTab === "all") && (
           <div>
-            {/* Multi-Persona 5-Act Executive Audio Briefing Player */}
-            <AudioBriefingPlayer instance={instance} report={report} theme={theme} />
-
             {/* Multi-Axis Polar Radar & Dimensional Gap Topology */}
             <DynamicRadarChart theme={theme}
               dimensions={framework?.dimensions || []}

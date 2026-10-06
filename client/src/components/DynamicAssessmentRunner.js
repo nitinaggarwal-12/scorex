@@ -815,16 +815,8 @@ const DynamicAssessmentRunner = () => {
   const [showAddEvidence, setShowAddEvidence] = useState(false);
   const [evidenceUrl, setEvidenceUrl] = useState('');
   const [evidenceLabel, setEvidenceLabel] = useState('');
-  const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem('scorex_runner_theme') === 'dark');
+  const isDarkMode = false;
   const [showShortcutsModal, setShowShortcutsModal] = useState(false);
-
-  const toggleThemeMode = () => {
-    setIsDarkMode(prev => {
-      const next = !prev;
-      localStorage.setItem('scorex_runner_theme', next ? 'dark' : 'light');
-      return next;
-    });
-  };
 
   const draftKey = `scorex_draft_${id || typeKey || 'custom'}`;
 
@@ -1465,7 +1457,7 @@ const DynamicAssessmentRunner = () => {
     return (
       <div style={{ 
         minHeight: '100vh', 
-        background: 'linear-gradient(135deg, #0b0f19 0%, #111827 50%, #171b30 100%)', 
+        background: '#f8fafc', 
         display: 'flex', 
         justifyContent: 'center', 
         alignItems: 'center', 
@@ -1475,21 +1467,20 @@ const DynamicAssessmentRunner = () => {
         <div style={{ 
           maxWidth: '680px', 
           width: '100%', 
-          background: 'rgba(30, 41, 59, 0.7)', 
-          border: '1px solid rgba(255,255,255,0.1)', 
+          background: '#ffffff', 
+          border: '1px solid #e2e8f0', 
           borderRadius: '24px', 
           padding: '40px 32px', 
           textAlign: 'center', 
-          backdropFilter: 'blur(16px)', 
-          boxShadow: '0 20px 50px rgba(0,0,0,0.4)' 
+          boxShadow: '0 10px 30px rgba(15, 23, 42, 0.08)' 
         }}>
           <div style={{ 
             width: '64px', 
             height: '64px', 
             borderRadius: '18px', 
-            background: 'rgba(239, 68, 68, 0.15)', 
-            border: '1.5px solid rgba(239, 68, 68, 0.4)', 
-            color: '#f87171', 
+            background: '#fef2f2', 
+            border: '1.5px solid #fecaca', 
+            color: '#dc2626', 
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center', 
@@ -1498,10 +1489,10 @@ const DynamicAssessmentRunner = () => {
           }}>
             <FiAlertTriangle />
           </div>
-          <h2 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#ffffff', marginBottom: '12px' }}>
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#0f172a', marginBottom: '12px' }}>
             Assessment Session Not Found
           </h2>
-          <p style={{ color: '#94a3b8', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '28px' }}>
+          <p style={{ color: '#475569', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '28px' }}>
             {loadError || 'This assessment session is no longer available or was run in a previous session.'}
             <br />
             Select one of the production frameworks below or start a new AI assessment.
@@ -1510,31 +1501,31 @@ const DynamicAssessmentRunner = () => {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '24px', textAlign: 'left' }}>
             <button 
               onClick={() => navigate('/assessments/run/finops_cloud_cost_optimization')}
-              style={{ background: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '14px', padding: '16px', color: '#ffffff', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '4px' }}
+              style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '16px', color: '#0f172a', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '4px' }}
             >
-              <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#38bdf8' }}>💰 FinOps Optimization</span>
-              <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>5 Dims • 10 Questions</span>
+              <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#0284c7' }}>💰 FinOps Optimization</span>
+              <span style={{ fontSize: '0.78rem', color: '#64748b' }}>5 Dims • 10 Questions</span>
             </button>
             <button 
               onClick={() => navigate('/assessments/run/openai_to_gemini_enterprise_migration')}
-              style={{ background: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '14px', padding: '16px', color: '#ffffff', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '4px' }}
+              style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '16px', color: '#0f172a', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '4px' }}
             >
-              <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#a855f7' }}>🤖 Gemini Enterprise Migration</span>
-              <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>5 Dims • 10 Questions</span>
+              <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#7c3aed' }}>🤖 Gemini Enterprise Migration</span>
+              <span style={{ fontSize: '0.78rem', color: '#64748b' }}>5 Dims • 10 Questions</span>
             </button>
             <button 
               onClick={() => navigate('/assessments/run/enterprise_ai_zero_trust_security')}
-              style={{ background: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '14px', padding: '16px', color: '#ffffff', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '4px' }}
+              style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '16px', color: '#0f172a', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '4px' }}
             >
-              <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#38bdf8' }}>🛡️ Enterprise AI & Zero Trust</span>
-              <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>5 Dims • 10 Questions</span>
+              <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#0284c7' }}>🛡️ Enterprise AI & Zero Trust</span>
+              <span style={{ fontSize: '0.78rem', color: '#64748b' }}>5 Dims • 10 Questions</span>
             </button>
             <button 
               onClick={() => navigate('/assessments/ai-generator')}
-              style={{ background: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '14px', padding: '16px', color: '#ffffff', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '4px' }}
+              style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '16px', color: '#0f172a', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '4px' }}
             >
-              <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#f59e0b' }}>✨ AI Generator (Prompt)</span>
-              <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Custom 3-Tier Depth</span>
+              <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#d97706' }}>✨ AI Generator (Prompt)</span>
+              <span style={{ fontSize: '0.78rem', color: '#64748b' }}>Custom 3-Tier Depth</span>
             </button>
           </div>
 
@@ -1740,9 +1731,9 @@ const DynamicAssessmentRunner = () => {
               <button
                 onClick={() => setShowShortcutsModal(true)}
                 style={{
-                  background: isDarkMode ? '#1e293b' : '#f1f5f9',
-                  border: isDarkMode ? '1px solid #475569' : '1px solid #cbd5e1',
-                  color: isDarkMode ? '#f8fafc' : '#475569',
+                  background: '#f1f5f9',
+                  border: '1px solid #cbd5e1',
+                  color: '#475569',
                   borderRadius: '8px',
                   padding: '6px 12px',
                   fontSize: '0.8rem',
@@ -1755,26 +1746,6 @@ const DynamicAssessmentRunner = () => {
                 title="Keyboard Shortcuts Cheat Sheet (?)"
               >
                 ⌨️ Shortcuts
-              </button>
-
-              <button
-                onClick={toggleThemeMode}
-                style={{
-                  background: isDarkMode ? '#1e293b' : '#f1f5f9',
-                  border: isDarkMode ? '1px solid #475569' : '1px solid #cbd5e1',
-                  color: isDarkMode ? '#f8fafc' : '#475569',
-                  borderRadius: '8px',
-                  padding: '6px 12px',
-                  fontSize: '0.8rem',
-                  fontWeight: '700',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}
-                title="Toggle Dark / Light Mode"
-              >
-                {isDarkMode ? '☀️ Light' : '🌙 Dark'}
               </button>
 
               <AutoSaveBadge>

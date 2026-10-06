@@ -1265,8 +1265,8 @@ const ExposureBox = styled.div`
 `;
 
 const AnnexIvCodeViewer = styled.div`
-  background: #0f172a;
-  color: #e2e8f0;
+  background: #f8fafc;
+  color: #1e293b;
   border-radius: 14px;
   padding: 20px;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -1274,87 +1274,8 @@ const AnnexIvCodeViewer = styled.div`
   line-height: 1.6;
   max-height: 520px;
   overflow-y: auto;
-  border: 1px solid #1e293b;
+  border: 1px solid #cbd5e1;
   position: relative;
-`;
-
-// ==========================================
-// EXECUTIVE AUDIO BRIEFING STYLED COMPONENTS
-// ==========================================
-
-const AudioBriefingCard = styled.div`
-  background: linear-gradient(135deg, #090d16 0%, #0f172a 100%);
-  color: #f8fafc;
-  border-radius: 16px;
-  border: 1px solid #1e293b;
-  padding: 18px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.35);
-`;
-
-const AudioActsRow = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-`;
-
-const AudioActPill = styled.button`
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.16s ease;
-  border: 1px solid ${props => props.$active ? '#38bdf8' : '#334155'};
-  background: ${props => props.$active ? 'rgba(56, 189, 248, 0.15)' : 'rgba(255, 255, 255, 0.04)'};
-  color: ${props => props.$active ? '#38bdf8' : '#94a3b8'};
-
-  &:hover {
-    border-color: #38bdf8;
-    color: #ffffff;
-  }
-`;
-
-const AudioControlsRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 14px;
-`;
-
-const PlayCircleBtn = styled.button`
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
-  color: #ffffff;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.18s ease;
-  box-shadow: 0 2px 10px rgba(56, 189, 248, 0.35);
-
-  &:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 16px rgba(56, 189, 248, 0.5);
-  }
-`;
-
-const AudioScriptContainer = styled.div`
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 16px;
-  font-size: 0.85rem;
-  line-height: 1.6;
-  color: #cbd5e1;
-  font-style: italic;
 `;
 
 // ==========================================
@@ -1710,14 +1631,6 @@ export default function EuAiComplianceWorkspace() {
   const [synthesis, setSynthesis] = useState(null);
   const [loadingSynthesis, setLoadingSynthesis] = useState(false);
   const [synthesisTab, setSynthesisTab] = useState('overview'); // 'overview' | 'statutoryRisk' | 'timeline' | 'fines' | 'annexIv'
-
-  // Executive Audio Briefing State
-  const [audioData, setAudioData] = useState(null);
-  const [loadingAudio, setLoadingAudio] = useState(false);
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
-  const [currentAct, setCurrentAct] = useState(1);
-  const [showAudioScript, setShowAudioScript] = useState(false);
-  const audioObjRef = useRef(null);
 
   // Regulatory Copilot Drawer State
   const [copilotOpen, setCopilotOpen] = useState(false);
@@ -2300,87 +2213,6 @@ export default function EuAiComplianceWorkspace() {
     } finally {
       setLoadingSynthesis(false);
     }
-  };
-
-  // Generate & Play Audio Briefing (DeepMind TTS / Web Speech)
-  const handleGenerateAudioBriefing = async (actNum = 1) => {
-    setLoadingAudio(true);
-    const toastId = toast.loading(`🎙️ Generating Executive Spoken Briefing (Act ${actNum})...`);
-    try {
-      let activeAudio = audioData;
-      if (!activeAudio) {
-        const res = await axios.post('/api/eu-ai-compliance/generate-audio-briefing', {
-          meta,
-          evaluation,
-          synthesis
-        });
-        if (res.data && res.data.success && res.data.acts) {
-          activeAudio = res.data;
-          setAudioData(res.data);
-        }
-      }
-
-      toast.success('🎙️ Spoken Briefing Ready', { id: toastId });
-      playActAudio(activeAudio, actNum);
-    } catch (err) {
-      console.error('Audio generation error:', err);
-      toast.error('Audio briefing error: ' + (err.response?.data?.error || err.message), { id: toastId });
-    } finally {
-      setLoadingAudio(false);
-    }
-  };
-
-  const playActAudio = (audioObj, actNum) => {
-    stopCurrentAudio();
-    const act = audioObj?.acts?.find(a => a.act === actNum) || audioObj?.acts?.[actNum - 1];
-    if (!act) return;
-
-    setCurrentAct(actNum);
-    setIsPlayingAudio(true);
-
-    if (act.audioBase64) {
-      try {
-        const audio = new Audio(`data:${act.format || 'audio/mp3'};base64,${act.audioBase64}`);
-        audioObjRef.current = audio;
-        audio.play().catch(e => {
-          console.warn('Audio play failed, falling back to Web Speech:', e);
-          fallbackWebSpeech(act.script);
-        });
-        audio.onended = () => {
-          setIsPlayingAudio(false);
-        };
-      } catch (e) {
-        fallbackWebSpeech(act.script);
-      }
-    } else {
-      fallbackWebSpeech(act.script);
-    }
-  };
-
-  const fallbackWebSpeech = (text) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const cleanText = (text || '').replace(/[*_#`]/g, '');
-      const utter = new SpeechSynthesisUtterance(cleanText);
-      utter.rate = 1.0;
-      utter.pitch = 0.95;
-      utter.onend = () => setIsPlayingAudio(false);
-      utter.onerror = () => setIsPlayingAudio(false);
-      window.speechSynthesis.speak(utter);
-    } else {
-      setIsPlayingAudio(false);
-    }
-  };
-
-  const stopCurrentAudio = () => {
-    if (audioObjRef.current) {
-      audioObjRef.current.pause();
-      audioObjRef.current = null;
-    }
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
-    setIsPlayingAudio(false);
   };
 
   // Regulatory Copilot Chat
@@ -3242,27 +3074,27 @@ export default function EuAiComplianceWorkspace() {
 
             {/* DYNAMIC CFO & BOARD FINANCIAL EXPOSURE & REMEDIATION ROI SIMULATOR (ARTICLE 99) */}
             {evaluation.financialSimulation && (
-              <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', borderRadius: '14px', padding: '18px 22px', color: '#f8fafc', border: '1px solid #334155', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div style={{ background: '#ffffff', borderRadius: '14px', padding: '18px 22px', color: '#0f172a', border: '1.5px solid #cbd5e1', boxShadow: '0 4px 16px rgba(15, 23, 42, 0.05)', display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ background: '#f59e0b', color: '#0f172a', fontSize: '0.7rem', fontWeight: '900', padding: '2px 8px', borderRadius: '4px', textTransform: 'uppercase' }}>
+                      <span style={{ background: '#fef3c7', color: '#b45309', border: '1px solid #fde68a', fontSize: '0.7rem', fontWeight: '900', padding: '2px 8px', borderRadius: '4px', textTransform: 'uppercase' }}>
                         CFO & Board Live Simulator
                       </span>
-                      <h3 style={{ fontSize: '1.05rem', fontWeight: '800', color: '#ffffff', margin: 0 }}>
+                      <h3 style={{ fontSize: '1.05rem', fontWeight: '800', color: '#0f172a', margin: 0 }}>
                         Dynamic Article 99 Financial Penalty, Turnover Cap & Remediation ROI Simulator
                       </h3>
                     </div>
-                    <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
+                    <span style={{ fontSize: '0.78rem', color: '#64748b' }}>
                       {evaluation.financialSimulation.applicableArticleRule} • {evaluation.financialSimulation.smeRuleApplied}
                     </span>
                   </div>
 
                   {/* Interactive Controls: Turnover Slider + SME Toggle + Multi-Regulator Stacking Toggle */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap', background: 'rgba(255,255,255,0.06)', padding: '8px 14px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.12)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap', background: '#f8fafc', padding: '8px 14px', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                      <label style={{ fontSize: '0.72rem', color: '#cbd5e1', fontWeight: '700' }}>
-                        Global Annual Turnover: <strong style={{ color: '#38bdf8' }}>€{globalTurnoverMillions.toLocaleString()} Million</strong> (€{(globalTurnoverMillions / 1000).toFixed(2)}B)
+                      <label style={{ fontSize: '0.72rem', color: '#334155', fontWeight: '700' }}>
+                        Global Annual Turnover: <strong style={{ color: '#0284c7' }}>€{globalTurnoverMillions.toLocaleString()} Million</strong> (€{(globalTurnoverMillions / 1000).toFixed(2)}B)
                       </label>
                       <input
                         type="range"
@@ -3271,11 +3103,11 @@ export default function EuAiComplianceWorkspace() {
                         step="50"
                         value={globalTurnoverMillions}
                         onChange={(e) => setGlobalTurnoverMillions(Number(e.target.value))}
-                        style={{ width: '180px', accentColor: '#38bdf8', cursor: 'pointer' }}
+                        style={{ width: '180px', accentColor: '#0284c7', cursor: 'pointer' }}
                       />
                     </div>
 
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '7px', cursor: 'pointer', fontSize: '0.74rem', fontWeight: '700', color: '#f8fafc', paddingLeft: '10px', borderLeft: '1px solid #475569' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '7px', cursor: 'pointer', fontSize: '0.74rem', fontWeight: '700', color: '#0f172a', paddingLeft: '10px', borderLeft: '1px solid #cbd5e1' }}>
                       <input
                         type="checkbox"
                         checked={isSme}
@@ -3284,11 +3116,11 @@ export default function EuAiComplianceWorkspace() {
                       />
                       <div>
                         <div>SME / Startup Lower-Cap</div>
-                        <div style={{ fontSize: '0.66rem', color: '#94a3b8', fontWeight: '500' }}>Art. 99(6) Lower Threshold</div>
+                        <div style={{ fontSize: '0.66rem', color: '#64748b', fontWeight: '500' }}>Art. 99(6) Lower Threshold</div>
                       </div>
                     </label>
 
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '7px', cursor: 'pointer', fontSize: '0.74rem', fontWeight: '700', color: '#f8fafc', paddingLeft: '10px', borderLeft: '1px solid #475569' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '7px', cursor: 'pointer', fontSize: '0.74rem', fontWeight: '700', color: '#0f172a', paddingLeft: '10px', borderLeft: '1px solid #cbd5e1' }}>
                       <input
                         type="checkbox"
                         checked={includeConcurrentGdprNis2}
@@ -3297,7 +3129,7 @@ export default function EuAiComplianceWorkspace() {
                       />
                       <div>
                         <div>Stack Concurrent GDPR + NIS2 Fines</div>
-                        <div style={{ fontSize: '0.66rem', color: '#fcd34d', fontWeight: '500' }}>Art. 83 (4%) + NIS2 Art. 34 (2%)</div>
+                        <div style={{ fontSize: '0.66rem', color: '#b45309', fontWeight: '500' }}>Art. 83 (4%) + NIS2 Art. 34 (2%)</div>
                       </div>
                     </label>
                   </div>
@@ -3305,46 +3137,46 @@ export default function EuAiComplianceWorkspace() {
 
                 {/* 4 Dynamic Financial Metric Tiles */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
-                  <div style={{ background: 'rgba(239, 68, 68, 0.12)', border: '1px solid rgba(239, 68, 68, 0.35)', borderRadius: '10px', padding: '12px 14px' }}>
-                    <div style={{ fontSize: '0.72rem', color: '#fca5a5', fontWeight: '700', textTransform: 'uppercase' }}>
+                  <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '10px', padding: '12px 14px' }}>
+                    <div style={{ fontSize: '0.72rem', color: '#991b1b', fontWeight: '700', textTransform: 'uppercase' }}>
                       {includeConcurrentGdprNis2 ? 'Combined Multi-Regulator Ceiling' : 'Statutory Maximum Fine Ceiling'}
                     </div>
-                    <div style={{ fontSize: '1.45rem', fontWeight: '900', color: '#f87171', marginTop: '2px' }}>
+                    <div style={{ fontSize: '1.45rem', fontWeight: '900', color: '#dc2626', marginTop: '2px' }}>
                       €{evaluation.financialSimulation.applicableStatutoryCeilingMillions.toLocaleString()}M
                     </div>
-                    <div style={{ fontSize: '0.68rem', color: '#cbd5e1', marginTop: '2px' }}>
+                    <div style={{ fontSize: '0.68rem', color: '#7f1d1d', marginTop: '2px' }}>
                       {includeConcurrentGdprNis2
                         ? `AI Act: €${evaluation.financialSimulation.aiActCeilingMillions}M + GDPR: €${evaluation.financialSimulation.gdprFineMillions}M + NIS2: €${evaluation.financialSimulation.nis2FineMillions}M`
                         : (isSme ? 'Capped at SME lower-of-two threshold' : 'Higher of €15M/€35M or 3%/7% global turnover')}
                     </div>
                   </div>
 
-                  <div style={{ background: 'rgba(245, 158, 11, 0.12)', border: '1px solid rgba(245, 158, 11, 0.35)', borderRadius: '10px', padding: '12px 14px' }}>
-                    <div style={{ fontSize: '0.72rem', color: '#fcd34d', fontWeight: '700', textTransform: 'uppercase' }}>Probability-Weighted Value-at-Risk (VaR)</div>
-                    <div style={{ fontSize: '1.45rem', fontWeight: '900', color: '#fbbf24', marginTop: '2px' }}>
+                  <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '10px', padding: '12px 14px' }}>
+                    <div style={{ fontSize: '0.72rem', color: '#92400e', fontWeight: '700', textTransform: 'uppercase' }}>Probability-Weighted Value-at-Risk (VaR)</div>
+                    <div style={{ fontSize: '1.45rem', fontWeight: '900', color: '#d97706', marginTop: '2px' }}>
                       €{evaluation.financialSimulation.expectedValueAtRiskMillions.toLocaleString()}M
                     </div>
-                    <div style={{ fontSize: '0.7rem', color: '#cbd5e1', marginTop: '2px' }}>
+                    <div style={{ fontSize: '0.7rem', color: '#78350f', marginTop: '2px' }}>
                       Based on {100 - evaluation.healthScore}% unweighted/weighted compliance deficit
                     </div>
                   </div>
 
-                  <div style={{ background: 'rgba(56, 189, 248, 0.12)', border: '1px solid rgba(56, 189, 248, 0.35)', borderRadius: '10px', padding: '12px 14px' }}>
-                    <div style={{ fontSize: '0.72rem', color: '#7dd3fc', fontWeight: '700', textTransform: 'uppercase' }}>Est. Engineering Remediation Cost</div>
-                    <div style={{ fontSize: '1.45rem', fontWeight: '900', color: '#38bdf8', marginTop: '2px' }}>
+                  <div style={{ background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '10px', padding: '12px 14px' }}>
+                    <div style={{ fontSize: '0.72rem', color: '#075985', fontWeight: '700', textTransform: 'uppercase' }}>Est. Engineering Remediation Cost</div>
+                    <div style={{ fontSize: '1.45rem', fontWeight: '900', color: '#0284c7', marginTop: '2px' }}>
                       €{evaluation.financialSimulation.estimatedRemediationCostMillions.toLocaleString()}M
                     </div>
-                    <div style={{ fontSize: '0.7rem', color: '#cbd5e1', marginTop: '2px' }}>
+                    <div style={{ fontSize: '0.7rem', color: '#0c4a6e', marginTop: '2px' }}>
                       Across {evaluation.remediationTasks.length} active technical & legal backlog items
                     </div>
                   </div>
 
-                  <div style={{ background: 'rgba(16, 185, 129, 0.14)', border: '1px solid rgba(16, 185, 129, 0.4)', borderRadius: '10px', padding: '12px 14px' }}>
-                    <div style={{ fontSize: '0.72rem', color: '#6ee7b7', fontWeight: '700', textTransform: 'uppercase' }}>Net Compliance Avoidance ROI</div>
-                    <div style={{ fontSize: '1.45rem', fontWeight: '900', color: '#34d399', marginTop: '2px' }}>
+                  <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '10px', padding: '12px 14px' }}>
+                    <div style={{ fontSize: '0.72rem', color: '#065f46', fontWeight: '700', textTransform: 'uppercase' }}>Net Compliance Avoidance ROI</div>
+                    <div style={{ fontSize: '1.45rem', fontWeight: '900', color: '#059669', marginTop: '2px' }}>
                       {evaluation.financialSimulation.netComplianceRoiMultiplier}x ROI
                     </div>
-                    <div style={{ fontSize: '0.7rem', color: '#cbd5e1', marginTop: '2px' }}>
+                    <div style={{ fontSize: '0.7rem', color: '#064e3b', marginTop: '2px' }}>
                       Net Penalty Avoided: €{evaluation.financialSimulation.netSavingsAvoidedMillions.toLocaleString()}M
                     </div>
                   </div>

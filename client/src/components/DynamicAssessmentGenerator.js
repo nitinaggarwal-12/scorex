@@ -355,7 +355,7 @@ const FrameworkHeader = styled.div`
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid #e2e8f0;
   padding-bottom: 24px;
   margin-bottom: 32px;
   gap: 24px;
@@ -369,13 +369,13 @@ const FrameworkInfo = styled.div`
 const FrameworkTitle = styled.h2`
   font-size: 2rem;
   font-weight: 700;
-  color: #ffffff;
+  color: #0f172a;
   margin-bottom: 8px;
 `;
 
 const FrameworkDesc = styled.p`
   font-size: 1.05rem;
-  color: #94a3b8;
+  color: #475569;
   line-height: 1.6;
 `;
 
@@ -389,9 +389,9 @@ const SecondaryButton = styled.button`
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ffffff;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: #334155;
   padding: 12px 22px;
   border-radius: 12px;
   font-weight: 600;
@@ -399,8 +399,9 @@ const SecondaryButton = styled.button`
   transition: all 0.2s ease;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.3);
+    background: #f1f5f9;
+    border-color: #94a3b8;
+    color: #0f172a;
   }
 `;
 
@@ -435,8 +436,8 @@ const DimensionsGrid = styled.div`
 `;
 
 const DimensionCard = styled.div`
-  background: rgba(15, 23, 42, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 18px;
   padding: 24px;
 `;
@@ -450,14 +451,14 @@ const DimensionHeader = styled.div`
 
 const DimensionTitle = styled.h3`
   font-size: 1.2rem;
-  font-weight: 600;
-  color: #38bdf8;
+  font-weight: 700;
+  color: #0f172a;
 `;
 
 const QuestionCount = styled.span`
   font-size: 0.8rem;
-  background: rgba(56, 189, 248, 0.15);
-  color: #38bdf8;
+  background: #e0f2fe;
+  color: #0369a1;
   padding: 4px 10px;
   border-radius: 20px;
   font-weight: 600;
@@ -465,7 +466,7 @@ const QuestionCount = styled.span`
 
 const DimensionDesc = styled.p`
   font-size: 0.9rem;
-  color: #94a3b8;
+  color: #475569;
   margin-bottom: 16px;
   line-height: 1.5;
 `;
@@ -477,12 +478,13 @@ const QuestionList = styled.div`
 `;
 
 const QuestionItem = styled.div`
-  background: rgba(30, 41, 59, 0.5);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 10px;
   padding: 12px 14px;
   font-size: 0.875rem;
-  color: #e2e8f0;
-  border-left: 3px solid #818cf8;
+  color: #1e293b;
+  border-left: 3px solid #6366f1;
 `;
 
 // Start Assessment Modal
@@ -492,7 +494,7 @@ const ModalOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(15, 23, 42, 0.45);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
@@ -502,14 +504,14 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContent = styled.div`
-  background: #1e293b;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 24px;
   padding: 36px;
   max-width: 550px;
   width: 100%;
-  color: white;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  color: #0f172a;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.2);
 `;
 
 const FormGroup = styled.div`
@@ -520,7 +522,7 @@ const Label = styled.label`
   display: block;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #cbd5e1;
+  color: #334155;
   margin-bottom: 8px;
 `;
 
@@ -907,13 +909,13 @@ const DynamicAssessmentGenerator = () => {
             transition={{ duration: 0.4 }}
           >
             <FrameworkPreview>
-              <div style={{ background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '12px', padding: '12px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
-                <span style={{ color: '#6ee7b7', fontSize: '0.9rem', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '12px', padding: '12px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+                <span style={{ color: '#047857', fontSize: '0.9rem', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                   ✓ Framework automatically saved to Assessment Catalog & Templates registry.
                 </span>
                 <button
                   onClick={() => navigate('/assessments/custom-hub')}
-                  style={{ background: 'none', border: 'none', color: '#38bdf8', fontSize: '0.88rem', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                  style={{ background: 'none', border: 'none', color: '#0284c7', fontSize: '0.88rem', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
                 >
                   View All Templates →
                 </button>
@@ -921,7 +923,7 @@ const DynamicAssessmentGenerator = () => {
 
               <FrameworkHeader>
                 <FrameworkInfo>
-                  <Badge style={{ background: 'rgba(56, 189, 248, 0.2)', borderColor: 'rgba(56, 189, 248, 0.4)', color: '#38bdf8' }}>
+                  <Badge style={{ background: '#e0f2fe', borderColor: '#bae6fd', color: '#0369a1' }}>
                     {generatedFramework.badge || 'Custom Assessment'}
                   </Badge>
                   <FrameworkTitle>{generatedFramework.title}</FrameworkTitle>
@@ -943,7 +945,7 @@ const DynamicAssessmentGenerator = () => {
                 </ActionsGroup>
               </FrameworkHeader>
 
-              <h4 style={{ fontSize: '1.25rem', marginBottom: '20px', color: '#e2e8f0' }}>
+              <h4 style={{ fontSize: '1.25rem', marginBottom: '20px', color: '#0f172a' }}>
                 Framework Dimensions & Capabilities ({generatedFramework.dimensions.length} Dimensions)
               </h4>
 
@@ -964,13 +966,13 @@ const DynamicAssessmentGenerator = () => {
                       ))}
                     </QuestionList>
 
-                    <div style={{ marginTop: '14px', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                    <div style={{ marginTop: '14px', paddingTop: '12px', borderTop: '1px solid #e2e8f0' }}>
                       <button
                         onClick={() => handleSuggestQuestionsForDim(idx, dim)}
                         style={{
-                          background: 'rgba(99, 102, 241, 0.15)',
-                          border: '1px solid rgba(139, 92, 246, 0.4)',
-                          color: '#c084fc',
+                          background: '#eef2ff',
+                          border: '1px solid #c7d2fe',
+                          color: '#4338ca',
                           borderRadius: '8px',
                           padding: '6px 12px',
                           fontSize: '0.78rem',
@@ -996,10 +998,10 @@ const DynamicAssessmentGenerator = () => {
           {isModalOpen && (
             <ModalOverlay onClick={() => setIsModalOpen(false)}>
               <ModalContent onClick={(e) => e.stopPropagation()}>
-                <h2 style={{ fontSize: '1.75rem', fontWeight: '700', marginBottom: '8px' }}>
+                <h2 style={{ fontSize: '1.75rem', fontWeight: '700', marginBottom: '8px', color: '#0f172a' }}>
                   Start Assessment
                 </h2>
-                <p style={{ color: '#94a3b8', marginBottom: '24px', fontSize: '0.95rem' }}>
+                <p style={{ color: '#475569', marginBottom: '24px', fontSize: '0.95rem' }}>
                   Configure the target organization and use case for this assessment run.
                 </p>
 

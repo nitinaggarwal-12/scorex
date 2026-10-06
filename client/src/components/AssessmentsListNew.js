@@ -1707,17 +1707,30 @@ const AssessmentsListNew = () => {
                   </div>
 
                   <div className="footer">
-                    <div className="actions">
+                    <div className="actions" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                       <ActionButton
                         onClick={handleOpenEditor}
                         title="Edit assessment"
                       >
-                        <FiEdit2 />
+                        <FiEdit2 /> Edit
+                      </ActionButton>
+                      <ActionButton
+                        onClick={(e) => handleCloneAssessment(assessment, e)}
+                        title="Clone this assessment"
+                      >
+                        <FiCopy /> Clone
+                      </ActionButton>
+                      <ActionButton
+                        onClick={(e) => handleDeleteAssessment(assessment, assessment.assessment_name, e)}
+                        title="Delete this assessment"
+                        style={{ color: '#dc2626', borderColor: '#fecaca', background: '#fef2f2' }}
+                      >
+                        <FiTrash2 /> Delete
                       </ActionButton>
                       <ActionButton
                         onClick={(e) => handleExportToExcel(assessment, e)}
                         title={family === 'ge_value_realization' || family === 'eu_ai_act' ? 'Download Dossier JSON' : 'Download as Excel'}
-                        style={{ color: '#10b981' }}
+                        style={{ color: '#059669' }}
                       >
                         <FiDownload />
                       </ActionButton>
@@ -1725,32 +1738,19 @@ const AssessmentsListNew = () => {
                         <ActionButton
                           onClick={(e) => handleImportFromExcel(assessment, e)}
                           title="Upload Excel to update"
-                          style={{ color: '#3b82f6' }}
+                          style={{ color: '#2563eb' }}
                           disabled={uploadingExcel === assessmentId}
                         >
                           <FiUpload />
                         </ActionButton>
                       )}
                       <ActionButton
-                        onClick={(e) => handleCloneAssessment(assessment, e)}
-                        title="Clone this assessment"
-                      >
-                        <FiCopy />
-                      </ActionButton>
-                      <ActionButton
-                        onClick={(e) => handleDeleteAssessment(assessment, assessment.assessment_name, e)}
-                        title="Delete this assessment"
-                        style={{ color: '#ef4444' }}
-                      >
-                        <FiTrash2 />
-                      </ActionButton>
-                      <ActionButton
                         className="primary"
                         disabled={progress === 0 || status === 'not_started'}
                         onClick={handleOpenReport}
                         title={progress === 0 || status === 'not_started' ? 'Complete at least one section to view report' : 'View executive assessment report'}
                       >
-                        <FiStar />
+                        <FiStar /> Report
                       </ActionButton>
                     </div>
                   </div>

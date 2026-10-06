@@ -27,7 +27,9 @@ import {
   FiChevronDown,
   FiChevronUp,
   FiHelpCircle,
-  FiUploadCloud
+  FiUploadCloud,
+  FiEdit2,
+  FiCopy
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
@@ -648,6 +650,64 @@ const DynamicAssessmentHub = () => {
     }
   };
 
+  const handleEditType = (type) => {
+    const canonicalId = CANONICAL_SAMPLE_REPORTS[type?.typeKey];
+    if (canonicalId) {
+      navigate(`/assessments/run/instance/${canonicalId}`);
+      return;
+    }
+    handleOpenStartModal(type);
+  };
+
+  const handleCloneType = async (type) => {
+    try {
+      toast.loading(`Cloning "${type.title}"...`, { id: 'clone-type' });
+      const res = await dynamicAssessmentService.forkAssessmentType(
+        type.id || type.typeKey,
+        `${type.title} (Copy)`
+      );
+      if (res?.type) {
+        setTypes(prev => [res.type, ...prev]);
+        toast.success(`Cloned "${type.title}"!`, { id: 'clone-type' });
+        window.dispatchEvent(new Event('assessment-types-updated'));
+      } else {
+        toast.error('Failed to clone template', { id: 'clone-type' });
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to clone template', { id: 'clone-type' });
+    }
+  };
+
+  const handleCloneInstance = async (run) => {
+    try {
+      toast.loading(`Cloning assessment for ${run.customerName || 'Customer'}...`, { id: 'clone-run' });
+      const res = await dynamicAssessmentService.cloneInstance(run.id, 'Cloned Copy');
+      const newInst = res?.instance || res;
+      if (newInst?.id) {
+        setInstances(prev => [newInst, ...prev]);
+        toast.success('Assessment cloned!', { id: 'clone-run' });
+      } else {
+        toast.error('Failed to clone assessment', { id: 'clone-run' });
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to clone assessment', { id: 'clone-run' });
+    }
+  };
+
+  const handleDeleteInstance = async (run) => {
+    if (!window.confirm(`Are you sure you want to delete this assessment for "${run.customerName || 'Customer'}"?`)) return;
+    try {
+      await dynamicAssessmentService.deleteInstance(run.id);
+      setInstances(prev => prev.filter(i => i.id !== run.id));
+      toast.success('Assessment deleted.');
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to delete assessment');
+    }
+  };
+
   const handleOpenStartModal = (type) => {
     setStartModalType(type);
     const savedUser = (() => {
@@ -847,7 +907,16 @@ const DynamicAssessmentHub = () => {
                   </SampleBtn>
                 </ActionButtonsRow>
                 <SecondaryActionsRow>
-                  <span style={{ fontSize: '0.8rem', color: '#2563eb', fontWeight: '700' }}>✓ Pre-Staged w/ Synthetic Enterprise Telemetry (`ACC-1002-BIONOVA`)</span>
+                  <span style={{ fontSize: '0.8rem', color: '#2563eb', fontWeight: '700' }}>✓ Pre-Staged (`ACC-1002-BIONOVA`)</span>
+                  <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                    <button
+                      type="button"
+                      onClick={() => navigate('/ge-value-realization/inst_bionova_ge_value_realization?tab=inputs')}
+                      style={{ background: 'none', border: 'none', color: '#4f46e5', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      <FiEdit2 size={13} /> Edit
+                    </button>
+                  </div>
                 </SecondaryActionsRow>
               </TypeFooter>
             </TypeCard>
@@ -856,7 +925,7 @@ const DynamicAssessmentHub = () => {
             <TypeCard>
               <div>
                 <CardTopRow>
-                  <TypeBadge $bg="rgba(16, 185, 129, 0.2)" $color="#34d399">EU Statutory Compliance</TypeBadge>
+                  <TypeBadge $bg="rgba(16, 185, 129, 0.2)" $color="#059669">EU Statutory Compliance</TypeBadge>
                   <StatusTag $status="production">Production Ready</StatusTag>
                 </CardTopRow>
                 <TypeTitle>EU AI Act Compliance Engine & Audit Workspace</TypeTitle>
@@ -880,6 +949,15 @@ const DynamicAssessmentHub = () => {
                 </ActionButtonsRow>
                 <SecondaryActionsRow>
                   <span style={{ fontSize: '0.8rem', color: '#10b981', fontWeight: '600' }}>✓ Core Statutory</span>
+                  <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                    <button
+                      type="button"
+                      onClick={() => navigate('/eu-ai-compliance')}
+                      style={{ background: 'none', border: 'none', color: '#4f46e5', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      <FiEdit2 size={13} /> Edit
+                    </button>
+                  </div>
                 </SecondaryActionsRow>
               </TypeFooter>
             </TypeCard>
@@ -894,7 +972,7 @@ const DynamicAssessmentHub = () => {
                 <TypeCard key={type.id || type.typeKey}>
                   <div>
                     <CardTopRow>
-                      <TypeBadge $bg={type.color ? `${type.color}22` : 'rgba(99, 102, 241, 0.2)'} $color={type.color || '#818cf8'}>
+                      <TypeBadge $bg={type.color ? `${type.color}22` : 'rgba(99, 102, 241, 0.2)'} $color={type.color || '#4f46e5'}>
                         {type.badge || 'Framework'}
                       </TypeBadge>
                       <StatusTag $status="production">Production Ready</StatusTag>
@@ -943,11 +1021,29 @@ const DynamicAssessmentHub = () => {
                         onClick={() => handleTogglePromote(type)}
                       >
                         {type.isPromoted ? <FiToggleRight /> : <FiToggleLeft />}
-                        {type.isPromoted ? 'Pinned in Nav Menu' : 'Pin to Nav Menu'}
+                        {type.isPromoted ? 'Pinned in Nav' : 'Pin to Nav'}
                       </PromoteToggle>
-                      <DeleteButton onClick={() => handleDeleteType(type)}>
-                        <FiTrash2 /> Delete
-                      </DeleteButton>
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                        <button
+                          type="button"
+                          onClick={() => handleEditType(type)}
+                          style={{ background: 'none', border: 'none', color: '#4f46e5', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                          title="Edit assessment responses"
+                        >
+                          <FiEdit2 size={13} /> Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleCloneType(type)}
+                          style={{ background: 'none', border: 'none', color: '#334155', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                          title="Clone this assessment template"
+                        >
+                          <FiCopy size={13} /> Clone
+                        </button>
+                        <DeleteButton onClick={() => handleDeleteType(type)} title="Delete this template">
+                          <FiTrash2 size={13} /> Delete
+                        </DeleteButton>
+                      </div>
                     </SecondaryActionsRow>
                   </TypeFooter>
                 </TypeCard>
@@ -981,7 +1077,7 @@ const DynamicAssessmentHub = () => {
                     <TypeCard key={type.id || type.typeKey}>
                       <div>
                         <CardTopRow>
-                          <TypeBadge $bg="rgba(245, 158, 11, 0.2)" $color="#f59e0b">
+                          <TypeBadge $bg="rgba(245, 158, 11, 0.2)" $color="#d97706">
                             {type.badge || 'Draft Framework'}
                           </TypeBadge>
                           <StatusTag $status="draft">Draft</StatusTag>
@@ -1030,11 +1126,27 @@ const DynamicAssessmentHub = () => {
                             onClick={() => handleTogglePromote(type)}
                           >
                             {type.isPromoted ? <FiToggleRight /> : <FiToggleLeft />}
-                            {type.isPromoted ? 'Pinned in Nav' : 'Promote to Production'}
+                            {type.isPromoted ? 'Pinned in Nav' : 'Promote to Prod'}
                           </PromoteToggle>
-                          <DeleteButton onClick={() => handleDeleteType(type)}>
-                            <FiTrash2 /> Delete
-                          </DeleteButton>
+                          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                            <button
+                              type="button"
+                              onClick={() => handleEditType(type)}
+                              style={{ background: 'none', border: 'none', color: '#4f46e5', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                            >
+                              <FiEdit2 size={13} /> Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleCloneType(type)}
+                              style={{ background: 'none', border: 'none', color: '#334155', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                            >
+                              <FiCopy size={13} /> Clone
+                            </button>
+                            <DeleteButton onClick={() => handleDeleteType(type)}>
+                              <FiTrash2 size={13} /> Delete
+                            </DeleteButton>
+                          </div>
                         </SecondaryActionsRow>
                       </TypeFooter>
                     </TypeCard>
@@ -1089,13 +1201,34 @@ const DynamicAssessmentHub = () => {
                         </span>
                       </div>
 
-                      <div style={{ display: 'flex', gap: '10px' }}>
-                        <SampleBtn onClick={() => navigate(`/assessments/run/instance/${run.id}`)}>
-                          <FiEye /> Continue Evaluation
-                        </SampleBtn>
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+                        <button
+                          type="button"
+                          onClick={() => navigate(`/assessments/run/instance/${run.id}`)}
+                          style={{ background: '#eef2ff', border: '1px solid #c7d2fe', color: '#4338ca', borderRadius: '8px', padding: '7px 12px', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+                          title="Edit assessment responses"
+                        >
+                          <FiEdit2 size={13} /> Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleCloneInstance(run)}
+                          style={{ background: '#f8fafc', border: '1px solid #cbd5e1', color: '#334155', borderRadius: '8px', padding: '7px 12px', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+                          title="Clone this assessment"
+                        >
+                          <FiCopy size={13} /> Clone
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteInstance(run)}
+                          style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626', borderRadius: '8px', padding: '7px 12px', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+                          title="Delete this assessment"
+                        >
+                          <FiTrash2 size={13} /> Delete
+                        </button>
                         {run.aiReport && (
-                          <LaunchBtn onClick={() => navigate(`/assessments/report/${run.id}`)}>
-                            <HiSparkles /> View AI Report
+                          <LaunchBtn onClick={() => navigate(`/assessments/report/${run.id}`)} style={{ padding: '7px 14px', fontSize: '0.82rem' }}>
+                            <HiSparkles /> View Report
                           </LaunchBtn>
                         )}
                       </div>

@@ -683,14 +683,8 @@ const ArchitectureComparisonDiagram = ({
   criticalConstraints = [],
   keyStrengths = []
 }) => {
-  const [viewMode, setViewMode] = useState('side_by_side'); // 'side_by_side', 'current_diagram', 'target_diagram', 'cards'
-  const [diagramTheme, setDiagramTheme] = useState(theme || 'light'); // 'light' | 'dark'
-
-  useEffect(() => {
-    if (theme) {
-      setDiagramTheme(theme);
-    }
-  }, [theme]);
+  const [viewMode, setViewMode] = useState('blueprint'); // 'blueprint' | 'cards'
+  const diagramTheme = 'light';
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
   const [isXmlEditorOpen, setIsXmlEditorOpen] = useState(false);
@@ -1304,13 +1298,13 @@ const ArchitectureComparisonDiagram = ({
           </div>
           <div>
             <Title>
-              3-Stage Architectural Evolution: Current State → Transition Bridge → Desired Future State
+              Unified 3-Zone Architecture Blueprint: Current State → Transformation Bridge → Future State
               <GeminiBadge>
                 <SiGooglecloud /> NANO BANANA 2 (NANO-BANANA-2 • GEMINI-3.1-FLASH-IMAGE-PREVIEW)
               </GeminiBadge>
             </Title>
             <Subtitle>
-              3-stage visual architecture roadmap synthesized by <strong>Nano Banana 2</strong> (<code>nano-banana-2</code> / <code>gemini-3.1-flash-image-preview</code>) &amp; PromptCanvas for <strong>{activeFrameworkTitle}</strong>: (1) Current State As-Is Baseline, (2) Phased Transition Bridge, and (3) Desired Future State Target Topology.
+              End-to-end 3-zone visual architecture roadmap synthesized by <strong>Nano Banana 2</strong> (<code>nano-banana-2</code> / <code>gemini-3.1-flash-image-preview</code>) &amp; PromptCanvas for <strong>{activeFrameworkTitle}</strong>: Zone 1 Current State (As-Is), Zone 2 Phased Transformation Bridge, and Zone 3 Desired Future State (To-Be) in one unified canvas.
             </Subtitle>
           </div>
         </TitleBlock>
@@ -1318,28 +1312,10 @@ const ArchitectureComparisonDiagram = ({
         <ActionGroup>
           <ViewToggle>
             <ViewBtn 
-              $active={viewMode === 'side_by_side'} 
-              onClick={() => setViewMode('side_by_side')}
+              $active={viewMode !== 'cards'} 
+              onClick={() => setViewMode('blueprint')}
             >
-              <FiEye /> 🔀 All 3 Diagrams (Current → Transition → Future)
-            </ViewBtn>
-            <ViewBtn 
-              $active={viewMode === 'current_diagram'} 
-              onClick={() => setViewMode('current_diagram')}
-            >
-              <FiAlertTriangle /> 1️⃣ Current State (As-Is)
-            </ViewBtn>
-            <ViewBtn 
-              $active={viewMode === 'transition_diagram'} 
-              onClick={() => setViewMode('transition_diagram')}
-            >
-              <FiRepeat /> 2️⃣ Transition State (Bridge)
-            </ViewBtn>
-            <ViewBtn 
-              $active={viewMode === 'target_diagram'} 
-              onClick={() => setViewMode('target_diagram')}
-            >
-              <FiCheckCircle /> 3️⃣ Desired Future State (To-Be)
+              <FiEye /> 🗺️ Unified 3-Zone Architecture Diagram
             </ViewBtn>
             <ViewBtn 
               $active={viewMode === 'cards'} 
@@ -1358,7 +1334,7 @@ const ArchitectureComparisonDiagram = ({
           </button>
 
           <button
-            onClick={() => handleCopyXml(viewMode === 'current_diagram' ? currentXml : viewMode === 'transition_diagram' ? transitionXml : targetXml)}
+            onClick={() => handleCopyXml(targetXml)}
             style={{ background: '#f8fafc', border: '1px solid #cbd5e1', color: '#334155', padding: '7px 12px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: '600', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
             title="Copy raw Draw.io XML to clipboard"
           >
@@ -1366,7 +1342,7 @@ const ArchitectureComparisonDiagram = ({
           </button>
 
           <button
-            onClick={() => handleCopyMermaid(viewMode === 'target_diagram' || viewMode === 'side_by_side')}
+            onClick={() => handleCopyMermaid(true)}
             style={{ background: '#f8fafc', border: '1px solid #cbd5e1', color: '#334155', padding: '7px 12px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: '600', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
             title="Copy Mermaid diagram syntax to clipboard"
           >
@@ -1384,14 +1360,14 @@ const ArchitectureComparisonDiagram = ({
           <RegenerateBtn 
             onClick={() => setIsModalOpen(true)}
             disabled={isGenerating}
-            title="Generate bespoke architecture diagrams using PromptCanvas AI"
+            title="Generate bespoke architecture diagram using PromptCanvas AI"
           >
             <FiRefreshCw className={isGenerating ? 'spin' : ''} /> 
             {isGenerating ? 'Synthesizing...' : '⚡ Regenerate with PromptCanvas AI'}
           </RegenerateBtn>
 
           <button
-            onClick={() => handleOpenVisualDrawio(viewMode === 'current_diagram' ? 'current' : viewMode === 'transition_diagram' ? 'transition' : 'target')}
+            onClick={() => handleOpenVisualDrawio('target')}
             style={{ background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)', border: 'none', color: '#ffffff', padding: '7px 14px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', boxShadow: '0 2px 8px rgba(2, 132, 199, 0.3)' }}
             title="Open full-featured interactive Draw.io visual canvas inside ScoreX"
           >
@@ -1399,27 +1375,7 @@ const ArchitectureComparisonDiagram = ({
           </button>
 
           <button
-            onClick={() => setDiagramTheme(prev => prev === 'light' ? 'dark' : 'light')}
-            style={{ 
-              background: diagramTheme === 'light' ? '#f8fafc' : '#0f172a', 
-              border: '1px solid #cbd5e1', 
-              color: diagramTheme === 'light' ? '#334155' : '#38bdf8', 
-              padding: '7px 12px', 
-              borderRadius: '8px', 
-              fontSize: '0.82rem', 
-              fontWeight: '700', 
-              cursor: 'pointer', 
-              display: 'inline-flex', 
-              alignItems: 'center', 
-              gap: '5px' 
-            }}
-            title={`Switch to ${diagramTheme === 'light' ? 'Dark' : 'Light'} Mode`}
-          >
-            {diagramTheme === 'light' ? '☀️ Light' : '🌙 Dark'}
-          </button>
-
-          <button
-            onClick={() => handleOpenXmlEditor(viewMode === 'current_diagram' ? 'current' : viewMode === 'transition_diagram' ? 'transition' : 'target')}
+            onClick={() => handleOpenXmlEditor('target')}
             style={{ background: '#f8fafc', border: '1px solid #cbd5e1', color: '#334155', padding: '7px 12px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
             title="Edit or paste raw Draw.io XML code directly into the diagram canvas"
           >
@@ -1427,10 +1383,7 @@ const ArchitectureComparisonDiagram = ({
           </button>
 
           <ExportBtn 
-            onClick={() => handleExportDrawio(
-              viewMode === 'current_diagram' ? currentXml : viewMode === 'transition_diagram' ? transitionXml : targetXml,
-              viewMode === 'current_diagram' ? 'ScoreX_1_Current_State_Architecture.drawio' : viewMode === 'transition_diagram' ? 'ScoreX_2_Transition_Bridge_Architecture.drawio' : 'ScoreX_3_Desired_Future_State_Architecture.drawio'
-            )}
+            onClick={() => handleExportDrawio(targetXml, 'ScoreX_Unified_3Zone_Architecture_Blueprint.drawio')}
             title="Download architecture diagram for Draw.io / diagrams.net"
           >
             <FiDownload /> 📥 Export Draw.io XML
@@ -1498,7 +1451,7 @@ const ArchitectureComparisonDiagram = ({
             1️⃣ Current State Grounded ({Number(currentScore || 2.5).toFixed(1)}/5.0)
           </div>
           <div style={{ fontSize: '0.78rem', color: '#1e293b', marginTop: '3px', lineHeight: 1.35 }}>
-            <strong>{customerName}</strong> • {normalizedDimScores.length || 6} evaluated pillars &amp; detected baseline stack mapped to Stage 1 cards.
+            <strong>{customerName}</strong> • {normalizedDimScores.length || 6} evaluated pillars &amp; detected baseline stack mapped to Zone 1 cards.
           </div>
         </div>
         <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '8px', padding: '8px 11px' }}>
@@ -1531,193 +1484,17 @@ const ArchitectureComparisonDiagram = ({
         </div>
       </div>
 
-      {/* 1. 3-STAGE ARCHITECTURE PROGRESSION VIEWPORT (CURRENT -> TRANSITION -> FUTURE) */}
-      {viewMode === 'side_by_side' && (
-        <>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '12px',
-            background: 'linear-gradient(90deg, #f8fafc 0%, #f1f5f9 100%)',
-            border: '1px solid #e2e8f0',
-            borderRadius: '10px',
-            padding: '10px 16px',
-            marginBottom: '14px',
-            fontSize: '0.84rem',
-            color: '#334155'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '1.1rem' }}>🏛️</span>
-              <span>
-                <strong>3-Stage Architecture Progression (3 Diagrams)</strong>: Comparing <strong>1. Current State ({nb2CodePrefix}-C-01)</strong> → <strong>2. Transition State ({nb2CodePrefix}-T-02)</strong> → <strong>3. Desired Future State ({nb2CodePrefix}-F-03)</strong> ({activeFrameworkTitle}).
-              </span>
-            </div>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              <button
-                type="button"
-                onClick={() => setStackedThreeView(prev => !prev)}
-                style={{
-                  background: stackedThreeView ? '#4f46e5' : '#ffffff',
-                  border: '1px solid #cbd5e1',
-                  color: stackedThreeView ? '#ffffff' : '#1e293b',
-                  padding: '5px 12px',
-                  borderRadius: '6px',
-                  fontSize: '0.78rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px'
-                }}
-              >
-                {stackedThreeView ? '▥ Switch to 3-Column Side-by-Side' : '▤ Switch to Full-Width Stacked (3 Rows)'}
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('current_diagram')}
-                style={{
-                  background: '#fff1f2',
-                  border: '1px solid #fecdd3',
-                  color: '#be123c',
-                  padding: '5px 11px',
-                  borderRadius: '6px',
-                  fontSize: '0.77rem',
-                  fontWeight: 700,
-                  cursor: 'pointer'
-                }}
-              >
-                1️⃣ Current State
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('transition_diagram')}
-                style={{
-                  background: '#fffbeb',
-                  border: '1px solid #fde68a',
-                  color: '#b45309',
-                  padding: '5px 11px',
-                  borderRadius: '6px',
-                  fontSize: '0.77rem',
-                  fontWeight: 700,
-                  cursor: 'pointer'
-                }}
-              >
-                2️⃣ Transition Bridge
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('target_diagram')}
-                style={{
-                  background: '#f0fdf4',
-                  border: '1px solid #bbf7d0',
-                  color: '#15803d',
-                  padding: '5px 11px',
-                  borderRadius: '6px',
-                  fontSize: '0.77rem',
-                  fontWeight: 700,
-                  cursor: 'pointer'
-                }}
-              >
-                3️⃣ Future State
-              </button>
-            </div>
-          </div>
-          <TripleDiagramGrid $stacked={stackedThreeView}>
-            <div style={{ position: 'relative' }}>
-              <DiagramErrorBoundary onAutoHeal={handleRegenerate}>
-                <DiagramViewer
-                  xml={currentXml}
-                  title={currentTitle}
-                  subtitle={currentSubtitle}
-                  badge="1. Current State"
-                  theme={diagramTheme}
-                  height={stackedThreeView ? '640px' : '540px'}
-                  isTarget={false}
-                  isTransition={false}
-                />
-              </DiagramErrorBoundary>
-            </div>
-            <div style={{ position: 'relative' }}>
-              <DiagramErrorBoundary onAutoHeal={handleRegenerate}>
-                <DiagramViewer
-                  xml={transitionXml}
-                  title={transitionTitle}
-                  subtitle={transitionSubtitle}
-                  badge="2. Transition Bridge"
-                  theme={diagramTheme}
-                  height={stackedThreeView ? '640px' : '540px'}
-                  isTarget={false}
-                  isTransition={true}
-                />
-              </DiagramErrorBoundary>
-            </div>
-            <div style={{ position: 'relative' }}>
-              <DiagramErrorBoundary onAutoHeal={handleRegenerate}>
-                <DiagramViewer
-                  xml={targetXml}
-                  title={targetTitle}
-                  subtitle={targetSubtitle}
-                  badge="3. Future State"
-                  theme={diagramTheme}
-                  height={stackedThreeView ? '640px' : '540px'}
-                  isTarget={true}
-                  isTransition={false}
-                />
-              </DiagramErrorBoundary>
-            </div>
-          </TripleDiagramGrid>
-        </>
-      )}
-
-      {/* 2. FULL-WIDTH STAGE 1: CURRENT STATE DIAGRAM */}
-      {viewMode === 'current_diagram' && (
+      {/* UNIFIED 3-ZONE ARCHITECTURE DIAGRAM VIEWPORT */}
+      {viewMode !== 'cards' && (
         <div style={{ marginBottom: '20px' }}>
           <DiagramErrorBoundary onAutoHeal={handleRegenerate}>
             <DiagramViewer
-              xml={currentXml}
-              title={currentTitle}
-              subtitle={currentSubtitle}
-              badge="1. Current State (As-Is)"
-              theme={diagramTheme}
-              height="780px"
-              isTarget={false}
-              isTransition={false}
-            />
-          </DiagramErrorBoundary>
-        </div>
-      )}
-
-      {/* 3. FULL-WIDTH STAGE 2: TRANSITION STATE DIAGRAM */}
-      {viewMode === 'transition_diagram' && (
-        <div style={{ marginBottom: '20px' }}>
-          <DiagramErrorBoundary onAutoHeal={handleRegenerate}>
-            <DiagramViewer
-              xml={transitionXml}
-              title={transitionTitle}
-              subtitle={transitionSubtitle}
-              badge="2. Transition State (Bridge)"
-              theme={diagramTheme}
-              height="780px"
-              isTarget={false}
-              isTransition={true}
-            />
-          </DiagramErrorBoundary>
-        </div>
-      )}
-
-      {/* 4. FULL-WIDTH STAGE 3: DESIRED FUTURE STATE DIAGRAM */}
-      {viewMode === 'target_diagram' && (
-        <div style={{ marginBottom: '20px' }}>
-          <DiagramErrorBoundary onAutoHeal={handleRegenerate}>
-            <DiagramViewer
-              xml={targetXml}
+              xml={targetXml || transitionXml || currentXml}
               title={targetTitle}
               subtitle={targetSubtitle}
-              badge="3. Desired Future State (To-Be)"
+              badge="Unified 3-Zone Blueprint (As-Is → Bridge → To-Be)"
               theme={diagramTheme}
-              height="780px"
+              height="740px"
               isTarget={true}
               isTransition={false}
             />

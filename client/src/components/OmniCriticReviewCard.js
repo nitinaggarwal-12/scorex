@@ -6,7 +6,7 @@ import {
   FiAlertTriangle,
   FiRefreshCw,
   FiCpu,
-  FiVolume2,
+  FiFileText,
   FiLayers,
   FiMessageSquare,
   FiEye,
@@ -15,13 +15,14 @@ import {
 import axios from 'axios';
 
 const CriticContainer = styled.div`
-  background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
-  border: 1px solid rgba(99, 102, 241, 0.35);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-top: 4px solid #4f46e5;
   border-radius: 16px;
   padding: 24px 28px;
   margin: 24px 0;
-  color: #f8fafc;
-  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.22);
+  color: #0f172a;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
 `;
 
 const HeaderRow = styled.div`
@@ -32,7 +33,7 @@ const HeaderRow = styled.div`
   flex-wrap: wrap;
   margin-bottom: 20px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+  border-bottom: 1px solid #e2e8f0;
 `;
 
 const TitleGroup = styled.div`
@@ -57,16 +58,16 @@ const PillBadge = styled.span`
   font-size: 0.73rem;
   font-weight: 700;
   letter-spacing: 0.03em;
-  background: ${props => props.$bg || 'rgba(99, 102, 241, 0.18)'};
-  color: ${props => props.$color || '#a5b4fc'};
-  border: 1px solid ${props => props.$border || 'rgba(99, 102, 241, 0.4)'};
+  background: ${props => props.$bg || '#eef2ff'};
+  color: ${props => props.$color || '#4338ca'};
+  border: 1px solid ${props => props.$border || '#c7d2fe'};
 `;
 
 const MainTitle = styled.h3`
   margin: 0;
   font-size: 1.25rem;
   font-weight: 800;
-  color: #ffffff;
+  color: #0f172a;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -75,7 +76,7 @@ const MainTitle = styled.h3`
 const Subtitle = styled.p`
   margin: 0;
   font-size: 0.88rem;
-  color: #cbd5e1;
+  color: #475569;
   line-height: 1.5;
 `;
 
@@ -83,8 +84,8 @@ const ScoreCircleBox = styled.div`
   display: flex;
   align-items: center;
   gap: 14px;
-  background: rgba(15, 23, 42, 0.65);
-  border: 1px solid rgba(56, 189, 248, 0.35);
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
   padding: 12px 18px;
   border-radius: 14px;
 `;
@@ -92,7 +93,7 @@ const ScoreCircleBox = styled.div`
 const BigScore = styled.div`
   font-size: 1.85rem;
   font-weight: 900;
-  color: #38bdf8;
+  color: #2563eb;
   line-height: 1;
 `;
 
@@ -104,8 +105,8 @@ const ModelStackGrid = styled.div`
 `;
 
 const ModelCard = styled.div`
-  background: rgba(30, 41, 59, 0.75);
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
   padding: 12px 14px;
   display: flex;
@@ -117,7 +118,7 @@ const ModelRole = styled.div`
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #94a3b8;
+  color: #64748b;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -127,12 +128,12 @@ const ModelRole = styled.div`
 const ModelId = styled.div`
   font-size: 0.88rem;
   font-weight: 800;
-  color: #f8fafc;
+  color: #0f172a;
 `;
 
 const ModelSub = styled.div`
   font-size: 0.75rem;
-  color: #38bdf8;
+  color: #2563eb;
   font-family: 'JetBrains Mono', monospace;
 `;
 
@@ -144,8 +145,8 @@ const RubricGrid = styled.div`
 `;
 
 const RubricCard = styled.div`
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
   padding: 14px 16px;
 `;
@@ -160,19 +161,19 @@ const RubricHeader = styled.div`
 const RubricLabel = styled.span`
   font-size: 0.84rem;
   font-weight: 700;
-  color: #e2e8f0;
+  color: #0f172a;
 `;
 
 const RubricScore = styled.span`
   font-size: 0.88rem;
   font-weight: 800;
-  color: ${props => (props.$score >= 95 ? '#34d399' : props.$score >= 85 ? '#38bdf8' : '#fbbf24')};
+  color: ${props => (props.$score >= 95 ? '#059669' : props.$score >= 85 ? '#2563eb' : '#d97706')};
 `;
 
 const ProgressBarTrack = styled.div`
   width: 100%;
   height: 6px;
-  background: rgba(148, 163, 184, 0.2);
+  background: #e2e8f0;
   border-radius: 999px;
   overflow: hidden;
   margin-bottom: 8px;
@@ -185,14 +186,14 @@ const ProgressBarFill = styled.div`
     props.$score >= 95
       ? 'linear-gradient(90deg, #10b981, #34d399)'
       : props.$score >= 85
-      ? 'linear-gradient(90deg, #0ea5e9, #38bdf8)'
+      ? 'linear-gradient(90deg, #2563eb, #3b82f6)'
       : 'linear-gradient(90deg, #f59e0b, #fbbf24)'};
   border-radius: 999px;
 `;
 
 const RubricStatus = styled.div`
   font-size: 0.78rem;
-  color: #94a3b8;
+  color: #475569;
   line-height: 1.4;
 `;
 
@@ -203,13 +204,14 @@ const FindingsList = styled.div`
 `;
 
 const FindingItem = styled.div`
-  background: rgba(15, 23, 42, 0.55);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-left: 4px solid ${props =>
     props.$severity === 'HIGH'
       ? '#f59e0b'
       : props.$severity === 'VERIFIED'
       ? '#10b981'
-      : '#38bdf8'};
+      : '#2563eb'};
   border-radius: 10px;
   padding: 12px 16px;
   display: flex;
@@ -223,7 +225,7 @@ const ActionButton = styled.button`
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: linear-gradient(135deg, #4f46e5 0%, #0ea5e9 100%);
+  background: linear-gradient(135deg, #4f46e5 0%, #2563eb 100%);
   color: #ffffff;
   border: none;
   border-radius: 10px;
@@ -301,12 +303,12 @@ export default function OmniCriticReviewCard(props) {
       criticSubModel: 'gemini-omni-1.1-flash',
       compositeQualityScore,
       verdict: 'CERTIFIED_ENTERPRISE_GRADE',
-      executiveCriticSummary: `Google Omni 1.1 audited ${customerName}'s ${frameworkName} dossier (${overallScore}% composite, ${coveragePct}% evidence coverage): all visual topologies (Nano Banana 2), 5-Act audio scripts (Omni 1.1), and live copilot prompts (Gemini 3.8 Flash Live Preview) trace strictly to submitted inputs with zero cross-domain hallucinations.`,
+      executiveCriticSummary: `Google Omni 1.1 audited ${customerName}'s ${frameworkName} dossier (${overallScore}% composite, ${coveragePct}% evidence coverage): all visual topologies (Nano Banana 2), executive narratives (Omni 1.1), and live copilot prompts (Gemini 3.8 Flash Live Preview) trace strictly to submitted inputs with zero cross-domain hallucinations.`,
       rubricScores: {
         visualUx: {
           score: visualUxScore,
           label: 'Visual & UX Ergonomics',
-          status: `High-contrast executive hierarchy, responsive KPI cards & Nano Banana 2 3-stage topology synchronized to ${frameworkName}`
+          status: `High-contrast executive hierarchy, responsive KPI cards & Nano Banana 2 3-zone topology synchronized to ${frameworkName}`
         },
         technicalAccuracy: {
           score: accuracyScore,
@@ -331,7 +333,7 @@ export default function OmniCriticReviewCard(props) {
         dynamicFreshness: {
           score: dynamicFreshnessScore,
           label: 'Zero Static / Stale / Broken Elements',
-          status: '5-Act Audio Story (Omni 1.1), Architecture Diagrams (Nano Banana 2), and Support Copilot (Gemini 3.8 Flash Live) dynamically bound'
+          status: 'Executive Narrative (Omni 1.1), Architecture Diagrams (Nano Banana 2), and Support Copilot (Gemini 3.8 Flash Live) dynamically bound'
         }
       },
       criticFindingsAndRemediations: [
@@ -345,15 +347,15 @@ export default function OmniCriticReviewCard(props) {
         {
           category: 'Architecture Diagram Generation (Nano Banana 2)',
           severity: 'VERIFIED',
-          finding: `3-Stage Architecture Blueprint and 5-Step Friction Flow verified for ${frameworkName} specificity.`,
+          finding: `Unified 3-Zone Architecture Blueprint and 5-Step Friction Flow verified for ${frameworkName} specificity.`,
           remediation: 'Powered by Nano Banana 2 (nano-banana-2 / gemini-3.1-flash-image-preview) + Draw.io XML compiler.',
           status: 'VERIFIED_DYNAMIC'
         },
         {
-          category: 'Audio Storytelling (Google Omni 1.1)',
+          category: 'Executive Narrative Synthesis (Google Omni 1.1)',
           severity: 'VERIFIED',
-          finding: `5-Act Narrative Arc and Dual-Host Podcast script verified free of unrelated template hallucinations.`,
-          remediation: `Google Omni 1.1 (google-omni-1.1 / gemini-omni-1.1-flash) dynamically narrates ${customerName}'s ${weakest.name} gap and ${strongest.name} anchor.`,
+          finding: `Executive Dossier and C-Suite synthesis verified free of unrelated template hallucinations.`,
+          remediation: `Google Omni 1.1 (google-omni-1.1 / gemini-omni-1.1-flash) dynamically synthesizes ${customerName}'s ${weakest.name} gap and ${strongest.name} anchor.`,
           status: 'VERIFIED_DYNAMIC'
         },
         {
@@ -400,15 +402,15 @@ export default function OmniCriticReviewCard(props) {
       <HeaderRow>
         <TitleGroup>
           <CriticBadgeRow>
-            <PillBadge $bg="rgba(16, 185, 129, 0.18)" $color="#34d399" $border="rgba(16, 185, 129, 0.45)">
+            <PillBadge $bg="#ecfdf5" $color="#047857" $border="#a7f3d0">
               <FiShield /> GOOGLE OMNI 1.1 UI/UX & TECHNICAL CRITIC
             </PillBadge>
             {engineName && (
-              <PillBadge $bg="rgba(168, 85, 247, 0.18)" $color="#c084fc" $border="rgba(168, 85, 247, 0.4)">
+              <PillBadge $bg="#f5f3ff" $color="#6d28d9" $border="#ddd6fe">
                 {engineName}
               </PillBadge>
             )}
-            <PillBadge $bg="rgba(56, 189, 248, 0.16)" $color="#38bdf8" $border="rgba(56, 189, 248, 0.4)">
+            <PillBadge $bg="#eff6ff" $color="#1d4ed8" $border="#bfdbfe">
               <FiEye /> ZERO-HALLUCINATION & RELEVANCY AUDIT
             </PillBadge>
             <PillBadge>
@@ -424,10 +426,10 @@ export default function OmniCriticReviewCard(props) {
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
           <ScoreCircleBox>
             <div>
-              <div style={{ fontSize: '0.7rem', textTransform: 'uppercase', color: '#94a3b8', fontWeight: 700 }}>
+              <div style={{ fontSize: '0.7rem', textTransform: 'uppercase', color: '#64748b', fontWeight: 700 }}>
                 Omni 1.1 Quality Index
               </div>
-              <div style={{ fontSize: '0.76rem', color: '#cbd5e1' }}>6-Pillar Audit Score</div>
+              <div style={{ fontSize: '0.76rem', color: '#475569' }}>6-Pillar Audit Score</div>
             </div>
             <BigScore>{computedReview.compositeQualityScore || 96}%</BigScore>
           </ScoreCircleBox>
@@ -441,7 +443,7 @@ export default function OmniCriticReviewCard(props) {
       {/* Specialized Model Stack Strip */}
       <ModelStackGrid>
         <ModelCard>
-          <ModelRole><FiVolume2 /> Audio Storytelling Engine</ModelRole>
+          <ModelRole><FiFileText /> Executive Narrative Engine</ModelRole>
           <ModelId>Google Omni 1.1</ModelId>
           <ModelSub>google-omni-1.1 • gemini-omni-1.1-flash</ModelSub>
         </ModelCard>
@@ -484,20 +486,20 @@ export default function OmniCriticReviewCard(props) {
           <FindingItem key={idx} $severity={f.severity}>
             <div style={{ flex: 1, minWidth: '260px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                <span style={{ fontWeight: 800, fontSize: '0.86rem', color: '#f8fafc' }}>
-                  {f.severity === 'VERIFIED' ? <FiCheckCircle style={{ color: '#10b981', marginRight: 4 }} /> : <FiAlertTriangle style={{ color: '#f59e0b', marginRight: 4 }} />}
+                <span style={{ fontWeight: 800, fontSize: '0.86rem', color: '#0f172a' }}>
+                  {f.severity === 'VERIFIED' ? <FiCheckCircle style={{ color: '#059669', marginRight: 4 }} /> : <FiAlertTriangle style={{ color: '#d97706', marginRight: 4 }} />}
                   {f.category}
                 </span>
                 <PillBadge
-                  $bg={f.severity === 'VERIFIED' ? 'rgba(16, 185, 129, 0.16)' : 'rgba(245, 158, 11, 0.16)'}
-                  $color={f.severity === 'VERIFIED' ? '#34d399' : '#fbbf24'}
-                  $border={f.severity === 'VERIFIED' ? 'rgba(16, 185, 129, 0.35)' : 'rgba(245, 158, 11, 0.35)'}
+                  $bg={f.severity === 'VERIFIED' ? '#ecfdf5' : '#fffbeb'}
+                  $color={f.severity === 'VERIFIED' ? '#047857' : '#b45309'}
+                  $border={f.severity === 'VERIFIED' ? '#a7f3d0' : '#fde68a'}
                 >
                   {f.status || f.severity}
                 </PillBadge>
               </div>
-              <div style={{ fontSize: '0.82rem', color: '#cbd5e1', marginBottom: '4px' }}>{f.finding}</div>
-              <div style={{ fontSize: '0.78rem', color: '#38bdf8', fontWeight: 600 }}>
+              <div style={{ fontSize: '0.82rem', color: '#334155', marginBottom: '4px' }}>{f.finding}</div>
+              <div style={{ fontSize: '0.78rem', color: '#2563eb', fontWeight: 600 }}>
                 <FiActivity style={{ marginRight: 4, verticalAlign: 'middle' }} />
                 Remediation: {f.remediation}
               </div>
