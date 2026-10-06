@@ -708,10 +708,10 @@ const ArchitectureComparisonDiagram = ({
     );
   }, [framework, customerName, useCase, currentScore, targetScore, responses, notes, normalizedDimScores]);
 
-  // Detect obsolete/draft diagrams that lack Template 05 3-Zone Master Layout
+  // Detect obsolete/draft diagrams that lack the Google Cloud Reference-Architecture layout
   const isOutdatedDiagram = useCallback((diagrams) => {
     if (!diagrams || !diagrams.currentStateXml) return true;
-    if (diagrams.template05MasterLayout && diagrams.transitionStateXml) return false;
+    if (diagrams.template05MasterLayout && diagrams.gcpReferenceLayout && diagrams.transitionStateXml) return false;
     return true;
   }, []);
 
@@ -1287,13 +1287,13 @@ const ArchitectureComparisonDiagram = ({
           </div>
           <div>
             <Title>
-              Unified 3-Zone Architecture Blueprint: Current State → Transformation Bridge → Future State
+              Google Cloud Reference Architecture: Current Estate → Migration Waves → Google Cloud Target
               <GeminiBadge>
                 <SiGooglecloud /> NANO BANANA 2 (NANO-BANANA-2 • GEMINI-3.1-FLASH-IMAGE-PREVIEW)
               </GeminiBadge>
             </Title>
             <Subtitle>
-              End-to-end 3-zone visual architecture roadmap synthesized by <strong>Nano Banana 2</strong> (<code>nano-banana-2</code> / <code>gemini-3.1-flash-image-preview</code>) &amp; PromptCanvas for <strong>{activeFrameworkTitle}</strong>: Zone 1 Current State (As-Is), Zone 2 Phased Transformation Bridge, and Zone 3 Desired Future State (To-Be) in one unified canvas.
+              End-to-end Google Cloud reference architecture synthesized by <strong>Nano Banana 2</strong> (<code>nano-banana-2</code> / <code>gemini-3.1-flash-image-preview</code>) &amp; PromptCanvas for <strong>{activeFrameworkTitle}</strong>: the Current Estate across six architectural tiers (L1 Channels → L6 Zero-Trust), the Wave 1–2 migration plan, and the Google Cloud Target pipeline (Ingest → Store → Govern → Serve → Operate) with numbered data-flow steps in one canvas.
             </Subtitle>
           </div>
         </TitleBlock>
@@ -1304,7 +1304,7 @@ const ArchitectureComparisonDiagram = ({
               $active={viewMode !== 'cards'} 
               onClick={() => setViewMode('blueprint')}
             >
-              <FiEye /> 🗺️ Unified 3-Zone Architecture Diagram
+              <FiEye /> 🗺️ Google Cloud Reference Architecture
             </ViewBtn>
             <ViewBtn 
               $active={viewMode === 'cards'} 
@@ -1372,7 +1372,7 @@ const ArchitectureComparisonDiagram = ({
           </button>
 
           <ExportBtn 
-            onClick={() => handleExportDrawio(targetXml, 'ScoreX_Unified_3Zone_Architecture_Blueprint.drawio')}
+            onClick={() => handleExportDrawio(targetXml, 'ScoreX_Google_Cloud_Reference_Architecture.drawio')}
             title="Download architecture diagram for Draw.io / diagrams.net"
           >
             <FiDownload /> 📥 Export Draw.io XML
@@ -1440,7 +1440,7 @@ const ArchitectureComparisonDiagram = ({
             1️⃣ Current State Grounded ({Number(currentScore || 2.5).toFixed(1)}/5.0)
           </div>
           <div style={{ fontSize: '0.78rem', color: '#1e293b', marginTop: '3px', lineHeight: 1.35 }}>
-            <strong>{customerName}</strong> • {normalizedDimScores.length || 6} evaluated pillars &amp; detected baseline stack mapped to Zone 1 cards.
+            <strong>{customerName}</strong> • {normalizedDimScores.length || 6} evaluated pillars &amp; detected baseline stack mapped to the six Current Estate tiers (L1 Channels → L6 Zero-Trust).
           </div>
         </div>
         <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '8px', padding: '8px 11px' }}>
@@ -1455,15 +1455,15 @@ const ArchitectureComparisonDiagram = ({
         </div>
         <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '8px', padding: '8px 11px' }}>
           <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#1e40af', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-            3️⃣ Phased Transition Bridge ({((Number(currentScore || 2.5) + Number(targetScore || 4.5)) / 2).toFixed(1)}/5.0)
+            3️⃣ Migration Waves 1–2 ({((Number(currentScore || 2.5) + Number(targetScore || 4.5)) / 2).toFixed(1)}/5.0)
           </div>
           <div style={{ fontSize: '0.78rem', color: '#1e293b', marginTop: '3px', lineHeight: 1.35 }}>
-            6-swimlane Strangler-Fig coexistence bridge ordered by maturity gap (Priority #1 → #6, Waves 1–3).
+            6-tier migration wave plan ordered by maturity gap (Priority #1 → #6): Wave 1 · 0–90 d for the three widest gaps, Wave 2 · 90–180 d for the rest.
           </div>
         </div>
         <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '8px 11px' }}>
           <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#166534', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-            4️⃣ Desired Future State &amp; Recommendations ({Number(targetScore || 4.5).toFixed(1)}/5.0)
+            4️⃣ Google Cloud Target &amp; Recommendations ({Number(targetScore || 4.5).toFixed(1)}/5.0)
           </div>
           <div style={{ fontSize: '0.78rem', color: '#1e293b', marginTop: '3px', lineHeight: 1.35 }}>
             {recommendations.length > 0
@@ -1473,7 +1473,7 @@ const ArchitectureComparisonDiagram = ({
         </div>
       </div>
 
-      {/* UNIFIED 3-ZONE ARCHITECTURE DIAGRAM VIEWPORT */}
+      {/* GOOGLE CLOUD REFERENCE ARCHITECTURE DIAGRAM VIEWPORT */}
       {viewMode !== 'cards' && (
         <div style={{ marginBottom: '20px' }}>
           <DiagramErrorBoundary onAutoHeal={handleRegenerate}>
@@ -1481,7 +1481,7 @@ const ArchitectureComparisonDiagram = ({
               xml={targetXml || transitionXml || currentXml}
               title={targetTitle}
               subtitle={targetSubtitle}
-              badge="Unified 3-Zone Blueprint (As-Is → Bridge → To-Be)"
+              badge="Google Cloud Reference Architecture (Current Estate → Migration Waves → Target)"
               theme={diagramTheme}
               height="740px"
               isTarget={true}

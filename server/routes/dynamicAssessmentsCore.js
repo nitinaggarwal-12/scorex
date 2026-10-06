@@ -259,7 +259,7 @@ function ensureInstanceGovernanceAndChangelog(instance) {
     stepOffsetMin += 8;
   });
 
-  // 5. Template 05 3-Zone Architecture Compilation
+  // 5. Google Cloud Reference-Architecture Compilation
   entries.push({
     id: `chg_${instance.id}_arch_t05`,
     timestamp: new Date(baseTime + (stepOffsetMin + 10) * 60000).toISOString(),
@@ -268,10 +268,10 @@ function ensureInstanceGovernanceAndChangelog(instance) {
     actorRole: 'Lead Cloud Architect (Owner)',
     actionType: 'architecture_updated',
     category: 'architecture',
-    targetScope: 'Template 05 Master 3-Zone Blueprints (As-Is / Transition / To-Be)',
+    targetScope: 'Google Cloud Reference Architecture (Current Estate / Migration Waves / Google Cloud Target)',
     previousValue: 'Raw Discovery Inventory',
-    newValue: 'Template 05 3-Zone Master Layout (Stage 1 As-Is, Stage 2 Transition, Stage 3 To-Be)',
-    summary: `Compiled grounded Template 05 3-Zone Master Architecture Blueprints (Left: As-Is Current State, Middle: Transformation Bridge, Right: To-Be Future State) for ${customer}.`
+    newValue: 'Google Cloud Reference-Architecture Layout (Stage 1 Current Estate, Stage 2 Migration Waves, Stage 3 Google Cloud Target)',
+    summary: `Compiled grounded Google Cloud Reference Architecture (Left: Current Estate across L1 Channels → L6 Zero-Trust tiers, Middle: Migration Waves 1–2, Right: Google Cloud Target pipeline Ingest → Store → Govern → Serve → Operate) for ${customer}.`
   });
 
   // 6. Final Status Change if completed
@@ -989,6 +989,7 @@ router.get('/instances/:id', async (req, res) => {
       const needsGroundedUpgrade =
         !existingDiags.grounded3StageCompiler ||
         !existingDiags.template05MasterLayout ||
+        !existingDiags.gcpReferenceLayout ||
         !existingDiags.transitionStateXml ||
         existingDiags.currentStateXml.includes('&amp;lt;');
       const grounded = needsGroundedUpgrade
@@ -1002,6 +1003,7 @@ router.get('/instances/:id', async (req, res) => {
             promptCanvasSource: true,
             grounded3StageCompiler: true,
             template05MasterLayout: true,
+            gcpReferenceLayout: true,
             diagramEngine: existingDiags.diagramEngine || 'nano-banana-2',
             imageModel: existingDiags.imageModel || 'gemini-3.1-flash-image-preview'
           }
@@ -1009,6 +1011,7 @@ router.get('/instances/:id', async (req, res) => {
             ...existingDiags,
             promptCanvasSource: true,
             template05MasterLayout: true,
+            gcpReferenceLayout: true,
             diagramEngine: existingDiags.diagramEngine || 'nano-banana-2',
             imageModel: existingDiags.imageModel || 'gemini-3.1-flash-image-preview'
           };
@@ -1025,6 +1028,7 @@ router.get('/instances/:id', async (req, res) => {
         promptCanvasSource: true,
         grounded3StageCompiler: true,
         template05MasterLayout: true,
+        gcpReferenceLayout: true,
         diagramEngine: 'nano-banana-2',
         imageModel: 'gemini-3.1-flash-image-preview'
       };

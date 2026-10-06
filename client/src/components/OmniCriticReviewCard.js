@@ -347,7 +347,7 @@ export default function OmniCriticReviewCard(props) {
         {
           category: 'Architecture Diagram Generation (Nano Banana 2)',
           severity: 'VERIFIED',
-          finding: `Unified 3-Zone Architecture Blueprint and 5-Step Friction Flow verified for ${frameworkName} specificity.`,
+          finding: `Google Cloud Reference Architecture (Current Estate → Migration Waves → Google Cloud Target) and 5-Step Friction Flow verified for ${frameworkName} specificity.`,
           remediation: 'Powered by Nano Banana 2 (nano-banana-2 / gemini-3.1-flash-image-preview) + Draw.io XML compiler.',
           status: 'VERIFIED_DYNAMIC'
         },

@@ -9200,7 +9200,7 @@ function extractArchitectureContext(responses = {}, metadata = {}) {
 
 /**
  * Dispatch bespoke, high-craft PromptCanvas Draw.io XML blueprints tailored to the assessment framework
- * using the canonical Template 05 3-Zone (Left: As-Is Current State, Middle: Transition Bridge, Right: To-Be Future State) layout.
+ * using the Google Cloud Reference-Architecture layout (Left: Current Estate, Middle: Migration Waves, Right: Google Cloud Target pipeline).
  */
 function getMasterArchitectureDiagrams(framework = {}, metadata = {}, scores = {}) {
   return compileAll3GroundedDiagrams(framework, metadata, scores);

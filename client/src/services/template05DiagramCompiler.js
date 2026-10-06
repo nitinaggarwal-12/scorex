@@ -210,7 +210,10 @@ function truncateText(str, maxLen = 38) {
       break;
     }
   }
-  if (acc) return acc;
+  if (acc) {
+    // Never end a truncated label on a dangling connector ("BigLake Partition &" → "BigLake Partition")
+    return acc.replace(/(\s+(?:&|&amp;|and|of|with|for|to|the|or|vs|at|on|in|by|via|\+|·|\/|-|—|–))+$/i, '').trim() || acc;
+  }
   return words[0].slice(0, maxLen);
 }
 
@@ -995,67 +998,6 @@ function getLayerIconHtml(layerId) {
 }
 
 /**
- * Returns an XML-escaped inline SVG icon + category badge metadata for each Technology Enabler card.
- */
-function getEnablerVisualMeta(name = '') {
-  const n = String(name).toLowerCase();
-  if (/bigquery|bqml|slot|focus/.test(n)) {
-    return {
-      cat: 'ANALYTICS',
-      color: '#1A73E8',
-      bg: '#EFF6FF',
-      svg: escapeXml('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1A73E8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="14" x2="8" y2="10"/><line x1="11" y1="14" x2="11" y2="8"/><line x1="14" y1="14" x2="14" y2="11"/></svg>')
-    };
-  }
-  if (/vertex|gemini|vector|agent/.test(n)) {
-    return {
-      cat: 'GEN AI / ML',
-      color: '#7C3AED',
-      bg: '#F5F3FF',
-      svg: escapeXml('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>')
-    };
-  }
-  if (/gke|cloud run|opencost|compute|confidential|terraform/.test(n)) {
-    return {
-      cat: 'CLOUD INFRA',
-      color: '#2563EB',
-      bg: '#EFF6FF',
-      svg: escapeXml('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>')
-    };
-  }
-  if (/vpc|armor|dlp|kms|chronicle|beyondcorp|workload|binary|scc|abac/.test(n)) {
-    return {
-      cat: 'ZERO-TRUST',
-      color: '#059669',
-      bg: '#ECFDF5',
-      svg: escapeXml('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>')
-    };
-  }
-  if (/apigee|mcp|a2a|pub\/sub|dataflow/.test(n)) {
-    return {
-      cat: 'EVENT MESH',
-      color: '#0284C7',
-      bg: '#F0F9FF',
-      svg: escapeXml('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>')
-    };
-  }
-  if (/biglake|alloydb|billing|cud/.test(n)) {
-    return {
-      cat: 'LAKEHOUSE',
-      color: '#0D9488',
-      bg: '#F0FDFA',
-      svg: escapeXml('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>')
-    };
-  }
-  return {
-    cat: 'GOVERNANCE',
-    color: '#D97706',
-    bg: '#FFFBEB',
-    svg: escapeXml('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>')
-  };
-}
-
-/**
  * Bijectively assigns the 6 evaluated pillars onto the 6 horizontal architectural tiers
  * (0: Channels/CoE, 1: Apps/Workbench, 2: Data/Storage/Memory, 3: Integration/Gateway, 4: Infra/Compute, 5: Security/Governance)
  * so that every horizontal bridge arrow (Row i -> Bridge 0(i+1) -> Tier i+1) is 100% logically coherent.
@@ -1111,11 +1053,13 @@ function assignPillarsToArchitecturalTiers(pillars = []) {
 }
 
 /**
- * MASTER TEMPLATE 05 3-ZONE COMPILER:
- * Left Zone   = AS-IS CURRENT STATE (Red container #FFF5F5, #DC2626 header, 6 rows on aligned 5-column grid with tier-specific shapes & score pills)
- * Middle Zone = TRANSFORMATION BENEFITS & TRANSITION BRIDGE (Blue container #EFF6FF, 6 tier-aligned bridge cards + 6-row horizontal flow arrows)
- * Right Zone  = TO-BE FUTURE STATE (Green container #F0FDF4, #065F46 header, 6 labeled architectural tier containers with clean vertical connectors)
- * Bottom Bar  = KEY TECHNOLOGY ENABLERS (12 SVG icon cards) + QUANTIFIED OUTCOMES (5 cards) + LEGEND Bar
+ * MASTER GOOGLE CLOUD REFERENCE-ARCHITECTURE COMPILER (Current Estate → Migration Waves → Google Cloud Target):
+ * Left Zone   = CURRENT ESTATE (dashed grey/red zone, 6 architectural tier rows L1 CHANNELS → L6 ZERO-TRUST, each with 2 grounded
+ *               legacy components, the tier's unique primary pain badge l_pain_0 → l_pain_5 and its migration disposition)
+ * Middle      = MIGRATION WAVE arrow (Wave 1 · 0–90 d → Wave 2 · 90–180 d) with the composite score pill
+ * Right Zone  = GOOGLE CLOUD TARGET (Ingest → Store → Govern → Serve → Operate pipeline with numbered Google Cloud services,
+ *               5 shared zero-trust controls, 8 numbered data-flow steps, and the 6-tier migration wave plan)
+ * Bottom Band = NOW / TRANSITION / TARGET chevrons + 5 QUANTIFIED OUTCOMES + LEGEND bar
  *
  * @param {object} dossier - Extracted customer telemetry dossier
  * @param {'current' | 'transition' | 'target'} stageFocus - Which stage tab is active
@@ -1147,34 +1091,12 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
   const isStage2 = stageFocus === 'transition';
   const isStage3 = stageFocus === 'target';
 
-  const stageLabel = isStage1
-    ? `STAGE 1 FOCUS: AS-IS CURRENT STATE (${avgCur}/5.0)`
-    : isStage2
-    ? `STAGE 2 FOCUS: TRANSITION BRIDGE (${avgCur} → ${avgMid}/5.0)`
-    : `STAGE 3 FOCUS: TO-BE FUTURE STATE (${avgTgt}/5.0 • +${overallDelta} LEAP)`;
-
-  const leftStroke = isStage1 ? '#DC2626' : '#FCA5A5';
-  const leftStrokeW = isStage1 ? '3.2' : '1.5';
-  const leftOpacity = isStage1 ? '100' : isStage3 ? '90' : '58';
-  const midStroke = isStage2 ? '#1D4ED8' : '#93C5FD';
-  const midStrokeW = isStage2 ? '3.2' : '1.5';
-  const midOpacity = isStage2 ? '100' : isStage3 ? '94' : '52';
-  const rightStroke = isStage3 ? '#059669' : '#86EFAC';
-  const rightStrokeW = isStage3 ? '3.2' : '1.5';
-  const rightOpacity = isStage3 ? '100' : isStage2 ? '62' : '50';
-
   const domainSignal = `${dossier.fwTypeKey || ''} ${useCase || ''}`.toLowerCase();
   const isFinOpsDomain = /finops|cost|billing/.test(domainSignal) && !/openai|gemini|edw|lakehouse/.test(domainSignal);
   const isSecurityDomain = /zero_trust|security|trism|ciso|dlp|siem/.test(domainSignal);
   const isAgenticDomain = /agentic|mcp|multi-agent/.test(domainSignal);
   const isGeminiMigDomain = /openai|gemini|migration/.test(domainSignal) && !/edw|lakehouse/.test(domainSignal);
   const isLakehouseDomain = /edw|lakehouse|bigquery|modernization/.test(domainSignal);
-
-  // Top 6 As-Is Pain Badges (y=86, height=34 -> 100% unique primaryPainLabel per pillar)
-  const asIsPainBadges = [p0, p1, p2, p3, p4, p5].map((p) => ({
-    title: p.primaryPainLabel || concisePainPoint(p.techPainCodes[0], 'Siloed Baseline', 19),
-    sub: `${concisePillarLabel(p.cleanName, 18)} (${p.currentScore}/5)`
-  }));
 
   // Industry & Domain-grounded Channels (distinct personas, never repeating pillar names)
   const indLower = String(industry || '').toLowerCase();
@@ -1425,567 +1347,483 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
         { name: 'Cost & SLA Drift', sub: p4.primaryPainLabel || 'No Chargeback' }
       ];
 
-  // 6 Canonical Tier Vertical Centers: aligns Left Zone rows, Middle Bridge cards 01..06, and Right Zone Tier 1..6 containers 1:1!
-  const tierSpec = [
-    { idx: 0, boxY: 128, boxH: 76, cardY: 134, cardH: 64, centerY: 166 },
-    { idx: 1, boxY: 216, boxH: 80, cardY: 222, cardH: 68, centerY: 256 },
-    { idx: 2, boxY: 308, boxH: 84, cardY: 314, cardH: 72, centerY: 350 },
-    { idx: 3, boxY: 404, boxH: 80, cardY: 410, cardH: 68, centerY: 444 },
-    { idx: 4, boxY: 496, boxH: 80, cardY: 502, cardH: 68, centerY: 536 },
-    { idx: 5, boxY: 588, boxH: 80, cardY: 594, cardH: 68, centerY: 628 }
+  // ==================== GOOGLE CLOUD REFERENCE-ARCHITECTURE LAYOUT (1600 x 880) ====================
+  // Left   = CURRENT ESTATE (dashed zone, 6 architectural tier rows L1 CHANNELS → L6 ZERO-TRUST, each with 2 grounded
+  //          legacy components, the tier's unique primary pain badge l_pain_0..l_pain_5 and its migration disposition)
+  // Middle = MIGRATION WAVE arrow (Wave 1 · 0–90 d → Wave 2 · 90–180 d)
+  // Right  = GOOGLE CLOUD TARGET (Ingest → Store → Govern → Serve → Operate pipeline with numbered services,
+  //          shared zero-trust controls, numbered data-flow steps and the 6-tier migration wave plan)
+  // Bottom = NOW / TRANSITION / TARGET chevron band + quantified outcomes + legend
+
+  const tierAlignedPillars = assignPillarsToArchitecturalTiers([p0, p1, p2, p3, p4, p5]);
+  const bridgeCards = tierAlignedPillars.map(({ pillar: p, layerTag }, idx) => {
+    const rank = Number(p.priorityRank) || idx + 1;
+    return {
+      badge: `0${idx + 1}`,
+      layerTag,
+      title: concisePillarLabel(p.cleanName, 18),
+      scorePill: `${p.currentScore} → ${p.midScore} → ${p.futureScore}`,
+      bridge: truncateText(p.defaultBridgeTitle, 34),
+      pain: p.primaryPainLabel || concisePainPoint(p.techPainCodes[0], 'Siloed Baseline', 19),
+      target: truncateText(p.defaultTargetTitle, 40),
+      currentScore: p.currentScore,
+      futureScore: p.futureScore,
+      rank,
+      isWave1: rank <= 3
+    };
+  });
+
+  const dispositionVerbs = ['Unify', 'Modernize', 'Replatform', 'Replace', 'Rightsize', 'Harden'];
+  const legacyTierRows = [
+    { id: 'channels', items: [{ name: channelNames[0], sub: 'Manual Workflows' }, { name: channelNames[3], sub: 'Siloed Reporting' }] },
+    { id: 'apps', items: [{ name: asIsApps[0].name, sub: asIsApps[0].pill }, { name: asIsApps[1].name, sub: asIsApps[1].pill }] },
+    { id: 'data', items: [asIsCylinders[0], asIsCylinders[1]] },
+    { id: 'integ', items: [asIsIntegration[0], asIsIntegration[1]] },
+    { id: 'infra', items: [asIsInfra[0], asIsInfra[1]] },
+    { id: 'sec', items: [asIsSecurity[0], asIsSecurity[1]] }
+  ].map((row, idx) => ({ ...row, verb: dispositionVerbs[idx], card: bridgeCards[idx] }));
+
+  // Google Cloud target pipeline: 5 stages x 3 services, numbered 1-8 to match the data-flow steps below
+  const GC_BLUE = '#4285F4';
+  const GC_RED = '#EA4335';
+  const GC_YELLOW = '#F9AB00';
+  const GC_GREEN = '#34A853';
+  const pipelineStages = isFinOpsDomain
+    ? [
+        { title: 'INGEST', services: [
+          { code: 'CB', color: GC_BLUE, name: 'Cloud Billing Export', sub: 'FOCUS 1.0 · hourly', step: 1 },
+          { code: 'GK', color: GC_BLUE, name: 'GKE Cost Allocation', sub: 'OpenCost labels · pods', step: 2 },
+          { code: 'PS', color: GC_GREEN, name: 'Pub/Sub Event Bus', sub: 'cost & anomaly events', step: 4 }
+        ] },
+        { title: 'STORE', services: [
+          { code: 'BQ', color: GC_BLUE, name: 'BigQuery FinOps Hub', sub: 'FOCUS 1.0 · unit-economics mart' },
+          { code: 'BL', color: GC_BLUE, name: 'BigLake + Autoclass', sub: 'cold tier · partitioned', step: 8 },
+          { code: 'SA', color: GC_RED, name: 'Spanner / AlloyDB', sub: 'retained OLTP systems' }
+        ] },
+        { title: 'GOVERN', services: [
+          { code: 'OP', color: GC_YELLOW, name: 'Org Policy · Tag Taxonomy', sub: 'enforced at creation', step: 3 },
+          { code: 'DX', color: GC_YELLOW, name: 'Dataplex Catalog', sub: 'lineage · quality · owners' },
+          { code: 'CG', color: GC_YELLOW, name: 'CUD & Slot Governor', sub: 'Flex CUDs · BQ reservations', step: 7 }
+        ] },
+        { title: 'SERVE', services: [
+          { code: 'LK', color: GC_GREEN, name: 'Looker FinOps Showback', sub: 'dept SLAs · budgets', step: 5 },
+          { code: 'VA', color: GC_RED, name: 'Vertex AI · Gemini', sub: 'context caching · Flash routing', step: 6 },
+          { code: 'AP', color: GC_GREEN, name: 'Apigee Token Quota Router', sub: 'per-team LLM quotas' }
+        ] },
+        { title: 'OPERATE', services: [
+          { code: 'GA', color: GC_BLUE, name: 'GKE Autopilot', sub: 'scale-to-zero · rightsizing' },
+          { code: 'CM', color: GC_GREEN, name: 'Cloud Monitoring SLOs', sub: 'showback latency · alerts' },
+          { code: 'ML', color: GC_RED, name: 'BQML Anomaly Detection', sub: 'spend drift · post-bill' }
+        ] }
+      ]
+    : isSecurityDomain
+    ? [
+        { title: 'INGEST', services: [
+          { code: 'IAP', color: GC_BLUE, name: 'BeyondCorp IAP', sub: 'identity-aware access', step: 1 },
+          { code: 'CA', color: GC_RED, name: 'Cloud Armor WAF', sub: 'edge DDoS · bot defense', step: 2 },
+          { code: 'CH', color: GC_GREEN, name: 'Chronicle Ingest', sub: 'SIEM telemetry streams', step: 4 }
+        ] },
+        { title: 'STORE', services: [
+          { code: 'BQ', color: GC_BLUE, name: 'BigQuery Security Lake', sub: 'immutable audit tables' },
+          { code: 'KM', color: GC_YELLOW, name: 'Cloud KMS HSM', sub: 'CMEK · EKM key control', step: 8 },
+          { code: 'DL', color: GC_RED, name: 'Cloud DLP Vault', sub: 'tokenized PII / PHI', step: 3 }
+        ] },
+        { title: 'GOVERN', services: [
+          { code: 'SC', color: GC_YELLOW, name: 'Security Command Center', sub: 'posture · findings', step: 5 },
+          { code: 'OP', color: GC_YELLOW, name: 'Org Policy · VPC-SC', sub: 'zero-trust perimeter' },
+          { code: 'BA', color: GC_YELLOW, name: 'Binary Authorization', sub: 'SLSA L3 supply chain' }
+        ] },
+        { title: 'SERVE', services: [
+          { code: 'MA', color: GC_RED, name: 'Model Armor', sub: 'prompt & response shield', step: 6 },
+          { code: 'VA', color: GC_RED, name: 'Vertex AI · Gemini', sub: 'private endpoints · CMEK' },
+          { code: 'AP', color: GC_GREEN, name: 'Apigee AI Gateway', sub: 'proxied LLM access' }
+        ] },
+        { title: 'OPERATE', services: [
+          { code: 'CS', color: GC_GREEN, name: 'Chronicle SOAR', sub: 'automated playbooks', step: 7 },
+          { code: 'CL', color: GC_GREEN, name: 'Cloud Logging · Audit', sub: 'WORM retention · SLOs' },
+          { code: 'CV', color: GC_BLUE, name: 'Confidential VMs', sub: 'encrypted-in-use compute' }
+        ] }
+      ]
+    : isAgenticDomain
+    ? [
+        { title: 'INGEST', services: [
+          { code: 'AP', color: GC_GREEN, name: 'Apigee MCP Gateway', sub: 'governed tool RPC', step: 1 },
+          { code: 'PS', color: GC_GREEN, name: 'Pub/Sub A2A Mesh', sub: 'agent-to-agent events', step: 3 },
+          { code: 'EA', color: GC_BLUE, name: 'Eventarc Triggers', sub: 'event-driven agents' }
+        ] },
+        { title: 'STORE', services: [
+          { code: 'AL', color: GC_BLUE, name: 'AlloyDB AI Memory', sub: 'episodic state · vectors', step: 4 },
+          { code: 'SP', color: GC_BLUE, name: 'Spanner Graph', sub: 'entity & relationship graph' },
+          { code: 'BQ', color: GC_BLUE, name: 'BigQuery Trace Lake', sub: 'trajectory analytics', step: 7 }
+        ] },
+        { title: 'GOVERN', services: [
+          { code: 'MA', color: GC_RED, name: 'Model Armor', sub: 'tool & prompt guardrails', step: 5 },
+          { code: 'HG', color: GC_YELLOW, name: 'HITL Approval Gate', sub: 'policy · audit guard', step: 6 },
+          { code: 'IAM', color: GC_YELLOW, name: 'Agent Identity · IAM', sub: 'scoped OAuth per agent' }
+        ] },
+        { title: 'SERVE', services: [
+          { code: 'VA', color: GC_RED, name: 'Vertex AI Agent Engine', sub: 'Gemini orchestration', step: 2 },
+          { code: 'VS', color: GC_RED, name: 'Vertex Vector Search', sub: 'grounded RAG retrieval' },
+          { code: 'CR', color: GC_BLUE, name: 'Cloud Run Tools', sub: 'sandboxed functions' }
+        ] },
+        { title: 'OPERATE', services: [
+          { code: 'OT', color: GC_GREEN, name: 'Cloud Trace · OpenTelemetry', sub: 'spans per tool call', step: 8 },
+          { code: 'CM', color: GC_GREEN, name: 'Cloud Monitoring', sub: 'agent SLOs · token burn' },
+          { code: 'GK', color: GC_BLUE, name: 'GKE Autopilot', sub: 'elastic agent pods' }
+        ] }
+      ]
+    : isGeminiMigDomain
+    ? [
+        { title: 'INGEST', services: [
+          { code: 'AP', color: GC_GREEN, name: 'Apigee AI Gateway', sub: 'OpenAI-compatible proxy', step: 1 },
+          { code: 'DA', color: GC_BLUE, name: 'Document AI Ingest', sub: 'layout-aware parsing', step: 3 },
+          { code: 'PS', color: GC_GREEN, name: 'Pub/Sub', sub: 'async batch requests' }
+        ] },
+        { title: 'STORE', services: [
+          { code: 'CC', color: GC_RED, name: 'Vertex Context Cache', sub: '2M tokens · 75% savings', step: 4 },
+          { code: 'VS', color: GC_RED, name: 'Vertex Vector RAG', sub: 'ACL-synced index' },
+          { code: 'BQ', color: GC_BLUE, name: 'BigQuery Eval Store', sub: 'golden datasets · scores', step: 7 }
+        ] },
+        { title: 'GOVERN', services: [
+          { code: 'MA', color: GC_RED, name: 'Model Armor', sub: 'jailbreak & PII shield', step: 5 },
+          { code: 'KM', color: GC_YELLOW, name: 'Cloud KMS · CMEK', sub: 'zero-retention keys' },
+          { code: 'VP', color: GC_YELLOW, name: 'VPC Service Controls', sub: 'private model egress' }
+        ] },
+        { title: 'SERVE', services: [
+          { code: 'GM', color: GC_RED, name: 'Gemini 3.1 Pro / Flash', sub: 'tiered model routing', step: 2 },
+          { code: 'VE', color: GC_RED, name: 'Vertex GenAI Eval', sub: 'parity certification', step: 6 },
+          { code: 'AB', color: GC_BLUE, name: 'Vertex AI Agent Builder', sub: 'grounded enterprise search' }
+        ] },
+        { title: 'OPERATE', services: [
+          { code: 'PT', color: GC_BLUE, name: 'Provisioned Throughput', sub: 'guaranteed TPM', step: 8 },
+          { code: 'CM', color: GC_GREEN, name: 'Cloud Monitoring', sub: 'latency · token SLOs' },
+          { code: 'CB', color: GC_GREEN, name: 'Cloud Build CI/CD', sub: 'prompt regression gates' }
+        ] }
+      ]
+    : isLakehouseDomain
+    ? [
+        { title: 'INGEST', services: [
+          { code: 'DS', color: GC_BLUE, name: 'Datastream CDC', sub: 'sub-second replication', step: 1 },
+          { code: 'DF', color: GC_BLUE, name: 'Dataflow Streaming', sub: 'Beam ETL · exactly-once', step: 2 },
+          { code: 'PS', color: GC_GREEN, name: 'Pub/Sub', sub: 'event ingestion' }
+        ] },
+        { title: 'STORE', services: [
+          { code: 'BQ', color: GC_BLUE, name: 'BigQuery Editions', sub: 'autoscaled slot pools', step: 4 },
+          { code: 'BL', color: GC_BLUE, name: 'BigLake Iceberg', sub: 'open zero-copy tables', step: 3 },
+          { code: 'GS', color: GC_GREEN, name: 'Cloud Storage Autoclass', sub: 'bronze · cold tiers' }
+        ] },
+        { title: 'GOVERN', services: [
+          { code: 'DX', color: GC_YELLOW, name: 'Dataplex Universal Catalog', sub: 'lineage · ABAC · quality', step: 5 },
+          { code: 'DQ', color: GC_YELLOW, name: 'Dataform ELT', sub: 'git-backed SQL models', step: 6 },
+          { code: 'KM', color: GC_YELLOW, name: 'Cloud KMS · CMEK', sub: 'column-level security' }
+        ] },
+        { title: 'SERVE', services: [
+          { code: 'LK', color: GC_GREEN, name: 'Looker Semantic Layer', sub: 'governed KPIs · BI Engine', step: 7 },
+          { code: 'BO', color: GC_BLUE, name: 'BigQuery Omni', sub: 'cross-cloud zero-egress' },
+          { code: 'VA', color: GC_RED, name: 'Vertex AI · BQML', sub: 'in-database ML' }
+        ] },
+        { title: 'OPERATE', services: [
+          { code: 'CC', color: GC_GREEN, name: 'Cloud Composer', sub: 'orchestrated DAGs', step: 8 },
+          { code: 'CM', color: GC_GREEN, name: 'Cloud Monitoring', sub: 'freshness · slot SLOs' },
+          { code: 'FO', color: GC_YELLOW, name: 'FinOps Slot Autoscaler', sub: 'reservation governor' }
+        ] }
+      ]
+    : [
+        { title: 'INGEST', services: [
+          { code: 'AP', color: GC_GREEN, name: 'Apigee API Gateway', sub: 'partner & app APIs', step: 1 },
+          { code: 'DS', color: GC_BLUE, name: 'Datastream CDC', sub: 'operational sources', step: 2 },
+          { code: 'PS', color: GC_GREEN, name: 'Pub/Sub', sub: 'event streaming' }
+        ] },
+        { title: 'STORE', services: [
+          { code: 'BQ', color: GC_BLUE, name: 'BigQuery Lakehouse', sub: 'governed analytics', step: 3 },
+          { code: 'BL', color: GC_BLUE, name: 'BigLake Iceberg', sub: 'open-format storage' },
+          { code: 'AL', color: GC_RED, name: 'AlloyDB / Spanner', sub: 'transactional systems' }
+        ] },
+        { title: 'GOVERN', services: [
+          { code: 'DX', color: GC_YELLOW, name: 'Dataplex Catalog', sub: 'lineage · ABAC tags', step: 4 },
+          { code: 'IAM', color: GC_YELLOW, name: 'IAM · Org Policy', sub: 'least privilege' },
+          { code: 'KM', color: GC_YELLOW, name: 'Cloud KMS · CMEK', sub: 'at rest & in transit' }
+        ] },
+        { title: 'SERVE', services: [
+          { code: 'LK', color: GC_GREEN, name: 'Looker BI', sub: 'semantic KPIs', step: 5 },
+          { code: 'VA', color: GC_RED, name: 'Vertex AI · Gemini', sub: 'GenAI & ML serving', step: 6 },
+          { code: 'MA', color: GC_RED, name: 'Model Armor', sub: 'AI safety guardrails' }
+        ] },
+        { title: 'OPERATE', services: [
+          { code: 'GK', color: GC_BLUE, name: 'GKE Autopilot · Cloud Run', sub: 'serverless compute', step: 7 },
+          { code: 'CM', color: GC_GREEN, name: 'Cloud Monitoring · Logging', sub: 'SLOs · audit trails', step: 8 },
+          { code: 'FO', color: GC_YELLOW, name: 'FinOps · FOCUS Billing', sub: 'showback & CUDs' }
+        ] }
+      ];
+
+  const dataFlowSteps = isFinOpsDomain
+    ? [
+        'Cloud Billing exports FOCUS 1.0 cost data to BigQuery hourly',
+        'GKE OpenCost + labels attribute pod-level cost to teams',
+        'Org Policy enforces the tag taxonomy at resource creation',
+        'BQML anomalies publish to Pub/Sub → chat / email in minutes',
+        'Looker showback with departmental unit-economics SLAs',
+        'Apigee routes LLM calls through Vertex context caching',
+        'Governor auto-adjusts Flex CUDs & BigQuery reservations',
+        'Autoclass + BigLake tiering retires cold petabytes'
+      ]
+    : isSecurityDomain
+    ? [
+        'BeyondCorp IAP verifies identity & device before any access',
+        'Cloud Armor blocks DDoS & bot traffic at the edge',
+        'Cloud DLP tokenizes PII / PHI before prompts & RAG',
+        'Chronicle ingests all AI & platform telemetry in real time',
+        'Security Command Center scores posture & routes findings',
+        'Model Armor shields prompts & responses from injection',
+        'Chronicle SOAR playbooks auto-contain incidents',
+        'Cloud KMS HSM keys (CMEK / EKM) protect every data store'
+      ]
+    : isAgenticDomain
+    ? [
+        'Apigee MCP gateway exposes governed tools to every agent',
+        'Vertex AI Agent Engine orchestrates Gemini multi-agent plans',
+        'Pub/Sub A2A mesh exchanges agent-to-agent messages',
+        'AlloyDB AI persists episodic memory & vector context',
+        'Model Armor screens prompts, tools & responses inline',
+        'HITL gate approves high-impact actions with policy audit',
+        'BigQuery trace lake stores every trajectory for review',
+        'Cloud Trace / OpenTelemetry spans every tool call'
+      ]
+    : isGeminiMigDomain
+    ? [
+        'Apigee proxies legacy OpenAI calls to Gemini with zero code change',
+        'Gemini 3.1 Pro / Flash routing arbitrages cost per request tier',
+        'Document AI parses long documents without 512-token chunking',
+        'Vertex context cache reuses 2M-token prompts at 75% lower cost',
+        'Model Armor blocks jailbreaks & masks PII inline',
+        'Vertex GenAI Eval certifies answer parity before cutover',
+        'BigQuery eval store tracks golden-dataset scores per release',
+        'Provisioned Throughput guarantees TPM for peak traffic'
+      ]
+    : isLakehouseDomain
+    ? [
+        'Datastream CDC replicates source changes in under a second',
+        'Dataflow streams & transforms events exactly-once',
+        'BigLake Iceberg lands open-format bronze / silver tables',
+        'BigQuery Editions autoscale slots for gold-layer analytics',
+        'Dataplex catalogs lineage, quality & ABAC policies',
+        'Dataform runs git-backed declarative SQL models',
+        'Looker serves governed KPIs through the semantic layer',
+        'Cloud Composer orchestrates & monitors the DAGs'
+      ]
+    : [
+        'Apigee exposes governed APIs to apps & partners',
+        'Datastream CDC replicates operational data continuously',
+        'BigQuery lakehouse unifies analytics on open BigLake tables',
+        'Dataplex enforces lineage, quality & ABAC policies',
+        'Looker serves governed KPIs to every persona',
+        'Vertex AI / Gemini serve grounded GenAI & ML',
+        'GKE Autopilot & Cloud Run scale workloads to demand',
+        'Cloud Monitoring & Logging track SLOs and audit trails'
+      ];
+
+  const sharedControls = [
+    { name: 'IAM & Least Privilege', sub: 'Workload Identity' },
+    { name: 'VPC Service Controls', sub: 'zero-trust perimeter' },
+    { name: 'Cloud KMS · CMEK', sub: isSecurityDomain ? 'HSM + Confidential VM' : 'at rest & in transit' },
+    { name: 'Cloud Logging · Audit', sub: isAgenticDomain ? 'agent trajectory logs' : 'real-time SLOs' },
+    { name: 'Model Armor · DLP', sub: `AI safety · PII (${p4.futureScore}/5)` }
   ];
 
-  // Middle Zone: 6 Transformation Bridge Cards bijectively aligned 1:1 with the 6 horizontal architectural tiers
-  const tierAlignedPillars = assignPillarsToArchitecturalTiers([p0, p1, p2, p3, p4, p5]);
-  const bridgeCards = tierAlignedPillars.map(({ pillar: p, layerTag }, idx) => ({
-    badge: `0${idx + 1}`,
-    layerTag,
-    title: concisePillarLabel(p.cleanName, 18),
-    scorePill: `${p.currentScore} → ${p.midScore} → ${p.futureScore}`,
-    bridge: truncateText(p.defaultBridgeTitle, 38),
-    remedy: `Fixes ${p.primaryPainLabel || concisePainPoint(p.techPainCodes[0], 'Siloed Baseline', 19)}`
-  }));
+  const stageLabel = isStage1
+    ? `STAGE 1 FOCUS: CURRENT ESTATE (${avgCur}/5.0)`
+    : isStage2
+    ? `STAGE 2 FOCUS: MIGRATION WAVES 1–2 (${avgCur} → ${avgMid}/5.0)`
+    : `STAGE 3 FOCUS: GOOGLE CLOUD TARGET (${avgTgt}/5.0 • +${overallDelta} LEAP)`;
 
-  const cleanHeaderTitle = `AS-IS / TRANSITION / TO-BE — ${truncateText(custName.toUpperCase(), 34)} (${truncateText(useCase.toUpperCase(), 68)})`;
+  const estateStroke = isStage1 ? '#DC2626' : '#94A3B8';
+  const estateStrokeW = isStage1 ? '2.6' : '1.6';
+  const waveFill = isStage2 ? '#1D4ED8' : '#3B82F6';
+  const waveStrokeW = isStage2 ? '2.6' : '1.2';
+  const gcpStroke = isStage3 ? '#1A73E8' : GC_BLUE;
+  const gcpStrokeW = isStage3 ? '3' : '1.8';
+  const gcpOpacity = isStage1 ? '88' : '100';
 
-  let xml = `<mxfile host="embed.diagrams.net" modified="${new Date().toISOString()}" agent="ScoreX-Template05-Master-Compiler" version="24.0.0" type="device">
-  <diagram id="template05_${stageFocus}" name="Template 05: As-Is / Transition / To-Be (${escapeXml(custName)})">
-    <mxGraphModel dx="1600" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="920" background="#FFFFFF" math="0" shadow="0">
+  const byRank = [...pillars].sort((a, b) => (Number(a.priorityRank) || 9) - (Number(b.priorityRank) || 9));
+  const nowSummary = byRank.slice(0, 3).map(p => p.primaryPainLabel || concisePainPoint(p.techPainCodes[0], 'Siloed Baseline', 19)).join(' · ');
+  const transitionSummary = byRank.slice(0, 3).map(p => truncateText(p.defaultBridgeTitle, 34)).join(' · ');
+  const targetSummary = byRank.slice(0, 3).map(p => truncateText(p.defaultTargetTitle, 34)).join(' · ');
+
+  const cleanHeaderTitle = `CURRENT ESTATE → MIGRATION WAVES → GOOGLE CLOUD TARGET — ${truncateText(custName.toUpperCase(), 34)} (${truncateText(useCase.toUpperCase(), 56)})`;
+
+  let xml = `<mxfile host="embed.diagrams.net" modified="${new Date().toISOString()}" agent="ScoreX-GoogleCloud-ReferenceArchitecture-Compiler" version="24.0.0" type="device">
+  <diagram id="gcp_reference_${stageFocus}" name="Google Cloud Reference Architecture: Current Estate / Migration Waves / Target (${escapeXml(custName)})">
+    <mxGraphModel dx="1600" dy="880" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="880" background="#FFFFFF" math="0" shadow="0">
       <root>
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
 
-        <!-- ==================== TOP HEADER BAR (TEMPLATE 05) ==================== -->
-        <mxCell id="t05_badge" value="&lt;b style=&quot;font-size:15px;color:#FFFFFF;&quot;&gt;05&lt;/b&gt;" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;align=center;verticalAlign=middle;" vertex="1" parent="1">
+        <!-- ==================== TOP HEADER BAR ==================== -->
+        <mxCell id="t05_badge" value="&lt;b style=&quot;font-size:11px;color:#FFFFFF;letter-spacing:0.5px;&quot;&gt;GCP&lt;/b&gt;" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#1A73E8;strokeColor=#1557B0;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="20" y="10" width="44" height="42" as="geometry"/>
         </mxCell>
         <mxCell id="t05_title" value="&lt;b style=&quot;font-size:13.5px;color:#0F172A;letter-spacing:-0.2px;&quot;&gt;${escapeXml(cleanHeaderTitle)}&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=nowrap;" vertex="1" parent="1">
           <mxGeometry x="72" y="8" width="1220" height="22" as="geometry"/>
         </mxCell>
-        <mxCell id="t05_subtitle" value="&lt;span style=&quot;font-size:9.8px;color:#475569;font-weight:600;&quot;&gt;Transforming to an Intelligent, Integrated &amp;amp; Compliant Platform • &lt;b style=&quot;color:#1D4ED8;&quot;&gt;${escapeXml(stageLabel)}&lt;/b&gt; • Primary Bottleneck Remediated: ${escapeXml(truncateText(weakest.cleanName, 60))} (${weakest.currentScore} → ${weakest.futureScore}/5.0)&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=nowrap;" vertex="1" parent="1">
+        <mxCell id="t05_subtitle" value="&lt;span style=&quot;font-size:9.8px;color:#475569;font-weight:600;&quot;&gt;&lt;b style=&quot;color:#1D4ED8;&quot;&gt;${escapeXml(stageLabel)}&lt;/b&gt; • Bottleneck Remediated: ${escapeXml(truncateText(weakest.cleanName, 44))} (${weakest.currentScore} → ${weakest.futureScore}/5.0) • Target: ${escapeXml(truncateText(targetPlatformBrand, 44))}&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=nowrap;" vertex="1" parent="1">
           <mxGeometry x="72" y="30" width="1220" height="20" as="geometry"/>
         </mxCell>
-        <mxCell id="t05_brand_logo" value="&lt;div style=&quot;text-align:right;&quot;&gt;&lt;b style=&quot;font-size:13px;color:#0F172A;letter-spacing:0.8px;&quot;&gt;&lt;span style=&quot;color:#4285F4;&quot;&gt;&#9670;&lt;/span&gt;&lt;span style=&quot;color:#EA4335;&quot;&gt;&#9670;&lt;/span&gt;&lt;span style=&quot;color:#FBBC05;&quot;&gt;&#9670;&lt;/span&gt;&lt;span style=&quot;color:#34A853;&quot;&gt;&#9670;&lt;/span&gt; ENTERPRISE CLOUD&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8px;color:#64748B;&quot;&gt;Transforming Operations. Accelerating AI Value.&lt;/span&gt;&lt;/div&gt;" style="text;html=1;align=right;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="t05_brand_logo" value="&lt;div style=&quot;text-align:right;&quot;&gt;&lt;b style=&quot;font-size:13px;color:#0F172A;letter-spacing:0.8px;&quot;&gt;&lt;span style=&quot;color:#4285F4;&quot;&gt;&amp;#9670;&lt;/span&gt;&lt;span style=&quot;color:#EA4335;&quot;&gt;&amp;#9670;&lt;/span&gt;&lt;span style=&quot;color:#FBBC05;&quot;&gt;&amp;#9670;&lt;/span&gt;&lt;span style=&quot;color:#34A853;&quot;&gt;&amp;#9670;&lt;/span&gt; GOOGLE CLOUD&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:8px;color:#64748B;&quot;&gt;Reference Architecture • Transforming Operations. Accelerating AI Value.&lt;/span&gt;&lt;/div&gt;" style="text;html=1;align=right;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="1300" y="10" width="280" height="40" as="geometry"/>
         </mxCell>
 
-        <!-- ==================== LEFT ZONE: AS-IS CURRENT STATE ==================== -->
-        <mxCell id="z_left_bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFF5F5;strokeColor=${leftStroke};strokeWidth=${leftStrokeW};opacity=${leftOpacity};" vertex="1" parent="1">
-          <mxGeometry x="20" y="60" width="570" height="688" as="geometry"/>
+        <!-- ==================== LEFT ZONE: CURRENT ESTATE ==================== -->
+        <mxCell id="z_left_bg" value="" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=${estateStroke};strokeWidth=${estateStrokeW};dashed=1;dashPattern=6 4;" vertex="1" parent="1">
+          <mxGeometry x="20" y="68" width="400" height="618" as="geometry"/>
         </mxCell>
-        <mxCell id="z_left_hdr" value="&lt;b style=&quot;font-size:10px;color:#FFFFFF;letter-spacing:0.4px;&quot;&gt;${isStage1 ? '&#9733; ' : ''}AS-IS CURRENT STATE (${avgCur} / 5.0)${isStage1 ? ' — ACTIVE FOCUS' : ''}&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DC2626;strokeColor=#B91C1C;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="135" y="60" width="340" height="22" as="geometry"/>
+        <mxCell id="z_left_hdr" value="&lt;b style=&quot;font-size:9px;color:#FFFFFF;letter-spacing:0.5px;&quot;&gt;${isStage1 ? '&amp;#9733; ' : ''}CURRENT ESTATE · ${avgCur} / 5.0${isStage1 ? ' — ACTIVE FOCUS' : ''}&lt;/b&gt;" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=${isStage1 ? '#DC2626' : '#475569'};strokeColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="34" y="58" width="${isStage1 ? 300 : 190}" height="20" as="geometry"/>
         </mxCell>
 `;
 
-  // Top 6 Pain Point Pills inside Left Zone (y=86, height=34)
-  asIsPainBadges.forEach((b, idx) => {
-    const bx = 28 + idx * 92;
+  legacyTierRows.forEach((row, idx) => {
+    const ry = 100 + idx * 90;
+    const bc = row.card;
     xml += `
-        <mxCell id="l_pain_${idx}" value="&lt;b style=&quot;font-size:7px;color:#DC2626;&quot;&gt;&#9888; ${escapeXml(b.title)}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;display:inline-block;margin-top:2px;background:#FEE2E2;color:#991B1B;border-radius:4px;padding:0px 4px;font-size:6.2px;font-weight:700;&quot;&gt;${escapeXml(b.sub)}&lt;/span&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#FECACA;strokeWidth=1.1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="${bx}" y="86" width="88" height="34" as="geometry"/>
+        <mxCell id="l_lbl_${row.id}" value="&lt;div style=&quot;display:inline-block;padding:3px;border-radius:6px;background:#FEE2E2;margin-bottom:2px;&quot;&gt;${getLayerIconHtml(row.id)}&lt;/div&gt;&lt;br&gt;&lt;b style=&quot;font-size:6.6px;color:#991B1B;letter-spacing:0.3px;&quot;&gt;${escapeXml(bc.layerTag)}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;display:inline-block;margin-top:3px;background:#FEE2E2;color:#B91C1C;border-radius:5px;padding:0px 5px;font-size:6.6px;font-weight:800;&quot;&gt;${bc.currentScore} / 5&lt;/span&gt;" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#FFF1F2;strokeColor=#FECDD3;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="28" y="${ry}" width="66" height="84" as="geometry"/>
+        </mxCell>`;
+    row.items.forEach((it, j) => {
+      const ix = 100 + j * 158;
+      xml += `
+        <mxCell id="l_item_${idx}_${j}" value="&lt;table style=&quot;width:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:5px;background:#EF4444;border-radius:3px;&quot;&gt;&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;text-align:left;padding-left:6px;&quot;&gt;&lt;b style=&quot;font-size:8.2px;color:#0F172A;&quot;&gt;${escapeXml(truncateText(it.name, 22))}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:6.8px;color:#64748B;font-weight:600;&quot;&gt;${escapeXml(truncateText(it.sub, 24))}&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2E8F0;strokeWidth=1.1;align=left;verticalAlign=middle;spacingLeft=3;spacingRight=3;" vertex="1" parent="1">
+          <mxGeometry x="${ix}" y="${ry}" width="152" height="48" as="geometry"/>
+        </mxCell>`;
+    });
+    xml += `
+        <mxCell id="l_pain_${idx}" value="&lt;table style=&quot;width:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:left;white-space:nowrap;&quot;&gt;&lt;span style=&quot;display:inline-block;background:#FEE2E2;color:#B91C1C;border-radius:5px;padding:1px 5px;font-size:6.6px;font-weight:800;&quot;&gt;&amp;#9888; ${escapeXml(bc.pain)}&lt;/span&gt;&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;text-align:right;&quot;&gt;&lt;span style=&quot;font-size:6.9px;color:#047857;font-weight:800;&quot;&gt;&amp;#8594; ${escapeXml(row.verb)} &amp;#8594; ${escapeXml(bc.target)}&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=14;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#FECACA;strokeWidth=1;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="${ry + 54}" width="310" height="30" as="geometry"/>
         </mxCell>`;
   });
 
-  // Left Vertical Layer Headers with Vector SVG Icons
-  const leftLayers = [
-    { id: 'channels', label: 'CHANNELS', y: tierSpec[0].cardY, h: tierSpec[0].cardH },
-    { id: 'apps', label: 'APPLICATIONS', y: tierSpec[1].cardY, h: tierSpec[1].cardH },
-    { id: 'data', label: 'DATA STORES', y: tierSpec[2].cardY, h: tierSpec[2].cardH },
-    { id: 'integ', label: 'INTEGRATION', y: tierSpec[3].cardY, h: tierSpec[3].cardH },
-    { id: 'infra', label: 'INFRASTRUCTURE', y: tierSpec[4].cardY, h: tierSpec[4].cardH },
-    { id: 'sec', label: 'SECURITY &amp;&lt;br&gt;GOVERNANCE', y: tierSpec[5].cardY, h: tierSpec[5].cardH }
-  ];
-
-  leftLayers.forEach(l => {
-    xml += `
-        <mxCell id="l_lbl_${l.id}" value="&lt;div style=&quot;display:inline-block;padding:3px;border-radius:6px;background:#FEE2E2;margin-bottom:2px;&quot;&gt;${getLayerIconHtml(l.id)}&lt;/div&gt;&lt;br&gt;&lt;b style=&quot;font-size:6.8px;color:#991B1B;letter-spacing:0.3px;&quot;&gt;${l.label}&lt;/b&gt;" style="rounded=1;arcSize=14;whiteSpace=wrap;html=1;fillColor=#FFF1F2;strokeColor=#FECDD3;strokeWidth=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="26" y="${l.y}" width="68" height="${l.h}" as="geometry"/>
-        </mxCell>`;
-  });
-
-  // Row 1 (Left): 5 Pill-Shaped Persona Channel Cards (arcSize=28)
-  channelNames.slice(0, 5).forEach((chName, idx) => {
-    const cx = 100 + idx * 96;
-    xml += `
-        <mxCell id="l_ch_${idx}" value="&lt;b style=&quot;font-size:7.8px;color:#0F172A;&quot;&gt;${escapeXml(chName)}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;display:inline-block;margin-top:4px;background:#FEE2E2;color:#991B1B;border-radius:6px;padding:1px 5px;font-size:6.4px;font-weight:700;&quot;&gt;Manual Workflows&lt;/span&gt;" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#FCA5A5;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="${cx}" y="${tierSpec[0].cardY}" width="90" height="${tierSpec[0].cardH}" as="geometry"/>
-        </mxCell>`;
-  });
-
-  // Row 2 (Left): 5 Application Cards with Crimson Top Accent Band & Score Pill
-  asIsApps.forEach((app, idx) => {
-    const ax = 100 + idx * 96;
-    xml += `
-        <mxCell id="l_app_${idx}" value="&lt;div style=&quot;font-size:5.8px;font-weight:800;color:#991B1B;background:#FEE2E2;border-radius:3px;padding:1px 4px;margin-bottom:3px;display:inline-block;letter-spacing:0.3px;&quot;&gt;${escapeXml(app.tag)}&lt;/div&gt;&lt;br&gt;&lt;b style=&quot;font-size:7.6px;color:#0F172A;&quot;&gt;${escapeXml(app.name)}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;display:inline-block;margin-top:3px;background:#FEF2F2;border:1px solid #FECACA;color:#B91C1C;border-radius:5px;padding:0px 4px;font-size:6.3px;font-weight:700;&quot;&gt;${escapeXml(app.pill)}&lt;/span&gt;" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="${ax}" y="${tierSpec[1].cardY}" width="90" height="${tierSpec[1].cardH}" as="geometry"/>
-        </mxCell>`;
-  });
-
-  // Row 3 (Left): 5 Tinted 3D Cylinder Data Stores
-  asIsCylinders.forEach((cyl, idx) => {
-    const dx = 100 + idx * 96;
-    xml += `
-        <mxCell id="l_cyl_${idx}" value="&lt;b style=&quot;font-size:7.5px;color:#0F172A;&quot;&gt;${escapeXml(cyl.name)}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;display:inline-block;margin-top:3px;background:#FFE4E6;color:#BE123C;border-radius:5px;padding:0px 4px;font-size:6.2px;font-weight:700;&quot;&gt;${escapeXml(cyl.sub)}&lt;/span&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=9;fillColor=#FFF1F2;strokeColor=#F43F5E;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="${dx}" y="${tierSpec[2].cardY}" width="90" height="${tierSpec[2].cardH}" as="geometry"/>
-        </mxCell>`;
-  });
-
-  // Row 4 (Left): 5 Hexagonal Integration / Brittle Pipeline Nodes (shape=hexagon)
-  asIsIntegration.forEach((intg, idx) => {
-    const ix = 100 + idx * 96;
-    xml += `
-        <mxCell id="l_int_${idx}" value="&lt;b style=&quot;font-size:7.3px;color:#78350F;&quot;&gt;${escapeXml(intg.name)}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;display:inline-block;margin-top:3px;background:#FEF3C7;color:#B45309;border-radius:4px;padding:0px 4px;font-size:6.1px;font-weight:700;&quot;&gt;${escapeXml(intg.sub)}&lt;/span&gt;" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;size=10;fillColor=#FFFBEB;strokeColor=#F59E0B;strokeWidth=1.3;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="${ix}" y="${tierSpec[3].cardY}" width="90" height="${tierSpec[3].cardH}" as="geometry"/>
-        </mxCell>`;
-  });
-
-  // Row 5 (Left): 5 Slate Compute & Infrastructure Nodes
-  asIsInfra.forEach((inf, idx) => {
-    const fx = 100 + idx * 96;
-    xml += `
-        <mxCell id="l_inf_${idx}" value="&lt;div style=&quot;font-size:5.8px;font-weight:800;color:#475569;background:#E2E8F0;border-radius:3px;padding:1px 4px;margin-bottom:3px;display:inline-block;&quot;&gt;ON-PREM / STATIC&lt;/div&gt;&lt;br&gt;&lt;b style=&quot;font-size:7.5px;color:#0F172A;&quot;&gt;${escapeXml(inf.name)}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:6.5px;color:#64748B;font-weight:600;&quot;&gt;${escapeXml(inf.sub)}&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#94A3B8;strokeWidth=1.3;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="${fx}" y="${tierSpec[4].cardY}" width="90" height="${tierSpec[4].cardH}" as="geometry"/>
-        </mxCell>`;
-  });
-
-  // Row 6 (Left): 5 Dashed-Perimeter Security & Governance Risk Nodes
-  asIsSecurity.forEach((sec, idx) => {
-    const sx = 100 + idx * 96;
-    xml += `
-        <mxCell id="l_sec_${idx}" value="&lt;b style=&quot;font-size:7.4px;color:#DC2626;&quot;&gt;&#9888; ${escapeXml(sec.name)}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;display:inline-block;margin-top:3px;background:#FEE2E2;color:#7F1D1D;border-radius:4px;padding:1px 4px;font-size:6.1px;font-weight:700;&quot;&gt;${escapeXml(sec.sub)}&lt;/span&gt;" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#FFF5F5;strokeColor=#EF4444;strokeWidth=1.3;dashed=1;dashPattern=4 2;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="${sx}" y="${tierSpec[5].cardY}" width="90" height="${tierSpec[5].cardH}" as="geometry"/>
-        </mxCell>`;
-  });
-
-  // Bottom Verbatim Assessor Note Strip inside As-Is Zone (y=678, height=60)
   xml += `
-        <mxCell id="l_note_strip" value="&lt;b style=&quot;font-size:7.8px;color:#991B1B;&quot;&gt;[ASSESSOR TELEMETRY &amp;amp; VERBATIM NOTE]:&lt;/b&gt; &lt;i style=&quot;font-size:7.3px;color:#334155;&quot;&gt;&amp;ldquo;${escapeXml(weakest.noteSnippet)}&amp;rdquo;&lt;/i&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#FCA5A5;strokeWidth=1.2;align=left;verticalAlign=middle;spacingLeft=8;" vertex="1" parent="1">
-          <mxGeometry x="26" y="678" width="554" height="60" as="geometry"/>
+        <mxCell id="l_note_strip" value="&lt;b style=&quot;font-size:7.4px;color:#991B1B;&quot;&gt;[ASSESSOR TELEMETRY &amp;amp; VERBATIM NOTE]:&lt;/b&gt; &lt;i style=&quot;font-size:7px;color:#334155;&quot;&gt;&amp;ldquo;${escapeXml(weakest.noteSnippet)}&amp;rdquo;&lt;/i&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#FCA5A5;strokeWidth=1.1;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;" vertex="1" parent="1">
+          <mxGeometry x="28" y="642" width="382" height="36" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== MIDDLE: MIGRATION WAVE ARROW ==================== -->
+        <mxCell id="m_wave1_lbl" value="&lt;b style=&quot;font-size:7.6px;color:#1D4ED8;letter-spacing:0.4px;&quot;&gt;WAVE 1&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#1E40AF;font-weight:700;&quot;&gt;0–90 d&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="424" y="318" width="68" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_wave_arrow" value="" style="shape=triangle;direction=east;whiteSpace=wrap;html=1;fillColor=${waveFill};strokeColor=#1E40AF;strokeWidth=${waveStrokeW};" vertex="1" parent="1">
+          <mxGeometry x="434" y="350" width="48" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_wave2_lbl" value="&lt;b style=&quot;font-size:7.6px;color:#1D4ED8;letter-spacing:0.4px;&quot;&gt;WAVE 2&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:#1E40AF;font-weight:700;&quot;&gt;90–180 d&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="424" y="410" width="68" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_wave_score" value="&lt;span style=&quot;display:inline-block;background:#DBEAFE;border:1px solid #93C5FD;color:#1E40AF;border-radius:6px;padding:2px 5px;font-size:6.6px;font-weight:800;&quot;&gt;${avgCur} → ${avgMid} → ${avgTgt}&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="420" y="444" width="76" height="22" as="geometry"/>
+        </mxCell>
+
+        <!-- ==================== RIGHT ZONE: GOOGLE CLOUD TARGET ==================== -->
+        <mxCell id="z_right_bg" value="" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#F8FBFF;strokeColor=${gcpStroke};strokeWidth=${gcpStrokeW};opacity=${gcpOpacity};" vertex="1" parent="1">
+          <mxGeometry x="496" y="68" width="1084" height="618" as="geometry"/>
+        </mxCell>
+        <mxCell id="z_right_hdr" value="&lt;b style=&quot;font-size:9px;color:#FFFFFF;letter-spacing:0.5px;&quot;&gt;${isStage3 ? '&amp;#9733; ' : ''}GOOGLE CLOUD · TARGET ${avgTgt} / 5.0 · +${overallDelta} LEAP${isStage3 ? ' — ACTIVE FOCUS' : ''}&lt;/b&gt;" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=${GC_BLUE};strokeColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="510" y="58" width="${isStage3 ? 400 : 300}" height="20" as="geometry"/>
         </mxCell>
 `;
 
-  // Straight 1:1 Vertical Red Dashed Friction Connectors across Left Zone rows
-  for (let i = 0; i < 5; i++) {
+  pipelineStages.forEach((stage, c) => {
+    const sx = 508 + c * 214;
     xml += `
-        <mxCell id="l_e_ch_app_${i}" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#EF4444;strokeWidth=1.1;dashed=1;dashPattern=3 3;endArrow=open;endFill=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="l_ch_${i}" target="l_app_${i}">
-          <mxGeometry relative="1" as="geometry"/>
+        <mxCell id="r_col_${c}" value="" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DBE4F0;strokeWidth=1.1;" vertex="1" parent="1">
+          <mxGeometry x="${sx}" y="96" width="200" height="204" as="geometry"/>
         </mxCell>
-        <mxCell id="l_e_app_cyl_${i}" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#EF4444;strokeWidth=1.1;dashed=1;dashPattern=3 3;endArrow=open;endFill=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="l_app_${i}" target="l_cyl_${i}">
-          <mxGeometry relative="1" as="geometry"/>
+        <mxCell id="r_col_hdr_${c}" value="&lt;b style=&quot;font-size:8.4px;color:#334155;letter-spacing:0.8px;&quot;&gt;${stage.title}&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="${sx}" y="98" width="200" height="18" as="geometry"/>
         </mxCell>
-        <mxCell id="l_e_cyl_int_${i}" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#EF4444;strokeWidth=1.1;dashed=1;dashPattern=3 3;endArrow=open;endFill=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="l_cyl_${i}" target="l_int_${i}">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="l_e_int_inf_${i}" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#EF4444;strokeWidth=1.1;dashed=1;dashPattern=3 3;endArrow=open;endFill=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="l_int_${i}" target="l_inf_${i}">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="l_e_inf_sec_${i}" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#EF4444;strokeWidth=1.1;dashed=1;dashPattern=3 3;endArrow=open;endFill=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="l_inf_${i}" target="l_sec_${i}">
-          <mxGeometry relative="1" as="geometry"/>
+        <mxCell id="r_col_rule_${c}" value="" style="line;strokeWidth=1;strokeColor=#EEF2F7;html=1;" vertex="1" parent="1">
+          <mxGeometry x="${sx + 8}" y="116" width="184" height="4" as="geometry"/>
         </mxCell>`;
-  }
+    stage.services.forEach((svc, s) => {
+      const sy = 124 + s * 58;
+      const badgeTd = svc.step
+        ? `&lt;td style=&quot;width:22px;vertical-align:middle;text-align:right;&quot;&gt;&lt;div style=&quot;display:inline-block;width:18px;height:18px;border-radius:50%;background:#0F172A;color:#FFFFFF;font-size:7.6px;font-weight:800;text-align:center;line-height:18px;&quot;&gt;${svc.step}&lt;/div&gt;&lt;/td&gt;`
+        : '';
+      xml += `
+        <mxCell id="r_svc_${c}_${s}" value="&lt;table style=&quot;width:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:30px;vertical-align:middle;&quot;&gt;&lt;div style=&quot;width:26px;height:26px;border-radius:7px;background:${svc.color};color:#FFFFFF;font-size:${svc.code.length > 2 ? '6.8' : '8'}px;font-weight:800;text-align:center;line-height:26px;&quot;&gt;${escapeXml(svc.code)}&lt;/div&gt;&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;text-align:left;padding-left:5px;&quot;&gt;&lt;b style=&quot;font-size:8.2px;color:#0F172A;&quot;&gt;${escapeXml(truncateText(svc.name, 26))}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:6.8px;color:#64748B;font-weight:600;&quot;&gt;${escapeXml(truncateText(svc.sub, 30))}&lt;/span&gt;&lt;/td&gt;${badgeTd}&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=14;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2E8F0;strokeWidth=1;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;" vertex="1" parent="1">
+          <mxGeometry x="${sx + 6}" y="${sy}" width="188" height="52" as="geometry"/>
+        </mxCell>`;
+    });
+    if (c < pipelineStages.length - 1) {
+      xml += `
+        <mxCell id="r_col_arrow_${c}" value="" style="shape=triangle;direction=east;whiteSpace=wrap;html=1;fillColor=#94A3B8;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="${sx + 201}" y="191" width="12" height="16" as="geometry"/>
+        </mxCell>`;
+    }
+  });
 
-  // ==================== MIDDLE ZONE: TRANSFORMATION BENEFITS & TRANSITION BRIDGE ====================
+  sharedControls.forEach((sc, idx) => {
+    const sx = 508 + idx * 214;
+    xml += `
+        <mxCell id="r_sec_${idx}" value="&lt;b style=&quot;font-size:7.8px;color:#1E3A8A;&quot;&gt;&amp;#10003; ${escapeXml(sc.name)}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:6.8px;color:#64748B;font-weight:600;&quot;&gt;${escapeXml(sc.sub)}&lt;/span&gt;" style="rounded=1;arcSize=14;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#BFDBFE;strokeWidth=1.1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="${sx}" y="310" width="200" height="40" as="geometry"/>
+        </mxCell>`;
+  });
+
+  // Data-flow steps panel (numbers match the service badges above)
   xml += `
-        <mxCell id="z_mid_bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=${midStroke};strokeWidth=${midStrokeW};opacity=${midOpacity};" vertex="1" parent="1">
-          <mxGeometry x="618" y="60" width="236" height="688" as="geometry"/>
+        <mxCell id="r_steps_box" value="" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DBE4F0;strokeWidth=1.1;" vertex="1" parent="1">
+          <mxGeometry x="508" y="362" width="520" height="316" as="geometry"/>
         </mxCell>
-        <mxCell id="z_mid_hdr" value="&lt;b style=&quot;font-size:9px;color:#FFFFFF;letter-spacing:0.3px;&quot;&gt;${isStage2 ? '&#9733; ' : ''}TRANSFORMATION BRIDGE${isStage2 ? ' (FOCUS)' : ''}&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1D4ED8;strokeColor=#1E40AF;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="636" y="60" width="200" height="22" as="geometry"/>
-        </mxCell>
-        <mxCell id="z_mid_sub" value="&lt;span style=&quot;display:inline-block;background:#DBEAFE;border:1px solid #93C5FD;color:#1E40AF;border-radius:6px;padding:2px 8px;font-size:7.2px;font-weight:800;&quot;&gt;PHASED CUTOVER: ${avgCur} → ${avgMid} → ${avgTgt}/5.0&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="626" y="88" width="220" height="28" as="geometry"/>
-        </mxCell>
-`;
+        <mxCell id="r_steps_hdr" value="&lt;b style=&quot;font-size:8.2px;color:#334155;letter-spacing:0.8px;&quot;&gt;DATA-FLOW STEPS (MATCH NUMBERED SERVICES ABOVE)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="508" y="366" width="520" height="18" as="geometry"/>
+        </mxCell>`;
+  dataFlowSteps.forEach((st, k) => {
+    const sy = 388 + k * 36;
+    xml += `
+        <mxCell id="r_step_${k}" value="&lt;table style=&quot;width:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:24px;vertical-align:middle;&quot;&gt;&lt;div style=&quot;width:19px;height:19px;border-radius:50%;background:#0F172A;color:#FFFFFF;font-size:7.8px;font-weight:800;text-align:center;line-height:19px;&quot;&gt;${k + 1}&lt;/div&gt;&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;text-align:left;padding-left:4px;&quot;&gt;&lt;span style=&quot;font-size:7.8px;color:#1E293B;font-weight:600;&quot;&gt;${escapeXml(st)}&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=16;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#EEF2F7;strokeWidth=1;align=left;verticalAlign=middle;spacingLeft=5;spacingRight=5;" vertex="1" parent="1">
+          <mxGeometry x="516" y="${sy}" width="504" height="32" as="geometry"/>
+        </mxCell>`;
+  });
 
-  // 6 Tier-Aligned Bridge Cards + 6 Left-to-Middle and Middle-to-Right Horizontal Flow Arrows
+  // Migration wave plan panel: 6 tier-aligned bridge cards (bijective L1 → L6 ↔ pillar mapping)
+  xml += `
+        <mxCell id="m_plan_box" value="" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=${isStage2 ? '#1D4ED8' : '#DBE4F0'};strokeWidth=${isStage2 ? '2.4' : '1.1'};" vertex="1" parent="1">
+          <mxGeometry x="1040" y="362" width="524" height="316" as="geometry"/>
+        </mxCell>
+        <mxCell id="m_plan_hdr" value="&lt;b style=&quot;font-size:8.2px;color:#334155;letter-spacing:0.8px;&quot;&gt;${isStage2 ? '&amp;#9733; ' : ''}MIGRATION WAVE PLAN · 6 TIER MOVES (${avgCur} → ${avgMid} → ${avgTgt} / 5.0)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="366" width="524" height="18" as="geometry"/>
+        </mxCell>`;
   bridgeCards.forEach((bc, idx) => {
-    const ts = tierSpec[idx];
+    const col = idx % 2;
+    const rowI = Math.floor(idx / 2);
+    const cx = 1048 + col * 262;
+    const cy = 388 + rowI * 96;
+    const waveBg = bc.isWave1 ? '#DBEAFE' : '#E0E7FF';
+    const waveColor = bc.isWave1 ? '#1D4ED8' : '#4338CA';
+    const waveTxt = bc.isWave1 ? 'WAVE 1 · 0–90 D' : 'WAVE 2 · 90–180 D';
     xml += `
-        <mxCell id="m_card_${idx}" value="&lt;table style=&quot;width:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:28px;vertical-align:middle;&quot;&gt;&lt;div style=&quot;width:24px;height:24px;border-radius:50%;background:#1D4ED8;color:#FFFFFF;font-size:8.5px;font-weight:800;text-align:center;line-height:24px;&quot;&gt;${bc.badge}&lt;/div&gt;&lt;/td&gt;&lt;td style=&quot;vertical-align:middle;text-align:left;&quot;&gt;&lt;span style=&quot;background:#EFF6FF;border:1px solid #BFDBFE;color:#1E40AF;border-radius:3px;padding:0px 3px;font-size:5.5px;font-weight:800;margin-right:3px;&quot;&gt;${escapeXml(bc.layerTag)}&lt;/span&gt;&lt;b style=&quot;font-size:7.3px;color:#0F172A;&quot;&gt;${escapeXml(bc.title)}&lt;/b&gt; &lt;span style=&quot;background:#DBEAFE;color:#1D4ED8;border-radius:4px;padding:0px 4px;font-size:6.1px;font-weight:800;&quot;&gt;${escapeXml(bc.scorePill)}&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:6.7px;color:#1E40AF;font-weight:700;&quot;&gt;${escapeXml(bc.bridge)}&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:6.2px;color:#475569;&quot;&gt;${escapeXml(bc.remedy)}&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#60A5FA;strokeWidth=1.3;align=left;verticalAlign=middle;spacingLeft=5;spacingRight=5;" vertex="1" parent="1">
-          <mxGeometry x="626" y="${ts.boxY}" width="220" height="${ts.boxH}" as="geometry"/>
-        </mxCell>
-        <mxCell id="m_flow_in_${idx}" value="" style="endArrow=block;endFill=1;html=1;strokeColor=#2563EB;strokeWidth=1.6;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="590" y="${ts.centerY}" as="sourcePoint"/>
-            <mxPoint x="626" y="${ts.centerY}" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="m_flow_out_${idx}" value="" style="endArrow=block;endFill=1;html=1;strokeColor=#059669;strokeWidth=1.6;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="846" y="${ts.centerY}" as="sourcePoint"/>
-            <mxPoint x="892" y="${ts.centerY}" as="targetPoint"/>
-          </mxGeometry>
+        <mxCell id="m_card_${idx}" value="&lt;table style=&quot;width:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:26px;vertical-align:top;padding-top:2px;&quot;&gt;&lt;div style=&quot;width:22px;height:22px;border-radius:50%;background:#1D4ED8;color:#FFFFFF;font-size:8px;font-weight:800;text-align:center;line-height:22px;&quot;&gt;${bc.badge}&lt;/div&gt;&lt;/td&gt;&lt;td style=&quot;vertical-align:top;text-align:left;padding-left:4px;&quot;&gt;&lt;span style=&quot;background:#EFF6FF;border:1px solid #BFDBFE;color:#1E40AF;border-radius:3px;padding:0px 3px;font-size:5.6px;font-weight:800;margin-right:3px;&quot;&gt;${escapeXml(bc.layerTag)}&lt;/span&gt;&lt;span style=&quot;background:${waveBg};color:${waveColor};border-radius:3px;padding:0px 3px;font-size:5.6px;font-weight:800;&quot;&gt;${waveTxt}&lt;/span&gt;&lt;br&gt;&lt;b style=&quot;font-size:7.8px;color:#0F172A;&quot;&gt;${escapeXml(bc.title)}&lt;/b&gt; &lt;span style=&quot;background:#DBEAFE;color:#1D4ED8;border-radius:4px;padding:0px 4px;font-size:6.2px;font-weight:800;&quot;&gt;${escapeXml(bc.scorePill)}&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:6.9px;color:#1E40AF;font-weight:700;&quot;&gt;${escapeXml(bc.bridge)}&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:6.4px;color:#475569;&quot;&gt;Fixes ${escapeXml(bc.pain)} → ${escapeXml(bc.target)}&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#93C5FD;strokeWidth=1.2;align=left;verticalAlign=middle;spacingLeft=5;spacingRight=5;" vertex="1" parent="1">
+          <mxGeometry x="${cx}" y="${cy}" width="254" height="90" as="geometry"/>
         </mxCell>`;
   });
 
-  // Matching Bottom Summary Strip inside Middle Bridge Zone (y=678, height=60)
-  xml += `
-        <mxCell id="m_summary_strip" value="&lt;b style=&quot;font-size:7.4px;color:#1D4ED8;&quot;&gt;[WAVE 1–2 BRIDGE SLA]:&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:6.8px;color:#1E293B;&quot;&gt;Dual-run cutover lifts maturity &lt;b&gt;${avgCur} → ${avgMid}/5.0&lt;/b&gt; with zero downtime.&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=#60A5FA;strokeWidth=1.2;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;" vertex="1" parent="1">
-          <mxGeometry x="626" y="678" width="220" height="60" as="geometry"/>
-        </mxCell>
-`;
-
-  // ==================== RIGHT ZONE: TO-BE FUTURE STATE ====================
-  xml += `
-        <mxCell id="z_right_bg" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=${rightStroke};strokeWidth=${rightStrokeW};opacity=${rightOpacity};" vertex="1" parent="1">
-          <mxGeometry x="882" y="60" width="698" height="688" as="geometry"/>
-        </mxCell>
-        <mxCell id="z_right_hdr" value="&lt;b style=&quot;font-size:10px;color:#FFFFFF;letter-spacing:0.4px;&quot;&gt;${isStage3 ? '&#9733; ' : ''}TO-BE FUTURE STATE (${avgTgt} / 5.0 • +${overallDelta} LEAP)${isStage3 ? ' — ACTIVE' : ''}&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#065F46;strokeColor=#047857;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1040" y="60" width="380" height="22" as="geometry"/>
-        </mxCell>
-`;
-
-  // Top 6 Target Value Pills inside Right Zone (y=86, height=34)
-  const toBeValuePills = [p0, p1, p2, p3, p4, p5].map((p) => ({
-    title: concisePillarLabel(p.cleanName, 18),
-    sub: `Target ${p.futureScore}/5.0 (+${p.gap})`
-  }));
-
-  toBeValuePills.forEach((vp, idx) => {
-    const vx = 892 + idx * 113;
-    xml += `
-        <mxCell id="r_val_${idx}" value="&lt;b style=&quot;font-size:7.2px;color:#065F46;&quot;&gt;&#10003; ${escapeXml(vp.title)}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;display:inline-block;margin-top:2px;background:#D1FAE5;color:#047857;border-radius:4px;padding:0px 4px;font-size:6.2px;font-weight:700;&quot;&gt;${escapeXml(vp.sub)}&lt;/span&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6EE7B7;strokeWidth=1.1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="${vx}" y="86" width="107" height="34" as="geometry"/>
-        </mxCell>`;
-  });
-
-  // Tier 1 (Right): Container + 6 Unified Pill-Shaped Persona Channels (y=128, height=76)
-  xml += `
-        <mxCell id="r_tier1_box" value="" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#ECFDF5;strokeColor=#6EE7B7;strokeWidth=1.3;" vertex="1" parent="1">
-          <mxGeometry x="892" y="${tierSpec[0].boxY}" width="678" height="${tierSpec[0].boxH}" as="geometry"/>
-        </mxCell>
-        <mxCell id="r_tier1_hdr" value="&lt;b style=&quot;font-size:7.8px;color:#065F46;letter-spacing:0.3px;&quot;&gt;TIER 1: UNIFIED OMNICHANNEL, PERSONA &amp;amp; AI EXPERIENCE LAYER&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="900" y="130" width="660" height="14" as="geometry"/>
-        </mxCell>
-`;
-
-  channelNames.slice(0, 6).forEach((chName, idx) => {
-    const cx = 898 + idx * 111;
-    xml += `
-        <mxCell id="r_ch_${idx}" value="&lt;b style=&quot;font-size:7.5px;color:#065F46;&quot;&gt;${escapeXml(chName)}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;display:inline-block;margin-top:3px;background:#D1FAE5;color:#047857;border-radius:6px;padding:1px 5px;font-size:6.2px;font-weight:700;&quot;&gt;Unified AI Portal&lt;/span&gt;" style="rounded=1;arcSize=28;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#34D399;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="${cx}" y="146" width="105" height="52" as="geometry"/>
-        </mxCell>`;
-  });
-
-  // Tier 2 (Right): Container + 6 Enterprise Cloud Digital Platform Cards (y=216, height=80)
-  xml += `
-        <mxCell id="r_plat_box" value="" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#93C5FD;strokeWidth=1.4;" vertex="1" parent="1">
-          <mxGeometry x="892" y="${tierSpec[1].boxY}" width="678" height="${tierSpec[1].boxH}" as="geometry"/>
-        </mxCell>
-        <mxCell id="r_plat_hdr" value="&lt;b style=&quot;font-size:7.8px;color:#0F172A;letter-spacing:0.3px;&quot;&gt;TIER 2: ENTERPRISE CLOUD DIGITAL PLATFORM (CLOUD-NATIVE — ${escapeXml(targetPlatformBrand.toUpperCase())})&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="900" y="218" width="660" height="14" as="geometry"/>
-        </mxCell>
-`;
-
-  const digitalPlatformApps = [
-    { name: 'AI / ML Workbench', tag: 'VERTEX AI', pill: `${p3.futureScore}/5 • Active` },
-    { name: concisePillarLabel(p0.cleanName, 18), tag: 'GOVERNED', pill: `${p0.futureScore}/5 • Policy` },
-    { name: concisePillarLabel(p1.cleanName, 18), tag: 'AUTOMATED', pill: `${p1.futureScore}/5 • Stream` },
-    { name: 'Safety & Guardrails', tag: 'MODEL ARMOR', pill: `${p4.futureScore}/5 • Inline` },
-    { name: concisePillarLabel(p2.cleanName, 18), tag: 'REAL-TIME', pill: `${p2.futureScore}/5 • Live` },
-    { name: concisePillarLabel(p5.cleanName, 18), tag: 'COE PORTAL', pill: `${p5.futureScore}/5 • Self-Svc` }
+  // ==================== BOTTOM: NOW / TRANSITION / TARGET CHEVRON BAND ====================
+  const chevrons = [
+    { id: 'now', active: isStage1, title: `NOW · ${avgCur} / 5.0`, body: nowSummary, solid: '#DC2626', solidStroke: '#B91C1C', soft: '#FEE2E2', softStroke: '#FCA5A5', softText: '#991B1B' },
+    { id: 'transition', active: isStage2, title: `TRANSITION · ${avgMid} / 5.0`, body: transitionSummary, solid: '#2563EB', solidStroke: '#1D4ED8', soft: '#DBEAFE', softStroke: '#93C5FD', softText: '#1E40AF' },
+    { id: 'target', active: isStage3, title: `TARGET · ${avgTgt} / 5.0 · +${overallDelta}`, body: targetSummary, solid: '#059669', solidStroke: '#047857', soft: '#D1FAE5', softStroke: '#6EE7B7', softText: '#065F46' }
   ];
-
-  digitalPlatformApps.forEach((dp, idx) => {
-    const px = 898 + idx * 111;
+  chevrons.forEach((ch, idx) => {
+    const cx = 20 + idx * 524;
+    const fill = ch.active ? ch.solid : ch.soft;
+    const stroke = ch.active ? ch.solidStroke : ch.softStroke;
+    const titleColor = ch.active ? '#FFFFFF' : ch.softText;
+    const bodyColor = ch.active ? '#FFFFFF' : '#334155';
     xml += `
-        <mxCell id="r_dp_${idx}" value="&lt;div style=&quot;font-size:5.6px;font-weight:800;color:#1E40AF;background:#DBEAFE;border-radius:3px;padding:1px 4px;margin-bottom:2px;display:inline-block;&quot;&gt;${escapeXml(dp.tag)}&lt;/div&gt;&lt;br&gt;&lt;b style=&quot;font-size:7.4px;color:#0F172A;&quot;&gt;${escapeXml(dp.name)}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;display:inline-block;margin-top:2px;background:#D1FAE5;color:#065F46;border-radius:4px;padding:0px 4px;font-size:6.2px;font-weight:700;&quot;&gt;${escapeXml(dp.pill)}&lt;/span&gt;" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#60A5FA;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="${px}" y="234" width="105" height="56" as="geometry"/>
+        <mxCell id="b_chev_${ch.id}" value="&lt;b style=&quot;font-size:9px;color:${titleColor};letter-spacing:0.4px;&quot;&gt;${ch.active ? '&amp;#9733; ' : ''}${escapeXml(ch.title)}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:7px;color:${bodyColor};font-weight:600;&quot;&gt;${escapeXml(ch.body)}&lt;/span&gt;" style="shape=step;perimeter=stepPerimeter;fixedSize=1;size=18;whiteSpace=wrap;html=1;fillColor=${fill};strokeColor=${stroke};strokeWidth=${ch.active ? '2' : '1.2'};align=left;verticalAlign=middle;spacingLeft=${idx === 0 ? 24 : 34};spacingRight=22;" vertex="1" parent="1">
+          <mxGeometry x="${cx}" y="698" width="${idx === 2 ? 512 : 518}" height="56" as="geometry"/>
         </mxCell>`;
   });
 
-  // Clean vertical green arrows from Tier 1 container bottom (y=204) to Tier 2 container top (y=216)
-  for (let i = 0; i < 6; i++) {
-    const ax = Math.round(898 + i * 111 + 52.5);
-    xml += `
-        <mxCell id="r_e_ch_plat_${i}" value="" style="endArrow=block;endFill=1;html=1;strokeColor=#16A34A;strokeWidth=1.3;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="${ax}" y="204" as="sourcePoint"/>
-            <mxPoint x="${ax}" y="216" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>`;
-  }
-
-  // Tier 3 (Right): Domain-Aware Data & Telemetry Platform with 5 Green Cylinders (y=308, height=84)
-  const tier3HeaderText = isFinOpsDomain
-    ? 'TIER 3: CLOUD FINOPS &amp; BILLING TELEMETRY PLATFORM (BIGQUERY FOCUS 1.0, CUD &amp; UNIT ECONOMICS HUB)'
-    : isSecurityDomain
-    ? 'TIER 3: ZERO-TRUST DATA SECURITY &amp; IMMUTABLE AUDIT PLATFORM (CLOUD DLP, KMS HSM &amp; CHRONICLE WORM)'
-    : isAgenticDomain
-    ? 'TIER 3: AGENTIC MEMORY, KNOWLEDGE &amp; CONTEXT PLATFORM (ALLOYDB AI, SPANNER GRAPH &amp; VECTOR RAG)'
-    : isGeminiMigDomain
-    ? 'TIER 3: ENTERPRISE AI CONTEXT &amp; GROUNDING PLATFORM (2M CONTEXT CACHE, VERTEX RAG &amp; EVAL STORE)'
-    : 'TIER 3: DATA PLATFORM (UNIFIED &amp; GOVERNED BIGQUERY + BIGLAKE MEDALLION LAKEHOUSE)';
-
-  xml += `
-        <mxCell id="r_data_box" value="" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#ECFDF5;strokeColor=#6EE7B7;strokeWidth=1.4;" vertex="1" parent="1">
-          <mxGeometry x="892" y="${tierSpec[2].boxY}" width="678" height="${tierSpec[2].boxH}" as="geometry"/>
-        </mxCell>
-        <mxCell id="r_data_hdr" value="&lt;b style=&quot;font-size:7.8px;color:#065F46;letter-spacing:0.3px;&quot;&gt;${tier3HeaderText}&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="900" y="310" width="660" height="14" as="geometry"/>
-        </mxCell>
-`;
-
-  const toBeCylinders = isFinOpsDomain
-    ? [
-        { name: 'FOCUS 1.0 Billing', sub: 'BigQuery FinOps Hub' },
-        { name: 'GKE Cost Allocation', sub: 'Autopilot + OpenCost' },
-        { name: 'CUD Portfolio Store', sub: '85%+ Flex Coverage' },
-        { name: 'BigLake Cold Tier', sub: 'Autoclass Lifecycle' },
-        { name: 'Unit Economics Mart', sub: 'Looker Showback SLA' }
-      ]
-    : isSecurityDomain
-    ? [
-        { name: 'Immutable Audit Log', sub: 'Chronicle WORM Lake' },
-        { name: 'Tokenized PII Vault', sub: 'Cloud DLP Surrogates' },
-        { name: 'HSM CMEK Key Store', sub: 'Cloud KMS Hardware' },
-        { name: 'Verified Model Repo', sub: 'SLSA L3 Binary Auth' },
-        { name: 'AI Telemetry Lake', sub: 'Zero-Egress VPC-SC' }
-      ]
-    : isAgenticDomain
-    ? [
-        { name: 'Episodic Memory DB', sub: 'AlloyDB AI + Spanner' },
-        { name: 'MCP Tool Registry', sub: 'Governed Schema Hub' },
-        { name: 'Vector RAG Index', sub: 'Vertex Vector Search' },
-        { name: 'Agent Trace Store', sub: 'OpenTelemetry Spans' },
-        { name: 'Entitlement Ledger', sub: 'Scoped OAuth + HITL' }
-      ]
-    : isGeminiMigDomain
-    ? [
-        { name: '2M Context Cache', sub: '75% Token Savings' },
-        { name: 'Vertex Vector RAG', sub: 'Zero-Chunk Grounding' },
-        { name: 'Canonical Prompt DB', sub: 'Gemini 3.8 Schemas' },
-        { name: 'Eval Golden Dataset', sub: 'Continuous CI/CD QA' },
-        { name: 'CMEK Audit Store', sub: 'Zero-Retention Logs' }
-      ]
-    : isLakehouseDomain
-    ? [
-        { name: 'BigLake Open Iceberg', sub: 'Zero-Copy Multi-Cloud' },
-        { name: 'BigQuery Editions', sub: 'Vectorized Slot Pool' },
-        { name: 'Dataplex Catalog', sub: 'Auto-Lineage & ABAC' },
-        { name: 'Streaming CDC Hub', sub: 'Sub-Sec Datastream' },
-        { name: 'Looker Semantic Hub', sub: 'Governed BI Metrics' }
-      ]
-    : [
-        { name: 'Unified Lakehouse', sub: 'BigQuery + BigLake' },
-        { name: 'Dataplex Catalog', sub: 'Lineage & ABAC Tags' },
-        { name: 'Looker Metric Store', sub: 'Semantic BI Engine' },
-        { name: 'Vertex Feature Store', sub: 'Online / Offline ML' },
-        { name: 'FinOps & Audit Hub', sub: 'FOCUS + KMS CMEK' }
-      ];
-
-  toBeCylinders.forEach((cyl, idx) => {
-    const cx = 902 + idx * 133;
-    xml += `
-        <mxCell id="r_cyl_${idx}" value="&lt;b style=&quot;font-size:7.4px;color:#065F46;&quot;&gt;${escapeXml(cyl.name)}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;display:inline-block;margin-top:2px;background:#D1FAE5;color:#047857;border-radius:4px;padding:0px 4px;font-size:6.1px;font-weight:700;&quot;&gt;${escapeXml(cyl.sub)}&lt;/span&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=8;fillColor=#FFFFFF;strokeColor=#10B981;strokeWidth=1.3;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="${cx}" y="326" width="125" height="60" as="geometry"/>
-        </mxCell>`;
-  });
-
-  // Clean vertical green arrows from Tier 2 container bottom (y=296) to Tier 3 container top (y=308)
-  for (let i = 0; i < 5; i++) {
-    const ax = Math.round(902 + i * 133 + 62.5);
-    xml += `
-        <mxCell id="r_e_plat_data_${i}" value="" style="endArrow=block;endFill=1;html=1;strokeColor=#16A34A;strokeWidth=1.3;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="${ax}" y="296" as="sourcePoint"/>
-            <mxPoint x="${ax}" y="308" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>`;
-  }
-
-  // Tier 4 (Right): Container + 5 Hexagonal Cloud-Native Integration & Event Mesh Nodes (y=404, height=80)
-  xml += `
-        <mxCell id="r_int_box" value="" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#F0F9FF;strokeColor=#7DD3FC;strokeWidth=1.3;" vertex="1" parent="1">
-          <mxGeometry x="892" y="${tierSpec[3].boxY}" width="678" height="${tierSpec[3].boxH}" as="geometry"/>
-        </mxCell>
-        <mxCell id="r_int_hdr" value="&lt;b style=&quot;font-size:7.8px;color:#0369A1;letter-spacing:0.3px;&quot;&gt;TIER 4: CLOUD-NATIVE INTEGRATION, API GATEWAY &amp;amp; EVENT MESH&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="900" y="406" width="660" height="14" as="geometry"/>
-        </mxCell>
-`;
-
-  const toBeIntegration = isFinOpsDomain
-    ? [
-        { name: 'Billing Export Stream', sub: 'BigQuery FOCUS 1.0' },
-        { name: 'Pod Cost Metering', sub: 'GKE OpenCost / Labels' },
-        { name: 'Token Quota Router', sub: 'Apigee + Context Cache' },
-        { name: 'Anomaly Event Bus', sub: 'Pub/Sub + BQML Alerts' },
-        { name: 'CUD & Slot Governor', sub: 'Autoscaling Reservations' }
-      ]
-    : isSecurityDomain
-    ? [
-        { name: 'Zero-Trust Edge Proxy', sub: 'Cloud Armor WAF + IAP' },
-        { name: 'Inline AI Shield', sub: 'Google Model Armor' },
-        { name: 'PII / PHI Tokenization', sub: 'Cloud DLP De-ID Stream' },
-        { name: 'SIEM / SOAR Telemetry', sub: 'Chronicle SecOps Bus' },
-        { name: 'Workload Federation', sub: 'Zero Static IAM Keys' }
-      ]
-    : isAgenticDomain
-    ? [
-        { name: 'Super-Orchestrator Bus', sub: 'Gemini 3.8 Agent Hub' },
-        { name: 'MCP Tool Gateway', sub: 'Standardized Tool RPC' },
-        { name: 'Agent-to-Agent (A2A)', sub: 'Pub/Sub Event Mesh' },
-        { name: 'Episodic Memory Sync', sub: 'AlloyDB + Vector RAG' },
-        { name: 'HITL Approval Gate', sub: 'Policy & Audit Guard' }
-      ]
-    : isGeminiMigDomain
-    ? [
-        { name: 'Apigee AI Gateway', sub: 'OpenAI-to-Gemini Proxy' },
-        { name: '2M Context Caching', sub: '75% Input Token Savings' },
-        { name: 'Vertex Vector RAG', sub: 'ACL-Synchronized Index' },
-        { name: 'MCP Tool Microservices', sub: 'Sandboxed Function Mesh' },
-        { name: 'Automated Eval Gate', sub: 'Vertex GenAI Eval CI/CD' }
-      ]
-    : isLakehouseDomain
-    ? [
-        { name: 'Datastream CDC', sub: 'Sub-Second Replication' },
-        { name: 'Dataform Declarative', sub: 'Git-Backed SQL ELT' },
-        { name: 'BigQuery Omni Mesh', sub: 'Cross-Cloud Zero-Egress' },
-        { name: 'Pub/Sub Event Bus', sub: 'Streaming Ingestion' },
-        { name: 'Looker Semantic API', sub: 'Governed BI Acceleration' }
-      ]
-    : [
-        { name: 'API Gateway & Mgmt', sub: 'Apigee / Cloud Endpoints' },
-        { name: 'Event Streaming', sub: 'Cloud Pub/Sub' },
-        { name: 'Data Integration', sub: 'Dataflow / Datastream' },
-        { name: 'MCP / A2A Mesh', sub: 'Agent Tool Protocol' },
-        { name: 'Partner & Ecosystem', sub: 'Zero-Trust Federation' }
-      ];
-
-  toBeIntegration.forEach((ig, idx) => {
-    const ix = 902 + idx * 133;
-    const ax = Math.round(ix + 62.5);
-    xml += `
-        <mxCell id="r_int_${idx}" value="&lt;b style=&quot;font-size:7.3px;color:#0F172A;&quot;&gt;${escapeXml(ig.name)}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;display:inline-block;margin-top:2px;background:#E0F2FE;color:#0369A1;border-radius:4px;padding:0px 4px;font-size:6.1px;font-weight:700;&quot;&gt;${escapeXml(ig.sub)}&lt;/span&gt;" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;size=10;fillColor=#FFFFFF;strokeColor=#0284C7;strokeWidth=1.3;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="${ix}" y="422" width="125" height="56" as="geometry"/>
-        </mxCell>
-        <mxCell id="r_e_data_int_${idx}" value="" style="endArrow=block;endFill=1;html=1;strokeColor=#16A34A;strokeWidth=1.3;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="${ax}" y="392" as="sourcePoint"/>
-            <mxPoint x="${ax}" y="404" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r_e_int_gcp_${idx}" value="" style="endArrow=block;endFill=1;html=1;strokeColor=#16A34A;strokeWidth=1.3;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="${ax}" y="484" as="sourcePoint"/>
-            <mxPoint x="${ax}" y="496" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>`;
-  });
-
-  // Tier 5 (Right): GOOGLE CLOUD PLATFORM Container with 4-Color Accent & Product Icons (y=496, height=80)
-  xml += `
-        <mxCell id="r_gcp_box" value="" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#93C5FD;strokeWidth=1.4;" vertex="1" parent="1">
-          <mxGeometry x="892" y="${tierSpec[4].boxY}" width="678" height="${tierSpec[4].boxH}" as="geometry"/>
-        </mxCell>
-        <mxCell id="r_gcp_hdr" value="&lt;b style=&quot;font-size:7.8px;color:#1E3A8A;letter-spacing:0.3px;&quot;&gt;TIER 5: GOOGLE CLOUD PLATFORM (${escapeXml(truncateText(useCase.toUpperCase(), 68))})&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="900" y="498" width="660" height="14" as="geometry"/>
-        </mxCell>
-`;
-
-  const gcpCards = [
-    { name: 'Compute', sub: isFinOpsDomain ? 'GKE Autopilot Scale-0' : 'GKE / Cloud Run', color: '#4285F4' },
-    { name: 'Storage', sub: isLakehouseDomain ? 'BigLake Iceberg + GCS' : 'Cloud Storage Autoclass', color: '#34A853' },
-    { name: 'Databases', sub: isAgenticDomain ? 'Spanner / AlloyDB AI' : 'Spanner / AlloyDB', color: '#FBBC05' },
-    { name: 'Analytics', sub: isFinOpsDomain ? 'BigQuery FOCUS 1.0' : 'BigQuery Editions', color: '#EA4335' },
-    { name: 'AI / ML', sub: isGeminiMigDomain ? 'Gemini 3.8 • 2M Cache' : 'Vertex AI / Gemini', color: '#7C3AED' },
-    { name: 'Resilience', sub: `${avgTgt}/5.0 Multi-Zone HA`, color: '#059669' }
-  ];
-
-  gcpCards.forEach((gc, idx) => {
-    const gx = 898 + idx * 111;
-    xml += `
-        <mxCell id="r_gcp_${idx}" value="&lt;div style=&quot;width:70%;height:3px;background:${gc.color};margin:0 auto 3px auto;border-radius:2px;&quot;&gt;&lt;/div&gt;&lt;b style=&quot;font-size:7.6px;color:#1E3A8A;&quot;&gt;${escapeXml(gc.name)}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;display:inline-block;margin-top:2px;background:#EFF6FF;color:#1D4ED8;border-radius:4px;padding:0px 4px;font-size:6.1px;font-weight:700;&quot;&gt;${escapeXml(gc.sub)}&lt;/span&gt;" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#60A5FA;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="${gx}" y="514" width="105" height="56" as="geometry"/>
-        </mxCell>`;
-  });
-
-  // Tier 6 (Right): Container + 6 Zero-Trust Security & Governance Perimeter Cards (y=588, height=80)
-  xml += `
-        <mxCell id="r_sec_box" value="" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#ECFDF5;strokeColor=#34D399;strokeWidth=1.4;" vertex="1" parent="1">
-          <mxGeometry x="892" y="${tierSpec[5].boxY}" width="678" height="${tierSpec[5].boxH}" as="geometry"/>
-        </mxCell>
-        <mxCell id="r_sec_hdr" value="&lt;b style=&quot;font-size:7.8px;color:#065F46;letter-spacing:0.3px;&quot;&gt;TIER 6: ZERO-TRUST SECURITY, AI SAFETY &amp;amp; GOVERNANCE PERIMETER&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="900" y="590" width="660" height="14" as="geometry"/>
-        </mxCell>
-`;
-
-  const toBeSecurity = [
-    { name: 'Zero Trust Security', sub: 'VPC Service Controls' },
-    { name: 'IAM & Least Privilege', sub: 'Workload Identity' },
-    { name: 'Encryption (CMEK)', sub: isSecurityDomain ? 'HSM + Confidential VM' : 'At Rest & In Transit' },
-    { name: 'Audit & Observability', sub: isAgenticDomain ? 'Agent Trajectory Logs' : 'Real-Time SLOs' },
-    { name: 'Data Privacy & DLP', sub: 'PII / PHI Tokenization' },
-    { name: 'AI Safety & Compliance', sub: `Model Armor (${p4.futureScore}/5)` }
-  ];
-
-  toBeSecurity.forEach((sc, idx) => {
-    const sx = 898 + idx * 111;
-    const ax = Math.round(sx + 52.5);
-    xml += `
-        <mxCell id="r_sec_${idx}" value="&lt;b style=&quot;font-size:7.3px;color:#065F46;&quot;&gt;&#10003; ${escapeXml(sc.name)}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;display:inline-block;margin-top:3px;background:#D1FAE5;color:#047857;border-radius:4px;padding:1px 4px;font-size:6.1px;font-weight:700;&quot;&gt;${escapeXml(sc.sub)}&lt;/span&gt;" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#10B981;strokeWidth=1.3;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="${sx}" y="606" width="105" height="56" as="geometry"/>
-        </mxCell>
-        <mxCell id="r_e_gcp_sec_${idx}" value="" style="endArrow=block;endFill=1;html=1;strokeColor=#16A34A;strokeWidth=1.3;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="${ax}" y="576" as="sourcePoint"/>
-            <mxPoint x="${ax}" y="588" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>`;
-  });
-
-  const toBeGuaranteeText = `100% of ${custName}'s identified pain points across all 6 dimensions are remediated on ${targetPlatformBrand}, lifting composite maturity +${overallDelta} points (${avgCur} → ${avgTgt}/5.0) with primary bottleneck ${weakest.cleanName} elevated from ${weakest.currentScore} to ${weakest.futureScore}/5.0.`;
-
-  // Bottom Target Summary Strip inside To-Be Zone (y=678, height=60)
-  xml += `
-        <mxCell id="r_summary_strip" value="&lt;b style=&quot;font-size:7.8px;color:#065F46;&quot;&gt;[TO-BE TARGET ARCHITECTURE (${avgTgt}/5.0)]:&lt;/b&gt; &lt;span style=&quot;font-size:7.3px;color:#0F172A;&quot;&gt;${escapeXml(toBeGuaranteeText)}&lt;/span&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#34D399;strokeWidth=1.2;align=left;verticalAlign=middle;spacingLeft=8;" vertex="1" parent="1">
-          <mxGeometry x="892" y="678" width="678" height="60" as="geometry"/>
-        </mxCell>
-
-        <!-- ==================== BOTTOM BAR: KEY TECHNOLOGY ENABLERS & OUTCOMES ==================== -->
-        <mxCell id="b_enablers_box" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.3;" vertex="1" parent="1">
-          <mxGeometry x="20" y="758" width="834" height="92" as="geometry"/>
-        </mxCell>
-        <mxCell id="b_enablers_hdr" value="&lt;b style=&quot;font-size:8.5px;color:#0F172A;letter-spacing:0.4px;&quot;&gt;KEY TECHNOLOGY ENABLERS (${escapeXml(custName.toUpperCase())})&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="30" y="760" width="814" height="18" as="geometry"/>
-        </mxCell>
-`;
-
-  const enablers = isFinOpsDomain
-    ? ['BigQuery FOCUS', 'GKE Autopilot', 'Vertex Caching', 'Looker FinOps', 'Cloud Billing', 'OpenCost', 'Slot Autoscaler', 'CUD Optimizer', 'BQML Alerts', 'Terraform', 'Apigee Quotas', 'Dataplex']
-    : isSecurityDomain
-    ? ['VPC-SC', 'Model Armor', 'Cloud DLP', 'Cloud KMS HSM', 'Chronicle SIEM', 'BeyondCorp IAP', 'Cloud Armor', 'Workload ID', 'Binary Auth', 'Confidential VM', 'Dataplex ABAC', 'SCC Enterprise']
-    : isAgenticDomain
-    ? ['Gemini 3.8', 'Vertex Agent', 'MCP Gateway', 'A2A Protocol', 'AlloyDB AI', 'Vector Search', 'Apigee Gateway', 'Cloud Pub/Sub', 'Model Armor', 'OpenTelemetry', 'BigQuery', 'Cloud Run']
-    : isGeminiMigDomain
-    ? ['Gemini 3.8', 'Gemini 3.1 Pro', '2M Ctx Cache', 'Vertex RAG', 'Apigee Proxy', 'GenAI Eval', 'Model Armor', 'Provisioned TP', 'Cloud KMS', 'VPC-SC', 'Vertex Agent', 'BigQuery']
-    : isLakehouseDomain
-    ? ['BQ Editions', 'BigLake Iceberg', 'BigQuery Omni', 'Datastream CDC', 'Dataform ELT', 'Dataplex ABAC', 'BI Engine', 'Looker BI', 'BQML In-DB', 'Cloud Composer', 'GCS Autoclass', 'Cloud KMS']
-    : [
-        'Google Cloud', 'Vertex AI', 'BigQuery', 'BigLake Iceberg',
-        'Dataflow CDC', 'Cloud Pub/Sub', 'GKE Autopilot', 'Apigee AI',
-        'Looker BI', 'Dataplex', 'Gemini 3.8', 'Model Armor'
-      ];
-
-  enablers.forEach((en, idx) => {
-    const ex = 28 + idx * 68;
-    const meta = getEnablerVisualMeta(en);
-    xml += `
-        <mxCell id="b_en_${idx}" value="&lt;div style=&quot;display:inline-block;padding:3px;border-radius:6px;background:${meta.bg};margin-bottom:2px;&quot;&gt;${meta.svg}&lt;/div&gt;&lt;br&gt;&lt;b style=&quot;font-size:6.8px;color:#0F172A;&quot;&gt;${escapeXml(en)}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size:5.2px;font-weight:800;color:${meta.color};letter-spacing:0.2px;&quot;&gt;${meta.cat}&lt;/span&gt;" style="rounded=1;arcSize=14;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="${ex}" y="780" width="64" height="64" as="geometry"/>
-        </mxCell>`;
-  });
-
-  xml += `
-        <mxCell id="b_outcomes_box" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.3;" vertex="1" parent="1">
-          <mxGeometry x="882" y="758" width="698" height="92" as="geometry"/>
-        </mxCell>
-        <mxCell id="b_outcomes_hdr" value="&lt;b style=&quot;font-size:8.5px;color:#0F172A;letter-spacing:0.4px;&quot;&gt;QUANTIFIED TARGET OUTCOMES (${escapeXml(custName.toUpperCase())})&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="892" y="760" width="678" height="18" as="geometry"/>
-        </mxCell>
-`;
-
+  // ==================== QUANTIFIED OUTCOMES ====================
   const domainOutcome5 = isFinOpsDomain
     ? { title: 'Cloud & AI Cost ROI', sub: '35–48% Unit TCO Savings', badge: 'FINOPS IMPACT' }
     : isSecurityDomain
@@ -2011,35 +1849,35 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
   ];
 
   outcomes.forEach((oc, idx) => {
-    const ox = 892 + idx * 137;
+    const ox = 20 + idx * 315;
     xml += `
-        <mxCell id="b_out_${idx}" value="&lt;div style=&quot;font-size:5.6px;font-weight:800;color:#047857;background:#D1FAE5;border-radius:3px;padding:1px 4px;margin-bottom:3px;display:inline-block;&quot;&gt;${escapeXml(oc.badge)}&lt;/div&gt;&lt;br&gt;&lt;b style=&quot;font-size:7.5px;color:#0F172A;&quot;&gt;&#10003; ${escapeXml(oc.title)}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;display:inline-block;margin-top:2px;font-size:6.8px;color:#059669;font-weight:800;&quot;&gt;${escapeXml(oc.sub)}&lt;/span&gt;" style="rounded=1;arcSize=14;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#A7F3D0;strokeWidth=1.2;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="${ox}" y="780" width="130" height="64" as="geometry"/>
+        <mxCell id="b_out_${idx}" value="&lt;table style=&quot;width:100%;border-collapse:collapse;&quot;&gt;&lt;tr&gt;&lt;td style=&quot;vertical-align:middle;text-align:left;&quot;&gt;&lt;span style=&quot;font-size:6.2px;font-weight:800;color:#64748B;letter-spacing:0.6px;&quot;&gt;${escapeXml(oc.badge)}&lt;/span&gt;&lt;br&gt;&lt;b style=&quot;font-size:10.5px;color:#0F172A;&quot;&gt;${escapeXml(oc.sub.split(' (')[0].split(' Zero')[0])}&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;display:inline-block;margin-top:2px;background:#ECFDF5;border:1px solid #A7F3D0;color:#047857;border-radius:999px;padding:0px 6px;font-size:6.6px;font-weight:800;&quot;&gt;&amp;#10003; ${escapeXml(oc.title)}&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#E2E8F0;strokeWidth=1.1;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;" vertex="1" parent="1">
+          <mxGeometry x="${ox}" y="766" width="300" height="60" as="geometry"/>
         </mxCell>`;
   });
 
   // ==================== BOTTOM LEGEND BAR ====================
   xml += `
         <mxCell id="b_legend_bar" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;strokeWidth=1.2;" vertex="1" parent="1">
-          <mxGeometry x="20" y="858" width="1560" height="36" as="geometry"/>
+          <mxGeometry x="20" y="838" width="1560" height="32" as="geometry"/>
         </mxCell>
         <mxCell id="b_leg_lbl" value="&lt;b style=&quot;font-size:8.5px;color:#0F172A;&quot;&gt;LEGEND:&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="32" y="864" width="60" height="24" as="geometry"/>
+          <mxGeometry x="32" y="842" width="60" height="24" as="geometry"/>
         </mxCell>
-        <mxCell id="b_leg_asis" value="&lt;b style=&quot;font-size:7.5px;color:#DC2626;&quot;&gt;As-Is Silos (${avgCur}/5.0)&lt;/b&gt;" style="rounded=1;arcSize=16;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#F87171;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="92" y="864" width="135" height="24" as="geometry"/>
+        <mxCell id="b_leg_asis" value="&lt;b style=&quot;font-size:7.5px;color:#475569;&quot;&gt;Current Estate (${avgCur}/5.0)&lt;/b&gt;" style="rounded=1;arcSize=16;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#94A3B8;dashed=1;dashPattern=5 3;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="92" y="842" width="150" height="24" as="geometry"/>
         </mxCell>
-        <mxCell id="b_leg_bridge" value="&lt;b style=&quot;font-size:7.5px;color:#1D4ED8;&quot;&gt;Transition Bridge (${avgMid}/5.0)&lt;/b&gt;" style="rounded=1;arcSize=16;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=#60A5FA;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="236" y="864" width="135" height="24" as="geometry"/>
+        <mxCell id="b_leg_bridge" value="&lt;b style=&quot;font-size:7.5px;color:#1D4ED8;&quot;&gt;Migration Waves 1–2 (${avgMid}/5.0)&lt;/b&gt;" style="rounded=1;arcSize=16;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=#60A5FA;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="252" y="842" width="170" height="24" as="geometry"/>
         </mxCell>
-        <mxCell id="b_leg_tobe" value="&lt;b style=&quot;font-size:7.5px;color:#065F46;&quot;&gt;To-Be Cloud Target (${avgTgt}/5.0)&lt;/b&gt;" style="rounded=1;arcSize=16;whiteSpace=wrap;html=1;fillColor=#D1FAE5;strokeColor=#34D399;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="380" y="864" width="135" height="24" as="geometry"/>
+        <mxCell id="b_leg_tobe" value="&lt;b style=&quot;font-size:7.5px;color:#1E3A8A;&quot;&gt;Google Cloud Target (${avgTgt}/5.0)&lt;/b&gt;" style="rounded=1;arcSize=16;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#4285F4;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="432" y="842" width="170" height="24" as="geometry"/>
         </mxCell>
-        <mxCell id="b_leg_flows" value="&lt;b style=&quot;font-size:8px;color:#2563EB;&quot;&gt;&#10142; Tier Transformation Bridge&lt;/b&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b style=&quot;font-size:8px;color:#DC2626;&quot;&gt;&#8674; Manual / Batch Friction (As-Is)&lt;/b&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b style=&quot;font-size:8px;color:#16A34A;&quot;&gt;&#10142; Automated Cloud Flow (To-Be)&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="535" y="864" width="760" height="24" as="geometry"/>
+        <mxCell id="b_leg_flows" value="&lt;span style=&quot;display:inline-block;width:14px;height:14px;border-radius:50%;background:#0F172A;color:#FFFFFF;font-size:7px;font-weight:800;text-align:center;line-height:14px;&quot;&gt;1&lt;/span&gt; &lt;b style=&quot;font-size:8px;color:#0F172A;&quot;&gt;Numbered data-flow step&lt;/b&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b style=&quot;font-size:8px;color:#DC2626;&quot;&gt;&amp;#9888; Primary pain per tier (L1 CHANNELS → L6 ZERO-TRUST)&lt;/b&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b style=&quot;font-size:8px;color:#047857;&quot;&gt;&amp;#8594; Migration disposition → Google Cloud target&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="616" y="842" width="700" height="24" as="geometry"/>
         </mxCell>
-        <mxCell id="b_leg_ver" value="&lt;span style=&quot;font-size:8px;color:#64748B;font-weight:600;&quot;&gt;Template 05 Master (${stageFocus.toUpperCase()}) • v2.0 — ${escapeXml(custName)}&lt;/span&gt;" style="text;html=1;align=right;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1310" y="864" width="256" height="24" as="geometry"/>
+        <mxCell id="b_leg_ver" value="&lt;span style=&quot;font-size:8px;color:#64748B;font-weight:600;&quot;&gt;Google Cloud Reference Architecture (${stageFocus.toUpperCase()}) • v3.0 — ${escapeXml(custName)}&lt;/span&gt;" style="text;html=1;align=right;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1310" y="842" width="256" height="24" as="geometry"/>
         </mxCell>
       </root>
     </mxGraphModel>
@@ -2062,8 +1900,8 @@ function compileStage3FutureStateXml(dossier) {
 }
 
 /**
- * Compile all 3 customer-grounded architecture diagrams (Current State, Transition Bridge, Desired Future State)
- * using the canonical Template 05 3-Zone layout (Left = Current State, Middle = Transition, Right = Future State).
+ * Compile all 3 customer-grounded architecture diagrams (Current Estate, Migration Waves, Google Cloud Target)
+ * using the Google Cloud Reference-Architecture layout (Left = Current Estate, Middle = Migration Waves, Right = Google Cloud Target).
  */
 function compileAll3GroundedDiagrams(framework = {}, metadata = {}, scores = {}) {
   const dossier = extractAssessmentTelemetry(framework, metadata, scores);
@@ -2074,19 +1912,19 @@ function compileAll3GroundedDiagrams(framework = {}, metadata = {}, scores = {})
   const targetStateXml = compileStage3FutureStateXml(dossier);
 
   return {
-    currentTitle: `1. Current State (As-Is) → Transition → To-Be: ${custName} (${avgCur}/5.0 Baseline Focus)`,
-    currentSubtitle: `Template 05 3-Zone Blueprint • Left: As-Is (${avgCur}/5.0) • Middle: Transition (${avgMid}/5.0) • Right: To-Be (${avgTgt}/5.0) • Bottleneck: ${weakest.cleanName}`,
-    curReasoning: `Template 05 3-Zone Architecture (${custName} • ${industry}): Left side maps As-Is Current State (${avgCur}/5.0) grounded in submitted scores, pain points, and verbatim assessor notes; Middle maps the 6-Pillar Transition Bridge (${avgMid}/5.0); Right maps the To-Be Future State (${avgTgt}/5.0).`,
+    currentTitle: `1. Current Estate → Migration Waves → Google Cloud Target: ${custName} (${avgCur}/5.0 Baseline Focus)`,
+    currentSubtitle: `Google Cloud Reference Architecture • Left: Current Estate (${avgCur}/5.0) • Middle: Migration Waves (${avgMid}/5.0) • Right: Google Cloud Target (${avgTgt}/5.0) • Bottleneck: ${weakest.cleanName}`,
+    curReasoning: `Google Cloud Reference Architecture (${custName} • ${industry}): Left zone maps the Current Estate (${avgCur}/5.0) across the 6 architectural tiers (L1 CHANNELS → L6 ZERO-TRUST) grounded in submitted scores, pain points, and verbatim assessor notes; the Migration Wave arrow and 6-tier wave plan map the transition (${avgMid}/5.0); Right zone maps the Google Cloud Target (${avgTgt}/5.0) as an Ingest → Store → Govern → Serve → Operate pipeline with numbered data-flow steps.`,
     currentStateXml,
 
-    transitionTitle: `2. Transition State Bridge (As-Is → Bridge → To-Be): ${custName} (${avgCur} → ${avgMid} → ${avgTgt}/5.0)`,
-    transitionSubtitle: `Template 05 3-Zone Blueprint • Active Focus: Middle Transformation Bridge (${avgCur} → ${avgMid}/5.0) • Priority #1: ${weakest.cleanName}`,
-    transitionReasoning: `Template 05 3-Zone Architecture (${avgCur} → ${avgMid} → ${avgTgt}/5.0): Highlights the 6-Pillar Phased Transition Bridge connecting ${custName}'s As-Is Current State on the left to the To-Be Future State on the right.`,
+    transitionTitle: `2. Migration Waves 1–2 (Current Estate → Waves → Google Cloud Target): ${custName} (${avgCur} → ${avgMid} → ${avgTgt}/5.0)`,
+    transitionSubtitle: `Google Cloud Reference Architecture • Active Focus: Migration Wave Plan (${avgCur} → ${avgMid}/5.0) • Priority #1: ${weakest.cleanName}`,
+    transitionReasoning: `Google Cloud Reference Architecture (${avgCur} → ${avgMid} → ${avgTgt}/5.0): Highlights the 6-tier Migration Wave Plan (Wave 1 · 0–90 d, Wave 2 · 90–180 d) that moves ${custName}'s Current Estate on the left onto the Google Cloud Target pipeline on the right.`,
     transitionStateXml,
 
-    targetTitle: `3. Desired Future State (As-Is → Transition → To-Be): ${custName} — ${targetPlatformBrand} (${avgTgt}/5.0)`,
-    targetSubtitle: `Template 05 3-Zone Blueprint • Active Focus: Right To-Be Future State (${avgTgt}/5.0 • +${overallDelta} Leap) • 100% Pain Points Remediated`,
-    tgtReasoning: `Template 05 3-Zone Architecture (${custName} • ${avgTgt}/5.0): Full end-to-end view with Left = Current State (${avgCur}/5.0), Middle = Transition Bridge (${avgMid}/5.0), and Right = Desired Future State (${avgTgt}/5.0) on ${targetPlatformBrand}.`,
+    targetTitle: `3. Google Cloud Target Architecture (Current Estate → Waves → Target): ${custName} — ${targetPlatformBrand} (${avgTgt}/5.0)`,
+    targetSubtitle: `Google Cloud Reference Architecture • Active Focus: Google Cloud Target pipeline (${avgTgt}/5.0 • +${overallDelta} Leap) • 100% Pain Points Remediated`,
+    tgtReasoning: `Google Cloud Reference Architecture (${custName} • ${avgTgt}/5.0): Full end-to-end view with Left = Current Estate (${avgCur}/5.0), Middle = Migration Waves (${avgMid}/5.0), and Right = Google Cloud Target (${avgTgt}/5.0) on ${targetPlatformBrand}, with numbered data-flow steps matching the numbered services.`,
     targetStateXml,
 
     transformations: pillars
@@ -2100,10 +1938,11 @@ function compileAll3GroundedDiagrams(framework = {}, metadata = {}, scores = {})
     diagramCount: 3,
     diagramEngine: 'nano-banana-2',
     imageModel: 'gemini-3.1-flash-image-preview',
-    modelUsed: 'Nano Banana 2 (nano-banana-2 / gemini-3.1-flash-image-preview) • Template 05 3-Zone Compiler',
+    modelUsed: 'Nano Banana 2 (nano-banana-2 / gemini-3.1-flash-image-preview) • Google Cloud Reference-Architecture Compiler',
     promptCanvasSource: true,
     grounded3StageCompiler: true,
     template05MasterLayout: true,
+    gcpReferenceLayout: true,
     generatedAt: new Date().toISOString()
   };
 }
