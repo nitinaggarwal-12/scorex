@@ -322,7 +322,18 @@ const FinancialImpactCard = ({
   const avgGap = hasSubmittedScores && dimensionCalculations.length > 0
     ? dimensionCalculations.reduce((acc, d) => acc + d.gap, 0) / dimensionCalculations.length
     : 0;
-  const dollarAtRiskMitigated = hasSubmittedScores ? Math.round(avgGap * 300000 * m) : 0;
+
+  const parseValueDriverUsd = (vd, fallbackShareUsd) => {
+    if (!vd) return fallbackShareUsd;
+    if (Number(vd.amountUsd) > 0) return Math.round(Number(vd.amountUsd) * m);
+    if (typeof vd.impact === 'string') {
+      const mMatch = vd.impact.match(/\$\s*([\d.]+)\s*M/i);
+      if (mMatch) return Math.round(parseFloat(mMatch[1]) * 1000000 * m);
+      const kMatch = vd.impact.match(/\$\s*([\d,]+(?:\.\d+)?)\s*K/i);
+      if (kMatch) return Math.round(parseFloat(kMatch[1].replace(/,/g, '')) * 1000 * m);
+    }
+    return fallbackShareUsd;
+  };
 
   // Dynamic implementation cost and net ROI grounded in Live Gemini or measured gap severity
   const implementationCost = hasSubmittedScores ? Math.round(totalAnnualSavings * 0.35) : 0;
@@ -339,13 +350,27 @@ const FinancialImpactCard = ({
     : 0;
 
   const breakdownDrivers = hasSubmittedScores && Array.isArray(financialAnalysis?.valueDrivers) && financialAnalysis.valueDrivers.length > 0
-    ? financialAnalysis.valueDrivers.map((vd, idx) => ({
-        name: vd.category || `Value Driver ${idx + 1}`,
-        amount: Math.round(totalAnnualSavings / financialAnalysis.valueDrivers.length),
-        desc: vd.rationale || vd.description || 'Quantified architectural efficiency and FinOps value driver.',
-        driver: vd.impact || `TCO Reduction: ${tcoReductionPct}%`
-      }))
+    ? financialAnalysis.valueDrivers.map((vd, idx) => {
+        const defaultShare = Math.round(totalAnnualSavings / financialAnalysis.valueDrivers.length);
+        const amt = parseValueDriverUsd(vd, defaultShare);
+        const formattedAmt = amt >= 1000000 ? `$${(amt / 1000000).toFixed(2)}M` : `$${Math.round(amt / 1000)}K`;
+        return {
+          name: vd.category || `Value Driver ${idx + 1}`,
+          amount: amt,
+          desc: vd.rationale || vd.description || 'Quantified architectural efficiency and FinOps value driver.',
+          driver: `Annualized Impact: ${formattedAmt} / yr • TCO Arbitrage: ${tcoReductionPct}%`
+        };
+      })
     : dimensionCalculations;
+
+  const riskDriverEntry = Array.isArray(financialAnalysis?.valueDrivers)
+    ? (financialAnalysis.valueDrivers.find(vd => /risk|compliance|resilience|audit|sla/i.test(vd.category || '')) || financialAnalysis.valueDrivers[2])
+    : null;
+  const dollarAtRiskMitigated = hasSubmittedScores
+    ? (riskDriverEntry
+        ? parseValueDriverUsd(riskDriverEntry, Math.round(avgGap * 300000 * m))
+        : Math.round(avgGap * 300000 * m))
+    : 0;
 
   return (
     <Container
@@ -490,7 +515,11 @@ const FinancialImpactCard = ({
                 <BreakdownCard key={idx}>
                   <div className="top">
                     <span className="name">{driver.name}</span>
-                    <span className="amount">+${((driver.amount || driver.savings || 150000) / 1000).toFixed(0)}k/yr</span>
+                    <span className="amount">
+                      {(driver.amount || driver.savings || 0) >= 1000000
+                        ? `+$${((driver.amount || driver.savings) / 1000000).toFixed(2)}M/yr`
+                        : `+$${Math.round((driver.amount || driver.savings || 150000) / 1000)}K/yr`}
+                    </span>
                   </div>
                   <div className="desc">{driver.desc}</div>
                   <div className="driver">{driver.driver}</div>

@@ -145,26 +145,41 @@ if (fs.existsSync(serverCompilerPath) && fs.existsSync(clientCompilerPath)) {
 }
 
 const dynAssessmentsPath = path.join(ROOT, 'data/dynamic_assessments.json');
+let verifiedDiagramCount = 0;
 if (fs.existsSync(dynAssessmentsPath)) {
   try {
     const dynData = JSON.parse(fs.readFileSync(dynAssessmentsPath, 'utf8'));
     for (const inst of Object.values(dynData)) {
-      if (!inst || !inst.typeId || !inst.architectureDiagrams) continue;
-      for (const stageKey of ['stage1', 'stage2', 'stage3']) {
-        const xml = String(inst.architectureDiagrams?.[stageKey]?.drawioXml || '');
-        if (!xml) continue;
+      if (!inst) continue;
+      const typeKey = inst.typeKey || inst.typeId || inst.id;
+      const diagObj = inst.aiReport?.architectureDiagrams || inst.architectureDiagrams;
+      if (!diagObj) {
+        failures.push(`Missing architectureDiagrams in ${typeKey}`);
+        continue;
+      }
+      for (const stageKey of ['currentStateXml', 'transitionStateXml', 'targetStateXml']) {
+        const xml = String(diagObj[stageKey] || '');
+        if (!xml) {
+          failures.push(`Empty ${stageKey} in ${typeKey}`);
+          continue;
+        }
+        verifiedDiagramCount++;
         const dotMatches = xml.match(/[^<>"]*\.\.[^<>"]*/g) || [];
         if (dotMatches.length > 0) {
-          failures.push(`Template 05 ".." truncation detected in ${inst.typeId} (${stageKey}): ${dotMatches[0]}`);
+          failures.push(`Template 05 ".." truncation detected in ${typeKey} (${stageKey}): ${dotMatches[0]}`);
         }
         if (xml.includes('[TARGET STATE GUARANTEE (')) {
-          failures.push(`Legacy [TARGET STATE GUARANTEE] banner detected in ${inst.typeId} (${stageKey})`);
+          failures.push(`Legacy [TARGET STATE GUARANTEE] banner detected in ${typeKey} (${stageKey})`);
         }
         for (const tierTag of ['L1 CHANNELS', 'L2 WORKBENCH', 'L3 DATA &amp; MEM', 'L4 EVENT MESH', 'L5 CLOUD INFRA', 'L6 ZERO-TRUST']) {
           if (!xml.includes(tierTag)) {
-            failures.push(`Missing bijective tier tag "${tierTag}" in ${inst.typeId} (${stageKey})`);
+            failures.push(`Missing bijective tier tag "${tierTag}" in ${typeKey} (${stageKey})`);
           }
         }
+      }
+      const execSum = String(inst.aiReport?.executiveSummary || '');
+      if (/finops|security|agentic|openai/i.test(typeKey) && /unified lakehouse governance, declarative streaming data engineering/i.test(execSum)) {
+        failures.push(`Cross-domain Lakehouse boilerplate detected in ${typeKey} executiveSummary`);
       }
     }
   } catch (err) {
@@ -178,5 +193,5 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
-console.log(`✅ [gate_governance_doc_sync] PASSED (${globalAndDocFiles.length + scorexRuntimeFiles.length} files verified, 8/8 Universal Symlinks & SHA-256 parity locked, 11/11 5-Tier models active, 18/18 Template 05 diagrams verified with 0 truncations).`);
+console.log(`✅ [gate_governance_doc_sync] PASSED (${globalAndDocFiles.length + scorexRuntimeFiles.length} files verified, 8/8 Universal Symlinks & SHA-256 parity locked, 11/11 5-Tier models active, ${verifiedDiagramCount}/18 Template 05 diagrams verified with 0 truncations).`);
 

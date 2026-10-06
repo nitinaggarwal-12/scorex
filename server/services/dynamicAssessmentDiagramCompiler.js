@@ -119,9 +119,9 @@ const KNOWN_TECH_PATTERNS = [
   { label: 'Azure DevOps', regex: /\bazure devops\b/i },
   { label: 'Terraform', regex: /\bterraform\b/i },
   { label: 'Legacy IAM', regex: /\blegacy iam\b/i },
-  { label: 'Shared Service Accounts', regex: /\bservice accounts?\b/i },
+  { label: 'Shared Service IAM', regex: /\bservice accounts?\b/i },
   { label: 'Excel Spreadsheets', regex: /\bexcel\b/i },
-  { label: 'Informatica PowerCenter', regex: /\binformatica\b/i },
+  { label: 'Informatica Batch', regex: /\binformatica\b/i },
   { label: 'Talend', regex: /\btalend\b/i },
   { label: 'Stitch', regex: /\bstitch\b/i },
   { label: 'Fivetran', regex: /\bfivetran\b/i },
@@ -132,10 +132,10 @@ const KNOWN_TECH_PATTERNS = [
   { label: 'Apache Spark', regex: /\bspark\b/i },
   { label: 'Apache Kafka', regex: /\bkafka\b/i },
   { label: 'Apache Airflow', regex: /\bairflow\b/i },
-  { label: 'Azure Data Factory (ADF)', regex: /\b(azure data factory|adf)\b/i },
+  { label: 'Azure Data Factory', regex: /\b(azure data factory|adf)\b/i },
   { label: 'dbt Models', regex: /\bdbt\b/i },
   { label: 'Stored Procedures', regex: /\bstored procedures?\b/i },
-  { label: 'Custom Python Scripts', regex: /\b(custom python|on-prem python|python scripts)\b/i },
+  { label: 'Custom Python ETL', regex: /\b(custom python|on-prem python|python scripts)\b/i },
   { label: 'Looker', regex: /\blooker\b/i },
   { label: 'Tableau', regex: /\btableau\b/i },
   { label: 'Power BI', regex: /\bpower\s*bi\b/i },
@@ -170,7 +170,7 @@ const KNOWN_TECH_PATTERNS = [
   { label: 'Teradata EDW', regex: /\bteradata\b/i },
   { label: 'Cloudera Hadoop', regex: /\b(cloudera|hadoop|hdfs)\b/i },
   { label: 'CyberArk / Vault', regex: /\b(cyberark|hashicorp|vault)\b/i },
-  { label: 'LangChain / OSS Agent', regex: /\b(langchain|semantic kernel|autogen)\b/i }
+  { label: 'LangChain Wrappers', regex: /\b(langchain|semantic kernel|autogen)\b/i }
 ];
 
 function escapeXml(str) {
@@ -198,12 +198,20 @@ function truncateText(str, maxLen = 38) {
   if (!str) return '';
   const s = String(str).replace(/\s+/g, ' ').trim();
   if (s.length <= maxLen) return s;
-  const sliced = s.slice(0, maxLen - 2).trim();
-  const lastSpace = sliced.lastIndexOf(' ');
-  if (lastSpace >= Math.floor(maxLen * 0.6)) {
-    return sliced.slice(0, lastSpace).replace(/[,;:/—–-]+$/, '') + '..';
+  const words = s.split(/\s+/);
+  let acc = '';
+  for (const w of words) {
+    const cleanW = w.replace(/^[,;:/]+|[,;:/—–-]+$/g, '');
+    if (!cleanW) continue;
+    const candidate = acc ? `${acc} ${cleanW}` : cleanW;
+    if (candidate.length <= maxLen) {
+      acc = candidate;
+    } else {
+      break;
+    }
   }
-  return sliced + '..';
+  if (acc) return acc;
+  return words[0].slice(0, maxLen);
 }
 
 function concisePillarLabel(cleanName, maxLen = 16) {
@@ -275,7 +283,7 @@ function concisePainPoint(rawPain, fallbackLabel = 'Siloed Baseline', maxLen = 1
     [/idle dev\/test|idle.*cluster|static threshold/i, 'Idle K8s & Alerts'],
     [/on-demand token|volatile credit|fragmented commit/i, 'Low CUD Coverage'],
     [/uncompacted cold|duplicate copies|millions of/i, 'Cold Storage Sprawl'],
-    [/manual showback|manual cost/i, 'Manual Showback'],
+    [/manual showback|manual cost|automated chargeback|showback.*finops/i, 'Manual Showback'],
     [/finops policy/i, 'Manual Cost Gate'],
     [/pii\/phi in prompts|unredacted rag|sensitive customer data|sensitive data/i, 'Unmasked PII in RAG'],
     [/unmanaged browser|shadow ai|public openai/i, 'Shadow AI Egress'],
@@ -298,14 +306,20 @@ function concisePainPoint(rawPain, fallbackLabel = 'Siloed Baseline', maxLen = 1
     [/openai sdk|vendor lock|vendor-specific/i, 'Locked Legacy SDKs'],
     [/proprietary sql|teradata|snowflake sql|stored procedure/i, 'Proprietary SQL'],
     [/proprietary.*format|proprietary storage|proprietary/i, 'Closed Formats'],
-    [/multi-hour batch|batch etl|24 to 48 hours|14-hour nightly/i, '24h Batch ETL Lag'],
+    [/multi-hour batch|batch etl|24 to 48 hours|14-hour nightly|medallion lakehouse/i, '24h Batch ETL Lag'],
     [/full table scans|slot contention/i, 'Full-Table Scans'],
     [/schema drift|data quality/i, 'Silent Schema Drift'],
     [/cross-cloud.*egress|egress fees/i, 'High Egress Costs'],
-    [/isolated notebook/i, 'Notebook Silos'],
-    [/coarse table-level|coarse acl/i, 'Coarse Table ACLs'],
-    [/bi query queuing/i, 'BI Query Queuing'],
-    [/siloed bi|manual sql/i, 'Manual SQL Cutover']
+    [/isolated notebook|unified model registry|feature store/i, 'Notebook Silos'],
+    [/coarse table-level|coarse acl|fine-grained abac|dynamic data masking/i, 'Coarse Table ACLs'],
+    [/bi query queuing|serverless sql warehouse|semantic layer/i, 'BI Query Queuing'],
+    [/siloed bi|manual sql/i, 'Manual SQL Cutover'],
+    [/workspace.*isolation|environment isolation|manual console|platform\s*&\s*gov|platform governance/i, 'Manual IAM & Drift'],
+    [/data lakehouse|data architecture|data engineering/i, '24h Batch ETL Lag'],
+    [/analytics\s*&\s*bi|business intelligence/i, 'BI Query Queuing'],
+    [/mlops\s*&\s*genai|machine learning/i, 'Notebook Silos'],
+    [/zero-trust sec|security,\s*compliance/i, 'Coarse Table ACLs'],
+    [/cloud finops|cloud economics/i, 'Manual Showback']
   ];
 
   for (const [regex, compressed] of painMappings) {
@@ -317,6 +331,11 @@ function concisePainPoint(rawPain, fallbackLabel = 'Siloed Baseline', maxLen = 1
   const stripped = s
     .replace(/^(Lack of|Absence of|Missing|Inability to|Proliferation of|Reliance on|Heavy reliance on|Zero|No|High risk of|Difficulty|Complex|Unmanaged)\s+(automated\s+|centralized\s+|real-time\s+|unified\s+|standardized\s+|enterprise\s+)?/i, '')
     .replace(/\b(across|requiring|without|causing|leading to|preventing)\b.*$/i, '')
+    .replace(/\boperational\b/gi, 'Ops')
+    .replace(/\bworkflows?\b/gi, 'Flows')
+    .replace(/\bmanagement\b/gi, 'Mgmt')
+    .replace(/\bconfiguration\b/gi, 'Config')
+    .replace(/\binfrastructure\b/gi, 'Infra')
     .trim();
 
   const capitalized = stripped ? stripped.charAt(0).toUpperCase() + stripped.slice(1) : s;
@@ -361,7 +380,12 @@ function extractAuthenticNoteSnippet(commentsList = []) {
   const custom = commentsList.find(c => c && !/Evaluated for .* current configuration meets baseline/i.test(c));
   const chosen = custom || commentsList[0];
   const cleaned = String(chosen).replace(/\s+/g, ' ').trim();
-  return cleaned.length > 110 ? cleaned.slice(0, 107) + '...' : cleaned;
+  if (cleaned.length <= 165) return cleaned;
+  const firstClause = cleaned.split(/[.;]/)[0].trim();
+  if (firstClause && firstClause.length <= 160) return `${firstClause}.`;
+  const sliced = cleaned.slice(0, 158).trim();
+  const lastSpace = sliced.lastIndexOf(' ');
+  return (lastSpace > 80 ? sliced.slice(0, lastSpace).replace(/[,;:/—–-]+$/, '') : sliced) + '.';
 }
 
 /**
@@ -382,7 +406,12 @@ function extractAssessmentTelemetry(framework = {}, metadata = {}, scores = {}) 
   const industry = (metadata.industry && metadata.industry !== 'Not specified')
     ? metadata.industry
     : (unwrappedFw.badge || framework?.badge || 'Enterprise Cloud & AI');
-  const useCase = metadata.useCase || fwTitle;
+  const rawUseCase = String(metadata.useCase || fwTitle).trim();
+  const useCase = rawUseCase.length <= 68
+    ? rawUseCase
+    : (fwTitle && fwTitle.length <= 68
+      ? fwTitle
+      : rawUseCase.replace(/\s*\([^)]*\)/g, '').split(/\s*[,;—–-]\s*/)[0].slice(0, 68).trim());
 
   const rawQuestionScores = (scores && typeof scores.questionScores === 'object' && scores.questionScores)
     || (metadata && typeof metadata.questionScores === 'object' && metadata.questionScores)
@@ -722,7 +751,7 @@ function extractAssessmentTelemetry(framework = {}, metadata = {}, scores = {}) 
             .replace(/^(How would you rate|How mature is|To what extent does|What is the current state of)\s+/i, '')
             .replace(/\?$/, '')
             .trim();
-          const finalOptLabel = conciseOptText.length > 44 ? conciseOptText.slice(0, 41) + '...' : conciseOptText;
+          const finalOptLabel = truncateText(conciseOptText, 44);
           if (cScore <= 2.5) {
             questionDerivedPains.push(`${finalOptLabel}`);
           } else if (cScore >= 3.5) {
@@ -815,7 +844,7 @@ function extractAssessmentTelemetry(framework = {}, metadata = {}, scores = {}) 
       stackSummary,
       theGood: theGoodList,
       theBad: theBadList,
-      techPainCodes: uniqueTechPains.length > 0 ? uniqueTechPains : [`${concisePillarLabel(pDef.cleanName, 14)} Silos`],
+      techPainCodes: uniqueTechPains.length > 0 ? uniqueTechPains : [concisePainPoint(pDef.cleanName, 'Siloed Baseline', 19)],
       bizPainCodes: uniqueBizPains.length > 0 ? uniqueBizPains : ['High Operational Cost', 'Delayed Delivery'],
       noteSnippet
     };
@@ -896,8 +925,8 @@ function extractAssessmentTelemetry(framework = {}, metadata = {}, scores = {}) 
 
   // Guarantee 100% unique primary pain labels across all 6 pillars so top pain badges never repeat
   const usedPainLabels = new Set();
-  enrichedPillars.forEach((p) => {
-    const fallbackPain = `${concisePillarLabel(p.cleanName, 12)} Gap`;
+  enrichedPillars.forEach((p, idx) => {
+    const fallbackPain = concisePainPoint(p.cleanName, `Pillar ${idx + 1} Gap`, 19);
     let chosenPain = null;
     for (const rawCandidate of p.techPainCodes) {
       const candidate = concisePainPoint(rawCandidate, fallbackPain, 19);
@@ -906,8 +935,9 @@ function extractAssessmentTelemetry(framework = {}, metadata = {}, scores = {}) 
         break;
       }
     }
-    if (!chosenPain) {
-      chosenPain = concisePainPoint(fallbackPain, fallbackPain, 19);
+    if (!chosenPain || usedPainLabels.has(chosenPain.toLowerCase())) {
+      const altFallbacks = ['Manual IAM & Drift', '24h Batch ETL Lag', 'BI Query Queuing', 'Notebook Silos', 'Coarse Table ACLs', 'Manual Showback'];
+      chosenPain = altFallbacks.find(f => !usedPainLabels.has(f.toLowerCase())) || fallbackPain;
     }
     usedPainLabels.add(chosenPain.toLowerCase());
     p.primaryPainLabel = chosenPain;
@@ -1171,23 +1201,23 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
         'Partners & APIs'
       ];
 
-  // As-Is Row 2: 5 Aligned Application Cards (grounded in detected tools or domain-specific legacy apps)
+  // As-Is Row 2: 5 Aligned Application Cards (grounded in detected tools or vendor-neutral domain legacy apps)
   const tList = allDetectedTools.length > 0 ? allDetectedTools : [];
   const defaultDomainApps = isFinOpsDomain
-    ? ['AWS Cost Explorer', 'Snowflake Billing', 'Datadog Metering', 'Uncached GPT-4 API', 'Excel Cost Sheets']
+    ? ['Cloud Cost Console', 'Warehouse Billing', 'APM Cost Metering', 'Uncached LLM APIs', 'Spreadsheet Budgets']
     : isSecurityDomain
     ? ['Static IAM Keys', 'Unproxied LLM APIs', 'Raw PII Pipelines', 'Siloed SIEM Logs', 'Manual GRC Sheets']
     : isAgenticDomain
-    ? ['LangChain Scripts', 'Hardcoded REST API', 'Stateless Chatbots', 'In-Memory Buffers', 'Manual Escalation']
+    ? ['Custom Agent Code', 'Hardcoded REST API', 'Stateless Chatbots', 'In-Memory Buffers', 'Manual Escalation']
     : isGeminiMigDomain
-    ? ['OpenAI GPT-4o API', 'Pinecone Vector DB', 'LangChain Wrappers', 'Static Prompt Files', 'Manual Eval Sheets']
+    ? ['OpenAI GPT-4o API', 'External Vector DB', 'Custom SDK Wrapper', 'Static Prompt Files', 'Manual Eval Sheets']
     : isLakehouseDomain
-    ? ['Teradata BTEQ SQL', 'Informatica Batch', 'Snowflake Marts', 'Tableau Extracts', 'Autosys Cron Jobs']
+    ? ['Legacy On-Prem EDW', 'Nightly Batch ETL', 'Siloed Data Marts', 'Static BI Extracts', 'Cron Batch Jobs']
     : [
-        'Legacy Collibra UI',
-        'Informatica Batch',
-        'Siloed Tableau BI',
-        'Local Jupyter Lab',
+        'Legacy Data Catalog',
+        'Nightly Batch ETL',
+        'Siloed BI Extracts',
+        'Local Notebook VMs',
         'Static IAM Policies'
       ];
 
@@ -1222,21 +1252,21 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
         { name: 'Isolated Vectors', sub: 'Stale Embeddings' },
         { name: 'Unindexed Logs', sub: 'Zero Trace IDs' },
         { name: 'Static Prompts', sub: 'Hardcoded Templates' },
-        { name: 'Local SQLite DB', sub: 'Single-Node State' }
+        { name: 'Local State DB', sub: 'Single-Node State' }
       ]
     : isGeminiMigDomain
     ? [
         { name: '512-Token Chunks', sub: 'Fragile RAG Splits' },
-        { name: 'Pinecone Vectors', sub: 'External Egress' },
+        { name: tList.some(t => /pinecone/i.test(t)) ? 'Pinecone Vectors' : 'External Vectors', sub: 'External Egress' },
         { name: 'GPT-4 Prompt Repo', sub: 'Model-Locked JSON' },
         { name: 'Uncached Context', sub: 'Repeated Token Burn' },
         { name: 'CSV Eval Sheets', sub: 'Manual Spot Checks' }
       ]
     : isLakehouseDomain
     ? [
-        { name: 'Teradata EDW', sub: 'Proprietary Tables' },
-        { name: 'Snowflake Marts', sub: 'Duplicate Storage' },
-        { name: 'Siloed S3 Parquet', sub: 'Uncataloged Files' },
+        { name: tList.some(t => /teradata/i.test(t)) ? 'Teradata EDW' : 'Legacy On-Prem EDW', sub: 'Proprietary Tables' },
+        { name: tList.some(t => /snowflake/i.test(t)) ? 'Snowflake Marts' : 'Siloed Data Marts', sub: 'Duplicate Storage' },
+        { name: 'Raw Object Parquet', sub: 'Uncataloged Files' },
         { name: 'Staging CSV Drops', sub: 'Nightly Extracts' },
         { name: 'Isolated BI Cubes', sub: 'Stale Refreshes' }
       ]
@@ -1284,9 +1314,9 @@ function compileTemplate05MasterDiagramXml(dossier, stageFocus = 'target') {
     : isLakehouseDomain
     ? [
         { name: 'Nightly Batch ETL', sub: '24h Replication Lag' },
-        { name: 'Proprietary BTEQ', sub: '2,400+ Stored Procs' },
-        { name: 'Cross-Cloud Egress', sub: 'High S3/Blob Fees' },
-        { name: 'Cron / Autosys Jobs', sub: 'Brittle Job Chains' },
+        { name: 'Legacy Stored Procs', sub: '2,400+ Brittle Scripts' },
+        { name: 'Cross-Cloud Egress', sub: 'High Egress Fees' },
+        { name: 'Cron & Batch Chains', sub: 'Brittle Job Chains' },
         { name: 'Manual Schema Sync', sub: 'Frequent Breakage' }
       ]
     : [

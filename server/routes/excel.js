@@ -94,11 +94,18 @@ async function buildDynamicWorkbook(instance, report = {}) {
   const dimHeader = dimensions.addRow(['Dimension', 'Baseline Score', 'Target Score', 'Maturity Gap', 'Risk Severity', 'Weight']);
   styleHeaderRow(dimHeader);
   (framework.dimensions || []).forEach((dimension) => {
-    const dScore = scores?.dimensionScores?.[dimension.id] || instance?.scores?.[dimension.id] || {};
-    const currentRaw = dScore.score ?? dScore.currentScore ?? '';
-    const targetRaw = dScore.targetScore ?? dScore.futureScore ?? '';
-    const current = Number.isFinite(Number(currentRaw)) ? Number(currentRaw) : '';
-    const target = Number.isFinite(Number(targetRaw)) ? Number(targetRaw) : '';
+    const insightMatch = Array.isArray(aiReport?.dimensionInsights)
+      ? aiReport.dimensionInsights.find(d => d.dimensionId === dimension.id || d.dimensionName === dimension.name)
+      : null;
+    const dScore = scores?.dimensionScores?.[dimension.id] ?? instance?.scores?.[dimension.id] ?? insightMatch ?? {};
+    const currentRaw = typeof dScore === 'number'
+      ? dScore
+      : (dScore.score ?? dScore.currentScore ?? insightMatch?.score ?? '');
+    const targetRaw = typeof dScore === 'object' && dScore !== null
+      ? (dScore.targetScore ?? dScore.futureScore ?? insightMatch?.futureScore ?? '')
+      : (insightMatch?.futureScore ?? '');
+    const current = currentRaw !== '' && Number.isFinite(Number(currentRaw)) ? Number(currentRaw) : '';
+    const target = targetRaw !== '' && Number.isFinite(Number(targetRaw)) ? Number(targetRaw) : '';
     const gap = current !== '' && target !== '' ? Number((target - current).toFixed(2)) : '';
     const severity = gap === '' ? 'Not calculated' : gap >= 2 ? 'High' : gap >= 1 ? 'Medium' : 'Low';
     dimensions.addRow([

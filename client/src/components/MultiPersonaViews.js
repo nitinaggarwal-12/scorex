@@ -405,41 +405,59 @@ const MultiPersonaViews = ({
         ]
   };
 
+  // Domain-specialized Top Board Decisions & Phase Fallbacks
+  const keyType = `${framework?.typeKey || ''} ${framework?.title || ''}`.toLowerCase();
+  const isAgenticDomain = keyType.includes('agentic') || keyType.includes('mcp') || keyType.includes('multi-agent');
+  const isGenAIDomain = keyType.includes('openai') || keyType.includes('gemini') || keyType.includes('genai') || isAgenticDomain;
+  const isSecDomain = keyType.includes('security') || keyType.includes('zero_trust') || keyType.includes('trism');
+  const isFinOpsDomain = keyType.includes('finops') || keyType.includes('cost') || keyType.includes('billing');
+  const isLakehouseDomain = keyType.includes('lakehouse') || keyType.includes('edw') || keyType.includes('bigquery');
+
   const phase2 = {
     title: rawPhase2?.title || 'Phase 2: Scale & Acceleration',
     timeline: rawPhase2?.timeline || 'Months 3–6',
-    focus: rawPhase2?.focus || (recs[1]?.pillarName ? `Scale modernization across ${recs[1].pillarName} with declarative pipelines and automated contracts.` : 'Unify storage with Apache Iceberg / BigLake, transition legacy batch to real-time CDC streaming, and automate CI/CD.'),
+    focus: rawPhase2?.focus || (recs[1]?.pillarName
+      ? `Scale modernization across ${recs[1].pillarName} with declarative pipelines and automated contracts.`
+      : isFinOpsDomain
+      ? 'Automate GKE Autopilot rightsizing, lock in 85%+ Flexible CUDs, and enable storage Autoclass tiering.'
+      : isSecDomain
+      ? 'Enforce inline Cloud DLP surrogate tokenization, HSM CMEK encryption, and Google Model Armor shields.'
+      : isAgenticDomain
+      ? 'Deploy Vertex AI Agent Engine supervisor/worker orchestration with AlloyDB AI episodic memory.'
+      : isGenAIDomain
+      ? 'Cut over to Gemini 3.8 Pro native 2M-token context windows and 75% Vertex AI Context Caching.'
+      : 'Unify storage with Apache Iceberg / BigLake, transition legacy batch to real-time CDC streaming, and automate CI/CD.'),
     milestones: (rawPhase2?.milestones && rawPhase2.milestones.length > 0)
       ? rawPhase2.milestones
       : (rawPhase2?.items && rawPhase2.items.length > 0)
       ? rawPhase2.items
       : [
-          rec2Steps[0] || (recs[1]?.pillarName ? `Standardize ${recs[1].pillarName} on open table formats & declarative models` : 'Standardize on Open Table Formats (Apache Iceberg / Delta)'),
-          rec2Steps[1] || 'Deploy Declarative Dataform/dbt Pipelines with Git CI/CD',
-          rec2Steps[2] || 'Automate Real-Time Change Data Capture (CDC)'
+          rec2Steps[0] || (recs[1]?.pillarName ? `Standardize ${recs[1].pillarName} on declarative cloud-native architecture` : 'Standardize on Declarative Cloud-Native Architecture'),
+          rec2Steps[1] || 'Deploy Automated CI/CD Policy & Quality Gates',
+          rec2Steps[2] || 'Automate Real-Time Streaming & Telemetry'
         ]
   };
 
   const phase3 = {
     title: rawPhase3?.title || 'Phase 3: Production AI & Autonomous Operations',
     timeline: rawPhase3?.timeline || 'Months 6–12',
-    focus: rawPhase3?.focus || (recs[2]?.pillarName ? `Productionize advanced capabilities across ${recs[2].pillarName} with real-time intelligence.` : 'Operationalize Vertex AI Gemini Agentic Mesh with Model Context Protocol (MCP) and Prompt Context Caching.'),
+    focus: rawPhase3?.focus || (recs[2]?.pillarName
+      ? `Productionize advanced capabilities across ${recs[2].pillarName} with real-time intelligence.`
+      : isFinOpsDomain
+      ? 'Operationalize autonomous FinOps unit economics, BQML anomaly circuit-breakers, and model-tier arbitrage.'
+      : isSecDomain
+      ? 'Activate autonomous Chronicle SIEM/SOAR response, JIT PAM, and SLSA Level 3 cryptographic attestation.'
+      : 'Operationalize Vertex AI Gemini Agentic Mesh with Model Context Protocol (MCP) and Prompt Context Caching.'),
     milestones: (rawPhase3?.milestones && rawPhase3.milestones.length > 0)
       ? rawPhase3.milestones
       : (rawPhase3?.items && rawPhase3.items.length > 0)
       ? rawPhase3.items
       : [
-          rec3Steps[0] || (recs[2]?.pillarName ? `Operationalize ${recs[2].pillarName} enterprise automation & agent contracts` : 'Enable Gemini Prompt Context Caching (75% Input Discount)'),
-          rec3Steps[1] || 'Deploy Model Context Protocol (MCP) Multi-Agent Mesh',
-          rec3Steps[2] || 'In-Database Real-Time Machine Learning & Vector Search'
+          rec3Steps[0] || (recs[2]?.pillarName ? `Operationalize ${recs[2].pillarName} enterprise automation & SLA contracts` : 'Enable Gemini Prompt Context Caching (75% Input Discount)'),
+          rec3Steps[1] || 'Deploy Governed Autonomous Workflows & Policy Guardrails',
+          rec3Steps[2] || 'Establish Continuous Executive Telemetry & Unit Economics'
         ]
   };
-
-  // Domain-specialized Top Board Decisions
-  const keyType = (framework?.typeKey || '').toLowerCase();
-  const isGenAIDomain = keyType.includes('openai') || keyType.includes('gemini') || keyType.includes('genai');
-  const isSecDomain = keyType.includes('security') || keyType.includes('zero_trust');
-  const isFinOpsDomain = keyType.includes('finops') || keyType.includes('cost');
 
   const boardDecisions = recs.length >= 3 ? [
     { 
@@ -454,6 +472,10 @@ const MultiPersonaViews = ({
       title: recs[2].title || (recs[2].pillarName ? `Fund ${recs[2].pillarName} Automation & Intelligence Deployment` : (isGenAIDomain ? 'Fund Model Armor & MCP Multi-Agent Mesh Deployment' : 'Fund Enterprise AI & Automation Deployment')), 
       desc: recs[2].whyItMatters || recs[2].justification || recs[2].description || (recs[2].theBad?.[0] ? `Remediate: ${recs[2].theBad[0]}` : 'Deploy standardized MCP agent contracts with real-time prompt injection defense.') 
     }
+  ] : isAgenticDomain ? [
+    { title: 'Authorize Standardized Apigee MCP Tool Gateway', desc: 'Replace brittle REST tool wrappers and shared credentials with schema-validated MCP tool servers and per-agent OAuth.' },
+    { title: 'Approve Hierarchical Vertex AI Agent Engine & AlloyDB Memory', desc: 'Transition from linear prompt chains to supervisor/worker orchestration with persistent episodic memory.' },
+    { title: 'Fund Regulated HITL Approval Gates & Trajectory Eval CI/CD', desc: 'Mandate Human-in-the-Loop approval for high-materiality banking actions and OpenTelemetry trajectory tracing.' }
   ] : isGenAIDomain ? [
     { title: 'Authorize Enterprise AI Gateway & CMEK Perimeter', desc: 'Decouple backend microservices from direct vendor SDKs and enforce VPC-SC and Cloud KMS CMEK encryption.' },
     { title: 'Approve Gemini Long-Context & Prompt Context Caching', desc: 'Capture up to 75% input token discount and eliminate lossy 8k chunking via native 2M context windows.' },
@@ -463,28 +485,32 @@ const MultiPersonaViews = ({
     { title: 'Deploy Real-Time Cloud DLP & Customer-Managed KMS (CMEK)', desc: 'Automate PII surrogate tokenization and institute cryptographic tenant data shredding.' },
     { title: 'Authorize Centralized Chronicle SIEM & Automated Incident Triage', desc: 'Correlate cloud audit logs across all regions to reduce mean-time-to-remediate (MTTR) under 15 minutes.' }
   ] : isFinOpsDomain ? [
-    { title: 'Authorize Automated Anomaly Detection & Budgets', desc: 'Deploy cloud cost anomaly detection with real-time alerting and automated budget triggers.' },
-    { title: 'Approve Dynamic Resource Rightsizing & Auto-Shutdown', desc: 'Implement automated scheduling for idle non-prod workloads and compute rightsizing.' },
-    { title: 'Fund Unified Multi-Cloud Cost Allocation Framework', desc: 'Enforce comprehensive tagging policies, unit-economic reporting, and showback/chargeback.' }
+    { title: 'Authorize BigQuery FOCUS 1.0 Billing Attribution & Budgets', desc: 'Eliminate unallocated spend and deployBQML cost anomaly detection with automated Pub/Sub budget circuit-breakers.' },
+    { title: 'Approve GKE Autopilot Rightsizing & 85%+ Flexible CUDs', desc: 'Enforce 15-minute idle compute auto-suspend and automated commitment portfolio optimization.' },
+    { title: 'Fund Departmental Showback & AI Token Arbitrage', desc: 'Operationalize 75% Vertex AI Context Caching discounts and unit-economic chargeback scorecards.' }
+  ] : isLakehouseDomain ? [
+    { title: 'Authorize Unified BigLake Open Iceberg & Dataplex Governance', desc: 'Eliminate duplicate storage taxes and enforce automated column-level lineage and ABAC policy tags.' },
+    { title: 'Approve Sub-Second Datastream CDC & BigQuery Editions', desc: 'Replace 24-hour nightly batch ETL windows and fixed legacy EDW appliance capacity with serverless autoscaling.' },
+    { title: 'Fund Governed Looker Semantic Layer & In-Database BQML', desc: 'Consolidate fragmented BI extracts into a single semantic metric layer accelerated by BigQuery BI Engine.' }
   ] : [
-    { title: 'Authorize Unified Lakehouse Governance & Open Storage', desc: 'Mandate open table formats (Apache Iceberg) and centralized ABAC cataloging across all teams.' },
-    { title: 'Approve Serverless Reservation Slot Migration', desc: 'Shift from static over-provisioned VMs to serverless autoscaling compute with 15-min auto-suspend.' },
-    { title: 'Fund Enterprise GenAI Agentic Infrastructure', desc: 'Establish enterprise prompt caching (75% savings), model routing, and zero-trust guardrails.' }
+    { title: 'Authorize Unified Dataplex Governance & Zero-Trust Perimeters', desc: 'Mandate centralized metadata cataloging, ABAC policy tags, and VPC-SC security across all domains.' },
+    { title: 'Approve Declarative Streaming & Serverless Compute Modernization', desc: 'Shift from manual batch pipelines and static VMs to Datastream CDC, Dataform, and autoscaling compute.' },
+    { title: 'Fund Enterprise Vertex AI MLOps, Agent Engine & FinOps CoE', desc: 'Establish 75% prompt context caching, governed MCP agents, and FOCUS 1.0 unit-cost attribution.' }
   ];
 
   // Derive dynamic playbook items from assessed pillars
   const findRecByTerms = (terms) => {
     return recs.find(r => {
-      const pid = (r.pillarId || r.area || r.pillar || '').toLowerCase();
-      const pname = (r.pillarName || r.name || r.title || '').toLowerCase();
+      const pid = (r.pillarId || r.area || r.pillar || r.dimension || '').toLowerCase();
+      const pname = (r.pillarName || r.dimension || r.name || r.title || '').toLowerCase();
       return terms.some(t => pid.includes(t) || pname.includes(t));
     });
   };
 
-  const secRec = findRecByTerms(['govern', 'secur', 'platform', 'trust', 'compliance']);
-  const dataRec = findRecByTerms(['engineer', 'data', 'pipeline', 'lakehouse', 'etl']);
-  const aiRec = findRecByTerms(['genai', 'ai', 'machine', 'ml', 'model', 'agent']);
-  const opsRec = findRecByTerms(['ops', 'finops', 'cost', 'excellence', 'cloud', 'infra']);
+  const secRec = findRecByTerms(['govern', 'secur', 'platform', 'trust', 'compliance', 'dlp', 'siem', 'iam', 'armor']);
+  const dataRec = findRecByTerms(['engineer', 'data', 'pipeline', 'lakehouse', 'etl', 'storage', 'memory', 'context', 'visibility', 'billing']);
+  const aiRec = findRecByTerms(['genai', 'ai', 'machine', 'ml', 'model', 'agent', 'mcp', 'prompt', 'telemetry', 'anomaly']);
+  const opsRec = findRecByTerms(['ops', 'finops', 'cost', 'excellence', 'cloud', 'infra', 'commitment', 'cud', 'unit']);
 
   const secSteps = extractSteps(secRec);
   const dataSteps = extractSteps(dataRec);
@@ -655,10 +681,20 @@ const MultiPersonaViews = ({
             <PlaybookGrid>
               <PlaybookCard>
                 <div className="title">
-                  <FiLock color="#10b981" /> Security, IAM & Zero-Trust Checklist
+                  <FiLock color="#10b981" /> {isSecDomain ? 'Zero-Trust Perimeter, WIF & JIT PAM Checklist' : isFinOpsDomain ? 'Tag Governance & Policy-as-Code Checklist' : 'Security, IAM & Zero-Trust Checklist'}
                 </div>
                 <div className="checklist">
-                  {(secSteps.length > 0 ? secSteps.slice(0, 4) : [
+                  {(secSteps.length > 0 ? secSteps.slice(0, 4) : isSecDomain ? [
+                    'Route 100% of foundation model traffic through Apigee AI Gateway inside VPC-SC perimeters.',
+                    'Eliminate static JSON service account keys via Workload Identity Federation & JIT PAM.',
+                    'Enforce Cloud KMS Hardware (HSM) CMEK and Confidential Computing for model weights.',
+                    'Mandate SLSA Level 3 Binary Authorization signing for all deployed containers and models.'
+                  ] : isFinOpsDomain ? [
+                    'Enforce mandatory cost-center, owner, and environment labels in CI/CD Terraform gates.',
+                    'Configure IAM budget circuit-breakers and token quota caps per business unit.',
+                    'Restrict on-demand GPU and high-memory instance creation via Organization Policy constraints.',
+                    'Enable audit logging for all reservation, slot, and commitment modifications.'
+                  ] : [
                     'Provision centralized cloud metadata catalog with fine-grained IAM role delegation.',
                     'Implement dynamic column-level masking and row-level filtering for PII data.',
                     'Enable Customer-Managed Encryption Keys (CMEK) and VPC Service Controls (VPC-SC).',
@@ -673,14 +709,29 @@ const MultiPersonaViews = ({
 
               <PlaybookCard>
                 <div className="title">
-                  <FiCpu color="#3b82f6" /> Declarative Data Engineering & CDC Architecture
+                  <FiCpu color="#3b82f6" /> {isFinOpsDomain ? 'FOCUS 1.0 Billing & Storage Lifecycle Architecture' : isSecDomain ? 'Inline Cloud DLP & Immutable Audit Architecture' : isGenAIDomain ? 'Long-Context Grounding & Episodic Memory Architecture' : 'Declarative Data Engineering & CDC Architecture'}
                 </div>
                 <div className="checklist">
-                  {(dataSteps.length > 0 ? dataSteps.slice(0, 4) : [
-                    'Standardize on open table formats (Apache Iceberg / Delta UniForm) for zero-copy querying.',
-                    'Replace legacy batch polling with real-time log-based Change Data Capture (CDC).',
+                  {(dataSteps.length > 0 ? dataSteps.slice(0, 4) : isFinOpsDomain ? [
+                    'Stream multi-cloud billing exports into BigQuery using the standardized FOCUS 1.0 schema.',
+                    'Enable GKE OpenCost pod-level metering for shared Kubernetes cluster attribution.',
+                    'Configure Cloud Storage Autoclass and BigLake compaction to tier cold petabytes automatically.',
+                    'Eliminate redundant staging table copies across analytical marts.'
+                  ] : isSecDomain ? [
+                    'Deploy inline Cloud DLP surrogate tokenization across all RAG ingestion and prompt streams.',
+                    'Stream 100% of AI gateway and KMS audit logs into Google SecOps (Chronicle SIEM) WORM storage.',
+                    'Enforce cryptographic tenant isolation and automated PII redaction before vector indexing.',
+                    'Validate zero-data-retention guarantees on all foundation model inference endpoints.'
+                  ] : isGenAIDomain ? [
+                    'Replace brittle 512-token RAG chunking with Gemini 3.8 Pro native 2M-token context windows.',
+                    'Consolidate external vector stores into ACL-synchronized Vertex AI Vector Search.',
+                    'Persist multi-turn agent episodic and semantic memory in AlloyDB AI and Cloud Spanner Graph.',
+                    'Enforce strict JSON-schema output contracts across all model and tool invocations.'
+                  ] : [
+                    'Standardize on open table formats (Apache Iceberg / BigLake) for zero-copy querying.',
+                    'Replace legacy batch polling with real-time Datastream Change Data Capture (CDC).',
                     'Enforce declarative data quality contracts and schema drift alerting.',
-                    'Deploy version-controlled Dataform / dbt pipelines with automated Git CI/CD testing.'
+                    'Deploy version-controlled Dataform SQLX pipelines with automated Git CI/CD testing.'
                   ]).map((item, idx) => (
                     <div key={idx} className="check-row">
                       <FiCheckSquare /> {item}
@@ -691,10 +742,20 @@ const MultiPersonaViews = ({
 
               <PlaybookCard>
                 <div className="title">
-                  <HiSparkles color="#8b5cf6" /> Compound AI & Agentic Implementation
+                  <HiSparkles color="#8b5cf6" /> {isFinOpsDomain ? 'GKE Autopilot Rightsizing & Anomaly Guardrails' : isSecDomain ? 'Google Model Armor & Adversarial Defense' : 'Compound AI & Agentic Implementation'}
                 </div>
                 <div className="checklist">
-                  {(aiSteps.length > 0 ? aiSteps.slice(0, 4) : [
+                  {(aiSteps.length > 0 ? aiSteps.slice(0, 4) : isFinOpsDomain ? [
+                    'Migrate over-provisioned Kubernetes workloads to GKE Autopilot with scale-to-zero node pools.',
+                    'Deploy BQML real-time cost anomaly detection with automated Pub/Sub Slack/PagerDuty alerts.',
+                    'Implement Vertex AI Context Caching for 75% input token savings on repeated system prompts.',
+                    'Route high-volume classification tasks to Gemini 3.8 Flash and complex reasoning to Pro.'
+                  ] : isSecDomain ? [
+                    'Activate Google Model Armor inline shields for direct and indirect prompt injection defense.',
+                    'Enforce real-time output toxicity, PII leakage, and hallucination grounding checks.',
+                    'Automate adversarial red-teaming and jailbreak regression suites in CI/CD pipelines.',
+                    'Configure Chronicle SOAR playbooks to quarantine compromised agent credentials in <60s.'
+                  ] : [
                     'Standardize agent tool calling schemas on Model Context Protocol (MCP).',
                     'Implement Gemini Prompt Context Caching for large static reference documents (75% cost reduction).',
                     'Build dynamic model router (route simple queries to Flash models, complex to Pro/Thinking).',
@@ -709,14 +770,19 @@ const MultiPersonaViews = ({
 
               <PlaybookCard>
                 <div className="title">
-                  <FiDollarSign color="#f59e0b" /> FinOps & Infrastructure Optimization
+                  <FiDollarSign color="#f59e0b" /> {isSecDomain ? 'Continuous AI TRiSM & GRC Automation' : 'FinOps, Commitment & SLA Optimization'}
                 </div>
                 <div className="checklist">
-                  {(opsSteps.length > 0 ? opsSteps.slice(0, 4) : [
+                  {(opsSteps.length > 0 ? opsSteps.slice(0, 4) : isSecDomain ? [
+                    'Publish continuous AI TRiSM compliance scorecards mapped to NIST AI RMF & ISO 42001.',
+                    'Enforce mandatory Human-in-the-Loop (HITL) approval gates for high-risk agent actions.',
+                    'Automate quarterly access certification and zero-standing-privilege drift audits.',
+                    'Verify regional data residency and sovereign VPC perimeter compliance.'
+                  ] : [
                     'Configure 15-minute auto-termination timeout on all interactive developer compute clusters.',
-                    'Migrate analytical SQL workloads to Serverless BigQuery Editions reservation slot pools.',
-                    'Set up FOCUS 1.0 multi-tenant cost attribution and automated budget alerting webhooks.',
-                    'Run weekly automated compute right-sizing and spot instance utilization audits.'
+                    'Optimize Flexible CUDs, Provisioned Throughput, and BigQuery Editions autoscaling slots.',
+                    'Set up FOCUS 1.0 multi-tenant cost attribution and automated departmental showback scorecards.',
+                    'Run continuous automated compute rightsizing and spot/preemptible utilization audits.'
                   ]).map((item, idx) => (
                     <div key={idx} className="check-row">
                       <FiCheckSquare /> {item}

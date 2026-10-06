@@ -162,15 +162,28 @@ export const exportAssessmentToWord = (instance, report) => {
           ]);
 
     const curNum = parseFloat(overallScore) || 2.5;
-    const tgtNum = Math.min(5.0, +(curNum + 1.3)).toFixed(1);
+    const tgtNum = report?.overallFutureScore
+      ? Number(report.overallFutureScore).toFixed(1)
+      : Math.min(5.0, +(curNum + 1.3)).toFixed(1);
     const delta = Math.max(0.5, +(tgtNum - curNum)).toFixed(1);
     const minRoi = (parseFloat(delta) * 1.5).toFixed(1);
     const maxRoi = (parseFloat(delta) * 3.0).toFixed(1);
-    const roiStr = report?.businessImpact?.financialRoi || `$${minRoi}M - $${maxRoi}M (30-45% TCO Reduction)`;
+    const roiStr = report?.financialAnalysis?.roiRangeFormatted
+      ? `${report.financialAnalysis.roiRangeFormatted} (${report.financialAnalysis.tcoArbitrageFormatted || '30-45% TCO Reduction'})`
+      : (report?.financialAnalysis?.estimatedRoi || report?.businessImpact?.financialRoi || `$${minRoi}M - $${maxRoi}M (30-45% TCO Reduction)`);
+    const targetHorizonLabel = report?.targetMaturityLevel || 'Optimized Target State';
+    const execSummaryText = report?.executiveSummary || `This executive memorandum establishes the foundational cloud and architecture maturity baseline for ${org}. Through comprehensive assessment across core architectural dimensions, ScoreX has identified prioritized modernization opportunities to eliminate operational debt and accelerate target-state execution on Google Cloud Platform.`;
 
     let dimensions = framework.dimensions || framework.assessmentAreas || [];
     if (!dimensions || dimensions.length === 0) {
-      if (report?.categoryDetails) {
+      if (Array.isArray(report?.dimensionInsights) && report.dimensionInsights.length > 0) {
+        dimensions = report.dimensionInsights.map(d => ({
+          id: d.dimensionId || d.dimensionName,
+          name: d.dimensionName || d.name,
+          score: d.score,
+          futureScore: d.futureScore
+        }));
+      } else if (report?.categoryDetails) {
         dimensions = Object.entries(report.categoryDetails).map(([key, cat]) => ({
           id: key,
           name: cat.name || cat.title || key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
@@ -211,12 +224,12 @@ export const exportAssessmentToWord = (instance, report) => {
           <strong>Enterprise Client:</strong> ${org}<br>
           <strong>Initiative / Scope:</strong> ${framework.title || 'Data & AI Architecture Maturity'}<br>
           <strong>Overall Maturity Score:</strong> <span class="badge badge-blue">${overallScore} / 5.0 (${maturityStage})</span><br>
-          <strong>Target Horizon:</strong> <span class="badge badge-green">${tgtNum} / 5.0 (Optimized Multi-Agent Mesh)</span><br>
+          <strong>Target Horizon:</strong> <span class="badge badge-green">${tgtNum} / 5.0 (${targetHorizonLabel})</span><br>
           <strong>Projected 3-Yr ROI:</strong> ${roiStr}
         </div>
 
         <h2>1. Executive Summary & Strategic Context</h2>
-        <p>This executive memorandum establishes the foundational cloud and artificial intelligence maturity baseline for <strong>${org}</strong>. Through comprehensive assessment across core architectural dimensions, ScoreX has identified key modernization opportunities to eliminate operational debt, accelerate streaming CDC, and deploy scalable agentic AI meshes on Google Cloud Platform.</p>
+        <p>${execSummaryText}</p>
 
         <h2>2. Dimensional Maturity Scores</h2>
         <table class="kpi-table">
@@ -230,9 +243,24 @@ export const exportAssessmentToWord = (instance, report) => {
           </thead>
           <tbody>
             ${dimensions.map(dim => {
-              const dScore = scores[dim.id] || scores[dim.name] || report?.categoryDetails?.[dim.id];
-              const cur = typeof dScore === 'number' ? dScore.toFixed(1) : (dScore?.score !== undefined ? Number(dScore.score).toFixed(1) : (dScore?.currentScore !== undefined ? Number(dScore.currentScore).toFixed(1) : '2.8'));
-              const target = typeof dScore?.futureScore === 'number' ? Number(dScore.futureScore).toFixed(1) : (typeof dScore?.targetScore === 'number' ? Number(dScore.targetScore).toFixed(1) : Math.min(5.0, +(parseFloat(cur) + 1.2)).toFixed(1));
+              const insightMatch = Array.isArray(report?.dimensionInsights)
+                ? report.dimensionInsights.find(d => d.dimensionId === dim.id || d.dimensionName === dim.name)
+                : null;
+              const dScore = scores[dim.id] || scores[dim.name] || insightMatch || report?.categoryDetails?.[dim.id];
+              const cur = typeof dScore === 'number'
+                ? dScore.toFixed(1)
+                : (dScore?.score !== undefined
+                  ? Number(dScore.score).toFixed(1)
+                  : (dScore?.currentScore !== undefined
+                    ? Number(dScore.currentScore).toFixed(1)
+                    : (dim.score !== undefined ? Number(dim.score).toFixed(1) : '2.8')));
+              const target = typeof dScore?.futureScore === 'number'
+                ? Number(dScore.futureScore).toFixed(1)
+                : (typeof dScore?.targetScore === 'number'
+                  ? Number(dScore.targetScore).toFixed(1)
+                  : (typeof dim.futureScore === 'number'
+                    ? Number(dim.futureScore).toFixed(1)
+                    : Math.min(5.0, +(parseFloat(cur) + 1.2)).toFixed(1)));
               return `
                 <tr>
                   <td><strong>${dim.name}</strong></td>

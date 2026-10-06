@@ -1060,6 +1060,8 @@ export const UnifiedDocumentPreviewModal = ({
                       theme="dark"
                       pillarScores={scores || {}}
                       framework={framework}
+                      responses={instance?.responses || {}}
+                      financialAnalysis={report?.financialAnalysis}
                       overallCurrent={instance?.totalScore || 2.5}
                       overallTarget={4.2}
                     />
@@ -1290,8 +1292,8 @@ export const UnifiedDocumentPreviewModal = ({
                     </tr>
                     <tr>
                       <td><strong>Projected 3-Year ROI Savings</strong></td>
-                      <td>$2,340,000 - $4,200,000</td>
-                      <td>35% - 50% TCO Cut</td>
+                      <td>{liveRoiEstimate}</td>
+                      <td>{liveTcoArbitrage}</td>
                       <td><span style={{ color: "#047857", fontWeight: 700 }}>FINANCIALLY MODELLED</span></td>
                     </tr>
                     <tr>
@@ -1432,7 +1434,7 @@ export const UnifiedDocumentPreviewModal = ({
                 </div>
                 <ActionButton 
                   onClick={() => {
-                    navigator.clipboard.writeText(`ScoreX Executive Report for ${org}\nOverall Score: ${overallScore}/5.0\nTarget ROI: $2.3M - $4.2M`);
+                    navigator.clipboard.writeText(`ScoreX Executive Report for ${org}\nOverall Score: ${overallScore}/5.0\nTarget ROI: ${liveRoiEstimate} (${liveTcoArbitrage})`);
                     toast.success('📋 Executive summary copied to clipboard!');
                   }}
                   style={{ color: "#1e293b", borderColor: "#cbd5e1", background: "#f8fafc" }}
@@ -1446,14 +1448,12 @@ export const UnifiedDocumentPreviewModal = ({
                 <strong>Initiative:</strong> {framework?.title || 'Data & AI Architecture Modernization'}<br />
                 <strong>Maturity Baseline:</strong> <span style={{ color: "#1d4ed8", fontWeight: 700 }}>{overallScore} / 5.0 ({maturityStage})</span><br />
                 <strong>Lifecycle Status:</strong> <span style={{ color: "#047857", fontWeight: 700 }}>{(instance?.status || 'completed').toUpperCase()}</span><br />
-                <strong>Projected 3-Yr ROI:</strong> <span style={{ color: "#047857", fontWeight: 700 }}>$2.3M - $4.2M (35-50% TCO Savings)</span>
+                <strong>Projected 3-Yr ROI:</strong> <span style={{ color: "#047857", fontWeight: 700 }}>{liveRoiEstimate} ({liveTcoArbitrage})</span>
               </div>
 
               <h2>1. Executive Summary &amp; Strategic Rationale</h2>
               <p>
-                This memorandum establishes the formal modernization strategy for <strong>{org}</strong> on Google Cloud Platform. 
-                Based on diagnostic assessment across {dimensions.length} architectural dimensions, ScoreX has outlined prioritized migration 
-                actions to eliminate operational debt, implement streaming CDC with Datastream, and orchestrate scalable agentic AI mesh topologies.
+                {report?.executiveSummary || customDeckData.executiveSummary}
               </p>
 
               <h2>2. Architectural Dimension Scores</h2>
@@ -1585,6 +1585,8 @@ export const UnifiedDocumentPreviewModal = ({
               <FinancialImpactCard
                 pillarScores={scores || {}}
                 framework={framework}
+                responses={instance?.responses || {}}
+                financialAnalysis={report?.financialAnalysis}
                 overallCurrent={instance?.totalScore || 2.5}
                 overallTarget={4.2}
               />

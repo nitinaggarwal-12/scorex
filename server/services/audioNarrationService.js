@@ -285,58 +285,98 @@ class AudioNarrationService {
   _resolveFrameworkNarrativeContext(instance, report) {
     const typeKey = String(instance?.typeKey || report?.typeKey || instance?.frameworkId || '').toLowerCase();
     const framework = instance?.frameworkSnapshot?.title || instance?.typeName || report?.typeName || instance?.useCase || 'Enterprise Architecture';
-    const rawDims = Array.isArray(report?.dimensions)
-      ? report.dimensions
-      : Array.isArray(instance?.dimensionScores)
-      ? instance.dimensionScores
-      : [];
+    let rawDims = [];
+    if (Array.isArray(report?.dimensions) && report.dimensions.length > 0) {
+      rawDims = report.dimensions.map(d => ({ name: d.name || d.dimensionName || d.dimension, score: d.score ?? d.currentScore ?? null }));
+    } else if (Array.isArray(report?.dimensionInsights) && report.dimensionInsights.length > 0) {
+      rawDims = report.dimensionInsights.map(d => ({ name: d.dimensionName || d.name || d.dimension, score: d.currentScore ?? d.score ?? null }));
+    } else if (Array.isArray(report?.radarChartData) && report.radarChartData.length > 0) {
+      rawDims = report.radarChartData.map(d => ({ name: d.dimension || d.name, score: d.currentScore ?? d.score ?? null }));
+    } else if (Array.isArray(instance?.dimensionScores) && instance.dimensionScores.length > 0) {
+      rawDims = instance.dimensionScores.map(d => ({ name: d.name || d.dimensionName, score: d.score ?? d.currentScore ?? null }));
+    } else if (instance?.scores && typeof instance.scores === 'object' && !Array.isArray(instance.scores)) {
+      rawDims = Object.values(instance.scores).map(d => ({ name: d.name || d.dimensionName, score: d.score ?? d.currentScore ?? null }));
+    } else if (report?.calculatedScores?.dimensionScores && typeof report.calculatedScores.dimensionScores === 'object') {
+      rawDims = Object.values(report.calculatedScores.dimensionScores).map(d => ({ name: d.name || d.dimensionName, score: d.score ?? d.currentScore ?? null }));
+    }
+    rawDims = rawDims.filter(d => d && d.name);
+
     const sortedDims = [...rawDims].sort((a, b) => (a.score ?? 0) - (b.score ?? 0));
     const weakestDim = sortedDims[0]?.name || 'Core Architectural Foundation';
     const weakestScore = sortedDims[0]?.score ?? null;
     const strongestDim = sortedDims[sortedDims.length - 1]?.name || 'Strategic Target Capability';
     const strongestScore = sortedDims[sortedDims.length - 1]?.score ?? null;
 
-    if (typeKey.includes('finops') || framework.toLowerCase().includes('finops')) {
+    const formatDimScore = (val, prefix = ' scoring ', suffix = '') => {
+      if (val === null || val === undefined || val === '') return '';
+      const num = Number(val);
+      if (Number.isNaN(num)) return '';
+      return num <= 5 ? `${prefix}${num} out of 5.0${suffix}` : `${prefix}${num} percent${suffix}`;
+    };
+
+    const fwLower = framework.toLowerCase();
+
+    if (typeKey.includes('finops') || fwLower.includes('finops')) {
       return {
-        typeKey: 'finops_cost_governance',
+        typeKey: 'finops_cloud_cost_optimization',
         framework,
         weakestDim,
         strongestDim,
-        conflictText: `Beneath the surface of daily cloud operations, financial frictions were quietly compounding... Unallocated multi-cloud spend, idle compute clusters, under-utilized committed use discounts, and unmonitored A.I. token burn were eroding unit economics, with ${weakestDim}${weakestScore !== null ? ` scoring ${weakestScore} percent` : ''} as the primary bottleneck.`,
-        awakeningText: `Imagine what happens next... By activating automated Cloud FinOps governance, dynamic workload rightsizing, commitment optimization, and intelligent model-tier routing with context caching, ${strongestDim}${strongestScore !== null ? ` at ${strongestScore} percent` : ''} anchors a thirty-five to fifty percent reduction in unit cloud and A.I. run-rate costs!`
+        conflictText: `Beneath the surface of daily cloud operations, financial frictions were quietly compounding... Unallocated multi-cloud spend, idle compute clusters, under-utilized committed use discounts, and unmonitored A.I. token burn were eroding unit economics, with ${weakestDim}${formatDimScore(weakestScore, ' scoring ')} as the primary bottleneck.`,
+        awakeningText: `Imagine what happens next... By activating automated Cloud FinOps governance, dynamic workload rightsizing, commitment optimization, and intelligent model-tier routing with context caching, ${strongestDim}${formatDimScore(strongestScore, ' at ')} anchors a thirty-five to fifty percent reduction in unit cloud and A.I. run-rate costs!`
       };
     }
-    if (typeKey.includes('zero_trust') || typeKey.includes('security') || framework.toLowerCase().includes('zero-trust')) {
+    if (typeKey.includes('zero_trust') || typeKey.includes('security') || fwLower.includes('zero-trust') || fwLower.includes('security')) {
       return {
-        typeKey: 'zero_trust_cyber_resilience',
+        typeKey: 'enterprise_ai_zero_trust_security',
         framework,
         weakestDim,
         strongestDim,
-        conflictText: `Beneath the surface of daily operations, critical security exposures were quietly mounting... Implicit network trust zones, fragmented identity perimeters, unencrypted data movement, and unguarded prompt surfaces were placing enterprise resilience at risk, centered on ${weakestDim}${weakestScore !== null ? ` at ${weakestScore} percent` : ''}.`,
+        conflictText: `Beneath the surface of daily operations, critical security exposures were quietly mounting... Implicit network trust zones, fragmented identity perimeters, unencrypted data movement, and unguarded prompt surfaces were placing enterprise resilience at risk, centered on ${weakestDim}${formatDimScore(weakestScore, ' at ')}.`,
         awakeningText: `Imagine what happens next... The target state enforces cryptographic Zero-Trust micro-perimeters, V.P.C. Service Controls, Customer-Managed Encryption Keys, Confidential Computing, and Google Cloud Model Armor—neutralizing exfiltration vectors while building upon ${strongestDim}!`
       };
     }
-    if (typeKey.includes('migration') || framework.toLowerCase().includes('migration')) {
+    if (typeKey.includes('openai') || (typeKey.includes('gemini') && typeKey.includes('migration')) || fwLower.includes('openai')) {
+      return {
+        typeKey: 'openai_to_gemini_enterprise_migration',
+        framework,
+        weakestDim,
+        strongestDim,
+        conflictText: `Beneath the surface of legacy L.L.M. operations, token economics and context bottlenecks were quietly compounding... Unproxied API egress, brittle five-hundred-twelve-token R.A.G. chunking, uncached system prompts, and vendor lock-in around ${weakestDim}${formatDimScore(weakestScore, ' (', ')')} were inflating inference spend and constraining reasoning accuracy.`,
+        awakeningText: `Imagine what happens next... By deploying an Apigee OpenAI-compatible gateway, migrating to Gemini 3.8 Pro native two-million-token context windows, and activating Vertex A.I. Context Caching for a seventy-five percent input token discount, your teams unlock zero-downtime parity anchored by ${strongestDim}${formatDimScore(strongestScore, ' (', ')')}!`
+      };
+    }
+    if (typeKey.includes('lakehouse') || typeKey.includes('edw') || typeKey.includes('bigquery') || fwLower.includes('lakehouse')) {
+      return {
+        typeKey: 'edw_lakehouse_to_bigquery_modernization',
+        framework,
+        weakestDim,
+        strongestDim,
+        conflictText: `Beneath the surface of legacy data warehouse operations, architectural debt was quietly compounding... Proprietary appliance lock-in, duplicate storage taxes, twenty-four-hour nightly batch E.T.L. lags, and fragmented BI extracts around ${weakestDim}${formatDimScore(weakestScore, ' (', ')')} were throttling real-time analytics.`,
+        awakeningText: `Imagine what happens next... Through Google Cloud BigLake open Apache Iceberg storage, sub-second Datastream C.D.C., declarative Dataform pipelines, Dataplex Universal Catalog governance, and Looker semantic acceleration, your organization unlocks zero-copy analytics anchored by ${strongestDim}${formatDimScore(strongestScore, ' (', ')')}!`
+      };
+    }
+    if (typeKey.includes('mlops') || typeKey.includes('agentic') || typeKey.includes('mcp') || fwLower.includes('mlops') || fwLower.includes('agentic')) {
+      return {
+        typeKey: 'agentic_ai_mesh_mcp_banking_readiness',
+        framework,
+        weakestDim,
+        strongestDim,
+        conflictText: `Beneath the surface of rapid experimentation, operational A.I. risks were quietly mounting... Disconnected feature pipelines, manual model deployments, unmonitored concept drift, and ungoverned agent tool calls in ${weakestDim}${formatDimScore(weakestScore, ' (', ')')} were blocking production scale.`,
+        awakeningText: `Imagine what happens next... By establishing a unified Feature Store, automated CI/CD model registries, continuous drift and bias telemetry, and governed Model Context Protocol gateways, your organization scales autonomous agentic workflows safely from ${strongestDim}!`
+      };
+    }
+    if (typeKey.includes('migration') || fwLower.includes('migration')) {
       return {
         typeKey: 'cloud_migration_modernization',
         framework,
         weakestDim,
         strongestDim,
-        conflictText: `Beneath the surface of legacy infrastructure, modernization debt was quietly compounding... Monolithic application dependencies, brittle batch ETL scripts, manual provisioning, and cutover risks in ${weakestDim}${weakestScore !== null ? ` (${weakestScore} percent)` : ''} were constraining release velocity.`,
+        conflictText: `Beneath the surface of legacy infrastructure, modernization debt was quietly compounding... Monolithic application dependencies, brittle batch ETL scripts, manual provisioning, and cutover risks in ${weakestDim}${formatDimScore(weakestScore, ' (', ')')} were constraining release velocity.`,
         awakeningText: `Imagine what happens next... Through automated 6-R wave orchestration, Strangler-Fig microservice refactoring, declarative Terraform landing zones, and Zero-E.T.L. change-data-capture streaming, your teams unlock cloud-native elasticity anchored by ${strongestDim}!`
       };
     }
-    if (typeKey.includes('mlops') || typeKey.includes('agentic') || framework.toLowerCase().includes('mlops')) {
-      return {
-        typeKey: 'mlops_agentic_ai_governance',
-        framework,
-        weakestDim,
-        strongestDim,
-        conflictText: `Beneath the surface of rapid experimentation, operational A.I. risks were quietly mounting... Disconnected feature pipelines, manual model deployments, unmonitored concept drift, and ungoverned agent tool calls in ${weakestDim}${weakestScore !== null ? ` (${weakestScore} percent)` : ''} were blocking production scale.`,
-        awakeningText: `Imagine what happens next... By establishing a unified Feature Store, automated CI/CD model registries, continuous drift and bias telemetry, and governed Model Context Protocol gateways, your organization scales autonomous agentic workflows safely from ${strongestDim}!`
-      };
-    }
-    if (typeKey.includes('eu_ai') || framework.toLowerCase().includes('eu ai act')) {
+    if (typeKey.includes('eu_ai') || fwLower.includes('eu ai act')) {
       return {
         typeKey: 'eu_ai_act',
         framework,
@@ -346,7 +386,7 @@ class AudioNarrationService {
         awakeningText: `Imagine what happens next... With automated Article 6 risk classification, immutable Article 12 audit logging, Article 14 human-in-the-loop oversight, and cryptographic Annex IV conformity dossiers, your A.I. portfolio achieves full regulatory readiness!`
       };
     }
-    if (typeKey.includes('ge_value') || framework.toLowerCase().includes('value realization')) {
+    if (typeKey.includes('ge_value') || fwLower.includes('value realization')) {
       return {
         typeKey: 'ge_value_realization',
         framework,
@@ -361,8 +401,8 @@ class AudioNarrationService {
       framework,
       weakestDim,
       strongestDim,
-      conflictText: `Beneath the surface of daily operations, architectural frictions were quietly mounting in ${weakestDim}${weakestScore !== null ? ` (${weakestScore} percent)` : ''}... Fragmented data silos, manual governance handoffs, and unoptimized A.I. pipelines were placing engineering velocity at risk.`,
-      awakeningText: `Imagine what happens next... The target architecture unifies open lakehouse governance, declarative streaming pipelines, and Google Omni 1.1 multimodal intelligence with Context Caching—building upon your strength in ${strongestDim}${strongestScore !== null ? ` (${strongestScore} percent)` : ''} to slash latency and accelerate innovation!`
+      conflictText: `Beneath the surface of daily operations, architectural frictions were quietly mounting in ${weakestDim}${formatDimScore(weakestScore, ' (', ')')}... Fragmented data silos, manual governance handoffs, and unoptimized A.I. pipelines were placing engineering velocity at risk.`,
+      awakeningText: `Imagine what happens next... The target architecture unifies open lakehouse governance, declarative streaming pipelines, and Google Omni 1.1 multimodal intelligence with Context Caching—building upon your strength in ${strongestDim}${formatDimScore(strongestScore, ' (', ')')} to slash latency and accelerate innovation!`
     };
   }
 

@@ -286,11 +286,12 @@ export const exportAssessmentToPPTX = async (instance, report) => {
       x: 7.45, y: cardY + 0.32, w: 1.8, h: 0.45,
       fontSize: 18, bold: true, color: PPTX_THEME.success, fontFace: 'Arial'
     });
+    const tcoBadgeText = aiReport?.financialAnalysis?.tcoArbitrageFormatted || (aiReport?.financialAnalysis?.tcoReductionPct ? `${aiReport.financialAnalysis.tcoReductionPct}% TCO Savings` : '35-50% TCO Savings');
     slide2.addShape(pptx.ShapeType.roundRect, {
       x: 7.45, y: cardY + 0.85, w: 1.8, h: 0.26,
       fill: { color: PPTX_THEME.successLight }, line: { color: 'A7F3D0', width: 0.75 }
     });
-    slide2.addText('35-50% TCO Savings', {
+    slide2.addText(tcoBadgeText, {
       x: 7.45, y: cardY + 0.87, w: 1.8, h: 0.22,
       fontSize: 8, bold: true, color: PPTX_THEME.success, align: 'center', fontFace: 'Arial'
     });
@@ -311,7 +312,7 @@ export const exportAssessmentToPPTX = async (instance, report) => {
       fontSize: 12, bold: true, color: PPTX_THEME.navyDark, fontFace: 'Arial'
     });
 
-    const rawSummary = stripMarkdown(aiReport.executiveSummary || `${org} demonstrates a proven architectural baseline with significant modernization opportunities to eliminate batch latency, unify data silos into an open BigLake lakehouse, and deploy governed agentic AI workflows on Google Cloud.`);
+    const rawSummary = stripMarkdown(aiReport.executiveSummary || `${org} demonstrates a measurable baseline across ${assessTitle} (${curScore}/5.0) with high-impact modernization opportunities to close the +${delta}-point capability gap on Google Cloud.`);
     slide2.addText(rawSummary.length > 380 ? rawSummary.substring(0, 377) + '...' : rawSummary, {
       x: 0.85, y: sumY + 0.5, w: 8.3, h: 1.0,
       fontSize: 9.5, color: PPTX_THEME.textDark, fontFace: 'Arial', lineSpacingMultiple: 1.15
@@ -326,7 +327,7 @@ export const exportAssessmentToPPTX = async (instance, report) => {
       x: 0.95, y: sumY + 1.7, w: 3.8, h: 0.2,
       fontSize: 8.5, bold: true, color: PPTX_THEME.danger, fontFace: 'Arial'
     });
-    const d1Text = aiReport.criticalConstraints?.[0] ? stripMarkdown(aiReport.criticalConstraints[0]) : '24-48 hour batch ETL replication lag halting real-time operational decisions and inflating compute costs';
+    const d1Text = aiReport.criticalConstraints?.[0] ? stripMarkdown(aiReport.criticalConstraints[0]) : `Fragmented baseline controls and manual operational workflows across ${assessTitle}`;
     slide2.addText(d1Text.length > 130 ? d1Text.substring(0, 127) + '...' : d1Text, {
       x: 0.95, y: sumY + 1.95, w: 3.8, h: 0.6,
       fontSize: 8.5, color: PPTX_THEME.textDark, fontFace: 'Arial', lineSpacingMultiple: 1.1
@@ -340,8 +341,9 @@ export const exportAssessmentToPPTX = async (instance, report) => {
       x: 5.25, y: sumY + 1.7, w: 3.8, h: 0.2,
       fontSize: 8.5, bold: true, color: PPTX_THEME.success, fontFace: 'Arial'
     });
-    const d2Text = 'Sub-second real-time CDC with BigLake Apache Iceberg open table formats and 75% GenAI prompt cost reduction via Vertex AI';
-    slide2.addText(d2Text, {
+    const d2Raw = aiReport.expectedOutcomes?.[0] || aiReport.prioritizedRecommendations?.[0]?.expectedImpact || `Automated Google Cloud target state unlocking ${netValueEst} value and ${tcoBadgeText}`;
+    const d2Text = stripMarkdown(d2Raw);
+    slide2.addText(d2Text.length > 130 ? d2Text.substring(0, 127) + '...' : d2Text, {
       x: 5.25, y: sumY + 1.95, w: 3.8, h: 0.6,
       fontSize: 8.5, color: PPTX_THEME.textDark, fontFace: 'Arial', lineSpacingMultiple: 1.1
     });
@@ -495,33 +497,49 @@ export const exportAssessmentToPPTX = async (instance, report) => {
     slide5.background = { color: 'FFFFFF' };
     addHeaderAndFooter(slide5, '03. Enterprise Architecture Evolution (As-Is vs. To-Be)', 5);
 
-    const archTiers = [
-      {
-        tier: '1. Ingestion & CDC',
-        asIs: 'Point-to-point cron jobs & unmanaged batch ETL with 24-48hr lag',
-        toBe: 'Serverless Google Cloud Datastream streaming CDC & Pub/Sub (<1s latency)'
-      },
-      {
-        tier: '2. Storage & Lakehouse',
-        asIs: 'Siloed relational databases and unmanaged flat storage buckets',
-        toBe: 'BigLake Medallion Architecture with Apache Iceberg open table formats on GCS'
-      },
-      {
-        tier: '3. Compute & FinOps',
-        asIs: 'Static 24/7 over-provisioned VMs with $480k estimated idle waste',
-        toBe: 'BigQuery Autoscaling Slots with GKE Autopilot pod-level metering & auto-suspend'
-      },
-      {
-        tier: '4. Agentic AI & LLMs',
-        asIs: 'Hardcoded public LLM calls paying 100% price with 0 caching',
-        toBe: 'Vertex AI Agent Builder, MCP Tool Gateway & 75% prompt context caching'
-      },
-      {
-        tier: '5. Zero-Trust Security',
-        asIs: 'Perimeter-only IAM, public API endpoints, manual audit log triage',
-        toBe: 'Zero-Trust Landing Zone with VPC-SC, Cloud KMS HSM CMEK, Model Armor'
-      }
-    ];
+    const insightList = Array.isArray(aiReport?.dimensionInsights) && aiReport.dimensionInsights.length > 0
+      ? aiReport.dimensionInsights.slice(0, 5)
+      : (dimensions || []).slice(0, 5).map(d => ({
+          dimensionName: d.name || 'Architectural Pillar',
+          currentScore: curScore,
+          targetScore: tgtScore,
+          findings: `Baseline maturity at ${curScore}/5.0 with manual operational bottlenecks in ${d.name || 'this domain'}.`,
+          priorityAction: `Modernize ${d.name || 'this domain'} toward ${tgtScore}/5.0 with automated Google Cloud governance.`
+        }));
+
+    const archTiers = insightList.length > 0
+      ? insightList.map((ins, idx) => ({
+          tier: `${idx + 1}. ${(ins.dimensionName || `Pillar ${idx + 1}`).slice(0, 26)}`,
+          asIs: stripMarkdown(ins.findings || `Assessed at ${ins.currentScore || curScore}/5.0 with baseline operational friction`).slice(0, 115),
+          toBe: stripMarkdown(ins.priorityAction || `Target ${ins.targetScore || tgtScore}/5.0 with automated Google Cloud architecture`).slice(0, 115)
+        }))
+      : [
+          {
+            tier: '1. Core Foundation',
+            asIs: 'Fragmented baseline controls and manual operational workflows',
+            toBe: 'Declarative Google Cloud foundation with automated policy enforcement'
+          },
+          {
+            tier: '2. Data & Context',
+            asIs: 'Siloed repositories and high-latency batch processing pipelines',
+            toBe: 'Unified zero-copy governance and real-time event streaming'
+          },
+          {
+            tier: '3. Compute & FinOps',
+            asIs: 'Unallocated cloud spend and static over-provisioned compute',
+            toBe: 'FOCUS 1.0 unit-cost attribution, autoscaling, and 75% context caching'
+          },
+          {
+            tier: '4. AI & Automation',
+            asIs: 'Disconnected model endpoints and brittle custom tool wrappers',
+            toBe: 'Vertex AI Agent Engine, standardized MCP gateways, and Eval CI/CD'
+          },
+          {
+            tier: '5. Zero-Trust Security',
+            asIs: 'Perimeter-only IAM, static keys, and manual audit log triage',
+            toBe: 'VPC Service Controls, Cloud KMS HSM CMEK, Cloud DLP, and Model Armor'
+          }
+        ];
 
     archTiers.forEach((tier, idx) => {
       const rowY = 0.9 + (idx * 0.83);
@@ -570,6 +588,21 @@ export const exportAssessmentToPPTX = async (instance, report) => {
     slide6.background = { color: 'FFFFFF' };
     addHeaderAndFooter(slide6, '04. Key Modernization Vectors (4-Tier Transition Matrix)', 6);
 
+    const outcomesList = Array.isArray(aiReport?.expectedOutcomes) && aiReport.expectedOutcomes.length > 0
+      ? aiReport.expectedOutcomes
+      : [
+          `Measurable TCO reduction (${tcoBadgeText}) with automated cloud governance`,
+          'Elimination of manual operational bottlenecks and unmonitored risk exposure',
+          'Accelerated release velocity via declarative CI/CD and policy guardrails'
+        ];
+
+    const dynamicVectorRows = archTiers.slice(0, 4).map((t, idx) => [
+      { text: t.tier, options: { bold: true, color: PPTX_THEME.navyDark, fill: { color: PPTX_THEME.slateBg } } },
+      { text: t.asIs, options: { color: '991B1B' } },
+      { text: t.toBe, options: { bold: true, color: '065F46' } },
+      { text: stripMarkdown(outcomesList[idx % outcomesList.length]).slice(0, 95), options: { color: '0369A1' } }
+    ]);
+
     const vectorRows = [
       [
         { text: 'Modernization Tier', options: { bold: true, fill: { color: PPTX_THEME.navyDark }, color: 'FFFFFF' } },
@@ -577,30 +610,7 @@ export const exportAssessmentToPPTX = async (instance, report) => {
         { text: 'Target Google Cloud Pattern', options: { bold: true, fill: { color: PPTX_THEME.navyDark }, color: 'FFFFFF' } },
         { text: 'Business & Technical Value', options: { bold: true, fill: { color: PPTX_THEME.navyDark }, color: 'FFFFFF' } }
       ],
-      [
-        { text: 'Tier 1: Ingestion & CDC', options: { bold: true, color: PPTX_THEME.navyDark, fill: { color: PPTX_THEME.slateBg } } },
-        { text: 'Brittle Informatica/Bash cron scripts with 24h batch lag', options: { color: '991B1B' } },
-        { text: 'Google Cloud Datastream CDC + Dataflow & Pub/Sub event bus', options: { bold: true, color: '065F46' } },
-        { text: 'Sub-second real-time replication with zero source DB locks', options: { color: '0369A1' } }
-      ],
-      [
-        { text: 'Tier 2: Unified Lakehouse', options: { bold: true, color: PPTX_THEME.navyDark, fill: { color: PPTX_THEME.slateBg } } },
-        { text: 'Proprietary siloed warehouses with high egress tax', options: { color: '991B1B' } },
-        { text: 'BigLake Apache Iceberg open table formats on Cloud Storage', options: { bold: true, color: '065F46' } },
-        { text: 'Zero vendor lock-in, 45% licensing reduction, unified catalog', options: { color: '0369A1' } }
-      ],
-      [
-        { text: 'Tier 3: Compute & FinOps', options: { bold: true, color: PPTX_THEME.navyDark, fill: { color: PPTX_THEME.slateBg } } },
-        { text: 'Static 24/7 oversized VMs with $480k estimated idle waste', options: { color: '991B1B' } },
-        { text: 'BigQuery Autoscaling Slots & GKE Autopilot pod metering', options: { bold: true, color: '065F46' } },
-        { text: '100% FOCUS 1.0 chargeback attribution and 15-min auto-suspend', options: { color: '0369A1' } }
-      ],
-      [
-        { text: 'Tier 4: Agentic AI & Sec', options: { bold: true, color: PPTX_THEME.navyDark, fill: { color: PPTX_THEME.slateBg } } },
-        { text: 'Unmanaged LLM calls without prompt caching or DLP', options: { color: '991B1B' } },
-        { text: 'Vertex AI Agent Builder + MCP Tool Gateway & Model Armor', options: { bold: true, color: '065F46' } },
-        { text: '75% token discount via Context Caching with VPC-SC guardrails', options: { color: '0369A1' } }
-      ]
+      ...dynamicVectorRows
     ];
 
     slide6.addTable(vectorRows, {
@@ -617,50 +627,52 @@ export const exportAssessmentToPPTX = async (instance, report) => {
     // ==========================================================
     const slide7 = pptx.addSlide();
     slide7.background = { color: 'FFFFFF' };
-    addHeaderAndFooter(slide7, '05. Phased 30-60-90 Day Transformation Roadmap', 7);
+    addHeaderAndFooter(slide7, '05. Phased Transformation Roadmap', 7);
+
+    const rm = aiReport?.transformationRoadmap || aiReport?.strategicRoadmap || {};
+    const p1 = rm.phase1 || {};
+    const p2 = rm.phase2 || {};
+    const p3 = rm.phase3 || {};
 
     const phases = [
       {
-        phase: 'PHASE 1 (DAYS 0-30)',
-        title: 'Foundation & Immediate Wins',
+        phase: `PHASE 1 (${(p1.timeline || '1–3 MONTHS').toUpperCase()})`,
+        title: (p1.title || 'Foundation & Immediate Wins').replace(/^Phase\s*1:\s*/i, '').slice(0, 38),
         color: PPTX_THEME.primary,
         bgColor: PPTX_THEME.primaryLight,
         borderColor: 'BFDBFE',
-        actions: [
-          'Deploy Zero-Trust Ingress & Cloud Armor WAF',
-          'Establish Datastream CDC Pipeline Prototype',
-          'Eliminate Public Internet Endpoint Exposure',
-          'Conduct Initial BigLake Table Proof-of-Concept'
-        ],
-        milestone: 'Security Baseline Hardened & CDC Operational'
+        actions: (Array.isArray(p1.milestones) && p1.milestones.length > 0 ? p1.milestones : [
+          'Establish zero-trust IAM & VPC-SC perimeter controls',
+          'Deploy baseline telemetry and FOCUS 1.0 cost attribution',
+          'Remediate highest-severity architectural bottlenecks'
+        ]).slice(0, 4).map(a => stripMarkdown(a).slice(0, 68)),
+        milestone: stripMarkdown(p1.focus || 'Foundation & Governance Baseline Operational').slice(0, 65)
       },
       {
-        phase: 'PHASE 2 (DAYS 30-60)',
-        title: 'Lakehouse & FinOps Scale',
+        phase: `PHASE 2 (${(p2.timeline || '3–6 MONTHS').toUpperCase()})`,
+        title: (p2.title || 'Scale & Automation').replace(/^Phase\s*2:\s*/i, '').slice(0, 38),
         color: PPTX_THEME.warning,
         bgColor: PPTX_THEME.warningLight,
         borderColor: 'FDE68A',
-        actions: [
-          'Migrate Silos to BigLake Apache Iceberg Tables',
-          'Activate BigQuery Autoscaling & Compute Auto-Suspend',
-          'Deploy Apigee AI Gateway & Vertex Context Caching',
-          'Implement Automated DLP Data Masking Policies'
-        ],
-        milestone: '75% Token Cost Cut & Sub-Second Query Speeds'
+        actions: (Array.isArray(p2.milestones) && p2.milestones.length > 0 ? p2.milestones : [
+          'Automate declarative pipelines and policy guardrails',
+          'Activate workload rightsizing and commitment coverage',
+          'Enforce continuous CI/CD evaluation and SLA gates'
+        ]).slice(0, 4).map(a => stripMarkdown(a).slice(0, 68)),
+        milestone: stripMarkdown(p2.focus || 'Automated Scale & Cost Optimization Realized').slice(0, 65)
       },
       {
-        phase: 'PHASE 3 (DAYS 60-90)',
-        title: 'Agentic Mesh & Full Autonomy',
+        phase: `PHASE 3 (${(p3.timeline || '6–12 MONTHS').toUpperCase()})`,
+        title: (p3.title || 'Autonomous Operations').replace(/^Phase\s*3:\s*/i, '').slice(0, 38),
         color: PPTX_THEME.success,
         bgColor: PPTX_THEME.successLight,
         borderColor: 'A7F3D0',
-        actions: [
-          'Deploy Hub-and-Spoke MCP Multi-Agent Mesh',
-          'Embed Model Armor Zero-Trust AI TRiSM Guardrails',
-          'Automate FOCUS 1.0 Chargeback & FinOps Dashboard',
-          'Conduct Executive Board Handover & Production Sign-Off'
-        ],
-        milestone: 'Enterprise Multi-Agent Autonomy & Live Governance'
+        actions: (Array.isArray(p3.milestones) && p3.milestones.length > 0 ? p3.milestones : [
+          'Scale autonomous workflows with HITL policy guardrails',
+          'Operationalize continuous unit-economics scorecards',
+          'Complete executive board handover and production sign-off'
+        ]).slice(0, 4).map(a => stripMarkdown(a).slice(0, 68)),
+        milestone: stripMarkdown(p3.focus || 'Enterprise Autonomy & Live Governance').slice(0, 65)
       }
     ];
 
@@ -726,17 +738,26 @@ export const exportAssessmentToPPTX = async (instance, report) => {
     // 3 Financial Metric Cards
     const roiY = 0.9;
     const roiW = 2.8;
+    const fin = aiReport?.financialAnalysis || {};
+    const kpi1Title = fin.tcoReductionPct ? `${fin.tcoReductionPct}% TCO Cut` : '35% - 50%';
+    const kpi1Sub = fin.valueDrivers?.[0]?.category
+      ? `${fin.valueDrivers[0].category} (${fin.valueDrivers[0].impact || 'Annualized Savings'})`
+      : `Direct Infrastructure & Operational TCO Reduction across ${assessTitle}`;
+    const kpi3Title = fin.paybackMonths ? `${fin.paybackMonths} Mo Payback` : '75% Discount';
+    const kpi3Sub = fin.valueDrivers?.[1]?.category
+      ? `${fin.valueDrivers[1].category} (${fin.valueDrivers[1].impact || 'Velocity Lift'})`
+      : 'Accelerated Engineering Velocity & Vertex AI Context Caching Savings';
 
     // KPI 1: TCO
     slide8.addShape(pptx.ShapeType.roundRect, {
       x: 0.6, y: roiY, w: roiW, h: 1.25,
       fill: { color: PPTX_THEME.slateBg }, line: { color: PPTX_THEME.cardBorder, width: 1 }
     });
-    slide8.addText('35% - 50%', {
+    slide8.addText(kpi1Title, {
       x: 0.8, y: roiY + 0.15, w: roiW - 0.4, h: 0.45,
       fontSize: 22, bold: true, color: PPTX_THEME.primary, fontFace: 'Arial'
     });
-    slide8.addText('Compute & Storage TCO Savings via BigQuery & Iceberg Open Formats', {
+    slide8.addText(kpi1Sub, {
       x: 0.8, y: roiY + 0.62, w: roiW - 0.4, h: 0.5,
       fontSize: 8.5, color: PPTX_THEME.textDark, fontFace: 'Arial'
     });
@@ -755,16 +776,16 @@ export const exportAssessmentToPPTX = async (instance, report) => {
       fontSize: 8.5, color: PPTX_THEME.textDark, fontFace: 'Arial'
     });
 
-    // KPI 3: Context Caching
+    // KPI 3: Payback & Velocity
     slide8.addShape(pptx.ShapeType.roundRect, {
       x: 6.6, y: roiY, w: roiW, h: 1.25,
       fill: { color: PPTX_THEME.slateBg }, line: { color: PPTX_THEME.cardBorder, width: 1 }
     });
-    slide8.addText('75% Discount', {
+    slide8.addText(kpi3Title, {
       x: 6.8, y: roiY + 0.15, w: roiW - 0.4, h: 0.45,
       fontSize: 22, bold: true, color: PPTX_THEME.accentCyan, fontFace: 'Arial'
     });
-    slide8.addText('GenAI Input Token Cost Reduction via Google Vertex AI Context Caching', {
+    slide8.addText(kpi3Sub, {
       x: 6.8, y: roiY + 0.62, w: roiW - 0.4, h: 0.5,
       fontSize: 8.5, color: PPTX_THEME.textDark, fontFace: 'Arial'
     });

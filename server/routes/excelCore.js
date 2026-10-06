@@ -113,8 +113,13 @@ router.get('/:id/export', async (req, res) => {
       wsScores.getRow(1).height = 28;
 
       dimensions.forEach((dim, idx) => {
-        const curScore = scores[dim.id] || 0;
-        const targetScore = Math.min(5, curScore + 1.5);
+        const rawScoreObj = scores[dim.id];
+        const curScore = typeof rawScoreObj === 'number'
+          ? rawScoreObj
+          : Number(rawScoreObj?.score ?? rawScoreObj?.currentScore ?? 0);
+        const targetScore = typeof rawScoreObj === 'object' && rawScoreObj !== null && Number.isFinite(Number(rawScoreObj.futureScore ?? rawScoreObj.targetScore))
+          ? Number(rawScoreObj.futureScore ?? rawScoreObj.targetScore)
+          : Math.min(5, +(curScore + 1.5).toFixed(1));
         const gap = +(targetScore - curScore).toFixed(1);
         const row = wsScores.addRow({
           name: dim.name,
@@ -208,12 +213,33 @@ router.get('/:id/export', async (req, res) => {
         wsAi.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF8B5CF6' } };
         wsAi.getRow(1).height = 28;
 
+        const keyFindingsList = Array.isArray(aiReport.keyFindings)
+          ? aiReport.keyFindings.map(f => `• ${f.title || 'Finding'}: ${f.finding || f.businessImpact || ''}`).join('\n')
+          : Array.isArray(aiReport.keyTransformations || aiReport.keyModernizationShifts)
+            ? (aiReport.keyTransformations || aiReport.keyModernizationShifts).map(t => `• ${t}`).join('\n')
+            : 'Architecture Modernization Roadmap';
+
+        const finDriversText = Array.isArray(aiReport.financialAnalysis?.valueDrivers)
+          ? aiReport.financialAnalysis.valueDrivers.map(vd => typeof vd === 'object' && vd !== null ? `${vd.category}: ${vd.impact}` : String(vd)).join(' | ')
+          : '';
+        const finSummary = aiReport.financialAnalysis
+          ? `Estimated 3-Yr ROI: ${aiReport.financialAnalysis.roiRangeFormatted || aiReport.financialAnalysis.estimatedRoi || 'N/A'} (${aiReport.financialAnalysis.paybackMonths ? `${aiReport.financialAnalysis.paybackMonths} Months` : (aiReport.financialAnalysis.paybackPeriod || 'N/A')} Payback). ${finDriversText}`
+          : (aiReport.personaRoadmaps?.cSuite || aiReport.cSuiteRoadmap || 'Focus on ROI arbitrage, compliance posture, and time-to-market acceleration.');
+
+        const roadmapList = Array.isArray(aiReport.transformationRoadmap)
+          ? aiReport.transformationRoadmap.map(p => `${p.phase || p.title || 'Phase'} (${p.timeline || ''}): ${p.focus || ''} — ${(p.milestones || []).join('; ')}`).join('\n')
+          : (aiReport.personaRoadmaps?.vpEngineering || aiReport.engineeringRoadmap || 'Execute phased modernization roadmap across prioritized architectural dimensions.');
+
+        const topRecsList = Array.isArray(aiReport.prioritizedRecommendations)
+          ? aiReport.prioritizedRecommendations.map(r => `[${r.priority || 'Priority'}] ${r.title || ''}: ${r.whyItMatters || ''} (${r.expectedImpact || ''})`).join('\n')
+          : (aiReport.personaRoadmaps?.architect || aiReport.architectPlaybook || 'Implement target-state architecture patterns across prioritized dimensions.');
+
         const aiRows = [
           { stream: 'Executive Summary', guidance: aiReport.executiveSummary || aiReport.strategicSituation || 'Enterprise Architecture Modernization' },
-          { stream: 'Key Modernization Shifts', guidance: Array.isArray(aiReport.keyTransformations || aiReport.keyModernizationShifts) ? (aiReport.keyTransformations || aiReport.keyModernizationShifts).map(t => `• ${t}`).join('\n') : 'Architecture Modernization Roadmap' },
-          { stream: 'Board & C-Suite Guidance', guidance: aiReport.personaRoadmaps?.cSuite || aiReport.cSuiteRoadmap || 'Focus on ROI arbitrage, compliance posture, and time-to-market acceleration.' },
-          { stream: 'VP Engineering Roadmap', guidance: aiReport.personaRoadmaps?.vpEngineering || aiReport.engineeringRoadmap || 'Decommission siloed batch jobs and deploy self-healing streaming lakehouse infrastructure.' },
-          { stream: 'Principal Architect Playbook', guidance: aiReport.personaRoadmaps?.architect || aiReport.architectPlaybook || 'Adopt Model Context Protocol (MCP), eBPF micro-segmentation, and zero-trust IAM.' }
+          { stream: 'Key Diagnostic Findings', guidance: keyFindingsList },
+          { stream: 'Board & C-Suite Financial Case', guidance: finSummary },
+          { stream: 'VP Engineering Transformation Roadmap', guidance: roadmapList },
+          { stream: 'Principal Architect Prioritized Actions', guidance: topRecsList }
         ];
 
         aiRows.forEach((r, idx) => {

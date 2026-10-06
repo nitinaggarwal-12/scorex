@@ -329,21 +329,26 @@ Output a strictly valid JSON object with the following schema:
     });
 
     const keyType = (framework.typeKey || '').toLowerCase();
+    const isAgentic = keyType.includes('agentic') || keyType.includes('mcp') || keyType.includes('multi-agent');
     const isGenAI = keyType.includes('openai') || keyType.includes('gemini') || keyType.includes('genai');
-    const isSec = keyType.includes('security') || keyType.includes('zero_trust');
-    const isFin = keyType.includes('finops') || keyType.includes('cost');
+    const isSec = keyType.includes('security') || keyType.includes('zero_trust') || keyType.includes('trism');
+    const isFin = keyType.includes('finops') || keyType.includes('cost') || keyType.includes('billing');
     const isEDW = keyType.includes('lakehouse') || keyType.includes('bigquery') || keyType.includes('edw');
 
-    let domainGuidance = "- Open Data Lakehouse: Dataplex Universal Catalog, Apache Iceberg, BigLake, and Dataform SQLX.";
-    if (isGenAI) {
+    let domainGuidance = "- Enterprise Cloud, Data & AI: Dataplex Universal Catalog, BigQuery, Vertex AI Model Registry & Agent Engine, Looker Semantic Layer, and FOCUS 1.0 FinOps.";
+    if (isAgentic) {
+      domainGuidance = `- Multi-Agent Orchestration & MCP: Google Cloud Vertex AI Agent Engine, Gemini 3.8 Super-Orchestrator, Apigee Model Context Protocol (MCP) Gateway, AlloyDB AI & Cloud Spanner Graph episodic memory, OpenTelemetry agent trajectory tracing, and Human-in-the-Loop (HITL) governance.`;
+    } else if (isGenAI) {
       domainGuidance = `- GenAI Modernization & Parity: OpenAI API to Google Cloud Vertex AI translation, Gemini 3.8 Flash & Pro native 2M context windows.
 - FinOps Token Economics: Vertex AI Prompt Context Caching (75% token discount), dynamic model routing (Flash for triage, Pro for reasoning).
 - Security & Agent Mesh: Google Cloud Model Armor prompt injection defense, Model Context Protocol (MCP) standardized tool calling, and VPC Service Controls.
 - CI/CD Quality: Automated LLM-as-a-judge regression evaluation pipelines. STRICTLY avoid referencing BigQuery reservation slots or Lakehouse catalogs in GenAI assessments unless explicitly mentioned by user.`;
     } else if (isSec) {
-      domainGuidance = `- Zero-Trust AI & Security: Google Cloud VPC Service Controls, Customer-Managed Encryption Keys (KMS CMEK), Cloud DLP surrogate tokenization, Workload Identity Federation (OIDC elimination of static keys), and Chronicle SIEM.`;
+      domainGuidance = `- Zero-Trust AI & Security: Google Cloud VPC Service Controls, Customer-Managed Encryption Keys (KMS CMEK), Cloud DLP surrogate tokenization, Workload Identity Federation (OIDC elimination of static keys), Google Model Armor, and Chronicle SIEM/SOAR.`;
     } else if (isFin) {
-      domainGuidance = `- Cloud FinOps & Cost Optimization: BigQuery edition slot reservation commitments, autoscaling 15-minute auto-termination, Cloud Billing BigQuery export, and GKE compute right-sizing.`;
+      domainGuidance = `- Cloud FinOps & Cost Optimization: BigQuery FOCUS 1.0 billing export, GKE Autopilot compute rightsizing, 15-minute idle auto-termination, Flexible CUDs, and Vertex AI Prompt Context Caching.`;
+    } else if (isEDW) {
+      domainGuidance = `- Open Data Lakehouse: Dataplex Universal Catalog, Apache Iceberg, BigLake, BigQuery Editions, Datastream CDC, Dataform SQLX, and Looker Semantic Layer.`;
     }
 
     const systemInstruction = `You are a Lead Executive Advisor and CTO Strategy Consultant at ScoreX powered by Google Gemini 3.8 Flash.
@@ -610,6 +615,37 @@ Generate a comprehensive JSON executive report matching this exact schema:
     const dimEntries = Object.entries(scores.dimensionScores || {});
     const totalAnswered = Number(scores.totalAnswered || 0);
 
+    const domainSignal = `${framework?.typeKey || ''} ${instance?.typeKey || ''} ${framework?.title || ''} ${instance?.name || ''}`.toLowerCase();
+    const isFinOps = /finops|cost|billing/.test(domainSignal) && !/openai|gemini|edw|lakehouse/.test(domainSignal);
+    const isSecurity = /zero_trust|security|trism|ciso|dlp|siem/.test(domainSignal);
+    const isAgentic = /agentic|mcp|multi-agent/.test(domainSignal);
+    const isGeminiMig = /openai|gemini|migration/.test(domainSignal) && !/edw|lakehouse/.test(domainSignal);
+    const isLakehouse = /edw|lakehouse|bigquery|modernization/.test(domainSignal);
+
+    const resolveRecommendedService = (dimName = '', qText = '') => {
+      const s = `${dimName} ${qText}`.toLowerCase();
+      if (/dlp|pii|phi|tokenization|masking/.test(s)) return 'Google Cloud DLP & KMS HSM CMEK';
+      if (/armor|injection|jailbreak|safety|trism/.test(s)) return 'Google Cloud Model Armor & Security Command Center';
+      if (/siem|soar|chronicle|audit|logging/.test(s)) return 'Google SecOps (Chronicle SIEM/SOAR) & Cloud Audit Logs';
+      if (/iam|identity|privilege|pam|federation|abac/.test(s)) return 'Workload Identity Federation, JIT PAM & VPC Service Controls';
+      if (/shadow ai|perimeter|egress|gateway/.test(s)) return 'Apigee AI Gateway, Cloud Armor WAF & VPC-SC';
+      if (/mcp|tool|protocol/.test(s)) return 'Vertex AI Agent Builder & Apigee MCP Gateway';
+      if (/memory|episodic|state persistence/.test(s)) return 'AlloyDB AI, Cloud Spanner Graph & Vertex Vector Search';
+      if (/trajectory|observability|tracing|evaluation|eval/.test(s)) return 'Vertex AI GenAI Evaluation Service & Cloud Trace';
+      if (/multi-agent|topology|orchestration|agent/.test(s)) return 'Vertex AI Agent Engine & Gemini 3.8 Super-Orchestrator';
+      if (/long-context|2m|chunk|rag/.test(s)) return 'Gemini 3.8 Pro 2M Context Window & Vertex AI Search';
+      if (/token economics|context cach|throughput/.test(s)) return 'Vertex AI Context Caching & Provisioned Throughput';
+      if (/prompt|sdk|openai/.test(s)) return 'Vertex AI Gemini SDK & Apigee OpenAI-Compatible Proxy';
+      if (/cost visibility|billing|tag|focus|chargeback|showback|unit economics/.test(s)) return 'BigQuery FOCUS 1.0 Billing Export & Looker FinOps Hub';
+      if (/anomaly|rightsizing|idle|k8s|kubernetes|compute/.test(s)) return 'GKE Autopilot, Cloud FinOps Hub & Active Assist';
+      if (/commitment|cud|rate optim|reservation|slot/.test(s)) return 'Google Cloud Flexible CUDs & BigQuery Editions Autoscaler';
+      if (/storage lifecycle|tiering|open storage|iceberg|biglake/.test(s)) return 'BigLake Open Iceberg & Cloud Storage Autoclass';
+      if (/cdc|elt|streaming|ingestion|medallion/.test(s)) return 'Google Cloud Datastream CDC, Pub/Sub & Dataform';
+      if (/semantic|bi |looker|warehouse/.test(s)) return 'Looker Semantic Layer & BigQuery BI Engine';
+      if (/feature store|mlops|model registry/.test(s)) return 'Vertex AI Feature Store, Model Registry & Pipelines';
+      return 'Google Cloud Dataplex Catalog, BigQuery & Vertex AI';
+    };
+
     const radarChartData = dimEntries.map(([, d]) => {
       const curr = typeof d.score === 'number' ? Number(d.score) : 0;
       const target = typeof d.targetScore === 'number' ? Number(d.targetScore) : (curr > 0 ? Math.min(5, Number((curr + 1.4).toFixed(1))) : 0);
@@ -625,6 +661,7 @@ Generate a comprehensive JSON executive report matching this exact schema:
       const curr = typeof d.score === 'number' ? Number(d.score) : 0;
       const target = typeof d.targetScore === 'number' ? Number(d.targetScore) : (curr > 0 ? Math.min(5, Number((curr + 1.4).toFixed(1))) : 0);
       const hasAnswers = Number(d.answeredCount || 0) > 0;
+      const recommendedSvc = resolveRecommendedService(d.name, '');
       return {
         dimensionId: dimId,
         dimensionName: d.name,
@@ -635,7 +672,7 @@ Generate a comprehensive JSON executive report matching this exact schema:
           ? `${customer} currently operates at ${curr}/5.0 maturity in ${d.name} (${d.answeredCount}/${d.totalQuestions} questions scored).`
           : `Input Pending for ${d.name} (0/${d.totalQuestions} questions scored).`,
         priorityAction: hasAnswers
-          ? `Deploy automated governance, observability, and serverless optimization across ${d.name} to close the ${(target - curr).toFixed(1)}-pt gap toward ${target}/5.0.`
+          ? `Deploy ${recommendedSvc} across ${d.name} to close the ${(target - curr).toFixed(1)}-pt capability gap toward ${target}/5.0.`
           : `Complete baseline questionnaire inputs for ${d.name} to unlock targeted prescription.`
       };
     });
@@ -651,6 +688,7 @@ Generate a comprehensive JSON executive report matching this exact schema:
         const targetVal = instance.responses?.[`${q.id}_future_state`]
           ? Number(instance.responses[`${q.id}_future_state`])
           : (qScore !== null ? Math.min(5, qScore + 1.5) : null);
+        const recommendedSvc = resolveRecommendedService(dim.name, q.text);
         questionReadouts[q.id] = {
           questionId: q.id,
           dimensionName: dim.name,
@@ -664,17 +702,29 @@ Generate a comprehensive JSON executive report matching this exact schema:
             ? `Current baseline is ${qScore}/5.0 vs. target ${targetVal}/5.0 (${Math.max(0, targetVal - qScore).toFixed(1)}-pt capability gap).`
             : `Awaiting respondent input to compute gap analysis.`,
           remediationAction: isAnswered
-            ? `Standardize and automate "${q.text}" using cloud-native declarative controls and continuous SLA telemetry.`
+            ? `Standardize and automate "${q.text}" using ${recommendedSvc} and continuous SLA telemetry.`
             : `Score this question in the assessment runner to generate remediation steps.`,
-          recommendedService: isAnswered ? 'Google Cloud Vertex AI & Dataplex Governance' : 'Pending Input'
+          recommendedService: isAnswered ? recommendedSvc : 'Pending Input'
         };
       });
     });
 
+    const domainFinancialDefaults = isFinOps
+      ? { spend: 4800000, fte: 45, rate: 145 }
+      : isSecurity
+      ? { spend: 3600000, fte: 38, rate: 160 }
+      : isAgentic
+      ? { spend: 4200000, fte: 52, rate: 155 }
+      : isGeminiMig
+      ? { spend: 2900000, fte: 34, rate: 150 }
+      : isLakehouse
+      ? { spend: 5400000, fte: 60, rate: 140 }
+      : { spend: 3200000, fte: 40, rate: 135 };
+
     // Transparent, formula-driven financial calculation strictly proportional to answered score gaps
-    const baselinePlatformSpendUsd = Number(instance.responses?.baseline_annual_spend_usd) || 3200000;
-    const engineeringTeamFte = Number(instance.responses?.engineering_fte_count) || 40;
-    const loadedHourlyRateUsd = Number(instance.responses?.loaded_hourly_rate_usd) || 135;
+    const baselinePlatformSpendUsd = Number(instance.responses?.baseline_annual_spend_usd) || domainFinancialDefaults.spend;
+    const engineeringTeamFte = Number(instance.responses?.engineering_fte_count) || domainFinancialDefaults.fte;
+    const loadedHourlyRateUsd = Number(instance.responses?.loaded_hourly_rate_usd) || domainFinancialDefaults.rate;
     const measuredGap = totalAnswered > 0 ? Math.max(0.2, Number(scores.overallGap || (4.2 - overall))) : 0;
 
     const infraSavingsUsd = totalAnswered > 0
@@ -703,9 +753,379 @@ Generate a comprehensive JSON executive report matching this exact schema:
       return `$${Math.round(val / 1e3)}K`;
     };
 
+    const domainLeversSummary = isFinOps
+      ? 'FOCUS 1.0 billing attribution, GKE Autopilot scale-to-zero rightsizing, 85%+ Flexible CUD coverage, BigLake Autoclass storage tiering, and Departmental Showback SLAs'
+      : isSecurity
+      ? 'Apigee AI Gateway perimeter enforcement, Cloud DLP surrogate PII/PHI tokenization, Workload Identity Federation with JIT PAM, Google Model Armor inline prompt shields, and Chronicle SIEM/SOAR WORM audit ingestion'
+      : isAgentic
+      ? 'Vertex AI Agent Engine hierarchical orchestration, standardized Model Context Protocol (MCP) tool gateways, AlloyDB AI episodic memory, OpenTelemetry agent trajectory tracing, and scoped OAuth HITL governance'
+      : isGeminiMig
+      ? 'Apigee OpenAI-to-Gemini proxy routing, Gemini 3.8 Pro 2M native context windows, 75% Context Caching token discounts, Cloud KMS HSM CMEK + VPC-SC zero-retention perimeters, and automated Vertex GenAI Eval CI/CD gates'
+      : isLakehouse
+      ? 'BigLake open Apache Iceberg tables, BigQuery Editions slot autoscaling, Dataplex automated column-level lineage & ABAC, sub-second Datastream CDC, and Looker governed semantic layer consolidation'
+      : 'unified Dataplex lakehouse governance, declarative Datastream & Dataform pipelines, Looker semantic BI acceleration, Vertex AI MLOps & Feature Store automation, VPC-SC zero-trust security, and Cloud FinOps unit economics';
+
     const executiveSummary = totalAnswered > 0
-      ? `This maturity assessment report provides a comprehensive architectural evaluation of ${customer}'s data and AI capabilities across key operational domains based on ${totalAnswered}/${totalFrameworkQuestions} scored inputs. With an overall maturity rating of ${overall}/5.0 (Stage: ${stage}), the organization demonstrates measurable foundations while holding a ${measuredGap.toFixed(2)}-point capability gap addressable through unified lakehouse governance, declarative streaming data engineering, serverless compute auto-termination, and compound GenAI agent orchestration.`
+      ? `This maturity assessment report provides a comprehensive architectural evaluation of ${customer}'s ${framework.title || 'Enterprise Cloud, Data & AI'} posture across ${(framework.dimensions || []).length || 5} evaluated dimensions based on ${totalAnswered}/${totalFrameworkQuestions} scored inputs. With an overall maturity rating of ${overall}/5.0 (Stage: ${stage}), ${customer} demonstrates measurable foundations while holding a ${measuredGap.toFixed(2)}-point capability gap addressable through ${domainLeversSummary}.`
       : `This assessment workspace for ${customer} currently has 0/${totalFrameworkQuestions} scored questions (Input Pending). Complete the dimensional questionnaire to compute verified maturity scores, gap topology, and formula-driven financial value.`;
+
+    const { techFlags = {} } = this._extractArchitectureContext(instance.responses, instance);
+
+    const threeYearLabels = isFinOps
+      ? ['FOCUS 1.0 tag enforcement & idle GKE/VM termination', '85%+ Flexible CUDs & BigLake Autoclass tiering', 'Autonomous FinOps unit economics & token quota routing']
+      : isSecurity
+      ? ['Shadow AI egress proxy & static IAM key elimination', 'Inline Cloud DLP tokenization & Model Armor shields', 'Autonomous Chronicle SOAR & continuous AI TRiSM certification']
+      : isAgentic
+      ? ['Standardized MCP tool gateway & scoped OAuth IAM', 'Hierarchical multi-agent orchestration & AlloyDB memory', 'Autonomous A2A banking mesh with HITL policy guardrails']
+      : isGeminiMig
+      ? ['Apigee OpenAI-to-Gemini proxy & 2M context caching', 'Zero-chunk long-context grounding & CMEK VPC-SC cutover', 'Multi-agent Gemini 3.8 mesh & automated Eval CI/CD']
+      : isLakehouse
+      ? ['BigLake Iceberg storage consolidation & slot autoscaling', (techFlags.isTeradata || techFlags.isBteq) ? 'Sub-second Datastream CDC & automated BTEQ/SQL cutover' : 'Sub-second Datastream CDC & automated legacy SQL cutover', 'Federated Data Mesh CoE & Looker semantic BI acceleration']
+      : ['Compute rightsizing & Dataplex governance automation', 'Declarative CDC pipelines & Vertex MLOps standardization', 'Enterprise-wide multi-agent mesh & FinOps unit economics'];
+
+    const domainStrategicContext = isFinOps
+      ? {
+          marketDrivers: [
+            'Board-level FinOps mandates to eliminate 42%+ unallocated multi-cloud and shadow AI token spend',
+            'Need for automated Kubernetes pod rightsizing, idle cluster scale-to-zero, and ML anomaly detection',
+            'Shift from reactive monthly billing spreadsheets to real-time FOCUS 1.0 unit economics and CUD rate arbitrage'
+          ],
+          organizationalImplications: [
+            'Enforce CI/CD mandatory cost-allocation tags and BigQuery FOCUS 1.0 billing exports across all business units',
+            'Consolidate fragmented on-demand compute and LLM APIs into GKE Autopilot and Provisioned Throughput commitments',
+            'Establish a Federated FinOps CoE with automated departmental showback/chargeback and budget circuit-breakers'
+          ]
+        }
+      : isSecurity
+      ? {
+          marketDrivers: [
+            'Urgent CISO requirement to block unmanaged shadow AI browser leaks and unproxied public LLM API egress',
+            'Regulatory mandates (HIPAA, PCI-DSS, EU AI Act) requiring zero-copy PII/PHI tokenization and customer-controlled HSM keys',
+            'Proliferation of indirect prompt injection, RAG poisoning, and standing privilege risks across enterprise AI workloads'
+          ],
+          organizationalImplications: [
+            'Route 100% of foundation model traffic through Apigee AI Gateway inside VPC Service Controls (VPC-SC) perimeters',
+            'Replace static JSON service account keys with Workload Identity Federation and Just-In-Time (JIT) Privileged Access Management',
+            'Deploy inline Google Model Armor guardrails and stream immutable WORM audit logs into Google SecOps (Chronicle SIEM/SOAR)'
+          ]
+        }
+      : isAgentic
+      ? {
+          marketDrivers: [
+            'Transition from brittle single-agent prompt chains to hierarchical multi-agent supervisor/worker topologies',
+            'Industry standardization on Model Context Protocol (MCP) to replace fragile custom REST tool wrappers',
+            'Regulatory scrutiny in banking & financial services requiring deterministic agent trajectory auditability and HITL gates'
+          ],
+          organizationalImplications: [
+            'Deploy Vertex AI Agent Engine with standardized Apigee MCP tool servers and schema validation gates',
+            'Unify short-term session state and long-term episodic memory on AlloyDB AI and Cloud Spanner Graph',
+            'Enforce per-agent OAuth identity propagation, step-budget circuit breakers, and Human-in-the-Loop (HITL) approval workflows'
+          ]
+        }
+      : isGeminiMig
+      ? {
+          marketDrivers: [
+            'Eliminating vendor lock-in, 8k–32k chunking bottlenecks, and volatile pay-as-you-go token costs on legacy OpenAI APIs',
+            'Leveraging Gemini 3.8 Pro native 2M-token context windows to replace brittle 512-token RAG chunking pipelines',
+            'Achieving 75% input token cost reduction via Vertex AI Context Caching and guaranteed Provisioned Throughput SLAs'
+          ],
+          organizationalImplications: [
+            'Deploy an Apigee OpenAI-compatible proxy to enable zero-downtime dual-run routing to Vertex AI Gemini 3.8',
+            techFlags.isPinecone
+              ? 'Consolidate external Pinecone vector indices into Vertex AI Vector Search inside a CMEK-encrypted VPC-SC perimeter'
+              : 'Consolidate external siloed vector indices into Vertex AI Vector Search inside a CMEK-encrypted VPC-SC perimeter',
+            'Automate prompt parity regression testing in CI/CD using Vertex AI GenAI Evaluation Service golden datasets'
+          ]
+        }
+      : isLakehouse
+      ? {
+          marketDrivers: [
+            (techFlags.isTeradata && techFlags.isSnowflake)
+              ? 'Decommissioning expensive proprietary Teradata/Netezza appliances and eliminating duplicate Snowflake/EDW storage taxes'
+              : techFlags.isTeradata
+              ? 'Decommissioning expensive proprietary Teradata/Netezza appliances and eliminating duplicate EDW storage taxes'
+              : techFlags.isSnowflake
+              ? 'Eliminating duplicate Snowflake/EDW storage taxes and volatile multi-warehouse credit burn'
+              : 'Decommissioning expensive proprietary legacy EDW appliances and eliminating duplicate dual-warehouse storage taxes',
+            'Standardizing on open Apache Iceberg tables via Google Cloud BigLake for zero-copy multi-cloud query federation',
+            'Replacing brittle 24-hour nightly batch ETL windows with sub-second Datastream CDC and declarative Dataform SQL pipelines'
+          ],
+          organizationalImplications: [
+            (techFlags.isTeradata || techFlags.isBteq)
+              ? 'Migrate proprietary BTEQ and stored procedures to BigQuery Editions using automated SQL translation and validation'
+              : 'Migrate proprietary legacy stored procedures and batch SQL to BigQuery Editions using automated SQL translation and validation',
+            'Enforce unified column-level lineage, dynamic data masking, and ABAC policy tags across all tables via Dataplex Catalog',
+            'Consolidate siloed BI extracts and cubes into a governed Looker Semantic Layer accelerated by BigQuery BI Engine'
+          ]
+        }
+      : {
+          marketDrivers: [
+            'Demand for unified, zero-copy open data & AI governance across multi-cloud lakehouse environments',
+            'Urgency to scale production MLOps and GenAI agents with standardized Feature Stores and Model Armor guardrails',
+            'FinOps mandates to eliminate idle compute waste and enforce automated departmental chargeback'
+          ],
+          organizationalImplications: [
+            'Transition from manual console provisioning and batch ETL to Terraform IaC, Datastream CDC, and Dataform SQL pipelines',
+            'Deploy centralized Dataplex Catalog & IAM policy tags for automated column/row PII masking and lineage',
+            'Establish an Enterprise Data & AI Center of Excellence uniting Looker Semantic BI, Vertex AI MLOps, and FOCUS FinOps'
+          ]
+        };
+
+    const domainRoadmap = isFinOps
+      ? {
+          phase1: {
+            title: 'Phase 1: FOCUS 1.0 Billing Attribution & Idle Compute Termination',
+            timeline: '1–3 Months',
+            focus: 'Eliminate 42% untagged spend and stop immediate dev/test compute leakage',
+            milestones: [
+              'Deploy BigQuery FOCUS 1.0 billing export and enforce mandatory CI/CD cost-allocation labels',
+              'Enable automated 15-minute idle auto-suspend on dev/test GKE clusters and SQL warehouses',
+              'Configure Vertex AI Context Caching for 75% input token savings on repeated system prompts'
+            ]
+          },
+          phase2: {
+            title: 'Phase 2: GKE Autopilot Rightsizing, Flexible CUDs & Storage Tiering',
+            timeline: '3–6 Months',
+            focus: 'Automate pod rightsizing, lock in 85%+ commitment discounts, and tier cold storage',
+            milestones: [
+              'Migrate over-provisioned Kubernetes workloads to GKE Autopilot with OpenCost pod metering',
+              'Execute automated Commitment Portfolio optimization for 85%+ Flexible CUD and Slot coverage',
+              'Enable Cloud Storage Autoclass and BigLake Iceberg compaction to eliminate duplicate data marts'
+            ]
+          },
+          phase3: {
+            title: 'Phase 3: Autonomous Unit Economics & FinOps Center of Excellence',
+            timeline: '6–12 Months',
+            focus: 'Embed real-time unit cost telemetry and automated budget circuit-breakers',
+            milestones: [
+              'Publish Looker FinOps executive showback/chargeback scorecards mapped to business unit KPIs',
+              'Deploy BQML real-time cost anomaly detection with automated Pub/Sub budget circuit-breakers',
+              'Operationalize model-tier arbitrage routing simple tasks to Gemini 3.8 Flash and complex reasoning to Pro'
+            ]
+          }
+        }
+      : isSecurity
+      ? {
+          phase1: {
+            title: 'Phase 1: AI Perimeter Gateway, VPC-SC & Static Key Elimination',
+            timeline: '1–3 Months',
+            focus: 'Block shadow AI egress and eliminate static service account credentials',
+            milestones: [
+              'Deploy Apigee AI Gateway + Cloud Armor WAF inside VPC Service Controls (VPC-SC) perimeters',
+              'Replace static JSON service account keys with Workload Identity Federation and OIDC tokens',
+              'Enable Cloud Audit Logs across all Vertex AI and data endpoints with zero-retention guarantees'
+            ]
+          },
+          phase2: {
+            title: 'Phase 2: Inline Cloud DLP Tokenization, HSM CMEK & Model Armor',
+            timeline: '3–6 Months',
+            focus: 'Enforce zero-copy PII/PHI redaction and real-time adversarial prompt defense',
+            milestones: [
+              'Deploy inline Cloud DLP surrogate tokenization across all RAG ingestion and prompt pipelines',
+              'Enforce Cloud KMS Hardware (HSM) Customer-Managed Encryption Keys (CMEK) and Confidential Computing',
+              'Activate Google Model Armor inline shields for prompt injection, jailbreak, and data exfiltration defense'
+            ]
+          },
+          phase3: {
+            title: 'Phase 3: Autonomous Chronicle SOAR & Continuous AI TRiSM Governance',
+            timeline: '6–12 Months',
+            focus: 'Automate threat response, JIT PAM, and SLSA Level 3 model supply-chain attestation',
+            milestones: [
+              'Stream 100% of AI and data telemetry into Google SecOps (Chronicle SIEM/SOAR) with WORM retention',
+              'Enforce Just-In-Time (JIT) Privileged Access Management (PAM) with automated session expiration',
+              'Mandate Binary Authorization and SLSA Level 3 cryptographic signing for all deployed models and containers'
+            ]
+          }
+        }
+      : isAgentic
+      ? {
+          phase1: {
+            title: 'Phase 1: Standardized MCP Tool Gateway & Scoped Agent IAM',
+            timeline: '1–3 Months',
+            focus: 'Replace brittle REST tool wrappers and shared credentials with governed MCP servers',
+            milestones: [
+              'Deploy Apigee MCP Gateway with strict JSON-schema tool contracts and sandboxed execution',
+              'Replace shared service accounts with per-agent OAuth identity propagation and least-privilege scopes',
+              'Instrument OpenTelemetry distributed tracing across all agent reasoning steps and tool calls'
+            ]
+          },
+          phase2: {
+            title: 'Phase 2: Hierarchical Multi-Agent Mesh & Episodic Memory Fabric',
+            timeline: '3–6 Months',
+            focus: 'Transition from linear prompt chains to stateful supervisor/worker orchestration',
+            milestones: [
+              'Deploy Vertex AI Agent Engine with Gemini 3.8 Super-Orchestrator and specialized sub-agents',
+              'Implement persistent episodic and semantic memory using AlloyDB AI and Cloud Spanner Graph',
+              'Enforce step-budget circuit breakers and Vertex AI Context Caching across multi-turn agent loops'
+            ]
+          },
+          phase3: {
+            title: 'Phase 3: Autonomous Banking Mesh, HITL Governance & Eval CI/CD',
+            timeline: '6–12 Months',
+            focus: 'Scale regulated autonomous workflows with Human-in-the-Loop policy gates',
+            milestones: [
+              'Activate asynchronous Agent-to-Agent (A2A) event mesh over Cloud Pub/Sub with dead-letter recovery',
+              'Enforce mandatory Human-in-the-Loop (HITL) approval gates for high-materiality financial transactions',
+              'Automate continuous agent trajectory evaluation and hallucination regression testing in CI/CD'
+            ]
+          }
+        }
+      : isGeminiMig
+      ? {
+          phase1: {
+            title: 'Phase 1: OpenAI-Compatible Proxy, VPC-SC Perimeter & Eval Baseline',
+            timeline: '1–3 Months',
+            focus: 'Establish zero-downtime dual-run routing and enterprise security controls',
+            milestones: [
+              'Deploy Apigee OpenAI-to-Gemini proxy for drop-in SDK compatibility and shadow traffic routing',
+              'Configure VPC Service Controls (VPC-SC), Cloud KMS HSM CMEK, and zero-data-retention policies',
+              'Build automated golden evaluation datasets in Vertex AI GenAI Evaluation Service for parity benchmarking'
+            ]
+          },
+          phase2: {
+            title: 'Phase 2: Gemini 3.8 Native 2M Context, Context Caching & Vector Cutover',
+            timeline: '3–6 Months',
+            focus: 'Eliminate brittle 512-token RAG chunking and slash token spend by 75%',
+            milestones: [
+              'Migrate fragile chunked RAG pipelines to Gemini 3.8 Pro native 2M-token long-context grounding',
+              techFlags.isPinecone
+                ? 'Consolidate external Pinecone vector indices into ACL-synchronized Vertex AI Vector Search'
+                : 'Consolidate external siloed vector indices into ACL-synchronized Vertex AI Vector Search',
+              'Enable Vertex AI Context Caching and Provisioned Throughput to cut input token costs by up to 75%'
+            ]
+          },
+          phase3: {
+            title: 'Phase 3: Model-Tier Arbitrage & Multi-Agent Gemini CoE',
+            timeline: '6–12 Months',
+            focus: 'Optimize latency/cost routing and scale compound Gemini agent workflows',
+            milestones: [
+              'Deploy dynamic complexity routing between Gemini 3.8 Flash (sub-second tasks) and Gemini 3.8 Pro (deep reasoning)',
+              techFlags.isLangChain
+                ? 'Refactor legacy LangChain wrappers into native Vertex AI Agent Builder & MCP tool microservices'
+                : 'Refactor legacy custom orchestration wrappers into native Vertex AI Agent Builder & MCP tool microservices',
+              'Operationalize the Gemini Center of Excellence with automated CI/CD prompt regression gates'
+            ]
+          }
+        }
+      : isLakehouse
+      ? {
+          phase1: {
+            title: 'Phase 1: BigLake Open Iceberg Foundation & Dataplex Governance',
+            timeline: '1–3 Months',
+            focus: 'Eliminate duplicate storage taxes and establish unified column-level lineage',
+            milestones: [
+              'Deploy Google Cloud BigLake open Apache Iceberg tables over unified Cloud Storage',
+              'Configure BigQuery Editions slot autoscaling to replace fixed legacy EDW appliance capacity',
+              'Enable Dataplex Universal Catalog with automated column-level lineage and ABAC policy tags'
+            ]
+          },
+          phase2: {
+            title: (techFlags.isTeradata || techFlags.isBteq)
+              ? 'Phase 2: Sub-Second Datastream CDC, Dataform ELT & BTEQ Translation'
+              : 'Phase 2: Sub-Second Datastream CDC, Dataform ELT & SQL Translation',
+            timeline: '3–6 Months',
+            focus: 'Replace 24-hour batch ETL windows and migrate proprietary stored procedures',
+            milestones: [
+              techFlags.isInformatica
+                ? 'Migrate nightly Informatica/batch jobs to sub-second Datastream CDC and Pub/Sub streaming'
+                : 'Migrate nightly legacy batch ETL jobs to sub-second Datastream CDC and Pub/Sub streaming',
+              (techFlags.isTeradata && techFlags.isSnowflake)
+                ? 'Convert legacy Teradata BTEQ / Snowflake SQL scripts using BigQuery Interactive SQL Translator'
+                : techFlags.isTeradata
+                ? 'Convert legacy Teradata BTEQ scripts using BigQuery Interactive SQL Translator'
+                : techFlags.isSnowflake
+                ? 'Convert legacy Snowflake SQL scripts using BigQuery Interactive SQL Translator'
+                : 'Convert legacy proprietary EDW SQL and stored procedures using BigQuery Interactive SQL Translator',
+              'Implement Git-backed declarative Dataform SQLX pipelines with automated data quality assertions'
+            ]
+          },
+          phase3: {
+            title: 'Phase 3: Looker Semantic Consolidation, In-DB AI & Data Mesh CoE',
+            timeline: '6–12 Months',
+            focus: 'Unify executive BI metrics and operationalize zero-copy in-database ML',
+            milestones: [
+              techFlags.isTableau
+                ? 'Consolidate siloed Tableau/BI extracts into a governed Looker Semantic Layer with BI Engine acceleration'
+                : 'Consolidate siloed legacy BI extracts into a governed Looker Semantic Layer with BI Engine acceleration',
+              'Activate in-database BigQuery ML (BQML) and Vertex AI Vector Search directly over BigLake tables',
+              'Establish a federated Data Mesh CoE with domain data contracts and zero-downtime EDW retirement'
+            ]
+          }
+        }
+      : {
+          phase1: {
+            title: 'Phase 1: Foundation, Unified Governance & FinOps Quick Wins',
+            timeline: '1–3 Months',
+            focus: 'Standardize Terraform IaC, unify Dataplex governance, and stop cloud spend leakage',
+            milestones: [
+              'Deploy Dataplex Universal Catalog, VPC-SC perimeters, and fine-grained ABAC policy tags',
+              'Enforce BigQuery FOCUS 1.0 billing exports and 15-minute idle compute auto-suspend policies',
+              'Standardize bronze/silver/gold Medallion tables on BigQuery & BigLake Open Iceberg'
+            ]
+          },
+          phase2: {
+            title: 'Phase 2: Streaming CDC, Looker Semantic Layer & Vertex MLOps',
+            timeline: '3–6 Months',
+            focus: 'Automate real-time data ingestion, semantic BI, and production ML registry',
+            milestones: [
+              'Migrate nightly batch ETL to sub-second Datastream CDC and declarative Dataform pipelines',
+              'Consolidate siloed BI extracts into a governed Looker Semantic Layer with BigQuery BI Engine',
+              'Deploy Vertex AI Model Registry, Feature Store, and automated MLOps CI/CD evaluation gates'
+            ]
+          },
+          phase3: {
+            title: 'Phase 3: Autonomous Multi-Agent Mesh & Continuous FinOps Optimization',
+            timeline: '6–12 Months',
+            focus: 'Scale compound GenAI agents with inline Model Armor safety and unit economics',
+            milestones: [
+              'Deploy Vertex AI Agent Engine with standardized Model Context Protocol (MCP) tool gateways',
+              'Activate Google Model Armor inline prompt shields and Cloud DLP surrogate tokenization',
+              'Operationalize 75% Prompt Context Caching discounts and departmental FinOps chargeback SLAs'
+            ]
+          }
+        };
+
+    const domainExpectedOutcomes = isFinOps
+      ? [
+          '99.4% real-time multi-cloud & AI token cost attribution via BigQuery FOCUS 1.0 billing exports',
+          '38%–45% reduction in wasted Kubernetes and warehouse compute via GKE Autopilot & Flexible CUDs',
+          '75% reduction in repeated LLM input token spend via Vertex AI Context Caching & tier arbitrage'
+        ]
+      : isSecurity
+      ? [
+          '100% elimination of unmanaged shadow AI egress and static JSON service account keys via VPC-SC & WIF',
+          'Zero-copy inline PII/PHI surrogate tokenization and HSM CMEK encryption across all RAG & LLM pipelines',
+          'Real-time adversarial prompt injection blocking via Model Armor and 100% Chronicle SIEM/SOAR audit coverage'
+        ]
+      : isAgentic
+      ? [
+          '3.4x faster multi-step banking workflow resolution via hierarchical Vertex AI Agent Engine orchestration',
+          '100% standardized MCP tool schema enforcement with zero hardcoded REST credentials',
+          'Full OpenTelemetry agent trajectory lineage and mandatory HITL approval gates for regulated actions'
+        ]
+      : isGeminiMig
+      ? [
+          '75% reduction in input token costs via Vertex AI Context Caching and Provisioned Throughput SLAs',
+          'Elimination of brittle 512-token RAG chunking failures via Gemini 3.8 Pro native 2M-token context windows',
+          'Zero-downtime OpenAI-to-Gemini cutover validated by automated Vertex GenAI Eval CI/CD parity gates'
+        ]
+      : isLakehouse
+      ? [
+          techFlags.isTeradata
+            ? '45%+ TCO reduction by retiring legacy Teradata/dual-warehouse silos onto BigQuery Editions & BigLake Iceberg'
+            : '45%+ TCO reduction by retiring legacy proprietary EDW and dual-warehouse silos onto BigQuery Editions & BigLake Iceberg',
+          'Reduction in data latency from 24-hour nightly batch windows to sub-second Datastream CDC streaming',
+          '100% automated column-level lineage, ABAC masking, and governed Looker semantic BI acceleration'
+        ]
+      : [
+          '40% reduction in data & ML engineering maintenance overhead via Datastream CDC, Dataform & Vertex MLOps',
+          '75% cost reduction on repeated LLM agent inference via Vertex AI Context Caching & FOCUS FinOps',
+          'Sub-second governed BI query response times with BigQuery Editions, BigLake Iceberg & Looker BI Engine'
+        ];
+
+    const sortedDimsForRecs = Object.values(scores.dimensionScores || {})
+      .slice()
+      .sort((a, b) => (Number(a.score ?? 5) - Number(b.score ?? 5)));
 
     return {
       executiveSummary,
@@ -747,118 +1167,45 @@ Generate a comprehensive JSON executive report matching this exact schema:
           ? `Derived from ${customer}'s measured ${measuredGap.toFixed(2)}-pt maturity gap across ${totalAnswered} answered inputs (using explicit baseline parameters: $${(baselinePlatformSpendUsd / 1e6).toFixed(1)}M platform spend, ${engineeringTeamFte} engineering FTEs @ $${loadedHourlyRateUsd}/hr), ${customer} can unlock ${formatUsdShort(annualSavingsUsd)} in annualized value with a ${paybackMonths}-month payback.`
           : `Financial projection is awaiting questionnaire responses (0/${totalFrameworkQuestions} answered).`,
         threeYearValueProjection: totalAnswered > 0 ? [
-          { year: 'Year 1 (Foundation & FinOps)', valueM: Number((annualSavingsM * 0.65).toFixed(2)), label: 'Compute rightsizing & governance automation' },
-          { year: 'Year 2 (Scale & Automation)', valueM: Number((annualSavingsM * 1.25).toFixed(2)), label: 'Declarative pipelines & GenAI context caching' },
-          { year: 'Year 3 (Autonomous Scale)', valueM: Number((annualSavingsM * 2.10).toFixed(2)), label: 'Enterprise-wide multi-agent mesh productivity' }
+          { year: 'Year 1 (Foundation & Quick Wins)', valueM: Number((annualSavingsM * 0.65).toFixed(2)), label: threeYearLabels[0] },
+          { year: 'Year 2 (Scale & Automation)', valueM: Number((annualSavingsM * 1.25).toFixed(2)), label: threeYearLabels[1] },
+          { year: 'Year 3 (Autonomous Scale)', valueM: Number((annualSavingsM * 2.10).toFixed(2)), label: threeYearLabels[2] }
         ] : [],
         valueDrivers: [
-          { category: 'Infrastructure & Compute FinOps', impact: `${formatUsdShort(infraSavingsUsd)} / yr`, rationale: `Computed from ${measuredGap.toFixed(2)}-pt maturity gap × $${(baselinePlatformSpendUsd / 1e6).toFixed(1)}M baseline platform spend.` },
-          { category: 'Engineering & MLOps Velocity', impact: `${formatUsdShort(velocitySavingsUsd)} / yr`, rationale: `Computed from ${engineeringTeamFte} FTEs × $${loadedHourlyRateUsd}/hr loaded rate × velocity lift from closing ${measuredGap.toFixed(2)}-pt gap.` },
-          { category: 'Risk & Compliance Mitigation', impact: `${formatUsdShort(riskSavingsUsd)} / yr`, rationale: 'Automated PII tokenization, zero-trust perimeter controls, and audit lineage.' }
+          { category: isFinOps ? 'Cloud & Token Rate Optimization' : isSecurity ? 'Breach & Shadow AI Risk Avoidance' : isGeminiMig ? 'Token Economics & Context Caching' : 'Infrastructure & Compute FinOps', impact: `${formatUsdShort(infraSavingsUsd)} / yr`, amountUsd: infraSavingsUsd, rationale: `Computed from ${measuredGap.toFixed(2)}-pt maturity gap × $${(baselinePlatformSpendUsd / 1e6).toFixed(1)}M baseline platform spend.` },
+          { category: isAgentic ? 'Agentic Workflow & Engineering Velocity' : isSecurity ? 'SecOps & IAM Automation Velocity' : 'Engineering & MLOps Velocity', impact: `${formatUsdShort(velocitySavingsUsd)} / yr`, amountUsd: velocitySavingsUsd, rationale: `Computed from ${engineeringTeamFte} FTEs × $${loadedHourlyRateUsd}/hr loaded rate × velocity lift from closing ${measuredGap.toFixed(2)}-pt gap.` },
+          { category: 'Compliance, SLA & Audit Resilience', impact: `${formatUsdShort(riskSavingsUsd)} / yr`, amountUsd: riskSavingsUsd, rationale: `Quantified operational resilience from ${domainLeversSummary.split(',')[0]} and continuous SLA governance.` }
         ]
       },
-      strategicContext: {
-        marketDrivers: [
-          'Demand for unified, zero-copy open data sharing across multi-cloud environments',
-          'Urgency to govern Foundation Models and GenAI agents with standardized MCP tool contracts',
-          'FinOps mandates to eliminate idle over-provisioned cluster costs via 15-minute auto-termination'
-        ],
-        organizationalImplications: [
-          'Transition from fractured siloed pipelines to declarative, version-controlled streaming data contracts',
-          'Deployment of centralized Cloud Data Catalog & IAM metadata for automated column/row PII masking',
-          'Establishment of an Enterprise Center of Excellence for production MLOps and Prompt Context Caching'
-        ]
-      },
+      strategicContext: domainStrategicContext,
       keyStrengths: [
-        `Established baseline operational capability in core ${framework.title || 'Data & AI'} architecture`,
-        'Demonstrated organizational commitment to enterprise data platform modernization',
-        'Initial governance controls in place with clear roadmap trajectory towards autonomous AI scale'
+        `Established baseline operational capability in core ${framework.title || 'Enterprise Architecture'}`,
+        `Executive sponsorship at ${customer} to close the ${measuredGap.toFixed(2)}-point maturity gap toward ${ Math.min(5.0, Number((overall + measuredGap).toFixed(1))) }/5.0`,
+        'Structured telemetry and pain-point baseline captured across all evaluated architectural dimensions'
       ],
-      criticalConstraints: selectedPainPoints.length > 0 
-        ? selectedPainPoints.slice(0, 4) 
-        : [
-          'Manual pipeline orchestration creating operational latency bottlenecks',
-          'Siloed metadata visibility impeding cross-functional compliance auditing',
-          'Cloud infrastructure compute spend lack of real-time auto-termination policies'
-        ],
-      transformationRoadmap: {
-        phase1: {
-          title: 'Phase 1: Foundation, Unified Governance & FinOps Quick Wins',
-          timeline: '1–3 Months',
-          focus: 'Eliminate security vulnerabilities and stop cloud spend leakage',
-          milestones: [
-            'Deploy unified Cloud Metastore / Universal Data Catalog and map IAM role delegations',
-            'Configure 15-minute auto-termination policies on all development SQL warehouses',
-            'Enable open table format (Apache Iceberg / Delta Lake) with automated compaction'
-          ]
-        },
-        phase2: {
-          title: 'Phase 2: Modernization, Declarative Streaming & MLOps Registry',
-          timeline: '3–6 Months',
-          focus: 'Automate data movement and centralize production ML model deployments',
-          milestones: [
-            'Migrate batch ingestion pipelines to event-driven streaming with automated schema evolution',
-            'Deploy centralized Model and Prompt Registry with automated evaluation gates',
-            'Implement declarative data pipelines (SDF / dbt) with automated data quality expectations'
-          ]
-        },
-        phase3: {
-          title: 'Phase 3: Autonomous Multi-Agent Mesh & Continuous FinOps Optimization',
-          timeline: '6–12 Months',
-          focus: 'Scale Compound GenAI systems with enterprise-grade latency and cost control',
-          milestones: [
-            'Implement Model Context Protocol (MCP) standardized tool calling across agents',
-            'Configure Prompt Context Caching for 75% input token discount on repeated schemas',
-            'Deploy self-service semantic metric layer for sub-second executive BI query acceleration'
-          ]
-        }
-      },
-      strategicRoadmap: {
-        phase1: {
-          title: 'Phase 1: Foundation, Unified Governance & FinOps Quick Wins',
-          timeline: '1–3 Months',
-          focus: 'Eliminate security vulnerabilities and stop cloud spend leakage',
-          milestones: [
-            'Deploy unified Cloud Metastore / Universal Data Catalog and map IAM role delegations',
-            'Configure 15-minute auto-termination policies on all development SQL warehouses',
-            'Enable open table format (Apache Iceberg / Delta Lake) with automated compaction'
-          ]
-        },
-        phase2: {
-          title: 'Phase 2: Modernization, Declarative Streaming & MLOps Registry',
-          timeline: '3–6 Months',
-          focus: 'Automate data movement and centralize production ML model deployments',
-          milestones: [
-            'Migrate batch ingestion pipelines to event-driven streaming with automated schema evolution',
-            'Deploy centralized Model and Prompt Registry with automated evaluation gates',
-            'Implement declarative data pipelines (SDF / dbt) with automated data quality expectations'
-          ]
-        },
-        phase3: {
-          title: 'Phase 3: Autonomous Multi-Agent Mesh & Continuous FinOps Optimization',
-          timeline: '6–12 Months',
-          focus: 'Scale Compound GenAI systems with enterprise-grade latency and cost control',
-          milestones: [
-            'Implement Model Context Protocol (MCP) standardized tool calling across agents',
-            'Configure Prompt Context Caching for 75% input token discount on repeated schemas',
-            'Deploy self-service semantic metric layer for sub-second executive BI query acceleration'
-          ]
-        }
-      },
-      prioritizedRecommendations: Object.values(scores.dimensionScores || {}).slice(0, 3).map((dim, idx) => ({
-        id: idx + 1,
-        title: `Modernize ${dim.name} Architecture & Governance Controls`,
-        dimension: dim.name,
-        priority: idx === 0 ? 'Critical' : 'High',
-        timeline: idx === 0 ? '1–2 Months' : '2–4 Months',
-        whyItMatters: `Identified capability gap in ${dim.name} (Score: ${dim.score}/5.0) limits team velocity and increases operational risk.`,
-        actionSteps: [
-          `Audit current ${dim.name} pipelines and establish automated CI/CD deployment gates`,
-          `Deploy standardized data contracts and continuous drift detection alerts`,
-          `Implement tag-based attribute access control (ABAC) and FinOps resource tagging`
-        ],
-        expectedImpact: '40% acceleration in delivery velocity and quantified reduction in compliance exposure.'
-      })),
+      criticalConstraints: selectedPainPoints.length > 0
+        ? selectedPainPoints.slice(0, 4)
+        : domainExpectedOutcomes.map(o => `Baseline gap prior to ${o.split(' via ')[1] || 'cloud-native modernization'}`),
+      transformationRoadmap: domainRoadmap,
+      strategicRoadmap: domainRoadmap,
+      prioritizedRecommendations: sortedDimsForRecs.slice(0, 3).map((dim, idx) => {
+        const recSvc = resolveRecommendedService(dim.name, '');
+        return {
+          id: idx + 1,
+          title: `Modernize ${dim.name} with ${recSvc}`,
+          dimension: dim.name,
+          pillarName: dim.name,
+          priority: idx === 0 ? 'Critical' : 'High',
+          timeline: idx === 0 ? '1–2 Months' : '2–4 Months',
+          whyItMatters: `Identified capability gap in ${dim.name} (Current Score: ${dim.score}/5.0 vs. Target: ${dim.targetScore || Math.min(5, Number((dim.score + 1.5).toFixed(1)))}/5.0) limits ${customer}'s operational velocity and increases architectural risk.`,
+          actionSteps: [
+            `Deploy ${recSvc} across ${dim.name} with declarative Terraform IaC and CI/CD policy gates`,
+            `Remediate baseline bottlenecks in ${dim.name} through automated telemetry, schema/policy enforcement, and zero-trust IAM`,
+            `Establish continuous SLA scorecards and unit-cost attribution for ${dim.name}`
+          ],
+          expectedImpact: domainExpectedOutcomes[idx % domainExpectedOutcomes.length]
+        };
+      }),
       questionReadouts,
       slideDeckSynthesis: {
         executiveHeadline: `${customer}: Accelerating ${framework.title || 'Enterprise Data & AI'} from ${overall}/5.0 (${stage}) to Autonomous Scale`,
@@ -867,17 +1214,13 @@ Generate a comprehensive JSON executive report matching this exact schema:
         slides: [
           { slideIndex: 0, title: 'Executive Maturity Summary & Strategic Baseline', speakerNotes: `${customer} achieved ${overall}/5.0 overall maturity across ${(framework.dimensions || []).length} dimensions (${totalAnswered}/${totalFrameworkQuestions} inputs verified).` },
           { slideIndex: 1, title: 'Dimensional Capability Radar & Gap Analysis', speakerNotes: 'Detailed breakdown of current vs. target scores across all architectural pillars.' },
-          { slideIndex: 2, title: 'Current vs. Target State Reference Architecture', speakerNotes: 'Transitioning from fragmented legacy silos to a governed Google Cloud & Vertex AI mesh.' },
+          { slideIndex: 2, title: 'Current vs. Target State Reference Architecture', speakerNotes: `Transitioning ${customer} from fragmented baseline silos to ${domainLeversSummary.split(',')[0]}.` },
           { slideIndex: 3, title: 'CFO Financial Value Bridge & TCO Arbitrage', speakerNotes: totalAnswered > 0 ? `Quantified ${formatUsdShort(annualSavingsUsd)} annual run-rate savings with ${paybackMonths}-month payback.` : 'Financial readout pending questionnaire completion.' },
-          { slideIndex: 4, title: 'Prioritized Engineering Recommendations', speakerNotes: 'Top 3 high-impact architectural remediations ordered by ROI and risk reduction.' },
-          { slideIndex: 5, title: '3-Horizon Transformation Roadmap (1–12 Months)', speakerNotes: 'Phased execution plan from Quick Wins to Autonomous Multi-Agent Scale.' }
+          { slideIndex: 4, title: 'Prioritized Engineering Recommendations', speakerNotes: 'Top 3 high-impact architectural remediations ordered by score gap and ROI.' },
+          { slideIndex: 5, title: '3-Horizon Transformation Roadmap (1–12 Months)', speakerNotes: 'Phased execution plan from Phase 1 Quick Wins to Phase 3 Autonomous Scale.' }
         ]
       },
-      expectedOutcomes: [
-        '40% reduction in data engineering pipeline maintenance overhead',
-        '75% cost reduction on repeated LLM agent inference via Prompt Context Caching',
-        'Sub-second query response times with serverless vectorized SQL engines'
-      ],
+      expectedOutcomes: domainExpectedOutcomes,
       generatedAt: new Date().toISOString(),
       modelUsed: 'gemini-3.8-flash',
       calculatedScores: scores,
@@ -975,10 +1318,13 @@ Generate a comprehensive JSON executive report matching this exact schema:
     const isPinecone = /\b(pinecone)\b/i.test(combinedText);
     const isWeaviate = /\b(weaviate|qdrant|chroma|milvus)\b/i.test(combinedText);
 
-    // 7. Detect Data Warehouses / Databases
+    // 7. Detect Data Warehouses / Databases & Legacy ETL/BI
     const isSnowflake = /\b(snowflake)\b/i.test(combinedText);
     const isDatabricks = /\b(databricks|delta\s+lake|unity\s+catalog)\b/i.test(combinedText);
-    const isTeradata = /\b(teradata)\b/i.test(combinedText);
+    const isTeradata = /\b(teradata|netezza)\b/i.test(combinedText);
+    const isBteq = /\b(bteq)\b/i.test(combinedText);
+    const isInformatica = /\b(informatica|autosys|datastage)\b/i.test(combinedText);
+    const isTableau = /\b(tableau|cognos|microstrategy)\b/i.test(combinedText);
     const isOracle = /\b(oracle)\b/i.test(combinedText);
 
     return {
@@ -1003,6 +1349,9 @@ Generate a comprehensive JSON executive report matching this exact schema:
         isSnowflake,
         isDatabricks,
         isTeradata,
+        isBteq,
+        isInformatica,
+        isTableau,
         isOracle
       }
     };

@@ -365,9 +365,10 @@ export class ExecutivePDFExporter {
     this.doc.text('Executive Summary & Strategic Context', this.margin + 16, yPos + 24);
 
     const aiReport = this.assessmentInfo.aiReport || this.results.aiReport || {};
+    const assessName = this.assessmentInfo.assessmentName || 'Enterprise Cloud & AI Architecture';
     const rawSummary = this._stripMarkdown(aiReport.executiveSummary || 
       this.results.overall?.level?.description || 
-      `This comprehensive enterprise assessment evaluates ${org}'s architectural baseline across data platforms, multi-agent AI ecosystems, cloud cost governance, and zero-trust security perimeters. The current architecture demonstrates a proven foundation with strategic modernization frontiers to eliminate legacy batch latency, unify siloed data warehouses into an open BigLake lakehouse, and deploy governed agentic AI workflows on Google Cloud.`);
+      `This comprehensive enterprise assessment evaluates ${org}'s baseline capability across ${assessName} (${curScore}/5.0). The diagnostic identifies targeted modernization priorities to close the +${delta}-point capability gap with automated governance, security guardrails, and FinOps unit economics on Google Cloud.`);
 
     this.doc.setFont('helvetica', 'normal');
     this.doc.setFontSize(9.5);
@@ -388,10 +389,12 @@ export class ExecutivePDFExporter {
 
     const driver1 = aiReport.keyStrengths?.[0] 
       ? `• Foundation: ${this._stripMarkdown(aiReport.keyStrengths[0])}`
-      : '• Transition from 24-48h batch ETL to real-time streaming CDC via Google Cloud Dataflow & BigLake Iceberg';
+      : `• Baseline Foundation: Established operational baseline across ${assessName} (${curScore}/5.0)`;
     const driver2 = aiReport.criticalConstraints?.[0]
       ? `• Critical Modernization: Remediate ${this._stripMarkdown(aiReport.criticalConstraints[0])}`
-      : '• Deploy Vertex AI Agent Builder & Model Context Protocol (MCP) gateway with Model Armor zero-trust guardrails';
+      : (aiReport.expectedOutcomes?.[0]
+          ? `• Target Outcome: ${this._stripMarkdown(aiReport.expectedOutcomes[0])}`
+          : '• Deploy declarative Google Cloud automation, zero-trust perimeters, and FinOps cost governance');
 
     this.doc.setFont('helvetica', 'normal');
     this.doc.setFontSize(8.5);
@@ -626,8 +629,16 @@ export class ExecutivePDFExporter {
 
     const kpiW = (this.contentWidth - 32) / 3;
     const avgGap = this.results.overall?.gap || 1.3;
-    const tcoSavingRange = avgGap > 1.2 ? '35% - 50%' : '25% - 40%';
-    const netValueEst = `$${(avgGap * 1.8).toFixed(1)}M - $${(avgGap * 3.2).toFixed(1)}M`;
+    const fin = aiReport.financialAnalysis || {};
+    const tcoSavingRange = fin.tcoReductionPct ? `${fin.tcoReductionPct}% TCO Cut` : (avgGap > 1.2 ? '35% - 50%' : '25% - 40%');
+    const netValueEst = fin.roiRangeFormatted || fin.annualSavingsFormatted || `$${(avgGap * 1.8).toFixed(1)}M - $${(avgGap * 3.2).toFixed(1)}M`;
+    const kpi1Desc = fin.valueDrivers?.[0]?.category
+      ? `${fin.valueDrivers[0].category} (${fin.valueDrivers[0].impact || 'Annualized Savings'})`
+      : 'Infrastructure & Operational TCO Reduction on Google Cloud';
+    const kpi3Title = fin.paybackMonths ? `${fin.paybackMonths} Mo Payback` : '75% Discount';
+    const kpi3Desc = fin.valueDrivers?.[1]?.category
+      ? `${fin.valueDrivers[1].category} (${fin.valueDrivers[1].impact || 'Velocity Lift'})`
+      : 'Engineering Velocity Lift & Vertex AI Context Caching Savings';
     
     // KPI 1: TCO Savings
     this.doc.setFont('helvetica', 'bold');
@@ -637,7 +648,7 @@ export class ExecutivePDFExporter {
     this.doc.setFont('helvetica', 'normal');
     this.doc.setFontSize(7.5);
     this.doc.setTextColor(COLORS.textDark);
-    const kpi1Lines = this.doc.splitTextToSize('Compute & Storage TCO Reduction via BigQuery & Iceberg', kpiW - 12);
+    const kpi1Lines = this.doc.splitTextToSize(kpi1Desc, kpiW - 12);
     this.doc.text(kpi1Lines, this.margin + 16, yPos + 54);
 
     // KPI 2: Value Creation
@@ -652,16 +663,16 @@ export class ExecutivePDFExporter {
     const kpi2Lines = this.doc.splitTextToSize('3-Year Value Creation & Cost Avoidance Benefit', kpiW - 12);
     this.doc.text(kpi2Lines, k2X, yPos + 54);
 
-    // KPI 3: GenAI Token Discount
+    // KPI 3: Payback & Velocity
     const k3X = k2X + kpiW;
     this.doc.setFont('helvetica', 'bold');
     this.doc.setFontSize(16);
     this.doc.setTextColor(COLORS.accentCyan);
-    this.doc.text('75% Discount', k3X, yPos + 40);
+    this.doc.text(kpi3Title, k3X, yPos + 40);
     this.doc.setFont('helvetica', 'normal');
     this.doc.setFontSize(7.5);
     this.doc.setTextColor(COLORS.textDark);
-    const kpi3Lines = this.doc.splitTextToSize('GenAI Token Input Savings via Vertex Context Caching', kpiW - 12);
+    const kpi3Lines = this.doc.splitTextToSize(kpi3Desc, kpiW - 12);
     this.doc.text(kpi3Lines, k3X, yPos + 54);
   }
 
@@ -671,6 +682,7 @@ export class ExecutivePDFExporter {
   addArchitectureEvolutionPage() {
     let yPos = 50;
     const org = this.assessmentInfo.organizationName || 'Enterprise Organization';
+    const aiReport = this.assessmentInfo?.aiReport || this.results?.aiReport || {};
 
     this.doc.setFont('helvetica', 'bold');
     this.doc.setFontSize(14);
@@ -686,11 +698,21 @@ export class ExecutivePDFExporter {
 
     const colW = (this.contentWidth - 14) / 2;
     const cardH = 265;
-    const diagrams = this.assessmentInfo?.architectureDiagrams || this.results?.architectureDiagrams || this.assessmentInfo?.aiReport?.architectureDiagrams || {};
+    const diagrams = this.assessmentInfo?.architectureDiagrams || this.results?.architectureDiagrams || aiReport.architectureDiagrams || {};
     const curTitle = diagrams.currentTitle || 'CURRENT BASELINE (AS-IS ARCHITECTURE)';
-    const curSub = diagrams.currentSubtitle || 'Blueprint Ref: P1-APP-L-01 (Legacy Dependency Map)';
+    const curSub = diagrams.currentSubtitle || 'Blueprint Ref: P1-APP-L-01 (Baseline Diagnostic Map)';
     const tgtTitle = diagrams.targetTitle || 'TARGET CLOUD-NATIVE (TO-BE ARCHITECTURE)';
-    const tgtSub = diagrams.targetSubtitle || 'Blueprint Ref: P3-APP-C-01 & P3-DAT-L-04 (BigLake Fabric)';
+    const tgtSub = diagrams.targetSubtitle || 'Blueprint Ref: P3-APP-C-01 (Target Cloud Architecture)';
+
+    const dimInsights = Array.isArray(aiReport.dimensionInsights) && aiReport.dimensionInsights.length > 0
+      ? aiReport.dimensionInsights.slice(0, 5)
+      : Object.values(this.results?.categoryDetails || {}).slice(0, 5).map(d => ({
+          dimensionName: d.name || 'Architectural Pillar',
+          currentScore: d.currentScore || 2.8,
+          targetScore: d.futureScore || 4.2,
+          findings: d.strengths?.[0] || `Assessed at ${d.currentScore || 2.8}/5.0 with baseline operational bottlenecks.`,
+          priorityAction: d.recommendations?.[0] || `Modernize ${d.name || 'domain'} toward ${d.futureScore || 4.2}/5.0 on Google Cloud.`
+        }));
 
     // LEFT CARD: AS-IS CURRENT STATE
     this.doc.setFillColor('#FFF5F5');
@@ -719,16 +741,18 @@ export class ExecutivePDFExporter {
     this.doc.setFontSize(8.5);
     this.doc.setTextColor(COLORS.textDark);
 
-    const asIsItems = [
-      '• Ingestion: Point-to-point cron jobs & unmanaged batch transfers with 24-48hr latency',
-      '• Storage: Siloed relational databases and unmanaged flat storage buckets',
-      '• Compute: Static 24/7 over-provisioned VMs without automated auto-suspend policies',
-      '• AI & Serving: Unmanaged hardcoded LLM calls paying 100% price with zero prompt caching',
-      '• Security: Disjoint IAM access, public API endpoints, and manual audit triage'
-    ];
+    const asIsItems = dimInsights.length > 0
+      ? dimInsights.map(d => `• ${d.dimensionName}: ${this._stripMarkdown(d.findings || `Baseline score ${d.currentScore}/5.0`)}`)
+      : [
+          '• Core Foundation: Fragmented baseline controls and manual operational workflows',
+          '• Data & Context: Siloed repositories and high-latency batch processing pipelines',
+          '• Compute & FinOps: Unallocated cloud spend and static over-provisioned compute',
+          '• AI & Automation: Disconnected model endpoints and brittle custom tool wrappers',
+          '• Security & Governance: Perimeter-only IAM, static keys, and manual audit triage'
+        ];
 
     asIsItems.forEach(item => {
-      const lines = this.doc.splitTextToSize(item, colW - 24);
+      const lines = this.doc.splitTextToSize(item, colW - 24).slice(0, 2);
       this.doc.text(lines, this.margin + 12, curY);
       curY += lines.length * 11 + 4;
     });
@@ -740,8 +764,11 @@ export class ExecutivePDFExporter {
     this.doc.setFont('helvetica', 'bold');
     this.doc.setFontSize(7.5);
     this.doc.setTextColor('#B91C1C');
-    const warnLines = this.doc.splitTextToSize('[!] CRITICAL BOTTLENECK: 38% ETL lag and unmanaged token billing burn', colW - 32);
-    this.doc.text(warnLines, this.margin + 16, yPos + cardH - 24);
+    const warnRaw = aiReport.criticalConstraints?.[0]
+      ? `[!] PRIMARY CONSTRAINT: ${this._stripMarkdown(aiReport.criticalConstraints[0])}`
+      : '[!] CRITICAL BOTTLENECK: Baseline capability gaps and manual operational friction';
+    const warnLines = this.doc.splitTextToSize(warnRaw, colW - 32).slice(0, 2);
+    this.doc.text(warnLines, this.margin + 16, yPos + cardH - 26);
 
     // RIGHT CARD: TO-BE TARGET STATE
     const rightX = this.margin + colW + 14;
@@ -770,16 +797,18 @@ export class ExecutivePDFExporter {
     this.doc.setFontSize(8.5);
     this.doc.setTextColor(COLORS.textDark);
 
-    const toBeItems = [
-      '• Ingestion: Serverless Google Cloud Dataflow streaming CDC & Pub/Sub messaging bus (<1s)',
-      '• Storage: BigLake Medallion Architecture with Apache Iceberg open table formats on GCS',
-      '• Compute: BigQuery Editions autoscaling slots with GKE Autopilot gVisor sandboxed compute',
-      '• AI & Serving: Vertex AI Agent Builder, Model Context Protocol (MCP), and 75% context caching',
-      '• Security: Zero-Trust Landing Zone with VPC-SC, Cloud KMS HSM CMEK, Model Armor'
-    ];
+    const toBeItems = dimInsights.length > 0
+      ? dimInsights.map(d => `• ${d.dimensionName}: ${this._stripMarkdown(d.priorityAction || `Target ${d.targetScore}/5.0`)}`)
+      : [
+          '• Core Foundation: Declarative Google Cloud foundation with automated policy enforcement',
+          '• Data & Context: Unified zero-copy governance and real-time event streaming',
+          '• Compute & FinOps: FOCUS 1.0 unit-cost attribution, autoscaling, and 75% context caching',
+          '• AI & Automation: Vertex AI Agent Engine, standardized MCP gateways, and Eval CI/CD',
+          '• Security & Governance: VPC Service Controls, Cloud KMS HSM CMEK, Cloud DLP, and Model Armor'
+        ];
 
     toBeItems.forEach(item => {
-      const lines = this.doc.splitTextToSize(item, colW - 24);
+      const lines = this.doc.splitTextToSize(item, colW - 24).slice(0, 2);
       this.doc.text(lines, rightX + 12, tgtY);
       tgtY += lines.length * 11 + 4;
     });
@@ -791,8 +820,11 @@ export class ExecutivePDFExporter {
     this.doc.setFont('helvetica', 'bold');
     this.doc.setFontSize(7.5);
     this.doc.setTextColor('#047857');
-    const succLines = this.doc.splitTextToSize('[+] TARGET OUTCOME: 99.99% Multi-Region HA & Sub-Second Analytical Queries', colW - 32);
-    this.doc.text(succLines, rightX + 16, yPos + cardH - 24);
+    const succRaw = aiReport.expectedOutcomes?.[0]
+      ? `[+] TARGET OUTCOME: ${this._stripMarkdown(aiReport.expectedOutcomes[0])}`
+      : '[+] TARGET OUTCOME: Automated Google Cloud governance, security resilience, and TCO reduction';
+    const succLines = this.doc.splitTextToSize(succRaw, colW - 32).slice(0, 2);
+    this.doc.text(succLines, rightX + 16, yPos + cardH - 26);
 
     // 2. Modernization Transformation Table
     yPos += cardH + 18;
@@ -804,32 +836,47 @@ export class ExecutivePDFExporter {
 
     yPos += 8;
 
-    const vectorData = [
-      [
-        'Tier 1: Ingestion & CDC',
-        'Brittle Informatica/Bash cron scripts with 24h batch lag',
-        'Google Cloud Datastream CDC + Dataflow & Pub/Sub event bus',
-        'Sub-second real-time replication with zero source DB locks'
-      ],
-      [
-        'Tier 2: Unified Lakehouse',
-        'Proprietary siloed warehouses with high egress tax',
-        'BigLake Apache Iceberg open table formats on Cloud Storage',
-        'Zero vendor lock-in, 45% licensing reduction, unified catalog'
-      ],
-      [
-        'Tier 3: Compute & FinOps',
-        'Static 24/7 oversized VMs with $480k estimated idle waste',
-        'BigQuery Autoscaling Slots & GKE Autopilot pod metering',
-        '100% FOCUS 1.0 chargeback attribution and 15-min auto-suspend'
-      ],
-      [
-        'Tier 4: Agentic AI & Sec',
-        'Unmanaged LLM calls without prompt caching or DLP',
-        'Vertex AI Agent Builder + MCP Tool Gateway & Model Armor',
-        '75% token discount via Context Caching with VPC-SC guardrails'
-      ]
-    ];
+    const outcomesList = Array.isArray(aiReport.expectedOutcomes) && aiReport.expectedOutcomes.length > 0
+      ? aiReport.expectedOutcomes
+      : [
+          'Measurable TCO reduction with automated cloud governance',
+          'Elimination of manual operational bottlenecks and unmonitored risk exposure',
+          'Accelerated release velocity via declarative CI/CD and policy guardrails'
+        ];
+
+    const vectorData = dimInsights.length > 0
+      ? dimInsights.slice(0, 4).map((d, idx) => [
+          `Tier ${idx + 1}: ${d.dimensionName || `Pillar ${idx + 1}`}`,
+          this._stripMarkdown(d.findings || `Baseline score ${d.currentScore}/5.0`),
+          this._stripMarkdown(d.priorityAction || `Target ${d.targetScore}/5.0 on Google Cloud`),
+          this._stripMarkdown(outcomesList[idx % outcomesList.length])
+        ])
+      : [
+          [
+            'Tier 1: Core Foundation',
+            'Fragmented baseline controls and manual operational workflows',
+            'Declarative Google Cloud foundation with automated policy enforcement',
+            this._stripMarkdown(outcomesList[0])
+          ],
+          [
+            'Tier 2: Data & Context',
+            'Siloed repositories and high-latency batch processing pipelines',
+            'Unified zero-copy governance and real-time event streaming',
+            this._stripMarkdown(outcomesList[1 % outcomesList.length])
+          ],
+          [
+            'Tier 3: Compute & FinOps',
+            'Unallocated cloud spend and static over-provisioned compute',
+            'FOCUS 1.0 unit-cost attribution, autoscaling, and 75% context caching',
+            this._stripMarkdown(outcomesList[2 % outcomesList.length])
+          ],
+          [
+            'Tier 4: AI & Security',
+            'Disconnected endpoints, static keys, and manual audit triage',
+            'Vertex AI Agent Engine, MCP Gateways, VPC-SC, and Model Armor',
+            this._stripMarkdown(outcomesList[0])
+          ]
+        ];
 
     autoTable(this.doc, {
       startY: yPos + 6,
@@ -869,7 +916,7 @@ export class ExecutivePDFExporter {
     this.doc.setFont('helvetica', 'bold');
     this.doc.setFontSize(14);
     this.doc.setTextColor(COLORS.navyDark);
-    this.doc.text('Prioritized Strategic Roadmap & 30-60-90 Day Backlog', this.margin, yPos);
+    this.doc.text('Prioritized Strategic Roadmap & Phased Backlog', this.margin, yPos);
 
     this.doc.setFont('helvetica', 'normal');
     this.doc.setFontSize(8.5);
@@ -886,45 +933,45 @@ export class ExecutivePDFExporter {
     const defaultRoadmap = [
       {
         p: 'P1 - CRITICAL',
-        title: 'Deploy Zero-Trust Ingress & Cloud Armor WAF',
-        dim: 'Security & Perimeter',
-        impact: 'Eliminates public internet exposure and blocks OWASP Top 10 exploits',
-        time: 'Day 0 - 30 (Wave 1)'
+        title: 'Deploy Zero-Trust Perimeter & Identity Controls',
+        dim: 'Security & Governance',
+        impact: 'Eliminates unmonitored egress and static credential exposure',
+        time: '1–3 Months (Phase 1)'
       },
       {
         p: 'P1 - CRITICAL',
-        title: 'Establish Real-Time Datastream CDC & BigLake Ingestion',
-        dim: 'Data Lakehouse',
-        impact: 'Eliminates 24-hour batch replication lag and source database locking',
-        time: 'Day 15 - 45 (Wave 1)'
+        title: 'Establish Baseline Telemetry & FOCUS 1.0 Attribution',
+        dim: 'FinOps & Observability',
+        impact: 'Establishes 100% unit-cost visibility and idle compute auto-suspend',
+        time: '1–3 Months (Phase 1)'
       },
       {
         p: 'P2 - HIGH',
-        title: 'Migrate AI Ingress to Apigee Gateway with Prompt Caching',
-        dim: 'AI & Machine Learning',
-        impact: 'Reduces LLM input token burn by 75% and accelerates TTFT to <200ms',
-        time: 'Day 30 - 60 (Wave 2)'
+        title: 'Automate Declarative Pipelines & Policy Gates',
+        dim: 'Platform Engineering',
+        impact: 'Replaces manual scripts with CI/CD-validated cloud workflows',
+        time: '3–6 Months (Phase 2)'
       },
       {
         p: 'P2 - HIGH',
-        title: 'Implement BigQuery FOCUS 1.0 Automated Billing Lake',
-        dim: 'FinOps Governance',
-        impact: 'Establishes 100% cost attribution and automated idle resource pruning',
-        time: 'Day 45 - 75 (Wave 2)'
+        title: 'Activate Vertex AI Context Caching & Tier Routing',
+        dim: 'AI & Compute Optimization',
+        impact: 'Reduces repeated LLM input token spend by up to 75%',
+        time: '3–6 Months (Phase 2)'
       },
       {
         p: 'P3 - STRATEGIC',
-        title: 'Deploy Hub-and-Spoke Agent Mesh with MCP Tool Services',
-        dim: 'Agentic Ecosystem',
-        impact: 'Enables cross-departmental autonomous multi-agent task execution',
-        time: 'Day 60 - 90 (Wave 3)'
+        title: 'Scale Governed Multi-Agent Workflows & MCP Gateways',
+        dim: 'Autonomous Operations',
+        impact: 'Enables cross-departmental autonomous execution with HITL gates',
+        time: '6–12 Months (Phase 3)'
       },
       {
         p: 'P3 - STRATEGIC',
-        title: 'Consolidate Looker Governed Semantic BI Model',
-        dim: 'Analytics & BI',
-        impact: 'Unifies corporate KPI metrics with zero extract lag and instant load',
-        time: 'Day 75 - 90 (Wave 3)'
+        title: 'Operationalize Executive Scorecards & Continuous SLA Audit',
+        dim: 'Enterprise CoE',
+        impact: 'Unifies executive KPIs with continuous compliance attestation',
+        time: '6–12 Months (Phase 3)'
       }
     ];
 
@@ -933,7 +980,7 @@ export class ExecutivePDFExporter {
       title: this._stripMarkdown(r.title || `Strategic Action Item ${i+1}`),
       dim: this._stripMarkdown(r.pillar || r.dimension || 'Architecture'),
       impact: this._stripMarkdown(r.impact || r.expectedImpact || r.whyItMatters || 'Accelerates cloud modernization and reduces operational TCO'),
-      time: r.timeline || (i < 2 ? 'Day 0 - 30 (Wave 1)' : i < 4 ? 'Day 30 - 60 (Wave 2)' : 'Day 60 - 90 (Wave 3)')
+      time: r.timeline || (i < 2 ? '1–3 Months (Phase 1)' : i < 4 ? '3–6 Months (Phase 2)' : '6–12 Months (Phase 3)')
     })) : defaultRoadmap;
 
     sourceRoadmap.forEach(r => {
@@ -1005,6 +1052,14 @@ export class ExecutivePDFExporter {
     const phaseY = yPos + 36;
     const phaseH = 110;
 
+    const rm = aiReport.transformationRoadmap || aiReport.strategicRoadmap || {};
+    const formatWaveMilestones = (milestones, fallbackLines) => {
+      if (Array.isArray(milestones) && milestones.length > 0) {
+        return milestones.slice(0, 4).map(m => `• ${this._stripMarkdown(m).slice(0, 34)}`).join('\n');
+      }
+      return fallbackLines;
+    };
+
     // Phase 1: Learn & Foundations
     this.doc.setFillColor(COLORS.white);
     this.doc.setDrawColor(COLORS.cardBorder);
@@ -1013,12 +1068,16 @@ export class ExecutivePDFExporter {
     this.doc.setFont('helvetica', 'bold');
     this.doc.setFontSize(9);
     this.doc.setTextColor(COLORS.primary);
-    this.doc.text('WAVE 1: FOUNDATIONS (0-30d)', this.margin + 20, phaseY + 18);
+    this.doc.text(`WAVE 1: ${(rm.phase1?.timeline || '1–3 MONTHS').toUpperCase()}`, this.margin + 20, phaseY + 18);
 
     this.doc.setFont('helvetica', 'normal');
     this.doc.setFontSize(8);
     this.doc.setTextColor(COLORS.textDark);
-    this.doc.text('• Shared VPC & Landing Zone\n• Cloud Armor WAF Perimeter\n• Datastream CDC Ingestion\n• Cloud KMS CMEK Keys Setup', this.margin + 20, phaseY + 36);
+    this.doc.text(
+      formatWaveMilestones(rm.phase1?.milestones, '• Zero-Trust IAM & VPC-SC\n• Baseline Cost Attribution\n• Core Security Guardrails\n• Quick-Win Remediations'),
+      this.margin + 20,
+      phaseY + 36
+    );
 
     // Phase 2: Lead & Industrialize
     const p2X = this.margin + 12 + phaseW + 6;
@@ -1029,12 +1088,16 @@ export class ExecutivePDFExporter {
     this.doc.setFont('helvetica', 'bold');
     this.doc.setFontSize(9);
     this.doc.setTextColor(COLORS.accentCyan);
-    this.doc.text('WAVE 2: INDUSTRIALIZE (30-60d)', p2X + 10, phaseY + 18);
+    this.doc.text(`WAVE 2: ${(rm.phase2?.timeline || '3–6 MONTHS').toUpperCase()}`, p2X + 10, phaseY + 18);
 
     this.doc.setFont('helvetica', 'normal');
     this.doc.setFontSize(8);
     this.doc.setTextColor(COLORS.textDark);
-    this.doc.text('• BigLake Apache Iceberg Fabric\n• Dataplex Universal Catalog\n• Apigee AI Gateway & Caching\n• Automated FinOps Chargeback', p2X + 10, phaseY + 36);
+    this.doc.text(
+      formatWaveMilestones(rm.phase2?.milestones, '• Declarative CI/CD Pipelines\n• Compute & Commitment Optimization\n• Context Caching & Routing\n• Automated DLP & KMS CMEK'),
+      p2X + 10,
+      phaseY + 36
+    );
 
     // Phase 3: Scale & Autonomy
     const p3X = p2X + phaseW + 6;
@@ -1045,12 +1108,16 @@ export class ExecutivePDFExporter {
     this.doc.setFont('helvetica', 'bold');
     this.doc.setFontSize(9);
     this.doc.setTextColor(COLORS.success);
-    this.doc.text('WAVE 3: AUTONOMOUS AI (60-90d)', p3X + 10, phaseY + 18);
+    this.doc.text(`WAVE 3: ${(rm.phase3?.timeline || '6–12 MONTHS').toUpperCase()}`, p3X + 10, phaseY + 18);
 
     this.doc.setFont('helvetica', 'normal');
     this.doc.setFontSize(8);
     this.doc.setTextColor(COLORS.textDark);
-    this.doc.text('• Hub-and-Spoke Agent Mesh\n• MCP Tool Microservices\n• Looker Governed Semantics\n• Real-Time Chronicle SIEM', p3X + 10, phaseY + 36);
+    this.doc.text(
+      formatWaveMilestones(rm.phase3?.milestones, '• Governed Autonomous Workflows\n• Standardized MCP Gateways\n• Executive FinOps Scorecards\n• Continuous Compliance Audit'),
+      p3X + 10,
+      phaseY + 36
+    );
   }
 
   // ==========================================

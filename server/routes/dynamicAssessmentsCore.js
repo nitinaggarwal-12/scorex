@@ -645,18 +645,72 @@ router.post('/types/:typeKey/sample', async (req, res) => {
     const profile = enterpriseProfiles[Math.floor(Math.random() * enterpriseProfiles.length)];
     const seed = Date.now();
 
-    const sampleComments = [
-      'Current setup relies on manual pipelines and partial scripting with high operational overhead.',
-      'Architecture modernization initiative approved by leadership for current fiscal year.',
-      'Team is evaluating Google Cloud Vertex AI & Gemini Enterprise for prompt caching and long-context reasoning.',
-      'Security and compliance standards require automated VPC Service Controls and Customer-Managed Encryption Keys (CMEK).',
-      'Active cross-functional initiative underway to unify metadata, governance, and CI/CD deployment pipelines.',
-      'FinOps team flagged unpredictable monthly spend; implementing BigQuery Editions slot reservations.',
-      'Production workload undergoing active migration; focusing on real-time CDC and sub-second query latency.',
-      'CISO signed off on Zero-Trust AI Gateway architecture to unblock enterprise-wide production rollout.'
-    ];
+    const domainSignal = `${type.typeKey || ''} ${framework.title || ''}`.toLowerCase();
+    const isFinOpsSample = /finops|cost|billing/.test(domainSignal) && !/openai|gemini|edw|lakehouse/.test(domainSignal);
+    const isSecuritySample = /zero_trust|security|trism|ciso|dlp|siem/.test(domainSignal);
+    const isAgenticSample = /agentic|mcp|multi-agent/.test(domainSignal);
+    const isGeminiMigSample = /openai|gemini|migration/.test(domainSignal) && !/edw|lakehouse/.test(domainSignal);
+    const isLakehouseSample = /edw|lakehouse|bigquery|modernization/.test(domainSignal);
 
-    const sampleResponses = {};
+    const sampleComments = isFinOpsSample
+      ? [
+          'FinOps team flagged 42% unallocated multi-cloud and AI token spend; implementing BigQuery FOCUS 1.0 billing exports.',
+          'Dev/test Kubernetes clusters run 24/7 with low CPU utilization; evaluating GKE Autopilot scale-to-zero policies.',
+          'Commitment coverage is currently below 35%; targeting 85%+ Flexible CUDs and BigQuery Editions slot autoscaling.',
+          'Enabling Vertex AI Context Caching for 75% input token discounts and departmental showback scorecards in Looker.'
+        ]
+      : isSecuritySample
+      ? [
+          'CISO mandated blocking unmanaged shadow AI egress via Apigee AI Gateway inside VPC Service Controls (VPC-SC).',
+          'Replacing static JSON service account keys with Workload Identity Federation (OIDC) and JIT Privileged Access Management.',
+          'Deploying inline Cloud DLP surrogate PII/PHI tokenization and Cloud KMS Hardware HSM CMEK encryption.',
+          'Activating Google Model Armor inline prompt injection shields and streaming immutable WORM audit logs to Chronicle SIEM.'
+        ]
+      : isAgenticSample
+      ? [
+          'Replacing brittle custom REST tool wrappers with standardized Apigee Model Context Protocol (MCP) tool servers.',
+          'Transitioning from linear single-agent chains to hierarchical Vertex AI Agent Engine supervisor/worker orchestration.',
+          'Implementing persistent episodic and semantic memory on AlloyDB AI and Cloud Spanner Graph.',
+          'Enforcing per-agent OAuth identity propagation, OpenTelemetry trajectory tracing, and Human-in-the-Loop (HITL) approval gates.'
+        ]
+      : isGeminiMigSample
+      ? [
+          'Deploying Apigee OpenAI-to-Gemini proxy for zero-downtime dual-run routing and SDK compatibility.',
+          'Replacing brittle 512-token RAG chunking pipelines with Gemini 3.8 Pro native 2M-token long-context grounding.',
+          'Activating Vertex AI Context Caching and Provisioned Throughput SLAs to reduce input token spend by up to 75%.',
+          'Automating prompt parity regression gates in CI/CD using Vertex AI GenAI Evaluation Service golden datasets.'
+        ]
+      : isLakehouseSample
+      ? [
+          'Modernizing legacy EDW storage silos onto Google Cloud BigLake open Apache Iceberg tables.',
+          'Replacing 24-hour nightly batch ETL lags with sub-second Datastream CDC and declarative Dataform SQLX pipelines.',
+          'Enforcing unified column-level lineage and ABAC policy tags across all tables via Dataplex Universal Catalog.',
+          'Consolidating fragmented BI extracts into a governed Looker Semantic Layer accelerated by BigQuery BI Engine.'
+        ]
+      : [
+          'Standardizing multi-cloud governance, column-level lineage, and ABAC policy tags via Dataplex Universal Catalog.',
+          'Replacing manual batch ETL scripts with sub-second Datastream CDC and declarative Dataform SQLX pipelines.',
+          'Operationalizing Vertex AI Model Registry, Feature Store, and Agent Engine with inline Model Armor guardrails.',
+          'Enforcing BigQuery FOCUS 1.0 FinOps attribution, 75% Context Caching discounts, and Looker Semantic BI.'
+        ];
+
+    const sampleFinDefaults = isFinOpsSample
+      ? { spend: 4800000, fte: 45, rate: 145 }
+      : isSecuritySample
+      ? { spend: 3600000, fte: 38, rate: 160 }
+      : isAgenticSample
+      ? { spend: 4200000, fte: 52, rate: 155 }
+      : isGeminiMigSample
+      ? { spend: 2900000, fte: 34, rate: 150 }
+      : isLakehouseSample
+      ? { spend: 5400000, fte: 60, rate: 140 }
+      : { spend: 3200000, fte: 40, rate: 135 };
+
+    const sampleResponses = {
+      baseline_annual_spend_usd: sampleFinDefaults.spend,
+      engineering_fte_count: sampleFinDefaults.fte,
+      loaded_hourly_rate_usd: sampleFinDefaults.rate
+    };
 
     dimensions.forEach((dim, dIdx) => {
       const dimVariance = ((seed + dIdx * 7) % 3) - 1; // -1, 0, or 1
@@ -695,12 +749,35 @@ router.post('/types/:typeKey/sample', async (req, res) => {
       });
     });
 
-    const sampleCustomers = [
-      { name: 'Apex Health Systems', useCase: 'Clinical AI Assistant & Vertex AI Migration' },
-      { name: 'Quantum FinTech Global', useCase: 'Zero Trust Multi-Cloud & FinOps Architecture' },
-      { name: 'Nova Retail Group', useCase: 'Enterprise GenAI Customer Search & Multimodal Analytics' },
-      { name: 'ConnectPlus Telecom', useCase: 'Cloud Network AI & Cost Optimization' }
-    ];
+    const sampleCustomers = isFinOpsSample
+      ? [
+          { name: 'Quantum FinTech Global', useCase: 'Multi-Cloud FinOps & AI Token Unit Economics' },
+          { name: 'ConnectPlus Telecom', useCase: 'FOCUS 1.0 Billing Attribution & GKE Rightsizing' }
+        ]
+      : isSecuritySample
+      ? [
+          { name: 'Aegis Health & BioPharma', useCase: 'Zero-Trust AI Perimeter, Cloud DLP & Model Armor' },
+          { name: 'Sentinel Sovereign Bank', useCase: 'VPC-SC Data Exfiltration Prevention & Chronicle SOAR' }
+        ]
+      : isAgenticSample
+      ? [
+          { name: 'Meridian Global Banking', useCase: 'Regulated Multi-Agent Mesh & MCP Tool Gateway' },
+          { name: 'Vanguard Capital Markets', useCase: 'Hierarchical Vertex AI Agent Engine & HITL Governance' }
+        ]
+      : isGeminiMigSample
+      ? [
+          { name: 'Apex Health Systems', useCase: 'Enterprise OpenAI-to-Gemini 3.8 Migration & 2M Context' },
+          { name: 'Nova Retail Group', useCase: 'Legacy LLM Cutover to Vertex AI Gemini & Context Caching' }
+        ]
+      : isLakehouseSample
+      ? [
+          { name: 'Atlas Global Logistics', useCase: 'Legacy EDW to BigQuery & BigLake Open Iceberg Modernization' },
+          { name: 'omniCommerce Retail Corp', useCase: 'Real-Time Datastream CDC & Looker Semantic Lakehouse' }
+        ]
+      : [
+          { name: 'Horizon Enterprise Group', useCase: 'Unified Enterprise Data, MLOps & GenAI Platform Maturity' },
+          { name: 'Global Manufacturing Corp', useCase: 'End-to-End Cloud Data & Autonomous AI Modernization' }
+        ];
     const pickedCust = sampleCustomers[Math.floor(Math.random() * sampleCustomers.length)];
 
     const calculated = dynamicEngine.calculateScores(sampleResponses, framework);
@@ -1669,10 +1746,23 @@ router.post('/instances/:id/generate-terraform', async (req, res) => {
     const org = instance.customerName || 'Enterprise Organization';
     const slug = org.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'enterprise';
     const recs = (instance.aiReport?.prioritizedRecommendations || []).map(r => `${r.title} (${r.expectedImpact || ''})`).join('; ');
+    const domainSig = `${instance.typeKey || ''} ${instance.useCase || ''} ${instance.frameworkSnapshot?.title || ''}`.toLowerCase();
+    const isFinOps = /finops|cost|billing/.test(domainSig) && !/openai|gemini|edw|lakehouse/.test(domainSig);
+    const isSecurity = /zero_trust|security|trism|ciso|dlp|siem/.test(domainSig);
+    const isAgentic = /agentic|mcp|multi-agent/.test(domainSig);
+    const isGeminiMig = /openai|gemini|migration/.test(domainSig) && !/edw|lakehouse/.test(domainSig);
+
+    const gcpHcl = isFinOps
+      ? `terraform {\n  required_providers {\n    google = { source = "hashicorp/google", version = "~> 6.0" }\n  }\n}\n\nprovider "google" {\n  project = "${slug}-finops-hub"\n  region  = "us-central1"\n}\n\nresource "google_bigquery_dataset" "focus_billing" {\n  dataset_id  = "${slug.replace(/-/g, '_')}_focus_v1"\n  location    = "US"\n  description = "${org} FOCUS 1.0 FinOps Billing & Unit Economics Hub"\n}\n\nresource "google_container_cluster" "autopilot_rightsizing" {\n  name             = "${slug}-autopilot-prod"\n  location         = "us-central1"\n  enable_autopilot = true\n}`
+      : isSecurity
+      ? `terraform {\n  required_providers {\n    google = { source = "hashicorp/google", version = "~> 6.0" }\n  }\n}\n\nprovider "google" {\n  project = "${slug}-secops-trism"\n  region  = "us-central1"\n}\n\nresource "google_kms_key_ring" "hsm_keyring" {\n  name     = "${slug}-hsm-cmek-ring"\n  location = "us-central1"\n}\n\nresource "google_access_context_manager_service_perimeter" "zero_trust_ai" {\n  parent = "accessPolicies/default"\n  name   = "accessPolicies/default/servicePerimeters/${slug.replace(/-/g, '_')}_zero_trust"\n  title  = "${org} Zero-Trust AI & DLP Perimeter"\n  status {\n    restricted_services = ["aiplatform.googleapis.com", "dlp.googleapis.com", "cloudkms.googleapis.com"]\n  }\n}`
+      : isAgentic || isGeminiMig
+      ? `terraform {\n  required_providers {\n    google = { source = "hashicorp/google", version = "~> 6.0" }\n  }\n}\n\nprovider "google" {\n  project = "${slug}-vertex-ai"\n  region  = "us-central1"\n}\n\nresource "google_kms_key_ring" "ai_keyring" {\n  name     = "${slug}-cmek-ring"\n  location = "us-central1"\n}\n\nresource "google_vertex_ai_endpoint" "gemini_gateway" {\n  name         = "${slug}-gemini-3-8-mesh"\n  display_name = "${org} ${isAgentic ? 'Vertex Agent Engine & MCP Gateway' : 'Gemini 3.8 Enterprise Gateway'}"\n  location     = "us-central1"\n}`
+      : `terraform {\n  required_providers {\n    google = { source = "hashicorp/google", version = "~> 6.0" }\n  }\n}\n\nprovider "google" {\n  project = "${slug}-lakehouse-prod"\n  region  = "us-central1"\n}\n\nresource "google_kms_key_ring" "ai_keyring" {\n  name     = "${slug}-cmek-ring"\n  location = "us-central1"\n}\n\nresource "google_bigquery_dataset" "lakehouse" {\n  dataset_id                 = "${slug.replace(/-/g, '_')}_iceberg_gold"\n  location                   = "US"\n  delete_contents_on_destroy = false\n}\n\nresource "google_vertex_ai_endpoint" "gemini_gateway" {\n  name         = "${slug}-gemini-3-8-flash"\n  display_name = "${org} Gemini 3.8 Enterprise Gateway"\n  location     = "us-central1"\n}`;
 
     const fallbackTerraform = {
-      gcp: `terraform {\n  required_providers {\n    google = { source = "hashicorp/google", version = "~> 6.0" }\n  }\n}\n\nprovider "google" {\n  project = "${slug}-prod-ai"\n  region  = "us-central1"\n}\n\nresource "google_kms_key_ring" "ai_keyring" {\n  name     = "${slug}-cmek-ring"\n  location = "us-central1"\n}\n\nresource "google_bigquery_dataset" "lakehouse" {\n  dataset_id                 = "${slug.replace(/-/g, '_')}_iceberg_gold"\n  location                   = "US"\n  delete_contents_on_destroy = false\n}\n\nresource "google_vertex_ai_endpoint" "gemini_gateway" {\n  name         = "${slug}-gemini-3-8-flash"\n  display_name = "${org} Gemini 3.8 Enterprise Gateway"\n  location     = "us-central1"\n}`,
-      aws: `provider "aws" {\n  region = "us-east-1"\n}\n\nresource "aws_iam_openid_connect_provider" "gcp_workload_federation" {\n  url             = "https://accounts.google.com"\n  client_id_list  = ["sts.googleapis.com"]\n  thumbprint_list = ["08745487e891c19e3078c1f2a07e452950ef36f6"]\n}\n\nresource "aws_s3_bucket" "omni_federated_lake" {\n  bucket = "${slug}-biglake-omni-iceberg"\n}`,
+      gcp: gcpHcl,
+      aws: `provider "aws" {\n  region = "us-east-1"\n}\n\nresource "aws_iam_openid_connect_provider" "gcp_workload_federation" {\n  url             = "https://accounts.google.com"\n  client_id_list  = ["sts.googleapis.com"]\n  thumbprint_list = ["08745487e891c19e3078c1f2a07e452950ef36f6"]\n}\n\nresource "aws_s3_bucket" "cross_cloud_telemetry" {\n  bucket = "${slug}-governed-telemetry"\n}`,
       azure: `provider "azurerm" {\n  features {}\n}\n\nresource "azurerm_resource_group" "cross_cloud_ai" {\n  name     = "rg-${slug}-ai-federation"\n  location = "East US"\n}\n\nresource "azurerm_federated_identity_credential" "vertex_federation" {\n  name                = "fc-${slug}-vertex-bridge"\n  resource_group_name = azurerm_resource_group.cross_cloud_ai.name\n  parent_id           = azurerm_resource_group.cross_cloud_ai.id\n  audience            = ["api://AzureADTokenExchange"]\n  issuer              = "https://accounts.google.com"\n  subject             = "system:serviceaccount:${slug}:vertex-agent"\n}`,
       modelUsed: 'gemini-3.8-flash'
     };

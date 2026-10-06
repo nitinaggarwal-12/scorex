@@ -867,7 +867,7 @@ const STARTER_PRODUCTION_TEMPLATES = [
             },
             {
               "id": "rate_02",
-              "text": "How are SaaS and specialized data platform commitments (Databricks DBUs, Snowflake Credits, Vertex AI quotas) managed?",
+              "text": "How are specialized data warehouse, analytics, and Vertex AI token/compute commitments managed?",
               "guidance": "Assess multi-year pre-commit discounts, consumption draw-down forecasting, and burst rate controls.",
               "options": [
                 {
@@ -3010,12 +3010,27 @@ class CustomAssessmentRepository {
         genai_enterprise_readiness: 'Vanguard Media & Consumer AI'
       };
 
+      const domainBaselineFinancials = {
+        openai_to_gemini_enterprise_migration: { spend: 2900000, fte: 34, rate: 150, comment: 'Evaluated OpenAI GPT-4o API & Pinecone RAG footprint; targeting Vertex AI Gemini 3.8 Pro 2M context window & 75% Context Caching.' },
+        finops_cloud_cost_optimization: { spend: 4800000, fte: 45, rate: 145, comment: 'Audited multi-cloud billing exports & GKE cluster utilization; 42% untagged spend and idle dev/test clusters targeted for FOCUS 1.0 & Autopilot.' },
+        enterprise_ai_zero_trust_security: { spend: 3600000, fte: 38, rate: 160, comment: 'CISO & AI TRiSM audit verified shadow AI egress, unmasked PII in RAG chunks, and static JSON IAM keys; targeting VPC-SC, Cloud DLP & Model Armor.' },
+        agentic_ai_mesh_mcp_banking_readiness: { spend: 4200000, fte: 52, rate: 155, comment: 'Evaluated retail & wealth banking agent pilots; brittle single-agent chains and custom REST wrappers targeted for Vertex Agent Engine & MCP Gateway.' },
+        edw_lakehouse_to_bigquery_modernization: { spend: 5400000, fte: 60, rate: 140, comment: 'Assessed legacy Teradata BTEQ scripts, Informatica nightly batch ETL, and duplicate Snowflake marts; targeting BigQuery Editions, BigLake Iceberg & Datastream CDC.' },
+        enterprise_data_ai_maturity: { spend: 3200000, fte: 40, rate: 135, comment: 'Assessed 6-pillar telecom data & AI estate; manual console IAM, 24h batch ETL lag, and isolated notebooks targeted for Dataplex, BigQuery & Vertex AI.' }
+      };
+
       STARTER_PRODUCTION_TEMPLATES.forEach(tpl => {
         const instanceId = `inst_${tpl.typeKey}_demo`;
-        const framework = tpl.framework;
+        const framework = { ...tpl.framework, typeKey: tpl.typeKey };
         const dimensions = framework.dimensions || [];
-        const sampleResponses = {};
-        
+        const finMeta = domainBaselineFinancials[tpl.typeKey] || domainBaselineFinancials.enterprise_data_ai_maturity;
+        const sampleResponses = {
+          baseline_annual_spend_usd: finMeta.spend,
+          engineering_fte_count: finMeta.fte,
+          loaded_hourly_rate_usd: finMeta.rate
+        };
+        const selectedPains = [];
+
         dimensions.forEach((dim, dIdx) => {
           (dim.questions || []).forEach((q, qIdx) => {
             const score = ((dIdx + qIdx) % 3) + 2;
@@ -3024,17 +3039,21 @@ class CustomAssessmentRepository {
             sampleResponses[`${q.id}_future_state`] = Math.min(5, score + 2);
             if (q.technicalPainPoints && q.technicalPainPoints.length > 0) {
               sampleResponses[`${q.id}_technical_pain`] = [q.technicalPainPoints[0]];
+              if (!selectedPains.includes(q.technicalPainPoints[0])) {
+                selectedPains.push(q.technicalPainPoints[0]);
+              }
             }
             if (q.businessPainPoints && q.businessPainPoints.length > 0) {
               sampleResponses[`${q.id}_business_pain`] = [q.businessPainPoints[0]];
             }
-            sampleResponses[`${q.id}_comment`] = 'Production baseline verified during architectural audit.';
+            sampleResponses[`${q.id}_comment`] = finMeta.comment;
           });
         });
 
         const calculated = dynamicEngine.calculateScores(sampleResponses, framework);
         const customerName = customerNames[tpl.typeKey] || 'Enterprise Organization';
         const metadata = {
+          typeKey: tpl.typeKey,
           customerName,
           useCase: tpl.subtitle || 'Enterprise Modernization Initiative',
           responses: sampleResponses
@@ -3043,7 +3062,8 @@ class CustomAssessmentRepository {
         const aiReport = dynamicEngine._generateDeterministicReportFallback(
           framework,
           metadata,
-          calculated
+          calculated,
+          selectedPains
         );
 
         const instance = {
@@ -3070,89 +3090,56 @@ class CustomAssessmentRepository {
 
       // 6. Seed Flagship Enterprise Data & AI Maturity Assessment Demo Instance
       const flagshipId = 'inst_enterprise_data_ai_maturity_demo';
-      const flagshipFramework = {
-        typeKey: 'enterprise_data_ai_maturity',
-        title: 'Enterprise Data & AI Maturity Assessment (6 Pillars, 60 Questions)',
-        subtitle: 'Flagship Multi-Dimensional Data, MLOps, Governance & Cloud Platform Maturity',
-        dimensions: [
-          {
-            id: 'platform_governance',
-            name: 'Platform Governance & Operations',
-            description: 'Multi-workspace architecture, IAM federation, lineage catalog & operational SLAs',
-            weight: 1,
-            questions: [
-              { id: 'pg_q1', text: 'Workspace & Environment Isolation Architecture', weight: 1 },
-              { id: 'pg_q2', text: 'Automated Lineage, Cataloging & Governance Controls', weight: 1 }
-            ]
-          },
-          {
-            id: 'data_architecture',
-            name: 'Data Architecture & Management',
-            description: 'Streaming CDC ingestion, open lakehouse storage & automated data quality gates',
-            weight: 1,
-            questions: [
-              { id: 'da_q1', text: 'Medallion Lakehouse & Open Table Format Standardization', weight: 1 },
-              { id: 'da_q2', text: 'Real-Time Streaming Ingestion & Automated Quality Gates', weight: 1 }
-            ]
-          },
-          {
-            id: 'analytics_bi',
-            name: 'Analytics & Business Intelligence',
-            description: 'Serverless SQL concurrency, governed semantic layer & self-service BI democratization',
-            weight: 1,
-            questions: [
-              { id: 'ab_q1', text: 'Serverless SQL Warehouse & Sub-Second BI Concurrency', weight: 1 },
-              { id: 'ab_q2', text: 'Enterprise Semantic Layer & Certified Metric Governance', weight: 1 }
-            ]
-          },
-          {
-            id: 'ai_mlops',
-            name: 'AI, Machine Learning & MLOps',
-            description: 'Model registry, feature store, GenAI RAG pipelines & continuous evaluation',
-            weight: 1,
-            questions: [
-              { id: 'am_q1', text: 'Unified Model Registry, Feature Store & Automated Retraining', weight: 1 },
-              { id: 'am_q2', text: 'Production GenAI RAG Grounding & LLM Evaluation Harness', weight: 1 }
-            ]
-          },
-          {
-            id: 'security_compliance',
-            name: 'Security, Compliance & Privacy',
-            description: 'Row/column masking, CMEK encryption, PII tokenization & audit logging',
-            weight: 1,
-            questions: [
-              { id: 'sc_q1', text: 'Fine-Grained ABAC, Row/Column Masking & PII Tokenization', weight: 1 },
-              { id: 'sc_q2', text: 'Zero-Trust Network Perimeter, CMEK & Continuous Audit Logs', weight: 1 }
-            ]
-          },
-          {
-            id: 'cost_finops',
-            name: 'Cloud Economics & FinOps',
-            description: 'Unit economics telemetry, workload chargeback, commitments & idle autoscaling',
-            weight: 1,
-            questions: [
-              { id: 'cf_q1', text: 'Automated Chargeback Attribution & Unit Cost Telemetry', weight: 1 },
-              { id: 'cf_q2', text: 'Serverless Autoscaling, Spot/Commitment Rate Optimization', weight: 1 }
-            ]
-          }
-        ]
-      };
+      const seededFlagshipType = typesFileStore.get('enterprise_data_ai_maturity');
+      const flagshipFramework = seededFlagshipType?.framework
+        ? { ...seededFlagshipType.framework, typeKey: 'enterprise_data_ai_maturity' }
+        : {
+            typeKey: 'enterprise_data_ai_maturity',
+            title: 'Enterprise Data & AI Maturity Assessment (6 Pillars, 60 Questions)',
+            subtitle: 'Flagship Multi-Dimensional Data, MLOps, Governance & Cloud Platform Maturity',
+            dimensions: []
+          };
+      const flagshipFin = domainBaselineFinancials.enterprise_data_ai_maturity;
       const flagshipResponses = {
+        baseline_annual_spend_usd: flagshipFin.spend,
+        engineering_fte_count: flagshipFin.fte,
+        loaded_hourly_rate_usd: flagshipFin.rate,
         pg_q1: 2.5, pg_q1_current_state: 2.5, pg_q1_future_state: 4.4,
+        pg_q1_technical_pain: ['Manual Console Provisioning'], pg_q1_business_pain: ['Slow Onboarding'], pg_q1_comment: flagshipFin.comment,
         pg_q2: 2.5, pg_q2_current_state: 2.5, pg_q2_future_state: 4.2,
+        pg_q2_technical_pain: ['Siloed Metadata'], pg_q2_business_pain: ['Audit Exposure'], pg_q2_comment: flagshipFin.comment,
         da_q1: 2.8, da_q1_current_state: 2.8, da_q1_future_state: 4.5,
+        da_q1_technical_pain: ['Proprietary Storage Lock-In'], da_q1_business_pain: ['High Storage TCO'], da_q1_comment: flagshipFin.comment,
         da_q2: 2.8, da_q2_current_state: 2.8, da_q2_future_state: 4.5,
+        da_q2_technical_pain: ['24h Batch ETL Lag'], da_q2_business_pain: ['Stale Executive KPIs'], da_q2_comment: flagshipFin.comment,
         ab_q1: 3.1, ab_q1_current_state: 3.1, ab_q1_future_state: 4.6,
+        ab_q1_technical_pain: ['BI Query Queuing'], ab_q1_business_pain: ['Delayed Reporting'], ab_q1_comment: flagshipFin.comment,
         ab_q2: 3.1, ab_q2_current_state: 3.1, ab_q2_future_state: 4.6,
+        ab_q2_technical_pain: ['Conflicting Spreadsheet KPIs'], ab_q2_business_pain: ['Low Executive Trust'], ab_q2_comment: flagshipFin.comment,
         am_q1: 2.2, am_q1_current_state: 2.2, am_q1_future_state: 4.3,
+        am_q1_technical_pain: ['Isolated Notebook Silos'], am_q1_business_pain: ['80% Models Never Reach Prod'], am_q1_comment: flagshipFin.comment,
         am_q2: 2.2, am_q2_current_state: 2.2, am_q2_future_state: 4.3,
+        am_q2_technical_pain: ['Unverified Hallucinations'], am_q2_business_pain: ['Compliance & Brand Risk'], am_q2_comment: flagshipFin.comment,
         sc_q1: 3.0, sc_q1_current_state: 3.0, sc_q1_future_state: 4.7,
+        sc_q1_technical_pain: ['Coarse Table-Level ACLs'], sc_q1_business_pain: ['GDPR/HIPAA Exposure'], sc_q1_comment: flagshipFin.comment,
         sc_q2: 3.0, sc_q2_current_state: 3.0, sc_q2_future_state: 4.7,
+        sc_q2_technical_pain: ['Public Endpoint Exposure'], sc_q2_business_pain: ['Data Exfiltration Risk'], sc_q2_comment: flagshipFin.comment,
         cf_q1: 2.6, cf_q1_current_state: 2.6, cf_q1_future_state: 4.4,
-        cf_q2: 2.6, cf_q2_current_state: 2.6, cf_q2_future_state: 4.4
+        cf_q1_technical_pain: ['Untagged Shared Spend'], cf_q1_business_pain: ['Unattributed Cloud Margin Erosion'], cf_q1_comment: flagshipFin.comment,
+        cf_q2: 2.6, cf_q2_current_state: 2.6, cf_q2_future_state: 4.4,
+        cf_q2_technical_pain: ['Idle Over-Provisioned Clusters'], cf_q2_business_pain: ['Wasted Compute Budget'], cf_q2_comment: flagshipFin.comment
       };
+      const flagshipPains = [
+        'Manual Console Provisioning',
+        '24h Batch ETL Lag',
+        'BI Query Queuing',
+        'Isolated Notebook Silos',
+        'Coarse Table-Level ACLs',
+        'Untagged Shared Spend'
+      ];
       const flagshipScores = dynamicEngine.calculateScores(flagshipResponses, flagshipFramework);
       const flagshipMetadata = {
+        typeKey: 'enterprise_data_ai_maturity',
         customerName: 'ConnectPlus Telecom Global',
         useCase: 'Enterprise Data & AI Maturity Modernization',
         responses: flagshipResponses
@@ -3160,7 +3147,8 @@ class CustomAssessmentRepository {
       const flagshipReport = dynamicEngine._generateDeterministicReportFallback(
         flagshipFramework,
         flagshipMetadata,
-        flagshipScores
+        flagshipScores,
+        flagshipPains
       );
       const flagshipInstance = {
         id: flagshipId,

@@ -252,32 +252,46 @@ const IaCBlueprintCard = ({
   }, [instanceId]);
 
   // Derive auto-populated project slug
-  const orgSlug = organizationName.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 20) || 'enterprise';
-  const derivedProject = `${orgSlug}-lakehouse-prod`;
-  const derivedBucket = `${orgSlug}-data-catalog-prod`;
-
   const keyType = (framework?.typeKey || '').toLowerCase();
   const frameworkTitle = (framework?.title || '').toLowerCase();
-  const isGenAI = keyType.includes('openai') || keyType.includes('gemini') || keyType.includes('genai') || frameworkTitle.includes('genai') || frameworkTitle.includes('agent') || prioritizedActions.some(p => (p.pillarId || p.pillarName || '').toLowerCase().includes('genai'));
-  const hasSecurityPriority = keyType.includes('security') || keyType.includes('zero_trust') || frameworkTitle.includes('security') || prioritizedActions.some(p => {
-    const name = (p.pillarName || p.pillarId || '').toLowerCase();
-    return (name.includes('govern') || name.includes('secur')) && (p.gap >= 1 || p.priority === 'critical');
+  const domainText = `${keyType} ${frameworkTitle} ${prioritizedActions.map(p => `${p.pillarId || ''} ${p.pillarName || ''} ${p.dimension || ''}`).join(' ')}`.toLowerCase();
+  const isFinOps = (domainText.includes('finops') || domainText.includes('cost') || domainText.includes('billing')) && !domainText.includes('lakehouse') && !domainText.includes('openai');
+  const isSecurity = domainText.includes('zero_trust') || domainText.includes('security') || domainText.includes('trism') || domainText.includes('dlp');
+  const isAgentic = domainText.includes('agentic') || domainText.includes('mcp') || domainText.includes('multi-agent');
+  const isGenAI = isAgentic || domainText.includes('openai') || domainText.includes('gemini') || domainText.includes('genai');
+  const hasSecurityPriority = isSecurity || prioritizedActions.some(p => {
+    const name = (p.pillarName || p.pillarId || p.dimension || '').toLowerCase();
+    return (name.includes('govern') || name.includes('secur')) && (p.gap >= 1 || p.priority === 'critical' || p.priority === 'Critical');
   });
 
-  // Cloud configurations & 1-Click Launch URLs
-  const cloudConfigs = isGenAI ? {
-    gcp: {
-      name: 'Google Cloud (Vertex AI + CMEK)',
-      icon: '🔵',
-      requiredRole: 'roles/aiplatform.admin & roles/cloudkms.admin',
-      launchText: '🚀 Launch in Google Cloud Shell',
-      launchUrl: `https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/enterprise-architecture/scorex.git&cloudshell_workspace=terraform/gcp-genai&cloudshell_tutorial=README.md`,
-      terraformCode: `# ScoreX Auto-Generated Terraform: Vertex AI & Gemini Enterprise Mesh
+  // Derive auto-populated project slug & domain-specific resource names
+  const orgSlug = organizationName.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/^-|-$/g, '').slice(0, 20) || 'enterprise';
+  const derivedProject = isFinOps
+    ? `${orgSlug}-finops-hub-prod`
+    : isSecurity
+    ? `${orgSlug}-secops-trism-prod`
+    : isAgentic
+    ? `${orgSlug}-agentic-mesh-prod`
+    : isGenAI
+    ? `${orgSlug}-vertex-gemini-prod`
+    : `${orgSlug}-lakehouse-prod`;
+  const derivedBucket = isFinOps
+    ? `${orgSlug}-focus-billing-prod`
+    : isSecurity
+    ? `${orgSlug}-chronicle-worm-prod`
+    : isAgentic
+    ? `${orgSlug}-mcp-registry-prod`
+    : isGenAI
+    ? `${orgSlug}-gemini-cache-prod`
+    : `${orgSlug}-data-catalog-prod`;
+
+  const gcpTerraformCode = isFinOps
+    ? `# ScoreX Auto-Generated Terraform: Cloud FinOps, FOCUS 1.0 & GKE Autopilot
 terraform {
   required_version = ">= 1.5.0"
   backend "gcs" {
     bucket = "${derivedBucket}-tfstate"
-    prefix = "scorex/genai-state"
+    prefix = "scorex/finops-state"
   }
   required_providers {
     google = { source = "hashicorp/google", version = "~> 5.0" }
@@ -289,83 +303,92 @@ provider "google" {
   region  = "us-central1"
 }
 
-# 1. Customer-Managed KMS Key (CMEK) for LLM Ingestion & Cache
-resource "google_kms_key_ring" "ai_keyring" {
-  name     = "${orgSlug}-ai-keyring"
+# 1. BigQuery FOCUS 1.0 Multi-Cloud Billing Export Dataset
+resource "google_bigquery_dataset" "focus_billing_hub" {
+  dataset_id  = "focus_billing_export_v1"
+  location    = "US"
+  description = "Unified FOCUS 1.0 FinOps telemetry & unit economics for ${organizationName}"
+}
+
+# 2. GKE Autopilot Cluster with Scale-to-Zero & Pod Cost Allocation
+resource "google_container_cluster" "finops_autopilot" {
+  name             = "${orgSlug}-autopilot-prod"
+  location         = "us-central1"
+  enable_autopilot = true
+}
+
+# 3. Automated FinOps Budget Alert & Circuit-Breaker Policy
+resource "google_monitoring_alert_policy" "finops_budget" {
+  display_name = "ScoreX FinOps Anomaly & Idle Compute Cap"
+  combiner     = "OR"
+  conditions {
+    display_name = "Unallocated Spend or Token Burn Spike"
+    condition_threshold {
+      filter          = "metric.type=\"compute.googleapis.com/instance/uptime\""
+      comparison      = "COMPARISON_GT"
+      threshold_value = 500
+    }
+  }
+}`
+    : isSecurity
+    ? `# ScoreX Auto-Generated Terraform: Zero-Trust AI Perimeter, DLP & HSM CMEK
+terraform {
+  required_version = ">= 1.5.0"
+  backend "gcs" {
+    bucket = "${derivedBucket}-tfstate"
+    prefix = "scorex/secops-state"
+  }
+  required_providers {
+    google = { source = "hashicorp/google", version = "~> 5.0" }
+  }
+}
+
+provider "google" {
+  project = "${derivedProject}"
+  region  = "us-central1"
+}
+
+# 1. Hardware HSM Customer-Managed Encryption Key (CMEK)
+resource "google_kms_key_ring" "secops_keyring" {
+  name     = "${orgSlug}-hsm-keyring"
   location = "us-central1"
 }
 
-resource "google_kms_crypto_key" "gemini_cmek" {
-  name            = "gemini-prompt-cache-key"
-  key_ring        = google_kms_key_ring.ai_keyring.id
+resource "google_kms_crypto_key" "ai_hsm_cmek" {
+  name            = "${orgSlug}-model-armor-cmek"
+  key_ring        = google_kms_key_ring.secops_keyring.id
   rotation_period = "7776000s" # 90-day automated rotation
-}
-
-# 2. Vertex AI Endpoint with Prompt Context Caching & Zero-Trust Perimeter
-resource "google_vertex_ai_endpoint" "gemini_gateway" {
-  name         = "${orgSlug}-gemini-mesh-prod"
-  display_name = "ScoreX Gemini Enterprise Endpoint"
-  location     = "us-central1"
-  encryption_spec {
-    kms_key_name = google_kms_crypto_key.gemini_cmek.id
+  version_template {
+    algorithm        = "GOOGLE_SYMMETRIC_ENCRYPTION"
+    protection_level = "HSM"
   }
 }
 
-# 3. VPC Service Controls Ingress Perimeter
-resource "google_access_context_manager_service_perimeter" "genai_perimeter" {
+# 2. VPC Service Controls Zero-Egress AI Perimeter
+resource "google_access_context_manager_service_perimeter" "zero_trust_ai" {
   parent = "accessPolicies/default"
-  name   = "accessPolicies/default/servicePerimeters/${orgSlug.replace(/-/g, '_')}_ai_perimeter"
-  title  = "${orgSlug} GenAI Zero-Trust Perimeter"
+  name   = "accessPolicies/default/servicePerimeters/${orgSlug.replace(/-/g, '_')}_zero_trust"
+  title  = "${organizationName} Zero-Trust AI & DLP Perimeter"
   status {
     restricted_services = [
       "aiplatform.googleapis.com",
+      "dlp.googleapis.com",
       "cloudkms.googleapis.com"
     ]
   }
-}`
-    },
-    aws: {
-      name: 'Amazon Web Services (Bedrock Relay)',
-      icon: '🟠',
-      requiredRole: 'AmazonBedrockFullAccess & IAMFullAccess',
-      launchText: '🚀 Launch in AWS CloudFormation',
-      launchUrl: `https://console.aws.amazon.com/cloudformation/home#/stacks/create/review?stackName=ScoreX-GenAI-Gateway`,
-      terraformCode: `# ScoreX Auto-Generated Terraform: AWS Bedrock to Vertex Relay
-terraform {
-  required_version = ">= 1.5.0"
 }
 
-provider "aws" { region = "us-east-1" }
-
-resource "aws_kms_key" "bedrock_cmek" {
-  description             = "ScoreX CMEK Key for AI Payload Encryption"
-  deletion_window_in_days = 30
-  enable_key_rotation     = true
+# 3. Immutable Chronicle WORM Audit Log Storage
+resource "google_storage_bucket" "worm_audit_vault" {
+  name                        = "${derivedBucket}"
+  location                    = "US"
+  uniform_bucket_level_access = true
+  retention_policy {
+    is_locked        = true
+    retention_period = 31536000 # 365-day WORM retention
+  }
 }`
-    },
-    azure: {
-      name: 'Microsoft Azure (AI Relay)',
-      icon: '🔷',
-      requiredRole: 'Cognitive Services Contributor',
-      launchText: '🚀 Deploy to Azure Portal',
-      launchUrl: `https://portal.azure.com/#create/Microsoft.Template`,
-      terraformCode: `# ScoreX Auto-Generated Terraform: Azure AI Services Relay
-terraform {
-  required_version = ">= 1.5.0"
-}
-
-provider "azurerm" {
-  features {}
-}`
-    }
-  } : {
-    gcp: {
-      name: 'Google Cloud (GCP)',
-      icon: '🔵',
-      requiredRole: 'roles/editor & roles/resourcemanager.projectIamAdmin',
-      launchText: '🚀 Launch in Google Cloud Shell',
-      launchUrl: `https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/enterprise-architecture/scorex.git&cloudshell_workspace=terraform/gcp&cloudshell_tutorial=README.md`,
-      terraformCode: `# ScoreX Auto-Generated Terraform: GCP Open Lakehouse 3.0
+    : `# ScoreX Auto-Generated Terraform: GCP Open Lakehouse 3.0
 terraform {
   required_version = ">= 1.5.0"
   backend "gcs" {
@@ -424,15 +447,118 @@ resource "google_kms_crypto_key" "storage_cmek" {
   name            = "${orgSlug}-storage-key"
   key_ring        = google_kms_key_ring.lakehouse_keyring.id
   rotation_period = "7776000s" # 90-day rotation
-}` : ''}`
+}` : ''}`;
+
+  // Cloud configurations & 1-Click Launch URLs
+  const cloudConfigs = isGenAI ? {
+    gcp: {
+      name: isAgentic ? 'Google Cloud (Vertex Agent Engine + MCP)' : 'Google Cloud (Vertex AI + CMEK)',
+      icon: '🔵',
+      requiredRole: 'roles/aiplatform.admin & roles/cloudkms.admin',
+      launchText: '🚀 Launch in Google Cloud Shell',
+      launchUrl: `https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/enterprise-architecture/scorex.git&cloudshell_workspace=terraform/gcp-genai&cloudshell_tutorial=README.md`,
+      terraformCode: `# ScoreX Auto-Generated Terraform: ${isAgentic ? 'Vertex AI Agent Engine, MCP Gateway & AlloyDB Memory' : 'Vertex AI & Gemini Enterprise Mesh'}
+terraform {
+  required_version = ">= 1.5.0"
+  backend "gcs" {
+    bucket = "${derivedBucket}-tfstate"
+    prefix = "scorex/genai-state"
+  }
+  required_providers {
+    google = { source = "hashicorp/google", version = "~> 5.0" }
+  }
+}
+
+provider "google" {
+  project = "${derivedProject}"
+  region  = "us-central1"
+}
+
+# 1. Customer-Managed KMS Key (CMEK) for LLM Ingestion & Cache
+resource "google_kms_key_ring" "ai_keyring" {
+  name     = "${orgSlug}-ai-keyring"
+  location = "us-central1"
+}
+
+resource "google_kms_crypto_key" "gemini_cmek" {
+  name            = "gemini-prompt-cache-key"
+  key_ring        = google_kms_key_ring.ai_keyring.id
+  rotation_period = "7776000s" # 90-day automated rotation
+}
+
+# 2. Vertex AI Endpoint with Prompt Context Caching & Zero-Trust Perimeter
+resource "google_vertex_ai_endpoint" "gemini_gateway" {
+  name         = "${orgSlug}-gemini-mesh-prod"
+  display_name = "${organizationName} Gemini 3.8 Enterprise Endpoint"
+  location     = "us-central1"
+  encryption_spec {
+    kms_key_name = google_kms_crypto_key.gemini_cmek.id
+  }
+}
+
+# 3. VPC Service Controls Ingress Perimeter
+resource "google_access_context_manager_service_perimeter" "genai_perimeter" {
+  parent = "accessPolicies/default"
+  name   = "accessPolicies/default/servicePerimeters/${orgSlug.replace(/-/g, '_')}_ai_perimeter"
+  title  = "${organizationName} GenAI Zero-Trust Perimeter"
+  status {
+    restricted_services = [
+      "aiplatform.googleapis.com",
+      "cloudkms.googleapis.com"
+    ]
+  }
+}`
+    },
+    aws: {
+      name: 'Amazon Web Services (Bedrock Relay)',
+      icon: '🟠',
+      requiredRole: 'AmazonBedrockFullAccess & IAMFullAccess',
+      launchText: '🚀 Launch in AWS CloudFormation',
+      launchUrl: `https://console.aws.amazon.com/cloudformation/home#/stacks/create/review?stackName=ScoreX-GenAI-Gateway`,
+      terraformCode: `# ScoreX Auto-Generated Terraform: AWS Bedrock to Vertex Relay
+terraform {
+  required_version = ">= 1.5.0"
+}
+
+provider "aws" { region = "us-east-1" }
+
+resource "aws_kms_key" "bedrock_cmek" {
+  description             = "ScoreX CMEK Key for AI Payload Encryption"
+  deletion_window_in_days = 30
+  enable_key_rotation     = true
+}`
+    },
+    azure: {
+      name: 'Microsoft Azure (AI Relay)',
+      icon: '🔷',
+      requiredRole: 'Cognitive Services Contributor',
+      launchText: '🚀 Deploy to Azure Portal',
+      launchUrl: `https://portal.azure.com/#create/Microsoft.Template`,
+      terraformCode: `# ScoreX Auto-Generated Terraform: Azure AI Services Relay
+terraform {
+  required_version = ">= 1.5.0"
+}
+
+provider "azurerm" {
+  features {}
+}`
+    }
+  } : {
+    gcp: {
+      name: isFinOps ? 'Google Cloud (FOCUS FinOps + Autopilot)' : isSecurity ? 'Google Cloud (Zero-Trust VPC-SC + DLP)' : 'Google Cloud (GCP)',
+      icon: '🔵',
+      requiredRole: isSecurity ? 'roles/accesscontextmanager.admin & roles/cloudkms.admin' : 'roles/editor & roles/resourcemanager.projectIamAdmin',
+      launchText: '🚀 Launch in Google Cloud Shell',
+      launchUrl: `https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/enterprise-architecture/scorex.git&cloudshell_workspace=terraform/gcp&cloudshell_tutorial=README.md`,
+      terraformCode: gcpTerraformCode
     },
     aws: {
       name: 'Amazon Web Services (AWS)',
       icon: '🟠',
       requiredRole: 'PowerUserAccess & AWSCloudFormationFullAccess',
       launchText: '🚀 Launch in AWS CloudFormation',
-      launchUrl: `https://console.aws.amazon.com/cloudformation/home#/stacks/create/review?stackName=ScoreX-Lakehouse-Stack`,
-      terraformCode: `# ScoreX Auto-Generated Terraform: AWS Lakehouse & Glue Catalog
+      launchUrl: `https://console.aws.amazon.com/cloudformation/home#/stacks/create/review?stackName=ScoreX-Architecture-Stack`,
+      terraformCode: `# ScoreX Auto-Generated Terraform: AWS Cross-Cloud Federation & Governance
 terraform {
   required_version = ">= 1.5.0"
   backend "s3" {
@@ -444,15 +570,17 @@ terraform {
 
 provider "aws" { region = "us-east-1" }
 
-# S3 Lakehouse Bucket with prevent_destroy guardrail
-resource "aws_s3_bucket" "lakehouse_storage" {
+# Governed S3 Telemetry / Storage Bucket with prevent_destroy guardrail
+resource "aws_s3_bucket" "governed_storage" {
   bucket = "${derivedBucket}"
   lifecycle { prevent_destroy = true }
 }
 
-# Glue Data Catalog Metastore
-resource "aws_glue_catalog_database" "catalog_db" {
-  name = "scorex_unified_catalog"
+# Cross-Cloud Workload Identity OIDC Federation
+resource "aws_iam_openid_connect_provider" "gcp_workload_federation" {
+  url             = "https://accounts.google.com"
+  client_id_list  = ["sts.googleapis.com"]
+  thumbprint_list = ["08745487e891c19e3078c1f2a07e452950ef36f6"]
 }`
     },
     azure: {
@@ -461,7 +589,7 @@ resource "aws_glue_catalog_database" "catalog_db" {
       requiredRole: 'Contributor & User Access Administrator',
       launchText: '🚀 Deploy to Azure Portal',
       launchUrl: `https://portal.azure.com/#create/Microsoft.Template`,
-      terraformCode: `# ScoreX Auto-Generated Terraform: Azure ADLS Gen2 & Synapse
+      terraformCode: `# ScoreX Auto-Generated Terraform: Azure Cross-Cloud Identity & Governance
 terraform {
   required_version = ">= 1.5.0"
 }
@@ -475,8 +603,8 @@ resource "azurerm_resource_group" "rg" {
   location = "East US"
 }
 
-resource "azurerm_storage_account" "lakehouse_adls" {
-  name                     = "${orgSlug.replace(/-/g, '')}adls"
+resource "azurerm_storage_account" "governed_adls" {
+  name                     = "${orgSlug.replace(/-/g, '').slice(0, 18)}adls"
   resource_group_name      = azurerm_resource_group.rg.name
   location                 = azurerm_resource_group.rg.location
   account_tier             = "Standard"
@@ -486,12 +614,49 @@ resource "azurerm_storage_account" "lakehouse_adls" {
 }`
     },
     open_lakehouse: {
-      name: 'Open Lakehouse (Iceberg & Polaris)',
-      icon: '🧊',
-      requiredRole: 'Lakehouse Admin & Cloud Storage Admin',
-      launchText: '🚀 Deploy Open Lakehouse & Catalog',
-      launchUrl: `https://github.com/apache/polaris`,
-      terraformCode: `# ScoreX Auto-Generated Terraform: Open Lakehouse (Apache Iceberg & Apache Polaris)
+      name: isFinOps ? 'FOCUS 1.0 FinOps & OpenCost' : isSecurity ? 'Zero-Trust Policy-as-Code (OPA)' : 'Open Lakehouse (Iceberg & Polaris)',
+      icon: isFinOps ? '📊' : isSecurity ? '🛡️' : '🧊',
+      requiredRole: isFinOps ? 'Billing Account Costs Manager & BigQuery Admin' : isSecurity ? 'Organization Policy Admin & Security Admin' : 'Lakehouse Admin & Cloud Storage Admin',
+      launchText: isFinOps ? '🚀 Deploy FOCUS FinOps Stack' : isSecurity ? '🚀 Deploy Zero-Trust Guardrails' : '🚀 Deploy Open Lakehouse & Catalog',
+      launchUrl: isFinOps ? 'https://www.opencost.io/' : isSecurity ? 'https://www.openpolicyagent.org/' : 'https://github.com/apache/polaris',
+      terraformCode: isFinOps
+        ? `# ScoreX Auto-Generated Terraform: FOCUS 1.0 FinOps & OpenCost Telemetry
+terraform {
+  required_version = ">= 1.5.0"
+  required_providers {
+    google = { source = "hashicorp/google", version = "~> 5.0" }
+  }
+}
+
+# 1. BigQuery FOCUS 1.0 Unified Billing Export Dataset
+resource "google_bigquery_dataset" "focus_finops_export" {
+  dataset_id  = "focus_billing_export"
+  location    = "US"
+  description = "FOCUS 1.0 multi-cloud and AI token unit-economics dataset for ${organizationName}"
+}
+
+# 2. Automated Cloud Billing Budget & Pub/Sub Circuit-Breaker
+resource "google_pubsub_topic" "finops_budget_alerts" {
+  name = "${orgSlug}-finops-budget-alerts"
+}`
+        : isSecurity
+        ? `# ScoreX Auto-Generated Terraform: Zero-Trust Policy-as-Code & Organization Guardrails
+terraform {
+  required_version = ">= 1.5.0"
+  required_providers {
+    google = { source = "hashicorp/google", version = "~> 5.0" }
+  }
+}
+
+# 1. Disable Static Service Account Key Creation Org-Wide
+resource "google_org_policy_policy" "disable_sa_keys" {
+  name   = "projects/${derivedProject}/policies/iam.disableServiceAccountKeyCreation"
+  parent = "projects/${derivedProject}"
+  spec {
+    rules { enforce = "TRUE" }
+  }
+}`
+        : `# ScoreX Auto-Generated Terraform: Open Lakehouse (Apache Iceberg & Apache Polaris)
 terraform {
   required_version = ">= 1.5.0"
   required_providers {
@@ -528,12 +693,12 @@ resource "google_bigquery_reservation" "analytics_slots" {
   };
 
   const activeCloud = {
-    ...cloudConfigs[selectedCloud],
-    terraformCode: liveTerraform?.[selectedCloud] || cloudConfigs[selectedCloud].terraformCode
+    ...(cloudConfigs[selectedCloud] || cloudConfigs.gcp),
+    terraformCode: liveTerraform?.[selectedCloud] || (cloudConfigs[selectedCloud] || cloudConfigs.gcp).terraformCode
   };
 
   const handleCopyAdminSnippet = () => {
-    const snippet = `Hi Cloud Admin,\n\nPlease grant '${activeCloud.requiredRole}' to my user account for project '${derivedProject}' so I can execute the ScoreX Data & AI Modernization Blueprint.\n\nThank you!`;
+    const snippet = `Hi Cloud Admin,\n\nPlease grant '${activeCloud.requiredRole}' to my user account for project '${derivedProject}' so I can execute the ScoreX ${framework?.title || 'Cloud & AI Modernization'} Blueprint.\n\nThank you!`;
     navigator.clipboard.writeText(snippet);
     setCopiedSnippet(true);
     toast.success('Admin IAM Request Snippet copied to clipboard!');
@@ -551,7 +716,7 @@ resource "google_bigquery_reservation" "analytics_slots" {
     const element = document.createElement('a');
     const file = new Blob([activeCloud.terraformCode], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
-    element.download = `scorex-${selectedCloud}-lakehouse.tf`;
+    element.download = `scorex-${selectedCloud}-${orgSlug}.tf`;
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
@@ -615,16 +780,16 @@ resource "google_bigquery_reservation" "analytics_slots" {
             <span className="value">{derivedProject}</span>
           </AutoPopulatedRow>
           <AutoPopulatedRow>
-            <span className="label">Storage Catalog Bucket:</span>
+            <span className="label">{isFinOps ? 'Billing Telemetry Bucket:' : isSecurity ? 'WORM Audit & DLP Bucket:' : isGenAI ? 'Artifact & Context Bucket:' : 'Storage Catalog Bucket:'}</span>
             <span className="value">{derivedBucket}</span>
           </AutoPopulatedRow>
           <AutoPopulatedRow>
-            <span className="label">Open Lakehouse Format:</span>
-            <span className="value">Delta / Iceberg UniForm</span>
+            <span className="label">{isFinOps ? 'Billing & FinOps Standard:' : isSecurity ? 'Zero-Trust Perimeter:' : isAgentic ? 'Agent & Tool Protocol:' : isGenAI ? 'Context & Model Standard:' : 'Open Lakehouse Format:'}</span>
+            <span className="value">{isFinOps ? 'FOCUS 1.0 + Flexible CUDs' : isSecurity ? 'VPC-SC + HSM CMEK + Model Armor' : isAgentic ? 'MCP 1.0 + A2A Pub/Sub Mesh' : isGenAI ? 'Gemini 3.8 Pro • 2M Context Cache' : 'Apache Iceberg / BigLake'}</span>
           </AutoPopulatedRow>
           <AutoPopulatedRow>
-            <span className="label">FinOps Auto-Suspend:</span>
-            <span className="value">15 Minutes (Active)</span>
+            <span className="label">{isSecurity ? 'Privileged Access Policy:' : isAgentic ? 'Step-Budget Circuit Breaker:' : 'FinOps Auto-Suspend:'}</span>
+            <span className="value">{isSecurity ? 'Zero Standing Privilege (JIT PAM)' : isAgentic ? 'Max 12 Steps + HITL Gate' : isGenAI ? '75% Context Cache Discount' : '15 Minutes (Active)'}</span>
           </AutoPopulatedRow>
           <AutoPopulatedRow>
             <span className="label">State Backend:</span>
