@@ -25,11 +25,11 @@
 
 ### 🌐 Endpoints
 - **Canonical Verified BeyondCorp URL (`ramp-portal-dev` / `248990048888`, `us-west1`)**:
-  - `https://scorex-248990048888.cr.gclb.goog` (Active revision: `scorex-00005-sjf`, `scorex-app` revision: `scorex-app-00005-s2m`, Baseline revision: `scorex-00002-2v7`)
+  - `https://scorex-248990048888.cr.gclb.goog` (Active revision: `scorex-00008-87n`, `scorex-app` revision: `scorex-app-00008-f7x`, Baseline revision: `scorex-00002-2v7`)
 - **Argolis Google Cloud Run Endpoints (`nitinagga-ge-2` / `638420508320` & `nitina-ggarwal-sandbox-647724` / `887605034827`, `us-central1`)**:
   - `https://scorex-638420508320.us-central1.run.app`
   - `https://scorex-blk2as46eq-uc.a.run.app`
   - `https://scorex-app-638420508320.us-central1.run.app`
-  - `https://scorex-app-887605034827.us-central1.run.app` (Active revision: `scorex-app-00008-6md`)
+  - `https://scorex-app-887605034827.us-central1.run.app` (Active revision: `scorex-app-00011-265`)
 - **Local Runtime**: `http://localhost:5001`
 - **API Health Check**: `/api/health`
