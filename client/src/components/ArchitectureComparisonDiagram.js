@@ -338,17 +338,6 @@ const DualDiagramGrid = styled.div`
   }
 `;
 
-const TripleDiagramGrid = styled.div`
-  display: grid;
-  grid-template-columns: ${props => props.$stacked ? '1fr' : 'repeat(3, minmax(0, 1fr))'};
-  gap: 18px;
-  margin-bottom: 22px;
-
-  @media (max-width: 1340px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
 const ComparisonGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;

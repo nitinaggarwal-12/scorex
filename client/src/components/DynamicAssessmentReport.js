@@ -587,7 +587,7 @@ const DynamicAssessmentReport = () => {
   const [isPasscodeRequired, setIsPasscodeRequired] = useState(false);
   const [enteredPasscode, setEnteredPasscode] = useState('');
   const [activeExecutiveTab, setActiveExecutiveTab] = useState('overview');
-  const [theme, setTheme] = useState('light');
+  const theme = 'light';
 
   useEffect(() => {
     loadReport();

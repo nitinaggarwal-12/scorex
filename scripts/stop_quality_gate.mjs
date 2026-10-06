@@ -57,4 +57,12 @@ if (fs.existsSync(framesBase)) {
   }
 }
 
-console.log('✅ [stop_quality_gate] ALL HARNESS INVARIANTS PASSED (0 legacy components, 58/58 unique frame MD5s, 5-Tier Model Stack locked).');
+// 4. Enforce 5-Point Frontend UI/UX Integrity Gate (0 hover toolbar, explicit Edit/Clone/Delete, uniform light theme, 0 audio UI, 1 unified 3-Zone diagram)
+try {
+  execSync('node --test tests/security/uiIntegrityGate.test.js', { stdio: 'inherit', cwd: ROOT });
+} catch (_) {
+  console.error('❌ [stop_quality_gate] Frontend UI/UX Integrity Gate failed.');
+  process.exit(1);
+}
+
+console.log('✅ [stop_quality_gate] ALL HARNESS INVARIANTS PASSED (0 legacy components, 58/58 unique frame MD5s, 5/5 UI/UX Integrity Gates, 5-Tier Model Stack locked).');
