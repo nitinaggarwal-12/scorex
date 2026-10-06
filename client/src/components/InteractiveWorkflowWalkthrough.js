@@ -164,7 +164,7 @@ const PlayerCard = styled.div`
     z-index: 99999;
     border-radius: 0;
     border: none;
-    background: #0f172a;
+    background: #f8fafc;
   `}
 `;
 
@@ -179,16 +179,16 @@ const PlayerTopBar = styled.div`
   gap: 10px;
 
   ${props => props.$isFullScreen && `
-    background: #1e293b;
-    border-bottom: 1px solid #334155;
-    color: #f8fafc;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    color: #0f172a;
   `}
 `;
 
 const PlayerTitle = styled.h3`
   font-size: 1.05rem;
   font-weight: 800;
-  color: ${props => props.$isFullScreen ? '#f8fafc' : '#0f172a'};
+  color: #0f172a;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -197,7 +197,7 @@ const PlayerTitle = styled.h3`
 
 const ScreenViewport = styled.div`
   width: 100%;
-  background: #0f172a;
+  background: #f1f5f9;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -225,10 +225,10 @@ const StepOverlayBadge = styled.div`
   position: absolute;
   top: 14px;
   left: 14px;
-  background: rgba(15, 23, 42, 0.88);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
   padding: 6px 14px;
   border-radius: 9999px;
   font-size: 0.82rem;
@@ -237,7 +237,7 @@ const StepOverlayBadge = styled.div`
   align-items: center;
   gap: 8px;
   z-index: 10;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
 `;
 
 const ActionHotspotOverlay = styled.div`
@@ -245,18 +245,18 @@ const ActionHotspotOverlay = styled.div`
   bottom: 14px;
   left: 14px;
   right: 14px;
-  background: rgba(15, 23, 42, 0.92);
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(10px);
-  border: 1.5px solid rgba(99, 102, 241, 0.55);
+  border: 1.5px solid #a5b4fc;
   border-radius: 12px;
   padding: 10px 16px;
-  color: #ffffff;
+  color: #0f172a;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   z-index: 10;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14);
 
   @media (max-width: 640px) {
     flex-direction: column;
@@ -267,8 +267,8 @@ const ActionHotspotOverlay = styled.div`
 
 const ControlsBar = styled.div`
   padding: 12px 18px;
-  background: ${props => props.$isFullScreen ? '#1e293b' : '#ffffff'};
-  border-top: 1px solid ${props => props.$isFullScreen ? '#334155' : '#e2e8f0'};
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -277,7 +277,7 @@ const ControlsBar = styled.div`
 const TimelineScrubber = styled.div`
   width: 100%;
   height: 6px;
-  background: ${props => props.$isFullScreen ? '#334155' : '#e2e8f0'};
+  background: #e2e8f0;
   border-radius: 9999px;
   cursor: pointer;
   position: relative;
@@ -326,9 +326,9 @@ const MainButtons = styled.div`
 `;
 
 const IconButton = styled.button`
-  background: ${props => props.$active ? '#6366f1' : props.$dark ? '#334155' : '#f1f5f9'};
-  color: ${props => props.$active ? '#ffffff' : props.$dark ? '#f8fafc' : '#0f172a'};
-  border: 1px solid ${props => props.$active ? '#6366f1' : props.$dark ? '#475569' : '#cbd5e1'};
+  background: ${props => props.$active ? '#6366f1' : '#f1f5f9'};
+  color: ${props => props.$active ? '#ffffff' : '#0f172a'};
+  border: 1px solid ${props => props.$active ? '#6366f1' : '#cbd5e1'};
   border-radius: 10px;
   padding: 0 12px;
   height: 36px;
@@ -372,15 +372,15 @@ const SpeedSelector = styled.div`
   display: flex;
   align-items: center;
   gap: 4px;
-  background: ${props => props.$dark ? '#334155' : '#f1f5f9'};
+  background: #f1f5f9;
   padding: 3px;
   border-radius: 8px;
-  border: 1px solid ${props => props.$dark ? '#475569' : '#e2e8f0'};
+  border: 1px solid #e2e8f0;
 `;
 
 const SpeedPill = styled.button`
   background: ${props => props.$active ? '#6366f1' : 'transparent'};
-  color: ${props => props.$active ? '#ffffff' : props.$dark ? '#cbd5e1' : '#475569'};
+  color: ${props => props.$active ? '#ffffff' : '#475569'};
   border: none;
   border-radius: 6px;
   padding: 4px 8px;

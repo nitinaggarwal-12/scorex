@@ -316,8 +316,9 @@ const StyledTable = styled.table`
   font-size: 0.82rem;
 
   th {
-    background: #0f172a;
-    color: #ffffff;
+    background: #f1f5f9;
+    color: #334155;
+    border-bottom: 2px solid #cbd5e1;
     font-weight: 700;
     text-align: left;
     padding: 11px 14px;

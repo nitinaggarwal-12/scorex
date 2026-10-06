@@ -514,12 +514,12 @@ class DiagramErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return (
         <div style={{
-          background: 'rgba(15, 23, 42, 0.95)',
-          border: '1px solid #ef4444',
+          background: '#fff1f2',
+          border: '1px solid #fecaca',
           borderRadius: '12px',
           padding: '32px',
           textAlign: 'center',
-          color: '#f8fafc',
+          color: '#881337',
           minHeight: '280px',
           display: 'flex',
           flexDirection: 'column',
@@ -528,10 +528,10 @@ class DiagramErrorBoundary extends React.Component {
           gap: '16px'
         }}>
           <div style={{ fontSize: '2rem' }}>⚠️</div>
-          <div style={{ fontWeight: 700, fontSize: '1.1rem', color: '#fca5a5' }}>
+          <div style={{ fontWeight: 700, fontSize: '1.1rem', color: '#be123c' }}>
             Architecture Diagram Rendering Notice
           </div>
-          <p style={{ fontSize: '0.85rem', color: '#94a3b8', maxWidth: '480px', margin: 0 }}>
+          <p style={{ fontSize: '0.85rem', color: '#475569', maxWidth: '480px', margin: 0 }}>
             The graph canvas encountered a parsing anomaly. You can trigger an instant AI auto-heal regeneration with Nano Banana 2 (gemini-3.1-flash-image-preview).
           </p>
           <button
@@ -1941,8 +1941,8 @@ const ArchitectureComparisonDiagram = ({
                   padding: '12px',
                   borderRadius: '8px',
                   border: '1.5px solid #cbd5e1',
-                  background: '#0f172a',
-                  color: '#f8fafc',
+                  background: '#f8fafc',
+                  color: '#0f172a',
                   boxSizing: 'border-box',
                   resize: 'vertical',
                   lineHeight: '1.4'

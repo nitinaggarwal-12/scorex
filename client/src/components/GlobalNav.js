@@ -69,7 +69,7 @@ const LogoIcon = styled.div`
   width: 30px;
   height: 30px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #0f172a 0%, #312e81 100%);
+  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
   border: 1px solid rgba(99, 102, 241, 0.35);
   display: flex;
   align-items: center;
@@ -77,7 +77,7 @@ const LogoIcon = styled.div`
   color: #ffffff;
   font-weight: 900;
   font-size: 0.9rem;
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.18);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.2);
 `;
 
 const LogoText = styled.span`
@@ -247,9 +247,9 @@ const SecondaryCTAButton = styled.button`
   display: flex;
   align-items: center;
   gap: 7px;
-  background: #0f172a;
+  background: #2563eb;
   color: #ffffff;
-  border: 1px solid #1e293b;
+  border: 1px solid #1d4ed8;
   outline: none;
   padding: 7px 14px;
   border-radius: 9px;
@@ -258,12 +258,12 @@ const SecondaryCTAButton = styled.button`
   cursor: pointer;
   transition: all 0.18s ease;
   white-space: nowrap;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 1px 2px rgba(37, 99, 235, 0.15);
 
   &:hover {
-    background: #1e293b;
+    background: #1d4ed8;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
   }
 
   &:active {
@@ -279,7 +279,7 @@ const CTAButton = styled.button`
   display: flex;
   align-items: center;
   gap: 6px;
-  background: #0f172a;
+  background: #2563eb;
   color: white;
   border: none;
   outline: none;
@@ -292,7 +292,7 @@ const CTAButton = styled.button`
   white-space: nowrap;
 
   &:hover {
-    background: #1e293b;
+    background: #1d4ed8;
   }
 
   &:focus {

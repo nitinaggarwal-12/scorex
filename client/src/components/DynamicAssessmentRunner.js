@@ -60,31 +60,13 @@ const PrefillButton = styled.button`
 
 const Container = styled.div`
   min-height: 100vh;
-  background: ${props => props.$dark
-    ? 'linear-gradient(135deg, #0b0f19 0%, #111827 50%, #1e293b 100%)'
-    : 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)'};
-  color: ${props => props.$dark ? '#f8fafc' : '#1e293b'};
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  color: #1e293b;
   display: flex;
   overflow: hidden;
   padding-top: 68px; /* Fixed GlobalNav offset */
   position: relative;
   transition: background 0.25s ease, color 0.25s ease;
-
-  ${props => props.$dark && `
-    aside, main > div > div, main > div:last-child {
-      background-color: #0f172a;
-      border-color: #1e293b;
-      color: #f8fafc;
-    }
-    h1, h2, h3 {
-      color: #f8fafc;
-    }
-    textarea, input[type="text"] {
-      background: #1e293b;
-      border-color: #334155;
-      color: #f8fafc;
-    }
-  `}
 `;
 
 /* =========================================================
@@ -2023,48 +2005,48 @@ const DynamicAssessmentRunner = () => {
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
               style={{
-                background: '#1e293b',
-                border: '1px solid rgba(255,255,255,0.15)',
+                background: '#ffffff',
+                border: '1px solid #e2e8f0',
                 borderRadius: '20px',
                 padding: '28px 32px',
                 maxWidth: '480px',
                 width: '90%',
-                boxShadow: '0 25px 50px rgba(0,0,0,0.5)',
-                color: '#ffffff'
+                boxShadow: '0 25px 50px rgba(15, 23, 42, 0.16)',
+                color: '#0f172a'
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', color: '#0f172a' }}>
                   ⌨️ Keyboard Shortcuts
                 </h3>
                 <button
                   onClick={() => setShowShortcutsModal(false)}
-                  style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '1.2rem', padding: 0 }}
+                  style={{ background: 'transparent', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: '1.2rem', padding: 0 }}
                 >
                   <FiX />
                 </button>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.9rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '8px' }}>
-                  <span style={{ color: '#cbd5e1' }}>Select Current State</span>
-                  <kbd style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', padding: '3px 8px', fontWeight: 700, color: '#38bdf8' }}>1 - 5</kbd>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: '8px' }}>
+                  <span style={{ color: '#475569' }}>Select Current State</span>
+                  <kbd style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '3px 8px', fontWeight: 700, color: '#0284c7' }}>1 - 5</kbd>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '8px' }}>
-                  <span style={{ color: '#cbd5e1' }}>Select Future Vision</span>
-                  <kbd style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', padding: '3px 8px', fontWeight: 700, color: '#a855f7' }}>Shift + 1 - 5</kbd>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: '8px' }}>
+                  <span style={{ color: '#475569' }}>Select Future Vision</span>
+                  <kbd style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '3px 8px', fontWeight: 700, color: '#7c3aed' }}>Shift + 1 - 5</kbd>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '8px' }}>
-                  <span style={{ color: '#cbd5e1' }}>Next Question</span>
-                  <kbd style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', padding: '3px 8px', fontWeight: 700, color: '#34d399' }}>→ or J</kbd>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: '8px' }}>
+                  <span style={{ color: '#475569' }}>Next Question</span>
+                  <kbd style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '3px 8px', fontWeight: 700, color: '#059669' }}>→ or J</kbd>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '8px' }}>
-                  <span style={{ color: '#cbd5e1' }}>Previous Question</span>
-                  <kbd style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', padding: '3px 8px', fontWeight: 700, color: '#f59e0b' }}>← or K</kbd>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: '8px' }}>
+                  <span style={{ color: '#475569' }}>Previous Question</span>
+                  <kbd style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '3px 8px', fontWeight: 700, color: '#d97706' }}>← or K</kbd>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#cbd5e1' }}>Toggle this Help Modal</span>
-                  <kbd style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', padding: '3px 8px', fontWeight: 700, color: '#f8fafc' }}>?</kbd>
+                  <span style={{ color: '#475569' }}>Toggle this Help Modal</span>
+                  <kbd style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '3px 8px', fontWeight: 700, color: '#334155' }}>?</kbd>
                 </div>
               </div>
             </motion.div>

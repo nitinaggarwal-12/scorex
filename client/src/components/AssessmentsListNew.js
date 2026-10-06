@@ -585,16 +585,16 @@ const FloatingBatchBar = styled(motion.div)`
   bottom: 28px;
   left: 50%;
   transform: translateX(-50%);
-  background: #0f172a;
-  color: white;
+  background: #ffffff;
+  color: #0f172a;
   border-radius: 16px;
   padding: 12px 24px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.16);
   display: flex;
   align-items: center;
   gap: 16px;
   z-index: 1000;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid #cbd5e1;
 
   @media (max-width: 768px) {
     width: 92%;

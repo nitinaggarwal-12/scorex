@@ -2,7 +2,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiEdit, FiTrash2, FiPlus, FiChevronDown, FiChevronUp, FiArrowUp, FiArrowDown, FiX, FiChevronLeft, FiChevronRight, FiPlay, FiPrinter } from 'react-icons/fi';
+import { FiEdit, FiCopy, FiTrash2, FiPlus, FiChevronDown, FiChevronUp, FiArrowUp, FiArrowDown, FiX, FiChevronLeft, FiChevronRight, FiPlay, FiPrinter } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -195,7 +195,7 @@ const SlideshowOverlay = styled(motion.div)`
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(15, 23, 42, 0.98);
+  background: rgba(248, 250, 252, 0.98);
   z-index: 10000;
   display: flex;
   align-items: center;
@@ -207,11 +207,12 @@ const SlideCounter = styled.div`
   position: absolute;
   bottom: 32px;
   right: 32px;
-  color: white;
+  color: #0f172a;
   font-size: 18px;
   font-weight: 600;
   padding: 12px 24px;
-  background: rgba(255, 255, 255, 0.1);
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
   z-index: 10;
   opacity: 0;
@@ -419,7 +420,8 @@ const SlideNavigation = styled.div`
   left: 0;
   right: 0;
   height: 80px;
-  background: rgba(15, 23, 42, 0.95);
+  background: #ffffff;
+  border-top: 1px solid #cbd5e1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1344,12 +1346,13 @@ const EngagementTableRow = styled.div`
 `;
 
 const EngagementTableHeader = styled(EngagementTableRow)`
-  background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
-  color: white;
+  background: #f1f5f9;
+  color: #334155;
   font-weight: 700;
+  border-bottom: 2px solid #cbd5e1;
 
   &:hover {
-    background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+    background: #f1f5f9;
   }
 `;
 
@@ -1363,7 +1366,7 @@ const EngagementTableCell = styled.div`
   position: relative;
 
   ${EngagementTableHeader} & {
-    color: white;
+    color: #0f172a;
     font-weight: 700;
   }
 
@@ -1371,7 +1374,7 @@ const EngagementTableCell = styled.div`
     border-right: 1px solid #e5e7eb;
 
     ${EngagementTableHeader} & {
-      border-right-color: rgba(255, 255, 255, 0.2);
+      border-right-color: #cbd5e1;
     }
   }
 
@@ -3239,6 +3242,17 @@ Transform: Fully governed multi-domain Lakehouse with automation.`;
     setModalOpen(true);
   };
 
+  const handleClone = (type, item) => {
+    const cloneId = `${item.id || type}-clone-${Date.now().toString(36)}`;
+    if (type === 'objective') {
+      setObjectives((prev) => [
+        ...prev,
+        { ...item, id: cloneId, title: `${item.title} (Clone)` }
+      ]);
+      toast.success(`Cloned "${item.title}"`);
+    }
+  };
+
   const handleDelete = (type, itemId) => {
     console.log('Delete button clicked:', type, itemId);
     if (!window.confirm('Are you sure you want to delete this item?')) return;
@@ -4263,12 +4277,16 @@ Transform: Fully governed multi-domain Lakehouse with automation.`;
                     {objective.title}
                   </CardTitle>
                   <CardActions>
-                    <IconButton onClick={() => handleEdit('objective', objective)}>
+                    <IconButton onClick={() => handleEdit('objective', objective)} title="Edit">
                       <FiEdit size={16} />
+                    </IconButton>
+                    <IconButton onClick={() => handleClone('objective', objective)} title="Clone">
+                      <FiCopy size={16} />
                     </IconButton>
                     <IconButton 
                       $variant="delete" 
                       onClick={() => handleDelete('objective', objective.id)}
+                      title="Delete"
                     >
                       <FiTrash2 size={16} />
                     </IconButton>

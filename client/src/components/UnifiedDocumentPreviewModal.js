@@ -30,11 +30,11 @@ const FullscreenOverlay = styled(motion.div)`
   left: 0;
   right: 0;
   bottom: 0;
-  background: #090d16;
+  background: #f8fafc;
   z-index: 10000;
   display: flex;
   flex-direction: column;
-  color: #f8fafc;
+  color: #0f172a;
   overflow: hidden;
 `;
 
@@ -43,9 +43,9 @@ const TopDeckBar = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 12px 28px;
-  background: rgba(15, 23, 42, 0.9);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(16px);
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
   gap: 16px;
   flex-wrap: wrap;
 `;
@@ -54,15 +54,15 @@ const DocTabsContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
-  background: rgba(30, 41, 59, 0.7);
+  background: #f1f5f9;
   padding: 4px;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid #e2e8f0;
 `;
 
 const DocTab = styled.button`
   background: ${props => props.$active ? props.$accentColor || '#3b82f6' : 'transparent'};
-  color: ${props => props.$active ? '#ffffff' : '#94a3b8'};
+  color: ${props => props.$active ? '#ffffff' : '#475569'};
   border: none;
   border-radius: 8px;
   padding: 6px 14px;
@@ -75,8 +75,8 @@ const DocTab = styled.button`
   transition: all 0.2s ease;
 
   &:hover {
-    color: #ffffff;
-    background: ${props => props.$active ? props.$accentColor || '#3b82f6' : 'rgba(255, 255, 255, 0.08)'};
+    color: ${props => props.$active ? '#ffffff' : '#0f172a'};
+    background: ${props => props.$active ? props.$accentColor || '#3b82f6' : '#e2e8f0'};
   }
 `;
 
@@ -95,10 +95,10 @@ const PreviewBody = styled.div`
 `;
 
 const SlideCanvas = styled.div`
-  background: linear-gradient(135deg, #090e1a 0%, #0f172a 100%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 20px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
   width: 100%;
   min-height: calc(100vh - 160px);
   padding: 36px 48px;
@@ -121,7 +121,7 @@ const SlideHeader = styled.div`
   align-items: flex-start;
   margin-bottom: 20px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid #e2e8f0;
 `;
 
 const SlideFooter = styled.div`
@@ -130,7 +130,7 @@ const SlideFooter = styled.div`
   align-items: center;
   margin-top: 20px;
   padding-top: 14px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid #e2e8f0;
   font-size: 0.76rem;
   color: #64748b;
 `;
@@ -163,17 +163,17 @@ const SlideThumbSidebar = styled.div`
 `;
 
 const SlideThumbItem = styled.div`
-  background: ${props => props.$active ? 'rgba(59, 130, 246, 0.18)' : 'rgba(15, 23, 42, 0.7)'};
-  border: ${props => props.$active ? '2px solid #3b82f6' : '1px solid rgba(255, 255, 255, 0.1)'};
+  background: ${props => props.$active ? '#eff6ff' : '#ffffff'};
+  border: ${props => props.$active ? '2px solid #2563eb' : '1px solid #e2e8f0'};
   border-radius: 12px;
   padding: 10px 14px;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: ${props => props.$active ? '0 4px 14px rgba(59, 130, 246, 0.3)' : 'none'};
+  box-shadow: ${props => props.$active ? '0 4px 14px rgba(37, 99, 235, 0.14)' : 'none'};
 
   &:hover {
-    background: ${props => props.$active ? 'rgba(59, 130, 246, 0.22)' : 'rgba(30, 41, 59, 0.8)'};
-    border-color: ${props => props.$active ? '#60a5fa' : 'rgba(255, 255, 255, 0.2)'};
+    background: ${props => props.$active ? '#eff6ff' : '#f8fafc'};
+    border-color: ${props => props.$active ? '#2563eb' : '#cbd5e1'};
   }
 
   @media (max-width: 900px) {
@@ -212,9 +212,9 @@ const CloudButton = styled.button`
 `;
 
 const ActionButton = styled.button`
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #ffffff;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: #334155;
   border-radius: 10px;
   padding: 7px 14px;
   cursor: pointer;
@@ -226,15 +226,17 @@ const ActionButton = styled.button`
   transition: all 0.2s ease;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: #f1f5f9;
+    border-color: #94a3b8;
+    color: #0f172a;
   }
 `;
 
 const EditableInput = styled.input`
-  background: rgba(56, 189, 248, 0.08);
-  border: 1.5px dashed rgba(56, 189, 248, 0.5);
+  background: #eff6ff;
+  border: 1.5px dashed #3b82f6;
   border-radius: 8px;
-  color: #ffffff;
+  color: #0f172a;
   padding: 6px 12px;
   font-family: inherit;
   font-size: ${props => props.$fontSize || '1rem'};
@@ -245,17 +247,17 @@ const EditableInput = styled.input`
   transition: all 0.2s ease;
 
   &:focus {
-    background: rgba(56, 189, 248, 0.15);
-    border-color: #38bdf8;
-    box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+    background: #ffffff;
+    border-color: #2563eb;
+    box-shadow: 0 0 12px rgba(37, 99, 235, 0.2);
   }
 `;
 
 const EditableTextArea = styled.textarea`
-  background: rgba(56, 189, 248, 0.08);
-  border: 1.5px dashed rgba(56, 189, 248, 0.5);
+  background: #eff6ff;
+  border: 1.5px dashed #3b82f6;
   border-radius: 8px;
-  color: #cbd5e1;
+  color: #1e293b;
   padding: 8px 12px;
   font-family: inherit;
   font-size: ${props => props.$fontSize || '0.95rem'};
@@ -268,15 +270,15 @@ const EditableTextArea = styled.textarea`
   transition: all 0.2s ease;
 
   &:focus {
-    background: rgba(56, 189, 248, 0.15);
-    border-color: #38bdf8;
-    box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+    background: #ffffff;
+    border-color: #2563eb;
+    box-shadow: 0 0 12px rgba(37, 99, 235, 0.2);
   }
 `;
 
 const SpeakerNotesPane = styled.div`
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 14px;
   padding: 14px 20px;
   margin-top: 16px;
@@ -285,6 +287,7 @@ const SpeakerNotesPane = styled.div`
   gap: 8px;
   width: 100%;
   box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
 `;
 
 const SheetTable = styled.table`
@@ -295,17 +298,18 @@ const SheetTable = styled.table`
   color: #0f172a;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
 
   th {
-    background: #0f172a;
-    color: #ffffff;
+    background: #f1f5f9;
+    color: #334155;
     padding: 12px 16px;
     text-align: left;
     font-weight: 700;
     font-size: 0.82rem;
     letter-spacing: 0.03em;
-    border-bottom: 2px solid #1e293b;
+    border-bottom: 2px solid #cbd5e1;
   }
 
   td {
@@ -651,14 +655,14 @@ export const UnifiedDocumentPreviewModal = ({
             </div>
             <div style={{ display: "flex", flexDirection: "column" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <span style={{ fontWeight: 800, fontSize: "0.95rem", color: "#f8fafc" }}>
+                <span style={{ fontWeight: 800, fontSize: "0.95rem", color: "#0f172a" }}>
                   {currentConfig.name}
                 </span>
                 <span style={{ 
                   fontSize: "0.68rem", 
-                  background: "rgba(255, 255, 255, 0.1)", 
-                  color: "#cbd5e1", 
-                  border: "1px solid rgba(255, 255, 255, 0.2)", 
+                  background: "#f1f5f9", 
+                  color: "#475569", 
+                  border: "1px solid #cbd5e1", 
                   padding: "1px 6px", 
                   borderRadius: "4px", 
                   fontWeight: 700 
@@ -666,7 +670,7 @@ export const UnifiedDocumentPreviewModal = ({
                   {currentConfig.badge}
                 </span>
               </div>
-              <span style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
+              <span style={{ fontSize: "0.75rem", color: "#64748b" }}>
                 {framework?.title || 'Architecture Advisory'} • Live In-Browser Preview & Cloud Bridge
               </span>
             </div>
@@ -731,11 +735,11 @@ export const UnifiedDocumentPreviewModal = ({
                   }
                 }}
                 style={{
-                  background: isEditMode ? 'linear-gradient(135deg, #10b981, #059669)' : 'rgba(99, 102, 241, 0.2)',
-                  borderColor: isEditMode ? '#34d399' : 'rgba(165, 180, 252, 0.4)',
-                  color: '#ffffff',
+                  background: isEditMode ? 'linear-gradient(135deg, #10b981, #059669)' : '#eef2ff',
+                  borderColor: isEditMode ? '#34d399' : '#c7d2fe',
+                  color: isEditMode ? '#ffffff' : '#4338ca',
                   fontWeight: 800,
-                  boxShadow: isEditMode ? '0 0 14px rgba(16, 185, 129, 0.4)' : 'none'
+                  boxShadow: isEditMode ? '0 0 14px rgba(16, 185, 129, 0.3)' : 'none'
                 }}
                 title="Edit slide text, metrics, initiatives, and speaker notes directly inside the browser"
               >
@@ -764,7 +768,7 @@ export const UnifiedDocumentPreviewModal = ({
 
             <ActionButton
               onClick={onClose}
-              style={{ background: "rgba(239, 68, 68, 0.15)", borderColor: "rgba(239, 68, 68, 0.3)", color: "#f87171" }}
+              style={{ background: "#fef2f2", borderColor: "#fecaca", color: "#dc2626" }}
               title="Close Preview"
             >
               <FiX size={16} />
@@ -780,11 +784,11 @@ export const UnifiedDocumentPreviewModal = ({
               {/* Left Slide Thumbnail Sidebar (Gmail / Drive style) */}
               <SlideThumbSidebar>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "2px 6px 8px" }}>
-                  <span style={{ fontSize: "0.75rem", color: "#94a3b8", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                  <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.06em" }}>
                     Slides ({SLIDES_META.length})
                   </span>
                   {isEditMode && (
-                    <span style={{ fontSize: "0.68rem", background: "rgba(16, 185, 129, 0.2)", color: "#34d399", border: "1px solid rgba(52, 211, 153, 0.3)", padding: "1px 6px", borderRadius: "4px", fontWeight: 700 }}>
+                    <span style={{ fontSize: "0.68rem", background: "#ecfdf5", color: "#059669", border: "1px solid #a7f3d0", padding: "1px 6px", borderRadius: "4px", fontWeight: 700 }}>
                       EDITING
                     </span>
                   )}
@@ -796,15 +800,15 @@ export const UnifiedDocumentPreviewModal = ({
                     onClick={() => setCurrentSlide(idx)}
                   >
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "4px" }}>
-                      <span style={{ fontSize: "0.68rem", background: currentSlide === idx ? "#3b82f6" : "rgba(255,255,255,0.1)", color: "#fff", padding: "1px 6px", borderRadius: "4px", fontWeight: 800 }}>
+                      <span style={{ fontSize: "0.68rem", background: currentSlide === idx ? "#2563eb" : "#f1f5f9", color: currentSlide === idx ? "#fff" : "#475569", padding: "1px 6px", borderRadius: "4px", fontWeight: 800 }}>
                         Slide {slide.num}
                       </span>
                       <span style={{ fontSize: "0.95rem" }}>{slide.icon}</span>
                     </div>
-                    <div style={{ fontSize: "0.82rem", fontWeight: 700, color: currentSlide === idx ? "#ffffff" : "#cbd5e1", lineHeight: 1.3 }}>
+                    <div style={{ fontSize: "0.82rem", fontWeight: 700, color: currentSlide === idx ? "#1d4ed8" : "#0f172a", lineHeight: 1.3 }}>
                       {slide.title}
                     </div>
-                    <div style={{ fontSize: "0.7rem", color: "#94a3b8", marginTop: "2px" }}>
+                    <div style={{ fontSize: "0.7rem", color: "#64748b", marginTop: "2px" }}>
                       {slide.subtitle}
                     </div>
                   </SlideThumbItem>
@@ -814,16 +818,16 @@ export const UnifiedDocumentPreviewModal = ({
               {/* Main Presentation Stage */}
               <SlideMainStage>
                 {/* Slide Navigation Top Bar */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(30, 41, 59, 0.7)", padding: "10px 20px", borderRadius: "14px", border: "1px solid rgba(255, 255, 255, 0.1)", marginBottom: "16px", width: "100%", boxSizing: "border-box", flexWrap: "wrap", gap: "10px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#ffffff", padding: "10px 20px", borderRadius: "14px", border: "1px solid #e2e8f0", marginBottom: "16px", width: "100%", boxSizing: "border-box", flexWrap: "wrap", gap: "10px", boxShadow: "0 2px 6px rgba(15, 23, 42, 0.03)" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <span style={{ fontSize: "0.92rem", color: "#f8fafc", fontWeight: 800 }}>
+                    <span style={{ fontSize: "0.92rem", color: "#0f172a", fontWeight: 800 }}>
                       {SLIDES_META[currentSlide]?.icon} {SLIDES_META[currentSlide]?.title}
                     </span>
-                    <span style={{ fontSize: "0.75rem", background: "rgba(99, 102, 241, 0.25)", color: "#a5b4fc", border: "1px solid rgba(165, 180, 252, 0.4)", padding: "2px 8px", borderRadius: "6px", fontWeight: 700 }}>
+                    <span style={{ fontSize: "0.75rem", background: "#eef2ff", color: "#4338ca", border: "1px solid #c7d2fe", padding: "2px 8px", borderRadius: "6px", fontWeight: 700 }}>
                       Slide {currentSlide + 1} of {SLIDES_META.length}
                     </span>
                     {isEditMode && (
-                      <span style={{ fontSize: "0.72rem", background: "rgba(56, 189, 248, 0.15)", color: "#38bdf8", border: "1px solid rgba(56, 189, 248, 0.3)", padding: "2px 8px", borderRadius: "6px", fontWeight: 700 }}>
+                      <span style={{ fontSize: "0.72rem", background: "#f0f9ff", color: "#0284c7", border: "1px solid #bae6fd", padding: "2px 8px", borderRadius: "6px", fontWeight: 700 }}>
                         🎨 Live Inline Studio
                       </span>
                     )}
@@ -833,14 +837,15 @@ export const UnifiedDocumentPreviewModal = ({
                     <ActionButton
                       onClick={() => setIsEditMode(prev => !prev)}
                       style={{
-                        background: isEditMode ? '#059669' : 'rgba(255, 255, 255, 0.08)',
-                        color: '#fff',
+                        background: isEditMode ? '#059669' : '#f8fafc',
+                        color: isEditMode ? '#fff' : '#334155',
+                        borderColor: isEditMode ? '#059669' : '#cbd5e1',
                         fontWeight: 700
                       }}
                     >
                       {isEditMode ? '💾 Save Slide' : '✏️ Edit'}
                     </ActionButton>
-                    <span style={{ fontSize: "0.75rem", color: "#94a3b8", marginRight: "4px" }}>← / → keys:</span>
+                    <span style={{ fontSize: "0.75rem", color: "#64748b", marginRight: "4px" }}>← / → keys:</span>
                     <ActionButton 
                       disabled={currentSlide === 0}
                       onClick={() => setCurrentSlide(prev => Math.max(0, prev - 1))}
@@ -874,7 +879,7 @@ export const UnifiedDocumentPreviewModal = ({
                             $width="320px"
                           />
                         ) : (
-                          <span style={{ color: '#94a3b8', fontSize: '0.82rem', fontWeight: 600 }}>
+                          <span style={{ color: '#64748b', fontSize: '0.82rem', fontWeight: 600 }}>
                             {customDeckData.scopeSubtitle}
                           </span>
                         )}
@@ -888,16 +893,16 @@ export const UnifiedDocumentPreviewModal = ({
                           $fontWeight="900"
                         />
                       ) : (
-                        <h1 style={{ fontSize: "2.5rem", margin: 0, color: "#ffffff", fontWeight: 900, lineHeight: 1.2 }}>
+                        <h1 style={{ fontSize: "2.5rem", margin: 0, color: "#0f172a", fontWeight: 900, lineHeight: 1.2 }}>
                           {customDeckData.title}
                         </h1>
                       )}
                     </div>
-                    <span style={{ fontSize: "0.85rem", color: "#38bdf8", fontWeight: 800 }}>Slide 1 / 6</span>
+                    <span style={{ fontSize: "0.85rem", color: "#2563eb", fontWeight: 800 }}>Slide 1 / 6</span>
                   </SlideHeader>
 
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "24px", padding: "30px 0", textAlign: "center" }}>
-                    <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "rgba(56, 189, 248, 0.15)", border: "1px solid rgba(56, 189, 248, 0.3)", color: "#38bdf8", padding: "6px 18px", borderRadius: "20px", fontSize: "0.95rem", fontWeight: 700 }}>
+                    <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "#f0f9ff", border: "1px solid #bae6fd", color: "#0369a1", padding: "6px 18px", borderRadius: "20px", fontSize: "0.95rem", fontWeight: 700 }}>
                       🏢 Target Enterprise: {isEditMode ? (
                         <EditableInput 
                           value={customDeckData.customerName} 
@@ -920,14 +925,14 @@ export const UnifiedDocumentPreviewModal = ({
                         $minHeight="80px"
                       />
                     ) : (
-                      <p style={{ maxWidth: "800px", color: "#cbd5e1", fontSize: "1.05rem", lineHeight: 1.6, margin: 0 }}>
+                      <p style={{ maxWidth: "800px", color: "#475569", fontSize: "1.05rem", lineHeight: 1.6, margin: 0 }}>
                         {customDeckData.executiveSummary}
                       </p>
                     )}
 
                     <div style={{ display: "flex", gap: "24px", flexWrap: "wrap", justifyContent: "center" }}>
-                      <div style={{ background: "rgba(15, 23, 42, 0.85)", padding: "18px 32px", borderRadius: "16px", border: "1.5px solid rgba(16, 185, 129, 0.3)", boxShadow: "0 10px 25px rgba(0,0,0,0.3)" }}>
-                        <div style={{ fontSize: "0.8rem", color: "#94a3b8", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "4px" }}>
+                      <div style={{ background: "#f8fafc", padding: "18px 32px", borderRadius: "16px", border: "1.5px solid #a7f3d0", boxShadow: "0 4px 14px rgba(15, 23, 42, 0.05)" }}>
+                        <div style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "4px" }}>
                           Overall Maturity Index
                         </div>
                         {isEditMode ? (
@@ -942,15 +947,15 @@ export const UnifiedDocumentPreviewModal = ({
                             <span style={{ fontSize: "1.2rem", color: "#64748b" }}>/ 5.0</span>
                           </div>
                         ) : (
-                          <div style={{ fontSize: "2.6rem", fontWeight: 900, color: "#34d399" }}>
+                          <div style={{ fontSize: "2.6rem", fontWeight: 900, color: "#059669" }}>
                             {customDeckData.maturityScore} <span style={{ fontSize: "1.2rem", color: "#64748b" }}>/ 5.0</span>
                           </div>
                         )}
-                        <div style={{ fontSize: "0.82rem", color: "#a7f3d0", fontWeight: 700 }}>{customDeckData.maturityStage} Stage</div>
+                        <div style={{ fontSize: "0.82rem", color: "#047857", fontWeight: 700 }}>{customDeckData.maturityStage} Stage</div>
                       </div>
 
-                      <div style={{ background: "rgba(15, 23, 42, 0.85)", padding: "18px 32px", borderRadius: "16px", border: "1.5px solid rgba(59, 130, 246, 0.3)", boxShadow: "0 10px 25px rgba(0,0,0,0.3)" }}>
-                        <div style={{ fontSize: "0.8rem", color: "#94a3b8", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "4px" }}>
+                      <div style={{ background: "#f8fafc", padding: "18px 32px", borderRadius: "16px", border: "1.5px solid #bfdbfe", boxShadow: "0 4px 14px rgba(15, 23, 42, 0.05)" }}>
+                        <div style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "4px" }}>
                           Projected 3-Year Value / ROI
                         </div>
                         {isEditMode ? (
@@ -962,11 +967,11 @@ export const UnifiedDocumentPreviewModal = ({
                             $width="220px"
                           />
                         ) : (
-                          <div style={{ fontSize: "2.6rem", fontWeight: 900, color: "#60a5fa" }}>
+                          <div style={{ fontSize: "2.6rem", fontWeight: 900, color: "#2563eb" }}>
                             {customDeckData.roiEstimate}
                           </div>
                         )}
-                        <div style={{ fontSize: "0.82rem", color: "#bfdbfe", fontWeight: 700 }}>{customDeckData.tcoArbitrage}</div>
+                        <div style={{ fontSize: "0.82rem", color: "#1d4ed8", fontWeight: 700 }}>{customDeckData.tcoArbitrage}</div>
                       </div>
                     </div>
                   </div>
@@ -983,19 +988,18 @@ export const UnifiedDocumentPreviewModal = ({
                 <SlideCanvas>
                   <SlideHeader>
                     <div>
-                      <div style={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: 600, marginBottom: '4px' }}>
+                      <div style={{ color: '#64748b', fontSize: '0.8rem', fontWeight: 600, marginBottom: '4px' }}>
                         Executive Diagnostic Matrix
                       </div>
-                      <h2 style={{ fontSize: "1.8rem", color: "#ffffff", fontWeight: 800, margin: 0 }}>
+                      <h2 style={{ fontSize: "1.8rem", color: "#0f172a", fontWeight: 800, margin: 0 }}>
                         Operational Capability vs Risk Heatmap
                       </h2>
                     </div>
-                    <span style={{ fontSize: "0.85rem", color: "#38bdf8", fontWeight: 800 }}>Slide 2 / 6</span>
+                    <span style={{ fontSize: "0.85rem", color: "#2563eb", fontWeight: 800 }}>Slide 2 / 6</span>
                   </SlideHeader>
 
                   <div style={{ flex: 1, overflowY: "auto", margin: "10px 0" }}>
                     <ExecutiveHeatmapMatrix
-                      theme="dark"
                       dimensions={framework?.dimensions || []}
                       dimensionScores={scores || {}}
                       responses={instance?.responses || {}}
@@ -1014,19 +1018,18 @@ export const UnifiedDocumentPreviewModal = ({
                 <SlideCanvas>
                   <SlideHeader>
                     <div>
-                      <div style={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: 600, marginBottom: '4px' }}>
+                      <div style={{ color: '#64748b', fontSize: '0.8rem', fontWeight: 600, marginBottom: '4px' }}>
                         5-Axis Capability Matrix
                       </div>
-                      <h2 style={{ fontSize: "1.8rem", color: "#ffffff", fontWeight: 800, margin: 0 }}>
+                      <h2 style={{ fontSize: "1.8rem", color: "#0f172a", fontWeight: 800, margin: 0 }}>
                         Dimensional Gap Radar & Target Horizon Topology
                       </h2>
                     </div>
-                    <span style={{ fontSize: "0.85rem", color: "#38bdf8", fontWeight: 800 }}>Slide 3 / 6</span>
+                    <span style={{ fontSize: "0.85rem", color: "#2563eb", fontWeight: 800 }}>Slide 3 / 6</span>
                   </SlideHeader>
 
                   <div style={{ flex: 1, overflowY: "auto", margin: "10px 0" }}>
                     <DynamicRadarChart
-                      theme="dark"
                       dimensions={framework?.dimensions || []}
                       dimensionScores={scores || {}}
                       responses={instance?.responses || {}}
@@ -1045,19 +1048,18 @@ export const UnifiedDocumentPreviewModal = ({
                 <SlideCanvas>
                   <SlideHeader>
                     <div>
-                      <div style={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: 600, marginBottom: '4px' }}>
+                      <div style={{ color: '#64748b', fontSize: '0.8rem', fontWeight: 600, marginBottom: '4px' }}>
                         FinOps & Business Realization
                       </div>
-                      <h2 style={{ fontSize: "1.8rem", color: "#ffffff", fontWeight: 800, margin: 0 }}>
+                      <h2 style={{ fontSize: "1.8rem", color: "#0f172a", fontWeight: 800, margin: 0 }}>
                         Quantified 3-Year Financial Impact & TCO Reduction
                       </h2>
                     </div>
-                    <span style={{ fontSize: "0.85rem", color: "#38bdf8", fontWeight: 800 }}>Slide 4 / 6</span>
+                    <span style={{ fontSize: "0.85rem", color: "#2563eb", fontWeight: 800 }}>Slide 4 / 6</span>
                   </SlideHeader>
 
                   <div style={{ flex: 1, overflowY: "auto", margin: "10px 0" }}>
                     <FinancialImpactCard
-                      theme="dark"
                       pillarScores={scores || {}}
                       framework={framework}
                       responses={instance?.responses || {}}
@@ -1079,19 +1081,18 @@ export const UnifiedDocumentPreviewModal = ({
                 <SlideCanvas>
                   <SlideHeader>
                     <div>
-                      <div style={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: 600, marginBottom: '4px' }}>
+                      <div style={{ color: '#64748b', fontSize: '0.8rem', fontWeight: 600, marginBottom: '4px' }}>
                         Target Architecture Blueprint
                       </div>
-                      <h2 style={{ fontSize: "1.8rem", color: "#ffffff", fontWeight: 800, margin: 0 }}>
+                      <h2 style={{ fontSize: "1.8rem", color: "#0f172a", fontWeight: 800, margin: 0 }}>
                         Cloud Architecture Evolution & Target Service Mesh
                       </h2>
                     </div>
-                    <span style={{ fontSize: "0.85rem", color: "#38bdf8", fontWeight: 800 }}>Slide 5 / 6</span>
+                    <span style={{ fontSize: "0.85rem", color: "#2563eb", fontWeight: 800 }}>Slide 5 / 6</span>
                   </SlideHeader>
 
                   <div style={{ flex: 1, overflowY: "auto", margin: "10px 0" }}>
                     <ArchitectureComparisonDiagram
-                      theme="dark"
                       instanceId={instance?.id}
                       initialDiagrams={report?.architectureDiagrams}
                       currentScore={instance?.totalScore || 2.5}
@@ -1116,23 +1117,23 @@ export const UnifiedDocumentPreviewModal = ({
                 <SlideCanvas>
                   <SlideHeader>
                     <div>
-                      <div style={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: 600, marginBottom: '4px' }}>
+                      <div style={{ color: '#64748b', fontSize: '0.8rem', fontWeight: 600, marginBottom: '4px' }}>
                         Execution Strategy & Milestones
                       </div>
-                      <h2 style={{ fontSize: "1.8rem", color: "#ffffff", fontWeight: 800, margin: 0 }}>
+                      <h2 style={{ fontSize: "1.8rem", color: "#0f172a", fontWeight: 800, margin: 0 }}>
                         Strategic Transformation Roadmap & Priority Actions
                       </h2>
                     </div>
-                    <span style={{ fontSize: "0.85rem", color: "#38bdf8", fontWeight: 800 }}>Slide 6 / 6</span>
+                    <span style={{ fontSize: "0.85rem", color: "#2563eb", fontWeight: 800 }}>Slide 6 / 6</span>
                   </SlideHeader>
 
                   <div style={{ flex: 1, overflowY: "auto", margin: "10px 0", display: "flex", flexDirection: "column", gap: "16px" }}>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "16px" }}>
                       {customDeckData.recommendations.map((r, idx) => (
-                        <div key={idx} style={{ background: "rgba(15, 23, 42, 0.9)", padding: "20px", borderRadius: "14px", border: "1.5px solid rgba(255, 255, 255, 0.1)", display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "12px" }}>
+                        <div key={idx} style={{ background: "#f8fafc", padding: "20px", borderRadius: "14px", border: "1.5px solid #e2e8f0", display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "12px" }}>
                           <div>
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                              <span style={{ fontSize: "0.75rem", background: "rgba(99, 102, 241, 0.2)", color: "#a5b4fc", border: "1px solid rgba(165, 180, 252, 0.3)", padding: "2px 8px", borderRadius: "4px", fontWeight: 800 }}>
+                              <span style={{ fontSize: "0.75rem", background: "#eef2ff", color: "#4338ca", border: "1px solid #c7d2fe", padding: "2px 8px", borderRadius: "4px", fontWeight: 800 }}>
                                 INITIATIVE #{idx + 1}
                               </span>
                               {isEditMode ? (
@@ -1151,7 +1152,7 @@ export const UnifiedDocumentPreviewModal = ({
                                   $width="120px"
                                 />
                               ) : (
-                                <span style={{ fontSize: "0.76rem", background: "rgba(16, 185, 129, 0.2)", color: "#34d399", border: "1px solid rgba(52, 211, 153, 0.3)", padding: "2px 8px", borderRadius: "4px", fontWeight: 700 }}>
+                                <span style={{ fontSize: "0.76rem", background: "#ecfdf5", color: "#059669", border: "1px solid #a7f3d0", padding: "2px 8px", borderRadius: "4px", fontWeight: 700 }}>
                                   {r.timeline || 'Phase 1'}
                                 </span>
                               )}
@@ -1172,7 +1173,7 @@ export const UnifiedDocumentPreviewModal = ({
                                 $fontWeight="800"
                               />
                             ) : (
-                              <h4 style={{ margin: "0 0 6px 0", fontSize: "1.05rem", color: "#ffffff", fontWeight: 800 }}>{r.title}</h4>
+                              <h4 style={{ margin: "0 0 6px 0", fontSize: "1.05rem", color: "#0f172a", fontWeight: 800 }}>{r.title}</h4>
                             )}
                             {isEditMode ? (
                               <EditableTextArea 
@@ -1190,7 +1191,7 @@ export const UnifiedDocumentPreviewModal = ({
                                 $minHeight="50px"
                               />
                             ) : (
-                              <p style={{ margin: 0, fontSize: "0.85rem", color: "#94a3b8", lineHeight: 1.5 }}>{r.impact}</p>
+                              <p style={{ margin: 0, fontSize: "0.85rem", color: "#475569", lineHeight: 1.5 }}>{r.impact}</p>
                             )}
                           </div>
                         </div>
@@ -1209,12 +1210,12 @@ export const UnifiedDocumentPreviewModal = ({
               <SpeakerNotesPane>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <span style={{ fontSize: "1rem" }}>🎙️</span>
-                    <span style={{ fontSize: "0.85rem", fontWeight: 700, color: "#f8fafc" }}>
+                    <span style={{ fontSize: "1rem" }}>📝</span>
+                    <span style={{ fontSize: "0.85rem", fontWeight: 700, color: "#0f172a" }}>
                       Executive Speaker Notes (Slide {currentSlide + 1}: {SLIDES_META[currentSlide]?.title})
                     </span>
                   </div>
-                  <span style={{ fontSize: "0.72rem", color: "#94a3b8" }}>
+                  <span style={{ fontSize: "0.72rem", color: "#64748b" }}>
                     Presenter Talking Points
                   </span>
                 </div>
@@ -1255,14 +1256,14 @@ export const UnifiedDocumentPreviewModal = ({
                   </DocTab>
                 </div>
 
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", background: "rgba(30, 41, 59, 0.7)", padding: "6px 12px", borderRadius: "8px" }}>
-                  <FiSearch color="#94a3b8" />
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", background: "#ffffff", border: "1px solid #cbd5e1", padding: "6px 12px", borderRadius: "8px" }}>
+                  <FiSearch color="#64748b" />
                   <input
                     type="text"
                     placeholder="Search spreadsheet rows..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    style={{ background: "transparent", border: "none", color: "#fff", fontSize: "0.85rem", outline: "none" }}
+                    style={{ background: "transparent", border: "none", color: "#0f172a", fontSize: "0.85rem", outline: "none" }}
                   />
                 </div>
               </div>
@@ -1460,7 +1461,7 @@ export const UnifiedDocumentPreviewModal = ({
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", margin: "16px 0", fontSize: "0.9rem" }}>
                   <thead>
-                    <tr style={{ background: "#0b132b", color: "#ffffff" }}>
+                    <tr style={{ background: "#f1f5f9", color: "#334155", borderBottom: "2px solid #cbd5e1" }}>
                       <th style={{ padding: "8px 12px", textAlign: "left" }}>Pillar</th>
                       <th style={{ padding: "8px 12px", textAlign: "left" }}>Current Score</th>
                       <th style={{ padding: "8px 12px", textAlign: "left" }}>Target Horizon</th>
@@ -1497,7 +1498,7 @@ export const UnifiedDocumentPreviewModal = ({
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", margin: "12px 0", fontSize: "0.85rem" }}>
                   <thead>
-                    <tr style={{ background: "#1e293b", color: "#ffffff" }}>
+                    <tr style={{ background: "#f1f5f9", color: "#334155", borderBottom: "2px solid #cbd5e1" }}>
                       <th style={{ padding: "8px 12px", textAlign: "left" }}>Collaborator Name</th>
                       <th style={{ padding: "8px 12px", textAlign: "left" }}>Role</th>
                       <th style={{ padding: "8px 12px", textAlign: "left" }}>Email</th>
@@ -1526,7 +1527,7 @@ export const UnifiedDocumentPreviewModal = ({
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", margin: "12px 0", fontSize: "0.82rem" }} data-testid="google-docs-changelog-table">
                   <thead>
-                    <tr style={{ background: "#0b132b", color: "#ffffff" }}>
+                    <tr style={{ background: "#f1f5f9", color: "#334155", borderBottom: "2px solid #cbd5e1" }}>
                       <th style={{ padding: "8px 10px", textAlign: "left" }}>Timestamp</th>
                       <th style={{ padding: "8px 10px", textAlign: "left" }}>Who (User &amp; Role)</th>
                       <th style={{ padding: "8px 10px", textAlign: "left" }}>Change Type</th>
@@ -1567,8 +1568,8 @@ export const UnifiedDocumentPreviewModal = ({
           {/* 4. PDF REPORT PREVIEW */}
           {activeDocType === 'pdf' && (
             <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(30, 41, 59, 0.5)", padding: "10px 20px", borderRadius: "10px" }}>
-                <span style={{ fontSize: "0.88rem", color: "#cbd5e1", fontWeight: 700 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#ffffff", border: "1px solid #e2e8f0", padding: "10px 20px", borderRadius: "10px" }}>
+                <span style={{ fontSize: "0.88rem", color: "#0f172a", fontWeight: 700 }}>
                   Executive PDF Report Layout
                 </span>
                 <ActionButton onClick={() => window.print()}>

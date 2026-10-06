@@ -8,7 +8,10 @@ import {
   FiPlus,
   FiCheck,
   FiSearch,
-  FiRefreshCw
+  FiRefreshCw,
+  FiEdit3,
+  FiCopy,
+  FiTrash2
 } from 'react-icons/fi';
 
 import {
@@ -867,6 +870,85 @@ const GeValueRealizationWorkspace = () => {
               title="Print / PDF"
             >
               <FiPrinter size={13} />
+            </button>
+
+            <button
+              onClick={() => {
+                setPrimaryView('inputs');
+                toast.success('Switched to Edit Assessment Answers');
+              }}
+              style={{
+                background: '#eff6ff',
+                color: '#1d4ed8',
+                border: '1px solid #bfdbfe',
+                borderRadius: '8px',
+                padding: '6px 10px',
+                fontSize: '0.74rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+              title="Edit Assessment Answers"
+            >
+              <FiEdit3 size={12} /> Edit
+            </button>
+
+            <button
+              onClick={() => {
+                const cloneName = `${dossier?.customerProfile?.customerName || 'Enterprise'} (Clone)`;
+                setDossier((prev) => ({
+                  ...prev,
+                  dossierId: `ge-vr-clone-${Date.now().toString(36)}`,
+                  customerProfile: {
+                    ...(prev?.customerProfile || {}),
+                    customerName: cloneName
+                  }
+                }));
+                toast.success(`Cloned workspace as "${cloneName}"`);
+              }}
+              style={{
+                background: '#eef2ff',
+                color: '#4f46e5',
+                border: '1px solid #c7d2fe',
+                borderRadius: '8px',
+                padding: '6px 10px',
+                fontSize: '0.74rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+              title="Clone Value Realization Dossier"
+            >
+              <FiCopy size={12} /> Clone
+            </button>
+
+            <button
+              onClick={() => {
+                if (window.confirm('Reset and clear this Value Realization dossier back to initial state?')) {
+                  setDossier(createInitialGeDossier());
+                  toast.success('Reset Value Realization dossier');
+                }
+              }}
+              style={{
+                background: '#fef2f2',
+                color: '#dc2626',
+                border: '1px solid #fecaca',
+                borderRadius: '8px',
+                padding: '6px 10px',
+                fontSize: '0.74rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+              title="Delete / Reset Value Realization Dossier"
+            >
+              <FiTrash2 size={12} /> Delete
             </button>
           </div>
         </div>

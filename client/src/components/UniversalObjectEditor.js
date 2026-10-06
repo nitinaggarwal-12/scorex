@@ -853,12 +853,12 @@ export default function UniversalObjectEditor() {
       display: 'flex',
       alignItems: 'center',
       gap: '4px',
-      background: 'rgba(15, 23, 42, 0.94)',
+      background: '#ffffff',
       backdropFilter: 'blur(8px)',
-      border: editingObjectId ? '1.5px solid #818cf8' : '1px solid rgba(148, 163, 184, 0.35)',
+      border: editingObjectId ? '1.5px solid #2563eb' : '1px solid #cbd5e1',
       borderRadius: '8px',
       padding: '3px 6px',
-      boxShadow: '0 8px 20px rgba(15, 23, 42, 0.28)',
+      boxShadow: '0 8px 20px rgba(15, 23, 42, 0.12)',
       fontFamily: 'Inter, system-ui, sans-serif'
     };
   })();
@@ -875,15 +875,15 @@ export default function UniversalObjectEditor() {
       {/* Global CSS rules for hovered & inline-editing objects */}
       <style>{`
         [data-scorex-hovered="true"]:not([data-scorex-editing="true"]) {
-          outline: 1.5px dashed rgba(79, 70, 229, 0.55) !important;
+          outline: 1.5px dashed rgba(37, 99, 235, 0.55) !important;
           outline-offset: 2px !important;
           transition: outline 0.12s ease !important;
         }
         [data-scorex-editing="true"] {
-          outline: 2px solid #4f46e5 !important;
+          outline: 2px solid #2563eb !important;
           outline-offset: 3px !important;
-          box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.14) !important;
-          background-color: rgba(238, 242, 255, 0.25) !important;
+          box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14) !important;
+          background-color: rgba(239, 246, 255, 0.35) !important;
         }
         [data-scorex-customized="edited"],
         [data-scorex-customized="added"],
@@ -909,11 +909,11 @@ export default function UniversalObjectEditor() {
             style={{
               fontSize: '0.62rem',
               fontWeight: 800,
-              color: '#a5b4fc',
+              color: '#1d4ed8',
               textTransform: 'uppercase',
               letterSpacing: '0.04em',
               padding: '2px 5px',
-              background: 'rgba(79, 70, 229, 0.25)',
+              background: '#eff6ff',
               borderRadius: '4px',
               maxWidth: '88px',
               overflow: 'hidden',
@@ -934,8 +934,8 @@ export default function UniversalObjectEditor() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '3px',
-              background: editingObjectId === hoveredInfo.objectId ? '#4f46e5' : 'transparent',
-              color: '#f8fafc',
+              background: editingObjectId === hoveredInfo.objectId ? '#eff6ff' : 'transparent',
+              color: '#1d4ed8',
               border: 'none',
               borderRadius: '5px',
               padding: '3px 6px',
@@ -960,8 +960,8 @@ export default function UniversalObjectEditor() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '3px',
-              background: editingObjectId === hoveredInfo.objectId ? '#059669' : 'rgba(16, 185, 129, 0.18)',
-              color: '#ecfdf5',
+              background: editingObjectId === hoveredInfo.objectId ? '#059669' : '#ecfdf5',
+              color: editingObjectId === hoveredInfo.objectId ? '#ffffff' : '#047857',
               border: 'none',
               borderRadius: '5px',
               padding: '3px 6px',
@@ -988,7 +988,7 @@ export default function UniversalObjectEditor() {
               alignItems: 'center',
               gap: '3px',
               background: 'transparent',
-              color: '#38bdf8',
+              color: '#0284c7',
               border: 'none',
               borderRadius: '5px',
               padding: '3px 6px',
@@ -1014,7 +1014,7 @@ export default function UniversalObjectEditor() {
               alignItems: 'center',
               gap: '3px',
               background: 'transparent',
-              color: '#c084fc',
+              color: '#7c3aed',
               border: 'none',
               borderRadius: '5px',
               padding: '3px 6px',
@@ -1040,7 +1040,7 @@ export default function UniversalObjectEditor() {
               alignItems: 'center',
               gap: '3px',
               background: 'transparent',
-              color: '#f87171',
+              color: '#dc2626',
               border: 'none',
               borderRadius: '5px',
               padding: '3px 6px',
@@ -1069,12 +1069,12 @@ export default function UniversalObjectEditor() {
           display: 'flex',
           alignItems: 'center',
           gap: '8px',
-          background: '#0f172a',
-          color: '#f8fafc',
+          background: '#ffffff',
+          color: '#0f172a',
           padding: '7px 12px',
           borderRadius: '999px',
-          border: '1px solid rgba(99, 102, 241, 0.45)',
-          boxShadow: '0 8px 24px rgba(15, 23, 42, 0.28)',
+          border: '1px solid #cbd5e1',
+          boxShadow: '0 8px 24px rgba(15, 23, 42, 0.12)',
           fontFamily: 'Inter, system-ui, sans-serif',
           fontSize: '0.74rem'
         }}
@@ -1087,7 +1087,7 @@ export default function UniversalObjectEditor() {
             alignItems: 'center',
             gap: '6px',
             background: 'transparent',
-            color: '#f8fafc',
+            color: '#0f172a',
             border: 'none',
             padding: 0,
             fontWeight: 700,
@@ -1102,15 +1102,15 @@ export default function UniversalObjectEditor() {
               width: '8px',
               height: '8px',
               borderRadius: '999px',
-              background: activeVersionId === 'v1.0' ? '#10b981' : '#818cf8'
+              background: activeVersionId === 'v1.0' ? '#10b981' : '#2563eb'
             }}
           />
           <span>Instance {activeVersionId}</span>
           {customizationCount > 0 && (
             <span
               style={{
-                background: 'rgba(99, 102, 241, 0.28)',
-                color: '#c7d2fe',
+                background: '#eff6ff',
+                color: '#1d4ed8',
                 padding: '1px 6px',
                 borderRadius: '999px',
                 fontSize: '0.66rem',
@@ -1120,17 +1120,17 @@ export default function UniversalObjectEditor() {
               {customizationCount} {customizationCount === 1 ? 'edit' : 'edits'}
             </span>
           )}
-          <span style={{ color: '#94a3b8', fontSize: '0.66rem' }}>• Master v1.0 Protected</span>
+          <span style={{ color: '#64748b', fontSize: '0.66rem' }}>• Master v1.0 Protected</span>
         </button>
 
-        <span style={{ color: '#334155' }}>|</span>
+        <span style={{ color: '#cbd5e1' }}>|</span>
 
         <button
           type="button"
           onClick={() => setHoverInteractiveMode((prev) => !prev)}
           style={{
-            background: hoverInteractiveMode ? 'rgba(16, 185, 129, 0.18)' : 'rgba(148, 163, 184, 0.15)',
-            color: hoverInteractiveMode ? '#34d399' : '#94a3b8',
+            background: hoverInteractiveMode ? '#ecfdf5' : '#f1f5f9',
+            color: hoverInteractiveMode ? '#047857' : '#64748b',
             border: 'none',
             borderRadius: '999px',
             padding: '2px 8px',

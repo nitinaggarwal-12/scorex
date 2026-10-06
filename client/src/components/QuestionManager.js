@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiPlus, FiEdit2, FiTrash2, FiX, FiEye, FiEyeOff, FiLink } from 'react-icons/fi';
+import { FiPlus, FiEdit2, FiCopy, FiTrash2, FiX, FiEye, FiEyeOff, FiLink } from 'react-icons/fi';
 import customQuestionsService from '../services/customQuestionsService';
 import * as assessmentService from '../services/assessmentService';
 
@@ -694,6 +694,28 @@ const QuestionManager = () => {
     setShowModal(true);
   };
 
+  const handleClone = async (question) => {
+    try {
+      await customQuestionsService.createQuestion({
+        question_text: `${question.question_text} (Clone)`,
+        pillar: question.pillar,
+        category: question.category || '',
+        weight: question.weight,
+        maturity_level_1: question.maturity_level_1 || '',
+        maturity_level_2: question.maturity_level_2 || '',
+        maturity_level_3: question.maturity_level_3 || '',
+        maturity_level_4: question.maturity_level_4 || '',
+        maturity_level_5: question.maturity_level_5 || '',
+        notes_placeholder: question.notes_placeholder || ''
+      });
+      fetchQuestions();
+      fetchStats();
+    } catch (error) {
+      console.error('Error cloning question:', error);
+      alert(error.message);
+    }
+  };
+
   const handleDelete = async (id) => {
     if (window.confirm('⚠️ Are you sure you want to DELETE this question permanently?\n\nThis will remove it from all assessments where it is assigned.\n\nThis action cannot be undone.')) {
       try {
@@ -984,16 +1006,19 @@ const QuestionManager = () => {
                     </QuestionInfo>
                   </QuestionMeta>
                   <ButtonGroup>
-                    <IconButton onClick={() => handleAssignToAssessments(question)}>
+                    <IconButton onClick={() => handleAssignToAssessments(question)} title="Assign">
                       <FiLink size={18} />
                     </IconButton>
-                    <IconButton onClick={() => handleToggleActive(question)}>
+                    <IconButton onClick={() => handleToggleActive(question)} title="Toggle Active">
                       {question.is_active ? <FiEyeOff size={18} /> : <FiEye size={18} />}
                     </IconButton>
-                    <IconButton onClick={() => handleEdit(question)}>
+                    <IconButton onClick={() => handleEdit(question)} title="Edit">
                       <FiEdit2 size={18} />
                     </IconButton>
-                    <IconButton $variant="danger" onClick={() => handleDelete(question.id)}>
+                    <IconButton onClick={() => handleClone(question)} title="Clone">
+                      <FiCopy size={18} />
+                    </IconButton>
+                    <IconButton $variant="danger" onClick={() => handleDelete(question.id)} title="Delete">
                       <FiTrash2 size={18} />
                     </IconButton>
                   </ButtonGroup>

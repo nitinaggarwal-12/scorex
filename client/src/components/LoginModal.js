@@ -85,8 +85,8 @@ const CloseButton = styled.button`
 const SidePanel = styled.div`
   width: 44%;
   background: ${props => props.$isAdmin ? 
-    'linear-gradient(145deg, #1e1b4b 0%, #312e81 40%, #4338ca 100%)' : 
-    'linear-gradient(145deg, #0f172a 0%, #1e3a8a 50%, #2563eb 100%)'};
+    'linear-gradient(145deg, #312e81 0%, #4338ca 50%, #4f46e5 100%)' : 
+    'linear-gradient(145deg, #1d4ed8 0%, #2563eb 50%, #3b82f6 100%)'};
   padding: 50px 36px;
   display: flex;
   flex-direction: column;
@@ -307,7 +307,7 @@ const DomainInput = styled.input`
 
 const DomainSubmitBtn = styled.button`
   padding: 8px 14px;
-  background: #0f172a;
+  background: #2563eb;
   color: white;
   border: none;
   border-radius: 6px;
@@ -320,7 +320,7 @@ const DomainSubmitBtn = styled.button`
   white-space: nowrap;
 
   &:hover {
-    background: #1e293b;
+    background: #1d4ed8;
   }
 `;
 

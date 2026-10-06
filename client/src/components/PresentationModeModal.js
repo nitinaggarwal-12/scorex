@@ -22,11 +22,11 @@ const FullscreenOverlay = styled(motion.div)`
   left: 0;
   right: 0;
   bottom: 0;
-  background: #090d16;
+  background: #f8fafc;
   z-index: 10000;
   display: flex;
   flex-direction: column;
-  color: #f8fafc;
+  color: #0f172a;
   overflow: hidden;
 `;
 
@@ -35,9 +35,9 @@ const TopDeckBar = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 16px 32px;
-  background: rgba(15, 23, 42, 0.8);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(12px);
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
 `;
 
 const SlideContainer = styled.div`
@@ -59,14 +59,14 @@ const SlideFooter = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 14px 32px;
-  background: rgba(15, 23, 42, 0.8);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
 `;
 
 const NavBtn = styled.button`
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #ffffff;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: #334155;
   border-radius: 10px;
   padding: 8px 16px;
   font-size: 0.85rem;
@@ -78,8 +78,9 @@ const NavBtn = styled.button`
   transition: all 0.2s ease;
 
   &:hover:not(:disabled) {
-    background: rgba(99, 102, 241, 0.3);
-    border-color: #818cf8;
+    background: #eff6ff;
+    border-color: #6366f1;
+    color: #4f46e5;
   }
 
   &:disabled {
@@ -96,6 +97,11 @@ const CoverSlide = styled.div`
   min-height: 60vh;
   text-align: center;
   gap: 20px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
 `;
 
 const PresentationModeModal = ({ isOpen, onClose, instance, report, framework }) => {
@@ -146,14 +152,14 @@ const PresentationModeModal = ({ isOpen, onClose, instance, report, framework })
             </div>
             <div style={{ display: "flex", flexDirection: "column" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <span style={{ fontWeight: 800, fontSize: "0.95rem", color: "#f8fafc" }}>
+                <span style={{ fontWeight: 800, fontSize: "0.95rem", color: "#0f172a" }}>
                   {instance?.customerName || 'ScoreX'} - Executive Modernization Deck.pptx
                 </span>
-                <span style={{ fontSize: "0.68rem", background: "rgba(245, 158, 11, 0.2)", color: "#fbbf24", border: "1px solid rgba(245, 158, 11, 0.4)", padding: "1px 6px", borderRadius: "4px", fontWeight: 700 }}>
+                <span style={{ fontSize: "0.68rem", background: "#fffbeb", color: "#d97706", border: "1px solid #fde68a", padding: "1px 6px", borderRadius: "4px", fontWeight: 700 }}>
                   PPTX / GOOGLE SLIDES
                 </span>
               </div>
-              <span style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
+              <span style={{ fontSize: "0.75rem", color: "#64748b" }}>
                 {framework?.title || 'Enterprise Data & AI Architecture'} • Slide {currentSlide + 1} of {totalSlides}
               </span>
             </div>
@@ -178,7 +184,7 @@ const PresentationModeModal = ({ isOpen, onClose, instance, report, framework })
                 gap: "8px",
                 fontWeight: 800,
                 fontSize: "0.85rem",
-                boxShadow: "0 2px 10px rgba(245, 158, 11, 0.35)",
+                boxShadow: "0 2px 10px rgba(245, 158, 11, 0.25)",
                 transition: "all 0.2s ease"
               }}
               title="Open directly in Google Slides (slides.new)"
@@ -202,9 +208,9 @@ const PresentationModeModal = ({ isOpen, onClose, instance, report, framework })
                 }
               }}
               style={{
-                background: "rgba(255, 255, 255, 0.08)",
-                border: "1px solid rgba(255, 255, 255, 0.15)",
-                color: "#ffffff",
+                background: "#f8fafc",
+                border: "1px solid #cbd5e1",
+                color: "#334155",
                 borderRadius: "10px",
                 padding: "8px 14px",
                 cursor: "pointer",
@@ -224,9 +230,9 @@ const PresentationModeModal = ({ isOpen, onClose, instance, report, framework })
             <button
               onClick={onClose}
               style={{
-                background: "rgba(239, 68, 68, 0.15)",
-                border: "1px solid rgba(239, 68, 68, 0.3)",
-                color: "#f87171",
+                background: "#fef2f2",
+                border: "1px solid #fecaca",
+                color: "#dc2626",
                 borderRadius: "10px",
                 padding: "8px 12px",
                 cursor: "pointer",
@@ -256,21 +262,21 @@ const PresentationModeModal = ({ isOpen, onClose, instance, report, framework })
                   <div style={{ width: "72px", height: "72px", borderRadius: "20px", background: "linear-gradient(135deg, #6366f1, #a855f7)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem" }}>
                     <FiAward color="#fff" />
                   </div>
-                  <h1 style={{ fontSize: "3rem", fontWeight: 900, margin: 0, background: "linear-gradient(135deg, #ffffff, #94a3b8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                  <h1 style={{ fontSize: "2.6rem", fontWeight: 900, margin: 0, color: "#0f172a" }}>
                     {framework?.title}
                   </h1>
-                  <h3 style={{ fontSize: "1.4rem", color: "#818cf8", fontWeight: 600, margin: 0 }}>
+                  <h3 style={{ fontSize: "1.35rem", color: "#4f46e5", fontWeight: 600, margin: 0 }}>
                     Executive Transformation Readout for {instance?.customerName}
                   </h3>
-                  <div style={{ background: "rgba(30, 41, 59, 0.6)", border: "1px solid rgba(255, 255, 255, 0.15)", borderRadius: "20px", padding: "24px 48px", display: "flex", gap: "32px", alignItems: "center", marginTop: "20px" }}>
+                  <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "20px", padding: "24px 48px", display: "flex", gap: "32px", alignItems: "center", marginTop: "20px" }}>
                     <div>
-                      <div style={{ fontSize: "0.85rem", color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em" }}>Overall Maturity Index</div>
-                      <div style={{ fontSize: "2.5rem", fontWeight: 800, color: "#34d399" }}>{scores.overallScore} / 5.0</div>
+                      <div style={{ fontSize: "0.85rem", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>Overall Maturity Index</div>
+                      <div style={{ fontSize: "2.5rem", fontWeight: 800, color: "#059669" }}>{scores.overallScore} / 5.0</div>
                     </div>
-                    <div style={{ width: "1px", height: "50px", background: "rgba(255,255,255,0.1)" }} />
+                    <div style={{ width: "1px", height: "50px", background: "#cbd5e1" }} />
                     <div>
-                      <div style={{ fontSize: "0.85rem", color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em" }}>Maturity Stage</div>
-                      <div style={{ fontSize: "1.8rem", fontWeight: 800, color: "#ffffff" }}>{scores.maturityLevel}</div>
+                      <div style={{ fontSize: "0.85rem", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>Maturity Stage</div>
+                      <div style={{ fontSize: "1.8rem", fontWeight: 800, color: "#0f172a" }}>{scores.maturityLevel}</div>
                     </div>
                   </div>
                 </CoverSlide>
@@ -284,7 +290,7 @@ const PresentationModeModal = ({ isOpen, onClose, instance, report, framework })
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
               >
-                <h2 style={{ fontSize: "1.75rem", fontWeight: 800, marginBottom: "20px", color: "#ffffff" }}>
+                <h2 style={{ fontSize: "1.75rem", fontWeight: 800, marginBottom: "20px", color: "#0f172a" }}>
                   1. Capability vs. Operational Risk Exposure
                 </h2>
                 <ExecutiveHeatmapMatrix
@@ -302,7 +308,7 @@ const PresentationModeModal = ({ isOpen, onClose, instance, report, framework })
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
               >
-                <h2 style={{ fontSize: "1.75rem", fontWeight: 800, marginBottom: "20px", color: "#ffffff" }}>
+                <h2 style={{ fontSize: "1.75rem", fontWeight: 800, marginBottom: "20px", color: "#0f172a" }}>
                   2. Polar Spider Radar & Baseline Analysis
                 </h2>
                 <DynamicRadarChart
@@ -320,7 +326,7 @@ const PresentationModeModal = ({ isOpen, onClose, instance, report, framework })
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
               >
-                <h2 style={{ fontSize: "1.75rem", fontWeight: 800, marginBottom: "20px", color: "#ffffff" }}>
+                <h2 style={{ fontSize: "1.75rem", fontWeight: 800, marginBottom: "20px", color: "#0f172a" }}>
                   3. Industry Peer Benchmarking & Percentile Distribution
                 </h2>
                 <IndustryPeerBenchmarkingCard
@@ -337,7 +343,7 @@ const PresentationModeModal = ({ isOpen, onClose, instance, report, framework })
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
               >
-                <h2 style={{ fontSize: "1.75rem", fontWeight: 800, marginBottom: "20px", color: "#ffffff" }}>
+                <h2 style={{ fontSize: "1.75rem", fontWeight: 800, marginBottom: "20px", color: "#0f172a" }}>
                   4. Quantified Financial & TCO ROI Impact
                 </h2>
                 <FinancialImpactCard
@@ -357,7 +363,7 @@ const PresentationModeModal = ({ isOpen, onClose, instance, report, framework })
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
               >
-                <h2 style={{ fontSize: "1.75rem", fontWeight: 800, marginBottom: "20px", color: "#ffffff" }}>
+                <h2 style={{ fontSize: "1.75rem", fontWeight: 800, marginBottom: "20px", color: "#0f172a" }}>
                   5. Enterprise Architecture Blueprints (Current vs. Target)
                 </h2>
                 <ArchitectureComparisonDiagram
@@ -381,7 +387,7 @@ const PresentationModeModal = ({ isOpen, onClose, instance, report, framework })
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
               >
-                <h2 style={{ fontSize: "1.75rem", fontWeight: 800, marginBottom: "20px", color: "#ffffff" }}>
+                <h2 style={{ fontSize: "1.75rem", fontWeight: 800, marginBottom: "20px", color: "#0f172a" }}>
                   6. Strategic Transformation Roadmap & Priority Backlog
                 </h2>
                 <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
@@ -389,27 +395,28 @@ const PresentationModeModal = ({ isOpen, onClose, instance, report, framework })
                     <div
                       key={rIdx}
                       style={{
-                        background: "rgba(30, 41, 59, 0.6)",
-                        border: "1px solid rgba(255,255,255,0.1)",
+                        background: "#ffffff",
+                        border: "1px solid #e2e8f0",
                         borderRadius: "14px",
                         padding: "18px 24px",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
-                        gap: "16px"
+                        gap: "16px",
+                        boxShadow: "0 2px 8px rgba(15, 23, 42, 0.04)"
                       }}
                     >
                       <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                        <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: "rgba(99, 102, 241, 0.2)", color: "#818cf8", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800 }}>
+                        <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: "#eef2ff", color: "#4f46e5", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800 }}>
                           {rIdx + 1}
                         </div>
                         <div>
-                          <h4 style={{ margin: "0 0 4px 0", fontSize: "1.05rem", color: "#ffffff" }}>{rec.title || rec.recommendation}</h4>
-                          <p style={{ margin: 0, fontSize: "0.85rem", color: "#94a3b8" }}>{rec.whyItMatters || rec.impact || rec.description}</p>
+                          <h4 style={{ margin: "0 0 4px 0", fontSize: "1.05rem", color: "#0f172a" }}>{rec.title || rec.recommendation}</h4>
+                          <p style={{ margin: 0, fontSize: "0.85rem", color: "#64748b" }}>{rec.whyItMatters || rec.impact || rec.description}</p>
                         </div>
                       </div>
 
-                      <span style={{ fontSize: "0.8rem", background: "rgba(16, 185, 129, 0.15)", color: "#34d399", padding: "4px 10px", borderRadius: "6px", fontWeight: 700 }}>
+                      <span style={{ fontSize: "0.8rem", background: "#ecfdf5", color: "#059669", border: "1px solid #a7f3d0", padding: "4px 10px", borderRadius: "6px", fontWeight: 700 }}>
                         {rec.timeline || rec.timeframe || "Phase 1"}
                       </span>
                     </div>
@@ -437,7 +444,7 @@ const PresentationModeModal = ({ isOpen, onClose, instance, report, framework })
                   width: idx === currentSlide ? "24px" : "8px",
                   height: "8px",
                   borderRadius: "4px",
-                  background: idx === currentSlide ? "#818cf8" : "rgba(255,255,255,0.2)",
+                  background: idx === currentSlide ? "#4f46e5" : "#cbd5e1",
                   cursor: "pointer",
                   transition: "all 0.2s ease"
                 }}

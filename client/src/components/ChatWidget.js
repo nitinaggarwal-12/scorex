@@ -261,8 +261,9 @@ const MessageBubble = styled.div`
   }
 
   pre {
-    background: #0f172a;
-    color: #f8fafc;
+    background: #f8fafc;
+    color: #0f172a;
+    border: 1px solid #e2e8f0;
     padding: 10px 12px;
     border-radius: 8px;
     overflow-x: auto;

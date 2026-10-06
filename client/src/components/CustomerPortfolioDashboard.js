@@ -12,7 +12,10 @@ import {
   FiFileText, 
   FiPlus, 
   FiArrowRight,
-  FiActivity
+  FiActivity,
+  FiEdit3,
+  FiCopy,
+  FiTrash2
 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import dynamicAssessmentService from '../services/dynamicAssessmentService';
@@ -189,6 +192,35 @@ const CustomerPortfolioDashboard = () => {
     }
   };
 
+  const handleClone = async (item) => {
+    try {
+      toast.loading(`Cloning "${item.title || 'Assessment'}"...`, { id: 'portfolio-clone' });
+      const res = await dynamicAssessmentService.cloneInstance(item.id, 'Portfolio Manager');
+      const clonedId = res?.instance?.id;
+      if (clonedId) {
+        toast.success('Assessment cloned!', { id: 'portfolio-clone' });
+        await loadPortfolio();
+      } else {
+        toast.error('Failed to clone assessment', { id: 'portfolio-clone' });
+      }
+    } catch (err) {
+      toast.error(err?.message || 'Error cloning assessment', { id: 'portfolio-clone' });
+    }
+  };
+
+  const handleDelete = async (item) => {
+    if (!window.confirm(`Delete "${item.title || 'this assessment'}"? This action cannot be undone.`)) {
+      return;
+    }
+    try {
+      await dynamicAssessmentService.deleteInstance(item.id);
+      toast.success('Assessment deleted');
+      await loadPortfolio();
+    } catch (err) {
+      toast.error(err?.message || 'Failed to delete assessment');
+    }
+  };
+
   if (loading) {
     return <LoadingSpinner message={`Calculating ${customerName} enterprise portfolio maturity...`} />;
   }
@@ -297,23 +329,35 @@ const CustomerPortfolioDashboard = () => {
                 </p>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '16px', borderTop: '1px solid #f1f5f9' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '16px', borderTop: '1px solid #f1f5f9', flexWrap: 'wrap', gap: '8px' }}>
                 <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
                   Updated {new Date(item.updatedAt).toLocaleDateString()}
                 </span>
 
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                   <button
                     onClick={() => navigate(`/assessments/report/${item.id}`)}
-                    style={{ background: '#eff6ff', border: '1px solid #bfdbfe', color: '#2563eb', borderRadius: '8px', padding: '6px 12px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    style={{ background: '#eff6ff', border: '1px solid #bfdbfe', color: '#2563eb', borderRadius: '8px', padding: '6px 10px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
                   >
-                    <FiFileText /> Report
+                    <FiFileText size={12} /> Report
                   </button>
                   <button
                     onClick={() => navigate(`/assessments/run/instance/${item.id}`)}
-                    style={{ background: '#f8fafc', border: '1px solid #cbd5e1', color: '#334155', borderRadius: '8px', padding: '6px 12px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}
+                    style={{ background: '#f8fafc', border: '1px solid #cbd5e1', color: '#334155', borderRadius: '8px', padding: '6px 10px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
                   >
-                    Edit
+                    <FiEdit3 size={12} /> Edit
+                  </button>
+                  <button
+                    onClick={() => handleClone(item)}
+                    style={{ background: '#f8fafc', border: '1px solid #cbd5e1', color: '#334155', borderRadius: '8px', padding: '6px 10px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                  >
+                    <FiCopy size={12} /> Clone
+                  </button>
+                  <button
+                    onClick={() => handleDelete(item)}
+                    style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626', borderRadius: '8px', padding: '6px 10px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                  >
+                    <FiTrash2 size={12} /> Delete
                   </button>
                 </div>
               </div>

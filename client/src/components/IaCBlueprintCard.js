@@ -181,8 +181,9 @@ const PreFlightNotice = styled.div`
 `;
 
 const CodePreviewBox = styled.div`
-  background: #0f172a;
-  color: #e2e8f0;
+  background: #f8fafc;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
   border-radius: 10px;
   padding: 16px;
   font-family: 'JetBrains Mono', monospace;

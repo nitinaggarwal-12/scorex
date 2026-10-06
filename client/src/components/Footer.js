@@ -4,8 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { FiShield } from 'react-icons/fi';
 
 const FooterContainer = styled.footer`
-  background: #0f172a;
-  color: rgba(255, 255, 255, 0.8);
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  color: #475569;
   padding: 64px 24px 32px;
 
   @media (max-width: 768px) {
@@ -42,7 +43,7 @@ const FooterContent = styled.div`
 const FooterBrand = styled.div`
   h3 {
     font-size: 1.25rem;
-    color: white;
+    color: #0f172a;
     font-weight: 700;
     margin-bottom: 12px;
   }
@@ -51,6 +52,7 @@ const FooterBrand = styled.div`
     font-size: 0.938rem;
     line-height: 1.6;
     margin-bottom: 20px;
+    color: #475569;
   }
 
   .security {
@@ -58,10 +60,11 @@ const FooterBrand = styled.div`
     align-items: center;
     gap: 8px;
     font-size: 0.875rem;
-    color: #86efac;
+    color: #059669;
+    font-weight: 600;
 
     svg {
-      color: #86efac;
+      color: #059669;
     }
   }
 `;
@@ -69,8 +72,8 @@ const FooterBrand = styled.div`
 const FooterLinks = styled.div`
   h4 {
     font-size: 0.875rem;
-    color: white;
-    font-weight: 600;
+    color: #0f172a;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 16px;
@@ -86,7 +89,7 @@ const FooterLinks = styled.div`
     margin-bottom: 12px;
 
     a, button {
-      color: rgba(255, 255, 255, 0.7);
+      color: #475569;
       text-decoration: none;
       font-size: 0.938rem;
       transition: color 0.2s;
@@ -97,7 +100,7 @@ const FooterLinks = styled.div`
       font-family: inherit;
 
       &:hover {
-        color: white;
+        color: #2563eb;
       }
     }
   }
@@ -106,8 +109,8 @@ const FooterLinks = styled.div`
 const FooterCTA = styled.div`
   h4 {
     font-size: 0.875rem;
-    color: white;
-    font-weight: 600;
+    color: #0f172a;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 16px;
@@ -117,6 +120,7 @@ const FooterCTA = styled.div`
     font-size: 0.875rem;
     margin-bottom: 16px;
     line-height: 1.5;
+    color: #475569;
   }
 
   button {
@@ -143,10 +147,10 @@ const FooterBottom = styled.div`
   margin: 0 auto;
   padding: 32px clamp(16px, 2vw, 32px) 0;
   box-sizing: border-box;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid #e2e8f0;
   text-align: center;
   font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: #64748b;
 
   @media (max-width: 768px) {
     padding: 24px 20px 0;

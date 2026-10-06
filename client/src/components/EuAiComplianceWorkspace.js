@@ -28,7 +28,6 @@ import {
   FiZap,
   FiChevronDown,
   FiChevronRight,
-  FiMic,
   FiPlay,
   FiPause,
   FiMessageSquare,
@@ -39,8 +38,8 @@ import {
   FiDollarSign,
   FiCalendar,
   FiBookOpen,
-  FiVolume2,
-  FiVolumeX,
+  FiEdit3,
+  FiTrash2,
   FiSend,
   FiCode,
   FiPlus
@@ -233,19 +232,6 @@ const ActionButton = styled.button`
       background: linear-gradient(135deg, #4338ca 0%, #6d28d9 50%, #1d4ed8 100%);
       transform: translateY(-1px);
       box-shadow: 0 4px 14px rgba(79, 70, 229, 0.45);
-    }
-  `}
-
-  ${props => props.$audio && `
-    background: #0f172a;
-    color: #38bdf8;
-    border: 1px solid #334155;
-    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.2);
-
-    &:hover {
-      background: #1e293b;
-      border-color: #38bdf8;
-      transform: translateY(-1px);
     }
   `}
 
@@ -1015,8 +1001,9 @@ const ScorecardTable = styled.table`
   }
 
   th {
-    background: #0f172a;
-    color: #ffffff;
+    background: #f1f5f9;
+    color: #334155;
+    border-bottom: 2px solid #cbd5e1;
     font-weight: 700;
     font-size: 0.8rem;
     text-transform: uppercase;
@@ -1332,13 +1319,13 @@ const CopilotDrawerPanel = styled.div`
 `;
 
 const CopilotHeader = styled.div`
-  background: #0f172a;
-  color: #f8fafc;
+  background: #f8fafc;
+  color: #0f172a;
   padding: 16px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #1e293b;
+  border-bottom: 1px solid #e2e8f0;
 `;
 
 const CopilotChatList = styled.div`
@@ -1545,8 +1532,9 @@ const CopilotBubble = styled.div`
       border: 1px solid #e2e8f0;
     }
     pre {
-      background: #0f172a;
-      color: #f8fafc;
+      background: #f8fafc;
+      color: #0f172a;
+      border: 1px solid #e2e8f0;
       padding: 10px 12px;
       border-radius: 8px;
       overflow-x: auto;
@@ -2311,7 +2299,7 @@ export default function EuAiComplianceWorkspace() {
       <TopStickyBar style={{ position: 'sticky', top: '56px', zIndex: 90, background: 'rgba(255, 255, 255, 0.97)', backdropFilter: 'blur(16px)', borderBottom: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(15, 23, 42, 0.03)' }}>
         <TopBarInner style={{ padding: '14px 36px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '20px', flexWrap: 'wrap' }}>
           <BrandBlock style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <EuroFlagBadge style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%)', fontSize: '1.05rem', boxShadow: '0 2px 6px rgba(15, 23, 42, 0.15)' }}>★</EuroFlagBadge>
+            <EuroFlagBadge style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)', fontSize: '1.05rem', boxShadow: '0 2px 6px rgba(37, 99, 235, 0.2)' }}>★</EuroFlagBadge>
             <TitleBlock style={{ gap: '3px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
                 <MainHeading style={{ fontSize: '1.22rem', letterSpacing: '-0.02em' }}>
@@ -2376,22 +2364,22 @@ export default function EuAiComplianceWorkspace() {
           </NavTabsRow>
 
           {/* Upscale Consolidated Executive Toolbar */}
-          <HeaderActions style={{ gap: '8px', flexWrap: 'nowrap' }}>
+          <HeaderActions style={{ gap: '8px', flexWrap: 'wrap' }}>
             <ActionButton 
               onClick={handleGenerateSynthesis}
               disabled={loadingSynthesis}
               title="Generate AI Legal Synthesis with Gemini 3.8 Flash"
               style={{
-                background: '#0f172a',
+                background: 'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)',
                 color: '#ffffff',
-                border: '1px solid #1e293b',
+                border: '1px solid #4338ca',
                 padding: '7px 14px',
                 fontSize: '0.82rem',
                 borderRadius: '8px',
-                boxShadow: '0 1px 2px rgba(15, 23, 42, 0.12)'
+                boxShadow: '0 2px 6px rgba(79, 70, 229, 0.2)'
               }}
             >
-              <HiSparkles size={14} style={{ color: '#818cf8' }} />
+              <HiSparkles size={14} style={{ color: '#e0e7ff' }} />
               {loadingSynthesis ? 'Synthesizing...' : 'AI Legal Synthesis'}
             </ActionButton>
 
@@ -2407,33 +2395,43 @@ export default function EuAiComplianceWorkspace() {
 
             <ActionButton 
               $secondary
-              onClick={handleStartNewAssessment}
-              title="Start a fresh blank EU AI Act compliance assessment with a new unique Dossier ID"
+              onClick={() => setActiveTab('questionnaire')}
+              title="Edit EU AI Act compliance responses"
               style={{ padding: '7px 11px', fontSize: '0.82rem', borderRadius: '8px' }}
             >
-              <FiPlus size={14} />
-              New
+              <FiEdit3 size={14} />
+              Edit
             </ActionButton>
 
-            {activeTab === 'report' ? (
-              <ActionButton 
-                $secondary
-                onClick={() => window.print()}
-                style={{ padding: '7px 11px', fontSize: '0.82rem', borderRadius: '8px' }}
-              >
-                <FiPrinter size={14} />
-                Print
-              </ActionButton>
-            ) : (
-              <ActionButton 
-                $secondary
-                onClick={handleReset}
-                title="Reset answers"
-                style={{ padding: '7px 10px', fontSize: '0.82rem', borderRadius: '8px', color: '#64748b' }}
-              >
-                <FiRotateCcw size={13} />
-              </ActionButton>
-            )}
+            <ActionButton 
+              $secondary
+              onClick={() => {
+                const clonedDocId = `EUAIA-2026-CL${Math.floor(1000 + Math.random() * 9000)}`;
+                const clonedMeta = {
+                  ...meta,
+                  documentId: clonedDocId,
+                  systemName: `${meta.systemName || 'EU AI System'} (Copy)`
+                };
+                setMeta(clonedMeta);
+                persistState(answers, clonedMeta, taskStatusOverrides);
+                toast.success(`Cloned dossier as ${clonedDocId}`);
+              }}
+              title="Clone this EU AI Act compliance dossier"
+              style={{ padding: '7px 11px', fontSize: '0.82rem', borderRadius: '8px' }}
+            >
+              <FiCopy size={14} />
+              Clone
+            </ActionButton>
+
+            <ActionButton 
+              $secondary
+              onClick={handleReset}
+              title="Delete / clear current EU AI Act compliance dossier"
+              style={{ padding: '7px 11px', fontSize: '0.82rem', borderRadius: '8px', background: '#fef2f2', borderColor: '#fecaca', color: '#dc2626' }}
+            >
+              <FiTrash2 size={14} />
+              Delete
+            </ActionButton>
           </HeaderActions>
         </TopBarInner>
 
@@ -2700,7 +2698,7 @@ export default function EuAiComplianceWorkspace() {
                                 width: '28px', 
                                 height: '28px', 
                                 borderRadius: '8px', 
-                                background: '#0f172a', 
+                                background: '#2563eb', 
                                 color: '#ffffff',
                                 display: 'flex',
                                 alignItems: 'center',
@@ -3030,7 +3028,7 @@ export default function EuAiComplianceWorkspace() {
 
                 <div style={{ maxHeight: '340px', overflowY: 'auto', border: '1px solid #e2e8f0', borderRadius: '10px' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.78rem' }}>
-                    <thead style={{ background: '#0f172a', color: '#ffffff', position: 'sticky', top: 0 }}>
+                    <thead style={{ background: '#f1f5f9', color: '#334155', borderBottom: '2px solid #cbd5e1', position: 'sticky', top: 0 }}>
                       <tr>
                         <th style={{ padding: '8px 10px', textAlign: 'left' }}>Q# & Statutory Article</th>
                         <th style={{ padding: '8px 10px', textAlign: 'left' }}>Penalty Tier & Weight (W_i)</th>
@@ -3772,7 +3770,7 @@ export default function EuAiComplianceWorkspace() {
                 <button
                   type="button"
                   onClick={() => window.print()}
-                  style={{ background: '#0f172a', color: '#ffffff', border: 'none', borderRadius: '8px', padding: '6px 14px', fontSize: '0.76rem', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  style={{ background: '#2563eb', color: '#ffffff', border: 'none', borderRadius: '8px', padding: '6px 14px', fontSize: '0.76rem', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
                 >
                   🖨️ Print Official PDF Dossier
                 </button>
@@ -4550,10 +4548,10 @@ export default function EuAiComplianceWorkspace() {
                       ★
                     </div>
                     <div>
-                      <h3 style={{ fontSize: '0.95rem', fontWeight: '800', margin: 0, color: '#f8fafc' }}>
+                      <h3 style={{ fontSize: '0.95rem', fontWeight: '800', margin: 0, color: '#0f172a' }}>
                         EU AI Act Regulatory Copilot
                       </h3>
-                      <span style={{ fontSize: '0.72rem', color: '#38bdf8', fontWeight: 700 }}>
+                      <span style={{ fontSize: '0.72rem', color: '#2563eb', fontWeight: 700 }}>
                         ⚡ Gemini 3.8 Flash Live Preview (gemini-3.8-flash-live-preview) • Zero-Hallucination
                       </span>
                     </div>
@@ -4562,7 +4560,7 @@ export default function EuAiComplianceWorkspace() {
                   <button
                     type="button"
                     onClick={() => setCopilotOpen(false)}
-                    style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: '6px', borderRadius: '6px' }}
+                    style={{ background: 'transparent', border: 'none', color: '#64748b', cursor: 'pointer', padding: '6px', borderRadius: '6px' }}
                   >
                     <FiX size={20} />
                   </button>
