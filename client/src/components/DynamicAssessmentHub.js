@@ -1,464 +1,70 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FiPlus, 
-  FiEye, 
-  FiTrash2, 
-  FiCalendar,
-  FiUser,
-  FiMail,
+import {
+  FiTrash2,
   FiBarChart2,
   FiCheckCircle,
   FiClock,
   FiSearch,
-  FiFilter,
   FiList,
   FiAward,
   FiLayers,
   FiToggleLeft,
   FiToggleRight,
   FiTarget,
-  FiArrowRight,
   FiPlay,
-  FiCheck,
-  FiExternalLink,
   FiChevronDown,
   FiChevronUp,
-  FiHelpCircle,
   FiUploadCloud,
   FiEdit2,
-  FiCopy
+  FiCopy,
+  FiStar
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import dynamicAssessmentService from '../services/dynamicAssessmentService';
-import assessmentService from '../services/assessmentService';
 import LoadingSpinner from './LoadingSpinner';
 import UploadDocumentModal from './UploadDocumentModal';
+import {
+  PageContainer,
+  ContentContainer,
+  HeaderSection,
+  PrimaryButton,
+  SecondaryButton,
+  FilterBar,
+  SearchBox,
+  TabGroup,
+  Tab,
+  Dropdown,
+  AssessmentsGrid,
+  AssessmentCard,
+  StatusBadge,
+  PillarTag,
+  ActionButton,
+  EmptyState
+} from './shared/assessmentCardKit';
 
-const HubContainer = styled.div`
-  min-height: 100vh;
-  background: #f8fafc;
-  color: #0f172a;
-  padding: 88px clamp(16px, 1.8vw, 28px) 60px;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
+// =======================
+// HUB-SPECIFIC PRIMITIVES (everything else comes from the shared /assessments kit)
+// =======================
 
-  @media (max-width: 1024px) {
-    padding: 88px 20px 40px;
-  }
-
-  @media (max-width: 768px) {
-    padding: 84px 14px 40px;
-  }
-`;
-
-const ContentWrapper = styled.div`
-  max-width: 100%;
-  margin: 0 auto;
-  width: 100%;
-  box-sizing: border-box;
-`;
-
-const HeaderSection = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 32px;
-  flex-wrap: wrap;
-  gap: 20px;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: stretch;
-    margin-bottom: 24px;
-  }
-`;
-
-const HeaderTitle = styled.h1`
-  font-size: 2.4rem;
-  font-weight: 800;
-  color: #0f172a;
-  margin-bottom: 8px;
-  letter-spacing: -0.02em;
-
-  @media (max-width: 768px) {
-    font-size: 1.75rem;
-  }
-`;
-
-const HeaderSubtitle = styled.p`
-  color: #475569;
-  font-size: 1.05rem;
+const CardDescription = styled.p`
+  font-size: 0.85rem;
   line-height: 1.5;
-`;
-
-const CreateBtn = styled.button`
-  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-  color: white;
-  border: none;
-  border-radius: 14px;
-  padding: 14px 28px;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: all 0.2s ease;
-  min-height: 48px;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 15px 30px rgba(99, 102, 241, 0.6);
-  }
-
-  @media (max-width: 768px) {
-    width: 100%;
-  }
-`;
-
-const UploadDocBtn = styled.button`
-  background: white;
-  color: #1e293b;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 14px;
-  padding: 14px 24px;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: all 0.2s ease;
-  min-height: 48px;
-
-  &:hover {
-    transform: translateY(-2px);
-    border-color: #6366f1;
-    color: #4f46e5;
-    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.15);
-  }
-
-  @media (max-width: 768px) {
-    width: 100%;
-  }
-`;
-
-const StatsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 16px;
-  margin-bottom: 32px;
-`;
-
-const StatCard = styled.div`
-  background: #ffffff;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 20px 24px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
-`;
-
-const StatIcon = styled.div`
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: ${props => props.$bg || 'rgba(99, 102, 241, 0.12)'};
-  color: ${props => props.$color || '#4f46e5'};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.4rem;
-  flex-shrink: 0;
-`;
-
-const StatInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const StatValue = styled.div`
-  font-size: 1.75rem;
-  font-weight: 800;
-  color: #0f172a;
-  line-height: 1.2;
-`;
-
-const StatLabel = styled.div`
-  font-size: 0.85rem;
   color: #475569;
-  font-weight: 600;
-`;
-
-const TabBar = styled.div`
-  display: flex;
-  gap: 12px;
-  border-bottom: 2px solid #e2e8f0;
-  padding-bottom: 16px;
-  margin-bottom: 32px;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-`;
-
-const Tab = styled.button`
-  background: ${props => props.$active ? '#4f46e5' : '#ffffff'};
-  border: 1.5px solid ${props => props.$active ? '#4f46e5' : '#e2e8f0'};
-  color: ${props => props.$active ? '#ffffff' : '#475569'};
-  padding: 10px 20px;
-  border-radius: 10px;
-  font-weight: 700;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-  min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: ${props => props.$active ? '0 4px 12px rgba(79, 70, 229, 0.25)' : '0 2px 4px rgba(0,0,0,0.02)'};
-
-  &:hover {
-    color: ${props => props.$active ? '#ffffff' : '#0f172a'};
-    background: ${props => props.$active ? '#4338ca' : '#f1f5f9'};
-    border-color: ${props => props.$active ? '#4338ca' : '#cbd5e1'};
-  }
-`;
-
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-  gap: 24px;
-
-  @media (max-width: 640px) {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-`;
-
-const TypeCard = styled.div`
-  background: #ffffff;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 20px;
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: all 0.25s ease;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-
-  &:hover {
-    transform: translateY(-4px);
-    border-color: #6366f1;
-    box-shadow: 0 16px 36px rgba(99, 102, 241, 0.12);
-  }
-
-  @media (max-width: 768px) {
-    padding: 20px 16px;
-    border-radius: 16px;
-  }
-`;
-
-const CardTopRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 12px;
-`;
-
-const TypeBadge = styled.span`
-  background: ${props => props.$bg ? `${props.$bg}20` : '#eff6ff'};
-  color: ${props => props.$color || '#2563eb'};
-  border: 1px solid ${props => props.$color ? `${props.$color}40` : '#bfdbfe'};
-  padding: 4px 12px;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-`;
-
-const StatusTag = styled.span`
-  background: ${props => props.$status === 'production' ? '#ecfdf5' : '#fffbeb'};
-  color: ${props => props.$status === 'production' ? '#059669' : '#d97706'};
-  border: 1px solid ${props => props.$status === 'production' ? '#a7f3d0' : '#fde68a'};
-  padding: 3px 10px;
-  border-radius: 8px;
-  font-size: 0.75rem;
-  font-weight: 800;
-`;
-
-const TypeTitle = styled.h3`
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: #0f172a;
-  margin-bottom: 8px;
-  line-height: 1.3;
-`;
-
-const TypeDesc = styled.p`
-  color: #334155;
-  font-size: 0.92rem;
-  line-height: 1.55;
-  margin-bottom: 16px;
-`;
-
-const MetaPillsRow = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 20px;
-`;
-
-const MetaPill = styled.span`
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 5px 12px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #334155;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-`;
-
-const DimensionsAccordion = styled.div`
-  background: #f8fafc;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 12px 16px;
-  margin-bottom: 20px;
-`;
-
-const AccordionToggle = styled.button`
-  background: none;
-  border: none;
-  color: #4f46e5;
-  font-size: 0.88rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  cursor: pointer;
-  padding: 0;
-
-  &:hover {
-    color: #4338ca;
-  }
-`;
-
-const DimensionList = styled.div`
-  margin-top: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-size: 0.85rem;
-  color: #334155;
-`;
-
-const DimensionItem = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #1e293b;
-  font-weight: 500;
-
-  svg {
-    color: #10b981;
-    font-size: 0.9rem;
-    flex-shrink: 0;
-  }
-`;
-
-const TypeFooter = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  border-top: 1.5px solid #e2e8f0;
-  padding-top: 16px;
-  margin-top: auto;
-`;
-
-const ActionButtonsRow = styled.div`
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-`;
-
-const LaunchBtn = styled.button`
-  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  padding: 10px 18px;
-  font-size: 0.9rem;
-  font-weight: 700;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.2s ease;
-  flex: 1;
-  min-height: 40px;
-
-  &:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4);
-  }
-`;
-
-const SampleBtn = styled.button`
-  background: #f0fdf4;
-  border: 1.5px solid #86efac;
-  color: #16a34a;
-  border-radius: 10px;
-  padding: 10px 16px;
-  font-size: 0.88rem;
-  font-weight: 700;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  transition: all 0.2s ease;
-  min-height: 40px;
-
-  &:hover {
-    background: #dcfce7;
-    color: #15803d;
-    border-color: #4ade80;
-  }
-`;
-
-const SecondaryActionsRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
+  margin: 0 0 14px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 `;
 
 const PromoteToggle = styled.button`
   background: none;
   border: none;
-  color: ${props => props.$promoted ? '#10b981' : '#64748b'};
-  display: flex;
+  color: ${props => props.$promoted ? '#059669' : '#64748b'};
+  display: inline-flex;
   align-items: center;
   gap: 6px;
   font-size: 0.8rem;
@@ -466,9 +72,10 @@ const PromoteToggle = styled.button`
   cursor: pointer;
   padding: 4px 0;
   transition: color 0.2s ease;
+  white-space: nowrap;
 
   &:hover {
-    color: ${props => props.$promoted ? '#34d399' : '#94a3b8'};
+    color: ${props => props.$promoted ? '#047857' : '#2563eb'};
   }
 
   svg {
@@ -476,23 +83,9 @@ const PromoteToggle = styled.button`
   }
 `;
 
-const DeleteButton = styled.button`
-  background: none;
-  border: none;
-  color: #ef4444;
-  font-size: 0.8rem;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  opacity: 0.7;
-  transition: opacity 0.2s;
-
-  &:hover {
-    opacity: 1;
-    text-decoration: underline;
-  }
-`;
+// Pin action footers to the bottom of equal-height grid rows (hub-only; keeps the shared kit untouched)
+const CARD_FLEX_STYLE = { display: 'flex', flexDirection: 'column' };
+const FOOTER_PIN_STYLE = { marginTop: 'auto' };
 
 // Start Assessment Modal
 const ModalOverlay = styled.div`
@@ -501,8 +94,8 @@ const ModalOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(8px);
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -512,17 +105,17 @@ const ModalOverlay = styled.div`
 
 const ModalContent = styled.div`
   background: #ffffff;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 24px;
-  padding: 36px;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 32px;
   width: 100%;
   max-width: 540px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  color: #0f172a;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+  color: #1e293b;
 
   @media (max-width: 640px) {
     padding: 24px 18px;
-    border-radius: 18px;
+    border-radius: 14px;
   }
 `;
 
@@ -532,8 +125,8 @@ const FormGroup = styled.div`
 
 const Label = styled.label`
   display: block;
-  font-size: 0.88rem;
-  font-weight: 700;
+  font-size: 0.875rem;
+  font-weight: 600;
   color: #334155;
   margin-bottom: 8px;
 `;
@@ -541,52 +134,105 @@ const Label = styled.label`
 const Input = styled.input`
   width: 100%;
   background: #ffffff;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 12px;
-  padding: 12px 16px;
-  color: #0f172a;
-  font-size: 0.95rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: #1e293b;
+  font-size: 0.875rem;
   box-sizing: border-box;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:focus {
     outline: none;
-    border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
   }
 `;
 
-const CustomerCard = styled.div`
-  background: #ffffff;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 20px;
-  padding: 28px;
-  margin-bottom: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-`;
+// =======================
+// STATIC CATALOG DATA
+// =======================
 
-const CustomerHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1.5px solid #e2e8f0;
-  padding-bottom: 16px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-  gap: 12px;
-`;
+const CANONICAL_SAMPLE_REPORTS = {
+  enterprise_data_ai_maturity: 'inst_data_ai_maturity_demo',
+  openai_to_gemini_enterprise_migration: 'inst_openai_gemini_demo',
+  finops_cloud_cost_optimization: 'inst_finops_demo',
+  agentic_ai_mesh_mcp_banking_readiness: 'inst_banking_mcp_demo',
+  edw_lakehouse_to_bigquery_modernization: 'inst_edw_bq_demo',
+  enterprise_ai_zero_trust_security: 'inst_zero_trust_demo'
+};
 
-const AssessmentRow = styled.div`
-  background: #f8fafc;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 16px 20px;
-  margin-bottom: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-`;
+// Suite badge palette shared with /assessments (AssessmentsListNew.js suiteBadges)
+const SUITE_BADGES = {
+  dynamic: { label: 'Dynamic Blueprint', bg: '#f3e8ff', text: '#6d28d9', border: '#ddd6fe' },
+  draft: { label: 'Draft Framework', bg: '#fffbeb', text: '#b45309', border: '#fde68a' },
+  ge_value_realization: { label: 'GE Value Realization', bg: '#eff6ff', text: '#1d4ed8', border: '#bfdbfe' },
+  eu_ai_act: { label: 'EU AI Act Dossier', bg: '#fffbeb', text: '#b45309', border: '#fde68a' },
+  pinned: { label: '📌 Pinned in Nav', bg: '#ecfdf5', text: '#047857', border: '#a7f3d0' }
+};
+
+// The two specialised, hard-wired production suites (own routes + own nav entries)
+const SPECIALIZED_TEMPLATES = [
+  {
+    key: 'ge_value_realization',
+    badge: SUITE_BADGES.ge_value_realization,
+    title: 'GE Value Realization (BioNova Migration)',
+    description: 'Zero-hallucination value realization assessment for migrating legacy AI (NovaAssist / NOVA-AI) to Google Gemini Enterprise across 85,300 seats, 5 workflows, and a 5-Column CFO Cost Bridge.',
+    meta: [
+      { Icon: FiLayers, label: '10 Modules (C–G)' },
+      { Icon: FiTarget, label: '82 Qs + 5 Workflows' },
+      { Icon: FiClock, label: '3 Input Modes' }
+    ],
+    pillars: ['5-Column CFO Cost Bridge', '85,300 Seats', '5 Workflows', '3 Input Modes'],
+    footnote: 'Pre-Staged • ACC-1002-BIONOVA',
+    accentBorder: '#93c5fd',
+    editPath: '/ge-value-realization/inst_bionova_ge_value_realization?tab=inputs',
+    secondary: { label: 'Executive Value Report', path: '/ge-value-realization/inst_bionova_ge_value_realization?tab=report' },
+    primary: { label: 'Open Inputs (3 Modes)', path: '/ge-value-realization/inst_bionova_ge_value_realization?tab=inputs' }
+  },
+  {
+    key: 'eu_ai_act',
+    badge: SUITE_BADGES.eu_ai_act,
+    title: 'EU AI Act Compliance Engine & Audit Workspace',
+    description: 'Statutory risk classification (Art. 5 tripwires, Annex III High-Risk), 7-vector conformity audit (Arts. 8–15), and formal regulatory attestation dossier.',
+    meta: [
+      { Icon: FiLayers, label: '9 Statutory Sections' },
+      { Icon: FiTarget, label: '20 Multi-Branch Qs' },
+      { Icon: FiClock, label: '~15 mins' }
+    ],
+    pillars: ['Art. 5 Tripwires', 'Annex III High-Risk', 'Arts. 8–15 Conformity', 'Attestation Dossier'],
+    footnote: 'Core Statutory Suite',
+    accentBorder: null,
+    editPath: '/eu-ai-compliance',
+    secondary: { label: 'Try Sample', path: '/eu-ai-compliance?demo=high-risk-hr' },
+    primary: { label: 'Start Assessment', path: '/eu-ai-compliance' }
+  }
+];
+
+const badgeStyle = (badge) => ({
+  display: 'inline-block',
+  padding: '3px 9px',
+  borderRadius: '999px',
+  fontSize: '0.72rem',
+  fontWeight: 700,
+  background: badge.bg,
+  color: badge.text,
+  border: `1px solid ${badge.border}`
+});
+
+const formatDate = (value) => {
+  if (!value) return 'n/a';
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return 'n/a';
+  return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+};
+
+const countQuestions = (type) =>
+  (type.framework?.dimensions || []).reduce((acc, d) => acc + (d.questions?.length || 0), 0);
+
+// =======================
+// COMPONENT
+// =======================
 
 const DynamicAssessmentHub = () => {
   const navigate = useNavigate();
@@ -597,6 +243,10 @@ const DynamicAssessmentHub = () => {
   const [expandedPreview, setExpandedPreview] = useState({});
   const [startModalType, setStartModalType] = useState(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [templateFilter, setTemplateFilter] = useState('all'); // 'all' | 'pinned' | 'unpinned'
+  const [runFilter, setRunFilter] = useState('all'); // 'all' | 'completed' | 'in_progress'
+  const [sortBy, setSortBy] = useState('catalog'); // 'catalog' | 'title' | 'questions'
   const [modalForm, setModalForm] = useState({
     customerName: '',
     useCase: '',
@@ -757,15 +407,6 @@ const DynamicAssessmentHub = () => {
     }
   };
 
-  const CANONICAL_SAMPLE_REPORTS = {
-    enterprise_data_ai_maturity: 'inst_data_ai_maturity_demo',
-    openai_to_gemini_enterprise_migration: 'inst_openai_gemini_demo',
-    finops_cloud_cost_optimization: 'inst_finops_demo',
-    agentic_ai_mesh_mcp_banking_readiness: 'inst_banking_mcp_demo',
-    edw_lakehouse_to_bigquery_modernization: 'inst_edw_bq_demo',
-    enterprise_ai_zero_trust_security: 'inst_zero_trust_demo'
-  };
-
   const handleTrySample = async (type) => {
     const canonicalId = CANONICAL_SAMPLE_REPORTS[type?.typeKey];
     if (canonicalId) {
@@ -790,468 +431,540 @@ const DynamicAssessmentHub = () => {
     }));
   };
 
-  // Group instances by customer
-  const customerMap = {};
-  instances.forEach(inst => {
-    const cust = inst.customerName || 'Other';
-    if (!customerMap[cust]) {
-      customerMap[cust] = [];
-    }
-    customerMap[cust].push(inst);
-  });
-
+  // -----------------------
+  // Derived collections
+  // -----------------------
   const productionTypes = types.filter(t => (t.status === 'production' || t.isPromoted));
   const draftTypes = types.filter(t => t.status === 'draft' && !t.isPromoted);
+
+  const query = searchTerm.trim().toLowerCase();
+  const typeMatchesSearch = (t) => !query || [
+    t.title,
+    t.description,
+    t.badge,
+    t.typeKey,
+    ...((t.framework?.dimensions || []).map(d => d.name))
+  ].filter(Boolean).join(' ').toLowerCase().includes(query);
+  const typeMatchesPin = (t) => templateFilter === 'all'
+    || (templateFilter === 'pinned' ? !!t.isPromoted : !t.isPromoted);
+  const sortTypes = (arr) => {
+    if (sortBy === 'title') return [...arr].sort((a, b) => String(a.title || '').localeCompare(String(b.title || '')));
+    if (sortBy === 'questions') return [...arr].sort((a, b) => countQuestions(b) - countQuestions(a));
+    return arr;
+  };
+
+  const visibleProductionTypes = sortTypes(productionTypes.filter(typeMatchesSearch).filter(typeMatchesPin));
+  const visibleDraftTypes = sortTypes(draftTypes.filter(typeMatchesSearch).filter(typeMatchesPin));
+  // Specialised suites are permanently wired into the nav, so they count as "pinned"
+  const visibleSpecialized = templateFilter === 'unpinned'
+    ? []
+    : SPECIALIZED_TEMPLATES.filter(s => !query || `${s.title} ${s.description} ${s.badge.label}`.toLowerCase().includes(query));
+
+  const runMatchesSearch = (r) => !query || [
+    r.customerName,
+    r.useCase,
+    r.frameworkSnapshot?.title,
+    r.typeKey,
+    r.contactEmail
+  ].filter(Boolean).join(' ').toLowerCase().includes(query);
+  const runMatchesStatus = (r) => runFilter === 'all'
+    || (runFilter === 'completed' ? !!r.aiReport : !r.aiReport);
+  // Flat grid like /assessments: cluster by customer, newest run first within a customer
+  const visibleInstances = instances
+    .filter(runMatchesSearch)
+    .filter(runMatchesStatus)
+    .slice()
+    .sort((a, b) => {
+      const byCustomer = String(a.customerName || 'Other').localeCompare(String(b.customerName || 'Other'));
+      if (byCustomer !== 0) return byCustomer;
+      return new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0);
+    });
+
+  const productionCount = productionTypes.length + SPECIALIZED_TEMPLATES.length;
+  const visibleCount = activeTab === 'production'
+    ? visibleProductionTypes.length + visibleSpecialized.length
+    : activeTab === 'drafts'
+    ? visibleDraftTypes.length
+    : visibleInstances.length;
+  const totalCount = activeTab === 'production'
+    ? productionCount
+    : activeTab === 'drafts'
+    ? draftTypes.length
+    : instances.length;
+
+  const collectionPills = [
+    { id: 'production', label: 'Production Ready', count: productionCount, color: '#059669', Icon: FiCheckCircle },
+    { id: 'drafts', label: 'Drafts & AI Frameworks', count: draftTypes.length, color: '#b45309', Icon: FiAward },
+    { id: 'portfolio', label: 'Customer Portfolio Runs', count: instances.length, color: '#1d4ed8', Icon: FiBarChart2 }
+  ];
+
+  const stopThen = (fn) => (e) => {
+    if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+    fn();
+  };
+
+  // -----------------------
+  // Card renderers (all on the shared /assessments AssessmentCard anatomy)
+  // -----------------------
+  const renderSpecializedCard = (tpl) => (
+    <AssessmentCard
+      key={tpl.key}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      style={{ ...CARD_FLEX_STYLE, cursor: 'default', borderColor: tpl.accentBorder || undefined }}
+    >
+      <div className="header">
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
+            <span style={badgeStyle(tpl.badge)}>{tpl.badge.label}</span>
+            <span style={badgeStyle(SUITE_BADGES.pinned)}>{SUITE_BADGES.pinned.label}</span>
+          </div>
+          <div className="title">{tpl.title}</div>
+          <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '6px' }}>
+            <strong style={{ color: '#475569', fontWeight: 600 }}>{tpl.footnote}</strong>
+          </div>
+        </div>
+        <StatusBadge $status="production" style={{ whiteSpace: 'nowrap' }}>Production</StatusBadge>
+      </div>
+
+      <CardDescription title={tpl.description}>{tpl.description}</CardDescription>
+
+      <div className="meta">
+        {tpl.meta.map(({ Icon, label }) => (
+          <span className="meta-item" key={label}><Icon /> {label}</span>
+        ))}
+      </div>
+
+      <div className="pillars">
+        {tpl.pillars.map(p => <PillarTag key={p}>{p}</PillarTag>)}
+      </div>
+
+      <div className="footer" style={FOOTER_PIN_STYLE}>
+        <div className="actions" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+          <ActionButton onClick={() => navigate(tpl.editPath)} title="Edit assessment inputs">
+            <FiEdit2 /> Edit
+          </ActionButton>
+          <ActionButton
+            onClick={() => navigate(tpl.secondary.path)}
+            title={tpl.secondary.label}
+            style={{ color: '#059669', borderColor: '#a7f3d0', background: '#ecfdf5' }}
+          >
+            <FiStar /> {tpl.secondary.label}
+          </ActionButton>
+          <ActionButton className="primary" onClick={() => navigate(tpl.primary.path)} title={tpl.primary.label}>
+            <FiPlay /> {tpl.primary.label}
+          </ActionButton>
+        </div>
+      </div>
+    </AssessmentCard>
+  );
+
+  const renderTypeCard = (type, { isDraft }) => {
+    const dimensions = type.framework?.dimensions || [];
+    const totalQ = countQuestions(type);
+    const isExpanded = !!expandedPreview[type.typeKey];
+    const visibleDims = isExpanded ? dimensions : dimensions.slice(0, 4);
+    const hiddenCount = dimensions.length - visibleDims.length;
+    const runsForType = instances.filter(i => i.typeKey === type.typeKey).length;
+    const badge = isDraft
+      ? { ...SUITE_BADGES.draft, label: type.badge || SUITE_BADGES.draft.label }
+      : {
+          label: type.badge || SUITE_BADGES.dynamic.label,
+          bg: type.color ? `${type.color}1f` : SUITE_BADGES.dynamic.bg,
+          text: type.color || SUITE_BADGES.dynamic.text,
+          border: type.color ? `${type.color}55` : SUITE_BADGES.dynamic.border
+        };
+
+    return (
+      <AssessmentCard
+        key={type.id || type.typeKey}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        style={{ ...CARD_FLEX_STYLE, cursor: 'default' }}
+      >
+        <div className="header">
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
+              <span style={badgeStyle(badge)}>{badge.label}</span>
+              {type.isPromoted && (
+                <span style={badgeStyle(SUITE_BADGES.pinned)}>{SUITE_BADGES.pinned.label}</span>
+              )}
+            </div>
+            <div className="title">{type.title}</div>
+            <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '6px' }}>
+              Key: <strong style={{ color: '#475569', fontWeight: 600 }}>{type.typeKey}</strong>
+              {runsForType > 0 && <> • {runsForType} customer run{runsForType === 1 ? '' : 's'}</>}
+            </div>
+          </div>
+          <StatusBadge $status={isDraft ? 'draft' : 'production'} style={{ whiteSpace: 'nowrap' }}>{isDraft ? 'Draft' : 'Production'}</StatusBadge>
+        </div>
+
+        <CardDescription title={type.description || ''}>
+          {type.description || (isDraft ? 'AI-generated assessment framework draft.' : 'Enterprise structured assessment framework.')}
+        </CardDescription>
+
+        <div className="meta">
+          <span className="meta-item"><FiLayers /> {dimensions.length} Dimensions</span>
+          <span className="meta-item"><FiTarget /> {totalQ} Questions</span>
+          <span className="meta-item"><FiClock /> ~{type.framework?.estimatedMinutes || 15} mins</span>
+        </div>
+
+        {dimensions.length > 0 && (
+          <div className="pillars">
+            {visibleDims.map((dim, dIdx) => (
+              <PillarTag key={dim.id || dIdx} title={`${dim.questions?.length || 0} questions`}>
+                {dim.name}
+              </PillarTag>
+            ))}
+            {dimensions.length > 4 && (
+              <PillarTag
+                as="button"
+                type="button"
+                onClick={() => togglePreview(type.typeKey)}
+                style={{ cursor: 'pointer', fontFamily: 'inherit', color: '#2563eb', borderColor: '#bfdbfe', background: '#eff6ff', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                title={isExpanded ? 'Collapse dimension list' : 'Preview all dimensions'}
+              >
+                {isExpanded ? <><FiChevronUp size={12} /> Show less</> : <><FiChevronDown size={12} /> +{hiddenCount} more</>}
+              </PillarTag>
+            )}
+          </div>
+        )}
+
+        <div className="footer" style={{ ...FOOTER_PIN_STYLE, justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap' }}>
+          <PromoteToggle
+            type="button"
+            $promoted={type.isPromoted}
+            onClick={() => handleTogglePromote(type)}
+            title={type.isPromoted ? 'Remove from the Assessments navigation menu' : 'Pin this framework to the Assessments navigation menu'}
+          >
+            {type.isPromoted ? <FiToggleRight /> : <FiToggleLeft />}
+            {type.isPromoted ? 'Pinned in Nav' : (isDraft ? 'Promote to Prod' : 'Pin to Nav')}
+          </PromoteToggle>
+          <div className="actions" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            <ActionButton onClick={() => handleEditType(type)} title="Edit assessment responses">
+              <FiEdit2 /> Edit
+            </ActionButton>
+            <ActionButton onClick={() => handleCloneType(type)} title="Clone this assessment template">
+              <FiCopy /> Clone
+            </ActionButton>
+            <ActionButton
+              onClick={() => handleDeleteType(type)}
+              title="Delete this template"
+              style={{ color: '#dc2626', borderColor: '#fecaca', background: '#fef2f2' }}
+            >
+              <FiTrash2 /> Delete
+            </ActionButton>
+            <ActionButton
+              onClick={() => handleTrySample(type)}
+              title="Open a sample executive report for this framework"
+              style={{ color: '#059669', borderColor: '#a7f3d0', background: '#ecfdf5' }}
+            >
+              🧪 Try Sample
+            </ActionButton>
+            <ActionButton className="primary" onClick={() => handleOpenStartModal(type)} title="Start a new customer assessment with this framework">
+              <FiPlay /> Start Assessment
+            </ActionButton>
+          </div>
+        </div>
+      </AssessmentCard>
+    );
+  };
+
+  const renderRunCard = (run) => {
+    const hasReport = !!run.aiReport;
+    const score = Number(run.totalScore || 0);
+    const status = hasReport ? 'completed' : (score > 0 ? 'in_progress' : 'not_started');
+    const statusLabel = hasReport ? 'Completed' : (score > 0 ? 'In Progress' : 'Not Started');
+    const pct = Math.max(0, Math.min(100, Math.round((score / 5) * 100)));
+    const typeMeta = types.find(t => t.typeKey === run.typeKey);
+    const badge = { ...SUITE_BADGES.dynamic, label: typeMeta?.badge || SUITE_BADGES.dynamic.label };
+    const owner = run.contactEmail ? run.contactEmail.split('@')[0] : 'Lead Architect';
+    const openRun = () => navigate(hasReport ? `/assessments/report/${run.id}` : `/assessments/run/instance/${run.id}`);
+
+    return (
+      <AssessmentCard
+        key={run.id}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        onClick={openRun}
+        style={CARD_FLEX_STYLE}
+      >
+        <div className="header">
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
+              <span style={badgeStyle(badge)}>{badge.label}</span>
+            </div>
+            <div className="title">{run.frameworkSnapshot?.title || typeMeta?.title || run.typeKey}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', fontSize: '0.84rem', fontWeight: 600, color: '#334155', marginTop: '6px' }}>
+              <span>{run.customerName || 'Customer'}</span>
+              {run.useCase && (
+                <span style={{ color: '#64748b', fontWeight: 500 }}>• {run.useCase}</span>
+              )}
+            </div>
+            <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '6px' }}>
+              Owner: <strong style={{ color: '#475569', fontWeight: 600 }}>{owner}</strong> • {formatDate(run.updatedAt || run.createdAt)}
+            </div>
+          </div>
+          <StatusBadge $status={status} style={{ whiteSpace: 'nowrap' }}>{statusLabel}</StatusBadge>
+        </div>
+
+        <div className="progress-section">
+          <div className="progress-label">
+            <span>Maturity Score{run.maturityLevel ? ` • ${run.maturityLevel}` : ''}</span>
+            <span><strong>{score > 0 ? `${score.toFixed(1)} / 5.0` : 'In Progress'}</strong></span>
+          </div>
+          <div className="progress-bar">
+            <div className="progress-fill" style={{ width: `${pct}%` }} />
+          </div>
+        </div>
+
+        <div className="footer" style={FOOTER_PIN_STYLE}>
+          <div className="actions" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            <ActionButton onClick={stopThen(() => navigate(`/assessments/run/instance/${run.id}`))} title="Edit assessment responses">
+              <FiEdit2 /> Edit
+            </ActionButton>
+            <ActionButton onClick={stopThen(() => handleCloneInstance(run))} title="Clone this assessment">
+              <FiCopy /> Clone
+            </ActionButton>
+            <ActionButton
+              onClick={stopThen(() => handleDeleteInstance(run))}
+              title="Delete this assessment"
+              style={{ color: '#dc2626', borderColor: '#fecaca', background: '#fef2f2' }}
+            >
+              <FiTrash2 /> Delete
+            </ActionButton>
+            <ActionButton
+              className="primary"
+              disabled={!hasReport}
+              onClick={stopThen(() => navigate(`/assessments/report/${run.id}`))}
+              title={hasReport ? 'View executive assessment report' : 'Complete the assessment to generate the executive report'}
+            >
+              <FiStar /> Report
+            </ActionButton>
+          </div>
+        </div>
+      </AssessmentCard>
+    );
+  };
+
+  const renderSearchEmptyState = () => (
+    <EmptyState>
+      <div className="icon"><FiSearch /></div>
+      <div className="title">No matches for “{searchTerm.trim()}”</div>
+      <div className="message">Try a different keyword, or clear the search and filters to see the full catalog.</div>
+      <SecondaryButton onClick={() => { setSearchTerm(''); setTemplateFilter('all'); setRunFilter('all'); }} style={{ margin: '0 auto' }}>
+        Clear search &amp; filters
+      </SecondaryButton>
+    </EmptyState>
+  );
 
   if (loading) {
     return <LoadingSpinner message="Loading Assessment Hub..." />;
   }
 
   return (
-    <HubContainer>
-      <ContentWrapper>
+    <PageContainer>
+      <ContentContainer>
         <HeaderSection>
-          <div>
-            <HeaderTitle>Assessment Catalog & Templates</HeaderTitle>
-            <HeaderSubtitle>
+          <div className="left">
+            <h1>Assessment Catalog &amp; Templates</h1>
+            <p>
               Explore verified production-ready frameworks, launch customized customer evaluations, and manage AI-generated assessment drafts.
-            </HeaderSubtitle>
+            </p>
           </div>
-
-          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
-            <UploadDocBtn onClick={() => setIsUploadModalOpen(true)}>
-              <FiUploadCloud />
+          <div className="right">
+            <SecondaryButton
+              onClick={() => setIsUploadModalOpen(true)}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <FiUploadCloud size={16} />
               Auto-Populate from Document
-            </UploadDocBtn>
-            <CreateBtn onClick={() => navigate('/assessments/ai-generator')}>
-              <HiSparkles />
+            </SecondaryButton>
+            <PrimaryButton
+              onClick={() => navigate('/assessments/ai-generator')}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <HiSparkles size={16} />
               Create with Gemini 3.8 Flash
-            </CreateBtn>
+            </PrimaryButton>
           </div>
         </HeaderSection>
 
-        <StatsGrid>
-          <StatCard>
-            <StatIcon $bg="rgba(16, 185, 129, 0.15)" $color="#10b981">
-              <FiCheckCircle />
-            </StatIcon>
-            <StatInfo>
-              <StatValue>{productionTypes.length + 2}</StatValue>
-              <StatLabel>Production Ready Frameworks</StatLabel>
-            </StatInfo>
-          </StatCard>
+        {/* Collection pills (same rail as the /assessments suite filter) */}
+        <div style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '10px',
+          marginBottom: '16px',
+          alignItems: 'center'
+        }}>
+          {collectionPills.map(({ id, label, count, color, Icon }) => {
+            const isActive = activeTab === id;
+            return (
+              <button
+                key={id}
+                type="button"
+                data-hub-collection={id}
+                onClick={() => setActiveTab(id)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '8px 16px',
+                  borderRadius: '999px',
+                  fontSize: '0.875rem',
+                  fontWeight: isActive ? 700 : 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  background: isActive ? color : '#ffffff',
+                  color: isActive ? '#ffffff' : '#475569',
+                  border: `1.5px solid ${isActive ? color : '#e2e8f0'}`,
+                  boxShadow: isActive ? '0 4px 12px rgba(15, 23, 42, 0.12)' : '0 1px 2px rgba(0, 0, 0, 0.04)'
+                }}
+              >
+                <Icon size={15} />
+                <span>{label}</span>
+                <span style={{
+                  background: isActive ? 'rgba(255, 255, 255, 0.22)' : '#f1f5f9',
+                  color: isActive ? '#ffffff' : '#334155',
+                  padding: '2px 8px',
+                  borderRadius: '999px',
+                  fontSize: '0.75rem',
+                  fontWeight: 700
+                }}>
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
 
-          <StatCard>
-            <StatIcon $bg="rgba(245, 158, 11, 0.15)" $color="#f59e0b">
-              <FiAward />
-            </StatIcon>
-            <StatInfo>
-              <StatValue>{draftTypes.length}</StatValue>
-              <StatLabel>Draft & AI-Generated Frameworks</StatLabel>
-            </StatInfo>
-          </StatCard>
-
-          <StatCard>
-            <StatIcon $bg="rgba(56, 189, 248, 0.15)" $color="#38bdf8">
-              <FiBarChart2 />
-            </StatIcon>
-            <StatInfo>
-              <StatValue>{instances.length}</StatValue>
-              <StatLabel>Active Customer Evaluations</StatLabel>
-            </StatInfo>
-          </StatCard>
-        </StatsGrid>
-
-        <TabBar>
-          <Tab $active={activeTab === 'production'} onClick={() => setActiveTab('production')}>
-            <FiCheckCircle />
-            Production Ready ({productionTypes.length + 2})
-          </Tab>
-          <Tab $active={activeTab === 'drafts'} onClick={() => setActiveTab('drafts')}>
-            <FiAward />
-            Drafts & AI Frameworks ({draftTypes.length})
-          </Tab>
-          <Tab $active={activeTab === 'portfolio'} onClick={() => setActiveTab('portfolio')}>
-            <FiList />
-            Customer Portfolio Runs ({instances.length})
-          </Tab>
-        </TabBar>
+        {/* Filter Bar */}
+        <FilterBar>
+          <div className="top-row">
+            <SearchBox>
+              <FiSearch size={18} />
+              <input
+                type="text"
+                placeholder={activeTab === 'portfolio'
+                  ? 'Search customers, initiatives, frameworks...'
+                  : 'Search frameworks, badges, dimensions...'}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </SearchBox>
+            {activeTab === 'portfolio' ? (
+              <TabGroup>
+                <Tab $active={runFilter === 'all'} onClick={() => setRunFilter('all')}>All</Tab>
+                <Tab $active={runFilter === 'completed'} onClick={() => setRunFilter('completed')}>Completed</Tab>
+                <Tab $active={runFilter === 'in_progress'} onClick={() => setRunFilter('in_progress')}>In Progress</Tab>
+              </TabGroup>
+            ) : (
+              <TabGroup>
+                <Tab $active={templateFilter === 'all'} onClick={() => setTemplateFilter('all')}>All</Tab>
+                <Tab $active={templateFilter === 'pinned'} onClick={() => setTemplateFilter('pinned')}>Pinned in Nav</Tab>
+                <Tab $active={templateFilter === 'unpinned'} onClick={() => setTemplateFilter('unpinned')}>Not Pinned</Tab>
+              </TabGroup>
+            )}
+          </div>
+          <div className="bottom-row">
+            {activeTab !== 'portfolio' && (
+              <Dropdown value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                <option value="catalog">Sort by: Catalog order</option>
+                <option value="title">Sort by: Title A–Z</option>
+                <option value="questions">Sort by: Most questions</option>
+              </Dropdown>
+            )}
+            <span style={{ marginLeft: 'auto', fontSize: '0.813rem', color: '#64748b' }}>
+              Showing <strong style={{ color: '#1e293b' }}>{visibleCount}</strong> of {totalCount}
+              {activeTab === 'portfolio' ? ' customer runs' : activeTab === 'drafts' ? ' draft frameworks' : ' production frameworks'}
+            </span>
+          </div>
+        </FilterBar>
 
         {/* Tab 1: Production Ready Templates */}
         {activeTab === 'production' && (
-          <Grid>
-            {/* Specialized: GE Value Realization (Enterprise Gemini Migration) */}
-            <TypeCard style={{ borderColor: '#3b82f6', boxShadow: '0 8px 24px rgba(37, 99, 235, 0.08)' }}>
-              <div>
-                <CardTopRow>
-                  <TypeBadge $bg="rgba(37, 99, 235, 0.15)" $color="#2563eb">CFO & Value Bridge</TypeBadge>
-                  <StatusTag $status="production">Production Ready</StatusTag>
-                </CardTopRow>
-                <TypeTitle>GE Value Realization (BioNova Migration)</TypeTitle>
-                <TypeDesc>
-                  Zero-hallucination value realization assessment for migrating legacy AI (NovaAssist / NOVA-AI) to Google Gemini Enterprise across 85,300 seats, 5 workflows, and a 5-Column CFO Cost Bridge.
-                </TypeDesc>
-                <MetaPillsRow>
-                  <MetaPill><FiLayers /> 10 Modules (C–G)</MetaPill>
-                  <MetaPill><FiTarget /> 82 Qs + 5 Workflows</MetaPill>
-                  <MetaPill><FiClock /> 3 Input Modes</MetaPill>
-                </MetaPillsRow>
-              </div>
-              <TypeFooter>
-                <ActionButtonsRow>
-                  <LaunchBtn onClick={() => navigate('/ge-value-realization/inst_bionova_ge_value_realization?tab=inputs')}>
-                    <FiPlay /> Open Inputs (3 Modes)
-                  </LaunchBtn>
-                  <SampleBtn onClick={() => navigate('/ge-value-realization/inst_bionova_ge_value_realization?tab=report')}>
-                    📊 Executive Value Report
-                  </SampleBtn>
-                </ActionButtonsRow>
-                <SecondaryActionsRow>
-                  <span style={{ fontSize: '0.8rem', color: '#2563eb', fontWeight: '700' }}>✓ Pre-Staged (`ACC-1002-BIONOVA`)</span>
-                  <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                    <button
-                      type="button"
-                      onClick={() => navigate('/ge-value-realization/inst_bionova_ge_value_realization?tab=inputs')}
-                      style={{ background: 'none', border: 'none', color: '#4f46e5', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
-                    >
-                      <FiEdit2 size={13} /> Edit
-                    </button>
-                  </div>
-                </SecondaryActionsRow>
-              </TypeFooter>
-            </TypeCard>
-
-            {/* Specialized: EU AI Act Compliance Engine & Audit Workspace */}
-            <TypeCard>
-              <div>
-                <CardTopRow>
-                  <TypeBadge $bg="rgba(16, 185, 129, 0.2)" $color="#059669">EU Statutory Compliance</TypeBadge>
-                  <StatusTag $status="production">Production Ready</StatusTag>
-                </CardTopRow>
-                <TypeTitle>EU AI Act Compliance Engine & Audit Workspace</TypeTitle>
-                <TypeDesc>
-                  Statutory risk classification (Art. 5 tripwires, Annex III High-Risk), 7-vector conformity audit (Arts. 8–15), and formal regulatory attestation dossier.
-                </TypeDesc>
-                <MetaPillsRow>
-                  <MetaPill><FiLayers /> 9 Statutory Sections</MetaPill>
-                  <MetaPill><FiTarget /> 20 Multi-Branch Qs</MetaPill>
-                  <MetaPill><FiClock /> ~15 mins</MetaPill>
-                </MetaPillsRow>
-              </div>
-              <TypeFooter>
-                <ActionButtonsRow>
-                  <LaunchBtn onClick={() => navigate('/eu-ai-compliance')}>
-                    <FiPlay /> Start Assessment
-                  </LaunchBtn>
-                  <SampleBtn onClick={() => navigate('/eu-ai-compliance?demo=high-risk-hr')}>
-                    🧪 Try Sample
-                  </SampleBtn>
-                </ActionButtonsRow>
-                <SecondaryActionsRow>
-                  <span style={{ fontSize: '0.8rem', color: '#10b981', fontWeight: '600' }}>✓ Core Statutory</span>
-                  <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                    <button
-                      type="button"
-                      onClick={() => navigate('/eu-ai-compliance')}
-                      style={{ background: 'none', border: 'none', color: '#4f46e5', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
-                    >
-                      <FiEdit2 size={13} /> Edit
-                    </button>
-                  </div>
-                </SecondaryActionsRow>
-              </TypeFooter>
-            </TypeCard>
-
-            {/* Custom Production Ready Templates */}
-            {productionTypes.map((type) => {
-              const dimensions = type.framework?.dimensions || [];
-              const totalQ = dimensions.reduce((acc, d) => acc + (d.questions?.length || 0), 0);
-              const isExpanded = expandedPreview[type.typeKey];
-
-              return (
-                <TypeCard key={type.id || type.typeKey}>
-                  <div>
-                    <CardTopRow>
-                      <TypeBadge $bg={type.color ? `${type.color}22` : 'rgba(99, 102, 241, 0.2)'} $color={type.color || '#4f46e5'}>
-                        {type.badge || 'Framework'}
-                      </TypeBadge>
-                      <StatusTag $status="production">Production Ready</StatusTag>
-                    </CardTopRow>
-                    <TypeTitle>{type.title}</TypeTitle>
-                    <TypeDesc>{type.description || 'Enterprise structured assessment framework.'}</TypeDesc>
-                    
-                    <MetaPillsRow>
-                      <MetaPill><FiLayers /> {dimensions.length} Dimensions</MetaPill>
-                      <MetaPill><FiTarget /> {totalQ} Questions</MetaPill>
-                      <MetaPill><FiClock /> ~{type.framework?.estimatedMinutes || 15} mins</MetaPill>
-                    </MetaPillsRow>
-
-                    {dimensions.length > 0 && (
-                      <DimensionsAccordion>
-                        <AccordionToggle onClick={() => togglePreview(type.typeKey)}>
-                          <span>Preview Dimensions ({dimensions.length})</span>
-                          {isExpanded ? <FiChevronUp /> : <FiChevronDown />}
-                        </AccordionToggle>
-                        {isExpanded && (
-                          <DimensionList>
-                            {dimensions.map((dim, dIdx) => (
-                              <DimensionItem key={dim.id || dIdx}>
-                                <FiCheck /> {dim.name} ({dim.questions?.length || 0} questions)
-                              </DimensionItem>
-                            ))}
-                          </DimensionList>
-                        )}
-                      </DimensionsAccordion>
-                    )}
-                  </div>
-
-                  <TypeFooter>
-                    <ActionButtonsRow>
-                      <LaunchBtn onClick={() => handleOpenStartModal(type)}>
-                        <FiPlay /> Start Assessment
-                      </LaunchBtn>
-                      <SampleBtn onClick={() => handleTrySample(type)}>
-                        🧪 Try Sample
-                      </SampleBtn>
-                    </ActionButtonsRow>
-
-                    <SecondaryActionsRow>
-                      <PromoteToggle 
-                        $promoted={type.isPromoted}
-                        onClick={() => handleTogglePromote(type)}
-                      >
-                        {type.isPromoted ? <FiToggleRight /> : <FiToggleLeft />}
-                        {type.isPromoted ? 'Pinned in Nav' : 'Pin to Nav'}
-                      </PromoteToggle>
-                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                        <button
-                          type="button"
-                          onClick={() => handleEditType(type)}
-                          style={{ background: 'none', border: 'none', color: '#4f46e5', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
-                          title="Edit assessment responses"
-                        >
-                          <FiEdit2 size={13} /> Edit
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleCloneType(type)}
-                          style={{ background: 'none', border: 'none', color: '#334155', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
-                          title="Clone this assessment template"
-                        >
-                          <FiCopy size={13} /> Clone
-                        </button>
-                        <DeleteButton onClick={() => handleDeleteType(type)} title="Delete this template">
-                          <FiTrash2 size={13} /> Delete
-                        </DeleteButton>
-                      </div>
-                    </SecondaryActionsRow>
-                  </TypeFooter>
-                </TypeCard>
-              );
-            })}
-          </Grid>
+          (visibleSpecialized.length + visibleProductionTypes.length) === 0 ? (
+            renderSearchEmptyState()
+          ) : (
+            <AssessmentsGrid>
+              {visibleSpecialized.map(renderSpecializedCard)}
+              {visibleProductionTypes.map((type) => renderTypeCard(type, { isDraft: false }))}
+            </AssessmentsGrid>
+          )
         )}
 
         {/* Tab 2: Drafts & AI Generated Frameworks */}
         {activeTab === 'drafts' && (
-          <>
-            {draftTypes.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '60px 20px', background: '#ffffff', border: '1.5px solid #e2e8f0', borderRadius: '20px', boxShadow: '0 4px 14px rgba(0,0,0,0.04)' }}>
-                <HiSparkles style={{ fontSize: '3rem', color: '#a855f7', marginBottom: '16px' }} />
-                <h3 style={{ fontSize: '1.4rem', color: '#0f172a', fontWeight: '800', marginBottom: '8px' }}>No Draft Frameworks</h3>
-                <p style={{ color: '#475569', maxWidth: '500px', margin: '0 auto 24px', fontSize: '0.95rem' }}>
-                  Generate custom assessment frameworks for specific industries, customer migrations, or emerging technology stacks using Gemini 3.8 Flash.
-                </p>
-                <CreateBtn onClick={() => navigate('/assessments/ai-generator')}>
-                  <HiSparkles /> Generate New Assessment
-                </CreateBtn>
+          draftTypes.length === 0 ? (
+            <EmptyState>
+              <div className="icon"><HiSparkles /></div>
+              <div className="title">No Draft Frameworks</div>
+              <div className="message">
+                Generate custom assessment frameworks for specific industries, customer migrations, or emerging technology stacks using Gemini 3.8 Flash.
               </div>
-            ) : (
-              <Grid>
-                {draftTypes.map((type) => {
-                  const dimensions = type.framework?.dimensions || [];
-                  const totalQ = dimensions.reduce((acc, d) => acc + (d.questions?.length || 0), 0);
-                  const isExpanded = expandedPreview[type.typeKey];
-
-                  return (
-                    <TypeCard key={type.id || type.typeKey}>
-                      <div>
-                        <CardTopRow>
-                          <TypeBadge $bg="rgba(245, 158, 11, 0.2)" $color="#d97706">
-                            {type.badge || 'Draft Framework'}
-                          </TypeBadge>
-                          <StatusTag $status="draft">Draft</StatusTag>
-                        </CardTopRow>
-                        <TypeTitle>{type.title}</TypeTitle>
-                        <TypeDesc>{type.description || 'AI-generated assessment framework draft.'}</TypeDesc>
-                        
-                        <MetaPillsRow>
-                          <MetaPill><FiLayers /> {dimensions.length} Dimensions</MetaPill>
-                          <MetaPill><FiTarget /> {totalQ} Questions</MetaPill>
-                          <MetaPill><FiClock /> ~{type.framework?.estimatedMinutes || 15} mins</MetaPill>
-                        </MetaPillsRow>
-
-                        {dimensions.length > 0 && (
-                          <DimensionsAccordion>
-                            <AccordionToggle onClick={() => togglePreview(type.typeKey)}>
-                              <span>Preview Dimensions ({dimensions.length})</span>
-                              {isExpanded ? <FiChevronUp /> : <FiChevronDown />}
-                            </AccordionToggle>
-                            {isExpanded && (
-                              <DimensionList>
-                                {dimensions.map((dim, dIdx) => (
-                                  <DimensionItem key={dim.id || dIdx}>
-                                    <FiCheck /> {dim.name} ({dim.questions?.length || 0} questions)
-                                  </DimensionItem>
-                                ))}
-                              </DimensionList>
-                            )}
-                          </DimensionsAccordion>
-                        )}
-                      </div>
-
-                      <TypeFooter>
-                        <ActionButtonsRow>
-                          <LaunchBtn onClick={() => handleOpenStartModal(type)}>
-                            <FiPlay /> Start Assessment
-                          </LaunchBtn>
-                          <SampleBtn onClick={() => handleTrySample(type)}>
-                            🧪 Try Sample
-                          </SampleBtn>
-                        </ActionButtonsRow>
-
-                        <SecondaryActionsRow>
-                          <PromoteToggle 
-                            $promoted={type.isPromoted}
-                            onClick={() => handleTogglePromote(type)}
-                          >
-                            {type.isPromoted ? <FiToggleRight /> : <FiToggleLeft />}
-                            {type.isPromoted ? 'Pinned in Nav' : 'Promote to Prod'}
-                          </PromoteToggle>
-                          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                            <button
-                              type="button"
-                              onClick={() => handleEditType(type)}
-                              style={{ background: 'none', border: 'none', color: '#4f46e5', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
-                            >
-                              <FiEdit2 size={13} /> Edit
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleCloneType(type)}
-                              style={{ background: 'none', border: 'none', color: '#334155', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
-                            >
-                              <FiCopy size={13} /> Clone
-                            </button>
-                            <DeleteButton onClick={() => handleDeleteType(type)}>
-                              <FiTrash2 size={13} /> Delete
-                            </DeleteButton>
-                          </div>
-                        </SecondaryActionsRow>
-                      </TypeFooter>
-                    </TypeCard>
-                  );
-                })}
-              </Grid>
-            )}
-          </>
+              <PrimaryButton
+                onClick={() => navigate('/assessments/ai-generator')}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                style={{ margin: '0 auto' }}
+              >
+                <HiSparkles size={16} /> Generate New Assessment
+              </PrimaryButton>
+            </EmptyState>
+          ) : visibleDraftTypes.length === 0 ? (
+            renderSearchEmptyState()
+          ) : (
+            <AssessmentsGrid>
+              {visibleDraftTypes.map((type) => renderTypeCard(type, { isDraft: true }))}
+            </AssessmentsGrid>
+          )
         )}
 
         {/* Tab 3: Customer Portfolio Runs */}
         {activeTab === 'portfolio' && (
-          <div>
-            {Object.keys(customerMap).length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '60px 20px', background: '#ffffff', border: '1.5px solid #e2e8f0', borderRadius: '20px', boxShadow: '0 4px 14px rgba(0,0,0,0.04)' }}>
-                <FiList style={{ fontSize: '3rem', color: '#0284c7', marginBottom: '16px' }} />
-                <h3 style={{ fontSize: '1.4rem', color: '#0f172a', fontWeight: '800', marginBottom: '8px' }}>No Customer Assessments Yet</h3>
-                <p style={{ color: '#475569', maxWidth: '500px', margin: '0 auto 24px', fontSize: '0.95rem' }}>
-                  Launch a new evaluation with a client or try a sample assessment to see the interactive 5-column runner and executive report.
-                </p>
-                <CreateBtn onClick={() => setActiveTab('production')}>
-                  Explore Assessment Templates
-                </CreateBtn>
+          instances.length === 0 ? (
+            <EmptyState>
+              <div className="icon"><FiList /></div>
+              <div className="title">No Customer Assessments Yet</div>
+              <div className="message">
+                Launch a new evaluation with a client or try a sample assessment to see the interactive 5-column runner and executive report.
               </div>
-            ) : (
-              Object.entries(customerMap).map(([customerName, runs]) => (
-                <CustomerCard key={customerName}>
-                  <CustomerHeader>
-                    <div>
-                      <h3 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
-                        {customerName}
-                      </h3>
-                      <span style={{ color: '#475569', fontSize: '0.9rem', fontWeight: '600' }}>
-                        {runs.length} Assessment{runs.length > 1 ? 's' : ''} in Portfolio
-                      </span>
-                    </div>
-                  </CustomerHeader>
-
-                  {runs.map((run) => (
-                    <AssessmentRow key={run.id}>
-                      <div>
-                        <strong style={{ color: '#0f172a', fontSize: '1.05rem', display: 'block', marginBottom: '4px', fontWeight: '700' }}>
-                          {run.frameworkSnapshot?.title || run.typeKey}
-                        </strong>
-                        {run.useCase && (
-                          <span style={{ fontSize: '0.85rem', color: '#0284c7', display: 'block', marginBottom: '4px', fontWeight: '600' }}>
-                            Initiative: {run.useCase}
-                          </span>
-                        )}
-                        <span style={{ fontSize: '0.82rem', color: '#475569', fontWeight: '500' }}>
-                          Created {new Date(run.createdAt).toLocaleDateString()} • Score: <strong style={{ color: '#0f172a' }}>{run.totalScore ? `${run.totalScore.toFixed(1)} / 5.0` : 'In Progress'}</strong> • Level: <strong style={{ color: '#4f46e5' }}>{run.maturityLevel || 'In Progress'}</strong>
-                        </span>
-                      </div>
-
-                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-                        <button
-                          type="button"
-                          onClick={() => navigate(`/assessments/run/instance/${run.id}`)}
-                          style={{ background: '#eef2ff', border: '1px solid #c7d2fe', color: '#4338ca', borderRadius: '8px', padding: '7px 12px', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
-                          title="Edit assessment responses"
-                        >
-                          <FiEdit2 size={13} /> Edit
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleCloneInstance(run)}
-                          style={{ background: '#f8fafc', border: '1px solid #cbd5e1', color: '#334155', borderRadius: '8px', padding: '7px 12px', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
-                          title="Clone this assessment"
-                        >
-                          <FiCopy size={13} /> Clone
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteInstance(run)}
-                          style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626', borderRadius: '8px', padding: '7px 12px', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
-                          title="Delete this assessment"
-                        >
-                          <FiTrash2 size={13} /> Delete
-                        </button>
-                        {run.aiReport && (
-                          <LaunchBtn onClick={() => navigate(`/assessments/report/${run.id}`)} style={{ padding: '7px 14px', fontSize: '0.82rem' }}>
-                            <HiSparkles /> View Report
-                          </LaunchBtn>
-                        )}
-                      </div>
-                    </AssessmentRow>
-                  ))}
-                </CustomerCard>
-              ))
-            )}
-          </div>
+              <PrimaryButton
+                onClick={() => setActiveTab('production')}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                style={{ margin: '0 auto' }}
+              >
+                Explore Assessment Templates
+              </PrimaryButton>
+            </EmptyState>
+          ) : visibleInstances.length === 0 ? (
+            renderSearchEmptyState()
+          ) : (
+            <AssessmentsGrid>
+              {visibleInstances.map(renderRunCard)}
+            </AssessmentsGrid>
+          )
         )}
-      </ContentWrapper>
+      </ContentContainer>
 
       {/* Start Assessment Modal */}
       {startModalType && (
         <ModalOverlay onClick={() => setStartModalType(null)}>
           <ModalContent onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-              <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'linear-gradient(135deg, #6366f1, #a855f7)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '1.2rem' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '1.2rem' }}>
                 <FiPlay />
               </div>
               <div>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#0f172a', margin: 0 }}>Start New Assessment</h3>
-                <span style={{ fontSize: '0.85rem', color: '#475569', fontWeight: '600' }}>{startModalType.title}</span>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1e293b', margin: 0 }}>Start New Assessment</h3>
+                <span style={{ fontSize: '0.85rem', color: '#475569', fontWeight: 600 }}>{startModalType.title}</span>
               </div>
             </div>
 
@@ -1288,16 +1001,12 @@ const DynamicAssessmentHub = () => {
               </FormGroup>
 
               <div style={{ display: 'flex', gap: '12px', marginTop: '28px' }}>
-                <button
-                  type="button"
-                  onClick={() => setStartModalType(null)}
-                  style={{ flex: 1, padding: '12px', background: '#f1f5f9', border: '1.5px solid #e2e8f0', borderRadius: '12px', color: '#334155', fontWeight: '700', cursor: 'pointer' }}
-                >
+                <SecondaryButton type="button" onClick={() => setStartModalType(null)} style={{ flex: 1 }}>
                   Cancel
-                </button>
-                <LaunchBtn type="submit" style={{ flex: 2 }}>
+                </SecondaryButton>
+                <PrimaryButton type="submit" style={{ flex: 2 }}>
                   Launch Assessment →
-                </LaunchBtn>
+                </PrimaryButton>
               </div>
             </form>
           </ModalContent>
@@ -1309,7 +1018,7 @@ const DynamicAssessmentHub = () => {
         isOpen={isUploadModalOpen}
         onClose={() => setIsUploadModalOpen(false)}
       />
-    </HubContainer>
+    </PageContainer>
   );
 };
 

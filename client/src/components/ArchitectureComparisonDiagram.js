@@ -766,7 +766,8 @@ const ArchitectureComparisonDiagram = ({
 
   const [noteText, setNoteText] = useState('');
   const [showNotesDrawer, setShowNotesDrawer] = useState(false);
-  const [stackedThreeView, setStackedThreeView] = useState(true);
+  // Stage shown in the single Google Cloud Reference-Architecture viewer: 'current' | 'transition' | 'target'
+  const [activeStage, setActiveStage] = useState('target');
   const drawioIframeRef = useRef(null);
 
   const handleOpenVisualDrawio = (target = 'target') => {
@@ -794,7 +795,7 @@ const ArchitectureComparisonDiagram = ({
               action: 'load',
               autosave: 1,
               xml: sanitizeDrawioXmlAttributes(xmlToSend),
-              title: `ScoreX ${xmlTargetState === 'current' ? 'Current Baseline' : xmlTargetState === 'transition' ? 'Transition Bridge' : 'Target Future'} Architecture`
+              title: `ScoreX ${xmlTargetState === 'current' ? 'Current Estate' : xmlTargetState === 'transition' ? 'Migration Waves' : 'Google Cloud Target'} Architecture`
             }), '*');
           }
         } else if (msg.event === 'save' || msg.event === 'autosave') {
@@ -916,6 +917,51 @@ const ArchitectureComparisonDiagram = ({
   const targetTitle = rawTargTitle.includes(nb2CodePrefix) ? rawTargTitle : `${nb2CodePrefix}-F-03 • ${rawTargTitle}`;
   const targetSubtitle = diagramsData?.targetSubtitle || `Level ${targetScore} Optimized • Nano Banana 2 Synthesized`;
   const modelUsed = diagramsData?.modelUsed || 'Nano Banana 2 (nano-banana-2 / gemini-3.1-flash-image-preview) + PromptCanvas 3-Stage Blueprints';
+
+  // One view model per compiled stage so the viewer, Copy/Edit/Export actions all follow the selected stage
+  const stageViews = {
+    current: {
+      key: 'current',
+      label: '1. Current Estate',
+      icon: '🏢',
+      xml: currentXml,
+      title: currentTitle,
+      subtitle: currentSubtitle,
+      reasoning: diagramsData?.curReasoning || '',
+      badge: `Stage 1 of 3 • Current Estate Baseline (${Number(currentScore || 2.5).toFixed(1)}/5.0)`,
+      filename: 'ScoreX_GCP_Reference_Architecture_1_Current_Estate.drawio',
+      isTarget: false,
+      isTransition: false
+    },
+    transition: {
+      key: 'transition',
+      label: '2. Migration Waves',
+      icon: '🌊',
+      xml: transitionXml,
+      title: transitionTitle,
+      subtitle: transitionSubtitle,
+      reasoning: diagramsData?.transitionReasoning || '',
+      badge: `Stage 2 of 3 • Migration Waves 1–2 (${((Number(currentScore || 2.5) + Number(targetScore || 4.5)) / 2).toFixed(1)}/5.0)`,
+      filename: 'ScoreX_GCP_Reference_Architecture_2_Migration_Waves.drawio',
+      isTarget: false,
+      isTransition: true
+    },
+    target: {
+      key: 'target',
+      label: '3. Google Cloud Target',
+      icon: '☁️',
+      xml: targetXml,
+      title: targetTitle,
+      subtitle: targetSubtitle,
+      reasoning: diagramsData?.tgtReasoning || '',
+      badge: `Stage 3 of 3 • Google Cloud Target Architecture (${Number(targetScore || 4.5).toFixed(1)}/5.0)`,
+      filename: 'ScoreX_GCP_Reference_Architecture_3_Google_Cloud_Target.drawio',
+      isTarget: true,
+      isTransition: false
+    }
+  };
+  const stageOrder = ['current', 'transition', 'target'];
+  const activeView = stageViews[activeStage] || stageViews.target;
 
   const handleRegenerate = async () => {
     if (!instanceId) {
@@ -1323,15 +1369,15 @@ const ArchitectureComparisonDiagram = ({
           </button>
 
           <button
-            onClick={() => handleCopyXml(targetXml)}
+            onClick={() => handleCopyXml(activeView.xml)}
             style={{ background: '#f8fafc', border: '1px solid #cbd5e1', color: '#334155', padding: '7px 12px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: '600', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
-            title="Copy raw Draw.io XML to clipboard"
+            title={`Copy raw Draw.io XML (${activeView.label}) to clipboard`}
           >
             📋 Copy XML
           </button>
 
           <button
-            onClick={() => handleCopyMermaid(true)}
+            onClick={() => handleCopyMermaid(activeStage !== 'current')}
             style={{ background: '#f8fafc', border: '1px solid #cbd5e1', color: '#334155', padding: '7px 12px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: '600', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
             title="Copy Mermaid diagram syntax to clipboard"
           >
@@ -1356,24 +1402,24 @@ const ArchitectureComparisonDiagram = ({
           </RegenerateBtn>
 
           <button
-            onClick={() => handleOpenVisualDrawio('target')}
+            onClick={() => handleOpenVisualDrawio(activeStage)}
             style={{ background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)', border: 'none', color: '#ffffff', padding: '7px 14px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', boxShadow: '0 2px 8px rgba(2, 132, 199, 0.3)' }}
-            title="Open full-featured interactive Draw.io visual canvas inside ScoreX"
+            title={`Open the ${activeView.label} diagram in the interactive Draw.io visual canvas inside ScoreX`}
           >
             🎨 Visual Draw.io Editor
           </button>
 
           <button
-            onClick={() => handleOpenXmlEditor('target')}
+            onClick={() => handleOpenXmlEditor(activeStage)}
             style={{ background: '#f8fafc', border: '1px solid #cbd5e1', color: '#334155', padding: '7px 12px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
-            title="Edit or paste raw Draw.io XML code directly into the diagram canvas"
+            title={`Edit or paste raw Draw.io XML for the ${activeView.label} diagram`}
           >
             ✏️ Edit XML / Tweak
           </button>
 
           <ExportBtn 
-            onClick={() => handleExportDrawio(targetXml, 'ScoreX_Google_Cloud_Reference_Architecture.drawio')}
-            title="Download architecture diagram for Draw.io / diagrams.net"
+            onClick={() => handleExportDrawio(activeView.xml, activeView.filename)}
+            title={`Download the ${activeView.label} diagram for Draw.io / diagrams.net`}
           >
             <FiDownload /> 📥 Export Draw.io XML
           </ExportBtn>
@@ -1476,16 +1522,79 @@ const ArchitectureComparisonDiagram = ({
       {/* GOOGLE CLOUD REFERENCE ARCHITECTURE DIAGRAM VIEWPORT */}
       {viewMode !== 'cards' && (
         <div style={{ marginBottom: '20px' }}>
+          {/* Stage selector: one compiled Draw.io diagram per stage (Current Estate → Migration Waves → Google Cloud Target) */}
+          <div
+            role="tablist"
+            aria-label="Architecture stage"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '12px',
+              flexWrap: 'wrap',
+              marginBottom: '10px',
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
+              borderRadius: '12px',
+              padding: '8px 10px'
+            }}
+          >
+            <ViewToggle>
+              {stageOrder.map((stageKey) => {
+                const stage = stageViews[stageKey];
+                const isActive = activeStage === stageKey;
+                return (
+                  <ViewBtn
+                    key={stageKey}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    $active={isActive}
+                    onClick={() => setActiveStage(stageKey)}
+                    title={stage.title}
+                  >
+                    {stage.icon} {stage.label}
+                  </ViewBtn>
+                );
+              })}
+            </ViewToggle>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: '240px', justifyContent: 'flex-end' }}>
+              <span
+                style={{
+                  fontSize: '0.74rem',
+                  fontWeight: 800,
+                  letterSpacing: '0.04em',
+                  textTransform: 'uppercase',
+                  color: activeView.isTarget ? '#166534' : activeView.isTransition ? '#92400e' : '#9f1239',
+                  background: activeView.isTarget ? '#f0fdf4' : activeView.isTransition ? '#fffbeb' : '#fff1f2',
+                  border: `1px solid ${activeView.isTarget ? '#bbf7d0' : activeView.isTransition ? '#fde68a' : '#fecdd3'}`,
+                  borderRadius: '999px',
+                  padding: '4px 10px',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                {activeView.badge}
+              </span>
+              <span style={{ fontSize: '0.78rem', color: '#64748b', lineHeight: 1.3, maxWidth: '520px' }}>
+                {activeStage === 'current'
+                  ? 'Legacy estate across six tiers with the pain badge and disposition verb for each tier.'
+                  : activeStage === 'transition'
+                  ? 'Wave 1 (0–90 d) and Wave 2 (90–180 d) cutover plan ordered by maturity gap.'
+                  : 'Ingest → Store → Govern → Serve → Operate pipeline with numbered data-flow steps.'}
+              </span>
+            </div>
+          </div>
           <DiagramErrorBoundary onAutoHeal={handleRegenerate}>
             <DiagramViewer
-              xml={targetXml || transitionXml || currentXml}
-              title={targetTitle}
-              subtitle={targetSubtitle}
-              badge="Google Cloud Reference Architecture (Current Estate → Migration Waves → Target)"
+              key={`gcp-reference-${activeStage}`}
+              xml={activeView.xml}
+              title={activeView.title}
+              subtitle={activeView.subtitle}
+              badge={activeView.badge}
               theme={diagramTheme}
               height="740px"
-              isTarget={true}
-              isTransition={false}
+              isTarget={activeView.isTarget}
+              isTransition={activeView.isTransition}
             />
           </DiagramErrorBoundary>
         </div>
@@ -1687,7 +1796,7 @@ const ArchitectureComparisonDiagram = ({
               </ModalHeader>
 
               <p style={{ fontSize: '0.84rem', color: '#64748b', margin: '0 0 12px 0' }}>
-                Specify any custom technology stack, cloud provider, or domain requirements. Nano Banana 2 (gemini-3.1-flash-image-preview) will synthesize complete, tailored Draw.io XML models across Current State, Transition Bridge, and Desired Future State.
+                Specify any custom technology stack, cloud provider, or domain requirements. Nano Banana 2 (gemini-3.1-flash-image-preview) will synthesize complete, tailored Draw.io XML models across Current Estate, Migration Waves, and Google Cloud Target.
               </p>
 
               <PromptChips>
@@ -1839,7 +1948,7 @@ const ArchitectureComparisonDiagram = ({
                       Manual Diagram XML Editor
                     </h3>
                     <span style={{ fontSize: '0.78rem', color: '#64748b' }}>
-                      Editing {xmlTargetState === 'current' ? '1. Current Baseline Architecture' : xmlTargetState === 'transition' ? '2. Transition Bridge Architecture' : '3. Desired Future State Architecture'}
+                      Editing {xmlTargetState === 'current' ? '1. Current Estate Architecture' : xmlTargetState === 'transition' ? '2. Migration Waves Architecture' : '3. Google Cloud Target Architecture'}
                     </span>
                   </div>
                 </div>
@@ -1868,7 +1977,7 @@ const ArchitectureComparisonDiagram = ({
                     cursor: 'pointer'
                   }}
                 >
-                  1. Current State XML
+                  1. Current Estate XML
                 </button>
                 <button
                   onClick={() => {
@@ -1886,7 +1995,7 @@ const ArchitectureComparisonDiagram = ({
                     cursor: 'pointer'
                   }}
                 >
-                  2. Transition Bridge XML
+                  2. Migration Waves XML
                 </button>
                 <button
                   onClick={() => {
@@ -1904,7 +2013,7 @@ const ArchitectureComparisonDiagram = ({
                     cursor: 'pointer'
                   }}
                 >
-                  3. Target State XML
+                  3. Google Cloud Target XML
                 </button>
                 <a
                   href="https://app.diagrams.net"
@@ -2001,7 +2110,7 @@ const ArchitectureComparisonDiagram = ({
                       </span>
                     </h3>
                     <span style={{ fontSize: '0.76rem', color: '#64748b' }}>
-                      Editing {xmlTargetState === 'current' ? '1. Current Baseline' : xmlTargetState === 'transition' ? '2. Transition Bridge' : '3. Desired Future State'} • Drag & Drop GCP shapes • Auto-saves directly to ScoreX assessment
+                      Editing {xmlTargetState === 'current' ? '1. Current Estate' : xmlTargetState === 'transition' ? '2. Migration Waves' : '3. Google Cloud Target'} • Drag & Drop GCP shapes • Auto-saves directly to ScoreX assessment
                     </span>
                   </div>
                 </div>

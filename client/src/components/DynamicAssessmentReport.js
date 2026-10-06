@@ -1291,7 +1291,7 @@ const DynamicAssessmentReport = () => {
             $isActive={activeExecutiveTab === "architecture"} 
             onClick={() => setActiveExecutiveTab("architecture")}
           >
-            🏛️ Target Architecture
+            🏛️ Target Architecture &amp; Migration Waves
           </ExecutiveTabButton>
           <ExecutiveTabButton $theme={theme} 
             $isActive={activeExecutiveTab === "financial"} 
