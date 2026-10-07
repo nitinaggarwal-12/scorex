@@ -914,10 +914,10 @@ const DynamicAssessmentGenerator = () => {
                   ✓ Framework automatically saved to Assessment Catalog & Templates registry.
                 </span>
                 <button
-                  onClick={() => navigate('/assessments/custom-hub')}
+                  onClick={() => navigate('/assessments')}
                   style={{ background: 'none', border: 'none', color: '#0284c7', fontSize: '0.88rem', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
                 >
-                  View All Templates →
+                  View All Assessments →
                 </button>
               </div>
 

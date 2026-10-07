@@ -153,7 +153,6 @@ const QuestionAssignmentManager = lazyWithRetry(() => import('./components/Quest
 const DynamicAssessmentGenerator = lazyWithRetry(() => import('./components/DynamicAssessmentGenerator'));
 const DynamicAssessmentRunner = lazyWithRetry(() => import('./components/DynamicAssessmentRunner'));
 const DynamicAssessmentReport = lazyWithRetry(() => import('./components/DynamicAssessmentReport'));
-const DynamicAssessmentHub = lazyWithRetry(() => import('./components/DynamicAssessmentHub'));
 const AssessmentComparisonView = lazyWithRetry(() => import('./components/AssessmentComparisonView'));
 const CustomerPortfolioDashboard = lazyWithRetry(() => import('./components/CustomerPortfolioDashboard'));
 const CommandPalette = lazyWithRetry(() => import('./components/CommandPalette'));
@@ -315,21 +314,17 @@ function App() {
 
             <Route 
               path="/assessments/custom-hub" 
-              element={
-                <ProtectedRoute>
-                  <DynamicAssessmentHub />
-                </ProtectedRoute>
-              } 
+              element={<Navigate to="/assessments" replace />} 
             />
 
             <Route 
               path="/assessments/templates" 
-              element={<Navigate to="/assessments/custom-hub" replace />} 
+              element={<Navigate to="/assessments" replace />} 
             />
 
             <Route 
               path="/assessment-templates" 
-              element={<Navigate to="/assessments/custom-hub" replace />} 
+              element={<Navigate to="/assessments" replace />} 
             />
 
             <Route 

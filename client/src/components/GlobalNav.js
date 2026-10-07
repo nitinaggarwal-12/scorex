@@ -1138,7 +1138,7 @@ const GlobalNav = () => {
 
             <TopNav>
               <NavLink
-                onClick={() => handleNavigate('/assessments/custom-hub')}
+                onClick={() => handleNavigate('/assessments')}
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -1542,7 +1542,7 @@ const GlobalNav = () => {
       {/* Mobile Menu */}
       <MobileMenu $isOpen={mobileMenuOpen}>
         <MobileNavLink onClick={handleLogoClick}>Home</MobileNavLink>
-        <MobileNavLink onClick={() => handleNavigate('/assessments/custom-hub')}>Assessment Hub</MobileNavLink>
+        <MobileNavLink onClick={() => handleNavigate('/assessments')}>Assessment Hub</MobileNavLink>
         <MobileNavLink onClick={() => handleNavigate('/assessments')}>Portfolio Directory</MobileNavLink>
         <MobileNavLink onClick={() => handleNavigate('/deep-dive')}>Methodology Rubric</MobileNavLink>
         <MobileNavLink onClick={() => handleNavigate('/workflow-walkthrough')}>Interactive Tour</MobileNavLink>
