@@ -693,14 +693,22 @@ const AssessmentsListNew = () => {
     fetchAssessments();
   }, []);
 
-  const normalizeAssessmentRecord = (raw, family = 'classic') => {
+  const normalizeAssessmentRecord = (raw, familyHint = 'classic') => {
     const id = raw.id || raw.assessmentId;
+    const isFlagship6Pillar =
+      familyHint === 'classic' ||
+      raw.typeKey === 'enterprise_data_ai_maturity' ||
+      id === 'inst_enterprise_data_ai_maturity_demo';
+    const family = isFlagship6Pillar ? 'classic' : familyHint;
+
     const rawOrg = raw.organization_name || raw.organizationName || raw.customerName || raw.customer_name || raw.meta?.organizationName || raw.meta?.customerName;
     const orgName = (rawOrg && rawOrg !== 'Unknown Org' && rawOrg !== 'Not specified') ? rawOrg : 'Enterprise Organization';
 
     const rawName = raw.assessment_name || raw.assessmentName || raw.meta?.systemName || (raw.frameworkSnapshot?.title ? `${orgName} - ${raw.frameworkSnapshot.title}` : null);
     const defaultTitleByFamily = {
+      classic: `${orgName} - Enterprise Data & AI Maturity Assessment`,
       dynamic: `${orgName} - ${raw.frameworkSnapshot?.title || 'Dynamic Blueprint Assessment'}`,
+      genai: `${orgName} - GenAI Readiness & Governance Assessment`,
       ge_value_realization: `${orgName} - Gemini Enterprise Value Realization (${raw.meta?.vectorAccountId || '82-Question CFO Dossier'})`,
       eu_ai_act: `${orgName} - EU AI Act Statutory Dossier (${raw.meta?.systemName || 'High-Risk AI System'})`
     };
@@ -714,8 +722,9 @@ const AssessmentsListNew = () => {
     const rawIndustry = raw.industry || raw.frameworkSnapshot?.badge || raw.meta?.industry || raw.meta?.sector || raw.maturityLevel || raw.maturity_level;
     const industry = (rawIndustry && rawIndustry !== 'Not specified') ? rawIndustry : (
       family === 'eu_ai_act' ? 'EU AI Act Annex III' :
+      family === 'genai' ? 'GenAI & Agentic AI' :
       family === 'ge_value_realization' ? 'GE Value Realization' :
-      'Cloud & Zero-Trust'
+      family === 'dynamic' ? 'Cloud & Zero-Trust' : 'Enterprise Data & AI'
     );
 
     const createdAt = raw.created_at || raw.createdAt || raw.startedAt || raw.started_at || raw.completedAt || raw.completed_at || '2026-08-15T14:30:00.000Z';
@@ -744,6 +753,12 @@ const AssessmentsListNew = () => {
       } else if (progress > 0 || answeredCount > 0) {
         status = 'in_progress';
       }
+    } else if (family === 'genai') {
+      const answeredCount = Object.keys(raw.responses || {}).length;
+      const isComplete = Boolean(raw.completedAt || raw.completed_at || raw.status === 'completed' || answeredCount >= 12);
+      progress = isComplete ? 100 : Math.min(95, Math.round((answeredCount / 15) * 100));
+      status = isComplete ? 'completed' : (progress > 0 ? 'in_progress' : 'not_started');
+      completedCategories = isComplete ? ['generative_ai', 'platform_governance'] : (progress > 0 ? ['generative_ai'] : []);
     } else if (family === 'ge_value_realization') {
       const answeredCount = Object.keys(raw.questionResponses || {}).length;
       progress = answeredCount >= 70 ? 100 : Math.min(95, Math.round((answeredCount / 82) * 100));
@@ -755,10 +770,27 @@ const AssessmentsListNew = () => {
       progress = isComplete ? 100 : Math.min(95, Math.round((answeredCount / 20) * 100));
       status = isComplete ? 'completed' : (progress > 0 ? 'in_progress' : 'not_started');
       completedCategories = isComplete ? ['platform_governance', 'generative_ai'] : (progress > 0 ? ['platform_governance'] : []);
+    } else {
+      // Classic 6-Pillar
+      const isComplete = raw.status === 'completed' || raw.status === 'submitted' || Number(raw.progress) >= 100 || completedCategories.length >= 6;
+      if (isComplete) {
+        status = 'completed';
+        progress = 100;
+        if (!completedCategories || completedCategories.length === 0) {
+          completedCategories = ['platform_governance', 'data_engineering', 'analytics_bi', 'machine_learning', 'generative_ai', 'operational_excellence'];
+        }
+      } else {
+        const pillarCount = completedCategories.length;
+        const respCount = Object.keys(raw.responses || {}).length;
+        progress = Number(raw.progress) > 0 ? Number(raw.progress) : Math.min(95, Math.round((pillarCount / 6) * 100) || (respCount > 0 ? 25 : 0));
+        status = (progress > 0 || respCount > 0) ? 'in_progress' : 'not_started';
+      }
     }
 
     const suiteBadges = {
+      classic: { label: 'Core 6-Pillar', bg: '#eff6ff', text: '#1d4ed8', border: '#bfdbfe' },
       dynamic: { label: 'Dynamic Blueprint', bg: '#f3e8ff', text: '#6d28d9', border: '#ddd6fe' },
+      genai: { label: 'GenAI Readiness', bg: '#ecfdf5', text: '#047857', border: '#a7f3d0' },
       ge_value_realization: { label: 'GE Value Realization', bg: '#eff6ff', text: '#1d4ed8', border: '#bfdbfe' },
       eu_ai_act: { label: 'EU AI Act Dossier', bg: '#fffbeb', text: '#b45309', border: '#fde68a' }
     };
@@ -771,7 +803,7 @@ const AssessmentsListNew = () => {
       assessmentId: id,
       assessmentFamily: family,
       isDynamic: family === 'dynamic',
-      suiteBadge: suiteBadges[family] || suiteBadges.dynamic,
+      suiteBadge: suiteBadges[family] || suiteBadges.classic,
       assessment_name: assessmentName,
       assessmentName: assessmentName,
       organization_name: orgName,
@@ -796,21 +828,42 @@ const AssessmentsListNew = () => {
     try {
       setLoading(true);
       const headers = authService.getAuthHeader ? authService.getAuthHeader() : {};
-      const [dynamicInstances, geVrData, euAiData] = await Promise.allSettled([
+      const [classicData, dynamicInstances, genaiData, geVrData, euAiData] = await Promise.allSettled([
+        assessmentService.getAssessments(),
         dynamicAssessmentService.getInstances(),
+        axios.get('/api/genai-readiness/assessments', { headers }),
         axios.get('/api/ge-value-realization/dossiers', { headers }),
         axios.get('/api/eu-ai-compliance/dossiers', { headers })
       ]);
+
+      const seenIds = new Set();
+      const classicList = classicData.status === 'fulfilled' && Array.isArray(classicData.value)
+        ? classicData.value.map(item => {
+            const norm = normalizeAssessmentRecord(item, 'classic');
+            if (norm.id) seenIds.add(norm.id);
+            return norm;
+          })
+        : [];
 
       const dynamicList = dynamicInstances.status === 'fulfilled' && Array.isArray(dynamicInstances.value)
         ? dynamicInstances.value
             .filter(item => {
               const id = String(item.id || '');
+              if (seenIds.has(id)) return false;
               const hasResponses = Object.keys(item.responses || {}).length > 0;
               return id.startsWith('inst_') || item.status === 'completed' || hasResponses;
             })
-            .map(item => normalizeAssessmentRecord(item, 'dynamic'))
+            .map(item => {
+              const norm = normalizeAssessmentRecord(item, 'dynamic');
+              if (norm.id) seenIds.add(norm.id);
+              return norm;
+            })
         : [];
+
+      const genaiRaw = genaiData.status === 'fulfilled' && Array.isArray(genaiData.value?.data)
+        ? genaiData.value.data
+        : [];
+      const genaiList = genaiRaw.map(item => normalizeAssessmentRecord(item, 'genai'));
 
       const geVrRaw = geVrData.status === 'fulfilled' && Array.isArray(geVrData.value?.data?.dossiers)
         ? geVrData.value.data.dossiers
@@ -822,7 +875,7 @@ const AssessmentsListNew = () => {
         : [];
       const euAiList = euAiRaw.map(item => normalizeAssessmentRecord(item, 'eu_ai_act'));
 
-      setAssessments([...dynamicList, ...geVrList, ...euAiList]);
+      setAssessments([...classicList, ...dynamicList, ...genaiList, ...geVrList, ...euAiList]);
     } catch (error) {
       console.error('Error fetching assessments:', error);
       setAssessments([]);
@@ -852,7 +905,7 @@ const AssessmentsListNew = () => {
       
       if (result && result.id) {
         await fetchAssessments();
-        navigate(`/assessments/report/${result.id}`);
+        navigate(`/results/${result.id}`);
       }
     } catch (error) {
       console.error('Error generating sample:', error);
@@ -1373,7 +1426,7 @@ const AssessmentsListNew = () => {
               Compare Assessments
             </button>
             <PrimaryButton
-              onClick={() => navigate('/assessments/ai-generator')}
+              onClick={() => navigate('/start')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -1393,8 +1446,10 @@ const AssessmentsListNew = () => {
         }}>
           {[
             { id: 'all', label: 'All Suites', count: assessments.length, color: '#0f172a' },
+            { id: 'classic', label: 'Core 6-Pillar', count: assessments.filter(a => a.assessmentFamily === 'classic').length, color: '#1d4ed8' },
             { id: 'dynamic', label: 'Dynamic Blueprints', count: assessments.filter(a => a.assessmentFamily === 'dynamic').length, color: '#6d28d9' },
-            { id: 'ge_value_realization', label: 'GE Value Realization', count: assessments.filter(a => a.assessmentFamily === 'ge_value_realization').length, color: '#1d4ed8' },
+            { id: 'genai', label: 'GenAI Readiness', count: assessments.filter(a => a.assessmentFamily === 'genai').length, color: '#047857' },
+            { id: 'ge_value_realization', label: 'GE Value Realization', count: assessments.filter(a => a.assessmentFamily === 'ge_value_realization').length, color: '#2563eb' },
             { id: 'eu_ai_act', label: 'EU AI Act Dossiers', count: assessments.filter(a => a.assessmentFamily === 'eu_ai_act').length, color: '#b45309' }
           ].map(suite => {
             const isActive = suiteFilter === suite.id;
@@ -1587,7 +1642,7 @@ const AssessmentsListNew = () => {
             </div>
             {!searchTerm && statusFilter === 'all' && (
               <PrimaryButton 
-                onClick={() => navigate('/assessments/ai-generator')}
+                onClick={() => navigate('/start')}
                 style={{ margin: '0 auto' }}
               >
                 <FiPlus size={16} />
@@ -1605,19 +1660,33 @@ const AssessmentsListNew = () => {
               // Use assessmentId or id, whichever is available
               const assessmentId = assessment.id || assessment.assessmentId;
 
-              const family = assessment.assessmentFamily || 'dynamic';
-              const suiteBadge = assessment.suiteBadge || { label: 'Dynamic Blueprint', bg: '#f3e8ff', text: '#6d28d9', border: '#ddd6fe' };
+              const family = assessment.assessmentFamily || (assessment.isDynamic ? 'dynamic' : 'classic');
+              const suiteBadge = assessment.suiteBadge || { label: 'Core 6-Pillar', bg: '#eff6ff', text: '#1d4ed8', border: '#bfdbfe' };
+              const selectedPillars = assessment.selected_pillars || assessment.selectedPillars || ['platform_governance'];
+              const targetPillar = (selectedPillars && selectedPillars.length > 0) ? selectedPillars[0] : 'platform_governance';
 
               const handleOpenReportOrEditor = () => {
                 if (family === 'eu_ai_act') {
                   navigate(`/eu-ai-compliance/${assessmentId}`);
                 } else if (family === 'ge_value_realization') {
                   navigate(`/ge-value-realization/${assessmentId}`);
-                } else {
+                } else if (family === 'genai') {
+                  if (status === 'completed') {
+                    navigate(`/genai-readiness/report/${assessmentId}`);
+                  } else {
+                    navigate(`/genai-readiness/edit/${assessmentId}`);
+                  }
+                } else if (family === 'dynamic') {
                   if (status === 'completed') {
                     navigate(`/assessments/report/${assessmentId}`);
                   } else {
                     navigate(`/assessments/run/instance/${assessmentId}`);
+                  }
+                } else {
+                  if (status === 'completed') {
+                    navigate(`/results/${assessmentId}`);
+                  } else {
+                    navigate(`/assessment/${assessmentId}/${targetPillar}`);
                   }
                 }
               };
@@ -1628,8 +1697,12 @@ const AssessmentsListNew = () => {
                   navigate(`/eu-ai-compliance/${assessmentId}`);
                 } else if (family === 'ge_value_realization') {
                   navigate(`/ge-value-realization/${assessmentId}?tab=inputs`);
-                } else {
+                } else if (family === 'genai') {
+                  navigate(`/genai-readiness/edit/${assessmentId}`);
+                } else if (family === 'dynamic') {
                   navigate(`/assessments/run/instance/${assessmentId}`);
+                } else {
+                  navigate(`/assessment/${assessmentId}/${targetPillar}`);
                 }
               };
 
@@ -1640,8 +1713,12 @@ const AssessmentsListNew = () => {
                   navigate(`/eu-ai-compliance/${assessmentId}`);
                 } else if (family === 'ge_value_realization') {
                   navigate(`/ge-value-realization/${assessmentId}?tab=report`);
-                } else {
+                } else if (family === 'genai') {
+                  navigate(`/genai-readiness/report/${assessmentId}`);
+                } else if (family === 'dynamic') {
                   navigate(`/assessments/report/${assessmentId}`);
+                } else {
+                  navigate(`/results/${assessmentId}`);
                 }
               };
 

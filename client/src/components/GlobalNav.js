@@ -812,7 +812,7 @@ const GlobalNav = () => {
     setTrySampleDropdownOpen(false);
     setAssessmentsDropdownOpen(false);
     toast.success('Opening Enterprise Data & AI Maturity Executive Report...');
-    navigate('/assessments/report/inst_enterprise_data_ai_maturity_demo');
+    navigate('/results/inst_enterprise_data_ai_maturity_demo');
   };
 
   const handleTrySampleGenAI = async () => {
@@ -827,6 +827,11 @@ const GlobalNav = () => {
     closeMobileMenu();
     setTrySampleDropdownOpen(false);
     setAssessmentsDropdownOpen(false);
+    if (typeKey === 'enterprise_data_ai_maturity') {
+      toast.success(`Opening "${title}" Executive Report...`);
+      navigate('/results/inst_enterprise_data_ai_maturity_demo');
+      return;
+    }
     const canonicalDemoMap = {
       enterprise_data_ai_maturity: 'inst_enterprise_data_ai_maturity_demo',
       openai_to_gemini_enterprise_migration: 'inst_openai_to_gemini_enterprise_migration_demo',
@@ -1051,10 +1056,11 @@ const GlobalNav = () => {
             {/* Canonical Dynamic Assessment Blueprints */}
             {promotedList.map((type) => {
               const { IconComponent, displayTitle, microSubtitle, color } = getTrackVisuals(type);
+              const targetPath = type.typeKey === 'enterprise_data_ai_maturity' ? '/start' : `/assessments/run/${type.typeKey}`;
               return (
                 <MegaMenuTrackItem
                   key={type.id || type.typeKey}
-                  onClick={() => runNav(`/assessments/run/${type.typeKey}`)}
+                  onClick={() => runNav(targetPath)}
                 >
                   <TrackIconBox $bg={`${color}14`} $color={color} $border={`${color}28`}>
                     <IconComponent />
@@ -1148,7 +1154,7 @@ const GlobalNav = () => {
                 }}
               >
                 <HiSparkles size={14} style={{ color: '#4f46e5' }} />
-                Assessment Hub
+                Assessments
               </NavLink>
 
               {/* 1. Frameworks & Demos Mega-Menu */}

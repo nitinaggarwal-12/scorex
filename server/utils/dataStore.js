@@ -60,6 +60,39 @@ class DataStore {
         
         await fs.promises.mkdir(dirPath, { recursive: true });
         
+        // Backup existing file asynchronously
+        try {
+          if (fs.existsSync(this.filePath)) {
+            await fs.promises.copyFile(this.filePath, this.filePath + '.backup');
+          }
+        } catch (backupError) {
+          console.warn('⚠️  Failed to create backup:', backupError.message);
+        }
+        
+        // Rolling Point-in-Time Snapshots (maintains last 10 historical snapshots)
+        try {
+          const snapshotDir = path.join(dirPath, 'snapshots');
+          await fs.promises.mkdir(snapshotDir, { recursive: true });
+          const baseName = path.basename(this.filePath, '.json');
+          const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+          const snapshotFile = path.join(snapshotDir, `${baseName}_${timestamp}.json`);
+          
+          await fs.promises.writeFile(snapshotFile, JSON.stringify(jsonData, null, 2), 'utf8');
+
+          const existingSnapshots = (await fs.promises.readdir(snapshotDir))
+            .filter(f => f.startsWith(baseName) && f.endsWith('.json'))
+            .sort();
+          
+          if (existingSnapshots.length > 10) {
+            const toDelete = existingSnapshots.slice(0, existingSnapshots.length - 10);
+            for (const oldFile of toDelete) {
+              await fs.promises.unlink(path.join(snapshotDir, oldFile)).catch(() => {});
+            }
+          }
+        } catch (snapErr) {
+          // Non-blocking snapshot capture
+        }
+        
         // Atomic write via temporary file
         const tempPath = this.filePath + '.tmp';
         await fs.promises.writeFile(tempPath, JSON.stringify(jsonData, null, 2), 'utf8');

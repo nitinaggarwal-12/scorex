@@ -22,14 +22,13 @@ try {
   process.exit(1);
 }
 
-// 2. Verify all 26 pruned legacy components remain absent
+// 2. Verify pruned v1 components remain absent while allowing restored original assessment components
 const DELETED_LEGACY = [
-  'AssessmentQuestion.js', 'AssessmentStart.js', 'AssessmentSummary.js', 'GenAIReadinessAssessment.js',
-  'MyAssessments.js', 'MaturityReport.js', 'AssessmentDetailView.js', 'BenchmarkingReport.js',
+  'AssessmentSummary.js', 'GenAIReadinessAssessment.js',
+  'MaturityReport.js', 'AssessmentDetailView.js', 'BenchmarkingReport.js',
   'DeepDiveReport.js', 'InsightsDashboard.js', 'CustomQuestionsManager.js', 'FeedbackAnalytics.js',
-  'AdminDashboard.js', 'AssignAssessmentModal.js', 'PitchDeck.js', 'AnalyticsDashboard.js',
-  'AuthorDashboard.js', 'ConsumerDashboard.js', 'Dashboard.js', 'AssessmentHeader.js',
-  'Header.js', 'HomeButton.js', 'DemoScenarioPickerModal.js', 'ExecutiveSummary.js',
+  'AdminDashboard.js', 'AssignAssessmentModal.js', 'AnalyticsDashboard.js',
+  'AuthorDashboard.js', 'ConsumerDashboard.js', 'DemoScenarioPickerModal.js', 'ExecutiveSummary.js',
   'FeedbackModal.js', 'ModernCharts.js'
 ];
 const resurrected = DELETED_LEGACY.filter((f) => fs.existsSync(path.join(ROOT, 'client/src/components', f)));

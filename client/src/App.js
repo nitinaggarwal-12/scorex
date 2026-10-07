@@ -3,7 +3,7 @@
  * Version: 2.2.0 - Added floating slideshow buttons and version history - Nov 17, 2025
  */
 import React, { useState, useEffect, lazy, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { createGlobalStyle } from 'styled-components';
 
@@ -140,16 +140,34 @@ class ChunkErrorBoundary extends React.Component {
   }
 }
 
-// Lazily loaded canonical page components for optimal bundle splitting
+// Lazily loaded page components for optimal bundle splitting
 const HomePage = lazyWithRetry(() => import('./components/HomePageNew'));
+const AssessmentStart = lazyWithRetry(() => import('./components/AssessmentStart'));
+const AssessmentQuestion = lazyWithRetry(() => import('./components/AssessmentQuestion'));
+const AssessmentResults = lazyWithRetry(() => import('./components/AssessmentResultsNew'));
 const AssessmentManagement = lazyWithRetry(() => import('./components/AssessmentsListNew'));
+const AssessmentDashboard = lazyWithRetry(() => import('./components/AssessmentDashboard'));
+const Dashboard = lazyWithRetry(() => import('./components/DashboardNew'));
+const ExecutiveCommandCenter = lazyWithRetry(() => import('./components/ExecutiveCommandCenter'));
+const ExecutiveSummary = lazyWithRetry(() => import('./components/ExecutiveSummaryNew'));
+const AssessmentHistory = lazyWithRetry(() => import('./components/AssessmentHistory'));
 const DeepDive = lazyWithRetry(() => import('./components/DeepDive'));
+const IndustryBenchmarkingReport = lazyWithRetry(() => import('./components/IndustryBenchmarkingReport'));
+const MyAssessments = lazyWithRetry(() => import('./components/MyAssessments'));
 const UserManagement = lazyWithRetry(() => import('./components/UserManagement'));
+const AssignAssessmentMulti = lazyWithRetry(() => import('./components/AssignAssessmentMulti'));
+const AuthorAssignments = lazyWithRetry(() => import('./components/AuthorAssignments'));
 const UserDetails = lazyWithRetry(() => import('./components/UserDetails'));
+const AssessmentDetails = lazyWithRetry(() => import('./components/AssessmentDetails'));
 const FeedbackForm = lazyWithRetry(() => import('./components/FeedbackForm'));
 const FeedbackList = lazyWithRetry(() => import('./components/FeedbackList'));
 const QuestionManager = lazyWithRetry(() => import('./components/QuestionManager'));
 const QuestionAssignmentManager = lazyWithRetry(() => import('./components/QuestionAssignmentManager'));
+const UserGuide = lazyWithRetry(() => import('./components/UserGuide'));
+const PitchDeck = lazyWithRetry(() => import('./components/PitchDeck'));
+const GenAIReadiness = lazyWithRetry(() => import('./components/GenAIReadiness'));
+const GenAIReadinessReport = lazyWithRetry(() => import('./components/GenAIReadinessReport'));
+const GenAIReadinessList = lazyWithRetry(() => import('./components/GenAIReadinessList'));
 const DynamicAssessmentGenerator = lazyWithRetry(() => import('./components/DynamicAssessmentGenerator'));
 const DynamicAssessmentRunner = lazyWithRetry(() => import('./components/DynamicAssessmentRunner'));
 const DynamicAssessmentReport = lazyWithRetry(() => import('./components/DynamicAssessmentReport'));
@@ -171,32 +189,6 @@ const ProtectedRoute = ({ children }) => {
   }
   
   return children;
-};
-
-// Parameter-preserving Legacy Redirect Helpers
-const LegacyReportRedirect = ({ fallbackId = 'inst_enterprise_data_ai_maturity_demo' }) => {
-  const params = useParams();
-  const rawId = params.assessmentId || params.id;
-  const targetId = (!rawId || rawId === 'sample' || rawId === 'demo') ? fallbackId : rawId;
-  return <Navigate to={`/assessments/report/${targetId}`} replace />;
-};
-
-const LegacyRunnerRedirect = ({ fallbackTypeKey = 'enterprise_data_ai_maturity' }) => {
-  const params = useParams();
-  const rawId = params.assessmentId || params.id;
-  if (!rawId || rawId === 'new' || rawId === fallbackTypeKey) {
-    return <Navigate to={`/assessments/run/${fallbackTypeKey}`} replace />;
-  }
-  return <Navigate to={`/assessments/run/instance/${rawId}`} replace />;
-};
-
-const LegacyCompareRedirect = () => {
-  const params = useParams();
-  const rawId = params.assessmentId || params.id;
-  if (!rawId) {
-    return <Navigate to="/assessments/compare" replace />;
-  }
-  return <Navigate to={`/assessments/compare?base=${encodeURIComponent(rawId)}&target=${encodeURIComponent(rawId)}`} replace />;
 };
 
 // Global Print Styles - Applied across all components
@@ -238,6 +230,9 @@ const GlobalPrintStyles = createGlobalStyle`
 `;
 
 function App() {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+  const [currentAssessment, setCurrentAssessment] = useState(null);
+  const [assessmentFramework, setAssessmentFramework] = useState(null);
   const [loading, setLoading] = useState(true);
   
   // Handle Corporate SSO redirect callback on application load
@@ -246,16 +241,183 @@ function App() {
     if (ssoResult) {
       if (ssoResult.success) {
         toast.success(`Signed in via Corporate SSO (${(ssoResult.provider || 'OIDC').toUpperCase()}) as ${ssoResult.user.email}`);
-        window.location.href = '/assessments';
+        if (ssoResult.user.role === 'consumer') {
+          window.location.href = '/my-assessments';
+        } else {
+          window.location.href = '/insights-dashboard';
+        }
       } else if (ssoResult.error) {
         toast.error(`Corporate SSO Error: ${ssoResult.error}`);
       }
     }
   }, []);
 
+  // Track pathname changes
   useEffect(() => {
-    setLoading(false);
+    const updatePath = () => setCurrentPath(window.location.pathname);
+    
+    // Listen to popstate (back/forward buttons)
+    window.addEventListener('popstate', updatePath);
+    
+    // Intercept pushState and replaceState for React Router navigation
+    const originalPushState = window.history.pushState;
+    const originalReplaceState = window.history.replaceState;
+    
+    window.history.pushState = function(...args) {
+      originalPushState.apply(this, args);
+      updatePath();
+    };
+    
+    window.history.replaceState = function(...args) {
+      originalReplaceState.apply(this, args);
+      updatePath();
+    };
+    
+    return () => {
+      window.removeEventListener('popstate', updatePath);
+      window.history.pushState = originalPushState;
+      window.history.replaceState = originalReplaceState;
+    };
   }, []);
+
+  useEffect(() => {
+    loadAssessmentFramework();
+    loadCurrentSession();
+  }, []);
+
+  // REMOVED: localStorage caching was causing stale data issues
+  // Assessment data is now always fetched fresh from the server based on URL
+  const loadCurrentSession = () => {
+    // No-op: kept for compatibility
+  };
+
+  const saveCurrentSession = (assessment) => {
+    // No-op: kept for compatibility
+  };
+
+  // Load current assessment when URL changes
+  useEffect(() => {
+    const loadCurrentAssessment = async () => {
+      const path = currentPath; // ✅ Use tracked pathname state
+      const assessmentMatch = path.match(/\/assessment\/([^\/]+)|\/results\/([^\/]+)|\/pillar-results\/([^\/]+)|\/executive-summary\/([^\/]+)|\/dashboard/);
+      
+      if (assessmentMatch) {
+        // Extract assessment ID from URL or use from localStorage
+        const assessmentId = assessmentMatch[1] || assessmentMatch[2] || assessmentMatch[3] || assessmentMatch[4];
+        
+        // If on dashboard and no ID in URL, try to load from localStorage
+        if (path === '/dashboard' && !assessmentId) {
+          const savedAssessment = localStorage.getItem('currentAssessment');
+          if (savedAssessment) {
+            try {
+              const assessment = JSON.parse(savedAssessment);
+              // Refresh assessment data from server
+              const refreshedAssessment = await assessmentService.getAssessmentStatus(assessment.id || assessment.assessmentId);
+              if (refreshedAssessment) {
+                setCurrentAssessment(refreshedAssessment);
+                saveCurrentSession(refreshedAssessment);
+              }
+            } catch (error) {
+              console.error('Error loading assessment from localStorage:', error);
+            }
+          }
+          return;
+        }
+        
+        if (assessmentId) {
+          try {
+            const assessment = await assessmentService.getAssessmentStatus(assessmentId);
+            if (assessment) {
+              // Calculate progress
+              const totalQuestions = assessmentFramework?.assessmentAreas?.reduce((total, area) => {
+                return total + (area.dimensions?.reduce((dimTotal, dim) => {
+                  return dimTotal + (dim.questions?.length || 0);
+                }, 0) || 0);
+              }, 0) || 0;
+              
+              // Count unique questions (not perspectives)
+              const questionIds = new Set();
+              Object.keys(assessment.responses || {}).forEach(key => {
+                if (key.includes('_comment') || key.includes('_skipped')) return;
+                
+                // Remove perspective suffixes to get question ID
+                let questionId = key;
+                const perspectiveSuffixes = ['_current_state', '_future_state', '_technical_pain', '_business_pain'];
+                for (const suffix of perspectiveSuffixes) {
+                  if (key.endsWith(suffix)) {
+                    questionId = key.substring(0, key.length - suffix.length);
+                    break;
+                  }
+                }
+                questionIds.add(questionId);
+              });
+              const answeredQuestions = questionIds.size;
+              
+              const progress = totalQuestions > 0 ? Math.round((answeredQuestions / totalQuestions) * 100) : 0;
+              
+              setCurrentAssessment({
+                ...assessment,
+                progress
+              });
+              saveCurrentSession(assessment);
+            }
+          } catch (error) {
+            console.error('Error loading current assessment:', error);
+          }
+        }
+      }
+      // Don't clear currentAssessment when navigating to other pages
+      // Only clear it explicitly via logout
+    };
+
+    if (assessmentFramework) {
+      loadCurrentAssessment();
+    }
+  }, [currentPath, assessmentFramework]); // ✅ currentPath is reactive state
+
+  const loadAssessmentFramework = async () => {
+    try {
+      setLoading(true);
+      const framework = await assessmentService.getAssessmentFramework();
+      setAssessmentFramework(framework);
+    } catch (error) {
+      console.error('Error loading assessment framework:', error);
+      
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const startAssessment = async (organizationInfo) => {
+    try {
+      const assessment = await assessmentService.startAssessment(organizationInfo);
+      setCurrentAssessment(assessment);
+      saveCurrentSession(assessment);
+      // Toast notification shown in AssessmentStart component to avoid duplicate
+      return assessment;
+    } catch (error) {
+      console.error('Error starting assessment:', error);
+      
+      throw error;
+    }
+  };
+
+  const handleLogout = () => {
+    setCurrentAssessment(null);
+    saveCurrentSession(null);
+  };
+
+  const updateAssessmentStatus = async (assessmentId) => {
+    try {
+      const status = await assessmentService.getAssessmentStatus(assessmentId);
+      setCurrentAssessment(prev => ({ ...prev, ...status }));
+      return status;
+    } catch (error) {
+      console.error('Error updating assessment status:', error);
+      
+      throw error;
+    }
+  };
 
   if (loading) {
     return (
@@ -287,308 +449,465 @@ function App() {
               element={<HomePage />} 
             />
           
-            <Route 
-              path="/deep-dive" 
-              element={<DeepDive />} 
-            />
+          <Route 
+            path="/insights-dashboard" 
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+          
+          <Route 
+            path="/deep-dive" 
+            element={<DeepDive />} 
+          />
+          
+          <Route 
+            path="/genai-readiness" 
+            element={
+              <ProtectedRoute>
+                <GenAIReadiness />
+              </ProtectedRoute>
+            } 
+          />
+          
+          <Route 
+            path="/genai-readiness/edit/:id" 
+            element={
+              <ProtectedRoute>
+                <GenAIReadiness />
+              </ProtectedRoute>
+            } 
+          />
+          
+          <Route 
+            path="/genai-readiness/list" 
+            element={
+              <ProtectedRoute>
+                <GenAIReadinessList />
+              </ProtectedRoute>
+            } 
+          />
+          
+          <Route 
+            path="/genai-readiness/report/:id" 
+            element={
+              <ProtectedRoute>
+                <GenAIReadinessReport />
+              </ProtectedRoute>
+            } 
+          />
 
-            {/* Canonical Engine 1: Dynamic Assessment Blueprints & AI Compiler */}
-            <Route 
-              path="/assessments/ai-generator" 
-              element={
-                <ProtectedRoute>
-                  <DynamicAssessmentGenerator />
-                </ProtectedRoute>
-              } 
-            />
+          <Route 
+            path="/eu-ai-compliance" 
+            element={
+              <ProtectedRoute>
+                <EuAiComplianceWorkspace />
+              </ProtectedRoute>
+            } 
+          />
 
-            <Route 
-              path="/assessments/generate" 
-              element={<Navigate to="/assessments/ai-generator" replace />} 
-            />
+          <Route 
+            path="/eu-ai-compliance/:id" 
+            element={
+              <ProtectedRoute>
+                <EuAiComplianceWorkspace />
+              </ProtectedRoute>
+            } 
+          />
 
-            <Route 
-              path="/assessments/generator" 
-              element={<Navigate to="/assessments/ai-generator" replace />} 
-            />
+          <Route 
+            path="/assessments/eu-ai-compliance" 
+            element={
+              <ProtectedRoute>
+                <EuAiComplianceWorkspace />
+              </ProtectedRoute>
+            } 
+          />
 
-            <Route 
-              path="/assessments/custom-hub" 
-              element={<Navigate to="/assessments" replace />} 
-            />
+          <Route 
+            path="/assessments/eu-ai-compliance/:id" 
+            element={
+              <ProtectedRoute>
+                <EuAiComplianceWorkspace />
+              </ProtectedRoute>
+            } 
+          />
 
-            <Route 
-              path="/assessments/templates" 
-              element={<Navigate to="/assessments" replace />} 
-            />
+          <Route 
+            path="/ge-value-realization" 
+            element={
+              <ProtectedRoute>
+                <GeValueRealizationWorkspace />
+              </ProtectedRoute>
+            } 
+          />
 
-            <Route 
-              path="/assessment-templates" 
-              element={<Navigate to="/assessments" replace />} 
-            />
+          <Route 
+            path="/ge-value-realization/:id" 
+            element={
+              <ProtectedRoute>
+                <GeValueRealizationWorkspace />
+              </ProtectedRoute>
+            } 
+          />
 
-            <Route 
-              path="/assessments/run/:typeKey" 
-              element={
-                <ProtectedRoute>
-                  <DynamicAssessmentRunner />
-                </ProtectedRoute>
-              } 
-            />
+          <Route 
+            path="/assessments/ge-value-realization" 
+            element={
+              <ProtectedRoute>
+                <GeValueRealizationWorkspace />
+              </ProtectedRoute>
+            } 
+          />
 
-            <Route 
-              path="/assessments/run/instance/:id" 
-              element={
-                <ProtectedRoute>
-                  <DynamicAssessmentRunner />
-                </ProtectedRoute>
-              } 
-            />
+          <Route 
+            path="/assessments/ge-value-realization/:id" 
+            element={
+              <ProtectedRoute>
+                <GeValueRealizationWorkspace />
+              </ProtectedRoute>
+            } 
+          />
+          
+          <Route 
+            path="/assessments/ai-generator" 
+            element={
+              <ProtectedRoute>
+                <DynamicAssessmentGenerator />
+              </ProtectedRoute>
+            } 
+          />
 
-            <Route 
-              path="/assessments/report/:id" 
-              element={
-                <ProtectedRoute>
-                  <DynamicAssessmentReport />
-                </ProtectedRoute>
-              } 
-            />
+          <Route 
+            path="/assessments/custom-hub" 
+            element={<Navigate to="/assessments" replace />} 
+          />
 
-            <Route 
-              path="/assessments/results/:id" 
-              element={
-                <ProtectedRoute>
-                  <DynamicAssessmentReport />
-                </ProtectedRoute>
-              } 
-            />
+          <Route 
+            path="/assessments/templates" 
+            element={<Navigate to="/assessments" replace />} 
+          />
 
-            <Route 
-              path="/assessments/public-report/:token" 
-              element={<DynamicAssessmentReport />} 
-            />
+          <Route 
+            path="/assessment-templates" 
+            element={<Navigate to="/assessments" replace />} 
+          />
 
-            {/* Canonical Engine 2: GE Value Realization */}
-            <Route 
-              path="/ge-value-realization" 
-              element={
-                <ProtectedRoute>
-                  <GeValueRealizationWorkspace />
-                </ProtectedRoute>
-              } 
-            />
+          <Route 
+            path="/assessments/run/enterprise_data_ai_maturity" 
+            element={<Navigate to="/start" replace />} 
+          />
 
-            <Route 
-              path="/ge-value-realization/:id" 
-              element={
-                <ProtectedRoute>
-                  <GeValueRealizationWorkspace />
-                </ProtectedRoute>
-              } 
-            />
+          <Route 
+            path="/assessments/run/instance/inst_enterprise_data_ai_maturity_demo" 
+            element={<Navigate to="/assessment/inst_enterprise_data_ai_maturity_demo/platform_governance" replace />} 
+          />
 
-            <Route 
-              path="/assessments/ge-value-realization" 
-              element={<Navigate to="/ge-value-realization" replace />} 
-            />
+          <Route 
+            path="/assessments/report/inst_enterprise_data_ai_maturity_demo" 
+            element={<Navigate to="/results/inst_enterprise_data_ai_maturity_demo" replace />} 
+          />
 
-            <Route 
-              path="/assessments/ge-value-realization/:id" 
-              element={
-                <ProtectedRoute>
-                  <GeValueRealizationWorkspace />
-                </ProtectedRoute>
-              } 
-            />
+          <Route 
+            path="/assessments/run/:typeKey" 
+            element={
+              <ProtectedRoute>
+                <DynamicAssessmentRunner />
+              </ProtectedRoute>
+            } 
+          />
 
-            {/* Canonical Engine 3: EU AI Act Statutory Compliance */}
-            <Route 
-              path="/eu-ai-compliance" 
-              element={
-                <ProtectedRoute>
-                  <EuAiComplianceWorkspace />
-                </ProtectedRoute>
-              } 
-            />
+          <Route 
+            path="/assessments/run/instance/:id" 
+            element={
+              <ProtectedRoute>
+                <DynamicAssessmentRunner />
+              </ProtectedRoute>
+            } 
+          />
 
-            <Route 
-              path="/eu-ai-act" 
-              element={<Navigate to="/eu-ai-compliance" replace />} 
-            />
+          <Route 
+            path="/assessments/report/:id" 
+            element={
+              <ProtectedRoute>
+                <DynamicAssessmentReport />
+              </ProtectedRoute>
+            } 
+          />
 
-            <Route 
-              path="/eu-ai-act/:id" 
-              element={
-                <ProtectedRoute>
-                  <EuAiComplianceWorkspace />
-                </ProtectedRoute>
-              } 
-            />
+          <Route 
+            path="/assessments/public-report/:token" 
+            element={<DynamicAssessmentReport />} 
+          />
 
-            <Route 
-              path="/eu-ai-act/system/:id" 
-              element={
-                <ProtectedRoute>
-                  <EuAiComplianceWorkspace />
-                </ProtectedRoute>
-              } 
-            />
+          <Route 
+            path="/assessments/compare" 
+            element={
+              <ProtectedRoute>
+                <AssessmentComparisonView />
+              </ProtectedRoute>
+            } 
+          />
 
-            <Route 
-              path="/eu-ai-compliance/:id" 
-              element={
-                <ProtectedRoute>
-                  <EuAiComplianceWorkspace />
-                </ProtectedRoute>
-              } 
-            />
+          <Route 
+            path="/customer-portfolio/:customerName" 
+            element={
+              <ProtectedRoute>
+                <CustomerPortfolioDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          
+          <Route 
+            path="/dashboard" 
+            element={
+              <AssessmentDashboard 
+                currentAssessment={currentAssessment}
+                framework={assessmentFramework}
+                onLogout={handleLogout}
+              />
+            } 
+          />
+          
+          <Route 
+            path="/dashboard/:assessmentId" 
+            element={
+              <AssessmentDashboard 
+                currentAssessment={currentAssessment}
+                framework={assessmentFramework}
+                onLogout={handleLogout}
+              />
+            } 
+          />
+          
+          {/* Removed /explore route - all content is on home page with scroll navigation */}
+          
+          <Route 
+            path="/start" 
+            element={
+              <ProtectedRoute>
+                <AssessmentStart 
+                  onStart={startAssessment}
+                />
+              </ProtectedRoute>
+            } 
+          />
+          
+          <Route 
+            path="/assessment/:assessmentId/:categoryId" 
+            element={
+              <ProtectedRoute>
+                <AssessmentQuestion 
+                  framework={assessmentFramework}
+                  currentAssessment={currentAssessment}
+                  onUpdateStatus={updateAssessmentStatus}
+                />
+              </ProtectedRoute>
+            } 
+          />
+          
+          <Route 
+            path="/results/:assessmentId" 
+            element={
+              <ProtectedRoute>
+                <AssessmentResults 
+                  currentAssessment={currentAssessment}
+                  framework={assessmentFramework}
+                />
+              </ProtectedRoute>
+            } 
+          />
 
-            <Route 
-              path="/assessments/eu-ai-compliance" 
-              element={<Navigate to="/eu-ai-compliance" replace />} 
-            />
+          <Route 
+            path="/executive-summary/:assessmentId" 
+            element={
+              <ProtectedRoute>
+                <ExecutiveSummary 
+                  currentAssessment={currentAssessment}
+                  framework={assessmentFramework}
+                />
+              </ProtectedRoute>
+            } 
+          />
+          
+          <Route 
+            path="/executive/:assessmentId" 
+            element={
+              <ProtectedRoute>
+                <ExecutiveCommandCenter />
+              </ProtectedRoute>
+            } 
+          />
 
-            <Route 
-              path="/assessments/eu-ai-compliance/:id" 
-              element={
-                <ProtectedRoute>
-                  <EuAiComplianceWorkspace />
-                </ProtectedRoute>
-              } 
-            />
+          <Route 
+            path="/executive-dashboard" 
+            element={
+              <ProtectedRoute>
+                <ExecutiveCommandCenter />
+              </ProtectedRoute>
+            } 
+          />
 
-            {/* Canonical Portfolio, Account Rollup & Progression Diff Views */}
-            <Route 
-              path="/assessments" 
-              element={
-                <ProtectedRoute>
-                  <AssessmentManagement />
-                </ProtectedRoute>
-              } 
-            />
+          <Route 
+            path="/executive-dashboard/:assessmentId" 
+            element={
+              <ProtectedRoute>
+                <ExecutiveCommandCenter />
+              </ProtectedRoute>
+            } 
+          />
+          
+          <Route 
+            path="/benchmarks/:assessmentId" 
+            element={
+              <ProtectedRoute>
+                <IndustryBenchmarkingReport />
+              </ProtectedRoute>
+            } 
+          />
 
-            <Route 
-              path="/assessments/compare" 
-              element={
-                <ProtectedRoute>
-                  <AssessmentComparisonView />
-                </ProtectedRoute>
-              } 
-            />
-
-            <Route 
-              path="/customer-portfolio/:customerName" 
-              element={
-                <ProtectedRoute>
-                  <CustomerPortfolioDashboard />
-                </ProtectedRoute>
-              } 
-            />
-
-            {/* Canonical Governance, Users, Questions & Enablement Routes */}
-            <Route 
-              path="/user-management" 
-              element={
-                <ProtectedRoute>
-                  <UserManagement />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route 
-              path="/user-details/:userId" 
-              element={
-                <ProtectedRoute>
-                  <UserDetails />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route 
-              path="/feedback" 
-              element={<FeedbackForm />} 
-            />
-
-            <Route 
-              path="/admin/feedback" 
-              element={
-                <ProtectedRoute>
-                  <FeedbackList />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route 
-              path="/admin/questions" 
-              element={
-                <ProtectedRoute>
-                  <QuestionManager />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route 
-              path="/question-assignments" 
-              element={
-                <ProtectedRoute>
-                  <QuestionAssignmentManager />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route 
-              path="/workflow-walkthrough" 
-              element={<InteractiveWorkflowWalkthrough />}
-            />
-
-            {/* Consolidated Legacy Redirects to Canonical Views */}
-            <Route path="/value-realization" element={<Navigate to="/ge-value-realization" replace />} />
-            <Route path="/workflow-demo" element={<Navigate to="/workflow-walkthrough" replace />} />
-            <Route path="/interactive-tours" element={<Navigate to="/workflow-walkthrough" replace />} />
-            <Route path="/user-guide" element={<Navigate to="/workflow-walkthrough" replace />} />
-            <Route path="/pitch-deck" element={<Navigate to="/deep-dive" replace />} />
-            <Route path="/start" element={<Navigate to="/assessments/run/enterprise_data_ai_maturity" replace />} />
-            <Route path="/assessment/:assessmentId/:categoryId" element={<LegacyRunnerRedirect />} />
-            <Route path="/assessment/:assessmentId" element={<LegacyRunnerRedirect />} />
-            <Route path="/results" element={<Navigate to="/assessments/report/inst_enterprise_data_ai_maturity_demo" replace />} />
-            <Route path="/results/:assessmentId" element={<LegacyReportRedirect />} />
-            <Route path="/executive-summary/:assessmentId" element={<LegacyReportRedirect />} />
-            <Route path="/executive/:assessmentId" element={<LegacyReportRedirect />} />
-            <Route path="/executive-dashboard" element={<Navigate to="/assessments/report/inst_enterprise_data_ai_maturity_demo" replace />} />
-            <Route path="/executive-dashboard/:assessmentId" element={<LegacyReportRedirect />} />
-            <Route path="/dashboard" element={<Navigate to="/assessments" replace />} />
-            <Route path="/dashboard/:assessmentId" element={<LegacyReportRedirect />} />
-            <Route path="/insights" element={<Navigate to="/assessments" replace />} />
-            <Route path="/insights/:assessmentId" element={<LegacyReportRedirect />} />
-            <Route path="/insights-dashboard" element={<Navigate to="/assessments" replace />} />
-            <Route path="/my-assessments" element={<Navigate to="/assessments" replace />} />
-            <Route path="/assessment-details/:assessmentId" element={<LegacyReportRedirect />} />
-            <Route path="/deep-dive/:assessmentId" element={<LegacyReportRedirect />} />
-            <Route path="/edit-questions/:assessmentId" element={<LegacyRunnerRedirect />} />
-            <Route path="/history/:assessmentId" element={<LegacyCompareRedirect />} />
-            <Route path="/benchmarks" element={<Navigate to="/assessments/report/inst_enterprise_data_ai_maturity_demo" replace />} />
-            <Route path="/benchmarks/:assessmentId" element={<LegacyReportRedirect />} />
-            <Route path="/industry-benchmarks" element={<Navigate to="/assessments/report/inst_enterprise_data_ai_maturity_demo" replace />} />
-            <Route path="/genai-readiness" element={<Navigate to="/assessments/run/openai_to_gemini_enterprise_migration" replace />} />
-            <Route path="/genai-readiness/edit/:id" element={<LegacyRunnerRedirect fallbackTypeKey="openai_to_gemini_enterprise_migration" />} />
-            <Route path="/genai-readiness/list" element={<Navigate to="/assessments" replace />} />
-            <Route path="/genai-readiness/report/:id" element={<LegacyReportRedirect fallbackId="inst_openai_to_gemini_enterprise_migration_demo" />} />
-            <Route path="/assign-assessment" element={<Navigate to="/question-assignments" replace />} />
-            <Route path="/my-assignments" element={<Navigate to="/question-assignments" replace />} />
-            <Route path="/custom-questions" element={<Navigate to="/admin/questions" replace />} />
-            <Route path="/feedback-analytics" element={<Navigate to="/admin/feedback" replace />} />
-            <Route path="/admin" element={<Navigate to="/user-management" replace />} />
-            <Route path="/analytics" element={<Navigate to="/assessments" replace />} />
-            <Route path="/author-dashboard" element={<Navigate to="/question-assignments" replace />} />
-            <Route path="/consumer-dashboard" element={<Navigate to="/assessments" replace />} />
-            <Route path="/tco-calculator" element={<Navigate to="/assessments/report/inst_finops_cloud_cost_optimization_demo" replace />} />
-            <Route path="/roi-calculator" element={<Navigate to="/ge-value-realization?tab=report" replace />} />
-
-            <Route 
-              path="*" 
-              element={<Navigate to="/" replace />} 
-            />
-          </Routes>
+          <Route 
+            path="/industry-benchmarks" 
+            element={
+              <ProtectedRoute>
+                <IndustryBenchmarkingReport />
+              </ProtectedRoute>
+            } 
+          />
+          
+          <Route 
+            path="/history/:assessmentId" 
+            element={
+              <ProtectedRoute>
+                <AssessmentHistory />
+              </ProtectedRoute>
+            } 
+          />
+          
+          <Route 
+            path="/assessments" 
+            element={
+              <ProtectedRoute>
+                <AssessmentManagement />
+              </ProtectedRoute>
+            } 
+          />
+          
+          <Route 
+            path="/my-assessments" 
+            element={
+              <ProtectedRoute>
+                <MyAssessments />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route 
+            path="/user-management" 
+            element={
+              <ProtectedRoute>
+                <UserManagement />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route 
+            path="/assign-assessment" 
+            element={
+              <ProtectedRoute>
+                <AssignAssessmentMulti />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route 
+            path="/my-assignments" 
+            element={
+              <ProtectedRoute>
+                <AuthorAssignments />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route 
+            path="/user-details/:userId" 
+            element={
+              <ProtectedRoute>
+                <UserDetails />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route 
+            path="/assessment-details/:assessmentId" 
+            element={
+              <ProtectedRoute>
+                <AssessmentDetails />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route 
+            path="/feedback" 
+            element={<FeedbackForm />} 
+          />
+          
+          <Route 
+            path="/admin/feedback" 
+            element={
+              <ProtectedRoute>
+                <FeedbackList />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route 
+            path="/admin/questions" 
+            element={
+              <ProtectedRoute>
+                <QuestionManager />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route 
+            path="/question-assignments" 
+            element={
+              <ProtectedRoute>
+                <QuestionAssignmentManager />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route 
+            path="/workflow-walkthrough" 
+            element={<InteractiveWorkflowWalkthrough />}
+          />
+          <Route 
+            path="/workflow-demo" 
+            element={<InteractiveWorkflowWalkthrough />}
+          />
+          <Route 
+            path="/interactive-tours" 
+            element={<InteractiveWorkflowWalkthrough />}
+          />
+          <Route 
+            path="/user-guide" 
+            element={<UserGuide />}
+          />
+          
+          <Route 
+            path="/pitch-deck" 
+            element={<PitchDeck />}
+          />
+          
+          <Route 
+            path="*" 
+            element={<Navigate to="/" replace />} 
+          />
+        </Routes>
         </Suspense>
         </ChunkErrorBoundary>
 

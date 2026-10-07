@@ -611,8 +611,8 @@ const HomePageNew = () => {
         // Small delay to ensure assessment is saved to disk
         await new Promise(resolve => setTimeout(resolve, 500));
         
-        // Navigate to the generated assessment report
-        navigate(`/assessments/report/${assessmentId}`);
+        // Navigate to the first question page
+        navigate(`/assessment/${assessmentId}/platform_governance`);
       } else {
         console.error('Invalid response structure:', result);
         throw new Error('Invalid response from server');
@@ -657,7 +657,7 @@ const HomePageNew = () => {
 
               <div style={{ display: 'flex', gap: '14px', marginTop: '28px', flexWrap: 'wrap' }}>
                 <button 
-                  onClick={() => navigate('/assessments/run/enterprise_data_ai_maturity')}
+                  onClick={() => navigate('/start')}
                   style={{
                     background: 'linear-gradient(135deg, #6366f1, #a855f7)',
                     color: '#ffffff',
@@ -976,7 +976,7 @@ const HomePageNew = () => {
               <span className="dimension-tag">Observability & Monitoring</span>
               <span className="dimension-tag">Cost Management</span>
             </div>
-            <button className="explore-btn" onClick={() => navigate('/assessments/run/enterprise_data_ai_maturity?dimensionIdx=0')}>
+            <button className="explore-btn" onClick={() => navigate('/start')}>
               Explore questions →
             </button>
           </PillarCard>
@@ -1002,7 +1002,7 @@ const HomePageNew = () => {
               <span className="dimension-tag">Data Quality</span>
               <span className="dimension-tag">Performance & Scalability</span>
             </div>
-            <button className="explore-btn" onClick={() => navigate('/assessments/run/enterprise_data_ai_maturity?dimensionIdx=1')}>
+            <button className="explore-btn" onClick={() => navigate('/start')}>
               Explore questions →
             </button>
           </PillarCard>
@@ -1028,7 +1028,7 @@ const HomePageNew = () => {
               <span className="dimension-tag">Self-Service Enablement</span>
               <span className="dimension-tag">Collaboration & Sharing</span>
             </div>
-            <button className="explore-btn" onClick={() => navigate('/assessments/run/enterprise_data_ai_maturity?dimensionIdx=2')}>
+            <button className="explore-btn" onClick={() => navigate('/start')}>
               Explore questions →
             </button>
           </PillarCard>
@@ -1054,7 +1054,7 @@ const HomePageNew = () => {
               <span className="dimension-tag">ML Lifecycle Governance</span>
               <span className="dimension-tag">Business Impact</span>
             </div>
-            <button className="explore-btn" onClick={() => navigate('/assessments/run/enterprise_data_ai_maturity?dimensionIdx=3')}>
+            <button className="explore-btn" onClick={() => navigate('/start')}>
               Explore questions →
             </button>
           </PillarCard>
@@ -1080,7 +1080,7 @@ const HomePageNew = () => {
               <span className="dimension-tag">Evaluation & Quality Control</span>
               <span className="dimension-tag">Responsible AI</span>
             </div>
-            <button className="explore-btn" onClick={() => navigate('/assessments/run/enterprise_data_ai_maturity?dimensionIdx=4')}>
+            <button className="explore-btn" onClick={() => navigate('/start')}>
               Explore questions →
             </button>
           </PillarCard>
@@ -1106,7 +1106,7 @@ const HomePageNew = () => {
               <span className="dimension-tag">Financial Management</span>
               <span className="dimension-tag">Innovation & Improvement</span>
             </div>
-            <button className="explore-btn" onClick={() => navigate('/assessments/run/enterprise_data_ai_maturity?dimensionIdx=5')}>
+            <button className="explore-btn" onClick={() => navigate('/start')}>
               Explore questions →
             </button>
           </PillarCard>
@@ -1119,7 +1119,7 @@ const HomePageNew = () => {
           <h2>Ready to begin?</h2>
           <p>Answer a few guided questions and get a shareable report with prioritized actions.</p>
           <CTAButton
-            onClick={() => navigate('/assessments/run/enterprise_data_ai_maturity')}
+            onClick={() => navigate('/start')}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >

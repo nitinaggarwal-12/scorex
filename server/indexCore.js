@@ -19,6 +19,14 @@ const path = require('path');
 const fs = require('fs');
 
 const assessmentFramework = require('./data/assessmentFramework');
+const RecommendationEngine = require('./services/recommendationEngine');
+const AdaptiveRecommendationEngine = require('./services/adaptiveRecommendationEngine');
+const LiveDataEnhancer = require('./services/liveDataEnhancer');
+const OpenAIContentGenerator = require('./services/openAIContentGenerator');
+const DatabricksFeatureMapper = require('./services/databricksFeatureMapper');
+const ContextAwareRecommendationEngine = require('./services/contextAwareRecommendationEngine');
+const IntelligentRecommendationEngine = require('./services/intelligentRecommendationEngine_v2');
+const featureDB = require('./services/databricksFeatureDatabase');
 const sampleAssessmentGenerator = require('./utils/sampleAssessmentGenerator');
 const industryBenchmarkingService = require('./services/industryBenchmarkingService');
 const masterBlueprintCatalog = require('./services/masterBlueprintCatalog');
@@ -64,6 +72,7 @@ const questionEditsRoutes = require('./routes/questionEdits');
 const questionAssignmentsRoutes = require('./routes/questionAssignments');
 const dataCleanupRoutes = require('./routes/dataCleanup');
 const authorValidationRoutes = require('./routes/authorValidation');
+const genaiReadinessRoutes = require('./routes/genaiReadiness');
 const dynamicAssessmentsRoutes = require('./routes/dynamicAssessments');
 const audioRoutes = require('./routes/audio');
 const euAiComplianceRoutes = require('./routes/euAiCompliance');
@@ -90,6 +99,7 @@ app.use('/api/assessment-excel', excelRoutes);
 app.use('/api/question-edits', questionEditsRoutes);
 app.use('/api/question-assignments', questionAssignmentsRoutes);
 app.use('/api/data-cleanup', dataCleanupRoutes);
+app.use('/api/genai-readiness', genaiReadinessRoutes);
 app.use('/api/dynamic-assessments', dynamicAssessmentsRoutes);
 app.use('/api/audio', audioRoutes);
 app.use('/api/eu-ai-compliance', euAiComplianceRoutes);
@@ -173,6 +183,11 @@ try {
   console.error('⚠️  ALL DATA WILL BE LOST ON RESTART!');
 }
 
+// Initialize engines
+const recommendationEngine = new RecommendationEngine();
+const adaptiveRecommendationEngine = new AdaptiveRecommendationEngine();
+const liveDataEnhancer = new LiveDataEnhancer();
+const openAIContentGenerator = new OpenAIContentGenerator();
 
 // Routes
 
@@ -1212,7 +1227,16 @@ app.post('/api/assessment/:id/submit', async (req, res) => {
     (async () => {
       try {
         const dynamicEngine = require('./services/dynamicAssessmentEngine');
+        const OpenAIContentGenerator = require('./services/openAIContentGenerator');
+        const aiContentGen = new OpenAIContentGenerator();
+
+        console.log(`🤖 [Gemini] Generating background multi-cloud AI report for: ${assessment.assessmentName || 'Enterprise'}`);
         const updatePayload = {};
+        const aiContent = await aiContentGen.generateAssessmentContent(assessment);
+        if (aiContent) {
+          updatePayload.ai_report = aiContent;
+          updatePayload.aiReport = aiContent;
+        }
 
         const diagrams = await dynamicEngine.generateArchitectureDiagramsWithGemini(
           {
@@ -1263,42 +1287,786 @@ app.post('/api/assessment/:id/submit', async (req, res) => {
   }
 });
 
-// Generate adaptive & standard assessment results via Dynamic Assessment Engine (Gemini 3.8 Flash / 3.1 Pro)
-app.get(['/api/assessment/:id/adaptive-results', '/api/assessment/:id/results'], requireAuth, async (req, res) => {
+// Generate adaptive assessment results (NEW - uses all inputs)
+app.get('/api/assessment/:id/adaptive-results', requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
-    const customRepo = require('./db/customAssessmentRepository');
-    const dynamicInst = await customRepo.getInstanceById(id);
-    if (dynamicInst) {
-      return res.json({
-        success: true,
-        data: dynamicInst
-      });
-    }
     const assessmentRepo = require('./db/assessmentRepository');
     const assessment = await assessmentRepo.findById(id);
+
     if (!assessment) {
-      return res.status(404).json({ success: false, message: 'Assessment not found' });
+      return res.status(404).json({
+        success: false,
+        message: 'Assessment not found'
+      });
     }
-    return res.json({
+
+    console.log('🎯 Generating ADAPTIVE results for assessment:', id);
+    console.log('Using: Current state, Future state, Pain points, and Comments');
+    
+    const hasAnyResponses = Object.keys(assessment.responses).length > 0;
+    
+    if (!hasAnyResponses) {
+      return res.json({
+        success: true,
+        data: {
+          message: 'No responses yet',
+          assessmentInfo: {
+            id: assessment.id,
+            assessmentName: assessment.assessmentName,
+            startedAt: assessment.startedAt
+          }
+        }
+      });
+    }
+    
+    // Use adaptive engine
+    let recommendations = adaptiveRecommendationEngine.generateAdaptiveRecommendations(
+      assessment.responses,
+      assessment.completedCategories.length > 0 ? assessment.completedCategories : null
+    );
+    
+    console.log('✅ Adaptive recommendations generated successfully');
+    console.log('Pain point recommendations:', recommendations.painPointRecommendations.length);
+    console.log('Gap-based actions:', recommendations.gapBasedActions.length);
+    console.log('Comment insights:', recommendations.commentBasedInsights.length);
+    
+    // Enhance with live data if enabled
+    if (process.env.USE_LIVE_DATA === 'true') {
+      console.log('🔄 Enhancing with live data...');
+      try {
+        recommendations = await liveDataEnhancer.enhanceRecommendations(
+          recommendations,
+          {
+            currentScore: recommendations.overall.currentScore,
+            painPoints: recommendations.painPointRecommendations,
+            gaps: recommendations.gapBasedActions
+          }
+        );
+        console.log('✅ Live data enhancement completed');
+      } catch (error) {
+        console.error('❌ Live data enhancement failed:', error);
+        console.log('⚠️  Continuing with base recommendations');
+      }
+    }
+    
+    res.json({
       success: true,
       data: {
         assessmentInfo: {
           id: assessment.id,
           assessmentName: assessment.assessmentName,
           organizationName: assessment.organizationName,
-          industry: assessment.industry,
           startedAt: assessment.startedAt,
           completedAt: assessment.completedAt
         },
-        overall: { currentScore: 3.4, futureScore: 4.6, gap: 1.2, maturityLevel: 'Scaling & Governed' },
-        executiveSummary: assessment.aiReport || {},
-        _engineType: 'gemini-3.8-flash',
-        _generatedAt: new Date().toISOString()
+        ...recommendations,
+        _engineType: 'adaptive',
+        _liveDataEnabled: process.env.USE_LIVE_DATA === 'true',
+        _liveDataSource: recommendations.whatsNew?.lastUpdated ? 'active' : 'disabled'
       }
     });
   } catch (error) {
-    return res.status(500).json({ success: false, message: 'Error generating assessment results', error: error.message });
+    console.error('❌ Error generating adaptive results:', error);
+    console.error('Error stack:', error.stack);
+    res.status(500).json({
+      success: false,
+      message: 'Error generating adaptive assessment results',
+      error: error.message
+    });
+  }
+});
+
+// Generate assessment results and recommendations (ADAPTIVE with live data)
+app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
+  try {
+    console.log(`🎯 [RESULTS ENDPOINT] Request for assessment: ${req.params.id}`);
+    
+    // CRITICAL: Prevent caching of dynamic results
+    res.set({
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0',
+      'Surrogate-Control': 'no-store'
+    });
+
+    const { id } = req.params;
+    const currentUser = req.user;
+    
+    // Try PostgreSQL first, then fallback to file storage
+    const assessmentRepo = require('./db/assessmentRepository');
+    let assessment = null;
+    
+    assessment = await assessmentRepo.findById(id);
+
+    if (!assessment) {
+      console.log(`❌ [RESULTS ENDPOINT] Assessment ${id} not found`);
+      return res.status(404).json({
+        success: false,
+        message: 'Assessment not found'
+      });
+    }
+    
+    // Check if results are released (only block restricted consumer users when explicitly unreleased)
+    if (currentUser.role === 'consumer' && assessment.results_released === false) {
+      console.log(`🔒 [RESULTS ENDPOINT] Results not released for assessment ${id}`);
+      return res.status(403).json({
+        success: false,
+        message: 'Results have not been released yet. Please contact your administrator.',
+        resultsReleased: false
+      });
+    }
+    
+    console.log(`✅ [RESULTS ENDPOINT] Found assessment ${id}, has ${Object.keys(assessment.responses || {}).length} responses`);
+
+    // DEBUG: Log what we retrieved
+    console.log('🔍 Results endpoint - Retrieved assessment:', id);
+    console.log('🔍 Assessment object keys:', Object.keys(assessment));
+    console.log('🔍 Assessment.responses type:', typeof assessment.responses);
+    console.log('🔍 Assessment.responses null/undefined?:', assessment.responses === null || assessment.responses === undefined);
+    console.log('🔍 Assessment.responses is object?:', assessment.responses && typeof assessment.responses === 'object');
+
+    // FIX: Ensure responses exists and is an object
+    if (!assessment.responses || typeof assessment.responses !== 'object') {
+      console.warn('⚠️  WARNING: Assessment responses is null/undefined or not an object! Initializing to empty object.');
+      assessment.responses = {};
+    }
+
+    // Apply question edits and deletions for this assessment
+    const effectiveFramework = await applyQuestionEdits(id, assessmentFramework);
+
+    // Allow results even with no responses - will show zero state
+    const hasAnyResponses = Object.keys(assessment.responses).length > 0;
+    const hasCompletedCategories = assessment.completedCategories.length > 0;
+    
+    console.log('Generating results for assessment:', id);
+    console.log('Assessment responses:', JSON.stringify(assessment.responses, null, 2));
+    console.log('Has responses:', hasAnyResponses, 'Completed categories:', assessment.completedCategories.length);
+    
+    // Calculate total questions and answered questions
+    const totalQuestions = effectiveFramework.assessmentAreas.reduce((total, area) => {
+      return total + area.dimensions.reduce((dimTotal, dim) => {
+        return dimTotal + (dim.questions?.length || 0);
+      }, 0);
+    }, 0);
+    
+    // Count answered questions (excluding comments and skipped)
+    // Extract unique question IDs by removing perspective suffixes
+    const questionIds = new Set();
+    Object.keys(assessment.responses).forEach(key => {
+      if (key.includes('_comment') || key.includes('_skipped')) return;
+      
+      // Remove perspective suffixes to get question ID
+      let questionId = key;
+      const perspectiveSuffixes = ['_current_state', '_future_state', '_technical_pain', '_business_pain'];
+      for (const suffix of perspectiveSuffixes) {
+        if (key.endsWith(suffix)) {
+          questionId = key.substring(0, key.length - suffix.length);
+          break;
+        }
+      }
+      questionIds.add(questionId);
+    });
+    const answeredQuestions = questionIds.size;
+    
+    console.log(`Questions answered: ${answeredQuestions} of ${totalQuestions}`);
+    
+    // Find areas with any responses (completed or partial)
+    const areasWithResponses = hasAnyResponses 
+      ? effectiveFramework.assessmentAreas.filter(area => {
+          // Check if there are any responses for this area
+          const hasAreaResponses = Object.keys(assessment.responses).some(key => {
+            // Skip comment and skipped keys
+            if (key.includes('_comment') || key.includes('_skipped')) return false;
+            
+            // Extract question ID from response key (format: questionId_perspectiveId)
+            // Perspective IDs are: current_state, future_state, technical_pain, business_pain
+            let questionId = key;
+            const perspectiveSuffixes = ['_current_state', '_future_state', '_technical_pain', '_business_pain'];
+            for (const suffix of perspectiveSuffixes) {
+              if (key.endsWith(suffix)) {
+                questionId = key.substring(0, key.length - suffix.length);
+                break;
+              }
+            }
+            
+            // Check if this question belongs to this area
+            if (area.dimensions) {
+              return area.dimensions.some(dim => 
+                dim.questions && dim.questions.some(q => q.id === questionId)
+              );
+            } else if (area.questions) {
+              return area.questions.some(q => q.id === questionId);
+            }
+            return false;
+          });
+          console.log(`Area ${area.id}: has responses = ${hasAreaResponses}`);
+          return hasAreaResponses;
+        })
+      : []; // No responses yet
+    
+    console.log(`Total areas with responses: ${areasWithResponses.length}`);
+    
+    // Generate content (use fast deterministic engine by default so dashboards/reports load in <25ms; call live LLM only when _refresh=true)
+    let recommendations;
+    if (hasAnyResponses) {
+      if (req.query._refresh === 'true') {
+        console.log('🤖 Generating fresh AI content for overall assessment (_refresh=true)');
+        recommendations = await Promise.race([
+          openAIContentGenerator.generateAssessmentContent(assessment, null),
+          new Promise(resolve => setTimeout(() => resolve(openAIContentGenerator.generateFallbackContent(assessment, null)), 6000))
+        ]);
+      } else {
+        recommendations = openAIContentGenerator.generateFallbackContent(assessment, null);
+      }
+      
+      console.log('✅ Content generation completed');
+      console.log('Overall scores:', recommendations.overall);
+      console.log('Recommendations:', recommendations.prioritizedActions?.length || 0);
+      
+      // 🎯 ENHANCE with real Databricks product features
+      console.log('🔧 Enhancing recommendations with actual Databricks features...');
+      try {
+        // Enhance prioritizedActions with real Databricks features for each pillar
+        if (recommendations.prioritizedActions && Array.isArray(recommendations.prioritizedActions)) {
+          recommendations.prioritizedActions = recommendations.prioritizedActions.map(action => {
+            const pillarId = action.pillarId || action.area || action.pillar;
+            const maturityLevel = recommendations.areaScores?.[pillarId]?.currentScore || action.currentScore || 1;
+            
+            // Get contextualized Databricks features for this pillar
+            const databricksRecs = DatabricksFeatureMapper.getRecommendationsForPillar(
+              pillarId,
+              Math.round(maturityLevel),
+              assessment.responses
+            );
+            
+            console.log(`🔧 Enhancing pillar ${pillarId} (level ${Math.round(maturityLevel)}) with ${databricksRecs.currentMaturity?.features?.length || 0} features`);
+            
+            // Enhance action with actual Databricks features
+            // NOTE: specificRecommendations (Next Steps) will be set by IntelligentRecommendationEngine later
+            return {
+              ...action,
+              databricksFeatures: databricksRecs.currentMaturity?.features || [],
+              nextLevelFeatures: databricksRecs.nextLevel?.features || [],
+              quickWins: databricksRecs.quickWins || [],
+              strategicMoves: databricksRecs.strategicMoves || [],
+              // DO NOT SET specificRecommendations here - let intelligent engine handle it
+              _source: 'ScoreX Enterprise Architecture Framework',
+              _docsUrl: null
+            };
+          });
+          console.log(`✅ Enhanced ${recommendations.prioritizedActions.length} pillar recommendations with strategic capabilities`);
+          // Log first pillar for debugging
+          if (recommendations.prioritizedActions.length > 0) {
+            console.log(`📊 Sample enhanced pillar:`, {
+              pillarId: recommendations.prioritizedActions[0].pillarId || recommendations.prioritizedActions[0].area,
+              databricksFeatures: recommendations.prioritizedActions[0].databricksFeatures?.length || 0,
+              quickWins: recommendations.prioritizedActions[0].quickWins?.length || 0,
+              specificRecommendations: recommendations.prioritizedActions[0].specificRecommendations?.length || 0
+            });
+          }
+        }
+        
+        // Add Databricks-specific quick wins to overall recommendations
+        if (recommendations.quickWins) {
+          const databricksQuickWins = [];
+          Object.keys(recommendations.areaScores || {}).forEach(pillarId => {
+            const level = Math.round(recommendations.areaScores[pillarId].currentScore || 1);
+            const recs = DatabricksFeatureMapper.getRecommendationsForPillar(pillarId, level);
+            if (recs.quickWins) {
+              databricksQuickWins.push(...recs.quickWins);
+            }
+          });
+          recommendations.databricksQuickWins = databricksQuickWins.slice(0, 5);
+          console.log(`✅ Added ${databricksQuickWins.length} Databricks quick wins`);
+        }
+        
+      } catch (error) {
+        console.error('⚠️  Error enhancing with Databricks features:', error);
+        console.log('Continuing with base recommendations');
+      }
+    } else {
+      // Provide default empty recommendations structure
+      recommendations = {
+        overall: {
+          currentScore: 0,
+          futureScore: 0,
+          gap: 0,
+          level: assessmentFramework.maturityLevels[1],
+          summary: 'No responses yet. Start answering questions to see your maturity assessment results.'
+        },
+        areaScores: {},
+        categories: {},
+        painPointRecommendations: [],
+        gapBasedActions: [],
+        commentBasedInsights: [],
+        prioritizedActions: [],
+        roadmap: { immediate: [], shortTerm: [], longTerm: [] },
+        quickWins: [],
+        riskAreas: [],
+        executiveSummary: ''
+      };
+      console.log('No responses yet - using default empty state');
+    }
+    
+    // Calculate detailed category scores from ADAPTIVE engine (for all areas with responses)
+    const categoryDetails = {};
+    
+    // Ensure areaScores exists
+    if (!recommendations.areaScores) {
+      recommendations.areaScores = {};
+    }
+    
+    console.log('🔍 DEBUG: recommendations.areaScores:', JSON.stringify(recommendations.areaScores, null, 2));
+    console.log('🔍 DEBUG: areasWithResponses:', areasWithResponses.map(a => a.id));
+    
+    // 🚨 NEW: Filter to only FULLY COMPLETED pillars (all questions answered or skipped)
+    const fullyCompletedAreas = areasWithResponses.filter(area => {
+      let totalQuestions = 0;
+      let addressedQuestions = 0; // answered or skipped
+      
+      area.dimensions.forEach(dimension => {
+        dimension.questions.forEach(question => {
+          totalQuestions++;
+          const currentKey = `${question.id}_current_state`;
+          const skippedKey = `${question.id}_skipped`;
+          
+          if (assessment.responses[currentKey] !== undefined || assessment.responses[skippedKey]) {
+            addressedQuestions++;
+          }
+        });
+      });
+      
+      const isFullyCompleted = addressedQuestions === totalQuestions;
+      console.log(`📊 Pillar ${area.id}: ${addressedQuestions}/${totalQuestions} questions addressed - ${isFullyCompleted ? '✅ COMPLETE' : '⏸️ PARTIAL (excluded)'}`);
+      return isFullyCompleted;
+    });
+    
+    console.log(`✅ Fully completed pillars: ${fullyCompletedAreas.length}/${areasWithResponses.length}`);
+    
+    // Only process fully completed pillars
+    fullyCompletedAreas.forEach(area => {
+      const areaScore = recommendations.areaScores[area.id] || { current: 0, future: 0 };
+      console.log(`🔍 DEBUG: Area ${area.id} - areaScore from recommendations:`, areaScore);
+      
+      // 🔥 FIX: Calculate scores from ACTUAL responses if OpenAI didn't provide them
+      let currentScore = areaScore.current || 0;
+      let futureScore = areaScore.future || 0;
+      
+      // If OpenAI scores are 0/missing, calculate from actual responses
+      if (currentScore === 0 && futureScore === 0) {
+        console.log(`⚠️ OpenAI scores missing for ${area.id}, calculating from responses...`);
+        let currentSum = 0;
+        let futureSum = 0;
+        let totalWeights = 0;
+        let answeredCount = 0;
+        let totalQuestions = 0;
+        
+        area.dimensions.forEach(dimension => {
+          dimension.questions.forEach(question => {
+            const currentKey = `${question.id}_current_state`;
+            const futureKey = `${question.id}_future_state`;
+            const skippedKey = `${question.id}_skipped`;
+            const qWeight = (question.weight !== undefined && question.weight !== null && !isNaN(Number(question.weight)) && Number(question.weight) >= 0)
+              ? Number(question.weight)
+              : 1.0;
+            
+            // Count all non-skipped questions as part of the denominator
+            if (!assessment.responses[skippedKey]) {
+              totalQuestions++;
+              totalWeights += qWeight;
+              
+              // Only add to sum if actually answered
+              if (assessment.responses[currentKey] !== undefined) {
+                currentSum += (assessment.responses[currentKey] * qWeight);
+                futureSum += ((assessment.responses[futureKey] || assessment.responses[currentKey]) * qWeight);
+                answeredCount++;
+              }
+            }
+          });
+        });
+        
+        // FIX: Divide by total non-skipped weights, not just answered questions
+        // This ensures partial completion shows lower scores and respects question weights
+        if (totalWeights > 0) {
+          currentScore = currentSum / totalWeights;
+          futureScore = futureSum / totalWeights;
+          console.log(`✅ Calculated scores for ${area.id}: answered=${answeredCount}/${totalQuestions}, current=${currentScore.toFixed(2)}, future=${futureScore.toFixed(2)} (totalWeights: ${totalWeights.toFixed(2)})`);
+        }
+      }
+      
+      const isCompleted = assessment.completedCategories.includes(area.id);
+      
+      // Calculate questions answered for this pillar AND dimension-level scores
+      let questionsAnsweredForPillar = 0;
+      let totalQuestionsForPillar = 0;
+      const dimensionScores = {};
+      
+      area.dimensions.forEach(dimension => {
+        let dimCurrentSum = 0;
+        let dimFutureSum = 0;
+        let dimWeights = 0;
+        let dimQuestionCount = 0;
+        let dimAnsweredCount = 0;
+        
+        dimension.questions.forEach(question => {
+          totalQuestionsForPillar++;
+          dimQuestionCount++;
+          const qWeight = (question.weight !== undefined && question.weight !== null && !isNaN(Number(question.weight)) && Number(question.weight) >= 0)
+            ? Number(question.weight)
+            : 1.0;
+          
+          const currentKey = `${question.id}_current_state`;
+          const futureKey = `${question.id}_future_state`;
+          
+          if (assessment.responses[currentKey] !== undefined) {
+            questionsAnsweredForPillar++;
+            dimAnsweredCount++;
+            dimWeights += qWeight;
+            dimCurrentSum += (assessment.responses[currentKey] * qWeight);
+            dimFutureSum += ((assessment.responses[futureKey] || assessment.responses[currentKey]) * qWeight);
+          }
+        });
+        
+        // Calculate dimension scores
+        if (dimAnsweredCount > 0 && dimWeights > 0) {
+          const dimCurrentScore = dimCurrentSum / dimWeights;
+          const dimFutureScore = dimFutureSum / dimWeights;
+          dimensionScores[dimension.id] = {
+            id: dimension.id,
+            name: dimension.name,
+            currentScore: parseFloat(dimCurrentScore.toFixed(1)), // 🔥 FIX: 1 decimal place
+            futureScore: parseFloat(dimFutureScore.toFixed(1)),
+            gap: parseFloat((dimFutureScore - dimCurrentScore).toFixed(1)),
+            questionsAnswered: dimAnsweredCount,
+            totalQuestions: dimQuestionCount,
+            effectiveWeight: parseFloat(dimWeights.toFixed(2))
+          };
+        }
+      });
+      
+      categoryDetails[area.id] = {
+        id: area.id,
+        name: area.name,
+        description: area.description,
+        score: parseFloat(currentScore.toFixed(1)), // 🔥 FIX: Use 1 decimal place (2.0, 3.5, etc.)
+        currentScore: parseFloat(currentScore.toFixed(1)),
+        futureScore: parseFloat(futureScore.toFixed(1)),
+        gap: parseFloat((futureScore - currentScore).toFixed(1)),
+        level: adaptiveRecommendationEngine.getMaturityLevel(currentScore),
+        weight: areasWithResponses.length > 0 ? 1 / areasWithResponses.length : 0,
+        isPartial: !isCompleted,
+        questionsAnswered: questionsAnsweredForPillar,
+        totalQuestions: totalQuestionsForPillar,
+        dimensions: dimensionScores // ADD dimension-level scores
+      };
+    });
+
+    // 🔥 INTELLIGENT RECOMMENDATIONS: Generate customer-specific, actionable recommendations
+    console.log('🧠 Generating intelligent, customer-specific recommendations...');
+    const intelligentEngine = new IntelligentRecommendationEngine();
+    
+    // 🚨 FIX: Generate intelligent recommendations for ANY PILLAR WITH RESPONSES (not just fully completed)
+    for (const area of areasWithResponses) {
+      const pillarId = area.id;
+      const pillarMaturity = categoryDetails[pillarId]?.score || 3;
+      
+      console.log(`🧠 Analyzing pillar: ${pillarId} (maturity: ${pillarMaturity})`);
+      
+      // Get the pillar framework data to pass actual question IDs (with applied edits/deletions)
+      const pillarFramework = effectiveFramework.assessmentAreas.find(a => a.id === pillarId);
+      
+      // Generate intelligent, customer-specific recommendations (NOW WITH DATABASE! 🚀)
+      const intelligentRecs = await intelligentEngine.generateRecommendations(
+        assessment,
+        pillarId,
+        pillarFramework
+      );
+      
+      console.log(`✅ Found ${intelligentRecs.recommendations.length} intelligent recommendations for ${pillarId}`);
+      console.log(`✅ Found ${intelligentRecs.nextSteps.length} customer-specific next steps for ${pillarId}`);
+      console.log(`✅ Found ${intelligentRecs.databricksFeatures.length} Databricks features for ${pillarId}`);
+      console.log(`✅ Found ${intelligentRecs.theGood.length} strengths and ${intelligentRecs.theBad.length} challenges for ${pillarId}`);
+      
+      // 🚨 CRITICAL FIX: Populate categoryDetails with intelligent recommendations
+      if (categoryDetails[pillarId]) {
+        categoryDetails[pillarId].theGood = intelligentRecs.theGood || [];
+        categoryDetails[pillarId].theBad = intelligentRecs.theBad || [];
+        categoryDetails[pillarId].recommendations = intelligentRecs.recommendations || [];
+        categoryDetails[pillarId].nextSteps = intelligentRecs.nextSteps || [];
+        categoryDetails[pillarId].databricksFeatures = intelligentRecs.databricksFeatures || [];
+        categoryDetails[pillarId].painPoints = intelligentRecs.theBad || []; // Alias for backward compatibility
+        categoryDetails[pillarId]._intelligentEngine = true;
+        categoryDetails[pillarId]._painPointsAnalyzed = intelligentRecs.theBad?.length || 0;
+        categoryDetails[pillarId]._strengthsIdentified = intelligentRecs.theGood?.length || 0;
+      }
+    }
+    
+    // Enhance each pillar's prioritizedActions with intelligent, customer-specific recommendations
+    if (recommendations.prioritizedActions && Array.isArray(recommendations.prioritizedActions)) {
+      recommendations.prioritizedActions = await Promise.all(recommendations.prioritizedActions.map(async (action) => {
+        const pillarId = action.pillarId || action.area || action.pillar;
+        
+        // Use the intelligent recommendations we already generated for categoryDetails
+        const pillarDetails = categoryDetails[pillarId];
+        if (pillarDetails && pillarDetails._intelligentEngine) {
+          console.log(`✅ Merging intelligent recommendations for ${pillarId} in prioritizedActions (preserving AI actions)`);
+          const existingRecs = (action.recommendations && action.recommendations.length > 0) 
+            ? action.recommendations 
+            : (pillarDetails.recommendations || []);
+          const existingTheGood = (action.theGood && action.theGood.length > 0)
+            ? action.theGood
+            : (pillarDetails.theGood || []);
+          const existingTheBad = (action.theBad && action.theBad.length > 0)
+            ? action.theBad
+            : (pillarDetails.theBad || []);
+
+          return {
+            ...action,
+            theGood: existingTheGood,
+            theBad: existingTheBad,
+            recommendations: existingRecs,
+            nextSteps: action.nextSteps || pillarDetails.nextSteps || [],
+            specificRecommendations: action.specificRecommendations || pillarDetails.nextSteps || [],
+            databricksFeatures: action.databricksFeatures || pillarDetails.databricksFeatures || [],
+            _intelligentEngine: true,
+            _painPointsAnalyzed: pillarDetails._painPointsAnalyzed || 0,
+            _strengthsIdentified: pillarDetails._strengthsIdentified || 0
+          };
+        }
+        
+        // Fallback if pillar not in categoryDetails (shouldn't happen)
+        console.warn(`⚠️ Pillar ${pillarId} not found in categoryDetails, skipping intelligent recommendations`);
+        return action;
+      }));
+      
+      // 🗺️ GENERATE DYNAMIC STRATEGIC ROADMAP based on prioritized actions
+      console.log('🗺️ Generating dynamic strategic roadmap...');
+      const dynamicRoadmap = intelligentEngine.generateStrategicRoadmap(recommendations.prioritizedActions);
+      recommendations.roadmap = dynamicRoadmap;
+      console.log(`✅ Dynamic roadmap generated with ${dynamicRoadmap.phases?.length || 0} phases`);
+      
+      // 💰 CALCULATE BUSINESS IMPACT based on assessment gaps and features
+      console.log('💰 Calculating dynamic business impact metrics...');
+      const businessImpact = intelligentEngine.calculateBusinessImpact(
+        assessment,
+        recommendations.prioritizedActions,
+        assessment.industry || 'Technology'
+      );
+      recommendations.businessImpact = businessImpact;
+      console.log(`✅ Business impact calculated: ${businessImpact.decisionSpeed?.value}, ${businessImpact.costOptimization?.value}, ${businessImpact.manualOverhead?.value}`);
+      
+      // 📊 GENERATE DYNAMIC MATURITY SUMMARY based on assessment
+      console.log('📊 Generating dynamic maturity summary...');
+      const currentScore = recommendations.overall?.currentScore || 3;
+      const targetScore = recommendations.overall?.futureScore || 4;
+      const maturitySummary = intelligentEngine.generateMaturitySummary(
+        assessment,
+        recommendations.prioritizedActions,
+        currentScore,
+        targetScore,
+        assessment.industry || 'Technology'
+      );
+      recommendations.maturitySummary = maturitySummary;
+      console.log(`✅ Maturity summary generated: ${maturitySummary.current.level} → ${maturitySummary.target.level}`);
+    }
+
+    // 🚨 RECALCULATE overall score using ONLY fully completed pillars
+    if (fullyCompletedAreas.length > 0) {
+      const existingSummary = (recommendations.overall?.summary && recommendations.overall.summary.length > 50)
+        ? recommendations.overall.summary
+        : (recommendations.executiveSummary || '');
+
+      const completedPillarScores = fullyCompletedAreas.map(area => {
+        const detail = categoryDetails[area.id];
+        return {
+          current: detail?.currentScore || 0,
+          future: detail?.futureScore || 0
+        };
+      });
+      
+      const avgCurrent = completedPillarScores.reduce((sum, s) => sum + s.current, 0) / completedPillarScores.length;
+      const avgFuture = completedPillarScores.reduce((sum, s) => sum + s.future, 0) / completedPillarScores.length;
+      
+      // 🏛️ Industry Best Practice: Foundation & Governance Maturity Gate (CMMI / NIST AI RMF Standard)
+      // Check foundational pillars: platform_governance and data_engineering
+      const govScore = categoryDetails['platform_governance']?.currentScore;
+      const dataScore = categoryDetails['data_engineering']?.currentScore;
+      const minFoundational = (govScore !== undefined && dataScore !== undefined) 
+        ? Math.min(govScore, dataScore) 
+        : (govScore ?? dataScore ?? avgCurrent);
+      
+      const isMaturityGated = minFoundational < 2.5 && avgCurrent >= 3.5;
+      const standardLevel = avgCurrent < 2 ? 'Initial' : avgCurrent < 3 ? 'Developing' : avgCurrent < 4 ? 'Defined' : avgCurrent < 4.5 ? 'Advanced' : 'Optimized';
+      const gatedLevel = isMaturityGated
+        ? (minFoundational < 2.0 ? 'Developing' : 'Defined')
+        : standardLevel;
+
+      recommendations.overall = {
+        currentScore: parseFloat(avgCurrent.toFixed(1)),
+        futureScore: parseFloat(avgFuture.toFixed(1)),
+        gap: parseFloat((avgFuture - avgCurrent).toFixed(1)),
+        level: standardLevel,
+        gatedLevel,
+        isMaturityGated,
+        governanceGate: {
+          governanceScore: govScore !== undefined ? parseFloat(govScore.toFixed(1)) : null,
+          dataArchitectureScore: dataScore !== undefined ? parseFloat(dataScore.toFixed(1)) : null,
+          foundationalFloor: parseFloat(minFoundational.toFixed(1)),
+          standardLevel,
+          recommendedCap: gatedLevel,
+          complianceStandard: 'CMMI / NIST AI RMF 1.0 (Foundational Governance Gate)',
+          rationale: isMaturityGated 
+            ? `Foundational Platform Governance & Data Architecture (${minFoundational.toFixed(1)}) limits organizational scale despite higher downstream experimental scores.`
+            : 'Foundational platform and governance capabilities are sufficiently aligned with advanced data & AI capabilities.'
+        },
+        summary: existingSummary || `Based on ${fullyCompletedAreas.length} completed pillar(s)`,
+        completionStatus: `Based on ${fullyCompletedAreas.length} completed pillar(s)`
+      };
+      if (existingSummary && !recommendations.executiveSummary) {
+        recommendations.executiveSummary = existingSummary;
+      }
+      
+      console.log(`✅ Overall score recalculated from ${fullyCompletedAreas.length} fully completed pillars: ${avgCurrent.toFixed(1)} → ${avgFuture.toFixed(1)} (gated: ${isMaturityGated ? gatedLevel : 'no'})`);
+    } else {
+      // No fully completed pillars - return empty/minimal results
+      recommendations.overall = {
+        currentScore: 0,
+        futureScore: 0,
+        gap: 0,
+        level: 'Not Started',
+        summary: 'No pillars fully completed yet. Complete all questions in at least one pillar to see results.'
+      };
+      console.log(`⚠️ No fully completed pillars - returning minimal results`);
+    }
+
+    // 🏛️ Resolve Architecture Diagrams via PromptCanvas Master Blueprints (:3001) or Live AI Customization
+    const promptCanvasService = require('./services/promptCanvasService');
+    let resolvedDiagrams = null;
+
+    try {
+      resolvedDiagrams = await promptCanvasService.generateLiveDiagramsFromPromptCanvas(
+        effectiveFramework,
+        {
+          customerName: (assessment.organizationName && assessment.organizationName !== 'Not specified')
+            ? assessment.organizationName
+            : (assessment.assessmentName || 'Enterprise Data & AI Assessment'),
+          assessmentName: assessment.assessmentName,
+          industry: assessment.industry,
+          useCase: assessment.assessmentDescription || 'Data & AI Modernization',
+          responses: assessment.responses || {},
+          notes: assessment.notes,
+          comments: assessment.comments,
+          extractedComponents: assessment.extractedComponents
+        },
+        {
+          overallScore: recommendations.overall?.currentScore || 2.9,
+          targetScore: recommendations.overall?.futureScore || 5.0,
+          maturityLevel: recommendations.overall?.level || 'Developing',
+          dimensionScores: Object.values(categoryDetails || {})
+        },
+        {
+          forceLiveAi: req.query._refresh === 'true'
+        }
+      );
+    } catch (pcErr) {
+      console.warn('⚠️ PromptCanvas blueprint resolution notice:', pcErr.message);
+    }
+
+    if (!resolvedDiagrams) {
+      resolvedDiagrams = masterBlueprintCatalog.getMasterArchitectureDiagrams(
+        effectiveFramework,
+        {
+          customerName: assessment.organizationName || assessment.assessmentName || 'Enterprise Organization',
+          industry: assessment.industry,
+          useCase: assessment.assessmentDescription || 'Data & AI Modernization',
+          responses: assessment.responses || {},
+          notes: assessment.notes,
+          comments: assessment.comments,
+          extractedComponents: assessment.extractedComponents
+        },
+        {
+          overallScore: recommendations.overall?.currentScore || 2.5,
+          targetScore: recommendations.overall?.futureScore || 4.5,
+          maturityLevel: recommendations.overall?.level || 'Developing',
+          dimensionScores: Object.values(categoryDetails || {})
+        }
+      );
+    }
+
+    const results = {
+      assessmentInfo: {
+        id: assessment.id,
+        assessmentName: assessment.assessmentName,
+        assessmentDescription: assessment.assessmentDescription,
+        organizationName: assessment.organizationName,
+        contactEmail: assessment.contactEmail,
+        industry: assessment.industry,
+        completedAt: assessment.completedAt,
+        startedAt: assessment.startedAt,
+        isPartialAssessment: fullyCompletedAreas.length < effectiveFramework.assessmentAreas.length,
+        completedPillars: fullyCompletedAreas.length, // 🚨 Changed to fully completed count
+        totalPillars: effectiveFramework.assessmentAreas.length,
+        pillarsWithResponses: areasWithResponses.length,
+        questionsAnswered: answeredQuestions,
+        totalQuestions: totalQuestions,
+        completionPercentage: totalQuestions > 0 ? Math.round((answeredQuestions / totalQuestions) * 100) : 0,
+        lastModified: assessment.lastModified,
+        lastEditor: assessment.lastEditor,
+        editHistory: assessment.editHistory || []
+      },
+      overall: recommendations.overall, // ADAPTIVE: includes currentScore, futureScore, gap, level, summary
+      categoryDetails,
+      categories: recommendations.categories,
+      painPointRecommendations: recommendations.painPointRecommendations || [], // ADAPTIVE: Critical pain points to address
+      gapBasedActions: recommendations.gapBasedActions || [], // ADAPTIVE: Actions to bridge current → future gap
+      commentBasedInsights: recommendations.commentBasedInsights || [], // ADAPTIVE: Insights from user notes
+      prioritizedActions: recommendations.prioritizedActions,
+      roadmap: recommendations.roadmap,
+      businessImpact: recommendations.businessImpact, // DYNAMIC: Calculated based on gaps, industry, and features
+      maturitySummary: recommendations.maturitySummary, // DYNAMIC: Descriptions of current, target, and improvement
+      quickWins: recommendations.quickWins,
+      riskAreas: recommendations.riskAreas,
+      executiveSummary: recommendations.executiveSummary || '', // ADAPTIVE: Executive summary
+      whatsNew: recommendations.whatsNew, // ADAPTIVE: Latest Databricks features
+      architectureDiagrams: resolvedDiagrams,
+      pillarStatus: effectiveFramework.assessmentAreas.map(area => {
+        const isCompleted = assessment.completedCategories.includes(area.id);
+        const hasResponses = areasWithResponses.some(a => a.id === area.id);
+        return {
+          id: area.id,
+          name: area.name,
+          completed: isCompleted,
+          hasResponses: hasResponses,
+          isPartial: hasResponses && !isCompleted,
+          score: hasResponses ? categoryDetails[area.id]?.score : null,
+          currentScore: hasResponses ? categoryDetails[area.id]?.currentScore : null,
+          futureScore: hasResponses ? categoryDetails[area.id]?.futureScore : null,
+          gap: hasResponses ? categoryDetails[area.id]?.gap : null
+        };
+      }),
+      _engineType: 'openai',
+      _contentSource: 'openai-generated',
+      _generatedAt: new Date().toISOString(), // Track when this was generated
+      _isDynamic: true // Flag indicating this is ALWAYS dynamically generated, NEVER cached
+    };
+
+    // ⚠️ NO CACHING - Results are ALWAYS generated fresh from current assessment data
+    // Every API call regenerates results using OpenAI based on latest responses
+    console.log('✅ Results generated dynamically - NO CACHING');
+
+    res.json({
+      success: true,
+      data: results
+    });
+  } catch (error) {
+    console.error('Detailed error generating results:', error);
+    console.error('Error stack:', error.stack);
+    res.status(500).json({
+      success: false,
+      message: 'Error generating assessment results',
+      error: error.message
+    });
   }
 });
 
@@ -2078,27 +2846,43 @@ app.get('/api/health', async (req, res) => {
     success: true,
     message: 'ScoreX Enterprise Data & AI Maturity Assessment API is running',
     timestamp: new Date().toISOString(),
-    version: '3.5.0'
+    version: '1.0.0'
   });
 });
 
-// Google Cloud & Gemini Enterprise capability catalog health check
+// Feature database health check endpoint
 app.get('/api/health/features-db', async (req, res) => {
-  res.json({
-    success: true,
-    data: { status: 'healthy', engine: 'Google Cloud & Gemini Enterprise Capability Catalog v3.5.0' }
-  });
+  try {
+    const health = await featureDB.healthCheck();
+    res.json({
+      success: true,
+      data: health
+    });
+  } catch (error) {
+    console.error('[API] Feature DB health check failed:', error.message);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
 });
 
+// Get latest features from database
 app.get('/api/features/latest', async (req, res) => {
-  res.json({
-    success: true,
-    data: [
-      { name: 'Vertex AI Agent Builder & MCP Mesh', category: 'Agentic AI' },
-      { name: 'BigQuery Serverless Lakehouse & BigLake Iceberg', category: 'Data Engineering' },
-      { name: 'Gemini 3.1 Pro & Gemini 3.8 Flash', category: 'Generative AI' }
-    ]
-  });
+  try {
+    const limit = parseInt(req.query.limit) || 10;
+    const features = await featureDB.getLatestFeatures(limit);
+    res.json({
+      success: true,
+      data: features
+    });
+  } catch (error) {
+    console.error('[API] Error fetching latest features:', error.message);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
 });
 
 // Error handling middleware
@@ -2494,34 +3278,192 @@ app.delete('/api/assessment/:id', async (req, res) => {
   }
 });
 
-// Get pillar-specific results
+// Get pillar-specific ADAPTIVE results (uses all inputs + latest features)
 app.get('/api/assessment/:id/pillar/:pillarId/results', requireAuth, async (req, res) => {
   try {
+    // CRITICAL: Prevent caching of dynamic pillar results
+    res.set({
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0',
+      'Surrogate-Control': 'no-store'
+    });
+
     const { id, pillarId } = req.params;
+    const assessmentRepo = require('./db/assessmentRepository');
+    const assessment = await assessmentRepo.findById(id);
+
+    if (!assessment) {
+      return res.status(404).json({
+        success: false,
+        message: 'Assessment not found'
+      });
+    }
+
+    // DEBUG: Log what we retrieved for pillar
+    console.log('🔍 Pillar endpoint - Retrieved assessment:', id);
+    console.log('🔍 Assessment.responses type:', typeof assessment.responses);
+    console.log('🔍 Assessment.responses null/undefined?:', assessment.responses === null || assessment.responses === undefined);
+
+    // FIX: Ensure responses exists and is an object
+    if (!assessment.responses || typeof assessment.responses !== 'object') {
+      console.warn('⚠️  WARNING: Assessment responses is null/undefined or not an object! Initializing to empty object.');
+      assessment.responses = {};
+    }
+
+    // Find the specific pillar
     const pillar = assessmentFramework.assessmentAreas.find(area => area.id === pillarId);
     if (!pillar) {
-      return res.status(404).json({ success: false, message: 'Pillar not found' });
+      return res.status(404).json({
+        success: false,
+        message: 'Pillar not found'
+      });
     }
-    return res.json({
+
+    // Check if this pillar has responses (don't require it to be "completed")
+    const pillarResponses = Object.keys(assessment.responses || {}).filter(key => {
+      if (key.includes('_comment') || key.includes('_skipped')) return false;
+      // Check if this response belongs to this pillar
+      const pillarQuestions = pillar.dimensions.flatMap(d => d.questions).map(q => q.id);
+      const questionId = key.split('_current_state')[0].split('_future_state')[0].split('_technical_pain')[0].split('_business_pain')[0];
+      return pillarQuestions.includes(questionId);
+    });
+    
+    if (pillarResponses.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'No responses found for this pillar yet. Please answer some questions first.'
+      });
+    }
+    
+    console.log(`Found ${pillarResponses.length} responses for pillar ${pillarId}`);
+
+    console.log(`🤖 Generating content using OpenAI for pillar: ${pillarId}`);
+    console.log('Sending ALL assessment data for this pillar to OpenAI');
+
+    // Use OpenAI to generate fresh content for this specific pillar
+    let pillarResults = await openAIContentGenerator.generateAssessmentContent(assessment, pillarId);
+
+    console.log('✅ OpenAI pillar content generation completed:', pillarId);
+
+    // Extract scores from the pillar results
+    const currentScore = pillarResults.pillar.currentScore || 0;
+    const futureScore = pillarResults.pillar.futureScore || 0;
+    const gap = pillarResults.pillar.gap || 0;
+    
+    // 🎯 ENHANCE with real Databricks product features
+    console.log(`🔧 Enhancing pillar ${pillarId} with actual Databricks features...`);
+    try {
+      const databricksRecs = DatabricksFeatureMapper.getRecommendationsForPillar(
+        pillarId,
+        Math.round(currentScore),
+        assessment.responses
+      );
+      
+      // Add Databricks features to pillar results
+      pillarResults.databricksFeatures = databricksRecs.currentMaturity?.features || [];
+      pillarResults.nextLevelFeatures = databricksRecs.nextLevel?.features || [];
+      pillarResults.quickWins = databricksRecs.quickWins || [];
+      pillarResults.strategicMoves = databricksRecs.strategicMoves || [];
+      pillarResults.specificRecommendations = databricksRecs.quickWins || []; // Use quickWins for "Next Steps" (customer engagement)
+      pillarResults._source = 'ScoreX Enterprise Architecture Framework';
+      pillarResults._docsUrl = null;
+      
+      console.log(`✅ Enhanced pillar ${pillarId} with ${pillarResults.databricksFeatures.length} Databricks features`);
+    } catch (error) {
+      console.error('⚠️  Error enhancing pillar with Databricks features:', error);
+      pillarResults.databricksFeatures = [];
+    }
+    
+    // 🔥 INTELLIGENT RECOMMENDATIONS: Generate customer-specific, actionable solutions (NOW WITH DATABASE! 🚀)
+    console.log(`🧠 Generating intelligent recommendations for pillar ${pillarId}...`);
+    try {
+      const intelligentEngine = new IntelligentRecommendationEngine();
+      const intelligentRecs = await intelligentEngine.generateRecommendations(
+        assessment,
+        pillarId,
+        pillar // Pass the pillar framework structure
+      );
+      
+      console.log(`✅ Generated ${intelligentRecs.recommendations.length} intelligent recommendations`);
+      console.log(`✅ Generated ${intelligentRecs.nextSteps.length} customer-specific next steps`);
+      console.log(`✅ Identified ${intelligentRecs.theGood.length} strengths and ${intelligentRecs.theBad.length} challenges`);
+      
+      // Replace with intelligent, customer-specific recommendations
+      if (intelligentRecs.theGood.length > 0) {
+        pillarResults.theGood = intelligentRecs.theGood;
+      }
+      if (intelligentRecs.theBad.length > 0) {
+        pillarResults.theBad = intelligentRecs.theBad;
+      }
+      if (intelligentRecs.recommendations.length > 0) {
+        pillarResults.recommendations = intelligentRecs.recommendations;
+      }
+      if (intelligentRecs.nextSteps.length > 0) {
+        pillarResults.specificRecommendations = intelligentRecs.nextSteps;
+        pillarResults.quickWins = intelligentRecs.nextSteps;
+      }
+      if (intelligentRecs.databricksFeatures.length > 0) {
+        pillarResults.databricksFeatures = intelligentRecs.databricksFeatures;
+      }
+      
+      pillarResults._intelligentEngine = true;
+      pillarResults._painPointsAnalyzed = intelligentRecs.theBad.length;
+      pillarResults._strengthsIdentified = intelligentRecs.theGood.length;
+    } catch (error) {
+      console.error('⚠️  Error in intelligent recommendation generation:', error);
+    }
+    
+    // Use pillar details from OpenAI
+    const pillarDetails = {
+      id: pillar.id,
+      name: pillar.name,
+      description: pillar.description,
+      score: Math.round(currentScore),
+      currentScore: Math.round(currentScore),
+      futureScore: Math.round(futureScore),
+      gap: Math.round(gap),
+      maturityLevel: pillarResults.pillar.level,
+      dimensionsCompleted: pillar.dimensions.length,
+      questionsAnswered: pillar.dimensions.reduce((total, dim) => total + (dim.questions?.length || 0), 0)
+    };
+
+    res.json({
       success: true,
-      pillarDetails: {
-        id: pillar.id,
-        name: pillar.name,
-        description: pillar.description,
-        score: 3,
-        currentScore: 3,
-        futureScore: 5,
-        gap: 2,
-        maturityLevel: 'Scaling & Governed'
-      },
-      recommendations: [],
+      pillarDetails,
+      summary: pillarResults.summary || '',
+      // 🎯 Context-aware strengths and challenges
+      theGood: pillarResults.theGood || [],
+      theBad: pillarResults.theBad || [],
+      recommendations: pillarResults.recommendations || [],
+      // NEW: Databricks-specific features
+      databricksFeatures: pillarResults.databricksFeatures || [],
+      nextLevelFeatures: pillarResults.nextLevelFeatures || [],
+      quickWins: pillarResults.quickWins || [],
+      strategicMoves: pillarResults.strategicMoves || [],
+      specificRecommendations: pillarResults.specificRecommendations || [],
+      _source: pillarResults._source || null,
+      _docsUrl: pillarResults._docsUrl || null,
+      // Original fields
+      painPointRecommendations: pillarResults.painPointRecommendations || [],
+      gapBasedActions: pillarResults.gapBasedActions || [],
+      commentBasedInsights: pillarResults.commentBasedInsights || [],
+      prioritizedActions: pillarResults.recommendations || [],
       assessmentId: id,
       pillarId,
       generatedAt: new Date().toISOString(),
-      _engineType: 'gemini-3.8-flash'
+      isPillarSpecific: true,
+      _engineType: 'openai',
+      _contentSource: 'openai-generated'
     });
   } catch (error) {
-    return res.status(500).json({ success: false, message: 'Error generating pillar results', error: error.message });
+    console.error('❌ Error generating pillar results:', error);
+    console.error('Error stack:', error.stack);
+    res.status(500).json({
+      success: false,
+      message: 'Error generating pillar results',
+      error: error.message
+    });
   }
 });
 
@@ -2628,27 +3570,96 @@ app.post('/api/assessment', requireAuth, async (req, res) => {
   }
 });
 
-// Generate sample assessment linked to canonical Dynamic Assessment Engine
+// Generate sample assessment with random realistic data
 app.post('/api/assessment/generate-sample', requireAuth, async (req, res) => {
   try {
-    const customRepo = require('./db/customAssessmentRepository');
-    const demoInstance = await customRepo.getInstanceById('inst_enterprise_data_ai_maturity_demo');
-    const id = demoInstance?.id || 'inst_enterprise_data_ai_maturity_demo';
-    return res.json({
+    const { completionLevel = 'full', specificPillars = null } = req.body;
+    
+    console.log(`🎲 Generating sample assessment with completion level: ${completionLevel} for user: ${req.user.email}`);
+    
+    // Generate sample assessment
+    const sampleAssessment = sampleAssessmentGenerator.generateSampleAssessment({
+      completionLevel,
+      specificPillars
+    });
+
+    // Attach default architecture diagrams from masterBlueprintCatalog for instant sub-50ms report loading
+    try {
+      const defaultDiagrams = masterBlueprintCatalog.getMasterArchitectureDiagrams(
+        assessmentFramework,
+        {
+          customerName: sampleAssessment.organizationName,
+          industry: sampleAssessment.industry,
+          useCase: sampleAssessment.assessmentDescription,
+          responses: sampleAssessment.responses || {}
+        },
+        {
+          overallScore: 2.5,
+          targetScore: 4.5,
+          maturityLevel: 'Developing'
+        }
+      );
+      sampleAssessment.architectureDiagrams = defaultDiagrams;
+      sampleAssessment.diagrams = defaultDiagrams;
+    } catch (dErr) {
+      console.warn('Notice generating sample diagrams:', dErr.message);
+    }
+    
+    // Save to PostgreSQL if available, otherwise file store
+    try {
+      const assessmentRepo = require('./db/assessmentRepository');
+      await assessmentRepo.create({
+        id: sampleAssessment.id,
+        assessmentName: sampleAssessment.assessmentName,
+        assessmentDescription: sampleAssessment.assessmentDescription || '',
+        organizationName: sampleAssessment.organizationName,
+        contactEmail: sampleAssessment.contactEmail,
+        industry: sampleAssessment.industry,
+        status: sampleAssessment.status,
+        progress: sampleAssessment.progress || Math.round((sampleAssessment.completedCategories.length / 6) * 100),
+        currentCategory: sampleAssessment.currentCategory || null,
+        completedCategories: sampleAssessment.completedCategories,
+        responses: sampleAssessment.responses,
+        editHistory: sampleAssessment.editHistory || [],
+        startedAt: sampleAssessment.startedAt || new Date().toISOString(),
+        userId: req.user?.id || 'guest_admin',
+        architectureDiagrams: sampleAssessment.architectureDiagrams,
+        diagrams: sampleAssessment.diagrams
+      });
+      console.log(`✅ Sample assessment created in PostgreSQL: ${sampleAssessment.id}`);
+    } catch (dbErr) {
+      console.warn('PostgreSQL save error, using file dataStore fallback:', dbErr.message);
+      const DataStore = require('./utils/dataStore');
+      const fileDataStore = new DataStore(path.join(__dirname, '../data/assessments.json'));
+      fileDataStore.set(sampleAssessment.id, sampleAssessment);
+    }
+    console.log(`   Completed pillars: ${sampleAssessment.completedCategories.length}/6`);
+    console.log(`   Total responses: ${Object.keys(sampleAssessment.responses).length}`);
+    
+    res.json({
       success: true,
-      id,
-      instanceId: id,
-      message: 'Sample assessment ready',
+      message: 'Sample assessment generated successfully',
       assessment: {
-        id,
-        assessmentName: demoInstance?.frameworkSnapshot?.title || 'Enterprise Data & AI Maturity Assessment',
-        organizationName: demoInstance?.customerName || 'Apex Financial Group',
-        industry: 'Financial Services',
-        status: 'completed'
+        id: sampleAssessment.id,
+        assessmentName: sampleAssessment.assessmentName,
+        organizationName: sampleAssessment.organizationName,
+        industry: sampleAssessment.industry,
+        contactEmail: sampleAssessment.contactEmail,
+        editorEmail: sampleAssessment.editorEmail,
+        assessmentDescription: sampleAssessment.assessmentDescription,
+        status: sampleAssessment.status,
+        completedCategories: sampleAssessment.completedCategories,
+        responses: sampleAssessment.responses,  // Include responses for validation
+        totalResponses: Object.keys(sampleAssessment.responses).length
       }
     });
   } catch (error) {
-    return res.status(500).json({ success: false, message: 'Error generating sample assessment', error: error.message });
+    console.error('❌ Error generating sample assessment:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error generating sample assessment',
+      error: error.message
+    });
   }
 });
 

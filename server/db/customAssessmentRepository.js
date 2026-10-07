@@ -3436,7 +3436,15 @@ class CustomAssessmentRepository {
       if (result.rows.length === 0) {
         return instancesFileStore.get(resolvedId) || instancesFileStore.get(id) || null;
       }
-      return this.mapRowToInstance(result.rows[0]);
+      const mapped = this.mapRowToInstance(result.rows[0]);
+      const seeded = instancesFileStore.get(resolvedId) || instancesFileStore.get(id);
+      if (seeded) {
+        mapped.responses = { ...(seeded.responses || {}), ...(mapped.responses || {}) };
+        if (seeded.frameworkSnapshot?.dimensions?.length) {
+          mapped.frameworkSnapshot = seeded.frameworkSnapshot;
+        }
+      }
+      return mapped;
     } catch (error) {
       console.warn('PostgreSQL getInstanceById fallback to file store:', error.message);
       return instancesFileStore.get(resolvedId) || instancesFileStore.get(id) || null;
