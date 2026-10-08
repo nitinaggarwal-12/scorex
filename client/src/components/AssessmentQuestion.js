@@ -965,8 +965,14 @@ const ProgressLabel = styled.span`
   white-space: nowrap;
 `;
 
-const AssessmentQuestion = ({ framework, currentAssessment, onUpdateStatus }) => {
+const AssessmentQuestion = ({ framework: propFramework, currentAssessment, onUpdateStatus }) => {
   const { assessmentId, categoryId } = useParams();
+  const [areaFramework, setAreaFramework] = useState(null);
+  const matchingCurrentCustomFramework =
+    currentAssessment && (currentAssessment.assessmentId === assessmentId || currentAssessment.id === assessmentId)
+      ? currentAssessment.customFramework
+      : null;
+  const framework = areaFramework || matchingCurrentCustomFramework || propFramework;
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   
@@ -1190,6 +1196,13 @@ const AssessmentQuestion = ({ framework, currentAssessment, onUpdateStatus }) =>
           
           // Set the area data from API (now with edits applied)
           setCurrentArea(areaData.area);
+          if (areaData.customFramework) {
+            setAreaFramework(prev =>
+              prev && prev.customTrackKey === areaData.customFramework.customTrackKey && prev._assessmentId === assessmentId
+                ? prev
+                : { ...areaData.customFramework, _assessmentId: assessmentId }
+            );
+          }
           
           // Load existing responses
           if (areaData.existingResponses) {
@@ -1256,7 +1269,8 @@ const AssessmentQuestion = ({ framework, currentAssessment, onUpdateStatus }) =>
     };
 
     loadAreaData();
-  }, [assessmentId, categoryId, targetDimensionIndex, targetQuestionId, currentAssessment, framework, navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [assessmentId, categoryId, targetDimensionIndex, targetQuestionId, navigate]);
 
   // Log current state for debugging
   useEffect(() => {

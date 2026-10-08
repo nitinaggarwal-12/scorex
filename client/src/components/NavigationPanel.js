@@ -375,11 +375,18 @@ const ProgressText = styled.div`
   }
 `;
 
-const NavigationPanel = ({ framework, currentAssessment, onAssessmentUpdate }) => {
+const NavigationPanel = ({ framework: propFramework, currentAssessment, onAssessmentUpdate }) => {
   const navigate = useNavigate();
   const { categoryId, assessmentId: routeAssessmentId } = useParams();
   // Use currentAssessment.assessmentId if routeAssessmentId is not available
   const assessmentId = routeAssessmentId || currentAssessment?.assessmentId;
+  const matchingCurrentCustomFramework =
+    currentAssessment && (!routeAssessmentId || currentAssessment.assessmentId === routeAssessmentId || currentAssessment.id === routeAssessmentId)
+      ? currentAssessment.customFramework
+      : null;
+  const framework = propFramework?.customTrackKey
+    ? propFramework
+    : (matchingCurrentCustomFramework || propFramework);
   const [expandedPillars, setExpandedPillars] = useState(new Set());
   const [pillarProgress, setPillarProgress] = useState({});
   const [showEditModal, setShowEditModal] = useState(false);
@@ -610,6 +617,7 @@ const NavigationPanel = ({ framework, currentAssessment, onAssessmentUpdate }) =
             'operational_excellence': '⚡'
           };
           const pillarIcon = pillarIcons[pillar.id] || '📋';
+          const hasLeadingEmoji = /^[^\w\s]/.test(String(pillar.name || '').trim());
           
           return (
             <PillarItem key={pillar.id}>
@@ -631,7 +639,9 @@ const NavigationPanel = ({ framework, currentAssessment, onAssessmentUpdate }) =
                 
                 <PillarInfo>
                   <PillarName $isDisabled={!isSelected}>
-                    <span style={{ marginRight: '8px', fontSize: '1.1rem' }}>{pillarIcon}</span>
+                    {!hasLeadingEmoji && (
+                      <span style={{ marginRight: '8px', fontSize: '1.1rem' }}>{pillarIcon}</span>
+                    )}
                     {pillar.name}
                     {!isSelected && <span style={{ marginLeft: '8px', fontSize: '0.75rem', fontWeight: 400, color: '#9ca3af' }}>(Not Selected)</span>}
                   </PillarName>
@@ -693,7 +703,7 @@ const NavigationPanel = ({ framework, currentAssessment, onAssessmentUpdate }) =
                         <FiPlay size={14} color="#0284c7" />
                       </DimensionIcon>
                       <DimensionName style={{ color: '#0284c7' }}>
-                        Start {pillar.name.split(' ')[0]} Assessment
+                        Start {String(pillar.name || '').replace(/^[^\w\s]+\s*/, '').split(' ')[0]} Assessment
                       </DimensionName>
                     </DimensionItem>
 

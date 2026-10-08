@@ -1,4 +1,5 @@
 const db = require('../db/connection');
+const { resolveAssessmentFrameworkOverlay } = require('../data/domainFrameworksOverlay');
 
 /**
  * Apply question edits and deletions to assessment framework
@@ -7,9 +8,10 @@ const db = require('../db/connection');
  * @returns {object} - Modified framework with edits applied and deleted questions removed
  */
 async function applyQuestionEdits(assessmentId, framework) {
+  const domainFramework = resolveAssessmentFrameworkOverlay(assessmentId, framework);
   try {
     if (!db.isInitialized || !db.pool) {
-      return framework;
+      return domainFramework;
     }
 
     // Fetch all edits for this assessment
@@ -30,7 +32,7 @@ async function applyQuestionEdits(assessmentId, framework) {
     console.log(`📝 Applying ${edits.length} edits and ${deletedQuestionIds.size} deletions to assessment ${assessmentId}`);
     
     // Deep clone the framework to avoid mutating the original
-    const modifiedFramework = JSON.parse(JSON.stringify(framework));
+    const modifiedFramework = JSON.parse(JSON.stringify(domainFramework));
     
     // Apply edits and remove deleted questions
     modifiedFramework.assessmentAreas = modifiedFramework.assessmentAreas.map(area => ({

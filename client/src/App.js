@@ -373,8 +373,9 @@ function App() {
           try {
             const assessment = await assessmentService.getAssessmentStatus(assessmentId);
             if (assessment) {
-              // Calculate progress
-              const totalQuestions = assessmentFramework?.assessmentAreas?.reduce((total, area) => {
+              // Calculate progress using customFramework if present
+              const activeFw = assessment.customFramework || assessmentFramework;
+              const totalQuestions = activeFw?.assessmentAreas?.reduce((total, area) => {
                 return total + (area.dimensions?.reduce((dimTotal, dim) => {
                   return dimTotal + (dim.questions?.length || 0);
                 }, 0) || 0);
@@ -710,7 +711,7 @@ function App() {
             element={
               <AssessmentDashboard 
                 currentAssessment={currentAssessment}
-                framework={assessmentFramework}
+                framework={currentAssessment?.customFramework || assessmentFramework}
                 onLogout={handleLogout}
               />
             } 
@@ -721,7 +722,7 @@ function App() {
             element={
               <AssessmentDashboard 
                 currentAssessment={currentAssessment}
-                framework={assessmentFramework}
+                framework={currentAssessment?.customFramework || assessmentFramework}
                 onLogout={handleLogout}
               />
             } 
@@ -745,7 +746,7 @@ function App() {
             element={
               <ProtectedRoute>
                 <AssessmentQuestion 
-                  framework={assessmentFramework}
+                  framework={currentAssessment?.customFramework || assessmentFramework}
                   currentAssessment={currentAssessment}
                   onUpdateStatus={updateAssessmentStatus}
                 />
@@ -759,7 +760,7 @@ function App() {
               <ProtectedRoute>
                 <AssessmentResults 
                   currentAssessment={currentAssessment}
-                  framework={assessmentFramework}
+                  framework={currentAssessment?.customFramework || assessmentFramework}
                 />
               </ProtectedRoute>
             } 
@@ -771,7 +772,7 @@ function App() {
               <ProtectedRoute>
                 <ExecutiveSummary 
                   currentAssessment={currentAssessment}
-                  framework={assessmentFramework}
+                  framework={currentAssessment?.customFramework || assessmentFramework}
                 />
               </ProtectedRoute>
             } 
