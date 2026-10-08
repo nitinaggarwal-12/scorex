@@ -519,7 +519,10 @@ const NavigationPanel = ({ framework, currentAssessment, onAssessmentUpdate }) =
   }
 
   const hasAnyCompletedPillars = currentAssessment?.completedCategories?.length > 0;
-  const isSubmitted = currentAssessment?.status === 'submitted';
+  const isSubmitted =
+    currentAssessment?.status === 'submitted' ||
+    currentAssessment?.status === 'completed' ||
+    (hasAnyCompletedPillars && Number(currentAssessment?.progress) >= 100);
 
   return (
     <NavigationContainer>

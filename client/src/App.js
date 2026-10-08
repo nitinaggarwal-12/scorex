@@ -3,7 +3,7 @@
  * Version: 2.2.0 - Added floating slideshow buttons and version history - Nov 17, 2025
  */
 import React, { useState, useEffect, lazy, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useParams, useSearchParams } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { createGlobalStyle } from 'styled-components';
 
@@ -189,6 +189,51 @@ const ProtectedRoute = ({ children }) => {
   }
   
   return children;
+};
+
+const CANONICAL_TYPE_TO_INSTANCE = {
+  enterprise_data_ai_maturity: 'inst_enterprise_data_ai_maturity_demo',
+  openai_to_gemini_enterprise_migration: 'inst_openai_to_gemini_enterprise_migration_demo',
+  finops_cloud_cost_optimization: 'inst_finops_cloud_cost_optimization_demo',
+  agentic_ai_mesh_mcp_banking_readiness: 'inst_agentic_ai_mesh_mcp_banking_readiness_demo',
+  edw_lakehouse_to_bigquery_modernization: 'inst_edw_lakehouse_to_bigquery_modernization_demo',
+  enterprise_ai_zero_trust_security: 'inst_enterprise_ai_zero_trust_security_demo',
+  ge_value_realization: 'ge_vr_acc-1001-aerovg'
+};
+
+const GeValueRealizationRedirect = () => {
+  const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const tab = searchParams.get('tab');
+  let targetId = id || 'ge_vr_acc-1001-aerovg';
+  if (targetId === 'inst_bionova_ge_value_realization' || targetId === 'bionova') {
+    targetId = 'ge_vr_acc-1002-bionova';
+  } else if (targetId === 'inst_aerovanguard_ge_value_realization' || targetId === 'aerovanguard_default') {
+    targetId = 'ge_vr_acc-1001-aerovg';
+  }
+  if (tab === 'report') {
+    return <Navigate to={`/results/${targetId}`} replace />;
+  }
+  return <Navigate to={`/assessment/${targetId}/platform_governance`} replace />;
+};
+
+const DynamicTrackRedirect = () => {
+  const { typeKey } = useParams();
+  const instanceId = CANONICAL_TYPE_TO_INSTANCE[typeKey];
+  if (instanceId) {
+    return <Navigate to={`/assessment/${instanceId}/platform_governance`} replace />;
+  }
+  return <Navigate to="/start" replace />;
+};
+
+const DynamicInstanceRedirect = () => {
+  const { id } = useParams();
+  return <Navigate to={`/assessment/${id || 'inst_enterprise_data_ai_maturity_demo'}/platform_governance`} replace />;
+};
+
+const DynamicReportRedirect = () => {
+  const { id } = useParams();
+  return <Navigate to={`/results/${id || 'inst_enterprise_data_ai_maturity_demo'}`} replace />;
 };
 
 // Global Print Styles - Applied across all components
@@ -539,7 +584,7 @@ function App() {
             path="/ge-value-realization" 
             element={
               <ProtectedRoute>
-                <GeValueRealizationWorkspace />
+                <GeValueRealizationRedirect />
               </ProtectedRoute>
             } 
           />
@@ -548,7 +593,7 @@ function App() {
             path="/ge-value-realization/:id" 
             element={
               <ProtectedRoute>
-                <GeValueRealizationWorkspace />
+                <GeValueRealizationRedirect />
               </ProtectedRoute>
             } 
           />
@@ -557,7 +602,7 @@ function App() {
             path="/assessments/ge-value-realization" 
             element={
               <ProtectedRoute>
-                <GeValueRealizationWorkspace />
+                <GeValueRealizationRedirect />
               </ProtectedRoute>
             } 
           />
@@ -566,7 +611,7 @@ function App() {
             path="/assessments/ge-value-realization/:id" 
             element={
               <ProtectedRoute>
-                <GeValueRealizationWorkspace />
+                <GeValueRealizationRedirect />
               </ProtectedRoute>
             } 
           />
@@ -614,7 +659,7 @@ function App() {
             path="/assessments/run/:typeKey" 
             element={
               <ProtectedRoute>
-                <DynamicAssessmentRunner />
+                <DynamicTrackRedirect />
               </ProtectedRoute>
             } 
           />
@@ -623,7 +668,7 @@ function App() {
             path="/assessments/run/instance/:id" 
             element={
               <ProtectedRoute>
-                <DynamicAssessmentRunner />
+                <DynamicInstanceRedirect />
               </ProtectedRoute>
             } 
           />
@@ -632,7 +677,7 @@ function App() {
             path="/assessments/report/:id" 
             element={
               <ProtectedRoute>
-                <DynamicAssessmentReport />
+                <DynamicReportRedirect />
               </ProtectedRoute>
             } 
           />

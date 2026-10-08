@@ -364,36 +364,42 @@ async function generateLiveDiagramsFromPromptCanvas(framework = {}, metadata = {
 
   const randOctet = () => Math.floor(Math.random() * 200) + 20;
 
-  // Call PromptCanvas POST /api/generate in parallel across all 3 stages
-  const [pcStage1, pcStage2, pcStage3] = await Promise.all([
-    callPromptCanvasGenerateApi({
-      name: `1. Current State (As-Is): ${custName} (${industry} • ${avgCur}/5.0)`,
-      architectureType: trio.currentArchType,
-      existingXml: baseXml1,
-      phaseName: 'Stage 1: Current State As-Is Baseline',
-      domain: industry,
-      prompt: `STAGE 1 CURRENT STATE (AS-IS BASELINE) for ${custName} (Industry: ${industry}, Maturity: ${avgCur}/5.0). ${toolsCitation} Customize the diagram cards to reflect each pillar's exact current state, tools, strengths, and pain points: ${pillarStage1Prompt}`,
-      clientIp: `10.11.${randOctet()}.${randOctet()}`
-    }),
-    callPromptCanvasGenerateApi({
-      name: `2. Transition State (Bridge): ${custName} (${avgCur} → ${avgMid}/5.0)`,
-      architectureType: trio.transitionArchType,
-      existingXml: baseXml2,
-      phaseName: 'Stage 2: Phased Transition Bridge',
-      domain: industry,
-      prompt: `STAGE 2 TRANSITION ARCHITECTURE (PHASED COEXISTENCE & STRANGLER FIG BRIDGE ${avgCur} -> ${avgMid}/5.0) for ${custName} (${industry}). ${toolsCitation} Customize the bridge cards to show how each pillar transitions from its current state into ${targetPlatformBrand}: ${pillarStage2Prompt}`,
-      clientIp: `10.22.${randOctet()}.${randOctet()}`
-    }),
-    callPromptCanvasGenerateApi({
-      name: `3. Desired Future State (To-Be): ${custName} (${avgTgt}/5.0)`,
-      architectureType: trio.targetArchType,
-      existingXml: baseXml3,
-      phaseName: 'Stage 3: Desired Future State Target Architecture',
-      domain: industry,
-      prompt: `STAGE 3 DESIRED FUTURE STATE (TARGET TO-BE ARCHITECTURE ${avgTgt}/5.0, +${overallDelta} Leap) for ${custName} (${industry}) on ${targetPlatformBrand}. Customize source feeds for ${industry} and target lakehouse, MLOps, and Agentic AI components to remediate 100% of pain points: ${pillarStage3Prompt}`,
-      clientIp: `10.33.${randOctet()}.${randOctet()}`
-    })
-  ]);
+  // Call external PromptCanvas POST /api/generate only when forceLiveAi is explicitly requested;
+  // otherwise use the instant (<5ms) deterministic 3-stage compiler so /results/:id loads sub-second.
+  let pcStage1 = null;
+  let pcStage2 = null;
+  let pcStage3 = null;
+  if (options.forceLiveAi) {
+    [pcStage1, pcStage2, pcStage3] = await Promise.all([
+      callPromptCanvasGenerateApi({
+        name: `1. Current State (As-Is): ${custName} (${industry} • ${avgCur}/5.0)`,
+        architectureType: trio.currentArchType,
+        existingXml: baseXml1,
+        phaseName: 'Stage 1: Current State As-Is Baseline',
+        domain: industry,
+        prompt: `STAGE 1 CURRENT STATE (AS-IS BASELINE) for ${custName} (Industry: ${industry}, Maturity: ${avgCur}/5.0). ${toolsCitation} Customize the diagram cards to reflect each pillar's exact current state, tools, strengths, and pain points: ${pillarStage1Prompt}`,
+        clientIp: `10.11.${randOctet()}.${randOctet()}`
+      }),
+      callPromptCanvasGenerateApi({
+        name: `2. Transition State (Bridge): ${custName} (${avgCur} → ${avgMid}/5.0)`,
+        architectureType: trio.transitionArchType,
+        existingXml: baseXml2,
+        phaseName: 'Stage 2: Phased Transition Bridge',
+        domain: industry,
+        prompt: `STAGE 2 TRANSITION ARCHITECTURE (PHASED COEXISTENCE & STRANGLER FIG BRIDGE ${avgCur} -> ${avgMid}/5.0) for ${custName} (${industry}). ${toolsCitation} Customize the bridge cards to show how each pillar transitions from its current state into ${targetPlatformBrand}: ${pillarStage2Prompt}`,
+        clientIp: `10.22.${randOctet()}.${randOctet()}`
+      }),
+      callPromptCanvasGenerateApi({
+        name: `3. Desired Future State (To-Be): ${custName} (${avgTgt}/5.0)`,
+        architectureType: trio.targetArchType,
+        existingXml: baseXml3,
+        phaseName: 'Stage 3: Desired Future State Target Architecture',
+        domain: industry,
+        prompt: `STAGE 3 DESIRED FUTURE STATE (TARGET TO-BE ARCHITECTURE ${avgTgt}/5.0, +${overallDelta} Leap) for ${custName} (${industry}) on ${targetPlatformBrand}. Customize source feeds for ${industry} and target lakehouse, MLOps, and Agentic AI components to remediate 100% of pain points: ${pillarStage3Prompt}`,
+        clientIp: `10.33.${randOctet()}.${randOctet()}`
+      })
+    ]);
+  }
 
   const curXml = pcStage1?.xml || baseXml1;
   const transXml = pcStage2?.xml || baseXml2;

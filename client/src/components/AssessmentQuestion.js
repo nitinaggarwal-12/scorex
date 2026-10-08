@@ -1035,8 +1035,17 @@ const AssessmentQuestion = ({ framework, currentAssessment, onUpdateStatus }) =>
   // Check for editor email in session storage on mount
   useEffect(() => {
     const storedEmail = sessionStorage.getItem('assessmentEditorEmail');
+    const isPrepopulatedDemo =
+      String(assessmentId || '').startsWith('ge_vr_') ||
+      String(assessmentId || '').startsWith('inst_') ||
+      String(assessmentId || '').startsWith('sample_') ||
+      Boolean(currentAssessment?.contactEmail);
     if (storedEmail) {
       setEditorEmail(storedEmail);
+    } else if (isPrepopulatedDemo && currentAssessment) {
+      const defaultEmail = currentAssessment.contactEmail || 'demo@scorex.enterprise';
+      setEditorEmail(defaultEmail);
+      sessionStorage.setItem('assessmentEditorEmail', defaultEmail);
     } else if (currentAssessment) {
       // Only show email prompt if this is an EXISTING assessment with responses
       // (not a brand new assessment that was just created)
@@ -1048,7 +1057,7 @@ const AssessmentQuestion = ({ framework, currentAssessment, onUpdateStatus }) =>
         setTimeout(() => setShowEmailPrompt(true), 500);
       }
     }
-  }, [currentAssessment]);
+  }, [currentAssessment, assessmentId]);
 
   // Add beforeunload warning to prevent accidental navigation away with unsaved changes
   useEffect(() => {

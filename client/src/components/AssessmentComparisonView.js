@@ -262,13 +262,10 @@ const AssessmentComparisonView = () => {
 
   const getReportPathForInstance = (inst) => {
     if (!inst?.id) return '/assessments';
-    if (inst.assessmentFamily === 'ge_value_realization' || inst.id.startsWith('ge_vr_') || inst.id.includes('_ge_value_realization')) {
-      return `/ge-value-realization/${inst.id}?tab=report`;
-    }
     if (inst.assessmentFamily === 'eu_ai_act' || inst.id.startsWith('EUAIA-') || inst.id.startsWith('EU-AI-')) {
       return `/eu-ai-compliance/${inst.id}?tab=report`;
     }
-    return `/assessments/report/${inst.id}`;
+    return `/results/${inst.id}`;
   };
 
   const fetchInitialData = async () => {

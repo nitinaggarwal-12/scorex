@@ -123,13 +123,125 @@ class AssessmentRepository {
     }
 
     try {
+      const idStr = String(id || '').trim();
+      const normId = idStr.toLowerCase();
+      const isGeVrId =
+        normId.startsWith('ge_vr_') ||
+        normId.startsWith('acc-') ||
+        normId.includes('ge_value_realization') ||
+        normId === 'aerovanguard_default' ||
+        normId === 'bionova_ge_vr_2026_q2' ||
+        normId === 'bionova';
+
+      if (isGeVrId) {
+        const { ingestCustomerMultiSourceDossier } = require('../services/geCustomerMultiSourceIngestor');
+        const fs = require('fs');
+        const dossiersPath = path.join(process.env.DATA_DIR || path.join(__dirname, '../../data'), 'ge_value_realization_dossiers.json');
+        let dossiers = {};
+        try {
+          if (fs.existsSync(dossiersPath)) {
+            dossiers = JSON.parse(fs.readFileSync(dossiersPath, 'utf8')) || {};
+          }
+        } catch (_) {}
+
+        let dossier = dossiers[idStr] || dossiers[normId];
+        if (!dossier) {
+          let sfdcAccountId = 'ACC-1001-AEROVG';
+          if (normId.includes('bionova') || normId.includes('1002')) {
+            sfdcAccountId = 'ACC-1002-BIONOVA';
+          } else if (normId.startsWith('ge_vr_acc-')) {
+            sfdcAccountId = idStr.replace(/^ge_vr_/i, '').toUpperCase();
+          } else if (normId.startsWith('acc-')) {
+            sfdcAccountId = idStr.toUpperCase();
+          }
+          dossier = dossiers[`ge_vr_${sfdcAccountId.toLowerCase()}`] || ingestCustomerMultiSourceDossier({
+            sfdcAccountId,
+            timePreset: 'ytd_2026',
+            prefillMode: 'evidence'
+          });
+        }
+
+        if (dossier) {
+          const fw = require('../data/assessmentFramework');
+          const allPillarIds = fw.assessmentAreas.map(a => a.id);
+          const customerName = dossier.meta?.customerName || dossier.customerName || 'AeroVanguard Global Logistics';
+          const legacyName = dossier.meta?.legacyPlatformName || dossier.legacyRetirement?.legacyToolName || 'Legacy AI Assistant';
+          const contractedSeats = Number(dossier.adoptionTelemetry?.contractedSeats || 68000).toLocaleString();
+          const assignedSeats = Number(dossier.adoptionTelemetry?.assignedSeats || 42500).toLocaleString();
+          const wauAll = Number(dossier.adoptionTelemetry?.wauAllApi || 28400).toLocaleString();
+          const legacyCost = Number(dossier.legacyRetirement?.legacyAnnualRunRateModeledUsd || 1850000).toLocaleString();
+          const topWorkflow = (dossier.workflows && dossier.workflows[0]?.name) || 'Priority Enterprise Workflow';
+
+          const pillarEvidenceNotes = {
+            platform_governance: `GE Value Realization [Modules L, Q & F — Platform Economics & Governance]: Migrating ${customerName} from ${legacyName} ($${legacyCost}/yr baseline run-rate) to Google Cloud Gemini Enterprise (${contractedSeats} contracted seats). Enforcing source ACL permission parity, VPC-SC boundaries, and Finance controller realization sign-off.`,
+            data_engineering: `GE Value Realization [Modules C06, P04 & P05 — Enterprise Connectors & Grounding]: Connected enterprise corpora across SharePoint/OneDrive, BigQuery Lakehouse, ITSM/ServiceNow, and DMS repositories with automated ACL indexing and citation grounding.`,
+            analytics_bi: `GE Value Realization [Module A — Cohort Adoption & Telemetry Funnel]: Active telemetry across ${contractedSeats} contracted seats, ${assignedSeats} assigned seats, and ${wauAll} 7-day WAU across Gemini Assist, Enterprise Search, and ADK Agents.`,
+            machine_learning: `GE Value Realization [Module Q — Blinded Quality Evaluation & Latency SLAs]: Continuous Vertex AI evaluation benchmarking Gemini Enterprise vs. ${legacyName} on golden prompt sets, tracking citation verification, defect severity, and P50/P95 latency.`,
+            generative_ai: `GE Value Realization [Module W — Priority Workflow Value Realization]: Validated cycle-time and task-effort reduction on "${topWorkflow}" and portfolio workflows, converting gross hours released into Finance-approved capacity and hard cost savings.`,
+            operational_excellence: `GE Value Realization [Modules U, G & F — Employee Experience & Multi-Geo Rollout]: Stratified 30-day recall Employee Pulse Survey, regional Works Council/privacy wave governance, and quarterly CFO/CIO value realization cadence.`
+          };
+
+          const mergedResponses = { ...(dossier.classicResponses || {}) };
+          fw.assessmentAreas.forEach((area, aIdx) => {
+            (area.dimensions || []).forEach((dim, dIdx) => {
+              (dim.questions || []).forEach((q, qIdx) => {
+                const score = mergedResponses[`${q.id}_current_state`] || mergedResponses[q.id] || (((aIdx + dIdx + qIdx) % 2) + 3);
+                const future = mergedResponses[`${q.id}_future_state`] || 5;
+                mergedResponses[q.id] = score;
+                mergedResponses[`${q.id}_current_state`] = score;
+                mergedResponses[`${q.id}_future_state`] = future;
+                const techP = (q.perspectives || []).find(p => p.id === 'technical_pain');
+                const bizP = (q.perspectives || []).find(p => p.id === 'business_pain');
+                if (!mergedResponses[`${q.id}_technical_pain`] && techP?.options?.length) {
+                  mergedResponses[`${q.id}_technical_pain`] = [techP.options[0].value];
+                }
+                if (!mergedResponses[`${q.id}_business_pain`] && bizP?.options?.length) {
+                  mergedResponses[`${q.id}_business_pain`] = [bizP.options[0].value];
+                }
+                if (!mergedResponses[`${q.id}_comment`]) {
+                  mergedResponses[`${q.id}_comment`] = pillarEvidenceNotes[area.id] || pillarEvidenceNotes.generative_ai;
+                }
+              });
+            });
+          });
+
+          return normalizeReleaseState({
+            id: idStr,
+            assessmentId: idStr,
+            assessmentFamily: 'ge_value_realization',
+            assessmentName: `${customerName} — GE Value Realization Assessment`,
+            assessmentDescription: `Gemini Enterprise Value Realization (${legacyName} → Gemini Enterprise Migration, Adoption, Workflow Outcomes & CFO Value Bridge)`,
+            organizationName: customerName,
+            contactEmail: dossier.meta?.executiveSponsor ? 'value-engineering@scorex.ai' : 'admin@scorex.ai',
+            industry: dossier.meta?.industry || 'Enterprise Technology',
+            status: 'submitted',
+            progress: 100,
+            currentCategory: allPillarIds[0],
+            completedCategories: allPillarIds,
+            selectedPillars: allPillarIds,
+            responses: mergedResponses,
+            editHistory: [],
+            startedAt: dossier.meta?.lastUpdated || new Date().toISOString(),
+            completedAt: dossier.meta?.lastUpdated || new Date().toISOString(),
+            createdAt: dossier.meta?.lastUpdated || new Date().toISOString(),
+            updatedAt: dossier.meta?.lastUpdated || new Date().toISOString(),
+            userId: 'system_unowned',
+            results_released: true
+          });
+        }
+      }
+    } catch (geErr) {
+      console.warn('[AssessmentRepo] GE Value Realization adapter notice:', geErr.message);
+    }
+
+    try {
       const customRepo = require('./customAssessmentRepository');
       const dynInst = await customRepo.getInstanceById(id);
       if (dynInst) {
         const fw = require('../data/assessmentFramework');
         const allPillarIds = fw.assessmentAreas.map(a => a.id);
         const mergedResponses = { ...(dynInst.responses || {}) };
-        if (id === 'inst_enterprise_data_ai_maturity_demo' || dynInst.typeKey === 'enterprise_data_ai_maturity' || dynInst.status === 'completed') {
+        if (id === 'inst_enterprise_data_ai_maturity_demo' || dynInst.typeKey === 'enterprise_data_ai_maturity' || dynInst.status === 'completed' || dynInst.status === 'submitted') {
           fw.assessmentAreas.forEach((area, aIdx) => {
             (area.dimensions || []).forEach((dim, dIdx) => {
               (dim.questions || []).forEach((q, qIdx) => {
@@ -147,7 +259,7 @@ class AssessmentRepository {
                   mergedResponses[`${q.id}_business_pain`] = [bizP.options[0].value];
                 }
                 if (!mergedResponses[`${q.id}_comment`]) {
-                  mergedResponses[`${q.id}_comment`] = 'Assessed 6-pillar enterprise data & AI estate; manual console IAM, 24h batch ETL lag, and isolated notebooks targeted for Dataplex, BigQuery & Vertex AI.';
+                  mergedResponses[`${q.id}_comment`] = `Assessed ${dynInst.customerName || 'Enterprise'} (${dynInst.useCase || 'Data & AI Modernization'}); baseline architecture and target state mapped across all 6 enterprise pillars.`;
                 }
               });
             });
@@ -160,7 +272,7 @@ class AssessmentRepository {
           organizationName: dynInst.customerName || 'Enterprise Organization',
           contactEmail: dynInst.contactEmail || 'admin@scorex.ai',
           industry: dynInst.industry || 'Telecommunications',
-          status: dynInst.status || 'completed',
+          status: (!dynInst.status || dynInst.status === 'completed') ? 'submitted' : dynInst.status,
           progress: 100,
           currentCategory: allPillarIds[0],
           completedCategories: allPillarIds,

@@ -899,10 +899,10 @@ const DynamicAssessmentHub = () => {
               </div>
               <TypeFooter>
                 <ActionButtonsRow>
-                  <LaunchBtn onClick={() => navigate('/ge-value-realization/inst_bionova_ge_value_realization?tab=inputs')}>
-                    <FiPlay /> Open Inputs (3 Modes)
+                  <LaunchBtn onClick={() => navigate('/assessment/ge_vr_acc-1002-bionova/platform_governance')}>
+                    <FiPlay /> Open Assessment
                   </LaunchBtn>
-                  <SampleBtn onClick={() => navigate('/ge-value-realization/inst_bionova_ge_value_realization?tab=report')}>
+                  <SampleBtn onClick={() => navigate('/results/ge_vr_acc-1002-bionova')}>
                     📊 Executive Value Report
                   </SampleBtn>
                 </ActionButtonsRow>
@@ -911,7 +911,7 @@ const DynamicAssessmentHub = () => {
                   <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                     <button
                       type="button"
-                      onClick={() => navigate('/ge-value-realization/inst_bionova_ge_value_realization?tab=inputs')}
+                      onClick={() => navigate('/assessment/ge_vr_acc-1002-bionova/platform_governance')}
                       style={{ background: 'none', border: 'none', color: '#4f46e5', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
                     >
                       <FiEdit2 size={13} /> Edit
