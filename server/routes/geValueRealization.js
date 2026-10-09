@@ -21,6 +21,7 @@ const {
   pickRandomSalesforceCustomer,
   resolveSalesforceAccount,
   ingestCustomerMultiSourceDossier,
+  extractGroundedAnswersFromMultimodalSources,
   generateGeminiAssessmentReport
 } = require('../services/geCustomerMultiSourceIngestor');
 
@@ -36,11 +37,13 @@ function loadServerDossiers() {
       const parsed = JSON.parse(fs.readFileSync(dossiersFile, 'utf8'));
       if (parsed && Object.keys(parsed).length > 0) {
         const primaryEntry = parsed['ge_vr_acc-1001-aerovg'] || parsed['inst_aerovanguard_ge_value_realization'];
+        const bionovaEntry = parsed['ge_vr_acc-1002-bionova'] || parsed['inst_bionova_ge_value_realization'];
         const hasCandidateOptions = Array.isArray(primaryEntry?.questionResponses?.C01?.candidateOptions);
         const hasNormalizedTelemetry = primaryEntry?.adoptionTelemetry?.geminiAssistWau7d !== undefined;
         const hasExpandedWorkflows = Array.isArray(primaryEntry?.workflows) && primaryEntry.workflows.length >= 3;
         const hasMatchingSfdcId = primaryEntry?.meta?.sfdcAccountId && primaryEntry?.meta?.sfdcAccountId === primaryEntry?.meta?.vectorAccountId;
-        if (hasCandidateOptions && hasNormalizedTelemetry && hasExpandedWorkflows && hasMatchingSfdcId) {
+        const hasCanonicalBioNova = Boolean(parsed['ge_vr_acc-1002-bionova'] && bionovaEntry?.meta?.sfdcAccountId === 'ACC-1002-BIONOVA');
+        if (hasCandidateOptions && hasNormalizedTelemetry && hasExpandedWorkflows && hasMatchingSfdcId && hasCanonicalBioNova) {
           return parsed;
         }
       }
@@ -58,9 +61,15 @@ function loadServerDossiers() {
     timePreset: 'ytd_2026',
     prefillMode: 'evidence'
   });
+  const seededOmniMart = ingestCustomerMultiSourceDossier({
+    sfdcAccountId: 'ACC-1003-OMNIMRT',
+    timePreset: 'ytd_2026',
+    prefillMode: 'evidence'
+  });
   const initialMap = {
     [seededAeroVanguard.id]: seededAeroVanguard,
-    [seededBioNova.id]: seededBioNova
+    [seededBioNova.id]: seededBioNova,
+    [seededOmniMart.id]: seededOmniMart
   };
   saveServerDossiers(initialMap);
   return initialMap;
@@ -186,7 +195,49 @@ router.post(['/ingest-customer', '/ingest-customer-sources'], (req, res) => {
 });
 
 /**
- * Submit All 82 Questions & Selected Options to Gemini API to Regenerate the Executive Value Realization Report
+ * Extract grounded answers, verbatim quotes, and citations for the 82 questions
+ * from uploaded Documents/PDFs/Images/Spreadsheets + Salesforce Account IDs + Buganizer Issue IDs + Connector Sources.
+ */
+router.post(['/extract-grounded-answers', '/extract-sources'], async (req, res) => {
+  try {
+    const {
+      dossier = null,
+      uploadedDocuments = [],
+      sfdcAccountId = '',
+      customerName = '',
+      buganizerIds = '',
+      otherSources = '',
+      preserveManualAnswers = true
+    } = req.body || {};
+
+    const result = await extractGroundedAnswersFromMultimodalSources({
+      dossier,
+      uploadedDocuments,
+      sfdcAccountId,
+      customerName,
+      buganizerIds,
+      otherSources,
+      preserveManualAnswers
+    });
+
+    const dossiers = loadServerDossiers();
+    const id = result.dossier.id || `ge_vr_${Date.now().toString(36)}`;
+    dossiers[id] = result.dossier;
+    saveServerDossiers(dossiers);
+
+    return res.json({
+      success: true,
+      dossier: result.dossier,
+      extractionSummary: result.extractionSummary
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * Submit All 82 Questions, Uploaded Documents, Salesforce/Buganizer IDs & Sources to the
+ * 3-Stage Chained Gemini Pipeline (Model 1 Extractor -> Model 2 Synthesizer -> Model 3 Judge)
  */
 router.post(['/generate-gemini-report', '/generate-report'], async (req, res) => {
   try {
@@ -202,6 +253,7 @@ router.post(['/generate-gemini-report', '/generate-report'], async (req, res) =>
       success: true,
       dossier: updatedDossier,
       geminiReport: updatedDossier.geminiReport,
+      modelChainPipeline: updatedDossier.geminiReport?.modelChainPipeline,
       report: updatedDossier.geminiReport,
       evaluation: updatedDossier.evaluation
     });
@@ -213,9 +265,27 @@ router.post(['/generate-gemini-report', '/generate-report'], async (req, res) =>
 router.get('/dossiers', (req, res) => {
   try {
     const dossiers = loadServerDossiers();
+    const enrichedList = Object.values(dossiers).map((d) => {
+      const ev = d.evaluation || evaluateGeValueRealization(d);
+      const sfdcAccountId = d.meta?.vectorAccountId || d.meta?.sfdcAccountId || 'ACC-1001-AEROVG';
+      const customerName = d.meta?.customerName || 'Enterprise Assessment';
+      const rawScore = ev?.index?.rawScore ?? ev?.rawScore ?? 0;
+      const evidenceAdjustedScore = ev?.index?.evidenceAdjustedScore ?? ev?.evidenceAdjustedScore ?? 0;
+      const headlineVerdict = ev?.overallHeadlineVerdict || ev?.headlineVerdict || 'IN PROGRESS';
+      return {
+        ...d,
+        customerName,
+        sfdcAccountId,
+        industry: d.meta?.industry || 'Enterprise Operations',
+        rawScore,
+        evidenceAdjustedScore,
+        headlineVerdict,
+        evaluation: ev
+      };
+    });
     return res.json({
       success: true,
-      dossiers: Object.values(dossiers)
+      dossiers: enrichedList
     });
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
