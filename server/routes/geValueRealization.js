@@ -141,6 +141,8 @@ router.get('/customers/random', (req, res) => {
 router.post(['/ingest-customer', '/ingest-customer-sources'], (req, res) => {
   try {
     const {
+      assessmentId = '',
+      createNewAssessment = false,
       customerQuery = '',
       sfdcAccountId = '',
       timePreset = 'ytd_2026',
@@ -154,6 +156,8 @@ router.post(['/ingest-customer', '/ingest-customer-sources'], (req, res) => {
     } = req.body || {};
 
     const ingestedDossier = ingestCustomerMultiSourceDossier({
+      assessmentId,
+      createNewAssessment,
       customerQuery,
       sfdcAccountId,
       timePreset,
@@ -251,11 +255,13 @@ router.get('/dossiers/:id', (req, res) => {
       });
       dossiers[dossier.id] = dossier;
       saveServerDossiers(dossiers);
-    } else if (!dossier && normId === 'clean_intake') {
-      dossier = createInitialGeDossier('clean');
-      dossier.id = 'clean_intake';
+    } else if (!dossier && (normId === 'clean_intake' || normId === 'new')) {
+      const freshId = normId === 'clean_intake' ? 'clean_intake' : `ge_vr_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`;
+      dossier = createInitialGeDossier('clean', freshId);
       dossier.evaluation = evaluateGeValueRealization(dossier);
-    } else if (!dossier && (normId.startsWith('ge_vr_') || normId.startsWith('acc-'))) {
+      dossiers[dossier.id] = dossier;
+      saveServerDossiers(dossiers);
+    } else if (!dossier && (normId.startsWith('ge_vr_acc-') || normId.startsWith('acc-'))) {
       const extractedSfdcId = id.replace(/^ge_vr_/i, '').toUpperCase();
       const canonicalKey = `ge_vr_${extractedSfdcId.toLowerCase()}`;
       dossier = dossiers[canonicalKey] || ingestCustomerMultiSourceDossier({
@@ -264,15 +270,28 @@ router.get('/dossiers/:id', (req, res) => {
       });
       dossiers[dossier.id] = dossier;
       saveServerDossiers(dossiers);
+    } else if (!dossier && normId.startsWith('ge_vr_')) {
+      // Any other unique assessment ID (e.g. ge_vr_<timestamp>_<random>) starts as a fresh, unfilled assessment from Question 1
+      dossier = createInitialGeDossier('clean', id);
+      dossier.evaluation = evaluateGeValueRealization(dossier);
+      dossiers[dossier.id] = dossier;
+      saveServerDossiers(dossiers);
     }
 
     if (!dossier) {
       return res.status(404).json({ success: false, error: 'Dossier not found' });
     }
 
-    // Refresh if older cached dossier lacks candidateOptions on questionResponses
-    if ((!dossier.ingestionAudit || !Array.isArray(dossier.questionResponses?.A01?.candidateOptions)) && dossier.meta?.vectorAccountId) {
+    // Refresh if older cached evidence-mode dossier lacks candidateOptions on questionResponses (never overwrite clean/unfilled dossiers!)
+    const isCleanUnfilled = dossier.mode === 'clean' || dossier.prefillMode === 'clean';
+    if (
+      !isCleanUnfilled &&
+      (!dossier.ingestionAudit || !Array.isArray(dossier.questionResponses?.A01?.candidateOptions)) &&
+      dossier.meta?.vectorAccountId &&
+      !String(dossier.meta.vectorAccountId).startsWith('NEW-')
+    ) {
       const refreshed = ingestCustomerMultiSourceDossier({
+        assessmentId: dossier.id,
         sfdcAccountId: dossier.meta.vectorAccountId,
         timePreset: 'ytd_2026'
       });

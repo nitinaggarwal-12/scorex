@@ -1299,13 +1299,13 @@ const DEFAULT_BIONOVA_GEOGRAPHIES = [
  * Builds the default pre-staged BioNova Life Sciences Inc. (ACC-1002-BIONOVA) dossier
  * OR a clean zero-assumption customer intake dossier when mode === 'clean'
  */
-function createInitialGeDossier(mode = 'aerovanguard_default') {
+function createInitialGeDossier(mode = 'aerovanguard_default', customId = null, customMeta = {}) {
   const isClean = mode === 'clean';
   const isAeroVanguard = mode === 'aerovanguard_default';
 
   if (isAeroVanguard) {
     return {
-      id: 'ge_vr_acc-1001-aerovg',
+      id: customId || 'ge_vr_acc-1001-aerovg',
       typeKey: 'ge_value_realization',
       mode: 'multi_source_ingested',
       meta: {
@@ -1448,21 +1448,32 @@ function createInitialGeDossier(mode = 'aerovanguard_default') {
     };
   }
 
+  const generatedCleanId = customId || `ge_vr_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`;
+  const cleanSfdcId = customMeta?.sfdcAccountId || customMeta?.vectorAccountId || `NEW-${generatedCleanId.slice(-6).toUpperCase()}`;
+
   return {
-    id: isClean ? `ge_vr_clean_${Date.now()}` : 'inst_bionova_ge_value_realization',
+    id: isClean ? generatedCleanId : (customId || 'inst_bionova_ge_value_realization'),
     typeKey: 'ge_value_realization',
     mode: isClean ? 'clean' : 'bionova_draft',
+    prefillMode: isClean ? 'clean' : 'evidence',
     meta: {
-      customerName: isClean ? '' : 'BioNova Life Sciences Inc.',
-      vectorAccountId: isClean ? '' : 'ACC-1002-BIONOVA',
-      gcpProjectId: isClean ? '' : '710492831045 (bionova-ai-prod-4102) / 820194736201',
-      legacySystemName: isClean ? 'Legacy Homegrown OpenAI' : 'NovaAssist / NOVA-AI (Homegrown OpenAI GPT-4o + 300 Early Pilot Seats)',
-      targetSystemName: 'Google Cloud Gemini Enterprise (85,300 Contracted Seats)',
-      executiveSponsor: isClean ? '' : 'Marcus Vance, CIO',
-      customerLeads: isClean ? '' : 'Lucas Sterling (Platform/IT), Elena Rostova (R&D/Clinical), Devon Thorne',
-      googleLeads: isClean ? '' : 'Jordan Hayes (OCE GE HCLS), Vikram Desai (Consulting), Claire Montgomery (FDE)',
-      assessmentTier: 'Regulated / Complex',
-      tierOverrideReason: 'Auto-escalated to Regulated / Complex due to GxP Clinical (BNV-04), CMC Manufacturing (BNV-05), and Multi-System ADK Agents (BNV-06).',
+      customerName: isClean ? (customMeta?.customerName || 'New Enterprise Assessment') : 'BioNova Life Sciences Inc.',
+      vectorAccountId: isClean ? cleanSfdcId : 'ACC-1002-BIONOVA',
+      sfdcAccountId: isClean ? cleanSfdcId : 'ACC-1002-BIONOVA',
+      gcpProjectId: isClean ? (customMeta?.gcpProjectId || 'Pending GCP Project') : '710492831045 (bionova-ai-prod-4102) / 820194736201',
+      industry: isClean ? (customMeta?.industry || 'Enterprise Operations') : 'Pharmaceuticals & Biotechnology (HCLS)',
+      legacySystemName: isClean ? (customMeta?.legacyPlatformName || 'Legacy AI / Search Baseline') : 'NovaAssist / NOVA-AI (Homegrown OpenAI GPT-4o + 300 Early Pilot Seats)',
+      legacyPlatformName: isClean ? (customMeta?.legacyPlatformName || 'Legacy AI / Search Baseline') : 'NovaAssist / NOVA-AI (Homegrown OpenAI GPT-4o + 300 Early Pilot Seats)',
+      targetSystemName: isClean ? (customMeta?.targetPlatformName || 'Google Cloud Gemini Enterprise') : 'Google Cloud Gemini Enterprise (85,300 Contracted Seats)',
+      targetPlatformName: isClean ? (customMeta?.targetPlatformName || 'Google Cloud Gemini Enterprise') : 'Google Cloud Gemini Enterprise (85,300 Contracted Seats)',
+      executiveSponsor: isClean ? (customMeta?.executiveSponsor || 'Executive Sponsor (Pending)') : 'Marcus Vance, CIO',
+      accountLeads: isClean ? (customMeta?.calLead ? [customMeta.calLead] : ['Enterprise Account Lead']) : ['Lucas Sterling (Platform/IT)', 'Elena Rostova (R&D/Clinical)', 'Vikram Desai (Google CAL)'],
+      customerLeads: isClean ? (customMeta?.customerLeads || '') : 'Lucas Sterling (Platform/IT), Elena Rostova (R&D/Clinical), Devon Thorne',
+      googleLeads: isClean ? (customMeta?.calLead || '') : 'Jordan Hayes (OCE GE HCLS), Vikram Desai (Consulting), Claire Montgomery (FDE)',
+      assessmentTier: isClean ? 'Enterprise Standard' : 'Regulated / Complex',
+      tierOverrideReason: isClean
+        ? 'New unfilled customer assessment initialized at Question 1 (C01).'
+        : 'Auto-escalated to Regulated / Complex due to GxP Clinical (BNV-04), CMC Manufacturing (BNV-05), and Multi-System ADK Agents (BNV-06).',
       baselineWindow: 'Jan 15, 2026 – Mar 15, 2026 (60 Days)',
       currentWindow: 'Mar 16, 2026 – May 15, 2026 (60 Days)',
       cutoverDate: '2026-06-30',

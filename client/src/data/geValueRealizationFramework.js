@@ -1294,13 +1294,13 @@ const DEFAULT_BIONOVA_GEOGRAPHIES = [
  * Builds the default pre-staged BioNova Life Sciences Inc. (ACC-1002-BIONOVA) dossier
  * OR a clean zero-assumption customer intake dossier when mode === 'clean'
  */
-function createInitialGeDossier(mode = 'aerovanguard_default') {
+function createInitialGeDossier(mode = 'aerovanguard_default', customId = null, customMeta = {}) {
   const isClean = mode === 'clean';
   const isAeroVanguard = mode === 'aerovanguard_default';
 
   if (isAeroVanguard) {
     return {
-      id: 'ge_vr_acc-1001-aerovg',
+      id: customId || 'ge_vr_acc-1001-aerovg',
       typeKey: 'ge_value_realization',
       mode: 'multi_source_ingested',
       meta: {
@@ -1443,21 +1443,32 @@ function createInitialGeDossier(mode = 'aerovanguard_default') {
     };
   }
 
+  const generatedCleanId = customId || `ge_vr_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`;
+  const cleanSfdcId = customMeta?.sfdcAccountId || customMeta?.vectorAccountId || `NEW-${generatedCleanId.slice(-6).toUpperCase()}`;
+
   return {
-    id: isClean ? `ge_vr_clean_${Date.now()}` : 'inst_bionova_ge_value_realization',
+    id: isClean ? generatedCleanId : (customId || 'inst_bionova_ge_value_realization'),
     typeKey: 'ge_value_realization',
     mode: isClean ? 'clean' : 'bionova_draft',
+    prefillMode: isClean ? 'clean' : 'evidence',
     meta: {
-      customerName: isClean ? '' : 'BioNova Life Sciences Inc.',
-      vectorAccountId: isClean ? '' : 'ACC-1002-BIONOVA',
-      gcpProjectId: isClean ? '' : '710492831045 (bionova-ai-prod-4102) / 820194736201',
-      legacySystemName: isClean ? 'Legacy Homegrown OpenAI' : 'NovaAssist / NOVA-AI (Homegrown OpenAI GPT-4o + 300 Early Pilot Seats)',
-      targetSystemName: 'Google Cloud Gemini Enterprise (85,300 Contracted Seats)',
-      executiveSponsor: isClean ? '' : 'Marcus Vance, CIO',
-      customerLeads: isClean ? '' : 'Lucas Sterling (Platform/IT), Elena Rostova (R&D/Clinical), Devon Thorne',
-      googleLeads: isClean ? '' : 'Jordan Hayes (OCE GE HCLS), Vikram Desai (Consulting), Claire Montgomery (FDE)',
-      assessmentTier: 'Regulated / Complex',
-      tierOverrideReason: 'Auto-escalated to Regulated / Complex due to GxP Clinical (BNV-04), CMC Manufacturing (BNV-05), and Multi-System ADK Agents (BNV-06).',
+      customerName: isClean ? (customMeta?.customerName || 'New Enterprise Assessment') : 'BioNova Life Sciences Inc.',
+      vectorAccountId: isClean ? cleanSfdcId : 'ACC-1002-BIONOVA',
+      sfdcAccountId: isClean ? cleanSfdcId : 'ACC-1002-BIONOVA',
+      gcpProjectId: isClean ? (customMeta?.gcpProjectId || 'Pending GCP Project') : '710492831045 (bionova-ai-prod-4102) / 820194736201',
+      industry: isClean ? (customMeta?.industry || 'Enterprise Operations') : 'Pharmaceuticals & Biotechnology (HCLS)',
+      legacySystemName: isClean ? (customMeta?.legacyPlatformName || 'Legacy AI / Search Baseline') : 'NovaAssist / NOVA-AI (Homegrown OpenAI GPT-4o + 300 Early Pilot Seats)',
+      legacyPlatformName: isClean ? (customMeta?.legacyPlatformName || 'Legacy AI / Search Baseline') : 'NovaAssist / NOVA-AI (Homegrown OpenAI GPT-4o + 300 Early Pilot Seats)',
+      targetSystemName: isClean ? (customMeta?.targetPlatformName || 'Google Cloud Gemini Enterprise') : 'Google Cloud Gemini Enterprise (85,300 Contracted Seats)',
+      targetPlatformName: isClean ? (customMeta?.targetPlatformName || 'Google Cloud Gemini Enterprise') : 'Google Cloud Gemini Enterprise (85,300 Contracted Seats)',
+      executiveSponsor: isClean ? (customMeta?.executiveSponsor || 'Executive Sponsor (Pending)') : 'Marcus Vance, CIO',
+      accountLeads: isClean ? (customMeta?.calLead ? [customMeta.calLead] : ['Enterprise Account Lead']) : ['Lucas Sterling (Platform/IT)', 'Elena Rostova (R&D/Clinical)', 'Vikram Desai (Google CAL)'],
+      customerLeads: isClean ? (customMeta?.customerLeads || '') : 'Lucas Sterling (Platform/IT), Elena Rostova (R&D/Clinical), Devon Thorne',
+      googleLeads: isClean ? (customMeta?.calLead || '') : 'Jordan Hayes (OCE GE HCLS), Vikram Desai (Consulting), Claire Montgomery (FDE)',
+      assessmentTier: isClean ? 'Enterprise Standard' : 'Regulated / Complex',
+      tierOverrideReason: isClean
+        ? 'New unfilled customer assessment initialized at Question 1 (C01).'
+        : 'Auto-escalated to Regulated / Complex due to GxP Clinical (BNV-04), CMC Manufacturing (BNV-05), and Multi-System ADK Agents (BNV-06).',
       baselineWindow: 'Jan 15, 2026 – Mar 15, 2026 (60 Days)',
       currentWindow: 'Mar 16, 2026 – May 15, 2026 (60 Days)',
       cutoverDate: '2026-06-30',
@@ -1539,9 +1550,23 @@ function createInitialGeDossier(mode = 'aerovanguard_default') {
       {
         ...DEFAULT_BIONOVA_WORKFLOWS[0],
         id: 'wf_clean_1',
+        code: 'WF1',
         name: 'Priority Workflow 1',
+        functionArea: 'Enterprise Operations',
+        owner: 'Workflow Owner (Pending)',
+        maturity: 'Scoping',
+        eligibleUsers: null,
         activeUsers: null,
         completedTasksPerMonth: null,
+        stages: {
+          discovery: { baseline: 0, gemini: 0 },
+          drafting: { baseline: 0, gemini: 0 },
+          verification: { baseline: 0, gemini: 0 },
+          correction: { baseline: 0, gemini: 0 },
+          approval: { baseline: 0, gemini: 0 },
+          handoff: { baseline: 0, gemini: 0 }
+        },
+        modeledAnnualValueUsd: 0,
         numericState: 'pending',
         verificationStatus: 'pending',
         confidenceTier: 'D'
@@ -1560,21 +1585,21 @@ function createInitialGeDossier(mode = 'aerovanguard_default') {
       perceivedMinutesSavedMedian: isClean ? null : 24, // Never monetized!
       wouldChooseGeminiAgainPct: isClean ? null : 82.0,
       ratings: {
-        relevance: { legacy: 3.2, gemini: 4.3 },
-        findability: { legacy: 2.9, gemini: 4.2 },
-        accuracy: { legacy: 3.4, gemini: 4.3 },
-        speed: { legacy: 3.3, gemini: 4.4 },
-        ease: { legacy: 3.5, gemini: 4.2 },
-        confidence: { legacy: 3.1, gemini: 4.1 }
+        relevance: { legacy: isClean ? 0 : 3.2, gemini: isClean ? 0 : 4.3 },
+        findability: { legacy: isClean ? 0 : 2.9, gemini: isClean ? 0 : 4.2 },
+        accuracy: { legacy: isClean ? 0 : 3.4, gemini: isClean ? 0 : 4.3 },
+        speed: { legacy: isClean ? 0 : 3.3, gemini: isClean ? 0 : 4.4 },
+        ease: { legacy: isClean ? 0 : 3.5, gemini: isClean ? 0 : 4.2 },
+        confidence: { legacy: isClean ? 0 : 3.1, gemini: isClean ? 0 : 4.1 }
       }
     },
 
     // Multi-Party Sign-Off (F08 & P08)
     signOffs: {
-      businessSponsor: { owner: 'Marcus Vance (CIO)', status: 'Pending Review', date: '2026-05-20', caveat: 'Awaiting Wave-1 Cost Bridge & NOVA-AI Pilot readout' },
-      platformAnalytics: { owner: 'Lucas Sterling', status: 'Approved with Caveat', date: '2026-05-18', caveat: 'Vector WAU/MAU verified; A07 workflow tagging & NovaAssist chat export in progress' },
-      finance: { owner: 'BioNova Finance Controller', status: 'Pending Review', date: '', caveat: 'Awaiting L01 NovaAssist invoices & F01 loaded rate sign-off' },
-      securityGxp: { owner: 'Enterprise Security Leads (Security) & GxP QA', status: 'Approved with Caveat', date: '2026-05-18', caveat: 'VPC-SC & citations verified; Gate 3 open until BNV-04/13 RegVault GxP CSV closes' }
+      businessSponsor: { owner: isClean ? 'Executive Sponsor (Pending)' : 'Marcus Vance (CIO)', status: 'Pending Review', date: '', caveat: isClean ? 'Awaiting assessment completion' : 'Awaiting Wave-1 Cost Bridge & NOVA-AI Pilot readout' },
+      platformAnalytics: { owner: isClean ? 'Platform Lead (Pending)' : 'Lucas Sterling', status: isClean ? 'Pending Review' : 'Approved with Caveat', date: '', caveat: isClean ? 'Awaiting telemetry input' : 'Vector WAU/MAU verified; A07 workflow tagging & NovaAssist chat export in progress' },
+      finance: { owner: isClean ? 'Finance Controller (Pending)' : 'BioNova Finance Controller', status: 'Pending Review', date: '', caveat: isClean ? 'Awaiting L01-L03 cost ledger & F01 rate card' : 'Awaiting L01 NovaAssist invoices & F01 loaded rate sign-off' },
+      securityGxp: { owner: isClean ? 'Security & Compliance Lead (Pending)' : 'Enterprise Security Leads (Security) & GxP QA', status: isClean ? 'Pending Review' : 'Approved with Caveat', date: '', caveat: isClean ? 'Awaiting Q01-Q06 governance review' : 'VPC-SC & citations verified; Gate 3 open until BNV-04/13 RegVault GxP CSV closes' }
     },
 
     // Per-Question Responses, Outcome Scores (0-4), Confidence Tiers (A-D), and Verification States
@@ -2015,21 +2040,23 @@ function getQuestionOptionsWithConfidence(question, resp = {}, dossier = null) {
   }
 
   // 2. Fallback for local default BioNova or Clean dossier
-  const custName = dossier?.meta?.customerName || 'BioNova Life Sciences Inc.';
+  const isCleanDossier = dossier?.mode === 'clean' || dossier?.prefillMode === 'clean';
+  const custName = dossier?.meta?.customerName || (isCleanDossier ? 'Customer Organization' : 'BioNova Life Sciences Inc.');
+  const legacyName = dossier?.meta?.legacyPlatformName || dossier?.meta?.legacySystemName || 'Legacy Baseline';
   const rawOptions = (Array.isArray(question.options) && question.options.length > 0)
     ? question.options
     : (FALLBACK_STRUCTURED_OPTIONS[question.id] || []);
 
-  const preStagedVal = resp.portalBackedValue !== undefined ? resp.portalBackedValue : getPreStagedValue(question.id);
-  const baseQuestionConf = Number(resp.confidenceScorePct ?? getPreStagedConfidenceScorePct(question.id));
-  const evidenceSource = resp.evidenceUrl || getPreStagedEvidenceSource(question.id);
+  const preStagedVal = isCleanDossier ? null : (resp.portalBackedValue !== undefined ? resp.portalBackedValue : getPreStagedValue(question.id));
+  const baseQuestionConf = isCleanDossier ? 0 : Number(resp.confidenceScorePct ?? getPreStagedConfidenceScorePct(question.id));
+  const evidenceSource = resp.evidenceUrl || (isCleanDossier ? 'Manual Customer Intake Selection' : getPreStagedEvidenceSource(question.id));
 
   return rawOptions.map((rawOptText, idx) => {
     const optText = custName !== 'BioNova Life Sciences Inc.'
-      ? String(rawOptText).replace(/BioNova/g, custName).replace(/NovaAssist/g, 'Legacy Baseline')
+      ? String(rawOptText).replace(/BioNova/g, custName).replace(/NovaAssist/g, legacyName)
       : rawOptText;
     const selectedNow = isOptionSelected(optText, currentVal);
-    const backedByInternalPortal = isOptionSelected(optText, preStagedVal) || (question.id === 'L04' && idx === 0);
+    const backedByInternalPortal = !isCleanDossier && (isOptionSelected(optText, preStagedVal) || (question.id === 'L04' && idx === 0));
 
     let confPct;
     let basisLabel;
@@ -2039,11 +2066,19 @@ function getQuestionOptionsWithConfidence(question, resp = {}, dossier = null) {
       confPct = 100;
       basisLabel = `Customer Confirmed + ${evidenceSource}`;
       impliedOutcomeScore = Number(resp.outcomeScore ?? 4);
+    } else if (selectedNow && isCleanDossier) {
+      confPct = Number(resp.confidenceScorePct || 85);
+      basisLabel = `Selected in Manual Assessment Intake (${custName})`;
+      impliedOutcomeScore = Number(resp.outcomeScore || (idx === 0 ? 4 : Math.max(1, 3 - idx)));
     } else if (backedByInternalPortal) {
       const itemOffset = Array.isArray(preStagedVal) ? Math.min(4, idx) : 0;
       confPct = Math.max(15, Math.min(99, baseQuestionConf - itemOffset));
       basisLabel = evidenceSource;
       impliedOutcomeScore = getPreStagedOutcomeScore(question.id);
+    } else if (isCleanDossier) {
+      confPct = 0;
+      basisLabel = 'Unfilled — Click to select this answer option';
+      impliedOutcomeScore = idx === 0 ? 4 : Math.max(1, 3 - idx);
     } else {
       if (idx === 1 && baseQuestionConf >= 75) {
         confPct = 52;

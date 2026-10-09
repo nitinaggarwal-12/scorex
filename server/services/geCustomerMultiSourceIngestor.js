@@ -3140,6 +3140,8 @@ function buildCustomerQuestionResponses(account, deepProfile, workflows, windowI
  */
 function ingestCustomerMultiSourceDossier(params = {}) {
   const {
+    assessmentId = '',
+    createNewAssessment = false,
     customerQuery = '',
     sfdcAccountId = '',
     timePreset = 'ytd_2026',
@@ -3190,8 +3192,8 @@ function ingestCustomerMultiSourceDossier(params = {}) {
     sources
   });
 
-  const isBioNova = account.sfdcAccountId === 'ACC-1002-BIONOVA';
-  const baseDossier = createInitialGeDossier(prefillMode === 'clean' ? 'clean' : 'bionova_draft');
+  const isBioNova = account.sfdcAccountId === 'ACC-1002-BIONOVA' && !createNewAssessment && !assessmentId;
+  const baseDossier = createInitialGeDossier(prefillMode === 'clean' ? 'clean' : 'bionova_draft', assessmentId || null);
 
   const workflows = buildCustomerWorkflows(account, deepProfile, windowInfo, prefillMode);
 
@@ -3213,9 +3215,13 @@ function ingestCustomerMultiSourceDossier(params = {}) {
     prefillMode
   );
 
-  const dossierId = isBioNova && prefillMode === 'evidence'
-    ? 'inst_bionova_ge_value_realization'
-    : `ge_vr_${account.sfdcAccountId.toLowerCase()}`;
+  const dossierId = assessmentId
+    ? assessmentId
+    : createNewAssessment
+      ? `ge_vr_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`
+      : (isBioNova && prefillMode === 'evidence'
+          ? 'inst_bionova_ge_value_realization'
+          : `ge_vr_${account.sfdcAccountId.toLowerCase()}`);
 
   const accountLeadsList = isBioNova
     ? ['Lucas Sterling (Platform/IT)', 'Elena Rostova (R&D/Clinical)', 'Vikram Desai (Google CAL)']
@@ -3227,11 +3233,12 @@ function ingestCustomerMultiSourceDossier(params = {}) {
 
   const legacyName = account.legacyBaselineName || inferLegacyBaselineName(account.accountName, account.industry, account.sfdcAccountId);
   const targetName = `Google Cloud Gemini Enterprise (${account.contractedSeats.toLocaleString()} Contracted Seats)`;
+  const isCleanUnfilled = prefillMode === 'clean';
 
   const customerDossier = {
     ...baseDossier,
     id: dossierId,
-    mode: prefillMode === 'clean' ? 'clean' : (isBioNova ? 'bionova_draft' : 'sfdc_multi_source'),
+    mode: isCleanUnfilled ? 'clean' : (isBioNova ? 'bionova_draft' : 'sfdc_multi_source'),
     prefillMode,
     meta: {
       ...baseDossier.meta,
@@ -3269,9 +3276,9 @@ function ingestCustomerMultiSourceDossier(params = {}) {
     },
     legacyRetirement: {
       legacyToolName: legacyName,
-      legacyAnnualRunRateModeledUsd: isBioNova ? 1850000 : Math.max(450000, Math.round((account.assignedSeats || 2500) * 95))
+      legacyAnnualRunRateModeledUsd: isCleanUnfilled ? null : (isBioNova ? 1850000 : Math.max(450000, Math.round((account.assignedSeats || 2500) * 95)))
     },
-    adoptionTelemetry: {
+    adoptionTelemetry: isCleanUnfilled ? baseDossier.adoptionTelemetry : {
       contractedSeats: account.contractedSeats,
       provisionedSeats: account.provisionedSeats,
       assignedSeats: account.assignedSeats,
