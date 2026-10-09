@@ -1306,6 +1306,7 @@ function createInitialGeDossier(mode = 'aerovanguard_default', customId = null, 
       meta: {
         customerName: 'AeroVanguard Global Logistics',
         vectorAccountId: 'ACC-1001-AEROVG',
+        sfdcAccountId: 'ACC-1001-AEROVG',
         gcpProjectId: 'aerovanguard-ge-logistics-prod-01',
         industry: 'Global Logistics, Air/Ground Express & Supply Chain',
         regionPrimary: 'NORTHAM (Atlanta, GA HQ + Global Hubs)',
@@ -1569,7 +1570,8 @@ function createInitialGeDossier(mode = 'aerovanguard_default', customId = null, 
         modeledAnnualValueUsd: 0,
         numericState: 'pending',
         verificationStatus: 'pending',
-        confidenceTier: 'D'
+        confidenceTier: 'D',
+        outcomeScores: {}
       }
     ] : JSON.parse(JSON.stringify(DEFAULT_BIONOVA_WORKFLOWS)),
 
@@ -2220,10 +2222,12 @@ function evaluateGeValueRealization(dossier) {
     let wfAdjPoints = 0;
     for (const [qId, qWt] of Object.entries(wfWeights)) {
       const qResp = qMap[qId];
-      const baseWfScore = Number(wf.outcomeScores?.[qId] ?? 2);
-      const oScore = qResp?.outcomeScore !== undefined ? Number((baseWfScore + Number(qResp.outcomeScore)) / 2) : baseWfScore;
+      const isWfPending = wf.numericState === 'pending' && (!qResp || qResp.numericState === 'pending' || qResp.value === null || qResp.value === '');
+      const hasExplicitWfScore = wf.outcomeScores && wf.outcomeScores[qId] !== undefined && wf.outcomeScores[qId] !== null;
+      const baseWfScore = isWfPending ? 0 : (hasExplicitWfScore ? Number(wf.outcomeScores[qId]) : Number(qResp?.outcomeScore ?? 0));
+      const oScore = isWfPending ? 0 : (hasExplicitWfScore && qResp?.outcomeScore !== undefined ? Number((baseWfScore + Number(qResp.outcomeScore)) / 2) : baseWfScore);
       const qConfFactor = qResp?.confidenceTier ? (EVIDENCE_FACTORS[qResp.confidenceTier]?.factor ?? wfConfFactor) : wfConfFactor;
-      const effectiveFactor = (wfConfFactor + qConfFactor) / 2;
+      const effectiveFactor = isWfPending ? 0 : (hasExplicitWfScore ? (wfConfFactor + qConfFactor) / 2 : qConfFactor);
       const raw = qWt * (Math.min(4, Math.max(0, oScore)) / 4);
       wfRawPoints += raw;
       wfAdjPoints += raw * effectiveFactor;

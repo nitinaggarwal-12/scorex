@@ -39,7 +39,8 @@ function loadServerDossiers() {
         const hasCandidateOptions = Array.isArray(primaryEntry?.questionResponses?.C01?.candidateOptions);
         const hasNormalizedTelemetry = primaryEntry?.adoptionTelemetry?.geminiAssistWau7d !== undefined;
         const hasExpandedWorkflows = Array.isArray(primaryEntry?.workflows) && primaryEntry.workflows.length >= 3;
-        if (hasCandidateOptions && hasNormalizedTelemetry && hasExpandedWorkflows) {
+        const hasMatchingSfdcId = primaryEntry?.meta?.sfdcAccountId && primaryEntry?.meta?.sfdcAccountId === primaryEntry?.meta?.vectorAccountId;
+        if (hasCandidateOptions && hasNormalizedTelemetry && hasExpandedWorkflows && hasMatchingSfdcId) {
           return parsed;
         }
       }
@@ -282,11 +283,11 @@ router.get('/dossiers/:id', (req, res) => {
       return res.status(404).json({ success: false, error: 'Dossier not found' });
     }
 
-    // Refresh if older cached evidence-mode dossier lacks candidateOptions on questionResponses (never overwrite clean/unfilled dossiers!)
+    // Refresh if older cached evidence-mode dossier lacks candidateOptions or has mismatched sfdcAccountId (never overwrite clean/unfilled dossiers!)
     const isCleanUnfilled = dossier.mode === 'clean' || dossier.prefillMode === 'clean';
     if (
       !isCleanUnfilled &&
-      (!dossier.ingestionAudit || !Array.isArray(dossier.questionResponses?.A01?.candidateOptions)) &&
+      (!dossier.ingestionAudit || !Array.isArray(dossier.questionResponses?.A01?.candidateOptions) || dossier.meta?.sfdcAccountId !== dossier.meta?.vectorAccountId) &&
       dossier.meta?.vectorAccountId &&
       !String(dossier.meta.vectorAccountId).startsWith('NEW-')
     ) {
@@ -301,6 +302,10 @@ router.get('/dossiers/:id', (req, res) => {
       };
       dossiers[id] = dossier;
       saveServerDossiers(dossiers);
+    }
+
+    if (dossier.meta && dossier.meta.vectorAccountId && dossier.meta.sfdcAccountId !== dossier.meta.vectorAccountId) {
+      dossier.meta.sfdcAccountId = dossier.meta.vectorAccountId;
     }
 
     dossier.evaluation = evaluateGeValueRealization(dossier);

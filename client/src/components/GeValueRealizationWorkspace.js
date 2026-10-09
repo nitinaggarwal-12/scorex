@@ -676,10 +676,90 @@ const GeValueRealizationWorkspace = () => {
         else if (s.includes('Definitely not')) nextSurvey.wouldChooseGeminiAgainPct = 18;
       }
 
+      // Sync C02 / P03 / A01 / A04 into adoptionTelemetry when answering a clean/unfilled assessment
+      const nextTelemetry = { ...(prev.adoptionTelemetry || {}) };
+      if ((qId === 'C02' || qId === 'P03' || qId === 'A01') && patch.value !== undefined && (prev.mode === 'clean' || prev.prefillMode === 'clean' || !nextTelemetry.contractedSeats)) {
+        const s = String(patch.value);
+        let baseSeats = 10000;
+        if (s.includes('50,000+') || s.includes('85,300')) baseSeats = 50000;
+        else if (s.includes('10,000')) baseSeats = 15000;
+        else if (s.includes('1,000')) baseSeats = 5000;
+        else if (s.includes('<1,000') || s.includes('300')) baseSeats = 500;
+        const prov = Math.round(baseSeats * 0.95);
+        const assgn = Math.round(baseSeats * 0.45);
+        const mau = Math.round(assgn * 0.72);
+        const wau = Math.round(assgn * 0.56);
+        nextTelemetry.contractedSeats = baseSeats;
+        nextTelemetry.provisionedSeats = prov;
+        nextTelemetry.assignedSeats = assgn;
+        nextTelemetry.assignedSeatsWave1 = assgn;
+        nextTelemetry.multiApiMau30d = mau;
+        nextTelemetry.mauMultiApi = mau;
+        nextTelemetry.allApiWau7d = wau;
+        nextTelemetry.wauAllApi = wau;
+        nextTelemetry.wauMultiApi = Math.round(wau * 0.88);
+        nextTelemetry.geminiAssistWau7d = Math.round(wau * 0.9);
+        nextTelemetry.wauGeminiAssist = Math.round(wau * 0.9);
+        nextTelemetry.enterpriseSearchWau7d = Math.round(wau * 0.82);
+        nextTelemetry.wauEnterpriseSearch = Math.round(wau * 0.82);
+        nextTelemetry.agentsWau7d = Math.round(wau * 0.28);
+        nextTelemetry.wauAgents = Math.round(wau * 0.28);
+        nextTelemetry.agentRequests7d = Math.round(wau * 2.1);
+      }
+
+      // Sync W01 / W02 / W04 into workflows[0] when answering a clean/unfilled assessment
+      const nextWorkflows = Array.isArray(prev.workflows) ? [...prev.workflows] : [];
+      if ((qId === 'W01' || qId === 'W02' || qId === 'W04') && patch.value !== undefined && nextWorkflows[0]?.numericState === 'pending') {
+        const s = String(patch.value).toLowerCase();
+        if (!s.includes('pending') && !s.includes('unknown')) {
+          nextWorkflows[0] = {
+            ...nextWorkflows[0],
+            maturity: 'Pilot',
+            numericState: 'actual',
+            verificationStatus: patch.verificationStatus || 'draft_verify',
+            confidenceTier: patch.confidenceTier && patch.confidenceTier !== 'D' ? patch.confidenceTier : 'B',
+            eligibleUsers: nextWorkflows[0].eligibleUsers || 500,
+            activeUsers: nextWorkflows[0].activeUsers || 250,
+            completedTasksPerMonth: nextWorkflows[0].completedTasksPerMonth || 1500,
+            stages: (nextWorkflows[0].stages?.discovery?.baseline > 0) ? nextWorkflows[0].stages : {
+              discovery: { baseline: 14, gemini: 5 },
+              drafting: { baseline: 15, gemini: 5 },
+              verification: { baseline: 8, gemini: 4 },
+              correction: { baseline: 5, gemini: 2 },
+              approval: { baseline: 3, gemini: 1 },
+              handoff: { baseline: 2, gemini: 1 }
+            }
+          };
+        }
+      }
+
+      // Sync F08 into signOffs when selected
+      const nextSignOffs = { ...(prev.signOffs || {}) };
+      if (qId === 'F08' && patch.value !== undefined) {
+        const s = String(patch.value);
+        const today = new Date().toISOString().slice(0, 10);
+        if (s.includes('All 4') || s.includes('Formally Signed Off')) {
+          for (const k of ['businessSponsor', 'platformAnalytics', 'finance', 'securityGxp', 'financeController', 'riskComplianceSecurity']) {
+            if (nextSignOffs[k]) {
+              nextSignOffs[k] = { ...nextSignOffs[k], status: 'Approved', date: today };
+            }
+          }
+        } else if (s.includes('2/4') || s.includes('Approved with Caveats')) {
+          for (const k of ['platformAnalytics', 'securityGxp', 'riskComplianceSecurity']) {
+            if (nextSignOffs[k]) {
+              nextSignOffs[k] = { ...nextSignOffs[k], status: 'Approved with Caveat', date: today };
+            }
+          }
+        }
+      }
+
       return {
         ...prev,
         costLedger: nextCostLedger,
         employeeSurvey: nextSurvey,
+        adoptionTelemetry: nextTelemetry,
+        workflows: nextWorkflows,
+        signOffs: nextSignOffs,
         questionResponses: {
           ...(prev.questionResponses || {}),
           [qId]: nextItem
@@ -968,305 +1048,77 @@ const GeValueRealizationWorkspace = () => {
       fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
     }}>
       {/* =====================================================================
-          TOP EXECUTIVE COMMAND BAR
+          TOP EXECUTIVE COMMAND BAR (COMPACT DROPDOWN-DRIVEN HEADER)
          ===================================================================== */}
       <div style={{
         background: 'linear-gradient(135deg, #eff6ff 0%, #eef2ff 60%, #f8fafc 100%)',
         color: '#0f172a',
         borderBottom: '1px solid #cbd5e1',
-        padding: '18px 32px',
-        boxShadow: '0 4px 16px rgba(15, 23, 42, 0.06)'
+        padding: '12px 28px',
+        boxShadow: '0 2px 10px rgba(15, 23, 42, 0.05)'
       }}>
-        <div style={{ maxWidth: '1560px', margin: '0 auto' }}>
-          {/* Row 1: Entity Lock Badges + New Assessment & Gemini API Controls */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '14px' }}>
+        <div style={{ maxWidth: '1560px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+          {/* Left: Compact Title + Inline Metadata Strip */}
+          <div style={{ minWidth: '300px', flex: '1 1 auto' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+              <h1 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, letterSpacing: '-0.02em', color: '#0f172a' }}>
+                {dossier.meta?.customerName || 'New Enterprise Assessment'} — Gemini Enterprise Value Realization
+              </h1>
               <span style={{
-                background: '#dbeafe',
-                border: '1px solid #93c5fd',
-                color: '#1e3a8a',
-                fontSize: '0.72rem',
+                background: '#ecfdf5',
+                border: '1px solid #6ee7b7',
+                color: '#047857',
+                fontSize: '0.68rem',
                 fontWeight: 800,
-                padding: '4px 10px',
+                padding: '2px 8px',
                 borderRadius: '999px',
-                letterSpacing: '0.05em',
-                textTransform: 'uppercase'
+                fontFamily: "'JetBrains Mono', monospace"
               }}>
-                GE Value Realization v2.0 • 8-Source Live Ingestor
+                🔒 {dossier.meta?.vectorAccountId || dossier.meta?.sfdcAccountId || 'NEW'}
               </span>
               <span style={{
                 background: '#eef2ff',
                 border: '1px solid #a5b4fc',
                 color: '#3730a3',
-                fontSize: '0.72rem',
-                fontWeight: 800,
-                padding: '4px 10px',
-                borderRadius: '999px',
-                fontFamily: "'JetBrains Mono', monospace"
-              }}>
-                🆔 Assessment ID: {dossier.id}
-              </span>
-              <span style={{
-                background: '#ecfdf5',
-                border: '1px solid #6ee7b7',
-                color: '#047857',
-                fontSize: '0.72rem',
+                fontSize: '0.68rem',
                 fontWeight: 700,
-                padding: '4px 10px',
+                padding: '2px 8px',
                 borderRadius: '999px',
                 fontFamily: "'JetBrains Mono', monospace"
               }}>
-                🔒 SFDC Entity Lock: {dossier.meta?.customerName || 'Clean Intake'} ({dossier.meta?.vectorAccountId || 'No SFDC ID'})
-              </span>
-              <span style={{
-                background: '#ffffff',
-                border: '1px solid #cbd5e1',
-                color: '#334155',
-                fontSize: '0.72rem',
-                fontWeight: 600,
-                padding: '4px 10px',
-                borderRadius: '999px',
-                fontFamily: "'JetBrains Mono', monospace"
-              }}>
-                GCP: {dossier.meta?.gcpProjectId || 'Pending'} • {formatNumber(dossier.adoptionTelemetry?.contractedSeats || 0)} Seats • {dossier.meta?.currentWindow || `${startDate} → ${endDate}`}
+                🆔 {dossier.id}
               </span>
               <span style={{
                 background: activePrefillMode === 'random' ? '#fdf2f8' : activePrefillMode === 'clean' ? '#f5f3ff' : '#fffbeb',
                 border: activePrefillMode === 'random' ? '1px solid #f9a8d4' : activePrefillMode === 'clean' ? '1px solid #c4b5fd' : '1px solid #fde68a',
                 color: activePrefillMode === 'random' ? '#be185d' : activePrefillMode === 'clean' ? '#5b21b6' : '#b45309',
-                fontSize: '0.72rem',
+                fontSize: '0.68rem',
                 fontWeight: 700,
-                padding: '4px 10px',
+                padding: '2px 8px',
                 borderRadius: '999px'
               }}>
                 {activePrefillMode === 'random'
-                  ? '🎲 Mode: Random Option Prefill Active'
+                  ? '🎲 Random Prefill'
                   : activePrefillMode === 'clean'
-                    ? '⚪ Mode: New Unfilled Assessment (From Question 1 — C01)'
-                    : '🟢 Mode: 8-Source Evidence Prefill'}
+                    ? '⚪ New Blank (From Q1)'
+                    : '🟢 8-Source Evidence'}
               </span>
             </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-              <button
-                onClick={() => handleStartNewUnfilledAssessment(null, true)}
-                style={{
-                  background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
-                  color: '#ffffff',
-                  border: '1px solid rgba(196, 181, 253, 0.55)',
-                  borderRadius: '8px',
-                  padding: '7px 14px',
-                  fontSize: '0.78rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 14px rgba(124, 58, 237, 0.25)'
-                }}
-                title="Create a brand-new unfilled assessment with a unique Assessment ID starting at Question 1 (C01)"
-              >
-                ➕ Start New Assessment (Unfilled from Q1 • Unique ID)
-              </button>
-              <button
-                onClick={() => {
-                  setPrimaryView('inputs');
-                  toast.success('Switched to Edit Assessment Answers');
-                }}
-                style={{
-                  background: '#eff6ff',
-                  color: '#1d4ed8',
-                  border: '1px solid #bfdbfe',
-                  borderRadius: '8px',
-                  padding: '7px 11px',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px'
-                }}
-                title="Edit Assessment Answers"
-              >
-                <FiEdit3 size={12} /> Edit
-              </button>
-              <button
-                onClick={() => {
-                  const cloneId = `ge_vr_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`;
-                  const cloneName = `${dossier?.meta?.customerName || 'Enterprise'} (Clone)`;
-                  const cloned = {
-                    ...dossier,
-                    id: cloneId,
-                    meta: {
-                      ...(dossier?.meta || {}),
-                      customerName: cloneName
-                    }
-                  };
-                  setDossier(cloned);
-                  navigate(`/ge-value-realization/${cloneId}?tab=inputs`, { replace: false });
-                  toast.success(`Cloned workspace as "${cloneName}" (${cloneId})`);
-                }}
-                style={{
-                  background: '#eef2ff',
-                  color: '#4f46e5',
-                  border: '1px solid #c7d2fe',
-                  borderRadius: '8px',
-                  padding: '7px 11px',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px'
-                }}
-                title="Clone Value Realization Dossier"
-              >
-                <FiCopy size={12} /> Clone
-              </button>
-              <button
-                onClick={() => {
-                  if (window.confirm('Reset and clear this Value Realization dossier back to an unfilled assessment starting at Question 1?')) {
-                    handleStartNewUnfilledAssessment(null, false);
-                  }
-                }}
-                style={{
-                  background: '#fef2f2',
-                  color: '#dc2626',
-                  border: '1px solid #fecaca',
-                  borderRadius: '8px',
-                  padding: '7px 11px',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px'
-                }}
-                title="Delete / Reset Value Realization Dossier"
-              >
-                <FiTrash2 size={12} /> Delete
-              </button>
-              <button
-                onClick={() => handlePickRandomCustomerForModal('rich', true, 'random')}
-                disabled={ingestingCustomer}
-                style={{
-                  background: '#fdf2f8',
-                  color: '#be185d',
-                  border: '1px solid #f9a8d4',
-                  borderRadius: '8px',
-                  padding: '7px 12px',
-                  fontSize: '0.76rem',
-                  fontWeight: 800,
-                  cursor: ingestingCustomer ? 'wait' : 'pointer'
-                }}
-                title="Pick a random Salesforce customer, ingest all 8 sources, and prefill all 82 questions with randomized realistic options"
-              >
-                🎲 Random Customer + Random Options
-              </button>
-              <button
-                onClick={handleRandomizeCurrentCustomerOptions}
-                style={{
-                  background: '#fffbeb',
-                  color: '#b45309',
-                  border: '1px solid #fde68a',
-                  borderRadius: '8px',
-                  padding: '7px 12px',
-                  fontSize: '0.76rem',
-                  fontWeight: 800,
-                  cursor: 'pointer'
-                }}
-                title="Randomize all 82 question option selections for the currently active customer"
-              >
-                🔀 Randomize 82 Options ({shortCustomerName})
-              </button>
-              <button
-                onClick={handleSubmitAndGenerateGeminiReport}
-                disabled={generatingGeminiReport}
-                style={{
-                  background: generatingGeminiReport ? '#475569' : 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-                  color: '#ffffff',
-                  border: '1px solid #059669',
-                  borderRadius: '8px',
-                  padding: '7px 14px',
-                  fontSize: '0.78rem',
-                  fontWeight: 900,
-                  cursor: generatingGeminiReport ? 'wait' : 'pointer',
-                  boxShadow: '0 4px 14px rgba(16, 185, 129, 0.25)'
-                }}
-              >
-                {generatingGeminiReport ? '🧠 Gemini API Synthesizing...' : '🚀 Submit & Generate Report (Gemini API)'}
-              </button>
-              <button
-                onClick={() => handleSaveDossier(dossier, false)}
-                disabled={saving}
-                style={{
-                  background: '#ffffff',
-                  color: '#334155',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '8px',
-                  padding: '6px 11px',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  cursor: 'pointer'
-                }}
-              >
-                {saving ? 'Saving...' : '💾 Save'}
-              </button>
-              <button
-                onClick={handleExportJson}
-                style={{
-                  background: '#ffffff',
-                  color: '#334155',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '8px',
-                  padding: '6px 11px',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '5px'
-                }}
-              >
-                <FiDownload size={13} /> JSON
-              </button>
-              <button
-                onClick={() => window.print()}
-                style={{
-                  background: '#ffffff',
-                  color: '#334155',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '8px',
-                  padding: '6px 11px',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '5px'
-                }}
-              >
-                <FiPrinter size={13} /> PDF
-              </button>
+            <div style={{ fontSize: '0.76rem', color: '#475569', marginTop: '3px' }}>
+              <strong style={{ color: '#0f172a' }}>{dossier.meta?.legacyPlatformName || 'Legacy AI / Manual Baseline'}</strong> → <strong style={{ color: '#1d4ed8' }}>{dossier.meta?.targetPlatformName || 'Google Gemini Enterprise'}</strong> ({formatNumber(dossier.adoptionTelemetry?.contractedSeats || 0)} Seats) • Sponsor: <strong style={{ color: '#0f172a' }}>{dossier.meta?.executiveSponsor || 'CIO / VP Enterprise AI'}</strong>
             </div>
           </div>
 
-          {/* Row 2: Title + Primary Workspace Mode Switcher */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
-            <div>
-              <h1 style={{ fontSize: '1.55rem', fontWeight: 800, margin: '0 0 4px 0', letterSpacing: '-0.02em', color: '#0f172a' }}>
-                {dossier.meta?.customerName || 'New Enterprise Assessment'} — Gemini Enterprise Value Realization Assessment
-              </h1>
-              <p style={{ margin: 0, fontSize: '0.85rem', color: '#475569' }}>
-                <strong style={{ color: '#0f172a' }}>{dossier.meta?.legacyPlatformName || 'Legacy AI / Manual Baseline'}</strong> → <strong style={{ color: '#1d4ed8' }}>{dossier.meta?.targetPlatformName || 'Google Gemini Enterprise'}</strong> • Sponsor: <strong style={{ color: '#0f172a' }}>{dossier.meta?.executiveSponsor || 'CIO / VP Enterprise AI'}</strong> • Leads: <strong style={{ color: '#0f172a' }}>{(dossier.meta?.accountLeads && dossier.meta.accountLeads.length ? dossier.meta.accountLeads : ['Enterprise Account Lead']).join(', ')}</strong>
-              </p>
-            </div>
-
+          {/* Right: Compact Primary View Switcher + Edit/Clone/Delete + Actions Dropdown + Generate CTA */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+            {/* Primary Workspace Segmented Tabs */}
             <div style={{
               display: 'inline-flex',
               background: '#ffffff',
-              padding: '4px',
-              borderRadius: '12px',
+              padding: '3px',
+              borderRadius: '10px',
               border: '1px solid #cbd5e1',
-              gap: '4px',
-              boxShadow: '0 2px 6px rgba(15, 23, 42, 0.04)'
+              gap: '3px'
             }}>
               <button
                 onClick={() => setPrimaryView('inputs')}
@@ -1274,18 +1126,18 @@ const GeValueRealizationWorkspace = () => {
                   background: primaryView === 'inputs' ? 'linear-gradient(135deg, #2563eb, #4f46e5)' : 'transparent',
                   color: primaryView === 'inputs' ? '#ffffff' : '#334155',
                   border: 'none',
-                  borderRadius: '9px',
-                  padding: '9px 16px',
-                  fontSize: '0.82rem',
+                  borderRadius: '7px',
+                  padding: '6px 11px',
+                  fontSize: '0.75rem',
                   fontWeight: 800,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '7px'
+                  gap: '5px'
                 }}
               >
-                <FiLayers size={15} />
-                1. Input & Verification Workspace ({GE_QUESTIONS.length} Qs + {dossier.workflows?.length || 1} Workflows)
+                <FiLayers size={13} />
+                1. Questionnaire ({GE_QUESTIONS.length} Qs)
               </button>
               <button
                 onClick={() => setPrimaryView('report')}
@@ -1293,17 +1145,17 @@ const GeValueRealizationWorkspace = () => {
                   background: primaryView === 'report' ? 'linear-gradient(135deg, #059669, #0d9488)' : 'transparent',
                   color: primaryView === 'report' ? '#ffffff' : '#334155',
                   border: 'none',
-                  borderRadius: '9px',
-                  padding: '9px 16px',
-                  fontSize: '0.82rem',
+                  borderRadius: '7px',
+                  padding: '6px 11px',
+                  fontSize: '0.75rem',
                   fontWeight: 800,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '7px'
+                  gap: '5px'
                 }}
               >
-                <FiAward size={15} />
+                <FiAward size={13} />
                 2. McKinsey & Google Executive Readout {dossier.geminiReport ? '✨' : ''}
               </button>
               <button
@@ -1312,20 +1164,161 @@ const GeValueRealizationWorkspace = () => {
                   background: primaryView === 'math' ? 'linear-gradient(135deg, #d97706, #b45309)' : 'transparent',
                   color: primaryView === 'math' ? '#ffffff' : '#334155',
                   border: 'none',
-                  borderRadius: '9px',
-                  padding: '9px 16px',
-                  fontSize: '0.82rem',
+                  borderRadius: '7px',
+                  padding: '6px 11px',
+                  fontSize: '0.75rem',
                   fontWeight: 800,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '7px'
+                  gap: '5px'
                 }}
               >
-                <FiShield size={15} />
-                3. Provenance & Contradiction Guardrails
+                <FiShield size={13} />
+                3. Provenance & Guardrails
               </button>
             </div>
+
+            {/* Explicit Edit / Clone / Delete Controls */}
+            <button
+              onClick={() => {
+                setPrimaryView('inputs');
+                toast.success('Switched to Edit Assessment Answers');
+              }}
+              style={{
+                background: '#eff6ff',
+                color: '#1d4ed8',
+                border: '1px solid #bfdbfe',
+                borderRadius: '8px',
+                padding: '6px 9px',
+                fontSize: '0.73rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+              title="Edit Assessment Answers"
+            >
+              <FiEdit3 size={12} /> Edit
+            </button>
+            <button
+              onClick={() => {
+                const cloneId = `ge_vr_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`;
+                const cloneName = `${dossier?.meta?.customerName || 'Enterprise'} (Clone)`;
+                const cloned = {
+                  ...dossier,
+                  id: cloneId,
+                  meta: {
+                    ...(dossier?.meta || {}),
+                    customerName: cloneName
+                  }
+                };
+                setDossier(cloned);
+                navigate(`/ge-value-realization/${cloneId}?tab=inputs`, { replace: false });
+                toast.success(`Cloned workspace as "${cloneName}" (${cloneId})`);
+              }}
+              style={{
+                background: '#eef2ff',
+                color: '#4f46e5',
+                border: '1px solid #c7d2fe',
+                borderRadius: '8px',
+                padding: '6px 9px',
+                fontSize: '0.73rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+              title="Clone Value Realization Dossier"
+            >
+              <FiCopy size={12} /> Clone
+            </button>
+            <button
+              onClick={() => {
+                if (window.confirm('Reset and clear this Value Realization dossier back to an unfilled assessment starting at Question 1?')) {
+                  handleStartNewUnfilledAssessment(null, false);
+                }
+              }}
+              style={{
+                background: '#fef2f2',
+                color: '#dc2626',
+                border: '1px solid #fecaca',
+                borderRadius: '8px',
+                padding: '6px 9px',
+                fontSize: '0.73rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+              title="Delete / Reset Value Realization Dossier"
+            >
+              <FiTrash2 size={12} /> Delete
+            </button>
+
+            {/* Consolidated Assessment Actions & Export Dropdown */}
+            <select
+              value=""
+              onChange={(e) => {
+                const action = e.target.value;
+                if (!action) return;
+                if (action === 'new_blank') {
+                  handleStartNewUnfilledAssessment(null, true);
+                } else if (action === 'random_customer') {
+                  handlePickRandomCustomerForModal('rich', true, 'random');
+                } else if (action === 'randomize_options') {
+                  handleRandomizeCurrentCustomerOptions();
+                } else if (action === 'save') {
+                  handleSaveDossier(dossier, false);
+                } else if (action === 'export_json') {
+                  handleExportJson();
+                } else if (action === 'print_pdf') {
+                  window.print();
+                }
+              }}
+              style={{
+                background: '#ffffff',
+                color: '#1e3a8a',
+                border: '1.5px solid #93c5fd',
+                borderRadius: '8px',
+                padding: '6px 10px',
+                fontSize: '0.75rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                maxWidth: '175px'
+              }}
+              title="Assessment Actions, Randomizers & Export Options"
+            >
+              <option value="" disabled>⚡ Actions & Export ▾</option>
+              <option value="new_blank">➕ Start New Assessment (Unfilled from Q1)</option>
+              <option value="random_customer">🎲 Random Customer + Random Options</option>
+              <option value="randomize_options">🔀 Randomize 82 Options ({shortCustomerName})</option>
+              <option value="save">💾 Save Assessment Dossier</option>
+              <option value="export_json">📥 Export Dossier JSON</option>
+              <option value="print_pdf">🖨️ Print / Export Executive PDF</option>
+            </select>
+
+            {/* Primary Submit & Generate Report CTA */}
+            <button
+              onClick={handleSubmitAndGenerateGeminiReport}
+              disabled={generatingGeminiReport}
+              style={{
+                background: generatingGeminiReport ? '#475569' : 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+                color: '#ffffff',
+                border: '1px solid #059669',
+                borderRadius: '8px',
+                padding: '6px 13px',
+                fontSize: '0.76rem',
+                fontWeight: 900,
+                cursor: generatingGeminiReport ? 'wait' : 'pointer',
+                boxShadow: '0 3px 10px rgba(16, 185, 129, 0.22)'
+              }}
+            >
+              {generatingGeminiReport ? '🧠 Synthesizing...' : '🚀 Generate Report'}
+            </button>
           </div>
         </div>
       </div>
@@ -1618,7 +1611,7 @@ const GeValueRealizationWorkspace = () => {
         )}
 
         {/* ===================================================================
-            UNIVERSAL CUSTOMER 360 & TIME-SCOPED 8-SOURCE INGESTION HUB
+            UNIVERSAL CUSTOMER 360 & TIME-SCOPED 8-SOURCE INGESTION HUB (COMPACT DROPDOWN BAR)
            =================================================================== */}
         {(() => {
           const ingestionAudit = dossier.ingestionAudit;
@@ -1632,80 +1625,24 @@ const GeValueRealizationWorkspace = () => {
             <div style={{
               background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
               border: '1.5px solid #93c5fd',
-              borderTop: '4px solid #2563eb',
-              borderRadius: '16px',
-              padding: '18px 22px',
-              marginBottom: '18px',
-              boxShadow: '0 8px 24px rgba(15, 23, 42, 0.06)'
+              borderTop: '3px solid #2563eb',
+              borderRadius: '12px',
+              padding: '10px 16px',
+              marginBottom: '12px',
+              boxShadow: '0 4px 14px rgba(15, 23, 42, 0.05)'
             }}>
-              {/* Top Header Row of Ingestion Hub */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '14px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                  <span style={{
-                    background: '#1e3a8a',
-                    color: '#ffffff',
-                    fontSize: '0.7rem',
-                    fontWeight: 900,
-                    padding: '4px 10px',
-                    borderRadius: '6px',
-                    letterSpacing: '0.06em',
-                    textTransform: 'uppercase'
-                  }}>
-                    🌐 Universal Salesforce Customer & Time-Window Multi-Source Ingestor
-                  </span>
-                  <span style={{ fontSize: '0.78rem', color: '#334155', fontWeight: 600 }}>
-                    Indexed Catalog: <strong>4,351 Salesforce / Vector Accounts</strong> • <strong>8 Enterprise Connectors</strong> (SFDC, Chat, Email, Drive, Docs, Sheets, Slides, Moma/Buganizer)
-                  </span>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                  {ingestionAudit && (
-                    <span style={{
-                      background: '#ecfdf5',
-                      color: '#047857',
-                      border: '1px solid #6ee7b7',
-                      borderRadius: '999px',
-                      padding: '4px 11px',
-                      fontSize: '0.72rem',
-                      fontWeight: 800,
-                      fontFamily: 'monospace'
-                    }}>
-                      ✓ {activeItemsList.length} Matched Artifacts • {quarantinedItemsList.length} Noise Quarantined
-                    </span>
-                  )}
-                  <button
-                    onClick={() => setShowIngestionAuditDrawer((prev) => !prev)}
-                    style={{
-                      background: showIngestionAuditDrawer ? '#1e3a8a' : '#eff6ff',
-                      color: showIngestionAuditDrawer ? '#ffffff' : '#1d4ed8',
-                      border: '1px solid #93c5fd',
-                      borderRadius: '8px',
-                      padding: '6px 12px',
-                      fontSize: '0.75rem',
-                      fontWeight: 800,
-                      cursor: 'pointer'
-                    }}
-                  >
-                    {showIngestionAuditDrawer ? '▾ Hide 8-Source Evidence & 4-Pillar Audit' : '▸ Inspect 8-Source Evidence & 4-Pillar Audit'}
-                  </button>
-                </div>
-              </div>
-
-              {/* Row 2: Search Input + Time Window Controls + Fetch Button */}
+              {/* Single Compact Row: Search + Quick-Load Dropdown + Time Window Dropdown + Connectors Dropdown + Fetch + Audit */}
               <div style={{
-                display: 'grid',
-                gridTemplateColumns: '1.5fr 0.9fr 0.65fr 0.65fr auto',
-                gap: '10px',
-                alignItems: 'end',
-                marginBottom: '12px'
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '8px'
               }}>
-                {/* Control 1: Customer Name or 18-char Salesforce Account ID */}
-                <div style={{ position: 'relative' }}>
-                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', color: '#1e293b', marginBottom: '4px' }}>
-                    1. Customer Name or Salesforce Account ID (e.g. AeroVanguard, OmniMart, ACC-1001-AEROVG)
-                  </label>
+                {/* 1. Customer Search Input (4,351 SFDC / Vector Accounts) */}
+                <div style={{ position: 'relative', flex: '1.4 1 250px', minWidth: '220px' }}>
                   <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                    <FiSearch size={14} style={{ position: 'absolute', left: '11px', color: '#64748b' }} />
+                    <FiSearch size={13} style={{ position: 'absolute', left: '10px', color: '#64748b' }} />
                     <input
                       type="text"
                       value={customerInput}
@@ -1726,11 +1663,11 @@ const GeValueRealizationWorkspace = () => {
                           handleIngestCustomer({ customerQuery: customerInput, sfdcAccountId: '' });
                         }
                       }}
-                      placeholder="Enter any Salesforce Customer Name or 18-char ID (0014M...)"
+                      placeholder="Search 4,351 SFDC Accounts or ID (e.g. AeroVanguard, ACC-1001-AEROVG)..."
                       style={{
                         width: '100%',
-                        padding: '8px 12px 8px 32px',
-                        fontSize: '0.82rem',
+                        padding: '7px 10px 7px 29px',
+                        fontSize: '0.78rem',
                         fontWeight: 700,
                         borderRadius: '8px',
                         border: '1.5px solid #93c5fd',
@@ -1808,98 +1745,214 @@ const GeValueRealizationWorkspace = () => {
                   )}
                 </div>
 
-                {/* Control 2: Time Period Preset */}
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', color: '#1e293b', marginBottom: '4px' }}>
-                    2. Time Period Cohort
-                  </label>
-                  <select
-                    value={timePreset}
-                    onChange={(e) => {
-                      const nextPreset = e.target.value;
-                      setTimePreset(nextPreset);
-                      const found = TIME_WINDOW_PRESETS.find((p) => p.id === nextPreset);
-                      if (found && nextPreset !== 'custom') {
-                        setStartDate(found.startDate);
-                        setEndDate(found.endDate);
-                        handleIngestCustomer({
-                          timePreset: nextPreset,
-                          startDate: found.startDate,
-                          endDate: found.endDate
-                        });
-                      }
-                    }}
-                    style={{
-                      width: '100%',
-                      padding: '8px 10px',
-                      fontSize: '0.8rem',
-                      fontWeight: 700,
-                      borderRadius: '8px',
-                      border: '1px solid #cbd5e1',
-                      background: '#ffffff',
-                      color: '#0f172a'
-                    }}
-                  >
-                    {TIME_WINDOW_PRESETS.map((p) => (
-                      <option key={p.id} value={p.id}>{p.label}</option>
-                    ))}
-                  </select>
-                </div>
+                {/* 2. Quick-Load Strategic SFDC Account Dropdown (Replaces 10 Pill Buttons) */}
+                <select
+                  value={dossier.meta?.vectorAccountId || ''}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (!val) return;
+                    if (val === '__NEW_BLANK__') {
+                      handleStartNewUnfilledAssessment(null, true);
+                      return;
+                    }
+                    if (val === '__RANDOM_CUSTOMER__') {
+                      handlePickRandomCustomerForModal('rich', true, 'random');
+                      return;
+                    }
+                    const found = STRATEGIC_QUICK_ACCOUNTS.find((a) => a.sfdcId === val);
+                    if (found) {
+                      setCustomerInput(`${found.shortName} (${found.sfdcId})`);
+                      setSelectedSfdcId(found.sfdcId);
+                      handleIngestCustomer({
+                        customerQuery: found.shortName,
+                        sfdcAccountId: found.sfdcId
+                      });
+                    }
+                  }}
+                  style={{
+                    padding: '7px 10px',
+                    fontSize: '0.76rem',
+                    fontWeight: 800,
+                    borderRadius: '8px',
+                    border: '1px solid #cbd5e1',
+                    background: '#f8fafc',
+                    color: '#1e3a8a',
+                    cursor: 'pointer'
+                  }}
+                  title="Quick-load any strategic Salesforce customer account or start a new assessment"
+                >
+                  <option value="" disabled>🏢 Quick-Load Account ▾</option>
+                  {STRATEGIC_QUICK_ACCOUNTS.map((item) => (
+                    <option key={item.sfdcId} value={item.sfdcId}>
+                      🏢 {item.shortName} ({item.seats} seats • {item.sfdcId})
+                    </option>
+                  ))}
+                  <option value="__RANDOM_CUSTOMER__">🎲 Pick Random SFDC Customer & Options...</option>
+                  <option value="__NEW_BLANK__">➕ Start New Blank Assessment (From Q1)...</option>
+                </select>
 
-                {/* Control 3: Start Date */}
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', color: '#1e293b', marginBottom: '4px' }}>
-                    Start Date
-                  </label>
-                  <input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => {
-                      setStartDate(e.target.value);
-                      setTimePreset('custom');
-                    }}
-                    style={{
-                      width: '100%',
-                      padding: '7px 10px',
-                      fontSize: '0.78rem',
-                      fontWeight: 700,
-                      fontFamily: 'monospace',
-                      borderRadius: '8px',
-                      border: '1px solid #cbd5e1',
-                      background: '#ffffff',
-                      color: '#0f172a'
-                    }}
-                  />
-                </div>
+                {/* 3. Time Period Cohort Dropdown */}
+                <select
+                  value={timePreset}
+                  onChange={(e) => {
+                    const nextPreset = e.target.value;
+                    setTimePreset(nextPreset);
+                    const found = TIME_WINDOW_PRESETS.find((p) => p.id === nextPreset);
+                    if (found && nextPreset !== 'custom') {
+                      setStartDate(found.startDate);
+                      setEndDate(found.endDate);
+                      handleIngestCustomer({
+                        timePreset: nextPreset,
+                        startDate: found.startDate,
+                        endDate: found.endDate
+                      });
+                    }
+                  }}
+                  style={{
+                    padding: '7px 10px',
+                    fontSize: '0.76rem',
+                    fontWeight: 700,
+                    borderRadius: '8px',
+                    border: '1px solid #cbd5e1',
+                    background: '#ffffff',
+                    color: '#0f172a',
+                    cursor: 'pointer'
+                  }}
+                  title="Select Time Period Cohort"
+                >
+                  {TIME_WINDOW_PRESETS.map((p) => (
+                    <option key={p.id} value={p.id}>📅 {p.label}</option>
+                  ))}
+                </select>
 
-                {/* Control 4: End Date */}
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', color: '#1e293b', marginBottom: '4px' }}>
-                    End Date
-                  </label>
-                  <input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => {
-                      setEndDate(e.target.value);
-                      setTimePreset('custom');
-                    }}
-                    style={{
-                      width: '100%',
-                      padding: '7px 10px',
-                      fontSize: '0.78rem',
-                      fontWeight: 700,
-                      fontFamily: 'monospace',
-                      borderRadius: '8px',
-                      border: '1px solid #cbd5e1',
-                      background: '#ffffff',
-                      color: '#0f172a'
-                    }}
-                  />
-                </div>
+                {/* Inline Custom Date Inputs (Only Shown When Custom Range Selected) */}
+                {timePreset === 'custom' && (
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                    <input
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                      style={{
+                        padding: '6px 8px',
+                        fontSize: '0.74rem',
+                        fontWeight: 700,
+                        fontFamily: 'monospace',
+                        borderRadius: '7px',
+                        border: '1px solid #cbd5e1',
+                        background: '#ffffff',
+                        color: '#0f172a'
+                      }}
+                    />
+                    <span style={{ fontSize: '0.72rem', color: '#64748b' }}>→</span>
+                    <input
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      style={{
+                        padding: '6px 8px',
+                        fontSize: '0.74rem',
+                        fontWeight: 700,
+                        fontFamily: 'monospace',
+                        borderRadius: '7px',
+                        border: '1px solid #cbd5e1',
+                        background: '#ffffff',
+                        color: '#0f172a'
+                      }}
+                    />
+                  </div>
+                )}
 
-                {/* Control 5: Execute Multi-Source Fetch */}
-                <div style={{ display: 'flex', gap: '6px' }}>
+                {/* 4. 8 Enterprise Source Connectors Dropdown Popover (Replaces 8 Connector Pills) */}
+                <details style={{ position: 'relative' }}>
+                  <summary style={{
+                    listStyle: 'none',
+                    background: '#eff6ff',
+                    color: '#1d4ed8',
+                    border: '1px solid #93c5fd',
+                    borderRadius: '8px',
+                    padding: '7px 11px',
+                    fontSize: '0.75rem',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    userSelect: 'none',
+                    whiteSpace: 'nowrap',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}>
+                    🔌 {enabledSources.length}/8 Sources ({activeItemsList.length} Artifacts) ▾
+                  </summary>
+                  <div style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 6px)',
+                    right: 0,
+                    width: '310px',
+                    background: '#ffffff',
+                    border: '1.5px solid #2563eb',
+                    borderRadius: '12px',
+                    padding: '10px 12px',
+                    boxShadow: '0 14px 32px rgba(15, 23, 42, 0.18)',
+                    zIndex: 70
+                  }}>
+                    <div style={{ fontSize: '0.68rem', fontWeight: 800, textTransform: 'uppercase', color: '#1e3a8a', marginBottom: '8px', display: 'flex', justifyContent: 'space-between' }}>
+                      <span>8 Enterprise Source Connectors</span>
+                      <span>{activeItemsList.length} Matched</span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                      {ENTERPRISE_SOURCE_CONNECTORS.map((src) => {
+                        const active = enabledSources.includes(src.id);
+                        const cov = (ingestionAudit?.sourceCoverage || []).find((c) => c.id === src.id);
+                        const count = cov ? cov.activeArtifactCount : '✓';
+                        return (
+                          <label
+                            key={src.id}
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              padding: '5px 8px',
+                              borderRadius: '7px',
+                              background: active ? '#eff6ff' : '#f8fafc',
+                              border: active ? '1px solid #bfdbfe' : '1px solid #e2e8f0',
+                              cursor: 'pointer',
+                              fontSize: '0.74rem',
+                              fontWeight: 700,
+                              color: active ? '#1e3a8a' : '#64748b'
+                            }}
+                          >
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <input
+                                type="checkbox"
+                                checked={active}
+                                onChange={() => {
+                                  const nextSources = active
+                                    ? (enabledSources.length > 1 ? enabledSources.filter((s) => s !== src.id) : enabledSources)
+                                    : [...enabledSources, src.id];
+                                  setEnabledSources(nextSources);
+                                  handleIngestCustomer({ sources: nextSources });
+                                }}
+                              />
+                              <span>{src.icon} {src.label}</span>
+                            </span>
+                            <span style={{
+                              background: active ? '#1d4ed8' : '#cbd5e1',
+                              color: '#ffffff',
+                              borderRadius: '999px',
+                              padding: '1px 6px',
+                              fontSize: '0.64rem',
+                              fontFamily: 'monospace'
+                            }}>
+                              {count}
+                            </span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </details>
+
+                {/* 5. Fetch 8 Sources + Inspect Audit Drawer Toggle */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <button
                     onClick={() => handleIngestCustomer({ prefillMode: 'evidence' })}
                     disabled={ingestingCustomer}
@@ -1907,125 +1960,33 @@ const GeValueRealizationWorkspace = () => {
                       background: ingestingCustomer ? '#64748b' : 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
                       color: '#ffffff',
                       border: 'none',
-                      borderRadius: '9px',
-                      padding: '9px 14px',
-                      fontSize: '0.78rem',
-                      fontWeight: 800,
-                      cursor: ingestingCustomer ? 'wait' : 'pointer',
-                      whiteSpace: 'nowrap',
-                      boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)'
-                    }}
-                  >
-                    {ingestingCustomer ? '⏳ Reconciling...' : '⚡ Fetch 8 Sources'}
-                  </button>
-                  <button
-                    onClick={() => handlePickRandomCustomerForModal('rich', true, 'random')}
-                    disabled={ingestingCustomer}
-                    style={{
-                      background: 'linear-gradient(135deg, #db2777 0%, #9333ea 100%)',
-                      color: '#ffffff',
-                      border: 'none',
-                      borderRadius: '9px',
-                      padding: '9px 12px',
+                      borderRadius: '8px',
+                      padding: '7px 12px',
                       fontSize: '0.76rem',
                       fontWeight: 800,
                       cursor: ingestingCustomer ? 'wait' : 'pointer',
                       whiteSpace: 'nowrap'
                     }}
-                    title="Pick a random Salesforce customer and prefill all 82 questions with randomized options"
                   >
-                    🎲 Random Customer & Options
+                    {ingestingCustomer ? '⏳ Reconciling...' : '⚡ Fetch 8 Sources'}
                   </button>
-                </div>
-              </div>
-
-              {/* Row 3: Quick-Switch Strategic Salesforce Accounts + 8 Enterprise Source Connectors */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', paddingTop: '10px', borderTop: '1px solid #e2e8f0' }}>
-                {/* Quick-Switch Strategic Accounts */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: '0.68rem', fontWeight: 800, textTransform: 'uppercase', color: '#64748b' }}>
-                    Quick-Load SFDC Account:
-                  </span>
-                  {STRATEGIC_QUICK_ACCOUNTS.map((item) => {
-                    const isCurrent = dossier.meta?.vectorAccountId === item.sfdcId;
-                    return (
-                      <button
-                        key={item.sfdcId}
-                        onClick={() => {
-                          setCustomerInput(`${item.shortName} (${item.sfdcId})`);
-                          setSelectedSfdcId(item.sfdcId);
-                          handleIngestCustomer({
-                            customerQuery: item.shortName,
-                            sfdcAccountId: item.sfdcId
-                          });
-                        }}
-                        style={{
-                          background: isCurrent ? '#1e3a8a' : '#f1f5f9',
-                          color: isCurrent ? '#ffffff' : '#334155',
-                          border: isCurrent ? '1px solid #1e3a8a' : '1px solid #cbd5e1',
-                          borderRadius: '999px',
-                          padding: '3px 9px',
-                          fontSize: '0.7rem',
-                          fontWeight: 700,
-                          cursor: 'pointer'
-                        }}
-                        title={`Salesforce ID: ${item.sfdcId} (${item.seats} seats)`}
-                      >
-                        {item.shortName} <span style={{ opacity: 0.75, fontSize: '0.64rem' }}>({item.seats})</span>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* 8 Enterprise Source Connector Pills */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: '0.68rem', fontWeight: 800, textTransform: 'uppercase', color: '#64748b', marginRight: '2px' }}>
-                    Active Connectors:
-                  </span>
-                  {ENTERPRISE_SOURCE_CONNECTORS.map((src) => {
-                    const active = enabledSources.includes(src.id);
-                    const cov = (ingestionAudit?.sourceCoverage || []).find((c) => c.id === src.id);
-                    const count = cov ? cov.activeArtifactCount : '✓';
-                    return (
-                      <button
-                        key={src.id}
-                        onClick={() => {
-                          const nextSources = active
-                            ? (enabledSources.length > 1 ? enabledSources.filter((s) => s !== src.id) : enabledSources)
-                            : [...enabledSources, src.id];
-                          setEnabledSources(nextSources);
-                          handleIngestCustomer({ sources: nextSources });
-                        }}
-                        style={{
-                          background: active ? '#eff6ff' : '#f8fafc',
-                          color: active ? '#1d4ed8' : '#94a3b8',
-                          border: active ? '1px solid #93c5fd' : '1px solid #e2e8f0',
-                          borderRadius: '6px',
-                          padding: '3px 8px',
-                          fontSize: '0.68rem',
-                          fontWeight: 800,
-                          cursor: 'pointer',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '4px'
-                        }}
-                        title={`${src.label} (${src.domain}) — Click to toggle source`}
-                      >
-                        <span>{src.icon}</span>
-                        <span>{src.label}</span>
-                        <span style={{
-                          background: active ? '#1d4ed8' : '#cbd5e1',
-                          color: '#ffffff',
-                          borderRadius: '999px',
-                          padding: '0 5px',
-                          fontSize: '0.62rem',
-                          fontFamily: 'monospace'
-                        }}>
-                          {count}
-                        </span>
-                      </button>
-                    );
-                  })}
+                  <button
+                    onClick={() => setShowIngestionAuditDrawer((prev) => !prev)}
+                    style={{
+                      background: showIngestionAuditDrawer ? '#1e3a8a' : '#ecfdf5',
+                      color: showIngestionAuditDrawer ? '#ffffff' : '#047857',
+                      border: '1px solid #6ee7b7',
+                      borderRadius: '8px',
+                      padding: '7px 10px',
+                      fontSize: '0.73rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap'
+                    }}
+                    title="Inspect 8-Source Evidence Lineage & 4-Pillar Quality Audit"
+                  >
+                    {showIngestionAuditDrawer ? '▾ Hide Audit' : `🔎 Audit (${activeItemsList.length})`}
+                  </button>
                 </div>
               </div>
 
@@ -2235,311 +2196,143 @@ const GeValueRealizationWorkspace = () => {
         })()}
 
         {/* ===================================================================
-            VIEW 1: INPUT & VERIFICATION WORKSPACE (3 SWITCHABLE MODES)
+            VIEW 1: INPUT & VERIFICATION WORKSPACE (UNIFIED DROPDOWN FILTER BAR)
            =================================================================== */}
         {primaryView === 'inputs' && (
           <div>
-            {/* Top Mode Switcher & Filter Strip */}
+            {/* Unified Single-Row Questionnaire View & Filter Toolbar (Dropdown-Driven) */}
             <div style={{
               background: '#ffffff',
               border: '1px solid #cbd5e1',
-              borderRadius: '14px',
-              padding: '14px 20px',
-              marginBottom: '12px',
+              borderRadius: '12px',
+              padding: '10px 16px',
+              marginBottom: '14px',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
               flexWrap: 'wrap',
-              gap: '14px',
+              gap: '10px',
               boxShadow: '0 2px 6px rgba(15,23,42,0.04)'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                <span style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#475569' }}>
-                  Input View Mode:
-                </span>
-                <div style={{ display: 'inline-flex', background: '#f1f5f9', padding: '3px', borderRadius: '10px', border: '1px solid #cbd5e1' }}>
-                  <button
-                    onClick={() => setInputMode('section')}
-                    style={{
-                      background: inputMode === 'section' ? '#1e3a8a' : 'transparent',
-                      color: inputMode === 'section' ? '#ffffff' : '#475569',
-                      border: 'none',
-                      borderRadius: '7px',
-                      padding: '7px 13px',
-                      fontSize: '0.78rem',
-                      fontWeight: 700,
-                      cursor: 'pointer'
-                    }}
-                  >
-                    📑 Mode 1: Section / Role Page (Default)
-                  </button>
-                  <button
-                    onClick={() => { setInputMode('wizard'); setWizardIndex(0); }}
-                    style={{
-                      background: inputMode === 'wizard' ? '#1e3a8a' : 'transparent',
-                      color: inputMode === 'wizard' ? '#ffffff' : '#475569',
-                      border: 'none',
-                      borderRadius: '7px',
-                      padding: '7px 13px',
-                      fontSize: '0.78rem',
-                      fontWeight: 700,
-                      cursor: 'pointer'
-                    }}
-                  >
-                    🎯 Mode 2: 1-by-1 Focus Wizard
-                  </button>
-                  <button
-                    onClick={() => setInputMode('grid')}
-                    style={{
-                      background: inputMode === 'grid' ? '#1e3a8a' : 'transparent',
-                      color: inputMode === 'grid' ? '#ffffff' : '#475569',
-                      border: 'none',
-                      borderRadius: '7px',
-                      padding: '7px 13px',
-                      fontSize: '0.78rem',
-                      fontWeight: 700,
-                      cursor: 'pointer'
-                    }}
-                  >
-                    ⊞ Mode 3: All-on-One-Page Audit Grid
-                  </button>
-                </div>
+              {/* Left Group: 4 Clean Dropdown Selectors (View Mode, Verification Status, Confidence Tier, Stakeholder Role) */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', flex: '1 1 auto' }}>
+                {/* 1. Input View Mode Dropdown */}
+                <select
+                  value={inputMode}
+                  onChange={(e) => {
+                    const nextMode = e.target.value;
+                    setInputMode(nextMode);
+                    if (nextMode === 'wizard') setWizardIndex(0);
+                  }}
+                  style={{
+                    padding: '7px 10px',
+                    fontSize: '0.76rem',
+                    fontWeight: 800,
+                    borderRadius: '8px',
+                    border: '1.5px solid #93c5fd',
+                    background: '#eff6ff',
+                    color: '#1e3a8a',
+                    cursor: 'pointer'
+                  }}
+                  title="Switch Questionnaire Layout Mode"
+                >
+                  <option value="section">📑 View: Section / Role Page (Default)</option>
+                  <option value="wizard">🎯 View: 1-by-1 Focus Wizard</option>
+                  <option value="grid">⊞ View: All-on-One-Page Audit Grid</option>
+                </select>
+
+                {/* 2. Verification Status Filter Dropdown */}
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  style={{
+                    padding: '7px 10px',
+                    fontSize: '0.76rem',
+                    fontWeight: 700,
+                    borderRadius: '8px',
+                    border: '1px solid #cbd5e1',
+                    background: statusFilter === 'ALL' ? '#ffffff' : '#f8fafc',
+                    color: '#0f172a',
+                    cursor: 'pointer'
+                  }}
+                  title="Filter Questions by Verification Status"
+                >
+                  <option value="ALL">📋 Status: All Questions ({statusCounts.total})</option>
+                  <option value="verified">🟢 Verified ({statusCounts.verified})</option>
+                  <option value="draft_verify">🟡 Verify w/ {shortCustomerName} ({statusCounts.draft_verify})</option>
+                  <option value="pending">⚪ Evidence Pending ({statusCounts.pending})</option>
+                </select>
+
+                {/* 3. Confidence Tier Filter Dropdown */}
+                <select
+                  value={confidenceTierFilter}
+                  onChange={(e) => {
+                    setConfidenceTierFilter(e.target.value);
+                    setWizardIndex(0);
+                  }}
+                  style={{
+                    padding: '7px 10px',
+                    fontSize: '0.76rem',
+                    fontWeight: 700,
+                    borderRadius: '8px',
+                    border: '1px solid #cbd5e1',
+                    background: confidenceTierFilter === 'ALL' ? '#ffffff' : '#f8fafc',
+                    color: '#0f172a',
+                    cursor: 'pointer'
+                  }}
+                  title="Filter Questions by Evidence Confidence Tier"
+                >
+                  <option value="ALL">🎯 Tier: All Confidence Tiers ({tierCounts.total})</option>
+                  <option value="A">🟢 Tier A: 90–100% Portal Verified ({tierCounts.A} Qs • 1.0x)</option>
+                  <option value="B">🔵 Tier B: 75–89% Doc/Pilot Backed ({tierCounts.B} Qs • 0.75x)</option>
+                  <option value="C">🟡 Tier C: 40–74% CoP/Survey ({tierCounts.C} Qs • 0.40x)</option>
+                  <option value="D">⚪ Tier D: 0–39% Unfilled / Pending ({tierCounts.D} Qs • 0.0x)</option>
+                  <option value="CONFIRM_QUEUE">👥 Customer Confirmation Queue ({tierCounts.confirmQueue} Qs)</option>
+                </select>
+
+                {/* 4. Stakeholder Role Packet Filter Dropdown */}
+                <select
+                  value={activeRoleFilter}
+                  onChange={(e) => setActiveRoleFilter(e.target.value)}
+                  style={{
+                    padding: '7px 10px',
+                    fontSize: '0.76rem',
+                    fontWeight: 700,
+                    borderRadius: '8px',
+                    border: '1px solid #cbd5e1',
+                    background: '#ffffff',
+                    color: '#0f172a',
+                    cursor: 'pointer'
+                  }}
+                  title="Filter Questions by Stakeholder Role Packet"
+                >
+                  {RESPONDENT_FORMS.map((rf) => (
+                    <option key={rf.id} value={rf.id}>
+                      👤 {rf.title} ({rf.badge})
+                    </option>
+                  ))}
+                </select>
               </div>
 
-              {/* Verification Status Filter Pills */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                <button
-                  onClick={() => setStatusFilter('ALL')}
-                  style={{
-                    background: statusFilter === 'ALL' ? '#1e3a8a' : '#f8fafc',
-                    color: statusFilter === 'ALL' ? '#ffffff' : '#334155',
-                    border: '1px solid #cbd5e1',
-                    borderRadius: '999px',
-                    padding: '5px 11px',
-                    fontSize: '0.74rem',
-                    fontWeight: 700,
-                    cursor: 'pointer'
-                  }}
-                >
-                  All ({statusCounts.total})
-                </button>
-                <button
-                  onClick={() => setStatusFilter('verified')}
-                  style={{
-                    background: statusFilter === 'verified' ? '#059669' : '#ecfdf5',
-                    color: statusFilter === 'verified' ? '#ffffff' : '#047857',
-                    border: '1px solid #6ee7b7',
-                    borderRadius: '999px',
-                    padding: '5px 11px',
-                    fontSize: '0.74rem',
-                    fontWeight: 700,
-                    cursor: 'pointer'
-                  }}
-                >
-                  🟢 Verified ({statusCounts.verified})
-                </button>
-                <button
-                  onClick={() => setStatusFilter('draft_verify')}
-                  style={{
-                    background: statusFilter === 'draft_verify' ? '#d97706' : '#fffbeb',
-                    color: statusFilter === 'draft_verify' ? '#ffffff' : '#b45309',
-                    border: '1px solid #fcd34d',
-                    borderRadius: '999px',
-                    padding: '5px 11px',
-                    fontSize: '0.74rem',
-                    fontWeight: 700,
-                    cursor: 'pointer'
-                  }}
-                >
-                  🟡 Verify w/ {shortCustomerName} ({statusCounts.draft_verify})
-                </button>
-                <button
-                  onClick={() => setStatusFilter('pending')}
-                  style={{
-                    background: statusFilter === 'pending' ? '#475569' : '#f8fafc',
-                    color: statusFilter === 'pending' ? '#ffffff' : '#475569',
-                    border: '1px solid #cbd5e1',
-                    borderRadius: '999px',
-                    padding: '5px 11px',
-                    fontSize: '0.74rem',
-                    fontWeight: 700,
-                    cursor: 'pointer'
-                  }}
-                >
-                  ⚪ Evidence Pending ({statusCounts.pending})
-                </button>
-              </div>
-
+              {/* Right Group: Search Input + Per-Option Confidence Toggle + Bulk Confirm */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                 <div style={{ position: 'relative' }}>
-                  <FiSearch style={{ position: 'absolute', left: '10px', top: '9px', color: '#64748b' }} size={14} />
+                  <FiSearch style={{ position: 'absolute', left: '10px', top: '8px', color: '#64748b' }} size={13} />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search ID, question, owner..."
                     style={{
-                      padding: '6px 12px 6px 30px',
+                      padding: '6px 10px 6px 28px',
                       borderRadius: '8px',
                       border: '1px solid #cbd5e1',
-                      fontSize: '0.78rem',
-                      width: '185px'
+                      fontSize: '0.76rem',
+                      width: '175px'
                     }}
                   />
                 </div>
-                <button
-                  onClick={handleRandomizeCurrentCustomerOptions}
-                  style={{
-                    background: '#fdf2f8',
-                    color: '#be185d',
-                    border: '1px solid #f472b6',
-                    borderRadius: '8px',
-                    padding: '7px 11px',
-                    fontSize: '0.75rem',
-                    fontWeight: 800,
-                    cursor: 'pointer'
-                  }}
-                  title="Randomly select candidate options across all 82 questions for this customer"
-                >
-                  🔀 Randomize 82 Options
-                </button>
-                <button
-                  onClick={handleSubmitAndGenerateGeminiReport}
-                  disabled={generatingGeminiReport}
-                  style={{
-                    background: generatingGeminiReport ? '#475569' : 'linear-gradient(135deg, #059669 0%, #0d9488 100%)',
-                    color: '#ffffff',
-                    border: 'none',
-                    borderRadius: '8px',
-                    padding: '7px 14px',
-                    fontSize: '0.78rem',
-                    fontWeight: 900,
-                    cursor: generatingGeminiReport ? 'wait' : 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    boxShadow: '0 4px 12px rgba(5, 150, 105, 0.25)'
-                  }}
-                >
-                  {generatingGeminiReport ? '🧠 Gemini API Synthesizing...' : '🚀 Submit & Generate Report (Gemini API)'} <FiArrowRight size={14} />
-                </button>
-              </div>
-            </div>
 
-            {/* ===============================================================
-                CONFIDENCE TIER FILTER BAR & CUSTOMER CONFIRMATION QUEUE STRIP
-               =============================================================== */}
-            <div style={{
-              background: 'linear-gradient(135deg, #eff6ff 0%, #eef2ff 60%, #f8fafc 100%)',
-              color: '#0f172a',
-              border: '1px solid #cbd5e1',
-              borderRadius: '14px',
-              padding: '12px 18px',
-              marginBottom: '16px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '12px',
-              boxShadow: '0 4px 14px rgba(15,23,42,0.05)'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                <span style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#334155', marginRight: '4px' }}>
-                  🎯 Filter by Confidence Tier:
-                </span>
-                <button
-                  onClick={() => setConfidenceTierFilter('ALL')}
-                  style={{
-                    background: confidenceTierFilter === 'ALL' ? '#2563eb' : '#ffffff',
-                    color: confidenceTierFilter === 'ALL' ? '#ffffff' : '#334155',
-                    border: confidenceTierFilter === 'ALL' ? '1px solid #1d4ed8' : '1px solid #cbd5e1',
-                    borderRadius: '999px',
-                    padding: '5px 12px',
-                    fontSize: '0.73rem',
-                    fontWeight: 800,
-                    cursor: 'pointer'
-                  }}
-                >
-                  All Tiers ({tierCounts.total})
-                </button>
-                <button
-                  onClick={() => { setConfidenceTierFilter('A'); setWizardIndex(0); }}
-                  style={{
-                    background: confidenceTierFilter === 'A' ? '#059669' : '#ecfdf5',
-                    color: confidenceTierFilter === 'A' ? '#ffffff' : '#065f46',
-                    border: '1px solid #6ee7b7',
-                    borderRadius: '999px',
-                    padding: '5px 12px',
-                    fontSize: '0.73rem',
-                    fontWeight: 800,
-                    cursor: 'pointer'
-                  }}
-                >
-                  🟢 Tier A: 90–100% Portal Verified ({tierCounts.A} Qs • 1.0x)
-                </button>
-                <button
-                  onClick={() => { setConfidenceTierFilter('B'); setWizardIndex(0); }}
-                  style={{
-                    background: confidenceTierFilter === 'B' ? '#2563eb' : '#eff6ff',
-                    color: confidenceTierFilter === 'B' ? '#ffffff' : '#1e40af',
-                    border: '1px solid #93c5fd',
-                    borderRadius: '999px',
-                    padding: '5px 12px',
-                    fontSize: '0.73rem',
-                    fontWeight: 800,
-                    cursor: 'pointer'
-                  }}
-                >
-                  🔵 Tier B: 75–89% Doc/Pilot Backed ({tierCounts.B} Qs • 0.75x)
-                </button>
-                <button
-                  onClick={() => { setConfidenceTierFilter('C'); setWizardIndex(0); }}
-                  style={{
-                    background: confidenceTierFilter === 'C' ? '#d97706' : '#fffbeb',
-                    color: confidenceTierFilter === 'C' ? '#ffffff' : '#92400e',
-                    border: '1px solid #fcd34d',
-                    borderRadius: '999px',
-                    padding: '5px 12px',
-                    fontSize: '0.73rem',
-                    fontWeight: 800,
-                    cursor: 'pointer'
-                  }}
-                >
-                  🟡 Tier C: 40–74% CoP/Survey ({tierCounts.C} Qs • 0.40x)
-                </button>
-                <button
-                  onClick={() => { setConfidenceTierFilter('D'); setWizardIndex(0); }}
-                  style={{
-                    background: confidenceTierFilter === 'D' ? '#475569' : '#ffffff',
-                    color: confidenceTierFilter === 'D' ? '#ffffff' : '#334155',
-                    border: '1px solid #cbd5e1',
-                    borderRadius: '999px',
-                    padding: '5px 12px',
-                    fontSize: '0.73rem',
-                    fontWeight: 800,
-                    cursor: 'pointer'
-                  }}
-                >
-                  ⚪ Tier D: 0–39% Unfilled / Pending ({tierCounts.D} Qs • 0.0x)
-                </button>
-                <button
-                  onClick={() => { setConfidenceTierFilter('CONFIRM_QUEUE'); setWizardIndex(0); }}
-                  style={{
-                    background: confidenceTierFilter === 'CONFIRM_QUEUE' ? '#db2777' : '#fdf2f8',
-                    color: confidenceTierFilter === 'CONFIRM_QUEUE' ? '#ffffff' : '#9d174d',
-                    border: '1px solid #f9a8d4',
-                    borderRadius: '999px',
-                    padding: '5px 12px',
-                    fontSize: '0.73rem',
-                    fontWeight: 800,
-                    cursor: 'pointer'
-                  }}
-                >
-                  👥 Customer Confirmation Queue ({tierCounts.confirmQueue} Qs)
-                </button>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                 <button
                   onClick={() => setShowAllOptionBreakdown((v) => !v)}
                   style={{
@@ -2547,13 +2340,14 @@ const GeValueRealizationWorkspace = () => {
                     color: showAllOptionBreakdown ? '#1d4ed8' : '#334155',
                     border: '1px solid #93c5fd',
                     borderRadius: '8px',
-                    padding: '5px 10px',
+                    padding: '6px 10px',
                     fontSize: '0.72rem',
                     fontWeight: 700,
                     cursor: 'pointer'
                   }}
+                  title="Toggle Per-Option Confidence Percentage Bars"
                 >
-                  {showAllOptionBreakdown ? '✓ Showing Per-Option Confidence (%)' : 'Show Per-Option Confidence (%)'}
+                  {showAllOptionBreakdown ? '✓ Option % On' : 'Option % Off'}
                 </button>
 
                 {(confidenceTierFilter !== 'ALL' || statusFilter !== 'ALL') && inputMode === 'section' && (
@@ -2564,13 +2358,13 @@ const GeValueRealizationWorkspace = () => {
                       color: tierFilterCrossModule ? '#6d28d9' : '#334155',
                       border: '1px solid #c4b5fd',
                       borderRadius: '8px',
-                      padding: '5px 10px',
+                      padding: '6px 10px',
                       fontSize: '0.72rem',
                       fontWeight: 700,
                       cursor: 'pointer'
                     }}
                   >
-                    {tierFilterCrossModule ? `Scope: All 10 Modules (${filteredQuestions.length} Qs)` : `Scope: Module ${activeModuleId} Only (${filteredQuestions.length} Qs)`}
+                    {tierFilterCrossModule ? `All Modules (${filteredQuestions.length})` : `Mod ${activeModuleId} (${filteredQuestions.length})`}
                   </button>
                 )}
 
@@ -2581,16 +2375,17 @@ const GeValueRealizationWorkspace = () => {
                     color: '#052e16',
                     border: 'none',
                     borderRadius: '8px',
-                    padding: '6px 12px',
+                    padding: '6px 11px',
                     fontSize: '0.73rem',
                     fontWeight: 900,
                     cursor: 'pointer',
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '5px'
+                    gap: '4px'
                   }}
+                  title={`Bulk confirm all ${filteredQuestions.length} currently shown questions to Tier A`}
                 >
-                  <FiCheck size={13} /> Confirm Shown ({filteredQuestions.length}) w/ {shortCustomerName} → Tier A
+                  <FiCheck size={13} /> Confirm ({filteredQuestions.length}) → Tier A
                 </button>
               </div>
             </div>
@@ -4005,7 +3800,7 @@ const GeValueRealizationWorkspace = () => {
                   Exhibit 1 • Executive Synthesis (McKinsey Minto Pyramid & 3 Independent Management Signals)
                 </span>
                 <span style={{ fontSize: '0.72rem', fontFamily: 'monospace', color: '#64748b' }}>
-                  Dossier ID: {dossier.id} • SFDC: {dossier.meta?.sfdcAccountId || dossier.meta?.vectorAccountId} • Window: {dossier.meta?.currentWindow}
+                  Dossier ID: {dossier.id} • SFDC: {dossier.meta?.vectorAccountId || dossier.meta?.sfdcAccountId} • Window: {dossier.meta?.currentWindow}
                 </span>
               </div>
 
@@ -4177,7 +3972,7 @@ const GeValueRealizationWorkspace = () => {
                 (LEGACY BASELINE vs. GEMINI ENTERPRISE)
                =============================================================== */}
             {(() => {
-              const sfdcId = dossier.meta?.sfdcAccountId || dossier.meta?.vectorAccountId || '';
+              const sfdcId = dossier.meta?.vectorAccountId || dossier.meta?.sfdcAccountId || '';
               const isBioNova = sfdcId === 'ACC-1002-BIONOVA';
               const tel = dossier.adoptionTelemetry || {};
               const contractedVal = tel.contractedSeats || 0;
@@ -4187,7 +3982,7 @@ const GeValueRealizationWorkspace = () => {
               const wauBefore = isBioNova ? 2100 : Math.max(150, Math.round(wauAfter * 0.36));
               const wauDeltaPct = wauBefore > 0 ? Math.round(((wauAfter - wauBefore) / wauBefore) * 100) : 179;
               const wauMultiplier = wauBefore > 0 ? (wauAfter / wauBefore).toFixed(1) : '2.8';
-              const legacyLabel = isBioNova ? 'Homegrown OpenAI (GMax)' : (dossier.legacyRetirement?.legacyToolName || dossier.meta?.legacyPlatformName || 'Legacy AI / Manual');
+              const legacyLabel = isBioNova ? 'Homegrown OpenAI (NovaAssist)' : (dossier.legacyRetirement?.legacyToolName || dossier.meta?.legacyPlatformName || 'Legacy AI / Manual');
               const wfList = (evaluation?.evaluatedWorkflows && evaluation.evaluatedWorkflows.length > 0)
                 ? evaluation.evaluatedWorkflows
                 : (dossier.workflows || []);
@@ -4233,13 +4028,13 @@ const GeValueRealizationWorkspace = () => {
                   before: 'Single-surface prompt chat + custom developer RAG scripts; 0 self-service business agents',
                   after: '3 Unified Surfaces: Gemini Assist (5,386 WAU), Grounded Enterprise Search (4,992 WAU), Custom Agents (1,710 WAU / 12,385 7d runs)',
                   delta: '+2 New Enterprise Surfaces + 12.4K Weekly Agent Executions',
-                  target: 'SharePoint, Veeva Vault & SAP connectors live enterprise-wide',
+                  target: 'SharePoint, RegVault DMS & SAP connectors live enterprise-wide',
                   conf: '98% • Tier A',
                   confColor: '#047857',
                   confBg: '#ecfdf5'
                 },
                 {
-                  dim: '3. WF1: Enterprise Search & "Ask HR" / ServiceNow (MER-08)',
+                  dim: '3. WF1: Enterprise Search & "Ask HR" / ServiceNow (BNV-08)',
                   before: '22 min / lookup across fragmented portals (Confluence, Jira, HR, ServiceNow); 68% first-pass accuracy',
                   after: '9 min / lookup with grounded citations across 4,992 users (14,500 tasks/mo); 84% first-pass accuracy',
                   delta: '-13 min/task (-59.1%) • +16 pts QA • $1.86M/yr (2,513 hrs/mo)',
@@ -4249,7 +4044,7 @@ const GeValueRealizationWorkspace = () => {
                   confBg: '#eff6ff'
                 },
                 {
-                  dim: '4. WF2: Global Pricing & Reference Cascade (MER-06 GMAX)',
+                  dim: '4. WF2: Global Pricing & Reference Cascade (BNV-06 NOVA-AI)',
                   before: '640 min (10.7 hrs) / pricing cascade via manual spreadsheets & legacy scripts; 62% first-pass QA',
                   after: '80 min (1.3 hrs) / cascade via Gemini Multi-Agent workflow (45 users, 90 cascades/mo); 88% first-pass QA',
                   delta: '-560 min/task (-87.5%) • +26 pts QA • $822K/yr (630 hrs/mo)',
@@ -4259,17 +4054,17 @@ const GeValueRealizationWorkspace = () => {
                   confBg: '#eff6ff'
                 },
                 {
-                  dim: '5. WF3: Clinical Data Review & Protocol Extraction (MER-04 GxP)',
+                  dim: '5. WF3: Clinical Data Review & Protocol Extraction (BNV-04 GxP)',
                   before: '90 min / clinical protocol section; un-grounded LLM outputs required heavy manual verification (70% QA)',
                   after: '44 min / protocol section with inline clinical document grounding (85 users, 1,400 tasks/mo); 86% QA',
                   delta: '-46 min/task (-51.1%) • +16 pts QA • $913K/yr (805 hrs/mo)',
-                  target: 'Complete Veeva MCP GxP CSV validation → scale to 1,000+ R&D seats',
+                  target: 'Complete RegVault DMS MCP GxP CSV validation → scale to 1,000+ R&D seats',
                   conf: '82% • Tier B',
                   confColor: '#1d4ed8',
                   confBg: '#eff6ff'
                 },
                 {
-                  dim: '6. WF4 (MER-07 HTA Dossier) & WF5 (MER-05 CMC Tech Transfer)',
+                  dim: '6. WF4 (BNV-07 AHEAD Dossier) & WF5 (BNV-05 CMC Tech Transfer)',
                   before: '510 min / HTA dossier section (65% QA) & 330 min / CMC batch packet (60% QA) via manual drafting',
                   after: '255 min HTA (80% QA) & 185 min CMC (75% QA) in pilot benchmarks ($40M quarantined in Col 3 Modeled)',
                   delta: '-50.0% (HTA) & -43.9% (CMC) Pilot Cycle Time Reduction',
@@ -4281,7 +4076,7 @@ const GeValueRealizationWorkspace = () => {
                 {
                   dim: '7. Output Trust, Rework Deduction & Governance (Q01–Q05, U09)',
                   before: 'Custom RAG chunking drift; ~28 min manual SME verification penalty; custom DevOps maintenance (4.5 FTE)',
-                  after: 'Mandatory Vertex Search citations; VPC-SC + Cloud Audit Logs; 82% user preference over legacy GMax',
+                  after: 'Mandatory Vertex Search citations; VPC-SC + Cloud Audit Logs; 82% user preference over legacy NovaAssist',
                   delta: '-54% Verification Rework • Zero P1 Privacy/Safety Incidents',
                   target: 'Close A07 per-workflow token telemetry ("Black Box" gap)',
                   conf: '85% • Tier B',
@@ -4290,10 +4085,10 @@ const GeValueRealizationWorkspace = () => {
                 },
                 {
                   dim: '8. Annualized Platform Run-Rate & Hard Cash Savings (L01–L04)',
-                  before: '$1.85M/yr modeled legacy GMax run-rate (Azure OpenAI API + Vector DB + 4.5 FTE custom engineering)',
-                  after: 'Parallel run active ($0 retired today while GMax chat history bulk export & connector opt-in close; L01–L03 Pending)',
+                  before: '$1.85M/yr modeled legacy NovaAssist run-rate (Azure OpenAI API + Vector DB + 4.5 FTE custom engineering)',
+                  after: 'Parallel run active ($0 retired today while NovaAssist chat history bulk export & connector opt-in close; L01–L03 Pending)',
                   delta: `${formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualBase)}/yr Validated Capacity (Hard Cash Gated on L01–L03)`,
-                  target: '$1.65M/yr hard legacy GMax cost retired post-cutover (4.5 → 0.5 FTE)',
+                  target: '$1.65M/yr hard legacy NovaAssist cost retired post-cutover (4.5 → 0.5 FTE)',
                   conf: '35% • Tier D',
                   confColor: '#475569',
                   confBg: '#f1f5f9'
@@ -5215,10 +5010,10 @@ const GeValueRealizationWorkspace = () => {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', fontSize: '0.8rem' }}>
                 <div style={{ background: '#ecfdf5', border: '1px solid #6ee7b7', borderRadius: '10px', padding: '14px' }}>
                   <div style={{ fontWeight: 800, color: '#047857', marginBottom: '6px' }}>
-                    ✅ Allowed Primary Sources (Locked to {dossier.meta?.customerName} `{dossier.meta?.sfdcAccountId || dossier.meta?.vectorAccountId}`)
+                    ✅ Allowed Primary Sources (Locked to {dossier.meta?.customerName} `{dossier.meta?.vectorAccountId || dossier.meta?.sfdcAccountId}`)
                   </div>
                   <ul style={{ margin: 0, paddingLeft: '18px', color: '#065f46', lineHeight: 1.6 }}>
-                    <li><strong>NorthAM Agent Acceleration Workbook.xlsx:</strong> Row `{dossier.meta?.customerName}` (`{dossier.meta?.sfdcAccountId || dossier.meta?.vectorAccountId}`), `{formatNumber(dossier.adoptionTelemetry?.contractedSeats)}` contracted, `{formatNumber(dossier.adoptionTelemetry?.provisionedSeats)}` provisioned, `{formatNumber(dossier.adoptionTelemetry?.assignedSeats ?? dossier.adoptionTelemetry?.assignedSeatsWave1)}` assigned, `{formatNumber(dossier.adoptionTelemetry?.allApiWau7d ?? dossier.adoptionTelemetry?.wauMultiApi)}` WAU, `{formatNumber(dossier.adoptionTelemetry?.agentRequests7d)}` 7d agent requests.</li>
+                    <li><strong>NorthAM Agent Acceleration Workbook.xlsx:</strong> Row `{dossier.meta?.customerName}` (`{dossier.meta?.vectorAccountId || dossier.meta?.sfdcAccountId}`), `{formatNumber(dossier.adoptionTelemetry?.contractedSeats)}` contracted, `{formatNumber(dossier.adoptionTelemetry?.provisionedSeats)}` provisioned, `{formatNumber(dossier.adoptionTelemetry?.assignedSeats ?? dossier.adoptionTelemetry?.assignedSeatsWave1)}` assigned, `{formatNumber(dossier.adoptionTelemetry?.allApiWau7d ?? dossier.adoptionTelemetry?.wauMultiApi)}` WAU, `{formatNumber(dossier.adoptionTelemetry?.agentRequests7d)}` 7d agent requests.</li>
                     <li><strong>8-Source Multi-Tenant Evidence Graph:</strong> {dossier.ingestionAudit?.sourcesConnectedCount || 6}/8 primary sources matched (`{dossier.ingestionAudit?.timeWindowLabel || dossier.meta?.currentWindow}`).</li>
                     <li><strong>Priority Workflow Register:</strong> {(dossier.workflows || []).map((w) => `${w.code} (${w.name})`).join(', ')}, with pre-sales scoping targets strictly quarantined to Column 3 Modeled Opportunity.</li>
                   </ul>
@@ -5230,7 +5025,7 @@ const GeValueRealizationWorkspace = () => {
                   </div>
                   <ul style={{ margin: 0, paddingLeft: '18px', color: '#7f1d1d', lineHeight: 1.6 }}>
                     <li><strong>Dummy / Synthetic Files:</strong> `Customers Assessment_ Dummy Data .xlsx` and all synthetic templates are hard-blocked.</li>
-                    <li><strong>Other Accounts in Multi-Tenant Workbooks:</strong> All 4,350 non-`{dossier.meta?.sfdcAccountId || dossier.meta?.vectorAccountId}` rows in `NorthAM Agent Acceleration Workbook.xlsx` and `use_case_registry.json` are strictly quarantined.</li>
+                    <li><strong>Other Accounts in Multi-Tenant Workbooks:</strong> All 4,350 non-`{dossier.meta?.vectorAccountId || dossier.meta?.sfdcAccountId}` rows in `NorthAM Agent Acceleration Workbook.xlsx` and `use_case_registry.json` are strictly quarantined.</li>
                     <li><strong>Strict Customer Isolation:</strong> Zero cross-customer contamination allowed across questions, candidate options, or exhibits.</li>
                   </ul>
                 </div>

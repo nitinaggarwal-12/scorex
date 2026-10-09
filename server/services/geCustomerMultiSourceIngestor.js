@@ -3244,6 +3244,7 @@ function ingestCustomerMultiSourceDossier(params = {}) {
       ...baseDossier.meta,
       customerName: account.accountName,
       vectorAccountId: account.sfdcAccountId,
+      sfdcAccountId: account.sfdcAccountId,
       gcpProjectId: isBioNova
         ? '710492831045 (bionova-ai-prod-4102) / 820194736201'
         : `gcp-ge-${account.sfdcAccountId.slice(-8).toLowerCase()}`,
