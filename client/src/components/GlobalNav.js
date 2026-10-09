@@ -842,14 +842,14 @@ const GlobalNav = () => {
     };
     if (canonicalDemoMap[typeKey]) {
       toast.success(`Opening "${title}" Executive Report...`);
-      navigate(`/results/${canonicalDemoMap[typeKey]}`);
+      navigate(`/assessments/report/${canonicalDemoMap[typeKey]}`);
       return;
     }
     try {
       toast.loading(`Opening sample report for "${title}"...`, { id: 'sample-assessment' });
       const result = await dynamicAssessmentService.generateSampleForType(typeKey);
       toast.success(`"${title}" report loaded!`, { id: 'sample-assessment' });
-      navigate(`/results/${result.instanceId}`);
+      navigate(`/assessments/report/${result.instanceId}`);
     } catch (error) {
       console.error('[GlobalNav] Error creating dynamic sample:', error);
       toast.error('Failed to open dynamic sample report');
@@ -932,7 +932,7 @@ const GlobalNav = () => {
         <span style={{ fontSize: '0.64rem', color: '#2563eb', background: '#eff6ff', padding: '2px 6px', borderRadius: '999px', fontWeight: 700 }}>{2 + promotedTypes.length} Live Demos</span>
       </TrySampleHeader>
 
-      <TrySampleOption onClick={() => { setTrySampleDropdownOpen(false); navigate('/results/ge_vr_acc-1002-bionova'); }}>
+      <TrySampleOption onClick={() => { setTrySampleDropdownOpen(false); navigate('/ge-value-realization/inst_bionova_ge_value_realization?tab=report'); }}>
         <TrackIconBox $bg="rgba(37, 99, 235, 0.12)" $color="#2563eb" $border="rgba(37, 99, 235, 0.28)">
           <FiTrendingUp />
         </TrackIconBox>
@@ -1006,7 +1006,7 @@ const GlobalNav = () => {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '6px 12px' }}>
             {/* Specialized Engine 1: GE Value Realization (Enterprise Gemini Migration) */}
-            <MegaMenuTrackItem onClick={() => runNav('/assessment/ge_vr_acc-1001-aerovg/platform_governance')}>
+            <MegaMenuTrackItem onClick={() => runNav('/ge-value-realization?tab=inputs')}>
               <TrackIconBox $bg="rgba(37, 99, 235, 0.12)" $color="#1d4ed8" $border="rgba(37, 99, 235, 0.28)">
                 <FiTrendingUp />
               </TrackIconBox>
@@ -1017,7 +1017,7 @@ const GlobalNav = () => {
                     onClick={(e) => {
                       e.stopPropagation();
                       setAssessmentsDropdownOpen(false);
-                      navigate('/results/ge_vr_acc-1001-aerovg');
+                      navigate('/ge-value-realization?tab=report');
                     }}
                     style={{ fontSize: '0.64rem', fontWeight: 700, padding: '2px 6px', borderRadius: '5px', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', cursor: 'pointer', flexShrink: 0 }}
                     title="Open Executive Value Realization Readout"
@@ -1025,7 +1025,7 @@ const GlobalNav = () => {
                     📊 Sample Report
                   </span>
                 </TrackTopRow>
-                <TrackSubtitle>Enterprise legacy AI → Gemini migration value bridge • 6 Pillars</TrackSubtitle>
+                <TrackSubtitle>Enterprise legacy AI → Gemini migration value bridge • 82 Qs</TrackSubtitle>
               </TrackContent>
             </MegaMenuTrackItem>
 
@@ -1056,18 +1056,7 @@ const GlobalNav = () => {
             {/* Canonical Dynamic Assessment Blueprints */}
             {promotedList.map((type) => {
               const { IconComponent, displayTitle, microSubtitle, color } = getTrackVisuals(type);
-              const canonicalInstanceMap = {
-                enterprise_data_ai_maturity: 'inst_enterprise_data_ai_maturity_demo',
-                openai_to_gemini_enterprise_migration: 'inst_openai_to_gemini_enterprise_migration_demo',
-                finops_cloud_cost_optimization: 'inst_finops_cloud_cost_optimization_demo',
-                agentic_ai_mesh_mcp_banking_readiness: 'inst_agentic_ai_mesh_mcp_banking_readiness_demo',
-                edw_lakehouse_to_bigquery_modernization: 'inst_edw_lakehouse_to_bigquery_modernization_demo',
-                enterprise_ai_zero_trust_security: 'inst_enterprise_ai_zero_trust_security_demo'
-              };
-              const targetInstance = canonicalInstanceMap[type.typeKey];
-              const targetPath = type.typeKey === 'enterprise_data_ai_maturity'
-                ? '/start'
-                : (targetInstance ? `/assessment/${targetInstance}/platform_governance` : `/assessments/run/${type.typeKey}`);
+              const targetPath = type.typeKey === 'enterprise_data_ai_maturity' ? '/start' : `/assessments/run/${type.typeKey}`;
               return (
                 <MegaMenuTrackItem
                   key={type.id || type.typeKey}
@@ -1270,14 +1259,14 @@ const GlobalNav = () => {
                 </NavLink>
                 <DropdownMenu $isOpen={resourcesDropdownOpen} style={{ minWidth: '320px', left: 0, right: 'auto', padding: '10px 0' }}>
                   <DropdownHeader>💰 Financial & Value Modelers</DropdownHeader>
-                  <DropdownItem onClick={() => { handleNavigate('/results/inst_finops_cloud_cost_optimization_demo'); setResourcesDropdownOpen(false); }}>
+                  <DropdownItem onClick={() => { handleNavigate('/assessments/report/inst_finops_cloud_cost_optimization_demo'); setResourcesDropdownOpen(false); }}>
                     <FiTrendingUp style={{ color: '#059669' }} />
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
                       <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.84rem' }}>FinOps & Cloud Economics Readout</span>
                       <span style={{ fontSize: '0.72rem', color: '#64748b' }}>3-year total cost of ownership & slot arbitrage</span>
                     </div>
                   </DropdownItem>
-                  <DropdownItem onClick={() => { handleNavigate('/results/ge_vr_acc-1001-aerovg'); setResourcesDropdownOpen(false); }}>
+                  <DropdownItem onClick={() => { handleNavigate('/ge-value-realization?tab=report'); setResourcesDropdownOpen(false); }}>
                     <FiAward style={{ color: '#2563eb' }} />
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
                       <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.84rem' }}>GE Value Realization & CFO Bridge</span>
@@ -1570,7 +1559,7 @@ const GlobalNav = () => {
               <HiSparkles size={16} style={{ color: '#c084fc' }} />
               AI Assessment Generator
             </MobileSecondaryCTAButton>
-            <MobileSecondaryCTAButton onClick={() => handleNavigate('/assessment/ge_vr_acc-1001-aerovg/platform_governance')}>
+            <MobileSecondaryCTAButton onClick={() => handleNavigate('/ge-value-realization')}>
               <FiTrendingUp size={16} style={{ color: '#2563eb' }} />
               GE Value Realization
             </MobileSecondaryCTAButton>
@@ -1587,7 +1576,7 @@ const GlobalNav = () => {
                 </MobileSecondaryCTAButton>
                 {mobileTrySampleOpen && (
                   <div style={{ background: '#f8fafc', padding: '8px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <MobileSubLink onClick={() => handleNavigate('/results/ge_vr_acc-1002-bionova')}>• GE Value Realization (BioNova)</MobileSubLink>
+                    <MobileSubLink onClick={() => handleNavigate('/ge-value-realization?tab=report')}>• GE Value Realization (BioNova)</MobileSubLink>
                     <MobileSubLink onClick={() => handleNavigate('/eu-ai-compliance?demo=high-risk-hr')}>• EU AI Act Compliance (ApexHire HR)</MobileSubLink>
                     {promotedTypes.map(t => (
                       <MobileSubLink key={t.typeKey} onClick={() => handleTrySampleDynamic(t.typeKey, t.title)}>
@@ -1630,7 +1619,7 @@ const GlobalNav = () => {
             </MobileSecondaryCTAButton>
             {mobileTrySampleOpen && (
               <div style={{ background: '#f8fafc', padding: '8px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <MobileSubLink onClick={() => handleNavigate('/results/ge_vr_acc-1002-bionova')}>• GE Value Realization (BioNova)</MobileSubLink>
+                <MobileSubLink onClick={() => handleNavigate('/ge-value-realization?tab=report')}>• GE Value Realization (BioNova)</MobileSubLink>
                 <MobileSubLink onClick={() => handleNavigate('/eu-ai-compliance?demo=high-risk-hr')}>• EU AI Act Compliance (ApexHire HR)</MobileSubLink>
                 {promotedTypes.map(t => (
                   <MobileSubLink key={t.typeKey} onClick={() => handleTrySampleDynamic(t.typeKey, t.title)}>

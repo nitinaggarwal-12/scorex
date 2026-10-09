@@ -375,18 +375,11 @@ const ProgressText = styled.div`
   }
 `;
 
-const NavigationPanel = ({ framework: propFramework, currentAssessment, onAssessmentUpdate }) => {
+const NavigationPanel = ({ framework, currentAssessment, onAssessmentUpdate }) => {
   const navigate = useNavigate();
   const { categoryId, assessmentId: routeAssessmentId } = useParams();
   // Use currentAssessment.assessmentId if routeAssessmentId is not available
   const assessmentId = routeAssessmentId || currentAssessment?.assessmentId;
-  const matchingCurrentCustomFramework =
-    currentAssessment && (!routeAssessmentId || currentAssessment.assessmentId === routeAssessmentId || currentAssessment.id === routeAssessmentId)
-      ? currentAssessment.customFramework
-      : null;
-  const framework = propFramework?.customTrackKey
-    ? propFramework
-    : (matchingCurrentCustomFramework || propFramework);
   const [expandedPillars, setExpandedPillars] = useState(new Set());
   const [pillarProgress, setPillarProgress] = useState({});
   const [showEditModal, setShowEditModal] = useState(false);
@@ -526,10 +519,7 @@ const NavigationPanel = ({ framework: propFramework, currentAssessment, onAssess
   }
 
   const hasAnyCompletedPillars = currentAssessment?.completedCategories?.length > 0;
-  const isSubmitted =
-    currentAssessment?.status === 'submitted' ||
-    currentAssessment?.status === 'completed' ||
-    (hasAnyCompletedPillars && Number(currentAssessment?.progress) >= 100);
+  const isSubmitted = currentAssessment?.status === 'submitted';
 
   return (
     <NavigationContainer>
@@ -617,7 +607,6 @@ const NavigationPanel = ({ framework: propFramework, currentAssessment, onAssess
             'operational_excellence': '⚡'
           };
           const pillarIcon = pillarIcons[pillar.id] || '📋';
-          const hasLeadingEmoji = /^[^\w\s]/.test(String(pillar.name || '').trim());
           
           return (
             <PillarItem key={pillar.id}>
@@ -639,9 +628,7 @@ const NavigationPanel = ({ framework: propFramework, currentAssessment, onAssess
                 
                 <PillarInfo>
                   <PillarName $isDisabled={!isSelected}>
-                    {!hasLeadingEmoji && (
-                      <span style={{ marginRight: '8px', fontSize: '1.1rem' }}>{pillarIcon}</span>
-                    )}
+                    <span style={{ marginRight: '8px', fontSize: '1.1rem' }}>{pillarIcon}</span>
                     {pillar.name}
                     {!isSelected && <span style={{ marginLeft: '8px', fontSize: '0.75rem', fontWeight: 400, color: '#9ca3af' }}>(Not Selected)</span>}
                   </PillarName>
@@ -703,7 +690,7 @@ const NavigationPanel = ({ framework: propFramework, currentAssessment, onAssess
                         <FiPlay size={14} color="#0284c7" />
                       </DimensionIcon>
                       <DimensionName style={{ color: '#0284c7' }}>
-                        Start {String(pillar.name || '').replace(/^[^\w\s]+\s*/, '').split(' ')[0]} Assessment
+                        Start {pillar.name.split(' ')[0]} Assessment
                       </DimensionName>
                     </DimensionItem>
 

@@ -763,7 +763,7 @@ const AssessmentsListNew = () => {
       const answeredCount = Object.keys(raw.questionResponses || {}).length;
       progress = answeredCount >= 70 ? 100 : Math.min(95, Math.round((answeredCount / 82) * 100));
       status = progress >= 100 ? 'completed' : (progress > 0 ? 'in_progress' : 'not_started');
-      completedCategories = ['platform_governance', 'data_engineering', 'analytics_bi', 'machine_learning', 'generative_ai', 'operational_excellence'];
+      completedCategories = ['generative_ai', 'platform_governance', 'operational_excellence'];
     } else if (family === 'eu_ai_act') {
       const answeredCount = Object.keys(raw.answers || {}).length;
       const isComplete = Boolean(answeredCount >= 20 || (raw.synthesis && answeredCount >= 18));
@@ -839,8 +839,7 @@ const AssessmentsListNew = () => {
       const seenIds = new Set();
       const classicList = classicData.status === 'fulfilled' && Array.isArray(classicData.value)
         ? classicData.value.map(item => {
-            const itemFamily = item.assessmentFamily || (String(item.id || '').startsWith('ge_vr_') ? 'ge_value_realization' : 'classic');
-            const norm = normalizeAssessmentRecord(item, itemFamily);
+            const norm = normalizeAssessmentRecord(item, 'classic');
             if (norm.id) seenIds.add(norm.id);
             return norm;
           })
@@ -869,13 +868,7 @@ const AssessmentsListNew = () => {
       const geVrRaw = geVrData.status === 'fulfilled' && Array.isArray(geVrData.value?.data?.dossiers)
         ? geVrData.value.data.dossiers
         : [];
-      const geVrList = geVrRaw
-        .filter(item => !seenIds.has(String(item.id || '')))
-        .map(item => {
-          const norm = normalizeAssessmentRecord(item, 'ge_value_realization');
-          if (norm.id) seenIds.add(norm.id);
-          return norm;
-        });
+      const geVrList = geVrRaw.map(item => normalizeAssessmentRecord(item, 'ge_value_realization'));
 
       const euAiRaw = euAiData.status === 'fulfilled' && Array.isArray(euAiData.value?.data?.dossiers)
         ? euAiData.value.data.dossiers
@@ -1675,11 +1668,19 @@ const AssessmentsListNew = () => {
               const handleOpenReportOrEditor = () => {
                 if (family === 'eu_ai_act') {
                   navigate(`/eu-ai-compliance/${assessmentId}`);
+                } else if (family === 'ge_value_realization') {
+                  navigate(`/ge-value-realization/${assessmentId}`);
                 } else if (family === 'genai') {
                   if (status === 'completed') {
                     navigate(`/genai-readiness/report/${assessmentId}`);
                   } else {
                     navigate(`/genai-readiness/edit/${assessmentId}`);
+                  }
+                } else if (family === 'dynamic') {
+                  if (status === 'completed') {
+                    navigate(`/assessments/report/${assessmentId}`);
+                  } else {
+                    navigate(`/assessments/run/instance/${assessmentId}`);
                   }
                 } else {
                   if (status === 'completed') {
@@ -1694,8 +1695,12 @@ const AssessmentsListNew = () => {
                 e.stopPropagation();
                 if (family === 'eu_ai_act') {
                   navigate(`/eu-ai-compliance/${assessmentId}`);
+                } else if (family === 'ge_value_realization') {
+                  navigate(`/ge-value-realization/${assessmentId}?tab=inputs`);
                 } else if (family === 'genai') {
                   navigate(`/genai-readiness/edit/${assessmentId}`);
+                } else if (family === 'dynamic') {
+                  navigate(`/assessments/run/instance/${assessmentId}`);
                 } else {
                   navigate(`/assessment/${assessmentId}/${targetPillar}`);
                 }
@@ -1706,8 +1711,12 @@ const AssessmentsListNew = () => {
                 if (progress === 0 || status === 'not_started') return;
                 if (family === 'eu_ai_act') {
                   navigate(`/eu-ai-compliance/${assessmentId}`);
+                } else if (family === 'ge_value_realization') {
+                  navigate(`/ge-value-realization/${assessmentId}?tab=report`);
                 } else if (family === 'genai') {
                   navigate(`/genai-readiness/report/${assessmentId}`);
+                } else if (family === 'dynamic') {
+                  navigate(`/assessments/report/${assessmentId}`);
                 } else {
                   navigate(`/results/${assessmentId}`);
                 }

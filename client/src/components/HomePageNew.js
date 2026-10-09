@@ -698,7 +698,7 @@ const HomePageNew = () => {
               </div>
               <div style={{ display: 'flex', gap: '10px', marginTop: '14px', flexWrap: 'wrap' }}>
                 <button
-                  onClick={() => navigate('/assessment/ge_vr_acc-1001-aerovg/platform_governance')}
+                  onClick={() => navigate('/ge-value-realization')}
                   style={{
                     background: 'rgba(59, 130, 246, 0.2)',
                     border: '1px solid rgba(147, 197, 253, 0.45)',
@@ -713,7 +713,7 @@ const HomePageNew = () => {
                     gap: '6px'
                   }}
                 >
-                  📈 Engine 2: GE Value Realization →
+                  📈 Engine 2: GE Value Realization (82Q) →
                 </button>
                 <button
                   onClick={() => navigate('/eu-ai-compliance')}

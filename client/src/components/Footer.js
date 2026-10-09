@@ -188,7 +188,7 @@ const Footer = () => {
           <ul>
             <li><button onClick={() => handleSectionLink('pillars')}>6 Maturity Pillars</button></li>
             <li><button onClick={() => navigate('/assessments/hub')}>Dynamic Blueprints Hub</button></li>
-            <li><button onClick={() => navigate('/assessment/ge_vr_acc-1001-aerovg/platform_governance')}>GE Value Realization</button></li>
+            <li><button onClick={() => navigate('/ge-value-realization')}>GE Value Realization (82Q)</button></li>
             <li><button onClick={() => navigate('/eu-ai-compliance')}>EU AI Act Dossier (20Q)</button></li>
             <li><button onClick={() => navigate('/assessments')}>My Assessments Portfolio</button></li>
           </ul>

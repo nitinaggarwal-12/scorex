@@ -426,13 +426,9 @@ app.post('/api/fetch-logo', async (req, res) => {
 // Get assessment framework
 app.get('/api/assessment/framework', async (req, res) => {
   try {
-    const assessmentId = req.query.assessmentId || req.query.id;
-    const effectiveFw = assessmentId
-      ? await applyQuestionEdits(assessmentId, assessmentFramework)
-      : assessmentFramework;
     res.json({
       success: true,
-      data: effectiveFw
+      data: assessmentFramework
     });
   } catch (error) {
     res.status(500).json({
@@ -555,9 +551,8 @@ app.get('/api/assessment/:id/status', requireAuth, async (req, res) => {
       });
     }
 
-    const effectiveFramework = await applyQuestionEdits(id, assessmentFramework);
     const completedCats = assessment.completedCategories || [];
-    const progress = (completedCats.length / effectiveFramework.assessmentAreas.length) * 100;
+    const progress = (completedCats.length / assessmentFramework.assessmentAreas.length) * 100;
 
     res.json({
       success: true,
@@ -578,8 +573,7 @@ app.get('/api/assessment/:id/status', requireAuth, async (req, res) => {
         startedAt: assessment.startedAt,
         createdAt: assessment.createdAt || assessment.startedAt,
         updatedAt: assessment.updatedAt || assessment.startedAt,
-        responses: assessment.responses, // Include responses for progress calculation
-        customFramework: effectiveFramework
+        responses: assessment.responses // Include responses for progress calculation
       }
     });
   } catch (error) {
@@ -752,8 +746,7 @@ app.get('/api/assessment/:id/category/:categoryId', requireAuth, async (req, res
           questions // Flatten questions for frontend compatibility
         },
         existingResponses: areaResponses,
-        isCompleted: completedCats.includes(categoryId),
-        customFramework: effectiveFramework
+        isCompleted: completedCats.includes(categoryId)
       }
     });
   } catch (error) {
@@ -2005,7 +1998,6 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
       assessmentInfo: {
         id: assessment.id,
         assessmentName: assessment.assessmentName,
-        reportTitle: effectiveFramework.reportTitle || null,
         assessmentDescription: assessment.assessmentDescription,
         organizationName: assessment.organizationName,
         contactEmail: assessment.contactEmail,
@@ -2023,7 +2015,6 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
         lastEditor: assessment.lastEditor,
         editHistory: assessment.editHistory || []
       },
-      customFramework: effectiveFramework,
       overall: recommendations.overall, // ADAPTIVE: includes currentScore, futureScore, gap, level, summary
       categoryDetails,
       categories: recommendations.categories,

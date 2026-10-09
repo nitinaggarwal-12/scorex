@@ -3,7 +3,7 @@
  * Version: 2.2.0 - Added floating slideshow buttons and version history - Nov 17, 2025
  */
 import React, { useState, useEffect, lazy, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useParams, useSearchParams } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { createGlobalStyle } from 'styled-components';
 
@@ -191,78 +191,31 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-const CANONICAL_TYPE_TO_INSTANCE = {
-  enterprise_data_ai_maturity: 'inst_enterprise_data_ai_maturity_demo',
-  openai_to_gemini_enterprise_migration: 'inst_openai_to_gemini_enterprise_migration_demo',
-  finops_cloud_cost_optimization: 'inst_finops_cloud_cost_optimization_demo',
-  agentic_ai_mesh_mcp_banking_readiness: 'inst_agentic_ai_mesh_mcp_banking_readiness_demo',
-  edw_lakehouse_to_bigquery_modernization: 'inst_edw_lakehouse_to_bigquery_modernization_demo',
-  enterprise_ai_zero_trust_security: 'inst_enterprise_ai_zero_trust_security_demo',
-  ge_value_realization: 'ge_vr_acc-1001-aerovg'
-};
-
-const isGeValueRealizationId = (rawId) => {
-  const s = String(rawId || '').trim().toLowerCase();
+const isGeVrAssessmentId = (rawId) => {
+  const s = String(rawId || '').toLowerCase();
   return (
     s.startsWith('ge_vr_') ||
-    s.startsWith('acc-') ||
     s === 'inst_bionova_ge_value_realization' ||
     s === 'inst_aerovanguard_ge_value_realization' ||
-    s === 'bionova_ge_vr_2026_q2' ||
     s === 'aerovanguard_default' ||
-    s === 'bionova'
+    s === 'bionova_ge_vr_2026_q2'
   );
 };
 
-const GeValueRealizationRedirect = () => {
-  const { id } = useParams();
-  const [searchParams] = useSearchParams();
-  const tab = searchParams.get('tab');
-  let targetId = id || 'ge_vr_acc-1001-aerovg';
-  if (targetId === 'inst_bionova_ge_value_realization' || targetId === 'bionova') {
-    targetId = 'ge_vr_acc-1002-bionova';
-  } else if (targetId === 'inst_aerovanguard_ge_value_realization' || targetId === 'aerovanguard_default') {
-    targetId = 'ge_vr_acc-1001-aerovg';
-  }
-  if (tab === 'report') {
-    return <GeValueRealizationWorkspace defaultView="report" />;
-  }
-  return <Navigate to={`/assessment/${targetId}/platform_governance`} replace />;
-};
-
-const AssessmentResultsOrGeReport = ({ currentAssessment, framework }) => {
+const AssessmentQuestionOrGeRedirect = (props) => {
   const { assessmentId } = useParams();
-  if (isGeValueRealizationId(assessmentId)) {
-    return <GeValueRealizationWorkspace defaultView="report" />;
+  if (isGeVrAssessmentId(assessmentId)) {
+    return <Navigate to={`/ge-value-realization/${assessmentId}?tab=inputs`} replace />;
   }
-  return (
-    <AssessmentResults
-      currentAssessment={currentAssessment}
-      framework={framework}
-    />
-  );
+  return <AssessmentQuestion {...props} />;
 };
 
-const DynamicTrackRedirect = () => {
-  const { typeKey } = useParams();
-  const instanceId = CANONICAL_TYPE_TO_INSTANCE[typeKey];
-  if (instanceId) {
-    return <Navigate to={`/assessment/${instanceId}/platform_governance`} replace />;
+const AssessmentResultsOrGeRedirect = (props) => {
+  const { assessmentId } = useParams();
+  if (isGeVrAssessmentId(assessmentId)) {
+    return <Navigate to={`/ge-value-realization/${assessmentId}?tab=report`} replace />;
   }
-  return <Navigate to="/start" replace />;
-};
-
-const DynamicInstanceRedirect = () => {
-  const { id } = useParams();
-  return <Navigate to={`/assessment/${id || 'inst_enterprise_data_ai_maturity_demo'}/platform_governance`} replace />;
-};
-
-const DynamicReportRedirect = () => {
-  const { id } = useParams();
-  if (isGeValueRealizationId(id)) {
-    return <Navigate to={`/ge-value-realization/${id}?tab=report`} replace />;
-  }
-  return <Navigate to={`/results/${id || 'inst_enterprise_data_ai_maturity_demo'}`} replace />;
+  return <AssessmentResults {...props} />;
 };
 
 // Global Print Styles - Applied across all components
@@ -402,9 +355,8 @@ function App() {
           try {
             const assessment = await assessmentService.getAssessmentStatus(assessmentId);
             if (assessment) {
-              // Calculate progress using customFramework if present
-              const activeFw = assessment.customFramework || assessmentFramework;
-              const totalQuestions = activeFw?.assessmentAreas?.reduce((total, area) => {
+              // Calculate progress
+              const totalQuestions = assessmentFramework?.assessmentAreas?.reduce((total, area) => {
                 return total + (area.dimensions?.reduce((dimTotal, dim) => {
                   return dimTotal + (dim.questions?.length || 0);
                 }, 0) || 0);
@@ -614,7 +566,7 @@ function App() {
             path="/ge-value-realization" 
             element={
               <ProtectedRoute>
-                <GeValueRealizationRedirect />
+                <GeValueRealizationWorkspace />
               </ProtectedRoute>
             } 
           />
@@ -623,7 +575,7 @@ function App() {
             path="/ge-value-realization/:id" 
             element={
               <ProtectedRoute>
-                <GeValueRealizationRedirect />
+                <GeValueRealizationWorkspace />
               </ProtectedRoute>
             } 
           />
@@ -632,7 +584,7 @@ function App() {
             path="/assessments/ge-value-realization" 
             element={
               <ProtectedRoute>
-                <GeValueRealizationRedirect />
+                <GeValueRealizationWorkspace />
               </ProtectedRoute>
             } 
           />
@@ -641,7 +593,7 @@ function App() {
             path="/assessments/ge-value-realization/:id" 
             element={
               <ProtectedRoute>
-                <GeValueRealizationRedirect />
+                <GeValueRealizationWorkspace />
               </ProtectedRoute>
             } 
           />
@@ -689,7 +641,7 @@ function App() {
             path="/assessments/run/:typeKey" 
             element={
               <ProtectedRoute>
-                <DynamicTrackRedirect />
+                <DynamicAssessmentRunner />
               </ProtectedRoute>
             } 
           />
@@ -698,7 +650,7 @@ function App() {
             path="/assessments/run/instance/:id" 
             element={
               <ProtectedRoute>
-                <DynamicInstanceRedirect />
+                <DynamicAssessmentRunner />
               </ProtectedRoute>
             } 
           />
@@ -707,7 +659,7 @@ function App() {
             path="/assessments/report/:id" 
             element={
               <ProtectedRoute>
-                <DynamicReportRedirect />
+                <DynamicAssessmentReport />
               </ProtectedRoute>
             } 
           />
@@ -740,7 +692,7 @@ function App() {
             element={
               <AssessmentDashboard 
                 currentAssessment={currentAssessment}
-                framework={currentAssessment?.customFramework || assessmentFramework}
+                framework={assessmentFramework}
                 onLogout={handleLogout}
               />
             } 
@@ -751,7 +703,7 @@ function App() {
             element={
               <AssessmentDashboard 
                 currentAssessment={currentAssessment}
-                framework={currentAssessment?.customFramework || assessmentFramework}
+                framework={assessmentFramework}
                 onLogout={handleLogout}
               />
             } 
@@ -774,8 +726,8 @@ function App() {
             path="/assessment/:assessmentId/:categoryId" 
             element={
               <ProtectedRoute>
-                <AssessmentQuestion 
-                  framework={currentAssessment?.customFramework || assessmentFramework}
+                <AssessmentQuestionOrGeRedirect 
+                  framework={assessmentFramework}
                   currentAssessment={currentAssessment}
                   onUpdateStatus={updateAssessmentStatus}
                 />
@@ -787,9 +739,9 @@ function App() {
             path="/results/:assessmentId" 
             element={
               <ProtectedRoute>
-                <AssessmentResultsOrGeReport 
+                <AssessmentResultsOrGeRedirect 
                   currentAssessment={currentAssessment}
-                  framework={currentAssessment?.customFramework || assessmentFramework}
+                  framework={assessmentFramework}
                 />
               </ProtectedRoute>
             } 
@@ -801,7 +753,7 @@ function App() {
               <ProtectedRoute>
                 <ExecutiveSummary 
                   currentAssessment={currentAssessment}
-                  framework={currentAssessment?.customFramework || assessmentFramework}
+                  framework={assessmentFramework}
                 />
               </ProtectedRoute>
             } 

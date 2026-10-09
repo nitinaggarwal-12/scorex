@@ -221,10 +221,10 @@ const CommandPalette = () => {
     },
     {
       id: 'ge-value-realization',
-      title: 'Gemini Enterprise Value Realization Assessment',
+      title: 'Gemini Enterprise Value Realization Workspace (82Q)',
       subtitle: 'Multi-source evidence ingestion (8 sources), CFO ledger & 3-year ROI',
       icon: FiTrendingUp,
-      action: () => navigate('/assessment/ge_vr_acc-1001-aerovg/platform_governance')
+      action: () => navigate('/ge-value-realization')
     },
     {
       id: 'eu-ai-compliance',
