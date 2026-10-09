@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import {
@@ -143,12 +143,14 @@ const simplifyQuestionTitle = (rawTitle) => {
     .trim();
 };
 
-const GeValueRealizationWorkspace = () => {
-  const { id: routeDossierId } = useParams();
+const GeValueRealizationWorkspace = ({ defaultView }) => {
+  const { id: routeId, assessmentId: routeAssessmentId } = useParams();
+  const routeDossierId = routeId || routeAssessmentId;
   const location = useLocation();
+  const navigate = useNavigate();
 
   const searchParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
-  const initialPrimaryView = searchParams.get('tab') === 'report' ? 'report' : 'inputs';
+  const initialPrimaryView = (defaultView === 'report' || searchParams.get('tab') === 'report' || location.pathname.startsWith('/results/')) ? 'report' : 'inputs';
   const initialPeriodParam = searchParams.get('period') || 'ytd_2026';
 
   const [dossier, setDossier] = useState(() => createInitialGeDossier('aerovanguard_default'));
@@ -269,11 +271,19 @@ const GeValueRealizationWorkspace = () => {
     }
   };
 
+  const getCanonicalQuestionnaireId = () => {
+    const sfdc = (selectedSfdcId || dossier?.meta?.vectorAccountId || 'ACC-1001-AEROVG').toLowerCase();
+    return sfdc.startsWith('ge_vr_') ? sfdc : `ge_vr_${sfdc}`;
+  };
+
   useEffect(() => {
     const tabParam = searchParams.get('tab');
-    if (tabParam === 'report') setPrimaryView('report');
-    else if (tabParam === 'inputs') setPrimaryView('inputs');
-  }, [searchParams]);
+    if (defaultView === 'report' || location.pathname.startsWith('/results/') || tabParam === 'report') {
+      setPrimaryView('report');
+    } else if (tabParam === 'inputs') {
+      setPrimaryView('inputs');
+    }
+  }, [defaultView, location.pathname, searchParams]);
 
   useEffect(() => {
     let mounted = true;
@@ -733,7 +743,7 @@ const GeValueRealizationWorkspace = () => {
               marginLeft: '6px'
             }}>
               <button
-                onClick={() => setPrimaryView('inputs')}
+                onClick={() => navigate(`/assessment/${getCanonicalQuestionnaireId()}/platform_governance`)}
                 style={{
                   background: primaryView === 'inputs' ? '#ffffff' : 'transparent',
                   color: primaryView === 'inputs' ? '#0f172a' : '#64748b',
@@ -874,7 +884,7 @@ const GeValueRealizationWorkspace = () => {
 
             <button
               onClick={() => {
-                setPrimaryView('inputs');
+                navigate(`/assessment/${getCanonicalQuestionnaireId()}/platform_governance`);
                 toast.success('Switched to Edit Assessment Answers');
               }}
               style={{

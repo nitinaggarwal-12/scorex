@@ -201,6 +201,19 @@ const CANONICAL_TYPE_TO_INSTANCE = {
   ge_value_realization: 'ge_vr_acc-1001-aerovg'
 };
 
+const isGeValueRealizationId = (rawId) => {
+  const s = String(rawId || '').trim().toLowerCase();
+  return (
+    s.startsWith('ge_vr_') ||
+    s.startsWith('acc-') ||
+    s === 'inst_bionova_ge_value_realization' ||
+    s === 'inst_aerovanguard_ge_value_realization' ||
+    s === 'bionova_ge_vr_2026_q2' ||
+    s === 'aerovanguard_default' ||
+    s === 'bionova'
+  );
+};
+
 const GeValueRealizationRedirect = () => {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
@@ -212,9 +225,22 @@ const GeValueRealizationRedirect = () => {
     targetId = 'ge_vr_acc-1001-aerovg';
   }
   if (tab === 'report') {
-    return <Navigate to={`/results/${targetId}`} replace />;
+    return <GeValueRealizationWorkspace defaultView="report" />;
   }
   return <Navigate to={`/assessment/${targetId}/platform_governance`} replace />;
+};
+
+const AssessmentResultsOrGeReport = ({ currentAssessment, framework }) => {
+  const { assessmentId } = useParams();
+  if (isGeValueRealizationId(assessmentId)) {
+    return <GeValueRealizationWorkspace defaultView="report" />;
+  }
+  return (
+    <AssessmentResults
+      currentAssessment={currentAssessment}
+      framework={framework}
+    />
+  );
 };
 
 const DynamicTrackRedirect = () => {
@@ -233,6 +259,9 @@ const DynamicInstanceRedirect = () => {
 
 const DynamicReportRedirect = () => {
   const { id } = useParams();
+  if (isGeValueRealizationId(id)) {
+    return <Navigate to={`/ge-value-realization/${id}?tab=report`} replace />;
+  }
   return <Navigate to={`/results/${id || 'inst_enterprise_data_ai_maturity_demo'}`} replace />;
 };
 
@@ -758,7 +787,7 @@ function App() {
             path="/results/:assessmentId" 
             element={
               <ProtectedRoute>
-                <AssessmentResults 
+                <AssessmentResultsOrGeReport 
                   currentAssessment={currentAssessment}
                   framework={currentAssessment?.customFramework || assessmentFramework}
                 />

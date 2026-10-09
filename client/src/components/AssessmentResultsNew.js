@@ -1866,47 +1866,29 @@ const DEFAULT_PILLARS = [
   { id: 'operational_excellence', name: 'Operational Excellence & Adoption', icon: '⚙️', color: '#06b6d4', emoji: '🎯' }
 ];
 
-const GENERIC_SHORT_NAMES = new Set(['🧱 Platform', '💾 Data', '📊 Analytics', '🤖 ML', '✨ GenAI', '⚡ Enablement']);
-
 const getActivePillars = (resultsData) => {
   const catDetails = resultsData?.categoryDetails;
   if (catDetails && typeof catDetails === 'object' && Object.keys(catDetails).length > 0) {
     const keys = Object.keys(catDetails);
     const defaultIds = DEFAULT_PILLARS.map(p => p.id);
     const hasCustomKeys = keys.some(k => !defaultIds.includes(k));
-    const palette = ['#3b82f6', '#10b981', '#ec4899', '#f59e0b', '#8b5cf6', '#06b6d4', '#6366f1', '#14b8a6'];
-    const icons = ['🧱', '💾', '📈', '🤖', '💡', '⚙️', '🛡️', '⚡'];
     if (hasCustomKeys) {
+      const palette = ['#3b82f6', '#10b981', '#ec4899', '#f59e0b', '#8b5cf6', '#06b6d4', '#6366f1', '#14b8a6'];
+      const icons = ['🧱', '💾', '📈', '🤖', '💡', '⚙️', '🛡️', '⚡'];
       return keys.map((key, idx) => {
         const found = DEFAULT_PILLARS.find(p => p.id === key);
+        if (found) return found;
         const details = catDetails[key] || {};
-        const rawName = details.name || details.title || (found ? found.name : key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '));
-        const cleanName = String(rawName).replace(/^[^\w\s]+\s*/, '').trim() || rawName;
+        const name = details.name || details.title || key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
         return {
           id: key,
-          name: cleanName,
-          icon: details.icon || (found ? found.icon : icons[idx % icons.length]),
-          color: details.color || (found ? found.color : palette[idx % palette.length]),
-          emoji: details.emoji || details.icon || (found ? found.emoji : icons[idx % icons.length])
+          name: name,
+          icon: details.icon || icons[idx % icons.length],
+          color: details.color || palette[idx % palette.length],
+          emoji: details.emoji || details.icon || icons[idx % icons.length]
         };
       });
     }
-    return DEFAULT_PILLARS.map((p) => {
-      const details = catDetails[p.id];
-      const rawName = details?.name;
-      if (rawName && !GENERIC_SHORT_NAMES.has(rawName.trim())) {
-        const emojiMatch = String(rawName).trim().match(/^([^\w\s]+)\s*(.*)$/);
-        const customIcon = emojiMatch ? emojiMatch[1] : p.icon;
-        const cleanName = emojiMatch && emojiMatch[2] ? emojiMatch[2].trim() : rawName.trim();
-        return {
-          ...p,
-          name: cleanName,
-          icon: customIcon,
-          emoji: customIcon
-        };
-      }
-      return p;
-    });
   }
   return DEFAULT_PILLARS;
 };
@@ -2120,10 +2102,6 @@ const AssessmentResultsNew = () => {
 
   // Fetch assessment framework for dimension names
   useEffect(() => {
-    if (resultsData?.customFramework) {
-      setFramework(resultsData.customFramework);
-      return;
-    }
     const fetchFramework = async () => {
       try {
         const frameworkData = await assessmentService.getAssessmentFramework();
@@ -2133,7 +2111,7 @@ const AssessmentResultsNew = () => {
       }
     };
     fetchFramework();
-  }, [resultsData]);
+  }, []);
 
   // Close color picker when clicking outside
   useEffect(() => {
@@ -3523,7 +3501,7 @@ const AssessmentResultsNew = () => {
         <ReportHeader>
           <HeaderTop>
             <TitleSection>
-              <h1>{resultsData?.assessmentInfo?.reportTitle || 'Enterprise Data & AI Maturity Report'}</h1>
+              <h1>Enterprise Data & AI Maturity Report</h1>
               <div className="subtitle">
                 Prepared for {resultsData?.assessmentInfo?.organizationName || 'Your Organization'} | {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
               </div>
