@@ -1,27 +1,22 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { motion, AnimatePresence } from 'framer-motion';
-import toast from 'react-hot-toast';
-import { 
-  FiCheckCircle, 
+import { motion } from 'framer-motion';
+import {
+  FiCheckCircle,
   FiArrowRight,
-  FiPlay,
-  FiTarget,
-  FiList,
   FiTrendingUp,
   FiFolder,
   FiShield,
-  FiBarChart2,
   FiZap,
-  FiPlayCircle,
   FiClock,
-  FiAlertCircle,
   FiDollarSign,
   FiUsers,
-  FiAward
+  FiAward,
+  FiFileText,
+  FiCpu,
+  FiLayers
 } from 'react-icons/fi';
-import * as assessmentService from '../services/assessmentService';
 import Footer from './Footer';
 
 // =======================
@@ -30,388 +25,453 @@ import Footer from './Footer';
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: white;
+  background: #f8fafc;
   color: #1e293b;
   padding-top: 68px; /* Height of fixed nav */
 `;
 
-// Hero Section with Gradient Background
-const HeroGradientBG = styled.div`
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  background: radial-gradient(1200px 600px at 50% -10%, #0a2a6a 0%, #0c2f77 22%, #0e3688 45%, #0f3b94 60%, #102043 100%);
-  
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    opacity: 0.2;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cpath d='M0 0h160v160H0z' fill='none'/%3E%3Cg stroke='%23fff' stroke-opacity='0.08' stroke-width='1'%3E%3Cpath d='M0 80h160M80 0v160'/%3E%3C/g%3E%3C/svg%3E");
-  }
+const JourneyRibbon = styled.div`
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 12px clamp(16px, 3vw, 48px);
 `;
 
-const HeroHeader = styled.header`
-  width: 100%;
-  max-width: 100%;
+const JourneyRibbonInner = styled.div`
+  max-width: 1360px;
   margin: 0 auto;
-  padding: 80px clamp(16px, 2.5vw, 40px);
-  box-sizing: border-box;
-
-  @media (max-width: 1024px) {
-    padding: 64px 24px;
-  }
-
-  @media (max-width: 768px) {
-    padding: 56px 16px;
-  }
-`;
-
-// GlobalNav is now a separate component imported in App.js
-
-const HeroContent = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 80px;
-  align-items: center;
-
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-    gap: 48px;
-    text-align: center;
-  }
-`;
-
-const HeroText = styled.div`
-  h1 {
-    font-size: clamp(2.5rem, 5vw, 4.25rem);
-    font-weight: 850;
-    color: white;
-    line-height: 1.1;
-    margin-bottom: 24px;
-    letter-spacing: -0.03em;
-
-    @media (max-width: 768px) {
-      font-size: 2.5rem;
-    }
-  }
-
-  p {
-    font-size: 1.25rem;
-    color: rgba(255, 255, 255, 0.9);
-    line-height: 1.7;
-    margin-bottom: 40px;
-
-    @media (max-width: 768px) {
-      font-size: 1.125rem;
-    }
-  }
-`;
-
-const ButtonGroup = styled.div`
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-
-  @media (max-width: 1024px) {
-    justify-content: center;
-  }
-
-  @media (max-width: 640px) {
-    flex-direction: column;
-  }
 `;
 
-const Button = styled(motion.button)`
-  padding: 16px 32px;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
+const JourneyStepsList = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+`;
+
+const JourneyStepPill = styled.button`
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.3s;
-  position: relative;
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  @media (max-width: 640px) {
-    width: 100%;
-    justify-content: center;
-  }
-`;
-
-const PrimaryButton = styled(Button)`
-  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
-  color: white;
-  box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4);
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 40px rgba(255, 107, 53, 0.5);
-  }
-`;
-
-const SecondaryButton = styled(Button)`
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(10px);
-  position: relative;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.4);
-  }
-`;
-
-const SampleDropdown = styled(motion.div)`
-  position: absolute;
-  top: 100%;
-  left: 0;
-  margin-top: 8px;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  min-width: 200px;
-  z-index: 10;
-  overflow: hidden;
-`;
-
-const SampleMenuItem = styled.button`
-  width: 100%;
-  padding: 12px 16px;
-  text-align: left;
-  background: white;
-  border: none;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: 1px solid ${props => (props.$active ? '#bfdbfe' : '#e2e8f0')};
+  background: ${props => (props.$active ? '#eff6ff' : '#f8fafc')};
+  color: ${props => (props.$active ? '#1d4ed8' : '#475569')};
   cursor: pointer;
-  font-size: 0.875rem;
-  color: #374151;
-  transition: background 0.2s;
-  border-bottom: 1px solid #f3f4f6;
-
-  &:last-child {
-    border-bottom: none;
-  }
+  transition: all 0.15s ease;
 
   &:hover {
-    background: #f9fafb;
+    border-color: #93c5fd;
+    background: #eff6ff;
+    color: #1d4ed8;
   }
 
-  .label {
-    font-weight: 600;
-    display: block;
-    margin-bottom: 2px;
-  }
-
-  .desc {
-    font-size: 0.75rem;
-    color: #6b7280;
-  }
-`;
-
-const HeroSidebar = styled.div`
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 24px;
-  padding: 40px;
-  backdrop-filter: blur(10px);
-
-  @media (max-width: 1024px) {
-    margin: 0 auto;
-    max-width: 600px;
-  }
-
-  @media (max-width: 640px) {
-    padding: 28px;
-  }
-`;
-
-const MetricPills = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-bottom: 32px;
-`;
-
-const MetricPill = styled.div`
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 16px;
-  border-radius: 12px;
-  text-align: center;
-
-  .number {
-    font-size: 1.875rem;
+  .step-num {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
     font-weight: 800;
-    color: white;
-    margin-bottom: 4px;
-  }
-
-  .label {
-    font-size: 0.813rem;
-    color: rgba(255, 255, 255, 0.8);
-    font-weight: 500;
+    background: ${props => (props.$active ? '#2563eb' : '#cbd5e1')};
+    color: ${props => (props.$active ? '#ffffff' : '#334155')};
   }
 `;
 
-const BenefitsCard = styled.div`
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 16px;
-  padding: 24px;
+const HeroSection = styled.header`
+  background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+  border-bottom: 1px solid #e2e8f0;
+  padding: 48px clamp(16px, 3vw, 48px) 56px;
+`;
 
-  h3 {
-    font-size: 1.125rem;
-    font-weight: 700;
-    color: white;
+const HeroContainer = styled.div`
+  max-width: 1360px;
+  margin: 0 auto;
+`;
+
+const HeroTopRow = styled.div`
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto 40px;
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1d4ed8;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     margin-bottom: 16px;
   }
 
-  ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  h1 {
+    font-size: clamp(2.1rem, 4vw, 3.25rem);
+    font-weight: 850;
+    color: #1e293b;
+    line-height: 1.15;
+    margin: 0 0 16px;
+    letter-spacing: -0.03em;
   }
 
-  li {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 0.938rem;
-    margin-bottom: 12px;
-    line-height: 1.5;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    svg {
-      margin-top: 2px;
-      color: #86efac;
-      flex-shrink: 0;
-    }
+  p {
+    font-size: 1.1rem;
+    color: #475569;
+    line-height: 1.65;
+    margin: 0;
   }
 `;
 
-// Content Sections
-const Section = styled.section`
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 80px clamp(16px, 2.5vw, 40px);
-  box-sizing: border-box;
+const IntentCardsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 36px;
 
   @media (max-width: 1024px) {
-    padding: 64px 24px;
+    grid-template-columns: 1fr;
+  }
+`;
+
+const IntentCard = styled(motion.div)`
+  background: #ffffff;
+  border: 2px solid ${props => props.$borderColor || '#e2e8f0'};
+  border-radius: 20px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: ${props =>
+    props.$featured
+      ? '0 16px 36px -10px rgba(37, 99, 235, 0.14)'
+      : '0 6px 20px -6px rgba(15, 23, 42, 0.06)'};
+  transition: all 0.22s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: ${props => props.$hoverBorder || '#2563eb'};
+    box-shadow: 0 18px 40px -10px rgba(37, 99, 235, 0.18);
+  }
+`;
+
+const IntentBadgeRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 18px;
+`;
+
+const IntentIconBox = styled.div`
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: ${props => props.$bg || '#eff6ff'};
+  border: 1px solid ${props => props.$border || '#bfdbfe'};
+  color: ${props => props.$color || '#2563eb'};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+`;
+
+const IntentStepTag = styled.span`
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: ${props => props.$bg || '#eff6ff'};
+  color: ${props => props.$color || '#1d4ed8'};
+  border: 1px solid ${props => props.$border || '#bfdbfe'};
+`;
+
+const QuickChipsRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0 22px;
+`;
+
+const QuickChip = styled.button`
+  padding: 6px 11px;
+  border-radius: 8px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  background: #f8fafc;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-color: #93c5fd;
+  }
+`;
+
+const IntentActionBtn = styled.button`
+  width: 100%;
+  padding: 13px 18px;
+  border-radius: 12px;
+  border: ${props => (props.$primary ? 'none' : '1px solid #cbd5e1')};
+  background: ${props =>
+    props.$primary
+      ? 'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)'
+      : props.$accentBg || '#f8fafc'};
+  color: ${props => (props.$primary ? '#ffffff' : props.$accentColor || '#1e293b')};
+  font-size: 0.92rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    opacity: 0.95;
+    transform: translateY(-1px);
+  }
+`;
+
+const RecentDossiersStrip = styled.div`
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 16px;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+`;
+
+const DossierMiniCard = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #eff6ff;
+    border-color: #93c5fd;
   }
 
-  @media (max-width: 768px) {
-    padding: 56px 16px;
+  .customer {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #1e293b;
+    display: block;
   }
 
-  &.alt-bg {
-    background: #f9fafb;
+  .meta {
+    font-size: 0.7rem;
+    color: #64748b;
+    font-weight: 600;
   }
+
+  .score-badge {
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+  }
+`;
+
+const Section = styled.section`
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 64px clamp(16px, 3vw, 48px);
+  box-sizing: border-box;
 `;
 
 const SectionHeader = styled.div`
   text-align: center;
-  max-width: 800px;
-  margin: 0 auto 64px;
+  max-width: 820px;
+  margin: 0 auto 44px;
 
   h2 {
-    font-size: 2.5rem;
-    font-weight: 800;
+    font-size: 2.15rem;
+    font-weight: 850;
     color: #1e293b;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     letter-spacing: -0.02em;
-
-    @media (max-width: 768px) {
-      font-size: 2rem;
-    }
   }
 
   p {
-    font-size: 1.125rem;
+    font-size: 1.05rem;
     color: #64748b;
-    line-height: 1.7;
+    line-height: 1.65;
+    margin: 0;
+  }
+`;
+
+const GroundingBanner = styled.div`
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+`;
+
+const SkillsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  margin-top: 20px;
+
+  @media (max-width: 1100px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const SkillCard = styled.div`
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-top: 3px solid ${props => props.$accent || '#2563eb'};
+  border-radius: 12px;
+  padding: 16px;
+
+  .skill-step {
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: ${props => props.$accent || '#2563eb'};
+    margin-bottom: 6px;
+  }
+
+  .skill-title {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 6px;
+  }
+
+  .skill-id {
+    font-family: monospace;
+    font-size: 0.68rem;
+    color: #475569;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 8px;
+  }
+
+  .skill-desc {
+    font-size: 0.76rem;
+    color: #64748b;
+    line-height: 1.45;
+  }
+`;
+
+const FactorsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 20px;
+
+  @media (max-width: 960px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const FactorBox = styled.div`
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  .factor-badge {
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+    font-size: 0.7rem;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .factor-title {
+    font-size: 0.84rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 3px;
+  }
+
+  .factor-text {
+    font-size: 0.76rem;
+    color: #64748b;
+    line-height: 1.45;
   }
 `;
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
   align-items: stretch;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
   @media (max-width: 640px) {
     grid-template-columns: 1fr;
   }
-
-  &.three-columns {
-    grid-template-columns: repeat(3, 1fr);
-
-    @media (max-width: 1024px) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    @media (max-width: 640px) {
-      grid-template-columns: 1fr;
-    }
-  }
 `;
 
 const Card = styled(motion.div)`
-  background: white;
-  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 16px;
-  padding: 32px;
-  transition: all 0.3s;
+  padding: 28px;
+  transition: all 0.25s ease;
 
   &:hover {
-    border-color: #d1d5db;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    transform: translateY(-4px);
+    border-color: #cbd5e1;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.07);
+    transform: translateY(-3px);
   }
-
-  @media (max-width: 640px) {
-    padding: 24px;
-  }
-`;
-
-const CardIcon = styled.div`
-  width: 56px;
-  height: 56px;
-  border-radius: 14px;
-  background: ${props => props.$bgColor || 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)'};
-  display: grid;
-  place-items: center;
-  margin-bottom: 20px;
-  color: white;
-  font-size: 24px;
-`;
-
-const CardTitle = styled.h3`
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 12px;
-`;
-
-const CardDescription = styled.p`
-  font-size: 0.938rem;
-  color: #64748b;
-  line-height: 1.6;
-  margin: 0;
 `;
 
 const PillarCard = styled(Card)`
@@ -423,48 +483,47 @@ const PillarCard = styled(Card)`
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
 
     .icon {
-      font-size: 2rem;
+      font-size: 1.85rem;
     }
 
     h3 {
-      font-size: 1.25rem;
-      font-weight: 700;
+      font-size: 1.15rem;
+      font-weight: 800;
       color: #1e293b;
       margin: 0;
     }
   }
 
   .pillar-desc {
-    font-size: 0.938rem;
+    font-size: 0.9rem;
     color: #64748b;
-    margin-bottom: 20px;
-    line-height: 1.6;
-    min-height: 3.6em;
+    margin-bottom: 18px;
+    line-height: 1.55;
   }
 
   .dimensions-label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #6b7280;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #64748b;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
 
   .dimensions {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
     flex: 1;
     align-content: flex-start;
   }
 
   .dimension-tag {
-    font-size: 0.813rem;
-    padding: 6px 12px;
+    font-size: 0.76rem;
+    padding: 5px 10px;
     background: #f1f5f9;
     color: #475569;
     border-radius: 6px;
@@ -473,84 +532,171 @@ const PillarCard = styled(Card)`
   }
 
   .explore-btn {
-    margin-top: 20px;
+    margin-top: 18px;
     width: 100%;
-    padding: 10px 16px;
+    padding: 10px 14px;
     background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #cbd5e1;
     border-radius: 8px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #1e293b;
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: #1d4ed8;
     cursor: pointer;
     transition: all 0.2s;
 
     &:hover {
-      background: white;
-      border-color: #cbd5e1;
+      background: #eff6ff;
+      border-color: #93c5fd;
     }
   }
 `;
 
 const CTABand = styled.div`
-  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
-  padding: 80px 24px;
+  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+  padding: 64px 24px;
   text-align: center;
-
-  @media (max-width: 768px) {
-    padding: 60px 20px;
-  }
 `;
 
 const CTAContent = styled.div`
-  max-width: 800px;
+  max-width: 780px;
   margin: 0 auto;
 
   h2 {
-    font-size: 2.5rem;
-    font-weight: 800;
-    color: white;
-    margin-bottom: 20px;
+    font-size: 2.2rem;
+    font-weight: 850;
+    color: #ffffff;
+    margin-bottom: 14px;
     letter-spacing: -0.02em;
-
-    @media (max-width: 768px) {
-      font-size: 2rem;
-    }
   }
 
   p {
-    font-size: 1.125rem;
-    color: rgba(255, 255, 255, 0.95);
-    margin-bottom: 32px;
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.92);
+    margin-bottom: 28px;
     line-height: 1.6;
   }
 `;
 
 const CTAButton = styled(motion.button)`
-  padding: 18px 40px;
-  background: white;
-  color: #ff6b35;
+  padding: 16px 34px;
+  background: #ffffff;
+  color: #1d4ed8;
   border: none;
   border-radius: 12px;
-  font-size: 1.125rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 800;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.25);
-  }
-
-  @media (max-width: 640px) {
-    padding: 16px 32px;
-    font-size: 1rem;
-  }
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.18);
 `;
+
+// =======================
+// DATA CONSTANTS
+// =======================
+
+const RECENT_DOSSIERS = [
+  {
+    id: 'inst-quantum-fintech-001',
+    customer: 'Quantum FinTech',
+    blueprint: 'Regulated Cloud & FinTech Blueprint',
+    score: '74% (Level 4)',
+    updated: 'Verified • 52/60 Auto-Filled'
+  },
+  {
+    id: 'inst-connectplus-telecom-002',
+    customer: 'ConnectPlus Telecom',
+    blueprint: 'Enterprise Data & AI Maturity (60Q)',
+    score: '68% (Level 3)',
+    updated: 'Verified • 3-Yr ROI $4.2M'
+  },
+  {
+    id: 'inst-bionova-rwe-003',
+    customer: 'BioNova Therapeutics',
+    blueprint: 'GxP & Clinical Data Readiness',
+    score: '81% (Level 4)',
+    updated: 'Verified • GxP Grounded'
+  },
+  {
+    id: 'inst-talentpulse-euai-004',
+    customer: 'TalentPulse HR AI',
+    blueprint: 'EU AI Act Annex III Compliance',
+    score: '79% (Conformant)',
+    updated: 'Verified • Annex IV Dossier'
+  }
+];
+
+const SCOREX_SKILLS = [
+  {
+    step: 'Skill 1 • Multi-Source Ingest',
+    title: 'Multi-Source Evidence Ingestor',
+    id: 'scorex-multisource-evidence-ingestor',
+    accent: '#2563eb',
+    desc: 'Ingests Salesforce (ACC-...), Buganizer (b/...), Email/Chat threads & PDFs/Spreadsheets with SHA-256 locators and Tier A/B/C tags.'
+  },
+  {
+    step: 'Skill 2 • Diagram Decompiler',
+    title: 'Diagram Topology Decompiler',
+    id: 'scorex-diagram-topology-decompiler',
+    accent: '#7c3aed',
+    desc: 'Decompiles architecture diagrams (.png/.pdf/.drawio) into verified GCP services, HA/DR zones, VPC-SC perimeters & SPOF detections.'
+  },
+  {
+    step: 'Skill 3 • Anti-Hallucination Scorer',
+    title: 'Grounded Rubric Scorer',
+    id: 'scorex-grounded-rubric-scorer',
+    accent: '#059669',
+    desc: 'Enforces the 6 Grounding Factors: verbatim quotes, Tier A > Tier C conflict resolution, and mandatory abstention when evidence < 0.75.'
+  },
+  {
+    step: 'Skill 4 • CFO ROI Modeler',
+    title: 'CFO Value Realization Calculator',
+    id: 'scorex-cfo-value-realization-calculator',
+    accent: '#d97706',
+    desc: 'Applies Evidence-Tier Risk Discounts (100% Tier A, 85% Tier B, 65% Tier C, 0% Abstained) for board-ready 3-Year NPV & Payback.'
+  },
+  {
+    step: 'Skill 5 • Forensic Gate',
+    title: 'Omni Forensic Critic Gate',
+    id: 'scorex-omni-forensic-critic',
+    accent: '#dc2626',
+    desc: 'Independent cross-model audit certifying zero ungrounded scores and rendering the Question-by-Question Audit Ledger in Tab 4.'
+  }
+];
+
+const GROUNDING_FACTORS = [
+  {
+    code: 'GF-1',
+    title: 'Source Authority & Freshness Tiering (Tier A / B / C)',
+    text: 'Architecture diagrams, Terraform & Buganizer telemetry (Tier A) outrank Salesforce notes (Tier B) and unverified email claims (Tier C).'
+  },
+  {
+    code: 'GF-2',
+    title: 'Mandatory Verbatim Quote + Exact Locator',
+    text: 'Every auto-selected rubric score requires a verbatim excerpt and clickable source coordinate (e.g., b/349102411#comment4 or Slide 4 bbox).'
+  },
+  {
+    code: 'GF-3',
+    title: 'Rubric Anchor Semantic Entailment',
+    text: 'Scores are never chosen by keyword overlap alone—evidence must prove the specific SLA, RTO/RPO, or automation cadence required by Level 1–5.'
+  },
+  {
+    code: 'GF-4',
+    title: 'Deterministic Contradiction Resolution (Tier A > Tier C)',
+    text: 'When email notes claim "multi-region active-active" but the diagram or Buganizer ticket shows single-region us-central1, Tier A wins automatically.'
+  },
+  {
+    code: 'GF-5',
+    title: 'Strict Abstention Gate ("Needs Human Input")',
+    text: 'If grounding confidence is below 0.75 or evidence is missing, ScoreX refuses to guess and flags the question for live discovery.'
+  },
+  {
+    code: 'GF-6',
+    title: 'Cross-Model Generator vs. Forensic Judge',
+    text: 'gemini-3.8-flash extracts candidate answers while gemini-3.1-pro-preview + google-omni-1.1 audit and reject any ungrounded inference.'
+  }
+];
 
 // =======================
 // COMPONENT
@@ -559,16 +705,9 @@ const CTAButton = styled(motion.button)`
 const HomePageNew = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [showSampleMenu, setShowSampleMenu] = useState(false);
-  const [generatingSample, setGeneratingSample] = useState(false);
-  const sampleMenuRef = useRef(null);
 
-  // Slideshow functionality removed per user request
-
-  // Handle scrolling when navigated from another page
   useEffect(() => {
     if (location.state && location.state.scrollTo) {
-      // Small delay to ensure page is rendered
       setTimeout(() => {
         const element = document.getElementById(location.state.scrollTo);
         if (element) {
@@ -578,395 +717,335 @@ const HomePageNew = () => {
     }
   }, [location]);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (sampleMenuRef.current && !sampleMenuRef.current.contains(event.target)) {
-        setShowSampleMenu(false);
-      }
-    };
-
-    if (showSampleMenu) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showSampleMenu]);
-
-  const handleGenerateSample = async (level) => {
-    try {
-      setGeneratingSample(true);
-      setShowSampleMenu(false);
-      toast.loading(`Generating ${level} sample assessment...`, { id: 'sample-gen' });
-      
-      const result = await assessmentService.generateSampleAssessment(level);
-      
-      // Server returns { success, message, assessment: { id, ... } }
-      const assessmentId = result?.assessment?.id || result?.id;
-      
-      if (assessmentId) {
-        
-        
-        // Small delay to ensure assessment is saved to disk
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // Navigate to the first question page
-        navigate(`/assessment/${assessmentId}/platform_governance`);
-      } else {
-        console.error('Invalid response structure:', result);
-        throw new Error('Invalid response from server');
-      }
-    } catch (error) {
-      console.error('Error generating sample:', error);
-      
-    } finally {
-      setGeneratingSample(false);
-    }
-  };
-
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
   return (
     <PageContainer>
-      {/* Hero Section */}
-      <HeroGradientBG>
-        <HeroHeader>
-          <HeroContent>
-            <HeroText>
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-              >
-                Accelerate Your Data & AI Journey
-              </motion.h1>
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-              >
-                Evaluate your enterprise Data, Cloud & Generative AI architectural maturity with audit-grade precision. 
-                Receive instant C-level ROI models, 3-year TCO projections, and Google Cloud target state blueprints.
-              </motion.p>
+      {/* 5-Step Guided Journey Ribbon */}
+      <JourneyRibbon>
+        <JourneyRibbonInner>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem', fontWeight: 800, color: '#334155' }}>
+            <FiLayers color="#2563eb" /> YOUR 4-STEP SCOREX WORKFLOW:
+          </div>
+          <JourneyStepsList>
+            <JourneyStepPill $active onClick={() => navigate('/assessments?view=blueprints')}>
+              <span className="step-num">1</span> Pick Assessment Blueprint
+            </JourneyStepPill>
+            <span style={{ color: '#94a3b8', fontWeight: 700 }}>→</span>
+            <JourneyStepPill onClick={() => navigate('/start')}>
+              <span className="step-num">2</span> Customer & Multi-Source Grounded Intake
+            </JourneyStepPill>
+            <span style={{ color: '#94a3b8', fontWeight: 700 }}>→</span>
+            <JourneyStepPill onClick={() => navigate('/assessments/run/enterprise_360')}>
+              <span className="step-num">3</span> Guided Assessment (Auto-Fill + Verify)
+            </JourneyStepPill>
+            <span style={{ color: '#94a3b8', fontWeight: 700 }}>→</span>
+            <JourneyStepPill onClick={() => navigate('/assessments/report/inst-quantum-fintech-001')}>
+              <span className="step-num">4</span> Complete 4-Tab Executive Report
+            </JourneyStepPill>
+          </JourneyStepsList>
+        </JourneyRibbonInner>
+      </JourneyRibbon>
 
-              <div style={{ display: 'flex', gap: '14px', marginTop: '28px', flexWrap: 'wrap' }}>
-                <button 
-                  onClick={() => navigate('/start')}
-                  style={{
-                    background: 'linear-gradient(135deg, #6366f1, #a855f7)',
-                    color: '#ffffff',
-                    fontWeight: 800,
-                    fontSize: '1.02rem',
-                    padding: '14px 28px',
-                    borderRadius: '12px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    boxShadow: '0 8px 24px rgba(99, 102, 241, 0.4)',
-                    transition: 'transform 0.2s ease'
-                  }}
-                >
-                  🚀 Launch 15-Min Assessment <FiArrowRight size={18} />
-                </button>
-                <button 
-                  onClick={() => navigate('/assessments/ai-generator')}
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.12)',
-                    border: '1px solid rgba(255, 255, 255, 0.25)',
-                    color: '#ffffff',
-                    fontWeight: 700,
-                    fontSize: '0.98rem',
-                    padding: '14px 24px',
-                    borderRadius: '12px',
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    backdropFilter: 'blur(8px)'
-                  }}
-                >
-                  ✨ Custom AI Generator
-                </button>
+      {/* Clean Light-Mode Hero + 3 Primary Intent Gateway */}
+      <HeroSection>
+        <HeroContainer>
+          <HeroTopRow>
+            <div className="eyebrow">
+              <FiShield size={14} /> Zero-Hallucination Enterprise Architecture & Value Platform
+            </div>
+            <motion.h1
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              How would you like to begin today?
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.05 }}
+            >
+              Choose a reusable assessment blueprint, resume a saved customer dossier, or run a standalone 3-Year CFO Value Realization model—backed by 6 Anti-Hallucination Grounding Factors and 5 specialized ScoreX Skills.
+            </motion.p>
+          </HeroTopRow>
+
+          {/* 3 Primary Intent Cards */}
+          <IntentCardsGrid>
+            {/* Intent 1: Start a New Customer Assessment */}
+            <IntentCard
+              $featured
+              $borderColor="#93c5fd"
+              $hoverBorder="#2563eb"
+              onClick={() => navigate('/assessments?view=blueprints')}
+            >
+              <div>
+                <IntentBadgeRow>
+                  <IntentIconBox $bg="#eff6ff" $border="#bfdbfe" $color="#2563eb">
+                    📐
+                  </IntentIconBox>
+                  <IntentStepTag $bg="#eff6ff" $color="#1d4ed8" $border="#bfdbfe">
+                    Intent 1 • Most Popular
+                  </IntentStepTag>
+                </IntentBadgeRow>
+                <h2 style={{ fontSize: '1.3rem', fontWeight: 850, color: '#1e293b', margin: '0 0 10px' }}>
+                  1. Start a New Customer Assessment
+                </h2>
+                <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: 1.6, margin: 0 }}>
+                  Select a reusable industry or technical blueprint, enter your customer profile, and auto-fill answers from Salesforce, Buganizer, Email, or Architecture Diagrams.
+                </p>
+                <QuickChipsRow onClick={e => e.stopPropagation()}>
+                  <QuickChip onClick={() => navigate('/start?blueprint=enterprise_360')}>
+                    📊 60Q Data & AI Maturity
+                  </QuickChip>
+                  <QuickChip onClick={() => navigate('/start?blueprint=quick_15min')}>
+                    ⚡ 15-Min Executive Diagnostic
+                  </QuickChip>
+                  <QuickChip onClick={() => navigate('/eu-ai-compliance')}>
+                    🇪🇺 EU AI Act (20Q)
+                  </QuickChip>
+                  <QuickChip onClick={() => navigate('/assessments/ai-generator')}>
+                    ✨ Custom AI Blueprint
+                  </QuickChip>
+                </QuickChipsRow>
               </div>
-              <div style={{ display: 'flex', gap: '10px', marginTop: '14px', flexWrap: 'wrap' }}>
-                <button
-                  onClick={() => navigate('/ge-value-realization')}
-                  style={{
-                    background: 'rgba(59, 130, 246, 0.2)',
-                    border: '1px solid rgba(147, 197, 253, 0.45)',
-                    color: '#e0f2fe',
-                    fontWeight: 700,
-                    fontSize: '0.84rem',
-                    padding: '8px 14px',
-                    borderRadius: '999px',
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px'
-                  }}
-                >
-                  📈 Engine 2: GE Value Realization (82Q) →
-                </button>
-                <button
-                  onClick={() => navigate('/eu-ai-compliance')}
-                  style={{
-                    background: 'rgba(245, 158, 11, 0.2)',
-                    border: '1px solid rgba(253, 224, 71, 0.45)',
-                    color: '#fef3c7',
-                    fontWeight: 700,
-                    fontSize: '0.84rem',
-                    padding: '8px 14px',
-                    borderRadius: '999px',
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px'
-                  }}
-                >
-                  🇪🇺 Engine 3: EU AI Act Dossier (20Q) →
-                </button>
-              </div>
-            </HeroText>
-
-            <HeroSidebar>
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
+              <IntentActionBtn
+                $primary
+                onClick={e => {
+                  e.stopPropagation();
+                  navigate('/assessments?view=blueprints');
+                }}
               >
-                <MetricPills>
-                  <MetricPill>
-                    <div className="number">6</div>
-                    <div className="label">Pillars</div>
-                  </MetricPill>
-                  <MetricPill>
-                    <div className="number">30</div>
-                    <div className="label">Dimensions</div>
-                  </MetricPill>
-                  <MetricPill>
-                    <div className="number">60</div>
-                    <div className="label">Questions</div>
-                  </MetricPill>
-                  <MetricPill>
-                    <div className="number">5</div>
-                    <div className="label">Maturity Levels</div>
-                  </MetricPill>
-                </MetricPills>
+                Browse Reusable Blueprints <FiArrowRight size={17} />
+              </IntentActionBtn>
+            </IntentCard>
 
-                <BenefitsCard>
-                  <h3>What You'll Get</h3>
-                  <ul>
-                    <li>
-                      <FiCheckCircle size={18} />
-                      <span>Comprehensive maturity assessment across 6 pillars</span>
-                    </li>
-                    <li>
-                      <FiCheckCircle size={18} />
-                      <span>Personalized recommendations based on your responses</span>
-                    </li>
-                    <li>
-                      <FiCheckCircle size={18} />
-                      <span>Prioritized action plan with timelines & impact</span>
-                    </li>
-                    <li>
-                      <FiCheckCircle size={18} />
-                      <span>Executive-ready reports (PDF & Excel)</span>
-                    </li>
-                    <li>
-                      <FiCheckCircle size={18} />
-                      <span>Identify gaps and opportunities for improvement</span>
-                    </li>
-                  </ul>
-                </BenefitsCard>
-              </motion.div>
-            </HeroSidebar>
-          </HeroContent>
-        </HeroHeader>
-      </HeroGradientBG>
+            {/* Intent 2: Open Saved Customer Dossiers */}
+            <IntentCard
+              $borderColor="#a7f3d0"
+              $hoverBorder="#059669"
+              onClick={() => navigate('/assessments?view=dossiers')}
+            >
+              <div>
+                <IntentBadgeRow>
+                  <IntentIconBox $bg="#ecfdf5" $border="#a7f3d0" $color="#059669">
+                    📂
+                  </IntentIconBox>
+                  <IntentStepTag $bg="#ecfdf5" $color="#047857" $border="#a7f3d0">
+                    Intent 2 • Resume / Reports
+                  </IntentStepTag>
+                </IntentBadgeRow>
+                <h2 style={{ fontSize: '1.3rem', fontWeight: 850, color: '#1e293b', margin: '0 0 10px' }}>
+                  2. Open Saved Customer Dossiers
+                </h2>
+                <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: 1.6, margin: 0 }}>
+                  Resume an in-progress customer discovery or open a completed 4-Tab Executive Report with Scorecard, Target Architecture, 3-Year ROI, and Grounding Audit Ledger.
+                </p>
+                <QuickChipsRow onClick={e => e.stopPropagation()}>
+                  <QuickChip onClick={() => navigate('/assessments/report/inst-quantum-fintech-001')}>
+                    🏦 Quantum FinTech Report
+                  </QuickChip>
+                  <QuickChip onClick={() => navigate('/assessments/report/inst-connectplus-telecom-002')}>
+                    📡 ConnectPlus Telecom
+                  </QuickChip>
+                  <QuickChip onClick={() => navigate('/assessments/report/inst-bionova-rwe-003')}>
+                    🧬 BioNova GxP Report
+                  </QuickChip>
+                </QuickChipsRow>
+              </div>
+              <IntentActionBtn
+                $accentBg="#ecfdf5"
+                $accentColor="#047857"
+                onClick={e => {
+                  e.stopPropagation();
+                  navigate('/assessments?view=dossiers');
+                }}
+              >
+                View Saved Customer Dossiers <FiFolder size={17} />
+              </IntentActionBtn>
+            </IntentCard>
 
-      {/* Why Take This Assessment Section */}
-      <Section id="why-assessment">
-        <SectionHeader>
-          <h2>Why take this assessment?</h2>
-          <p>Gain clarity on your enterprise data & AI journey and unlock the full potential of your initiatives.</p>
-        </SectionHeader>
+            {/* Intent 3: Quick ROI & Value Calculator */}
+            <IntentCard
+              $borderColor="#fde68a"
+              $hoverBorder="#d97706"
+              onClick={() => navigate('/ge-value-realization')}
+            >
+              <div>
+                <IntentBadgeRow>
+                  <IntentIconBox $bg="#fffbeb" $border="#fde68a" $color="#d97706">
+                    💰
+                  </IntentIconBox>
+                  <IntentStepTag $bg="#fffbeb" $color="#b45309" $border="#fde68a">
+                    Intent 3 • Standalone CFO Model
+                  </IntentStepTag>
+                </IntentBadgeRow>
+                <h2 style={{ fontSize: '1.3rem', fontWeight: 850, color: '#1e293b', margin: '0 0 10px' }}>
+                  3. Quick ROI & Value Calculator
+                </h2>
+                <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: 1.6, margin: 0 }}>
+                  Build a defensible 3-Year CFO Value Realization, TCO & Payback model with Evidence-Tier Risk Discounting—without running a full 60-question assessment first.
+                </p>
+                <QuickChipsRow onClick={e => e.stopPropagation()}>
+                  <QuickChip onClick={() => navigate('/ge-value-realization')}>
+                    📈 3-Year NPV & Payback
+                  </QuickChip>
+                  <QuickChip onClick={() => navigate('/executive-canvas')}>
+                    🎯 Executive Value Canvas
+                  </QuickChip>
+                  <QuickChip onClick={() => navigate('/benchmarks')}>
+                    📊 Industry Benchmarks
+                  </QuickChip>
+                </QuickChipsRow>
+              </div>
+              <IntentActionBtn
+                $accentBg="#fffbeb"
+                $accentColor="#b45309"
+                onClick={e => {
+                  e.stopPropagation();
+                  navigate('/ge-value-realization');
+                }}
+              >
+                Open ROI & Value Calculator <FiDollarSign size={17} />
+              </IntentActionBtn>
+            </IntentCard>
+          </IntentCardsGrid>
 
-        <Grid className="three-columns">
-          <Card
-            initial={{ opacity: 1, y: 0 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <CardIcon $bgColor="linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)">
-              <FiTrendingUp />
-            </CardIcon>
-            <CardTitle>Accelerate Growth</CardTitle>
-            <CardDescription>
-              Identify opportunities to maximize your data & AI platform investments and accelerate your transformation.
-            </CardDescription>
-          </Card>
+          {/* Quick-Resume Recent Customer Dossiers Strip */}
+          <RecentDossiersStrip>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span
+                style={{
+                  padding: '5px 10px',
+                  borderRadius: '8px',
+                  background: '#ecfdf5',
+                  color: '#047857',
+                  border: '1px solid #a7f3d0',
+                  fontSize: '0.75rem',
+                  fontWeight: 800
+                }}
+              >
+                ⚡ QUICK JUMP TO COMPLETE REPORT
+              </span>
+              <span style={{ fontSize: '0.84rem', color: '#475569', fontWeight: 600 }}>
+                Inspect a live 4-Tab Customer Executive Report immediately:
+              </span>
+            </div>
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              {RECENT_DOSSIERS.map(d => (
+                <DossierMiniCard
+                  key={d.id}
+                  onClick={() => navigate(`/assessments/report/${d.id}`)}
+                >
+                  <div>
+                    <span className="customer">{d.customer}</span>
+                    <span className="meta">{d.updated}</span>
+                  </div>
+                  <span className="score-badge">{d.score}</span>
+                </DossierMiniCard>
+              ))}
+            </div>
+          </RecentDossiersStrip>
+        </HeroContainer>
+      </HeroSection>
 
-          <Card
-            initial={{ opacity: 1, y: 0 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            <CardIcon $bgColor="linear-gradient(135deg, #10b981 0%, #059669 100%)">
-              <FiDollarSign />
-            </CardIcon>
-            <CardTitle>Maximize ROI</CardTitle>
-            <CardDescription>
-              Optimize costs, improve utilization, and demonstrate measurable business value from your platform.
-            </CardDescription>
-          </Card>
+      {/* 5 ScoreX Domain Skills & 6 Anti-Hallucination Grounding Factors Section */}
+      <Section id="grounding-architecture">
+        <GroundingBanner>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
+            <div>
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '4px 10px',
+                  borderRadius: '999px',
+                  background: '#ecfdf5',
+                  border: '1px solid #a7f3d0',
+                  color: '#047857',
+                  fontSize: '0.72rem',
+                  fontWeight: 800,
+                  textTransform: 'uppercase',
+                  marginBottom: '8px'
+                }}
+              >
+                <FiCheckCircle size={13} /> Multi-Source Anti-Hallucination Architecture
+              </div>
+              <h2 style={{ fontSize: '1.55rem', fontWeight: 850, color: '#1e293b', margin: '0 0 6px' }}>
+                5 Dedicated ScoreX Skills & 6 Anti-Hallucination Grounding Factors
+              </h2>
+              <p style={{ fontSize: '0.92rem', color: '#475569', margin: 0, maxWidth: '880px', lineHeight: 1.55 }}>
+                When auto-filling an assessment from <strong>Salesforce (`ACC-...`)</strong>, <strong>Buganizer (`b/...`)</strong>, <strong>Email/Chat threads</strong>, or uploaded <strong>Architecture Diagrams & PDFs</strong>, ScoreX never guesses. Every auto-filled answer is governed by 5 domain skills and 6 deterministic grounding rules.
+              </p>
+            </div>
+            <button
+              onClick={() => navigate('/start')}
+              style={{
+                padding: '11px 18px',
+                borderRadius: '10px',
+                background: '#eff6ff',
+                border: '1px solid #93c5fd',
+                color: '#1d4ed8',
+                fontWeight: 800,
+                fontSize: '0.84rem',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              <FiCpu size={15} /> Try Multi-Source Grounded Intake →
+            </button>
+          </div>
 
-          <Card
-            initial={{ opacity: 1, y: 0 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <CardIcon $bgColor="linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)">
-              <FiUsers />
-            </CardIcon>
-            <CardTitle>Align Teams</CardTitle>
-            <CardDescription>
-              Create a shared understanding of priorities and build consensus around your data strategy and roadmap.
-            </CardDescription>
-          </Card>
+          {/* 5 Skills Pipeline */}
+          <SkillsGrid>
+            {SCOREX_SKILLS.map(s => (
+              <SkillCard key={s.id} $accent={s.accent}>
+                <div className="skill-step">{s.step}</div>
+                <div className="skill-title">{s.title}</div>
+                <div className="skill-id">{s.id}</div>
+                <div className="skill-desc">{s.desc}</div>
+              </SkillCard>
+            ))}
+          </SkillsGrid>
 
-          <Card
-            initial={{ opacity: 1, y: 0 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            <CardIcon $bgColor="linear-gradient(135deg, #f59e0b 0%, #d97706 100%)">
-              <FiClock />
-            </CardIcon>
-            <CardTitle>Save Time</CardTitle>
-            <CardDescription>
-              Focus your efforts on the highest-impact improvements with prioritized recommendations and clear next steps.
-            </CardDescription>
-          </Card>
-
-          <Card
-            initial={{ opacity: 1, y: 0 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
-            <CardIcon $bgColor="linear-gradient(135deg, #ef4444 0%, #dc2626 100%)">
-              <FiShield />
-            </CardIcon>
-            <CardTitle>Reduce Risk</CardTitle>
-            <CardDescription>
-              Identify security gaps, governance weaknesses, and operational risks before they impact your business.
-            </CardDescription>
-          </Card>
-
-          <Card
-            initial={{ opacity: 1, y: 0 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-          >
-            <CardIcon $bgColor="linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)">
-              <FiAward />
-            </CardIcon>
-            <CardTitle>Best Practices</CardTitle>
-            <CardDescription>
-              Learn from industry best practices and proven architectural patterns for data & AI implementations.
-            </CardDescription>
-          </Card>
-        </Grid>
-      </Section>
-
-      {/* How It Works Section */}
-      <Section id="how-it-works">
-        <SectionHeader>
-          <h2>How it works</h2>
-          <p>Get actionable insights in three simple steps</p>
-        </SectionHeader>
-
-        <Grid className="three-columns">
-          <Card
-            initial={{ opacity: 1, y: 0 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <CardIcon $bgColor="linear-gradient(135deg, #ff6b35 0%, #f7931e 100%)">
-              <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>1</span>
-            </CardIcon>
-            <CardTitle>Answer Questions</CardTitle>
-            <CardDescription>
-              Complete 60 targeted questions across 6 pillars. Takes 15-20 minutes. Save and resume anytime.
-            </CardDescription>
-          </Card>
-
-          <Card
-            initial={{ opacity: 1, y: 0 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            <CardIcon $bgColor="linear-gradient(135deg, #ff6b35 0%, #f7931e 100%)">
-              <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>2</span>
-            </CardIcon>
-            <CardTitle>Get Insights</CardTitle>
-            <CardDescription>
-              Receive instant analysis of your maturity level, gaps, and opportunities across all dimensions.
-            </CardDescription>
-          </Card>
-
-          <Card
-            initial={{ opacity: 1, y: 0 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <CardIcon $bgColor="linear-gradient(135deg, #ff6b35 0%, #f7931e 100%)">
-              <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>3</span>
-            </CardIcon>
-            <CardTitle>Take Action</CardTitle>
-            <CardDescription>
-              Download executive reports and implement prioritized recommendations with clear timelines and impact.
-            </CardDescription>
-          </Card>
-        </Grid>
+          {/* 6 Grounding Factors */}
+          <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid #e2e8f0' }}>
+            <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#334155', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              🛡️ 6 Deterministic Anti-Hallucination Grounding Factors Enforced on Every Question:
+            </div>
+            <FactorsGrid>
+              {GROUNDING_FACTORS.map(f => (
+                <FactorBox key={f.code}>
+                  <span className="factor-badge">{f.code}</span>
+                  <div>
+                    <div className="factor-title">{f.title}</div>
+                    <div className="factor-text">{f.text}</div>
+                  </div>
+                </FactorBox>
+              ))}
+            </FactorsGrid>
+          </div>
+        </GroundingBanner>
       </Section>
 
       {/* Assessment Pillars Section */}
-      <Section id="pillars" className="alt-bg">
+      <Section id="pillars" style={{ paddingTop: '16px' }}>
         <SectionHeader>
-          <h2>Assessment Pillars</h2>
-          <p>Evaluate your enterprise data & AI maturity across these six comprehensive pillars. Each contains five dimensions with targeted questions.</p>
+          <h2>6 Enterprise Assessment Pillars (30 Dimensions)</h2>
+          <p>
+            Evaluate your enterprise Data, Cloud & Agentic AI maturity across six comprehensive pillars. Every question supports manual input or evidence-grounded auto-fill.
+          </p>
         </SectionHeader>
 
-        <Grid className="three-columns">
-          <PillarCard
-            initial={{ opacity: 1, y: 0 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
+        <Grid>
+          <PillarCard>
             <div className="pillar-header">
               <span className="icon">🧱</span>
               <h3>Platform & Governance</h3>
             </div>
             <div className="pillar-desc">
-              Assess how well your data & AI platform foundation is secured, scalable, and governed.
+              Assess how well your data & AI platform foundation is secured, scalable, and governed across cloud perimeters.
             </div>
             <div className="dimensions-label">Dimensions:</div>
             <div className="dimensions">
@@ -977,22 +1056,17 @@ const HomePageNew = () => {
               <span className="dimension-tag">Cost Management</span>
             </div>
             <button className="explore-btn" onClick={() => navigate('/start')}>
-              Explore questions →
+              Start with this pillar →
             </button>
           </PillarCard>
 
-          <PillarCard
-            initial={{ opacity: 1, y: 0 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
+          <PillarCard>
             <div className="pillar-header">
               <span className="icon">📊</span>
               <h3>Data Engineering & Integration</h3>
             </div>
             <div className="pillar-desc">
-              Evaluate how efficiently data is ingested, transformed, and managed across your data pipelines.
+              Evaluate how efficiently data is ingested, transformed, and managed across batch and streaming pipelines.
             </div>
             <div className="dimensions-label">Dimensions:</div>
             <div className="dimensions">
@@ -1003,22 +1077,17 @@ const HomePageNew = () => {
               <span className="dimension-tag">Performance & Scalability</span>
             </div>
             <button className="explore-btn" onClick={() => navigate('/start')}>
-              Explore questions →
+              Start with this pillar →
             </button>
           </PillarCard>
 
-          <PillarCard
-            initial={{ opacity: 1, y: 0 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
+          <PillarCard>
             <div className="pillar-header">
               <span className="icon">📈</span>
               <h3>Analytics & BI Modernization</h3>
             </div>
             <div className="pillar-desc">
-              Assess how your platform supports governed analytics, query performance, and self-service access.
+              Assess how your platform supports governed analytics, semantic layers, query performance, and self-service access.
             </div>
             <div className="dimensions-label">Dimensions:</div>
             <div className="dimensions">
@@ -1029,22 +1098,17 @@ const HomePageNew = () => {
               <span className="dimension-tag">Collaboration & Sharing</span>
             </div>
             <button className="explore-btn" onClick={() => navigate('/start')}>
-              Explore questions →
+              Start with this pillar →
             </button>
           </PillarCard>
 
-          <PillarCard
-            initial={{ opacity: 1, y: 0 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
+          <PillarCard>
             <div className="pillar-header">
               <span className="icon">🤖</span>
               <h3>Machine Learning & MLOps</h3>
             </div>
             <div className="pillar-desc">
-              Understand how machine learning is leveraged for predictive ML use cases with reliable operations.
+              Understand how machine learning is leveraged for predictive use cases with automated CI/CD/CT operations.
             </div>
             <div className="dimensions-label">Dimensions:</div>
             <div className="dimensions">
@@ -1055,22 +1119,17 @@ const HomePageNew = () => {
               <span className="dimension-tag">Business Impact</span>
             </div>
             <button className="explore-btn" onClick={() => navigate('/start')}>
-              Explore questions →
+              Start with this pillar →
             </button>
           </PillarCard>
 
-          <PillarCard
-            initial={{ opacity: 1, y: 0 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
+          <PillarCard>
             <div className="pillar-header">
               <span className="icon">💡</span>
               <h3>Generative AI & Agentic Capabilities</h3>
             </div>
             <div className="pillar-desc">
-              Evaluate readiness to operationalize GenAI and agent-based intelligence within your organization.
+              Evaluate readiness to operationalize GenAI, RAG grounding, and multi-agent architectures within your enterprise.
             </div>
             <div className="dimensions-label">Dimensions:</div>
             <div className="dimensions">
@@ -1081,22 +1140,17 @@ const HomePageNew = () => {
               <span className="dimension-tag">Responsible AI</span>
             </div>
             <button className="explore-btn" onClick={() => navigate('/start')}>
-              Explore questions →
+              Start with this pillar →
             </button>
           </PillarCard>
 
-          <PillarCard
-            initial={{ opacity: 1, y: 0 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-          >
+          <PillarCard>
             <div className="pillar-header">
               <span className="icon">⚙️</span>
               <h3>Operational Excellence & Adoption</h3>
             </div>
             <div className="pillar-desc">
-              Measure organizational readiness, adoption velocity, and realized value across data & AI programs.
+              Measure organizational readiness, FinOps governance, adoption velocity, and realized value across programs.
             </div>
             <div className="dimensions-label">Dimensions:</div>
             <div className="dimensions">
@@ -1107,7 +1161,7 @@ const HomePageNew = () => {
               <span className="dimension-tag">Innovation & Improvement</span>
             </div>
             <button className="explore-btn" onClick={() => navigate('/start')}>
-              Explore questions →
+              Start with this pillar →
             </button>
           </PillarCard>
         </Grid>
@@ -1116,16 +1170,28 @@ const HomePageNew = () => {
       {/* CTA Band */}
       <CTABand>
         <CTAContent>
-          <h2>Ready to begin?</h2>
-          <p>Answer a few guided questions and get a shareable report with prioritized actions.</p>
-          <CTAButton
-            onClick={() => navigate('/start')}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Start My Free Assessment
-            <FiArrowRight size={20} />
-          </CTAButton>
+          <h2>Ready to launch an evidence-grounded assessment?</h2>
+          <p>
+            Pick a reusable blueprint, connect Salesforce/Buganizer/Diagrams or answer interactively, and generate a board-ready 4-Tab Executive Report.
+          </p>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap' }}>
+            <CTAButton
+              onClick={() => navigate('/assessments?view=blueprints')}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              1. Pick Assessment Blueprint
+              <FiArrowRight size={18} />
+            </CTAButton>
+            <CTAButton
+              onClick={() => navigate('/assessments/report/inst-quantum-fintech-001')}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+              style={{ background: 'rgba(255,255,255,0.16)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.4)' }}
+            >
+              <FiFileText size={18} /> Inspect Complete 4-Tab Report
+            </CTAButton>
+          </div>
         </CTAContent>
       </CTABand>
 

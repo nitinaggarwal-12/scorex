@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import {
@@ -671,8 +671,96 @@ const LoadingContainer = styled.div`
 // COMPONENT
 // =======================
 
+const REUSABLE_BLUEPRINTS_CATALOG = [
+  {
+    key: 'enterprise_360',
+    title: 'Enterprise Data, Cloud & AI Maturity Blueprint (60Q)',
+    category: 'core',
+    badge: 'Flagship 6-Pillar • 60 Questions',
+    duration: '15–20 mins (or 90s Grounded Auto-Fill)',
+    desc: 'Comprehensive 6-pillar architectural maturity rubric covering Platform Governance, Data Engineering, Analytics/BI, MLOps, Agentic AI & FinOps.',
+    skills: ['scorex-multisource-evidence-ingestor', 'scorex-grounded-rubric-scorer', 'scorex-cfo-value-realization-calculator'],
+    route: '/start?blueprint=enterprise_360'
+  },
+  {
+    key: 'quick_15min',
+    title: 'Executive Quick Diagnostic Blueprint (18Q)',
+    category: 'core',
+    badge: 'Rapid Discovery • 18 Questions',
+    duration: '8–10 mins (or 60s Grounded Auto-Fill)',
+    desc: 'High-velocity C-suite diagnostic focused on top architectural bottlenecks, security perimeter gaps, and immediate 12-month ROI levers.',
+    skills: ['scorex-multisource-evidence-ingestor', 'scorex-grounded-rubric-scorer'],
+    route: '/start?blueprint=quick_15min'
+  },
+  {
+    key: 'fintech_regulated_cloud',
+    title: 'Regulated Cloud, Zero-Trust & FinTech Blueprint (36Q)',
+    category: 'industry',
+    badge: 'Financial Services • DORA / PCI-DSS',
+    duration: '12–15 mins',
+    desc: 'Evaluates VPC Service Controls, CMEK/KMS key sovereignty, multi-region Spanner HA/DR (RTO/RPO), and zero-trust data exfiltration guardrails.',
+    skills: ['scorex-diagram-topology-decompiler', 'scorex-grounded-rubric-scorer', 'scorex-omni-forensic-critic'],
+    route: '/assessments/run/cloud_zero_trust'
+  },
+  {
+    key: 'telecom_lakehouse_ai',
+    title: 'Telecom & High-Throughput Streaming Lakehouse Blueprint (32Q)',
+    category: 'industry',
+    badge: 'Telecom & Media • Streaming + AI',
+    duration: '12–15 mins',
+    desc: 'Assesses Pub/Sub + Dataflow streaming ingestion, BigQuery Iceberg lakehouse partitioning, network anomaly ML, and contact-center GenAI.',
+    skills: ['scorex-diagram-topology-decompiler', 'scorex-cfo-value-realization-calculator'],
+    route: '/assessments/run/data_lakehouse_modernization'
+  },
+  {
+    key: 'pharma_gxp_rwe',
+    title: 'Life Sciences GxP, Clinical & Real-World Evidence Blueprint (30Q)',
+    category: 'industry',
+    badge: 'Pharma & Biotech • 21 CFR Part 11',
+    duration: '12–15 mins',
+    desc: 'Audits clinical trial lineage, GxP validation locks, multi-modal RWE harmonization, and verifiable audit trails for regulatory submissions.',
+    skills: ['scorex-multisource-evidence-ingestor', 'scorex-omni-forensic-critic'],
+    route: '/assessments/run/genai_agentic_readiness'
+  },
+  {
+    key: 'eu_ai_act_annex_iii',
+    title: 'EU AI Act Annex III & IV Statutory Compliance Blueprint (20Q)',
+    category: 'compliance',
+    badge: 'Regulatory Dossier • Articles 9–15',
+    duration: '10–12 mins',
+    desc: 'Generates a statutory Annex IV Technical Documentation dossier covering risk management, data governance, human oversight, and robustness.',
+    skills: ['scorex-grounded-rubric-scorer', 'scorex-omni-forensic-critic'],
+    route: '/eu-ai-compliance'
+  },
+  {
+    key: 'cfo_value_realization_82q',
+    title: 'Gemini Enterprise CFO Value Realization & FinOps Blueprint (82Q)',
+    category: 'compliance',
+    badge: 'CFO Business Case • 3-Yr NPV & TCO',
+    duration: '10–15 mins',
+    desc: 'Quantifies developer velocity, unit-cost optimization, legacy license retirement, and Tier-Discounted 3-Year ROI with board-ready sensitivity tables.',
+    skills: ['scorex-cfo-value-realization-calculator', 'scorex-omni-forensic-critic'],
+    route: '/ge-value-realization'
+  },
+  {
+    key: 'custom_ai_blueprint',
+    title: 'Custom AI Blueprint Generator (Any Domain or Architecture)',
+    category: 'custom',
+    badge: 'Generative Rubric • Tailored Dimensions',
+    duration: '60 seconds to synthesize',
+    desc: 'Describe your target industry, regulatory regime, or cloud workload to synthesize a custom 5-level anchored maturity rubric on the fly.',
+    skills: ['scorex-multisource-evidence-ingestor', 'scorex-grounded-rubric-scorer'],
+    route: '/assessments/ai-generator'
+  }
+];
+
 const AssessmentsListNew = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const initialView = queryParams.get('view') === 'blueprints' ? 'blueprints' : (queryParams.get('view') === 'dossiers' ? 'dossiers' : 'all');
+  const [viewMode, setViewMode] = useState(initialView);
+  const [blueprintCategory, setBlueprintCategory] = useState('all');
   const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -688,6 +776,14 @@ const AssessmentsListNew = () => {
   const [uploadingExcel, setUploadingExcel] = useState(null); // Track which assessment is being uploaded
   const [selectedIds, setSelectedIds] = useState(new Set());
   const fileInputRef = React.useRef(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const v = params.get('view');
+    if (v === 'blueprints' || v === 'dossiers') {
+      setViewMode(v);
+    }
+  }, [location.search]);
 
   useEffect(() => {
     fetchAssessments();
@@ -1400,11 +1496,207 @@ const AssessmentsListNew = () => {
   return (
     <PageContainer>
       <ContentContainer>
-        {/* Header */}
+        {/* Top Segmented Mode Switcher: Blueprints vs Saved Customer Dossiers */}
+        <div
+          style={{
+            background: '#ffffff',
+            border: '1px solid #cbd5e1',
+            borderRadius: '16px',
+            padding: '12px 16px',
+            marginBottom: '24px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '12px',
+            flexWrap: 'wrap',
+            boxShadow: '0 4px 14px rgba(15, 23, 42, 0.04)'
+          }}
+        >
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <button
+              onClick={() => navigate('/assessments?view=blueprints')}
+              style={{
+                padding: '10px 18px',
+                borderRadius: '10px',
+                fontWeight: 800,
+                fontSize: '0.88rem',
+                cursor: 'pointer',
+                border: viewMode === 'blueprints' ? '1.5px solid #2563eb' : '1px solid #e2e8f0',
+                background: viewMode === 'blueprints' ? '#eff6ff' : '#f8fafc',
+                color: viewMode === 'blueprints' ? '#1d4ed8' : '#475569'
+              }}
+            >
+              📐 1. Reusable Assessment Blueprints ({REUSABLE_BLUEPRINTS_CATALOG.length} Templates)
+            </button>
+            <button
+              onClick={() => navigate('/assessments?view=dossiers')}
+              style={{
+                padding: '10px 18px',
+                borderRadius: '10px',
+                fontWeight: 800,
+                fontSize: '0.88rem',
+                cursor: 'pointer',
+                border: viewMode === 'dossiers' ? '1.5px solid #059669' : '1px solid #e2e8f0',
+                background: viewMode === 'dossiers' ? '#ecfdf5' : '#f8fafc',
+                color: viewMode === 'dossiers' ? '#047857' : '#475569'
+              }}
+            >
+              📂 2. Saved Customer Dossiers ({assessments.length} Customer Runs)
+            </button>
+            <button
+              onClick={() => setViewMode('all')}
+              style={{
+                padding: '10px 14px',
+                borderRadius: '10px',
+                fontWeight: 700,
+                fontSize: '0.82rem',
+                cursor: 'pointer',
+                border: viewMode === 'all' ? '1.5px solid #6366f1' : '1px solid #e2e8f0',
+                background: viewMode === 'all' ? '#eef2ff' : '#ffffff',
+                color: viewMode === 'all' ? '#4338ca' : '#64748b'
+              }}
+            >
+              Show Both Views
+            </button>
+          </div>
+          <div style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 600 }}>
+            🛡️ Powered by 5 ScoreX Grounding Skills • Zero Customer Names Mixed in Reusable Blueprints
+          </div>
+        </div>
+
+        {/* Section 1: Reusable Assessment Blueprints (Start New) */}
+        {(viewMode === 'blueprints' || viewMode === 'all') && (
+          <div
+            style={{
+              background: '#ffffff',
+              border: '1px solid #cbd5e1',
+              borderRadius: '18px',
+              padding: '24px',
+              marginBottom: '32px',
+              boxShadow: '0 6px 20px rgba(15, 23, 42, 0.04)'
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px', flexWrap: 'wrap', marginBottom: '18px' }}>
+              <div>
+                <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#1d4ed8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
+                  Step 1 of 4 • Reusable Template Catalog
+                </div>
+                <h2 style={{ margin: '0 0 6px', fontSize: '1.5rem', fontWeight: 850, color: '#1e293b' }}>
+                  📐 1. Reusable Assessment Blueprints (Start New)
+                </h2>
+                <p style={{ margin: 0, fontSize: '0.9rem', color: '#475569' }}>
+                  Select a reusable industry or technical blueprint below. You will enter your customer name and connect Salesforce, Buganizer, Email, or Diagrams on the next step.
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                {[
+                  { id: 'all', label: 'All Blueprints' },
+                  { id: 'core', label: 'Core Data & AI' },
+                  { id: 'industry', label: 'Industry Verticals' },
+                  { id: 'compliance', label: 'Compliance & CFO ROI' },
+                  { id: 'custom', label: 'Custom AI Generator' }
+                ].map(cat => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setBlueprintCategory(cat.id)}
+                    style={{
+                      padding: '7px 13px',
+                      borderRadius: '999px',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      border: blueprintCategory === cat.id ? '1.5px solid #2563eb' : '1px solid #cbd5e1',
+                      background: blueprintCategory === cat.id ? '#eff6ff' : '#f8fafc',
+                      color: blueprintCategory === cat.id ? '#1d4ed8' : '#475569'
+                    }}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '18px' }}>
+              {REUSABLE_BLUEPRINTS_CATALOG.filter(b => blueprintCategory === 'all' || b.category === blueprintCategory).map(bp => (
+                <div
+                  key={bp.key}
+                  onClick={() => navigate(bp.route)}
+                  style={{
+                    background: '#f8fafc',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '14px',
+                    padding: '20px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', marginBottom: '10px', flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: '0.72rem', fontWeight: 800, padding: '4px 10px', borderRadius: '999px', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe' }}>
+                        {bp.badge}
+                      </span>
+                      <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#64748b' }}>
+                        ⏱️ {bp.duration}
+                      </span>
+                    </div>
+                    <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#1e293b', margin: '0 0 8px' }}>
+                      {bp.title}
+                    </h3>
+                    <p style={{ fontSize: '0.84rem', color: '#475569', lineHeight: 1.55, margin: '0 0 14px' }}>
+                      {bp.desc}
+                    </p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '16px' }}>
+                      {bp.skills.map(sk => (
+                        <span
+                          key={sk}
+                          style={{
+                            fontFamily: 'monospace',
+                            fontSize: '0.66rem',
+                            padding: '2px 7px',
+                            borderRadius: '4px',
+                            background: '#ffffff',
+                            border: '1px solid #cbd5e1',
+                            color: '#334155'
+                          }}
+                        >
+                          🛡️ {sk}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <button
+                    onClick={e => {
+                      e.stopPropagation();
+                      navigate(bp.route);
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      borderRadius: '10px',
+                      border: 'none',
+                      background: 'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)',
+                      color: '#ffffff',
+                      fontWeight: 800,
+                      fontSize: '0.82rem',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Select Blueprint & Enter Customer Details →
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Header for Saved Customer Dossiers */}
         <HeaderSection>
           <div className="left">
-            <h1>Assessments</h1>
-            <p>Browse, filter, and manage all maturity assessments in one place.</p>
+            <h1>📂 Saved Customer Dossiers & Active Runs</h1>
+            <p>Resume in-progress customer discovery or open completed 4-Tab Executive Reports ({assessments.length} customer dossiers).</p>
           </div>
           <div className="right" style={{ display: 'flex', gap: '12px' }}>
             <button
@@ -1445,7 +1737,7 @@ const AssessmentsListNew = () => {
           alignItems: 'center'
         }}>
           {[
-            { id: 'all', label: 'All Suites', count: assessments.length, color: '#0f172a' },
+            { id: 'all', label: 'All Suites', count: assessments.length, color: '#1d4ed8' },
             { id: 'classic', label: 'Core 6-Pillar', count: assessments.filter(a => a.assessmentFamily === 'classic').length, color: '#1d4ed8' },
             { id: 'dynamic', label: 'Dynamic Blueprints', count: assessments.filter(a => a.assessmentFamily === 'dynamic').length, color: '#6d28d9' },
             { id: 'genai', label: 'GenAI Readiness', count: assessments.filter(a => a.assessmentFamily === 'genai').length, color: '#047857' },

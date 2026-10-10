@@ -64,9 +64,10 @@ const StartContainer = styled.div`
 const FormCard = styled(motion.div)`
   background: white;
   border-radius: 20px;
-  padding: 48px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-  max-width: 600px;
+  padding: 40px 44px;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
+  border: 1px solid #e2e8f0;
+  max-width: 860px;
   width: 100%;
 `;
 
@@ -296,6 +297,13 @@ const AssessmentStart = ({ onStart }) => {
     industry: '',
     selectedPillars: []
   });
+  const [groundingSources, setGroundingSources] = useState({
+    salesforceId: 'ACC-0094821-QFT (Quantum FinTech Global)',
+    buganizerIds: 'b/349102411, b/351008912 (Architecture & DR Review)',
+    emailThread: 'CTO Thread (Oct 2026): "Migrating core ledger to Cloud Spanner; current DR failover is single-region us-central1 with 4h manual runbook..."',
+    diagramFile: 'quantum_fintech_gcp_topology_v3.pdf (Tier A Verified)'
+  });
+  const [groundingPreviewOpen, setGroundingPreviewOpen] = useState(true);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -398,14 +406,15 @@ const AssessmentStart = ({ onStart }) => {
 
   const handlePrefillForm = () => {
     setFormData({
-      assessmentName: 'Enterprise Data & AI Acceleration Review',
-      assessmentDescription: 'Comprehensive maturity evaluation covering Lakehouse platform governance, ETL pipelines, automated ML deployments, and Generative AI readiness.',
-      contactEmail: 'lead.architect@enterprise-corp.com',
-      industry: 'Technology',
+      assessmentName: 'Quantum FinTech — Enterprise Data & AI Maturity Review',
+      assessmentDescription: 'Grounded via Salesforce ACC-0094821-QFT, Buganizer b/349102411, and Architecture Diagram v3.0 (52/60 questions auto-filled with Tier A/B/C citations; 8 abstained for live discovery).',
+      contactEmail: 'lead.architect@quantum-fintech.com',
+      industry: 'Financial Services',
       selectedPillars: PILLARS.map(p => p.id)
     });
+    setGroundingPreviewOpen(true);
     setErrors({});
-    toast.success('✨ Form filled with realistic enterprise details!');
+    toast.success('🛡️ Multi-Source Grounded Intake applied (52/60 auto-filled, 1 contradiction resolved Tier A > Tier C, 8 abstained)!');
   };
 
   return (
@@ -415,19 +424,127 @@ const AssessmentStart = ({ onStart }) => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <FormTitle>Start Your Assessment</FormTitle>
-        <FormSubtitle>
-          Begin your enterprise data & AI maturity assessment journey. We'll guide you through 
-          evaluating your current capabilities and future goals.
+        <div style={{ textAlign: 'center', marginBottom: '10px' }}>
+          <span style={{
+            display: 'inline-block',
+            padding: '5px 12px',
+            borderRadius: '999px',
+            background: '#eff6ff',
+            border: '1px solid #bfdbfe',
+            color: '#1d4ed8',
+            fontSize: '0.75rem',
+            fontWeight: 800,
+            textTransform: 'uppercase',
+            letterSpacing: '0.04em'
+          }}>
+            Step 2 of 4 • Customer Context & Multi-Source Grounded Auto-Fill
+          </span>
+        </div>
+        <FormTitle>Customer Intake & Grounded Evidence Ingestion</FormTitle>
+        <FormSubtitle style={{ marginBottom: '24px' }}>
+          Enter your customer details below and optionally auto-populate the assessment from <strong>Salesforce</strong>, <strong>Buganizer</strong>, <strong>Email/Chat threads</strong>, or <strong>Architecture Diagrams & PDFs</strong> with zero hallucination.
         </FormSubtitle>
 
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap', marginBottom: '10px' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap', marginBottom: '18px' }}>
           <UploadDocButton type="button" onClick={() => setIsUploadModalOpen(true)}>
             <FiUploadCloud /> Upload Architecture Doc / Diagram (Auto-Populate)
           </UploadDocButton>
           <AutofillButton type="button" onClick={handlePrefillForm}>
-            <FiZap /> Autofill Sample Details
+            <FiZap /> Run 5-Skill Grounded Auto-Fill (Sample Customer)
           </AutofillButton>
+        </div>
+
+        {/* Multi-Source Evidence Connectors & 6 Anti-Hallucination Grounding Factors */}
+        <div
+          style={{
+            background: '#f8fafc',
+            border: '1px solid #cbd5e1',
+            borderRadius: '14px',
+            padding: '18px 20px',
+            marginBottom: '26px'
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '12px' }}>
+            <div style={{ fontSize: '0.86rem', fontWeight: 800, color: '#1e293b' }}>
+              🔌 Multi-Source Evidence Connectors (Optional — Auto-Fills Questionnaire with Citations)
+            </div>
+            <button
+              type="button"
+              onClick={() => setGroundingPreviewOpen(!groundingPreviewOpen)}
+              style={{
+                background: '#ffffff',
+                border: '1px solid #cbd5e1',
+                borderRadius: '6px',
+                padding: '4px 10px',
+                fontSize: '0.74rem',
+                fontWeight: 700,
+                color: '#1d4ed8',
+                cursor: 'pointer'
+              }}
+            >
+              {groundingPreviewOpen ? 'Hide Grounding Rules ▲' : 'Show 6 Grounding Factors ▼'}
+            </button>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '10px', marginBottom: groundingPreviewOpen ? '14px' : 0 }}>
+            <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '10px 12px' }}>
+              <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#1d4ed8', textTransform: 'uppercase' }}>
+                ☁️ Salesforce Account / Opp (Tier B • 0.85x)
+              </div>
+              <input
+                type="text"
+                value={groundingSources.salesforceId}
+                onChange={e => setGroundingSources(prev => ({ ...prev, salesforceId: e.target.value }))}
+                style={{ width: '100%', border: 'none', fontSize: '0.8rem', fontWeight: 600, color: '#334155', marginTop: '4px', outline: 'none' }}
+              />
+            </div>
+            <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '10px 12px' }}>
+              <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#047857', textTransform: 'uppercase' }}>
+                🐞 Buganizer Issues (Tier A • 1.00x)
+              </div>
+              <input
+                type="text"
+                value={groundingSources.buganizerIds}
+                onChange={e => setGroundingSources(prev => ({ ...prev, buganizerIds: e.target.value }))}
+                style={{ width: '100%', border: 'none', fontSize: '0.8rem', fontWeight: 600, color: '#334155', marginTop: '4px', outline: 'none' }}
+              />
+            </div>
+            <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '10px 12px' }}>
+              <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#6d28d9', textTransform: 'uppercase' }}>
+                📐 Architecture Diagram / PDF (Tier A • 1.00x)
+              </div>
+              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#334155', marginTop: '4px' }}>
+                {groundingSources.diagramFile}
+              </div>
+            </div>
+            <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '10px 12px' }}>
+              <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#b45309', textTransform: 'uppercase' }}>
+                ✉️ Email / Discovery Notes (Tier C • 0.60x)
+              </div>
+              <input
+                type="text"
+                value={groundingSources.emailThread}
+                onChange={e => setGroundingSources(prev => ({ ...prev, emailThread: e.target.value }))}
+                style={{ width: '100%', border: 'none', fontSize: '0.78rem', color: '#475569', marginTop: '4px', outline: 'none' }}
+              />
+            </div>
+          </div>
+
+          {groundingPreviewOpen && (
+            <div style={{ background: '#ffffff', border: '1px solid #dbeafe', borderRadius: '10px', padding: '12px 14px', fontSize: '0.76rem', color: '#334155', lineHeight: 1.5 }}>
+              <div style={{ fontWeight: 800, color: '#1d4ed8', marginBottom: '6px' }}>
+                🛡️ 6 Anti-Hallucination Grounding Factors Active (`scorex-multisource-evidence-ingestor` + `scorex-grounded-rubric-scorer`):
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '6px' }}>
+                <div>• <strong>GF-1 Authority Tiering:</strong> Diagram/Buganizer (Tier A) &gt; CRM (Tier B) &gt; Email (Tier C)</div>
+                <div>• <strong>GF-2 Verbatim Quote:</strong> Exact snippet + coordinate required per answer</div>
+                <div>• <strong>GF-3 Rubric Entailment:</strong> Must prove target Level 1–5 SLA/RTO metrics</div>
+                <div>• <strong>GF-4 Conflict Resolution:</strong> Tier A overrides optimistic Tier C email claims</div>
+                <div>• <strong>GF-5 Abstention Gate:</strong> Confidence &lt; 0.75 stays unanswered for human review</div>
+                <div>• <strong>GF-6 Forensic Critic:</strong> Cross-model audit via <code>scorex-omni-forensic-critic</code></div>
+              </div>
+            </div>
+          )}
         </div>
 
         <Form onSubmit={handleSubmit}>
