@@ -1398,14 +1398,14 @@ function createInitialGeDossier(mode = 'aerovanguard_default', customId = null, 
         {
           ...DEFAULT_BIONOVA_WORKFLOWS[0],
           id: 'wf_aerovanguard_1',
-          code: 'WF1',
-          name: 'Global Customs & Export Tariff Document Triage',
-          functionArea: 'International Customs & Trade Compliance',
+          code: 'AVG-01',
+          name: 'AVG-01: Hub Dispatch, Customs Clearance & Route Exception Search',
+          functionArea: 'International Customs & Global Hub Operations',
           owner: 'VP Global Trade & Customs Operations',
           maturity: 'Scaled',
-          eligibleUsers: 4500,
-          activeUsers: 1600,
-          completedTasksPerMonth: 4800,
+          eligibleUsers: 13803,
+          activeUsers: 7508,
+          completedTasksPerMonth: 18500,
           stages: {
             discovery: { baseline: 14, gemini: 4 },
             drafting: { baseline: 12, gemini: 4 },
@@ -1414,15 +1414,100 @@ function createInitialGeDossier(mode = 'aerovanguard_default', customId = null, 
             approval: { baseline: 3, gemini: 1 },
             handoff: { baseline: 2, gemini: 1 }
           },
+          firstPassBaselinePct: 68,
+          firstPassGeminiPct: 86,
           approvedHourlyRate: 112,
           modeledAnnualValueUsd: 9500000,
           isRegulatedGxp: false,
           gxpValidated: true,
           confidenceTier: 'A',
           verificationStatus: 'verified'
+        },
+        {
+          ...DEFAULT_BIONOVA_WORKFLOWS[1],
+          id: 'wf_aerovanguard_2',
+          code: 'AVG-02',
+          name: 'AVG-02: Automated Cargo Claims & Tariff Classification Agent (ADK)',
+          functionArea: 'Global Claims & Tariff Engineering',
+          owner: 'Global Logistics Claims & Tariff Director',
+          maturity: 'Pilot',
+          eligibleUsers: 4500,
+          activeUsers: 1154,
+          completedTasksPerMonth: 9200,
+          stages: {
+            discovery: { baseline: 18, gemini: 5 },
+            drafting: { baseline: 16, gemini: 5 },
+            verification: { baseline: 10, gemini: 6 },
+            correction: { baseline: 6, gemini: 2 },
+            approval: { baseline: 4, gemini: 2 },
+            handoff: { baseline: 4, gemini: 2 }
+          },
+          firstPassBaselinePct: 65,
+          firstPassGeminiPct: 84,
+          approvedHourlyRate: 112,
+          modeledAnnualValueUsd: 6800000,
+          isRegulatedGxp: false,
+          gxpValidated: true,
+          confidenceTier: 'B',
+          verificationStatus: 'draft_verify'
+        },
+        {
+          ...DEFAULT_BIONOVA_WORKFLOWS[4],
+          id: 'wf_aerovanguard_3',
+          code: 'AVG-03',
+          name: 'AVG-03: Predictive Fleet Maintenance & Air Hub Turnaround Synthesis',
+          functionArea: 'Air/Ground Fleet Maintenance & Turnaround',
+          owner: 'VP Global Fleet Engineering',
+          maturity: 'Scoping',
+          eligibleUsers: 3200,
+          activeUsers: 420,
+          completedTasksPerMonth: null,
+          stages: {
+            discovery: { baseline: 30, gemini: 10 },
+            drafting: { baseline: 25, gemini: 10 },
+            verification: { baseline: 15, gemini: 10 },
+            correction: { baseline: 10, gemini: 5 },
+            approval: { baseline: 8, gemini: 5 },
+            handoff: { baseline: 6, gemini: 3 }
+          },
+          firstPassBaselinePct: 64,
+          firstPassGeminiPct: 80,
+          approvedHourlyRate: 118,
+          modeledAnnualValueUsd: 11200000,
+          isRegulatedGxp: false,
+          gxpValidated: true,
+          confidenceTier: 'C',
+          verificationStatus: 'pending'
         }
       ],
-      geographies: [],
+      geographies: [
+        {
+          id: 'geo_avg_northam',
+          region: 'NORTHAM (Atlanta HQ, Memphis SuperHub & US/Canada Hubs)',
+          language: 'English, Spanish, French',
+          launchDate: '2026-02-01',
+          eligibleSeats: 32300,
+          assignedSeats: 13803,
+          wau: 8900,
+          mau: 9854,
+          worksCouncilRestriction: 'None (Standard North America Enterprise Telemetry)',
+          comparabilityStatus: 'Validated Primary Baseline (Vector ACC-1001-AEROVG)',
+          poolingRule: 'Primary benchmark cohort'
+        },
+        {
+          id: 'geo_avg_emea',
+          region: 'EMEA (Cologne/Bonn, Paris CDG, Stansted & EU Hubs)',
+          language: 'English, German, French',
+          launchDate: '2026-05-15',
+          eligibleSeats: null,
+          assignedSeats: null,
+          wau: null,
+          mau: null,
+          worksCouncilRestriction: 'EU Works Council aggregated k-anonymity rule (min N=15)',
+          comparabilityStatus: 'Wave 2 international hub expansion',
+          poolingRule: 'Report separately until EU Works Council sign-off complete'
+        }
+      ],
       employeeSurvey: {
         invitedCount: 1500,
         respondentCount: 610,
@@ -1445,7 +1530,7 @@ function createInitialGeDossier(mode = 'aerovanguard_default', customId = null, 
         finance: { owner: 'AeroVanguard Global Logistics Finance Controller', status: 'Pending Review', date: '', caveat: 'Awaiting L01 legacy invoices & F01 loaded rate sign-off' },
         securityGxp: { owner: 'AeroVanguard InfoSec & Compliance QA', status: 'Approved with Caveat', date: '2026-05-18', caveat: 'VPC-SC & citations verified; RuggedEdge mobile edge auth in progress' }
       },
-      questionResponses: buildDefaultQuestionResponses(false)
+      questionResponses: buildDefaultQuestionResponses(false, 'aerovanguard')
     };
   }
 
@@ -1624,22 +1709,76 @@ function createInitialGeDossier(mode = 'aerovanguard_default', customId = null, 
   };
 }
 
-function buildDefaultQuestionResponses(isClean) {
+function adaptTextForPresetCustomer(rawVal, presetCustomer) {
+  if (!presetCustomer || rawVal === null || rawVal === undefined) return rawVal;
+  const resolvedPreset = typeof presetCustomer === 'string' && presetCustomer.toLowerCase().includes('aero')
+    ? {
+        customerName: 'AeroVanguard Global Logistics',
+        legacyPlatformName: 'Legacy Manual Station Dispatch & Static SOPs',
+        sfdcAccountId: 'ACC-1001-AEROVG',
+        gcpProjectNumber: 'aerovanguard-ge-logistics-prod-01',
+        executiveSponsor: 'Rohan Kapoor (EVP, CDIO)',
+        accountLead: 'Enterprise AI & Digital Operations Platform Lead',
+        telemetry: {
+          contractedSeats: 301354,
+          provisionedSeats: 32300,
+          assignedSeats: 13803,
+          mau: 9854,
+          wau: 8900,
+          assistWau: 8003,
+          searchWau: 7508,
+          agentWau: 1154
+        }
+      }
+    : presetCustomer;
+  const tel = resolvedPreset?.telemetry || resolvedPreset?.adoptionTelemetry || {};
+  const adaptOne = (str) => {
+    let s = String(str)
+      .replace(/BioNova Life Sciences Inc\.|BioNova/g, resolvedPreset.customerName || 'Enterprise Customer')
+      .replace(/Legacy NovaAssist \(OpenAI\)|NovaAssist \(OpenAI\)|Legacy NovaAssist|NovaAssist/g, resolvedPreset.legacyPlatformName || 'Legacy AI Baseline')
+      .replace(/ACC-1002-BIONOVA/g, resolvedPreset.sfdcAccountId || 'ACC-1001-AEROVG')
+      .replace(/710492831045/g, resolvedPreset.gcpProjectNumber || 'aerovanguard-ge-logistics-prod-01')
+      .replace(/Marcus Vance/g, resolvedPreset.executiveSponsor || 'Executive Sponsor')
+      .replace(/Lucas Sterling/g, resolvedPreset.accountLead || 'Platform Lead')
+      .replace(/85,300/g, Number(tel.contractedSeats || 301354).toLocaleString())
+      .replace(/85,000/g, Number(tel.provisionedSeats || 32300).toLocaleString())
+      .replace(/10,663/g, Number(tel.assignedSeats || tel.assignedSeatsWave1 || 13803).toLocaleString())
+      .replace(/7,763/g, Number(tel.mau || tel.mauMultiApi || 9854).toLocaleString())
+      .replace(/5,867/g, Number(tel.wau || tel.wauAllApi || 8900).toLocaleString())
+      .replace(/5,386/g, Number(tel.assistWau || tel.wauGeminiAssist || 8003).toLocaleString())
+      .replace(/4,992/g, Number(tel.searchWau || tel.wauEnterpriseSearch || 7508).toLocaleString())
+      .replace(/1,710/g, Number(tel.agentWau || tel.wauAgents || 1154).toLocaleString());
+    return s;
+  };
+  if (Array.isArray(rawVal)) return rawVal.map(adaptOne);
+  return adaptOne(rawVal);
+}
+
+function buildDefaultQuestionResponses(isClean, presetCustomer = null) {
   const map = {};
+  const isAero = (typeof presetCustomer === 'string' && presetCustomer.toLowerCase().includes('aero')) ||
+    (presetCustomer?.customerName && String(presetCustomer.customerName).toLowerCase().includes('aero'));
   for (const q of GE_QUESTIONS) {
     const confPct = isClean ? 0 : getPreStagedConfidenceScorePct(q.id);
     const tier = isClean ? 'D' : getPreStagedConfidenceTier(q.id);
+    let rawVal = isClean ? null : getPreStagedValue(q.id);
+    if (!isClean && isAero && q.id === 'C09') {
+      rawVal = '1–3 workflows (Focused)';
+    }
+    const rawOwner = isClean ? '' : getPreStagedOwner(q.id);
+    const rawEvidence = isClean ? '' : getPreStagedEvidenceSource(q.id);
+    const rawNotes = isClean ? '' : getPreStagedNotes(q.id);
     map[q.id] = {
       questionId: q.id,
-      value: isClean ? null : getPreStagedValue(q.id),
+      value: isClean ? null : adaptTextForPresetCustomer(rawVal, presetCustomer),
       numericState: isClean ? 'pending' : getPreStagedNumericState(q.id),
       outcomeScore: isClean ? 0 : getPreStagedOutcomeScore(q.id),
       confidenceTier: tier,
       confidenceScorePct: confPct,
       verificationStatus: isClean ? 'pending' : getPreStagedVerificationStatus(q.id),
-      owner: isClean ? '' : getPreStagedOwner(q.id),
-      evidenceUrl: isClean ? '' : getPreStagedEvidenceSource(q.id),
-      notes: isClean ? '' : getPreStagedNotes(q.id)
+      owner: isClean ? '' : adaptTextForPresetCustomer(rawOwner, presetCustomer),
+      evidenceUrl: isClean ? '' : adaptTextForPresetCustomer(rawEvidence, presetCustomer),
+      notes: isClean ? '' : adaptTextForPresetCustomer(rawNotes, presetCustomer)
     };
   }
   return map;
@@ -1681,8 +1820,17 @@ function getPreStagedValue(qId) {
     L06: 'Per assigned/active seat for core GE + direct GCP project/consumption tracking for ADK agents (710492831045)',
     W01: '5 Priority Workflows Defined (WF1 Search/Ask HR, WF2 NOVA-AI Pricing, WF3 Clinical/Reg, WF4 AHEAD, WF5 CMC) with Named Owners',
     W02: 'Telemetry-Backed Active Users & Monthly Task Volumes Recorded for Scaled/Pilot Workflows (WF1–WF3); WF4–WF5 Quarantined in Scoping',
+    W03: 'Timed pilot comparison study on representative task sample',
     W04: '6-Stage Task Effort Decomposition Recorded (Discovery, Drafting, Verification, Correction, Approval, Handoff) with HITL Review Deduction',
+    W05: 'No material complexity change; task mix held constant in comparison sample',
+    W06: '75–89%',
+    W07: 'First-pass acceptance ≥80%, rework reduced, 100% source citations verified via HITL review',
+    W08: 'Dramatic cycle compression (>50% faster end-to-end turnaround)',
+    W09: ['Faster turnaround / cycle time', 'Higher output volume / throughput', 'Improved decision quality & reference coverage'],
+    W10: 'Redeployed to priority work without direct cash budget cut (Col 2 Capacity)',
     W11: 'Unmonetized in Col 1 Cash (Kept in Col 2 Validated Capacity at 65% Factor & Col 3 Modeled Opportunity until Finance Sign-Off)',
+    W12: 'Additional human citation checking (+2–5 min/task captured in W04 stage 3)',
+    W13: 'Pilot (Measured cohort active)',
     U01: 'Both Legacy NovaAssist and Gemini Enterprise in parallel (Coexistence cohort)',
     U02: ['R&D / Discovery Scientists', 'Clinical Operations & Medical Writing', 'Commercial & Market Access Analysts', 'Manufacturing / CMC / Quality Engineers', 'Global Support Functions (HR, Finance, IT, Procurement)'],
     U03: '75%+ of attempts',
@@ -2056,20 +2204,33 @@ function getQuestionOptionsWithConfidence(question, resp = {}, dossier = null) {
     });
   }
 
-  // 2. Fallback for local default BioNova or Clean dossier
+  // 2. Fallback for local default BioNova, Preset Customer, or Clean dossier
+  const isCleanDossier = dossier?.mode === 'clean' || dossier?.prefillMode === 'clean';
+  const sfdcId = dossier?.meta?.vectorAccountId || dossier?.meta?.sfdcAccountId || '';
+  const isBioNova = !isCleanDossier && (!sfdcId || sfdcId === 'ACC-1002-BIONOVA');
   const custName = dossier?.meta?.customerName || 'BioNova Life Sciences Inc.';
-  const rawOptions = (Array.isArray(question.options) && question.options.length > 0)
-    ? question.options
-    : (FALLBACK_STRUCTURED_OPTIONS[question.id] || []);
+  const baseRawOptions = (!isCleanDossier && FALLBACK_STRUCTURED_OPTIONS[question.id])
+    ? FALLBACK_STRUCTURED_OPTIONS[question.id]
+    : ((Array.isArray(question.options) && question.options.length > 0)
+        ? question.options
+        : (FALLBACK_STRUCTURED_OPTIONS[question.id] || []));
 
-  const preStagedVal = resp.portalBackedValue !== undefined ? resp.portalBackedValue : getPreStagedValue(question.id);
+  const adaptedOptions = baseRawOptions.map((rawOptText) => (
+    !isBioNova ? adaptTextForPresetCustomer(rawOptText, dossier?.meta?.customerName?.toLowerCase().includes('aero') ? 'aerovanguard' : dossier) : rawOptText
+  ));
+  if (Array.isArray(currentVal)) {
+    for (const v of currentVal) {
+      if (v && !adaptedOptions.includes(v)) adaptedOptions.unshift(v);
+    }
+  } else if (currentVal && !adaptedOptions.includes(currentVal)) {
+    adaptedOptions.unshift(currentVal);
+  }
+
+  const preStagedVal = resp.portalBackedValue !== undefined ? resp.portalBackedValue : (resp.value || getPreStagedValue(question.id));
   const baseQuestionConf = Number(resp.confidenceScorePct ?? getPreStagedConfidenceScorePct(question.id));
   const evidenceSource = resp.evidenceUrl || getPreStagedEvidenceSource(question.id);
 
-  return rawOptions.map((rawOptText, idx) => {
-    const optText = custName !== 'BioNova Life Sciences Inc.'
-      ? String(rawOptText).replace(/BioNova/g, custName).replace(/NovaAssist/g, 'Legacy Baseline')
-      : rawOptText;
+  return adaptedOptions.map((optText, idx) => {
     const selectedNow = isOptionSelected(optText, currentVal);
     const backedByInternalPortal = isOptionSelected(optText, preStagedVal) || (question.id === 'L04' && idx === 0);
 

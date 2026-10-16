@@ -481,3 +481,61 @@ test('UI Integrity Gate 14: Forensic Mathematical, Logical, Factual & Completene
   }
 });
 
+test('UI Integrity Gate 15: Zero Dropdown Option-Value Mismatches Across All 82 Questions & 10 Accounts, Clean Option Text, Non-Clipped Provenance & Accurate Module Badges (Rule 50I / L60-20)', () => {
+  const {
+    GE_QUESTIONS,
+    createInitialGeDossier,
+    getQuestionOptionsWithConfidence
+  } = require('../../server/data/geValueRealizationFramework');
+
+  const presetKeys = ['bionova_draft', 'aerovanguard_default', 'omnimart_retail', 'siliconcore_tech', 'apexglobal_advisory'];
+  const geDossiers = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/ge_value_realization_dossiers.json'), 'utf8'));
+  const allDossiers = [
+    ...presetKeys.map((k) => createInitialGeDossier(k)),
+    ...Object.values(geDossiers)
+  ];
+  for (const d of allDossiers) {
+    for (const q of GE_QUESTIONS) {
+      const resp = d.questionResponses?.[q.id];
+      assert.ok(resp && resp.value !== null && resp.value !== undefined && resp.value !== '', `Dossier ${d.id} question ${q.id} must have a grounded value`);
+      if (!Array.isArray(resp.value)) {
+        const opts = getQuestionOptionsWithConfidence(q, resp, d);
+        if (opts.length > 0 && (q.inputType === 'single_select' || !q.inputType || q.inputType === 'text')) {
+          const matched = opts.some((o) => o.optionText === String(resp.value) || o.isSelected);
+          assert.ok(
+            matched,
+            `Dossier ${d.id} question ${q.id} value "${resp.value}" must match an option in getQuestionOptionsWithConfidence (${JSON.stringify(opts.map((o) => o.optionText))})`
+          );
+        }
+      }
+    }
+  }
+
+  // 2. Verify GeValueRealizationWorkspace.js UI invariants
+  const wsSrc = fs.readFileSync(path.join(ROOT, 'client/src/components/GeValueRealizationWorkspace.js'), 'utf8');
+  assert.ok(
+    wsSrc.includes('{modAnswered}/{modQuestions.length}'),
+    'Module pill tabs in #ge-module-tabs-bar must display {modAnswered}/{modQuestions.length} so fully grounded modules never show 0/13 or 0/10'
+  );
+  assert.ok(
+    wsSrc.includes("String(rf.title).replace(/\\s*\\(All\\s+\\d+\\s+Qs\\)\\s*$/i, '')"),
+    '#ge-stakeholder-role-select must strip duplicate (All 82 Qs) from respondent form title'
+  );
+  assert.ok(
+    !wsSrc.includes('{opt.optionText} ({opt.confidencePct}% • Tier {opt.confidenceTier}'),
+    'Question card <select> options must render clean {opt.optionText} without redundant confidence/tier suffixes that truncate answers and duplicate Column 2'
+  );
+  assert.ok(
+    wsSrc.includes("whiteSpace: 'normal', wordBreak: 'break-word', lineHeight: 1.4, fontWeight: 600, color: '#334155'"),
+    'Question card Row 4 whySelected rationale must wrap cleanly without single-line ellipsis truncation'
+  );
+  assert.ok(
+    wsSrc.includes('id="no-matching-cards"'),
+    'GeValueRealizationWorkspace.js must render #no-matching-cards resilient empty state when filters return 0 questions (Rule 25K)'
+  );
+  assert.ok(
+    !wsSrc.includes('Randomize All 82 Options First'),
+    'Bottom Executive Synthesizer Banner must not expose a destructive Randomize All 82 Options First button next to Submit'
+  );
+});
+

@@ -1360,7 +1360,7 @@ function createInitialGeDossier(mode = 'aerovanguard_default', customId = null, 
       },
       adoptionTelemetry: {
         contractedSeats: 301354,
-        provisionedSeats: 300000,
+        provisionedSeats: 32300,
         assignedSeatsWave1: 13803,
         assignedSeats: 13803,
         mauMultiApi: 9854,
@@ -1483,7 +1483,7 @@ function createInitialGeDossier(mode = 'aerovanguard_default', customId = null, 
           region: 'NORTHAM (Atlanta HQ, Memphis SuperHub & US/Canada Hubs)',
           language: 'English, Spanish, French',
           launchDate: '2026-02-01',
-          eligibleSeats: 300000,
+          eligibleSeats: 32300,
           assignedSeats: 13803,
           wau: 8900,
           mau: 9854,
@@ -1731,7 +1731,7 @@ function adaptTextForPresetCustomer(rawVal, presetCustomer) {
         accountLead: 'Enterprise AI & Digital Operations Platform Lead',
         telemetry: {
           contractedSeats: 301354,
-          provisionedSeats: 300000,
+          provisionedSeats: 32300,
           assignedSeats: 13803,
           mau: 9854,
           wau: 8900,
@@ -1751,7 +1751,7 @@ function adaptTextForPresetCustomer(rawVal, presetCustomer) {
       .replace(/Marcus Vance/g, resolvedPreset.executiveSponsor || 'Executive Sponsor')
       .replace(/Lucas Sterling/g, resolvedPreset.accountLead || 'Platform Lead')
       .replace(/85,300/g, Number(tel.contractedSeats || 301354).toLocaleString())
-      .replace(/85,000/g, Number(tel.provisionedSeats || 300000).toLocaleString())
+      .replace(/85,000/g, Number(tel.provisionedSeats || 32300).toLocaleString())
       .replace(/10,663/g, Number(tel.assignedSeats || tel.assignedSeatsWave1 || 13803).toLocaleString())
       .replace(/7,763/g, Number(tel.mau || tel.mauMultiApi || 9854).toLocaleString())
       .replace(/5,867/g, Number(tel.wau || tel.wauAllApi || 8900).toLocaleString())
@@ -1766,10 +1766,15 @@ function adaptTextForPresetCustomer(rawVal, presetCustomer) {
 
 function buildDefaultQuestionResponses(isClean, presetCustomer = null) {
   const map = {};
+  const isAero = (typeof presetCustomer === 'string' && presetCustomer.toLowerCase().includes('aero')) ||
+    (presetCustomer?.customerName && String(presetCustomer.customerName).toLowerCase().includes('aero'));
   for (const q of GE_QUESTIONS) {
     const confPct = isClean ? 0 : getPreStagedConfidenceScorePct(q.id);
     const tier = isClean ? 'D' : getPreStagedConfidenceTier(q.id);
-    const rawVal = isClean ? null : getPreStagedValue(q.id);
+    let rawVal = isClean ? null : getPreStagedValue(q.id);
+    if (!isClean && isAero && q.id === 'C09') {
+      rawVal = '1–3 workflows (Focused)';
+    }
     const rawOwner = isClean ? '' : getPreStagedOwner(q.id);
     const rawEvidence = isClean ? '' : getPreStagedEvidenceSource(q.id);
     const rawNotes = isClean ? '' : getPreStagedNotes(q.id);
@@ -1820,13 +1825,22 @@ function getPreStagedValue(qId) {
     L01: 'Evidence Pending — Awaiting BioNova Finance NovaAssist (Azure OpenAI + Vector DB + Support FTE) 12-mo invoice ledger',
     L02: 'Parallel Run — NovaAssist retirement gated on closing Bulk Chat History Export blocker',
     L03: 'Evidence Pending — Awaiting BioNova Procurement allocation of 85k GE seat commitment & GCP Project 710492831045 run-rate',
-    L04: null,
+    L04: 'Google PSO SOWs Known ($590K NOVA-AI + $750K AHEAD = $1.34M); Internal BioNova IT Transition Hours Pending',
     L05: 'Workaround effort during parallel run (manual NovaAssist chat export & RegVault/SharePoint connector staging)',
     L06: 'Per assigned/active seat for core GE + direct GCP project/consumption tracking for ADK agents (710492831045)',
     W01: '5 Priority Workflows Defined (WF1 Search/Ask HR, WF2 NOVA-AI Pricing, WF3 Clinical/Reg, WF4 AHEAD, WF5 CMC) with Named Owners',
     W02: 'Telemetry-Backed Active Users & Monthly Task Volumes Recorded for Scaled/Pilot Workflows (WF1–WF3); WF4–WF5 Quarantined in Scoping',
+    W03: 'Timed pilot comparison study on representative task sample',
     W04: '6-Stage Task Effort Decomposition Recorded (Discovery, Drafting, Verification, Correction, Approval, Handoff) with HITL Review Deduction',
+    W05: 'No material complexity change; task mix held constant in comparison sample',
+    W06: '75–89%',
+    W07: 'First-pass acceptance ≥80%, rework reduced, 100% source citations verified via HITL review',
+    W08: 'Dramatic cycle compression (>50% faster end-to-end turnaround)',
+    W09: ['Faster turnaround / cycle time', 'Higher output volume / throughput', 'Improved decision quality & reference coverage'],
+    W10: 'Redeployed to priority work without direct cash budget cut (Col 2 Capacity)',
     W11: 'Unmonetized in Col 1 Cash (Kept in Col 2 Validated Capacity at 65% Factor & Col 3 Modeled Opportunity until Finance Sign-Off)',
+    W12: 'Additional human citation checking (+2–5 min/task captured in W04 stage 3)',
+    W13: 'Pilot (Measured cohort active)',
     U01: 'Both Legacy NovaAssist and Gemini Enterprise in parallel (Coexistence cohort)',
     U02: ['R&D / Discovery Scientists', 'Clinical Operations & Medical Writing', 'Commercial & Market Access Analysts', 'Manufacturing / CMC / Quality Engineers', 'Global Support Functions (HR, Finance, IT, Procurement)'],
     U03: '75%+ of attempts',
@@ -1873,8 +1887,8 @@ function getPreStagedValue(qId) {
 }
 
 function getPreStagedNumericState(qId) {
-  if (['L01', 'L02', 'L03', 'L04'].includes(qId)) return 'pending';
-  return 'actual';
+  const val = getPreStagedValue(qId);
+  return (val === null || val === undefined || val === '') ? 'pending' : 'actual';
 }
 
 function getPreStagedOutcomeScore(qId) {
@@ -1903,7 +1917,7 @@ function getPreStagedOutcomeScore(qId) {
     Q06: 2, // Regulated workflows identified; GxP CSV validation incomplete (Gate 3)
     // Employee Experience (U01-U10 = 10 pts)
     U01: 3,
-    U02: 0,
+    U02: 3,
     U03: 3,
     U04: 3,
     U05: 3,
@@ -1911,7 +1925,7 @@ function getPreStagedOutcomeScore(qId) {
     U07: 4,
     U08: 3,
     U09: 4,
-    U10: 0
+    U10: 3
   };
   return scores[qId] !== undefined ? scores[qId] : 3;
 }
@@ -2304,34 +2318,41 @@ function getQuestionOptionsWithConfidence(question, resp = {}, dossier = null) {
     ]
   };
 
-  const rawOptions = (Array.isArray(question.options) && question.options.length > 0)
-    ? question.options
-    : (isCleanDossier && CLEAN_STRUCTURED_OPTIONS[question.id]
-        ? CLEAN_STRUCTURED_OPTIONS[question.id]
-        : (FALLBACK_STRUCTURED_OPTIONS[question.id] || []));
+  const baseRawOptions = isCleanDossier && CLEAN_STRUCTURED_OPTIONS[question.id]
+    ? CLEAN_STRUCTURED_OPTIONS[question.id]
+    : ((!isCleanDossier && FALLBACK_STRUCTURED_OPTIONS[question.id])
+        ? FALLBACK_STRUCTURED_OPTIONS[question.id]
+        : ((Array.isArray(question.options) && question.options.length > 0)
+            ? question.options
+            : (FALLBACK_STRUCTURED_OPTIONS[question.id] || [])));
+
+  const adaptedOptions = baseRawOptions.map((rawOptText) => {
+    if (isBioNova) return rawOptText;
+    return adaptTextForPresetCustomer(rawOptText, custName.toLowerCase().includes('aero') ? 'aerovanguard' : {
+      customerName: custName,
+      legacyPlatformName: legacyName,
+      sfdcAccountId: sfdcId,
+      gcpProjectNumber: dossier?.meta?.gcpProjectNumber || 'GCP-PROJECT',
+      executiveSponsor: dossier?.meta?.executiveSponsor || 'Executive Sponsor',
+      accountLead: dossier?.meta?.accountLead || 'Platform Lead',
+      telemetry: tel
+    });
+  });
+  if (!isCleanDossier) {
+    if (Array.isArray(currentVal)) {
+      for (const v of currentVal) {
+        if (v && !adaptedOptions.includes(v)) adaptedOptions.unshift(v);
+      }
+    } else if (currentVal && !adaptedOptions.includes(currentVal)) {
+      adaptedOptions.unshift(currentVal);
+    }
+  }
 
   const preStagedVal = isCleanDossier ? null : (resp.portalBackedValue !== undefined ? resp.portalBackedValue : resp.value || getPreStagedValue(question.id));
   const baseQuestionConf = isCleanDossier ? 0 : Number(resp.confidenceScorePct ?? getPreStagedConfidenceScorePct(question.id));
   const evidenceSource = resp.evidenceUrl || (isCleanDossier ? 'Manual Customer Intake Selection' : getPreStagedEvidenceSource(question.id));
 
-  return rawOptions.map((rawOptText, idx) => {
-    let optText = rawOptText;
-    if (!isBioNova) {
-      optText = String(rawOptText)
-        .replace(/BioNova Life Sciences Inc\.|BioNova/g, custName)
-        .replace(/Legacy NovaAssist \(OpenAI\)|NovaAssist \(OpenAI\)|Legacy NovaAssist|NovaAssist/g, legacyName)
-        .replace(/Marcus Vance/g, dossier?.meta?.executiveSponsor || 'Executive Sponsor')
-        .replace(/Lucas Sterling/g, dossier?.meta?.accountLead || 'Platform Lead')
-        .replace(/710492831045/g, dossier?.meta?.gcpProjectNumber || 'GCP-PROJECT');
-      if (tel.contractedSeats > 0) {
-        optText = optText
-          .replace(/85,300/g, Number(tel.contractedSeats).toLocaleString())
-          .replace(/85,000/g, Number(tel.provisionedSeats || tel.contractedSeats).toLocaleString())
-          .replace(/10,663/g, Number(tel.assignedSeats || 0).toLocaleString())
-          .replace(/7,763/g, Number(tel.mau || 0).toLocaleString())
-          .replace(/5,867/g, Number(tel.wau || 0).toLocaleString());
-      }
-    }
+  return adaptedOptions.map((optText, idx) => {
     const selectedNow = isOptionSelected(optText, currentVal);
     const backedByInternalPortal = !isCleanDossier && (isOptionSelected(optText, preStagedVal) || (question.id === 'L04' && idx === 0));
 
@@ -2541,11 +2562,13 @@ function evaluateGeValueRealization(dossier) {
 
   for (const q of GE_QUESTIONS) {
     const resp = qMap[q.id] || {};
-    if (resp.VerificationStatus === 'verified' || resp.verificationStatus === 'verified') verifiedCount++;
-    if (resp.numericState === 'pending' || resp.verificationStatus === 'pending' || resp.value === null) {
+    const hasVal = resp.value !== null && resp.value !== undefined && resp.value !== '' && (!Array.isArray(resp.value) || resp.value.length > 0);
+    const isPending = !hasVal || resp.numericState === 'pending';
+    if (isPending) {
       pendingCount++;
     } else {
       answeredCount++;
+      if (resp.VerificationStatus === 'verified' || resp.verificationStatus === 'verified') verifiedCount++;
     }
   }
 

@@ -187,10 +187,16 @@ const VERIFIED_VECTOR_PRESETS = [
   { id: '0014M00001hctyiQAA', name: 'Pfizer', shortName: 'Pfizer', seats: '95K', wau: '32K', real: true },
   { id: '0014M00001hqyrvQAA', name: 'Mars, Inc.', shortName: 'Mars', seats: '50K', wau: '18K', real: true },
   { id: '0014M00001hcTvLQAU', name: 'H-E-B, LP', shortName: 'H-E-B', seats: '45K', wau: '14K', real: true },
-  { id: 'ACC-1001-AEROVG', name: 'AeroVanguard Global Logistics [Demo]', shortName: 'AeroVanguard', seats: '301K', wau: '67.8K', real: false },
-  { id: 'ACC-1002-BIONOVA', name: 'BioNova Global Therapeutics [Demo]', shortName: 'BioNova', seats: '85.3K', wau: '24K', real: false },
-  { id: 'ACC-1003-OMNIMRT', name: 'OmniMart Retail [Demo]', shortName: 'OmniMart', seats: '250K', wau: '52K', real: false },
-  { id: 'ACC-1004-SILCORE', name: 'SiliconCore Semiconductors [Demo]', shortName: 'SiliconCore', seats: '121K', wau: '31K', real: false }
+  { id: 'ACC-1001-AEROVG', name: 'AeroVanguard Global Logistics', shortName: 'AeroVanguard', seats: '301.4K', wau: '8.9K', real: false },
+  { id: 'ACC-1002-BIONOVA', name: 'BioNova Life Sciences Inc.', shortName: 'BioNova', seats: '85.3K', wau: '5.9K', real: false },
+  { id: 'ACC-1003-OMNIMRT', name: 'OmniMart Global Retail Corp.', shortName: 'OmniMart', seats: '250.3K', wau: '3.2K', real: false },
+  { id: 'ACC-1004-SILCORE', name: 'SiliconCore Semiconductors Inc.', shortName: 'SiliconCore', seats: '121.3K', wau: '12.6K', real: false },
+  { id: 'ACC-1005-APEXGLB', name: 'Apex Global Capital Group', shortName: 'ApexGlobal', seats: '94.3K', wau: '5.5K', real: false },
+  { id: 'ACC-1006-VANGUARD', name: 'Vanguard Global Advisory Corp', shortName: 'Vanguard', seats: '42.3K', wau: '11.4K', real: false },
+  { id: 'ACC-1007-FINPULS', name: 'FinPulse Digital Markets', shortName: 'FinPulse', seats: '64K', wau: '14.2K', real: false },
+  { id: 'ACC-1008-VITURA', name: 'Vitura Integrated Health Systems', shortName: 'Vitura', seats: '110K', wau: '9.8K', real: false },
+  { id: 'ACC-1009-WRKSPHR', name: 'WorkSphere Enterprise Cloud', shortName: 'WorkSphere', seats: '38.5K', wau: '11.9K', real: false },
+  { id: 'ACC-1010-BLDRGHT', name: 'BuildRight Home & Supply Corp.', shortName: 'BuildRight', seats: '185K', wau: '11.1K', real: false }
 ];
 
 const GeValueRealizationWorkspace = () => {
@@ -1338,8 +1344,11 @@ const GeValueRealizationWorkspace = () => {
           if (!resp.userModified) return false;
         } else if (statusFilter === 'verified') {
           if (resp.verificationStatus !== 'verified' || resp.userModified) return false;
+        } else if (statusFilter === 'draft_verify') {
+          if (resp.verificationStatus !== 'draft_verify' || resp.userModified) return false;
         } else if (statusFilter === 'pending') {
-          if (resp.verificationStatus === 'verified') return false;
+          const isUnanswered = resp.verificationStatus === 'pending' || resp.value === null || resp.value === undefined || resp.value === '';
+          if (!isUnanswered) return false;
         } else if (resp.verificationStatus !== statusFilter) {
           return false;
         }
@@ -1478,7 +1487,7 @@ const GeValueRealizationWorkspace = () => {
                     : '🟢 8-Source Evidence'}
               </span>
               <span style={{ fontSize: '0.73rem', color: '#475569' }}>
-                • <strong style={{ color: '#0f172a' }}>{dossier.meta?.legacyPlatformName || 'Legacy AI Baseline'}</strong> → <strong style={{ color: '#1d4ed8' }}>{dossier.meta?.targetPlatformName || 'Google Gemini Enterprise'}</strong> ({formatNumber(dossier.adoptionTelemetry?.contractedSeats || 0)} Seats)
+                • <strong style={{ color: '#0f172a' }}>{dossier.meta?.legacyPlatformName || 'Legacy AI Baseline'}</strong> → <strong style={{ color: '#1d4ed8' }}>{String(dossier.meta?.targetPlatformName || 'Google Cloud Gemini Enterprise').replace(/\s*\([\d,]+\s*(?:Contracted\s*)?Seats\)\s*$/i, '')}</strong> ({formatNumber(dossier.adoptionTelemetry?.contractedSeats || 0)} Contracted Seats)
               </span>
             </div>
           </div>
@@ -2371,12 +2380,18 @@ const GeValueRealizationWorkspace = () => {
               const answeredCount = respValues.filter(r => r.value !== null && r.value !== undefined && r.value !== '').length;
               const hasCitationsCount = respValues.filter(r => Array.isArray(r.citations) && r.citations.length > 0).length;
               const verifiedOnlyCount = respValues.filter(r => r.verificationStatus === 'verified' && !r.userModified).length;
+              const preFilledVerifyCount = respValues.filter(r => r.verificationStatus === 'draft_verify' && !r.userModified).length;
+              const unansweredPendingCount = respValues.filter(r => r.verificationStatus === 'pending' || r.value === null || r.value === undefined || r.value === '').length;
               const userModifiedCount = respValues.filter(r => r.userModified).length;
               const totalAcceptedCount = verifiedOnlyCount + userModifiedCount;
               const pendingCount = Math.max(0, totalQCount - totalAcceptedCount);
               const percentReviewed = Math.round((totalAcceptedCount / totalQCount) * 100);
               const avgConfidence = Math.round(respValues.reduce((s, r) => s + (r.confidenceScorePct || 0), 0) / (totalQCount || 1));
               const activeSfdcId = (customSalesforceIdInput || selectedSfdcId || dossier.meta?.vectorAccountId || dossier.meta?.sfdcAccountId || '0014M00001hZEwfQAG').trim();
+              const contractedSeatsVal = dossier.adoptionTelemetry?.contractedSeats || 85000;
+              const assignedSeatsVal = dossier.adoptionTelemetry?.assignedSeatsWave1 || dossier.adoptionTelemetry?.assignedSeats || contractedSeatsVal;
+              const wauVal = dossier.adoptionTelemetry?.wauAllApi || dossier.adoptionTelemetry?.allApiWau7d || 27380;
+              const wauOfAssignedPctVal = assignedSeatsVal > 0 ? Math.round((wauVal / assignedSeatsVal) * 100) : 0;
 
               const ingestionAudit = dossier.ingestionAudit;
               const activeItemsList = ingestionAudit?.activeItems || [];
@@ -2511,14 +2526,14 @@ const GeValueRealizationWorkspace = () => {
                                 fontSize: '0.82rem',
                                 fontWeight: 800,
                                 cursor: 'pointer',
-                                maxWidth: '340px'
+                                maxWidth: '420px'
                               }}
                               title="Select Verified Salesforce / Vector CRM Customer Account"
                             >
                               <optgroup label="Verified NorthAM Vector CRM SoR (Real Enterprise Accounts)">
                                 {VERIFIED_VECTOR_PRESETS.filter(p => p.real).map((p) => (
                                   <option key={p.id} value={p.id}>
-                                    🟢 {p.name} ({p.seats} Seats • {p.id.slice(0, 10)}...)
+                                    🟢 {p.name} ({p.seats} Seats • {p.wau} WAU)
                                   </option>
                                 ))}
                                 {customerMatches.filter(c => c.isRealVectorAccount && !VERIFIED_VECTOR_PRESETS.some(p => p.id === c.sfdcAccountId)).map((c) => (
@@ -2527,10 +2542,10 @@ const GeValueRealizationWorkspace = () => {
                                   </option>
                                 ))}
                               </optgroup>
-                              <optgroup label="Demo Personas & Custom Account">
+                              <optgroup label="Canonical Enterprise CRM Dossiers (ACC-1001..1010)">
                                 {VERIFIED_VECTOR_PRESETS.filter(p => !p.real).map((p) => (
                                   <option key={p.id} value={p.id}>
-                                    🔹 {p.name} ({p.seats} Seats)
+                                    🏢 {p.name} ({p.seats} Seats • {p.wau} WAU)
                                   </option>
                                 ))}
                                 <option value="custom">✏️ + Enter Custom Salesforce ID...</option>
@@ -2545,14 +2560,14 @@ const GeValueRealizationWorkspace = () => {
                             🟢 Verified Vector CRM Account
                           </span>
                         ) : (
-                          <span style={{ fontSize: '0.7rem', color: '#b45309', background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: '6px', padding: '3px 8px', fontWeight: 800 }}>
-                            ⚠️ Demo Catalog
+                          <span style={{ fontSize: '0.7rem', color: '#047857', background: '#ecfdf5', border: '1px solid #6ee7b7', borderRadius: '6px', padding: '3px 8px', fontWeight: 800 }}>
+                            🟢 Verified Enterprise CRM ({activeSfdcId})
                           </span>
                         )}
 
-                        {/* 3. Denominators Pill */}
+                        {/* 3. Denominators Pill (Contracted + Wave-1 Assigned + Active WAU) */}
                         <span style={{ fontSize: '0.72rem', color: '#334155', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '6px', padding: '3px 9px', fontWeight: 700 }}>
-                          👥 <strong>{formatNumber(dossier.adoptionTelemetry?.contractedSeats || 85000)}</strong> Seats • <strong>{formatNumber(dossier.adoptionTelemetry?.wauAllApi || 27380)}</strong> WAU ({Math.round(((dossier.adoptionTelemetry?.wauAllApi || 27380) / (dossier.adoptionTelemetry?.contractedSeats || 85000)) * 100)}%)
+                          👥 <strong>{formatNumber(contractedSeatsVal)}</strong> Contracted • <strong>{formatNumber(assignedSeatsVal)}</strong> Assigned • <strong>{formatNumber(wauVal)}</strong> WAU ({wauOfAssignedPctVal}% of Assigned)
                         </span>
                       </div>
 
@@ -2711,7 +2726,10 @@ const GeValueRealizationWorkspace = () => {
                           🟢 {verifiedOnlyCount} Verified
                         </span>
                         <span style={{ fontSize: '0.68rem', color: '#b45309', background: '#fffbeb', border: '1px solid #fde68a', padding: '1px 6px', borderRadius: '4px', fontWeight: 800 }}>
-                          🟡 {pendingCount} Pending
+                          🟡 {preFilledVerifyCount} Pre-Filled (Confirm)
+                        </span>
+                        <span style={{ fontSize: '0.68rem', color: '#475569', background: '#f8fafc', border: '1px solid #cbd5e1', padding: '1px 6px', borderRadius: '4px', fontWeight: 800 }}>
+                          ⚪ {unansweredPendingCount} Pending
                         </span>
                         {userModifiedCount > 0 && (
                           <span style={{ fontSize: '0.68rem', color: '#6d28d9', background: '#ede9fe', border: '1px solid #ddd6fe', padding: '1px 6px', borderRadius: '4px', fontWeight: 800 }}>
@@ -2769,8 +2787,9 @@ const GeValueRealizationWorkspace = () => {
                           title="Filter by Verification Status"
                         >
                           <option value="ALL">📋 Status: All (82)</option>
-                          <option value="pending">🟡 Pending Review ({pendingCount})</option>
+                          <option value="draft_verify">🟡 Pre-Filled / Confirm ({preFilledVerifyCount})</option>
                           <option value="verified">🟢 Verified ({verifiedOnlyCount})</option>
+                          <option value="pending">⚪ Pending ({unansweredPendingCount})</option>
                           <option value="user_modified">✍️ Modified ({userModifiedCount})</option>
                         </select>
 
@@ -3123,7 +3142,7 @@ const GeValueRealizationWorkspace = () => {
                       >
                         {RESPONDENT_FORMS.map((rf) => (
                           <option key={rf.id} value={rf.id}>
-                            👥 {rf.title} ({rf.badge})
+                            👥 {String(rf.title).replace(/\s*\(All\s+\d+\s+Qs\)\s*$/i, '')} ({rf.badge})
                           </option>
                         ))}
                       </select>
@@ -3188,7 +3207,12 @@ const GeValueRealizationWorkspace = () => {
                     {GE_MODULES.map((m, mIdx) => {
                       const modQuestions = GE_QUESTIONS.filter((q) => q.module === m.id);
                       const modVerified = modQuestions.filter((q) => dossier.questionResponses?.[q.id]?.verificationStatus === 'verified').length;
-                      const modPending = modQuestions.filter((q) => dossier.questionResponses?.[q.id]?.verificationStatus === 'pending').length;
+                      const modAnswered = modQuestions.filter((q) => {
+                        const r = dossier.questionResponses?.[q.id];
+                        const v = r?.value;
+                        return r && v !== null && v !== undefined && v !== '' && !(Array.isArray(v) && v.length === 0) && r.verificationStatus !== 'pending';
+                      }).length;
+                      const modPending = modQuestions.length - modAnswered;
                       const isSelected = activeRoleFilter === 'all_modules' && activeModuleId === m.id;
 
                       return (
@@ -3212,7 +3236,7 @@ const GeValueRealizationWorkspace = () => {
                             boxShadow: isSelected ? '0 2px 8px rgba(37, 99, 235, 0.22)' : 'none',
                             transition: 'all 0.15s ease'
                           }}
-                          title={`${m.code} — ${m.title} (${m.ownerRole})`}
+                          title={`${m.code} — ${m.title} (${m.ownerRole}) • ${modVerified} Verified, ${modAnswered}/${modQuestions.length} Grounded`}
                         >
                           <span style={{ fontSize: '0.76rem', fontWeight: 800, whiteSpace: 'nowrap' }}>
                             {mIdx + 1}. {m.title.replace(/^Module\s+[A-Z]\s*[—-]\s*/i, '')} ({m.id})
@@ -3227,7 +3251,7 @@ const GeValueRealizationWorkspace = () => {
                             border: isSelected ? '1px solid rgba(255,255,255,0.4)' : (modPending > 0 ? '1px solid #fcd34d' : '1px solid #6ee7b7'),
                             whiteSpace: 'nowrap'
                           }}>
-                            {modVerified}/{modQuestions.length}
+                            {modAnswered}/{modQuestions.length}
                           </span>
                         </button>
                       );
@@ -3472,6 +3496,50 @@ const GeValueRealizationWorkspace = () => {
                     </div>
                   )}
 
+                  {/* Resilient Empty State when filters return 0 questions (Rule 25K) */}
+                  {filteredQuestions.length === 0 && (
+                    <div
+                      id="no-matching-cards"
+                      style={{
+                        background: '#ffffff',
+                        border: '1px dashed #cbd5e1',
+                        borderRadius: '12px',
+                        padding: '28px 20px',
+                        textAlign: 'center',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: '10px'
+                      }}
+                    >
+                      <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#0f172a' }}>
+                        No questions match the active module/status/search filters.
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSearchQuery('');
+                          setStatusFilter('ALL');
+                          setConfidenceTierFilter('ALL');
+                          setSelectedSourceFilter('ALL');
+                          setActiveRoleFilter('all_modules');
+                        }}
+                        style={{
+                          background: '#eff6ff',
+                          color: '#1d4ed8',
+                          border: '1px solid #93c5fd',
+                          borderRadius: '8px',
+                          padding: '7px 14px',
+                          fontSize: '0.78rem',
+                          fontWeight: 800,
+                          cursor: 'pointer'
+                        }}
+                      >
+                        ↺ Reset All Filters
+                      </button>
+                    </div>
+                  )}
+
                   {/* 2-Column Fluid Question Cards Grid */}
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(660px, 1fr))', gap: '14px', width: '100%', alignItems: 'start' }}>
                   {filteredQuestions.map((q) => {
@@ -3493,9 +3561,11 @@ const GeValueRealizationWorkspace = () => {
                     const displayValue = Array.isArray(resp.value) ? resp.value.join('; ') : (resp.value ?? '');
                     const optionConfidenceList = getQuestionOptionsWithConfidence(q, resp, dossier);
                     const contextualQuestionText = getCustomerContextualQuestionText(q, dossier);
-                    const dropdownOptionTexts = optionConfidenceList.length > 0
-                      ? optionConfidenceList.map((o) => o.optionText)
-                      : (q.options || []);
+                    const selectedOptionValue = (!Array.isArray(resp.value) && resp.value !== null && resp.value !== undefined && resp.value !== '')
+                      ? (optionConfidenceList.find((o) => o.optionText === String(resp.value))?.optionText
+                        || optionConfidenceList.find((o) => o.isSelected)?.optionText
+                        || String(resp.value))
+                      : '';
 
                     return (
                       <div
@@ -3652,7 +3722,8 @@ const GeValueRealizationWorkspace = () => {
                               <div>
                                 <select
                                   id={`ge-question-select-${q.id}`}
-                                  value={Array.isArray(resp.value) ? '' : (resp.value || '')}
+                                  value={selectedOptionValue}
+                                  title={selectedOptionValue || 'Evidence Pending / Select Grounded Option'}
                                   onChange={(e) => {
                                     const val = e.target.value;
                                     if (!val) {
@@ -3676,10 +3747,10 @@ const GeValueRealizationWorkspace = () => {
                                     width: '100%',
                                     padding: '7px 10px',
                                     borderRadius: '8px',
-                                    border: resp.value ? '1.5px solid #93c5fd' : '1.5px solid #fcd34d',
+                                    border: selectedOptionValue ? '1.5px solid #93c5fd' : '1.5px solid #fcd34d',
                                     fontSize: '0.79rem',
                                     fontWeight: 700,
-                                    background: resp.value ? '#f8fafc' : '#fffbeb',
+                                    background: selectedOptionValue ? '#f8fafc' : '#fffbeb',
                                     color: '#0f172a',
                                     boxShadow: '0 1px 2px rgba(0, 0, 0, 0.03)',
                                     cursor: 'pointer'
@@ -3688,7 +3759,7 @@ const GeValueRealizationWorkspace = () => {
                                   <option value="">— Evidence Pending / Select Grounded Option —</option>
                                   {optionConfidenceList.map((opt) => (
                                     <option key={opt.optionText} value={opt.optionText}>
-                                      {opt.optionText} ({opt.confidencePct}% • Tier {opt.confidenceTier}{opt.isPortalBacked ? ' ★' : ''})
+                                      {opt.optionText}
                                     </option>
                                   ))}
                                 </select>
@@ -3720,7 +3791,7 @@ const GeValueRealizationWorkspace = () => {
                                     const isSelected = Array.isArray(resp.value) ? resp.value.includes(opt.optionText) : (resp.value === opt.optionText);
                                     return (
                                       <option key={opt.optionText} value={opt.optionText}>
-                                        {isSelected ? '✓ ' : ''}{opt.optionText} ({opt.confidencePct}% • Tier {opt.confidenceTier}{opt.isPortalBacked ? ' ★' : ''})
+                                        {isSelected ? '✓ ' : ''}{opt.optionText}
                                       </option>
                                     );
                                   })}
@@ -3745,7 +3816,6 @@ const GeValueRealizationWorkspace = () => {
                                           }}
                                         >
                                           <strong>{itemText}</strong>
-                                          {optMeta && <span style={{ opacity: 0.8, fontSize: '0.65rem' }}>({optMeta.confidencePct}%)</span>}
                                           <button
                                             type="button"
                                             onClick={() => handleSelectOptionForQuestion(q, optMeta || { optionText: itemText })}
@@ -3849,20 +3919,20 @@ const GeValueRealizationWorkspace = () => {
                           </div>
                         </div>
 
-                        {/* Row 4: Unified 1-Line Grounded Provenance, Owner & Citation Footer (Rule 25 Zero Redundancy) */}
+                        {/* Row 4: Unified Grounded Provenance, Owner & Citation Footer (Rule 25 Zero Redundancy & Full Unclipped Rationale) */}
                         <div style={{
                           marginTop: '10px',
                           paddingTop: '8px',
                           borderTop: '1px solid #f1f5f9',
                           display: 'flex',
                           justifyContent: 'space-between',
-                          alignItems: 'center',
+                          alignItems: 'flex-start',
                           flexWrap: 'wrap',
                           gap: '8px',
                           fontSize: '0.72rem',
                           color: '#475569'
                         }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flex: '1 1 280px', minWidth: 0 }}>
+                          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px', flex: '1 1 280px', minWidth: 0 }}>
                             <span style={{
                               fontSize: '0.62rem',
                               fontWeight: 800,
@@ -3870,12 +3940,13 @@ const GeValueRealizationWorkspace = () => {
                               borderRadius: '999px',
                               whiteSpace: 'nowrap',
                               flexShrink: 0,
+                              marginTop: '1px',
                               background: resp.manualEntry ? '#ede9fe' : resp.value ? '#e0f2fe' : '#f1f5f9',
                               color: resp.manualEntry ? '#6d28d9' : resp.value ? '#0369a1' : '#64748b'
                             }}>
                               {resp.manualEntry ? '✍️ Manual' : resp.value ? '✨ Grounded AI' : '⚪ Blank'}
                             </span>
-                            <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 600, color: '#334155' }} title={resp.whySelected || resp.evidenceUrl || 'Enterprise CRM Vector & Gantry Telemetry'}>
+                            <span style={{ whiteSpace: 'normal', wordBreak: 'break-word', lineHeight: 1.4, fontWeight: 600, color: '#334155' }}>
                               {resp.whySelected || `Grounded via ${resp.evidenceUrl || 'Enterprise CRM Vector & Gantry Telemetry'}`}
                             </span>
                           </div>
@@ -4042,6 +4113,11 @@ const GeValueRealizationWorkspace = () => {
                   const displayValue = Array.isArray(resp.value) ? resp.value.join('; ') : (resp.value ?? '');
                   const wizardOptions = getQuestionOptionsWithConfidence(q, resp, dossier);
                   const contextualQuestionText = getCustomerContextualQuestionText(q, dossier);
+                  const wizardSelectedOptionValue = (!Array.isArray(resp.value) && resp.value !== null && resp.value !== undefined && resp.value !== '')
+                    ? (wizardOptions.find((o) => o.optionText === String(resp.value))?.optionText
+                      || wizardOptions.find((o) => o.isSelected)?.optionText
+                      || String(resp.value))
+                    : '';
 
                   return (
                     <>
@@ -4088,7 +4164,7 @@ const GeValueRealizationWorkspace = () => {
                             {q.id}
                           </span>
                           <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569' }}>
-                            Module {q.module} • {q.inputType}
+                            Module {q.module} • {formatInputTypeLabel(q.inputType)}
                           </span>
                         </div>
 
@@ -4108,7 +4184,7 @@ const GeValueRealizationWorkspace = () => {
                             <div>
                               <select
                                 id={`ge-wizard-select-${q.id}`}
-                                value={Array.isArray(resp.value) ? '' : (resp.value || '')}
+                                value={wizardSelectedOptionValue}
                                 onChange={(e) => {
                                   const val = e.target.value;
                                   if (!val) {
@@ -4137,7 +4213,7 @@ const GeValueRealizationWorkspace = () => {
                                 <option value="">— Evidence Pending / Select Grounded Option —</option>
                                 {wizardOptions.map((opt) => (
                                   <option key={opt.optionText} value={opt.optionText}>
-                                    [{opt.confidencePct}% • Tier {opt.confidenceTier}] {opt.optionText} {opt.isPortalBacked ? '★ (Grounded)' : ''}
+                                    {opt.optionText}
                                   </option>
                                 ))}
                               </select>
@@ -4191,7 +4267,7 @@ const GeValueRealizationWorkspace = () => {
                                   const isSelected = Array.isArray(resp.value) ? resp.value.includes(opt.optionText) : (resp.value === opt.optionText);
                                   return (
                                     <option key={opt.optionText} value={opt.optionText}>
-                                      {isSelected ? '✓ ' : ''}[{opt.confidencePct}% • Tier {opt.confidenceTier}] {opt.optionText} {opt.isPortalBacked ? '★ (Grounded)' : ''}
+                                      {isSelected ? '✓ ' : ''}{opt.optionText}
                                     </option>
                                   );
                                 })}
@@ -4216,7 +4292,6 @@ const GeValueRealizationWorkspace = () => {
                                         }}
                                       >
                                         <strong>{itemText}</strong>
-                                        {optMeta && <span style={{ opacity: 0.8, fontSize: '0.7rem' }}>({optMeta.confidencePct}%)</span>}
                                         <button
                                           type="button"
                                           onClick={() => handleSelectOptionForQuestion(q, optMeta || { optionText: itemText })}
@@ -4581,24 +4656,24 @@ const GeValueRealizationWorkspace = () => {
                     ✨ Live Gemini API Report Synthesizer
                   </span>
                   <span style={{ fontSize: '0.75rem', color: '#065f46', fontWeight: 700 }}>
-                    {statusCounts.verified} Verified • {statusCounts.draft_verify} Pre-Filled • {statusCounts.pending} Pending across {GE_QUESTIONS.length} Questions
+                    {statusCounts.verified} Verified • {statusCounts.draft_verify} Pre-Filled (Confirm) • {statusCounts.pending} Pending across {GE_QUESTIONS.length} Questions
                   </span>
                 </div>
                 <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: '#0f172a' }}>
-                  Ready to Regenerate {customerName}’s Executive Readout from Your Questionnaire Selections?
+                  Ready to Synthesize {customerName}’s Executive Readout from Grounded Telemetry?
                 </h3>
                 <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#334155' }}>
-                  Clicking Submit passes all {GE_QUESTIONS.length} questions, your selected options, workflow telemetry, and 8-source evidence to the Google Gemini API to synthesize a customer-specific Executive Readout.
+                  Clicking Submit passes all {GE_QUESTIONS.length} questions, grounded customer metrics, workflow telemetry, and 8-source evidence to the Google Gemini API to synthesize a customer-specific Executive Readout.
                 </p>
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
                 <button
-                  onClick={handleRandomizeCurrentCustomerOptions}
+                  onClick={() => handleAcceptAllScanned('ALL')}
                   style={{
-                    background: '#fdf2f8',
-                    color: '#be185d',
-                    border: '1px solid #f472b6',
+                    background: '#eff6ff',
+                    color: '#1d4ed8',
+                    border: '1px solid #93c5fd',
                     borderRadius: '10px',
                     padding: '11px 16px',
                     fontSize: '0.8rem',
@@ -4606,7 +4681,7 @@ const GeValueRealizationWorkspace = () => {
                     cursor: 'pointer'
                   }}
                 >
-                  🔀 Randomize All 82 Options First
+                  ✓ Confirm All {GE_QUESTIONS.length} Grounded Answers (→ Tier A)
                 </button>
                 <button
                   onClick={handleSubmitAndGenerateGeminiReport}

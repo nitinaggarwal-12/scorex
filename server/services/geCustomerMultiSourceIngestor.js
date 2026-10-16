@@ -2714,8 +2714,20 @@ function buildCustomerQuestionResponses(account, deepProfile, workflows, windowI
             ? `10,000–49,999 (${contracted.toLocaleString()} Contracted / ${assigned.toLocaleString()} Assigned)`
             : `1,000–9,999 (${contracted.toLocaleString()} Contracted / ${assigned.toLocaleString()} Assigned)`),
       opts: [
-        `50,000+ (${contracted.toLocaleString()} Contracted / ${provisioned.toLocaleString()} Provisioned / ${assigned.toLocaleString()} Assigned)`,
-        `10,000–49,999 (Wave-1 Assigned Population Only: ${assigned.toLocaleString()} Seats)`,
+        ...(contracted >= 50000
+          ? [
+              `50,000+ (${contracted.toLocaleString()} Contracted / ${provisioned.toLocaleString()} Provisioned / ${assigned.toLocaleString()} Assigned)`,
+              `10,000–49,999 (Wave-1 Assigned Population Only: ${assigned.toLocaleString()} Seats)`
+            ]
+          : contracted >= 10000
+            ? [
+                `10,000–49,999 (${contracted.toLocaleString()} Contracted / ${assigned.toLocaleString()} Assigned)`,
+                `50,000+ (Global Enterprise Expansion Target)`
+              ]
+            : [
+                `1,000–9,999 (${contracted.toLocaleString()} Contracted / ${assigned.toLocaleString()} Assigned)`,
+                `10,000–49,999 (Enterprise Expansion Target)`
+              ]),
         `1,000–9,999 (Active Monthly Cohort Only: ${mau.toLocaleString()} MAU)`,
         `<1,000 (Pilot Cohort Only: ${Math.max(50, wauAgent).toLocaleString()} Agent Users)`
       ]
@@ -2741,7 +2753,7 @@ function buildCustomerQuestionResponses(account, deepProfile, workflows, windowI
       val: isBioNova
         ? ['GxP (Manufacturing / Quality / CSV)', 'Clinical Operations (GCP)', 'Medical / Scientific Information', 'Data Privacy / Works Council', 'Commercial / Promotional (MLR)']
         : (isRegulatedIndustry
-            ? ['Data Privacy / Works Council', 'Enterprise Security & Audit Compliance', 'Regulated Domain Review']
+            ? ['Data Privacy / Works Council', 'Enterprise Security & SOC2/ISO Governance', 'Regulated Domain Review']
             : ['Data Privacy / Works Council', 'Enterprise Security & SOC2/ISO Governance']),
       opts: isBioNova
         ? ['GxP (Manufacturing / Quality / CSV)', 'Clinical Operations (GCP)', 'Medical / Scientific Information', 'Data Privacy / Works Council', 'Commercial / Promotional (MLR)', 'None']
@@ -2786,13 +2798,22 @@ function buildCustomerQuestionResponses(account, deepProfile, workflows, windowI
       ]
     },
     C09: {
-      val: workflows.length >= 4 ? `4–8 workflows (${workflows.length} Priority Workflows Active/Scoped)` : `1–3 workflows (${workflows.length} Priority Workflows Active)`,
-      opts: [
-        `4–8 workflows (${workflows.length} Priority Workflows Active/Scoped)`,
-        '1–3 workflows (Focused)',
-        '9+ workflows (Broad Portfolio)',
-        'Undecided'
-      ]
+      val: workflows.length >= 4
+        ? `4–8 workflows (${workflows.length} Priority Workflows Active/Scoped)`
+        : `1–3 workflows (${workflows.length} Priority Workflows Active)`,
+      opts: workflows.length >= 4
+        ? [
+            `4–8 workflows (${workflows.length} Priority Workflows Active/Scoped)`,
+            '1–3 workflows (Focused)',
+            '9+ workflows (Broad Portfolio)',
+            'Undecided'
+          ]
+        : [
+            `1–3 workflows (${workflows.length} Priority Workflows Active)`,
+            '4–8 workflows (Enterprise Standard)',
+            '9+ workflows (Broad Portfolio)',
+            'Undecided'
+          ]
     },
     C10: {
       val: ['Aggregated platform analytics', 'Opt-in employee pulse survey', 'Timed workflow observation study'],
@@ -3471,8 +3492,21 @@ function buildCustomerQuestionResponses(account, deepProfile, workflows, windowI
     const baseResp = baseResponses[qId] || {};
     const spec = customerSpec[qId] || {
       val: baseResp.value,
-      opts: Array.isArray(q.options) && q.options.length > 0 ? q.options : [String(baseResp.value || 'Verified in Workflow Register')]
+      opts: Array.isArray(q.options) && q.options.length > 0 ? [...q.options] : [String(baseResp.value || 'Verified in Workflow Register')]
     };
+    const rawOpts = Array.isArray(spec.opts) ? [...spec.opts] : [];
+    if (Array.isArray(spec.val)) {
+      for (const v of spec.val) {
+        if (v !== null && v !== undefined && v !== '' && !rawOpts.some(o => String(o).toLowerCase() === String(v).toLowerCase())) {
+          rawOpts.unshift(String(v));
+        }
+      }
+    } else if (spec.val !== null && spec.val !== undefined && spec.val !== '') {
+      if (!rawOpts.some(o => String(o).toLowerCase() === String(spec.val).toLowerCase())) {
+        rawOpts.unshift(String(spec.val));
+      }
+    }
+    spec.opts = rawOpts;
 
     const linkedItems = questionSourceMap[qId] || [];
     const primarySource = linkedItems[0] || windowInfo.activeItems[0];
