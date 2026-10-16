@@ -224,9 +224,14 @@ Output a strictly valid JSON object with the following schema:
       };
     });
 
-    const overallScore = totalQuestionsCount > 0 ? parseFloat((totalScoreSum / totalQuestionsCount).toFixed(2)) : 0;
-    const rawOverallTarget = totalTargetCount > 0 ? (totalTargetSum / totalTargetCount) : (totalQuestionsCount > 0 ? (overallScore + 1.2) : 0);
-    const overallTarget = totalQuestionsCount > 0 ? parseFloat(Math.min(5.0, Math.max(overallScore, rawOverallTarget)).toFixed(2)) : 0;
+    const answeredDims = Object.values(dimensionScores).filter(d => d.answeredCount > 0);
+    const overallScore = answeredDims.length > 0
+      ? parseFloat((answeredDims.reduce((acc, d) => acc + d.score, 0) / answeredDims.length).toFixed(2))
+      : 0;
+    const rawOverallTarget = answeredDims.length > 0
+      ? (answeredDims.reduce((acc, d) => acc + d.targetScore, 0) / answeredDims.length)
+      : 0;
+    const overallTarget = answeredDims.length > 0 ? parseFloat(Math.min(5.0, Math.max(overallScore, rawOverallTarget)).toFixed(2)) : 0;
     const overallGap = parseFloat(Math.max(0, overallTarget - overallScore).toFixed(2));
     const maxScore = 5.0;
 

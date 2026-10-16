@@ -2892,8 +2892,28 @@ class CustomAssessmentRepository {
       typesFileStore.delete('cloud_security___zero_trust_architecture_readiness');
       typesFileStore.delete('ciso_enterprise_ai_security_shadow_gateway');
 
+      const templateCategories = {
+        openai_to_gemini_enterprise_migration: 'GenAI & Model Migration',
+        finops_cloud_cost_optimization: 'Cloud FinOps & Unit Economics',
+        agentic_ai_mesh_mcp_banking_readiness: 'Agentic AI & MCP Architecture',
+        edw_lakehouse_to_bigquery_modernization: 'Data Warehouse & Lakehouse',
+        enterprise_ai_zero_trust_security: 'AI Security, Zero Trust & TRiSM',
+        enterprise_data_ai_maturity: 'Enterprise Data & AI Strategy'
+      };
+
       STARTER_PRODUCTION_TEMPLATES.forEach(tpl => {
-        typesFileStore.set(tpl.typeKey, tpl);
+        const totalQuestions = (tpl.framework?.dimensions || []).reduce((acc, d) => acc + (d.questions || []).length, 0);
+        const enrichedTpl = {
+          ...tpl,
+          category: tpl.category || templateCategories[tpl.typeKey] || 'Enterprise Architecture',
+          totalQuestions,
+          framework: {
+            ...tpl.framework,
+            category: tpl.category || templateCategories[tpl.typeKey] || 'Enterprise Architecture',
+            totalQuestions
+          }
+        };
+        typesFileStore.set(tpl.typeKey, enrichedTpl);
       });
 
       const fwData = require('../data/assessmentFramework');
@@ -2939,12 +2959,15 @@ class CustomAssessmentRepository {
         };
       });
 
+      const flagshipTotalQuestions = flagshipDimensions.reduce((acc, d) => acc + (d.questions || []).length, 0);
       const flagshipTemplate = {
         id: 'tpl_enterprise_data_ai_maturity',
         typeKey: 'enterprise_data_ai_maturity',
         title: 'Enterprise Data & AI Maturity Assessment (6 Pillars)',
         subtitle: 'Flagship Multi-Dimensional Data, MLOps, Governance & Cloud Platform Maturity',
         description: 'Comprehensive 6-pillar maturity blueprint evaluating Platform Governance, Data Architecture, Analytics & BI, AI/MLOps, Generative AI, and Operational Excellence & FinOps.',
+        category: 'Enterprise Data & AI Strategy',
+        totalQuestions: flagshipTotalQuestions,
         icon: 'FiLayers',
         badge: 'Flagship 6-Pillar Blueprint',
         color: '#2563eb',
@@ -2959,6 +2982,8 @@ class CustomAssessmentRepository {
           typeKey: 'enterprise_data_ai_maturity',
           title: 'Enterprise Data & AI Maturity Assessment (6 Pillars)',
           subtitle: 'Flagship Multi-Dimensional Data, MLOps, Governance & Cloud Platform Maturity',
+          category: 'Enterprise Data & AI Strategy',
+          totalQuestions: flagshipTotalQuestions,
           badge: 'Flagship 6-Pillar Blueprint',
           dimensions: flagshipDimensions
         }
@@ -2993,11 +3018,20 @@ class CustomAssessmentRepository {
         enterprise_data_ai_maturity: { spend: 3200000, fte: 40, rate: 135, comment: 'Assessed 6-pillar telecom data & AI estate; manual console IAM, 24h batch ETL lag, and isolated notebooks targeted for Dataplex, BigQuery & Vertex AI.' }
       };
 
+      const domainScoreProfiles = {
+        openai_to_gemini_enterprise_migration: [[2, 3], [2, 3], [2, 2], [3, 2], [3, 3]],
+        finops_cloud_cost_optimization: [[3, 2], [3, 3], [2, 3], [3, 3], [3, 3]],
+        agentic_ai_mesh_mcp_banking_readiness: [[3, 3], [3, 4], [3, 2], [4, 3], [3, 4]],
+        edw_lakehouse_to_bigquery_modernization: [[2, 3, 2], [3, 2], [2, 3], [3, 3, 4]],
+        enterprise_ai_zero_trust_security: [[4, 3], [3, 4], [3, 3], [4, 3], [3, 4]]
+      };
+
       STARTER_PRODUCTION_TEMPLATES.forEach(tpl => {
         const instanceId = `inst_${tpl.typeKey}_demo`;
         const framework = { ...tpl.framework, typeKey: tpl.typeKey };
         const dimensions = framework.dimensions || [];
         const finMeta = domainBaselineFinancials[tpl.typeKey] || domainBaselineFinancials.enterprise_data_ai_maturity;
+        const scoreMatrix = domainScoreProfiles[tpl.typeKey] || [];
         const sampleResponses = {
           baseline_annual_spend_usd: finMeta.spend,
           engineering_fte_count: finMeta.fte,
@@ -3007,10 +3041,13 @@ class CustomAssessmentRepository {
 
         dimensions.forEach((dim, dIdx) => {
           (dim.questions || []).forEach((q, qIdx) => {
-            const score = ((dIdx + qIdx) % 3) + 2;
+            const score = (scoreMatrix[dIdx] && scoreMatrix[dIdx][qIdx] !== undefined)
+              ? scoreMatrix[dIdx][qIdx]
+              : (((dIdx + qIdx) % 3) + 2);
+            const futureScore = Math.min(5, score + (qIdx % 2 === 0 ? 2 : 1));
             sampleResponses[q.id] = score;
             sampleResponses[`${q.id}_current_state`] = score;
-            sampleResponses[`${q.id}_future_state`] = Math.min(5, score + 2);
+            sampleResponses[`${q.id}_future_state`] = futureScore;
             if (q.technicalPainPoints && q.technicalPainPoints.length > 0) {
               sampleResponses[`${q.id}_technical_pain`] = [q.technicalPainPoints[0]];
               if (!selectedPains.includes(q.technicalPainPoints[0])) {
@@ -3050,6 +3087,7 @@ class CustomAssessmentRepository {
           responses: sampleResponses,
           scores: calculated.dimensionScores,
           totalScore: calculated.overallScore,
+          overallScore: calculated.overallScore,
           maxScore: calculated.maxScore,
           maturityLevel: calculated.maturityLevel,
           status: 'completed',
@@ -3080,13 +3118,22 @@ class CustomAssessmentRepository {
         loaded_hourly_rate_usd: flagshipFin.rate
       };
       const flagshipPains = [];
+      const flagshipPillarPatterns = [
+        [3, 4, 3, 3, 4, 3, 3, 3, 3, 3], // 3.2
+        [3, 3, 3, 2, 3, 3, 3, 3, 3, 3], // 2.9
+        [4, 3, 4, 3, 3, 4, 3, 3, 4, 3], // 3.4
+        [3, 2, 3, 2, 3, 2, 3, 3, 2, 3], // 2.6
+        [3, 3, 2, 3, 3, 3, 2, 3, 3, 3], // 2.8
+        [3, 3, 4, 3, 3, 3, 3, 3, 3, 3]  // 3.1
+      ];
 
       flagshipFramework.dimensions.forEach((dim, dIdx) => {
+        const pattern = flagshipPillarPatterns[dIdx] || [3, 3, 3, 3, 3, 3, 3, 3, 3, 3];
         (dim.questions || []).forEach((q, qIdx) => {
-          const score = ((dIdx + qIdx) % 3) + 2;
+          const score = pattern[qIdx % pattern.length];
           flagshipResponses[q.id] = score;
           flagshipResponses[`${q.id}_current_state`] = score;
-          flagshipResponses[`${q.id}_future_state`] = Math.min(5, score + 2);
+          flagshipResponses[`${q.id}_future_state`] = Math.min(5, score + (qIdx % 2 === 0 ? 2 : 1));
           if (q.technicalPainPoints && q.technicalPainPoints.length > 0) {
             flagshipResponses[`${q.id}_technical_pain`] = [q.technicalPainPoints[0]];
             if (!flagshipPains.includes(q.technicalPainPoints[0])) {

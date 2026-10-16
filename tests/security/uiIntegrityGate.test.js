@@ -371,3 +371,113 @@ test('UI Integrity Gate 13: Question Form Layout, 3-Column Non-Truncating Input 
     'DynamicAssessmentRunner.js must differentiate Current State (#2563eb Blue), Future State ($variant="future" #059669 Emerald), Technical Pain (#e11d48 Rose), and Business Pain ($variant="business" #d97706 Amber)'
   );
 });
+
+test('UI Integrity Gate 14: Forensic Mathematical, Logical, Factual & Completeness Invariants Across All 5 Assessment Subsystems (Rule 50H / L60-14..L60-19)', () => {
+  // 1. Zero consulting brand leaks in backend services & static mockups
+  const ingestorSrc = fs.readFileSync(path.join(ROOT, 'server/services/geCustomerMultiSourceIngestor.js'), 'utf8');
+  const recEngineSrc = fs.readFileSync(path.join(ROOT, 'server/services/intelligentRecommendationEngine_v2.js'), 'utf8');
+  const mockupSrc = fs.readFileSync(path.join(ROOT, 'client/public/ge_value_realization_figma_mockup.html'), 'utf8');
+  assert.ok(!/Stratagem|McKinsey|\bMcK\b/i.test(ingestorSrc), 'geCustomerMultiSourceIngestor.js must contain 0 Stratagem/McKinsey references');
+  assert.ok(!/Stratagem|McKinsey|\bMcK\b/i.test(recEngineSrc), 'intelligentRecommendationEngine_v2.js must contain 0 Stratagem/McKinsey references');
+  assert.ok(!/Stratagem|McKinsey|\bMcK\b/i.test(mockupSrc), 'ge_value_realization_figma_mockup.html must contain 0 Stratagem/McKinsey references');
+
+  // 2. GE Value Realization Framework pre-staged profiles & 10 ingested dossiers
+  const { createInitialGeDossier, evaluateGeValueRealization } = require('../../server/data/geValueRealizationFramework');
+  const presetKeys = ['bionova_draft', 'aerovanguard_default', 'omnimart_retail', 'siliconcore_tech', 'apexglobal_advisory'];
+  for (const presetKey of presetKeys) {
+    const dossier = createInitialGeDossier(presetKey);
+    const tel = dossier.adoptionTelemetry;
+    assert.ok(
+      tel.wauAllApi > 0 &&
+      tel.wauAllApi <= tel.mauMultiApi &&
+      tel.mauMultiApi <= tel.assignedSeats &&
+      tel.assignedSeats <= tel.provisionedSeats &&
+      tel.provisionedSeats <= tel.contractedSeats,
+      `Pre-staged customer ${presetKey} must obey 0 < WAU <= MAU <= Assigned <= Provisioned <= Contracted`
+    );
+    const ev = evaluateGeValueRealization(dossier);
+    assert.strictEqual(ev.index.answeredCount, 82, `${presetKey} must have 82/82 answered questions`);
+    assert.strictEqual(ev.index.pendingCount, 0, `${presetKey} must have 0 pending questions`);
+    assert.strictEqual(ev.index.completenessPct, 100, `${presetKey} must have 100% completeness`);
+    assert.ok(ev.index.verifiedCount <= ev.index.answeredCount, `${presetKey} verifiedCount must be <= answeredCount`);
+    assert.strictEqual(ev.contradictions.length, 0, `${presetKey} must have 0 mathematical/logical contradictions`);
+    const fc = ev.financials.fiveColumns;
+    assert.ok(
+      fc.col2ValidatedCapacity.valueAnnualBase <= fc.col3ModeledOpportunity.base,
+      `${presetKey} Column 2 Validated Capacity ($${fc.col2ValidatedCapacity.valueAnnualBase}) must be <= Column 3 Modeled Opportunity ($${fc.col3ModeledOpportunity.base})`
+    );
+  }
+
+  const geDossiers = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/ge_value_realization_dossiers.json'), 'utf8'));
+  const geEntries = Object.values(geDossiers);
+  assert.strictEqual(geEntries.length, 10, 'data/ge_value_realization_dossiers.json must contain all 10 canonical enterprise customer dossiers');
+  for (const d of geEntries) {
+    const ev = d.evaluation;
+    assert.strictEqual(ev.index.answeredCount, 82, `Dossier ${d.id} must have 82/82 answered questions`);
+    assert.strictEqual(ev.index.pendingCount, 0, `Dossier ${d.id} must have 0 pending questions`);
+    assert.strictEqual(ev.index.completenessPct, 100, `Dossier ${d.id} must have 100% completeness`);
+    assert.ok(ev.index.verifiedCount <= ev.index.answeredCount, `Dossier ${d.id} verifiedCount must be <= answeredCount`);
+    assert.strictEqual(ev.contradictions.length, 0, `Dossier ${d.id} must have 0 contradictions`);
+    const fc = ev.financials.fiveColumns;
+    assert.ok(
+      fc.col2ValidatedCapacity.valueAnnualBase <= fc.col3ModeledOpportunity.base,
+      `Dossier ${d.id} Column 2 Validated Capacity must be <= Column 3 Modeled Opportunity`
+    );
+  }
+
+  // 3. Custom Assessment Templates & 6 Dynamic Assessment Instances
+  const dynTypes = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/custom_assessment_types.json'), 'utf8'));
+  assert.strictEqual(Object.keys(dynTypes).length, 6, 'data/custom_assessment_types.json must contain 6 production templates');
+  for (const [k, tpl] of Object.entries(dynTypes)) {
+    assert.ok(tpl.category && tpl.category.length > 2, `Template ${k} must have a non-empty category`);
+    assert.ok(Number(tpl.totalQuestions) >= 10, `Template ${k} must have totalQuestions >= 10`);
+  }
+
+  const dynInstances = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/dynamic_assessments.json'), 'utf8'));
+  const dynValues = Object.values(dynInstances);
+  assert.strictEqual(dynValues.length, 6, 'data/dynamic_assessments.json must contain 6 starter instances');
+  const seenDynScores = new Set();
+  for (const inst of dynValues) {
+    const dimScores = Object.values(inst.scores || {}).map(d => d.score);
+    const meanDimScore = Number((dimScores.reduce((a, b) => a + b, 0) / dimScores.length).toFixed(2));
+    assert.strictEqual(
+      inst.totalScore,
+      meanDimScore,
+      `Dynamic instance ${inst.id} totalScore (${inst.totalScore}) must equal exact mean of dimensionScores (${meanDimScore})`
+    );
+    seenDynScores.add(inst.totalScore);
+  }
+  assert.strictEqual(seenDynScores.size, 6, 'All 6 dynamic assessment instances must have strictly distinct totalScore values');
+
+  // 4. Core 6-Pillar Enterprise Assessments & Docker/Gcloud Inclusion
+  const dockerignore = fs.readFileSync(path.join(ROOT, '.dockerignore'), 'utf8');
+  const gcloudignore = fs.readFileSync(path.join(ROOT, '.gcloudignore'), 'utf8');
+  assert.ok(!/^data\/assessments\.json$/m.test(dockerignore), '.dockerignore must not exclude data/assessments.json');
+  assert.ok(!/^data\/assessments\.json$/m.test(gcloudignore), '.gcloudignore must not exclude data/assessments.json');
+
+  const coreAssessments = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/assessments.json'), 'utf8'));
+  const coreValues = Object.values(coreAssessments);
+  assert.strictEqual(coreValues.length, 4, 'data/assessments.json must contain 4 canonical 6-pillar enterprise assessments');
+  const seenCoreScores = new Set();
+  for (const c of coreValues) {
+    assert.strictEqual(c.selectedPillars.length, 6, `Core assessment ${c.id} must select all 6 pillars`);
+    assert.ok(c.overallScore > 0 && c.futureScore > c.overallScore, `Core assessment ${c.id} must have valid overallScore and futureScore`);
+    assert.strictEqual(c.gap, Number((c.futureScore - c.overallScore).toFixed(2)), `Core assessment ${c.id} gap must equal futureScore - overallScore`);
+    assert.ok(c.maturityLevel && c.maturityLevel !== 'Pending', `Core assessment ${c.id} must have a computed maturityLevel`);
+    seenCoreScores.add(c.overallScore);
+  }
+  assert.strictEqual(seenCoreScores.size, 4, 'All 4 core 6-pillar assessments must have strictly distinct overallScore values');
+
+  // 5. GenAI Readiness Assessments
+  const genaiAssessments = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/genai_assessments.json'), 'utf8'));
+  const genaiValues = Object.values(genaiAssessments);
+  assert.strictEqual(genaiValues.length, 3, 'data/genai_assessments.json must contain 3 complete 30-question GenAI Readiness assessments');
+  for (const g of genaiValues) {
+    assert.strictEqual(Object.keys(g.responses || {}).length, 30, `GenAI assessment ${g.id} must have all 30 question responses`);
+    const sumDims = Object.values(g.scores || {}).reduce((acc, d) => acc + Number(d.score || 0), 0);
+    assert.strictEqual(g.totalScore, sumDims, `GenAI assessment ${g.id} totalScore (${g.totalScore}) must equal sum of 6 dimension scores (${sumDims})`);
+    assert.strictEqual(g.maxScore, 160, `GenAI assessment ${g.id} maxScore must be 160`);
+    assert.ok(['Initial', 'Developing', 'Defined', 'Managed', 'Optimizing'].includes(g.maturityLevel), `GenAI assessment ${g.id} must have a valid maturityLevel (${g.maturityLevel})`);
+  }
+});
+

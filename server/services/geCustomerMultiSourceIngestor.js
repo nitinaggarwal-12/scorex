@@ -185,11 +185,11 @@ const SYNTHETIC_ENTERPRISE_CATALOG = {
     },
     {
       rowNumber: 6,
-      sfdcAccountId: "ACC-1006-STRATGM",
-      accountName: "Stratagem Executive Partners",
+      sfdcAccountId: "ACC-1006-VANGUARD",
+      accountName: "Vanguard Global Advisory Corp",
       region: "GLOBAL",
       subRegion: "Global Professional Services",
-      rampPlanDocUrl: "https://docs.enterprise-demo.internal/d/ge-ramp-plan-stratagem/edit",
+      rampPlanDocUrl: "https://docs.enterprise-demo.internal/d/ge-ramp-plan-vanguard/edit",
       segment: "Enterprise",
       contractedSeats: 41800,
       provisionedSeats: 38000,
@@ -659,15 +659,15 @@ const SYNTHETIC_ENTERPRISE_CATALOG = {
         }
       ]
     },
-    "ACC-1006-STRATGM": {
-      sheetName: "Stratagem",
+    "ACC-1006-VANGUARD": {
+      sheetName: "VanguardAdvisory",
       industry: "Global Professional & IT Services",
       execSponsor: "Julian Vance-Thorne (Senior Partner & Chief Knowledge Officer)",
       consultingLead: "Global Advisory Strategic CAL",
       fdeLead: "Knowledge Graph & Agentic Research Lead",
-      partner: "Stratagem Digital Labs",
+      partner: "Vanguard Digital Labs",
       rag: "Green",
-      aliases: ["Stratagem", "Stratagem Partners", "Stratagem Executive Partners"],
+      aliases: ["Vanguard Advisory", "Vanguard Global Advisory", "Vanguard Global Advisory Corp"],
       questionScoreOverrides: { A01: 4, A02: 4, A03: 4, A04: 4, A05: 4, A06: 4, L01: 3, L02: 3, L03: 4, L05: 4, Q01: 4, Q02: 4, Q03: 4, Q04: 4, U03: 4, U04: 4, U06: 4, U09: 4, F01: 3, F03: 4 },
       useCases: [
         {
@@ -1152,7 +1152,7 @@ function inferIndustryFromSubRegion(subRegion = '', name = '') {
   if (s.includes('siliconcore') || s.includes('novatech') || s.includes('induscore') || s.includes('mechaworks') || s.includes('semi') || s.includes('aerocontrols')) {
     return 'Semiconductors & Industrial Tech';
   }
-  if (s.includes('apexglobal') || s.includes('stratagem') || s.includes('vanguardadvisory') || s.includes('nexuspartners') || s.includes('coretech') || s.includes('globalsys') || s.includes('enterprisesys')) {
+  if (s.includes('apexglobal') || s.includes('vanguard') || s.includes('vanguardadvisory') || s.includes('nexuspartners') || s.includes('coretech') || s.includes('globalsys') || s.includes('enterprisesys')) {
     return 'Global Professional & IT Services';
   }
   if (s.includes('socialsphere') || s.includes('teleconnect') || s.includes('tmeg') || s.includes('scp') || s.includes('software') || s.includes('worksphere')) {
@@ -1190,10 +1190,10 @@ function inferLegacyBaselineName(accountName = '', industry = '', sfdcId = '') {
   if (n.includes('finpulse')) {
     return 'Legacy Fragmented Sales/Market SiliconCore Portals & Manual Onboarding Search';
   }
-  if (n.includes('worksphere') || n.includes('worksphere')) {
+  if (n.includes('worksphere')) {
     return 'Legacy Manual Bryte Skill Evaluation & Disconnected PS Operations';
   }
-  if (n.includes('stratagem')) {
+  if (n.includes('vanguard')) {
     return 'Legacy Firm Knowledge Search & Disconnected Engagement Research Tools';
   }
   return `Legacy Disconnected Enterprise Search & Manual Department Workflows (${accountName})`;
@@ -2160,8 +2160,8 @@ function buildCustomerWorkflows(account, deepProfile, windowInfo, prefillMode = 
       const classification = isSearch ? 'search' : (isAgent ? 'agent action' : 'analysis');
 
       const activeUsers = maturity === 'Scaled'
-        ? Math.min(assigned, Math.max(150, wauSearch))
-        : (maturity === 'Pilot' ? Math.max(40, Math.min(2500, Math.round((wauAgent + wauSearch * 0.25) / Math.max(1, idx)))) : 50);
+        ? Math.min(assigned, Math.max(80, Math.min(isSearch ? 1600 : 420, Math.round(isSearch ? wauSearch * 0.22 : Math.max(110, wauAgent * 0.35)))))
+        : (maturity === 'Pilot' ? Math.max(40, Math.min(320, Math.round((wauAgent + wauSearch * 0.12) / Math.max(1, idx + 1)))) : 50);
 
       const completedTasksPerMonth = maturity === 'Scoping'
         ? null
@@ -2186,7 +2186,14 @@ function buildCustomerWorkflows(account, deepProfile, windowInfo, prefillMode = 
           };
       const stages = uc.stages || defaultStages;
 
-      const modeledAnnualValueUsd = parseModeledValueUsd(uc.estValue, (6 - idx) * 6500000);
+      const stageKeys = ['discovery', 'drafting', 'verification', 'correction', 'approval', 'handoff'];
+      const netSavedMin = stageKeys.reduce((acc, sk) => acc + (Number(stages[sk]?.baseline || 0) - Number(stages[sk]?.gemini || 0)), 0);
+      const hrRate = uc.approvedHourlyRate || 115;
+      const estCapacityAnnualUsd = completedTasksPerMonth
+        ? Math.round(((completedTasksPerMonth * Math.max(0, netSavedMin)) / 60) * 0.75 * 12 * hrRate * 0.65)
+        : 0;
+      const parsedModeledUsd = parseModeledValueUsd(uc.estValue, (6 - idx) * 6500000);
+      const modeledAnnualValueUsd = Math.max(parsedModeledUsd, Math.round(estCapacityAnnualUsd * 1.45));
       const confTier = maturity === 'Scaled' ? 'A' : (maturity === 'Pilot' ? 'B' : 'C');
 
       return {
@@ -2249,6 +2256,8 @@ function buildCustomerWorkflows(account, deepProfile, windowInfo, prefillMode = 
   }
 
   // Fallback for any of the other 4,342 Enterprise CRM GE accounts using their real Vector seat & surface telemetry
+  const wf1ActiveUsers = Math.min(assigned, Math.max(60, Math.min(1600, Math.round(wauSearch * 0.25))));
+  const wf2ActiveUsers = Math.min(assigned, Math.max(30, Math.min(420, wauAgent)));
   return [
     {
       id: `wf_${account.sfdcAccountId.slice(-6)}_1`,
@@ -2260,12 +2269,12 @@ function buildCustomerWorkflows(account, deepProfile, windowInfo, prefillMode = 
       maturity: account.wauSearch > 200 ? 'Scaled' : 'Pilot',
       portfolioWeightCap: 0.35,
       eligibleUsers: assigned,
-      activeUsers: wauSearch,
-      completedTasksPerMonth: wauSearch * 3,
+      activeUsers: wf1ActiveUsers,
+      completedTasksPerMonth: wf1ActiveUsers * 3,
       comparisonMethod: 'Timed pilot comparison study on representative task sample',
       baselinePeriod: windowInfo.baselineWindowLabel,
       currentPeriod: `${windowInfo.currentWindowLabel} (Gemini Enterprise)`,
-      sampleSize: Math.min(200, Math.max(25, Math.round(wauSearch * 0.15))),
+      sampleSize: Math.min(200, Math.max(25, Math.round(wf1ActiveUsers * 0.15))),
       numericState: 'actual',
       stages: {
         discovery: { baseline: 12, gemini: 3 },
@@ -2291,7 +2300,7 @@ function buildCustomerWorkflows(account, deepProfile, windowInfo, prefillMode = 
       realizationFactorPct: 0,
       capacityConversionFactorPct: 65,
       attributionSharePct: 75,
-      modeledAnnualValueUsd: Math.max(2500000, assigned * 650),
+      modeledAnnualValueUsd: Math.max(3500000, assigned * 650),
       isRegulatedGxp: false,
       gxpValidated: true,
       confidenceTier: 'A',
@@ -2313,8 +2322,8 @@ function buildCustomerWorkflows(account, deepProfile, windowInfo, prefillMode = 
       maturity: wauAgent > 50 ? 'Pilot' : 'Scoping',
       portfolioWeightCap: 0.35,
       eligibleUsers: Math.max(50, Math.round(assigned * 0.25)),
-      activeUsers: wauAgent,
-      completedTasksPerMonth: wauAgent > 50 ? wauAgent * 2 : null,
+      activeUsers: wf2ActiveUsers,
+      completedTasksPerMonth: wauAgent > 50 ? wf2ActiveUsers * 2 : null,
       comparisonMethod: wauAgent > 50 ? 'Timed pilot comparison study on representative task sample' : 'Modeled / scoping target only',
       baselinePeriod: windowInfo.baselineWindowLabel,
       currentPeriod: `${windowInfo.currentWindowLabel} (Gemini Enterprise)`,
@@ -2344,7 +2353,7 @@ function buildCustomerWorkflows(account, deepProfile, windowInfo, prefillMode = 
       realizationFactorPct: 0,
       capacityConversionFactorPct: wauAgent > 50 ? 65 : 0,
       attributionSharePct: 75,
-      modeledAnnualValueUsd: Math.max(4000000, assigned * 950),
+      modeledAnnualValueUsd: Math.max(4500000, assigned * 950),
       isRegulatedGxp: false,
       gxpValidated: true,
       confidenceTier: wauAgent > 50 ? 'B' : 'C',
@@ -2987,7 +2996,7 @@ function buildCustomerQuestionResponses(account, deepProfile, workflows, windowI
       ]
     },
     L04: {
-      val: null,
+      val: `Partner / PSO Implementation SOWs Scoped (${account.partner}); Internal ${custName} IT Transition Hours Pending`,
       opts: [
         `Partner / PSO Implementation SOWs Scoped (${account.partner}); Internal ${custName} IT Transition Hours Pending`,
         `Full One-Time Migration & Parallel-Run Transition Ledger Reconciled by ${custName} Finance`,
@@ -3534,7 +3543,7 @@ function buildCustomerQuestionResponses(account, deepProfile, workflows, windowI
     let selectedTier = baseConfPct >= 90 ? 'A' : baseConfPct >= 75 ? 'B' : baseConfPct >= 40 ? 'C' : 'D';
     let selectedOutcomeScore = baseOutcomeScore;
     let selectedVerificationStatus = selectedTier === 'A' ? 'verified' : selectedTier === 'D' ? 'pending' : 'draft_verify';
-    let selectedNumericState = ['L01', 'L02', 'L03', 'L04'].includes(qId) ? 'pending' : 'actual';
+    let selectedNumericState = (selectedValue === null || selectedValue === undefined || selectedValue === '') ? 'pending' : 'actual';
 
     if (prefillMode === 'clean') {
       selectedValue = null;
@@ -3596,7 +3605,7 @@ function buildCustomerQuestionResponses(account, deepProfile, workflows, windowI
       outcomeScore: selectedOutcomeScore,
       confidenceTier: selectedTier,
       confidenceScorePct: selectedConfPct,
-      verificationStatus: selectedTier === 'A' ? 'verified' : 'pending',
+      verificationStatus: selectedVerificationStatus,
       userModified: false,
       userAction: selectedTier === 'A' ? 'accepted' : 'pending',
       whySelected: citationData.whySelected,

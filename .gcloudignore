@@ -9,7 +9,6 @@ server/data/assessments.json
 server/data/feedback.json
 data/users.json
 data/sessions.json
-data/assessments.json
 data/assignments.json
 data/notifications.json
 data/instance_object_versions.json

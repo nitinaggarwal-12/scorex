@@ -30,20 +30,36 @@ function getDossiersFile() {
   return path.join(dataDir, 'ge_value_realization_dossiers.json');
 }
 
+const CANONICAL_SFDC_ACCOUNT_IDS = [
+  'ACC-1001-AEROVG',
+  'ACC-1002-BIONOVA',
+  'ACC-1003-OMNIMRT',
+  'ACC-1004-APEXBNK',
+  'ACC-1005-VOLTGRID',
+  'ACC-1006-VANGUARD',
+  'ACC-1007-TITANMFG',
+  'ACC-1008-CAREHLTH',
+  'ACC-1009-STREAMX',
+  'ACC-1010-BLDRGHT'
+];
+
 function loadServerDossiers() {
   const dossiersFile = getDossiersFile();
   try {
     if (fs.existsSync(dossiersFile)) {
       const parsed = JSON.parse(fs.readFileSync(dossiersFile, 'utf8'));
-      if (parsed && Object.keys(parsed).length > 0) {
+      if (parsed && Object.keys(parsed).length >= CANONICAL_SFDC_ACCOUNT_IDS.length) {
         const primaryEntry = parsed['ge_vr_acc-1001-aerovg'] || parsed['inst_aerovanguard_ge_value_realization'];
         const bionovaEntry = parsed['ge_vr_acc-1002-bionova'] || parsed['inst_bionova_ge_value_realization'];
+        const vanguardEntry = parsed['ge_vr_acc-1006-vanguard'];
         const hasCandidateOptions = Array.isArray(primaryEntry?.questionResponses?.C01?.candidateOptions);
         const hasNormalizedTelemetry = primaryEntry?.adoptionTelemetry?.geminiAssistWau7d !== undefined;
         const hasExpandedWorkflows = Array.isArray(primaryEntry?.workflows) && primaryEntry.workflows.length >= 3;
         const hasMatchingSfdcId = primaryEntry?.meta?.sfdcAccountId && primaryEntry?.meta?.sfdcAccountId === primaryEntry?.meta?.vectorAccountId;
         const hasCanonicalBioNova = Boolean(parsed['ge_vr_acc-1002-bionova'] && bionovaEntry?.meta?.sfdcAccountId === 'ACC-1002-BIONOVA');
-        if (hasCandidateOptions && hasNormalizedTelemetry && hasExpandedWorkflows && hasMatchingSfdcId && hasCanonicalBioNova) {
+        const hasComplete82 = primaryEntry?.evaluation?.provenanceAudit?.answeredCount === 82 && primaryEntry?.evaluation?.provenanceAudit?.pendingCount === 0;
+        const hasZeroContradictions = Array.isArray(primaryEntry?.evaluation?.contradictionFlags) && primaryEntry.evaluation.contradictionFlags.length === 0;
+        if (hasCandidateOptions && hasNormalizedTelemetry && hasExpandedWorkflows && hasMatchingSfdcId && hasCanonicalBioNova && vanguardEntry && hasComplete82 && hasZeroContradictions) {
           return parsed;
         }
       }
@@ -51,26 +67,15 @@ function loadServerDossiers() {
   } catch (e) {
     console.warn('Could not read ge_value_realization_dossiers.json:', e.message);
   }
-  const seededAeroVanguard = ingestCustomerMultiSourceDossier({
-    sfdcAccountId: 'ACC-1001-AEROVG',
-    timePreset: 'ytd_2026',
-    prefillMode: 'evidence'
-  });
-  const seededBioNova = ingestCustomerMultiSourceDossier({
-    sfdcAccountId: 'ACC-1002-BIONOVA',
-    timePreset: 'ytd_2026',
-    prefillMode: 'evidence'
-  });
-  const seededOmniMart = ingestCustomerMultiSourceDossier({
-    sfdcAccountId: 'ACC-1003-OMNIMRT',
-    timePreset: 'ytd_2026',
-    prefillMode: 'evidence'
-  });
-  const initialMap = {
-    [seededAeroVanguard.id]: seededAeroVanguard,
-    [seededBioNova.id]: seededBioNova,
-    [seededOmniMart.id]: seededOmniMart
-  };
+  const initialMap = {};
+  for (const sfdcAccountId of CANONICAL_SFDC_ACCOUNT_IDS) {
+    const seeded = ingestCustomerMultiSourceDossier({
+      sfdcAccountId,
+      timePreset: 'ytd_2026',
+      prefillMode: 'evidence'
+    });
+    initialMap[seeded.id] = seeded;
+  }
   saveServerDossiers(initialMap);
   return initialMap;
 }

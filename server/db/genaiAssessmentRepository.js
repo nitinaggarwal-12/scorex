@@ -20,6 +20,85 @@ async function ensureOwnerColumn() {
 }
 
 class GenAIAssessmentRepository {
+  constructor() {
+    this.ensureStarterGenAIAssessments();
+  }
+
+  ensureStarterGenAIAssessments() {
+    try {
+      const fw = require('../data/genai-readiness-framework');
+      const starters = [
+        {
+          id: 'genai_apex_banking_readiness',
+          customerName: 'Apex Global Banking & Wealth',
+          optionChoices: [4, 4, 3, 4, 3]
+        },
+        {
+          id: 'genai_bionova_hcls_readiness',
+          customerName: 'BioNova Life Sciences Inc.',
+          optionChoices: [3, 4, 3, 3, 4]
+        },
+        {
+          id: 'genai_nova_retail_readiness',
+          customerName: 'Nova Retail & E-Commerce Group',
+          optionChoices: [3, 2, 3, 3, 2]
+        }
+      ];
+
+      for (const st of starters) {
+        const responses = {};
+        const scores = {};
+        let totalScore = 0;
+        let maxScore = 0;
+
+        (fw.dimensions || []).forEach((dim, dIdx) => {
+          let dimScore = 0;
+          (dim.questions || []).forEach((q, qIdx) => {
+            const rawVal = st.optionChoices[(dIdx + qIdx) % st.optionChoices.length];
+            const opt = (q.options || []).find(o => o.value === rawVal) || q.options[2];
+            responses[q.id] = opt.value;
+            dimScore += Number(opt.score || opt.value || 0);
+          });
+          scores[dim.id] = {
+            score: dimScore,
+            maxScore: dim.maxScore,
+            percentage: Math.round((dimScore / dim.maxScore) * 100)
+          };
+          totalScore += dimScore;
+          maxScore += Number(dim.maxScore || 0);
+        });
+
+        const matchedLevel = (fw.maturityLevels || []).find(
+          lvl => totalScore >= Number(lvl.min ?? lvl.minScore ?? 0) && totalScore <= Number(lvl.max ?? lvl.maxScore ?? 160)
+        ) || (fw.maturityLevels || [])[2];
+
+        const resolvedLevelName = matchedLevel ? (matchedLevel.level || matchedLevel.name || 'Developing') : 'Developing';
+        const formatted = {
+          id: st.id,
+          customer_name: st.customerName,
+          customerName: st.customerName,
+          responses,
+          scores,
+          total_score: totalScore,
+          totalScore,
+          max_score: maxScore,
+          maxScore,
+          maturity_level: resolvedLevelName,
+          maturityLevel: resolvedLevelName,
+          completed_at: '2026-09-10T16:00:00.000Z',
+          completedAt: '2026-09-10T16:00:00.000Z',
+          created_at: '2026-09-01T12:00:00.000Z',
+          createdAt: '2026-09-01T12:00:00.000Z',
+          updated_at: new Date().toISOString(),
+          owner_id: 'system'
+        };
+        fileStore.set(st.id, formatted);
+      }
+    } catch (e) {
+      console.warn('Could not seed starter GenAI readiness assessments:', e.message);
+    }
+  }
+
   async ensureSchema() {
     await ensureOwnerColumn();
   }

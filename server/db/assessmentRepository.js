@@ -4,6 +4,46 @@ const path = require('path');
 
 const fileStore = new DataStore(path.join(__dirname, '../../data/assessments.json'));
 
+const ALL_SIX_PILLAR_IDS = [
+  'platform_governance',
+  'data_engineering',
+  'analytics_bi',
+  'machine_learning',
+  'generative_ai',
+  'operational_excellence'
+];
+
+function computeCoreAssessmentScores(responses = {}) {
+  const curVals = [];
+  const futVals = [];
+  for (const [k, v] of Object.entries(responses || {})) {
+    if (k.endsWith('_current_state')) {
+      const n = Number(v);
+      if (Number.isFinite(n) && n >= 1 && n <= 5) curVals.push(n);
+    } else if (k.endsWith('_future_state')) {
+      const n = Number(v);
+      if (Number.isFinite(n) && n >= 1 && n <= 5) futVals.push(n);
+    }
+  }
+  const overallScore = curVals.length > 0
+    ? Number((curVals.reduce((a, b) => a + b, 0) / curVals.length).toFixed(2))
+    : 0;
+  const futureScore = futVals.length > 0
+    ? Number((futVals.reduce((a, b) => a + b, 0) / futVals.length).toFixed(2))
+    : (overallScore > 0 ? Number(Math.min(5, overallScore + 1.4).toFixed(2)) : 0);
+  const gap = Number(Math.max(0, futureScore - overallScore).toFixed(2));
+  const maturityLevel = overallScore >= 4.2
+    ? 'Transform'
+    : overallScore >= 3.4
+      ? 'Optimize'
+      : overallScore >= 2.6
+        ? 'Formalize'
+        : overallScore >= 1.8
+          ? 'Experiment'
+          : (overallScore > 0 ? 'Explore' : 'Pending');
+  return { overallScore, futureScore, gap, maturityLevel };
+}
+
 function normalizeReleaseState(assessment) {
   if (!assessment) return assessment;
 
@@ -13,9 +53,12 @@ function normalizeReleaseState(assessment) {
   const name = assessment.assessment_name || assessment.assessmentName || 'Enterprise Data & AI Assessment';
   const org = assessment.organization_name || assessment.organizationName || 'Enterprise Organization';
   const email = assessment.contact_email || assessment.contactEmail || 'admin@scorex.ai';
-  const pillars = assessment.selected_pillars || assessment.selectedPillars || ['platform_governance', 'data_engineering', 'analytics_bi', 'machine_learning', 'generative_ai', 'operational_excellence'];
+  const rawPillars = assessment.selected_pillars || assessment.selectedPillars || [];
+  const completedCats = assessment.completed_categories || assessment.completedCategories || [];
+  const pillars = (completedCats.length >= 6 || rawPillars.length === 0) ? ALL_SIX_PILLAR_IDS : rawPillars;
   const created = assessment.created_at || assessment.createdAt || assessment.startedAt || assessment.started_at || '2026-08-15T12:00:00.000Z';
   const updated = assessment.updated_at || assessment.updatedAt || assessment.completedAt || assessment.completed_at || created;
+  const computed = computeCoreAssessmentScores(assessment.responses);
 
   return {
     ...assessment,
@@ -27,6 +70,12 @@ function normalizeReleaseState(assessment) {
     contactEmail: email,
     selected_pillars: pillars,
     selectedPillars: pillars,
+    overallScore: assessment.overallScore || computed.overallScore,
+    totalScore: assessment.totalScore || assessment.overallScore || computed.overallScore,
+    futureScore: assessment.futureScore || computed.futureScore,
+    targetScore: assessment.targetScore || assessment.futureScore || computed.futureScore,
+    gap: assessment.gap ?? computed.gap,
+    maturityLevel: assessment.maturityLevel || computed.maturityLevel,
     created_at: created,
     createdAt: created,
     updated_at: updated,
@@ -43,6 +92,116 @@ function normalizeReleaseState(assessment) {
  * Uses PostgreSQL when available and falls back to persistent file storage.
  */
 class AssessmentRepository {
+  constructor() {
+    this.ensureStarterCoreAssessments();
+  }
+
+  ensureStarterCoreAssessments() {
+    try {
+      const fw = require('../data/assessmentFramework');
+      fileStore.delete('b897151f-8f96-4f99-a080-9540e3446961');
+      fileStore.delete('e548a10d-7277-4bf0-95a4-067ef77744c4');
+      fileStore.delete('58fe19e8-ca16-4d0b-8be3-99e7e01f2b22');
+      const existing = fileStore.getAll() || {};
+      const profiles = [
+        {
+          id: 'c5219d95-d9d8-4850-9c05-889921dc118d',
+          assessmentName: 'OmniChannel Retail Group — Data & AI Maturity Assessment',
+          assessmentDescription: 'End-to-end 6-pillar evaluation of omnichannel customer data platform, real-time inventory analytics, and retail personalization AI.',
+          organizationName: 'OmniChannel Retail Group',
+          contactEmail: 'vp-data@omnichannelretail.com',
+          industry: 'Retail & Consumer Goods',
+          pillarScores: [[3, 2, 3, 3, 2, 3, 3, 2, 3, 3], [3, 3, 2, 3, 3, 2, 3, 3, 2, 3], [3, 3, 3, 2, 3, 3, 3, 2, 3, 3], [2, 3, 2, 2, 3, 2, 3, 2, 2, 3], [2, 2, 3, 2, 2, 3, 2, 2, 3, 2], [3, 2, 3, 2, 3, 3, 2, 3, 2, 3]]
+        },
+        {
+          id: '29160ad2-afd1-4335-bb0a-d74ce475af02',
+          assessmentName: 'Precision Industrial Corp — Smart Manufacturing & IoT AI Assessment',
+          assessmentDescription: 'Comprehensive 6-pillar readiness review for industrial telemetry streaming, predictive maintenance ML, and supply chain digital twin.',
+          organizationName: 'Precision Industrial Corp',
+          contactEmail: 'chief-digital@precisionindustrial.com',
+          industry: 'Manufacturing & Industrial IoT',
+          pillarScores: [[3, 3, 3, 3, 3, 3, 4, 3, 3, 3], [3, 4, 3, 3, 3, 3, 3, 4, 3, 3], [3, 3, 3, 3, 2, 3, 3, 3, 3, 3], [3, 3, 2, 3, 3, 2, 3, 3, 2, 3], [2, 3, 2, 3, 2, 2, 3, 2, 3, 2], [3, 3, 3, 3, 3, 3, 3, 3, 3, 3]]
+        },
+        {
+          id: 'd4a9c051-667e-4e43-8d57-e721115189e1',
+          assessmentName: 'Vanguard Global Insurance — Actuarial Risk & Agentic Claims Assessment',
+          assessmentDescription: 'Regulated financial services 6-pillar assessment covering zero-trust governance, actuarial lakehouse, and agentic claims triage.',
+          organizationName: 'Vanguard Global Insurance',
+          contactEmail: 'cdo@vanguardinsurance.com',
+          industry: 'Financial Services & Insurance',
+          pillarScores: [[4, 3, 4, 4, 3, 4, 3, 4, 3, 4], [3, 3, 4, 3, 3, 4, 3, 3, 3, 3], [4, 3, 3, 4, 3, 3, 4, 3, 3, 4], [3, 3, 3, 3, 3, 3, 3, 3, 3, 3], [3, 3, 3, 2, 3, 3, 3, 2, 3, 3], [3, 4, 3, 3, 3, 4, 3, 3, 3, 3]]
+        },
+        {
+          id: 'inst_enterprise_data_ai_maturity_demo',
+          assessmentName: 'ConnectPlus Telecom Global — Enterprise Data & AI Maturity Assessment',
+          assessmentDescription: 'Flagship 6-pillar telecom data & AI estate assessment across network telemetry, subscriber 360, and autonomous NOC operations.',
+          organizationName: 'ConnectPlus Telecom Global',
+          contactEmail: 'cio@connectplus.telecom',
+          industry: 'Telecommunications & Media',
+          pillarScores: [[3, 4, 3, 3, 4, 3, 3, 3, 3, 3], [3, 3, 3, 2, 3, 3, 3, 3, 3, 3], [4, 3, 4, 3, 3, 4, 3, 3, 4, 3], [3, 2, 3, 2, 3, 2, 3, 3, 2, 3], [3, 3, 2, 3, 3, 3, 2, 3, 3, 3], [3, 3, 4, 3, 3, 3, 3, 3, 3, 3]]
+        }
+      ];
+
+      for (const prof of profiles) {
+        const curExisting = existing[prof.id] || {};
+        const responses = {};
+        fw.assessmentAreas.forEach((area, aIdx) => {
+          let qCounter = 0;
+          const pattern = prof.pillarScores[aIdx] || [3, 3, 3, 3, 3, 3, 3, 3, 3, 3];
+          (area.dimensions || []).forEach(dim => {
+            (dim.questions || []).forEach(q => {
+              const score = pattern[qCounter % pattern.length];
+              const future = Math.min(5, score + (qCounter % 2 === 0 ? 2 : 1));
+              qCounter++;
+              responses[q.id] = score;
+              responses[`${q.id}_current_state`] = score;
+              responses[`${q.id}_future_state`] = future;
+              const techPain = q.perspectives?.find(p => p.id === 'technical_pain');
+              const bizPain = q.perspectives?.find(p => p.id === 'business_pain');
+              if (techPain?.options?.length > 0) {
+                responses[`${q.id}_technical_pain`] = [techPain.options[0].value];
+              }
+              if (bizPain?.options?.length > 0) {
+                responses[`${q.id}_business_pain`] = [bizPain.options[0].value];
+              }
+              responses[`${q.id}_comment`] = `Verified ${dim.name} baseline for ${prof.organizationName}; target state aligned to 12-month transformation roadmap.`;
+            });
+          });
+        });
+
+        const computed = computeCoreAssessmentScores(responses);
+        const record = normalizeReleaseState({
+          ...curExisting,
+          id: prof.id,
+          assessmentName: prof.assessmentName,
+          assessmentDescription: prof.assessmentDescription,
+          organizationName: prof.organizationName,
+          contactEmail: prof.contactEmail,
+          industry: prof.industry,
+          status: 'completed',
+          progress: 100,
+          currentCategory: 'operational_excellence',
+          completedCategories: ALL_SIX_PILLAR_IDS,
+          selectedPillars: ALL_SIX_PILLAR_IDS,
+          responses,
+          overallScore: computed.overallScore,
+          totalScore: computed.overallScore,
+          futureScore: computed.futureScore,
+          targetScore: computed.futureScore,
+          gap: computed.gap,
+          maturityLevel: computed.maturityLevel,
+          userId: curExisting.userId || 'system',
+          startedAt: curExisting.startedAt || '2026-08-15T12:00:00.000Z',
+          completedAt: curExisting.completedAt || '2026-09-01T15:30:00.000Z',
+          createdAt: curExisting.createdAt || '2026-08-15T12:00:00.000Z',
+          updatedAt: new Date().toISOString()
+        });
+        fileStore.set(prof.id, record);
+      }
+    } catch (e) {
+      console.warn('Could not seed starter core assessments:', e.message);
+    }
+  }
   /**
    * Create a new assessment
    */

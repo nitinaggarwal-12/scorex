@@ -1126,7 +1126,7 @@ class IntelligentRecommendationEngine {
         `Adoption Strategy: Start with one business domain as a pilot (e.g., ${domainPilot}), then scale horizontally`,
         `Assessment: Run a Security, Compliance & Governance Assessment to benchmark against ${domainCompliance}`,
         `Industry Outlook: Review emerging regulations (e.g., AI Act, Data Privacy) and benchmark governance models across ${domainPeers}`,
-        'Partner / SI Engagement: Engage SI partners (e.g., ApexGlobal Advisory, Stratagem Partners, Nexus Cloud Consulting) for governance rollout and cross-workspace architecture design',
+        'Partner / SI Engagement: Engage SI partners (e.g., ApexGlobal Advisory, Vanguard Global Advisory, Nexus Cloud Consulting) for governance rollout and cross-workspace architecture design',
         'Change Management: Create a governance council; publish policies, catalog taxonomy, and data ownership matrix'
       ],
       data_engineering: [

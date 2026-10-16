@@ -48,10 +48,22 @@ class DataStore {
   }
 
   saveData() {
+    try {
+      const jsonData = Object.fromEntries(this.data);
+      const dirPath = path.dirname(this.filePath);
+      fs.mkdirSync(dirPath, { recursive: true });
+      const serialized = JSON.stringify(jsonData, null, 2);
+      const tempSyncPath = this.filePath + '.sync.tmp';
+      fs.writeFileSync(tempSyncPath, serialized, 'utf8');
+      fs.renameSync(tempSyncPath, this.filePath);
+    } catch (syncErr) {
+      console.error('❌ Error writing data synchronously to disk:', syncErr.message);
+    }
+
     if (this._pendingSave) return;
     this._pendingSave = true;
 
-    // Queue write asynchronously to avoid blocking Node.js event loop
+    // Queue backup and snapshot rotation asynchronously to avoid blocking Node.js event loop
     this._writePromise = this._writePromise.then(async () => {
       this._pendingSave = false;
       try {
@@ -92,13 +104,8 @@ class DataStore {
         } catch (snapErr) {
           // Non-blocking snapshot capture
         }
-        
-        // Atomic write via temporary file
-        const tempPath = this.filePath + '.tmp';
-        await fs.promises.writeFile(tempPath, JSON.stringify(jsonData, null, 2), 'utf8');
-        await fs.promises.rename(tempPath, this.filePath);
       } catch (error) {
-        console.error('❌ CRITICAL: Error saving data asynchronously to disk:', error);
+        console.error('❌ CRITICAL: Error saving backup/snapshot asynchronously to disk:', error);
       }
     });
   }

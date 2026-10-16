@@ -1317,7 +1317,7 @@ function createInitialGeDossier(mode = 'aerovanguard_default', customId = null, 
         regionPrimary: 'NORTHAM (Atlanta, GA HQ + Global Hubs)',
         legacySystemName: 'M365 Copilot Pilot + Disconnected SharePoint/OmniDesk ITSM Search',
         legacyPlatformName: 'M365 Copilot Pilot + Disconnected SharePoint/OmniDesk ITSM Search',
-        targetSystemName: 'Google Cloud Gemini Enterprise (10,000 Contracted Seats)',
+        targetSystemName: 'Google Cloud Gemini Enterprise (301,354 Contracted Seats)',
         executiveSponsor: 'Rohan Kapoor (EVP, Chief Digital & Information Officer)',
         customerLeads: 'Enterprise AI & Digital Operations Platform Lead, Global Logistics Ops Director',
         googleLeads: 'AeroVanguard Strategic Account Director, Google Cloud Supply Chain Principal Architect',
@@ -1328,7 +1328,7 @@ function createInitialGeDossier(mode = 'aerovanguard_default', customId = null, 
           googleCeLead: 'Google Cloud Supply Chain Principal Architect'
         },
         assessmentTier: 'Enterprise Standard',
-        tierOverrideReason: 'High over-assignment density (138% assigned vs contracted) & RuggedEdge mobile handheld edge blocker.',
+        tierOverrideReason: 'High Wave-1 active density (8,900 WAU / 13,803 assigned = 64.5%) & RuggedEdge mobile handheld edge integration.',
         baselineWindow: 'Jan 15, 2026 – Mar 15, 2026 (60 Days)',
         currentWindow: 'Mar 16, 2026 – May 15, 2026 (60 Days)',
         cutoverDate: '2026-06-30',
@@ -1364,8 +1364,8 @@ function createInitialGeDossier(mode = 'aerovanguard_default', customId = null, 
         sensitivityHighMultiplier: 1.25
       },
       adoptionTelemetry: {
-        contractedSeats: 10000,
-        provisionedSeats: 10000,
+        contractedSeats: 301354,
+        provisionedSeats: 32300,
         assignedSeatsWave1: 13803,
         assignedSeats: 13803,
         mauMultiApi: 9854,
@@ -1404,8 +1404,8 @@ function createInitialGeDossier(mode = 'aerovanguard_default', customId = null, 
           owner: 'VP Global Trade & Customs Operations',
           maturity: 'Scaled',
           eligibleUsers: 4500,
-          activeUsers: 3850,
-          completedTasksPerMonth: 18500,
+          activeUsers: 1600,
+          completedTasksPerMonth: 4800,
           stages: {
             discovery: { baseline: 14, gemini: 4 },
             drafting: { baseline: 12, gemini: 4 },
@@ -1676,7 +1676,7 @@ function getPreStagedValue(qId) {
     L01: 'Evidence Pending — Awaiting BioNova Finance NovaAssist (Azure OpenAI + Vector DB + Support FTE) 12-mo invoice ledger',
     L02: 'Parallel Run — NovaAssist retirement gated on closing Bulk Chat History Export blocker',
     L03: 'Evidence Pending — Awaiting BioNova Procurement allocation of 85k GE seat commitment & GCP Project 710492831045 run-rate',
-    L04: null,
+    L04: 'Google PSO SOWs Known ($590K NOVA-AI + $750K AHEAD = $1.34M); Internal BioNova IT Transition Hours Pending',
     L05: 'Workaround effort during parallel run (manual NovaAssist chat export & RegVault/SharePoint connector staging)',
     L06: 'Per assigned/active seat for core GE + direct GCP project/consumption tracking for ADK agents (710492831045)',
     W01: '5 Priority Workflows Defined (WF1 Search/Ask HR, WF2 NOVA-AI Pricing, WF3 Clinical/Reg, WF4 AHEAD, WF5 CMC) with Named Owners',
@@ -1729,8 +1729,8 @@ function getPreStagedValue(qId) {
 }
 
 function getPreStagedNumericState(qId) {
-  if (['L01', 'L02', 'L03', 'L04'].includes(qId)) return 'pending';
-  return 'actual';
+  const val = getPreStagedValue(qId);
+  return (val === null || val === undefined || val === '') ? 'pending' : 'actual';
 }
 
 function getPreStagedOutcomeScore(qId) {
@@ -1759,7 +1759,7 @@ function getPreStagedOutcomeScore(qId) {
     Q06: 2, // Regulated workflows identified; GxP CSV validation incomplete (Gate 3)
     // Employee Experience (U01-U10 = 10 pts)
     U01: 3,
-    U02: 0,
+    U02: 3,
     U03: 3,
     U04: 3,
     U05: 3,
@@ -1767,7 +1767,7 @@ function getPreStagedOutcomeScore(qId) {
     U07: 4,
     U08: 3,
     U09: 4,
-    U10: 0
+    U10: 3
   };
   return scores[qId] !== undefined ? scores[qId] : 3;
 }
@@ -2271,11 +2271,13 @@ function evaluateGeValueRealization(dossier) {
 
   for (const q of GE_QUESTIONS) {
     const resp = qMap[q.id] || {};
-    if (resp.VerificationStatus === 'verified' || resp.verificationStatus === 'verified') verifiedCount++;
-    if (resp.numericState === 'pending' || resp.verificationStatus === 'pending' || resp.value === null) {
+    const hasVal = resp.value !== null && resp.value !== undefined && resp.value !== '' && (!Array.isArray(resp.value) || resp.value.length > 0);
+    const isPending = !hasVal || resp.numericState === 'pending';
+    if (isPending) {
       pendingCount++;
     } else {
       answeredCount++;
+      if (resp.VerificationStatus === 'verified' || resp.verificationStatus === 'verified') verifiedCount++;
     }
   }
 
