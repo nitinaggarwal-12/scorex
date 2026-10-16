@@ -17,9 +17,11 @@ const HeaderContainer = styled.div`
 `;
 
 const HeaderContent = styled.div`
-  max-width: 1400px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 16px 20px;
+  padding: 16px clamp(16px, 1.8vw, 28px);
+  box-sizing: border-box;
   
   @media (max-width: 768px) {
     padding: 12px 16px;

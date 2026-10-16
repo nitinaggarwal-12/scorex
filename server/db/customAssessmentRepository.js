@@ -3430,6 +3430,10 @@ class CustomAssessmentRepository {
       'inst_enterprise_maturity_demo': 'inst_enterprise_data_ai_maturity_demo'
     };
     const resolvedId = SHORTHAND_INSTANCE_ALIASES[id] || id;
+    if (String(resolvedId || '').startsWith('inst_')) {
+      const fastHit = instancesFileStore.get(resolvedId) || instancesFileStore.get(id);
+      if (fastHit) return fastHit;
+    }
     try {
       const query = 'SELECT * FROM dynamic_assessments WHERE id = $1';
       const result = await db.query(query, [resolvedId]);

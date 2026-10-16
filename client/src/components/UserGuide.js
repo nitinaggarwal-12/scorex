@@ -37,9 +37,11 @@ const PageContainer = styled.div`
 `;
 
 const ContentWrapper = styled.div`
-  max-width: 1600px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 clamp(16px, 1.8vw, 28px);
+  box-sizing: border-box;
 `;
 
 const Section = styled.div`

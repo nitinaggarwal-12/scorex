@@ -7,18 +7,22 @@ import feedbackService from '../services/feedbackService';
 const PageContainer = styled.div`
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 40px 20px;
+  padding: 88px clamp(16px, 1.8vw, 28px) 40px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 `;
 
 const FormCard = styled(motion.div)`
   background: white;
   border-radius: 20px;
-  padding: 40px;
-  max-width: 800px;
+  padding: 36px;
+  max-width: 100%;
   width: 100%;
+  box-sizing: border-box;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 `;
 

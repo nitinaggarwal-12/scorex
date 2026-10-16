@@ -1,7 +1,9 @@
 .genai-list-container {
-  max-width: 1400px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 120px 20px 40px 20px; /* Added top padding for fixed header */
+  padding: 120px clamp(16px, 1.8vw, 28px) 40px; /* Added top padding for fixed header */
+  box-sizing: border-box;
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }

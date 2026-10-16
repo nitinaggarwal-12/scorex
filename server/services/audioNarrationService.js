@@ -761,6 +761,8 @@ class AudioNarrationService {
     }
 
     const modelsToTry = [
+      'gemini-3.8-flash-tts',
+      'gemini-3.8-flash-lite-tts',
       'google-omni-1.1',
       'gemini-omni-1.1-flash',
       'lyria-3.5',
@@ -773,9 +775,16 @@ class AudioNarrationService {
     let lastError = null;
     for (const modelName of modelsToTry) {
       try {
+        // Breaking Change 2C Guard: gemini-3.8-flash-tts / lite-tts treats `contents` strictly as a
+        // verbatim transcript and will speak stage directions aloud unless separated from `text`.
+        const isVerbatimTtsModel = modelName.includes('3.8-flash') && modelName.includes('tts');
+        const ttsContents = isVerbatimTtsModel
+          ? processedText
+          : `${styleDirective}\n\n${langDirective}Read the following executive assessment excerpt with authentic human cadence and emotive pacing:\n\n"${processedText}"`;
+
         const response = await ai.models.generateContent({
           model: modelName,
-          contents: `${styleDirective}\n\n${langDirective}Read the following executive assessment excerpt with authentic human cadence and emotive pacing:\n\n"${processedText}"`,
+          contents: ttsContents,
           config: {
             responseModalities: ['AUDIO'],
             speechConfig: {

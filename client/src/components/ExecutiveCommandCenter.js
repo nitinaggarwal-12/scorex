@@ -28,9 +28,11 @@ const PageContainer = styled.div`
 
 const PageHeader = styled.div`
   position: relative;
-  max-width: 1600px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto 32px auto;
-  padding: 0 48px;
+  padding: 0 clamp(16px, 1.8vw, 28px);
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -405,9 +407,10 @@ const FloatingSlideshowButton = styled.button`
 
 const ContentContainer = styled.div`
   width: 100%;
-  max-width: 1600px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 0 48px;
+  padding: 0 clamp(16px, 1.8vw, 28px);
+  box-sizing: border-box;
 
   @media (max-width: 1024px) {
     padding: 0 24px;
@@ -1081,21 +1084,7 @@ const ExecutiveCommandCenter = () => {
       try {
         setLoading(true);
         setError(null);
-        let activeId = assessmentId;
-        if (!activeId) {
-          const allResp = await assessmentService.getAllAssessments();
-          const list = Array.isArray(allResp) ? allResp : (allResp?.assessments || allResp?.data || []);
-          const completed = list.find(a => a && a.id && (a.status === 'completed' || a.progress >= 50)) || list[0];
-          if (completed?.id) {
-            activeId = completed.id;
-          } else {
-            const sample = await assessmentService.generateSampleAssessment();
-            activeId = sample?.assessment?.id || sample?.data?.assessmentId || sample?.assessmentId || sample?.id;
-          }
-        }
-        if (!activeId) {
-          throw new Error('No completed assessment found');
-        }
+        let activeId = assessmentId || 'inst_enterprise_data_ai_maturity_demo';
         setResolvedId(activeId);
         const response = await assessmentService.getAssessmentResults(activeId);
         if (response.success && response.data) {

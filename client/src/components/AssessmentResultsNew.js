@@ -122,9 +122,10 @@ const PageContainer = styled.div`
 
 const ReportContainer = styled.div`
   width: 100%;
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 0 48px;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 clamp(16px, 1.8vw, 28px);
+  box-sizing: border-box;
 
   @media (max-width: 1024px) {
     padding: 0 24px;
@@ -6370,7 +6371,7 @@ const AssessmentResultsNew = () => {
                             gap: '12px',
                             paddingTop: '10px',
                             paddingBottom: '10px',
-                            maxWidth: '1400px',
+                            maxWidth: '100%',
                             margin: '0 auto',
                             width: '100%'
                           }}>

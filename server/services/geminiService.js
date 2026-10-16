@@ -11,6 +11,7 @@ const MODEL_STACK = {
     ui_ux_critic: process.env.OMNI_CRITIC_MODEL || 'google-omni-1.1'
   },
   tier2_deep_reasoning: {
+    argon: process.env.GEMINI_ARGON_MODEL || 'gemini-4-argon',
     primary: process.env.GEMINI_PRO_MODEL || 'gemini-3.1-pro-preview',
     vision: 'gemini-3.1-pro-preview'
   },
@@ -26,9 +27,14 @@ const MODEL_STACK = {
     video: process.env.GEMINI_VIDEO_MODEL || 'veo-3.1-generate-preview',
     audio_composition: process.env.GEMINI_AUDIO_MODEL || 'lyria-3.5',
     neural_tts: process.env.GEMINI_TTS_MODEL || 'gemini-3.1-flash-tts-preview',
+    neural_tts_v38: 'gemini-3.8-flash-tts',
+    neural_tts_lite: 'gemini-3.8-flash-lite-tts',
     architecture_diagram: process.env.NANO_BANANA_MODEL || 'nano-banana-2',
+    architecture_diagram_v21: 'gemini-nano-banana-2.1',
     image_generation: process.env.GEMINI_IMAGE_MODEL || 'gemini-3.1-flash-image-preview',
+    image_generation_ga: 'gemini-3.1-flash-image',
     embedding_primary: process.env.GEMINI_EMBEDDING_MODEL || 'gemini-embedding-001',
+    embedding_v2: 'gemini-embedding-2',
     embedding_secondary: 'text-embedding-005',
     graph_engine: 'BigQuery Property Graphs (ISO GQL)',
     agent_sidecar: 'Google ADK 4-Agent Scheduled Sidecar',
@@ -40,8 +46,9 @@ const MODEL_STACK = {
 /**
  * Gemini AI Service
  * Powered by the Canonical 5-Tier Google / Gemini / DeepMind Model Stack
+ * - Frontier Deep Reasoning & Orthogonal Judge: Gemini 4 Argon (gemini-4-argon) & Gemini 3.1 Pro (gemini-3.1-pro-preview)
  * - Audio Storytelling & Multimodal Critic: Google Omni 1.1 (google-omni-1.1 / gemini-omni-1.1-flash)
- * - Architecture Diagram Generation: Nano Banana 2 (nano-banana-2 / gemini-3.1-flash-image-preview)
+ * - Architecture Diagram Generation: Nano Banana 2 (nano-banana-2 / gemini-nano-banana-2.1 / gemini-3.1-flash-image-preview)
  * - Support Agent / Live Copilot: Gemini 3.8 Flash Live Preview (gemini-3.8-flash-live-preview / gemini-3.1-flash-live-preview)
  */
 class GeminiService {
@@ -52,6 +59,7 @@ class GeminiService {
     this.fallbackModels = [
       MODEL_STACK.tier4_live_streaming.primary,
       MODEL_STACK.tier4_live_streaming.fallback_live,
+      MODEL_STACK.tier2_deep_reasoning.argon,
       MODEL_STACK.tier2_deep_reasoning.primary,
       MODEL_STACK.tier1_orchestrator.flash
     ];
@@ -65,13 +73,18 @@ class GeminiService {
   _resolveWireModel(model) {
     if (process.env.GEMINI_WIRE_MODEL) return process.env.GEMINI_WIRE_MODEL;
     if (
+      model === 'gemini-4-argon' ||
       model === 'google-omni-1.1' ||
       model === 'gemini-omni-1.1-flash' ||
       model === 'gemini-3.8-flash' ||
       model === 'gemini-3.8-flash-live-preview' ||
+      model === 'gemini-3.8-flash-tts' ||
+      model === 'gemini-3.8-flash-lite-tts' ||
       model === 'gemini-3.1-pro-preview' ||
       model === 'gemini-3.1-flash-live-preview' ||
-      model === 'nano-banana-2'
+      model === 'nano-banana-2' ||
+      model === 'gemini-nano-banana-2.1' ||
+      model === 'gemini-embedding-2'
     ) {
       return process.env.GEMINI_RUNTIME_WIRE_ENDPOINT || model;
     }
@@ -112,7 +125,7 @@ class GeminiService {
    * Internal helper to generate content with automatic exponential backoff retry and model fallback.
    * Supports options = { preferredModel, excludeModel } to enforce strict separation of duties
    * between Report Generator models (e.g. gemini-3.8-flash) and Independent LLM-as-a-Judge models
-   * (e.g. gemini-3.1-pro-preview, google-omni-1.1).
+   * (e.g. gemini-4-argon, gemini-3.1-pro-preview, google-omni-1.1).
    */
   async _generateWithFallback(promptOrContents, systemInstruction = '', temperature = 0.7, responseMimeType = null, maxRetries = 2, options = {}) {
     if (!this.isAvailable()) {
@@ -122,6 +135,7 @@ class GeminiService {
     const { preferredModel = null, excludeModel = null } = options || {};
     const candidateList = [
       ...(preferredModel ? [preferredModel] : []),
+      MODEL_STACK.tier2_deep_reasoning.argon,
       MODEL_STACK.tier1_orchestrator.primary,
       MODEL_STACK.tier2_deep_reasoning.primary,
       this.primaryModel,
@@ -138,7 +152,7 @@ class GeminiService {
       : orderedUnique;
 
     if (modelsToTry.length === 0) {
-      modelsToTry.push(MODEL_STACK.tier2_deep_reasoning.primary);
+      modelsToTry.push(MODEL_STACK.tier2_deep_reasoning.argon, MODEL_STACK.tier2_deep_reasoning.primary);
     }
 
     let lastError = null;
@@ -159,6 +173,12 @@ class GeminiService {
           }
           if (responseMimeType) {
             config.responseMimeType = responseMimeType;
+          }
+          // Breaking Change 2A Guard: gemini-4-argon strictly requires discrete thinkingLevel ('LOW'|'MEDIUM'|'HIGH')
+          if (String(wireModel).includes('4-argon')) {
+            config.thinkingConfig = { thinkingLevel: 'HIGH' };
+          } else if (String(wireModel).includes('3.8-flash') && !String(wireModel).includes('tts')) {
+            config.thinkingConfig = { thinkingLevel: 'LOW' };
           }
 
           const response = await this.client.models.generateContent({
@@ -1035,67 +1055,75 @@ Return ONLY valid JSON.`;
         'nitina-ggarwal-sandbox-647724'
       ].filter(Boolean)));
 
-      const vertexWireModel = 'gemini-3.1-pro-preview';
+      const vertexWireModels = ['gemini-4-argon', 'gemini-3.1-pro-preview'];
 
-      for (const proj of candidateProjects) {
-        try {
-          const url = `https://aiplatform.googleapis.com/v1/projects/${proj}/locations/global/publishers/google/models/${vertexWireModel}:generateContent`;
-          const controller = new AbortController();
-          const timer = setTimeout(() => controller.abort(), timeoutMs);
+      for (const vertexWireModel of vertexWireModels) {
+        for (const proj of candidateProjects) {
+          try {
+            const url = `https://aiplatform.googleapis.com/v1/projects/${proj}/locations/global/publishers/google/models/${vertexWireModel}:generateContent`;
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), timeoutMs);
 
-          const bodyPayload = {
-            contents: [{ role: 'user', parts: [{ text: prompt + '\n\nIMPORTANT: Output ONLY pure valid JSON.' }] }],
-            generationConfig: {
+            const generationConfig = {
               temperature,
               responseMimeType: 'application/json'
+            };
+            if (vertexWireModel.includes('4-argon')) {
+              generationConfig.thinkingConfig = { thinkingLevel: 'HIGH' };
             }
-          };
-          if (systemInstruction) {
-            bodyPayload.systemInstruction = { parts: [{ text: systemInstruction }] };
-          }
 
-          const res = await fetch(url, {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${vertexToken}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(bodyPayload),
-            signal: controller.signal
-          });
-          clearTimeout(timer);
-
-          if (res.ok) {
-            const data = await res.json();
-            const rawText = (data?.candidates?.[0]?.content?.parts || [])
-              .map(p => p.text || '')
-              .join('')
-              .trim();
-            if (rawText) {
-              const clean = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-              const jsonMatch = clean.match(/\{[\s\S]*\}/);
-              const parsed = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(clean);
-              const completedAt = new Date().toISOString();
-              return {
-                parsed,
-                telemetry: {
-                  logicalModel: preferredModel,
-                  wireModel: vertexWireModel,
-                  executionMode: 'LIVE_API_CALL',
-                  executionLabel: `LIVE GEMINI API CALL (Vertex AI ${proj} • HTTP 200)`,
-                  isLiveApiCall: true,
-                  apiEndpoint: `https://aiplatform.googleapis.com/v1/projects/${proj}/locations/global/publishers/google/models/${vertexWireModel}:generateContent`,
-                  authMethod: this._vertexTokenSource || 'Google Cloud Vertex AI OAuth2',
-                  httpStatus: 200,
-                  startedAt,
-                  refreshedAt: completedAt,
-                  latencyMs: Date.now() - startedMs
-                }
-              };
+            const bodyPayload = {
+              contents: [{ role: 'user', parts: [{ text: prompt + '\n\nIMPORTANT: Output ONLY pure valid JSON.' }] }],
+              generationConfig
+            };
+            if (systemInstruction) {
+              bodyPayload.systemInstruction = { parts: [{ text: systemInstruction }] };
             }
+
+            const res = await fetch(url, {
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${vertexToken}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(bodyPayload),
+              signal: controller.signal
+            });
+            clearTimeout(timer);
+
+            if (res.ok) {
+              const data = await res.json();
+              const rawText = (data?.candidates?.[0]?.content?.parts || [])
+                .filter(p => !p.thought)
+                .map(p => p.text || '')
+                .join('')
+                .trim();
+              if (rawText) {
+                const clean = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+                const jsonMatch = clean.match(/\{[\s\S]*\}/);
+                const parsed = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(clean);
+                const completedAt = new Date().toISOString();
+                return {
+                  parsed,
+                  telemetry: {
+                    logicalModel: preferredModel,
+                    wireModel: vertexWireModel,
+                    executionMode: 'LIVE_API_CALL',
+                    executionLabel: `LIVE GEMINI API CALL (Vertex AI ${proj} • ${vertexWireModel} • HTTP 200)`,
+                    isLiveApiCall: true,
+                    apiEndpoint: `https://aiplatform.googleapis.com/v1/projects/${proj}/locations/global/publishers/google/models/${vertexWireModel}:generateContent`,
+                    authMethod: this._vertexTokenSource || 'Google Cloud Vertex AI OAuth2',
+                    httpStatus: 200,
+                    startedAt,
+                    refreshedAt: completedAt,
+                    latencyMs: Date.now() - startedMs
+                  }
+                };
+              }
+            }
+          } catch (vertexErr) {
+            // Try next candidate project / model
           }
-        } catch (vertexErr) {
-          // Try next candidate project
         }
       }
     }

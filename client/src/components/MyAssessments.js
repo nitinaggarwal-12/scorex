@@ -10,12 +10,17 @@ import authService from '../services/authService';
 const PageContainer = styled.div`
   min-height: 100vh;
   background: #f8fafc;
-  padding: 100px 32px 60px;
+  padding: 88px clamp(16px, 1.8vw, 28px) 60px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 `;
 
 const Content = styled.div`
-  max-width: 1600px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
+  box-sizing: border-box;
 `;
 
 const Header = styled.div`

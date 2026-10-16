@@ -758,7 +758,7 @@ const AssessmentsListNew = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const initialView = queryParams.get('view') === 'blueprints' ? 'blueprints' : (queryParams.get('view') === 'dossiers' ? 'dossiers' : 'all');
+  const initialView = queryParams.get('view') === 'blueprints' ? 'blueprints' : 'dossiers';
   const [viewMode, setViewMode] = useState(initialView);
   const [blueprintCategory, setBlueprintCategory] = useState('all');
   const [assessments, setAssessments] = useState([]);
@@ -780,9 +780,7 @@ const AssessmentsListNew = () => {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const v = params.get('view');
-    if (v === 'blueprints' || v === 'dossiers') {
-      setViewMode(v);
-    }
+    setViewMode(v === 'blueprints' ? 'blueprints' : 'dossiers');
   }, [location.search]);
 
   useEffect(() => {
@@ -1071,12 +1069,8 @@ const AssessmentsListNew = () => {
     const family = typeof assessment === 'object' ? (assessment.assessmentFamily || (assessment.isDynamic ? 'dynamic' : 'classic')) : 'classic';
     const name = assessmentName || (typeof assessment === 'object' ? (assessment.assessment_name || assessment.assessmentName) : 'this assessment');
     
-    if (!window.confirm(`Are you sure you want to delete "${name}"? This action cannot be undone.`)) {
-      return;
-    }
-    
     try {
-      toast.loading('Deleting assessment...', { id: 'delete' });
+      toast.loading(`Deleting "${name}"...`, { id: 'delete' });
       const headers = authService.getAuthHeader ? authService.getAuthHeader() : {};
       if (family === 'dynamic') {
         await dynamicAssessmentService.deleteInstance(assessmentId);
@@ -1226,9 +1220,6 @@ const AssessmentsListNew = () => {
 
   const handleBatchDelete = async () => {
     if (selectedIds.size === 0) return;
-    if (!window.confirm(`Are you sure you want to delete ${selectedIds.size} selected assessment(s)? This action cannot be undone.`)) {
-      return;
-    }
     try {
       toast.loading(`Deleting ${selectedIds.size} assessments...`, { id: 'batch-delete' });
       const ids = Array.from(selectedIds);
@@ -1496,76 +1487,8 @@ const AssessmentsListNew = () => {
   return (
     <PageContainer>
       <ContentContainer>
-        {/* Top Segmented Mode Switcher: Blueprints vs Saved Customer Dossiers */}
-        <div
-          style={{
-            background: '#ffffff',
-            border: '1px solid #cbd5e1',
-            borderRadius: '16px',
-            padding: '12px 16px',
-            marginBottom: '24px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '12px',
-            flexWrap: 'wrap',
-            boxShadow: '0 4px 14px rgba(15, 23, 42, 0.04)'
-          }}
-        >
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            <button
-              onClick={() => navigate('/assessments?view=blueprints')}
-              style={{
-                padding: '10px 18px',
-                borderRadius: '10px',
-                fontWeight: 800,
-                fontSize: '0.88rem',
-                cursor: 'pointer',
-                border: viewMode === 'blueprints' ? '1.5px solid #2563eb' : '1px solid #e2e8f0',
-                background: viewMode === 'blueprints' ? '#eff6ff' : '#f8fafc',
-                color: viewMode === 'blueprints' ? '#1d4ed8' : '#475569'
-              }}
-            >
-              📐 1. Reusable Assessment Blueprints ({REUSABLE_BLUEPRINTS_CATALOG.length} Templates)
-            </button>
-            <button
-              onClick={() => navigate('/assessments?view=dossiers')}
-              style={{
-                padding: '10px 18px',
-                borderRadius: '10px',
-                fontWeight: 800,
-                fontSize: '0.88rem',
-                cursor: 'pointer',
-                border: viewMode === 'dossiers' ? '1.5px solid #059669' : '1px solid #e2e8f0',
-                background: viewMode === 'dossiers' ? '#ecfdf5' : '#f8fafc',
-                color: viewMode === 'dossiers' ? '#047857' : '#475569'
-              }}
-            >
-              📂 2. Saved Customer Dossiers ({assessments.length} Customer Runs)
-            </button>
-            <button
-              onClick={() => setViewMode('all')}
-              style={{
-                padding: '10px 14px',
-                borderRadius: '10px',
-                fontWeight: 700,
-                fontSize: '0.82rem',
-                cursor: 'pointer',
-                border: viewMode === 'all' ? '1.5px solid #6366f1' : '1px solid #e2e8f0',
-                background: viewMode === 'all' ? '#eef2ff' : '#ffffff',
-                color: viewMode === 'all' ? '#4338ca' : '#64748b'
-              }}
-            >
-              Show Both Views
-            </button>
-          </div>
-          <div style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 600 }}>
-            🛡️ Powered by 5 ScoreX Grounding Skills • Zero Customer Names Mixed in Reusable Blueprints
-          </div>
-        </div>
-
         {/* Section 1: Reusable Assessment Blueprints (Start New) */}
-        {(viewMode === 'blueprints' || viewMode === 'all') && (
+        {viewMode === 'blueprints' && (
           <div
             style={{
               background: '#ffffff',
@@ -1692,13 +1615,32 @@ const AssessmentsListNew = () => {
           </div>
         )}
 
+        {/* Section 2: Saved Customer Dossiers */}
+        {viewMode === 'dossiers' && (
+          <>
         {/* Header for Saved Customer Dossiers */}
         <HeaderSection>
           <div className="left">
             <h1>📂 Saved Customer Dossiers & Active Runs</h1>
             <p>Resume in-progress customer discovery or open completed 4-Tab Executive Reports ({assessments.length} customer dossiers).</p>
           </div>
-          <div className="right" style={{ display: 'flex', gap: '12px' }}>
+          <div className="right" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <div style={{
+              padding: '9px 14px',
+              background: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              borderRadius: '8px',
+              fontSize: '0.8rem',
+              fontWeight: 700,
+              color: '#334155',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <span style={{ color: '#059669' }}>● {assessments.filter(a => getStatusFromAssessment(a) === 'completed').length} Completed</span>
+              <span style={{ color: '#cbd5e1' }}>|</span>
+              <span style={{ color: '#2563eb' }}>● {assessments.filter(a => getStatusFromAssessment(a) === 'in_progress').length} Active</span>
+            </div>
             <button
               onClick={() => navigate('/assessments/compare')}
               style={{
@@ -1717,14 +1659,6 @@ const AssessmentsListNew = () => {
             >
               Compare Assessments
             </button>
-            <PrimaryButton
-              onClick={() => navigate('/start')}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <FiPlus size={16} />
-              New Assessment
-            </PrimaryButton>
           </div>
         </HeaderSection>
 
@@ -2127,6 +2061,8 @@ const AssessmentsListNew = () => {
               );
             })}
           </AssessmentsGrid>
+        )}
+          </>
         )}
 
         {/* Floating Batch Actions Toolbar */}

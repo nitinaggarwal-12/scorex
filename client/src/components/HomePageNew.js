@@ -33,11 +33,12 @@ const PageContainer = styled.div`
 const JourneyRibbon = styled.div`
   background: #ffffff;
   border-bottom: 1px solid #e2e8f0;
-  padding: 12px clamp(16px, 3vw, 48px);
+  padding: 12px clamp(16px, 1.8vw, 28px);
 `;
 
 const JourneyRibbonInner = styled.div`
-  max-width: 1360px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -90,18 +91,20 @@ const JourneyStepPill = styled.button`
 const HeroSection = styled.header`
   background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
   border-bottom: 1px solid #e2e8f0;
-  padding: 48px clamp(16px, 3vw, 48px) 56px;
+  padding: 28px clamp(16px, 1.8vw, 28px) 36px;
 `;
 
 const HeroContainer = styled.div`
-  max-width: 1360px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
 `;
 
 const HeroTopRow = styled.div`
   text-align: center;
-  max-width: 900px;
-  margin: 0 auto 40px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto 28px;
 
   .eyebrow {
     display: inline-flex;
@@ -116,23 +119,24 @@ const HeroTopRow = styled.div`
     font-weight: 800;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
 
   h1 {
-    font-size: clamp(2.1rem, 4vw, 3.25rem);
+    font-size: clamp(2rem, 3.2vw, 2.85rem);
     font-weight: 850;
     color: #1e293b;
     line-height: 1.15;
-    margin: 0 0 16px;
+    margin: 0 0 12px;
     letter-spacing: -0.03em;
   }
 
   p {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     color: #475569;
-    line-height: 1.65;
-    margin: 0;
+    line-height: 1.6;
+    margin: 0 auto;
+    max-width: 1100px;
   }
 `;
 
@@ -308,16 +312,17 @@ const DossierMiniCard = styled.button`
 
 const Section = styled.section`
   width: 100%;
-  max-width: 1360px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 64px clamp(16px, 3vw, 48px);
+  padding: 44px clamp(16px, 1.8vw, 28px);
   box-sizing: border-box;
 `;
 
 const SectionHeader = styled.div`
   text-align: center;
-  max-width: 820px;
-  margin: 0 auto 44px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto 32px;
 
   h2 {
     font-size: 2.15rem;
@@ -331,7 +336,8 @@ const SectionHeader = styled.div`
     font-size: 1.05rem;
     color: #64748b;
     line-height: 1.65;
-    margin: 0;
+    margin: 0 auto;
+    max-width: 960px;
   }
 `;
 

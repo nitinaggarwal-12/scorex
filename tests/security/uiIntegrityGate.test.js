@@ -160,3 +160,214 @@ test('UI Integrity Gate 6: Codebase-wide scan across all components in client/sr
     );
   }
 });
+
+test('UI Integrity Gate 7: Zero occurrences of banned consulting brands (McKinsey, Stratagem) across components, mocks, and server', () => {
+  const geVrSource = readClientFile('components/GeValueRealizationWorkspace.js');
+  assert.ok(!/mckinsey/i.test(geVrSource), 'GeValueRealizationWorkspace.js must not contain McKinsey references');
+  assert.ok(!/stratagem\/google/i.test(geVrSource), 'GeValueRealizationWorkspace.js must not contain Stratagem/Google references');
+
+  const mockPath = path.join(ROOT, 'ge_vr_executive_ui_mock.html');
+  if (fs.existsSync(mockPath)) {
+    const mockSource = fs.readFileSync(mockPath, 'utf8');
+    assert.ok(!/mckinsey/i.test(mockSource), 'ge_vr_executive_ui_mock.html must not contain McKinsey references');
+    assert.ok(!/stratagem\/google/i.test(mockSource), 'ge_vr_executive_ui_mock.html must not contain Stratagem/Google references');
+  }
+
+  const ingestorPath = path.join(ROOT, 'server/services/geCustomerMultiSourceIngestor.js');
+  if (fs.existsSync(ingestorPath)) {
+    const ingestorSource = fs.readFileSync(ingestorPath, 'utf8');
+    assert.ok(!/mckinsey/i.test(ingestorSource), 'geCustomerMultiSourceIngestor.js must not contain McKinsey references');
+  }
+});
+
+test('UI Integrity Gate 8: Zero thread-blocking window.prompt, window.alert, or window.confirm calls in GeValueRealizationWorkspace.js and AssessmentsListNew.js', () => {
+  const geVrSource = readClientFile('components/GeValueRealizationWorkspace.js');
+  assert.ok(!geVrSource.includes('window.prompt('), 'GeValueRealizationWorkspace.js must not use thread-blocking window.prompt()');
+  assert.ok(!geVrSource.includes('window.alert('), 'GeValueRealizationWorkspace.js must not use thread-blocking window.alert()');
+  assert.ok(!geVrSource.includes('window.confirm('), 'GeValueRealizationWorkspace.js must not use thread-blocking window.confirm()');
+  assert.ok(geVrSource.includes('showCustomSfdcInput'), 'GeValueRealizationWorkspace.js must implement non-blocking inline custom SFDC input mode');
+
+  const listSource = readClientFile('components/AssessmentsListNew.js');
+  assert.ok(!listSource.includes('window.confirm('), 'AssessmentsListNew.js must not use thread-blocking window.confirm()');
+});
+
+test('UI Integrity Gate 9: 100% fluid edge-to-edge layout across all pages and zero rigid max-width 1400px/1440px/1560px page containers', () => {
+  const geVrSource = readClientFile('components/GeValueRealizationWorkspace.js');
+  assert.ok(
+    geVrSource.includes("width: '100%'") && geVrSource.includes("maxWidth: '100%'"),
+    'GeValueRealizationWorkspace.js container must enforce 100% fluid width'
+  );
+  assert.ok(!geVrSource.includes("maxWidth: '1560px'"), 'GeValueRealizationWorkspace.js must not constrain container to maxWidth: 1560px');
+  assert.ok(!geVrSource.includes("maxWidth: '1440px'"), 'GeValueRealizationWorkspace.js must not constrain container to maxWidth: 1440px');
+
+  const fluidPageFiles = [
+    'components/HomePageNew.js',
+    'components/AssessmentStart.js',
+    'components/AssessmentsListNew.js',
+    'components/ExecutiveCommandCenter.js',
+    'components/ExecutiveSummaryNew.js',
+    'components/AssessmentDashboard.js',
+    'components/MyAssessments.js',
+    'components/FeedbackForm.js',
+    'components/UserGuide.js',
+    'components/AuthorAssignments.js',
+    'components/AssessmentHeader.js',
+    'components/AssessmentDetails.js',
+    'components/PitchDeck.js',
+    'components/AssessmentHistory.js'
+  ];
+
+  for (const relFile of fluidPageFiles) {
+    const src = readClientFile(relFile);
+    assert.ok(
+      src.includes('max-width: 100%') || src.includes("maxWidth: '100%'"),
+      `${relFile} must enforce 100% fluid max-width container`
+    );
+  }
+
+  const mockPath = path.join(ROOT, 'ge_vr_executive_ui_mock.html');
+  if (fs.existsSync(mockPath)) {
+    const mockSource = fs.readFileSync(mockPath, 'utf8');
+    assert.ok(mockSource.includes('max-width: 100%'), 'ge_vr_executive_ui_mock.html must enforce 100% fluid width');
+    assert.ok(!mockSource.includes('max-width: 1440px'), 'ge_vr_executive_ui_mock.html must not constrain container to max-width: 1440px');
+  }
+});
+
+test('UI Integrity Gate 10: Verified Mars, Inc. and H-E-B, LP grounded customer records exist in geCustomerMultiSourceIngestor.js', () => {
+  const ingestorPath = path.join(ROOT, 'server/services/geCustomerMultiSourceIngestor.js');
+  const ingestorSource = fs.readFileSync(ingestorPath, 'utf8');
+  assert.ok(ingestorSource.includes('0014M00001hqyrvQAA'), 'geCustomerMultiSourceIngestor.js must contain verified Mars SFDC ID 0014M00001hqyrvQAA');
+  assert.ok(ingestorSource.includes('0014M00001hcTvLQAU'), 'geCustomerMultiSourceIngestor.js must contain verified H-E-B SFDC ID 0014M00001hcTvLQAU');
+  assert.ok(ingestorSource.includes('50000') || ingestorSource.includes('50,000'), 'geCustomerMultiSourceIngestor.js must ground Mars 50,000 seats');
+  assert.ok(ingestorSource.includes('45000') || ingestorSource.includes('45,000'), 'geCustomerMultiSourceIngestor.js must ground H-E-B 45,000 seats');
+});
+
+test('UI Integrity Gate 11: Assessment Workspace Horizontal 10-Module Tab Bar, Zero Duplicate Header/Card Clutter, and Clean New-Assessment Isolation', () => {
+  const geVrSource = readClientFile('components/GeValueRealizationWorkspace.js');
+  assert.ok(
+    geVrSource.includes('const [showSavedHubDrawer, setShowSavedHubDrawer] = useState(false);'),
+    'GeValueRealizationWorkspace.js must default showSavedHubDrawer to false so New Assessment never opens Saved Hub on load'
+  );
+  assert.ok(
+    geVrSource.includes('id="ge-module-tabs-bar"'),
+    'GeValueRealizationWorkspace.js must render Horizontal 10-Module Tab Bar (#ge-module-tabs-bar)'
+  );
+  assert.ok(
+    !geVrSource.includes('id="ge-batch-actions-select"'),
+    'GeValueRealizationWorkspace.js must not render duplicate #ge-batch-actions-select dropdown'
+  );
+  assert.ok(
+    !geVrSource.includes('Decision Rationale & Grounded Evidence:'),
+    'GeValueRealizationWorkspace.js question cards must not render duplicate bottom rationale/citation block'
+  );
+
+  const listSource = readClientFile('components/AssessmentsListNew.js');
+  assert.ok(
+    listSource.includes("{viewMode === 'dossiers' && ("),
+    'AssessmentsListNew.js must isolate Saved Customer Dossiers behind viewMode === "dossiers"'
+  );
+  assert.ok(
+    !listSource.includes('Show Both Views'),
+    'AssessmentsListNew.js must not mix Blueprints and Saved Dossiers via Show Both Views'
+  );
+
+  const startSource = readClientFile('components/AssessmentStart.js');
+  assert.ok(
+    startSource.includes('const [groundingPreviewOpen, setGroundingPreviewOpen] = useState(false);'),
+    'AssessmentStart.js must keep groundingPreviewOpen collapsed by default'
+  );
+  assert.ok(
+    !startSource.includes('Quantum FinTech Global'),
+    'AssessmentStart.js must not pre-populate hardcoded Quantum FinTech Global customer strings on New Assessment'
+  );
+});
+
+test('UI Integrity Gate 12: Omni 1.1 E2E Executive Review Invariants (Deep-Link Tab Sync, Light-Theme Release Gate Banner, Dynamic Report 4-Card Hero Strip & Tab 4 Isolation, Instance ID Resolution)', () => {
+  const geVrSource = readClientFile('components/GeValueRealizationWorkspace.js');
+  assert.ok(
+    geVrSource.includes("tabParam === 'provenance'") && geVrSource.includes("nextTab === 'provenance'"),
+    'GeValueRealizationWorkspace.js must route ?tab=provenance and ?tab=audit to Tab 3 (math/provenance)'
+  );
+  assert.ok(
+    !geVrSource.includes('linear-gradient(90deg, #7f1d1d'),
+    'GeValueRealizationWorkspace.js Tab 2 Release Gate banner must use Executive Light Theme (#fff1f2 / #ecfdf5), not dark crimson #7f1d1d'
+  );
+
+  const dynReportSource = readClientFile('components/DynamicAssessmentReport.js');
+  assert.ok(
+    !dynReportSource.includes('$isActive={activeExecutiveTab === "roadmap" || activeExecutiveTab === "audit"}'),
+    'DynamicAssessmentReport.js Tab 4 must not highlight simultaneously when Tab 5 (roadmap) is active'
+  );
+  assert.ok(
+    dynReportSource.includes('4-Card Full-Width Executive Telemetry Strip'),
+    'DynamicAssessmentReport.js HeroCard must render the 4-Card Full-Width Executive Telemetry Strip'
+  );
+
+  const dynRunnerSource = readClientFile('components/DynamicAssessmentRunner.js');
+  assert.ok(
+    dynRunnerSource.includes("typeKey && typeKey.startsWith('inst_')"),
+    'DynamicAssessmentRunner.js must resolve inst_* instance IDs passed via /assessments/run/:typeKey'
+  );
+  assert.ok(
+    !dynRunnerSource.includes("!k.includes('_')"),
+    'DynamicAssessmentRunner.js must not filter out question IDs containing underscores (cost_01, api_01) when computing totalAnswered'
+  );
+
+  const eccSource = readClientFile('components/ExecutiveCommandCenter.js');
+  assert.ok(
+    eccSource.includes("let activeId = assessmentId || 'inst_enterprise_data_ai_maturity_demo';"),
+    'ExecutiveCommandCenter.js must default activeId to inst_enterprise_data_ai_maturity_demo for instant <250ms loading'
+  );
+
+  const pcServiceSource = fs.readFileSync(path.join(ROOT, 'server/services/promptCanvasService.js'), 'utf8');
+  assert.ok(
+    pcServiceSource.includes('if (options.forceLiveAi)'),
+    'promptCanvasService.js must guard external 60s network generation behind options.forceLiveAi'
+  );
+
+  const appSource = readClientFile('App.js');
+  assert.ok(
+    appSource.includes('path="/executive-command-center"'),
+    'App.js must expose /executive-command-center route alias alongside /executive-dashboard'
+  );
+});
+
+test('UI Integrity Gate 13: Question Form Layout, 3-Column Non-Truncating Input Grid, 2x2 Intake Grid & Semantic 4-Column Runner Theme (Rule 50G)', () => {
+  const geVrSource = readClientFile('components/GeValueRealizationWorkspace.js');
+  assert.ok(
+    geVrSource.includes('formatInputTypeLabel(q.inputType)'),
+    'GeValueRealizationWorkspace.js must format inputType via formatInputTypeLabel() instead of rendering raw snake_case'
+  );
+  assert.ok(
+    geVrSource.includes("gridTemplateColumns: 'minmax(0, 2.15fr) minmax(175px, 0.9fr) minmax(150px, 0.75fr)'"),
+    'GeValueRealizationWorkspace.js question card input row must use balanced 3-column non-truncating grid (2.15fr / 0.9fr / 0.75fr)'
+  );
+  assert.ok(
+    !geVrSource.includes('Evidence Source & Owner'),
+    'GeValueRealizationWorkspace.js must merge Evidence Source & Owner into the unified 1-line provenance footer rather than a duplicate 4th input column'
+  );
+  assert.ok(
+    geVrSource.includes('Tier A (90–100% • 1.00x)'),
+    'GeValueRealizationWorkspace.js CONFIDENCE_OPTIONS must use concise non-truncating Tier A–E labels'
+  );
+
+  const startSource = readClientFile('components/AssessmentStart.js');
+  assert.ok(
+    !startSource.includes('#ff6b35'),
+    'AssessmentStart.js must harmonize all controls to the ScoreX Enterprise Blue (#2563eb) light theme with zero legacy #ff6b35 orange'
+  );
+  assert.ok(
+    startSource.includes('const IntakeFieldsGrid = styled.div`'),
+    'AssessmentStart.js must render a 2x2 IntakeFieldsGrid so all 4 core intake fields and 6 pillars fit above the fold'
+  );
+
+  const dynRunnerSource = readClientFile('components/DynamicAssessmentRunner.js');
+  assert.ok(
+    !dynRunnerSource.includes('#ff6b35'),
+    'DynamicAssessmentRunner.js must contain zero legacy #ff6b35 orange colors'
+  );
+  assert.ok(
+    dynRunnerSource.includes('$variant="future"') && dynRunnerSource.includes('$variant="business"'),
+    'DynamicAssessmentRunner.js must differentiate Current State (#2563eb Blue), Future State ($variant="future" #059669 Emerald), Technical Pain (#e11d48 Rose), and Business Pain ($variant="business" #d97706 Amber)'
+  );
+});

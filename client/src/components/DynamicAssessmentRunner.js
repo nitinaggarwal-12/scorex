@@ -234,7 +234,7 @@ const StatusDot = styled.div`
 const DimNavName = styled.div`
   font-size: 0.9rem;
   font-weight: ${props => props.$active ? '700' : '600'};
-  color: ${props => props.$active ? '#ff6b35' : '#334155'};
+  color: ${props => props.$active ? '#2563eb' : '#334155'};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -248,8 +248,8 @@ const QuestionsSubList = styled.div`
 `;
 
 const QuestionSubItem = styled.button`
-  background: ${props => props.$active ? '#ffefe9' : 'transparent'};
-  color: ${props => props.$active ? '#ff6b35' : '#64748b'};
+  background: ${props => props.$active ? '#eff6ff' : 'transparent'};
+  color: ${props => props.$active ? '#1d4ed8' : '#64748b'};
   font-weight: ${props => props.$active ? '700' : '500'};
   border: none;
   border-radius: 6px;
@@ -335,13 +335,13 @@ const DimensionIconCircle = styled.div`
   width: 38px;
   height: 38px;
   border-radius: 10px;
-  background: ${props => props.$color ? `linear-gradient(135deg, ${props.$color} 0%, #4f46e5 100%)` : 'linear-gradient(135deg, #ff6b35 0%, #f7931e 100%)'};
+  background: ${props => props.$color ? `linear-gradient(135deg, ${props.$color} 0%, #4f46e5 100%)` : 'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)'};
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.3rem;
-  box-shadow: ${props => props.$color ? `0 4px 12px ${props.$color}40` : '0 4px 12px rgba(255, 107, 53, 0.3)'};
+  box-shadow: ${props => props.$color ? `0 4px 12px ${props.$color}40` : '0 4px 12px rgba(37, 99, 235, 0.3)'};
   flex-shrink: 0;
 
   @media (max-width: 640px) {
@@ -376,9 +376,9 @@ const MobileDimensionDrawerButton = styled.button`
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: #ffefe9;
-    color: #ff6b35;
-    border: 1px solid #ffcca3;
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
     padding: 8px 14px;
     border-radius: 8px;
     font-weight: 700;
@@ -441,12 +441,12 @@ const QuestionCircle = styled.button`
   height: 32px;
   border-radius: 50%;
   background: ${props => {
-    if (props.$current) return '#ff6b35';
+    if (props.$current) return '#2563eb';
     if (props.$answered) return '#10b981';
     return '#f1f5f9';
   }};
   color: ${props => (props.$current || props.$answered) ? '#ffffff' : '#64748b'};
-  border: 2px solid ${props => props.$current ? '#ff6b35' : 'transparent'};
+  border: 2px solid ${props => props.$current ? '#2563eb' : 'transparent'};
   font-weight: 700;
   font-size: 0.85rem;
   display: flex;
@@ -498,12 +498,12 @@ const QuestionTitleArea = styled.div`
 `;
 
 const QuestionNumberTag = styled.div`
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #ff6b35;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #2563eb;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 `;
 
 const QuestionPromptText = styled.h2`
@@ -520,10 +520,10 @@ const QuestionPromptText = styled.h2`
 
 const QuestionGuidance = styled.div`
   font-size: 0.76rem;
-  color: #64748b;
+  color: #475569;
   background: #f8fafc;
-  border-left: 3px solid #ff6b35;
-  padding: 4px 8px;
+  border-left: 3px solid #2563eb;
+  padding: 5px 10px;
   border-radius: 4px;
   display: inline-block;
   text-align: left;
@@ -586,12 +586,18 @@ const OptionsStack = styled.div`
 `;
 
 const MaturityOptionCard = styled.button`
-  background: ${props => props.$selected ? '#fff7ed' : '#ffffff'};
-  border: 2px solid ${props => props.$selected ? '#ff6b35' : '#e2e8f0'};
+  background: ${props => {
+    if (!props.$selected) return '#ffffff';
+    return props.$variant === 'future' ? '#ecfdf5' : '#eff6ff';
+  }};
+  border: 2px solid ${props => {
+    if (!props.$selected) return '#e2e8f0';
+    return props.$variant === 'future' ? '#059669' : '#2563eb';
+  }};
   border-radius: 8px;
   padding: 5px 8px;
   text-align: left;
-  cursor: pointer;
+  cursor: ${props => props.$disabled ? 'not-allowed' : 'pointer'};
   transition: all 0.2s ease;
   display: flex;
   flex-direction: column;
@@ -599,18 +605,26 @@ const MaturityOptionCard = styled.button`
   gap: 1px;
   flex: 1;
   min-height: 40px;
-  box-shadow: ${props => props.$selected ? '0 4px 12px rgba(255, 107, 53, 0.15)' : 'none'};
+  box-shadow: ${props => {
+    if (!props.$selected) return 'none';
+    return props.$variant === 'future'
+      ? '0 4px 12px rgba(5, 150, 105, 0.14)'
+      : '0 4px 12px rgba(37, 99, 235, 0.14)';
+  }};
 
   &:hover {
-    border-color: #ff6b35;
-    background: #fffaf5;
+    border-color: ${props => props.$disabled ? '#e2e8f0' : (props.$variant === 'future' ? '#059669' : '#2563eb')};
+    background: ${props => props.$disabled ? '#ffffff' : (props.$variant === 'future' ? '#f0fdf4' : '#f8fafc')};
   }
 `;
 
 const OptionStageTag = styled.span`
   font-size: 0.66rem;
   font-weight: 800;
-  color: ${props => props.$selected ? '#ff6b35' : '#64748b'};
+  color: ${props => {
+    if (!props.$selected) return '#64748b';
+    return props.$variant === 'future' ? '#047857' : '#1d4ed8';
+  }};
   text-transform: uppercase;
   letter-spacing: 0.03em;
 `;
@@ -618,14 +632,20 @@ const OptionStageTag = styled.span`
 const OptionText = styled.span`
   font-size: 0.72rem;
   line-height: 1.18;
-  color: ${props => props.$selected ? '#1e293b' : '#475569'};
+  color: ${props => props.$selected ? '#0f172a' : '#475569'};
   font-weight: ${props => props.$selected ? '600' : '400'};
 `;
 
 /* Checkbox Cards */
 const PainCheckboxCard = styled.label`
-  background: ${props => props.$checked ? '#fef2f2' : '#ffffff'};
-  border: 1.5px solid ${props => props.$checked ? '#ef4444' : '#e2e8f0'};
+  background: ${props => {
+    if (!props.$checked) return '#ffffff';
+    return props.$variant === 'business' ? '#fffbeb' : '#fff1f2';
+  }};
+  border: 1.5px solid ${props => {
+    if (!props.$checked) return '#e2e8f0';
+    return props.$variant === 'business' ? '#d97706' : '#e11d48';
+  }};
   border-radius: 8px;
   padding: 5px 8px;
   margin-bottom: 4px;
@@ -644,7 +664,7 @@ const PainCheckboxCard = styled.label`
 
   input {
     margin: 0;
-    accent-color: #ef4444;
+    accent-color: ${props => props.$variant === 'business' ? '#d97706' : '#e11d48'};
     cursor: pointer;
     width: 14px;
     height: 14px;
@@ -653,13 +673,16 @@ const PainCheckboxCard = styled.label`
 
   span {
     font-size: 0.72rem;
-    color: ${props => props.$checked ? '#991b1b' : '#334155'};
+    color: ${props => {
+      if (!props.$checked) return '#334155';
+      return props.$variant === 'business' ? '#92400e' : '#9f1239';
+    }};
     line-height: 1.18;
     font-weight: ${props => props.$checked ? '600' : '400'};
   }
 
   &:hover {
-    border-color: #ef4444;
+    border-color: ${props => props.$variant === 'business' ? '#d97706' : '#e11d48'};
   }
 `;
 
@@ -691,8 +714,8 @@ const NotesArea = styled.textarea`
 
   &:focus {
     outline: none;
-    border-color: #ff6b35;
-    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.15);
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
   }
 
   &::placeholder {
@@ -753,13 +776,13 @@ const BackButton = styled(NavActionButton)`
 `;
 
 const NextButton = styled(NavActionButton)`
-  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
   color: white;
-  box-shadow: 0 4px 14px rgba(255, 107, 53, 0.35);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 107, 53, 0.5);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
   }
 `;
 
@@ -800,7 +823,8 @@ const DynamicAssessmentRunner = () => {
   const isDarkMode = false;
   const [showShortcutsModal, setShowShortcutsModal] = useState(false);
 
-  const draftKey = `scorex_draft_${id || typeKey || 'custom'}`;
+  const resolvedInstanceId = id || (typeKey && typeKey.startsWith('inst_') ? typeKey : null);
+  const draftKey = `scorex_draft_${resolvedInstanceId || typeKey || 'custom'}`;
 
   const saveLocalBackup = useCallback((data) => {
     try {
@@ -822,9 +846,9 @@ const DynamicAssessmentRunner = () => {
     setLoadError(null);
     try {
       let loadedResponses = {};
-      if (id) {
+      if (resolvedInstanceId) {
         try {
-          const inst = await dynamicAssessmentService.getInstance(id);
+          const inst = await dynamicAssessmentService.getInstance(resolvedInstanceId);
           if (inst && inst.frameworkSnapshot && inst.frameworkSnapshot.dimensions) {
             setInstance(inst);
             setFramework(inst.frameworkSnapshot);
@@ -833,12 +857,12 @@ const DynamicAssessmentRunner = () => {
             throw new Error('Assessment session framework is missing or corrupt.');
           }
         } catch (fetchErr) {
-          console.warn(`[DynamicAssessmentRunner] Instance ${id} not found on server (${fetchErr.message}). Checking recovery paths...`);
+          console.warn(`[DynamicAssessmentRunner] Instance ${resolvedInstanceId} not found on server (${fetchErr.message}). Checking recovery paths...`);
           
           // Path 1: Check localStorage for cached draft
           let recoveredFromLocal = false;
           try {
-            const rawDraft = localStorage.getItem(draftKey) || localStorage.getItem(`scorex_draft_${id}`);
+            const rawDraft = localStorage.getItem(draftKey) || localStorage.getItem(`scorex_draft_${resolvedInstanceId}`);
             if (rawDraft) {
               const parsed = JSON.parse(rawDraft);
               if (parsed.framework && parsed.framework.dimensions && parsed.framework.dimensions.length > 0) {
@@ -868,10 +892,10 @@ const DynamicAssessmentRunner = () => {
             console.warn('Local draft inspection error:', storageErr);
           }
 
-          // Path 2: Check if id is actually a typeKey (e.g. user pasted typeKey into instance URL)
+          // Path 2: Check if resolvedInstanceId is actually a typeKey (e.g. user pasted typeKey into instance URL)
           try {
             const types = await dynamicAssessmentService.getAssessmentTypes();
-            const matchedType = (types || []).find(t => t.typeKey === id || t.id === id);
+            const matchedType = (types || []).find(t => t.typeKey === resolvedInstanceId || t.id === resolvedInstanceId);
             if (matchedType && matchedType.framework && matchedType.framework.dimensions) {
               setFramework(matchedType.framework);
               navigate(`/assessments/run/${matchedType.typeKey}`, { replace: true });
@@ -1240,9 +1264,12 @@ const DynamicAssessmentRunner = () => {
   const currentQ = questions[safeQIdx] || questions[0] || null;
 
   const totalQuestions = dimensions.reduce((sum, d) => sum + (d.questions?.length || 0), 0);
-  const totalAnswered = Object.keys(responses).filter(k => !k.includes('_')).length;
+  const totalAnswered = dimensions.reduce(
+    (sum, d) => sum + (d.questions || []).filter(q => responses[q.id] !== undefined).length,
+    0
+  );
   const unansweredCount = Math.max(0, totalQuestions - totalAnswered);
-  const estimatedMinutesRemaining = Math.max(1, Math.round(unansweredCount * 1.2));
+  const estimatedMinutesRemaining = unansweredCount === 0 ? 0 : Math.max(1, Math.round(unansweredCount * 1.2));
 
   const isCurrentQAnswered = (qId) => responses[qId] !== undefined;
 
@@ -1308,7 +1335,7 @@ const DynamicAssessmentRunner = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [currentQ, nextQuestion, prevQuestion, handleSelectCurrentState, handleSelectFutureState]);
 
-  if (loading || !framework) {
+  if (loading) {
     return <LoadingSpinner message="Loading assessment framework..." />;
   }
 
@@ -1395,7 +1422,7 @@ const DynamicAssessmentRunner = () => {
                   </StatusDot>
                   <DimNavName $active={isDimActive}>{dim.name}</DimNavName>
                 </DimNavLeft>
-                {isDimActive ? <FiChevronDown color="#ff6b35" /> : <FiChevronRight color="#94a3b8" />}
+                {isDimActive ? <FiChevronDown color="#2563eb" /> : <FiChevronRight color="#94a3b8" />}
               </DimensionNavHeader>
 
               {isDimActive && (
@@ -1418,7 +1445,9 @@ const DynamicAssessmentRunner = () => {
                         <span style={{ color: isQAnswered ? '#10b981' : '#94a3b8' }}>
                           {isQAnswered ? '●' : '○'}
                         </span>
-                        <span>Q{actualIdx + 1}: {q.text.substring(0, 24)}...</span>
+                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          Q{actualIdx + 1}: {q.text.length > 38 ? `${q.text.substring(0, 38)}...` : q.text}
+                        </span>
                       </QuestionSubItem>
                     );
                   })}
@@ -1830,9 +1859,9 @@ const DynamicAssessmentRunner = () => {
               <PerspectivesGrid>
                 {/* Column 1: Current State */}
                 <PerspectiveColumn>
-                  <PerspectiveHeader>
+                  <PerspectiveHeader style={{ borderTop: '3px solid #2563eb' }}>
                     <span>Current State</span>
-                    <span style={{ fontSize: '0.75rem', background: '#ff6b35', color: '#fff', borderRadius: '50%', width: '16px', height: '16px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>?</span>
+                    <span style={{ fontSize: '0.68rem', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', borderRadius: '999px', padding: '1px 7px', fontWeight: 800 }}>Baseline</span>
                   </PerspectiveHeader>
                   <OptionsStack>
                     {(currentQ.options || []).map((opt) => {
@@ -1843,9 +1872,10 @@ const DynamicAssessmentRunner = () => {
                         <MaturityOptionCard
                           key={score}
                           $selected={isSelected}
+                          $variant="current"
                           onClick={() => handleSelectCurrentState(currentQ.id, score)}
                         >
-                          <OptionStageTag $selected={isSelected}>
+                          <OptionStageTag $selected={isSelected} $variant="current">
                             {score}. {score === 1 ? 'Explore' : score === 2 ? 'Experiment' : score === 3 ? 'Formalize' : score === 4 ? 'Optimize' : 'Transform'}
                           </OptionStageTag>
                           <OptionText $selected={isSelected}>
@@ -1859,9 +1889,9 @@ const DynamicAssessmentRunner = () => {
 
                 {/* Column 2: Future State Vision */}
                 <PerspectiveColumn>
-                  <PerspectiveHeader>
+                  <PerspectiveHeader style={{ borderTop: '3px solid #059669' }}>
                     <span>Future State Vision</span>
-                    <span style={{ fontSize: '0.75rem', background: '#3b82f6', color: '#fff', borderRadius: '50%', width: '16px', height: '16px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>?</span>
+                    <span style={{ fontSize: '0.68rem', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', borderRadius: '999px', padding: '1px 7px', fontWeight: 800 }}>Target</span>
                   </PerspectiveHeader>
                   <OptionsStack>
                     {(currentQ.options || []).map((opt) => {
@@ -1878,12 +1908,13 @@ const DynamicAssessmentRunner = () => {
                         <MaturityOptionCard
                           key={score}
                           $selected={isSelected}
+                          $variant="future"
                           $disabled={isNotStrictlyHigher}
                           disabled={isNotStrictlyHigher}
                           title={isNotStrictlyHigher ? `Target horizon must be higher than Current Baseline (${currentBaseline}/5.0)` : ""}
                           onClick={() => !isNotStrictlyHigher && handleSelectFutureState(currentQ.id, score)}
                         >
-                          <OptionStageTag $selected={isSelected} style={isNotStrictlyHigher ? { color: "#94a3b8" } : {}}>
+                          <OptionStageTag $selected={isSelected} $variant="future" style={isNotStrictlyHigher ? { color: "#94a3b8" } : {}}>
                             {score}. {score === 1 ? 'Explore' : score === 2 ? 'Experiment' : score === 3 ? 'Formalize' : score === 4 ? 'Optimize' : 'Transform'}
                             {isNotStrictlyHigher && <span style={{ marginLeft: "6px", fontSize: "0.7rem", color: "#ef4444" }}>🔒 Must be &gt; Baseline</span>}
                           </OptionStageTag>
@@ -1898,8 +1929,9 @@ const DynamicAssessmentRunner = () => {
 
                 {/* Column 3: Technical Pain Points */}
                 <PerspectiveColumn>
-                  <PerspectiveHeader>
+                  <PerspectiveHeader style={{ borderTop: '3px solid #e11d48' }}>
                     <span>Technical Pain Points</span>
+                    <span style={{ fontSize: '0.68rem', background: '#fff1f2', color: '#be123c', border: '1px solid #fecdd3', borderRadius: '999px', padding: '1px 7px', fontWeight: 800 }}>Blockers</span>
                   </PerspectiveHeader>
                   <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between', gap: '6px' }}>
                     {(currentQ.technicalPainPoints || [
@@ -1911,7 +1943,7 @@ const DynamicAssessmentRunner = () => {
                     ]).map((pain, pIdx) => {
                       const checked = (responses[`${currentQ.id}_technical_pain`] || []).includes(pain);
                       return (
-                        <PainCheckboxCard key={pIdx} $checked={checked}>
+                        <PainCheckboxCard key={pIdx} $checked={checked} $variant="technical">
                           <input
                             type="checkbox"
                             checked={checked}
@@ -1926,8 +1958,9 @@ const DynamicAssessmentRunner = () => {
 
                 {/* Column 4: Business Pain Points */}
                 <PerspectiveColumn>
-                  <PerspectiveHeader>
+                  <PerspectiveHeader style={{ borderTop: '3px solid #d97706' }}>
                     <span>Business Pain Points</span>
+                    <span style={{ fontSize: '0.68rem', background: '#fffbeb', color: '#b45309', border: '1px solid #fde68a', borderRadius: '999px', padding: '1px 7px', fontWeight: 800 }}>Impact</span>
                   </PerspectiveHeader>
                   <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between', gap: '6px' }}>
                     {(currentQ.businessPainPoints || [
@@ -1939,7 +1972,7 @@ const DynamicAssessmentRunner = () => {
                     ]).map((pain, pIdx) => {
                       const checked = (responses[`${currentQ.id}_business_pain`] || []).includes(pain);
                       return (
-                        <PainCheckboxCard key={pIdx} $checked={checked}>
+                        <PainCheckboxCard key={pIdx} $checked={checked} $variant="business">
                           <input
                             type="checkbox"
                             checked={checked}

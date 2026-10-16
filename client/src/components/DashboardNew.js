@@ -2149,7 +2149,7 @@ const Dashboard = () => {
               {currentSlide === 1 && (
                 <div style={{
                   width: '100%',
-                  maxWidth: '1600px',
+                  maxWidth: '100%',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
@@ -2294,7 +2294,7 @@ const Dashboard = () => {
               {currentSlide === 2 && (
                 <div style={{
                   width: '100%',
-                  maxWidth: '1600px',
+                  maxWidth: '100%',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
@@ -2476,7 +2476,7 @@ const Dashboard = () => {
               {currentSlide === 3 && (
                 <div style={{
                   width: '100%',
-                  maxWidth: '1400px',
+                  maxWidth: '100%',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
@@ -2649,7 +2649,7 @@ const Dashboard = () => {
               {currentSlide === 4 && (
                 <div style={{
                   width: '100%',
-                  maxWidth: '1400px',
+                  maxWidth: '100%',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',

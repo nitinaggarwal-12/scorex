@@ -785,6 +785,15 @@ function App() {
               </ProtectedRoute>
             } 
           />
+
+          <Route 
+            path="/executive-command-center" 
+            element={
+              <ProtectedRoute>
+                <ExecutiveCommandCenter />
+              </ProtectedRoute>
+            } 
+          />
           
           <Route 
             path="/benchmarks/:assessmentId" 

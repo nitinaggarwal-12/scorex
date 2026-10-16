@@ -7,47 +7,46 @@ import toast from 'react-hot-toast';
 import UploadDocumentModal from './UploadDocumentModal';
 
 const AutofillButton = styled.button`
-  background: none;
-  border: 1px dashed #6366f1;
-  color: #6366f1;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  margin-bottom: 20px;
-  transition: all 0.2s ease;
-  align-self: center;
-
-  &:hover {
-    background: rgba(99, 102, 241, 0.08);
-    border-color: #4f46e5;
-    color: #4f46e5;
-  }
-`;
-
-const UploadDocButton = styled.button`
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-  border: 1.5px solid #bfdbfe;
-  color: #1d4ed8;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 0.85rem;
+  background: #f5f3ff;
+  border: 1.5px dashed #6366f1;
+  color: #4f46e5;
+  padding: 9px 16px;
+  border-radius: 10px;
+  font-size: 0.84rem;
   font-weight: 700;
   display: inline-flex;
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  margin-bottom: 20px;
   transition: all 0.2s ease;
-  align-self: center;
+  white-space: nowrap;
+
+  &:hover {
+    background: #ede9fe;
+    border-color: #4f46e5;
+    color: #3730a3;
+    transform: translateY(-1px);
+  }
+`;
+
+const UploadDocButton = styled.button`
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border: 1.5px solid #93c5fd;
+  color: #1d4ed8;
+  padding: 9px 16px;
+  border-radius: 10px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
 
   &:hover {
     background: #dbeafe;
-    border-color: #93c5fd;
+    border-color: #60a5fa;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(29, 78, 216, 0.15);
   }
@@ -55,126 +54,152 @@ const UploadDocButton = styled.button`
 
 const StartContainer = styled.div`
   min-height: 100vh;
+  background: #f8fafc;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 100px 20px 60px;
+  padding: 76px clamp(16px, 1.8vw, 28px) 32px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 `;
 
 const FormCard = styled(motion.div)`
-  background: white;
-  border-radius: 20px;
-  padding: 40px 44px;
-  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
-  border: 1px solid #e2e8f0;
-  max-width: 860px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 22px clamp(20px, 2.2vw, 32px);
+  box-shadow: 0 10px 32px rgba(15, 23, 42, 0.06);
+  border: 1px solid #cbd5e1;
+  max-width: 100%;
   width: 100%;
+  box-sizing: border-box;
 `;
 
 const FormTitle = styled.h1`
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #333;
-  margin-bottom: 16px;
-  text-align: center;
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 4px 0 4px;
+  letter-spacing: -0.02em;
 `;
 
 const FormSubtitle = styled.p`
-  font-size: 1.1rem;
-  color: #666;
-  margin-bottom: 40px;
-  text-align: center;
-  line-height: 1.6;
+  font-size: 0.9rem;
+  color: #475569;
+  margin: 0;
+  line-height: 1.45;
 `;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
+`;
+
+const IntakeFieldsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 18px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
+  min-width: 0;
 `;
 
 const Label = styled.label`
-  font-size: 1rem;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 6px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 `;
 
 const Input = styled.input`
-  padding: 16px;
-  border: 2px solid ${props => props.$hasError ? '#ff4444' : '#e0e0e0'};
-  border-radius: 12px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  background-color: ${props => props.$hasError ? '#fff5f5' : 'white'};
+  padding: 11px 14px;
+  border: 1.5px solid ${props => props.$hasError ? '#ef4444' : '#cbd5e1'};
+  border-radius: 10px;
+  font-size: 0.92rem;
+  color: #0f172a;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  background-color: ${props => props.$hasError ? '#fef2f2' : '#f8fafc'};
   
   &:focus {
     outline: none;
-    border-color: ${props => props.$hasError ? '#ff4444' : '#ff6b35'};
-    box-shadow: 0 0 0 3px ${props => props.$hasError ? 'rgba(255, 68, 68, 0.1)' : 'rgba(255, 107, 53, 0.1)'};
+    background-color: #ffffff;
+    border-color: ${props => props.$hasError ? '#ef4444' : '#2563eb'};
+    box-shadow: 0 0 0 3px ${props => props.$hasError ? 'rgba(239, 68, 68, 0.12)' : 'rgba(37, 99, 235, 0.14)'};
   }
   
   &::placeholder {
-    color: #999;
+    color: #94a3b8;
   }
   
   &:disabled {
-    background-color: #f8f9fa;
+    background-color: #f1f5f9;
     cursor: not-allowed;
     opacity: 0.7;
   }
 `;
 
 const TextArea = styled.textarea`
-  padding: 16px;
-  border: 2px solid #e0e0e0;
-  border-radius: 12px;
-  font-size: 1rem;
-  background: white;
-  transition: all 0.3s ease;
+  padding: 11px 14px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  color: #0f172a;
+  background: #f8fafc;
+  transition: all 0.2s ease;
   resize: vertical;
-  min-height: 100px;
+  min-height: 44px;
+  height: 44px;
   font-family: inherit;
 
   &:focus {
     outline: none;
-    border-color: #ff6b35;
-    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+    background: #ffffff;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
   }
 
   &:disabled {
-    background-color: #f8f9fa;
+    background-color: #f1f5f9;
     cursor: not-allowed;
   }
 
   &::placeholder {
-    color: #6c757d;
+    color: #94a3b8;
   }
 `;
 
 const SubmitButton = styled(motion.button)`
-  background: linear-gradient(135deg, #ff6b35, #f7931e);
-  color: white;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
   border: none;
-  padding: 18px 32px;
-  font-size: 1.1rem;
-  font-weight: 600;
+  padding: 14px 28px;
+  font-size: 1rem;
+  font-weight: 800;
   border-radius: 12px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  margin-top: 16px;
+  gap: 10px;
+  margin-top: 4px;
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.25);
   
+  &:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  }
+
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -182,28 +207,32 @@ const SubmitButton = styled(motion.button)`
 `;
 
 const ErrorMessage = styled.div`
-  color: #ff4444;
-  font-size: 0.9rem;
-  margin-top: 8px;
+  color: #dc2626;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 5px;
 `;
 
 const Select = styled.select`
-  padding: 16px;
-  border: 2px solid ${props => props.$hasError ? '#ff4444' : '#e0e0e0'};
-  border-radius: 12px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  background-color: ${props => props.$hasError ? '#fff5f5' : 'white'};
+  padding: 11px 14px;
+  border: 1.5px solid ${props => props.$hasError ? '#ef4444' : '#cbd5e1'};
+  border-radius: 10px;
+  font-size: 0.92rem;
+  color: #0f172a;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  background-color: ${props => props.$hasError ? '#fef2f2' : '#f8fafc'};
   cursor: pointer;
   
   &:focus {
     outline: none;
-    border-color: ${props => props.$hasError ? '#ff4444' : '#ff6b35'};
-    box-shadow: 0 0 0 3px ${props => props.$hasError ? 'rgba(255, 68, 68, 0.1)' : 'rgba(255, 107, 53, 0.1)'};
+    background-color: #ffffff;
+    border-color: ${props => props.$hasError ? '#ef4444' : '#2563eb'};
+    box-shadow: 0 0 0 3px ${props => props.$hasError ? 'rgba(239, 68, 68, 0.12)' : 'rgba(37, 99, 235, 0.14)'};
   }
   
   &:disabled {
-    background-color: #f8f9fa;
+    background-color: #f1f5f9;
     cursor: not-allowed;
     opacity: 0.7;
   }
@@ -211,55 +240,63 @@ const Select = styled.select`
 
 const PillarCheckboxContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 12px;
-  margin-top: 8px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 6px;
+
+  @media (max-width: 1280px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  @media (max-width: 680px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 `;
 
 const PillarCheckbox = styled.label`
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px;
-  border: 2px solid ${props => props.$checked ? '#ff6b35' : '#e0e0e0'};
-  border-radius: 8px;
+  padding: 10px 12px;
+  border: 1.5px solid ${props => props.$checked ? '#2563eb' : '#cbd5e1'};
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  background: ${props => props.$checked ? 'rgba(255, 107, 53, 0.05)' : 'white'};
+  transition: all 0.2s ease;
+  background: ${props => props.$checked ? '#eff6ff' : '#f8fafc'};
 
   &:hover {
-    border-color: #ff6b35;
-    background: rgba(255, 107, 53, 0.02);
+    border-color: #2563eb;
+    background: #eff6ff;
   }
 
   input {
     cursor: pointer;
-    width: 18px;
-    height: 18px;
-    accent-color: #ff6b35;
+    width: 16px;
+    height: 16px;
+    accent-color: #2563eb;
+    flex-shrink: 0;
   }
 
   span {
-    font-size: 0.95rem;
-    color: #333;
-    font-weight: ${props => props.$checked ? '600' : '400'};
+    font-size: 0.86rem;
+    color: ${props => props.$checked ? '#1e3a8a' : '#334155'};
+    font-weight: ${props => props.$checked ? '700' : '600'};
   }
 `;
 
 const SelectAllButton = styled.button`
-  background: transparent;
-  border: 2px solid #ff6b35;
-  color: #ff6b35;
-  padding: 8px 16px;
+  background: #eff6ff;
+  border: 1px solid #93c5fd;
+  color: #1d4ed8;
+  padding: 5px 12px;
   border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: 0.78rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
-  margin-bottom: 12px;
+  transition: all 0.2s ease;
 
   &:hover {
-    background: rgba(255, 107, 53, 0.1);
+    background: #dbeafe;
   }
 `;
 
@@ -298,12 +335,12 @@ const AssessmentStart = ({ onStart }) => {
     selectedPillars: []
   });
   const [groundingSources, setGroundingSources] = useState({
-    salesforceId: 'ACC-0094821-QFT (Quantum FinTech Global)',
-    buganizerIds: 'b/349102411, b/351008912 (Architecture & DR Review)',
-    emailThread: 'CTO Thread (Oct 2026): "Migrating core ledger to Cloud Spanner; current DR failover is single-region us-central1 with 4h manual runbook..."',
-    diagramFile: 'quantum_fintech_gcp_topology_v3.pdf (Tier A Verified)'
+    salesforceId: '',
+    buganizerIds: '',
+    emailThread: '',
+    diagramFile: ''
   });
-  const [groundingPreviewOpen, setGroundingPreviewOpen] = useState(true);
+  const [groundingPreviewOpen, setGroundingPreviewOpen] = useState(false);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -412,6 +449,12 @@ const AssessmentStart = ({ onStart }) => {
       industry: 'Financial Services',
       selectedPillars: PILLARS.map(p => p.id)
     });
+    setGroundingSources({
+      salesforceId: 'ACC-0094821-QFT (Quantum FinTech)',
+      buganizerIds: 'b/349102411, b/351092810',
+      diagramFile: 'gcp_hybrid_mesh_v3.drawio.xml (Tier A • 1.00x)',
+      emailThread: 'VP Eng Discovery Notes (2026-09-14)'
+    });
     setGroundingPreviewOpen(true);
     setErrors({});
     toast.success('🛡️ Multi-Source Grounded Intake applied (52/60 auto-filled, 1 contradiction resolved Tier A > Tier C, 8 abstained)!');
@@ -420,38 +463,50 @@ const AssessmentStart = ({ onStart }) => {
   return (
     <StartContainer>
       <FormCard
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.35 }}
       >
-        <div style={{ textAlign: 'center', marginBottom: '10px' }}>
-          <span style={{
-            display: 'inline-block',
-            padding: '5px 12px',
-            borderRadius: '999px',
-            background: '#eff6ff',
-            border: '1px solid #bfdbfe',
-            color: '#1d4ed8',
-            fontSize: '0.75rem',
-            fontWeight: 800,
-            textTransform: 'uppercase',
-            letterSpacing: '0.04em'
-          }}>
-            Step 2 of 4 • Customer Context & Multi-Source Grounded Auto-Fill
-          </span>
-        </div>
-        <FormTitle>Customer Intake & Grounded Evidence Ingestion</FormTitle>
-        <FormSubtitle style={{ marginBottom: '24px' }}>
-          Enter your customer details below and optionally auto-populate the assessment from <strong>Salesforce</strong>, <strong>Buganizer</strong>, <strong>Email/Chat threads</strong>, or <strong>Architecture Diagrams & PDFs</strong> with zero hallucination.
-        </FormSubtitle>
+        {/* Top Executive Header Bar: Left Title/Subtitle + Right Auto-Populate Actions */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          flexWrap: 'wrap',
+          gap: '16px',
+          paddingBottom: '16px',
+          marginBottom: '16px',
+          borderBottom: '1px solid #e2e8f0'
+        }}>
+          <div style={{ flex: '1 1 520px', minWidth: 0 }}>
+            <span style={{
+              display: 'inline-block',
+              padding: '3px 10px',
+              borderRadius: '999px',
+              background: '#eff6ff',
+              border: '1px solid #bfdbfe',
+              color: '#1d4ed8',
+              fontSize: '0.7rem',
+              fontWeight: 800,
+              textTransform: 'uppercase',
+              letterSpacing: '0.04em'
+            }}>
+              Step 2 of 4 • Customer Context & Multi-Source Grounded Auto-Fill
+            </span>
+            <FormTitle>Customer Intake & Grounded Evidence Ingestion</FormTitle>
+            <FormSubtitle>
+              Enter customer details below and optionally connect <strong>Salesforce CRM</strong>, <strong>Buganizer</strong>, <strong>Email/Chat threads</strong>, or <strong>Architecture Diagrams & PDFs</strong> for zero-hallucination auto-fill.
+            </FormSubtitle>
+          </div>
 
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap', marginBottom: '18px' }}>
-          <UploadDocButton type="button" onClick={() => setIsUploadModalOpen(true)}>
-            <FiUploadCloud /> Upload Architecture Doc / Diagram (Auto-Populate)
-          </UploadDocButton>
-          <AutofillButton type="button" onClick={handlePrefillForm}>
-            <FiZap /> Run 5-Skill Grounded Auto-Fill (Sample Customer)
-          </AutofillButton>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            <UploadDocButton type="button" onClick={() => setIsUploadModalOpen(true)}>
+              <FiUploadCloud size={16} /> Upload Architecture Doc / Diagram
+            </UploadDocButton>
+            <AutofillButton type="button" onClick={handlePrefillForm}>
+              <FiZap size={16} /> Run 5-Skill Grounded Auto-Fill (Sample)
+            </AutofillButton>
+          </div>
         </div>
 
         {/* Multi-Source Evidence Connectors & 6 Anti-Hallucination Grounding Factors */}
@@ -459,14 +514,14 @@ const AssessmentStart = ({ onStart }) => {
           style={{
             background: '#f8fafc',
             border: '1px solid #cbd5e1',
-            borderRadius: '14px',
-            padding: '18px 20px',
-            marginBottom: '26px'
+            borderRadius: '12px',
+            padding: '14px 16px',
+            marginBottom: '18px'
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '12px' }}>
-            <div style={{ fontSize: '0.86rem', fontWeight: 800, color: '#1e293b' }}>
-              🔌 Multi-Source Evidence Connectors (Optional — Auto-Fills Questionnaire with Citations)
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '10px' }}>
+            <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#0f172a' }}>
+              🔌 Multi-Source Evidence Connectors <span style={{ fontWeight: 500, color: '#64748b', fontSize: '0.78rem' }}>(Optional — Auto-populates questions with Tier A/B/C citations)</span>
             </div>
             <button
               type="button"
@@ -476,7 +531,7 @@ const AssessmentStart = ({ onStart }) => {
                 border: '1px solid #cbd5e1',
                 borderRadius: '6px',
                 padding: '4px 10px',
-                fontSize: '0.74rem',
+                fontSize: '0.73rem',
                 fontWeight: 700,
                 color: '#1d4ed8',
                 cursor: 'pointer'
@@ -486,56 +541,63 @@ const AssessmentStart = ({ onStart }) => {
             </button>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '10px', marginBottom: groundingPreviewOpen ? '14px' : 0 }}>
-            <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '10px 12px' }}>
-              <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#1d4ed8', textTransform: 'uppercase' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '10px', marginBottom: groundingPreviewOpen ? '12px' : 0 }}>
+            <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '10px', padding: '9px 11px' }}>
+              <label style={{ fontSize: '0.68rem', fontWeight: 800, color: '#1d4ed8', textTransform: 'uppercase', display: 'block', marginBottom: '5px' }}>
                 ☁️ Salesforce Account / Opp (Tier B • 0.85x)
-              </div>
+              </label>
               <input
                 type="text"
+                placeholder="e.g. 0014M00001hZEwfQAG or Account"
                 value={groundingSources.salesforceId}
                 onChange={e => setGroundingSources(prev => ({ ...prev, salesforceId: e.target.value }))}
-                style={{ width: '100%', border: 'none', fontSize: '0.8rem', fontWeight: 600, color: '#334155', marginTop: '4px', outline: 'none' }}
+                style={{ width: '100%', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '6px 9px', fontSize: '0.78rem', fontWeight: 600, color: '#0f172a', outline: 'none', boxSizing: 'border-box' }}
               />
             </div>
-            <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '10px 12px' }}>
-              <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#047857', textTransform: 'uppercase' }}>
+            <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '10px', padding: '9px 11px' }}>
+              <label style={{ fontSize: '0.68rem', fontWeight: 800, color: '#047857', textTransform: 'uppercase', display: 'block', marginBottom: '5px' }}>
                 🐞 Buganizer Issues (Tier A • 1.00x)
-              </div>
+              </label>
               <input
                 type="text"
+                placeholder="e.g. b/349102411, b/351092810"
                 value={groundingSources.buganizerIds}
                 onChange={e => setGroundingSources(prev => ({ ...prev, buganizerIds: e.target.value }))}
-                style={{ width: '100%', border: 'none', fontSize: '0.8rem', fontWeight: 600, color: '#334155', marginTop: '4px', outline: 'none' }}
+                style={{ width: '100%', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '6px 9px', fontSize: '0.78rem', fontWeight: 600, color: '#0f172a', outline: 'none', boxSizing: 'border-box' }}
               />
             </div>
-            <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '10px 12px' }}>
-              <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#6d28d9', textTransform: 'uppercase' }}>
+            <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '10px', padding: '9px 11px' }}>
+              <label style={{ fontSize: '0.68rem', fontWeight: 800, color: '#6d28d9', textTransform: 'uppercase', display: 'block', marginBottom: '5px' }}>
                 📐 Architecture Diagram / PDF (Tier A • 1.00x)
-              </div>
-              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#334155', marginTop: '4px' }}>
-                {groundingSources.diagramFile}
-              </div>
-            </div>
-            <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '10px 12px' }}>
-              <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#b45309', textTransform: 'uppercase' }}>
-                ✉️ Email / Discovery Notes (Tier C • 0.60x)
-              </div>
+              </label>
               <input
                 type="text"
+                placeholder="e.g. gcp_hybrid_mesh_v3.drawio.xml"
+                value={groundingSources.diagramFile}
+                onChange={e => setGroundingSources(prev => ({ ...prev, diagramFile: e.target.value }))}
+                style={{ width: '100%', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '6px 9px', fontSize: '0.78rem', fontWeight: 600, color: '#0f172a', outline: 'none', boxSizing: 'border-box' }}
+              />
+            </div>
+            <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '10px', padding: '9px 11px' }}>
+              <label style={{ fontSize: '0.68rem', fontWeight: 800, color: '#b45309', textTransform: 'uppercase', display: 'block', marginBottom: '5px' }}>
+                ✉️ Email / Discovery Notes (Tier C • 0.60x)
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. QBR thread or stakeholder notes"
                 value={groundingSources.emailThread}
                 onChange={e => setGroundingSources(prev => ({ ...prev, emailThread: e.target.value }))}
-                style={{ width: '100%', border: 'none', fontSize: '0.78rem', color: '#475569', marginTop: '4px', outline: 'none' }}
+                style={{ width: '100%', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '6px 9px', fontSize: '0.78rem', fontWeight: 600, color: '#0f172a', outline: 'none', boxSizing: 'border-box' }}
               />
             </div>
           </div>
 
           {groundingPreviewOpen && (
-            <div style={{ background: '#ffffff', border: '1px solid #dbeafe', borderRadius: '10px', padding: '12px 14px', fontSize: '0.76rem', color: '#334155', lineHeight: 1.5 }}>
-              <div style={{ fontWeight: 800, color: '#1d4ed8', marginBottom: '6px' }}>
+            <div style={{ background: '#ffffff', border: '1px solid #dbeafe', borderRadius: '10px', padding: '10px 14px', fontSize: '0.75rem', color: '#334155', lineHeight: 1.45 }}>
+              <div style={{ fontWeight: 800, color: '#1d4ed8', marginBottom: '4px' }}>
                 🛡️ 6 Anti-Hallucination Grounding Factors Active (`scorex-multisource-evidence-ingestor` + `scorex-grounded-rubric-scorer`):
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '6px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '4px 12px' }}>
                 <div>• <strong>GF-1 Authority Tiering:</strong> Diagram/Buganizer (Tier A) &gt; CRM (Tier B) &gt; Email (Tier C)</div>
                 <div>• <strong>GF-2 Verbatim Quote:</strong> Exact snippet + coordinate required per answer</div>
                 <div>• <strong>GF-3 Rubric Entailment:</strong> Must prove target Level 1–5 SLA/RTO metrics</div>
@@ -548,98 +610,103 @@ const AssessmentStart = ({ onStart }) => {
         </div>
 
         <Form onSubmit={handleSubmit}>
-          <FormGroup>
-            <Label htmlFor="assessmentName">
-              <FiFileText size={18} />
-              Assessment Name *
-            </Label>
-            <Input
-              id="assessmentName"
-              name="assessmentName"
-              type="text"
-              placeholder="Enter a name for this assessment (e.g., 'Q4 2024 Maturity Review')"
-              value={formData.assessmentName}
-              onChange={handleInputChange}
-              disabled={isSubmitting}
-              $hasError={!!errors.assessmentName}
-            />
-            {errors.assessmentName && (
-              <ErrorMessage>{errors.assessmentName}</ErrorMessage>
-            )}
-          </FormGroup>
+          {/* 2x2 Executive Intake Grid */}
+          <IntakeFieldsGrid>
+            <FormGroup>
+              <Label htmlFor="assessmentName">
+                <FiFileText size={16} color="#2563eb" />
+                Assessment Name *
+              </Label>
+              <Input
+                id="assessmentName"
+                name="assessmentName"
+                type="text"
+                placeholder="e.g., Quantum FinTech — Q4 2026 Maturity Review"
+                value={formData.assessmentName}
+                onChange={handleInputChange}
+                disabled={isSubmitting}
+                $hasError={!!errors.assessmentName}
+              />
+              {errors.assessmentName && (
+                <ErrorMessage>{errors.assessmentName}</ErrorMessage>
+              )}
+            </FormGroup>
+
+            <FormGroup>
+              <Label htmlFor="contactEmail">
+                <FiMail size={16} color="#2563eb" />
+                Stakeholder Contact Email *
+              </Label>
+              <Input
+                id="contactEmail"
+                name="contactEmail"
+                type="email"
+                placeholder="e.g., lead.architect@enterprise.com"
+                value={formData.contactEmail}
+                onChange={handleInputChange}
+                disabled={isSubmitting}
+                $hasError={!!errors.contactEmail}
+              />
+              {errors.contactEmail && (
+                <ErrorMessage>{errors.contactEmail}</ErrorMessage>
+              )}
+            </FormGroup>
+
+            <FormGroup>
+              <Label htmlFor="industry">
+                <FiBriefcase size={16} color="#2563eb" />
+                Industry Vertical *
+              </Label>
+              <Select
+                id="industry"
+                name="industry"
+                value={formData.industry}
+                onChange={handleInputChange}
+                disabled={isSubmitting}
+                $hasError={!!errors.industry}
+              >
+                <option value="">Select industry vertical...</option>
+                {INDUSTRIES.map(industry => (
+                  <option key={industry} value={industry}>
+                    {industry}
+                  </option>
+                ))}
+              </Select>
+              {errors.industry && (
+                <ErrorMessage>{errors.industry}</ErrorMessage>
+              )}
+            </FormGroup>
+
+            <FormGroup>
+              <Label htmlFor="assessmentDescription">
+                <FiEdit3 size={16} color="#2563eb" />
+                Assessment Scope & Context (Optional)
+              </Label>
+              <TextArea
+                id="assessmentDescription"
+                name="assessmentDescription"
+                placeholder="Briefly describe target workloads, executive sponsor, or business objectives..."
+                value={formData.assessmentDescription}
+                onChange={handleInputChange}
+                disabled={isSubmitting}
+              />
+            </FormGroup>
+          </IntakeFieldsGrid>
 
           <FormGroup>
-            <Label htmlFor="assessmentDescription">
-              <FiEdit3 size={18} />
-              Assessment Description (Optional)
-            </Label>
-            <TextArea
-              id="assessmentDescription"
-              name="assessmentDescription"
-              placeholder="Briefly describe the purpose or context of this assessment..."
-              value={formData.assessmentDescription}
-              onChange={handleInputChange}
-              disabled={isSubmitting}
-            />
-          </FormGroup>
-
-          <FormGroup>
-            <Label htmlFor="contactEmail">
-              <FiMail size={18} />
-              Contact Email *
-            </Label>
-            <Input
-              id="contactEmail"
-              name="contactEmail"
-              type="email"
-              placeholder="Enter your email address"
-              value={formData.contactEmail}
-              onChange={handleInputChange}
-              disabled={isSubmitting}
-              $hasError={!!errors.contactEmail}
-            />
-            {errors.contactEmail && (
-              <ErrorMessage>{errors.contactEmail}</ErrorMessage>
-            )}
-          </FormGroup>
-
-          <FormGroup>
-            <Label htmlFor="industry">
-              <FiBriefcase size={18} />
-              Industry *
-            </Label>
-            <Select
-              id="industry"
-              name="industry"
-              value={formData.industry}
-              onChange={handleInputChange}
-              disabled={isSubmitting}
-              $hasError={!!errors.industry}
-            >
-              <option value="">Select your industry...</option>
-              {INDUSTRIES.map(industry => (
-                <option key={industry} value={industry}>
-                  {industry}
-                </option>
-              ))}
-            </Select>
-            {errors.industry && (
-              <ErrorMessage>{errors.industry}</ErrorMessage>
-            )}
-          </FormGroup>
-
-          <FormGroup>
-            <Label>
-              <FiLayers size={18} />
-              Select Pillars to Assess *
-            </Label>
-            <SelectAllButton 
-              type="button"
-              onClick={handleSelectAllPillars}
-              disabled={isSubmitting}
-            >
-              {formData.selectedPillars.length === PILLARS.length ? 'Deselect All' : 'Select All'}
-            </SelectAllButton>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px', flexWrap: 'wrap', gap: '8px' }}>
+              <Label style={{ marginBottom: 0 }}>
+                <FiLayers size={16} color="#2563eb" />
+                Select Architectural Pillars to Assess *
+              </Label>
+              <SelectAllButton 
+                type="button"
+                onClick={handleSelectAllPillars}
+                disabled={isSubmitting}
+              >
+                {formData.selectedPillars.length === PILLARS.length ? '✓ Deselect All (6/6)' : 'Select All 6 Pillars'}
+              </SelectAllButton>
+            </div>
             <PillarCheckboxContainer>
               {PILLARS.map(pillar => (
                 <PillarCheckbox

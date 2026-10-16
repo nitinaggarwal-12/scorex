@@ -231,9 +231,11 @@ const PrintButton = styled.button`
 `;
 
 const HeroSection = styled.div`
-  max-width: 1400px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto 20px auto;
-  padding: 20px 40px 0 40px;
+  padding: 20px clamp(16px, 1.8vw, 28px) 0;
+  box-sizing: border-box;
   text-align: center;
   color: white;
 `;
@@ -267,9 +269,11 @@ const HeroSubtitle = styled.p`
 `;
 
 const ContentSection = styled.div`
-  max-width: 1400px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto 30px auto;
-  padding: 0 40px;
+  padding: 0 clamp(16px, 1.8vw, 28px);
+  box-sizing: border-box;
 `;
 
 const SectionTitle = styled.h2`

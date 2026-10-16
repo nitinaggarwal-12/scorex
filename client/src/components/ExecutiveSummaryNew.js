@@ -64,9 +64,11 @@ const Breadcrumb = styled.div`
 `;
 
 const ContentContainer = styled.div`
-  max-width: 1400px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 32px 24px;
+  padding: 32px clamp(16px, 1.8vw, 28px);
+  box-sizing: border-box;
 
   @media (max-width: 768px) {
     padding: 20px 16px;
