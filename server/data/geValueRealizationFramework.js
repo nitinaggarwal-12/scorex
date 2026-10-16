@@ -2113,14 +2113,15 @@ function getCustomerContextualQuestionText(question, dossier = null) {
 
   const custName = dossier.meta?.customerName || 'Enterprise Customer';
   const legacyName = dossier.meta?.legacyPlatformName || dossier.meta?.legacySystemName || 'Legacy Baseline';
+  const shortLegacyName = String(legacyName).split(',')[0].trim();
   const wfs = dossier.workflows || [];
   const wf1Name = wfs[0]?.name || 'WF1 Primary Workflow';
   const wf2Name = wfs[1]?.name || wf1Name;
 
   const map = {
-    C07: `What is the state of the previous system (${legacyName})?`,
-    P01: `Why was the migration from ${legacyName} to Gemini Enterprise undertaken?`,
-    P04: `Which capabilities existed in each platform (${legacyName} vs. Gemini Enterprise)?`,
+    C07: `What is the state of the previous system (${shortLegacyName})?`,
+    P01: `Why was the migration from ${shortLegacyName} to Gemini Enterprise undertaken?`,
+    P04: `Which capabilities existed in each platform (${shortLegacyName} vs. Gemini Enterprise)?`,
     P06: `What happened to legacy baseline users and workflows at ${custName}?`,
     L01: `What were annual legacy baseline platform & tool costs at ${custName}?`,
     L02: `Which legacy baseline costs at ${custName} have ended or will end?`,
@@ -2134,7 +2135,7 @@ function getCustomerContextualQuestionText(question, dossier = null) {
     V06: `Commercial / Customer Operations: Does output touch pricing, claims, or customer workflows (${wf2Name})?`
   };
 
-  return map[question.id] || question.question.replace(/BioNova/g, custName).replace(/NovaAssist \(OpenAI\)|Legacy NovaAssist|NovaAssist/g, legacyName);
+  return map[question.id] || question.question.replace(/BioNova/g, custName).replace(/NovaAssist \(OpenAI\)|Legacy NovaAssist|NovaAssist/g, shortLegacyName);
 }
 
 /**

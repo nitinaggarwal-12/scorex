@@ -3540,8 +3540,8 @@ const GeValueRealizationWorkspace = () => {
                     </div>
                   )}
 
-                  {/* 2-Column Fluid Question Cards Grid */}
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(660px, 1fr))', gap: '14px', width: '100%', alignItems: 'start' }}>
+                  {/* 2-Column Fluid Question Cards Grid (100% Uniform Card Geometry Across Every Row) */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(660px, 1fr))', gap: '14px', width: '100%', alignItems: 'stretch' }}>
                   {filteredQuestions.map((q) => {
                     const resp = dossier.questionResponses?.[q.id] || {
                       value: null,
@@ -3558,31 +3558,44 @@ const GeValueRealizationWorkspace = () => {
                     const qTier = resp.confidenceTier || 'B';
                     const qTierMeta = TIER_META[qTier] || TIER_META.B;
                     const qConfPct = resp.confidenceScorePct !== undefined ? resp.confidenceScorePct : getPreStagedConfidenceScorePct(q.id);
-                    const displayValue = Array.isArray(resp.value) ? resp.value.join('; ') : (resp.value ?? '');
+                    const isMultiSelectValue = Array.isArray(resp.value) && resp.value.length > 0;
+                    const displayValue = isMultiSelectValue ? resp.value.join('; ') : (resp.value ?? '');
                     const optionConfidenceList = getQuestionOptionsWithConfidence(q, resp, dossier);
                     const contextualQuestionText = getCustomerContextualQuestionText(q, dossier);
-                    const selectedOptionValue = (!Array.isArray(resp.value) && resp.value !== null && resp.value !== undefined && resp.value !== '')
-                      ? (optionConfidenceList.find((o) => o.optionText === String(resp.value))?.optionText
-                        || optionConfidenceList.find((o) => o.isSelected)?.optionText
-                        || String(resp.value))
-                      : '';
+                    const contextualRequiredEntry = getCustomerContextualRequiredEntry(q, dossier);
+                    const selectedOptionValue = isMultiSelectValue
+                      ? displayValue
+                      : (resp.value !== null && resp.value !== undefined && resp.value !== '')
+                        ? (optionConfidenceList.find((o) => o.optionText === String(resp.value))?.optionText
+                          || optionConfidenceList.find((o) => o.isSelected)?.optionText
+                          || String(resp.value))
+                        : '';
+                    const fullOwnerText = resp.owner || q.ownerRole || 'Assigned Owner';
+                    const shortOwnerText = String(fullOwnerText).split('/')[0].trim();
+                    const fullRationaleText = resp.whySelected || `Grounded via ${resp.evidenceUrl || 'Enterprise CRM Vector & Gantry Telemetry'}`;
 
                     return (
                       <div
                         key={q.id}
+                        data-testid={`ge-question-card-${q.id}`}
                         style={{
                           background: '#ffffff',
-                          border: q.gateTrigger ? '1.5px solid #f59e0b' : '1px solid #cbd5e1',
+                          border: '1px solid #cbd5e1',
                           borderRadius: '12px',
-                          padding: '16px 18px',
+                          padding: '15px 18px',
                           boxShadow: '0 1px 4px rgba(15,23,42,0.03)',
                           minWidth: 0,
+                          height: '100%',
+                          boxSizing: 'border-box',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
                           overflow: 'hidden'
                         }}
                       >
-                        {/* Row 1: Single-Line Executive Question Card Header (Rule 25E — Zero Raw Snake_Case Keys) */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                        {/* Band 1: Uniform Single-Line Executive Question Card Header */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', height: '26px', marginBottom: '8px', flexWrap: 'nowrap' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, overflow: 'hidden', flexWrap: 'nowrap' }}>
                             <span style={{
                               background: '#1e3a8a',
                               color: '#ffffff',
@@ -3590,7 +3603,8 @@ const GeValueRealizationWorkspace = () => {
                               fontSize: '0.73rem',
                               fontWeight: 800,
                               padding: '2px 8px',
-                              borderRadius: '6px'
+                              borderRadius: '6px',
+                              flexShrink: 0
                             }}>
                               {q.id}
                             </span>
@@ -3601,7 +3615,9 @@ const GeValueRealizationWorkspace = () => {
                               fontSize: '0.68rem',
                               fontWeight: 700,
                               padding: '2px 8px',
-                              borderRadius: '6px'
+                              borderRadius: '6px',
+                              whiteSpace: 'nowrap',
+                              flexShrink: 0
                             }}>
                               Module {q.module} • {formatInputTypeLabel(q.inputType)}
                             </span>
@@ -3613,23 +3629,25 @@ const GeValueRealizationWorkspace = () => {
                               fontWeight: 800,
                               padding: '2px 8px',
                               borderRadius: '999px',
-                              fontFamily: "'JetBrains Mono', monospace"
+                              fontFamily: "'JetBrains Mono', monospace",
+                              whiteSpace: 'nowrap',
+                              flexShrink: 0
                             }}>
                               {qConfPct}% • {qTierMeta.shortBadge}
                             </span>
-                            {q.weight > 0 && (
-                              <span style={{
-                                background: '#eff6ff',
-                                color: '#1d4ed8',
-                                border: '1px solid #bfdbfe',
-                                fontSize: '0.68rem',
-                                fontWeight: 700,
-                                padding: '2px 7px',
-                                borderRadius: '6px'
-                              }}>
-                                {q.weight} pts
-                              </span>
-                            )}
+                            <span style={{
+                              background: q.weight > 0 ? '#eff6ff' : '#f8fafc',
+                              color: q.weight > 0 ? '#1d4ed8' : '#64748b',
+                              border: q.weight > 0 ? '1px solid #bfdbfe' : '1px solid #e2e8f0',
+                              fontSize: '0.68rem',
+                              fontWeight: 700,
+                              padding: '2px 7px',
+                              borderRadius: '6px',
+                              whiteSpace: 'nowrap',
+                              flexShrink: 0
+                            }}>
+                              {q.weight > 0 ? `${q.weight} pts` : 'Routing'}
+                            </span>
                             {q.gateTrigger && (
                               <span
                                 style={{
@@ -3639,44 +3657,28 @@ const GeValueRealizationWorkspace = () => {
                                   fontSize: '0.68rem',
                                   fontWeight: 800,
                                   padding: '2px 7px',
-                                  borderRadius: '6px'
+                                  borderRadius: '6px',
+                                  whiteSpace: 'nowrap',
+                                  flexShrink: 0
                                 }}
                                 title={`Release Gate Trigger: ${q.gateTrigger}`}
                               >
-                                🛡️ Gate Trigger
+                                🛡️ Gate
                               </span>
                             )}
                           </div>
 
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                            {resp.verificationStatus !== 'verified' && (
-                              <button
-                                onClick={() => handleConfirmQuestionWithCustomer(q.id)}
-                                style={{
-                                  background: '#059669',
-                                  color: '#ffffff',
-                                  border: 'none',
-                                  borderRadius: '999px',
-                                  padding: '3px 10px',
-                                  fontSize: '0.69rem',
-                                  fontWeight: 800,
-                                  cursor: 'pointer',
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: '4px',
-                                  whiteSpace: 'nowrap'
-                                }}
-                                title={`Confirm answer with ${shortCustomerName} and promote to 100% Tier A`}
-                              >
-                                <FiCheck size={11} /> Confirm (→ Tier A)
-                              </button>
-                            )}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
                             <select
                               value={resp.verificationStatus || 'pending'}
                               onChange={(e) => {
                                 const nextSt = e.target.value;
-                                const autoTier = nextSt === 'verified' ? 'A' : nextSt === 'draft_verify' ? 'B' : 'D';
-                                const autoPct = nextSt === 'verified' ? 98 : nextSt === 'draft_verify' ? 84 : 20;
+                                if (nextSt === 'verified') {
+                                  handleConfirmQuestionWithCustomer(q.id);
+                                  return;
+                                }
+                                const autoTier = nextSt === 'draft_verify' ? 'B' : 'D';
+                                const autoPct = nextSt === 'draft_verify' ? 84 : 20;
                                 updateQuestionResponse(q.id, {
                                   verificationStatus: nextSt,
                                   confidenceTier: autoTier,
@@ -3685,6 +3687,7 @@ const GeValueRealizationWorkspace = () => {
                                 });
                               }}
                               style={{
+                                width: '188px',
                                 background: stMeta.bg,
                                 color: stMeta.color,
                                 border: `1px solid ${stMeta.border}`,
@@ -3694,170 +3697,113 @@ const GeValueRealizationWorkspace = () => {
                                 fontWeight: 800,
                                 cursor: 'pointer'
                               }}
+                              title={`Verification status for ${q.id} (${shortCustomerName})`}
                             >
                               <option value="verified">🟢 Verified Telemetry</option>
-                              <option value="draft_verify">🟡 Verify w/ {shortCustomerName}</option>
+                              <option value="draft_verify">🟡 Pre-Filled (Confirm)</option>
                               <option value="pending">⚪ Evidence Pending</option>
                             </select>
                           </div>
                         </div>
 
-                        {/* Row 2: Question Title & Required Entry Guidance */}
-                        <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#0f172a', marginBottom: '3px', lineHeight: 1.38 }}>
-                          {contextualQuestionText}
-                        </div>
-                        {q.requiredEntry && (
-                          <div style={{ fontSize: '0.73rem', color: '#64748b', marginBottom: '9px' }}>
-                            <strong>Required Entry:</strong> {getCustomerContextualRequiredEntry(q, dossier)}
+                        {/* Band 2: Uniform Fixed-Height Question Title & Required Entry Guidance (46px) */}
+                        <div style={{ height: '44px', marginBottom: '8px', display: 'flex', flexDirection: 'column', justifyContent: 'center', minWidth: 0 }}>
+                          <div
+                            style={{
+                              fontSize: '0.91rem',
+                              fontWeight: 700,
+                              color: '#0f172a',
+                              height: '22px',
+                              lineHeight: '22px',
+                              marginBottom: '2px',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis'
+                            }}
+                            title={contextualQuestionText}
+                          >
+                            {contextualQuestionText}
                           </div>
-                        )}
+                          <div
+                            style={{
+                              fontSize: '0.73rem',
+                              color: '#64748b',
+                              height: '18px',
+                              lineHeight: '18px',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis'
+                            }}
+                            title={contextualRequiredEntry ? `Required Entry: ${contextualRequiredEntry}` : ''}
+                          >
+                            <strong>Required Entry:</strong> {contextualRequiredEntry || 'Standard grounded metric or option'}
+                          </div>
+                        </div>
 
-                        {/* Row 3: 3-Column Balanced Executive Input Grid (Zero Truncation, Zero Duplicate Evidence Column) */}
+                        {/* Band 3: Uniform 3-Column Balanced Executive Input Grid (Zero Chip Cloud Overflow, Identical 36px Controls) */}
                         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2.15fr) minmax(175px, 0.9fr) minmax(150px, 0.75fr)', gap: '10px', alignItems: 'start' }}>
                           <div style={{ minWidth: 0 }}>
-                            <label style={{ fontSize: '0.68rem', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            <label style={{ fontSize: '0.68rem', fontWeight: 700, color: '#475569', display: 'block', height: '16px', lineHeight: '16px', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                               Recorded Answer / Customer Metric {q.unitLabel ? `(${q.unitLabel})` : ''}
                             </label>
-                            {optionConfidenceList.length > 0 && (q.inputType === 'single_select' || !q.inputType || q.inputType === 'text') ? (
-                              <div>
-                                <select
-                                  id={`ge-question-select-${q.id}`}
-                                  value={selectedOptionValue}
-                                  title={selectedOptionValue || 'Evidence Pending / Select Grounded Option'}
-                                  onChange={(e) => {
-                                    const val = e.target.value;
-                                    if (!val) {
-                                      updateQuestionResponse(q.id, {
-                                        value: null,
-                                        numericState: 'pending'
-                                      });
-                                      return;
-                                    }
-                                    const opt = optionConfidenceList.find(o => o.optionText === val);
-                                    if (opt) {
-                                      handleSelectOptionForQuestion(q, opt);
-                                    } else {
-                                      updateQuestionResponse(q.id, {
-                                        value: val,
-                                        numericState: 'actual'
-                                      });
-                                    }
-                                  }}
-                                  style={{
-                                    width: '100%',
-                                    padding: '7px 10px',
-                                    borderRadius: '8px',
-                                    border: selectedOptionValue ? '1.5px solid #93c5fd' : '1.5px solid #fcd34d',
-                                    fontSize: '0.79rem',
-                                    fontWeight: 700,
-                                    background: selectedOptionValue ? '#f8fafc' : '#fffbeb',
-                                    color: '#0f172a',
-                                    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.03)',
-                                    cursor: 'pointer'
-                                  }}
-                                >
-                                  <option value="">— Evidence Pending / Select Grounded Option —</option>
-                                  {optionConfidenceList.map((opt) => (
-                                    <option key={opt.optionText} value={opt.optionText}>
-                                      {opt.optionText}
-                                    </option>
-                                  ))}
-                                </select>
-                              </div>
-                            ) : (q.inputType === 'multi_select' || q.inputType === 'multi_select_rank') ? (
-                              <div>
-                                <select
-                                  id={`ge-question-multiselect-${q.id}`}
-                                  value=""
-                                  onChange={(e) => {
-                                    const val = e.target.value;
-                                    if (!val) return;
-                                    const opt = optionConfidenceList.find(o => o.optionText === val) || { optionText: val, confidencePct: 80, confidenceTier: 'B' };
-                                    handleSelectOptionForQuestion(q, opt);
-                                  }}
-                                  style={{
-                                    width: '100%',
-                                    padding: '7px 10px',
-                                    borderRadius: '8px',
-                                    border: '1.5px solid #cbd5e1',
-                                    fontSize: '0.79rem',
-                                    fontWeight: 600,
-                                    background: '#f8fafc',
-                                    color: '#0f172a'
-                                  }}
-                                >
-                                  <option value="">+ Add Option ({optionConfidenceList.length} candidate options)...</option>
-                                  {optionConfidenceList.map((opt) => {
-                                    const isSelected = Array.isArray(resp.value) ? resp.value.includes(opt.optionText) : (resp.value === opt.optionText);
-                                    return (
-                                      <option key={opt.optionText} value={opt.optionText}>
-                                        {isSelected ? '✓ ' : ''}{opt.optionText}
-                                      </option>
-                                    );
-                                  })}
-                                </select>
-                                {Array.isArray(resp.value) && resp.value.length > 0 && (
-                                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginTop: '6px' }}>
-                                    {resp.value.map((itemText) => {
-                                      const optMeta = optionConfidenceList.find(o => o.optionText === itemText);
-                                      return (
-                                        <span
-                                          key={itemText}
-                                          style={{
-                                            background: '#eff6ff',
-                                            border: '1px solid #bfdbfe',
-                                            color: '#1e3a8a',
-                                            padding: '2px 8px',
-                                            borderRadius: '6px',
-                                            fontSize: '0.72rem',
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                            gap: '6px'
-                                          }}
-                                        >
-                                          <strong>{itemText}</strong>
-                                          <button
-                                            type="button"
-                                            onClick={() => handleSelectOptionForQuestion(q, optMeta || { optionText: itemText })}
-                                            style={{ border: 'none', background: 'transparent', color: '#dc2626', cursor: 'pointer', padding: 0, fontWeight: 900, fontSize: '0.8rem' }}
-                                            title="Remove option"
-                                          >
-                                            ✕
-                                          </button>
-                                        </span>
-                                      );
-                                    })}
-                                  </div>
-                                )}
-                              </div>
-                            ) : (
-                              <input
-                                type="text"
-                                value={displayValue}
-                                placeholder="Evidence Pending (Null — Never defaults to 0)"
-                                onChange={(e) => {
-                                  const raw = e.target.value;
+                            <select
+                              id={`ge-question-select-${q.id}`}
+                              value={selectedOptionValue}
+                              title={selectedOptionValue || 'Evidence Pending / Select Grounded Option'}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                if (!val) {
                                   updateQuestionResponse(q.id, {
-                                    value: raw === '' ? null : raw,
-                                    numericState: raw === '' ? 'pending' : 'actual'
+                                    value: null,
+                                    numericState: 'pending'
                                   });
-                                }}
-                                style={{
-                                  width: '100%',
-                                  padding: '7px 10px',
-                                  borderRadius: '8px',
-                                  border: '1.5px solid #cbd5e1',
-                                  fontSize: '0.79rem',
-                                  fontWeight: 600,
-                                  background: resp.value === null || resp.numericState === 'pending' ? '#fffbeb' : '#f8fafc',
-                                  color: '#0f172a'
-                                }}
-                              />
-                            )}
+                                  return;
+                                }
+                                if (isMultiSelectValue && val === displayValue) return;
+                                const opt = optionConfidenceList.find(o => o.optionText === val);
+                                if (opt) {
+                                  handleSelectOptionForQuestion(q, opt);
+                                } else {
+                                  updateQuestionResponse(q.id, {
+                                    value: val,
+                                    numericState: 'actual'
+                                  });
+                                }
+                              }}
+                              style={{
+                                width: '100%',
+                                height: '36px',
+                                boxSizing: 'border-box',
+                                padding: '6px 10px',
+                                borderRadius: '8px',
+                                border: selectedOptionValue ? '1.5px solid #93c5fd' : '1.5px solid #fcd34d',
+                                fontSize: '0.79rem',
+                                fontWeight: 700,
+                                background: selectedOptionValue ? '#f8fafc' : '#fffbeb',
+                                color: '#0f172a',
+                                boxShadow: '0 1px 2px rgba(0, 0, 0, 0.03)',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              <option value="">— Evidence Pending / Select Grounded Option —</option>
+                              {isMultiSelectValue && !optionConfidenceList.some((o) => o.optionText === displayValue) && (
+                                <option value={displayValue}>
+                                  {displayValue}
+                                </option>
+                              )}
+                              {optionConfidenceList.map((opt) => {
+                                const isCheckedInMulti = isMultiSelectValue && resp.value.includes(opt.optionText);
+                                return (
+                                  <option key={opt.optionText} value={opt.optionText}>
+                                    {isCheckedInMulti ? `✓ ${opt.optionText}` : opt.optionText}
+                                  </option>
+                                );
+                              })}
+                            </select>
                           </div>
 
                           <div style={{ minWidth: 0 }}>
-                            <label style={{ fontSize: '0.68rem', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            <label style={{ fontSize: '0.68rem', fontWeight: 700, color: '#475569', display: 'block', height: '16px', lineHeight: '16px', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                               Confidence Tier ({qConfPct}%)
                             </label>
                             <select
@@ -3872,7 +3818,9 @@ const GeValueRealizationWorkspace = () => {
                               }}
                               style={{
                                 width: '100%',
-                                padding: '7px 8px',
+                                height: '36px',
+                                boxSizing: 'border-box',
+                                padding: '6px 8px',
                                 borderRadius: '8px',
                                 border: '1px solid #cbd5e1',
                                 fontSize: '0.75rem',
@@ -3889,7 +3837,7 @@ const GeValueRealizationWorkspace = () => {
                           </div>
 
                           <div style={{ minWidth: 0 }}>
-                            <label style={{ fontSize: '0.68rem', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            <label style={{ fontSize: '0.68rem', fontWeight: 700, color: '#475569', display: 'block', height: '16px', lineHeight: '16px', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                               Rubric Score (0–4)
                             </label>
                             <select
@@ -3899,7 +3847,9 @@ const GeValueRealizationWorkspace = () => {
                               })}
                               style={{
                                 width: '100%',
-                                padding: '7px 8px',
+                                height: '36px',
+                                boxSizing: 'border-box',
+                                padding: '6px 8px',
                                 borderRadius: '8px',
                                 border: '1px solid #cbd5e1',
                                 fontSize: '0.75rem',
@@ -3919,20 +3869,20 @@ const GeValueRealizationWorkspace = () => {
                           </div>
                         </div>
 
-                        {/* Row 4: Unified Grounded Provenance, Owner & Citation Footer (Rule 25 Zero Redundancy & Full Unclipped Rationale) */}
+                        {/* Band 4: Uniform 2-Row Grounded Provenance, Owner & Citation Footer */}
                         <div style={{
                           marginTop: '10px',
                           paddingTop: '8px',
                           borderTop: '1px solid #f1f5f9',
                           display: 'flex',
+                          flexDirection: 'column',
                           justifyContent: 'space-between',
-                          alignItems: 'flex-start',
-                          flexWrap: 'wrap',
-                          gap: '8px',
+                          gap: '6px',
                           fontSize: '0.72rem',
                           color: '#475569'
                         }}>
-                          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px', flex: '1 1 280px', minWidth: 0 }}>
+                          {/* Footer Line 1: Grounded AI Rationale (Fixed 38px 2-Line Box) */}
+                          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px', minWidth: 0, height: '38px', overflow: 'hidden' }} title={fullRationaleText}>
                             <span style={{
                               fontSize: '0.62rem',
                               fontWeight: 800,
@@ -3940,64 +3890,85 @@ const GeValueRealizationWorkspace = () => {
                               borderRadius: '999px',
                               whiteSpace: 'nowrap',
                               flexShrink: 0,
-                              marginTop: '1px',
+                              marginTop: '2px',
                               background: resp.manualEntry ? '#ede9fe' : resp.value ? '#e0f2fe' : '#f1f5f9',
                               color: resp.manualEntry ? '#6d28d9' : resp.value ? '#0369a1' : '#64748b'
                             }}>
                               {resp.manualEntry ? '✍️ Manual' : resp.value ? '✨ Grounded AI' : '⚪ Blank'}
                             </span>
-                            <span style={{ whiteSpace: 'normal', wordBreak: 'break-word', lineHeight: 1.4, fontWeight: 600, color: '#334155' }}>
-                              {resp.whySelected || `Grounded via ${resp.evidenceUrl || 'Enterprise CRM Vector & Gantry Telemetry'}`}
+                            <span style={{ whiteSpace: 'normal', wordBreak: 'break-word', lineHeight: 1.4, fontWeight: 600, color: '#334155', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                              {fullRationaleText}
                             </span>
                           </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                            <span style={{ fontSize: '0.66rem', color: '#475569', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', padding: '2px 7px', fontWeight: 700, whiteSpace: 'nowrap' }}>
-                              👤 {resp.owner || q.ownerRole || 'Assigned Owner'}
+
+                          {/* Footer Line 2: Single-Line Owner Left + Source Citations Right (24px) */}
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', height: '24px', flexWrap: 'nowrap', minWidth: 0 }}>
+                            <span
+                              style={{
+                                fontSize: '0.66rem',
+                                color: '#475569',
+                                background: '#f8fafc',
+                                border: '1px solid #e2e8f0',
+                                borderRadius: '6px',
+                                padding: '2px 7px',
+                                fontWeight: 700,
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                maxWidth: '340px'
+                              }}
+                              title={fullOwnerText}
+                            >
+                              👤 {shortOwnerText}
                             </span>
-                            {Array.isArray(resp.citations) && resp.citations.slice(0, 2).map((cit, cIdx) => (
-                              <a
-                                key={cit.id || cIdx}
-                                href={cit.uri || '#'}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{
-                                  background: '#f8fafc',
-                                  color: '#1d4ed8',
-                                  border: '1px solid #cbd5e1',
-                                  borderRadius: '6px',
-                                  padding: '2px 7px',
-                                  fontSize: '0.65rem',
-                                  fontWeight: 700,
-                                  textDecoration: 'none',
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: '3px'
-                                }}
-                                title={cit.verbatimQuote || cit.snippet || cit.title}
-                              >
-                                <span>{cit.sourceIcon || '📄'}</span>
-                                <span>{cit.sourceLabel || cit.sourceType}</span>
-                                <span>↗</span>
-                              </a>
-                            ))}
-                            {(resp.userModified || (resp.scannedBaseline && resp.verificationStatus === 'verified')) && (
-                              <button
-                                onClick={() => handleResetToScanned(q.id)}
-                                style={{
-                                  background: '#fef2f2',
-                                  color: '#dc2626',
-                                  border: '1px solid #fecaca',
-                                  borderRadius: '6px',
-                                  padding: '2px 7px',
-                                  fontSize: '0.65rem',
-                                  fontWeight: 700,
-                                  cursor: 'pointer'
-                                }}
-                                title="Revert back to original scanned baseline answer"
-                              >
-                                ↺ Reset
-                              </button>
-                            )}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0, flexWrap: 'nowrap' }}>
+                              {Array.isArray(resp.citations) && resp.citations.slice(0, 2).map((cit, cIdx) => (
+                                <a
+                                  key={cit.id || cIdx}
+                                  href={cit.uri || '#'}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    background: '#f8fafc',
+                                    color: '#1d4ed8',
+                                    border: '1px solid #cbd5e1',
+                                    borderRadius: '6px',
+                                    padding: '2px 7px',
+                                    fontSize: '0.65rem',
+                                    fontWeight: 700,
+                                    textDecoration: 'none',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '3px',
+                                    whiteSpace: 'nowrap'
+                                  }}
+                                  title={cit.verbatimQuote || cit.snippet || cit.title}
+                                >
+                                  <span>{cit.sourceIcon || '📄'}</span>
+                                  <span>{cit.sourceLabel || cit.sourceType}</span>
+                                  <span>↗</span>
+                                </a>
+                              ))}
+                              {resp.userModified && (
+                                <button
+                                  onClick={() => handleResetToScanned(q.id)}
+                                  style={{
+                                    background: '#fef2f2',
+                                    color: '#dc2626',
+                                    border: '1px solid #fecaca',
+                                    borderRadius: '6px',
+                                    padding: '2px 7px',
+                                    fontSize: '0.65rem',
+                                    fontWeight: 700,
+                                    cursor: 'pointer',
+                                    whiteSpace: 'nowrap'
+                                  }}
+                                  title="Revert back to original scanned baseline answer"
+                                >
+                                  ↺ Reset
+                                </button>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>

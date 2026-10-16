@@ -526,8 +526,16 @@ test('UI Integrity Gate 15: Zero Dropdown Option-Value Mismatches Across All 82 
     'Question card <select> options must render clean {opt.optionText} without redundant confidence/tier suffixes that truncate answers and duplicate Column 2'
   );
   assert.ok(
+    wsSrc.includes("alignItems: 'stretch'") && wsSrc.includes("height: '44px'") && wsSrc.includes("height: '38px'") && wsSrc.includes('WebkitLineClamp: 2'),
+    'Question cards must enforce 100% 4-Band Uniform Card Architecture (alignItems: stretch, fixed 44px Title+Required Entry band, fixed 56px 3-column <select> band, and fixed 68px 2-line clamped Provenance footer)'
+  );
+  assert.ok(
+    !wsSrc.includes('ge-question-multiselect-') && !wsSrc.includes('+ Add Option ('),
+    'Question cards must use a single uniform 36px <select> control in Column 1 across all 82 questions without multi-row chip clouds or "+ Add Option (...)" placeholders'
+  );
+  assert.ok(
     wsSrc.includes("whiteSpace: 'normal', wordBreak: 'break-word', lineHeight: 1.4, fontWeight: 600, color: '#334155'"),
-    'Question card Row 4 whySelected rationale must wrap cleanly without single-line ellipsis truncation'
+    'Question card Row 4 whySelected rationale must wrap cleanly inside a uniform 2-line clamped container without single-line ellipsis truncation'
   );
   assert.ok(
     wsSrc.includes('id="no-matching-cards"'),
