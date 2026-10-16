@@ -7,23 +7,27 @@ const ROOT = path.resolve(__dirname, '../..');
 const readClientFile = (relPath) =>
   fs.readFileSync(path.join(ROOT, 'client/src', relPath), 'utf8');
 
-test('UI Integrity Gate 1: UniversalObjectEditor hover toolbar is never mounted in App.js', () => {
+test('UI Integrity Gate 1: UniversalObjectEditor hover toolbar is never mounted in App.js and purged from disk', () => {
   const appSource = readClientFile('App.js');
   assert.ok(
     !appSource.includes('UniversalObjectEditor'),
     'App.js must not import or mount UniversalObjectEditor (prevents intrusive global hover toolbar and bottom-left version bar)'
   );
+  assert.ok(
+    !fs.existsSync(path.join(ROOT, 'client/src/components/UniversalObjectEditor.js')),
+    'Orphaned client/src/components/UniversalObjectEditor.js must be permanently purged from disk'
+  );
 });
 
-test('UI Integrity Gate 2: Explicit Edit, Clone, and Delete controls exist across all 8 entity/workspace components', () => {
+test('UI Integrity Gate 2: Explicit Edit, Clone, and Delete controls exist across all 7 active entity/workspace components', () => {
   const listSource = readClientFile('components/AssessmentsListNew.js');
   assert.ok(listSource.includes('<FiEdit2 /> Edit'), 'AssessmentsListNew.js must render explicit Edit button label');
   assert.ok(listSource.includes('<FiCopy /> Clone'), 'AssessmentsListNew.js must render explicit Clone button label');
   assert.ok(listSource.includes('<FiTrash2 /> Delete'), 'AssessmentsListNew.js must render explicit Delete button label');
-
-  const hubSource = readClientFile('components/DynamicAssessmentHub.js');
-  assert.ok(hubSource.includes('handleCloneType') && hubSource.includes('handleDeleteType'), 'DynamicAssessmentHub.js must wire template Clone and Delete handlers');
-  assert.ok(hubSource.includes('handleCloneInstance') && hubSource.includes('handleDeleteInstance'), 'DynamicAssessmentHub.js must wire instance Clone and Delete handlers');
+  assert.ok(
+    !fs.existsSync(path.join(ROOT, 'client/src/components/DynamicAssessmentHub.js')),
+    'Orphaned duplicate client/src/components/DynamicAssessmentHub.js must be permanently purged from disk'
+  );
 
   const reportSource = readClientFile('components/DynamicAssessmentReport.js');
   assert.ok(reportSource.includes('handleCloneAssessment') && reportSource.includes('handleDeleteAssessment'), 'DynamicAssessmentReport.js must wire report Clone and Delete handlers');
@@ -530,9 +534,21 @@ test('UI Integrity Gate 15: Zero Dropdown Option-Value Mismatches Across All 82 
     'Question cards must enforce 100% 4-Band Uniform Card Architecture (alignItems: stretch, fixed 44px Title+Required Entry band, fixed 56px 3-column <select> band, and fixed 68px 2-line clamped Provenance footer)'
   );
   assert.ok(
-    !wsSrc.includes('ge-question-multiselect-') && !wsSrc.includes('+ Add Option ('),
-    'Question cards must use a single uniform 36px <select> control in Column 1 across all 82 questions without multi-row chip clouds or "+ Add Option (...)" placeholders'
+    !wsSrc.includes('ge-question-multiselect-') && !wsSrc.includes('ge-wizard-multiselect-') && !wsSrc.includes('+ Add Option ('),
+    'Question cards and Wizard view must use a single uniform <select> control across all 82 questions without multi-row chip clouds or "+ Add Option (...)" placeholders'
   );
+  assert.ok(
+    !wsSrc.includes('handleAcceptAnswer') && !wsSrc.includes('handleStartModifyAnswer') && !wsSrc.includes('handleSwitchPreset') && !wsSrc.includes('ge-nonblocking-modify-drawer'),
+    'GeValueRealizationWorkspace.js must contain zero unreferenced dead functions or unreachable legacy drawers'
+  );
+  const clientCatalog = fs.readFileSync(path.join(ROOT, 'client/src/services/masterBlueprintCatalog.js'), 'utf8');
+  const serverCatalog = fs.readFileSync(path.join(ROOT, 'server/services/masterBlueprintCatalog.js'), 'utf8');
+  for (const deadFn of ['getLegacyMasterArchitectureDiagramsUnused', 'buildGcpDataLakehouseWbsXml', 'buildAgenticEvalSafetyXml', 'buildAgenticRagWidescreenXml', 'buildLegacyFinOpsWasteXml']) {
+    assert.ok(!clientCatalog.includes(deadFn) && !serverCatalog.includes(deadFn), `Dead function ${deadFn} must be purged from client and server masterBlueprintCatalog.js`);
+  }
+  assert.ok(!fs.existsSync(path.join(ROOT, 'client/src/components/AudioBriefingPlayer.js')), 'Orphaned AudioBriefingPlayer.js must be purged from disk');
+  assert.ok(!fs.existsSync(path.join(ROOT, 'client/src/services/notificationService.js')), 'Orphaned client notificationService.js must be purged from disk');
+  assert.ok(!fs.existsSync(path.join(ROOT, 'server/utils/storageAdapter.js')), 'Orphaned server storageAdapter.js must be purged from disk');
   assert.ok(
     wsSrc.includes("whiteSpace: 'normal', wordBreak: 'break-word', lineHeight: 1.4, fontWeight: 600, color: '#334155'"),
     'Question card Row 4 whySelected rationale must wrap cleanly inside a uniform 2-line clamped container without single-line ellipsis truncation'

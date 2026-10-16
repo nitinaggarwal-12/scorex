@@ -29,11 +29,16 @@ const DELETED_LEGACY = [
   'DeepDiveReport.js', 'InsightsDashboard.js', 'CustomQuestionsManager.js', 'FeedbackAnalytics.js',
   'AdminDashboard.js', 'AssignAssessmentModal.js', 'AnalyticsDashboard.js',
   'AuthorDashboard.js', 'ConsumerDashboard.js', 'DemoScenarioPickerModal.js', 'ExecutiveSummary.js',
-  'FeedbackModal.js', 'ModernCharts.js'
+  'FeedbackModal.js', 'ModernCharts.js',
+  'UniversalObjectEditor.js', 'AudioBriefingPlayer.js', 'DynamicAssessmentHub.js'
 ];
 const resurrected = DELETED_LEGACY.filter((f) => fs.existsSync(path.join(ROOT, 'client/src/components', f)));
-if (resurrected.length > 0) {
-  console.error(`❌ [stop_quality_gate] Resurrected legacy components detected: ${resurrected.join(', ')}`);
+const DELETED_ORPHAN_PATHS = [
+  'client/src/services/notificationService.js',
+  'server/utils/storageAdapter.js'
+].filter((rel) => fs.existsSync(path.join(ROOT, rel)));
+if (resurrected.length > 0 || DELETED_ORPHAN_PATHS.length > 0) {
+  console.error(`❌ [stop_quality_gate] Resurrected legacy/orphan files detected: ${[...resurrected, ...DELETED_ORPHAN_PATHS].join(', ')}`);
   process.exit(1);
 }
 

@@ -5,8 +5,6 @@ import toast from 'react-hot-toast';
 import {
   FiShield,
   FiLayers,
-  FiDownload,
-  FiPrinter,
   FiPlus,
   FiArrowLeft,
   FiArrowRight,
@@ -20,10 +18,8 @@ import {
 } from 'react-icons/fi';
 
 import {
-  EVIDENCE_FACTORS,
   GE_MODULES,
   RESPONDENT_FORMS,
-  KPA_DEFINITIONS,
   RUBRIC_TEMPLATES,
   GE_QUESTIONS,
   DEFAULT_BIONOVA_WORKFLOWS,
@@ -239,22 +235,19 @@ const GeValueRealizationWorkspace = () => {
   const [activeRoleFilter, setActiveRoleFilter] = useState('all_modules');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [confidenceTierFilter, setConfidenceTierFilter] = useState(initialTierFilter); // 'ALL' | 'A' | 'B' | 'C' | 'D' | 'CONFIRM_QUEUE'
-  const [tierFilterCrossModule, setTierFilterCrossModule] = useState(true);
-  const [showAllOptionBreakdown, setShowAllOptionBreakdown] = useState(true);
+  const [tierFilterCrossModule] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeWorkflowIdx, setActiveWorkflowIdx] = useState(0);
   const [wizardIndex, setWizardIndex] = useState(0);
-  const [saving, setSaving] = useState(false);
 
   // Universal Customer 360 & Multi-Source Time-Period Ingestion State
   const [customerInput, setCustomerInput] = useState(initialCustomerParam || 'AeroVanguard Global Logistics (ACC-1001-AEROVG)');
   const [selectedSfdcId, setSelectedSfdcId] = useState('ACC-1001-AEROVG');
   const [customerMatches, setCustomerMatches] = useState([]);
-  const [showCustomerDropdown, setShowCustomerDropdown] = useState(false);
   const [timePreset, setTimePreset] = useState(initialPeriodParam);
-  const [startDate, setStartDate] = useState('2026-01-01');
-  const [endDate, setEndDate] = useState('2026-09-26');
-  const [enabledSources, setEnabledSources] = useState(() => ENTERPRISE_SOURCE_CONNECTORS.map(s => s.id));
+  const [startDate] = useState('2026-01-01');
+  const [endDate] = useState('2026-09-26');
+  const [enabledSources] = useState(() => ENTERPRISE_SOURCE_CONNECTORS.map(s => s.id));
   const [ingestingCustomer, setIngestingCustomer] = useState(false);
   const [showIngestionAuditDrawer, setShowIngestionAuditDrawer] = useState(false);
   const [auditSourceFilter, setAuditSourceFilter] = useState('ALL');
@@ -287,11 +280,9 @@ const GeValueRealizationWorkspace = () => {
   // Pilot Salesforce Customer Scanner & Multi-Source Evidence Grounding State
   const [customSalesforceIdInput, setCustomSalesforceIdInput] = useState('ACC-1001-AEROVG');
   const [showCustomSfdcInput, setShowCustomSfdcInput] = useState(false);
-  const [verificationFilter, setVerificationFilter] = useState('ALL'); // 'ALL' | 'PENDING' | 'VERIFIED' | 'MODIFIED'
+  const [verificationFilter] = useState('ALL');
   const [selectedSourceFilter, setSelectedSourceFilter] = useState('ALL');
   const [scanningStatusStep, setScanningStatusStep] = useState(0); // 0=idle, 1..5=scanning stages
-  const [editingQuestionId, setEditingQuestionId] = useState(null);
-  const [editForm, setEditForm] = useState({ value: '', outcomeScore: 3, confidenceTier: 'B', notes: '' });
 
   // Fetch all saved assessments from backend
   const fetchSavedAssessmentsList = async () => {
@@ -478,7 +469,6 @@ const GeValueRealizationWorkspace = () => {
   // Execute Multi-Source Customer & Time-Period Ingestion
   const handleIngestCustomer = async (overrideParams = {}) => {
     setIngestingCustomer(true);
-    setShowCustomerDropdown(false);
     try {
       const targetPreset = overrideParams.timePreset || timePreset;
       const presetObj = TIME_WINDOW_PRESETS.find(p => p.id === targetPreset);
@@ -598,44 +588,6 @@ const GeValueRealizationWorkspace = () => {
     }
   };
 
-  // 1-Click Accept / Verify Question Answer based on citations
-  const handleAcceptAnswer = (qId) => {
-    updateQuestionResponse(qId, {
-      verificationStatus: 'verified',
-      userAction: 'accepted'
-    });
-    toast.success(`✓ Accepted answer for ${qId} based on scanned evidence citations.`);
-  };
-
-  // Open inline modify panel for a question
-  const handleStartModifyAnswer = (qId, resp) => {
-    setEditingQuestionId(qId);
-    setEditForm({
-      value: Array.isArray(resp.value) ? resp.value.join('; ') : (resp.value ?? ''),
-      outcomeScore: resp.outcomeScore ?? 3,
-      confidenceTier: resp.confidenceTier || 'B',
-      notes: resp.notes || ''
-    });
-  };
-
-  // Save user-modified answer, outcome score, confidence tier, and notes
-  const handleSaveModifyAnswer = (qId) => {
-    const defaultPct = editForm.confidenceTier === 'A' ? 96 : editForm.confidenceTier === 'B' ? 84 : editForm.confidenceTier === 'C' ? 62 : 25;
-    updateQuestionResponse(qId, {
-      value: editForm.value === '' ? null : editForm.value,
-      outcomeScore: Number(editForm.outcomeScore),
-      confidenceTier: editForm.confidenceTier,
-      confidenceScorePct: defaultPct,
-      notes: editForm.notes,
-      userModified: true,
-      userAction: 'modified',
-      verificationStatus: 'verified',
-      numericState: editForm.value ? 'actual' : 'pending'
-    });
-    setEditingQuestionId(null);
-    toast.success(`✍️ Saved modified answer for ${qId} (marked as User-Modified & Verified).`);
-  };
-
   // Revert back to original scanned baseline
   const handleResetToScanned = (qId) => {
     const resp = dossier.questionResponses?.[qId] || {};
@@ -656,7 +608,6 @@ const GeValueRealizationWorkspace = () => {
       verificationStatus: base.confidenceTier === 'A' ? 'verified' : 'pending',
       numericState: base.value ? 'actual' : 'pending'
     });
-    if (editingQuestionId === qId) setEditingQuestionId(null);
     toast.success(`↺ Reset ${qId} back to scanned baseline.`);
   };
 
@@ -709,13 +660,6 @@ const GeValueRealizationWorkspace = () => {
       toast.success(`↺ Reset all ${count} questions back to original scanned baseline.`);
       return { ...prev, questionResponses: nextResp };
     });
-  };
-
-  // Generate Report from Verified Answers
-  const handleGenerateFinalReport = () => {
-    setPrimaryView('report');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    toast.success('🚀 Assessment Report generated! Verified evidence & citations compiled into executive readout.');
   };
 
   // Pick a random customer from Salesforce catalog to populate the New Assessment modal (or immediately ingest)
@@ -936,7 +880,6 @@ const GeValueRealizationWorkspace = () => {
 
   // Save dossier to backend
   const handleSaveDossier = async (customDossier = dossier, silent = false) => {
-    setSaving(true);
     try {
       const id = customDossier.id || 'ge_vr_ACC-1001-AEROVG';
       const res = await axios.post(`/api/ge-value-realization/dossiers/${id}`, customDossier);
@@ -948,30 +891,6 @@ const GeValueRealizationWorkspace = () => {
       if (!silent) {
         toast.success('Dossier state updated locally');
       }
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  // Switch between Evidence-Backed Prefill, Random Options, and Clean Customer Intake
-  const handleSwitchPreset = (presetMode) => {
-    if (presetMode === 'clean') {
-      handleStartNewUnfilledAssessment(null, false);
-    } else if (presetMode === 'random') {
-      handleIngestCustomer({
-        assessmentId: dossier.id,
-        customerQuery: customerInput,
-        sfdcAccountId: selectedSfdcId,
-        timePreset,
-        prefillMode: 'random'
-      });
-    } else {
-      handleIngestCustomer({
-        customerQuery: customerInput,
-        sfdcAccountId: selectedSfdcId,
-        timePreset,
-        prefillMode: 'evidence'
-      });
     }
   };
 
@@ -1373,31 +1292,6 @@ const GeValueRealizationWorkspace = () => {
       return true;
     });
   }, [dossier, inputMode, activeModuleId, activeRoleFilter, statusFilter, confidenceTierFilter, tierFilterCrossModule, searchQuery, verificationFilter, selectedSourceFilter]);
-
-  // Bulk confirm all currently filtered questions with customer
-  const handleBulkConfirmFilteredQuestions = () => {
-    if (!filteredQuestions.length) return;
-    const custLabel = (dossier.meta?.customerName || 'Customer').split(',')[0];
-    setDossier((prev) => {
-      const nextResponses = { ...(prev.questionResponses || {}) };
-      filteredQuestions.forEach((q) => {
-        const existing = nextResponses[q.id] || {};
-        nextResponses[q.id] = {
-          ...existing,
-          verificationStatus: 'verified',
-          confidenceTier: 'A',
-          confidenceScorePct: 100,
-          customerConfirmed: true,
-          numericState: existing.value === null ? 'pending' : 'actual'
-        };
-      });
-      return {
-        ...prev,
-        questionResponses: nextResponses
-      };
-    });
-    toast.success(`Confirmed ${filteredQuestions.length} questions with ${custLabel} → Upgraded to Tier A (100%)`);
-  };
 
   // Overall status counts across all 82 questions
   const statusCounts = useMemo(() => {
@@ -2378,13 +2272,11 @@ const GeValueRealizationWorkspace = () => {
               const respValues = Object.values(dossier.questionResponses || {});
               const totalQCount = GE_QUESTIONS.length;
               const answeredCount = respValues.filter(r => r.value !== null && r.value !== undefined && r.value !== '').length;
-              const hasCitationsCount = respValues.filter(r => Array.isArray(r.citations) && r.citations.length > 0).length;
               const verifiedOnlyCount = respValues.filter(r => r.verificationStatus === 'verified' && !r.userModified).length;
               const preFilledVerifyCount = respValues.filter(r => r.verificationStatus === 'draft_verify' && !r.userModified).length;
               const unansweredPendingCount = respValues.filter(r => r.verificationStatus === 'pending' || r.value === null || r.value === undefined || r.value === '').length;
               const userModifiedCount = respValues.filter(r => r.userModified).length;
               const totalAcceptedCount = verifiedOnlyCount + userModifiedCount;
-              const pendingCount = Math.max(0, totalQCount - totalAcceptedCount);
               const percentReviewed = Math.round((totalAcceptedCount / totalQCount) * 100);
               const avgConfidence = Math.round(respValues.reduce((s, r) => s + (r.confidenceScorePct || 0), 0) / (totalQCount || 1));
               const activeSfdcId = (customSalesforceIdInput || selectedSfdcId || dossier.meta?.vectorAccountId || dossier.meta?.sfdcAccountId || '0014M00001hZEwfQAG').trim();
@@ -4151,154 +4043,52 @@ const GeValueRealizationWorkspace = () => {
                           <label style={{ fontSize: '0.74rem', fontWeight: 800, color: '#334155', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
                             Recorded Value / Customer Response {q.unitLabel ? `(${q.unitLabel})` : ''}
                           </label>
-                          {wizardOptions.length > 0 && (q.inputType === 'single_select' || !q.inputType || q.inputType === 'text') ? (
-                            <div>
-                              <select
-                                id={`ge-wizard-select-${q.id}`}
-                                value={wizardSelectedOptionValue}
-                                onChange={(e) => {
-                                  const val = e.target.value;
-                                  if (!val) {
-                                    updateQuestionResponse(q.id, { value: null, numericState: 'pending' });
-                                    return;
-                                  }
-                                  const opt = wizardOptions.find((o) => o.optionText === val);
-                                  if (opt) {
-                                    handleSelectOptionForQuestion(q, opt);
-                                  } else {
-                                    updateQuestionResponse(q.id, { value: val, numericState: 'actual' });
-                                  }
-                                }}
-                                style={{
-                                  width: '100%',
-                                  padding: '12px 14px',
-                                  borderRadius: '10px',
-                                  border: '1.5px solid #2563eb',
-                                  fontSize: '0.95rem',
-                                  fontWeight: 700,
-                                  background: '#ffffff',
-                                  color: '#0f172a',
-                                  cursor: 'pointer'
-                                }}
-                              >
-                                <option value="">— Evidence Pending / Select Grounded Option —</option>
-                                {wizardOptions.map((opt) => (
-                                  <option key={opt.optionText} value={opt.optionText}>
-                                    {opt.optionText}
-                                  </option>
-                                ))}
-                              </select>
-                              {(() => {
-                                const activeOpt = wizardOptions.find((o) => o.isSelected || o.optionText === resp.value);
-                                if (!activeOpt?.sourceBasis) return null;
-                                return (
-                                  <div style={{
-                                    fontSize: '0.74rem',
-                                    color: '#475569',
-                                    marginTop: '8px',
-                                    background: '#ffffff',
-                                    padding: '6px 12px',
-                                    borderRadius: '8px',
-                                    border: '1px solid #cbd5e1',
-                                    borderLeft: activeOpt.isPortalBacked ? '3px solid #059669' : '3px solid #2563eb',
-                                    lineHeight: 1.45
-                                  }}>
-                                    <span style={{ color: activeOpt.isPortalBacked ? '#059669' : '#2563eb', fontWeight: 800, marginRight: '6px' }}>
-                                      {activeOpt.isPortalBacked ? '📌 Grounded SoR Evidence:' : '🔄 Grounded Evidence:'}
-                                    </span>
-                                    <span style={{ fontStyle: 'italic', color: '#334155' }}>{activeOpt.sourceBasis}</span>
-                                  </div>
-                                );
-                              })()}
-                            </div>
-                          ) : (q.inputType === 'multi_select' || q.inputType === 'multi_select_rank') ? (
-                            <div>
-                              <select
-                                id={`ge-wizard-multiselect-${q.id}`}
-                                value=""
-                                onChange={(e) => {
-                                  const val = e.target.value;
-                                  if (!val) return;
-                                  const opt = wizardOptions.find((o) => o.optionText === val) || { optionText: val, confidencePct: 80, confidenceTier: 'B' };
-                                  handleSelectOptionForQuestion(q, opt);
-                                }}
-                                style={{
-                                  width: '100%',
-                                  padding: '12px 14px',
-                                  borderRadius: '10px',
-                                  border: '1.5px solid #2563eb',
-                                  fontSize: '0.95rem',
-                                  fontWeight: 700,
-                                  background: '#ffffff',
-                                  color: '#0f172a'
-                                }}
-                              >
-                                <option value="">+ Add / Select Option from Dropdown ({wizardOptions.length} candidate options)...</option>
-                                {wizardOptions.map((opt) => {
-                                  const isSelected = Array.isArray(resp.value) ? resp.value.includes(opt.optionText) : (resp.value === opt.optionText);
-                                  return (
-                                    <option key={opt.optionText} value={opt.optionText}>
-                                      {isSelected ? '✓ ' : ''}{opt.optionText}
-                                    </option>
-                                  );
-                                })}
-                              </select>
-                              {Array.isArray(resp.value) && resp.value.length > 0 && (
-                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '8px' }}>
-                                  {resp.value.map((itemText) => {
-                                    const optMeta = wizardOptions.find((o) => o.optionText === itemText);
-                                    return (
-                                      <span
-                                        key={itemText}
-                                        style={{
-                                          background: '#eff6ff',
-                                          border: '1px solid #bfdbfe',
-                                          color: '#1e3a8a',
-                                          padding: '3px 10px',
-                                          borderRadius: '7px',
-                                          fontSize: '0.78rem',
-                                          display: 'inline-flex',
-                                          alignItems: 'center',
-                                          gap: '6px'
-                                        }}
-                                      >
-                                        <strong>{itemText}</strong>
-                                        <button
-                                          type="button"
-                                          onClick={() => handleSelectOptionForQuestion(q, optMeta || { optionText: itemText })}
-                                          style={{ border: 'none', background: 'transparent', color: '#dc2626', cursor: 'pointer', padding: 0, fontWeight: 900 }}
-                                        >
-                                          ✕
-                                        </button>
-                                      </span>
-                                    );
-                                  })}
-                                </div>
-                              )}
-                            </div>
-                          ) : (
-                            <input
-                              type="text"
-                              value={displayValue}
-                              placeholder="Evidence Pending (Leave blank to keep Null — Never defaults to 0)"
-                              onChange={(e) => {
-                                const raw = e.target.value;
-                                updateQuestionResponse(q.id, {
-                                  value: raw === '' ? null : raw,
-                                  numericState: raw === '' ? 'pending' : 'actual'
-                                });
-                              }}
-                              style={{
-                                width: '100%',
-                                padding: '12px 14px',
-                                borderRadius: '10px',
-                                border: '1.5px solid #94a3b8',
-                                fontSize: '1rem',
-                                fontWeight: 700,
-                                background: '#ffffff'
-                              }}
-                            />
-                          )}
+                          <select
+                            id={`ge-wizard-select-${q.id}`}
+                            value={Array.isArray(resp.value) ? (resp.value.length > 0 ? displayValue : '') : (wizardSelectedOptionValue || String(displayValue || ''))}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              if (!val) {
+                                updateQuestionResponse(q.id, { value: null, numericState: 'pending' });
+                                return;
+                              }
+                              const opt = wizardOptions.find((o) => o.optionText === val);
+                              if (opt) {
+                                handleSelectOptionForQuestion(q, opt);
+                              } else {
+                                updateQuestionResponse(q.id, { value: val, numericState: 'actual' });
+                              }
+                            }}
+                            style={{
+                              width: '100%',
+                              padding: '12px 14px',
+                              borderRadius: '10px',
+                              border: '1.5px solid #2563eb',
+                              fontSize: '0.95rem',
+                              fontWeight: 700,
+                              background: '#ffffff',
+                              color: '#0f172a',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            <option value="">— Evidence Pending / Select Grounded Option —</option>
+                            {Array.isArray(resp.value) && resp.value.length > 0 && !wizardOptions.some((o) => o.optionText === displayValue) && (
+                              <option value={displayValue}>{displayValue}</option>
+                            )}
+                            {!Array.isArray(resp.value) && displayValue && !wizardOptions.some((o) => o.optionText === String(displayValue)) && (
+                              <option value={String(displayValue)}>{String(displayValue)}</option>
+                            )}
+                            {wizardOptions.map((opt) => {
+                              const isSelected = Array.isArray(resp.value)
+                                ? resp.value.includes(opt.optionText)
+                                : (String(resp.value) === opt.optionText);
+                              return (
+                                <option key={opt.optionText} value={opt.optionText}>
+                                  {isSelected && Array.isArray(resp.value) ? `✓ ${opt.optionText}` : opt.optionText}
+                                </option>
+                              );
+                            })}
+                          </select>
                         </div>
 
                         <div style={{ marginBottom: '20px' }}>
@@ -6393,230 +6183,7 @@ const GeValueRealizationWorkspace = () => {
           </div>
         )}
 
-        {/* RULE 25F NON-BLOCKING MODIFICATION DRAWER */}
-        {editingQuestionId && (
-          <>
-            <div
-              onClick={() => setEditingQuestionId(null)}
-              style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                background: 'rgba(15, 23, 42, 0.25)',
-                backdropFilter: 'blur(2px)',
-                zIndex: 998,
-                transition: 'opacity 0.2s ease'
-              }}
-            />
-            <aside
-              id="ge-nonblocking-modify-drawer"
-              style={{
-                position: 'fixed',
-                top: 0,
-                right: 0,
-                width: '520px',
-                maxWidth: '90vw',
-                height: '100vh',
-                background: '#ffffff',
-                boxShadow: '-8px 0 32px rgba(15, 23, 42, 0.16)',
-                borderLeft: '1.5px solid #cbd5e1',
-                zIndex: 999,
-                display: 'flex',
-                flexDirection: 'column'
-              }}
-            >
-              {/* Drawer Header */}
-              <div style={{
-                padding: '16px 20px',
-                borderBottom: '1px solid #e2e8f0',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                background: '#f8fafc'
-              }}>
-                <div>
-                  <span style={{ fontSize: '0.68rem', fontWeight: 800, textTransform: 'uppercase', color: '#2563eb', letterSpacing: '0.04em' }}>
-                    MANUAL OVERRIDE & REVIEW (RULE 25F)
-                  </span>
-                  <h2 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a', margin: '2px 0 0 0' }}>
-                    Modify Question {editingQuestionId}
-                  </h2>
-                </div>
-                <button
-                  onClick={() => setEditingQuestionId(null)}
-                  style={{
-                    background: 'transparent',
-                    border: 'none',
-                    fontSize: '1.2rem',
-                    color: '#64748b',
-                    cursor: 'pointer',
-                    padding: '4px 8px',
-                    borderRadius: '6px'
-                  }}
-                  title="Close Drawer"
-                >
-                  ✕
-                </button>
               </div>
-
-              {/* Drawer Content */}
-              <div style={{ padding: '20px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div>
-                  <label style={{ fontSize: '0.72rem', fontWeight: 800, color: '#475569', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
-                    Question Text:
-                  </label>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0f172a' }}>
-                    {dossier.questions?.find(q => q.id === editingQuestionId)?.question || `Question ${editingQuestionId}`}
-                  </div>
-                </div>
-
-                <div>
-                  <label style={{ fontSize: '0.72rem', fontWeight: 800, color: '#475569', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>
-                    Recorded Value / Answer:
-                  </label>
-                  <input
-                    type="text"
-                    value={editForm.value}
-                    onChange={(e) => setEditForm(prev => ({ ...prev, value: e.target.value }))}
-                    placeholder="Enter modified response..."
-                    style={{
-                      width: '100%',
-                      padding: '9px 12px',
-                      borderRadius: '8px',
-                      border: '1.5px solid #3b82f6',
-                      fontSize: '0.85rem',
-                      fontWeight: 600,
-                      color: '#0f172a',
-                      outline: 'none',
-                      background: '#ffffff'
-                    }}
-                  />
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  <div>
-                    <label style={{ fontSize: '0.72rem', fontWeight: 800, color: '#475569', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>
-                      Confidence Tier:
-                    </label>
-                    <select
-                      value={editForm.confidenceTier}
-                      onChange={(e) => setEditForm(prev => ({ ...prev, confidenceTier: e.target.value }))}
-                      style={{
-                        width: '100%',
-                        padding: '8px 10px',
-                        borderRadius: '8px',
-                        border: '1px solid #cbd5e1',
-                        fontSize: '0.8rem',
-                        fontWeight: 700,
-                        color: '#0f172a',
-                        background: '#ffffff'
-                      }}
-                    >
-                      <option value="A">Tier A (96% • Verified Evidence)</option>
-                      <option value="B">Tier B (84% • Supported)</option>
-                      <option value="C">Tier C (62% • Modeled)</option>
-                      <option value="D">Tier D (25% • Provisional)</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label style={{ fontSize: '0.72rem', fontWeight: 800, color: '#475569', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>
-                      Outcome Score (0–4):
-                    </label>
-                    <select
-                      value={editForm.outcomeScore}
-                      onChange={(e) => setEditForm(prev => ({ ...prev, outcomeScore: e.target.value }))}
-                      style={{
-                        width: '100%',
-                        padding: '8px 10px',
-                        borderRadius: '8px',
-                        border: '1px solid #cbd5e1',
-                        fontSize: '0.8rem',
-                        fontWeight: 700,
-                        color: '#0f172a',
-                        background: '#ffffff'
-                      }}
-                    >
-                      <option value="0">0 — Missing / Worse</option>
-                      <option value="1">1 — Partial / Weak</option>
-                      <option value="2">2 — Emerging / Caveat</option>
-                      <option value="3">3 — Meets Target</option>
-                      <option value="4">4 — Decision-Grade</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label style={{ fontSize: '0.72rem', fontWeight: 800, color: '#475569', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>
-                    Audit Rationale & OCE Notes:
-                  </label>
-                  <textarea
-                    rows={4}
-                    value={editForm.notes}
-                    onChange={(e) => setEditForm(prev => ({ ...prev, notes: e.target.value }))}
-                    placeholder="Document reason for override, customer stakeholder verification, or evidence source..."
-                    style={{
-                      width: '100%',
-                      padding: '9px 12px',
-                      borderRadius: '8px',
-                      border: '1px solid #cbd5e1',
-                      fontSize: '0.82rem',
-                      color: '#0f172a',
-                      outline: 'none',
-                      resize: 'vertical',
-                      background: '#ffffff'
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Drawer Footer */}
-              <div style={{
-                padding: '14px 20px',
-                borderTop: '1px solid #e2e8f0',
-                display: 'flex',
-                justifyContent: 'flex-end',
-                gap: '8px',
-                background: '#f8fafc'
-              }}>
-                <button
-                  onClick={() => setEditingQuestionId(null)}
-                  style={{
-                    background: '#ffffff',
-                    border: '1px solid #cbd5e1',
-                    borderRadius: '8px',
-                    padding: '7px 14px',
-                    fontSize: '0.78rem',
-                    fontWeight: 700,
-                    color: '#475569',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => handleSaveModifyAnswer(editingQuestionId)}
-                  style={{
-                    background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
-                    border: 'none',
-                    borderRadius: '8px',
-                    padding: '7px 16px',
-                    fontSize: '0.78rem',
-                    fontWeight: 800,
-                    color: '#ffffff',
-                    cursor: 'pointer',
-                    boxShadow: '0 2px 6px rgba(37, 99, 235, 0.3)'
-                  }}
-                >
-                  💾 Save Override
-                </button>
-              </div>
-            </aside>
-          </>
-        )}
-      </div>
     </div>
   );
 };
