@@ -415,12 +415,12 @@ export const UnifiedDocumentPreviewModal = ({
     report?.slideDeckSynthesis?.roiEstimate ||
     report?.financialAnalysis?.roiRangeFormatted ||
     report?.financialAnalysis?.annualSavingsFormatted ||
-    '$1.8M - $3.1M';
+    'Pending Financial Inputs';
 
   const liveTcoArbitrage =
     report?.slideDeckSynthesis?.tcoArbitrage ||
     report?.financialAnalysis?.tcoArbitrageFormatted ||
-    (report?.financialAnalysis?.tcoReductionPct ? `${report.financialAnalysis.tcoReductionPct}% TCO Reduction` : '38% - 46% TCO Arbitrage');
+    (report?.financialAnalysis?.tcoReductionPct ? `${report.financialAnalysis.tcoReductionPct}% TCO Reduction` : 'Pending TCO Inputs');
 
   const buildLiveSpeakerNotes = () => {
     const slidesArr = report?.slideDeckSynthesis?.slides;

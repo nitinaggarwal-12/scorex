@@ -1940,32 +1940,32 @@ class RecommendationEngine {
       // Generate pillar-specific, highly impactful challenges with quantified consequences
       const specificChallenges = {
         platform_governance: {
-          low: 'Without Unity Catalog, you cannot leverage AI/ML governance, dynamic views, or row/column-level security—blocking production AI workloads',
+          low: 'Without a unified metadata catalog (Dataplex Universal Catalog), you cannot leverage AI/ML governance, dynamic views, or row/column-level security—blocking production AI workloads',
           medium: 'Manual access controls consume 40+ hours/month of admin time and create 2-3 week delays for data requests',
-          high: 'Missing lakehouse architecture means paying 3-5x more for separate data warehouse + data lake infrastructure'
+          high: 'Missing unified lakehouse architecture means paying 3-5x more for separate data warehouse + data lake infrastructure'
         },
         data_engineering: {
-          low: 'Cannot use Delta Live Tables or Auto Loader—forcing manual pipeline maintenance that costs $500K+/year in engineering time',
-          medium: 'No pipeline observability means 6-12 hour MTTR for failures vs 15-minute industry benchmark with DLT expectations',
+          low: 'Cannot use declarative pipelines (Dataform) or automated CDC (Datastream)—forcing manual pipeline maintenance that costs $500K+/year in engineering time',
+          medium: 'No pipeline observability means 6-12 hour MTTR for failures vs 15-minute industry benchmark with automated data quality assertions',
           high: 'Batch-only pipelines delay business decisions by 24-48 hours while real-time competitors capture market opportunities'
         },
         analytics_bi: {
-          low: 'Business users blocked from self-service analytics—IT handles 200+ monthly requests vs 20 with proper SQL warehouse setup',
-          medium: 'Cannot leverage Databricks AI/BI, Genie, or serverless warehouses—missing 60% improvement in analyst productivity',
-          high: 'Slow query performance (5-10 min) drives users back to Excel, undermining $500K+ platform investment'
+          low: 'Business users blocked from self-service analytics—IT handles 200+ monthly requests vs 20 with proper serverless SQL setup',
+          medium: 'Cannot leverage Conversational BI, semantic modeling, or serverless SQL warehouses—missing 60% improvement in analyst productivity',
+          high: 'Slow query performance (5-10 min) drives users back to spreadsheets, undermining $500K+ platform investment'
         },
         machine_learning: {
-          low: 'Without MLflow and Feature Store, teams rebuild same features 3-4 times—wasting $300K+/year in duplicate effort',
-          medium: 'Cannot use Model Serving or MLOps workflows—models take 4-6 months to production vs 2-4 weeks with automation',
+          low: 'Without Vertex AI Model Registry and Feature Store, teams rebuild same features 3-4 times—wasting $300K+/year in duplicate effort',
+          medium: 'Cannot use automated Model Serving or MLOps workflows—models take 4-6 months to production vs 2-4 weeks with automation',
           high: 'Stuck at 2-3 models in production when competitors operate 20-50+ models, capturing 10x more business value'
         },
         generative_ai: {
-          low: 'Missing Mosaic AI and Vector Search means cannot build RAG applications—18 months behind GenAI early adopters',
-          medium: 'No Model Serving for LLMs or governance for AI—blocking customer-facing GenAI that could drive 20-30% revenue growth',
+          low: 'Missing Vertex AI Agent Engine and Vector Search means cannot build grounded RAG applications—18 months behind GenAI early adopters',
+          medium: 'No managed LLM endpoints or AI governance—blocking customer-facing GenAI that could drive 20-30% revenue growth',
           high: 'Competitors launched GenAI features 12+ months ago, capturing market share while you\'re still evaluating technology'
         },
         operational_excellence: {
-          low: 'Platform adoption under 25%—wasting $200K-500K annually on unused Databricks licenses and missed productivity gains',
+          low: 'Platform adoption under 25%—wasting $200K-500K annually on underutilized cloud capacity and missed productivity gains',
           medium: 'No training programs means 6-9 month ramp time for new users vs 4-6 weeks, limiting team scaling and agility',
           high: 'Cannot demonstrate platform ROI with usage metrics—putting $1M+ annual investment at risk in next budget cycle'
         }
@@ -1988,7 +1988,7 @@ class RecommendationEngine {
     
     // Always ensure exactly 4 challenges
     const genericChallenges = [
-      'Current maturity level limits ability to leverage advanced Databricks capabilities',
+      'Current maturity level limits ability to leverage advanced Enterprise Data & AI capabilities',
       'Identified gaps increase total cost of ownership and operational overhead',
       'Missing automation creates dependency bottlenecks and slows innovation velocity',
       'Limited adoption prevents realization of full platform ROI and strategic value'

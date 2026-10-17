@@ -162,7 +162,7 @@
   function buildFallbackTargets(branch) {
     return [
       { label: 'Current', branch, url: window.location.origin },
-      { label: 'Production', branch: 'main', url: 'https://scorex.up.railway.app' }
+      { label: 'Production', branch: 'main', url: 'https://scorex-248990048888.cr.gclb.goog' }
     ];
   }
 

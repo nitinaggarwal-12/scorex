@@ -896,7 +896,7 @@ const ExecutiveDashboard = ({ results, assessment, hideImperatives = false }) =>
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="e.g., Deploy Unity Catalog for centralized governance"
+                  placeholder="e.g., Deploy Dataplex Universal Catalog for centralized governance"
                   required
                 />
               </FormGroup>
@@ -979,16 +979,15 @@ const ExecutiveDashboard = ({ results, assessment, hideImperatives = false }) =>
 // =====================
 
 function calculateRevenueOpportunity(categoryDetails) {
-  // Simplified calculation - should be more sophisticated in production
   let totalOpportunity = 0;
   
-  Object.values(categoryDetails).forEach(category => {
-    const gap = (category.futureScore || 0) - (category.currentScore || 0);
+  Object.values(categoryDetails || {}).forEach(category => {
+    const gap = Math.max(0, (category.futureScore || 0) - (category.currentScore || 0));
     // Each maturity point improvement = ~$400K in value
     totalOpportunity += gap * 400000;
   });
   
-  return Math.max(totalOpportunity, 500000); // Minimum $500K
+  return totalOpportunity;
 }
 
 function calculateRiskExposure(results) {

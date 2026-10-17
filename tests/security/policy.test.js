@@ -6,11 +6,16 @@ const path = require('path');
 const root = path.resolve(__dirname, '../..');
 const read = (relativePath) => fs.readFileSync(path.join(root, relativePath), 'utf8');
 
-test('file authentication has no built-in default administrator credentials', () => {
+test('file and SQL migration authentication have no built-in default administrator credentials', () => {
   const source = read('server/db/fileUserStore.js');
   assert.equal(source.includes('admin123'), false);
   assert.equal(source.includes('admin@databricks.com'), false);
   assert.match(source, /without default credentials/);
+
+  const mig006 = read('server/db/migrations/006_user_management.sql');
+  assert.equal(mig006.includes('admin123'), false);
+  assert.equal(mig006.includes('admin@databricks.com'), false);
+  assert.equal(fs.existsSync(path.join(root, 'server/db/migrations/007_add_test_users.sql')), false);
 });
 
 test('data cleanup is globally admin-only', () => {

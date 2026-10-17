@@ -30,12 +30,22 @@ const DELETED_LEGACY = [
   'AdminDashboard.js', 'AssignAssessmentModal.js', 'AnalyticsDashboard.js',
   'AuthorDashboard.js', 'ConsumerDashboard.js', 'DemoScenarioPickerModal.js', 'ExecutiveSummary.js',
   'FeedbackModal.js', 'ModernCharts.js',
-  'UniversalObjectEditor.js', 'AudioBriefingPlayer.js', 'DynamicAssessmentHub.js'
+  'UniversalObjectEditor.js', 'AudioBriefingPlayer.js', 'DynamicAssessmentHub.js',
+  'Dashboard.js', 'Header.js', 'HomeButton.js'
 ];
 const resurrected = DELETED_LEGACY.filter((f) => fs.existsSync(path.join(ROOT, 'client/src/components', f)));
 const DELETED_ORPHAN_PATHS = [
   'client/src/services/notificationService.js',
-  'server/utils/storageAdapter.js'
+  'client/src/data/assessmentFramework.js',
+  'server/utils/storageAdapter.js',
+  'server/services/intelligentRecommendationEngine.js',
+  'server/services/contextAwareRecommendationEngine.js',
+  'server/db/migrate.js',
+  'server/migrations',
+  'server/db/migrations/007_add_test_users.sql',
+  'ge_vr_executive_ui_mock.html',
+  'client/public/ge_vr_executive_ui_mock.html',
+  'client/public/ge_value_realization_figma_mockup.html'
 ].filter((rel) => fs.existsSync(path.join(ROOT, rel)));
 if (resurrected.length > 0 || DELETED_ORPHAN_PATHS.length > 0) {
   console.error(`❌ [stop_quality_gate] Resurrected legacy/orphan files detected: ${[...resurrected, ...DELETED_ORPHAN_PATHS].join(', ')}`);

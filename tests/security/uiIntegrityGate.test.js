@@ -377,13 +377,14 @@ test('UI Integrity Gate 13: Question Form Layout, 3-Column Non-Truncating Input 
 });
 
 test('UI Integrity Gate 14: Forensic Mathematical, Logical, Factual & Completeness Invariants Across All 5 Assessment Subsystems (Rule 50H / L60-14..L60-19)', () => {
-  // 1. Zero consulting brand leaks in backend services & static mockups
+  // 1. Zero consulting brand leaks in backend services & permanent purge of static HTML mockups
   const ingestorSrc = fs.readFileSync(path.join(ROOT, 'server/services/geCustomerMultiSourceIngestor.js'), 'utf8');
   const recEngineSrc = fs.readFileSync(path.join(ROOT, 'server/services/intelligentRecommendationEngine_v2.js'), 'utf8');
-  const mockupSrc = fs.readFileSync(path.join(ROOT, 'client/public/ge_value_realization_figma_mockup.html'), 'utf8');
   assert.ok(!/Stratagem|McKinsey|\bMcK\b/i.test(ingestorSrc), 'geCustomerMultiSourceIngestor.js must contain 0 Stratagem/McKinsey references');
   assert.ok(!/Stratagem|McKinsey|\bMcK\b/i.test(recEngineSrc), 'intelligentRecommendationEngine_v2.js must contain 0 Stratagem/McKinsey references');
-  assert.ok(!/Stratagem|McKinsey|\bMcK\b/i.test(mockupSrc), 'ge_value_realization_figma_mockup.html must contain 0 Stratagem/McKinsey references');
+  assert.ok(!fs.existsSync(path.join(ROOT, 'ge_vr_executive_ui_mock.html')), 'Root ge_vr_executive_ui_mock.html must be permanently purged');
+  assert.ok(!fs.existsSync(path.join(ROOT, 'client/public/ge_vr_executive_ui_mock.html')), 'client/public/ge_vr_executive_ui_mock.html must be permanently purged');
+  assert.ok(!fs.existsSync(path.join(ROOT, 'client/public/ge_value_realization_figma_mockup.html')), 'client/public/ge_value_realization_figma_mockup.html must be permanently purged');
 
   // 2. GE Value Realization Framework pre-staged profiles & 10 ingested dossiers
   const { createInitialGeDossier, evaluateGeValueRealization } = require('../../server/data/geValueRealizationFramework');
@@ -562,4 +563,60 @@ test('UI Integrity Gate 15: Zero Dropdown Option-Value Mismatches Across All 82 
     'Bottom Executive Synthesizer Banner must not expose a destructive Randomize All 82 Options First button next to Submit'
   );
 });
+
+test('UI Integrity Gate 16: Transitive Dead-Code Purge, Dynamic Exhibit 1B Financial Math, F01 $120/hr Rate Parity & Zero Hardcoded Fallback Floors (Rule 50J)', () => {
+  // 1. Verify unreachable dead files identified via transitive import graph are permanently purged
+  const purgedDeadPaths = [
+    'client/src/components/Dashboard.js',
+    'client/src/components/Header.js',
+    'client/src/components/HomeButton.js',
+    'client/src/data/assessmentFramework.js',
+    'server/services/intelligentRecommendationEngine.js',
+    'server/services/contextAwareRecommendationEngine.js',
+    'server/db/migrate.js',
+    'server/migrations',
+    'server/db/migrations/007_add_test_users.sql',
+    'ge_vr_executive_ui_mock.html',
+    'client/public/ge_vr_executive_ui_mock.html',
+    'client/public/ge_value_realization_figma_mockup.html',
+    'client/public/workflow-demo.html',
+    'client/public/databricks-logo.svg',
+    'deploy-to-railway.sh',
+    'railway.json',
+    'fly.toml',
+    'render.yaml',
+    'vercel.json',
+    'app.yaml',
+    'db-sync',
+    'api',
+    'scratch'
+  ];
+  for (const rel of purgedDeadPaths) {
+    assert.ok(!fs.existsSync(path.join(ROOT, rel)), `Dead/legacy path ${rel} must be permanently purged from disk`);
+  }
+
+  // 2. Verify Exhibit 1B dynamic workflow math & zero conflicting L01 baseline cost strings
+  const wsSrc = readClientFile('components/GeValueRealizationWorkspace.js');
+  for (const bannedStaticStr of ['$1.85M/yr', '$1.65M/yr', '~$0.95M/yr', '$40M quarantined', 'dossier.legacyRetirement']) {
+    assert.ok(!wsSrc.includes(bannedStaticStr), `GeValueRealizationWorkspace.js Exhibit 1B must not contain hardcoded/conflicting string "${bannedStaticStr}"`);
+  }
+  assert.ok(
+    wsSrc.includes('wf1.validatedCapacityValueAnnual') && wsSrc.includes('wf45ModeledSum'),
+    'GeValueRealizationWorkspace.js Exhibit 1B must dynamically bind WF1-WF5 dollar and hour deltas to evaluatedWorkflows'
+  );
+
+  // 3. Verify F01 $120/hr rate parity across ingestor and persisted dossiers
+  const ingestorSrc = fs.readFileSync(path.join(ROOT, 'server/services/geCustomerMultiSourceIngestor.js'), 'utf8');
+  const dossiersSrc = fs.readFileSync(path.join(ROOT, 'data/ge_value_realization_dossiers.json'), 'utf8');
+  assert.ok(!ingestorSrc.includes('$115/hr'), 'geCustomerMultiSourceIngestor.js must not contain $115/hr F01 rate discrepancy');
+  assert.ok(!dossiersSrc.includes('$115/hr'), 'data/ge_value_realization_dossiers.json must not contain $115/hr F01 rate discrepancy');
+  assert.ok(ingestorSrc.includes('Blended Loaded Rate: $120/hr'), 'geCustomerMultiSourceIngestor.js F01 must match $120/hr defaultLoadedHourlyRate');
+
+  // 4. Verify zero hardcoded ROI fallback in UnifiedDocumentPreviewModal.js and zero $500K floor in ExecutiveDashboard.js
+  const modalSrc = readClientFile('components/UnifiedDocumentPreviewModal.js');
+  assert.ok(!modalSrc.includes('$1.8M - $3.1M'), 'UnifiedDocumentPreviewModal.js must not fall back to hardcoded $1.8M - $3.1M');
+  const execDashSrc = readClientFile('components/ExecutiveDashboard.js');
+  assert.ok(!execDashSrc.includes('Math.max(totalOpportunity, 500000)'), 'ExecutiveDashboard.js must not enforce an artificial $500K minimum floor on zero-gap assessments');
+});
+
 

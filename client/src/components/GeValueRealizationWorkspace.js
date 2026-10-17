@@ -929,7 +929,7 @@ const GeValueRealizationWorkspace = () => {
           nextCostLedger.legacyRetiredAnnualCost = num;
           nextCostLedger.legacyCostNumericState = 'actual';
         } else if (String(patch.value).includes('100% Avoidable')) {
-          const modeled = prev.legacyRetirement?.legacyAnnualRunRateModeledUsd || nextCostLedger.legacyAnnualApiCost || 1200000;
+          const modeled = prev.costLedger?.legacyAnnualRunRate || nextCostLedger.legacyAnnualApiCost || 1200000;
           nextCostLedger.legacyRetiredAnnualCost = modeled;
           nextCostLedger.legacyRetainedParallelRunAnnualCost = 0;
           nextCostLedger.legacyCostNumericState = 'actual';
@@ -4682,7 +4682,7 @@ const GeValueRealizationWorkspace = () => {
                 const mauVal = tel.multiApiMau30d ?? tel.mauMultiApi ?? 0;
                 const wauVal = tel.allApiWau7d ?? tel.wauMultiApi ?? fiveCols.col4NonFinancial?.wau ?? 0;
                 const agentReqsVal = tel.agentRequests7d ?? fiveCols.col4NonFinancial?.agent7dRequests ?? 0;
-                const legacyName = dossier.legacyRetirement?.legacyToolName || dossier.meta?.legacyPlatformName || 'Legacy AI / Manual Workflows';
+                const legacyName = dossier.costLedger?.legacyToolName || dossier.meta?.legacyPlatformName || 'Legacy AI / Manual Workflows';
                 const unassignedProvisioned = Math.max(0, provisionedVal - assignedVal);
 
                 return (
@@ -4852,13 +4852,22 @@ const GeValueRealizationWorkspace = () => {
               const wauBefore = isBioNova ? 2100 : Math.max(150, Math.round(wauAfter * 0.36));
               const wauDeltaPct = wauBefore > 0 ? Math.round(((wauAfter - wauBefore) / wauBefore) * 100) : 179;
               const wauMultiplier = wauBefore > 0 ? (wauAfter / wauBefore).toFixed(1) : '2.8';
-              const legacyLabel = isBioNova ? 'Homegrown OpenAI (NovaAssist)' : (dossier.legacyRetirement?.legacyToolName || dossier.meta?.legacyPlatformName || 'Legacy AI / Manual');
+              const legacyLabel = isBioNova ? 'Homegrown OpenAI (NovaAssist)' : (dossier.costLedger?.legacyToolName || dossier.meta?.legacyPlatformName || 'Legacy AI / Manual');
               const wfList = (evaluation?.evaluatedWorkflows && evaluation.evaluatedWorkflows.length > 0)
                 ? evaluation.evaluatedWorkflows
                 : (dossier.workflows || []);
               const wf1 = wfList[0] || {};
               const wf2 = wfList[1] || wf1;
               const wf3 = wfList[2] || wf1;
+              const wf4 = wfList[3] || {};
+              const wf5 = wfList[4] || {};
+
+              const wf1ValStr = `${formatCurrency(wf1.validatedCapacityValueAnnual || 0)}/yr (${formatNumber(Math.round(wf1.attributedHoursReleasedMonthly || 0))} hrs/mo)`;
+              const wf2ValStr = `${formatCurrency(wf2.validatedCapacityValueAnnual || 0)}/yr (${formatNumber(Math.round(wf2.attributedHoursReleasedMonthly || 0))} hrs/mo)`;
+              const wf3ValStr = `${formatCurrency(wf3.validatedCapacityValueAnnual || 0)}/yr (${formatNumber(Math.round(wf3.attributedHoursReleasedMonthly || 0))} hrs/mo)`;
+              const wf45ModeledSum = (Number(wf4.modeledAnnualValueUsd) || 15000000) + (Number(wf5.modeledAnnualValueUsd) || 22500000);
+              const legacyRunRate = Number(dossier.costLedger?.legacyAnnualRunRate) || 0;
+              const legacyRetirable = Number(dossier.costLedger?.legacyRetirableCost12Mo) || 0;
 
               const wf1BaseMin = wf1.baselineMinutes ?? wf1.baselineMinutesPerTask ?? 45;
               const wf1GemMin = wf1.geminiMinutes ?? wf1.postGeMinutesPerTask ?? 18;
@@ -4876,6 +4885,7 @@ const GeValueRealizationWorkspace = () => {
               const wf3GemMin = wf3.geminiMinutes ?? wf3.postGeMinutesPerTask ?? 25;
               const wf3BaseQa = wf3.firstPassBaselinePct ?? wf3.firstPassAcceptBeforePct ?? 68;
               const wf3GemQa = wf3.firstPassGeminiPct ?? wf3.firstPassAcceptAfterPct ?? 86;
+              const wf3Tasks = wf3.completedTasksPerMonth ?? wf3.tasksPerMonth ?? 510;
 
               const assistWauVal = tel.geminiAssistWau7d ?? tel.wauGeminiAssist ?? tel.featureWau?.assist ?? 0;
               const searchWauVal = tel.enterpriseSearchWau7d ?? tel.wauEnterpriseSearch ?? tel.featureWau?.search ?? 0;
@@ -4905,9 +4915,9 @@ const GeValueRealizationWorkspace = () => {
                 },
                 {
                   dim: '3. WF1: Enterprise Search & "Ask HR" / ServiceNow (BNV-08)',
-                  before: '22 min / lookup across fragmented portals (Confluence, Jira, HR, ServiceNow); 68% first-pass accuracy',
-                  after: '9 min / lookup with grounded citations across 4,992 users (14,500 tasks/mo); 84% first-pass accuracy',
-                  delta: '-13 min/task (-59.1%) • +16 pts QA • $1.86M/yr (2,513 hrs/mo)',
+                  before: `${wf1BaseMin} min / lookup across fragmented portals (Confluence, Jira, HR, ServiceNow); ${wf1BaseQa}% first-pass accuracy`,
+                  after: `${wf1GemMin} min / lookup with grounded citations across ${formatNumber(wf1.activeUsers || 4992)} users (${formatNumber(wf1Tasks)} tasks/mo); ${wf1GemQa}% first-pass accuracy`,
+                  delta: `-${wf1BaseMin - wf1GemMin} min/task (-${(((wf1BaseMin - wf1GemMin) / Math.max(1, wf1BaseMin)) * 100).toFixed(1)}%) • +${wf1GemQa - wf1BaseQa} pts QA • ${wf1ValStr}`,
                   target: 'Unlock 74,337 Wave 2 seats (+$4.2M/yr capacity)',
                   conf: '88% • Tier B',
                   confColor: '#1d4ed8',
@@ -4915,9 +4925,9 @@ const GeValueRealizationWorkspace = () => {
                 },
                 {
                   dim: '4. WF2: Global Pricing & Reference Cascade (BNV-06 NOVA-AI)',
-                  before: '640 min (10.7 hrs) / pricing cascade via manual spreadsheets & legacy scripts; 62% first-pass QA',
-                  after: '80 min (1.3 hrs) / cascade via Gemini Multi-Agent workflow (45 users, 90 cascades/mo); 88% first-pass QA',
-                  delta: '-560 min/task (-87.5%) • +26 pts QA • $822K/yr (630 hrs/mo)',
+                  before: `${wf2BaseMin} min (${(wf2BaseMin / 60).toFixed(1)} hrs) / pricing cascade via manual spreadsheets & legacy scripts; ${wf2BaseQa}% first-pass QA`,
+                  after: `${wf2GemMin} min (${(wf2GemMin / 60).toFixed(1)} hrs) / cascade via Gemini Multi-Agent workflow (${formatNumber(wf2.activeUsers || 45)} users, ${formatNumber(wf2Tasks)} cascades/mo); ${wf2GemQa}% first-pass QA`,
+                  delta: `-${wf2BaseMin - wf2GemMin} min/task (-${(((wf2BaseMin - wf2GemMin) / Math.max(1, wf2BaseMin)) * 100).toFixed(1)}%) • +${wf2GemQa - wf2BaseQa} pts QA • ${wf2ValStr}`,
                   target: 'Graduate $100M–$300M commercial pricing case from Col 3',
                   conf: '84% • Tier B',
                   confColor: '#1d4ed8',
@@ -4925,9 +4935,9 @@ const GeValueRealizationWorkspace = () => {
                 },
                 {
                   dim: '5. WF3: Clinical Data Review & Protocol Extraction (BNV-04 GxP)',
-                  before: '90 min / clinical protocol section; un-grounded LLM outputs required heavy manual verification (70% QA)',
-                  after: '44 min / protocol section with inline clinical document grounding (85 users, 1,400 tasks/mo); 86% QA',
-                  delta: '-46 min/task (-51.1%) • +16 pts QA • $913K/yr (805 hrs/mo)',
+                  before: `${wf3BaseMin} min / clinical protocol section; un-grounded LLM outputs required heavy manual verification (${wf3BaseQa}% QA)`,
+                  after: `${wf3GemMin} min / protocol section with inline clinical document grounding (${formatNumber(wf3.activeUsers || 85)} users, ${formatNumber(wf3Tasks)} tasks/mo); ${wf3GemQa}% QA`,
+                  delta: `-${wf3BaseMin - wf3GemMin} min/task (-${(((wf3BaseMin - wf3GemMin) / Math.max(1, wf3BaseMin)) * 100).toFixed(1)}%) • +${wf3GemQa - wf3BaseQa} pts QA • ${wf3ValStr}`,
                   target: 'Complete RegVault DMS MCP GxP CSV validation → scale to 1,000+ R&D seats',
                   conf: '82% • Tier B',
                   confColor: '#1d4ed8',
@@ -4936,7 +4946,7 @@ const GeValueRealizationWorkspace = () => {
                 {
                   dim: '6. WF4 (BNV-07 AHEAD Dossier) & WF5 (BNV-05 CMC Tech Transfer)',
                   before: '510 min / HTA dossier section (65% QA) & 330 min / CMC batch packet (60% QA) via manual drafting',
-                  after: '255 min HTA (80% QA) & 185 min CMC (75% QA) in pilot benchmarks ($40M quarantined in Col 3 Modeled)',
+                  after: `255 min HTA (80% QA) & 185 min CMC (75% QA) in pilot benchmarks (${formatCurrency(wf45ModeledSum)} quarantined in Col 3 Modeled)`,
                   delta: '-50.0% (HTA) & -43.9% (CMC) Pilot Cycle Time Reduction',
                   target: 'Complete timed pre/post study & CSV to move into Col 2 Validated',
                   conf: '78% • Tier B',
@@ -4955,10 +4965,14 @@ const GeValueRealizationWorkspace = () => {
                 },
                 {
                   dim: '8. Annualized Platform Run-Rate & Hard Cash Savings (L01–L04)',
-                  before: '$1.85M/yr modeled legacy NovaAssist run-rate (Azure OpenAI API + Vector DB + 4.5 FTE custom engineering)',
+                  before: legacyRunRate > 0
+                    ? `${formatCurrency(legacyRunRate)}/yr verified legacy NovaAssist run-rate (Azure OpenAI API + Vector DB + 4.5 FTE custom engineering)`
+                    : 'Evidence Pending — Awaiting 12-mo Finance invoice ledger (L01 null per guardrail; 4.5 FTE custom engineering)',
                   after: 'Parallel run active ($0 retired today while NovaAssist chat history bulk export & connector opt-in close; L01–L03 Pending)',
                   delta: `${formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualBase)}/yr Validated Capacity (Hard Cash Gated on L01–L03)`,
-                  target: '$1.65M/yr hard legacy NovaAssist cost retired post-cutover (4.5 → 0.5 FTE)',
+                  target: legacyRetirable > 0
+                    ? `${formatCurrency(legacyRetirable)}/yr hard legacy NovaAssist cost retired post-cutover (4.5 → 0.5 FTE)`
+                    : 'Retire legacy NovaAssist cost post-cutover once L01–L03 ledger is signed off (4.5 → 0.5 FTE)',
                   conf: '35% • Tier D',
                   confColor: '#475569',
                   confBg: '#f1f5f9'
@@ -4988,7 +5002,7 @@ const GeValueRealizationWorkspace = () => {
                   dim: `3. WF1: ${wf1.name || 'Primary Production Workflow'} (${wf1.code || 'WF-01'})`,
                   before: `${wf1BaseMin} min / task via legacy manual tools; ${wf1BaseQa}% first-pass QA`,
                   after: `${wf1GemMin} min / task with Gemini Enterprise (${formatNumber(wf1.activeUsers)} users, ${formatNumber(wf1Tasks)} tasks/mo); ${wf1GemQa}% QA`,
-                  delta: `-${wf1BaseMin - wf1GemMin} min/task • +${wf1GemQa - wf1BaseQa} pts QA`,
+                  delta: `-${wf1BaseMin - wf1GemMin} min/task • +${wf1GemQa - wf1BaseQa} pts QA • ${wf1ValStr}`,
                   target: 'Expand across Wave 2 business units',
                   conf: '88% • Tier B',
                   confColor: '#1d4ed8',
@@ -4998,7 +5012,7 @@ const GeValueRealizationWorkspace = () => {
                   dim: `4. WF2: ${wf2.name || 'Secondary Agentic Workflow'} (${wf2.code || 'WF-02'})`,
                   before: `${wf2BaseMin} min / task via legacy process; ${wf2BaseQa}% first-pass QA`,
                   after: `${wf2GemMin} min / task via Gemini Multi-Agent workflow (${formatNumber(wf2.activeUsers)} users, ${formatNumber(wf2Tasks)} tasks/mo); ${wf2GemQa}% QA`,
-                  delta: `-${wf2BaseMin - wf2GemMin} min/task • +${wf2GemQa - wf2BaseQa} pts QA`,
+                  delta: `-${wf2BaseMin - wf2GemMin} min/task • +${wf2GemQa - wf2BaseQa} pts QA • ${wf2ValStr}`,
                   target: 'Graduate pipeline value from Col 3 Modeled to Col 2 Validated',
                   conf: '84% • Tier B',
                   confColor: '#1d4ed8',
@@ -5008,7 +5022,7 @@ const GeValueRealizationWorkspace = () => {
                   dim: `5. WF3: ${wf3.name || 'Knowledge Grounding Workflow'} (${wf3.code || 'WF-03'})`,
                   before: `${wf3BaseMin} min / task; high manual SME review burden (${wf3BaseQa}% QA)`,
                   after: `${wf3GemMin} min / task with inline ACL-grounded citations (${formatNumber(wf3.activeUsers)} users); ${wf3GemQa}% QA`,
-                  delta: `-${wf3BaseMin - wf3GemMin} min/task • Grounded Citations`,
+                  delta: `-${wf3BaseMin - wf3GemMin} min/task • Grounded Citations • ${wf3ValStr}`,
                   target: 'Complete enterprise connector security & compliance sign-off',
                   conf: '82% • Tier B',
                   confColor: '#1d4ed8',
@@ -5026,7 +5040,9 @@ const GeValueRealizationWorkspace = () => {
                 },
                 {
                   dim: '7. Annualized Platform Run-Rate & Hard Cash Savings (L01–L04)',
-                  before: `${formatCurrency(dossier.legacyRetirement?.legacyAnnualRunRateModeledUsd || 1200000)}/yr modeled legacy AI & point-tool run-rate`,
+                  before: legacyRunRate > 0
+                    ? `${formatCurrency(legacyRunRate)}/yr verified legacy AI & point-tool run-rate`
+                    : 'Evidence Pending — Awaiting 12-mo Finance invoice ledger (L01 null per guardrail)',
                   after: 'Parallel migration active ($0 retired today while L01–L03 legacy invoice ledger awaits Finance sign-off)',
                   delta: `${formatCurrency(fiveCols.col2ValidatedCapacity?.valueAnnualBase)}/yr Validated Capacity (Hard Cash Gated on L01–L03)`,
                   target: 'Retire legacy point-tool spend post-cutover',
@@ -5171,8 +5187,12 @@ const GeValueRealizationWorkspace = () => {
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                         <div style={{ background: '#f1f5f9', padding: '8px 10px', borderRadius: '8px' }}>
                           <div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>BEFORE (Baseline)</div>
-                          <div style={{ fontSize: '0.98rem', fontWeight: 800, color: '#334155', fontFamily: 'monospace' }}>~$0.95M/yr</div>
-                          <div style={{ fontSize: '0.62rem', color: '#b91c1c' }}>vs. {formatCurrency(dossier.legacyRetirement?.legacyAnnualRunRateModeledUsd || 1450000)} Cost</div>
+                          <div style={{ fontSize: '0.98rem', fontWeight: 800, color: '#334155', fontFamily: 'monospace' }}>
+                            {legacyRunRate > 0 ? `${formatCurrency(legacyRunRate)}/yr` : 'Pending L01'}
+                          </div>
+                          <div style={{ fontSize: '0.62rem', color: '#64748b' }}>
+                            {legacyRunRate > 0 ? 'Verified Legacy Ledger' : 'L01–L03 Gate Active'}
+                          </div>
                         </div>
                         <div style={{ fontWeight: 900, color: '#2563eb', fontSize: '1rem' }}>→</div>
                         <div style={{ background: '#ecfdf5', padding: '8px 10px', borderRadius: '8px', border: '1px solid #6ee7b7' }}>
@@ -5436,7 +5456,7 @@ const GeValueRealizationWorkspace = () => {
                       <div style={{ fontSize: '0.73rem', color: '#7f1d1d', display: 'flex', flexDirection: 'column', gap: '6px' }}>
                         <div>• <strong>Extra HITL Review Burden:</strong> +{fiveCols.col5NegativeEffects?.extraReviewHoursMonthly} hrs/mo</div>
                         <div>• <strong>Primary Blocker (A05):</strong> {String((Array.isArray(dossier.questionResponses?.A05?.value) ? dossier.questionResponses.A05.value[0] : dossier.questionResponses?.A05?.value) || dossier.questionResponses?.P06?.value || 'Enterprise connector ACL opt-in').slice(0, 62)}</div>
-                        <div>• <strong>Legacy Cutover (L02):</strong> {(dossier.legacyRetirement?.legacyToolName || dossier.meta?.legacyPlatformName || 'Legacy AI').slice(0, 38)} parallel run</div>
+                        <div>• <strong>Legacy Cutover (L02):</strong> {(dossier.costLedger?.legacyToolName || dossier.meta?.legacyPlatformName || 'Legacy AI').slice(0, 38)} parallel run</div>
                       </div>
                     </div>
                   </div>
@@ -5585,7 +5605,7 @@ const GeValueRealizationWorkspace = () => {
                     },
                     {
                       title: '2. Legacy AI & Point-Tool Cutover Dependency (L01/L02):',
-                      detail: String(dossier.questionResponses?.L02?.value || `Parallel run with ${dossier.legacyRetirement?.legacyToolName || dossier.meta?.legacyPlatformName || 'Legacy AI'} open while 12-month cost baseline is reconciled.`)
+                      detail: String(dossier.questionResponses?.L02?.value || `Parallel run with ${dossier.costLedger?.legacyToolName || dossier.meta?.legacyPlatformName || 'Legacy AI'} open while 12-month cost baseline is reconciled.`)
                     },
                     {
                       title: '3. Identity, Group & Network Perimeter Readiness (P02/P05):',
@@ -5715,7 +5735,7 @@ const GeValueRealizationWorkspace = () => {
                 : [
                     {
                       num: 'Action 1',
-                      title: `Close Legacy ${dossier.legacyRetirement?.legacyToolName || dossier.meta?.legacyPlatformName || 'AI'} Cost Ledger (L01–L04, F01)`,
+                      title: `Close Legacy ${dossier.costLedger?.legacyToolName || dossier.meta?.legacyPlatformName || 'AI'} Cost Ledger (L01–L04, F01)`,
                       owner: `${dossier.meta?.accountTeam?.customerTechLead || shortCustomerName + ' Lead'} + ${shortCustomerName} Finance`,
                       target: '30 Days',
                       impact: 'Unlocks Col 1 Realized Cash $ & clears Gate 4 (Baseline Reconciliation)'
@@ -5732,7 +5752,7 @@ const GeValueRealizationWorkspace = () => {
                       title: 'Execute Legacy Parallel-Run Cutover & History Export',
                       owner: `${dossier.meta?.accountTeam?.customerTechLead || shortCustomerName + ' Platform Eng'}`,
                       target: '60 Days',
-                      impact: `Allows full retirement of residual ${dossier.legacyRetirement?.legacyToolName || 'legacy'} parallel-run cohorts`
+                      impact: `Allows full retirement of residual ${dossier.costLedger?.legacyToolName || 'legacy'} parallel-run cohorts`
                     },
                     {
                       num: 'Action 4',

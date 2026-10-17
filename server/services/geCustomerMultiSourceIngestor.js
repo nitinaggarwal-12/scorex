@@ -2524,7 +2524,7 @@ function buildGroundedCitationsForQuestion(q, account, primarySource, linkedItem
         title: `${custName} — Gemini Enterprise Financial Ledger & Cost Model`,
         uri: `https://docs.google.com/spreadsheets/u/0/?q=${encodeURIComponent(custName + ' Financial Model')}`,
         locator: `Tab "Cost_Bridge" • Rows 14–38`,
-        snippet: `Modeled legacy baseline (${legacyName}) run-rate vs Gemini recurring cost; hourly loaded rate ($125-$165/hr).`,
+        snippet: `Modeled legacy baseline (${legacyName}) run-rate vs Gemini recurring cost; hourly loaded rate ($95-$145/hr, $120/hr blended).`,
         verbatimQuote: `Financial model tab Cost_Bridge: loaded rate baseline cross-referenced against ${account.industry} benchmarks`,
         confidencePct: 82,
         whySelected: `Financial model and loaded rate card referenced from Google Sheets.`
@@ -3285,9 +3285,9 @@ function buildCustomerQuestionResponses(account, deepProfile, workflows, windowI
       ]
     },
     F01: {
-      val: `Blended Loaded Rate: $115/hr (${custName} Operations & Engineering) • Cash Realization: 0% (Pending Finance Sign-Off) • Capacity Factor: 65%`,
+      val: `Blended Loaded Rate: $120/hr (${custName} Operations & Engineering) • Cash Realization: 0% (Pending Finance Sign-Off) • Capacity Factor: 65%`,
       opts: [
-        `Blended Loaded Rate: $115/hr (${custName} Operations & Engineering) • Cash Realization: 0% (Pending Finance Sign-Off) • Capacity Factor: 65%`,
+        `Blended Loaded Rate: $120/hr (${custName} Operations & Engineering) • Cash Realization: 0% (Pending Finance Sign-Off) • Capacity Factor: 65%`,
         `${custName} Finance Controller Signed-Off Rate Card & Cash Realization Factor (>0%)`,
         'Unmonetized Hours Only (No Loaded Hourly Rate Applied)'
       ]

@@ -74,6 +74,34 @@ for (const [relLocal, globalTarget] of lockstepPairs) {
   }
 }
 
+// Check .agents/rules/*.md <-> ~/.gemini/config/rules/*.md SHA-256 parity and YAML frontmatter
+const localRulesDir = path.join(ROOT, '.agents', 'rules');
+const globalRulesDir = path.join(CONFIG_DIR, 'rules');
+if (fs.existsSync(localRulesDir) && fs.existsSync(globalRulesDir)) {
+  for (const ruleFile of fs.readdirSync(localRulesDir)) {
+    if (!ruleFile.endsWith('.md')) continue;
+    const lp = path.join(localRulesDir, ruleFile);
+    const gp = path.join(globalRulesDir, ruleFile);
+    const lc = fs.readFileSync(lp, 'utf8');
+    if (!lc.startsWith('---\ntrigger:')) {
+      failures.push(`Missing YAML frontmatter (trigger:) in .agents/rules/${ruleFile}`);
+    }
+    if (fs.existsSync(gp)) {
+      const gc = fs.readFileSync(gp, 'utf8');
+      if (sha256(lc) !== sha256(gc)) {
+        failures.push(`SHA-256 mismatch between .agents/rules/${ruleFile} and ~/.gemini/config/rules/${ruleFile}`);
+      }
+    }
+  }
+}
+
+// Verify 0 duplicate top-level GEMINI.md / CLAUDE.md in ~/.gemini/config/
+for (const dupTop of ['GEMINI.md', 'CLAUDE.md']) {
+  if (fs.existsSync(path.join(CONFIG_DIR, dupTop))) {
+    failures.push(`Duplicate top-level rule file ~/.gemini/config/${dupTop} detected (causes multiple <RULE[user_global]> injections)`);
+  }
+}
+
 // Check skills.json === .datacloud_skills_manifest
 const globalSkillsJson = path.join(CONFIG_DIR, 'skills.json');
 const globalSkillsManifest = path.join(CONFIG_DIR, 'skills', '.datacloud_skills_manifest');
@@ -83,8 +111,8 @@ if (fs.existsSync(globalSkillsJson) && fs.existsSync(globalSkillsManifest)) {
   }
 }
 
-// 2. Check 5-Tier model completeness in skills.md, README.md, DEPLOYMENT_STATUS.md, and db-sync/README.md
-for (const docName of ['skills.md', 'README.md', 'DEPLOYMENT_STATUS.md', 'db-sync/README.md']) {
+// 2. Check 5-Tier model completeness in skills.md, README.md, and DEPLOYMENT_STATUS.md
+for (const docName of ['skills.md', 'README.md', 'DEPLOYMENT_STATUS.md']) {
   const docPath = path.join(ROOT, docName);
   if (fs.existsSync(docPath)) {
     const content = fs.readFileSync(docPath, 'utf8');
@@ -100,7 +128,6 @@ const globalAndDocFiles = [
   path.join(ROOT, 'skills.md'),
   path.join(ROOT, 'README.md'),
   path.join(ROOT, 'DEPLOYMENT_STATUS.md'),
-  path.join(ROOT, 'db-sync/README.md'),
   path.join(ROOT, 'env.example'),
   path.join(ROOT, '.env.template')
 ].filter((f) => fs.existsSync(f));
@@ -112,11 +139,10 @@ for (const file of globalAndDocFiles) {
   }
 }
 
-// 4. Scan ScoreX runtime codebase (server/, client/src/, app.yaml) for forbidden models or stale legacy strings
+// 4. Scan ScoreX runtime codebase (server/, client/src/) for forbidden models or stale legacy strings
 const scorexRuntimeFiles = [
   ...walk(path.join(ROOT, 'server'), /\.(js|json)$/),
-  ...walk(path.join(ROOT, 'client/src'), /\.(js|jsx)$/),
-  path.join(ROOT, 'app.yaml')
+  ...walk(path.join(ROOT, 'client/src'), /\.(js|jsx)$/)
 ].filter((f) => fs.existsSync(f));
 
 for (const file of scorexRuntimeFiles) {

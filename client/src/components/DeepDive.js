@@ -2476,8 +2476,8 @@ Accelerate your journey toward platform maturity through actionable best practic
       maturityLevel: 4, // Optimize/Transform
       maturityDescriptions: {
         explore: 'Isolated sandboxes; minimal governance.',
-        experiment: 'IaC introduced; early DLT or MLflow pilots.',
-        formalize: 'Stable CI/CD pipelines; partial Unity Catalog.',
+        experiment: 'IaC introduced; early declarative pipeline or MLflow pilots.',
+        formalize: 'Stable CI/CD pipelines; partial centralized catalog governance.',
         optimize: 'Automated provisioning, lineage tracking.',
         transform: 'Policy-as-code; self-service Lakehouse platform.'
       },
@@ -2667,13 +2667,13 @@ Accelerate your journey toward platform maturity through actionable best practic
         },
         {
           stage: '4. Optimize',
-          description: 'DBSQL Serverless and AI BI (Genie) enable natural-language analytics. Predictive insights embedded into workflows.',
-          tools: 'AI BI Genie, Predictive Analytics Accelerator'
+          description: 'BigQuery Serverless SQL and Conversational BI enable natural-language analytics. Predictive insights embedded into workflows.',
+          tools: 'Conversational BI Studio, Predictive Analytics Accelerator'
         },
         {
           stage: '5. Transform',
           description: 'Analytics operates as conversational, AI-native experience. Self-service insights democratized across all personas with zero learning curve.',
-          tools: 'Genie Spaces, Compound AI System, Auto-Insights Framework'
+          tools: 'Conversational Analytics Spaces, Compound AI System, Auto-Insights Framework'
         }
       ]
     },
@@ -2718,7 +2718,7 @@ Accelerate your journey toward platform maturity through actionable best practic
       levels: [
         {
           stage: '1. Explore',
-          description: 'Teams test OpenAI endpoints without governance. Define use-case categories and establish standards.',
+          description: 'Teams test LLM endpoints without governance. Define use-case categories and establish standards.',
           tools: 'GenAI Ideation Canvas, Prompt Engineering Guide'
         },
         {
@@ -2801,7 +2801,7 @@ Accelerate your journey toward platform maturity through actionable best practic
           levels: [
             'Minimal identity integration; credentials managed manually.',
             'Some SSO setup; limited access segmentation.',
-            'Unity Catalog or SCIM integrated; basic role-based model.',
+            'Dataplex Universal Catalog or SCIM integrated; basic role-based model.',
             'Fine-grained ABAC and table ACLs; access managed centrally.',
             'Enterprise-wide zero-trust model, federated IDP, cross-workspace governance.'
           ]
@@ -2811,7 +2811,7 @@ Accelerate your journey toward platform maturity through actionable best practic
           levels: [
             'No cataloging or lineage; ad-hoc data ownership.',
             'Manual tagging of assets; limited data stewardship.',
-            'Unity Catalog used for governed access and auditing.',
+            'Dataplex Universal Catalog used for governed access and auditing.',
             'Data lineage & classification automated; compliance reports generated.',
             'Policy-as-code and regulatory alignment (HIPAA, HITRUST, GDPR) continuously enforced.'
           ]
@@ -2821,7 +2821,7 @@ Accelerate your journey toward platform maturity through actionable best practic
           levels: [
             'Manual job checks; no proactive monitoring.',
             'Basic dashboards for cluster utilization and costs.',
-            'Centralized monitoring via Lakehouse Monitoring or MLflow tracking.',
+            'Centralized monitoring via Cloud Monitoring or MLflow tracking.',
             'Alerting, anomaly detection, and audit dashboards established.',
             'Predictive monitoring; auto-remediation and FinOps optimization integrated.'
           ]
@@ -2848,20 +2848,20 @@ Accelerate your journey toward platform maturity through actionable best practic
           name: 'Ingestion Strategy',
           levels: [
             'Manual file uploads; no pipelines.',
-            'Initial DLT or Spark ingestion jobs built.',
+            'Initial Dataform or Spark ingestion jobs built.',
             'Batch ingestion standardized; CDC evaluated.',
-            'LakeFlow Connect / Auto Loader pipelines operationalized.',
+            'Datastream CDC / Cloud Storage auto-ingestion pipelines operationalized.',
             'Event-driven, declarative ingestion with quality SLAs and lineage tracking.'
           ]
         },
         {
           name: 'Lakehouse Architecture',
           levels: [
-            'Traditional staging/curated zones without Delta format.',
-            'Partial adoption of Delta tables.',
-            'Delta Lake adopted; schema enforcement in place.',
-            'Multi-hop Delta pipelines standardized.',
-            'Delta Universal Format across clouds; unified batch + streaming.'
+            'Traditional staging/curated zones without open table format.',
+            'Partial adoption of Iceberg / Delta open tables.',
+            'Open Lakehouse tables adopted; schema enforcement in place.',
+            'Multi-hop medallion pipelines standardized.',
+            'Universal open table format across clouds; unified batch + streaming.'
           ]
         },
         {
@@ -2870,7 +2870,7 @@ Accelerate your journey toward platform maturity through actionable best practic
             'Manual scheduling.',
             'Use of notebooks or cron-based triggers.',
             'Workflows adopted; dependencies defined.',
-            'DLT pipelines or Job Workflows modularized.',
+            'Declarative Dataform pipelines or Cloud Composer workflows modularized.',
             'Fully declarative orchestration with GitOps integration.'
           ]
         },
@@ -2880,7 +2880,7 @@ Accelerate your journey toward platform maturity through actionable best practic
             'Quality handled manually.',
             'Basic checks via SQL queries.',
             'Expectations defined within pipelines.',
-            'Data quality rules embedded in DLT expectations.',
+            'Data quality rules embedded in declarative pipeline assertions.',
             'Centralized quality registry with continuous validation and auto-healing.'
           ]
         },
@@ -2889,7 +2889,7 @@ Accelerate your journey toward platform maturity through actionable best practic
           levels: [
             'Manual tuning; performance bottlenecks common.',
             'Initial optimization of cluster configs.',
-            'Delta optimization and Z-ordering practices established.',
+            'Table partitioning and clustering practices established.',
             'Serverless compute adoption for elasticity.',
             'Adaptive performance tuning using AI-driven optimization.'
           ]
@@ -2906,9 +2906,9 @@ Accelerate your journey toward platform maturity through actionable best practic
           name: 'Query Performance',
           levels: [
             'Reports slow and inconsistent.',
-            'Some caching and Z-ordering.',
+            'Some caching and partitioning.',
             'Query optimization and caching policies established.',
-            'DBSQL Serverless adopted for BI workloads.',
+            'BigQuery Serverless SQL & BI Engine adopted for BI workloads.',
             'Predictive query optimization across semantic layers.'
           ]
         },
@@ -2917,18 +2917,18 @@ Accelerate your journey toward platform maturity through actionable best practic
           levels: [
             'Flat tables; no standard semantic model.',
             'Ad-hoc star schemas built.',
-            'Business layer modeled in Delta Live Tables.',
-            'Reusable models deployed in Unity Catalog.',
-            'Enterprise-wide semantic layer (AI/BI Genie) unified across org.'
+            'Business layer modeled in declarative Dataform pipelines.',
+            'Reusable models deployed in Dataplex Universal Catalog.',
+            'Enterprise-wide semantic layer (Looker / Conversational BI) unified across org.'
           ]
         },
         {
           name: 'Visualization & Reporting',
           levels: [
             'Isolated dashboards.',
-            'Experimentation with DBSQL or Power BI connectors.',
-            'Standardized BI dashboards in DBSQL.',
-            'AI-powered insights via Genie and SQL Functions.',
+            'Experimentation with Looker Studio or Power BI connectors.',
+            'Standardized BI dashboards in Looker & BigQuery.',
+            'AI-powered insights via Conversational Analytics and SQL AI Functions.',
             'Self-service AI BI embedded across business workflows.'
           ]
         },
@@ -2947,8 +2947,8 @@ Accelerate your journey toward platform maturity through actionable best practic
           levels: [
             'Static exports.',
             'BI tools connected via ODBC/JDBC.',
-            'Unity Catalog Shares for internal use.',
-            'Delta Sharing adopted for partners.',
+            'Governed Catalog Data Exchanges for internal use.',
+            'Analytics Hub clean rooms & zero-copy sharing adopted for partners.',
             'Cross-organization sharing automated with audit trails.'
           ]
         }

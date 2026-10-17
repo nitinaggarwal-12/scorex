@@ -629,7 +629,7 @@ const getSampleRisks = () => {
       financialImpact: '$500K-$2M/yr',
       description: 'Unreliable data pipelines cause delays, data quality issues, and business disruptions.',
       mitigation: [
-        'Implement Delta Live Tables for reliability',
+        'Implement declarative Dataform & Datastream CDC pipelines for reliability',
         'Add automated testing and monitoring',
         'Enable data quality checks',
         'Set up alerting and notifications'
@@ -661,7 +661,7 @@ const getSampleRisks = () => {
       financialImpact: '$1M-$5M opportunity cost',
       description: 'Slow GenAI adoption puts organization behind competitors in innovation and efficiency.',
       mitigation: [
-        'Deploy Mosaic AI Agent Framework',
+        'Deploy Vertex AI Agent Engine & Gemini Enterprise',
         'Implement Vector Search for RAG',
         'Train teams on Foundation Model APIs',
         'Start with high-impact use cases'
@@ -677,7 +677,7 @@ const getSampleRisks = () => {
       financialImpact: '$200K-$500K/yr',
       description: 'Manual ML deployment processes slow time-to-production and reduce model ROI.',
       mitigation: [
-        'Deploy Mosaic AI Model Serving',
+        'Deploy Vertex AI Model Registry & Prediction Endpoints',
         'Implement MLOps best practices',
         'Automate model monitoring and retraining',
         'Establish model governance framework'
@@ -781,9 +781,9 @@ const getRisks = (results) => {
           financialImpact: '$500K-$1M/yr',
           description: 'Manual data pipelines and slow ingestion processes delay business insights and decision-making.',
           mitigation: [
-            'Implement Lakeflow Connect for automated ingestion',
-            'Deploy Delta Live Tables for pipeline orchestration',
-            'Optimize data processing with Photon engine',
+            'Implement Datastream & Pub/Sub for automated ingestion',
+            'Deploy Dataform & Cloud Composer for pipeline orchestration',
+            'Optimize data processing with BigQuery BI Engine',
             'Establish SLAs for data freshness'
           ],
           timeline: '6-8 weeks',
@@ -800,7 +800,7 @@ const getRisks = (results) => {
           financialImpact: '$1M-$3M/yr',
           description: 'Competitors are leveraging GenAI for competitive advantage while your organization falls behind.',
           mitigation: [
-            'Launch Mosaic AI Agent Framework pilot',
+            'Launch Vertex AI Agent Engine & Gemini Enterprise pilot',
             'Deploy Vector Search for RAG applications',
             'Establish GenAI governance and ethics policies',
             'Train teams on GenAI best practices'
@@ -822,7 +822,7 @@ const getRisks = (results) => {
           financialImpact: '$200K-$500K/yr',
           description: 'Manual ML deployment processes slow time-to-production and reduce model ROI.',
           mitigation: [
-            'Deploy Mosaic AI Model Serving',
+            'Deploy Vertex AI Model Registry & Prediction Endpoints',
             'Implement MLOps best practices',
             'Automate model monitoring and retraining',
             'Establish model governance framework'

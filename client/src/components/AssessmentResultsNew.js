@@ -3260,7 +3260,7 @@ const AssessmentResultsNew = () => {
         title: 'Phase 1: Foundation (0–3 months)',
         ...phaseColors.phase1,
         items: customizations.phases.phase1 || [
-          'Implement Unity Catalog with initial RBAC roles',
+          'Implement Dataplex Universal Catalog with initial RBAC/ABAC roles',
           'Establish data quality monitoring and observability',
           'Launch initial governance enablement sessions'
         ]
@@ -3270,7 +3270,7 @@ const AssessmentResultsNew = () => {
         title: 'Phase 2: Scale (3–6 months)',
         ...phaseColors.phase2,
         items: customizations.phases.phase2 || [
-          'Automate pipeline reliability tracking via DLT',
+          'Automate pipeline reliability tracking via Dataform & Datastream',
           'Integrate ML flow metrics with centralized dashboards',
           'Deploy first GenAI-enabled use case under governance'
         ]
@@ -3282,7 +3282,7 @@ const AssessmentResultsNew = () => {
         items: customizations.phases.phase3 || [
           'Formalize MLOps CI/CD for model deployment',
           'Expand GenAI use cases with RAG implementation',
-          'Align data mesh principles with Unity Catalog'
+          'Align data mesh principles with Dataplex Universal Catalog'
         ]
       }
     ];
@@ -5460,7 +5460,7 @@ const AssessmentResultsNew = () => {
                                   ...editedContent,
                                   [`new-feature-${pillar.id}-name`]: e.target.value
                                 })}
-                                placeholder="Feature name (e.g., Unity Catalog)"
+                                placeholder="Feature name (e.g., Dataplex Universal Catalog)"
                                 style={{
                                   fontWeight: 700,
                                   fontSize: '0.95rem',

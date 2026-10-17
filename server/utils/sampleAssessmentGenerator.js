@@ -73,7 +73,7 @@ class SampleAssessmentGenerator {
     this.assessmentDescriptions = [
       'Q4 2025 data platform maturity assessment for board presentation',
       'Cloud migration readiness evaluation - Phase 2',
-      'Annual Databricks optimization and cost analysis review',
+      'Annual Enterprise Data & AI platform optimization and cost analysis review',
       'Post-merger data integration capability assessment',
       'GenAI readiness and ML platform evaluation',
       'Regulatory compliance and data governance audit',

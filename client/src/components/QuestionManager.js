@@ -442,7 +442,7 @@ const SAMPLE_QUESTIONS = {
       category: 'Streaming Data',
       maturity_level_1: 'Batch processing only with significant delays',
       maturity_level_2: 'Basic streaming for specific use cases',
-      maturity_level_3: 'Standardized streaming architecture with Delta Live Tables',
+      maturity_level_3: 'Standardized streaming architecture with declarative Dataflow & Pub/Sub pipelines',
       maturity_level_4: 'Advanced stream processing with exactly-once semantics',
       maturity_level_5: 'Unified batch and streaming with auto-scaling'
     }

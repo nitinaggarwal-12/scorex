@@ -433,26 +433,26 @@ function getSuggestedFollowUpQuestions(messageLower, pageType, hasAssessmentData
     console.log('[Questions] Returning', selected.length, 'questions:', selected);
     return selected.slice(0, 4);
   };
-  // Specific Databricks features mentioned
-  if (messageLower.includes('delta lake')) {
+  // Specific Enterprise Data & AI features mentioned
+  if (messageLower.includes('open lakehouse') || messageLower.includes('biglake') || messageLower.includes('iceberg')) {
     return [
-      "How does time travel work in Delta Lake?",
+      "How does time travel work in Open Lakehouse tables?",
       "What are ACID transactions?",
-      "How do I implement Delta Lake?",
-      "Tell me about Unity Catalog"
+      "How do I implement BigLake & Apache Iceberg?",
+      "Tell me about Dataplex Universal Catalog"
     ];
   }
   
-  if (messageLower.includes('unity catalog')) {
+  if (messageLower.includes('dataplex') || messageLower.includes('catalog')) {
     return [
       "How does data lineage work?",
       "What are fine-grained permissions?",
-      "How do I set up Unity Catalog?",
-      "Tell me about Delta Lake"
+      "How do I set up Dataplex Universal Catalog?",
+      "Tell me about BigLake & Open Lakehouse"
     ];
   }
   
-  if (messageLower.includes('mlflow')) {
+  if (messageLower.includes('vertex') || messageLower.includes('mlflow')) {
     return [
       "How do I track experiments?",
       "What is the Model Registry?",
@@ -461,21 +461,21 @@ function getSuggestedFollowUpQuestions(messageLower, pageType, hasAssessmentData
     ];
   }
   
-  if (messageLower.includes('delta live tables') || messageLower.includes('dlt')) {
+  if (messageLower.includes('dataform') || messageLower.includes('datastream')) {
     return [
-      "How do I build DLT pipelines?",
-      "What are data quality expectations?",
+      "How do I build declarative pipelines?",
+      "What are data quality assertions?",
       "How does auto-scaling work?",
-      "Tell me about Auto Loader"
+      "Tell me about CDC streaming ingestion"
     ];
   }
   
-  if (messageLower.includes('photon')) {
+  if (messageLower.includes('bi engine') || messageLower.includes('bigquery')) {
     return [
-      "How much faster is Photon?",
-      "Does it work with my existing code?",
+      "How much faster is BigQuery BI Engine?",
+      "Does it work with my existing SQL queries?",
       "What workloads benefit most?",
-      "How do I enable Photon?"
+      "How do I enable BI Engine acceleration?"
     ];
   }
   
@@ -484,11 +484,11 @@ function getSuggestedFollowUpQuestions(messageLower, pageType, hasAssessmentData
       "How do I deploy a model?",
       "What about real-time inference?",
       "How does auto-scaling work?",
-      "Tell me about MLflow"
+      "Tell me about Vertex AI Model Registry"
     ];
   }
   
-  if (messageLower.includes('ai gateway')) {
+  if (messageLower.includes('ai gateway') || messageLower.includes('agent engine')) {
     return [
       "How do I access different LLMs?",
       "What security features are included?",
@@ -500,7 +500,7 @@ function getSuggestedFollowUpQuestions(messageLower, pageType, hasAssessmentData
   // Specific pillars mentioned
   if (messageLower.includes('platform') && messageLower.includes('governance')) {
     return [
-      "Tell me about Unity Catalog",
+      "Tell me about Dataplex Universal Catalog",
       "How do I implement access controls?",
       "What about data lineage?",
       "Tell me about Data Engineering"
@@ -509,8 +509,8 @@ function getSuggestedFollowUpQuestions(messageLower, pageType, hasAssessmentData
   
   if (messageLower.includes('data engineering')) {
     return [
-      "Tell me about Delta Lake",
-      "What is Delta Live Tables?",
+      "Tell me about Open Lakehouse & BigLake",
+      "What is Dataform & Datastream CDC?",
       "How do I ensure data quality?",
       "Tell me about Analytics & BI"
     ];
@@ -518,16 +518,16 @@ function getSuggestedFollowUpQuestions(messageLower, pageType, hasAssessmentData
   
   if (messageLower.includes('analytics') || messageLower.includes('bi')) {
     return [
-      "What is Photon?",
+      "What is BigQuery BI Engine?",
       "How do I create dashboards?",
-      "Can I connect to Power BI?",
+      "Can I connect to Looker & Power BI?",
       "Tell me about Machine Learning"
     ];
   }
   
   if (messageLower.includes('machine learning') || messageLower.includes('mlops')) {
     return [
-      "Tell me about MLflow",
+      "Tell me about Vertex AI Model Registry",
       "What is Model Serving?",
       "How do I track experiments?",
       "Tell me about Generative AI"
@@ -566,7 +566,7 @@ function getSuggestedFollowUpQuestions(messageLower, pageType, hasAssessmentData
     return getRotatedQuestions(
       ["Tell me about Platform Governance", "Tell me about Data Engineering", "Tell me about Machine Learning", "What are maturity levels?"],
       ["Tell me about Analytics & BI", "Tell me about Generative AI", "Tell me about Operational Excellence", "How are pillars scored?"],
-      ["What is Delta Lake?", "What is Unity Catalog?", "How do I rate maturity?", "How long does it take?"]
+      ["What is Open Lakehouse?", "What is Dataplex Universal Catalog?", "How do I rate maturity?", "How long does it take?"]
     );
   }
   
@@ -830,15 +830,15 @@ function extractEntities(message) {
   if (lower.match(/\b(generative ai|gen ai|genai|llm|ai)\b/)) entities.pillars.push('generative_ai');
   if (lower.match(/\b(operational excellence|operations|monitoring|optimization)\b/)) entities.pillars.push('operational_excellence');
   
-  // Databricks Features
-  if (lower.match(/\b(delta lake|delta)\b/)) entities.features.push('delta_lake');
-  if (lower.match(/\b(unity catalog|catalog)\b/)) entities.features.push('unity_catalog');
-  if (lower.match(/\b(mlflow)\b/)) entities.features.push('mlflow');
-  if (lower.match(/\b(delta live tables|dlt)\b/)) entities.features.push('delta_live_tables');
-  if (lower.match(/\b(photon)\b/)) entities.features.push('photon');
+  // Platform Features
+  if (lower.match(/\b(biglake|open lakehouse|iceberg|delta)\b/)) entities.features.push('delta_lake');
+  if (lower.match(/\b(dataplex|universal catalog|catalog)\b/)) entities.features.push('unity_catalog');
+  if (lower.match(/\b(vertex|mlflow)\b/)) entities.features.push('mlflow');
+  if (lower.match(/\b(dataform|declarative pipelines)\b/)) entities.features.push('delta_live_tables');
+  if (lower.match(/\b(bi engine|bigquery)\b/)) entities.features.push('photon');
   if (lower.match(/\b(model serving|serving)\b/)) entities.features.push('model_serving');
   if (lower.match(/\b(ai gateway|gateway)\b/)) entities.features.push('ai_gateway');
-  if (lower.match(/\b(auto loader|autoloader)\b/)) entities.features.push('auto_loader');
+  if (lower.match(/\b(datastream|auto loader|autoloader)\b/)) entities.features.push('auto_loader');
   
   // Actions
   if (lower.match(/\b(start|begin|create|new)\b/)) entities.actions.push('start');
@@ -919,12 +919,12 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
   
   // ===== INTELLIGENT ENTITY-BASED RESPONSES =====
   
-  // Handle specific Databricks feature questions
+  // Handle specific Enterprise Data & AI feature questions
   if (entities.features.length > 0) {
     const featureDetails = {
       delta_lake: {
-        name: "Delta Lake",
-        description: "**Delta Lake** is an open-source storage framework that brings ACID transactions to data lakes.",
+        name: "BigLake & Open Lakehouse (Iceberg)",
+        description: "**BigLake & Open Lakehouse** brings ACID transactions and unified storage governance across cloud data lakes.",
         keyFeatures: [
           "**ACID Transactions** - Ensures data reliability and consistency",
           "**Time Travel** - Query historical versions of your data",
@@ -936,94 +936,94 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
         pillar: "Data Engineering"
       },
       unity_catalog: {
-        name: "Unity Catalog",
-        description: "**Unity Catalog** provides unified governance for all your data and AI assets across clouds.",
+        name: "Dataplex Universal Catalog",
+        description: "**Dataplex Universal Catalog** provides unified governance for all your data and AI assets across clouds.",
         keyFeatures: [
           "**Centralized Governance** - Single place to manage all data assets",
           "**Fine-Grained Access Control** - Row/column level security",
           "**Data Lineage** - Track data flow end-to-end",
           "**Audit Logging** - Complete visibility into data access",
-          "**Cross-Cloud** - Works across AWS, Azure, and GCP"
+          "**Cross-Cloud** - Works across multi-cloud and hybrid environments"
         ],
         useCase: "Essential for enterprise data governance and compliance.",
         pillar: "Platform & Governance"
       },
       mlflow: {
-        name: "MLflow",
-        description: "**MLflow** is an open-source platform for managing the complete ML lifecycle.",
+        name: "Vertex AI Model Registry & MLOps",
+        description: "**Vertex AI MLOps** is an enterprise platform for managing the complete ML lifecycle.",
         keyFeatures: [
           "**Experiment Tracking** - Log parameters, metrics, and artifacts",
           "**Model Registry** - Version and manage ML models",
           "**Model Deployment** - Deploy models to production",
-          "**Project Packaging** - Reproducible ML workflows",
-          "**Integration** - Works with any ML library"
+          "**Pipeline Packaging** - Reproducible ML workflows",
+          "**Integration** - Works with any open-source ML library"
         ],
         useCase: "Critical for MLOps and managing ML model lifecycle.",
         pillar: "Machine Learning"
       },
       delta_live_tables: {
-        name: "Delta Live Tables (DLT)",
-        description: "**Delta Live Tables** is a declarative framework for building reliable data pipelines.",
+        name: "Dataform & Declarative Pipelines",
+        description: "**Dataform** is a declarative framework for building reliable, version-controlled SQL and data pipelines.",
         keyFeatures: [
           "**Declarative Pipelines** - Define what you want, not how to build it",
-          "**Auto-Scaling** - Automatically scales compute resources",
-          "**Data Quality** - Built-in expectations and monitoring",
-          "**Dependency Management** - Automatic pipeline orchestration",
-          "**Continuous Processing** - Real-time and batch in one framework"
+          "**Auto-Scaling** - Automatically scales serverless compute resources",
+          "**Data Quality** - Built-in assertions and monitoring",
+          "**Dependency Management** - Automatic DAG pipeline orchestration",
+          "**Continuous Processing** - Real-time and batch in one architecture"
         ],
         useCase: "Simplifies building production-grade data pipelines.",
         pillar: "Data Engineering"
       },
       photon: {
-        name: "Photon",
-        description: "**Photon** is a high-performance query engine that accelerates Spark workloads.",
+        name: "BigQuery BI Engine",
+        description: "**BigQuery BI Engine** is a fast, in-memory analysis service that accelerates SQL and BI workloads.",
         keyFeatures: [
-          "**3-5x Faster** - Significantly faster than standard Spark",
-          "**Lower Cost** - Better price/performance ratio",
-          "**Vectorized Processing** - Modern CPU optimization",
-          "**Compatible** - Works with existing Spark code",
-          "**Automatic** - No code changes required"
+          "**Sub-Second Queries** - Significantly faster interactive analytics",
+          "**Lower Cost** - Better price/performance ratio via slot autoscaling",
+          "**Vectorized Processing** - Modern in-memory CPU optimization",
+          "**Compatible** - Works with existing SQL and Looker/BI tools",
+          "**Automatic** - No query rewrites required"
         ],
-        useCase: "Accelerates analytics, ETL, and data science workloads.",
+        useCase: "Accelerates analytics, reporting, and executive dashboard workloads.",
         pillar: "Data Engineering & Analytics"
       },
       model_serving: {
-        name: "Model Serving",
-        description: "**Model Serving** provides scalable, low-latency serving of ML models.",
+        name: "Vertex AI Prediction Endpoints",
+        description: "**Vertex AI Prediction** provides scalable, low-latency serving of ML and foundation models.",
         keyFeatures: [
           "**Real-Time Inference** - Low-latency predictions",
           "**Auto-Scaling** - Scales based on demand",
           "**Multi-Model** - Serve multiple models simultaneously",
-          "**Monitoring** - Built-in performance tracking",
+          "**Monitoring** - Built-in drift and performance tracking",
           "**Easy Deployment** - One-click model deployment"
         ],
         useCase: "Deploy ML models to production with enterprise-grade reliability.",
         pillar: "Machine Learning"
       },
       ai_gateway: {
-        name: "AI Gateway",
+        name: "AI Gateway & Model Armor",
         description: "**AI Gateway** provides secure, governed access to LLMs and GenAI applications.",
         keyFeatures: [
-          "**Unified Interface** - Access multiple LLM providers",
-          "**Security** - PII detection and redaction",
-          "**Cost Control** - Rate limiting and usage tracking",
-          "**Monitoring** - Track quality and performance",
+          "**Unified Interface** - Access multiple foundation models",
+          "**Security** - PII detection, prompt injection defense, and redaction",
+          "**Cost Control** - Rate limiting and token usage tracking",
+          "**Monitoring** - Track quality and latency performance",
           "**Governance** - Centralized policy enforcement"
         ],
         useCase: "Build secure, enterprise-grade GenAI applications.",
         pillar: "Generative AI"
       },
       auto_loader: {
-        name: "Auto Loader",
-        description: "**Auto Loader** incrementally and efficiently processes new data files as they arrive.",
+        name: "Datastream & Event-Driven Ingestion",
+        description: "**Datastream** incrementally and efficiently processes change data capture (CDC) and new files as they arrive.",
         keyFeatures: [
-          "**Incremental Processing** - Only processes new files",
-          "**Schema Inference** - Automatically detects schema",
-          "**Scalable** - Handles millions of files",
+          "**Incremental Processing** - Only processes new changes",
+          "**Schema Inference** - Automatically detects schema drift",
+          "**Scalable** - Handles millions of events",
           "**Fault Tolerant** - Exactly-once processing guarantees",
-          "**Cloud Native** - Works with S3, ADLS, GCS"
+          "**Cloud Native** - Works across databases and cloud storage"
         ],
-        useCase: "Efficiently ingest streaming data from cloud storage.",
+        useCase: "Efficiently ingest streaming data from operational sources.",
         pillar: "Data Engineering"
       }
     };
@@ -1050,7 +1050,7 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
         icon: "🏛️",
         description: "Focuses on security, compliance, access control, and unified governance across your data platform.",
         keyAreas: [
-          "**Unity Catalog** - Centralized data governance",
+          "**Dataplex Universal Catalog** - Centralized data governance",
           "**Access Controls** - Fine-grained permissions (row/column level)",
           "**Data Lineage** - Track data flow and transformations",
           "**Audit & Compliance** - Complete audit trails",
@@ -1069,10 +1069,10 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
         icon: "🔷",
         description: "Covers data pipelines, ETL/ELT processes, data quality, and integration patterns.",
         keyAreas: [
-          "**Delta Lake** - Reliable data lake storage",
-          "**Delta Live Tables** - Declarative pipeline framework",
-          "**Auto Loader** - Incremental file ingestion",
-          "**Data Quality** - Expectations and monitoring",
+          "**Open Lakehouse & BigLake** - Reliable data lake storage",
+          "**Dataform Pipelines** - Declarative pipeline framework",
+          "**Datastream CDC** - Incremental streaming ingestion",
+          "**Data Quality** - Assertions and monitoring",
           "**Pipeline Orchestration** - Workflow management"
         ],
         whyMatters: "Foundation for all data initiatives - without reliable data engineering, analytics and ML efforts fail.",
@@ -1088,10 +1088,10 @@ async function generateSmartAIResponse(userMessage, conversationHistory, context
         icon: "📊",
         description: "Encompasses SQL analytics, reporting, dashboards, and business intelligence capabilities.",
         keyAreas: [
-          "**SQL Warehouses** - High-performance SQL engine",
+          "**Serverless SQL Warehouses** - High-performance SQL engine",
           "**Dashboards** - Interactive visualizations",
-          "**Photon Engine** - 3-5x faster queries",
-          "**BI Tool Integration** - Tableau, Power BI, Looker",
+          "**BigQuery BI Engine** - Sub-second accelerated queries",
+          "**BI Tool Integration** - Looker, Tableau, Power BI",
           "**Semantic Layer** - Consistent business metrics"
         ],
         whyMatters: "Enables data-driven decision making across the organization with fast, reliable analytics.",

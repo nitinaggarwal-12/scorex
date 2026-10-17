@@ -85,24 +85,6 @@ CREATE TRIGGER update_users_updated_at
 ALTER TABLE assessments ADD COLUMN IF NOT EXISTS user_id INTEGER REFERENCES users(id);
 CREATE INDEX IF NOT EXISTS idx_assessments_user ON assessments(user_id);
 
--- Create default admin user (password: admin123 - CHANGE THIS!)
--- Password hash for 'admin123' using bcrypt rounds=10
--- Note: The migration will attempt to create this user, but will skip if it already exists
--- Default credentials:
---   Email: admin@databricks.com
---   Password: admin123
--- ⚠️  IMPORTANT: Change this password immediately after first login!
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM users WHERE email = 'admin@databricks.com') THEN
-    INSERT INTO users (email, password_hash, role, first_name, last_name, organization, is_active)
-    VALUES ('admin@databricks.com', '$2b$10$PNrmXZqKMzBc619kNilSIul0xyWSsTOlAIRlg/vU03vT4Q4zYnmEO', 'admin', 'Admin', 'User', 'Databricks', true);
-    RAISE NOTICE 'Default admin user created';
-  ELSE
-    RAISE NOTICE 'Admin user already exists, skipping creation';
-  END IF;
-END$$;
-
 -- Comments for documentation
 COMMENT ON TABLE users IS 'Stores all users with their roles and authentication info';
 COMMENT ON TABLE assessment_assignments IS 'Links assessments to consumers with author tracking';

@@ -1,4 +1,9 @@
-# ScoreX Value Realization, 100% Fluid Edge-to-Edge Layout, 10-Module Tabs, Question Form Ergonomics (`Rule 50G`), Forensic 5-Subsystem Completeness (`Rule 50H`), Consulting Brand Ban & Synchronous 2-Project Cloud Run Deployment Gate (`Rule 50` & `Rule 56` / `L60-01`..`L60-19`)
+---
+trigger: model_decision
+description: Use when modifying, auditing, or deploying ScoreX (/Users/nitinagga/Documents/scorex) to enforce Rule 50 / L60-01..L60-20 100% fluid layout, 82-question 10-module tabs, and 5-subsystem completeness.
+---
+
+# ScoreX Value Realization, 100% Fluid Edge-to-Edge Layout, 10-Module Tabs, Question Form Ergonomics (`Rule 50G`), Forensic 5-Subsystem Completeness (`Rule 50H`–`50I`), Consulting Brand Ban & Synchronous 2-Project Cloud Run Deployment Gate (`Rule 50` & `Rule 56` / `L60-01`..`L60-20`)
 
 Whenever modifying, generating, auditing, or deploying any component of **ScoreX** (`/Users/nitinagga/Documents/scorex`):
 

@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 /**
- * UNIVERSAL SINGLE-SOURCE TRINITY ENFORCER & AUTO-HEALER (v6.2.0)
+ * UNIVERSAL SINGLE-SOURCE TRINITY ENFORCER & AUTO-HEALER (v6.3.0)
  * ===============================================================
  * Enforces 100% single-inode symlink identity across all universal governance pillars:
  *   1. ~/.gemini/config/hooks.json                             (all project/plugin hooks.json -> symlink, including root hooks.json)
  *   2. ~/.gemini/config/skills.md                              (all project skills.md -> symlink)
  *   3. ~/.gemini/config/skills.json                            (all project skills.json + .datacloud_skills_manifest -> symlink, with live 52-skill SHA-256 sync)
- *   4. ~/.gemini/config/AGENTS.md                              (all project AGENTS.md / GEMINI.md / CLAUDE.md -> symlink)
+ *   4. ~/.gemini/config/AGENTS.md                              (all project AGENTS.md / GEMINI.md / CLAUDE.md -> symlink; purges duplicate top-level ~/.gemini/config/{GEMINI,CLAUDE}.md)
  *   5. ~/.gemini/config/plugins/zyvoriq_guard/plugin.json      (workspace plugins/zyvoriq_guard/plugin.json -> symlink)
  *   6. /Users/nitinagga/Documents/zyvoriq/lib/rules_engine.mjs (plugin lib/rules_engine.mjs copies -> symlink)
  *   7. ~/.gemini/config/skills                                 (workspace skills/ & .agents/skills -> directory symlink, safely merging local skills first)
  *
- * Also automatically purges any stale shadow backup or static garbage files
- * (*.shadow_backup, *~origin_main, *.bak*, ZYVORIQ_COMPLETE_CONSOLIDATED_CONFIG.md, ZYVORIQ_MD_AND_HOOKS_FORENSIC_AUDIT.md).
+ * Also automatically purges any stale shadow backup or duplicate top-level rule files
+ * (*.shadow_backup, *~origin_main, *.bak*, ~/.gemini/config/GEMINI.md, ~/.gemini/config/CLAUDE.md, ~/.gemini/AGENTS.md, ~/.gemini/GEMINI.md).
  *
  * USAGE:
  *   node scripts/guards/enforce_universal_single_source_trinity.mjs --auto-heal
@@ -109,16 +109,29 @@ function syncSkillsJsonManifest() {
   } catch {}
 }
 
+function pathOrLinkExists(p) {
+  try {
+    fs.lstatSync(p);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function purgeShadowGarbage() {
   const purged = [];
   const candidateFiles = [
     ...walk(ZYVORIQ_ROOT, (n) => /\.shadow_backup$|~origin_main$|\.bak(\.v\d+)?$/i.test(n)),
     ...walk(path.join(HOME, ".gemini", "config"), (n) => /\.shadow_backup$|~origin_main$|^hooks\.json\.bak/i.test(n)),
+    path.join(HOME, ".gemini", "config", "GEMINI.md"),
+    path.join(HOME, ".gemini", "config", "CLAUDE.md"),
+    path.join(HOME, ".gemini", "AGENTS.md"),
+    path.join(HOME, ".gemini", "GEMINI.md"),
     path.join(ZYVORIQ_ROOT, "ZYVORIQ_COMPLETE_CONSOLIDATED_CONFIG.md"),
     path.join(ZYVORIQ_ROOT, "ZYVORIQ_MD_AND_HOOKS_FORENSIC_AUDIT.md")
   ];
   for (const f of candidateFiles) {
-    if (fs.existsSync(f)) {
+    if (pathOrLinkExists(f)) {
       if (AUTO_HEAL) {
         try {
           fs.rmSync(f, { force: true });
@@ -134,7 +147,7 @@ function purgeShadowGarbage() {
     path.join(ZYVORIQ_ROOT, "scratch", "zyvoriq_config_bundle_staging")
   ];
   for (const d of staleDirs) {
-    if (fs.existsSync(d)) {
+    if (pathOrLinkExists(d)) {
       if (AUTO_HEAL) {
         try {
           fs.rmSync(d, { recursive: true, force: true });
@@ -223,7 +236,6 @@ function enforceDirSymlinks(name, canonicalDir, targetDirs) {
       offenders.push(p);
       continue;
     }
-    // Safely preserve any local skill folders into canonicalDir before replacing directory with symlink
     if (st && !isLink && st.isDirectory()) {
       try {
         for (const sub of fs.readdirSync(p, { withFileTypes: true })) {
@@ -256,6 +268,18 @@ function main() {
   const purgedGarbage = purgeShadowGarbage();
   syncSkillsJsonManifest();
 
+  const docsRoot = path.join(HOME, "Documents");
+  const projectRoots = [];
+  try {
+    for (const d of fs.readdirSync(docsRoot, { withFileTypes: true })) {
+      if (!d.isDirectory() || d.name.startsWith(".") || SKIP_DIRS.has(d.name)) continue;
+      const p = path.join(docsRoot, d.name);
+      if ([".git", "package.json", "pyproject.toml", "requirements.txt", "Dockerfile", "AGENTS.md"].some((f) => fs.existsSync(path.join(p, f)))) {
+        projectRoots.push(p);
+      }
+    }
+  } catch {}
+
   const hooksPaths = [
     path.join(ZYVORIQ_ROOT, "hooks.json"),
     path.join(ZYVORIQ_ROOT, ".agents", "hooks.json"),
@@ -263,6 +287,7 @@ function main() {
     path.join(CUSTOMER_TRACKER_ROOT, "hooks.json"),
     path.join(CUSTOMER_TRACKER_ROOT, ".agents", "hooks.json"),
     path.join(CUSTOMER_TRACKER_ROOT, ".gemini", "hooks.json"),
+    ...projectRoots.flatMap((r) => [path.join(r, "hooks.json"), path.join(r, ".agents", "hooks.json")]),
     ...walk(path.join(HOME, "Documents"), (n, full) => n === "hooks.json" && !EXEMPT_HOOKS.some(rx => rx.test(full))),
     ...walk(path.join(HOME, ".gemini", "config", "plugins"), (n, full) => n === "hooks.json" && !EXEMPT_HOOKS.some(rx => rx.test(full)))
   ];
@@ -271,6 +296,7 @@ function main() {
     path.join(ZYVORIQ_ROOT, "skills.md"),
     path.join(CUSTOMER_TRACKER_ROOT, "skills.md"),
     path.join(CUSTOMER_TRACKER_ROOT, ".agents", "skills.md"),
+    ...projectRoots.map((r) => path.join(r, "skills.md")),
     ...walk(path.join(HOME, "Documents"), (n, full) => n.toLowerCase() === "skills.md" && !EXEMPT_SKILLS.some(rx => rx.test(full)))
   ];
 
@@ -279,6 +305,7 @@ function main() {
     path.join(CUSTOMER_TRACKER_ROOT, "skills.json"),
     path.join(CUSTOMER_TRACKER_ROOT, ".agents", "skills.json"),
     path.join(CANONICAL_SKILLS_DIR, ".datacloud_skills_manifest"),
+    ...projectRoots.map((r) => path.join(r, "skills.json")),
     ...walk(path.join(HOME, "Documents"), (n) => n.toLowerCase() === "skills.json")
   ];
 
@@ -291,8 +318,53 @@ function main() {
     path.join(CUSTOMER_TRACKER_ROOT, "GEMINI.md"),
     path.join(CUSTOMER_TRACKER_ROOT, "CLAUDE.md"),
     path.join(CUSTOMER_TRACKER_ROOT, ".agents", "AGENTS.md"),
+    ...projectRoots.flatMap((r) => [
+      path.join(r, "AGENTS.md"),
+      path.join(r, "GEMINI.md"),
+      path.join(r, "CLAUDE.md"),
+      path.join(r, ".agents", "AGENTS.md")
+    ]),
     ...walk(path.join(HOME, "Documents"), (n) => GOV_NAMES.has(n.toLowerCase()))
   ];
+
+  const canonicalRulesDir = path.join(HOME, ".gemini", "config", "rules");
+  const canonicalHooksMd = path.join(HOME, ".gemini", "config", "hooks.md");
+  if (AUTO_HEAL && fs.existsSync(canonicalRulesDir)) {
+    const ruleFiles = fs.readdirSync(canonicalRulesDir).filter((f) => f.endsWith(".md"));
+    const hooksMdBuf = fs.existsSync(canonicalHooksMd) ? fs.readFileSync(canonicalHooksMd) : null;
+    for (const r of [ZYVORIQ_ROOT, CUSTOMER_TRACKER_ROOT, ...projectRoots]) {
+      if (hooksMdBuf) {
+        const dstHooksMd = path.join(r, "hooks.md");
+        if (fs.existsSync(dstHooksMd)) {
+          try {
+            const curBuf = fs.readFileSync(dstHooksMd);
+            if (!hooksMdBuf.equals(curBuf)) {
+              if (fs.lstatSync(dstHooksMd).isSymbolicLink()) fs.rmSync(dstHooksMd, { force: true });
+              fs.writeFileSync(dstHooksMd, hooksMdBuf);
+            }
+          } catch {}
+        }
+      }
+      const projRulesDir = path.join(r, ".agents", "rules");
+      if (fs.existsSync(projRulesDir)) {
+        for (const rf of ruleFiles) {
+          const srcRule = path.join(canonicalRulesDir, rf);
+          const dstRule = path.join(projRulesDir, rf);
+          if (r !== ZYVORIQ_ROOT && !fs.existsSync(dstRule)) continue;
+          try {
+            const srcBuf = fs.readFileSync(srcRule);
+            const dstBuf = fs.existsSync(dstRule) ? fs.readFileSync(dstRule) : null;
+            if (!dstBuf || !srcBuf.equals(dstBuf)) {
+              if (fs.existsSync(dstRule) && fs.lstatSync(dstRule).isSymbolicLink()) {
+                fs.rmSync(dstRule, { force: true });
+              }
+              fs.writeFileSync(dstRule, srcBuf);
+            }
+          } catch {}
+        }
+      }
+    }
+  }
 
   const pluginPaths = [
     path.join(ZYVORIQ_ROOT, "plugins", "zyvoriq_guard", "plugin.json")
