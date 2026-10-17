@@ -617,6 +617,18 @@ test('UI Integrity Gate 16: Transitive Dead-Code Purge, Dynamic Exhibit 1B Finan
   assert.ok(!modalSrc.includes('$1.8M - $3.1M'), 'UnifiedDocumentPreviewModal.js must not fall back to hardcoded $1.8M - $3.1M');
   const execDashSrc = readClientFile('components/ExecutiveDashboard.js');
   assert.ok(!execDashSrc.includes('Math.max(totalOpportunity, 500000)'), 'ExecutiveDashboard.js must not enforce an artificial $500K minimum floor on zero-gap assessments');
+
+  // 5. Verify native Jetski Hook Handler (scripts/guards/jetski_hook_handler.mjs) & .agents/rules realpath deduplication
+  const hookHandlerPath = path.join(ROOT, 'scripts/guards/jetski_hook_handler.mjs');
+  assert.ok(fs.existsSync(hookHandlerPath), 'scripts/guards/jetski_hook_handler.mjs must exist to enforce native Jetski PreToolUse/PostToolUse/Stop JSON contracts');
+  const localScorexRule = path.join(ROOT, '.agents/rules/scorex-value-realization-and-fluid-layout-gate.md');
+  if (fs.existsSync(localScorexRule) && fs.existsSync('/Users/nitinagga/.gemini/config/rules/scorex-value-realization-and-fluid-layout-gate.md')) {
+    assert.strictEqual(
+      fs.realpathSync(localScorexRule),
+      fs.realpathSync('/Users/nitinagga/.gemini/config/rules/scorex-value-realization-and-fluid-layout-gate.md'),
+      '.agents/rules/*.md must share identical realpath with ~/.gemini/config/rules/*.md so Jetski deduplicates <RULE> injections'
+    );
+  }
 });
 
 

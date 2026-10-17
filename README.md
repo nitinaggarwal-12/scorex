@@ -82,6 +82,7 @@ Run the automated Harness Engineering Stop Quality Gate, Governance Lockstep Enf
 npm test
 npm run quality-gate
 node scripts/guards/enforce_universal_single_source_trinity.mjs --verify-only
+node scripts/guards/jetski_hook_handler.mjs --self-test
 ```
 
 ---
@@ -89,4 +90,6 @@ node scripts/guards/enforce_universal_single_source_trinity.mjs --verify-only
 ## 🔐 Privacy & Universal Single-Source Governance (`v3.8.0`)
 
 - **100% Fictitious Enterprise Demo Personas**: Seeded portfolios use strictly synthetic benchmark organizations (`ConnectPlus Telecom Global`, `Quantum FinTech Global`, `Nova Retail & E-Commerce Group`, `Apex Global Banking & Wealth`, `Global Logistics Alliance`, `CyberShield Health & Life Sciences`, `AeroVanguard Defense Systems`, `BioNova Therapeutics`, `Vanguard Global Advisory Corp`).
-- **Universal Single-Source Governance Lockstep**: `AGENTS.md`, `GEMINI.md`, `CLAUDE.md`, `.agents/AGENTS.md`, `skills.md`, `.agents/skills.md`, `skills.json`, `.agents/skills.json`, `hooks.json`, and `.agents/hooks.json` are symlinked directly to `/Users/nitinagga/.gemini/config/` with 100% SHA-256 parity.
+- **Universal Single-Source Governance Lockstep & Jetski Realpath Deduplication**: `AGENTS.md`, `GEMINI.md`, `CLAUDE.md`, `.agents/AGENTS.md`, `skills.md`, `.agents/skills.md`, `skills.json`, `.agents/skills.json`, `hooks.json`, `.agents/hooks.json`, and all 15 `.agents/rules/*.md` files are symlinked directly to `/Users/nitinagga/.gemini/config/` with 100% SHA-256 and `realpath` parity (eliminating duplicate `<RULE>` prompt injections).
+- **Native Jetski Customizations (`agent-hooks`, `agent-skills`, `agent-swarm`, `review-agent`)**: Enforces `PreToolUse` (`{"decision": "allow"|"deny"}`), `PostToolUse` (`{}`), and `Stop` (`{"decision": "continue"}` on gate failure) via `scripts/guards/jetski_hook_handler.mjs`, progressive-disclosure skill `scorex-forensic-gate` (`references/rule50_forensic_checklist.md`), and 3-Arm Review Subagent `scorex-forensic-auditor.md`.
+

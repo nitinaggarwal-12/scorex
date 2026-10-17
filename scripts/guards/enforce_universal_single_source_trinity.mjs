@@ -84,33 +84,55 @@ function walk(dir, predicate, out = [], depth = 0) {
 }
 
 function syncRulesAndSkillsAcrossWorkspaces() {
-  // 1. Sync all 15 canonical rule files across ~/.gemini/config/rules/*.md and all workspace .agents/rules/*.md
+  // 1. Sync all canonical rule files across ~/.gemini/config/rules/*.md and symlink workspace .agents/rules/*.md -> canonRule
+  //    so Jetski's realpath deduplicator (SKILL.md:L109) injects each rule 1x instead of 2x into <user_rules>.
   if (fs.existsSync(CANONICAL_RULES_DIR)) {
+    const canonRulesReal = fs.realpathSync(CANONICAL_RULES_DIR);
     const ruleFiles = fs.readdirSync(CANONICAL_RULES_DIR).filter((f) => f.endsWith(".md"));
     for (const rf of ruleFiles) {
       const canonRule = path.join(CANONICAL_RULES_DIR, rf);
-      const targets = [canonRule];
+      const wsTargets = [];
       for (const ws of WORKSPACE_ROOTS) {
         const wsRulesDir = path.join(ws, ".agents", "rules");
-        if (fs.existsSync(wsRulesDir)) {
-          targets.push(path.join(wsRulesDir, rf));
-        }
+        try {
+          if (fs.existsSync(wsRulesDir) && fs.realpathSync(wsRulesDir) !== canonRulesReal) {
+            wsTargets.push(path.join(wsRulesDir, rf));
+          }
+        } catch {}
       }
-      const existingCandidates = targets.filter((p) => {
-        try { return fs.existsSync(p) && fs.statSync(p).isFile() && fs.statSync(p).size > 0; } catch { return false; }
+      const existingCandidates = [canonRule, ...wsTargets].filter((p) => {
+        try {
+          // Only consider non-symlink physical files or valid non-looping files
+          const st = fs.lstatSync(p);
+          if (st.isSymbolicLink()) return false;
+          return st.isFile() && st.size > 0;
+        } catch { return false; }
       });
       if (AUTO_HEAL && existingCandidates.length > 0) {
         existingCandidates.sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs);
-        const sourceRule = existingCandidates[0];
-        const sourceSha = sha256Full(sourceRule);
-        for (const targetRule of targets) {
-          if (path.resolve(targetRule) === path.resolve(sourceRule)) continue;
-          let targetSha = "";
-          try { if (fs.existsSync(targetRule)) targetSha = sha256Full(targetRule); } catch {}
-          if (targetSha !== sourceSha) {
-            try { if (fs.lstatSync(targetRule).isSymbolicLink()) fs.unlinkSync(targetRule); } catch {}
+        const newestRule = existingCandidates[0];
+        const newestContent = fs.readFileSync(newestRule);
+        let canonIsLink = false;
+        try { canonIsLink = fs.lstatSync(canonRule).isSymbolicLink(); } catch {}
+        if (canonIsLink) {
+          fs.unlinkSync(canonRule);
+          fs.writeFileSync(canonRule, newestContent);
+        } else if (!fs.existsSync(canonRule) || sha256Full(canonRule) !== sha256Full(newestRule)) {
+          fs.writeFileSync(canonRule, newestContent);
+        }
+        for (const targetRule of wsTargets) {
+          if (fs.realpathSync(path.dirname(targetRule)) === canonRulesReal) continue;
+          let isCorrectLink = false;
+          try {
+            const st = fs.lstatSync(targetRule);
+            if (st.isSymbolicLink() && path.resolve(path.dirname(targetRule), fs.readlinkSync(targetRule)) === path.resolve(canonRule)) {
+              isCorrectLink = true;
+            }
+          } catch {}
+          if (!isCorrectLink) {
+            try { fs.rmSync(targetRule, { force: true }); } catch {}
             fs.mkdirSync(path.dirname(targetRule), { recursive: true });
-            fs.copyFileSync(sourceRule, targetRule);
+            fs.symlinkSync(canonRule, targetRule);
           }
         }
       }
@@ -165,6 +187,13 @@ function syncRulesAndSkillsAcrossWorkspaces() {
       parsed.version = "3.7.0";
       mutated = true;
     }
+    if (!Array.isArray(parsed.entries) || parsed.entries.length < 2) {
+      parsed.entries = [
+        { path: "~/.gemini/config/skills" },
+        { path: "/Users/nitinagga/Documents/Demoes-GE/enterprise-skills" }
+      ];
+      mutated = true;
+    }
 
     const concatChecksums = [];
     for (const dir of skillEntries) {
@@ -202,6 +231,8 @@ function purgeShadowGarbage() {
     ...walk(path.join(HOME, ".gemini", "config"), (n) => /\.shadow_backup$|~origin_main$|^hooks\.json\.bak/i.test(n)),
     path.join(ZYVORIQ_ROOT, "ZYVORIQ_COMPLETE_CONSOLIDATED_CONFIG.md"),
     path.join(ZYVORIQ_ROOT, "ZYVORIQ_MD_AND_HOOKS_FORENSIC_AUDIT.md"),
+    path.join(ZYVORIQ_ROOT, "public", "assets", "ZYVORIQ_COMPLETE_CONSOLIDATED_CONFIG.md"),
+    path.join(ZYVORIQ_ROOT, "public", "assets", "ZYVORIQ_MD_AND_HOOKS_FORENSIC_AUDIT.md"),
     // Enforce zero duplicate global AGENTS.md symlinks in ~/.gemini/config and ~/.gemini (Section 20 of skills.md)
     path.join(HOME, ".gemini", "config", "GEMINI.md"),
     path.join(HOME, ".gemini", "config", "CLAUDE.md"),
