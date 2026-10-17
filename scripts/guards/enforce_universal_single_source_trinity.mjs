@@ -2,17 +2,19 @@
 /**
  * UNIVERSAL SINGLE-SOURCE TRINITY ENFORCER & AUTO-HEALER (v6.3.0)
  * ===============================================================
- * Enforces 100% single-inode symlink identity across all universal governance pillars:
+ * Enforces 100% single-inode symlink & SHA-256 identity across all universal governance pillars:
  *   1. ~/.gemini/config/hooks.json                             (all project/plugin hooks.json -> symlink, including root hooks.json)
- *   2. ~/.gemini/config/skills.md                              (all project skills.md -> symlink)
- *   3. ~/.gemini/config/skills.json                            (all project skills.json + .datacloud_skills_manifest -> symlink, with live 52-skill SHA-256 sync)
- *   4. ~/.gemini/config/AGENTS.md                              (all project AGENTS.md / GEMINI.md / CLAUDE.md -> symlink; purges duplicate top-level ~/.gemini/config/{GEMINI,CLAUDE}.md)
- *   5. ~/.gemini/config/plugins/zyvoriq_guard/plugin.json      (workspace plugins/zyvoriq_guard/plugin.json -> symlink)
- *   6. /Users/nitinagga/Documents/zyvoriq/lib/rules_engine.mjs (plugin lib/rules_engine.mjs copies -> symlink)
- *   7. ~/.gemini/config/skills                                 (workspace skills/ & .agents/skills -> directory symlink, safely merging local skills first)
+ *   2. ~/.gemini/config/hooks.md                               (all project hooks.md -> symlink)
+ *   3. ~/.gemini/config/skills.md                              (all project skills.md -> symlink)
+ *   4. ~/.gemini/config/skills.json                            (all project skills.json + .datacloud_skills_manifest -> symlink, with live 53-skill SHA-256 sync)
+ *   5. ~/.gemini/config/AGENTS.md                              (all project AGENTS.md / GEMINI.md / CLAUDE.md -> symlink; 0 duplicate global GEMINI.md/CLAUDE.md)
+ *   6. ~/.gemini/config/rules/*.md                             (all workspace .agents/rules/*.md -> 100% SHA-256 byte-for-byte sync + YAML frontmatter)
+ *   7. ~/.gemini/config/skills/<dir>/SKILL.md                  (all workspace .agents/skills/<dir>/SKILL.md -> 100% SHA-256 byte-for-byte sync)
+ *   8. ~/.gemini/config/plugins/zyvoriq_guard/plugin.json      (workspace plugins/zyvoriq_guard/plugin.json -> symlink)
+ *   9. /Users/nitinagga/Documents/zyvoriq/lib/rules_engine.mjs (plugin lib/rules_engine.mjs copies -> symlink)
  *
- * Also automatically purges any stale shadow backup or duplicate top-level rule files
- * (*.shadow_backup, *~origin_main, *.bak*, ~/.gemini/config/GEMINI.md, ~/.gemini/config/CLAUDE.md, ~/.gemini/AGENTS.md, ~/.gemini/GEMINI.md).
+ * Also automatically purges any stale shadow backup or static garbage files
+ * (*.shadow_backup, *~origin_main, *.bak, ZYVORIQ_COMPLETE_CONSOLIDATED_CONFIG.md, ZYVORIQ_MD_AND_HOOKS_FORENSIC_AUDIT.md).
  *
  * USAGE:
  *   node scripts/guards/enforce_universal_single_source_trinity.mjs --auto-heal
@@ -26,19 +28,33 @@ import { execSync } from "node:child_process";
 
 const HOME = os.homedir();
 const ZYVORIQ_ROOT = path.join(HOME, "Documents", "zyvoriq");
-const CUSTOMER_TRACKER_ROOT = path.join(HOME, "Documents", "customer-tracker");
+const CUSTOMER_TRACKER_ROOT = fs.existsSync(path.join(HOME, "Documents", "gantry-pulse"))
+  ? path.join(HOME, "Documents", "gantry-pulse")
+  : path.join(HOME, "Documents", "customer-tracker");
 const AUTO_HEAL = process.argv.includes("--auto-heal") || !process.argv.includes("--verify-only");
 const SYNC_CLOUDTOP = process.argv.includes("--sync-cloudtop");
 
 const CANONICAL_HOOKS = path.join(HOME, ".gemini", "config", "hooks.json");
+const CANONICAL_HOOKS_MD = path.join(HOME, ".gemini", "config", "hooks.md");
 const CANONICAL_SKILLS = path.join(HOME, ".gemini", "config", "skills.md");
 const CANONICAL_SKILLS_JSON = path.join(HOME, ".gemini", "config", "skills.json");
 const CANONICAL_AGENTS = path.join(HOME, ".gemini", "config", "AGENTS.md");
 const CANONICAL_PLUGIN = path.join(HOME, ".gemini", "config", "plugins", "zyvoriq_guard", "plugin.json");
 const CANONICAL_RULES_ENGINE = path.join(ZYVORIQ_ROOT, "lib", "rules_engine.mjs");
 const CANONICAL_SKILLS_DIR = path.join(HOME, ".gemini", "config", "skills");
+const CANONICAL_RULES_DIR = path.join(HOME, ".gemini", "config", "rules");
 
-const SKIP_DIRS = new Set(["node_modules", ".next", ".git", "dist", "build", ".venv", "__pycache__", "scratch", "BMAD-METHOD-main", "book"]);
+const WORKSPACE_ROOTS = [
+  CUSTOMER_TRACKER_ROOT,
+  path.join(HOME, "Documents", "PromptCanvas"),
+  path.join(HOME, "Documents", "AskAIOCE"),
+  path.join(HOME, "Documents", "scorex"),
+  path.join(HOME, "Documents", "Demoes-GE"),
+  path.join(HOME, "Documents", "blogs"),
+  ZYVORIQ_ROOT,
+].filter((p) => fs.existsSync(p));
+
+const SKIP_DIRS = new Set(["node_modules", ".next", ".git", "dist", "build", ".venv", "__pycache__", "scratch", "BMAD-METHOD-main"]);
 const EXEMPT_HOOKS = [/googlecloudtools\.datacloud_telemetry/, /google-slides-design/];
 const EXEMPT_SKILLS = [/\.gemini\/(antigravity|antigravity-ide|jetski)\/builtin\/skills\//];
 const GOV_NAMES = new Set(["agents.md", "gemini.md", "claude.md"]);
@@ -67,21 +83,91 @@ function walk(dir, predicate, out = [], depth = 0) {
   return out;
 }
 
-function syncSkillsJsonManifest() {
+function syncRulesAndSkillsAcrossWorkspaces() {
+  // 1. Sync all 15 canonical rule files across ~/.gemini/config/rules/*.md and all workspace .agents/rules/*.md
+  if (fs.existsSync(CANONICAL_RULES_DIR)) {
+    const ruleFiles = fs.readdirSync(CANONICAL_RULES_DIR).filter((f) => f.endsWith(".md"));
+    for (const rf of ruleFiles) {
+      const canonRule = path.join(CANONICAL_RULES_DIR, rf);
+      const targets = [canonRule];
+      for (const ws of WORKSPACE_ROOTS) {
+        const wsRulesDir = path.join(ws, ".agents", "rules");
+        if (fs.existsSync(wsRulesDir)) {
+          targets.push(path.join(wsRulesDir, rf));
+        }
+      }
+      const existingCandidates = targets.filter((p) => {
+        try { return fs.existsSync(p) && fs.statSync(p).isFile() && fs.statSync(p).size > 0; } catch { return false; }
+      });
+      if (AUTO_HEAL && existingCandidates.length > 0) {
+        existingCandidates.sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs);
+        const sourceRule = existingCandidates[0];
+        const sourceSha = sha256Full(sourceRule);
+        for (const targetRule of targets) {
+          if (path.resolve(targetRule) === path.resolve(sourceRule)) continue;
+          let targetSha = "";
+          try { if (fs.existsSync(targetRule)) targetSha = sha256Full(targetRule); } catch {}
+          if (targetSha !== sourceSha) {
+            try { if (fs.lstatSync(targetRule).isSymbolicLink()) fs.unlinkSync(targetRule); } catch {}
+            fs.mkdirSync(path.dirname(targetRule), { recursive: true });
+            fs.copyFileSync(sourceRule, targetRule);
+          }
+        }
+      }
+    }
+  }
+
+  // 2. Sync all canonical skills/*/SKILL.md across ~/.gemini/config/skills and workspace .agents/skills/*/SKILL.md
   if (!fs.existsSync(CANONICAL_SKILLS_DIR) || !fs.existsSync(CANONICAL_SKILLS_JSON)) return;
   try {
-    const parsed = JSON.parse(fs.readFileSync(CANONICAL_SKILLS_JSON, "utf-8"));
-    let mutated = false;
-    if (parsed.version !== "3.5.0") {
-      parsed.version = "3.5.0";
-      mutated = true;
-    }
-    const entries = fs.readdirSync(CANONICAL_SKILLS_DIR, { withFileTypes: true })
+    const skillEntries = fs.readdirSync(CANONICAL_SKILLS_DIR, { withFileTypes: true })
       .filter((d) => d.isDirectory())
       .sort((a, b) => a.name.localeCompare(b.name));
 
+    for (const dir of skillEntries) {
+      const canonSkill = path.join(CANONICAL_SKILLS_DIR, dir.name, "SKILL.md");
+      const targets = [canonSkill];
+      if (dir.name === "customer-lineage-forensic-guard") {
+        targets.push(path.join(CUSTOMER_TRACKER_ROOT, ".local_backup", "SKILL.md"));
+      }
+      for (const ws of WORKSPACE_ROOTS) {
+        const wsSkillsRoot = path.join(ws, ".agents", "skills");
+        try {
+          if (fs.existsSync(wsSkillsRoot) && !fs.lstatSync(wsSkillsRoot).isSymbolicLink()) {
+            const wsSkillFile = path.join(wsSkillsRoot, dir.name, "SKILL.md");
+            if (fs.existsSync(wsSkillFile)) targets.push(wsSkillFile);
+          }
+        } catch {}
+      }
+      const existingCandidates = targets.filter((p) => {
+        try { return fs.existsSync(p) && fs.statSync(p).isFile() && fs.statSync(p).size > 0; } catch { return false; }
+      });
+      if (AUTO_HEAL && existingCandidates.length > 0) {
+        existingCandidates.sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs);
+        const sourceSkill = existingCandidates[0];
+        const sourceSha = sha256Full(sourceSkill);
+        for (const targetSkill of targets) {
+          if (path.resolve(targetSkill) === path.resolve(sourceSkill)) continue;
+          let targetSha = "";
+          try { if (fs.existsSync(targetSkill)) targetSha = sha256Full(targetSkill); } catch {}
+          if (targetSha !== sourceSha) {
+            try { if (fs.lstatSync(targetSkill).isSymbolicLink()) fs.unlinkSync(targetSkill); } catch {}
+            fs.mkdirSync(path.dirname(targetSkill), { recursive: true });
+            fs.copyFileSync(sourceSkill, targetSkill);
+          }
+        }
+      }
+    }
+
+    const parsed = JSON.parse(fs.readFileSync(CANONICAL_SKILLS_JSON, "utf-8"));
+    let mutated = false;
+    if (parsed.version !== "3.7.0") {
+      parsed.version = "3.7.0";
+      mutated = true;
+    }
+
     const concatChecksums = [];
-    for (const dir of entries) {
+    for (const dir of skillEntries) {
       const skillFile = path.join(CANONICAL_SKILLS_DIR, dir.name, "SKILL.md");
       if (!fs.existsSync(skillFile)) continue;
       const sum = sha256Full(skillFile);
@@ -109,29 +195,24 @@ function syncSkillsJsonManifest() {
   } catch {}
 }
 
-function pathOrLinkExists(p) {
-  try {
-    fs.lstatSync(p);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 function purgeShadowGarbage() {
   const purged = [];
   const candidateFiles = [
     ...walk(ZYVORIQ_ROOT, (n) => /\.shadow_backup$|~origin_main$|\.bak(\.v\d+)?$/i.test(n)),
     ...walk(path.join(HOME, ".gemini", "config"), (n) => /\.shadow_backup$|~origin_main$|^hooks\.json\.bak/i.test(n)),
+    path.join(ZYVORIQ_ROOT, "ZYVORIQ_COMPLETE_CONSOLIDATED_CONFIG.md"),
+    path.join(ZYVORIQ_ROOT, "ZYVORIQ_MD_AND_HOOKS_FORENSIC_AUDIT.md"),
+    // Enforce zero duplicate global AGENTS.md symlinks in ~/.gemini/config and ~/.gemini (Section 20 of skills.md)
     path.join(HOME, ".gemini", "config", "GEMINI.md"),
     path.join(HOME, ".gemini", "config", "CLAUDE.md"),
     path.join(HOME, ".gemini", "AGENTS.md"),
     path.join(HOME, ".gemini", "GEMINI.md"),
-    path.join(ZYVORIQ_ROOT, "ZYVORIQ_COMPLETE_CONSOLIDATED_CONFIG.md"),
-    path.join(ZYVORIQ_ROOT, "ZYVORIQ_MD_AND_HOOKS_FORENSIC_AUDIT.md")
+    path.join(HOME, ".gemini", "CLAUDE.md"),
   ];
   for (const f of candidateFiles) {
-    if (pathOrLinkExists(f)) {
+    let existsOrLink = false;
+    try { existsOrLink = Boolean(fs.lstatSync(f)); } catch {}
+    if (existsOrLink) {
       if (AUTO_HEAL) {
         try {
           fs.rmSync(f, { force: true });
@@ -147,7 +228,7 @@ function purgeShadowGarbage() {
     path.join(ZYVORIQ_ROOT, "scratch", "zyvoriq_config_bundle_staging")
   ];
   for (const d of staleDirs) {
-    if (pathOrLinkExists(d)) {
+    if (fs.existsSync(d)) {
       if (AUTO_HEAL) {
         try {
           fs.rmSync(d, { recursive: true, force: true });
@@ -166,7 +247,6 @@ function enforcePillar(name, canonicalPath, foundPaths) {
   let healed = 0;
   const offenders = [];
 
-  const canonicalMtime = fs.existsSync(canonicalPath) ? fs.statSync(canonicalPath).mtimeMs : 0;
   const uniquePaths = [...new Set(foundPaths)];
 
   for (const p of uniquePaths) {
@@ -195,7 +275,7 @@ function enforcePillar(name, canonicalPath, foundPaths) {
         fs.mkdirSync(backupDir, { recursive: true });
         const backupFile = path.join(backupDir, path.basename(p) + "." + Date.now() + ".bak");
         fs.copyFileSync(p, backupFile);
-        if (st.mtimeMs >= canonicalMtime) {
+        if (!fs.existsSync(canonicalPath) || fs.statSync(canonicalPath).size === 0) {
           fs.copyFileSync(p, canonicalPath);
         }
       }
@@ -266,19 +346,7 @@ function enforceDirSymlinks(name, canonicalDir, targetDirs) {
 
 function main() {
   const purgedGarbage = purgeShadowGarbage();
-  syncSkillsJsonManifest();
-
-  const docsRoot = path.join(HOME, "Documents");
-  const projectRoots = [];
-  try {
-    for (const d of fs.readdirSync(docsRoot, { withFileTypes: true })) {
-      if (!d.isDirectory() || d.name.startsWith(".") || SKIP_DIRS.has(d.name)) continue;
-      const p = path.join(docsRoot, d.name);
-      if ([".git", "package.json", "pyproject.toml", "requirements.txt", "Dockerfile", "AGENTS.md"].some((f) => fs.existsSync(path.join(p, f)))) {
-        projectRoots.push(p);
-      }
-    }
-  } catch {}
+  syncRulesAndSkillsAcrossWorkspaces();
 
   const hooksPaths = [
     path.join(ZYVORIQ_ROOT, "hooks.json"),
@@ -287,7 +355,6 @@ function main() {
     path.join(CUSTOMER_TRACKER_ROOT, "hooks.json"),
     path.join(CUSTOMER_TRACKER_ROOT, ".agents", "hooks.json"),
     path.join(CUSTOMER_TRACKER_ROOT, ".gemini", "hooks.json"),
-    ...projectRoots.flatMap((r) => [path.join(r, "hooks.json"), path.join(r, ".agents", "hooks.json")]),
     ...walk(path.join(HOME, "Documents"), (n, full) => n === "hooks.json" && !EXEMPT_HOOKS.some(rx => rx.test(full))),
     ...walk(path.join(HOME, ".gemini", "config", "plugins"), (n, full) => n === "hooks.json" && !EXEMPT_HOOKS.some(rx => rx.test(full)))
   ];
@@ -296,7 +363,6 @@ function main() {
     path.join(ZYVORIQ_ROOT, "skills.md"),
     path.join(CUSTOMER_TRACKER_ROOT, "skills.md"),
     path.join(CUSTOMER_TRACKER_ROOT, ".agents", "skills.md"),
-    ...projectRoots.map((r) => path.join(r, "skills.md")),
     ...walk(path.join(HOME, "Documents"), (n, full) => n.toLowerCase() === "skills.md" && !EXEMPT_SKILLS.some(rx => rx.test(full)))
   ];
 
@@ -305,7 +371,6 @@ function main() {
     path.join(CUSTOMER_TRACKER_ROOT, "skills.json"),
     path.join(CUSTOMER_TRACKER_ROOT, ".agents", "skills.json"),
     path.join(CANONICAL_SKILLS_DIR, ".datacloud_skills_manifest"),
-    ...projectRoots.map((r) => path.join(r, "skills.json")),
     ...walk(path.join(HOME, "Documents"), (n) => n.toLowerCase() === "skills.json")
   ];
 
@@ -318,53 +383,8 @@ function main() {
     path.join(CUSTOMER_TRACKER_ROOT, "GEMINI.md"),
     path.join(CUSTOMER_TRACKER_ROOT, "CLAUDE.md"),
     path.join(CUSTOMER_TRACKER_ROOT, ".agents", "AGENTS.md"),
-    ...projectRoots.flatMap((r) => [
-      path.join(r, "AGENTS.md"),
-      path.join(r, "GEMINI.md"),
-      path.join(r, "CLAUDE.md"),
-      path.join(r, ".agents", "AGENTS.md")
-    ]),
     ...walk(path.join(HOME, "Documents"), (n) => GOV_NAMES.has(n.toLowerCase()))
   ];
-
-  const canonicalRulesDir = path.join(HOME, ".gemini", "config", "rules");
-  const canonicalHooksMd = path.join(HOME, ".gemini", "config", "hooks.md");
-  if (AUTO_HEAL && fs.existsSync(canonicalRulesDir)) {
-    const ruleFiles = fs.readdirSync(canonicalRulesDir).filter((f) => f.endsWith(".md"));
-    const hooksMdBuf = fs.existsSync(canonicalHooksMd) ? fs.readFileSync(canonicalHooksMd) : null;
-    for (const r of [ZYVORIQ_ROOT, CUSTOMER_TRACKER_ROOT, ...projectRoots]) {
-      if (hooksMdBuf) {
-        const dstHooksMd = path.join(r, "hooks.md");
-        if (fs.existsSync(dstHooksMd)) {
-          try {
-            const curBuf = fs.readFileSync(dstHooksMd);
-            if (!hooksMdBuf.equals(curBuf)) {
-              if (fs.lstatSync(dstHooksMd).isSymbolicLink()) fs.rmSync(dstHooksMd, { force: true });
-              fs.writeFileSync(dstHooksMd, hooksMdBuf);
-            }
-          } catch {}
-        }
-      }
-      const projRulesDir = path.join(r, ".agents", "rules");
-      if (fs.existsSync(projRulesDir)) {
-        for (const rf of ruleFiles) {
-          const srcRule = path.join(canonicalRulesDir, rf);
-          const dstRule = path.join(projRulesDir, rf);
-          if (r !== ZYVORIQ_ROOT && !fs.existsSync(dstRule)) continue;
-          try {
-            const srcBuf = fs.readFileSync(srcRule);
-            const dstBuf = fs.existsSync(dstRule) ? fs.readFileSync(dstRule) : null;
-            if (!dstBuf || !srcBuf.equals(dstBuf)) {
-              if (fs.existsSync(dstRule) && fs.lstatSync(dstRule).isSymbolicLink()) {
-                fs.rmSync(dstRule, { force: true });
-              }
-              fs.writeFileSync(dstRule, srcBuf);
-            }
-          } catch {}
-        }
-      }
-    }
-  }
 
   const pluginPaths = [
     path.join(ZYVORIQ_ROOT, "plugins", "zyvoriq_guard", "plugin.json")
@@ -380,7 +400,14 @@ function main() {
     path.join(ZYVORIQ_ROOT, ".agents", "skills")
   ];
 
+  const hooksMdPaths = [
+    path.join(CUSTOMER_TRACKER_ROOT, "hooks.md"),
+    path.join(CUSTOMER_TRACKER_ROOT, ".agents", "hooks.md"),
+    ...walk(path.join(HOME, "Documents"), (n) => n.toLowerCase() === "hooks.md")
+  ];
+
   const rHooks = enforcePillar("hooks.json", CANONICAL_HOOKS, hooksPaths);
+  const rHooksMd = enforcePillar("hooks.md", CANONICAL_HOOKS_MD, hooksMdPaths);
   const rSkills = enforcePillar("skills.md", CANONICAL_SKILLS, skillsPaths);
   const rSkillsJson = enforcePillar("skills.json", CANONICAL_SKILLS_JSON, skillsJsonPaths);
   const rAgents = enforcePillar("AGENTS.md", CANONICAL_AGENTS, agentsPaths);
@@ -388,7 +415,7 @@ function main() {
   const rRulesEngine = enforcePillar("rules_engine.mjs", CANONICAL_RULES_ENGINE, rulesEnginePaths);
   const rSkillsDir = enforceDirSymlinks("skills_dir", CANONICAL_SKILLS_DIR, skillsDirTargets);
 
-  const results = [rHooks, rSkills, rSkillsJson, rAgents, rPlugin, rRulesEngine, rSkillsDir];
+  const results = [rHooks, rHooksMd, rSkills, rSkillsJson, rAgents, rPlugin, rRulesEngine, rSkillsDir];
   const totalOffenders = results.reduce((acc, r) => acc + r.offenders.length, 0) + (!AUTO_HEAL ? purgedGarbage.length : 0);
 
   if (SYNC_CLOUDTOP) {
