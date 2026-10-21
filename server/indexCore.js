@@ -70,7 +70,6 @@ const excelRoutes = require('./routes/excel');
 const questionEditsRoutes = require('./routes/questionEdits');
 const questionAssignmentsRoutes = require('./routes/questionAssignments');
 const dataCleanupRoutes = require('./routes/dataCleanup');
-const authorValidationRoutes = require('./routes/authorValidation');
 const genaiReadinessRoutes = require('./routes/genaiReadiness');
 const dynamicAssessmentsRoutes = require('./routes/dynamicAssessments');
 const audioRoutes = require('./routes/audio');
@@ -90,6 +89,92 @@ app.use('/api/users', (req, res, next) => {
 app.use('/api/assignments', assignmentRoutes);
 app.use('/api/author', require('./routes/authorValidation')); // Enhanced Author features
 app.use('/api/notifications', notificationRoutes);
+
+// Unified Cross-App Feedback & Admin Inbox Routes (nitinagga@google.com) — registered before legacy feedbackRoutes (:id wildcard)
+const feedbackEngine = require('./unified_feedback_engine.cjs');
+const scorexLocalFeedbackPath = path.join(__dirname, '..', '.local_backup', 'user_feedback.json');
+
+app.get('/universal_feedback_widget.js', (req, res) => {
+  const buildWidgetPath = path.join(__dirname, '../client/build/universal_feedback_widget.js');
+  const publicWidgetPath = path.join(__dirname, '../client/public/universal_feedback_widget.js');
+  const widgetPath = fs.existsSync(buildWidgetPath) ? buildWidgetPath : publicWidgetPath;
+  res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+  res.sendFile(widgetPath);
+});
+
+app.get('/api/feedback/messages', async (req, res) => {
+  try {
+    const auth = feedbackEngine.verifyAdminAccess(
+      req.headers || {},
+      req.ip || req.socket?.remoteAddress || '127.0.0.1',
+      req.query || {}
+    );
+    if (!auth.authorized) {
+      return res.status(403).json({
+        ok: false,
+        authorized: false,
+        resolvedEmail: auth.resolvedEmail,
+        authMode: auth.authMode,
+        error: `Admin access restricted to ${feedbackEngine.ADMIN_EMAIL}`,
+      });
+    }
+    const payload = await feedbackEngine.listFeedback({
+      defaultAppId: 'scorex',
+      localStorePath: scorexLocalFeedbackPath,
+      scope: req.query.scope || 'all',
+      categoryFilter: req.query.category || '',
+      priorityFilter: req.query.priority || '',
+      statusFilter: req.query.status || '',
+      searchQuery: req.query.search || req.query.q || '',
+      forceSheetRefresh: req.query.force === '1',
+    });
+    payload.authorized = true;
+    payload.resolvedEmail = auth.resolvedEmail;
+    payload.authMode = auth.authMode;
+    res.json(payload);
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+app.post('/api/feedback/submit', async (req, res) => {
+  try {
+    const result = await feedbackEngine.submitFeedback(
+      req.body || {},
+      'scorex',
+      'ScoreX Enterprise Maturity & Value Realization',
+      scorexLocalFeedbackPath,
+      req.headers || {}
+    );
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({ ok: false, error: err.message });
+  }
+});
+
+app.post(['/api/feedback/status', '/api/feedback/update'], async (req, res) => {
+  try {
+    const auth = feedbackEngine.verifyAdminAccess(
+      req.headers || {},
+      req.ip || req.socket?.remoteAddress || '127.0.0.1'
+    );
+    if (!auth.authorized) {
+      return res.status(403).json({ ok: false, error: 'Unauthorized' });
+    }
+    const body = req.body || {};
+    const result = await feedbackEngine.updateFeedbackStatus({
+      feedbackId: String(body.id || body.feedbackId || ''),
+      newStatus: body.status || null,
+      deleteItem: Boolean(body.delete),
+      localStorePath: scorexLocalFeedbackPath,
+    });
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({ ok: false, error: err.message });
+  }
+});
+
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/custom-questions', customQuestionsRoutes);
