@@ -12,6 +12,9 @@ data/sessions.json
 data/assignments.json
 data/notifications.json
 data/instance_object_versions.json
+data/user_feedback.json
+data/custom_question_assignments.json
+data/cloudrun_deploy_receipt.json
 data/*.backup*
 data/snapshots/
 *.db

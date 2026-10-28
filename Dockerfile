@@ -1,4 +1,4 @@
-FROM node:20-bookworm-slim AS build
+FROM node:22-bookworm-slim AS build
 
 WORKDIR /app
 
@@ -11,7 +11,7 @@ COPY . .
 # Build the React application if not already pre-built in context, and ensure /app/data exists.
 RUN mkdir -p /app/data && if [ ! -f client/build/index.html ]; then cd client && npm install --ignore-scripts --include=dev && CI=true npm run build && rm -rf node_modules; fi
 
-FROM node:20-bookworm-slim AS runtime
+FROM node:22-bookworm-slim AS runtime
 
 WORKDIR /app
 

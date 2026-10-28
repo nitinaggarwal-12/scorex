@@ -658,9 +658,10 @@ test('UI Integrity Gate 19: Permanent 5-Subsystem Persistence, Guard Synchroniza
     assert.ok(!preToolGuardSrc.includes(`'${activeRestored}'`), `pre_tool_guard.mjs must not block active restored component ${activeRestored}`);
   }
 
-  // 2. Subsystem 1: Single-source geValueRealizationFramework.js reference identity & uppercase ge_vr_ACC-1001-AEROVG key check
+  // 2. Subsystem 1: Pure V8-native require(esm) geValueRealizationFramework.js reference identity & zero regex transpiler
   const serverGeFwFile = fs.readFileSync(path.join(ROOT, 'server/data/geValueRealizationFramework.js'), 'utf8').trim();
-  assert.ok(serverGeFwFile.split('\n').length <= 80, 'server/data/geValueRealizationFramework.js must be a compact single-source loader (<= 80 lines), not a duplicated 2,868-line copy');
+  assert.ok(serverGeFwFile.split('\n').length <= 12, 'server/data/geValueRealizationFramework.js must be a pure <= 12-line native V8 require(esm) re-export');
+  assert.ok(!serverGeFwFile.includes('transpileEsmToCommonJs'), 'server/data/geValueRealizationFramework.js must not contain any regex ESM-to-CJS fallback transpiler');
   const serverGeModule = require('../../server/data/geValueRealizationFramework');
   const clientGeModule = require('../../client/src/data/geValueRealizationFramework');
   assert.strictEqual(serverGeModule, clientGeModule, 'server and client geValueRealizationFramework must resolve to the exact same single-source module reference');
@@ -721,11 +722,12 @@ test('UI Integrity Gate 19: Permanent 5-Subsystem Persistence, Guard Synchroniza
   assert.ok(euRouteSrc.includes('q20:') && euRouteSrc.includes('.sync.tmp'), 'euAiCompliance.js must include all 20 statutory fallback questions and atomic .sync.tmp write');
 });
 
-test('UI Integrity Gate 20: Durable GCS Scale-to-Zero State Persistence, Runtime Auth Isolation, Pre-Drain Shutdown Flush & Strict CI=true Build Gate', async () => {
+test('UI Integrity Gate 20: Multi-Instance GCS Atomic CAS (?ifGenerationMatch), 3-Way Ancestor Merge, Peer Hot-Reload, Node 22 LTS & Strict CI=true Build Gate', async () => {
   const os = require('os');
   const durableGcs = require('../../server/utils/durableGcsPersistence');
+  const DataStore = require('../../server/utils/dataStore');
 
-  // 1. All 13 runtime & canonical state stores are managed, and auth/session stores are NEVER seeded from image onto GCS
+  // 1. All 15 runtime & canonical state stores are managed, and auth/session stores are NEVER seeded from image onto GCS
   const expectedStores = [
     'assessments.json',
     'dynamic_assessments.json',
@@ -739,17 +741,19 @@ test('UI Integrity Gate 20: Durable GCS Scale-to-Zero State Persistence, Runtime
     'assignments.json',
     'notifications.json',
     'user_feedback.json',
-    'custom_questions.json'
+    'custom_questions.json',
+    'custom_question_assignments.json',
+    'feedback.json'
   ];
   for (const storeName of expectedStores) {
     assert.ok(durableGcs.MANAGED_STATE_FILES.has(storeName), `durableGcsPersistence must manage ${storeName}`);
   }
-  for (const runtimeOnly of ['sessions.json', 'users.json', 'assignments.json', 'notifications.json']) {
+  for (const runtimeOnly of ['sessions.json', 'users.json', 'assignments.json', 'notifications.json', 'custom_question_assignments.json']) {
     assert.ok(durableGcs.RUNTIME_ONLY_STATE_FILES.has(runtimeOnly), `${runtimeOnly} must be classified as RUNTIME_ONLY_STATE_FILES`);
     assert.ok(!durableGcs.SEEDABLE_CANONICAL_FILES.has(runtimeOnly), `${runtimeOnly} must NEVER be seeded from baked image files onto GCS`);
   }
 
-  // 2. Cold-start hydration, fail-closed corrupt JSON rejection, runtime-only seed block, and coalesced write-through
+  // 2. Cold-start hydration, fail-closed corrupt JSON rejection, runtime-only seed block, and Multi-Instance CAS + 3-Way Merge
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'scorex-gate20-gcs-'));
   const origBucket = process.env.SCOREX_GCS_STATE_BUCKET;
   const origPrefix = process.env.SCOREX_GCS_STATE_PREFIX;
@@ -758,37 +762,138 @@ test('UI Integrity Gate 20: Durable GCS Scale-to-Zero State Persistence, Runtime
   const origDataDir = process.env.DATA_DIR;
   const origFetch = global.fetch;
 
+  durableGcs.resetDurableGcsRuntimeStateForTests();
+
+  let nextGenerationCounter = 100;
+  // Simulate authentic Google Cloud Storage object store with 64-bit generation numbers & HTTP 412 preconditions
   const remoteObjects = new Map([
-    ['unit-prefix/assessments.json', JSON.stringify({ hydrated_from_gcs: { id: 'hydrated_from_gcs', ok: true } })],
-    ['unit-prefix/eu_ai_dossiers.json', '{corrupt-truncated-json']
+    [
+      'unit-prefix/assessments.json',
+      {
+        generation: '100',
+        payload: JSON.stringify({
+          shared_1: { id: 'shared_1', responses: { q1: 3, q2: 3 } },
+          peer_deleted: { id: 'peer_deleted', v: 1 },
+          local_deleted: { id: 'local_deleted', v: 1 }
+        })
+      }
+    ],
+    [
+      'unit-prefix/custom_questions.json',
+      {
+        generation: '100',
+        payload: JSON.stringify([
+          { id: 'cq_shared', weight: 1.0 },
+          { id: 'cq_peer_del', weight: 1.0 }
+        ])
+      }
+    ],
+    [
+      'unit-prefix/eu_ai_dossiers.json',
+      {
+        generation: '100',
+        payload: '{corrupt-truncated-json'
+      }
+    ]
   ]);
 
   fs.writeFileSync(path.join(tmpDir, 'eu_ai_dossiers.json'), JSON.stringify({ local_intact: true }), 'utf8');
   fs.writeFileSync(path.join(tmpDir, 'ge_value_realization_dossiers.json'), JSON.stringify({ ge_vr_seed: { id: 'ge_vr_seed' } }), 'utf8');
   fs.writeFileSync(path.join(tmpDir, 'sessions.json'), JSON.stringify([{ sid: 'leaked_local_session_must_not_seed' }]), 'utf8');
 
+  let observed412Count = 0;
+  let simulateUpload503 = false;
+
   global.fetch = async (url, opts = {}) => {
     const u = String(url);
     if (u.includes('/upload/storage/v1/b/')) {
       const parsedUrl = new URL(u);
       const name = parsedUrl.searchParams.get('name');
-      remoteObjects.set(name, opts.body);
-      return { ok: true, status: 200, json: async () => ({ name }), text: async () => '' };
+      const ifGenMatch = parsedUrl.searchParams.get('ifGenerationMatch');
+      assert.ok(ifGenMatch !== null, `Every GCS upload MUST include ?ifGenerationMatch precondition (${u})`);
+
+      if (simulateUpload503) {
+        return {
+          ok: false,
+          status: 503,
+          headers: new Map(),
+          json: async () => ({ error: { code: 503, message: 'Service Unavailable' } }),
+          text: async () => 'Service Unavailable'
+        };
+      }
+
+      const existing = remoteObjects.get(name);
+      const currentGen = existing ? existing.generation : '0';
+      if (String(ifGenMatch) !== String(currentGen)) {
+        observed412Count += 1;
+        return {
+          ok: false,
+          status: 412,
+          headers: new Map(),
+          json: async () => ({ error: { code: 412, message: 'Precondition Failed' } }),
+          text: async () => 'Precondition Failed'
+        };
+      }
+
+      nextGenerationCounter += 1;
+      const newGen = String(nextGenerationCounter);
+      remoteObjects.set(name, { generation: newGen, payload: opts.body });
+      return {
+        ok: true,
+        status: 200,
+        headers: new Map([['x-goog-generation', newGen]]),
+        json: async () => ({ name, generation: newGen }),
+        text: async () => ''
+      };
     }
+
     if (u.includes('?prefix=')) {
-      const items = Array.from(remoteObjects.entries()).map(([name, val]) => ({
+      const items = Array.from(remoteObjects.entries()).map(([name, entry]) => ({
         name,
-        size: String(Buffer.byteLength(val, 'utf8'))
+        generation: entry.generation,
+        size: String(Buffer.byteLength(entry.payload, 'utf8'))
       }));
-      return { ok: true, status: 200, json: async () => ({ items }), text: async () => '' };
+      return { ok: true, status: 200, headers: new Map(), json: async () => ({ items }), text: async () => '' };
     }
+
     if (u.includes('?alt=media')) {
-      const match = u.match(/\/o\/([^?]+)\?alt=media/);
+      const parsedUrl = new URL(u);
+      const match = parsedUrl.pathname.match(/\/o\/(.+)$/);
       const decodedName = decodeURIComponent(match[1]);
-      const payload = remoteObjects.get(decodedName);
-      return { ok: payload !== undefined, status: payload !== undefined ? 200 : 404, text: async () => payload || '' };
+      const entry = remoteObjects.get(decodedName);
+      if (!entry) {
+        return { ok: false, status: 404, headers: new Map(), text: async () => 'not found' };
+      }
+      return {
+        ok: true,
+        status: 200,
+        headers: new Map([['x-goog-generation', entry.generation]]),
+        text: async () => entry.payload
+      };
     }
-    return { ok: false, status: 404, text: async () => 'not found' };
+
+    // Object metadata GET /storage/v1/b/<bucket>/o/<encodedObject>
+    const metaMatch = u.match(/\/storage\/v1\/b\/[^/]+\/o\/([^?]+)$/);
+    if (metaMatch) {
+      const decodedName = decodeURIComponent(metaMatch[1]);
+      const entry = remoteObjects.get(decodedName);
+      if (!entry) {
+        return { ok: false, status: 404, headers: new Map(), json: async () => ({}), text: async () => 'not found' };
+      }
+      return {
+        ok: true,
+        status: 200,
+        headers: new Map([['x-goog-generation', entry.generation]]),
+        json: async () => ({
+          name: decodedName,
+          generation: entry.generation,
+          size: String(Buffer.byteLength(entry.payload, 'utf8'))
+        }),
+        text: async () => ''
+      };
+    }
+
+    return { ok: false, status: 404, headers: new Map(), text: async () => 'not found' };
   };
 
   try {
@@ -800,6 +905,20 @@ test('UI Integrity Gate 20: Durable GCS Scale-to-Zero State Persistence, Runtime
 
     assert.strictEqual(durableGcs.resolveDataDir(), path.resolve(tmpDir), 'resolveDataDir() must honor process.env.DATA_DIR');
 
+    // Positional numeric array & non-email users.json merge safety invariants (P2)
+    assert.deepStrictEqual(
+      durableGcs.threeWayMergeJsonState({ scores: [1, 2, 3] }, { scores: [1, 2, 4] }, { scores: [1, 2, 5] }, 'assessments.json'),
+      { scores: [1, 2, 5] },
+      'Positional numeric arrays must NEVER be treated as unordered sets or inflated in length'
+    );
+    const mergedUsersWithBot = durableGcs.threeWayMergeJsonState(
+      [],
+      [{ id: 'svc_bot', role: 'system' }],
+      [{ id: 'u1', email: 'a@example.com' }],
+      'users.json'
+    );
+    assert.strictEqual(mergedUsersWithBot.length, 2, 'users.json secondary email dedup must never drop service entries without .email');
+
     const res = await durableGcs.hydrateDataDirFromGcs(tmpDir);
     assert.strictEqual(res.hydrated, true);
     assert.ok(res.hydratedFiles.includes('assessments.json'), 'valid remote state file must hydrate onto local disk');
@@ -809,22 +928,153 @@ test('UI Integrity Gate 20: Durable GCS Scale-to-Zero State Persistence, Runtime
       { local_intact: true },
       'local valid state file must remain untouched when remote object fails JSON.parse'
     );
-    assert.ok(res.seededFiles.includes('ge_value_realization_dossiers.json'), 'canonical assessment dossier file must be seeded to GCS when missing remotely');
+    assert.ok(res.seededFiles.includes('ge_value_realization_dossiers.json'), 'canonical assessment dossier file must be seeded to GCS via ifGenerationMatch=0 when missing remotely');
     assert.ok(!res.seededFiles.includes('sessions.json'), 'sessions.json must NEVER be uploaded from local seed on cold start');
     assert.strictEqual(remoteObjects.has('unit-prefix/sessions.json'), false, 'GCS bucket must never receive baked local sessions.json on boot');
+    assert.strictEqual(
+      fs.existsSync(path.join(tmpDir, 'sessions.json')),
+      false,
+      'Unhydrated local baked RUNTIME_ONLY_STATE_FILES (sessions.json) must be actively purged from disk on cold start'
+    );
 
-    // Coalesced write-through: 3 rapid mutations coalesce cleanly and persist latest value
+    // Construct DataStore bound to hydrated assessments.json (at generation 100)
     const targetAssessmentsPath = path.join(tmpDir, 'assessments.json');
-    durableGcs.scheduleStateFileSync(targetAssessmentsPath, JSON.stringify({ seq: 1 }));
-    durableGcs.scheduleStateFileSync(targetAssessmentsPath, JSON.stringify({ seq: 2 }));
-    durableGcs.scheduleStateFileSync(targetAssessmentsPath, JSON.stringify({ seq: 3 }));
+    const dsAssessments = new DataStore(targetAssessmentsPath);
+    assert.strictEqual(dsAssessments.data.get('shared_1').responses.q1, 3);
+
+    // Simulate Peer Cloud Run Instance B concurrently committing an update to assessments.json on GCS (advancing generation -> 901)
+    remoteObjects.set('unit-prefix/assessments.json', {
+      generation: '901',
+      payload: JSON.stringify({
+        shared_1: { id: 'shared_1', responses: { q1: 3, q2: 5 } }, // Peer edited q2
+        local_deleted: { id: 'local_deleted', v: 1 }, // Peer left local_deleted untouched
+        peer_added: { id: 'peer_added', score: 4.2 } // Peer created new assessment; AND peer deleted peer_deleted!
+      })
+    });
+
+    // Local Instance A (still believing generation == 100) edits q1, adds local_added, and deletes local_deleted
+    dsAssessments.data.set('shared_1', { id: 'shared_1', responses: { q1: 4, q2: 3 } });
+    dsAssessments.data.set('local_added', { id: 'local_added', score: 3.9 });
+    dsAssessments.data.delete('local_deleted');
+    dsAssessments.saveData();
     await durableGcs.flushAllPendingSyncs();
+
+    assert.ok(observed412Count >= 1, 'Stale expected generation MUST trigger HTTP 412 Precondition Failed and enter CAS 3-way merge');
+    const mergedRemoteAssessments = JSON.parse(remoteObjects.get('unit-prefix/assessments.json').payload);
     assert.deepStrictEqual(
-      JSON.parse(remoteObjects.get('unit-prefix/assessments.json')),
-      { seq: 3 },
-      'coalesced async write-through must persist latest payload to GCS'
+      mergedRemoteAssessments,
+      {
+        shared_1: { id: 'shared_1', responses: { q1: 4, q2: 5 } },
+        peer_added: { id: 'peer_added', score: 4.2 },
+        local_added: { id: 'local_added', score: 3.9 }
+      },
+      '3-Way CAS merge must preserve both concurrent additions, merge nested q1/q2 edits, and never resurrect peer_deleted or local_deleted'
+    );
+    // Verify DataStore in-memory Map on Instance A was also hot-reloaded with Peer Instance B's changes!
+    assert.deepStrictEqual(dsAssessments.data.get('peer_added'), { id: 'peer_added', score: 4.2 });
+    assert.deepStrictEqual(dsAssessments.data.get('shared_1').responses, { q1: 4, q2: 5 });
+    assert.strictEqual(dsAssessments.data.has('peer_deleted'), false);
+
+    // Simulate concurrent Multi-Instance HTTP 412 conflict on Keyed Entity Array (custom_questions.json)
+    remoteObjects.set('unit-prefix/custom_questions.json', {
+      generation: '950',
+      payload: JSON.stringify([
+        { id: 'cq_shared', weight: 1.0 },
+        { id: 'cq_peer_new', weight: 1.6 }
+        // cq_peer_del was deleted on Peer Instance B!
+      ])
+    });
+    const customQuestionsPath = path.join(tmpDir, 'custom_questions.json');
+    const localArrayEdit = [
+      { id: 'cq_shared', weight: 2.0 }, // Local edited weight
+      { id: 'cq_peer_del', weight: 1.0 }, // Untouched locally since base -> must honor peer deletion
+      { id: 'cq_local_new', weight: 1.4 } // Local added new question
+    ];
+    fs.writeFileSync(customQuestionsPath, JSON.stringify(localArrayEdit, null, 2), 'utf8');
+    durableGcs.scheduleStateFileSync(customQuestionsPath, JSON.stringify(localArrayEdit, null, 2));
+    await durableGcs.flushAllPendingSyncs();
+
+    const mergedQuestions = JSON.parse(remoteObjects.get('unit-prefix/custom_questions.json').payload);
+    assert.deepStrictEqual(
+      mergedQuestions,
+      [
+        { id: 'cq_shared', weight: 2.0 },
+        { id: 'cq_peer_new', weight: 1.6 },
+        { id: 'cq_local_new', weight: 1.4 }
+      ],
+      '3-Way keyed-array CAS merge must preserve concurrent edits/additions and honor peer deletions without resurrection'
+    );
+
+    // Simulate Cross-Instance Read-After-Write Freshness (Peer Instance B writes gen=999; Instance A refreshes before GET)
+    remoteObjects.set('unit-prefix/assessments.json', {
+      generation: '999',
+      payload: JSON.stringify({
+        ...mergedRemoteAssessments,
+        peer_read_after_write: { id: 'peer_read_after_write', score: 4.75 }
+      })
+    });
+    const refreshRes = await durableGcs.refreshChangedFilesFromGcs({ force: true, targetDataDir: tmpDir });
+    assert.strictEqual(refreshRes.refreshed, true);
+    assert.ok(refreshRes.updatedFiles.includes('assessments.json'));
+    assert.deepStrictEqual(
+      dsAssessments.data.get('peer_read_after_write'),
+      { id: 'peer_read_after_write', score: 4.75 },
+      'refreshChangedFilesFromGcs must hot-reload peer instance mutations into DataStore memory before read handlers execute'
+    );
+
+    // P1 Invariant: Transient 503 upload failure MUST preserve dirty local state across peer refresh and self-heal
+    simulateUpload503 = true;
+    dsAssessments.data.set('dirty_local_after_503', { id: 'dirty_local_after_503', score: 4.9 });
+    dsAssessments.saveData();
+    await durableGcs.flushAllPendingSyncs();
+    assert.strictEqual(durableGcs.getDurablePersistenceStatus().dirtyUnsyncedCount, 1, 'Failed 503 upload must retain path in dirtyUnsyncedPaths');
+
+    simulateUpload503 = false;
+    const pre503Remote = JSON.parse(remoteObjects.get('unit-prefix/assessments.json').payload);
+    remoteObjects.set('unit-prefix/assessments.json', {
+      generation: '1100',
+      payload: JSON.stringify({
+        ...pre503Remote,
+        peer_during_503: { id: 'peer_during_503', score: 4.1 }
+      })
+    });
+    await durableGcs.refreshChangedFilesFromGcs({ force: true, targetDataDir: tmpDir });
+    await durableGcs.flushAllPendingSyncs();
+
+    assert.strictEqual(durableGcs.getDurablePersistenceStatus().dirtyUnsyncedCount, 0, 'Self-healed dirty file must clear dirtyUnsyncedPaths after recovery upload');
+    assert.ok(dsAssessments.data.has('dirty_local_after_503'), 'refreshChangedFilesFromGcs must NEVER clobber dirty unsynced local mutations');
+    assert.ok(dsAssessments.data.has('peer_during_503'), 'refreshChangedFilesFromGcs must merge peer mutations into dirty local state');
+    const healedRemoteAssessments = JSON.parse(remoteObjects.get('unit-prefix/assessments.json').payload);
+    assert.ok(healedRemoteAssessments.dirty_local_after_503 && healedRemoteAssessments.peer_during_503, 'Recovered 3-way merge must be uploaded back to GCS');
+
+    // P1 Invariant: FileUserStore.createUser async bcrypt.hash MUST NOT wipe concurrent peer users.json refreshes
+    const fileUserStore = require('../../server/db/fileUserStore');
+    fileUserStore.initializedDir = null;
+    const createAlicePromise = fileUserStore.createUser({
+      email: 'alice@example.com',
+      password: 'StrongPassword123!'
+    });
+    // While bcrypt.hash (~250ms) is running, Peer B writes bob@example.com to GCS and Instance A refreshes
+    await new Promise((r) => setTimeout(r, 15));
+    remoteObjects.set('unit-prefix/users.json', {
+      generation: '1200',
+      payload: JSON.stringify([
+        { id: 'peer_bob', email: 'bob@example.com', role: 'consumer', is_active: true, created_at: '2026-01-01T00:00:00.000Z' }
+      ])
+    });
+    await durableGcs.refreshChangedFilesFromGcs({ force: true, targetDataDir: tmpDir });
+    await createAlicePromise;
+    await durableGcs.flushAllPendingSyncs();
+
+    const finalUsersRemote = JSON.parse(remoteObjects.get('unit-prefix/users.json').payload);
+    const finalEmails = finalUsersRemote.map((u) => u.email).sort();
+    assert.deepStrictEqual(
+      finalEmails,
+      ['alice@example.com', 'bob@example.com'],
+      'Concurrent FileUserStore.createUser + peer refresh during bcrypt.hash must preserve both users'
     );
   } finally {
+    durableGcs.resetDurableGcsRuntimeStateForTests();
     global.fetch = origFetch;
     if (origBucket === undefined) delete process.env.SCOREX_GCS_STATE_BUCKET; else process.env.SCOREX_GCS_STATE_BUCKET = origBucket;
     if (origPrefix === undefined) delete process.env.SCOREX_GCS_STATE_PREFIX; else process.env.SCOREX_GCS_STATE_PREFIX = origPrefix;
@@ -834,20 +1084,42 @@ test('UI Integrity Gate 20: Durable GCS Scale-to-Zero State Persistence, Runtime
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
 
-  // 3. Strict CI=true zero-warning build gate in root package.json, client/package.json, and Dockerfile
+  // 3. P0 Middleware Order, Runtime Ignore Hygiene, Strict CI=true & Node 22 LTS Gate
   const rootPkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
   const clientPkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'client/package.json'), 'utf8'));
   const dockerfileSrc = fs.readFileSync(path.join(ROOT, 'Dockerfile'), 'utf8');
+  const dockerignoreSrc = fs.readFileSync(path.join(ROOT, '.dockerignore'), 'utf8');
+  const gcloudignoreSrc = fs.readFileSync(path.join(ROOT, '.gcloudignore'), 'utf8');
+  const hardeningSrc = fs.readFileSync(path.join(ROOT, 'server/security/hardening.js'), 'utf8');
+  const indexCoreShutdownSrc = fs.readFileSync(path.join(ROOT, 'server/indexCore.js'), 'utf8');
+
+  for (const rtFile of durableGcs.RUNTIME_ONLY_STATE_FILES) {
+    assert.ok(dockerignoreSrc.includes(`data/${rtFile}`), `.dockerignore must exclude runtime state file data/${rtFile}`);
+    assert.ok(gcloudignoreSrc.includes(`data/${rtFile}`), `.gcloudignore must exclude runtime state file data/${rtFile}`);
+  }
+
+  const gcsMwIdx = indexCoreShutdownSrc.indexOf('app.use(createGcsFreshnessMiddleware())');
+  const firstRouteIdx = indexCoreShutdownSrc.indexOf("app.get(['/health'");
+  assert.ok(
+    gcsMwIdx > 0 && firstRouteIdx > gcsMwIdx,
+    'createGcsFreshnessMiddleware() MUST be mounted BEFORE the first app.get route so installSecurity splices securityMiddleware after GCS sync'
+  );
+  assert.ok(
+    hardeningSrc.includes('refreshChangedFilesFromGcs') && hardeningSrc.indexOf('refreshChangedFilesFromGcs') < hardeningSrc.indexOf('await authenticate(req, res)'),
+    'securityMiddleware in hardening.js must guarantee GCS freshness before await authenticate(req, res) and /api/assessments handlers'
+  );
+
   assert.ok(!rootPkg.scripts.build.includes('CI=false') && rootPkg.scripts.build.includes('CI=true'), 'root package.json build script must enforce CI=true');
+  assert.strictEqual(rootPkg.engines.node, '>=22.12.0', 'root package.json engines.node must require >=22.12.0 for native V8 require(esm)');
   assert.strictEqual(clientPkg.scripts.build, 'CI=true react-scripts build', 'client/package.json build script must enforce CI=true react-scripts build');
   assert.ok(!dockerfileSrc.includes('CI=false') && dockerfileSrc.includes('CI=true'), 'Dockerfile must enforce CI=true');
+  assert.ok(!dockerfileSrc.includes('node:20') && dockerfileSrc.includes('FROM node:22-bookworm-slim'), 'Dockerfile must target Node 22 LTS for native V8 require(esm)');
 
   // 4. PostgreSQL JSONB migration parity & pre-drain SIGTERM GCS flush
   assert.ok(fs.existsSync(path.join(ROOT, 'server/db/migrations/023_ge_and_eu_ai_dossiers.sql')), 'numbered migration 023_ge_and_eu_ai_dossiers.sql must exist for migrate.js');
   const schemaEnhancements = fs.readFileSync(path.join(ROOT, 'server/db/schema-enhancements.sql'), 'utf8');
   assert.ok(schemaEnhancements.includes('CREATE TABLE IF NOT EXISTS ge_value_realization_dossiers'), 'schema-enhancements.sql must define ge_value_realization_dossiers JSONB table');
   assert.ok(schemaEnhancements.includes('CREATE TABLE IF NOT EXISTS eu_ai_dossiers'), 'schema-enhancements.sql must define eu_ai_dossiers JSONB table');
-  const indexCoreShutdownSrc = fs.readFileSync(path.join(ROOT, 'server/indexCore.js'), 'utf8');
   const flushIdx = indexCoreShutdownSrc.indexOf('const initialFlushPromise = flushAllPendingSyncs()');
   const closeIdx = indexCoreShutdownSrc.indexOf('server.close(() =>');
   assert.ok(flushIdx > 0 && closeIdx > flushIdx, 'gracefulShutdown must initiate flushAllPendingSyncs() BEFORE blocking on server.close()');

@@ -1,6 +1,6 @@
 # ScoreX (`v3.9.0`) — Deployment & Architecture Status
 
-## Current Status: ✅ Production Ready & Certified (`v3.9.0` — 20 UI Integrity Gates [`46/46` Tests], Single-Source Framework, Durable GCS State Sync & `CI=true` Zero-Warning Build Certified)
+## Current Status: ✅ Production Ready & Certified (`v3.9.0` — 20 UI Integrity Gates [`46/46` Tests], Node 22 LTS Native `require(esm)` Single-Source Framework, Multi-Instance GCS `?ifGenerationMatch` CAS + 3-Way Merge & `CI=true` Zero-Warning Build Certified)
 
 ### 🏛️ 3-Engine Consolidated Architecture & 21-Level Forensic Remediation
 - **Engine 1 — Dynamic Assessment Blueprints Engine**: Active on `/assessments`, `/assessments/hub`, `/assessments/ai-generator`, `/assessments/run/:typeKey`, `/assessments/run/instance/:id`, and `/assessments/report/:id` across all **6 canonical blueprints**:

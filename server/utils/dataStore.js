@@ -1,8 +1,18 @@
 const fs = require('fs');
 const path = require('path');
-const { scheduleStateFileSync } = require('./durableGcsPersistence');
+const {
+  scheduleStateFileSync,
+  registerExternalFileSyncListener
+} = require('./durableGcsPersistence');
 
 const SHARED_STORES_BY_PATH = new Map();
+
+registerExternalFileSyncListener((canonicalPath, parsedData) => {
+  const existing = SHARED_STORES_BY_PATH.get(canonicalPath);
+  if (existing && parsedData && typeof parsedData === 'object' && !Array.isArray(parsedData)) {
+    existing.data = new Map(Object.entries(parsedData));
+  }
+});
 
 class DataStore {
   constructor(filePath, options = {}) {

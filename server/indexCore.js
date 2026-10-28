@@ -48,7 +48,18 @@ app.use(fileUpload({
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
-const { getDurablePersistenceStatus, flushAllPendingSyncs, resolveDataDir } = require('./utils/durableGcsPersistence');
+const {
+  getDurablePersistenceStatus,
+  flushAllPendingSyncs,
+  resolveDataDir,
+  createGcsFreshnessMiddleware
+} = require('./utils/durableGcsPersistence');
+
+// Multi-instance GCS generation freshness sync MUST be registered BEFORE the first
+// `app.get(...)` route so `installSecurity(app)` (`insertBeforeFirstRoute`) splices
+// `securityMiddleware` AFTER `gcsFreshnessMiddleware` (createGcsFreshnessMiddleware
+// already fast-paths `/health`, `/healthz`, and `/api/health` in 0ms).
+app.use(createGcsFreshnessMiddleware());
 
 // High-priority root & API health check endpoints for Railway / Docker / Cloud Run
 app.get(['/health', '/healthz', '/api/health'], (req, res) => {
@@ -57,7 +68,8 @@ app.get(['/health', '/healthz', '/api/health'], (req, res) => {
     success: true,
     message: 'ScoreX Enterprise API is live and healthy',
     timestamp: new Date().toISOString(),
-    version: '3.8.0',
+    version: '3.9.0',
+    nodeVersion: process.version,
     gitCommitSha: process.env.SCOREX_GIT_COMMIT_SHA || null,
     durablePersistence: getDurablePersistenceStatus()
   });

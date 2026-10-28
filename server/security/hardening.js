@@ -370,6 +370,15 @@ function installSecurity(app) {
           return res.status(200).json({ builds: getBuildTargets(req) });
         }
 
+        if (req.path.startsWith('/api/') && req.path !== '/api/health' && !req.__scorexGcsRefreshed) {
+          const { isDurableGcsEnabled, refreshChangedFilesFromGcs } = require('../utils/durableGcsPersistence');
+          if (isDurableGcsEnabled()) {
+            const isMutating = req.method !== 'GET' && req.method !== 'HEAD' && req.method !== 'OPTIONS';
+            await refreshChangedFilesFromGcs({ maxStalenessMs: isMutating ? 400 : 1500 }).catch(() => null);
+            req.__scorexGcsRefreshed = true;
+          }
+        }
+
         if (req.path.startsWith('/api/') && !isPublicApiPath(req)) {
           const authenticated = await authenticate(req, res);
           if (!authenticated) return;
