@@ -327,17 +327,6 @@ const PrimaryBtn = styled.button`
   }
 `;
 
-const DualDiagramGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-bottom: 20px;
-
-  @media (max-width: 1100px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
 const ComparisonGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;

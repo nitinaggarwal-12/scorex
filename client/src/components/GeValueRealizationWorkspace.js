@@ -817,11 +817,9 @@ const GeValueRealizationWorkspace = () => {
       handleStartNewUnfilledAssessment(null, false);
       return;
     }
-    if (!routeDossierId || initialCustomerParam) {
-      const targetQuery = initialCustomerParam || 'AeroVanguard Global Logistics';
-      const targetSfdc = initialCustomerParam
-        ? (initialCustomerParam.startsWith('001') || initialCustomerParam.toUpperCase().startsWith('ACC-') ? initialCustomerParam : '')
-        : 'ACC-1001-AEROVG';
+    if (initialCustomerParam) {
+      const targetQuery = initialCustomerParam;
+      const targetSfdc = (initialCustomerParam.startsWith('001') || initialCustomerParam.toUpperCase().startsWith('ACC-')) ? initialCustomerParam : '';
       handleIngestCustomer({
         customerQuery: targetQuery,
         sfdcAccountId: targetSfdc,
@@ -830,8 +828,9 @@ const GeValueRealizationWorkspace = () => {
       });
       return;
     }
+    const targetDossierId = routeDossierId || 'ge_vr_ACC-1001-AEROVG';
     axios
-      .get(`/api/ge-value-realization/dossiers/${routeDossierId}`)
+      .get(`/api/ge-value-realization/dossiers/${targetDossierId}`)
       .then((res) => {
         if (res.data?.success && res.data?.dossier) {
           const loaded = res.data.dossier;
@@ -1048,7 +1047,7 @@ const GeValueRealizationWorkspace = () => {
         }
       }
 
-      return {
+      const updatedDossier = {
         ...prev,
         costLedger: nextCostLedger,
         employeeSurvey: nextSurvey,
@@ -1060,6 +1059,9 @@ const GeValueRealizationWorkspace = () => {
           [qId]: nextItem
         }
       };
+      const targetId = updatedDossier.id || 'ge_vr_ACC-1001-AEROVG';
+      axios.post(`/api/ge-value-realization/dossiers/${targetId}`, updatedDossier).catch(() => {});
+      return updatedDossier;
     });
   };
 
@@ -1072,10 +1074,13 @@ const GeValueRealizationWorkspace = () => {
         ...workflows[wfIdx],
         ...patch
       };
-      return {
+      const updatedDossier = {
         ...prev,
         workflows
       };
+      const targetId = updatedDossier.id || 'ge_vr_ACC-1001-AEROVG';
+      axios.post(`/api/ge-value-realization/dossiers/${targetId}`, updatedDossier).catch(() => {});
+      return updatedDossier;
     });
   };
 

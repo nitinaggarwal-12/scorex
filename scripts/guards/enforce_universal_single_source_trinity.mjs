@@ -51,10 +51,12 @@ const WORKSPACE_ROOTS = [
   path.join(HOME, "Documents", "scorex"),
   path.join(HOME, "Documents", "Demoes-GE"),
   path.join(HOME, "Documents", "blogs"),
+  path.join(HOME, "Documents", "skills"),
+  path.join(HOME, "Documents", "ideas-mining"),
   ZYVORIQ_ROOT,
 ].filter((p) => fs.existsSync(p));
 
-const SKIP_DIRS = new Set(["node_modules", ".next", ".git", "dist", "build", ".venv", "__pycache__", "scratch", "BMAD-METHOD-main"]);
+const SKIP_DIRS = new Set(["node_modules", ".next", ".git", "dist", "build", ".venv", "__pycache__", "scratch", "BMAD-METHOD-main", "generated-repos"]);
 const EXEMPT_HOOKS = [/googlecloudtools\.datacloud_telemetry/, /google-slides-design/];
 const EXEMPT_SKILLS = [/\.gemini\/(antigravity|antigravity-ide|jetski)\/builtin\/skills\//];
 const GOV_NAMES = new Set(["agents.md", "gemini.md", "claude.md"]);
@@ -84,52 +86,54 @@ function walk(dir, predicate, out = [], depth = 0) {
 }
 
 function syncRulesAndSkillsAcrossWorkspaces() {
-  // 1. Sync all canonical rule files across ~/.gemini/config/rules/*.md and symlink workspace .agents/rules/*.md -> canonRule
-  //    so Jetski's realpath deduplicator (SKILL.md:L109) injects each rule 1x instead of 2x into <user_rules>.
+  // 1. Sync all 15 canonical rule files across ~/.gemini/config/rules/*.md and all workspace .agents/rules/*.md
   if (fs.existsSync(CANONICAL_RULES_DIR)) {
-    const canonRulesReal = fs.realpathSync(CANONICAL_RULES_DIR);
     const ruleFiles = fs.readdirSync(CANONICAL_RULES_DIR).filter((f) => f.endsWith(".md"));
     for (const rf of ruleFiles) {
       const canonRule = path.join(CANONICAL_RULES_DIR, rf);
-      const wsTargets = [];
+      const targets = [canonRule];
       for (const ws of WORKSPACE_ROOTS) {
         const wsRulesDir = path.join(ws, ".agents", "rules");
         try {
-          if (fs.existsSync(wsRulesDir) && fs.realpathSync(wsRulesDir) !== canonRulesReal) {
-            wsTargets.push(path.join(wsRulesDir, rf));
+          if (fs.existsSync(wsRulesDir) && !fs.lstatSync(wsRulesDir).isSymbolicLink()) {
+            if (fs.realpathSync(wsRulesDir) === fs.realpathSync(CANONICAL_RULES_DIR)) continue;
+            targets.push(path.join(wsRulesDir, rf));
           }
         } catch {}
       }
-      const existingCandidates = [canonRule, ...wsTargets].filter((p) => {
-        try {
-          // Only consider non-symlink physical files or valid non-looping files
-          const st = fs.lstatSync(p);
-          if (st.isSymbolicLink()) return false;
-          return st.isFile() && st.size > 0;
-        } catch { return false; }
+      const existingCandidates = targets.filter((p) => {
+        try { return fs.existsSync(p) && !fs.lstatSync(p).isSymbolicLink() && fs.statSync(p).isFile() && fs.statSync(p).size > 0; } catch { return false; }
       });
       if (AUTO_HEAL && existingCandidates.length > 0) {
         existingCandidates.sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs);
-        const newestRule = existingCandidates[0];
-        const newestContent = fs.readFileSync(newestRule);
-        let canonIsLink = false;
-        try { canonIsLink = fs.lstatSync(canonRule).isSymbolicLink(); } catch {}
-        if (canonIsLink) {
-          fs.unlinkSync(canonRule);
-          fs.writeFileSync(canonRule, newestContent);
-        } else if (!fs.existsSync(canonRule) || sha256Full(canonRule) !== sha256Full(newestRule)) {
-          fs.writeFileSync(canonRule, newestContent);
+        const sourceRule = existingCandidates[0];
+        const sourceSha = sha256Full(sourceRule);
+        // Ensure canonical ~/.gemini/config/rules/<rf> is ALWAYS a real file (never a symlink) with the latest content
+        if (path.resolve(sourceRule) !== path.resolve(canonRule)) {
+          let canonIsLink = false;
+          try { canonIsLink = fs.lstatSync(canonRule).isSymbolicLink(); } catch {}
+          const canonSha = !canonIsLink && fs.existsSync(canonRule) ? sha256Full(canonRule) : "";
+          if (canonSha !== sourceSha || canonIsLink) {
+            const buf = fs.readFileSync(sourceRule);
+            try { fs.rmSync(canonRule, { force: true }); } catch {}
+            fs.writeFileSync(canonRule, buf);
+          }
         }
-        for (const targetRule of wsTargets) {
-          if (fs.realpathSync(path.dirname(targetRule)) === canonRulesReal) continue;
-          let isCorrectLink = false;
+        // Symlink all workspace .agents/rules/<rf> (inside non-symlinked .agents/rules dirs) to canonRule so Jetski realpath deduplication prevents 2x rule injection
+        for (const targetRule of targets) {
+          if (path.resolve(targetRule) === path.resolve(canonRule)) continue;
+          try {
+            if (fs.lstatSync(path.dirname(targetRule)).isSymbolicLink()) continue;
+            if (fs.realpathSync(path.dirname(targetRule)) === fs.realpathSync(CANONICAL_RULES_DIR)) continue;
+          } catch {}
+          let isAlreadyLinked = false;
           try {
             const st = fs.lstatSync(targetRule);
             if (st.isSymbolicLink() && path.resolve(path.dirname(targetRule), fs.readlinkSync(targetRule)) === path.resolve(canonRule)) {
-              isCorrectLink = true;
+              isAlreadyLinked = true;
             }
           } catch {}
-          if (!isCorrectLink) {
+          if (!isAlreadyLinked) {
             try { fs.rmSync(targetRule, { force: true }); } catch {}
             fs.mkdirSync(path.dirname(targetRule), { recursive: true });
             fs.symlinkSync(canonRule, targetRule);
@@ -157,7 +161,9 @@ function syncRulesAndSkillsAcrossWorkspaces() {
         try {
           if (fs.existsSync(wsSkillsRoot) && !fs.lstatSync(wsSkillsRoot).isSymbolicLink()) {
             const wsSkillFile = path.join(wsSkillsRoot, dir.name, "SKILL.md");
-            if (fs.existsSync(wsSkillFile)) targets.push(wsSkillFile);
+            if (fs.existsSync(wsSkillFile) && fs.realpathSync(wsSkillFile) !== fs.realpathSync(canonSkill)) {
+              targets.push(wsSkillFile);
+            }
           }
         } catch {}
       }
@@ -187,11 +193,16 @@ function syncRulesAndSkillsAcrossWorkspaces() {
       parsed.version = "3.7.0";
       mutated = true;
     }
-    if (!Array.isArray(parsed.entries) || parsed.entries.length < 2) {
-      parsed.entries = [
-        { path: "~/.gemini/config/skills" },
-        { path: "/Users/nitinagga/Documents/Demoes-GE/enterprise-skills" }
-      ];
+    const requiredEntries = [
+      { path: "~/.gemini/config/skills" },
+      { path: "/Users/nitinagga/Documents/Demoes-GE/enterprise-skills" }
+    ];
+    if (JSON.stringify(parsed.entries) !== JSON.stringify(requiredEntries)) {
+      parsed.entries = requiredEntries;
+      mutated = true;
+    }
+    if (!parsed.skills || typeof parsed.skills !== "object") {
+      parsed.skills = {};
       mutated = true;
     }
 
@@ -220,6 +231,41 @@ function syncRulesAndSkillsAcrossWorkspaces() {
     if (mutated && AUTO_HEAL) {
       parsed.updatedAt = new Date().toISOString();
       fs.writeFileSync(CANONICAL_SKILLS_JSON, JSON.stringify(parsed, null, 2) + "\n", "utf-8");
+    }
+
+    // Critical Guard: .datacloud_skills_manifest in ~/.gemini/config/skills/ must NEVER be symlinked to skills.json,
+    // otherwise googlecloudtools.datacloud's uninstaller.prune() deletes all non-datacloud custom skills on IDE startup!
+    const dcManifestPath = path.join(CANONICAL_SKILLS_DIR, ".datacloud_skills_manifest");
+    try {
+      if (fs.existsSync(dcManifestPath) && fs.lstatSync(dcManifestPath).isSymbolicLink()) {
+        fs.unlinkSync(dcManifestPath);
+      }
+    } catch {}
+
+    // 3. Sync global Jetski workflows (~/.gemini/jetski/global_workflows/*.md) into workspace .agents/workflows/*.md
+    const globalWorkflowsDir = path.join(HOME, ".gemini", "jetski", "global_workflows");
+    if (AUTO_HEAL && fs.existsSync(globalWorkflowsDir)) {
+      const wfFiles = fs.readdirSync(globalWorkflowsDir).filter((f) => f.endsWith(".md")).sort();
+      for (const ws of WORKSPACE_ROOTS) {
+        if (!fs.existsSync(ws)) continue;
+        const wsWfDir = path.join(ws, ".agents", "workflows");
+        fs.mkdirSync(wsWfDir, { recursive: true });
+        for (const wf of wfFiles) {
+          const canonWf = path.join(globalWorkflowsDir, wf);
+          const targetWf = path.join(wsWfDir, wf);
+          let isLinked = false;
+          try {
+            const st = fs.lstatSync(targetWf);
+            if (st.isSymbolicLink() && path.resolve(path.dirname(targetWf), fs.readlinkSync(targetWf)) === path.resolve(canonWf)) {
+              isLinked = true;
+            }
+          } catch {}
+          if (!isLinked) {
+            try { fs.rmSync(targetWf, { force: true }); } catch {}
+            fs.symlinkSync(canonWf, targetWf);
+          }
+        }
+      }
     }
   } catch {}
 }
@@ -401,7 +447,6 @@ function main() {
     path.join(ZYVORIQ_ROOT, "skills.json"),
     path.join(CUSTOMER_TRACKER_ROOT, "skills.json"),
     path.join(CUSTOMER_TRACKER_ROOT, ".agents", "skills.json"),
-    path.join(CANONICAL_SKILLS_DIR, ".datacloud_skills_manifest"),
     ...walk(path.join(HOME, "Documents"), (n) => n.toLowerCase() === "skills.json")
   ];
 

@@ -29,7 +29,7 @@ const COLORS = {
   white: '#FFFFFF'
 };
 
-export class ExecutivePDFExporter {
+class ExecutivePDFExporter {
   constructor(results = {}, assessmentInfo = {}) {
     this.doc = new jsPDF('p', 'pt', 'a4');
     this.results = results || {};

@@ -24,6 +24,40 @@ class GenAIAssessmentRepository {
     this.ensureStarterGenAIAssessments();
   }
 
+  computeGenAIScores(responses = {}) {
+    const fw = require('../data/genai-readiness-framework');
+    const scores = {};
+    let totalScore = 0;
+    let maxScore = 0;
+
+    (fw.dimensions || []).forEach((dim) => {
+      let dimScore = 0;
+      (dim.questions || []).forEach((q) => {
+        const val = responses[q.id];
+        if (val !== undefined && val !== null) {
+          const opt = (q.options || []).find(o => o.value === val || Number(o.value) === Number(val));
+          if (opt) {
+            dimScore += Number(opt.score ?? opt.value ?? 0);
+          }
+        }
+      });
+      scores[dim.id] = {
+        score: dimScore,
+        maxScore: dim.maxScore,
+        percentage: dim.maxScore > 0 ? Math.round((dimScore / dim.maxScore) * 100) : 0
+      };
+      totalScore += dimScore;
+      maxScore += Number(dim.maxScore || 0);
+    });
+
+    const matchedLevel = (fw.maturityLevels || []).find(
+      lvl => totalScore >= Number(lvl.min ?? lvl.minScore ?? 0) && totalScore <= Number(lvl.max ?? lvl.maxScore ?? 160)
+    ) || (fw.maturityLevels || [])[0];
+    const maturityLevel = matchedLevel ? (matchedLevel.level || matchedLevel.name || 'Initial') : 'Initial';
+
+    return { scores, totalScore, maxScore, maturityLevel };
+  }
+
   ensureStarterGenAIAssessments() {
     try {
       const fw = require('../data/genai-readiness-framework');
@@ -46,33 +80,28 @@ class GenAIAssessmentRepository {
       ];
 
       for (const st of starters) {
-        const responses = {};
-        const scores = {};
-        let totalScore = 0;
-        let maxScore = 0;
+        const existing = fileStore.get(st.id);
+        if (
+          existing &&
+          existing.responses &&
+          Object.keys(existing.responses).length >= 30 &&
+          Number(existing.total_score ?? existing.totalScore ?? 0) > 0 &&
+          existing.scores &&
+          Object.keys(existing.scores).length === 6
+        ) {
+          continue;
+        }
 
+        const responses = {};
         (fw.dimensions || []).forEach((dim, dIdx) => {
-          let dimScore = 0;
           (dim.questions || []).forEach((q, qIdx) => {
             const rawVal = st.optionChoices[(dIdx + qIdx) % st.optionChoices.length];
             const opt = (q.options || []).find(o => o.value === rawVal) || q.options[2];
             responses[q.id] = opt.value;
-            dimScore += Number(opt.score || opt.value || 0);
           });
-          scores[dim.id] = {
-            score: dimScore,
-            maxScore: dim.maxScore,
-            percentage: Math.round((dimScore / dim.maxScore) * 100)
-          };
-          totalScore += dimScore;
-          maxScore += Number(dim.maxScore || 0);
         });
 
-        const matchedLevel = (fw.maturityLevels || []).find(
-          lvl => totalScore >= Number(lvl.min ?? lvl.minScore ?? 0) && totalScore <= Number(lvl.max ?? lvl.maxScore ?? 160)
-        ) || (fw.maturityLevels || [])[2];
-
-        const resolvedLevelName = matchedLevel ? (matchedLevel.level || matchedLevel.name || 'Developing') : 'Developing';
+        const { scores, totalScore, maxScore, maturityLevel: resolvedLevelName } = this.computeGenAIScores(responses);
         const formatted = {
           id: st.id,
           customer_name: st.customerName,
@@ -105,16 +134,32 @@ class GenAIAssessmentRepository {
 
   async create(data) {
     const id = data.id || crypto.randomUUID();
+    const responses = data.responses || {};
+    const computed = Object.keys(responses).length > 0 ? this.computeGenAIScores(responses) : null;
+    const customerName = data.customerName || data.customer_name || 'Untitled Assessment';
+    const scores = computed ? computed.scores : (data.scores || {});
+    const totalScore = computed ? computed.totalScore : Number(data.totalScore ?? data.total_score ?? 0);
+    const maxScore = computed ? computed.maxScore : Number(data.maxScore ?? data.max_score ?? 160);
+    const maturityLevel = computed ? computed.maturityLevel : (data.maturityLevel || data.maturity_level || '');
+    const completedAt = data.completedAt || data.completed_at || null;
+    const createdAt = data.createdAt || new Date().toISOString();
+
     const formatted = {
       id,
-      customer_name: data.customerName || data.customer_name || 'Untitled Assessment',
-      responses: data.responses || {},
-      scores: data.scores || {},
-      total_score: Number(data.totalScore ?? data.total_score ?? 0),
-      max_score: Number(data.maxScore ?? data.max_score ?? 0),
-      maturity_level: data.maturityLevel || data.maturity_level || '',
-      completed_at: data.completedAt || data.completed_at || null,
-      created_at: data.createdAt || new Date().toISOString(),
+      customer_name: customerName,
+      customerName,
+      responses,
+      scores,
+      total_score: totalScore,
+      totalScore,
+      max_score: maxScore,
+      maxScore,
+      maturity_level: maturityLevel,
+      maturityLevel,
+      completed_at: completedAt,
+      completedAt,
+      created_at: createdAt,
+      createdAt,
       updated_at: new Date().toISOString(),
       owner_id: data.ownerId || data.owner_id || null
     };
@@ -199,16 +244,30 @@ class GenAIAssessmentRepository {
     const existing = await this.findById(id);
     if (!existing) return null;
 
+    const responses = data.responses || existing.responses || {};
+    const computed = Object.keys(responses).length > 0 ? this.computeGenAIScores(responses) : null;
+    const customerName = data.customerName || data.customer_name || existing.customer_name || existing.customerName;
+    const scores = computed ? computed.scores : (data.scores || existing.scores || {});
+    const totalScore = computed ? computed.totalScore : Number(data.totalScore ?? data.total_score ?? existing.total_score ?? 0);
+    const maxScore = computed ? computed.maxScore : Number(data.maxScore ?? data.max_score ?? existing.max_score ?? 160);
+    const maturityLevel = computed ? computed.maturityLevel : (data.maturityLevel || data.maturity_level || existing.maturity_level);
+    const completedAt = data.completedAt || data.completed_at || existing.completed_at;
+
     const updated = {
       ...existing,
       ...data,
-      customer_name: data.customerName || data.customer_name || existing.customer_name,
-      responses: data.responses || existing.responses,
-      scores: data.scores || existing.scores,
-      total_score: Number(data.totalScore ?? data.total_score ?? existing.total_score ?? 0),
-      max_score: Number(data.maxScore ?? data.max_score ?? existing.max_score ?? 0),
-      maturity_level: data.maturityLevel || data.maturity_level || existing.maturity_level,
-      completed_at: data.completedAt || data.completed_at || existing.completed_at,
+      customer_name: customerName,
+      customerName,
+      responses,
+      scores,
+      total_score: totalScore,
+      totalScore,
+      max_score: maxScore,
+      maxScore,
+      maturity_level: maturityLevel,
+      maturityLevel,
+      completed_at: completedAt,
+      completedAt,
       updated_at: new Date().toISOString()
     };
 

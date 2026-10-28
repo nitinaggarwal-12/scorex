@@ -863,22 +863,6 @@ const SlideContent = styled.div`
   overflow: hidden;
 `;
 
-const SlideHeading = styled.div`
-  position: absolute;
-  top: 20px;
-  left: 60px;
-  font-size: 1.8rem;
-  fontWeight: 700;
-  color: white;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  
-  ${SlideContainer}:hover & {
-    opacity: 1;
-  }
-`;
-
 const SlideCounter = styled.div`
   position: absolute;
   bottom: 20px;
@@ -951,37 +935,6 @@ const NavigationButton = styled(motion.button)`
       color: #3b82f6;
       border-color: rgba(59, 130, 246, 0.3);
       transform: translateY(-50%) scale(1);
-    }
-  }
-`;
-
-// Global print styles
-const PrintStyles = styled.div`
-  @media print {
-    /* Enable background graphics */
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-    color-adjust: exact !important;
-    
-    /* Page margins - zero to prevent content cutoff */
-    @page {
-      margin: 0;
-      size: letter;
-    }
-    
-    /* Keep sections together */
-    section,
-    div[style*="background"],
-    [class*="Card"],
-    [class*="Container"] {
-      page-break-inside: avoid !important;
-      break-inside: avoid-page !important;
-    }
-    
-    /* Headings stay with content */
-    h1, h2, h3, h4, h5, h6 {
-      page-break-after: avoid !important;
-      break-after: avoid-page !important;
     }
   }
 `;

@@ -380,8 +380,8 @@ test('UI Integrity Gate 14: Forensic Mathematical, Logical, Factual & Completene
   // 1. Zero consulting brand leaks in backend services & permanent purge of static HTML mockups
   const ingestorSrc = fs.readFileSync(path.join(ROOT, 'server/services/geCustomerMultiSourceIngestor.js'), 'utf8');
   const recEngineSrc = fs.readFileSync(path.join(ROOT, 'server/services/intelligentRecommendationEngine_v2.js'), 'utf8');
-  assert.ok(!/Stratagem|McKinsey|\bMcK\b/i.test(ingestorSrc), 'geCustomerMultiSourceIngestor.js must contain 0 Stratagem/McKinsey references');
-  assert.ok(!/Stratagem|McKinsey|\bMcK\b/i.test(recEngineSrc), 'intelligentRecommendationEngine_v2.js must contain 0 Stratagem/McKinsey references');
+  assert.ok(!/Stratagem|McKinsey|\bMcK\b|Quantiphi|Deloitte|Accenture|\bPwC\b|\bKPMG\b|\bBCG\b|\bBain\b|Slalom/i.test(ingestorSrc), 'geCustomerMultiSourceIngestor.js must contain 0 prohibited consulting brand references');
+  assert.ok(!/Stratagem|McKinsey|\bMcK\b|Quantiphi|Deloitte|Accenture|\bPwC\b|\bKPMG\b|\bBCG\b|\bBain\b|Slalom/i.test(recEngineSrc), 'intelligentRecommendationEngine_v2.js must contain 0 prohibited consulting brand references');
   assert.ok(!fs.existsSync(path.join(ROOT, 'ge_vr_executive_ui_mock.html')), 'Root ge_vr_executive_ui_mock.html must be permanently purged');
   assert.ok(!fs.existsSync(path.join(ROOT, 'client/public/ge_vr_executive_ui_mock.html')), 'client/public/ge_vr_executive_ui_mock.html must be permanently purged');
   assert.ok(!fs.existsSync(path.join(ROOT, 'client/public/ge_value_realization_figma_mockup.html')), 'client/public/ge_value_realization_figma_mockup.html must be permanently purged');
@@ -631,4 +631,64 @@ test('UI Integrity Gate 16: Transitive Dead-Code Purge, Dynamic Exhibit 1B Finan
   }
 });
 
+test('UI Integrity Gate 17: Rule 55 Frontier Model Payload Cap (maxOutputTokens <= 32768) & Zero Legacy text-embedding-004 / gemini-2.5 in SQL & Blueprint Catalogs', () => {
+  const geminiSvc = fs.readFileSync(path.join(ROOT, 'server/services/geminiService.js'), 'utf8');
+  assert.ok(geminiSvc.includes('maxOutputTokens: 32768'), 'geminiService.js must enforce explicit maxOutputTokens: 32768 cap per Rule 55');
+  const clientCatalog = readClientFile('services/masterBlueprintCatalog.js');
+  const serverCatalog = fs.readFileSync(path.join(ROOT, 'server/services/masterBlueprintCatalog.js'), 'utf8');
+  assert.ok(!clientCatalog.includes('text-embedding-004'), 'client masterBlueprintCatalog.js must not reference deprecated text-embedding-004');
+  assert.ok(!serverCatalog.includes('text-embedding-004'), 'server masterBlueprintCatalog.js must not reference deprecated text-embedding-004');
+  const sqlSeed = fs.readFileSync(path.join(ROOT, 'server/db/migrations/003_seed_more_features.sql'), 'utf8');
+  assert.ok(!/gemini-2\.5/i.test(sqlSeed), '003_seed_more_features.sql must not seed deprecated gemini-2.5 models');
+});
+
+test('UI Integrity Gate 18: Rule 50A Fluid Layout & Rule 54 Executive Light Theme on AssignAssessmentMulti, UserDetails, and ExecutiveDashboard', () => {
+  for (const rel of ['components/AssignAssessmentMulti.js', 'components/UserDetails.js', 'components/ExecutiveDashboard.js']) {
+    const src = readClientFile(rel);
+    assert.ok(!src.includes('max-width: 900px'), `${rel} must not use rigid max-width: 900px container (Rule 50A)`);
+  }
+  const assignSrc = readClientFile('components/AssignAssessmentMulti.js');
+  assert.ok(assignSrc.includes('background: #f8fafc;') && assignSrc.includes('max-width: 100%;'), 'AssignAssessmentMulti.js must use #f8fafc Executive Light Theme and 100% fluid width');
+});
+
+test('UI Integrity Gate 19: Permanent 5-Subsystem Persistence, Guard Synchronization, Client/Server Framework Parity & Zero Native Dialogs', () => {
+  // 1. Pre-tool guard & stop quality gate DELETED_LEGACY parity
+  const preToolGuardSrc = fs.readFileSync(path.join(ROOT, 'scripts/pre_tool_guard.mjs'), 'utf8');
+  for (const activeRestored of ['AssessmentQuestion.js', 'AssessmentStart.js', 'MyAssessments.js', 'PitchDeck.js', 'AssessmentHeader.js']) {
+    assert.ok(!preToolGuardSrc.includes(`'${activeRestored}'`), `pre_tool_guard.mjs must not block active restored component ${activeRestored}`);
+  }
+
+  // 2. Subsystem 1: Client/Server geValueRealizationFramework.js 1:1 parity & uppercase ge_vr_ACC-1001-AEROVG key check
+  const clientGeFw = readClientFile('data/geValueRealizationFramework.js').replace(/\bexport\s*\{/, 'module.exports = {').trim();
+  const serverGeFw = fs.readFileSync(path.join(ROOT, 'server/data/geValueRealizationFramework.js'), 'utf8').trim();
+  assert.strictEqual(clientGeFw, serverGeFw, 'client and server geValueRealizationFramework.js must be 100% identical');
+  const geRouteSrc = fs.readFileSync(path.join(ROOT, 'server/routes/geValueRealization.js'), 'utf8');
+  assert.ok(!geRouteSrc.includes("const aero = parsed['ge_vr_acc-1001-aerovg'];"), 'geValueRealization.js loadServerDossiers must not exclusively check lowercase ge_vr_acc-1001-aerovg');
+  assert.ok(geRouteSrc.includes("parsed['ge_vr_ACC-1001-AEROVG']") && geRouteSrc.includes('evaluation?.index'), 'geValueRealization.js loadServerDossiers must check canonical ge_vr_ACC-1001-AEROVG key and evaluation?.index');
+
+  // 3. Subsystem 2, 3, 4: Idempotent boot seeding (no unconditional DataStore overwrite on every require)
+  const dataStoreSrc = fs.readFileSync(path.join(ROOT, 'server/utils/dataStore.js'), 'utf8');
+  assert.ok(dataStoreSrc.includes('if (result) {\n      this.saveData();\n    }'), 'dataStore.js delete(key) must only call saveData() when key actually existed');
+  const customRepoSrc = fs.readFileSync(path.join(ROOT, 'server/db/customAssessmentRepository.js'), 'utf8');
+  assert.ok(customRepoSrc.includes('isStarterInstanceValid'), 'customAssessmentRepository.js must check isStarterInstanceValid before overwriting starter instances on boot');
+  const coreRepoSrc = fs.readFileSync(path.join(ROOT, 'server/db/assessmentRepository.js'), 'utf8');
+  assert.ok(coreRepoSrc.includes("endsWith('_current_state')).length >= 60"), 'assessmentRepository.js must skip overwriting valid 60-question starter assessments on boot');
+  const genaiRepoSrc = fs.readFileSync(path.join(ROOT, 'server/db/genaiAssessmentRepository.js'), 'utf8');
+  assert.ok(genaiRepoSrc.includes('computeGenAIScores') && genaiRepoSrc.includes('Object.keys(existing.responses).length >= 30'), 'genaiAssessmentRepository.js must deterministically compute scores via computeGenAIScores and skip overwriting valid 30-question starter assessments on boot');
+
+  // 4. Subsystem 3: Clone route assignment & starter delete protection
+  const indexCoreSrc = fs.readFileSync(path.join(ROOT, 'server/indexCore.js'), 'utf8');
+  assert.ok(indexCoreSrc.includes('const clonedAssessment = await assessmentRepo.create('), 'indexCore.js clone route must assign const clonedAssessment');
+  assert.ok(indexCoreSrc.includes('PROTECTED_CORE_STARTER_IDS'), 'indexCore.js must protect canonical starter assessments from deletion');
+
+  // 5. Subsystem 4: Zero native alert/confirm/prompt in GenAIReadiness.js & GenAIReadinessList.js
+  for (const rel of ['components/GenAIReadiness.js', 'components/GenAIReadinessList.js']) {
+    const src = readClientFile(rel);
+    assert.ok(!/\b(alert|prompt)\s*\(/.test(src) && !/window\.confirm\s*\(/.test(src), `${rel} must not use native browser alert/prompt/confirm dialogs (Rule 50C)`);
+  }
+
+  // 6. Subsystem 5: Full 20-question statutory seed fallback & atomic write in euAiCompliance.js
+  const euRouteSrc = fs.readFileSync(path.join(ROOT, 'server/routes/euAiCompliance.js'), 'utf8');
+  assert.ok(euRouteSrc.includes('q20:') && euRouteSrc.includes('.sync.tmp'), 'euAiCompliance.js must include all 20 statutory fallback questions and atomic .sync.tmp write');
+});
 

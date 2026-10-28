@@ -15,7 +15,7 @@ import { EU_AI_QUESTIONS } from '../data/euAiComplianceData';
  * - Tier 3 (Weight 1.5x - 1.8x): Art. 13, 26(7), 49, 50, 86 Transparency, Registry & Explainability Rights (€7.5M - €15M / 1.5% - 3% Turnover)
  * - Tier 4 (Weight 1.0x): Art. 4 General Staff AI Literacy Baseline
  */
-export const QUESTION_STATUTORY_WEIGHTS = {
+const QUESTION_STATUTORY_WEIGHTS = {
   q1: {
     weight: 2.5,
     tier: 'Tier 2: Value-Chain Liability (Art. 16 & 25)',

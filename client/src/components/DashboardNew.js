@@ -216,53 +216,6 @@ const MetricChange = styled.div`
   z-index: 1;
 `;
 
-// Charts Section
-const ChartsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
-  margin-bottom: 40px;
-
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const ChartCard = styled.div`
-  background: white;
-  border-radius: 16px;
-  padding: 32px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-
-  &:hover {
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-  }
-`;
-
-const ChartHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 24px;
-`;
-
-const ChartTitle = styled.h3`
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-`;
-
-const ChartSubtitle = styled.p`
-  font-size: 0.875rem;
-  color: #64748b;
-  margin: 8px 0 0 0;
-`;
-
 // Industry Breakdown
 const IndustryGrid = styled.div`
   display: grid;

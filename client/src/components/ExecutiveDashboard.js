@@ -21,10 +21,11 @@ import toast from 'react-hot-toast';
 // =====================
 
 const DashboardContainer = styled.div`
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 48px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: clamp(20px, 2.2vw, 32px);
   border-radius: 16px;
-  margin-bottom: 40px;
+  margin-bottom: 32px;
   position: relative;
   overflow: hidden;
 
@@ -491,23 +492,6 @@ const Input = styled.input`
   border: 2px solid #e2e8f0;
   border-radius: 8px;
   font-size: 1rem;
-  transition: all 0.2s ease;
-
-  &:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-  }
-`;
-
-const TextArea = styled.textarea`
-  padding: 12px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 1rem;
-  min-height: 100px;
-  font-family: inherit;
-  resize: vertical;
   transition: all 0.2s ease;
 
   &:focus {

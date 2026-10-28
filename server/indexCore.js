@@ -526,7 +526,7 @@ app.get('/api/assessment/framework', async (req, res) => {
 // Start new assessment
 app.post('/api/assessment/start', requireAuth, async (req, res) => {
   try {
-    const { organizationName, contactEmail, contactName, contactRole, industry, assessmentName, assessmentDescription } = req.body;
+    const { organizationName, contactEmail, contactName, contactRole, industry, assessmentName, assessmentDescription, selectedPillars } = req.body;
     
     if (!contactEmail) {
       return res.status(400).json({
@@ -544,6 +544,11 @@ app.post('/api/assessment/start', requireAuth, async (req, res) => {
 
     const assessmentRepo = require('./db/assessmentRepository');
     const assessmentId = uuidv4();
+    const allPillarIds = assessmentFramework.assessmentAreas.map(a => a.id);
+    const normalizedSelectedPillars = Array.isArray(selectedPillars) && selectedPillars.length > 0
+      ? selectedPillars.filter(p => allPillarIds.includes(p))
+      : allPillarIds;
+    const effectiveSelectedPillars = normalizedSelectedPillars.length > 0 ? normalizedSelectedPillars : allPillarIds;
     
     await assessmentRepo.create({
       id: assessmentId,
@@ -551,10 +556,13 @@ app.post('/api/assessment/start', requireAuth, async (req, res) => {
       assessmentDescription: assessmentDescription || '',
       organizationName: organizationName || 'Not specified',
       contactEmail,
+      contactName: contactName || '',
+      contactRole: contactRole || '',
       industry: industry || 'Not specified',
       status: 'in_progress',
       progress: 0,
-      currentCategory: assessmentFramework.assessmentAreas[0].id,
+      selectedPillars: effectiveSelectedPillars,
+      currentCategory: effectiveSelectedPillars[0],
       completedCategories: [],
       responses: {},
       editHistory: [],
@@ -566,8 +574,9 @@ app.post('/api/assessment/start', requireAuth, async (req, res) => {
       success: true,
       data: {
       assessmentId,
-      currentCategory: assessmentFramework.assessmentAreas[0].id,
-      totalCategories: assessmentFramework.assessmentAreas.length,
+      selectedPillars: effectiveSelectedPillars,
+      currentCategory: effectiveSelectedPillars[0],
+      totalCategories: effectiveSelectedPillars.length,
       assessmentName,
       assessmentDescription
       }
@@ -907,14 +916,14 @@ app.post('/api/assessment/:id/category/:categoryId/submit', async (req, res) => 
       updateData.completedAt = new Date().toISOString();
     }
 
-    await assessmentRepo.update(id, updateData);
+    const updated = await assessmentRepo.update(id, updateData);
 
     res.json({
       success: true,
       data: {
-        progress: (assessment.completedCategories.length / assessmentFramework.assessmentAreas.length) * 100,
+        progress: updated.progress !== undefined ? updated.progress : (completedCategories.length / assessmentFramework.assessmentAreas.length) * 100,
         nextCategory: nextArea ? nextArea.id : null,
-        isCompleted: assessment.status === 'completed'
+        isCompleted: updated.status === 'completed'
       }
     });
   } catch (error) {
@@ -1038,20 +1047,20 @@ app.patch('/api/assessment/:id/metadata', async (req, res) => {
       updateData.editHistory = editHistory;
     }
 
-    await assessmentRepo.update(id, updateData);
+    const updated = await assessmentRepo.update(id, updateData);
 
     res.json({
       success: true,
       message: 'Assessment metadata updated',
       data: {
-        id: assessment.id,
-        assessmentName: assessment.assessmentName,
-        organizationName: assessment.organizationName,
-        contactEmail: assessment.contactEmail,
-        industry: assessment.industry,
-        assessmentDescription: assessment.assessmentDescription,
-        lastModified: assessment.lastModified,
-        editHistory: assessment.editHistory
+        id: updated.id,
+        assessmentName: updated.assessmentName,
+        organizationName: updated.organizationName,
+        contactEmail: updated.contactEmail,
+        industry: updated.industry,
+        assessmentDescription: updated.assessmentDescription,
+        lastModified: updated.lastModified || updated.updatedAt,
+        editHistory: updated.editHistory
       }
     });
   } catch (error) {
@@ -1728,8 +1737,8 @@ app.get('/api/assessment/:id/results', requireAuth, async (req, res) => {
     
     console.log(`✅ Fully completed pillars: ${fullyCompletedAreas.length}/${areasWithResponses.length}`);
     
-    // Only process fully completed pillars
-    fullyCompletedAreas.forEach(area => {
+    // Process all pillars with responses (marking partial pillars via isPartial: !isCompleted)
+    areasWithResponses.forEach(area => {
       const areaScore = recommendations.areaScores[area.id] || { current: 0, future: 0 };
       console.log(`🔍 DEBUG: Area ${area.id} - areaScore from recommendations:`, areaScore);
       
@@ -2347,14 +2356,14 @@ app.post('/api/assessment/:id/nps-feedback', async (req, res) => {
       category: score >= 9 ? 'Promoter' : score >= 7 ? 'Passive' : 'Detractor'
     };
     
-    await assessmentRepo.update(id, { npsFeedback });
+    const updated = await assessmentRepo.update(id, { npsFeedback });
     
     console.log(`[NPS Feedback] Saved successfully for ${id}`);
     
     res.json({
       success: true,
       message: 'Feedback submitted successfully',
-      data: assessment.npsFeedback
+      data: updated.npsFeedback || npsFeedback
     });
   } catch (error) {
     console.error('Error submitting NPS feedback:', error);
@@ -3251,9 +3260,12 @@ app.post('/api/assessment/:id/clone', async (req, res) => {
     // Create new assessment with cloned data
     const newAssessmentId = uuidv4();
     const completedCats = originalAssessment.completedCategories || [];
-    const progress = Math.round((completedCats.length / 6) * 100);
+    const selectedPillars = Array.isArray(originalAssessment.selectedPillars) && originalAssessment.selectedPillars.length > 0
+      ? originalAssessment.selectedPillars
+      : assessmentFramework.assessmentAreas.map(a => a.id);
+    const progress = Math.round((completedCats.length / selectedPillars.length) * 100);
     
-    await assessmentRepo.create({
+    const clonedAssessment = await assessmentRepo.create({
       id: newAssessmentId,
       assessmentName,
       assessmentDescription: assessmentDescription || '',
@@ -3262,6 +3274,7 @@ app.post('/api/assessment/:id/clone', async (req, res) => {
       industry: industry || originalAssessment.industry,
       status: 'in_progress',
       progress: progress,
+      selectedPillars,
       currentCategory: originalAssessment.currentCategory,
       completedCategories: completedCats,
       responses: originalAssessment.responses || {},
@@ -3277,8 +3290,8 @@ app.post('/api/assessment/:id/clone', async (req, res) => {
         organizationName: clonedAssessment.organizationName,
         assessmentName: clonedAssessment.assessmentName,
         assessmentDescription: clonedAssessment.assessmentDescription,
-        completedCategories: clonedAssessment.completedCategories.length,
-        totalCategories: assessmentFramework.assessmentAreas.length
+        completedCategories: (clonedAssessment.completedCategories || completedCats).length,
+        totalCategories: selectedPillars.length
       }
     });
   } catch (error) {
@@ -3291,17 +3304,26 @@ app.post('/api/assessment/:id/clone', async (req, res) => {
   }
 });
 
+const PROTECTED_CORE_STARTER_IDS = new Set([
+  'c5219d95-d9d8-4850-9c05-889921dc118d',
+  '29160ad2-afd1-4335-bb0a-d74ce475af02',
+  'd4a9c051-667e-4e43-8d57-e721115189e1',
+  'inst_enterprise_data_ai_maturity_demo'
+]);
+
 // Delete an assessment
-// Delete all assessments
-app.delete('/api/assessments/all', async (req, res) => {
+// Delete all assessments (excluding protected canonical starter assessments)
+app.delete('/api/assessments/all', requireAuth, async (req, res) => {
   try {
-    console.log('🗑️  Deleting all assessments...');
+    console.log('🗑️  Deleting all non-starter assessments...');
     
     const assessmentRepo = require('./db/assessmentRepository');
     const allAssessments = await assessmentRepo.findAll();
-    const assessmentIds = allAssessments.map(a => a.id);
+    const assessmentIds = allAssessments
+      .map(a => a.id)
+      .filter(id => !PROTECTED_CORE_STARTER_IDS.has(id));
     
-    console.log(`Found ${assessmentIds.length} assessments to delete`);
+    console.log(`Found ${assessmentIds.length} non-starter assessments to delete`);
     
     // Delete each assessment
     let deletedCount = 0;
@@ -3332,9 +3354,15 @@ app.delete('/api/assessments/all', async (req, res) => {
 });
 
 // Delete individual assessment
-app.delete('/api/assessment/:id', async (req, res) => {
+app.delete('/api/assessment/:id', requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
+    if (PROTECTED_CORE_STARTER_IDS.has(id)) {
+      return res.status(403).json({
+        success: false,
+        message: 'Canonical starter assessments cannot be deleted.'
+      });
+    }
     
     const assessmentRepo = require('./db/assessmentRepository');
     const assessment = await assessmentRepo.findById(id);
@@ -3422,13 +3450,12 @@ app.get('/api/assessment/:id/pillar/:pillarId/results', requireAuth, async (req,
     
     console.log(`Found ${pillarResponses.length} responses for pillar ${pillarId}`);
 
-    console.log(`🤖 Generating content using OpenAI for pillar: ${pillarId}`);
-    console.log('Sending ALL assessment data for this pillar to OpenAI');
+    console.log(`🤖 Generating content using AI engine for pillar: ${pillarId}`);
 
-    // Use OpenAI to generate fresh content for this specific pillar
+    // Generate fresh content for this specific pillar
     let pillarResults = await openAIContentGenerator.generateAssessmentContent(assessment, pillarId);
 
-    console.log('✅ OpenAI pillar content generation completed:', pillarId);
+    console.log('✅ Pillar content generation completed:', pillarId);
 
     // Extract scores from the pillar results
     const currentScore = pillarResults.pillar.currentScore || 0;
@@ -3498,20 +3525,21 @@ app.get('/api/assessment/:id/pillar/:pillarId/results', requireAuth, async (req,
       console.error('⚠️  Error in intelligent recommendation generation:', error);
     }
     
-    // Use pillar details from OpenAI
+    // Preserve 2-decimal precision
     const pillarDetails = {
       id: pillar.id,
       name: pillar.name,
       description: pillar.description,
-      score: Math.round(currentScore),
-      currentScore: Math.round(currentScore),
-      futureScore: Math.round(futureScore),
-      gap: Math.round(gap),
+      score: Number(currentScore.toFixed(2)),
+      currentScore: Number(currentScore.toFixed(2)),
+      futureScore: Number(futureScore.toFixed(2)),
+      gap: Number(gap.toFixed(2)),
       maturityLevel: pillarResults.pillar.level,
       dimensionsCompleted: pillar.dimensions.length,
       questionsAnswered: pillar.dimensions.reduce((total, dim) => total + (dim.questions?.length || 0), 0)
     };
 
+    const geminiService = require('./services/geminiService');
     res.json({
       success: true,
       pillarDetails,
@@ -3537,8 +3565,8 @@ app.get('/api/assessment/:id/pillar/:pillarId/results', requireAuth, async (req,
       pillarId,
       generatedAt: new Date().toISOString(),
       isPillarSpecific: true,
-      _engineType: 'openai',
-      _contentSource: 'openai-generated'
+      _engineType: geminiService.isReady() ? 'gemini-3.8-flash' : 'deterministic-rule-engine',
+      _contentSource: geminiService.isReady() ? 'gemini-generated' : 'deterministic-rule-based'
     });
   } catch (error) {
     console.error('❌ Error generating pillar results:', error);
@@ -3552,7 +3580,7 @@ app.get('/api/assessment/:id/pillar/:pillarId/results', requireAuth, async (req,
 });
 
 // Debug endpoint to manually complete an assessment for testing
-app.post('/api/assessment/:id/debug/complete', async (req, res) => {
+app.post('/api/assessment/:id/debug/complete', requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
     const assessmentRepo = require('./db/assessmentRepository');
@@ -3584,14 +3612,14 @@ app.post('/api/assessment/:id/debug/complete', async (req, res) => {
     updateData.progress = 100;
     updateData.completedAt = new Date().toISOString();
     
-    await assessmentRepo.update(id, updateData);
+    const updated = await assessmentRepo.update(id, updateData);
 
     res.json({
       success: true,
       message: 'Assessment marked as completed for testing',
       data: {
-        status: assessment.status,
-        completedCategories: assessment.completedCategories.length
+        status: updated.status,
+        completedCategories: (updated.completedCategories || updateData.completedCategories).length
       }
     });
   } catch (error) {

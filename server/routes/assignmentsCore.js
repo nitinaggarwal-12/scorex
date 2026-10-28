@@ -12,7 +12,6 @@ const nodemailer = require('nodemailer');
 
 // Get data file path for StorageAdapter
 const dataDir = process.env.DATA_DIR || path.join(__dirname, '..', 'data');
-const dataFilePath = path.join(dataDir, 'assessments.json');
 
 // Configure email transporter (optional - only if credentials are provided)
 let transporter = null;

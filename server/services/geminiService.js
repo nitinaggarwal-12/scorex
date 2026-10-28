@@ -129,7 +129,40 @@ class GeminiService {
    */
   async _generateWithFallback(promptOrContents, systemInstruction = '', temperature = 0.7, responseMimeType = null, maxRetries = 2, options = {}) {
     if (!this.isAvailable()) {
-      throw new Error('Gemini API key is not configured. Please set GEMINI_API_KEY in your environment variables (or in your Railway project under Variables).');
+      const vertexToken = await this.getVertexAccessToken();
+      if (vertexToken) {
+        const proj = process.env.GOOGLE_CLOUD_PROJECT || process.env.GCLOUD_PROJECT || 'ramp-portal-dev';
+        const wireModel = this._resolveWireModel((options && options.preferredModel) || this.primaryModel || 'gemini-3.8-flash');
+        const url = `https://aiplatform.googleapis.com/v1/projects/${proj}/locations/global/publishers/google/models/${wireModel}:generateContent`;
+        const generationConfig = { temperature, maxOutputTokens: 32768 };
+        if (responseMimeType) generationConfig.responseMimeType = responseMimeType;
+        if (String(wireModel).includes('4-argon')) generationConfig.thinkingConfig = { thinkingLevel: 'HIGH' };
+        else if (String(wireModel).includes('3.8-flash') && !String(wireModel).includes('tts')) generationConfig.thinkingConfig = { thinkingLevel: 'LOW' };
+        const textPrompt = typeof promptOrContents === 'string' ? promptOrContents : JSON.stringify(promptOrContents);
+        const bodyPayload = {
+          contents: [{ role: 'user', parts: [{ text: textPrompt }] }],
+          generationConfig
+        };
+        if (systemInstruction) bodyPayload.systemInstruction = { parts: [{ text: systemInstruction }] };
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${vertexToken}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify(bodyPayload)
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const rawText = (data?.candidates?.[0]?.content?.parts || []).filter(p => !p.thought).map(p => p.text || '').join('').trim();
+          if (rawText) {
+            return {
+              text: rawText,
+              modelUsed: (options && options.preferredModel) || this.primaryModel,
+              wireModelUsed: wireModel,
+              excludedGeneratorModel: (options && options.excludeModel) || null
+            };
+          }
+        }
+      }
+      throw new Error('Gemini API key or Vertex AI ADC credentials not configured. Set GEMINI_API_KEY or run on Google Cloud Run with Vertex AI IAM permissions.');
     }
 
     const { preferredModel = null, excludeModel = null } = options || {};
@@ -166,7 +199,8 @@ class GeminiService {
       for (let attempt = 0; attempt <= maxRetries; attempt++) {
         try {
           const config = {
-            temperature
+            temperature,
+            maxOutputTokens: 32768
           };
           if (systemInstruction) {
             config.systemInstruction = systemInstruction;
@@ -352,20 +386,22 @@ Return a JSON object with this exact schema:
     const frameworkLabel = assessmentData?.frameworkName || assessmentData?.typeName || context?.frameworkName || 'ScoreX Multi-Engine Enterprise Assessment';
 
     const systemInstruction = `You are the ScoreX Live Support Agent & Principal Enterprise Architect, powered by Gemini 3.8 Flash Live Preview (${supportModel}).
-Your mission is to provide real-time, domain-accurate guidance across all 3 ScoreX Assessment Engines:
-1. Engine 1 — Dynamic Blueprint Assessments:
-   - Enterprise Data & AI Maturity (Platform & Governance, Data Engineering, Analytics & BI, Machine Learning, Generative AI, Operational Excellence)
-   - GenAI & Agentic RAG Readiness (Model Routing, Vector Grounding, Context Caching, Model Armor, Agentic Orchestration)
-   - Cloud FinOps & Unit Economics (Cost Allocation, Commitment Optimization, Compute Auto-Scaling, AI Token FinOps)
-   - Cloud Migration & Application Modernization (6R Portfolio Discovery, Landing Zone, Strangler Fig Refactoring, Zero-ETL Data Migration)
-   - Zero-Trust Cyber & AI Security Resilience (Identity Perimeter, VPC Service Controls, CMEK/Confidential Compute, Model Armor & Threat Response)
-   - MLOps & Agentic AI Governance (Feature Engineering, Model Registry & CI/CD, Drift & Bias Telemetry, MCP Governance)
-2. Engine 2 — Gemini Enterprise (GE) Value Realization & FinOps Dossier (License & Seat Telemetry, 3-Year ROI/NPV, Department Velocity, Token Unit Economics)
-3. Engine 3 — EU AI Act (Regulation 2024/1689) Statutory Compliance & Annex IV Dossier (Article 5 Prohibited Practices, Article 6/Annex III High-Risk Classification, Articles 9-15 Controls, Conformity Assessment)
+Your mission is to provide real-time, domain-accurate guidance across all 5 ScoreX Assessment Subsystems:
+1. Subsystem 1 — Gemini Enterprise (GE) Value Realization & FinOps Dossier (82 Questions across 10 Modules C·P·A·W·T·Q·U·L·R·F, 8 Evidence Sources, 10 CRM Accounts, Seat Funnel WAU<=MAU<=Assigned<=Provisioned<=Contracted, 3-Year ROI/NPV, Timed 6-Stage Workflows)
+2. Subsystem 2 — Dynamic Blueprint Assessments (6 Canonical Blueprints & 6 Starter Instances):
+   - OpenAI/ChatGPT Enterprise to Gemini Enterprise Migration Readiness
+   - Multi-Cloud FinOps & AI Token Unit Economics
+   - Agentic AI Mesh, A2A & MCP Governance Readiness
+   - Legacy EDW & Lakehouse to BigQuery Autonomous Data & AI Modernization
+   - Enterprise AI Zero-Trust Security, Privacy & Model Armor Readiness
+   - Enterprise Cloud, Data & AI Maturity Blueprint
+3. Subsystem 3 — Core 6-Pillar Enterprise Maturity Assessment (6 Pillars: Platform & Governance, Data Engineering & Integration, Analytics & BI Modernization, Machine Learning & MLOps, Generative AI & Agentic Systems, Operational Excellence & FinOps; 1-5 Current/Target scale)
+4. Subsystem 4 — GenAI Technical Readiness Assessment (32 Questions across 6 Technical Dimensions, 160-Point Scale: Initial 0-48, Developing 49-80, Defined 81-112, Managed 113-136, Optimizing 137-160)
+5. Subsystem 5 — EU AI Act (Regulation 2024/1689) Statutory Compliance & Annex IV Dossier (20 Statutory Controls: Article 5 Prohibited Practices, Article 6/Annex III High-Risk Classification, Articles 9-15 Controls, Conformity Assessment)
 
 CRITICAL ANTI-HALLUCINATION RULES:
 - Ground your response strictly in the active assessment framework (${frameworkLabel}) and the submitted assessment scores/context.
-- Never fabricate unsubmitted scores or cite unrelated vendor features when the user is working on FinOps, Zero-Trust Security, EU AI Act, or GE Value Realization.
+- Never fabricate unsubmitted scores or cite banned third-party consulting firms; cite only verified Google Cloud / enterprise telemetry.
 - Format responses with crisp Markdown bolding, bullet points, and concrete architectural actions (2-4 paragraphs max).`;
 
     let contextDetails = '';
@@ -1066,6 +1102,7 @@ Return ONLY valid JSON.`;
 
             const generationConfig = {
               temperature,
+              maxOutputTokens: 32768,
               responseMimeType: 'application/json'
             };
             if (vertexWireModel.includes('4-argon')) {

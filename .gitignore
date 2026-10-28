@@ -31,6 +31,7 @@ db-sync/*.json
 
 # Scratch & temporary artifacts
 scratch/
+.local_backup/
 
 # Logs
 *.log

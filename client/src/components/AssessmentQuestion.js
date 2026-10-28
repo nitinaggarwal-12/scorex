@@ -85,13 +85,6 @@ const ProgressSection = styled.div`
   flex-shrink: 0;
 `;
 
-const ProgressInfo = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-`;
-
 const AutoSaveStatus = styled.div`
   display: flex;
   align-items: center;
@@ -115,13 +108,6 @@ const AutoSaveStatus = styled.div`
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.3); }
   }
-`;
-
-const LastSavedText = styled.span`
-  font-size: 0.85rem;
-  color: #666;
-  font-weight: 400;
-  margin-left: 4px;
 `;
 
 const AreaTitle = styled.h1`
@@ -274,46 +260,6 @@ const QuestionActions = styled.div`
   display: flex;
   gap: 8px;
   align-items: center;
-`;
-
-const SkipToggleContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
-  flex-shrink: 0;
-  padding: 8px 12px;
-  background: ${props => props.isSkipped ? '#fef3c7' : '#f8f9fa'};
-  border-radius: 8px;
-  border: 2px solid ${props => props.isSkipped ? '#fbbf24' : '#e5e7eb'};
-  transition: all 0.3s ease;
-`;
-
-const SkipToggle = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: ${props => props.isSkipped ? '#f59e0b' : '#6b7280'};
-  transition: color 0.3s ease;
-  white-space: nowrap;
-
-  input {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-  }
-`;
-
-const SkipMessage = styled.div`
-  font-style: italic;
-  color: #f59e0b;
-  font-size: 0.75rem;
-  text-align: right;
-  max-width: 180px;
-  line-height: 1.3;
 `;
 
 const PerspectivesGrid = styled.div`
@@ -656,24 +602,6 @@ const LoadingSpinner = styled.div`
   }
 `;
 
-const FilterSection = styled.div`
-  background: transparent;
-  border-radius: 0;
-  padding: 0;
-  margin-bottom: 0;
-  box-shadow: none;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-`;
-
-const FilterLabel = styled.span`
-  font-weight: 600;
-  color: #333;
-  font-size: 0.95rem;
-`;
-
 const FilterButton = styled.button`
   padding: 8px 16px;
   border-radius: 8px;
@@ -701,24 +629,6 @@ const FilterBadge = styled.span`
   border-radius: 12px;
   font-size: 0.85rem;
   font-weight: 600;
-`;
-
-// 🆕 SMART NAVIGATION COMPONENTS
-const QuestionMiniMap = styled.div`
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  padding: 12px;
-  background: white;
-  border-radius: 12px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  overflow-x: auto;
-  
-  @media (max-width: 768px) {
-    padding: 10px;
-    gap: 5px;
-  }
 `;
 
 const MiniMapDot = styled.button`
@@ -753,17 +663,6 @@ const MiniMapDot = styled.button`
     width: 26px;
     height: 26px;
     font-size: 0.7rem;
-  }
-`;
-
-const MiniMapLabel = styled.div`
-  font-size: 0.85rem;
-  color: #666;
-  font-weight: 600;
-  white-space: nowrap;
-  
-  @media (max-width: 768px) {
-    font-size: 0.75rem;
   }
 `;
 
@@ -831,138 +730,6 @@ const TooltipContent = styled.div`
     font-size: 0.8rem;
     padding: 10px 12px;
   }
-`;
-
-const MaturityLevelInfo = styled.div`
-  background: #f8f9fa;
-  border-left: 4px solid #3b82f6;
-  padding: 12px 16px;
-  margin-top: 8px;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  
-  strong {
-    color: #3b82f6;
-    display: block;
-    margin-bottom: 4px;
-  }
-`;
-
-// 🆕 BULK ACTIONS COMPONENTS
-const BulkActionsBar = styled.div`
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 16px 20px;
-  border-radius: 12px;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-  
-  @media (max-width: 968px) {
-    flex-direction: column;
-    align-items: stretch;
-  }
-`;
-
-const BulkActionsTitle = styled.div`
-  font-weight: 700;
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-const BulkActionsButtons = styled.div`
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  
-  @media (max-width: 768px) {
-    width: 100%;
-  }
-`;
-
-const BulkActionButton = styled.button`
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
-  
-  &:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
-  }
-  
-  @media (max-width: 768px) {
-    flex: 1;
-    padding: 10px 12px;
-  }
-`;
-
-// 🆕 DIMENSION PROGRESS CARD
-const DimensionProgressCard = styled.div`
-  background: white;
-  border-radius: 12px;
-  padding: 16px 20px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: stretch;
-  }
-`;
-
-const DimensionInfo = styled.div`
-  flex: 1;
-`;
-
-const DimensionTitle = styled.h3`
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #333;
-  margin: 0 0 8px 0;
-`;
-
-const DimensionProgress = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-`;
-
-const ProgressBarSmall = styled.div`
-  flex: 1;
-  height: 6px;
-  background: #e5e7eb;
-  border-radius: 3px;
-  overflow: hidden;
-  
-  div {
-    height: 100%;
-    background: linear-gradient(90deg, #10b981, #059669);
-    width: ${props => props.progress}%;
-    transition: width 0.5s ease;
-  }
-`;
-
-const ProgressLabel = styled.span`
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #10b981;
-  white-space: nowrap;
 `;
 
 const AssessmentQuestion = ({ framework, currentAssessment, onUpdateStatus }) => {

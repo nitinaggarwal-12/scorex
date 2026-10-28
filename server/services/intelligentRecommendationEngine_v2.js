@@ -1165,7 +1165,7 @@ class IntelligentRecommendationEngine {
         `Adoption: Identify 2–3 lighthouse GenAI use cases (e.g., ${domainGenAIUseCases})`,
         'Assessment: Perform a GenAI Readiness & Risk Assessment (focus: privacy, bias, and model auditability)',
         'Industry Outlook: Present evolving trends — GenAI copilots, regulated model governance, fine-tuning ethics, and AI act implications',
-        'Partner / SI Engagement: Collaborate with GenAI implementation partners (Quantiphi, Enterprise Lakehouse PS, or industry ISVs)',
+        'Partner / SI Engagement: Collaborate with GenAI implementation partners (Vanguard Global Advisory Corp, Enterprise Lakehouse PS, or industry ISVs)',
         'Change Management: Define a responsible-AI policy; involve legal, compliance, and data ethics teams early',
         'Measurement: Track adoption metrics: user satisfaction, productivity gains, task automation rates'
       ],
@@ -1175,7 +1175,7 @@ class IntelligentRecommendationEngine {
         'Adoption: Standardize ops dashboards and monthly business reviews (MBRs) to track system health and cost',
         'Assessment: Run an Operational Maturity Assessment on incident management, SLAs, and observability',
         `Industry Outlook: Benchmark operational cost, uptime, and governance KPIs vs. ${domainPeers}`,
-        'Partner / SI Engagement: Collaborate with managed service providers (e.g., Persistent, Capgemini, HCL) for 24×7 support',
+        'Partner / SI Engagement: Collaborate with managed service providers (Vanguard Global Advisory Corp or Enterprise Cloud Ops Partners) for 24×7 support',
         'Change Management: Define escalation paths, ticket SLAs, and accountability models for teams',
         'Measurement: KPIs — uptime %, mean time to detect (MTTD), cost reduction %, and automation coverage'
       ]

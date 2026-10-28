@@ -495,9 +495,9 @@ Return JSON with this structure:
     // Generate pillar-specific prioritized actions
     const pillarActions = this.generatePillarPrioritizedActions(pillarScores, assessment);
     
-    const currentScore = typeof overallScores.currentScore === 'number' ? overallScores.currentScore : 3;
-    const futureScore = typeof overallScores.futureScore === 'number' ? overallScores.futureScore : 4;
-    const gap = typeof overallScores.gap === 'number' ? overallScores.gap : (futureScore - currentScore);
+    const currentScore = typeof overallScores.currentScore === 'number' ? Number(overallScores.currentScore.toFixed(2)) : 0;
+    const futureScore = typeof overallScores.futureScore === 'number' ? Number(overallScores.futureScore.toFixed(2)) : 0;
+    const gap = typeof overallScores.gap === 'number' ? Number(overallScores.gap.toFixed(2)) : Number((futureScore - currentScore).toFixed(2));
 
     const validPillars = {};
     assessmentFramework.assessmentAreas.forEach(area => {
@@ -507,22 +507,22 @@ Return JSON with this structure:
         if (matchedKey) pScore = pillarScores[matchedKey];
       }
       pScore = pScore || {};
-      const c = typeof pScore.current === 'number' ? pScore.current : 3;
-      const f = typeof pScore.future === 'number' ? pScore.future : 4;
-      const g = typeof pScore.gap === 'number' ? pScore.gap : (f - c);
+      const c = typeof pScore.current === 'number' ? Number(pScore.current.toFixed(2)) : 0;
+      const f = typeof pScore.future === 'number' ? Number(pScore.future.toFixed(2)) : 0;
+      const g = typeof pScore.gap === 'number' ? Number(pScore.gap.toFixed(2)) : Number((f - c).toFixed(2));
       validPillars[area.id] = {
-        current: Math.round(c),
-        future: Math.round(f),
-        gap: Math.round(g),
-        overall: Math.round((c + f) / 2)
+        current: c,
+        future: f,
+        gap: g,
+        overall: Number(((c + f) / 2).toFixed(2))
       };
     });
 
     return {
       overall: {
-        currentScore: Math.round(currentScore),
-        futureScore: Math.round(futureScore),
-        gap: Math.round(gap),
+        currentScore,
+        futureScore,
+        gap,
         level: this.getMaturityLevel(currentScore),
         summary: executiveSummary
       },
@@ -589,16 +589,19 @@ Return JSON with this structure:
     
     // Generate dimension-level gap actions
     const gapActions = this.generatePillarGapActions(assessment, pillarId);
+    const curVal = typeof scores?.current === 'number' ? Number(scores.current.toFixed(2)) : 0;
+    const futVal = typeof scores?.future === 'number' ? Number(scores.future.toFixed(2)) : 0;
+    const gapVal = typeof scores?.gap === 'number' ? Number(scores.gap.toFixed(2)) : Number((futVal - curVal).toFixed(2));
     
     return {
       pillar: {
         id: area ? area.id : pillarId,
         name: area ? area.name : pillarId,
-        currentScore: Math.round(scores?.current || 3),
-        futureScore: Math.round(scores?.future || 4),
-        gap: parseFloat((scores?.gap || 1).toFixed(1)), // Fix floating point precision
-        level: this.getMaturityLevel(scores?.current || 3),
-        targetLevel: this.getMaturityLevel(scores?.future || 4)
+        currentScore: curVal,
+        futureScore: futVal,
+        gap: gapVal,
+        level: this.getMaturityLevel(curVal),
+        targetLevel: this.getMaturityLevel(futVal)
       },
       summary: summary || '',
       recommendations: recommendations || [],
@@ -622,15 +625,15 @@ Return JSON with this structure:
         if (matchedKey) scores = pillarScores[matchedKey];
       }
       scores = scores || {};
-      const current = typeof scores.current === 'number' ? scores.current : 3;
-      const future = typeof scores.future === 'number' ? scores.future : 4;
-      const gap = typeof scores.gap === 'number' ? scores.gap : (future - current);
+      const current = typeof scores.current === 'number' ? Number(scores.current.toFixed(2)) : 0;
+      const future = typeof scores.future === 'number' ? Number(scores.future.toFixed(2)) : 0;
+      const gap = typeof scores.gap === 'number' ? Number(scores.gap.toFixed(2)) : Number((future - current).toFixed(2));
       
       categories[area.id] = {
         name: area.name,
-        currentScore: Math.round(current),
-        futureScore: Math.round(future),
-        gap: Math.round(gap),
+        currentScore: current,
+        futureScore: future,
+        gap: gap,
         level: this.getMaturityLevel(current),
         targetLevel: this.getMaturityLevel(future),
         recommendations: []

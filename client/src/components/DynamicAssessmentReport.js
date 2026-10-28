@@ -476,66 +476,6 @@ const CalloutBox = styled.div`
   }
 `;
 
-const RoadmapGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-  margin-top: 20px;
-
-  @media (max-width: 992px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const RoadmapCard = styled.div`
-  background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.7)' : '#ffffff'};
-  border: ${props => props.$theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.1)' : '1.5px solid #e2e8f0'};
-  border-radius: 18px;
-  padding: 24px;
-  box-shadow: ${props => props.$theme === 'dark' ? 'none' : '0 4px 14px rgba(0,0,0,0.04)'};
-`;
-
-const RoadmapPhase = styled.div`
-  font-size: 0.8rem;
-  font-weight: 800;
-  color: ${props => props.$theme === 'dark' ? '#38bdf8' : '#0284c7'};
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 6px;
-`;
-
-const RoadmapTimeline = styled.div`
-  font-size: 1.2rem;
-  font-weight: 800;
-  color: ${props => props.$theme === 'dark' ? '#ffffff' : '#0f172a'};
-  margin-bottom: 12px;
-`;
-
-const MilestoneList = styled.ul`
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-`;
-
-const MilestoneItem = styled.li`
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  font-size: 0.9rem;
-  color: ${props => props.$theme === 'dark' ? '#cbd5e1' : '#334155'};
-  line-height: 1.45;
-  font-weight: ${props => props.$theme === 'dark' ? 'normal' : '500'};
-
-  svg {
-    color: #10b981;
-    margin-top: 3px;
-    flex-shrink: 0;
-  }
-`;
-
 const RecommendationCard = styled.div`
   background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.7)' : '#ffffff'};
   border: ${props => props.$theme === 'dark' ? '1px solid rgba(255, 255, 255, 0.08)' : '1.5px solid #e2e8f0'};

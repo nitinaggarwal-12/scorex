@@ -172,25 +172,9 @@ async function enforceAssessmentAccess(req, res, id) {
     return false;
   }
 
-  const isRead = ['GET', 'HEAD', 'OPTIONS'].includes(req.method);
-
-  if (isRead) {
-    if (!canAccessResource(req.user, assessment, ASSESSMENT_OWNER_FIELDS)) {
-      res.status(403).json({ success: false, error: 'Access denied' });
-      return false;
-    }
-  } else {
-    // For mutations (PUT, PATCH, DELETE), require admin or direct ownership
-    const userId = String(req.user?.id || '');
-    const isDirectOwner = ASSESSMENT_OWNER_FIELDS.some((field) => {
-      const owner = assessment[field];
-      return owner !== undefined && owner !== null && String(owner) === userId;
-    });
-
-    if (!isDirectOwner) {
-      res.status(403).json({ success: false, error: 'Access denied' });
-      return false;
-    }
+  if (!canAccessResource(req.user, assessment, ASSESSMENT_OWNER_FIELDS)) {
+    res.status(403).json({ success: false, error: 'Access denied' });
+    return false;
   }
 
   req.securityAssessment = assessment;
@@ -249,6 +233,7 @@ function insertBeforeFirstRoute(app, middleware) {
 function isPublicApiPath(req) {
   if (req.method === 'POST' && req.path === '/api/auth/login') return true;
   if (req.path.startsWith('/api/auth/sso')) return true;
+  if (req.path.startsWith('/api/feedback/')) return true;
   if (req.method === 'GET' && req.path.startsWith('/api/instance-versions')) return true;
   return req.method === 'GET' && req.path === '/api/health';
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 import { FiEdit2, FiDownload, FiUpload, FiCopy, FiTrash2, FiEye, FiShare2 } from 'react-icons/fi';
 import './GenAIReadinessList.css';
 
@@ -28,16 +29,14 @@ const GenAIReadinessList = () => {
 
   const handleDelete = async (id, e) => {
     e.stopPropagation();
-    if (!window.confirm('Are you sure you want to delete this assessment?')) {
-      return;
-    }
 
     try {
       await axios.delete(`/api/genai-readiness/assessments/${id}`);
       setAssessments(assessments.filter(a => a.id !== id));
+      toast.success('Assessment deleted');
     } catch (error) {
       console.error('Error deleting assessment:', error);
-      alert('Failed to delete assessment');
+      toast.error(error.response?.data?.error || 'Failed to delete assessment');
     }
   };
 
@@ -52,10 +51,7 @@ const GenAIReadinessList = () => {
     try {
       const response = await axios.get(`/api/genai-readiness/assessments/${id}`);
       const original = response.data;
-      
-      // Create a clone with new name
-      const cloneName = prompt('Enter name for cloned assessment:', `${original.customerName} (Copy)`);
-      if (!cloneName) return;
+      const cloneName = `${original.customerName || original.customer_name || 'Enterprise Client'} (Copy)`;
 
       const cloned = {
         customerName: cloneName,
@@ -67,14 +63,14 @@ const GenAIReadinessList = () => {
         completedAt: new Date().toISOString()
       };
 
-      const cloneResponse = await axios.post('/api/genai-readiness/assessments', cloned);
+      await axios.post('/api/genai-readiness/assessments', cloned);
       
       // Reload assessments
       loadAssessments();
-      alert('Assessment cloned successfully!');
+      toast.success(`Cloned as "${cloneName}"`);
     } catch (error) {
       console.error('Error cloning assessment:', error);
-      alert('Failed to clone assessment');
+      toast.error('Failed to clone assessment');
     }
   };
 
@@ -94,9 +90,10 @@ const GenAIReadinessList = () => {
       document.body.appendChild(link);
       link.click();
       link.remove();
+      toast.success('Excel report downloaded');
     } catch (error) {
       console.error('Error downloading Excel:', error);
-      alert('Excel download feature coming soon!');
+      toast.error('Failed to download Excel report');
     }
   };
 
@@ -108,18 +105,6 @@ const GenAIReadinessList = () => {
     input.onchange = async (event) => {
       const file = event.target.files[0];
       if (!file) return;
-
-      const confirmed = window.confirm(
-        `Upload Excel for Assessment?\n\n` +
-        `This will update the assessment with responses from the Excel file.\n\n` +
-        `Make sure the Excel file:\n` +
-        `• Was downloaded from this app\n` +
-        `• Has the 'Responses' sheet\n` +
-        `• Selected answers match the option text exactly\n\n` +
-        `Continue?`
-      );
-      
-      if (!confirmed) return;
 
       try {
         const formData = new FormData();
@@ -134,16 +119,13 @@ const GenAIReadinessList = () => {
         );
         
         loadAssessments();
-        alert(
-          `✅ Excel Uploaded Successfully!\n\n` +
-          `Total Score: ${response.data.totalScore}\n` +
-          `Maturity Level: ${response.data.maturityLevel}\n` +
-          `Responses Updated: ${response.data.responsesCount}`
+        toast.success(
+          `Excel uploaded: Score ${response.data.totalScore} (${response.data.maturityLevel})`
         );
       } catch (error) {
         console.error('Error uploading Excel:', error);
         const errorMsg = error.response?.data?.error || 'Failed to upload Excel file';
-        alert(`❌ Upload Failed\n\n${errorMsg}\n\nPlease ensure:\n• File is a valid Excel (.xlsx)\n• 'Responses' sheet exists\n• Selected answers match exactly`);
+        toast.error(`Upload failed: ${errorMsg}`);
       }
     };
     input.click();
@@ -153,7 +135,7 @@ const GenAIReadinessList = () => {
     e.stopPropagation();
     const url = `${window.location.origin}/genai-readiness/report/${id}`;
     navigator.clipboard.writeText(url);
-    alert('Report link copied to clipboard!');
+    toast.success('Report link copied to clipboard!');
   };
 
   const getMaturityColor = (level) => {

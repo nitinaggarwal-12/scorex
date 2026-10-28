@@ -60,7 +60,7 @@ export function sanitizeDrawioXmlAttributes(xml) {
   return cleaned;
 }
 
-export function getCleanGraphXml(xmlStr) {
+function getCleanGraphXml(xmlStr) {
   if (!xmlStr) return '';
   const trimmed = xmlStr.trim();
   if (trimmed.includes('<mxfile')) {
@@ -78,7 +78,7 @@ export function getCleanGraphXml(xmlStr) {
   return xmlStr;
 }
 
-export function adaptXmlForTheme(xmlStr, theme = 'light') {
+function adaptXmlForTheme(xmlStr, theme = 'light') {
   if (!xmlStr) return '';
   if (theme === 'dark') return xmlStr;
 

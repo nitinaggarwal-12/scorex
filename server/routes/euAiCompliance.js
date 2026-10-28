@@ -137,8 +137,26 @@ function buildDefaultEuAiSeed() {
         documentId: 'EUAIA-2026-HR4902'
       },
       answers: {
-        q1: { level1OptionId: '1.1', level2OptionId: '1.1.1', notes: 'Deployed within documented parameters.' },
-        q5: { level1OptionId: '5.1', level2OptionId: '5.1.1', notes: 'Classified under Annex III, Item 4(a).' }
+        q1: { level1OptionId: '1.1', level2OptionId: '1.1.1', notes: 'Deployed using third-party vendor strictly within documented parameters.' },
+        q2: { level1OptionId: '2.1', level2OptionId: '2.1.1', notes: 'Underlying model is Google Gemini 3.1 Pro on Vertex AI (EU Frankfurt region).' },
+        q3: { level1OptionId: '3.1', level2OptionId: '3.1.1', notes: 'Completed mandatory 4-hour training for all 18 recruiters and talent leads.' },
+        q4: { level1OptionId: '4.1', level2OptionId: '4.1.1', notes: 'Zero facial emotion detection, zero voice pitch stress analysis, zero biometric categorization.' },
+        q5: { level1OptionId: '5.1', level2OptionId: '5.1.1', notes: 'Formally classified under Annex III, Item 4(a).' },
+        q6: { level1OptionId: '6.1', level2OptionId: '6.1.1', notes: 'Article 6(3) narrow derogations are statutorily blocked due to GDPR profiling.' },
+        q7: { level1OptionId: '7.2', level2OptionId: '7.2.1', notes: 'Vendor training data is documented; runtime schema sanitization in progress.' },
+        q8: { level1OptionId: '8.2', level2OptionId: '8.2.1', notes: 'Adverse impact disparate ratio testing is underway across synthetic demographic cohorts.' },
+        q9: { level1OptionId: '9.2', level2OptionId: '9.2.2', notes: 'Inference logs retained in Google Cloud Logging / BigQuery; extending to 6-month GCS WORM.' },
+        q10: { level1OptionId: '10.1', level2OptionId: '10.1.1', notes: 'Comprehensive Annex IV technical dossier compiled with system architecture and model cards.' },
+        q11: { level1OptionId: '11.2', level2OptionId: '11.2.1', notes: 'Cloud Armor WAF and TLS 1.3 in place; Model Armor red-teaming scheduled.' },
+        q12: { level1OptionId: '12.1', level2OptionId: '12.1.2', notes: 'Human-in-the-loop enforced: Recruiters must actively review and approve recommendations.' },
+        q13: { level1OptionId: '13.1', level2OptionId: '13.1.2', notes: 'Recruiter UI displays confidence percentages, key CV positive drivers, and gaps.' },
+        q14: { level1OptionId: '14.1', level2OptionId: '14.1.1', notes: 'Automated plain-language summary of assessment criteria delivered via candidate portal.' },
+        q15: { level1OptionId: '15.2', level2OptionId: '15.2.1', notes: 'Workplace consultation dossier submitted to European Works Council.' },
+        q16: { level1OptionId: '16.3', level2OptionId: '16.3.2', notes: 'Private enterprise; GDPR DPIA completed and reviewed by external DPO.' },
+        q17: { level1OptionId: '17.2', level2OptionId: '17.2.1', notes: 'Annex VIII registration submission template prepared for EU Central Database.' },
+        q18: { level1OptionId: '18.1', level2OptionId: '18.1.1', notes: 'Candidate portal clearly displays AI assistant disclosure notice.' },
+        q19: { level1OptionId: '19.2', level2OptionId: '19.2.1', notes: 'All candidate communication templates undergo mandatory human editorial review.' },
+        q20: { level1OptionId: '20.1', level2OptionId: '20.1.2', notes: 'Telemetry dashboard monitors candidate score distribution drift with 15-day authority SLA.' }
       },
       taskStatusOverrides: {},
       synthesis: null,
@@ -170,7 +188,9 @@ function saveServerDossiers(dossiers) {
     const dossiersFile = getDossiersFile();
     const dir = path.dirname(dossiersFile);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(dossiersFile, JSON.stringify(dossiers, null, 2), 'utf8');
+    const tmpFile = `${dossiersFile}.sync.tmp`;
+    fs.writeFileSync(tmpFile, JSON.stringify(dossiers, null, 2), 'utf8');
+    fs.renameSync(tmpFile, dossiersFile);
   } catch (e) {
     console.warn('Could not write eu_ai_dossiers.json:', e.message);
   }
@@ -228,20 +248,22 @@ router.get('/dossiers/:id', (req, res) => {
 
 /**
  * POST /api/eu-ai-compliance/dossiers/:id
- * Save/update an EU AI Act compliance dossier on the server.
+ * Save/update an EU AI Act compliance dossier on the server (non-destructive merge).
  */
 router.post('/dossiers/:id', (req, res) => {
   try {
     const { id } = req.params;
     const { meta, answers, taskStatusOverrides, synthesis, financialConfig } = req.body;
     const dossiers = loadServerDossiers();
+    const existing = dossiers[id] || {};
     dossiers[id] = {
+      ...existing,
       id,
-      meta: meta || {},
-      answers: answers || {},
-      taskStatusOverrides: taskStatusOverrides || {},
-      synthesis: synthesis || null,
-      financialConfig: financialConfig || null,
+      meta: meta !== undefined ? { ...(existing.meta || {}), ...meta } : (existing.meta || {}),
+      answers: answers !== undefined ? { ...(existing.answers || {}), ...answers } : (existing.answers || {}),
+      taskStatusOverrides: taskStatusOverrides !== undefined ? { ...(existing.taskStatusOverrides || {}), ...taskStatusOverrides } : (existing.taskStatusOverrides || {}),
+      synthesis: synthesis !== undefined ? synthesis : (existing.synthesis || null),
+      financialConfig: financialConfig !== undefined ? financialConfig : (existing.financialConfig || null),
       updatedAt: new Date().toISOString()
     };
     saveServerDossiers(dossiers);
@@ -258,6 +280,9 @@ router.post('/dossiers/:id', (req, res) => {
 router.delete('/dossiers/:id', (req, res) => {
   try {
     const { id } = req.params;
+    if (String(id || '').toUpperCase() === 'EUAIA-2026-HR4902') {
+      return res.status(403).json({ success: false, error: 'Canonical EU AI Act starter dossier cannot be deleted.' });
+    }
     const dossiers = loadServerDossiers();
     if (dossiers[id]) {
       delete dossiers[id];

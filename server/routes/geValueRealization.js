@@ -45,29 +45,35 @@ const CANONICAL_SFDC_ACCOUNT_IDS = [
 
 function loadServerDossiers() {
   const dossiersFile = getDossiersFile();
+  let existingCustom = {};
   try {
     if (fs.existsSync(dossiersFile)) {
       const parsed = JSON.parse(fs.readFileSync(dossiersFile, 'utf8'));
-      if (parsed && Object.keys(parsed).length >= CANONICAL_SFDC_ACCOUNT_IDS.length) {
-        const primaryEntry = parsed['ge_vr_acc-1001-aerovg'] || parsed['inst_aerovanguard_ge_value_realization'];
-        const bionovaEntry = parsed['ge_vr_acc-1002-bionova'] || parsed['inst_bionova_ge_value_realization'];
-        const vanguardEntry = parsed['ge_vr_acc-1006-vanguard'];
-        const hasCandidateOptions = Array.isArray(primaryEntry?.questionResponses?.C01?.candidateOptions);
-        const hasNormalizedTelemetry = primaryEntry?.adoptionTelemetry?.geminiAssistWau7d !== undefined;
-        const hasExpandedWorkflows = Array.isArray(primaryEntry?.workflows) && primaryEntry.workflows.length >= 3;
-        const hasMatchingSfdcId = primaryEntry?.meta?.sfdcAccountId && primaryEntry?.meta?.sfdcAccountId === primaryEntry?.meta?.vectorAccountId;
-        const hasCanonicalBioNova = Boolean(parsed['ge_vr_acc-1002-bionova'] && bionovaEntry?.meta?.sfdcAccountId === 'ACC-1002-BIONOVA');
-        const hasComplete82 = primaryEntry?.evaluation?.provenanceAudit?.answeredCount === 82 && primaryEntry?.evaluation?.provenanceAudit?.pendingCount === 0;
-        const hasZeroContradictions = Array.isArray(primaryEntry?.evaluation?.contradictionFlags) && primaryEntry.evaluation.contradictionFlags.length === 0;
-        if (hasCandidateOptions && hasNormalizedTelemetry && hasExpandedWorkflows && hasMatchingSfdcId && hasCanonicalBioNova && vanguardEntry && hasComplete82 && hasZeroContradictions) {
-          return parsed;
+      if (parsed && typeof parsed === 'object') {
+        existingCustom = parsed;
+        if (Object.keys(parsed).length >= CANONICAL_SFDC_ACCOUNT_IDS.length) {
+          const primaryEntry = parsed['ge_vr_ACC-1001-AEROVG'] || parsed['ge_vr_acc-1001-aerovg'] || parsed['inst_aerovanguard_ge_value_realization'];
+          const bionovaEntry = parsed['ge_vr_ACC-1002-BIONOVA'] || parsed['ge_vr_acc-1002-bionova'] || parsed['inst_bionova_ge_value_realization'];
+          const vanguardEntry = parsed['ge_vr_ACC-1006-VANGUARD'] || parsed['ge_vr_acc-1006-vanguard'];
+          const hasCandidateOptions = Array.isArray(primaryEntry?.questionResponses?.C01?.candidateOptions);
+          const hasNormalizedTelemetry = primaryEntry?.adoptionTelemetry?.geminiAssistWau7d !== undefined;
+          const hasExpandedWorkflows = Array.isArray(primaryEntry?.workflows) && primaryEntry.workflows.length >= 3;
+          const hasMatchingSfdcId = primaryEntry?.meta?.sfdcAccountId && primaryEntry?.meta?.sfdcAccountId === primaryEntry?.meta?.vectorAccountId;
+          const hasCanonicalBioNova = Boolean(bionovaEntry?.meta?.sfdcAccountId === 'ACC-1002-BIONOVA');
+          const evalIdx = primaryEntry?.evaluation?.index || primaryEntry?.evaluation?.provenanceAudit;
+          const hasComplete82 = evalIdx?.answeredCount === 82 && evalIdx?.pendingCount === 0;
+          const contraList = primaryEntry?.evaluation?.contradictions || primaryEntry?.evaluation?.contradictionFlags;
+          const hasZeroContradictions = Array.isArray(contraList) && contraList.length === 0;
+          if (hasCandidateOptions && hasNormalizedTelemetry && hasExpandedWorkflows && hasMatchingSfdcId && hasCanonicalBioNova && vanguardEntry && hasComplete82 && hasZeroContradictions) {
+            return parsed;
+          }
         }
       }
     }
   } catch (e) {
     console.warn('Could not read ge_value_realization_dossiers.json:', e.message);
   }
-  const initialMap = {};
+  const initialMap = { ...existingCustom };
   for (const sfdcAccountId of CANONICAL_SFDC_ACCOUNT_IDS) {
     const seeded = ingestCustomerMultiSourceDossier({
       sfdcAccountId,
@@ -85,7 +91,9 @@ function saveServerDossiers(dossiers) {
     const dossiersFile = getDossiersFile();
     const dir = path.dirname(dossiersFile);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(dossiersFile, JSON.stringify(dossiers, null, 2), 'utf8');
+    const tmpFile = `${dossiersFile}.${process.pid}.${Date.now()}.sync.tmp`;
+    fs.writeFileSync(tmpFile, JSON.stringify(dossiers, null, 2), 'utf8');
+    fs.renameSync(tmpFile, dossiersFile);
   } catch (e) {
     console.warn('Could not write ge_value_realization_dossiers.json:', e.message);
   }

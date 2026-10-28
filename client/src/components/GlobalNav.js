@@ -197,28 +197,6 @@ const MobileSecondaryCTAButton = styled.button`
   }
 `;
 
-const MobileCTAButton = styled.button`
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  color: white;
-  border: none;
-  padding: 14px 24px;
-  margin: 8px 16px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-
-  &:active {
-    transform: scale(0.98);
-  }
-`;
-
 const NavLink = styled.button`
   background: transparent;
   border: none;
@@ -268,31 +246,6 @@ const SecondaryCTAButton = styled.button`
 
   &:active {
     transform: translateY(0);
-  }
-
-  &:focus {
-    outline: none;
-  }
-`;
-
-const CTAButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: #2563eb;
-  color: white;
-  border: none;
-  outline: none;
-  padding: 7px 15px;
-  border-radius: 9px;
-  font-weight: 600;
-  font-size: 0.84rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-
-  &:hover {
-    background: #1d4ed8;
   }
 
   &:focus {
@@ -452,21 +405,6 @@ const MegaMenuPrimaryCol = styled.div`
   gap: 2px;
 `;
 
-const MegaMenuSecondaryCol = styled.div`
-  padding: 14px 12px;
-  background: #f8fafc;
-  border-left: 1px solid #e2e8f0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 14px;
-
-  @media (max-width: 900px) {
-    border-left: none;
-    border-top: 1px solid #e2e8f0;
-  }
-`;
-
 const MegaMenuSectionHeader = styled.div`
   display: flex;
   align-items: center;
@@ -560,27 +498,6 @@ const TrackSubtitle = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-`;
-
-const MegaMenuStudioCard = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 10px 11px;
-  border-radius: 10px;
-  background: ${props => props.$gradient ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(219, 39, 119, 0.08) 100%)' : '#ffffff'};
-  border: 1px solid ${props => props.$gradient ? 'rgba(139, 92, 246, 0.28)' : '#e2e8f0'};
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
-  text-align: left;
-  cursor: pointer;
-  transition: all 0.16s ease;
-
-  &:hover {
-    border-color: ${props => props.$gradient ? 'rgba(219, 39, 119, 0.45)' : '#cbd5e1'};
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
-    transform: translateY(-1px);
-  }
 `;
 
 const TrySampleDropdownContainer = styled.div`

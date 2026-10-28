@@ -1142,6 +1142,7 @@ router.put('/instances/:id', async (req, res) => {
       responses: updatedResponses,
       scores: calculated.dimensionScores,
       totalScore: calculated.overallScore,
+      overallScore: calculated.overallScore,
       maxScore: calculated.maxScore,
       maturityLevel: calculated.maturityLevel,
       status: status || current.status,
@@ -1276,9 +1277,19 @@ router.post('/instances/:id/changelog', async (req, res) => {
     };
 
     const updatedChangelog = [entry, ...(current.changelog || [])];
+    const recalculated = responses && current.frameworkSnapshot
+      ? dynamicEngine.calculateScores(updatedResponses, current.frameworkSnapshot)
+      : null;
 
     const updated = await customAssessmentRepo.updateInstance(id, {
       responses: updatedResponses,
+      ...(recalculated ? {
+        scores: recalculated.dimensionScores,
+        totalScore: recalculated.overallScore,
+        overallScore: recalculated.overallScore,
+        maxScore: recalculated.maxScore,
+        maturityLevel: recalculated.maturityLevel
+      } : {}),
       status: updatedStatus,
       collaborators: updatedCollaborators,
       changelog: updatedChangelog
@@ -1402,6 +1413,7 @@ router.post('/instances/batch-clone', async (req, res) => {
         responses: JSON.parse(JSON.stringify(source.responses || {})),
         scores: source.scores,
         totalScore: source.totalScore,
+        overallScore: source.overallScore ?? source.totalScore,
         maxScore: source.maxScore,
         maturityLevel: source.maturityLevel,
         status: 'in_progress',
@@ -1447,6 +1459,7 @@ router.post('/instances/:id/clone', async (req, res) => {
       responses: JSON.parse(JSON.stringify(source.responses || {})),
       scores: source.scores,
       totalScore: source.totalScore,
+      overallScore: source.overallScore ?? source.totalScore,
       maxScore: source.maxScore,
       maturityLevel: source.maturityLevel,
       status: 'in_progress',
@@ -1500,6 +1513,7 @@ router.post('/instances/:id/generate-report', aiRateLimiter(15, 60000), async (r
     const updateFields = {
       scores: calculated.dimensionScores,
       totalScore: calculated.overallScore,
+      overallScore: calculated.overallScore,
       maturityLevel: calculated.maturityLevel,
       status: 'completed'
     };

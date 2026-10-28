@@ -52,7 +52,7 @@ const GenAIReadiness = () => {
       setShowNameModal(false);
     } catch (error) {
       console.error('Error loading assessment:', error);
-      alert('Failed to load assessment for editing');
+      toast.error('Failed to load assessment for editing');
       navigate('/genai-readiness/list');
     }
   };
@@ -135,7 +135,7 @@ const GenAIReadiness = () => {
 
   const handleSubmit = async () => {
     if (!customerName.trim()) {
-      alert('Please enter a customer name');
+      toast.error('Please enter a customer name');
       setShowNameModal(true);
       return;
     }
@@ -169,7 +169,7 @@ const GenAIReadiness = () => {
       navigate(`/genai-readiness/report/${response.data.id}`);
     } catch (error) {
       console.error('Error saving assessment:', error);
-      alert('Failed to save assessment. Please try again.');
+      toast.error('Failed to save assessment. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -247,7 +247,7 @@ const GenAIReadiness = () => {
                     console.log('[GenAIReadiness] Closing name modal...');
                     setShowNameModal(false);
                   } else {
-                    alert('Please enter a customer name');
+                    toast.error('Please enter a customer name');
                   }
                 }}
                 disabled={!customerName.trim()}

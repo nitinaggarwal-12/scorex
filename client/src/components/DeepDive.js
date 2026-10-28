@@ -414,76 +414,6 @@ const SlideContent = styled(motion.div)`
   }
 `;
 
-const SlideNavigation = styled.div`
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 80px;
-  background: #ffffff;
-  border-top: 1px solid #cbd5e1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 32px;
-  z-index: 10001;
-  
-  @media (max-width: 768px) {
-    height: 60px;
-    gap: 16px;
-  }
-`;
-
-const NavButton = styled(motion.button)`
-  background: ${props => props.disabled ? 'rgba(100, 116, 139, 0.5)' : 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)'};
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.2s ease;
-
-  &:hover {
-    ${props => !props.disabled && `
-      transform: scale(1.05);
-      box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
-    `}
-  }
-  
-  @media (max-width: 768px) {
-    padding: 10px 16px;
-    font-size: 14px;
-  }
-`;
-
-const PrintSlide = styled.div`
-  @media print {
-    page-break-after: always;
-    page-break-inside: avoid;
-    width: 11in;
-    height: 8.5in;
-    max-height: 8.5in;
-    min-height: 8.5in;
-    position: relative;
-    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%);
-    background-attachment: local;
-    display: block;
-    padding: 40px !important;
-    margin: 0 !important;
-    overflow: hidden !important;
-    box-sizing: border-box !important;
-  }
-  
-  @media screen {
-    display: none;
-  }
-`;
-
 const SlideHeading = styled.div`
   position: absolute;
   top: 20px;
@@ -504,22 +434,6 @@ const SlideGrid = styled.div`
   
   @media (max-width: 1200px) {
     grid-template-columns: 1fr;
-  }
-`;
-
-const SlideSection = styled.div`
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border-radius: 16px;
-  padding: 24px;
-  overflow-y: auto;
-  
-  h3 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 3px solid #8b5cf6;
   }
 `;
 

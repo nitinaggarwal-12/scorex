@@ -30,8 +30,8 @@ const REQUIRED_MODELS = [
 
 // Global forbidden models and stale blueprint keys across all SKILL.md and markdown docs
 const GLOBAL_FORBIDDEN_MODEL_REGEX = /Gemini 3\.7|gemini-3\.7|gemini-2\.0-flash|gemini-1\.5-pro|gemini-1\.5-flash|gemini-2\.5-flash-preview-tts|gpt-4o-mini|OPENAI_API_KEY|OPENAI_MODEL|genai_rag_readiness|finops_cost_governance|cloud_migration_modernization|zero_trust_cyber_resilience|mlops_agentic_ai_governance/i;
-// Strict ScoreX runtime code forbidden regex (also bans legacy e2-demo-field-eng & LAKEBASE_*)
-const SCOREX_CODE_FORBIDDEN_REGEX = /Gemini 3\.7|gemini-3\.7|gemini-2\.5-pro|gemini-2\.5-flash|gemini-2\.0-flash|gemini-1\.5-pro|gemini-1\.5-flash|gpt-4o-mini|OPENAI_API_KEY|OPENAI_MODEL|e2-demo-field-eng|LAKEBASE_HOST|databricks_postgres/i;
+// Strict ScoreX runtime code forbidden regex (also bans legacy e2-demo-field-eng, text-embedding-004 & LAKEBASE_*)
+const SCOREX_CODE_FORBIDDEN_REGEX = /Gemini 3\.7|gemini-3\.7|gemini-2\.5-pro|gemini-2\.5-flash|gemini-2\.0-flash|gemini-1\.5-pro|gemini-1\.5-flash|text-embedding-004|gpt-4o-mini|OPENAI_API_KEY|OPENAI_MODEL|e2-demo-field-eng|LAKEBASE_HOST|databricks_postgres/i;
 
 function walk(dir, extRegex, out = []) {
   if (!fs.existsSync(dir)) return out;
@@ -102,12 +102,12 @@ for (const dupTop of ['GEMINI.md', 'CLAUDE.md']) {
   }
 }
 
-// Check skills.json === .datacloud_skills_manifest
+// Check .datacloud_skills_manifest is isolated (NOT symlinked) from skills.json so googlecloudtools.datacloud uninstaller.prune() never deletes custom skills
 const globalSkillsJson = path.join(CONFIG_DIR, 'skills.json');
 const globalSkillsManifest = path.join(CONFIG_DIR, 'skills', '.datacloud_skills_manifest');
 if (fs.existsSync(globalSkillsJson) && fs.existsSync(globalSkillsManifest)) {
-  if (sha256(fs.readFileSync(globalSkillsJson, 'utf8')) !== sha256(fs.readFileSync(globalSkillsManifest, 'utf8'))) {
-    failures.push('SHA-256 mismatch between ~/.gemini/config/skills.json and ~/.gemini/config/skills/.datacloud_skills_manifest');
+  if (fs.lstatSync(globalSkillsManifest).isSymbolicLink()) {
+    failures.push('~/.gemini/config/skills/.datacloud_skills_manifest must NEVER be a symlink to skills.json (causes datacloud uninstaller.prune() to delete custom skills)');
   }
 }
 

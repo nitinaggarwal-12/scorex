@@ -135,23 +135,6 @@ export const submitCategoryResponses = async (assessmentId, categoryId, response
 };
 
 /**
- * Submit all responses at once (bulk submission for sample assessments)
- */
-export const submitBulkResponses = async (assessmentId, responses, completedCategories) => {
-  try {
-    const response = await api.post(`/assessment/${assessmentId}/bulk-submit`, {
-      responses,
-      completedCategories,
-      status: 'completed'
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error submitting bulk responses:', error);
-    throw error;
-  }
-};
-
-/**
  * Save / prefill full assessment responses in bulk
  */
 export const saveAssessmentResponses = async (assessmentId, responses) => {
@@ -243,21 +226,6 @@ export const getAllAssessments = async () => {
  * Alias for getAllAssessments (for backward compatibility)
  */
 export const getAssessments = getAllAssessments;
-
-/**
- * Save edited Executive Summary content
- */
-export const saveEditedExecutiveSummary = async (assessmentId, editedContent) => {
-  try {
-    console.log(`[saveEditedExecutiveSummary] Saving for assessment: ${assessmentId}`);
-    const data = await api.put(`/assessment/${assessmentId}/edited-executive-summary`, editedContent);
-    console.log(`[saveEditedExecutiveSummary] Saved successfully`);
-    return data;
-  } catch (error) {
-    console.error('Error saving edited executive summary:', error);
-    throw error;
-  }
-};
 
 /**
  * Clone an existing assessment
@@ -413,34 +381,6 @@ export const healthCheck = async () => {
 // Utility functions
 
 /**
- * Calculate progress percentage
- */
-export const calculateProgress = (completedCategories, totalCategories) => {
-  if (!totalCategories || totalCategories === 0) return 0;
-  return Math.round((completedCategories / totalCategories) * 100);
-};
-
-/**
- * Format assessment duration
- */
-export const formatDuration = (startTime, endTime) => {
-  if (!startTime) return 'Unknown';
-  
-  const start = new Date(startTime);
-  const end = endTime ? new Date(endTime) : new Date();
-  const diffMs = end - start;
-  
-  const minutes = Math.floor(diffMs / 60000);
-  const hours = Math.floor(minutes / 60);
-  
-  if (hours > 0) {
-    return `${hours}h ${minutes % 60}m`;
-  } else {
-    return `${minutes}m`;
-  }
-};
-
-/**
  * Get maturity level color
  */
 export const getMaturityColor = (score) => {
@@ -452,38 +392,6 @@ export const getMaturityColor = (score) => {
     5: '#00cc44'
   };
   return colors[score] || '#cccccc';
-};
-
-/**
- * Get priority color
- */
-export const getPriorityColor = (priority) => {
-  const colors = {
-    'critical': '#ff4444',
-    'high': '#ff8800',
-    'medium': '#ffaa00',
-    'low': '#88cc00'
-  };
-  return colors[priority] || '#cccccc';
-};
-
-/**
- * Validate assessment responses
- */
-export const validateResponses = (questions, responses) => {
-  const errors = [];
-  
-  questions.forEach(question => {
-    const response = responses[question.id];
-    
-    if (!response) {
-      errors.push(`Response required for: ${question.question}`);
-    } else if (question.type === 'multiple_choice' && (!Array.isArray(response) || response.length === 0)) {
-      errors.push(`At least one option must be selected for: ${question.question}`);
-    }
-  });
-  
-  return errors;
 };
 
 /**

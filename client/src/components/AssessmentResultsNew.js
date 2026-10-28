@@ -334,51 +334,6 @@ const ActionButton = styled(motion.button)`
   }
 `;
 
-const FloatingSlideshowButton = styled(motion.button)`
-  position: absolute;
-  top: 24px;
-  right: 32px;
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-  color: white;
-  border: none;
-  padding: 14px 28px;
-  border-radius: 16px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-  z-index: 10;
-
-  &:hover {
-    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(139, 92, 246, 0.6);
-  }
-
-  @media (max-width: 1024px) {
-    top: 20px;
-    right: 24px;
-    padding: 12px 20px;
-    font-size: 14px;
-  }
-  
-  @media (max-width: 768px) {
-    top: 140px;
-    right: 16px;
-    padding: 10px 16px;
-    font-size: 13px;
-  }
-  
-  @media print {
-    display: none !important;
-  }
-`;
-
 const MaturityOverview = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -669,24 +624,6 @@ const PillarHeader = styled.div`
   
   @media print {
     background: white !important;
-  }
-`;
-
-const CollapsibleHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  user-select: none;
-  transition: all 0.2s;
-
-  &:hover {
-    opacity: 0.8;
-  }
-
-  .collapse-icon {
-    transition: transform 0.3s ease;
-    ${props => props.$collapsed && 'transform: rotate(180deg);'}
   }
 `;
 
@@ -1003,206 +940,6 @@ const PillarColumn = styled.div`
   }
 `;
 
-const RoadmapSection = styled.section`
-  margin-top: 64px;
-  padding-top: 48px;
-  border-top: 2px solid #e5e7eb;
-
-  @media (max-width: 768px) {
-    margin-top: 48px;
-    padding-top: 32px;
-  }
-`;
-
-const RoadmapPhases = styled.div`
-  display: grid;
-  gap: 24px;
-`;
-
-const PhaseCard = styled(motion.div)`
-  background: ${props => props.$bgColor || '#ffffff'};
-  border: 2px solid ${props => props.$borderColor || '#e5e7eb'};
-  border-radius: 12px;
-  padding: 28px 32px;
-  position: relative;
-
-  .phase-header-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 16px;
-    gap: 12px;
-  }
-
-  .phase-header {
-    font-size: 1.125rem;
-    font-weight: 700;
-    color: #1e293b;
-    flex: 1;
-  }
-
-  .phase-actions {
-    display: flex;
-    gap: 6px;
-    flex-shrink: 0;
-  }
-
-  ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  li {
-    font-size: 0.938rem;
-    color: #374151;
-    line-height: 1.6;
-    margin-bottom: 10px;
-    padding-left: 20px;
-    position: relative;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    &::before {
-      content: '▸';
-      position: absolute;
-      left: 0;
-      color: ${props => props.$accentColor || '#f59e0b'};
-      font-weight: bold;
-    }
-  }
-
-  @media (max-width: 768px) {
-    padding: 20px 24px;
-
-    .phase-header {
-      font-size: 1rem;
-    }
-
-    li {
-      font-size: 0.875rem;
-    }
-  }
-`;
-
-const ImpactSection = styled.section`
-  margin-top: 64px;
-  padding-top: 48px;
-  border-top: 2px solid #e5e7eb;
-
-  @media (max-width: 768px) {
-    margin-top: 48px;
-    padding-top: 32px;
-  }
-`;
-
-const ImpactMetrics = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-`;
-
-const MetricCard = styled(motion.div)`
-  background: #ffffff;
-  border: 2px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 32px 28px;
-  text-align: center;
-
-  .metric-value {
-    font-size: 3rem;
-    font-weight: 800;
-    color: #0369a1;
-    margin-bottom: 8px;
-    line-height: 1;
-  }
-
-  .metric-label {
-    font-size: 0.938rem;
-    color: #0c4a6e;
-    font-weight: 500;
-    line-height: 1.5;
-  }
-
-  @media (max-width: 768px) {
-    padding: 24px 20px;
-
-    .metric-value {
-      font-size: 2.5rem;
-    }
-
-    .metric-label {
-      font-size: 0.875rem;
-    }
-  }
-`;
-
-const LoadingContainer = styled.div`
-  min-height: 60vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  .spinner {
-    text-align: center;
-    
-    .text {
-      font-size: 1.125rem;
-      color: #6b7280;
-      margin-top: 16px;
-    }
-  }
-`;
-
-const ErrorContainer = styled.div`
-  min-height: 60vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 16px;
-  padding: 20px;
-
-  .icon {
-    color: #dc2626;
-    margin-bottom: 8px;
-  }
-
-  .title {
-    font-size: 1.25rem;
-    color: #111827;
-    font-weight: 600;
-  }
-
-  .message {
-    font-size: 1rem;
-    color: #6b7280;
-  }
-
-  button {
-    margin-top: 16px;
-    padding: 10px 20px;
-    background: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    cursor: pointer;
-
-    &:hover {
-      background: #2563eb;
-    }
-  }
-`;
-
 // Maturity Chart Styled Components
 // Summary Maturity Chart (Top of page)
 const MaturityChart = styled.div`
@@ -1211,16 +948,6 @@ const MaturityChart = styled.div`
   background: white;
   border-radius: 8px;
   border: 1px solid #e5e7eb;
-`;
-
-const MaturityChartTitle = styled.h3`
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #111827;
-  margin: 0 0 12px 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
 `;
 
 const CompactMaturityGrid = styled.div`
@@ -1541,17 +1268,6 @@ const NavigationButton = styled(motion.button)`
       transform: translateY(-50%) scale(1);
     }
   }
-`;
-
-const SlideGrid = styled.div`
-  display: grid;
-  grid-template-columns: ${props => props.$columns || '1fr 1fr'};
-  gap: ${props => props.$gap || '24px'};
-  height: fit-content;
-  max-height: 92%;
-  overflow: hidden;
-  padding-top: ${props => props.$paddingTop || '45px'};
-  padding-bottom: ${props => props.$paddingBottom || '10px'};
 `;
 
 const ExitButton = styled(motion.button)`

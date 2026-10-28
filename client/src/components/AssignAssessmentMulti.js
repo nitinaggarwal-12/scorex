@@ -11,12 +11,16 @@ import MultiSelectDropdown from './MultiSelectDropdown';
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 100px 20px 40px 20px;
+  background: #f8fafc;
+  width: 100%;
+  max-width: 100%;
+  padding: 88px clamp(16px, 1.8vw, 28px) 40px;
+  box-sizing: border-box;
 `;
 
 const ContentWrapper = styled.div`
-  max-width: 900px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
 `;
 
@@ -85,135 +89,6 @@ const Label = styled.label`
   color: #334155;
   margin-bottom: 8px;
   font-size: 0.9375rem;
-`;
-
-const SearchWrapper = styled.div`
-  position: relative;
-  margin-bottom: 12px;
-`;
-
-const SearchInput = styled.input`
-  width: 100%;
-  padding: 12px 16px 12px 44px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: all 0.2s;
-  
-  &:focus {
-    outline: none;
-    border-color: #3b82f6;
-  }
-  
-  &::placeholder {
-    color: #94a3b8;
-  }
-`;
-
-const SearchIcon = styled.div`
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #94a3b8;
-`;
-
-const UsersList = styled.div`
-  max-height: 300px;
-  overflow-y: auto;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  background: white;
-  margin-bottom: 12px;
-`;
-
-const UserItem = styled.div`
-  padding: 12px 16px;
-  border-bottom: 1px solid #f1f5f9;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  
-  ${props => props.$selected && `
-    background: #eff6ff;
-    border-left: 3px solid #3b82f6;
-  `}
-  
-  &:hover {
-    background: ${props => props.$selected ? '#dbeafe' : '#f8fafc'};
-  }
-  
-  &:last-child {
-    border-bottom: none;
-  }
-`;
-
-const UserInfo = styled.div`
-  flex: 1;
-`;
-
-const UserName = styled.div`
-  font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 2px;
-`;
-
-const UserEmail = styled.div`
-  font-size: 0.875rem;
-  color: #64748b;
-`;
-
-const CheckIcon = styled.div`
-  color: #3b82f6;
-  display: flex;
-  align-items: center;
-`;
-
-const SelectedUsers = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  min-height: 42px;
-  padding: 8px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  background: #f8fafc;
-  align-items: center;
-`;
-
-const SelectedUserBadge = styled.div`
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  color: white;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  font-weight: 500;
-`;
-
-const RemoveButton = styled.button`
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  
-  &:hover {
-    opacity: 0.8;
-  }
-`;
-
-const EmptyState = styled.div`
-  padding: 20px;
-  text-align: center;
-  color: #94a3b8;
-  font-size: 0.875rem;
 `;
 
 const Select = styled.select`

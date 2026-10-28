@@ -401,26 +401,6 @@ const TopNavFilters = styled.div`
   }
 `;
 
-const FilterPillGroup = styled.div`
-  display: flex;
-  background: #f1f5f9;
-  padding: 4px;
-  border-radius: 10px;
-  gap: 4px;
-`;
-
-const FilterPill = styled.button`
-  background: ${props => props.$active ? '#ffffff' : 'transparent'};
-  color: ${props => props.$active ? '#1e293b' : '#64748b'};
-  box-shadow: ${props => props.$active ? '0 2px 6px rgba(0,0,0,0.06)' : 'none'};
-  font-weight: 600;
-  font-size: 0.8rem;
-  padding: 6px 12px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-`;
-
 const QuestionNumberScrollWrap = styled.div`
   display: flex;
   align-items: center;

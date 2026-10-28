@@ -2901,8 +2901,19 @@ class CustomAssessmentRepository {
         enterprise_data_ai_maturity: 'Enterprise Data & AI Strategy'
       };
 
+      let templatesUpdated = 0;
       STARTER_PRODUCTION_TEMPLATES.forEach(tpl => {
         const totalQuestions = (tpl.framework?.dimensions || []).reduce((acc, d) => acc + (d.questions || []).length, 0);
+        const existingTpl = typesFileStore.get(tpl.typeKey);
+        if (
+          existingTpl &&
+          existingTpl.totalQuestions === totalQuestions &&
+          existingTpl.category === (tpl.category || templateCategories[tpl.typeKey] || 'Enterprise Architecture') &&
+          Array.isArray(existingTpl.framework?.dimensions) &&
+          existingTpl.framework.dimensions.length === (tpl.framework?.dimensions || []).length
+        ) {
+          return;
+        }
         const enrichedTpl = {
           ...tpl,
           category: tpl.category || templateCategories[tpl.typeKey] || 'Enterprise Architecture',
@@ -2914,6 +2925,7 @@ class CustomAssessmentRepository {
           }
         };
         typesFileStore.set(tpl.typeKey, enrichedTpl);
+        templatesUpdated++;
       });
 
       const fwData = require('../data/assessmentFramework');
@@ -2960,37 +2972,48 @@ class CustomAssessmentRepository {
       });
 
       const flagshipTotalQuestions = flagshipDimensions.reduce((acc, d) => acc + (d.questions || []).length, 0);
-      const flagshipTemplate = {
-        id: 'tpl_enterprise_data_ai_maturity',
-        typeKey: 'enterprise_data_ai_maturity',
-        title: 'Enterprise Data & AI Maturity Assessment (6 Pillars)',
-        subtitle: 'Flagship Multi-Dimensional Data, MLOps, Governance & Cloud Platform Maturity',
-        description: 'Comprehensive 6-pillar maturity blueprint evaluating Platform Governance, Data Architecture, Analytics & BI, AI/MLOps, Generative AI, and Operational Excellence & FinOps.',
-        category: 'Enterprise Data & AI Strategy',
-        totalQuestions: flagshipTotalQuestions,
-        icon: 'FiLayers',
-        badge: 'Flagship 6-Pillar Blueprint',
-        color: '#2563eb',
-        status: 'production',
-        isPublished: true,
-        isPromoted: true,
-        createdBy: 'system',
-        createdAt: '2026-01-15T00:00:00.000Z',
-        updatedAt: new Date().toISOString(),
-        framework: {
-          id: 'fw_enterprise_data_ai_maturity',
+      const existingFlagshipTpl = typesFileStore.get('enterprise_data_ai_maturity');
+      if (
+        !existingFlagshipTpl ||
+        existingFlagshipTpl.totalQuestions !== flagshipTotalQuestions ||
+        !Array.isArray(existingFlagshipTpl.framework?.dimensions) ||
+        existingFlagshipTpl.framework.dimensions.length !== flagshipDimensions.length
+      ) {
+        const flagshipTemplate = {
+          id: 'tpl_enterprise_data_ai_maturity',
           typeKey: 'enterprise_data_ai_maturity',
           title: 'Enterprise Data & AI Maturity Assessment (6 Pillars)',
           subtitle: 'Flagship Multi-Dimensional Data, MLOps, Governance & Cloud Platform Maturity',
+          description: 'Comprehensive 6-pillar maturity blueprint evaluating Platform Governance, Data Architecture, Analytics & BI, AI/MLOps, Generative AI, and Operational Excellence & FinOps.',
           category: 'Enterprise Data & AI Strategy',
           totalQuestions: flagshipTotalQuestions,
+          icon: 'FiLayers',
           badge: 'Flagship 6-Pillar Blueprint',
-          dimensions: flagshipDimensions
-        }
-      };
-      typesFileStore.set(flagshipTemplate.typeKey, flagshipTemplate);
+          color: '#2563eb',
+          status: 'production',
+          isPublished: true,
+          isPromoted: true,
+          createdBy: 'system',
+          createdAt: '2026-01-15T00:00:00.000Z',
+          updatedAt: new Date().toISOString(),
+          framework: {
+            id: 'fw_enterprise_data_ai_maturity',
+            typeKey: 'enterprise_data_ai_maturity',
+            title: 'Enterprise Data & AI Maturity Assessment (6 Pillars)',
+            subtitle: 'Flagship Multi-Dimensional Data, MLOps, Governance & Cloud Platform Maturity',
+            category: 'Enterprise Data & AI Strategy',
+            totalQuestions: flagshipTotalQuestions,
+            badge: 'Flagship 6-Pillar Blueprint',
+            dimensions: flagshipDimensions
+          }
+        };
+        typesFileStore.set(flagshipTemplate.typeKey, flagshipTemplate);
+        templatesUpdated++;
+      }
 
-      console.log('✅ Synchronized 6 golden production assessment starter templates in registry.');
+      if (templatesUpdated > 0) {
+        console.log(`✅ Synchronized ${templatesUpdated} golden production assessment starter template(s) in registry.`);
+      }
     } catch (e) {
       console.warn('Could not seed starter templates:', e.message);
     }
@@ -3026,10 +3049,28 @@ class CustomAssessmentRepository {
         enterprise_ai_zero_trust_security: [[4, 3], [3, 4], [3, 3], [4, 3], [3, 4]]
       };
 
+      const isStarterInstanceValid = (inst, expectedDimCount) => {
+        if (!inst || !inst.frameworkSnapshot || !Array.isArray(inst.frameworkSnapshot.dimensions)) return false;
+        if (inst.frameworkSnapshot.dimensions.length !== expectedDimCount) return false;
+        if (!inst.responses || !inst.scores || !inst.aiReport?.executiveSummary) return false;
+        if (!(inst.totalScore > 0) || inst.totalScore !== inst.overallScore) return false;
+        for (const dim of inst.frameworkSnapshot.dimensions) {
+          for (const q of dim.questions || []) {
+            if (inst.responses[q.id] === undefined) return false;
+          }
+        }
+        return true;
+      };
+
+      let instancesSeeded = 0;
       STARTER_PRODUCTION_TEMPLATES.forEach(tpl => {
         const instanceId = `inst_${tpl.typeKey}_demo`;
         const framework = { ...tpl.framework, typeKey: tpl.typeKey };
         const dimensions = framework.dimensions || [];
+        const existingInst = instancesFileStore.get(instanceId);
+        if (isStarterInstanceValid(existingInst, dimensions.length)) {
+          return;
+        }
         const finMeta = domainBaselineFinancials[tpl.typeKey] || domainBaselineFinancials.enterprise_data_ai_maturity;
         const scoreMatrix = domainScoreProfiles[tpl.typeKey] || [];
         const sampleResponses = {
@@ -3098,6 +3139,7 @@ class CustomAssessmentRepository {
         };
 
         instancesFileStore.set(instanceId, instance);
+        instancesSeeded++;
       });
 
       // 6. Seed Flagship Enterprise Data & AI Maturity Assessment Demo Instance
@@ -3111,76 +3153,82 @@ class CustomAssessmentRepository {
             subtitle: 'Flagship Multi-Dimensional Data, MLOps, Governance & Cloud Platform Maturity',
             dimensions: []
           };
-      const flagshipFin = domainBaselineFinancials.enterprise_data_ai_maturity;
-      const flagshipResponses = {
-        baseline_annual_spend_usd: flagshipFin.spend,
-        engineering_fte_count: flagshipFin.fte,
-        loaded_hourly_rate_usd: flagshipFin.rate
-      };
-      const flagshipPains = [];
-      const flagshipPillarPatterns = [
-        [3, 4, 3, 3, 4, 3, 3, 3, 3, 3], // 3.2
-        [3, 3, 3, 2, 3, 3, 3, 3, 3, 3], // 2.9
-        [4, 3, 4, 3, 3, 4, 3, 3, 4, 3], // 3.4
-        [3, 2, 3, 2, 3, 2, 3, 3, 2, 3], // 2.6
-        [3, 3, 2, 3, 3, 3, 2, 3, 3, 3], // 2.8
-        [3, 3, 4, 3, 3, 3, 3, 3, 3, 3]  // 3.1
-      ];
+      const existingFlagshipInst = instancesFileStore.get(flagshipId);
+      if (!isStarterInstanceValid(existingFlagshipInst, (flagshipFramework.dimensions || []).length)) {
+        const flagshipFin = domainBaselineFinancials.enterprise_data_ai_maturity;
+        const flagshipResponses = {
+          baseline_annual_spend_usd: flagshipFin.spend,
+          engineering_fte_count: flagshipFin.fte,
+          loaded_hourly_rate_usd: flagshipFin.rate
+        };
+        const flagshipPains = [];
+        const flagshipPillarPatterns = [
+          [3, 4, 3, 3, 4, 3, 3, 3, 3, 3], // 3.2
+          [3, 3, 3, 2, 3, 3, 3, 3, 3, 3], // 2.9
+          [4, 3, 4, 3, 3, 4, 3, 3, 4, 3], // 3.4
+          [3, 2, 3, 2, 3, 2, 3, 3, 2, 3], // 2.6
+          [3, 3, 2, 3, 3, 3, 2, 3, 3, 3], // 2.8
+          [3, 3, 4, 3, 3, 3, 3, 3, 3, 3]  // 3.1
+        ];
 
-      flagshipFramework.dimensions.forEach((dim, dIdx) => {
-        const pattern = flagshipPillarPatterns[dIdx] || [3, 3, 3, 3, 3, 3, 3, 3, 3, 3];
-        (dim.questions || []).forEach((q, qIdx) => {
-          const score = pattern[qIdx % pattern.length];
-          flagshipResponses[q.id] = score;
-          flagshipResponses[`${q.id}_current_state`] = score;
-          flagshipResponses[`${q.id}_future_state`] = Math.min(5, score + (qIdx % 2 === 0 ? 2 : 1));
-          if (q.technicalPainPoints && q.technicalPainPoints.length > 0) {
-            flagshipResponses[`${q.id}_technical_pain`] = [q.technicalPainPoints[0]];
-            if (!flagshipPains.includes(q.technicalPainPoints[0])) {
-              flagshipPains.push(q.technicalPainPoints[0]);
+        flagshipFramework.dimensions.forEach((dim, dIdx) => {
+          const pattern = flagshipPillarPatterns[dIdx] || [3, 3, 3, 3, 3, 3, 3, 3, 3, 3];
+          (dim.questions || []).forEach((q, qIdx) => {
+            const score = pattern[qIdx % pattern.length];
+            flagshipResponses[q.id] = score;
+            flagshipResponses[`${q.id}_current_state`] = score;
+            flagshipResponses[`${q.id}_future_state`] = Math.min(5, score + (qIdx % 2 === 0 ? 2 : 1));
+            if (q.technicalPainPoints && q.technicalPainPoints.length > 0) {
+              flagshipResponses[`${q.id}_technical_pain`] = [q.technicalPainPoints[0]];
+              if (!flagshipPains.includes(q.technicalPainPoints[0])) {
+                flagshipPains.push(q.technicalPainPoints[0]);
+              }
             }
-          }
-          if (q.businessPainPoints && q.businessPainPoints.length > 0) {
-            flagshipResponses[`${q.id}_business_pain`] = [q.businessPainPoints[0]];
-          }
-          flagshipResponses[`${q.id}_comment`] = flagshipFin.comment;
+            if (q.businessPainPoints && q.businessPainPoints.length > 0) {
+              flagshipResponses[`${q.id}_business_pain`] = [q.businessPainPoints[0]];
+            }
+            flagshipResponses[`${q.id}_comment`] = flagshipFin.comment;
+          });
         });
-      });
-      const flagshipScores = dynamicEngine.calculateScores(flagshipResponses, flagshipFramework);
-      const flagshipMetadata = {
-        typeKey: 'enterprise_data_ai_maturity',
-        customerName: 'ConnectPlus Telecom Global',
-        useCase: 'Enterprise Data & AI Maturity Modernization',
-        responses: flagshipResponses
-      };
-      const flagshipReport = dynamicEngine._generateDeterministicReportFallback(
-        flagshipFramework,
-        flagshipMetadata,
-        flagshipScores,
-        flagshipPains
-      );
-      const flagshipInstance = {
-        id: flagshipId,
-        typeKey: 'enterprise_data_ai_maturity',
-        customerName: 'ConnectPlus Telecom Global',
-        useCase: 'Enterprise Data & AI Platform Modernization',
-        contactEmail: 'cio@connectplus.telecom',
-        frameworkSnapshot: flagshipFramework,
-        responses: flagshipResponses,
-        scores: flagshipScores.dimensionScores,
-        totalScore: flagshipScores.overallScore,
-        overallScore: flagshipScores.overallScore,
-        maxScore: flagshipScores.maxScore,
-        maturityLevel: flagshipScores.maturityLevel,
-        status: 'completed',
-        aiReport: flagshipReport,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        completedAt: new Date().toISOString()
-      };
-      instancesFileStore.set(flagshipId, flagshipInstance);
+        const flagshipScores = dynamicEngine.calculateScores(flagshipResponses, flagshipFramework);
+        const flagshipMetadata = {
+          typeKey: 'enterprise_data_ai_maturity',
+          customerName: 'ConnectPlus Telecom Global',
+          useCase: 'Enterprise Data & AI Maturity Modernization',
+          responses: flagshipResponses
+        };
+        const flagshipReport = dynamicEngine._generateDeterministicReportFallback(
+          flagshipFramework,
+          flagshipMetadata,
+          flagshipScores,
+          flagshipPains
+        );
+        const flagshipInstance = {
+          id: flagshipId,
+          typeKey: 'enterprise_data_ai_maturity',
+          customerName: 'ConnectPlus Telecom Global',
+          useCase: 'Enterprise Data & AI Platform Modernization',
+          contactEmail: 'cio@connectplus.telecom',
+          frameworkSnapshot: flagshipFramework,
+          responses: flagshipResponses,
+          scores: flagshipScores.dimensionScores,
+          totalScore: flagshipScores.overallScore,
+          overallScore: flagshipScores.overallScore,
+          maxScore: flagshipScores.maxScore,
+          maturityLevel: flagshipScores.maturityLevel,
+          status: 'completed',
+          aiReport: flagshipReport,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          completedAt: new Date().toISOString()
+        };
+        instancesFileStore.set(flagshipId, flagshipInstance);
+        instancesSeeded++;
+      }
 
-      console.log('✅ Seeded and synchronized all 6 production starter assessment instances with bespoke architecture diagrams.');
+      if (instancesSeeded > 0) {
+        console.log(`✅ Seeded and synchronized ${instancesSeeded} production starter assessment instance(s) with bespoke architecture diagrams.`);
+      }
     } catch (e) {
       console.warn('Could not seed starter instances:', e.message);
     }

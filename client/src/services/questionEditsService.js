@@ -34,19 +34,6 @@ export const saveQuestionEdit = async (assessmentId, questionId, editData) => {
 };
 
 /**
- * Delete a question edit (revert to original)
- */
-export const deleteQuestionEdit = async (assessmentId, questionId) => {
-  try {
-    const response = await axios.delete(`${API_URL}/${assessmentId}/${questionId}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error deleting question edit:', error);
-    throw error;
-  }
-};
-
-/**
  * Delete a question entirely
  */
 export const deleteQuestion = async (assessmentId, questionId, deletedBy) => {

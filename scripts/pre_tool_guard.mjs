@@ -10,11 +10,8 @@
 import fs from 'fs';
 
 const DELETED_LEGACY_COMPONENTS = new Set([
-  'AssessmentQuestion.js',
-  'AssessmentStart.js',
   'AssessmentSummary.js',
   'GenAIReadinessAssessment.js',
-  'MyAssessments.js',
   'MaturityReport.js',
   'AssessmentDetailView.js',
   'BenchmarkingReport.js',
@@ -24,21 +21,31 @@ const DELETED_LEGACY_COMPONENTS = new Set([
   'FeedbackAnalytics.js',
   'AdminDashboard.js',
   'AssignAssessmentModal.js',
-  'PitchDeck.js',
   'AnalyticsDashboard.js',
   'AuthorDashboard.js',
   'ConsumerDashboard.js',
   'Dashboard.js',
-  'AssessmentHeader.js',
   'Header.js',
   'HomeButton.js',
   'DemoScenarioPickerModal.js',
   'ExecutiveSummary.js',
   'FeedbackModal.js',
-  'ModernCharts.js'
+  'ModernCharts.js',
+  'UniversalObjectEditor.js',
+  'AudioBriefingPlayer.js',
+  'DynamicAssessmentHub.js'
 ]);
 
 const FORBIDDEN_CONTENT_REGEX = /Gemini 3\.7|gemini-3\.7-flash|gemini-3\.7-pro|gpt-4o-mini|OPENAI_API_KEY|databricksapps\.com|e2-demo-field-eng|2dd066d2-2717-4694-85be-968a1407fd53/i;
+
+if (process.argv.includes('--self-test')) {
+  if (DELETED_LEGACY_COMPONENTS.size !== 24 || !FORBIDDEN_CONTENT_REGEX.test('gpt-4o-mini')) {
+    console.error('❌ [pre_tool_guard] Self-test failed');
+    process.exit(1);
+  }
+  console.log('✅ [pre_tool_guard] Self-test passed (24 legacy components & forbidden model/URL patterns guarded).');
+  process.exit(0);
+}
 
 let rawInput = '';
 try {

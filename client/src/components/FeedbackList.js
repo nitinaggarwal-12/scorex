@@ -24,11 +24,6 @@ const Title = styled.h1`
   margin-bottom: 10px;
 `;
 
-const Subtitle = styled.p`
-  font-size: 1.1rem;
-  color: #64748b;
-`;
-
 const AnalyticsSection = styled.div`
   width: 100%;
   max-width: 100%;
@@ -38,22 +33,6 @@ const AnalyticsSection = styled.div`
   padding: 30px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
-`;
-
-const AnalyticsTitle = styled.h2`
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-`;
-
-const AnalyticsSubtitle = styled.p`
-  font-size: 1rem;
-  color: #64748b;
-  margin-bottom: 30px;
 `;
 
 const CombinedChartContainer = styled.div`
@@ -120,58 +99,6 @@ const StatPercentage = styled.div`
   font-weight: 600;
   color: #94a3b8;
   margin-top: 4px;
-`;
-
-const CombinedBarGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-`;
-
-const QuestionRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 16px;
-`;
-
-const QuestionLabel = styled.div`
-  min-width: 80px;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #1e293b;
-  text-align: right;
-`;
-
-const BarsContainer = styled.div`
-  flex: 1;
-  display: flex;
-  gap: 4px;
-  height: 40px;
-  background: #e2e8f0;
-  border-radius: 8px;
-  overflow: hidden;
-  position: relative;
-`;
-
-const SegmentBar = styled(motion.div)`
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 0.85rem;
-  font-weight: 700;
-  background: ${props => 
-    props.$type === 'Yes' ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 
-    props.$type === 'No' ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' : 
-    'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
-  };
-  cursor: pointer;
-  transition: filter 0.3s ease;
-
-  &:hover {
-    filter: brightness(1.1);
-  }
 `;
 
 const Legend = styled.div`

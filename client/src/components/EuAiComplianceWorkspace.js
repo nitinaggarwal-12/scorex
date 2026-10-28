@@ -160,12 +160,6 @@ const MainHeading = styled.h1`
   }
 `;
 
-const SubHeading = styled.span`
-  font-size: 0.8rem;
-  color: #64748b;
-  font-weight: 500;
-`;
-
 const HeaderActions = styled.div`
   display: flex;
   align-items: center;
@@ -248,112 +242,6 @@ const ActionButton = styled.button`
   `}
 `;
 
-const CategoryDropdownContainer = styled.div`
-  position: relative;
-  display: inline-flex;
-`;
-
-const CategoryDropdownTrigger = styled.button`
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
-  border-radius: 9px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.18s ease;
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-  color: #ffffff;
-  border: 1px solid #6d28d9;
-  box-shadow: 0 2px 6px rgba(139, 92, 246, 0.25);
-
-  &:hover {
-    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.35);
-  }
-`;
-
-const CategoryDropdownMenu = styled.div`
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  width: 460px;
-  max-height: 520px;
-  overflow-y: auto;
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
-  border-radius: 14px;
-  box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.22), 0 4px 12px rgba(15, 23, 42, 0.08);
-  z-index: 120;
-  padding: 10px;
-`;
-
-const CategoryMenuHeader = styled.div`
-  padding: 8px 12px 10px;
-  border-bottom: 1px solid #f1f5f9;
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.78rem;
-  font-weight: 800;
-  color: #475569;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-`;
-
-const CategoryMenuItem = styled.button`
-  width: 100%;
-  text-align: left;
-  padding: 10px 12px;
-  border-radius: 10px;
-  border: 1px solid ${props => props.$active ? '#8b5cf6' : 'transparent'};
-  background: ${props => props.$active ? '#f5f3ff' : '#ffffff'};
-  cursor: pointer;
-  transition: all 0.14s ease;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-bottom: 4px;
-
-  &:hover {
-    background: ${props => props.$active ? '#ede9fe' : '#f8fafc'};
-    border-color: ${props => props.$active ? '#8b5cf6' : '#e2e8f0'};
-  }
-`;
-
-const CategoryItemTopRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-`;
-
-const CategoryItemTitle = styled.span`
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #0f172a;
-`;
-
-const CategoryBadge = styled.span`
-  font-size: 0.68rem;
-  font-weight: 800;
-  padding: 2px 7px;
-  border-radius: 6px;
-  background: ${props => props.$color ? `${props.$color}15` : '#f1f5f9'};
-  color: ${props => props.$color || '#334155'};
-  border: 1px solid ${props => props.$color ? `${props.$color}40` : '#cbd5e1'};
-  white-space: nowrap;
-`;
-
-const CategoryItemDesc = styled.span`
-  font-size: 0.76rem;
-  color: #64748b;
-  line-height: 1.35;
-`;
-
 const NavTabsRow = styled.div`
   display: flex;
   align-items: center;
@@ -394,44 +282,6 @@ const ContentContainer = styled.div`
   margin: 0 auto;
   padding: 20px clamp(16px, 1.8vw, 28px);
   box-sizing: border-box;
-`;
-
-const ProgressBanner = styled.div`
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  padding: 16px 20px;
-  margin-bottom: 24px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-`;
-
-const ProgressBarWrapper = styled.div`
-  flex: 1;
-  min-width: 240px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-`;
-
-const ProgressTrack = styled.div`
-  width: 100%;
-  height: 8px;
-  background: #e2e8f0;
-  border-radius: 999px;
-  overflow: hidden;
-`;
-
-const ProgressFill = styled.div`
-  height: 100%;
-  width: ${props => props.$pct}%;
-  background: linear-gradient(90deg, #2563eb, #38bdf8);
-  border-radius: 999px;
-  transition: width 0.3s ease;
 `;
 
 // ==========================================
@@ -1708,22 +1558,36 @@ export default function EuAiComplianceWorkspace() {
           setMeta(matchedPreset.meta);
           setAnswers(matchedPreset.answers);
           setTaskStatusOverrides({});
-          localStorage.setItem(`scorex_eu_ai_compliance_${routeParamId}`, JSON.stringify({
-            meta: matchedPreset.meta,
-            answers: matchedPreset.answers,
-            taskStatusOverrides: {}
-          }));
         }
-        if (!savedSynthesis) {
-          axios.get(`/api/eu-ai-compliance/dossiers/${routeParamId}`)
-            .then(res => {
-              if (res.data?.success && res.data?.dossier?.synthesis) {
-                setSynthesis(res.data.dossier.synthesis);
-                localStorage.setItem(`scorex_eu_ai_synthesis_${routeParamId}`, JSON.stringify(res.data.dossier.synthesis));
+        axios.get(`/api/eu-ai-compliance/dossiers/${routeParamId}`)
+          .then(res => {
+            if (res.data?.success && res.data?.dossier) {
+              const d = res.data.dossier;
+              if (!savedPreset) {
+                const mergedMeta = { ...(matchedPreset.meta || {}), ...(d.meta || {}), documentId: routeParamId };
+                const mergedAnswers = Object.keys(d.answers || {}).length > 0 ? { ...(matchedPreset.answers || {}), ...d.answers } : matchedPreset.answers;
+                const mergedOverrides = d.taskStatusOverrides || {};
+                setMeta(mergedMeta);
+                setAnswers(mergedAnswers);
+                setTaskStatusOverrides(mergedOverrides);
+                localStorage.setItem(`scorex_eu_ai_compliance_${routeParamId}`, JSON.stringify({
+                  meta: mergedMeta,
+                  answers: mergedAnswers,
+                  taskStatusOverrides: mergedOverrides
+                }));
               }
-            })
-            .catch(() => {});
-        }
+              if (d.financialConfig && !savedPreset) {
+                if (d.financialConfig.globalTurnoverMillions) setGlobalTurnoverMillions(d.financialConfig.globalTurnoverMillions);
+                if (typeof d.financialConfig.isSme === 'boolean') setIsSme(d.financialConfig.isSme);
+                if (typeof d.financialConfig.includeConcurrentGdprNis2 === 'boolean') setIncludeConcurrentGdprNis2(d.financialConfig.includeConcurrentGdprNis2);
+              }
+              if (d.synthesis && !savedSynthesis) {
+                setSynthesis(d.synthesis);
+                localStorage.setItem(`scorex_eu_ai_synthesis_${routeParamId}`, JSON.stringify(d.synthesis));
+              }
+            }
+          })
+          .catch(() => {});
         if (isDemo && !requestedTab) {
           setActiveTab('dashboard');
         }

@@ -509,17 +509,6 @@ const StatusBadge = styled.span`
   }}
 `;
 
-const PillarTag = styled.span`
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  background: #f8fafc;
-  color: #475569;
-  border: 1px solid #e2e8f0;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-`;
-
 const ActionButton = styled.button`
   padding: 6px 14px;
   border-radius: 6px;

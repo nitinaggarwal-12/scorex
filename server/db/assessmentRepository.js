@@ -59,6 +59,7 @@ function normalizeReleaseState(assessment) {
   const created = assessment.created_at || assessment.createdAt || assessment.startedAt || assessment.started_at || '2026-08-15T12:00:00.000Z';
   const updated = assessment.updated_at || assessment.updatedAt || assessment.completedAt || assessment.completed_at || created;
   const computed = computeCoreAssessmentScores(assessment.responses);
+  const hasComputedScores = computed.overallScore > 0;
 
   return {
     ...assessment,
@@ -70,12 +71,12 @@ function normalizeReleaseState(assessment) {
     contactEmail: email,
     selected_pillars: pillars,
     selectedPillars: pillars,
-    overallScore: assessment.overallScore || computed.overallScore,
-    totalScore: assessment.totalScore || assessment.overallScore || computed.overallScore,
-    futureScore: assessment.futureScore || computed.futureScore,
-    targetScore: assessment.targetScore || assessment.futureScore || computed.futureScore,
-    gap: assessment.gap ?? computed.gap,
-    maturityLevel: assessment.maturityLevel || computed.maturityLevel,
+    overallScore: hasComputedScores ? computed.overallScore : (assessment.overallScore || 0),
+    totalScore: hasComputedScores ? computed.overallScore : (assessment.totalScore || assessment.overallScore || 0),
+    futureScore: hasComputedScores ? computed.futureScore : (assessment.futureScore || 0),
+    targetScore: hasComputedScores ? computed.futureScore : (assessment.targetScore || assessment.futureScore || 0),
+    gap: hasComputedScores ? computed.gap : (assessment.gap ?? 0),
+    maturityLevel: hasComputedScores ? computed.maturityLevel : (assessment.maturityLevel || computed.maturityLevel),
     created_at: created,
     createdAt: created,
     updated_at: updated,
@@ -143,7 +144,18 @@ class AssessmentRepository {
       ];
 
       for (const prof of profiles) {
-        const curExisting = existing[prof.id] || {};
+        const curExisting = existing[prof.id];
+        if (
+          curExisting &&
+          curExisting.responses &&
+          Object.keys(curExisting.responses).filter(k => k.endsWith('_current_state')).length >= 60 &&
+          curExisting.overallScore > 0 &&
+          Array.isArray(curExisting.selectedPillars) &&
+          curExisting.selectedPillars.length === 6
+        ) {
+          continue;
+        }
+        const safeExisting = curExisting || {};
         const responses = {};
         fw.assessmentAreas.forEach((area, aIdx) => {
           let qCounter = 0;
@@ -171,7 +183,7 @@ class AssessmentRepository {
 
         const computed = computeCoreAssessmentScores(responses);
         const record = normalizeReleaseState({
-          ...curExisting,
+          ...safeExisting,
           id: prof.id,
           assessmentName: prof.assessmentName,
           assessmentDescription: prof.assessmentDescription,
@@ -190,10 +202,10 @@ class AssessmentRepository {
           targetScore: computed.futureScore,
           gap: computed.gap,
           maturityLevel: computed.maturityLevel,
-          userId: curExisting.userId || 'system',
-          startedAt: curExisting.startedAt || '2026-08-15T12:00:00.000Z',
-          completedAt: curExisting.completedAt || '2026-09-01T15:30:00.000Z',
-          createdAt: curExisting.createdAt || '2026-08-15T12:00:00.000Z',
+          userId: safeExisting.userId || 'system',
+          startedAt: safeExisting.startedAt || '2026-08-15T12:00:00.000Z',
+          completedAt: safeExisting.completedAt || '2026-09-01T15:30:00.000Z',
+          createdAt: safeExisting.createdAt || '2026-08-15T12:00:00.000Z',
           updatedAt: new Date().toISOString()
         });
         fileStore.set(prof.id, record);
@@ -483,8 +495,9 @@ class AssessmentRepository {
       // Fallback to file storage
     }
 
-    fileStore.set(id, merged);
-    return normalizeReleaseState(merged);
+    const normalized = normalizeReleaseState(merged);
+    fileStore.set(id, normalized);
+    return normalized;
   }
 
   /**

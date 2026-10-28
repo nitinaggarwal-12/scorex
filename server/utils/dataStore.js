@@ -139,7 +139,9 @@ class DataStore {
 
   delete(key) {
     const result = this.data.delete(key);
-    this.saveData();
+    if (result) {
+      this.saveData();
+    }
     return result;
   }
 

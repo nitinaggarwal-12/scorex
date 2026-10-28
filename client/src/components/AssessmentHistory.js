@@ -336,12 +336,6 @@ const ChangeValue = styled.div`
   font-weight: 500;
 `;
 
-const ImpactGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 12px;
-`;
-
 const ImpactBadge = styled.div`
   display: flex;
   align-items: center;

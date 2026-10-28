@@ -3,7 +3,7 @@
  * (BioNova Life Sciences Inc. — Homegrown OpenAI [NovaAssist] to Gemini Enterprise Migration)
  *
  * Implements:
- * - 75 Questions across 10 Modules (C, P, A, L, W, U, Q, F, V, G)
+ * - 82 Questions across 10 Modules (C, P, A, W, T, Q, U, L, R, F)
  * - 6 Role-Based Respondent Forms with Skip Logic
  * - 3 Independent Calculation Engines:
  *   1) Deterministic Financial & Capacity Ledger (5 MECE Columns + Low/Base/High Sensitivity)
@@ -1315,8 +1315,8 @@ function createInitialGeDossier(mode = 'aerovanguard_default', customId = null, 
         gcpProjectId: 'aerovanguard-ge-logistics-prod-01',
         industry: 'Global Logistics, Air/Ground Express & Supply Chain',
         regionPrimary: 'NORTHAM (Atlanta, GA HQ + Global Hubs)',
-        legacySystemName: 'M365 Copilot Pilot + Disconnected SharePoint/OmniDesk ITSM Search',
-        legacyPlatformName: 'M365 Copilot Pilot + Disconnected SharePoint/OmniDesk ITSM Search',
+        legacySystemName: 'Legacy Manual Station Dispatch, Static Paper SOPs & Fragmented Claims Search',
+        legacyPlatformName: 'Legacy Manual Station Dispatch, Static Paper SOPs & Fragmented Claims Search',
         targetSystemName: 'Google Cloud Gemini Enterprise (301,354 Contracted Seats)',
         executiveSponsor: 'Rohan Kapoor (EVP, Chief Digital & Information Officer)',
         customerLeads: 'Enterprise AI & Digital Operations Platform Lead, Global Logistics Ops Director',
@@ -1328,7 +1328,7 @@ function createInitialGeDossier(mode = 'aerovanguard_default', customId = null, 
           googleCeLead: 'Google Cloud Supply Chain Principal Architect'
         },
         assessmentTier: 'Enterprise Standard',
-        tierOverrideReason: 'High Wave-1 active density (8,900 WAU / 13,803 assigned = 64.5%) & RuggedEdge mobile handheld edge integration.',
+        tierOverrideReason: 'Global multi-hub deployment (301,354 contracted seats / 13,803 Wave-1 assigned) & RuggedEdge handheld edge blocker.',
         baselineWindow: 'Jan 15, 2026 – Mar 15, 2026 (60 Days)',
         currentWindow: 'Mar 16, 2026 – May 15, 2026 (60 Days)',
         cutoverDate: '2026-06-30',
@@ -1387,11 +1387,13 @@ function createInitialGeDossier(mode = 'aerovanguard_default', customId = null, 
           agent: 1154,
           agentRolling7dRequests: 13699
         },
+        legacyBaselineEligible: 30000,
+        legacyBaselineWau: 3190,
         trackerOngoingIssues: 0,
         cloudBlockersInReview: 1
       },
       legacyRetirement: {
-        legacyToolName: 'M365 Copilot Pilot + Disconnected SharePoint/OmniDesk ITSM Search',
+        legacyToolName: 'Legacy Manual Station Dispatch, Static Paper SOPs & Fragmented Claims Search',
         legacyAnnualRunRateModeledUsd: 1950000
       },
       workflows: [
@@ -1643,14 +1645,12 @@ function createInitialGeDossier(mode = 'aerovanguard_default', customId = null, 
         id: 'wf_clean_1',
         code: 'WF1',
         name: 'Priority Workflow 1',
-        businessUnit: 'Pending Input',
-        owner: 'Pending Input',
+        functionArea: 'Enterprise Operations',
+        owner: 'Workflow Owner (Pending)',
         maturity: 'Scoping',
+        eligibleUsers: null,
         activeUsers: null,
         completedTasksPerMonth: null,
-        numericState: 'pending',
-        verificationStatus: 'pending',
-        confidenceTier: 'D',
         stages: {
           discovery: { baseline: 0, gemini: 0 },
           drafting: { baseline: 0, gemini: 0 },
@@ -1659,16 +1659,39 @@ function createInitialGeDossier(mode = 'aerovanguard_default', customId = null, 
           approval: { baseline: 0, gemini: 0 },
           handoff: { baseline: 0, gemini: 0 }
         },
+        firstPassBaselinePct: null,
+        firstPassGeminiPct: null,
+        reworkBaselinePct: null,
+        reworkGeminiPct: null,
+        citationsVerifiedPct: null,
         cycleTimeBaselineHours: null,
         cycleTimeGeminiHours: null,
-        realizedCashSavingsAnnualUsd: 0,
+        isRegulatedGxp: false,
+        gxpValidated: true,
         modeledAnnualValueUsd: 0,
+        numericState: 'pending',
+        verificationStatus: 'pending',
+        confidenceTier: 'D',
         outcomeScores: {}
       }
     ] : JSON.parse(JSON.stringify(DEFAULT_BIONOVA_WORKFLOWS)),
 
     // Geographies (G01-G05)
-    geographies: isClean ? [] : JSON.parse(JSON.stringify(DEFAULT_BIONOVA_GEOGRAPHIES)),
+    geographies: isClean ? [
+      {
+        id: 'geo_clean_1',
+        region: 'Primary Rollout Region (Configure in G01)',
+        language: 'English',
+        launchDate: '2026-Q2',
+        eligibleSeats: null,
+        assignedSeats: null,
+        wau: null,
+        mau: null,
+        worksCouncilRestriction: 'Pending Privacy & Works Council Review (G04)',
+        comparabilityStatus: 'Pending Regional Cohort Baseline (G02)',
+        poolingRule: 'Primary benchmark cohort'
+      }
+    ] : JSON.parse(JSON.stringify(DEFAULT_BIONOVA_GEOGRAPHIES)),
 
     // Employee Survey Summary (U01-U10)
     employeeSurvey: {
@@ -1678,34 +1701,26 @@ function createInitialGeDossier(mode = 'aerovanguard_default', customId = null, 
       coUseOtherAiToolPct: isClean ? null : 22.0, // Used to check F03 attribution ceiling
       perceivedMinutesSavedMedian: isClean ? null : 24, // Never monetized!
       wouldChooseGeminiAgainPct: isClean ? null : 82.0,
-      meanLegacyScore: isClean ? null : 3.23,
-      meanGeminiScore: isClean ? null : 4.25,
-      preferencePct: isClean ? null : 82.0,
-      ratings: isClean ? {} : {
-        relevance: { legacy: 3.2, gemini: 4.3 },
-        findability: { legacy: 2.9, gemini: 4.2 },
-        accuracy: { legacy: 3.4, gemini: 4.3 },
-        speed: { legacy: 3.3, gemini: 4.4 },
-        ease: { legacy: 3.5, gemini: 4.2 },
-        confidence: { legacy: 3.1, gemini: 4.1 }
+      ratings: {
+        relevance: { legacy: isClean ? 0 : 3.2, gemini: isClean ? 0 : 4.3 },
+        findability: { legacy: isClean ? 0 : 2.9, gemini: isClean ? 0 : 4.2 },
+        accuracy: { legacy: isClean ? 0 : 3.4, gemini: isClean ? 0 : 4.3 },
+        speed: { legacy: isClean ? 0 : 3.3, gemini: isClean ? 0 : 4.4 },
+        ease: { legacy: isClean ? 0 : 3.5, gemini: isClean ? 0 : 4.2 },
+        confidence: { legacy: isClean ? 0 : 3.1, gemini: isClean ? 0 : 4.1 }
       }
     },
 
     // Multi-Party Sign-Off (F08 & P08)
-    signOffs: isClean ? {
-      businessSponsor: { owner: 'Pending Assignment', status: 'Pending Review', date: '', caveat: 'Awaiting customer input & workflow scoping' },
-      platformAnalytics: { owner: 'Pending Assignment', status: 'Pending Review', date: '', caveat: 'Awaiting telemetry ingestion (A01–A07)' },
-      finance: { owner: 'Pending Assignment', status: 'Pending Review', date: '', caveat: 'Awaiting L01 legacy invoices & F01 loaded rate sign-off' },
-      securityGxp: { owner: 'Pending Assignment', status: 'Pending Review', date: '', caveat: 'Awaiting security & governance questionnaire (Q01–Q06)' }
-    } : {
-      businessSponsor: { owner: 'Marcus Vance (CIO)', status: 'Pending Review', date: '2026-05-20', caveat: 'Awaiting Wave-1 Cost Bridge & NOVA-AI Pilot readout' },
-      platformAnalytics: { owner: 'Lucas Sterling', status: 'Approved with Caveat', date: '2026-05-18', caveat: 'Vector WAU/MAU verified; A07 workflow tagging & NovaAssist chat export in progress' },
-      finance: { owner: 'BioNova Finance Controller', status: 'Pending Review', date: '', caveat: 'Awaiting L01 NovaAssist invoices & F01 loaded rate sign-off' },
-      securityGxp: { owner: 'Enterprise Security Leads (Security) & GxP QA', status: 'Approved with Caveat', date: '2026-05-18', caveat: 'VPC-SC & citations verified; Gate 3 open until BNV-04/13 RegVault GxP CSV closes' }
+    signOffs: {
+      businessSponsor: { owner: isClean ? 'Executive Sponsor (Pending)' : 'Marcus Vance (CIO)', status: 'Pending Review', date: '', caveat: isClean ? 'Awaiting assessment completion' : 'Awaiting Wave-1 Cost Bridge & NOVA-AI Pilot readout' },
+      platformAnalytics: { owner: isClean ? 'Platform Lead (Pending)' : 'Lucas Sterling', status: isClean ? 'Pending Review' : 'Approved with Caveat', date: '', caveat: isClean ? 'Awaiting telemetry input' : 'Vector WAU/MAU verified; A07 workflow tagging & NovaAssist chat export in progress' },
+      finance: { owner: isClean ? 'Finance Controller (Pending)' : 'BioNova Finance Controller', status: 'Pending Review', date: '', caveat: isClean ? 'Awaiting L01-L03 cost ledger & F01 rate card' : 'Awaiting L01 NovaAssist invoices & F01 loaded rate sign-off' },
+      securityGxp: { owner: isClean ? 'Security & Compliance Lead (Pending)' : 'Enterprise Security Leads (Security) & GxP QA', status: isClean ? 'Pending Review' : 'Approved with Caveat', date: '', caveat: isClean ? 'Awaiting Q01-Q06 governance review' : 'VPC-SC & citations verified; Gate 3 open until BNV-04/13 RegVault GxP CSV closes' }
     },
 
     // Per-Question Responses, Outcome Scores (0-4), Confidence Tiers (A-D), and Verification States
-    questionResponses: buildDefaultQuestionResponses(isClean)
+    questionResponses: buildDefaultQuestionResponses(isClean, null)
   };
 }
 
@@ -2209,31 +2224,143 @@ function getQuestionOptionsWithConfidence(question, resp = {}, dossier = null) {
   const isCleanDossier = dossier?.mode === 'clean' || dossier?.prefillMode === 'clean';
   const sfdcId = dossier?.meta?.vectorAccountId || dossier?.meta?.sfdcAccountId || '';
   const isBioNova = !isCleanDossier && (!sfdcId || sfdcId === 'ACC-1002-BIONOVA');
-  const custName = dossier?.meta?.customerName || 'BioNova Life Sciences Inc.';
-  const baseRawOptions = (!isCleanDossier && FALLBACK_STRUCTURED_OPTIONS[question.id])
-    ? FALLBACK_STRUCTURED_OPTIONS[question.id]
-    : ((Array.isArray(question.options) && question.options.length > 0)
-        ? question.options
-        : (FALLBACK_STRUCTURED_OPTIONS[question.id] || []));
+  const custName = dossier?.meta?.customerName || (isCleanDossier ? 'Customer Organization' : 'BioNova Life Sciences Inc.');
+  const legacyName = dossier?.meta?.legacyPlatformName || dossier?.meta?.legacySystemName || 'Legacy Baseline';
+  const tel = dossier?.adoptionTelemetry || {};
 
-  const adaptedOptions = baseRawOptions.map((rawOptText) => (
-    !isBioNova ? adaptTextForPresetCustomer(rawOptText, dossier?.meta?.customerName?.toLowerCase().includes('aero') ? 'aerovanguard' : dossier) : rawOptText
-  ));
-  if (Array.isArray(currentVal)) {
-    for (const v of currentVal) {
-      if (v && !adaptedOptions.includes(v)) adaptedOptions.unshift(v);
+  const CLEAN_STRUCTURED_OPTIONS = {
+    C02: [
+      '50,000+ Enterprise Seats (Global Tier-1 Deployment)',
+      '10,000–49,999 Seats (Multi-Region Wave-1 Assigned Population)',
+      '1,000–9,999 Seats (Business Unit / Active Monthly Cohort)',
+      '<1,000 Seats (Initial Pilot Cohort)'
+    ],
+    P03: [
+      'Full Enterprise Seat Waterfall Verified (Contracted / Provisioned / Assigned)',
+      'Provisioned Global Cohort Verified; Regional Assignment In Progress',
+      'Wave-1 Assigned Cohort Only Verified',
+      'Unknown / Pending HR & IdP Denominator Audit'
+    ],
+    P04: [
+      `Chat, Doc Analysis & APIs in Both; Grounded Search, Managed Connectors, ADK Agents & Deep Research in Gemini Only`,
+      `Conversational Chat & Basic Search in Both; Custom Agents in Gemini Only`,
+      `Full capability parity across ${legacyName} and Gemini Enterprise`
+    ],
+    P05: [
+      'Core Knowledge & Cloud Data Warehouse Actively Used; ITSM & Domain Connectors in Pilot',
+      'Primary Productivity Suite Only Connected; Enterprise Connectors Pending',
+      'All Enterprise Connectors Live in Production'
+    ],
+    P08: [
+      `Named Governance Domain Owners Identified (${dossier?.meta?.executiveSponsor || 'Executive Sponsor'}, ${dossier?.meta?.accountLead || 'Platform Lead'}, Security, Finance); Finance Sign-Off Pending`,
+      'All 5 Governance Domain Owners Formally Signed Off',
+      'Governance Owners Unassigned / Disputed'
+    ],
+    A01: [
+      'Full 6-Stage Adoption Funnel Verified (Contracted → Provisioned → Assigned → MAU → WAU ≥50% of Assigned)',
+      'Multi-Surface Active Cohort Verified (35–49% WAU/Assigned)',
+      'Early Rollout Funnel Tracked (<35% WAU/Assigned)',
+      'Pending Regional Cohort Breakdown'
+    ],
+    L01: [
+      `Evidence Pending — Awaiting ${custName} Finance ${legacyName} 12-month invoice ledger`,
+      `Preliminary Scoping Estimate Recorded for ${legacyName} API + Hosting + Engineering Support`,
+      `Audited 12-Month ${custName} Finance ${legacyName} Invoice Ledger Reconciled`
+    ],
+    L02: [
+      `Parallel Run — ${legacyName} retirement gated on closing transition blockers`,
+      `Partial ${legacyName} Run-Rate Spend Retired Following Wave-1 Cutover`,
+      `100% Avoidable ${legacyName} Run-Rate Decommissioned & Verified by ${custName} Finance`
+    ],
+    L03: [
+      `Evidence Pending — Awaiting ${custName} Procurement allocation of GE seat commitment & GCP run-rate`,
+      'Apportioned by Active Wave-1 Assigned Seats + Direct GCP Project Billing',
+      `Full Enterprise Seat Contract Reconciled with ${custName} Procurement`
+    ],
+    L04: [
+      `Implementation SOWs Known; Internal ${custName} IT Transition Hours Pending`,
+      `Full One-Time Migration & Parallel-Run Transition Ledger Reconciled by ${custName} Finance`,
+      'Unknown / Unmeasured Transition Spend'
+    ],
+    W01: [
+      'Priority Enterprise Workflows Defined (WF1–WF5) with Named Business & Technical Owners',
+      'Active Pilot/Scaled Workflows Defined (WF1–WF3); Scoping Workflows Quarantined',
+      'Workflow Owners & Definitions Pending'
+    ],
+    W02: [
+      'Telemetry-Backed Active Users & Monthly Task Volumes Recorded for Scaled/Pilot Workflows',
+      'Full System-Logged Task Volumes Across All Registered Workflows',
+      'Estimated Task Volumes Only'
+    ],
+    W04: [
+      '6-Stage Task Effort Decomposition Recorded (Discovery, Drafting, Verification, Correction, Approval, Handoff) with HITL Review Deduction',
+      'Top-Line Task Duration Estimate Only (Without 6-Stage Review/Correction Split)',
+      'Timed Observation Study Pending'
+    ],
+    W11: [
+      'Unmonetized in Col 1 Cash (Kept in Col 2 Validated Capacity at 65% Factor & Col 3 Modeled Opportunity until Finance Sign-Off)',
+      'Finance-Approved Unit Dollar Value per Outcome Signed Off for Col 1 Realized Cash',
+      'Nonfinancial KPI Tracking Only'
+    ],
+    U06: [
+      `Gemini Mean: 4.25 / 5.0 vs. ${legacyName} Mean: 3.23 / 5.0 (+1.02 pt gain across 6 dimensions)`,
+      `Moderate Improvement: Gemini Mean 3.8 / 5.0 vs. ${legacyName} Mean 3.3 / 5.0`,
+      `Neutral / Comparable Rating Between ${legacyName} and Gemini Enterprise`
+    ],
+    F01: [
+      'Blended Loaded Rate: $120/hr (Support $95/hr, Core Ops $135/hr, Commercial $145/hr) • Cash Realization: 0% (Pending) • Capacity Factor: 65%',
+      `${custName} Finance Controller Signed-Off Rate Card & Cash Realization Factor (>0%)`,
+      'Unmonetized Hours Only (No Loaded Hourly Rate Applied)'
+    ],
+    F03: [
+      '75% Attribution Share to Gemini Enterprise (Accounting for Multi-Tool Co-Use & Training Confounders)',
+      '50% Conservative Attribution Share to Gemini Enterprise',
+      '100% Attribution Share to Gemini Enterprise (Zero Confounder Haircut)'
+    ],
+    F08: [
+      `Platform & Security Approved with Caveats (2/4); Executive Sponsor & ${custName} Finance Pending Final Cost Bridge (Gate 4)`,
+      'All 4 Governance Domains (Sponsor, Platform, Finance, Security/Compliance) Formally Signed Off',
+      'Pending Initial Executive Steering Review'
+    ]
+  };
+
+  const baseRawOptions = isCleanDossier && CLEAN_STRUCTURED_OPTIONS[question.id]
+    ? CLEAN_STRUCTURED_OPTIONS[question.id]
+    : ((!isCleanDossier && FALLBACK_STRUCTURED_OPTIONS[question.id])
+        ? FALLBACK_STRUCTURED_OPTIONS[question.id]
+        : ((Array.isArray(question.options) && question.options.length > 0)
+            ? question.options
+            : (FALLBACK_STRUCTURED_OPTIONS[question.id] || [])));
+
+  const adaptedOptions = baseRawOptions.map((rawOptText) => {
+    if (isBioNova) return rawOptText;
+    return adaptTextForPresetCustomer(rawOptText, custName.toLowerCase().includes('aero') ? 'aerovanguard' : {
+      customerName: custName,
+      legacyPlatformName: legacyName,
+      sfdcAccountId: sfdcId,
+      gcpProjectNumber: dossier?.meta?.gcpProjectNumber || 'GCP-PROJECT',
+      executiveSponsor: dossier?.meta?.executiveSponsor || 'Executive Sponsor',
+      accountLead: dossier?.meta?.accountLead || 'Platform Lead',
+      telemetry: tel
+    });
+  });
+  if (!isCleanDossier) {
+    if (Array.isArray(currentVal)) {
+      for (const v of currentVal) {
+        if (v && !adaptedOptions.includes(v)) adaptedOptions.unshift(v);
+      }
+    } else if (currentVal && !adaptedOptions.includes(currentVal)) {
+      adaptedOptions.unshift(currentVal);
     }
-  } else if (currentVal && !adaptedOptions.includes(currentVal)) {
-    adaptedOptions.unshift(currentVal);
   }
 
-  const preStagedVal = resp.portalBackedValue !== undefined ? resp.portalBackedValue : (resp.value || getPreStagedValue(question.id));
-  const baseQuestionConf = Number(resp.confidenceScorePct ?? getPreStagedConfidenceScorePct(question.id));
-  const evidenceSource = resp.evidenceUrl || getPreStagedEvidenceSource(question.id);
+  const preStagedVal = isCleanDossier ? null : (resp.portalBackedValue !== undefined ? resp.portalBackedValue : resp.value || getPreStagedValue(question.id));
+  const baseQuestionConf = isCleanDossier ? 0 : Number(resp.confidenceScorePct ?? getPreStagedConfidenceScorePct(question.id));
+  const evidenceSource = resp.evidenceUrl || (isCleanDossier ? 'Manual Customer Intake Selection' : getPreStagedEvidenceSource(question.id));
 
   return adaptedOptions.map((optText, idx) => {
     const selectedNow = isOptionSelected(optText, currentVal);
-    const backedByInternalPortal = isOptionSelected(optText, preStagedVal) || (question.id === 'L04' && idx === 0);
+    const backedByInternalPortal = !isCleanDossier && (isOptionSelected(optText, preStagedVal) || (question.id === 'L04' && idx === 0));
 
     let confPct;
     let basisLabel;
@@ -2243,11 +2370,19 @@ function getQuestionOptionsWithConfidence(question, resp = {}, dossier = null) {
       confPct = 100;
       basisLabel = `Customer Confirmed + ${evidenceSource}`;
       impliedOutcomeScore = Number(resp.outcomeScore ?? 4);
+    } else if (selectedNow && isCleanDossier) {
+      confPct = Number(resp.confidenceScorePct || 85);
+      basisLabel = `Selected in Manual Assessment Intake (${custName})`;
+      impliedOutcomeScore = Number(resp.outcomeScore || (idx === 0 ? 4 : Math.max(1, 3 - idx)));
     } else if (backedByInternalPortal) {
       const itemOffset = Array.isArray(preStagedVal) ? Math.min(4, idx) : 0;
       confPct = Math.max(15, Math.min(99, baseQuestionConf - itemOffset));
       basisLabel = evidenceSource;
       impliedOutcomeScore = getPreStagedOutcomeScore(question.id);
+    } else if (isCleanDossier) {
+      confPct = 0;
+      basisLabel = 'Unfilled — Click to select this answer option';
+      impliedOutcomeScore = idx === 0 ? 4 : Math.max(1, 3 - idx);
     } else {
       if (idx === 1 && baseQuestionConf >= 75) {
         confPct = 52;
@@ -2729,4 +2864,3 @@ module.exports = {
   createInitialGeDossier,
   evaluateGeValueRealization
 };
-
