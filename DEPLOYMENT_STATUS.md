@@ -25,7 +25,7 @@
 
 ### 🌐 Endpoints
 - **Canonical Verified BeyondCorp URL (`ramp-portal-dev` / `248990048888`, `us-west1`)**:
-  - `https://scorex-248990048888.cr.gclb.goog` (Active revision: `scorex-00031-jgr`, Baseline: `scorex-00002-2v7`)
+  - `https://scorex-248990048888.cr.gclb.goog` (Active revision: `scorex-00034-wcq`, Previous: `scorex-00033-gr8`, Durable GCS State: `gs://scorex-durable-state-bbar-138hf0/scorex-prod-v1`)
 - **Argolis Google Cloud Run Endpoints (`nitinagga-ge-2` / `638420508320` & `nitina-ggarwal-sandbox-647724` / `887605034827`, `us-central1`)**:
   - `https://scorex-638420508320.us-central1.run.app`
   - `https://scorex-blk2as46eq-uc.a.run.app`
