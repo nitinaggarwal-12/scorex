@@ -8,7 +8,7 @@
     "dev:legacy": "concurrently \"npm run server\" \"npm run client\"",
     "server": "nodemon server/index.js",
     "client": "cd client && npm start",
-    "build": "cd client && npm install --include=dev && CI=false npm run build",
+    "build": "cd client && npm install --include=dev && CI=true npm run build",
     "install-all": "npm install && cd client && npm install --include=dev",
     "start": "NODE_ENV=production node server/index.js",
     "migrate": "node server/run-migrations.js",

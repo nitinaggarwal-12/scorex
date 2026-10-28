@@ -30,7 +30,7 @@ export function sanitizeDrawioXmlAttributes(xml) {
     .replace(/\/\s*>/g, '/>');
 
   // 2. Convert non-ASCII unicode characters/emojis into safe numeric HTML entities
-  cleaned = cleaned.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]|[^\x00-\x7F]/gu, function(char) {
+  cleaned = cleaned.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]|[\u0080-\uFFFF]/gu, function(char) {
     const code = char.codePointAt(0);
     return code ? '&#' + code + ';' : '';
   });
@@ -156,7 +156,6 @@ export default function DiagramViewer({
   }, [sanitizedXml]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [zoomScale, setZoomScale] = useState(1);
   const [fullScaleScroll, setFullScaleScroll] = useState(false);
 
   const iframeHtml = useMemo(() => {
@@ -444,7 +443,7 @@ export default function DiagramViewer({
   </script>
 </body>
 </html>`;
-  }, [configObjJson, title, subtitle, badge, isTarget, scriptUrl, bgColor, cardBg, textColor, borderColor, fullScaleScroll, theme]);
+  }, [configObjJson, title, badge, scriptUrl, bgColor, cardBg, textColor, borderColor, accentBg, accentBorder, accentText, fullScaleScroll, theme]);
 
   useEffect(() => {
     const handleMsg = (e) => {

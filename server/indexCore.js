@@ -48,6 +48,8 @@ app.use(fileUpload({
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
+const { getDurablePersistenceStatus, flushAllPendingSyncs, resolveDataDir } = require('./utils/durableGcsPersistence');
+
 // High-priority root & API health check endpoints for Railway / Docker / Cloud Run
 app.get(['/health', '/healthz', '/api/health'], (req, res) => {
   res.status(200).json({
@@ -55,7 +57,9 @@ app.get(['/health', '/healthz', '/api/health'], (req, res) => {
     success: true,
     message: 'ScoreX Enterprise API is live and healthy',
     timestamp: new Date().toISOString(),
-    version: '3.7.0'
+    version: '3.8.0',
+    gitCommitSha: process.env.SCOREX_GIT_COMMIT_SHA || null,
+    durablePersistence: getDurablePersistenceStatus()
   });
 });
 
@@ -92,7 +96,7 @@ app.use('/api/notifications', notificationRoutes);
 
 // Unified Cross-App Feedback & Admin Inbox Routes (nitinagga@google.com) — registered before legacy feedbackRoutes (:id wildcard)
 const feedbackEngine = require('./unified_feedback_engine.cjs');
-const scorexLocalFeedbackPath = path.join(__dirname, '..', '.local_backup', 'user_feedback.json');
+const scorexLocalFeedbackPath = path.join(resolveDataDir(), 'user_feedback.json');
 
 app.get('/universal_feedback_widget.js', (req, res) => {
   const buildWidgetPath = path.join(__dirname, '../client/build/universal_feedback_widget.js');
@@ -235,8 +239,7 @@ app.post('/api/admin/release-results/:assessmentId', requireAuth, requireAdmin, 
 // Use Railway volume path if available, otherwise fallback to local path
 console.log('🔍 DEBUG: Checking DATA_DIR environment variable...');
 console.log('🔍 DEBUG: process.env.DATA_DIR =', process.env.DATA_DIR);
-const defaultDataDir = fs.existsSync(path.join(__dirname, '..', 'data')) ? path.join(__dirname, '..', 'data') : path.join(__dirname, 'data');
-const dataDir = process.env.DATA_DIR || defaultDataDir;
+const dataDir = resolveDataDir();
 const dataFilePath = path.join(dataDir, 'assessments.json');
 console.log(`📁 Data directory: ${dataDir}`);
 console.log(`📄 Data file path: ${dataFilePath}`);
@@ -282,7 +285,8 @@ app.get('/status', async (req, res) => {
     const assessmentRepo = require('./db/assessmentRepository');
     const assessmentCount = await assessmentRepo.count();
     const stats = await assessmentRepo.getStats();
-    const storageType = 'postgresql';
+    const durableStatus = getDurablePersistenceStatus();
+    const storageType = durableStatus.mode;
     const dataFileExists = fs.existsSync(dataFilePath);
     
     res.json({
@@ -292,6 +296,7 @@ app.get('/status', async (req, res) => {
       timestamp: new Date().toISOString(),
       storage: {
         type: storageType,
+        durablePersistence: durableStatus,
         assessmentCount: assessmentCount,
         stats: stats,
         // Keep legacy fields for compatibility
@@ -604,7 +609,7 @@ app.get('/api/assessment/:id', requireAuth, async (req, res) => {
     
     if (!assessment) {
       const DataStore = require('./utils/dataStore');
-      const fileDataStore = new DataStore(path.join(__dirname, '../data/assessments.json'));
+      const fileDataStore = new DataStore(path.join(resolveDataDir(), 'assessments.json'));
       assessment = fileDataStore.get(id);
     }
     
@@ -2932,14 +2937,13 @@ app.get('/api/dashboard/stats', async (req, res) => {
   }
 });
 
-// Health check endpoint
-app.get('/api/health', async (req, res) => {
+// Admin-authenticated storage & durable persistence telemetry endpoint
+app.get('/api/debug/storage', requireAdmin, (req, res) => {
+  const status = getDurablePersistenceStatus();
   res.json({
-    status: 'ok',
     success: true,
-    message: 'ScoreX Enterprise Data & AI Maturity Assessment API is running',
-    timestamp: new Date().toISOString(),
-    version: '1.0.0'
+    storageType: status.mode,
+    durablePersistence: status
   });
 });
 
@@ -3150,7 +3154,7 @@ app.get('/api/assessments', requireAuth, async (req, res) => {
     console.error('Error retrieving assessments from PostgreSQL, falling back to file storage:', error.message);
     try {
       const DataStore = require('./utils/dataStore');
-      const fileDataStore = new DataStore(path.join(__dirname, '../data/assessments.json'));
+      const fileDataStore = new DataStore(path.join(resolveDataDir(), 'assessments.json'));
       const allFileAssessments = fileDataStore.getAll() || {};
       const list = Object.values(allFileAssessments).map(a => ({
         id: a.id,
@@ -3742,7 +3746,7 @@ app.post('/api/assessment/generate-sample', requireAuth, async (req, res) => {
     } catch (dbErr) {
       console.warn('PostgreSQL save error, using file dataStore fallback:', dbErr.message);
       const DataStore = require('./utils/dataStore');
-      const fileDataStore = new DataStore(path.join(__dirname, '../data/assessments.json'));
+      const fileDataStore = new DataStore(path.join(resolveDataDir(), 'assessments.json'));
       fileDataStore.set(sampleAssessment.id, sampleAssessment);
     }
     console.log(`   Completed pillars: ${sampleAssessment.completedCategories.length}/6`);
@@ -4074,31 +4078,51 @@ if (process.env.VERCEL !== '1' && process.env.SCOREX_DISABLE_LISTEN !== '1') {
     });
   });
 
-  // Graceful shutdown protocol for cloud container lifecycles (Railway, Docker, K8s)
+  // Graceful shutdown protocol for cloud container lifecycles (Cloud Run, Railway, Docker, K8s)
   let isShuttingDown = false;
   const gracefulShutdown = async (signal) => {
     if (isShuttingDown) return;
     isShuttingDown = true;
-    console.log(`\n🛑 [ScoreX] Received ${signal}. Draining connections and initiating graceful shutdown...`);
+    console.log(`\n🛑 [ScoreX] Received ${signal}. Flushing durable GCS state and draining connections...`);
 
-    // Stop accepting new incoming connections
-    server.close(async () => {
-      console.log('🔒 [ScoreX] HTTP server successfully closed to new incoming requests');
-      try {
-        await db.close();
-        console.log('🔒 [ScoreX] PostgreSQL connection pool closed');
-      } catch (err) {
-        console.warn('⚠️ [ScoreX] Error closing database pool during shutdown:', err.message);
-      }
-      process.exit(0);
-    });
-
-    // Enforce hard timeout in case connections refuse to drain
     const forceTimeout = setTimeout(() => {
       console.error('⚠️ [ScoreX] Forced termination after 10s shutdown timeout');
       process.exit(1);
     }, 10000);
     if (forceTimeout.unref) forceTimeout.unref();
+
+    // Immediately kick off flush of debounced GCS state writes BEFORE waiting on keep-alive sockets
+    const initialFlushPromise = flushAllPendingSyncs().catch((gcsErr) => {
+      console.warn('⚠️ [ScoreX] Error during initial GCS flush on shutdown:', gcsErr.message);
+    });
+
+    const serverClosePromise = new Promise((resolve) => {
+      server.close(() => {
+        console.log('🔒 [ScoreX] HTTP server successfully closed to new incoming requests');
+        resolve();
+      });
+      if (typeof server.closeIdleConnections === 'function') {
+        server.closeIdleConnections();
+      }
+    });
+
+    await Promise.allSettled([initialFlushPromise, serverClosePromise]);
+
+    // Final flush pass in case an in-flight request wrote state while server.close was draining
+    try {
+      await flushAllPendingSyncs();
+      console.log('☁️  [ScoreX] Pending durable GCS state writes flushed');
+    } catch (gcsErr) {
+      console.warn('⚠️ [ScoreX] Error flushing durable GCS writes during shutdown:', gcsErr.message);
+    }
+
+    try {
+      await db.close();
+      console.log('🔒 [ScoreX] PostgreSQL connection pool closed');
+    } catch (err) {
+      console.warn('⚠️ [ScoreX] Error closing database pool during shutdown:', err.message);
+    }
+    process.exit(0);
   };
 
   process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));

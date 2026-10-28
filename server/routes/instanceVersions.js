@@ -4,11 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const { requireAuth } = require('../middleware/auth');
 
-const defaultDataDir = fs.existsSync(path.join(__dirname, '..', '..', 'data'))
-  ? path.join(__dirname, '..', '..', 'data')
-  : path.join(__dirname, '..', 'data');
-const DATA_DIR = process.env.DATA_DIR || defaultDataDir;
-const VERSIONS_FILE = path.join(DATA_DIR, 'instance_object_versions.json');
+const { resolveDataDir, scheduleStateFileSync } = require('../utils/durableGcsPersistence');
+const getVersionsFile = () => path.join(resolveDataDir(), 'instance_object_versions.json');
 
 /**
  * Strips dangerous HTML tags, event handler attributes, and executable URI schemes
@@ -78,9 +75,10 @@ function sanitizeVersionState(state, fallbackState = {}) {
 }
 
 function loadVersionStore() {
+  const versionsFile = getVersionsFile();
   try {
-    if (fs.existsSync(VERSIONS_FILE)) {
-      const raw = fs.readFileSync(VERSIONS_FILE, 'utf8');
+    if (fs.existsSync(versionsFile)) {
+      const raw = fs.readFileSync(versionsFile, 'utf8');
       const parsed = JSON.parse(raw);
       if (parsed && typeof parsed === 'object') return parsed;
     }
@@ -92,12 +90,16 @@ function loadVersionStore() {
 
 function saveVersionStore(store) {
   try {
-    if (!fs.existsSync(DATA_DIR)) {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
+    const versionsFile = getVersionsFile();
+    const dir = path.dirname(versionsFile);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
     }
-    const tmpFile = `${VERSIONS_FILE}.${process.pid}.${Date.now()}.tmp`;
-    fs.writeFileSync(tmpFile, JSON.stringify(store, null, 2), 'utf8');
-    fs.renameSync(tmpFile, VERSIONS_FILE);
+    const serialized = JSON.stringify(store, null, 2);
+    const tmpFile = `${versionsFile}.${process.pid}.${Date.now()}.tmp`;
+    fs.writeFileSync(tmpFile, serialized, 'utf8');
+    fs.renameSync(tmpFile, versionsFile);
+    scheduleStateFileSync(versionsFile, serialized);
   } catch (err) {
     console.warn('[InstanceVersions] Could not write instance_object_versions.json:', err.message);
   }

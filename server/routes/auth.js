@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const userRepository = require('../db/userRepository');
 const fileUserStore = require('../db/fileUserStore');
-const { requireAuth, requireAdmin, requireAuthorOrAdmin, isGuestSession, guestUserFromSession } = require('../middleware/auth');
+const { requireAuth, requireAdmin, requireAuthorOrAdmin, isGuestSession, guestUserFromSession, fileAuthAllowed } = require('../middleware/auth');
 
 let fileStoreInitialized = false;
 const loginBuckets = new Map();
@@ -49,10 +49,6 @@ function loginRateLimit(req, res, next) {
 
 function clearLoginAttempts(req) {
   if (req.loginRateKey) loginBuckets.delete(req.loginRateKey);
-}
-
-function fileAuthAllowed() {
-  return process.env.ALLOW_FILE_AUTH === 'true' && process.env.NODE_ENV !== 'production';
 }
 
 router.post('/login', loginRateLimit, async (req, res) => {
@@ -157,18 +153,34 @@ router.post('/register', requireAuthorOrAdmin, async (req, res) => {
       return res.status(403).json({ error: 'Only admins can create admin or author users' });
     }
 
-    const existingUser = await userRepository.findByEmail(email);
-    if (existingUser) return res.status(409).json({ error: 'User with this email already exists' });
+    let user;
+    try {
+      const existingUser = await userRepository.findByEmail(email);
+      if (existingUser) return res.status(409).json({ error: 'User with this email already exists' });
 
-    const user = await userRepository.createUser({
-      email,
-      password,
-      role,
-      firstName,
-      lastName,
-      organization,
-      createdBy: req.user.id
-    });
+      user = await userRepository.createUser({
+        email,
+        password,
+        role,
+        firstName,
+        lastName,
+        organization,
+        createdBy: req.user.id
+      });
+    } catch (dbErr) {
+      if (!fileAuthAllowed()) throw dbErr;
+      await fileUserStore.initialize();
+      const existingUser = await fileUserStore.findUserByEmail(email);
+      if (existingUser) return res.status(409).json({ error: 'User with this email already exists' });
+      user = await fileUserStore.createUser({
+        email,
+        password,
+        role,
+        firstName,
+        lastName,
+        organization
+      });
+    }
 
     return res.status(201).json({ success: true, user });
   } catch (error) {
@@ -380,10 +392,18 @@ router.post('/change-password', requireAuth, async (req, res) => {
     const passwordError = validatePassword(newPassword);
     if (passwordError) return res.status(400).json({ error: passwordError });
 
-    const user = await userRepository.verifyPassword(req.user.email, currentPassword);
-    if (!user) return res.status(401).json({ error: 'Current password is incorrect' });
-
-    await userRepository.changePassword(req.user.id, newPassword);
+    let user;
+    try {
+      user = await userRepository.verifyPassword(req.user.email, currentPassword);
+      if (!user) return res.status(401).json({ error: 'Current password is incorrect' });
+      await userRepository.changePassword(req.user.id, newPassword);
+    } catch (dbErr) {
+      if (!fileAuthAllowed()) throw dbErr;
+      await fileUserStore.initialize();
+      user = await fileUserStore.verifyPassword(req.user.email, currentPassword);
+      if (!user) return res.status(401).json({ error: 'Current password is incorrect' });
+      await fileUserStore.changePassword(req.user.id, newPassword);
+    }
     return res.json({ success: true, message: 'Password changed successfully. Please sign in again.' });
   } catch (error) {
     console.error('Change password error:', error.message);

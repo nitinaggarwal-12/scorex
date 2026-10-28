@@ -4,22 +4,14 @@ import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FiCpu, 
-  FiCheckCircle, 
   FiPlay, 
   FiAward, 
   FiLayers, 
-  FiEdit2, 
-  FiPlus, 
-  FiTrash2, 
   FiArrowRight,
-  FiHelpCircle,
   FiShield,
   FiDollarSign,
   FiDatabase,
-  FiActivity,
-  FiGrid,
-  FiClock,
-  FiUser
+  FiActivity
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';

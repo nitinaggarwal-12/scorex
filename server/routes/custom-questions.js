@@ -27,15 +27,22 @@ router.use((req, res, next) => {
 async function userCanReadAssessment(req, assessmentId) {
   if (req.user.role === 'admin' || req.user.role === 'author') return true;
 
-  const result = await db.query(
-    `SELECT * FROM assessments
-     WHERE id::text = $1 OR assessment_id::text = $1
-     LIMIT 1`,
-    [String(assessmentId)]
-  );
+  try {
+    const result = await db.query(
+      `SELECT * FROM assessments
+       WHERE id::text = $1 OR assessment_id::text = $1
+       LIMIT 1`,
+      [String(assessmentId)]
+    );
 
-  if (result.rows.length === 0) return false;
-  return canAccessResource(req.user, result.rows[0]);
+    if (result.rows.length === 0) return false;
+    return canAccessResource(req.user, result.rows[0]);
+  } catch (_) {
+    const assessmentRepo = require('../db/assessmentRepository');
+    const found = await assessmentRepo.findById(String(assessmentId));
+    if (!found) return false;
+    return canAccessResource(req.user, found);
+  }
 }
 
 const SEEDED_CUSTOM_QUESTIONS = [
@@ -125,7 +132,39 @@ const SEEDED_CUSTOM_QUESTIONS = [
   }
 ];
 
-let inMemoryCustomQuestions = [...SEEDED_CUSTOM_QUESTIONS];
+const fs = require('fs');
+const path = require('path');
+const { resolveDataDir, scheduleStateFileSync } = require('../utils/durableGcsPersistence');
+
+function getCustomQuestionsFilePath() {
+  return path.join(resolveDataDir(), 'custom_questions.json');
+}
+
+function loadCustomQuestionsStore() {
+  const filePath = getCustomQuestionsFilePath();
+  try {
+    if (fs.existsSync(filePath)) {
+      const parsed = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (_) {}
+  return [...SEEDED_CUSTOM_QUESTIONS];
+}
+
+function saveCustomQuestionsStore(questionsList) {
+  const filePath = getCustomQuestionsFilePath();
+  const dir = path.dirname(filePath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  const serialized = JSON.stringify(questionsList, null, 2);
+  const tmpPath = `${filePath}.${process.pid}.${Date.now()}.sync.tmp`;
+  fs.writeFileSync(tmpPath, serialized, 'utf8');
+  fs.renameSync(tmpPath, filePath);
+  scheduleStateFileSync(filePath, serialized);
+}
 
 function filterQuestionsList(list, { includeInactive, pillar, privileged }) {
   return list.filter(q => {
@@ -156,10 +195,11 @@ router.get('/stats/summary', async (req, res) => {
     }
   } catch (_) {}
 
-  const total = inMemoryCustomQuestions.length;
-  const active = inMemoryCustomQuestions.filter(q => q.is_active).length;
+  const questionsList = loadCustomQuestionsStore();
+  const total = questionsList.length;
+  const active = questionsList.filter(q => q.is_active).length;
   const inactive = total - active;
-  const unique_pillars = new Set(inMemoryCustomQuestions.map(q => q.pillar)).size;
+  const unique_pillars = new Set(questionsList.map(q => q.pillar)).size;
   return res.json({
     success: true,
     stats: { total, active, inactive, unique_pillars }
@@ -203,7 +243,8 @@ router.get('/', async (req, res) => {
     }
   } catch (_) {}
 
-  const filtered = filterQuestionsList(inMemoryCustomQuestions, { includeInactive, pillar, privileged });
+  const questionsList = loadCustomQuestionsStore();
+  const filtered = filterQuestionsList(questionsList, { includeInactive, pillar, privileged });
   return res.json({
     success: true,
     questions: filtered,
@@ -224,7 +265,8 @@ router.get('/:id', async (req, res) => {
     }
   } catch (_) {}
 
-  const found = inMemoryCustomQuestions.find(q => String(q.id) === String(id));
+  const questionsList = loadCustomQuestionsStore();
+  const found = questionsList.find(q => String(q.id) === String(id));
   if (!found) {
     return res.status(404).json({ success: false, error: 'Question not found' });
   }
@@ -282,6 +324,7 @@ router.post('/', async (req, res) => {
       message: 'Custom question created successfully'
     });
   } catch (_) {
+    const questionsList = loadCustomQuestionsStore();
     const newQ = {
       id: `cq_${Date.now()}`,
       question_text,
@@ -297,7 +340,8 @@ router.post('/', async (req, res) => {
       created_by: req.user.id,
       created_at: new Date().toISOString()
     };
-    inMemoryCustomQuestions.unshift(newQ);
+    questionsList.unshift(newQ);
+    saveCustomQuestionsStore(questionsList);
     return res.status(201).json({
       success: true,
       question: newQ,
@@ -361,12 +405,13 @@ router.put('/:id', async (req, res) => {
     }
   } catch (_) {}
 
-  const idx = inMemoryCustomQuestions.findIndex(q => String(q.id) === String(id));
+  const questionsList = loadCustomQuestionsStore();
+  const idx = questionsList.findIndex(q => String(q.id) === String(id));
   if (idx === -1) {
     return res.status(404).json({ success: false, error: 'Question not found' });
   }
-  inMemoryCustomQuestions[idx] = {
-    ...inMemoryCustomQuestions[idx],
+  questionsList[idx] = {
+    ...questionsList[idx],
     ...(question_text !== undefined ? { question_text } : {}),
     ...(pillar !== undefined ? { pillar } : {}),
     ...(category !== undefined ? { category } : {}),
@@ -378,9 +423,10 @@ router.put('/:id', async (req, res) => {
     ...(maturity_level_5 !== undefined ? { maturity_level_5 } : {}),
     ...(is_active !== undefined ? { is_active } : {})
   };
+  saveCustomQuestionsStore(questionsList);
   return res.json({
     success: true,
-    question: inMemoryCustomQuestions[idx],
+    question: questionsList[idx],
     message: 'Custom question updated successfully'
   });
 });
@@ -407,34 +453,63 @@ router.delete('/:id', async (req, res) => {
     }
   } catch (_) {}
 
-  const idx = inMemoryCustomQuestions.findIndex(q => String(q.id) === String(id));
+  const questionsList = loadCustomQuestionsStore();
+  const idx = questionsList.findIndex(q => String(q.id) === String(id));
   if (idx === -1) {
     return res.status(404).json({ success: false, error: 'Question not found' });
   }
   if (hard === 'true') {
-    const [removed] = inMemoryCustomQuestions.splice(idx, 1);
+    const [removed] = questionsList.splice(idx, 1);
+    saveCustomQuestionsStore(questionsList);
     return res.json({ success: true, message: 'Custom question permanently deleted', question: removed });
   }
-  inMemoryCustomQuestions[idx].is_active = false;
-  return res.json({ success: true, message: 'Custom question deactivated', question: inMemoryCustomQuestions[idx] });
+  questionsList[idx].is_active = false;
+  saveCustomQuestionsStore(questionsList);
+  return res.json({ success: true, message: 'Custom question deactivated', question: questionsList[idx] });
 });
+
+function getCustomQuestionAssignmentsFilePath() {
+  return path.join(resolveDataDir(), 'custom_question_assignments.json');
+}
+
+function loadCustomQuestionAssignmentsStore() {
+  const filePath = getCustomQuestionAssignmentsFilePath();
+  try {
+    if (fs.existsSync(filePath)) {
+      const parsed = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      if (Array.isArray(parsed)) return parsed;
+    }
+  } catch (_) {}
+  return [];
+}
+
+function saveCustomQuestionAssignmentsStore(items) {
+  const filePath = getCustomQuestionAssignmentsFilePath();
+  const dir = path.dirname(filePath);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  const serialized = JSON.stringify(items, null, 2);
+  const tmpPath = `${filePath}.${process.pid}.${Date.now()}.sync.tmp`;
+  fs.writeFileSync(tmpPath, serialized, 'utf8');
+  fs.renameSync(tmpPath, filePath);
+  scheduleStateFileSync(filePath, serialized);
+}
 
 /**
  * POST /api/custom-questions/:questionId/assign
  * Assign a custom question to specific assessment(s)
  */
 router.post('/:questionId/assign', async (req, res) => {
+  const { questionId } = req.params;
+  const { assessmentIds } = req.body;
+
+  if (!assessmentIds || !Array.isArray(assessmentIds) || assessmentIds.length === 0) {
+    return res.status(400).json({
+      success: false,
+      error: 'Assessment IDs array is required'
+    });
+  }
+
   try {
-    const { questionId } = req.params;
-    const { assessmentIds } = req.body;
-
-    if (!assessmentIds || !Array.isArray(assessmentIds) || assessmentIds.length === 0) {
-      return res.status(400).json({
-        success: false,
-        error: 'Assessment IDs array is required'
-      });
-    }
-
     const questionResult = await db.query(
       'SELECT id FROM custom_questions WHERE id = $1',
       [questionId]
@@ -465,17 +540,39 @@ router.post('/:questionId/assign', async (req, res) => {
       }
     }
 
-    res.json({
+    return res.json({
       success: true,
       message: `Question assigned to ${assignments.length} assessment(s)`,
       assignments
     });
-  } catch (error) {
-    console.error('Error assigning custom question:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to assign custom question',
-      message: error.message
+  } catch (_) {
+    const questionsList = loadCustomQuestionsStore();
+    if (!questionsList.some(q => String(q.id) === String(questionId))) {
+      return res.status(404).json({ success: false, error: 'Custom question not found' });
+    }
+    const store = loadCustomQuestionAssignmentsStore();
+    const assignments = [];
+    for (const assessmentId of assessmentIds) {
+      const exists = store.some(
+        a => String(a.custom_question_id) === String(questionId) && String(a.assessment_id) === String(assessmentId)
+      );
+      if (!exists) {
+        const row = {
+          id: `cqa_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+          assessment_id: String(assessmentId),
+          custom_question_id: String(questionId),
+          assigned_by: req.user.id,
+          assigned_at: new Date().toISOString()
+        };
+        store.push(row);
+        assignments.push(row);
+      }
+    }
+    saveCustomQuestionAssignmentsStore(store);
+    return res.json({
+      success: true,
+      message: `Question assigned to ${assignments.length} assessment(s)`,
+      assignments
     });
   }
 });
@@ -485,9 +582,8 @@ router.post('/:questionId/assign', async (req, res) => {
  * Remove a custom question assignment from an assessment
  */
 router.delete('/:questionId/assign/:assessmentId', async (req, res) => {
+  const { questionId, assessmentId } = req.params;
   try {
-    const { questionId, assessmentId } = req.params;
-
     const result = await db.query(
       `DELETE FROM assessment_custom_questions
        WHERE custom_question_id = $1 AND assessment_id = $2
@@ -502,17 +598,20 @@ router.delete('/:questionId/assign/:assessmentId', async (req, res) => {
       });
     }
 
-    res.json({
+    return res.json({
       success: true,
       message: 'Assignment removed successfully'
     });
-  } catch (error) {
-    console.error('Error removing assignment:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to remove assignment',
-      message: error.message
-    });
+  } catch (_) {
+    const store = loadCustomQuestionAssignmentsStore();
+    const filtered = store.filter(
+      a => !(String(a.custom_question_id) === String(questionId) && String(a.assessment_id) === String(assessmentId))
+    );
+    if (filtered.length === store.length) {
+      return res.status(404).json({ success: false, error: 'Assignment not found' });
+    }
+    saveCustomQuestionAssignmentsStore(filtered);
+    return res.json({ success: true, message: 'Assignment removed successfully' });
   }
 });
 
@@ -521,9 +620,8 @@ router.delete('/:questionId/assign/:assessmentId', async (req, res) => {
  * Get all assessments that have this question assigned
  */
 router.get('/:questionId/assignments', async (req, res) => {
+  const { questionId } = req.params;
   try {
-    const { questionId } = req.params;
-
     const result = await db.query(
       `SELECT
         acq.*,
@@ -538,17 +636,30 @@ router.get('/:questionId/assignments', async (req, res) => {
       [questionId]
     );
 
-    res.json({
+    return res.json({
       success: true,
       assignments: result.rows,
       count: result.rows.length
     });
-  } catch (error) {
-    console.error('Error fetching assignments:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to fetch assignments',
-      message: error.message
+  } catch (_) {
+    const store = loadCustomQuestionAssignmentsStore().filter(
+      a => String(a.custom_question_id) === String(questionId)
+    );
+    const assessmentRepo = require('../db/assessmentRepository');
+    const enriched = await Promise.all(store.map(async (acq) => {
+      const a = await assessmentRepo.findById(acq.assessment_id).catch(() => null);
+      return {
+        ...acq,
+        assessment_name: a?.assessmentName || a?.assessment_name || acq.assessment_id,
+        organization_name: a?.organizationName || a?.organization_name || 'Enterprise',
+        status: a?.status || 'in_progress',
+        progress: a?.progress || 0
+      };
+    }));
+    return res.json({
+      success: true,
+      assignments: enriched,
+      count: enriched.length
     });
   }
 });
@@ -558,15 +669,15 @@ router.get('/:questionId/assignments', async (req, res) => {
  * Get all custom questions assigned to a specific assessment
  */
 router.get('/assessments/:assessmentId/questions', async (req, res) => {
+  const { assessmentId } = req.params;
+  const { pillar } = req.query;
+
+  const allowed = await userCanReadAssessment(req, assessmentId);
+  if (!allowed) {
+    return res.status(403).json({ success: false, error: 'Access denied' });
+  }
+
   try {
-    const { assessmentId } = req.params;
-    const { pillar } = req.query;
-
-    const allowed = await userCanReadAssessment(req, assessmentId);
-    if (!allowed) {
-      return res.status(403).json({ success: false, error: 'Access denied' });
-    }
-
     let query = `
       SELECT
         cq.*,
@@ -588,17 +699,28 @@ router.get('/assessments/:assessmentId/questions', async (req, res) => {
 
     const result = await db.query(query, params);
 
-    res.json({
+    return res.json({
       success: true,
       questions: result.rows,
       count: result.rows.length
     });
-  } catch (error) {
-    console.error('Error fetching assessment custom questions:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to fetch assessment custom questions',
-      message: error.message
+  } catch (_) {
+    const store = loadCustomQuestionAssignmentsStore().filter(
+      a => String(a.assessment_id) === String(assessmentId)
+    );
+    const questionsList = loadCustomQuestionsStore();
+    const matched = store
+      .map((acq) => {
+        const q = questionsList.find(item => String(item.id) === String(acq.custom_question_id) && item.is_active);
+        return q ? { ...q, assigned_at: acq.assigned_at, assigned_by: acq.assigned_by } : null;
+      })
+      .filter(Boolean)
+      .filter((q) => !pillar || q.pillar === pillar || q.pillar === 'all');
+
+    return res.json({
+      success: true,
+      questions: matched,
+      count: matched.length
     });
   }
 });

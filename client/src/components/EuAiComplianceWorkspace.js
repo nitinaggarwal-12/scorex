@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
@@ -8,28 +8,12 @@ import {
   FiShield, 
   FiCheckCircle, 
   FiAlertTriangle, 
-  FiAlertOctagon, 
   FiFileText, 
   FiAward, 
   FiLayers, 
   FiArrowLeft, 
   FiArrowRight, 
-  FiSave, 
-  FiRotateCcw, 
   FiPrinter, 
-  FiDownload, 
-  FiExternalLink, 
-  FiInfo, 
-  FiUser, 
-  FiClock, 
-  FiFilter, 
-  FiCheckSquare, 
-  FiSquare,
-  FiZap,
-  FiChevronDown,
-  FiChevronRight,
-  FiPlay,
-  FiPause,
   FiMessageSquare,
   FiCopy,
   FiCheck,
@@ -37,12 +21,10 @@ import {
   FiRefreshCw,
   FiDollarSign,
   FiCalendar,
-  FiBookOpen,
   FiEdit3,
   FiTrash2,
   FiSend,
-  FiCode,
-  FiPlus
+  FiCode
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
@@ -1223,7 +1205,7 @@ const formatCopilotMarkdown = (text, isUser = false) => {
   str = str.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 
   // 7. Italic: *text* (avoid matching standalone stars or bullet points)
-  str = str.replace(/(^|[^\*])\*([^\*]+?)\*([^\*]|$)/g, '$1<em>$2</em>$3');
+  str = str.replace(/(^|[^*])\*([^*]+?)\*([^*]|$)/g, '$1<em>$2</em>$3');
 
   // 8. Links: [text](url)
   str = str.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
@@ -1434,7 +1416,6 @@ const CopilotInput = styled.input`
 
 export default function EuAiComplianceWorkspace() {
   const navigate = useNavigate();
-  const location = useLocation();
   const { id: routeParamId } = useParams();
 
   // Active view tab: 'questionnaire' | 'dashboard' | 'report'
@@ -1448,7 +1429,7 @@ export default function EuAiComplianceWorkspace() {
 
   // Category Preset Dropdown State
   const [selectedCategoryPreset, setSelectedCategoryPreset] = useState('');
-  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
+  const [, setCategoryDropdownOpen] = useState(false);
 
   // Core submission state
   const [meta, setMeta] = useState({
@@ -2002,11 +1983,18 @@ export default function EuAiComplianceWorkspace() {
     toast.success(`🏛️ Exported EU Database Annex VIII Registration Payload (${docId}.json)`);
   };
 
+  const pendingEuResetRef = React.useRef(0);
+
   // Reset Questionnaire
   const handleReset = () => {
-    if (window.confirm('Reset all questionnaire responses to a clean blank assessment with a new unique ID?')) {
-      handleStartNewAssessment();
+    const now = Date.now();
+    if (pendingEuResetRef.current < now) {
+      pendingEuResetRef.current = now + 4500;
+      toast('Click Reset again within 4s to start a clean blank assessment', { icon: '⚠️', id: 'confirm-eu-reset' });
+      return;
     }
+    pendingEuResetRef.current = 0;
+    handleStartNewAssessment();
   };
 
   // Toggle remediation task status

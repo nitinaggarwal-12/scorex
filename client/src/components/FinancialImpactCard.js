@@ -6,8 +6,6 @@ import {
   FiTrendingUp, 
   FiShield, 
   FiClock, 
-  FiCpu, 
-  FiCheckCircle, 
   FiChevronDown, 
   FiChevronUp,
   FiZap,

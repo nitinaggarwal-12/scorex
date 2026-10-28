@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FiGrid, FiAlertTriangle, FiCheckCircle, FiInfo, FiLayers } from 'react-icons/fi';
+import { motion } from 'framer-motion';
+import { FiGrid, FiAlertTriangle } from 'react-icons/fi';
 
 const MatrixCard = styled(motion.div)`
   background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.75)' : '#ffffff'};
@@ -109,7 +109,7 @@ const SeverityPill = styled.span`
 `;
 
 const ExecutiveHeatmapMatrix = ({ dimensions = [], dimensionScores = {}, responses = {}, theme = "light" }) => {
-  const [selectedDimension, setSelectedDimension] = useState(null);
+  const [, setSelectedDimension] = useState(null);
 
   if (!dimensions || dimensions.length === 0) {
     return null;

@@ -10,9 +10,6 @@ const emailService = require('../services/emailService');
 const { requireAuth, requireAuthorOrAdmin, requireAdmin } = require('../middleware/auth');
 const nodemailer = require('nodemailer');
 
-// Get data file path for StorageAdapter
-const dataDir = process.env.DATA_DIR || path.join(__dirname, '..', 'data');
-
 // Configure email transporter (optional - only if credentials are provided)
 let transporter = null;
 if (process.env.EMAIL_USER && process.env.EMAIL_PASSWORD) {

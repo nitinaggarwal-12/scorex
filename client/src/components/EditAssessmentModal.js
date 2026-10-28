@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiX, FiEdit2, FiSave, FiMail } from 'react-icons/fi';
-import toast from 'react-hot-toast';
 import * as assessmentService from '../services/assessmentService';
 
 const ModalOverlay = styled(motion.div)`

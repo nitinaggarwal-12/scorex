@@ -47,7 +47,7 @@ Enterprise-grade platform for evaluating technical maturity, CFO value realizati
 
 - **Frontend**: React 18, React Router v6, Recharts, Framer Motion, Lucide Icons, PPTX/PDF/Excel/Word Executive Exporters
 - **Backend**: Node.js, Express, `@google/genai` Unified 5-Tier Gemini Service (`server/services/geminiService.js`), 4-Category Conversational Non-Mutation Guard (`server/utils/conversationalIntentGuard.js`)
-- **Database**: PostgreSQL (`PGHOST` / `PGDATABASE: scorex_postgres`) & Deterministic Atomic File-Backed Stores (`data/dynamic_assessments.json`, `data/ge_value_realization_dossiers.json`, `data/assessments.json`, `data/genai_assessments.json`)
+- **Database & Durable Cloud Persistence**: PostgreSQL (`PGHOST` / `PGDATABASE: scorex_postgres`, including `ge_value_realization_dossiers` and `eu_ai_dossiers` JSONB tables) & Deterministic Atomic File-Backed Stores (`data/*.json`) backed by `server/utils/durableGcsPersistence.js` pre-boot cold-start hydration & coalesced write-through to versioned Google Cloud Storage (`gs://scorex-durable-state-bbar-138hf0` in `us-west1`) so state survives scale-to-zero and container revisions.
 - **Canonical Verified BeyondCorp URL (`google.com`)**: `https://scorex-248990048888.cr.gclb.goog` (Project: `ramp-portal-dev` / `248990048888`, Region: `us-west1`, Service: `scorex`)
 - **Argolis Google Cloud Run (`nitinagga-ge-2`)**: `https://scorex-638420508320.us-central1.run.app` & `https://scorex-app-638420508320.us-central1.run.app` (Project: `nitinagga-ge-2` / `638420508320`, Region: `us-central1`)
 
@@ -64,7 +64,7 @@ npm install --prefix client
 cp env.example .env
 # Add GEMINI_API_KEY and optional model overrides in .env
 
-# 3. Build React production bundle & sync static workflows
+# 3. Build React production bundle (strict CI=true zero-warning gate) & sync static workflows
 npm run build --prefix client
 cp -r client/public/workflows client/build/workflows
 
@@ -76,7 +76,7 @@ PORT=5001 node server/index.js
 
 ## 🧪 End-to-End Forensic & Quality Gate Verification
 
-Run the automated Harness Engineering Stop Quality Gate, Governance Lockstep Enforcer, and Security Test Suite (`42/42` tests & `16/16` UI Integrity Gates):
+Run the automated Harness Engineering Stop Quality Gate, Governance Lockstep Enforcer, and Security Test Suite (`46/46` tests & `20/20` UI Integrity Gates):
 
 ```bash
 npm test

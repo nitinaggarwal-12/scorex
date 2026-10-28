@@ -111,9 +111,56 @@ const fs = require('fs');
 const path = require('path');
 const BUNDLED_DOSSIERS_FILE = path.join(__dirname, '../../data/eu_ai_dossiers.json');
 
+const db = require('../db/connection');
+const { resolveDataDir, scheduleStateFileSync, isPostgresConnected } = require('../utils/durableGcsPersistence');
+
 function getDossiersFile() {
-  const dataDir = process.env.DATA_DIR || path.join(__dirname, '../../data');
-  return path.join(dataDir, 'eu_ai_dossiers.json');
+  return path.join(resolveDataDir(), 'eu_ai_dossiers.json');
+}
+
+let pgEuHydrated = false;
+async function hydrateEuFromPostgresIfConnected() {
+  if (pgEuHydrated || !isPostgresConnected()) return;
+  pgEuHydrated = true;
+  try {
+    const res = await db.query('SELECT id, dossier_payload FROM eu_ai_dossiers');
+    if (res && Array.isArray(res.rows) && res.rows.length > 0) {
+      const current = loadServerDossiers();
+      let changed = false;
+      for (const row of res.rows) {
+        if (row.id && row.dossier_payload && !current[row.id]) {
+          current[row.id] = row.dossier_payload;
+          changed = true;
+        }
+      }
+      if (changed) saveServerDossiers(current, { skipPostgres: true });
+    }
+  } catch (_) {}
+}
+
+function syncEuMapToPostgresAsync(dossiers, deletedId = null) {
+  if (!isPostgresConnected()) return;
+  Promise.resolve().then(async () => {
+    try {
+      if (deletedId) {
+        await db.query('DELETE FROM eu_ai_dossiers WHERE id = $1', [deletedId]);
+        return;
+      }
+      for (const [id, d] of Object.entries(dossiers || {})) {
+        if (!d || typeof d !== 'object') continue;
+        const sysName = d.meta?.systemName || d.systemName || null;
+        await db.query(
+          `INSERT INTO eu_ai_dossiers (id, system_name, dossier_payload, updated_at)
+           VALUES ($1, $2, $3::jsonb, CURRENT_TIMESTAMP)
+           ON CONFLICT (id) DO UPDATE SET
+             system_name = EXCLUDED.system_name,
+             dossier_payload = EXCLUDED.dossier_payload,
+             updated_at = CURRENT_TIMESTAMP`,
+          [id, sysName, JSON.stringify(d)]
+        );
+      }
+    } catch (_) {}
+  });
 }
 
 function buildDefaultEuAiSeed() {
@@ -167,6 +214,7 @@ function buildDefaultEuAiSeed() {
 }
 
 function loadServerDossiers() {
+  hydrateEuFromPostgresIfConnected();
   const dossiersFile = getDossiersFile();
   try {
     if (fs.existsSync(dossiersFile)) {
@@ -183,14 +231,19 @@ function loadServerDossiers() {
   return seeded;
 }
 
-function saveServerDossiers(dossiers) {
+function saveServerDossiers(dossiers, options = {}) {
   try {
     const dossiersFile = getDossiersFile();
     const dir = path.dirname(dossiersFile);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    const tmpFile = `${dossiersFile}.sync.tmp`;
-    fs.writeFileSync(tmpFile, JSON.stringify(dossiers, null, 2), 'utf8');
+    const serialized = JSON.stringify(dossiers, null, 2);
+    const tmpFile = `${dossiersFile}.${process.pid}.${Date.now()}.sync.tmp`;
+    fs.writeFileSync(tmpFile, serialized, 'utf8');
     fs.renameSync(tmpFile, dossiersFile);
+    scheduleStateFileSync(dossiersFile, serialized);
+    if (!options.skipPostgres) {
+      syncEuMapToPostgresAsync(dossiers, options.deletedId || null);
+    }
   } catch (e) {
     console.warn('Could not write eu_ai_dossiers.json:', e.message);
   }
@@ -286,7 +339,7 @@ router.delete('/dossiers/:id', (req, res) => {
     const dossiers = loadServerDossiers();
     if (dossiers[id]) {
       delete dossiers[id];
-      saveServerDossiers(dossiers);
+      saveServerDossiers(dossiers, { deletedId: id });
     }
     return res.json({ success: true, message: 'Dossier deleted successfully' });
   } catch (err) {

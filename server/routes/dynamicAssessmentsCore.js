@@ -1969,10 +1969,12 @@ async function resolveMultiEngineInstance(rawId) {
 
   const fs = require('fs');
   const path = require('path');
+  const { resolveDataDir } = require('../utils/durableGcsPersistence');
+  const sharedDataDir = resolveDataDir();
 
   // Check Engine 2: GE Value Realization Dossiers
   try {
-    const gePath = path.join(__dirname, '../../data/ge_value_realization_dossiers.json');
+    const gePath = path.join(sharedDataDir, 'ge_value_realization_dossiers.json');
     if (fs.existsSync(gePath)) {
       const geMap = JSON.parse(fs.readFileSync(gePath, 'utf8'));
       const aliasId = rawId === 'inst_aerovanguard_ge_value_realization'
@@ -2023,7 +2025,7 @@ async function resolveMultiEngineInstance(rawId) {
 
   // Check Engine 3: EU AI Act Compliance Dossiers
   try {
-    const euPath = path.join(__dirname, '../../data/eu_ai_dossiers.json');
+    const euPath = path.join(sharedDataDir, 'eu_ai_dossiers.json');
     if (fs.existsSync(euPath)) {
       const euMap = JSON.parse(fs.readFileSync(euPath, 'utf8'));
       const euDossier = euMap[rawId];

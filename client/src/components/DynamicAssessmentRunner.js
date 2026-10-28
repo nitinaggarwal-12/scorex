@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -6,24 +6,18 @@ import {
   FiArrowLeft, 
   FiArrowRight, 
   FiCheckCircle, 
-  FiSave, 
   FiClock, 
-  FiUser, 
   FiAlertTriangle, 
   FiFileText,
   FiAward,
   FiChevronRight,
   FiChevronDown,
-  FiEdit3,
   FiLayers,
-  FiMenu,
   FiX,
   FiZap,
   FiSearch,
   FiLink,
-  FiPlus,
-  FiExternalLink,
-  FiTrash2
+  FiPlus
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
@@ -817,11 +811,7 @@ const DynamicAssessmentRunner = () => {
     }
   }, [draftKey]);
 
-  useEffect(() => {
-    loadData();
-  }, [id, typeKey]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     setLoadError(null);
     try {
@@ -923,7 +913,11 @@ const DynamicAssessmentRunner = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [resolvedInstanceId, draftKey, typeKey, navigate]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const debounceTimerRef = useRef(null);
 
@@ -977,7 +971,7 @@ const DynamicAssessmentRunner = () => {
     }, 450);
   }, [performAutoSave, saveLocalBackup]);
 
-  const handleSelectCurrentState = (qId, score) => {
+  const handleSelectCurrentState = useCallback((qId, score) => {
     const currentFuture = responses[`${qId}_future_state`];
     // Future state is at least Current + 1 for levels 1-4, or 5 (Sustained Transform) when Current is already Level 5
     const minRequiredFuture = Math.min(5, score + 1);
@@ -993,9 +987,9 @@ const DynamicAssessmentRunner = () => {
     };
     setResponses(updated);
     performAutoSave(updated);
-  };
+  }, [responses, performAutoSave]);
 
-  const handleSelectFutureState = (qId, score) => {
+  const handleSelectFutureState = useCallback((qId, score) => {
     const currentBaseline = responses[qId] !== undefined 
       ? Number(responses[qId]) 
       : responses[`${qId}_current_state`] !== undefined 
@@ -1018,7 +1012,7 @@ const DynamicAssessmentRunner = () => {
     };
     setResponses(updated);
     performAutoSave(updated);
-  };
+  }, [responses, performAutoSave]);
 
   const handleToggleTechnicalPain = (qId, pain) => {
     const key = `${qId}_technical_pain`;
@@ -1236,7 +1230,7 @@ const DynamicAssessmentRunner = () => {
     }
   };
 
-  const dimensions = framework?.dimensions || [];
+  const dimensions = useMemo(() => framework?.dimensions || [], [framework]);
   const safeDimIdx = Math.min(Math.max(0, activeDimIdx), Math.max(0, dimensions.length - 1));
   const currentDim = dimensions[safeDimIdx] || dimensions[0] || {};
   const questions = currentDim.questions || [];

@@ -9,7 +9,7 @@ RUN npm install --omit=dev --ignore-scripts
 COPY . .
 
 # Build the React application if not already pre-built in context, and ensure /app/data exists.
-RUN mkdir -p /app/data && if [ ! -f client/build/index.html ]; then cd client && npm install --ignore-scripts --include=dev && CI=false npm run build && rm -rf node_modules; fi
+RUN mkdir -p /app/data && if [ ! -f client/build/index.html ]; then cd client && npm install --ignore-scripts --include=dev && CI=true npm run build && rm -rf node_modules; fi
 
 FROM node:20-bookworm-slim AS runtime
 
@@ -26,6 +26,7 @@ COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/package-lock.json ./package-lock.json
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/server ./server
+COPY --from=build /app/client/src/data/geValueRealizationFramework.js ./client/src/data/geValueRealizationFramework.js
 COPY --from=build /app/client/build ./client/build
 COPY --from=build /app/data ./data
 

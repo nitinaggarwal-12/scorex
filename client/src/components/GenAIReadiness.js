@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -19,15 +19,7 @@ const GenAIReadiness = () => {
 
   console.log('[GenAIReadiness] Render. showNameModal:', showNameModal, 'customerName:', customerName, 'loading:', loading, 'editMode:', editMode);
 
-  useEffect(() => {
-    console.log('[GenAIReadiness] useEffect mount/id change. id:', id);
-    loadFramework();
-    if (id) {
-      loadExistingAssessment(id);
-    }
-  }, [id]);
-
-  const loadFramework = async () => {
+  const loadFramework = useCallback(async () => {
     try {
       console.log('[GenAIReadiness] Loading framework from API...');
       const response = await axios.get('/api/genai-readiness/framework');
@@ -38,24 +30,32 @@ const GenAIReadiness = () => {
       console.error('Error loading framework:', error);
       setLoading(false);
     }
-  };
+  }, []);
 
-  const loadExistingAssessment = async (assessmentId) => {
+  const loadExistingAssessment = useCallback(async (targetAssessmentId) => {
     try {
-      const response = await axios.get(`/api/genai-readiness/assessments/${assessmentId}`);
+      const response = await axios.get(`/api/genai-readiness/assessments/${targetAssessmentId}`);
       const assessment = response.data;
       
       setCustomerName(assessment.customerName);
       setResponses(assessment.responses);
       setEditMode(true);
-      setAssessmentId(assessmentId);
+      setAssessmentId(targetAssessmentId);
       setShowNameModal(false);
     } catch (error) {
       console.error('Error loading assessment:', error);
       toast.error('Failed to load assessment for editing');
       navigate('/genai-readiness/list');
     }
-  };
+  }, [navigate]);
+
+  useEffect(() => {
+    console.log('[GenAIReadiness] useEffect mount/id change. id:', id);
+    loadFramework();
+    if (id) {
+      loadExistingAssessment(id);
+    }
+  }, [id, loadFramework, loadExistingAssessment]);
 
   const handleResponse = (questionId, value) => {
     setResponses(prev => ({

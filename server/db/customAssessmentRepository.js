@@ -4,12 +4,31 @@ const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 
-const baseDataDir = process.env.DATA_DIR || 
-  (fs.existsSync(path.join(__dirname, '../../data')) ? path.join(__dirname, '../../data') : 
-   (fs.existsSync(path.join(__dirname, '../data')) ? path.join(__dirname, '../data') : path.join(__dirname, '../../data')));
+const { resolveDataDir } = require('../utils/durableGcsPersistence');
 
-const typesFileStore = new DataStore(path.join(baseDataDir, 'custom_assessment_types.json'));
-const instancesFileStore = new DataStore(path.join(baseDataDir, 'dynamic_assessments.json'));
+const getTypesStore = () => new DataStore(path.join(resolveDataDir(), 'custom_assessment_types.json'));
+const getInstancesStore = () => new DataStore(path.join(resolveDataDir(), 'dynamic_assessments.json'));
+
+const typesFileStore = new Proxy(
+  {},
+  {
+    get(_t, prop) {
+      const store = getTypesStore();
+      const val = store[prop];
+      return typeof val === 'function' ? val.bind(store) : val;
+    }
+  }
+);
+const instancesFileStore = new Proxy(
+  {},
+  {
+    get(_t, prop) {
+      const store = getInstancesStore();
+      const val = store[prop];
+      return typeof val === 'function' ? val.bind(store) : val;
+    }
+  }
+);
 
 /**
  * Built-in Production Ready Starter Templates

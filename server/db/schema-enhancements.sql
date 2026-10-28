@@ -242,29 +242,39 @@ CREATE INDEX IF NOT EXISTS idx_history_date ON assessment_history(snapshot_date)
 -- 8. NOTIFICATIONS
 -- ============================================
 
--- User notifications
+-- User notifications (aligned with 006_user_management.sql & notificationRepository.js)
 CREATE TABLE IF NOT EXISTS notifications (
   id SERIAL PRIMARY KEY,
-  user_email VARCHAR(255) NOT NULL,
-  notification_type VARCHAR(100) NOT NULL, -- comment, mention, reminder, action_assigned, etc.
+  user_id VARCHAR(255) NOT NULL,
+  type VARCHAR(100) NOT NULL,
   title VARCHAR(500) NOT NULL,
   message TEXT,
-  link_url TEXT,
+  assessment_id VARCHAR(255),
   is_read BOOLEAN DEFAULT FALSE,
   read_at TIMESTAMP,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_email);
+CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications(user_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_read ON notifications(is_read);
 
 -- ============================================
--- GRANT PERMISSIONS (adjust as needed)
+-- 9. GE VALUE REALIZATION & EU AI ACT DOSSIERS
 -- ============================================
 
--- Grant permissions to your database user
--- GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO your_db_user;
--- GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO your_db_user;
+CREATE TABLE IF NOT EXISTS ge_value_realization_dossiers (
+  id VARCHAR(255) PRIMARY KEY,
+  sfdc_account_id VARCHAR(120),
+  customer_name VARCHAR(500),
+  dossier_payload JSONB NOT NULL,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
+CREATE INDEX IF NOT EXISTS idx_ge_vr_sfdc_account ON ge_value_realization_dossiers(sfdc_account_id);
 
-
+CREATE TABLE IF NOT EXISTS eu_ai_dossiers (
+  id VARCHAR(255) PRIMARY KEY,
+  system_name VARCHAR(500),
+  dossier_payload JSONB NOT NULL,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

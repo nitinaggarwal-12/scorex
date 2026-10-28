@@ -11,6 +11,7 @@ const GenAIReadinessList = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all'); // all, completed, incomplete
   const [sortBy, setSortBy] = useState('date'); // date, score, name
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
   useEffect(() => {
     loadAssessments();
@@ -30,6 +31,16 @@ const GenAIReadinessList = () => {
   const handleDelete = async (id, e) => {
     e.stopPropagation();
 
+    if (confirmDeleteId !== id) {
+      setConfirmDeleteId(id);
+      toast('Click Delete again to confirm removal', { icon: '⚠️', id: `confirm-genai-${id}` });
+      setTimeout(() => {
+        setConfirmDeleteId((prev) => (prev === id ? null : prev));
+      }, 4500);
+      return;
+    }
+
+    setConfirmDeleteId(null);
     try {
       await axios.delete(`/api/genai-readiness/assessments/${id}`);
       setAssessments(assessments.filter(a => a.id !== id));
@@ -352,9 +363,10 @@ const GenAIReadinessList = () => {
                 <button
                   className="action-icon delete-icon"
                   onClick={(e) => handleDelete(assessment.id, e)}
-                  title="Delete Assessment"
+                  title={confirmDeleteId === assessment.id ? 'Click again to confirm delete' : 'Delete Assessment'}
+                  style={confirmDeleteId === assessment.id ? { background: '#dc2626', color: '#ffffff', width: 'auto', padding: '0 8px', fontSize: '0.72rem', fontWeight: 700 } : undefined}
                 >
-                  <FiTrash2 />
+                  {confirmDeleteId === assessment.id ? 'Confirm?' : <FiTrash2 />}
                 </button>
               </div>
             </div>

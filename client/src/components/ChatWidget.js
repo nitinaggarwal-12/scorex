@@ -421,7 +421,7 @@ const ChatWidget = () => {
     formatted = formatted.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     
     // Italic: *text* -> <em>text</em> (avoid matching standalone bullet stars)
-    formatted = formatted.replace(/(^|[^\*])\*([^\*]+?)\*([^\*]|$)/g, '$1<em>$2</em>$3');
+    formatted = formatted.replace(/(^|[^*])\*([^*]+?)\*([^*]|$)/g, '$1<em>$2</em>$3');
     
     // Lists: unordered (•, -, *) and ordered (1., 2.)
     const lines = formatted.split('\n');
@@ -474,12 +474,12 @@ const ChatWidget = () => {
     return DOMPurify.sanitize(formatted, {
       ALLOWED_TAGS: ['strong', 'em', 'code', 'pre', 'ul', 'ol', 'li', 'a', 'p', 'br', 'span', 'div', 'h1', 'h2', 'h3', 'h4', 'hr', 'blockquote'],
       ALLOWED_ATTR: ['href', 'target', 'rel', 'style', 'title', 'class'],
-      ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
+      ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):|[^a-z]|[a-z+.-]+(?:[^a-z+.-:]|$))/i
     });
   };
 
   // Get current page context across all 3 ScoreX Assessment Engines
-  const getPageContext = () => {
+  const getPageContext = React.useCallback(() => {
     const path = location.pathname;
     const search = location.search;
     const params = new URLSearchParams(search);
@@ -566,7 +566,7 @@ const ChatWidget = () => {
     }
 
     return { pageType, pageData, path };
-  };
+  }, [location.pathname, location.search]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -583,7 +583,7 @@ const ChatWidget = () => {
       const initialQuestions = getInitialSuggestedQuestions(context.pageType);
       setSuggestedQuestions(initialQuestions);
     }
-  }, [isOpen, location.pathname]);
+  }, [isOpen, messages.length, getPageContext]);
 
   // Get initial suggested questions based on page type
   const getInitialSuggestedQuestions = (pageType) => {

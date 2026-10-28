@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiX, FiMessageSquare, FiUser, FiMail, FiBriefcase, FiClock, FiBarChart2 } from 'react-icons/fi';
+import { FiX, FiMessageSquare, FiUser, FiMail, FiBriefcase, FiClock } from 'react-icons/fi';
 import feedbackService from '../services/feedbackService';
 
 const PageContainer = styled.div`

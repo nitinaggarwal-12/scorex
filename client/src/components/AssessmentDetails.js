@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import toast from 'react-hot-toast';
 import { FiFileText, FiBriefcase, FiCalendar, FiArrowLeft, FiUser, FiCheckCircle, FiClock, FiEye, FiEdit } from 'react-icons/fi';
 import axios from 'axios';
 
@@ -269,11 +268,7 @@ const AssessmentDetails = () => {
   const [assignment, setAssignment] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchAssessmentDetails();
-  }, [assessmentId]);
-
-  const fetchAssessmentDetails = async () => {
+  const fetchAssessmentDetails = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -294,7 +289,11 @@ const AssessmentDetails = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [assessmentId]);
+
+  useEffect(() => {
+    fetchAssessmentDetails();
+  }, [fetchAssessmentDetails]);
 
   const getStatusIcon = (status) => {
     switch(status) {

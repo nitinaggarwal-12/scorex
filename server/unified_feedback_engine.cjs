@@ -161,7 +161,14 @@ function writeJsonList(filePath, items) {
     if (!filePath) return;
     const dir = path.dirname(filePath);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(filePath, JSON.stringify(items, null, 2), 'utf-8');
+    const serialized = JSON.stringify(items, null, 2);
+    const tmpPath = `${filePath}.${process.pid}.${Date.now()}.sync.tmp`;
+    fs.writeFileSync(tmpPath, serialized, 'utf-8');
+    fs.renameSync(tmpPath, filePath);
+    try {
+      const { scheduleStateFileSync } = require('./utils/durableGcsPersistence');
+      scheduleStateFileSync(filePath, serialized);
+    } catch (_) {}
   } catch (_) {}
 }
 

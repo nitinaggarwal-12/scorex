@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import toast from 'react-hot-toast';
-import { FiUsers, FiFileText, FiClock, FiCheckCircle, FiSend, FiEye, FiArrowLeft, FiMail } from 'react-icons/fi';
+import { FiFileText, FiClock, FiCheckCircle, FiSend, FiEye, FiArrowLeft, FiMail } from 'react-icons/fi';
 import axios from 'axios';
-import authService from '../services/authService';
 
 // Use relative URL in production (Railway) or custom port, localhost:5001 only in standalone dev server on :3000
 const API_URL = process.env.REACT_APP_API_URL || 

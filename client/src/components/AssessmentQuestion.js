@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiArrowLeft, FiArrowRight, FiCheckCircle, FiSave, FiWifi, FiWifiOff, FiLoader, FiEdit2, FiX, FiTrash2, FiZap } from 'react-icons/fi';
+import { FiArrowLeft, FiArrowRight, FiCheckCircle, FiSave, FiLoader, FiEdit2, FiX, FiTrash2, FiZap } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import * as assessmentService from '../services/assessmentService';
 import authService from '../services/authService';
@@ -743,15 +743,13 @@ const AssessmentQuestion = ({ framework, currentAssessment, onUpdateStatus }) =>
   const [responses, setResponses] = useState({});
   const [skippedQuestions, setSkippedQuestions] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [lastSaved, setLastSaved] = useState(null);
   const [autoSaveStatus, setAutoSaveStatus] = useState('saved'); // 'saving', 'saved', 'error'
+  const [, setLastSaved] = useState(null);
   const [showEmailPrompt, setShowEmailPrompt] = useState(false);
   const [editorEmail, setEditorEmail] = useState(null);
   const [showCompletionDialog, setShowCompletionDialog] = useState(false);
   const [nextPillarInfo, setNextPillarInfo] = useState(null);
   const [questionFilter, setQuestionFilter] = useState('all'); // 'all', 'completed', 'not_started', 'without_notes'
-  const [showBulkActions, setShowBulkActions] = useState(false); // 🆕 Bulk actions toggle
-  const [showMiniMap, setShowMiniMap] = useState(true); // 🆕 Mini-map toggle
   const [isSubmittingReport, setIsSubmittingReport] = useState(false); // 🆕 Report submission state
   const [submissionProgress, setSubmissionProgress] = useState(0); // 🆕 Progress tracking
   const [submissionMessage, setSubmissionMessage] = useState(''); // 🆕 Progress message
@@ -834,33 +832,6 @@ const AssessmentQuestion = ({ framework, currentAssessment, onUpdateStatus }) =>
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [autoSaveStatus]);
-
-  // Calculate and update progress
-  const updateProgress = useCallback(() => {
-    if (framework && currentAssessment && onUpdateStatus) {
-      // Filter to only selected pillars
-      const selectedPillars = currentAssessment?.selectedPillars || framework.assessmentAreas.map(a => a.id);
-      const availablePillars = framework.assessmentAreas.filter(area => selectedPillars.includes(area.id));
-      
-      const totalQuestions = availablePillars.reduce((total, area) => {
-        return total + (area.dimensions?.reduce((dimTotal, dim) => {
-          return dimTotal + (dim.questions?.length || 0);
-        }, 0) || 0);
-      }, 0);
-      
-      const answeredQuestions = Object.keys(responses).filter(key => 
-        !key.includes('_comment') && !key.includes('_skipped') && responses[key]
-      ).length;
-      
-      const progress = totalQuestions > 0 ? Math.round((answeredQuestions / totalQuestions) * 100) : 0;
-      
-      onUpdateStatus({
-        ...currentAssessment,
-        progress,
-        responses
-      });
-    }
-  }, [framework, currentAssessment, responses, onUpdateStatus]);
 
   // Load existing responses and area data when component mounts or area changes
   useEffect(() => {
@@ -1141,30 +1112,6 @@ const AssessmentQuestion = ({ framework, currentAssessment, onUpdateStatus }) =>
 
   const currentDimension = getCurrentDimension();
 
-  // 🆕 MATURITY LEVEL EXPLANATIONS
-  const maturityLevelHelp = {
-    1: {
-      name: "Level 1: Explore",
-      description: "Manual processes, ad-hoc implementations, no standardization. You're just beginning your journey."
-    },
-    2: {
-      name: "Level 2: Experiment",
-      description: "Basic implementation in place, some repeatability. Early adoption with limited scale."
-    },
-    3: {
-      name: "Level 3: Formalize",
-      description: "Documented processes, consistent practices across teams. Enterprise-wide standards emerging."
-    },
-    4: {
-      name: "Level 4: Optimize",
-      description: "Fully automated, optimized processes. Advanced capabilities deployed at scale."
-    },
-    5: {
-      name: "Level 5: Transform",
-      description: "Industry-leading maturity, continuous innovation, AI-driven optimization across all operations."
-    }
-  };
-
   // Helper component for tooltips
   const renderTooltip = (content) => (
     <TooltipContainer>
@@ -1174,7 +1121,7 @@ const AssessmentQuestion = ({ framework, currentAssessment, onUpdateStatus }) =>
   );
 
   // Auto-save function with debouncing
-  const autoSave = async (questionId, perspectiveId, value, comment, isSkipped) => {
+  const autoSave = useCallback(async (questionId, perspectiveId, value, comment, isSkipped) => {
     if (!assessmentId || !questionId) return;
     
     setAutoSaveStatus('saving');
@@ -1192,9 +1139,6 @@ const AssessmentQuestion = ({ framework, currentAssessment, onUpdateStatus }) =>
       
       if (result.success) {
         setAutoSaveStatus('saved');
-        setLastSaved(result.lastSaved);
-        // Optional: Show subtle success toast
-        // 
       } else {
         setAutoSaveStatus('error');
         console.error('Auto-save failed:', result.error);
@@ -1203,49 +1147,15 @@ const AssessmentQuestion = ({ framework, currentAssessment, onUpdateStatus }) =>
       console.error('Auto-save failed:', error);
       setAutoSaveStatus('error');
     }
-  };
+  }, [assessmentId, editorEmail]);
 
   // Debounced auto-save for comments
-  const debouncedAutoSave = useCallback(
-    debounce((questionId, perspectiveId, value, comment, isSkipped) => {
+  const debouncedAutoSave = useMemo(
+    () => debounce((questionId, perspectiveId, value, comment, isSkipped) => {
       autoSave(questionId, perspectiveId, value, comment, isSkipped);
     }, 1000),
-    [assessmentId, editorEmail]
+    [autoSave]
   );
-
-  // 🆕 BULK ACTIONS HANDLERS
-  const handleBulkSetCurrentState = async (level) => {
-    if (!window.confirm(`Set ALL questions' Current State to Level ${level}?`)) return;
-    
-    const updatedResponses = { ...responses };
-    currentArea?.questions?.forEach(question => {
-      const currentStateKey = `${question.id}_current_state`;
-      updatedResponses[currentStateKey] = level;
-    });
-    
-    setResponses(updatedResponses);
-    
-    setAutoSaveStatus('saving');
-    
-    // Save all changes
-    try {
-      for (const question of (currentArea?.questions || [])) {
-        await assessmentService.saveQuestionResponse(
-          assessmentId, 
-          question.id, 
-          'current_state', 
-          level, 
-          responses[`${question.id}_comment`] || '',
-          skippedQuestions[question.id] || false,
-          editorEmail
-        );
-      }
-      setAutoSaveStatus('saved');
-      setLastSaved(new Date());
-    } catch (error) {
-      setAutoSaveStatus('error');
-    }
-  };
 
   const handleAutoPrefillAllPillars = async () => {
     if (!framework?.assessmentAreas) return;
@@ -1288,42 +1198,14 @@ const AssessmentQuestion = ({ framework, currentAssessment, onUpdateStatus }) =>
       }
       toast.success('✨ All 6 pillars prefilled! Live results & executive reports unlocked.', { id: 'prefill-all' });
       setAutoSaveStatus('saved');
-      setLastSaved(new Date());
     } catch (e) {
       console.warn('Prefill save note:', e);
       toast.success('✨ Prefilled all pillars successfully!', { id: 'prefill-all' });
     }
   };
 
-  const handleSkipToNextUnanswered = () => {
-    const unansweredIndex = (currentArea?.questions || []).findIndex((q, idx) => {
-      if (idx <= currentQuestionIndex) return false;
-      return !isQuestionCompleted(q);
-    });
-    
-    if (unansweredIndex !== -1) {
-      setCurrentQuestionIndex(unansweredIndex);
-      
-    } else {
-      
-    }
-  };
-
   const handleJumpToQuestion = (index) => {
     setCurrentQuestionIndex(index);
-  };
-
-  // Format last saved time
-  const getLastSavedText = () => {
-    if (!lastSaved) return null;
-    
-    const now = new Date();
-    const diff = Math.floor((now - new Date(lastSaved)) / 1000); // seconds
-    
-    if (diff < 60) return 'Just now';
-    if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;
-    return new Date(lastSaved).toLocaleTimeString();
   };
 
   const handlePerspectiveResponse = (questionId, perspectiveId, value, isMultiple = false) => {
@@ -1516,11 +1398,17 @@ const AssessmentQuestion = ({ framework, currentAssessment, onUpdateStatus }) =>
     }
   };
 
+  const pendingDeleteQuestionRef = React.useRef({ id: null, expiresAt: 0 });
+
   // Handle question deletion
   const handleDeleteQuestion = async () => {
-    if (!window.confirm(`Are you sure you want to delete this question?\n\n"${currentQuestion.question}"\n\nThis will permanently remove the question and regenerate all reports and KPIs.`)) {
+    const now = Date.now();
+    if (pendingDeleteQuestionRef.current.id !== currentQuestion.id || pendingDeleteQuestionRef.current.expiresAt < now) {
+      pendingDeleteQuestionRef.current = { id: currentQuestion.id, expiresAt: now + 4500 };
+      toast('Click Delete Question again within 4s to confirm permanent removal', { icon: '⚠️', id: 'confirm-del-q' });
       return;
     }
+    pendingDeleteQuestionRef.current = { id: null, expiresAt: 0 };
 
     try {
       setLoading(true);
@@ -1644,7 +1532,7 @@ const AssessmentQuestion = ({ framework, currentAssessment, onUpdateStatus }) =>
     
     try {
       // Submit responses for this area
-      const result = await assessmentService.submitCategoryResponses(
+      await assessmentService.submitCategoryResponses(
         assessmentId, 
         categoryId, 
         responses

@@ -2,8 +2,19 @@ const db = require('./connection');
 const DataStore = require('../utils/dataStore');
 const path = require('path');
 const crypto = require('crypto');
+const { resolveDataDir } = require('../utils/durableGcsPersistence');
 
-const fileStore = new DataStore(path.join(__dirname, '../../data/genai_assessments.json'));
+const getFileStore = () => new DataStore(path.join(resolveDataDir(), 'genai_assessments.json'));
+const fileStore = new Proxy(
+  {},
+  {
+    get(_target, prop) {
+      const store = getFileStore();
+      const val = store[prop];
+      return typeof val === 'function' ? val.bind(store) : val;
+    }
+  }
+);
 
 let ownerColumnReady = false;
 async function ensureOwnerColumn() {

@@ -6,10 +6,7 @@ import {
   FiMessageSquare,
   FiRefreshCw,
   FiCheckCircle,
-  FiShield,
   FiSearch,
-  FiLayers,
-  FiActivity,
   FiUsers,
   FiArrowRight,
   FiPlus

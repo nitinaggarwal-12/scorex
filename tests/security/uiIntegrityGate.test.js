@@ -658,17 +658,30 @@ test('UI Integrity Gate 19: Permanent 5-Subsystem Persistence, Guard Synchroniza
     assert.ok(!preToolGuardSrc.includes(`'${activeRestored}'`), `pre_tool_guard.mjs must not block active restored component ${activeRestored}`);
   }
 
-  // 2. Subsystem 1: Client/Server geValueRealizationFramework.js 1:1 parity & uppercase ge_vr_ACC-1001-AEROVG key check
-  const clientGeFw = readClientFile('data/geValueRealizationFramework.js').replace(/\bexport\s*\{/, 'module.exports = {').trim();
-  const serverGeFw = fs.readFileSync(path.join(ROOT, 'server/data/geValueRealizationFramework.js'), 'utf8').trim();
-  assert.strictEqual(clientGeFw, serverGeFw, 'client and server geValueRealizationFramework.js must be 100% identical');
+  // 2. Subsystem 1: Single-source geValueRealizationFramework.js reference identity & uppercase ge_vr_ACC-1001-AEROVG key check
+  const serverGeFwFile = fs.readFileSync(path.join(ROOT, 'server/data/geValueRealizationFramework.js'), 'utf8').trim();
+  assert.ok(serverGeFwFile.split('\n').length <= 80, 'server/data/geValueRealizationFramework.js must be a compact single-source loader (<= 80 lines), not a duplicated 2,868-line copy');
+  const serverGeModule = require('../../server/data/geValueRealizationFramework');
+  const clientGeModule = require('../../client/src/data/geValueRealizationFramework');
+  assert.strictEqual(serverGeModule, clientGeModule, 'server and client geValueRealizationFramework must resolve to the exact same single-source module reference');
+  assert.strictEqual(serverGeModule.GE_QUESTIONS.length, 82, 'single-source geValueRealizationFramework must export all 82 questions');
+  assert.strictEqual(typeof serverGeModule.evaluateGeValueRealization, 'function', 'single-source geValueRealizationFramework must export evaluateGeValueRealization');
   const geRouteSrc = fs.readFileSync(path.join(ROOT, 'server/routes/geValueRealization.js'), 'utf8');
   assert.ok(!geRouteSrc.includes("const aero = parsed['ge_vr_acc-1001-aerovg'];"), 'geValueRealization.js loadServerDossiers must not exclusively check lowercase ge_vr_acc-1001-aerovg');
   assert.ok(geRouteSrc.includes("parsed['ge_vr_ACC-1001-AEROVG']") && geRouteSrc.includes('evaluation?.index'), 'geValueRealization.js loadServerDossiers must check canonical ge_vr_ACC-1001-AEROVG key and evaluation?.index');
 
-  // 3. Subsystem 2, 3, 4: Idempotent boot seeding (no unconditional DataStore overwrite on every require)
-  const dataStoreSrc = fs.readFileSync(path.join(ROOT, 'server/utils/dataStore.js'), 'utf8');
-  assert.ok(dataStoreSrc.includes('if (result) {\n      this.saveData();\n    }'), 'dataStore.js delete(key) must only call saveData() when key actually existed');
+  // 3. Subsystem 2, 3, 4: Idempotent boot seeding & DataStore singleton registry per file path
+  const DataStore = require('../../server/utils/dataStore');
+  const os = require('os');
+  const singletonTmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'scorex-ds-singleton-'));
+  try {
+    const sharedPath = path.join(singletonTmpDir, 'assessments.json');
+    const dsA = new DataStore(sharedPath);
+    const dsB = new DataStore(sharedPath);
+    assert.strictEqual(dsA, dsB, 'DataStore must return a shared singleton per resolved file path to prevent stale in-memory cache clobbers');
+  } finally {
+    fs.rmSync(singletonTmpDir, { recursive: true, force: true });
+  }
   const customRepoSrc = fs.readFileSync(path.join(ROOT, 'server/db/customAssessmentRepository.js'), 'utf8');
   assert.ok(customRepoSrc.includes('isStarterInstanceValid'), 'customAssessmentRepository.js must check isStarterInstanceValid before overwriting starter instances on boot');
   const coreRepoSrc = fs.readFileSync(path.join(ROOT, 'server/db/assessmentRepository.js'), 'utf8');
@@ -676,19 +689,168 @@ test('UI Integrity Gate 19: Permanent 5-Subsystem Persistence, Guard Synchroniza
   const genaiRepoSrc = fs.readFileSync(path.join(ROOT, 'server/db/genaiAssessmentRepository.js'), 'utf8');
   assert.ok(genaiRepoSrc.includes('computeGenAIScores') && genaiRepoSrc.includes('Object.keys(existing.responses).length >= 30'), 'genaiAssessmentRepository.js must deterministically compute scores via computeGenAIScores and skip overwriting valid 30-question starter assessments on boot');
 
-  // 4. Subsystem 3: Clone route assignment & starter delete protection
+  // 4. Subsystem 3 & Comparison View: Clone route assignment, starter delete protection, and zero infinite searchParams loop
   const indexCoreSrc = fs.readFileSync(path.join(ROOT, 'server/indexCore.js'), 'utf8');
   assert.ok(indexCoreSrc.includes('const clonedAssessment = await assessmentRepo.create('), 'indexCore.js clone route must assign const clonedAssessment');
   assert.ok(indexCoreSrc.includes('PROTECTED_CORE_STARTER_IDS'), 'indexCore.js must protect canonical starter assessments from deletion');
+  const comparisonSrc = readClientFile('components/AssessmentComparisonView.js');
+  assert.ok(!comparisonSrc.includes('[loadComparison, searchParams]'), 'AssessmentComparisonView.js must not trigger infinite fetch loop via [loadComparison, searchParams]');
+  assert.ok(comparisonSrc.includes('{ replace: true }'), 'AssessmentComparisonView.js must update searchParams with { replace: true }');
 
-  // 5. Subsystem 4: Zero native alert/confirm/prompt in GenAIReadiness.js & GenAIReadinessList.js
-  for (const rel of ['components/GenAIReadiness.js', 'components/GenAIReadinessList.js']) {
-    const src = readClientFile(rel);
-    assert.ok(!/\b(alert|prompt)\s*\(/.test(src) && !/window\.confirm\s*\(/.test(src), `${rel} must not use native browser alert/prompt/confirm dialogs (Rule 50C)`);
+  // 5. Rule 50D: Zero native window.alert / window.confirm / window.prompt across 100% of client/src
+  function collectClientJsFiles(dir) {
+    const out = [];
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) out.push(...collectClientJsFiles(full));
+      else if (/\.(js|jsx)$/.test(entry.name)) out.push(full);
+    }
+    return out;
+  }
+  for (const fullPath of collectClientJsFiles(path.join(ROOT, 'client/src'))) {
+    const relPath = path.relative(path.join(ROOT, 'client/src'), fullPath);
+    const src = fs.readFileSync(fullPath, 'utf8');
+    assert.ok(
+      !/\bwindow\.(alert|prompt|confirm)\s*\(/.test(src) && !/(^|[^.\w])(alert|prompt|confirm)\s*\(/m.test(src),
+      `${relPath} must not invoke native browser alert/prompt/confirm dialogs (Rule 50D)`
+    );
   }
 
   // 6. Subsystem 5: Full 20-question statutory seed fallback & atomic write in euAiCompliance.js
   const euRouteSrc = fs.readFileSync(path.join(ROOT, 'server/routes/euAiCompliance.js'), 'utf8');
   assert.ok(euRouteSrc.includes('q20:') && euRouteSrc.includes('.sync.tmp'), 'euAiCompliance.js must include all 20 statutory fallback questions and atomic .sync.tmp write');
 });
+
+test('UI Integrity Gate 20: Durable GCS Scale-to-Zero State Persistence, Runtime Auth Isolation, Pre-Drain Shutdown Flush & Strict CI=true Build Gate', async () => {
+  const os = require('os');
+  const durableGcs = require('../../server/utils/durableGcsPersistence');
+
+  // 1. All 13 runtime & canonical state stores are managed, and auth/session stores are NEVER seeded from image onto GCS
+  const expectedStores = [
+    'assessments.json',
+    'dynamic_assessments.json',
+    'custom_assessment_types.json',
+    'genai_assessments.json',
+    'ge_value_realization_dossiers.json',
+    'eu_ai_dossiers.json',
+    'instance_object_versions.json',
+    'users.json',
+    'sessions.json',
+    'assignments.json',
+    'notifications.json',
+    'user_feedback.json',
+    'custom_questions.json'
+  ];
+  for (const storeName of expectedStores) {
+    assert.ok(durableGcs.MANAGED_STATE_FILES.has(storeName), `durableGcsPersistence must manage ${storeName}`);
+  }
+  for (const runtimeOnly of ['sessions.json', 'users.json', 'assignments.json', 'notifications.json']) {
+    assert.ok(durableGcs.RUNTIME_ONLY_STATE_FILES.has(runtimeOnly), `${runtimeOnly} must be classified as RUNTIME_ONLY_STATE_FILES`);
+    assert.ok(!durableGcs.SEEDABLE_CANONICAL_FILES.has(runtimeOnly), `${runtimeOnly} must NEVER be seeded from baked image files onto GCS`);
+  }
+
+  // 2. Cold-start hydration, fail-closed corrupt JSON rejection, runtime-only seed block, and coalesced write-through
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'scorex-gate20-gcs-'));
+  const origBucket = process.env.SCOREX_GCS_STATE_BUCKET;
+  const origPrefix = process.env.SCOREX_GCS_STATE_PREFIX;
+  const origForce = process.env.SCOREX_FORCE_GCS_SYNC_IN_TEST;
+  const origToken = process.env.SCOREX_GCS_ACCESS_TOKEN;
+  const origDataDir = process.env.DATA_DIR;
+  const origFetch = global.fetch;
+
+  const remoteObjects = new Map([
+    ['unit-prefix/assessments.json', JSON.stringify({ hydrated_from_gcs: { id: 'hydrated_from_gcs', ok: true } })],
+    ['unit-prefix/eu_ai_dossiers.json', '{corrupt-truncated-json']
+  ]);
+
+  fs.writeFileSync(path.join(tmpDir, 'eu_ai_dossiers.json'), JSON.stringify({ local_intact: true }), 'utf8');
+  fs.writeFileSync(path.join(tmpDir, 'ge_value_realization_dossiers.json'), JSON.stringify({ ge_vr_seed: { id: 'ge_vr_seed' } }), 'utf8');
+  fs.writeFileSync(path.join(tmpDir, 'sessions.json'), JSON.stringify([{ sid: 'leaked_local_session_must_not_seed' }]), 'utf8');
+
+  global.fetch = async (url, opts = {}) => {
+    const u = String(url);
+    if (u.includes('/upload/storage/v1/b/')) {
+      const parsedUrl = new URL(u);
+      const name = parsedUrl.searchParams.get('name');
+      remoteObjects.set(name, opts.body);
+      return { ok: true, status: 200, json: async () => ({ name }), text: async () => '' };
+    }
+    if (u.includes('?prefix=')) {
+      const items = Array.from(remoteObjects.entries()).map(([name, val]) => ({
+        name,
+        size: String(Buffer.byteLength(val, 'utf8'))
+      }));
+      return { ok: true, status: 200, json: async () => ({ items }), text: async () => '' };
+    }
+    if (u.includes('?alt=media')) {
+      const match = u.match(/\/o\/([^?]+)\?alt=media/);
+      const decodedName = decodeURIComponent(match[1]);
+      const payload = remoteObjects.get(decodedName);
+      return { ok: payload !== undefined, status: payload !== undefined ? 200 : 404, text: async () => payload || '' };
+    }
+    return { ok: false, status: 404, text: async () => 'not found' };
+  };
+
+  try {
+    process.env.SCOREX_GCS_STATE_BUCKET = 'mock-scorex-durable-bucket';
+    process.env.SCOREX_GCS_STATE_PREFIX = 'unit-prefix';
+    process.env.SCOREX_FORCE_GCS_SYNC_IN_TEST = '1';
+    process.env.SCOREX_GCS_ACCESS_TOKEN = 'mock-oauth-token';
+    process.env.DATA_DIR = tmpDir;
+
+    assert.strictEqual(durableGcs.resolveDataDir(), path.resolve(tmpDir), 'resolveDataDir() must honor process.env.DATA_DIR');
+
+    const res = await durableGcs.hydrateDataDirFromGcs(tmpDir);
+    assert.strictEqual(res.hydrated, true);
+    assert.ok(res.hydratedFiles.includes('assessments.json'), 'valid remote state file must hydrate onto local disk');
+    assert.ok(!res.hydratedFiles.includes('eu_ai_dossiers.json'), 'corrupt remote JSON must fail closed and be rejected');
+    assert.deepStrictEqual(
+      JSON.parse(fs.readFileSync(path.join(tmpDir, 'eu_ai_dossiers.json'), 'utf8')),
+      { local_intact: true },
+      'local valid state file must remain untouched when remote object fails JSON.parse'
+    );
+    assert.ok(res.seededFiles.includes('ge_value_realization_dossiers.json'), 'canonical assessment dossier file must be seeded to GCS when missing remotely');
+    assert.ok(!res.seededFiles.includes('sessions.json'), 'sessions.json must NEVER be uploaded from local seed on cold start');
+    assert.strictEqual(remoteObjects.has('unit-prefix/sessions.json'), false, 'GCS bucket must never receive baked local sessions.json on boot');
+
+    // Coalesced write-through: 3 rapid mutations coalesce cleanly and persist latest value
+    const targetAssessmentsPath = path.join(tmpDir, 'assessments.json');
+    durableGcs.scheduleStateFileSync(targetAssessmentsPath, JSON.stringify({ seq: 1 }));
+    durableGcs.scheduleStateFileSync(targetAssessmentsPath, JSON.stringify({ seq: 2 }));
+    durableGcs.scheduleStateFileSync(targetAssessmentsPath, JSON.stringify({ seq: 3 }));
+    await durableGcs.flushAllPendingSyncs();
+    assert.deepStrictEqual(
+      JSON.parse(remoteObjects.get('unit-prefix/assessments.json')),
+      { seq: 3 },
+      'coalesced async write-through must persist latest payload to GCS'
+    );
+  } finally {
+    global.fetch = origFetch;
+    if (origBucket === undefined) delete process.env.SCOREX_GCS_STATE_BUCKET; else process.env.SCOREX_GCS_STATE_BUCKET = origBucket;
+    if (origPrefix === undefined) delete process.env.SCOREX_GCS_STATE_PREFIX; else process.env.SCOREX_GCS_STATE_PREFIX = origPrefix;
+    if (origForce === undefined) delete process.env.SCOREX_FORCE_GCS_SYNC_IN_TEST; else process.env.SCOREX_FORCE_GCS_SYNC_IN_TEST = origForce;
+    if (origToken === undefined) delete process.env.SCOREX_GCS_ACCESS_TOKEN; else process.env.SCOREX_GCS_ACCESS_TOKEN = origToken;
+    if (origDataDir === undefined) delete process.env.DATA_DIR; else process.env.DATA_DIR = origDataDir;
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+
+  // 3. Strict CI=true zero-warning build gate in root package.json, client/package.json, and Dockerfile
+  const rootPkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+  const clientPkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'client/package.json'), 'utf8'));
+  const dockerfileSrc = fs.readFileSync(path.join(ROOT, 'Dockerfile'), 'utf8');
+  assert.ok(!rootPkg.scripts.build.includes('CI=false') && rootPkg.scripts.build.includes('CI=true'), 'root package.json build script must enforce CI=true');
+  assert.strictEqual(clientPkg.scripts.build, 'CI=true react-scripts build', 'client/package.json build script must enforce CI=true react-scripts build');
+  assert.ok(!dockerfileSrc.includes('CI=false') && dockerfileSrc.includes('CI=true'), 'Dockerfile must enforce CI=true');
+
+  // 4. PostgreSQL JSONB migration parity & pre-drain SIGTERM GCS flush
+  assert.ok(fs.existsSync(path.join(ROOT, 'server/db/migrations/023_ge_and_eu_ai_dossiers.sql')), 'numbered migration 023_ge_and_eu_ai_dossiers.sql must exist for migrate.js');
+  const schemaEnhancements = fs.readFileSync(path.join(ROOT, 'server/db/schema-enhancements.sql'), 'utf8');
+  assert.ok(schemaEnhancements.includes('CREATE TABLE IF NOT EXISTS ge_value_realization_dossiers'), 'schema-enhancements.sql must define ge_value_realization_dossiers JSONB table');
+  assert.ok(schemaEnhancements.includes('CREATE TABLE IF NOT EXISTS eu_ai_dossiers'), 'schema-enhancements.sql must define eu_ai_dossiers JSONB table');
+  const indexCoreShutdownSrc = fs.readFileSync(path.join(ROOT, 'server/indexCore.js'), 'utf8');
+  const flushIdx = indexCoreShutdownSrc.indexOf('const initialFlushPromise = flushAllPendingSyncs()');
+  const closeIdx = indexCoreShutdownSrc.indexOf('server.close(() =>');
+  assert.ok(flushIdx > 0 && closeIdx > flushIdx, 'gracefulShutdown must initiate flushAllPendingSyncs() BEFORE blocking on server.close()');
+});
+
 

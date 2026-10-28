@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FiTarget, FiLayers, FiEye, FiActivity, FiArrowRight } from 'react-icons/fi';
-import { HiSparkles } from 'react-icons/hi';
+import { motion } from 'framer-motion';
+import { FiTarget, FiArrowRight } from 'react-icons/fi';
 
 const ChartCard = styled(motion.div)`
   background: ${props => props.$theme === 'dark' ? 'rgba(15, 23, 42, 0.85)' : '#ffffff'};

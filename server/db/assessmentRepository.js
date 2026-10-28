@@ -1,8 +1,19 @@
 const db = require('./connection');
 const DataStore = require('../utils/dataStore');
 const path = require('path');
+const { resolveDataDir } = require('../utils/durableGcsPersistence');
 
-const fileStore = new DataStore(path.join(__dirname, '../../data/assessments.json'));
+const getFileStore = () => new DataStore(path.join(resolveDataDir(), 'assessments.json'));
+const fileStore = new Proxy(
+  {},
+  {
+    get(_target, prop) {
+      const store = getFileStore();
+      const val = store[prop];
+      return typeof val === 'function' ? val.bind(store) : val;
+    }
+  }
+);
 
 const ALL_SIX_PILLAR_IDS = [
   'platform_governance',

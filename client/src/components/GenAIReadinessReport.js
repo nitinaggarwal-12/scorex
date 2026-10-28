@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Radar } from 'react-chartjs-2';
@@ -45,11 +45,7 @@ const GenAIReadinessReport = () => {
   const [activeTab, setActiveTab] = useState('');
   const [aiSynthesis, setAiSynthesis] = useState(null);
 
-  useEffect(() => {
-    loadData();
-  }, [id]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       const [assessmentRes, frameworkRes] = await Promise.all([
         axios.get(`/api/genai-readiness/assessments/${id}`),
@@ -74,7 +70,11 @@ const GenAIReadinessReport = () => {
       console.error('Error loading data:', error);
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const getRecommendations = (dimensionId, score, maxScore) => {
     if (aiSynthesis?.dimensionRecommendations?.[dimensionId]?.length > 0) {

@@ -326,7 +326,7 @@ function App() {
   useEffect(() => {
     const loadCurrentAssessment = async () => {
       const path = currentPath; // ✅ Use tracked pathname state
-      const assessmentMatch = path.match(/\/assessment\/([^\/]+)|\/results\/([^\/]+)|\/pillar-results\/([^\/]+)|\/executive-summary\/([^\/]+)|\/dashboard/);
+      const assessmentMatch = path.match(/\/assessment\/([^/]+)|\/results\/([^/]+)|\/pillar-results\/([^/]+)|\/executive-summary\/([^/]+)|\/dashboard/);
       
       if (assessmentMatch) {
         // Extract assessment ID from URL or use from localStorage

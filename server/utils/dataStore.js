@@ -1,13 +1,27 @@
 const fs = require('fs');
 const path = require('path');
+const { scheduleStateFileSync } = require('./durableGcsPersistence');
+
+const SHARED_STORES_BY_PATH = new Map();
 
 class DataStore {
-  constructor(filePath) {
-    this.filePath = filePath;
+  constructor(filePath, options = {}) {
+    const canonicalPath = path.resolve(filePath);
+    if (!options.isolated && SHARED_STORES_BY_PATH.has(canonicalPath)) {
+      const existing = SHARED_STORES_BY_PATH.get(canonicalPath);
+      if (existing.data.size === 0 && fs.existsSync(canonicalPath)) {
+        existing.loadData();
+      }
+      return existing;
+    }
+    this.filePath = canonicalPath;
     this.data = new Map();
     this._writePromise = Promise.resolve();
     this._pendingSave = false;
     this.loadData();
+    if (!options.isolated) {
+      SHARED_STORES_BY_PATH.set(canonicalPath, this);
+    }
   }
 
   loadData() {
@@ -48,14 +62,16 @@ class DataStore {
   }
 
   saveData() {
+    let serialized = null;
     try {
       const jsonData = Object.fromEntries(this.data);
       const dirPath = path.dirname(this.filePath);
       fs.mkdirSync(dirPath, { recursive: true });
-      const serialized = JSON.stringify(jsonData, null, 2);
+      serialized = JSON.stringify(jsonData, null, 2);
       const tempSyncPath = this.filePath + '.sync.tmp';
       fs.writeFileSync(tempSyncPath, serialized, 'utf8');
       fs.renameSync(tempSyncPath, this.filePath);
+      scheduleStateFileSync(this.filePath, serialized);
     } catch (syncErr) {
       console.error('❌ Error writing data synchronously to disk:', syncErr.message);
     }

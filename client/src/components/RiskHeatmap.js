@@ -12,6 +12,7 @@ import {
   FiTrash2,
   FiPlus
 } from 'react-icons/fi';
+import toast from 'react-hot-toast';
 
 // =====================
 // STYLED COMPONENTS
@@ -961,22 +962,25 @@ const RiskHeatmap = ({ results, assessment }) => {
     });
   };
 
+  const pendingRiskDeleteRef = useRef({ id: null, expiresAt: 0 });
+
   const handleDeleteRisk = (e, riskId) => {
     e.stopPropagation();
-    if (window.confirm('Are you sure you want to delete this risk?')) {
-      // Check if it's a custom risk
-      const isCustom = customRisks.some(r => r.id === riskId);
-      
-      if (isCustom) {
-        // Remove from custom risks
-        setCustomRisks(customRisks.filter(r => r.id !== riskId));
-      } else {
-        // Add to deleted IDs (for auto-generated risks)
-        setDeletedRiskIds([...deletedRiskIds, riskId]);
-      }
-      
-      
+    const now = Date.now();
+    if (pendingRiskDeleteRef.current.id !== riskId || pendingRiskDeleteRef.current.expiresAt < now) {
+      pendingRiskDeleteRef.current = { id: riskId, expiresAt: now + 4500 };
+      toast('Click Delete again within 4s to remove this risk', { icon: '⚠️', id: `confirm-risk-${riskId}` });
+      return;
     }
+    pendingRiskDeleteRef.current = { id: null, expiresAt: 0 };
+
+    const isCustom = customRisks.some(r => r.id === riskId);
+    if (isCustom) {
+      setCustomRisks(customRisks.filter(r => r.id !== riskId));
+    } else {
+      setDeletedRiskIds([...deletedRiskIds, riskId]);
+    }
+    toast.success('Risk removed');
   };
 
   const handleSubmitRisk = (e) => {

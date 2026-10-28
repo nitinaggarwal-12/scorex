@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
@@ -243,35 +243,37 @@ const AssessmentComparisonView = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
+  const initialParamsRef = React.useRef({
+    base: searchParams.get('base') || '',
+    target: searchParams.get('target') || ''
+  });
   const [allAssessments, setAllAssessments] = useState([]);
-  const [baseId, setBaseId] = useState(searchParams.get('base') || '');
-  const [targetId, setTargetId] = useState(searchParams.get('target') || '');
+  const [baseId, setBaseId] = useState(initialParamsRef.current.base);
+  const [targetId, setTargetId] = useState(initialParamsRef.current.target);
+
+  const setSearchParamsRef = React.useRef(setSearchParams);
+  setSearchParamsRef.current = setSearchParams;
 
   const [comparisonData, setComparisonData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchInitialData();
+  const loadComparison = useCallback(async (bId, tId) => {
+    try {
+      setLoading(true);
+      const result = await dynamicAssessmentService.compareAssessments(bId, tId);
+      if (result && result.success) {
+        setComparisonData(result);
+        setSearchParamsRef.current({ base: bId, target: tId }, { replace: true });
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to calculate progression comparison');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  useEffect(() => {
-    if (baseId && targetId) {
-      loadComparison(baseId, targetId);
-    }
-  }, [baseId, targetId]);
-
-  const getReportPathForInstance = (inst) => {
-    if (!inst?.id) return '/assessments';
-    if (inst.assessmentFamily === 'ge_value_realization' || inst.id.startsWith('ge_vr_') || inst.id.includes('_ge_value_realization')) {
-      return `/ge-value-realization/${inst.id}?tab=report`;
-    }
-    if (inst.assessmentFamily === 'eu_ai_act' || inst.id.startsWith('EUAIA-') || inst.id.startsWith('EU-AI-')) {
-      return `/eu-ai-compliance/${inst.id}?tab=report`;
-    }
-    return `/assessments/report/${inst.id}`;
-  };
-
-  const fetchInitialData = async () => {
+  const fetchInitialData = useCallback(async () => {
     try {
       setLoading(true);
       const [instances, geRes, euRes] = await Promise.all([
@@ -299,37 +301,38 @@ const AssessmentComparisonView = () => {
       setAllAssessments(combined);
 
       const defaultId = combined[0]?.id || '';
-      const initialBase = searchParams.get('base') || defaultId;
-      const initialTarget = searchParams.get('target') || defaultId;
+      const initialBase = initialParamsRef.current.base || defaultId;
+      const initialTarget = initialParamsRef.current.target || defaultId;
 
       setBaseId(initialBase);
       setTargetId(initialTarget);
-
-      if (initialBase && initialTarget) {
-        await loadComparison(initialBase, initialTarget);
-      }
     } catch (err) {
       console.error(err);
       toast.error('Failed to load assessment instances');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const loadComparison = async (bId, tId) => {
-    try {
-      setLoading(true);
-      const result = await dynamicAssessmentService.compareAssessments(bId, tId);
-      if (result && result.success) {
-        setComparisonData(result);
-        setSearchParams({ base: bId, target: tId });
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error('Failed to calculate progression comparison');
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    fetchInitialData();
+  }, [fetchInitialData]);
+
+  useEffect(() => {
+    if (baseId && targetId) {
+      loadComparison(baseId, targetId);
     }
+  }, [baseId, targetId, loadComparison]);
+
+  const getReportPathForInstance = (inst) => {
+    if (!inst?.id) return '/assessments';
+    if (inst.assessmentFamily === 'ge_value_realization' || inst.id.startsWith('ge_vr_') || inst.id.includes('_ge_value_realization')) {
+      return `/ge-value-realization/${inst.id}?tab=report`;
+    }
+    if (inst.assessmentFamily === 'eu_ai_act' || inst.id.startsWith('EUAIA-') || inst.id.startsWith('EU-AI-')) {
+      return `/eu-ai-compliance/${inst.id}?tab=report`;
+    }
+    return `/assessments/report/${inst.id}`;
   };
 
   if (loading && !comparisonData) {

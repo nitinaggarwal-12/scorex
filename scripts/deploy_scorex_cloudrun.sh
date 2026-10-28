@@ -37,7 +37,7 @@ if gcloud builds submit --project="${BUILD_PROJECT}" --tag="${IMAGE_TAGGED}" . 2
     --project="${RUNTIME_PROJECT}" \
     --region="${REGION}" \
     --image="${IMAGE_TAGGED}" \
-    --update-env-vars="SCOREX_GIT_BRANCH=${GIT_BRANCH},SCOREX_GIT_COMMIT_SHA=${GIT_SHA}"
+    --update-env-vars="SCOREX_GIT_BRANCH=${GIT_BRANCH},SCOREX_GIT_COMMIT_SHA=${GIT_SHA},SCOREX_GCS_STATE_BUCKET=scorex-durable-state-bbar-138hf0,SCOREX_GCS_STATE_PREFIX=scorex-prod-v1"
 else
   echo "⚠️ Cloud Build in ${BUILD_PROJECT} unavailable; executing Zero-Daemon OCI Static-Layer Deployer..."
   python3 /Users/nitinagga/Documents/notes/scripts/oci_deploy_remaining_services.py scorex

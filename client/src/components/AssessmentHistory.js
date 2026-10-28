@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -14,7 +14,6 @@ import {
   FiChevronDown,
   FiChevronUp,
   FiArrowLeft,
-  FiDownload,
   FiTarget,
   FiZap,
   FiShield,
@@ -575,15 +574,7 @@ const AssessmentHistory = () => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [expandedEvents, setExpandedEvents] = useState(new Set());
 
-  useEffect(() => {
-    fetchAuditTrail();
-  }, [assessmentId]);
-
-  useEffect(() => {
-    filterEvents();
-  }, [events, activeFilter]);
-
-  const fetchAuditTrail = async () => {
+  const fetchAuditTrail = useCallback(async () => {
     setLoading(true);
     try {
       const response = await axios.get(`/api/assessment/${assessmentId}/audit-trail`);
@@ -591,24 +582,29 @@ const AssessmentHistory = () => {
       if (response.data.success) {
         setAuditData(response.data.data);
         setEvents(response.data.data.events || []);
-      } else {
-        
       }
     } catch (error) {
       console.error('Error fetching audit trail:', error);
-      
     } finally {
       setLoading(false);
     }
-  };
+  }, [assessmentId]);
 
-  const filterEvents = () => {
+  const filterEvents = useCallback(() => {
     if (activeFilter === 'all') {
       setFilteredEvents(events);
     } else {
       setFilteredEvents(events.filter(e => e.eventType === activeFilter));
     }
-  };
+  }, [activeFilter, events]);
+
+  useEffect(() => {
+    fetchAuditTrail();
+  }, [fetchAuditTrail]);
+
+  useEffect(() => {
+    filterEvents();
+  }, [filterEvents]);
 
   const toggleEventExpansion = (eventId) => {
     setExpandedEvents(prev => {

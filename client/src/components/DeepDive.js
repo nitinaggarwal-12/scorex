@@ -1,8 +1,8 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiEdit, FiCopy, FiTrash2, FiPlus, FiChevronDown, FiChevronUp, FiArrowUp, FiArrowDown, FiX, FiChevronLeft, FiChevronRight, FiPlay, FiPrinter } from 'react-icons/fi';
+import { FiEdit, FiCopy, FiTrash2, FiPlus, FiChevronDown, FiChevronUp, FiArrowUp, FiArrowDown, FiX, FiPlay, FiPrinter } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -25,8 +25,8 @@ const FormattedText = ({ children, style }) => {
     const trimmedLine = line.trim();
     
     // Check for bullet points
-    if (trimmedLine.match(/^[•\-\*]\s+/)) {
-      const content = trimmedLine.replace(/^[•\-\*]\s+/, '');
+    if (trimmedLine.match(/^[•\-*]\s+/)) {
+      const content = trimmedLine.replace(/^[•\-*]\s+/, '');
       if (currentListType !== 'ul') {
         if (currentList) formatted.push(currentList);
         currentList = { type: 'ul', items: [] };
@@ -35,8 +35,8 @@ const FormattedText = ({ children, style }) => {
       currentList.items.push(content);
     }
     // Check for numbered lists
-    else if (trimmedLine.match(/^\d+[\.)]\s+/)) {
-      const content = trimmedLine.replace(/^\d+[\.)]\s+/, '');
+    else if (trimmedLine.match(/^\d+[.)]\s+/)) {
+      const content = trimmedLine.replace(/^\d+[.)]\s+/, '');
       if (currentListType !== 'ol') {
         if (currentList) formatted.push(currentList);
         currentList = { type: 'ol', items: [] };
@@ -1865,25 +1865,25 @@ const DeepDive = () => {
     document.body.style.overflow = 'hidden';
   };
 
-  const exitPresentation = () => {
+  const exitPresentation = useCallback(() => {
     setPresentationMode(false);
     document.body.style.overflow = 'auto';
-  };
+  }, []);
 
-  const nextSlide = () => {
+  const nextSlide = useCallback(() => {
     if (currentSlide < slides.length - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
       // Exit slideshow when trying to go past the last slide
       exitPresentation();
     }
-  };
+  }, [currentSlide, slides.length, exitPresentation]);
 
-  const previousSlide = () => {
+  const previousSlide = useCallback(() => {
     if (currentSlide > 0) {
       setCurrentSlide(currentSlide - 1);
     }
-  };
+  }, [currentSlide]);
 
   const handlePrintSlideshow = async () => {
     const pdf = new jsPDF({
@@ -1995,41 +1995,7 @@ const DeepDive = () => {
       window.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'auto';
     };
-  }, [presentationMode, currentSlide]);
-
-
-  // Click navigation handler
-  const handleSlideClick = (e) => {
-    const slideWidth = e.currentTarget.offsetWidth;
-    const clickX = e.clientX;
-    
-    // If clicked on left half, go previous; right half, go next
-    if (clickX < slideWidth / 2) {
-      previousSlide();
-    } else {
-      nextSlide();
-    }
-  };
-
-  // Keyboard navigation for presentation
-  useEffect(() => {
-    if (!presentationMode) return;
-
-    const handleKeyPress = (e) => {
-      if (e.key === 'ArrowRight' || e.key === ' ') {
-        e.preventDefault();
-        nextSlide();
-      } else if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        previousSlide();
-      } else if (e.key === 'Escape') {
-        exitPresentation();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [presentationMode, currentSlide]);
+  }, [presentationMode, nextSlide, previousSlide, exitPresentation]);
 
 
   // Section collapse state (all sections expanded by default)
@@ -2084,7 +2050,7 @@ const DeepDive = () => {
   const [modalType, setModalType] = useState('');
   const [editingItem, setEditingItem] = useState(null);
   const [formData, setFormData] = useState({});
-  const [parentCategory, setParentCategory] = useState(null); // For sub-category editing
+  const [, setParentCategory] = useState(null); // For sub-category editing
 
   // Move section up
   const moveSectionUp = (sectionId) => {
@@ -3167,9 +3133,17 @@ Transform: Fully governed multi-domain Lakehouse with automation.`;
     }
   };
 
+  const pendingDeepDiveDeleteRef = React.useRef({ key: null, expiresAt: 0 });
+
   const handleDelete = (type, itemId) => {
-    console.log('Delete button clicked:', type, itemId);
-    if (!window.confirm('Are you sure you want to delete this item?')) return;
+    const deleteKey = `${type}:${typeof itemId === 'object' ? JSON.stringify(itemId) : itemId}`;
+    const now = Date.now();
+    if (pendingDeepDiveDeleteRef.current.key !== deleteKey || pendingDeepDiveDeleteRef.current.expiresAt < now) {
+      pendingDeepDiveDeleteRef.current = { key: deleteKey, expiresAt: now + 4500 };
+      toast('Click Delete again within 4s to confirm item removal', { icon: '⚠️', id: 'confirm-deepdive-del' });
+      return;
+    }
+    pendingDeepDiveDeleteRef.current = { key: null, expiresAt: 0 };
     
     if (type === 'objective') {
       setObjectives(prev => prev.filter(obj => obj.id !== itemId));
@@ -3498,8 +3472,6 @@ Transform: Fully governed multi-domain Lakehouse with automation.`;
       
     } else {
       // Fallback for any other types
-      const itemName = modalType.charAt(0).toUpperCase() + modalType.slice(1);
-      
       console.log(`${modalType} data:`, formData);
     }
     
@@ -3543,564 +3515,6 @@ Transform: Fully governed multi-domain Lakehouse with automation.`;
   };
 
 
-  // Helper function to render slide content for print
-  const renderSlideContentForPrint = (slide) => {
-    // Strategic Objectives
-    if (slide.id === 'objectives') {
-      return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', justifyContent: 'center', height: '100%' }}>
-          {objectives.map((obj) => (
-            <div key={obj.id} style={{ 
-              background: 'white',
-              borderRadius: '10px',
-              border: `2px solid ${obj.borderColor}`,
-              padding: '18px 20px',
-              boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)'
-            }}>
-              <div style={{ 
-                display: 'flex',
-                alignItems: 'center',
-                marginBottom: '12px',
-                paddingBottom: '10px',
-                borderBottom: `2px solid ${obj.borderColor}`
-              }}>
-                <span style={{ fontSize: '1.8rem', marginRight: '14px' }}>{obj.icon}</span>
-                <h3 style={{ 
-                  fontSize: '1.25rem',
-                  fontWeight: 700,
-                  color: '#1e293b',
-                  margin: 0
-                }}>
-                  {obj.title}
-                </h3>
-              </div>
-              <div style={{ 
-                fontSize: '1.05rem',
-                lineHeight: '1.5',
-                color: '#475569'
-              }}>
-                {obj.content || 'No content available'}
-              </div>
-            </div>
-          ))}
-        </div>
-      );
-    }
-    
-    // Categories Part 1
-    if (slide.id === 'categories-1') {
-      return (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
-          {categories.slice(0, 3).map((cat) => (
-            <div key={cat.id} style={{ 
-              background: 'white', 
-              borderRadius: '12px', 
-              padding: '16px',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)'
-            }}>
-              <div style={{ 
-                background: cat.bgColor, 
-                color: 'white', 
-                padding: '16px', 
-                borderRadius: '12px 12px 0 0',
-                marginBottom: '12px',
-                marginTop: '-16px',
-                marginLeft: '-16px',
-                marginRight: '-16px'
-              }}>
-                <div style={{ fontSize: '0.85rem', fontWeight: 700, letterSpacing: '0.05em', marginBottom: '8px', textTransform: 'uppercase' }}>
-                  {cat.label}
-                </div>
-                <h4 style={{ color: 'white', marginBottom: '8px', fontSize: '1.1rem', fontWeight: 700 }}>{cat.title}</h4>
-                <p style={{ fontSize: '0.9rem', opacity: 1, lineHeight: '1.4', color: 'rgba(255, 255, 255, 0.95)' }}>{cat.description}</p>
-              </div>
-              <div>
-                {cat.subCategories && cat.subCategories.map((subCat, idx) => (
-                  <div key={idx} style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '10px', 
-                    padding: '8px 0',
-                    borderBottom: idx < cat.subCategories.length - 1 ? '1px solid #e2e8f0' : 'none'
-                  }}>
-                    <div style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '6px',
-                      background: cat.bgColor,
-                      color: 'white',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontWeight: 700,
-                      fontSize: '1rem',
-                      flexShrink: 0
-                    }}>
-                      {subCat.letter}
-                    </div>
-                    <div style={{ 
-                      fontSize: '1rem', 
-                      color: '#1e293b',
-                      fontWeight: 600,
-                      flex: 1,
-                      lineHeight: '1.3'
-                    }}>
-                      {subCat.name}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      );
-    }
-    
-    // Categories Part 2
-    if (slide.id === 'categories-2') {
-      return (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
-          {categories.slice(3, 6).map((cat) => (
-            <div key={cat.id} style={{ 
-              background: 'white', 
-              borderRadius: '12px', 
-              padding: '16px',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)'
-            }}>
-              <div style={{ 
-                background: cat.bgColor, 
-                color: 'white', 
-                padding: '16px', 
-                borderRadius: '12px 12px 0 0',
-                marginBottom: '12px',
-                marginTop: '-16px',
-                marginLeft: '-16px',
-                marginRight: '-16px'
-              }}>
-                <div style={{ fontSize: '0.85rem', fontWeight: 700, letterSpacing: '0.05em', marginBottom: '8px', textTransform: 'uppercase' }}>
-                  {cat.label}
-                </div>
-                <h4 style={{ color: 'white', marginBottom: '8px', fontSize: '1.1rem', fontWeight: 700 }}>{cat.title}</h4>
-                <p style={{ fontSize: '0.9rem', opacity: 1, lineHeight: '1.4', color: 'rgba(255, 255, 255, 0.95)' }}>{cat.description}</p>
-              </div>
-              <div>
-                {cat.subCategories && cat.subCategories.map((subCat, idx) => (
-                  <div key={idx} style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '10px', 
-                    padding: '8px 0',
-                    borderBottom: idx < cat.subCategories.length - 1 ? '1px solid #e2e8f0' : 'none'
-                  }}>
-                    <div style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '6px',
-                      background: cat.bgColor,
-                      color: 'white',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontWeight: 700,
-                      fontSize: '1rem',
-                      flexShrink: 0
-                    }}>
-                      {subCat.letter}
-                    </div>
-                    <div style={{ 
-                      fontSize: '1rem', 
-                      color: '#1e293b',
-                      fontWeight: 600,
-                      flex: 1,
-                      lineHeight: '1.3'
-                    }}>
-                      {subCat.name}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      );
-    }
-    
-    // Technical Success Plan Part 1
-    if (slide.id === 'success-plan-1') {
-      return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {technicalSuccessPlan.slice(0, 3).map((item) => (
-            <div key={item.id} style={{
-              background: 'rgba(255, 255, 255, 0.95)',
-              padding: '0',
-              borderLeft: `4px solid ${item.color}`,
-              overflow: 'hidden'
-            }}>
-              <div style={{
-                background: item.color,
-                color: 'white',
-                padding: '16px 20px',
-                fontSize: '1.1rem',
-                fontWeight: 700
-              }}>
-                {item.category}
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr 1fr', gap: '20px', padding: '20px' }}>
-                <div>
-                  <h4 style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#6b7280', marginBottom: '10px' }}>
-                    NEEDS
-                  </h4>
-                  <p style={{ color: '#475569', fontSize: '0.9rem', lineHeight: '1.5', margin: 0 }}>{item.need}</p>
-                </div>
-                <div>
-                  <h4 style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#6b7280', marginBottom: '10px' }}>
-                    ACTIVITIES
-                  </h4>
-                  <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                    {item.activities.map((activity, idx) => (
-                      <li key={idx} style={{ color: '#475569', fontSize: '0.9rem', lineHeight: '1.5', padding: '4px 0', display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
-                        <span style={{ color: item.color, fontWeight: 700, fontSize: '1.1rem' }}>•</span>
-                        <span>{activity}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h4 style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#6b7280', marginBottom: '10px' }}>
-                    OUTCOME
-                  </h4>
-                  <p style={{ color: '#475569', fontSize: '0.9rem', lineHeight: '1.5', margin: 0 }}>{item.outcome}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      );
-    }
-
-    // Technical Success Plan Part 2
-    if (slide.id === 'success-plan-2') {
-      return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {technicalSuccessPlan.slice(3, 6).map((item) => (
-            <div key={item.id} style={{
-              background: 'rgba(255, 255, 255, 0.95)',
-              padding: '0',
-              border: `3px solid ${item.color}`,
-              borderRadius: '10px',
-              overflow: 'hidden'
-            }}>
-              <div style={{
-                background: item.color,
-                color: 'white',
-                padding: 'clamp(8px, 1.2vh, 16px) clamp(12px, 1.5vw, 20px)',
-                fontSize: 'clamp(1rem, 1.3vw, 1.5rem)',
-                fontWeight: 700
-              }}>
-                {item.category}
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr 1fr', gap: 'clamp(12px, 1.5vw, 20px)', padding: 'clamp(12px, 1.5vw, 20px)' }}>
-                <div>
-                  <h4 style={{ fontSize: 'clamp(0.7rem, 0.8vw, 1rem)', fontWeight: 700, textTransform: 'uppercase', color: '#6b7280', marginBottom: 'clamp(6px, 0.8vh, 10px)' }}>
-                    NEEDS
-                  </h4>
-                  <p style={{ color: '#475569', fontSize: 'clamp(0.75rem, 0.85vw, 1rem)', lineHeight: '1.5', margin: 0 }}>{item.need}</p>
-                </div>
-                <div>
-                  <h4 style={{ fontSize: 'clamp(0.7rem, 0.8vw, 1rem)', fontWeight: 700, textTransform: 'uppercase', color: '#6b7280', marginBottom: 'clamp(6px, 0.8vh, 10px)' }}>
-                    ACTIVITIES
-                  </h4>
-                  <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                    {item.activities.map((activity, idx) => (
-                      <li key={idx} style={{ color: '#475569', fontSize: 'clamp(0.75rem, 0.85vw, 1rem)', lineHeight: '1.5', padding: '4px 0', display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
-                        <span style={{ color: item.color, fontWeight: 700, fontSize: 'clamp(0.9rem, 1vw, 1.2rem)' }}>•</span>
-                        <span>{activity}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h4 style={{ fontSize: 'clamp(0.7rem, 0.8vw, 1rem)', fontWeight: 700, textTransform: 'uppercase', color: '#6b7280', marginBottom: 'clamp(6px, 0.8vh, 10px)' }}>
-                    OUTCOME
-                  </h4>
-                  <p style={{ color: '#475569', fontSize: 'clamp(0.75rem, 0.85vw, 1rem)', lineHeight: '1.5', margin: 0 }}>{item.outcome}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      );
-    }
-
-    // Engagement Plan
-    if (slide.id === 'engagement-plan') {
-      return (
-        <div style={{ background: 'rgba(255, 255, 255, 0.95)', overflow: 'hidden' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '150px 1fr 1fr', borderBottom: '1px solid #e5e7eb', background: '#f9fafb' }}>
-            <div style={{ padding: '16px', fontWeight: 700, fontSize: '0.9rem', color: '#1e293b', textAlign: 'center' }}>TIMELINE</div>
-            <div style={{ padding: '16px', fontWeight: 700, fontSize: '0.9rem', color: '#1e293b', borderLeft: '1px solid #e5e7eb' }}>ENGAGEMENT</div>
-            <div style={{ padding: '16px', fontWeight: 700, fontSize: '0.9rem', color: '#1e293b', borderLeft: '1px solid #e5e7eb' }}>FOCUS AREA</div>
-          </div>
-          {engagementPlan.map((item, idx) => (
-            <div key={item.id} style={{ display: 'grid', gridTemplateColumns: '150px 1fr 1fr', borderBottom: idx < engagementPlan.length - 1 ? '1px solid #e5e7eb' : 'none', transition: 'all 0.2s' }}>
-              <div style={{ padding: '16px', background: '#fef3c7', fontWeight: 700, fontSize: '0.9rem', color: '#92400e', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{item.time}</div>
-              <div style={{ padding: '16px', fontSize: '0.9rem', color: '#1e293b', lineHeight: '1.5', borderLeft: '1px solid #e5e7eb', display: 'flex', alignItems: 'center' }}>{item.engagement}</div>
-              <div style={{ padding: '16px', fontSize: '0.9rem', color: '#64748b', lineHeight: '1.5', borderLeft: '1px solid #e5e7eb', display: 'flex', alignItems: 'center' }}>{item.focusArea}</div>
-            </div>
-          ))}
-        </div>
-      );
-    }
-
-    // Analysis & Actions Part 1
-    if (slide.id === 'analysis-1') {
-      return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          {analysisActions.slice(0, 3).map((item) => (
-            <div key={item.id} style={{ marginBottom: '0' }}>
-              <div style={{
-                background: item.bgColor,
-                color: 'white',
-                padding: '8px 14px',
-                fontWeight: 700,
-                fontSize: '1.2rem',
-                borderRadius: '8px 8px 0 0',
-                border: `2px solid ${item.color}`,
-                borderBottom: 'none'
-              }}>
-                {item.title}
-              </div>
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(5, 1fr)',
-                gap: '4px',
-                padding: '8px',
-                background: 'white',
-                border: `2px solid ${item.color}`,
-                borderTop: 'none',
-                borderRadius: '0 0 8px 8px'
-              }}>
-                {item.levels && item.levels.map((level, idx) => (
-                  <div key={idx} style={{
-                    background: '#f8fafc',
-                    borderRadius: '6px',
-                    padding: '6px',
-                    border: `1px solid ${item.color}30`
-                  }}>
-                    <div style={{
-                      fontWeight: 700,
-                      color: item.color,
-                      marginBottom: '3px',
-                      fontSize: '1rem'
-                    }}>
-                      {level.stage}
-                    </div>
-                    <div style={{
-                      fontSize: '0.8rem',
-                      color: '#475569',
-                      lineHeight: '1.35',
-                      marginBottom: '3px'
-                    }}>
-                      {level.description}
-                    </div>
-                    <div style={{
-                      fontSize: '0.72rem',
-                      color: '#64748b',
-                      lineHeight: '1.3'
-                    }}>
-                      <strong>Helpful Tools:</strong> {level.tools}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      );
-    }
-
-    // Analysis & Actions Part 2
-    if (slide.id === 'analysis-2') {
-      return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          {analysisActions.slice(3, 6).map((item) => (
-            <div key={item.id} style={{ marginBottom: '0' }}>
-              <div style={{
-                background: item.bgColor,
-                color: 'white',
-                padding: '8px 14px',
-                fontWeight: 700,
-                fontSize: '1.2rem',
-                borderRadius: '8px 8px 0 0',
-                border: `2px solid ${item.color}`,
-                borderBottom: 'none'
-              }}>
-                {item.title}
-              </div>
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(5, 1fr)',
-                gap: '4px',
-                padding: '8px',
-                background: 'white',
-                border: `2px solid ${item.color}`,
-                borderTop: 'none',
-                borderRadius: '0 0 8px 8px'
-              }}>
-                {item.levels && item.levels.map((level, idx) => (
-                  <div key={idx} style={{
-                    background: '#f8fafc',
-                    borderRadius: '6px',
-                    padding: '6px',
-                    border: `1px solid ${item.color}30`
-                  }}>
-                    <div style={{
-                      fontWeight: 700,
-                      color: item.color,
-                      marginBottom: '3px',
-                      fontSize: '1rem'
-                    }}>
-                      {level.stage}
-                    </div>
-                    <div style={{
-                      fontSize: '0.8rem',
-                      color: '#475569',
-                      lineHeight: '1.35',
-                      marginBottom: '3px'
-                    }}>
-                      {level.description}
-                    </div>
-                    <div style={{
-                      fontSize: '0.72rem',
-                      color: '#64748b',
-                      lineHeight: '1.3'
-                    }}>
-                      <strong>Helpful Tools:</strong> {level.tools}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      );
-    }
-
-    // Customer Engagement Scenarios
-    if (slide.id === 'scenarios') {
-      return (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }}>
-          {engagementScenarios.slice(0, 4).map((scenario) => (
-            <div key={scenario.id} style={{ background: 'rgba(255, 255, 255, 0.95)', padding: '0', overflow: 'hidden', borderLeft: `4px solid ${scenario.color}` }}>
-              <div style={{ background: scenario.bgColor, color: 'white', padding: '16px', fontWeight: 700, fontSize: '1rem' }}>{scenario.title}</div>
-              <div style={{ padding: '16px' }}>
-                <div style={{ fontSize: '0.85rem', color: '#475569', lineHeight: '1.5', marginBottom: '12px' }}>{scenario.scenario}</div>
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#6b7280', marginBottom: '8px' }}>KEY ACTIONS</div>
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                  {scenario.approach.slice(0, 3).map((action, idx) => (
-                    <li key={idx} style={{ fontSize: '0.8rem', color: '#475569', lineHeight: '1.4', padding: '4px 0', display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
-                      <span style={{ color: scenario.color, fontWeight: 700, fontSize: '1rem' }}>•</span>
-                      <span>{action}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          ))}
-        </div>
-      );
-    }
-
-    // Maturity matrices slides (6 pillars)
-    if (slide.id.startsWith('matrices-')) {
-      const matrixIndex = parseInt(slide.id.split('-')[1]) - 1;
-      const matrix = maturityMatrices[matrixIndex];
-      
-      if (!matrix) return <div>No data</div>;
-
-      return (
-        <div style={{ background: 'rgba(255, 255, 255, 0.95)', padding: '20px', maxWidth: '100%', overflow: 'hidden', boxSizing: 'border-box' }}>
-          <h3 style={{ fontSize: '1.3rem', fontWeight: 700, color: matrix.color, marginBottom: '20px', margin: '0 0 20px 0' }}>{matrix.title}</h3>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.75rem', tableLayout: 'fixed' }}>
-            <thead>
-              <tr style={{ background: '#f9fafb' }}>
-                <th style={{ padding: '8px', textAlign: 'left', fontWeight: 700, color: '#1e293b', border: '1px solid #e5e7eb', width: '18%', wordWrap: 'break-word' }}>Dimension</th>
-                <th style={{ padding: '8px', textAlign: 'center', fontWeight: 700, color: '#1e293b', border: '1px solid #e5e7eb', fontSize: '0.7rem', wordWrap: 'break-word' }}>1. Explore</th>
-                <th style={{ padding: '8px', textAlign: 'center', fontWeight: 700, color: '#1e293b', border: '1px solid #e5e7eb', fontSize: '0.7rem', wordWrap: 'break-word' }}>2. Experiment</th>
-                <th style={{ padding: '8px', textAlign: 'center', fontWeight: 700, color: '#1e293b', border: '1px solid #e5e7eb', fontSize: '0.7rem', wordWrap: 'break-word' }}>3. Formalize</th>
-                <th style={{ padding: '8px', textAlign: 'center', fontWeight: 700, color: '#1e293b', border: '1px solid #e5e7eb', fontSize: '0.7rem', wordWrap: 'break-word' }}>4. Optimize</th>
-                <th style={{ padding: '8px', textAlign: 'center', fontWeight: 700, color: '#1e293b', border: '1px solid #e5e7eb', fontSize: '0.7rem', wordWrap: 'break-word' }}>5. Transform</th>
-              </tr>
-            </thead>
-            <tbody>
-              {matrix.dimensions.map((dim, idx) => (
-                <tr key={idx}>
-                  <td style={{ padding: '8px', fontWeight: 600, color: matrix.color, border: '1px solid #e5e7eb', background: '#f9fafb', wordWrap: 'break-word', fontSize: '0.75rem' }}>{dim.name}</td>
-                  {dim.levels.map((level, levelIdx) => (
-                    <td key={levelIdx} style={{ padding: '8px', color: '#475569', lineHeight: '1.3', border: '1px solid #e5e7eb', verticalAlign: 'top', wordWrap: 'break-word', overflowWrap: 'break-word' }}>
-                      {level}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      );
-    }
-
-    // Thank You slide
-    if (slide.id === 'thank-you') {
-      return (
-        <div style={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          textAlign: 'center',
-          padding: '60px',
-          gap: '30px'
-        }}>
-          <div style={{
-            fontSize: '4rem',
-            fontWeight: 800,
-            color: 'white',
-            marginBottom: '20px',
-            textShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
-          }}>
-            Thank You
-          </div>
-          <div style={{
-            fontSize: '1.5rem',
-            fontWeight: 400,
-            color: 'rgba(255, 255, 255, 0.9)',
-            lineHeight: '1.6',
-            maxWidth: '800px'
-          }}>
-            For your time and participation in the Technical Maturity Assessment
-          </div>
-        </div>
-      );
-    }
-
-    // Fallback for any undefined slides
-    return (
-      <div style={{
-        flex: 1,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '1.5rem',
-        color: 'rgba(255, 255, 255, 0.9)',
-        textAlign: 'center',
-        padding: '40px',
-        fontWeight: 600
-      }}>
-        {slide.title}
-      </div>
-    );
-  };
 
   return (
     <PageContainer>

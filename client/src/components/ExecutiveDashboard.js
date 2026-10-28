@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import {
@@ -14,7 +14,6 @@ import {
   FiTrash2,
   FiPlus
 } from 'react-icons/fi';
-import toast from 'react-hot-toast';
 
 // =====================
 // STYLED COMPONENTS
@@ -564,10 +563,9 @@ const ExecutiveDashboard = ({ results, assessment, hideImperatives = false }) =>
 
   // FIX: API returns results.overall.currentScore, not results.overallScore
   const overallScore = results?.overall?.currentScore || results?.overallScore || 0;
-  const categoryDetails = results?.categoryDetails || {};
+  const categoryDetails = useMemo(() => results?.categoryDetails || {}, [results]);
   
   // Calculate metrics
-  const maturityScore = overallScore.toFixed(1);
   const maturityChange = 0.8; // Could be calculated from previous assessment
   
   // Calculate revenue opportunity (simplified - should come from backend)

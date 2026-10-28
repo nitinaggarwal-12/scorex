@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const userRepository = require('../db/userRepository');
 const fileUserStore = require('../db/fileUserStore');
+const { isDurableGcsEnabled } = require('../utils/durableGcsPersistence');
 
 // Track file store initialization
 let fileStoreInitialized = false;
@@ -31,7 +32,10 @@ function guestUserFromSession(sessionId) {
 }
 
 function fileAuthAllowed() {
-  return process.env.ALLOW_FILE_AUTH === 'true' && process.env.NODE_ENV !== 'production';
+  if (process.env.ALLOW_FILE_AUTH === 'true' && process.env.NODE_ENV !== 'production') {
+    return true;
+  }
+  return !process.env.DATABASE_URL && isDurableGcsEnabled();
 }
 
 /**
@@ -200,5 +204,6 @@ module.exports = {
   requireAuthorOrAdmin,
   canAccessResource,
   isGuestSession,
-  guestUserFromSession
+  guestUserFromSession,
+  fileAuthAllowed
 };

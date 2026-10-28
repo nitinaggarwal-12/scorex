@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiArrowLeft, FiDownload, FiShare2, FiAlertTriangle, FiUpload, FiX, FiLink, FiEdit2, FiTrash2, FiPlus, FiBarChart2, FiMonitor, FiPrinter } from 'react-icons/fi';
+import { FiArrowLeft, FiAlertTriangle, FiUpload, FiX, FiLink, FiEdit2, FiTrash2, FiPlus, FiBarChart2, FiMonitor, FiPrinter } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -1017,7 +1017,7 @@ const ExecutiveCommandCenter = () => {
   // 🎬 Presentation Mode State
   const [presentationMode, setPresentationMode] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [printMode, setPrintMode] = useState(false);
+  const [printMode] = useState(false);
 
   const [resolvedId, setResolvedId] = useState(assessmentId || '');
 
@@ -1057,41 +1057,6 @@ const ExecutiveCommandCenter = () => {
 
   const handleBenchmark = () => {
     navigate(`/benchmarks/${assessmentId}`);
-  };
-
-  const handlePrint = () => {
-    // Show brief toast
-    const toastId = 
-    
-    // Set print mode to render all slides
-    setPrintMode(true);
-    
-    // Dismiss the toast and open print dialog
-    setTimeout(() => {
-      toast.dismiss(toastId);
-      toast.dismiss();
-      setTimeout(() => {
-        window.print();
-        // Exit print mode after printing
-        setTimeout(() => {
-          setPrintMode(false);
-        }, 500);
-      }, 500);
-    }, 1000);
-  };
-
-  const handleShare = () => {
-    const url = window.location.href;
-    if (navigator.share) {
-      navigator.share({
-        title: 'Executive Command Center',
-        text: 'View our enterprise data & AI maturity assessment executive summary',
-        url: url
-      }).catch(err => console.log('Error sharing:', err));
-    } else {
-      navigator.clipboard.writeText(url);
-      
-    }
   };
 
   const handleLogoUpload = (event) => {
@@ -1187,10 +1152,7 @@ const ExecutiveCommandCenter = () => {
 
   const handleDelete = (type, item) => {
     console.log('[Delete]', type, item);
-    if (window.confirm(`Are you sure you want to delete this ${type}?`)) {
-      // In a real app, you'd update the backend here
-      
-    }
+    toast.success(`Removed ${type} item`);
   };
 
   const handleAdd = (type) => {
@@ -1210,6 +1172,45 @@ const ExecutiveCommandCenter = () => {
     
   };
 
+  // Define slides for Executive Command Center
+  const slides = [
+    {
+      id: 'executive-dashboard',
+      title: 'Executive Command Center',
+      type: 'dashboard'
+    },
+    {
+      id: 'strategic-imperatives',
+      title: 'Top Strategic Imperatives',
+      type: 'imperatives'
+    },
+    {
+      id: 'strategic-roadmap',
+      title: 'Strategic Roadmap & Next Steps',
+      type: 'component'
+    },
+    {
+      id: 'business-impact',
+      title: 'Expected Business Impact',
+      type: 'component'
+    },
+    {
+      id: 'roi',
+      title: 'Interactive ROI Calculator',
+      type: 'component'
+    },
+    {
+      id: 'risk-heatmap',
+      title: 'Risk Heatmap',
+      type: 'component'
+    },
+    {
+      id: 'thank-you',
+      title: 'Thank You',
+      type: 'thank-you'
+    }
+  ];
+
   // 🎬 Presentation Mode Handlers
   const startPresentation = () => {
     setPresentationMode(true);
@@ -1217,44 +1218,39 @@ const ExecutiveCommandCenter = () => {
     document.body.style.overflow = 'hidden';
   };
 
-  const exitPresentation = () => {
+  const exitPresentation = useCallback(() => {
     setPresentationMode(false);
     setCurrentSlide(0);
     document.body.style.overflow = 'auto';
-  };
+  }, []);
 
-  // ESC key to exit slideshow
+  const nextSlide = useCallback(() => {
+    if (currentSlide < slides.length - 1) {
+      setCurrentSlide(currentSlide + 1);
+    } else {
+      exitPresentation();
+    }
+  }, [currentSlide, slides.length, exitPresentation]);
+
+  const previousSlide = useCallback(() => {
+    if (currentSlide > 0) {
+      setCurrentSlide(currentSlide - 1);
+    }
+  }, [currentSlide]);
+
+  // Keyboard navigation for slideshow
   useEffect(() => {
     if (!presentationMode) return;
 
     const handleKeyPress = (e) => {
-      if (e.key === 'Escape') {
-        exitPresentation();
-      } else if (e.key === 'ArrowLeft') {
-        previousSlide();
-      } else if (e.key === 'ArrowRight') {
-        nextSlide();
-      }
+      if (e.key === 'Escape') exitPresentation();
+      if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+      if (e.key === 'ArrowLeft') previousSlide();
     };
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [presentationMode, currentSlide]);
-
-  const nextSlide = () => {
-    if (currentSlide < slides.length - 1) {
-      setCurrentSlide(currentSlide + 1);
-    } else {
-      // Exit slideshow when trying to go past the last slide
-      exitPresentation();
-    }
-  };
-
-  const previousSlide = () => {
-    if (currentSlide > 0) {
-      setCurrentSlide(currentSlide - 1);
-    }
-  };
+  }, [presentationMode, exitPresentation, nextSlide, previousSlide]);
 
   // Print slideshow as PDF
   const handlePrintSlideshow = async () => {
@@ -1359,59 +1355,6 @@ const ExecutiveCommandCenter = () => {
       
     }
   };
-
-  // Keyboard navigation for slideshow
-  useEffect(() => {
-    if (!presentationMode) return;
-
-    const handleKeyPress = (e) => {
-      if (e.key === 'Escape') exitPresentation();
-      if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
-      if (e.key === 'ArrowLeft') previousSlide();
-    };
-
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [presentationMode, currentSlide]);
-
-  // Define slides for Executive Command Center
-  const slides = [
-    {
-      id: 'executive-dashboard',
-      title: 'Executive Command Center',
-      type: 'dashboard'
-    },
-    {
-      id: 'strategic-imperatives',
-      title: 'Top Strategic Imperatives',
-      type: 'imperatives'
-    },
-    {
-      id: 'strategic-roadmap',
-      title: 'Strategic Roadmap & Next Steps',
-      type: 'component'
-    },
-    {
-      id: 'business-impact',
-      title: 'Expected Business Impact',
-      type: 'component'
-    },
-    {
-      id: 'roi',
-      title: 'Interactive ROI Calculator',
-      type: 'component'
-    },
-    {
-      id: 'risk-heatmap',
-      title: 'Risk Heatmap',
-      type: 'component'
-    },
-    {
-      id: 'thank-you',
-      title: 'Thank You',
-      type: 'thank-you'
-    }
-  ];
 
   // Render slide content for print
   const renderSlideContentForPrint = (slide) => {

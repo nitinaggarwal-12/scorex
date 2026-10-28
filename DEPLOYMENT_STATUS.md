@@ -1,8 +1,8 @@
-# ScoreX (`v3.8.0`) — Deployment & Architecture Status
+# ScoreX (`v3.9.0`) — Deployment & Architecture Status
 
-## Current Status: ✅ Production Ready & Certified (`v3.8.0` — 20-Level Forensic Audit, 16 UI Integrity Gates & Zero Dead Code Certified)
+## Current Status: ✅ Production Ready & Certified (`v3.9.0` — 20 UI Integrity Gates [`46/46` Tests], Single-Source Framework, Durable GCS State Sync & `CI=true` Zero-Warning Build Certified)
 
-### 🏛️ 3-Engine Consolidated Architecture & 20-Level Forensic Remediation
+### 🏛️ 3-Engine Consolidated Architecture & 21-Level Forensic Remediation
 - **Engine 1 — Dynamic Assessment Blueprints Engine**: Active on `/assessments`, `/assessments/hub`, `/assessments/ai-generator`, `/assessments/run/:typeKey`, `/assessments/run/instance/:id`, and `/assessments/report/:id` across all **6 canonical blueprints**:
   1. `enterprise_data_ai_maturity` (`inst_enterprise_data_ai_maturity_demo` — `ConnectPlus Telecom Global`)
   2. `openai_to_gemini_enterprise_migration` (`inst_openai_to_gemini_enterprise_migration_demo` — `Quantum FinTech Global`)

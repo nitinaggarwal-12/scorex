@@ -23,7 +23,7 @@ import { SiGooglecloud } from 'react-icons/si';
 import toast from 'react-hot-toast';
 import DiagramViewer, { sanitizeDrawioXmlAttributes } from './DiagramViewer';
 import dynamicAssessmentService from '../services/dynamicAssessmentService';
-import masterBlueprintCatalog, {
+import {
   getMasterArchitectureDiagrams,
   getMermaidDiagram,
   buildLegacyDataDependencyMapXml,
@@ -774,10 +774,10 @@ const ArchitectureComparisonDiagram = ({
         if (msg.event === 'init') {
           // Send active XML to Draw.io
           const xmlToSend = xmlTargetState === 'current'
-            ? (diagramsData?.currentStateXml || currentXml)
+            ? (diagramsData?.currentStateXml || DEFAULT_CURRENT_XML)
             : xmlTargetState === 'transition'
-            ? (diagramsData?.transitionStateXml || transitionXml)
-            : (diagramsData?.targetStateXml || targetXml);
+            ? (diagramsData?.transitionStateXml || diagramsData?.currentStateXml || DEFAULT_CURRENT_XML)
+            : (diagramsData?.targetStateXml || DEFAULT_TARGET_XML);
 
           if (drawioIframeRef.current && drawioIframeRef.current.contentWindow) {
             drawioIframeRef.current.contentWindow.postMessage(JSON.stringify({
@@ -905,7 +905,6 @@ const ArchitectureComparisonDiagram = ({
   const transitionSubtitle = diagramsData?.transitionSubtitle || 'Phased Strangler Fig & Hybrid Cloud Cutover';
   const targetTitle = rawTargTitle.includes(nb2CodePrefix) ? rawTargTitle : `${nb2CodePrefix}-F-03 • ${rawTargTitle}`;
   const targetSubtitle = diagramsData?.targetSubtitle || `Level ${targetScore} Optimized • Nano Banana 2 Synthesized`;
-  const modelUsed = diagramsData?.modelUsed || 'Nano Banana 2 (nano-banana-2 / gemini-3.1-flash-image-preview) + PromptCanvas 3-Stage Blueprints';
 
   // One view model per compiled stage so the viewer, Copy/Edit/Export actions all follow the selected stage
   const stageViews = {
@@ -1024,11 +1023,6 @@ const ArchitectureComparisonDiagram = ({
     ]);
     setNoteText('');
     toast.success('📝 Reviewer note pinned to architecture diagram');
-  };
-
-  const handleDeleteNote = (noteId) => {
-    setReviewerNotes(prev => prev.filter(n => n.id !== noteId));
-    toast.success('🗑️ Reviewer note removed');
   };
 
   const handleExportDrawio = (xml, filename) => {

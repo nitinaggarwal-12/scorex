@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { 
-  FiBarChart2, 
   FiPlay, 
   FiCheckCircle, 
   FiClock,
@@ -12,8 +11,7 @@ import {
   FiTarget,
   FiLogOut,
   FiEdit3,
-  FiTrendingUp,
-  FiArrowRight
+  FiTrendingUp
 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import * as assessmentService from '../services/assessmentService';
@@ -268,6 +266,7 @@ const AssessmentDashboard = ({ currentAssessment: propAssessment, framework, onL
   const [loading, setLoading] = useState(false);
   const [assessment, setAssessment] = useState(propAssessment);
   const [error, setError] = useState(null);
+  const pendingLogoutRef = React.useRef(0);
 
   // Load assessment from URL param if present and not in props
   useEffect(() => {
@@ -361,10 +360,15 @@ const AssessmentDashboard = ({ currentAssessment: propAssessment, framework, onL
   };
 
   const handleLogout = () => {
-    if (window.confirm('Are you sure you want to logout? You can continue your assessment later from the Past Assessments page.')) {
-      onLogout();
-      navigate('/');
+    const now = Date.now();
+    if (pendingLogoutRef.current < now) {
+      pendingLogoutRef.current = now + 4500;
+      toast('Click Logout again within 4s to sign out (progress is saved)', { icon: 'ℹ️', id: 'confirm-logout' });
+      return;
     }
+    pendingLogoutRef.current = 0;
+    onLogout();
+    navigate('/');
   };
 
   const formatDate = (dateString) => {

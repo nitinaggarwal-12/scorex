@@ -6,7 +6,8 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 
-const FEEDBACK_FILE = path.join(__dirname, '../data/feedback.json');
+const { resolveDataDir, scheduleStateFileSync } = require('../utils/durableGcsPersistence');
+const getFeedbackFile = () => path.join(resolveDataDir(), 'feedback.json');
 const submissionBuckets = new Map();
 
 async function isPostgresAvailable() {
@@ -64,8 +65,9 @@ const SEEDED_FEEDBACK = [
 ];
 
 async function readFeedbackFile() {
+  const feedbackFile = getFeedbackFile();
   try {
-    const data = await fs.readFile(FEEDBACK_FILE, 'utf8');
+    const data = await fs.readFile(feedbackFile, 'utf8');
     const parsed = JSON.parse(data);
     return Array.isArray(parsed) && parsed.length > 0 ? parsed : [...SEEDED_FEEDBACK];
   } catch (error) {
@@ -75,7 +77,13 @@ async function readFeedbackFile() {
 }
 
 async function writeFeedbackFile(feedback) {
-  await fs.writeFile(FEEDBACK_FILE, JSON.stringify(feedback, null, 2), 'utf8');
+  const feedbackFile = getFeedbackFile();
+  await fs.mkdir(path.dirname(feedbackFile), { recursive: true });
+  const serialized = JSON.stringify(feedback, null, 2);
+  const tmpFile = `${feedbackFile}.${process.pid}.${Date.now()}.sync.tmp`;
+  await fs.writeFile(tmpFile, serialized, 'utf8');
+  await fs.rename(tmpFile, feedbackFile);
+  scheduleStateFileSync(feedbackFile, serialized);
 }
 
 function submissionRateLimit(req, res, next) {

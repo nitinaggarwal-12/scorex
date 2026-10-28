@@ -4,27 +4,20 @@ import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FiTrendingUp,
-  FiTrendingDown,
-  FiUsers,
   FiClock,
   FiBarChart2,
   FiDownload,
-  FiShare2,
-  FiFilter,
   FiAward,
   FiTarget,
   FiZap,
   FiActivity,
   FiGlobe,
-  FiCalendar,
   FiCheckCircle,
   FiAlertCircle,
   FiLayers,
   FiPieChart,
-  FiTrendingDown as FiArrowDown,
   FiArrowRight,
   FiRefreshCw,
-  FiEye,
   FiPlay,
   FiPrinter,
   FiChevronLeft,
@@ -1336,44 +1329,31 @@ const Dashboard = () => {
     }
   };
 
-  const handleShare = () => {
-    const url = window.location.href;
-    if (navigator.share) {
-      navigator.share({
-        title: 'Insights Dashboard',
-        url: url
-      }).catch(err => console.log('Error sharing:', err));
-    } else {
-      navigator.clipboard.writeText(url);
-      
-    }
-  };
-
   // Slideshow handlers
   const startPresentation = () => {
     setPresentationMode(true);
     setCurrentSlide(0);
   };
 
-  const exitPresentation = () => {
+  const exitPresentation = useCallback(() => {
     setPresentationMode(false);
     setCurrentSlide(0);
-  };
+  }, []);
 
-  const nextSlide = () => {
+  const nextSlide = useCallback(() => {
     if (currentSlide < totalSlides - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
       // Auto-exit slideshow after last slide
       exitPresentation();
     }
-  };
+  }, [currentSlide, totalSlides, exitPresentation]);
 
-  const previousSlide = () => {
+  const previousSlide = useCallback(() => {
     if (currentSlide > 0) {
       setCurrentSlide(currentSlide - 1);
     }
-  };
+  }, [currentSlide]);
 
   // Keyboard navigation for slideshow
   useEffect(() => {
@@ -1391,7 +1371,7 @@ const Dashboard = () => {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [presentationMode, currentSlide]);
+  }, [presentationMode, exitPresentation, previousSlide, nextSlide]);
 
   // Print slideshow handler
   const handlePrintSlideshow = async () => {

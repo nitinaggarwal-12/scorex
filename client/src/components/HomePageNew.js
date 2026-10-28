@@ -5,14 +5,9 @@ import { motion } from 'framer-motion';
 import {
   FiCheckCircle,
   FiArrowRight,
-  FiTrendingUp,
   FiFolder,
   FiShield,
-  FiZap,
-  FiClock,
   FiDollarSign,
-  FiUsers,
-  FiAward,
   FiFileText,
   FiCpu,
   FiLayers

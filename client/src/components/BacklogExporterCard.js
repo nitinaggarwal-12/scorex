@@ -6,11 +6,6 @@ import {
   FiCopy, 
   FiCheck, 
   FiList, 
-  FiExternalLink, 
-  FiFileText,
-  FiZap,
-  FiLayers,
-  FiFolder,
   FiChevronDown,
   FiChevronUp
 } from 'react-icons/fi';

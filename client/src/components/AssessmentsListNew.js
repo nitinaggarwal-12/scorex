@@ -1,17 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import {
   FiSearch,
   FiFilter,
-  FiMoreVertical,
   FiEdit2,
   FiStar,
   FiDownload,
   FiUpload,
   FiPlus,
-  FiChevronDown,
   FiCopy,
   FiTrash2,
   FiAlertTriangle,
@@ -23,7 +21,6 @@ import authService from '../services/authService';
 import * as assessmentService from '../services/assessmentService';
 import dynamicAssessmentService from '../services/dynamicAssessmentService';
 import excelService from '../services/excelService';
-import { exportAssessmentToExcel } from '../services/excelExportService';
 
 // =======================
 // STYLED COMPONENTS
@@ -772,11 +769,7 @@ const AssessmentsListNew = () => {
     setViewMode(v === 'blueprints' ? 'blueprints' : 'dossiers');
   }, [location.search]);
 
-  useEffect(() => {
-    fetchAssessments();
-  }, []);
-
-  const normalizeAssessmentRecord = (raw, familyHint = 'classic') => {
+  const normalizeAssessmentRecord = useCallback((raw, familyHint = 'classic') => {
     const id = raw.id || raw.assessmentId;
     const isFlagship6Pillar =
       familyHint === 'classic' ||
@@ -905,9 +898,9 @@ const AssessmentsListNew = () => {
       updated_at: updatedAt,
       updatedAt: updatedAt
     };
-  };
+  }, []);
 
-  const fetchAssessments = async () => {
+  const fetchAssessments = useCallback(async () => {
     try {
       setLoading(true);
       const headers = authService.getAuthHeader ? authService.getAuthHeader() : {};
@@ -965,7 +958,11 @@ const AssessmentsListNew = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [normalizeAssessmentRecord]);
+
+  useEffect(() => {
+    fetchAssessments();
+  }, [fetchAssessments]);
 
   const handleDeleteAll = async () => {
     try {
@@ -978,30 +975,6 @@ const AssessmentsListNew = () => {
       }
     } catch (error) {
       console.error('Error deleting all assessments:', error);
-    }
-  };
-
-  const handleGenerateSample = async (level) => {
-    try {
-      toast.loading(`Generating ${level} sample assessment...`, { id: 'sample' });
-      const result = await assessmentService.generateSampleAssessment(level);
-      
-      if (result && result.id) {
-        await fetchAssessments();
-        navigate(`/results/${result.id}`);
-      }
-    } catch (error) {
-      console.error('Error generating sample:', error);
-    }
-  };
-
-  const handleExportAssessment = async (assessmentId, assessmentName, event) => {
-    event.stopPropagation();
-    try {
-      toast.loading('Exporting assessment...', { id: 'export' });
-      await exportAssessmentToExcel(assessmentId, assessmentName);
-    } catch (error) {
-      console.error('Error exporting:', error);
     }
   };
 
@@ -1052,11 +1025,24 @@ const AssessmentsListNew = () => {
     }
   };
 
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [confirmBatchDelete, setConfirmBatchDelete] = useState(false);
+
   const handleDeleteAssessment = async (assessment, assessmentName, event) => {
     event.stopPropagation();
     const assessmentId = typeof assessment === 'object' ? (assessment.id || assessment.assessmentId) : assessment;
     const family = typeof assessment === 'object' ? (assessment.assessmentFamily || (assessment.isDynamic ? 'dynamic' : 'classic')) : 'classic';
     const name = assessmentName || (typeof assessment === 'object' ? (assessment.assessment_name || assessment.assessmentName) : 'this assessment');
+
+    if (confirmDeleteId !== assessmentId) {
+      setConfirmDeleteId(assessmentId);
+      toast(`Click Confirm? to permanently delete "${name}"`, { icon: '⚠️', id: `confirm-del-${assessmentId}` });
+      setTimeout(() => {
+        setConfirmDeleteId((prev) => (prev === assessmentId ? null : prev));
+      }, 4500);
+      return;
+    }
+    setConfirmDeleteId(null);
     
     try {
       toast.loading(`Deleting "${name}"...`, { id: 'delete' });
@@ -1209,6 +1195,13 @@ const AssessmentsListNew = () => {
 
   const handleBatchDelete = async () => {
     if (selectedIds.size === 0) return;
+    if (!confirmBatchDelete) {
+      setConfirmBatchDelete(true);
+      toast(`Click Confirm Batch Delete (${selectedIds.size}) within 4s to confirm`, { icon: '⚠️', id: 'confirm-batch-del' });
+      setTimeout(() => setConfirmBatchDelete(false), 4500);
+      return;
+    }
+    setConfirmBatchDelete(false);
     try {
       toast.loading(`Deleting ${selectedIds.size} assessments...`, { id: 'batch-delete' });
       const ids = Array.from(selectedIds);
@@ -1424,20 +1417,6 @@ const AssessmentsListNew = () => {
         return 0;
     }
   });
-
-  const getTimeAgo = (dateString) => {
-    if (!dateString) return 'Just now';
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInHours = Math.floor((now - date) / (1000 * 60 * 60));
-    
-    if (diffInHours < 1) return 'Just now';
-    if (diffInHours < 24) return `${diffInHours} hours ago`;
-    const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays === 1) return '1 day ago';
-    if (diffInDays < 7) return `${diffInDays} days ago`;
-    return date.toLocaleDateString();
-  };
 
   const formatDateTime = (dateString) => {
     if (!dateString) return 'N/A';
@@ -1870,7 +1849,6 @@ const AssessmentsListNew = () => {
             {sortedAssessments.map((assessment) => {
               const status = getStatusFromAssessment(assessment);
               const progress = getProgressPercentage(assessment);
-              const completedPillars = assessment.completedCategories || [];
               
               // Use assessmentId or id, whichever is available
               const assessmentId = assessment.id || assessment.assessmentId;
@@ -2014,10 +1992,12 @@ const AssessmentsListNew = () => {
                       </ActionButton>
                       <ActionButton
                         onClick={(e) => handleDeleteAssessment(assessment, assessment.assessment_name, e)}
-                        title="Delete this assessment"
-                        style={{ color: '#dc2626', borderColor: '#fecaca', background: '#fef2f2' }}
+                        title={confirmDeleteId === assessmentId ? 'Click again to confirm deletion' : 'Delete this assessment'}
+                        style={confirmDeleteId === assessmentId
+                          ? { color: '#ffffff', borderColor: '#dc2626', background: '#dc2626' }
+                          : { color: '#dc2626', borderColor: '#fecaca', background: '#fef2f2' }}
                       >
-                        <FiTrash2 /> Delete
+                        {confirmDeleteId === assessmentId ? <><FiTrash2 /> Confirm?</> : <><FiTrash2 /> Delete</>}
                       </ActionButton>
                       <ActionButton
                         onClick={(e) => handleExportToExcel(assessment, e)}
@@ -2089,7 +2069,7 @@ const AssessmentsListNew = () => {
                 <FiCopy size={14} /> Batch Clone ({selectedIds.size})
               </BatchActionButton>
               <BatchActionButton $danger onClick={handleBatchDelete}>
-                <FiTrash2 size={14} /> Batch Delete ({selectedIds.size})
+                <FiTrash2 size={14} /> {confirmBatchDelete ? `Confirm Batch Delete (${selectedIds.size})?` : `Batch Delete (${selectedIds.size})`}
               </BatchActionButton>
             </div>
           </FloatingBatchBar>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -408,7 +408,10 @@ export const UnifiedDocumentPreviewModal = ({
   const maturityStage = instance?.maturityLevel || report?.maturityLevel || 'Defined';
   const scores = instance?.scores || report?.dimensionScores || {};
   const dimensions = framework?.dimensions || [];
-  const recs = report?.prioritizedRecommendations || report?.prioritizedActions || [];
+  const recs = useMemo(
+    () => report?.prioritizedRecommendations || report?.prioritizedActions || [],
+    [report?.prioritizedRecommendations, report?.prioritizedActions]
+  );
   const safeName = org.toLowerCase().replace(/[^a-z0-9]/g, '_');
 
   const liveRoiEstimate =
@@ -422,7 +425,7 @@ export const UnifiedDocumentPreviewModal = ({
     report?.financialAnalysis?.tcoArbitrageFormatted ||
     (report?.financialAnalysis?.tcoReductionPct ? `${report.financialAnalysis.tcoReductionPct}% TCO Reduction` : 'Pending TCO Inputs');
 
-  const buildLiveSpeakerNotes = () => {
+  const buildLiveSpeakerNotes = useCallback(() => {
     const slidesArr = report?.slideDeckSynthesis?.slides;
     if (Array.isArray(slidesArr) && slidesArr.length > 0) {
       const map = {};
@@ -439,7 +442,7 @@ export const UnifiedDocumentPreviewModal = ({
       4: report?.architectureDiagrams?.reasoning || `This blueprint outlines ${org}'s target state service mesh, event streaming backbone, and enterprise governance boundary.`,
       5: `Finally, our 3-phase execution roadmap prioritizes high-impact quick wins in Phase 1 (${report?.transformationRoadmap?.phase1?.focus || 'Foundation'}) leading into autonomous scale.`
     };
-  };
+  }, [report, org, liveRoiEstimate, overallScore, liveTcoArbitrage]);
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [customDeckData, setCustomDeckData] = useState({
@@ -478,7 +481,7 @@ export const UnifiedDocumentPreviewModal = ({
         timeline: r.timeline || `Phase ${(i % 3) + 1}`
       }))
     }));
-  }, [report, org, overallScore, maturityStage]);
+  }, [report, org, overallScore, maturityStage, framework?.title, liveRoiEstimate, liveTcoArbitrage, buildLiveSpeakerNotes, recs]);
 
   if (!isOpen) return null;
 

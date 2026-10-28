@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import styled from 'styled-components';
 import { FiUsers, FiUserPlus, FiEdit2, FiTrash2, FiCheck, FiX, FiSend } from 'react-icons/fi';
+import toast from 'react-hot-toast';
 import authService from '../services/authService';
 
 // Use relative URL in production (Railway) or custom port, localhost:5001 only in standalone dev server on :3000
@@ -551,13 +552,18 @@ const UserManagement = () => {
     }
   };
 
+  const pendingUserDeleteRef = React.useRef({ id: null, expiresAt: 0 });
+
   const handleDeleteUser = async (userId) => {
-    if (!window.confirm('Are you sure you want to delete this user?')) {
+    const now = Date.now();
+    if (pendingUserDeleteRef.current.id !== userId || pendingUserDeleteRef.current.expiresAt < now) {
+      pendingUserDeleteRef.current = { id: userId, expiresAt: now + 4500 };
+      toast('Click Delete again within 4s to confirm user removal', { icon: '⚠️', id: `confirm-usr-${userId}` });
       return;
     }
+    pendingUserDeleteRef.current = { id: null, expiresAt: 0 };
 
     try {
-      // Note: We need to add a delete endpoint to authService
       const sessionId = localStorage.getItem('sessionId');
       const response = await fetch(`${API_URL}/auth/users/${userId}`, {
         method: 'DELETE',
@@ -567,12 +573,11 @@ const UserManagement = () => {
       });
       
       if (!response.ok) throw new Error('Failed to delete user');
-      
-      
+      toast.success('User deleted');
       fetchUsers();
     } catch (error) {
       console.error('Error deleting user:', error);
-      
+      toast.error(error.message || 'Failed to delete user');
     }
   };
 

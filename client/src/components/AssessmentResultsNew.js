@@ -1610,6 +1610,27 @@ const getActivePillars = (resultsData) => {
   return DEFAULT_PILLARS;
 };
 
+const DEFAULT_CUSTOMIZATIONS = {
+  title: '',
+  summary: '',
+  pillars: {},
+  phases: {},
+  features: {},
+  pillarColors: {}, // Custom colors for each pillar
+  nextSteps: {},
+  goodItems: {}, // { pillarId_index: text }
+  badItems: {}, // { pillarId_index: text }
+  newGoodItems: {}, // { pillarId: [array of new items] }
+  newBadItems: {}, // { pillarId: [array of new items] }
+  newFeatures: {}, // { pillarId: [array of new features] }
+  newNextSteps: {}, // { pillarId: [array of new next steps] }
+  newPhaseItems: {}, // { phaseId: [array of new items] }
+  newImpactMetrics: [], // Array of new impact metrics
+  impactMetrics: {}, // { metricKey: { value, label, drivers } }
+  cardColors: {}, // { cardKey: { bg, border, text } }
+  collapsedSections: {} // { sectionKey: boolean }
+};
+
 const AssessmentResultsNew = () => {
   const { assessmentId } = useParams();
   const navigate = useNavigate();
@@ -1623,7 +1644,7 @@ const AssessmentResultsNew = () => {
   const [benchmarkData, setBenchmarkData] = useState(null);
   const [benchmarkLoading, setBenchmarkLoading] = useState(false);
   const [showSimulator, setShowSimulator] = useState(false);
-  const [simulatedTargets, setSimulatedTargets] = useState(null);
+  const [, setSimulatedTargets] = useState(null);
 
   // Dynamic assessment data & active pillars resolution
   const resultsData = results?.data || results;
@@ -1633,13 +1654,9 @@ const AssessmentResultsNew = () => {
   // Slideshow mode state
   const [presentationMode, setPresentationMode] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [printMode, setPrintMode] = useState(false);
   
   // Edit state management
-  const [editMode, setEditMode] = useState(false); // Global edit mode toggle
   const [editingPillar, setEditingPillar] = useState(null);
-  const [editingPhase, setEditingPhase] = useState(null);
-  const [editingPhaseItem, setEditingPhaseItem] = useState(null); // Track which phase item is being edited
   const [editingFeature, setEditingFeature] = useState(null); // Track which feature is being edited
   const [editingNextStep, setEditingNextStep] = useState(null); // Track which next step is being edited
   const [editingGoodItem, setEditingGoodItem] = useState(null); // Track which "What's Working" item is being edited
@@ -1648,37 +1665,14 @@ const AssessmentResultsNew = () => {
   const [addingBadItem, setAddingBadItem] = useState(null); // Track which pillar is adding a new "Key Challenge" item
   const [addingFeature, setAddingFeature] = useState(null); // Track which pillar is adding a new feature
   const [addingNextStep, setAddingNextStep] = useState(null); // Track which pillar is adding a new next step
-  const [addingPhaseItem, setAddingPhaseItem] = useState(null); // Track which phase is adding a new item
-  const [addingImpactMetric, setAddingImpactMetric] = useState(false); // Track if adding a new impact metric
-  const [editingImpactMetric, setEditingImpactMetric] = useState(null); // Track which impact metric is being edited
   const [editingNewGoodItem, setEditingNewGoodItem] = useState(null); // Track which new "What's Working" item is being edited
   const [editingNewBadItem, setEditingNewBadItem] = useState(null); // Track which new "Key Challenge" item is being edited
   const [editingNewFeature, setEditingNewFeature] = useState(null); // Track which new feature is being edited
   const [editingNewNextStep, setEditingNewNextStep] = useState(null); // Track which new next step is being edited
   const [editedContent, setEditedContent] = useState({});
   const [showColorPicker, setShowColorPicker] = useState(null); // Track which pillar's color picker is shown
-  const defaultCustomizations = {
-    title: '',
-    summary: '',
-    pillars: {},
-    phases: {},
-    features: {},
-    pillarColors: {}, // Custom colors for each pillar
-    nextSteps: {},
-    goodItems: {}, // { pillarId_index: text }
-    badItems: {}, // { pillarId_index: text }
-    newGoodItems: {}, // { pillarId: [array of new items] }
-    newBadItems: {}, // { pillarId: [array of new items] }
-    newFeatures: {}, // { pillarId: [array of new features] }
-    newNextSteps: {}, // { pillarId: [array of new next steps] }
-    newPhaseItems: {}, // { phaseId: [array of new items] }
-    newImpactMetrics: [], // Array of new impact metrics
-    impactMetrics: {}, // { metricKey: { value, label, drivers } }
-    cardColors: {}, // { cardKey: { bg, border, text } }
-    collapsedSections: {} // { sectionKey: boolean }
-  };
 
-  const [customizations, setCustomizations] = useState(defaultCustomizations);
+  const [customizations, setCustomizations] = useState(DEFAULT_CUSTOMIZATIONS);
   const loadedAssessmentIdRef = useRef(null);
 
   // Load customizations from localStorage on assessment change
@@ -1689,19 +1683,19 @@ const AssessmentResultsNew = () => {
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
-          setCustomizations({ ...defaultCustomizations, ...parsed });
+          setCustomizations({ ...DEFAULT_CUSTOMIZATIONS, ...parsed });
           console.log('[AssessmentResultsNew] Loaded customizations from localStorage for:', assessmentId, parsed);
         } catch (error) {
           console.error('[AssessmentResultsNew] Error parsing saved customizations:', error);
-          setCustomizations(defaultCustomizations);
+          setCustomizations(DEFAULT_CUSTOMIZATIONS);
         }
       } else {
         // Reset to default customizations for new/un-customized assessment
-        setCustomizations(defaultCustomizations);
+        setCustomizations(DEFAULT_CUSTOMIZATIONS);
       }
       loadedAssessmentIdRef.current = assessmentId;
     } else {
-      setCustomizations(defaultCustomizations);
+      setCustomizations(DEFAULT_CUSTOMIZATIONS);
       loadedAssessmentIdRef.current = null;
     }
   }, [assessmentId]);
@@ -1921,70 +1915,6 @@ const AssessmentResultsNew = () => {
     
   };
 
-  // Edit handlers for phase cards
-  const handleEditPhase = (phaseId, items) => {
-    setEditingPhase(phaseId);
-    setEditedContent({ items: items.join('\n') });
-  };
-
-  const handleSavePhase = (phaseId) => {
-    const newCustomizations = { ...customizations };
-    newCustomizations.phases[phaseId] = editedContent.items.split('\n').filter(line => line.trim());
-    setCustomizations(newCustomizations);
-    setEditingPhase(null);
-    
-  };
-
-  const handleCancelPhaseEdit = () => {
-    setEditingPhase(null);
-    setEditedContent({});
-  };
-
-  const handleRemovePhaseCustomization = (phaseId) => {
-    const newCustomizations = { ...customizations };
-    delete newCustomizations.phases[phaseId];
-    setCustomizations(newCustomizations);
-    
-  };
-
-  // Edit handlers for individual phase items
-  const handleEditPhaseItem = (phaseId, itemIndex, itemText) => {
-    setEditingPhaseItem(`${phaseId}-item-${itemIndex}`);
-    setEditedContent({ itemText });
-  };
-
-  const handleSavePhaseItem = (phaseId, itemIndex) => {
-    const newCustomizations = { ...customizations };
-    
-    // Get current phase items (either customized or original)
-    const currentPhase = roadmapPhases.find(p => p.id === phaseId);
-    if (!currentPhase) return;
-    
-    const updatedItems = [...currentPhase.items];
-    updatedItems[itemIndex] = editedContent.itemText;
-    
-    newCustomizations.phases[phaseId] = updatedItems;
-    setCustomizations(newCustomizations);
-    setEditingPhaseItem(null);
-    
-  };
-
-  const handleDeletePhaseItem = (phaseId, itemIndex) => {
-    if (!window.confirm('Are you sure you want to delete this item?')) return;
-    
-    const newCustomizations = { ...customizations };
-    
-    // Get current phase items
-    const currentPhase = roadmapPhases.find(p => p.id === phaseId);
-    if (!currentPhase) return;
-    
-    const updatedItems = currentPhase.items.filter((_, idx) => idx !== itemIndex);
-    newCustomizations.phases[phaseId] = updatedItems;
-    setCustomizations(newCustomizations);
-    
-  };
-
-
   const handlePrintSlideshow = async () => {
     const toastId = toast.loading('Generating PDF from slideshow... This may take a minute', {
       position: 'top-center'
@@ -2129,25 +2059,6 @@ const AssessmentResultsNew = () => {
     }
   };
 
-  // Calculate overall score dynamically from all active pillars
-  const calculateOverallScore = () => {
-    const categoryDetails = resultsData?.categoryDetails;
-    if (!categoryDetails) return 0;
-    
-    let totalScore = 0;
-    let count = 0;
-    
-    pillars.forEach(p => {
-      const pillarData = categoryDetails[p.id];
-      if (pillarData && pillarData.score !== undefined) {
-        totalScore += pillarData.score;
-        count++;
-      }
-    });
-    
-    return count > 0 ? totalScore / count : 0;
-  };
-
   // Keyboard navigation for slideshow
   useEffect(() => {
     if (!presentationMode) return;
@@ -2250,162 +2161,6 @@ const AssessmentResultsNew = () => {
     const newCustomizations = { ...customizations };
     newCustomizations.nextSteps[key] = null; // Mark as deleted
     setCustomizations(newCustomizations);
-    
-  };
-
-  // Add handlers for phase items
-  const handleAddPhaseItem = (phaseId) => {
-    setAddingPhaseItem(phaseId);
-    setEditedContent({
-      ...editedContent,
-      [`new-phase-${phaseId}`]: ''
-    });
-  };
-
-  const handleSaveNewPhaseItem = (phaseId) => {
-    const newText = editedContent[`new-phase-${phaseId}`];
-    if (!newText || !newText.trim()) {
-      
-      return;
-    }
-    
-    const newCustomizations = { ...customizations };
-    if (!newCustomizations.newPhaseItems[phaseId]) {
-      newCustomizations.newPhaseItems[phaseId] = [];
-    }
-    newCustomizations.newPhaseItems[phaseId].push(newText.trim());
-    setCustomizations(newCustomizations);
-    setAddingPhaseItem(null);
-    
-  };
-
-  // Add handlers for impact metrics
-  const handleAddImpactMetric = () => {
-    setAddingImpactMetric(true);
-    setEditedContent({
-      ...editedContent,
-      'new-metric-value': '',
-      'new-metric-label': '',
-      'new-metric-drivers': ''
-    });
-  };
-
-  const handleSaveNewImpactMetric = () => {
-    const newValue = editedContent['new-metric-value'];
-    const newLabel = editedContent['new-metric-label'];
-    const newDrivers = editedContent['new-metric-drivers'];
-    
-    if (!newValue || !newValue.trim() || !newLabel || !newLabel.trim()) {
-      
-      return;
-    }
-    
-    const newCustomizations = { ...customizations };
-    if (!newCustomizations.newImpactMetrics) {
-      newCustomizations.newImpactMetrics = [];
-    }
-    newCustomizations.newImpactMetrics.push({
-      value: newValue.trim(),
-      label: newLabel.trim(),
-      drivers: newDrivers ? newDrivers.split(',').map(d => d.trim()).filter(d => d) : []
-    });
-    setCustomizations(newCustomizations);
-    setAddingImpactMetric(false);
-    
-  };
-
-  // Edit handlers for impact metrics
-  const handleEditImpactMetric = (metricKey, metric) => {
-    setEditingImpactMetric(metricKey);
-    setEditedContent({
-      ...editedContent,
-      [`${metricKey}-value`]: metric.value,
-      [`${metricKey}-label`]: metric.label,
-      [`${metricKey}-drivers`]: metric.drivers ? metric.drivers.join(', ') : ''
-    });
-  };
-
-  const handleSaveImpactMetric = (metricKey) => {
-    const newValue = editedContent[`${metricKey}-value`];
-    const newLabel = editedContent[`${metricKey}-label`];
-    const newDrivers = editedContent[`${metricKey}-drivers`];
-    
-    if (!newValue || !newValue.trim() || !newLabel || !newLabel.trim()) {
-      
-      return;
-    }
-    
-    setCustomizations({
-      ...customizations,
-      impactMetrics: {
-        ...customizations.impactMetrics,
-        [metricKey]: {
-          value: newValue.trim(),
-          label: newLabel.trim(),
-          drivers: newDrivers ? newDrivers.split(',').map(d => d.trim()).filter(d => d) : []
-        }
-      }
-    });
-    setEditingImpactMetric(null);
-    
-  };
-
-  const handleDeleteImpactMetric = (metricKey) => {
-    setCustomizations({
-      ...customizations,
-      impactMetrics: {
-        ...customizations.impactMetrics,
-        [metricKey]: null // Mark as deleted
-      }
-    });
-    
-  };
-
-  const handleDeleteNewImpactMetric = (index) => {
-    const newMetrics = [...customizations.newImpactMetrics];
-    newMetrics.splice(index, 1);
-    setCustomizations({
-      ...customizations,
-      newImpactMetrics: newMetrics
-    });
-    
-  };
-
-  const handleEditNewImpactMetric = (metricIndex, metric) => {
-    const key = `new-metric-${metricIndex}`;
-    setEditingImpactMetric(key);
-    setEditedContent({
-      ...editedContent,
-      [`${key}-value`]: metric.value,
-      [`${key}-label`]: metric.label,
-      [`${key}-drivers`]: metric.drivers?.join(', ') || ''
-    });
-  };
-
-  const handleSaveEditedNewImpactMetric = (metricIndex) => {
-    const key = `new-metric-${metricIndex}`;
-    const newValue = editedContent[`${key}-value`];
-    const newLabel = editedContent[`${key}-label`];
-    const newDrivers = editedContent[`${key}-drivers`];
-    
-    if (!newValue || !newValue.trim() || !newLabel || !newLabel.trim()) {
-      
-      return;
-    }
-    
-    const driversArray = newDrivers ? newDrivers.split(',').map(d => d.trim()).filter(d => d) : [];
-    const newMetrics = [...customizations.newImpactMetrics];
-    newMetrics[metricIndex] = {
-      value: newValue.trim(),
-      label: newLabel.trim(),
-      drivers: driversArray
-    };
-    
-    setCustomizations({
-      ...customizations,
-      newImpactMetrics: newMetrics
-    });
-    setEditingImpactMetric(null);
     
   };
 
@@ -2662,23 +2417,6 @@ const AssessmentResultsNew = () => {
     }
   };
 
-  const handleSaveAddedBadItem = (pillarId) => {
-    const newText = editedContent[`new-bad-${pillarId}`];
-    if (!newText || !newText.trim()) {
-      
-      return;
-    }
-    
-    const newCustomizations = { ...customizations };
-    if (!newCustomizations.newBadItems[pillarId]) {
-      newCustomizations.newBadItems[pillarId] = [];
-    }
-    newCustomizations.newBadItems[pillarId].push(newText.trim());
-    setCustomizations(newCustomizations);
-    setAddingBadItem(null);
-    
-  };
-
   const handleAddFeature = (pillarId) => {
     setAddingFeature(pillarId);
     setEditedContent({
@@ -2735,74 +2473,6 @@ const AssessmentResultsNew = () => {
     setCustomizations(newCustomizations);
     setAddingNextStep(null);
     
-  };
-
-  // Edit handlers for features and next steps
-  const handleEditFeature = (pillarId, featureIndex, feature) => {
-    const key = `${pillarId}-${featureIndex}`;
-    setEditingFeature(key);
-    setEditedContent({
-      ...editedContent,
-      [key]: {
-        name: feature.name,
-        description: feature.description,
-        releaseDate: feature.releaseDate || '',
-        docs: feature.docs || ''
-      }
-    });
-  };
-
-  const handleSaveFeature = (pillarId, featureIndex) => {
-    const key = `${pillarId}-${featureIndex}`;
-    setCustomizations({
-      ...customizations,
-      features: {
-        ...customizations.features,
-        [key]: editedContent[key]
-      }
-    });
-    setEditingFeature(null);
-    
-  };
-
-  const handleEditNextStep = (pillarId, stepIndex, step) => {
-    const key = `${pillarId}-${stepIndex}`;
-    setEditingNextStep(key);
-    setEditedContent({
-      ...editedContent,
-      [key]: step
-    });
-  };
-
-  const handleSaveNextStep = (pillarId, stepIndex) => {
-    const key = `${pillarId}-${stepIndex}`;
-    setCustomizations({
-      ...customizations,
-      nextSteps: {
-        ...customizations.nextSteps,
-        [key]: editedContent[key]
-      }
-    });
-    setEditingNextStep(null);
-    
-  };
-
-  const handleEditTitle = (title) => {
-    setEditedContent({ ...editedContent, title });
-  };
-
-  const handleSaveTitle = () => {
-    setCustomizations({ ...customizations, title: editedContent.title });
-    
-  };
-
-  const toggleEditMode = () => {
-    setEditMode(!editMode);
-    if (editMode) {
-      
-    } else {
-      
-    }
   };
 
   if (loading) {
@@ -2931,80 +2601,6 @@ const AssessmentResultsNew = () => {
   const currentMaturity = hasAnyResponses ? (resultsData?.overall?.currentScore || 1) : 1;
   const targetMaturity = hasAnyResponses ? (resultsData?.overall?.futureScore || 1) : 1;
   const improvementLevel = parseFloat((targetMaturity - currentMaturity).toFixed(1)); // 🔥 Round to 1 decimal place
-
-  // Phase colors for Strategic Roadmap
-  const phaseColors = {
-    phase1: {
-      bgColor: '#fef3c7',
-      borderColor: '#fbbf24',
-      accentColor: '#f59e0b'
-    },
-    phase2: {
-      bgColor: '#fed7aa',
-      borderColor: '#fb923c',
-      accentColor: '#ea580c'
-    },
-    phase3: {
-      bgColor: '#d1fae5',
-      borderColor: '#86efac',
-      accentColor: '#10b981'
-    }
-  };
-  
-  // Get dynamic roadmap phases from API (with customization override)
-  const getRoadmapPhases = () => {
-    const resultsData = results?.data || results;
-    const apiRoadmap = resultsData?.roadmap;
-    
-    console.log('[AssessmentResultsNew] API roadmap:', apiRoadmap);
-    
-    // Use dynamic roadmap from API if available
-    if (apiRoadmap?.phases && Array.isArray(apiRoadmap.phases)) {
-      return apiRoadmap.phases.map(phase => ({
-        ...phase,
-        ...phaseColors[phase.id],
-        // Allow customization override
-        items: customizations.phases[phase.id] || phase.items
-      }));
-    }
-    
-    // Fallback to default if API doesn't return roadmap
-    console.log('[AssessmentResultsNew] No API roadmap, using default phases');
-    return [
-      {
-        id: 'phase1',
-        title: 'Phase 1: Foundation (0–3 months)',
-        ...phaseColors.phase1,
-        items: customizations.phases.phase1 || [
-          'Implement Dataplex Universal Catalog with initial RBAC/ABAC roles',
-          'Establish data quality monitoring and observability',
-          'Launch initial governance enablement sessions'
-        ]
-      },
-      {
-        id: 'phase2',
-        title: 'Phase 2: Scale (3–6 months)',
-        ...phaseColors.phase2,
-        items: customizations.phases.phase2 || [
-          'Automate pipeline reliability tracking via Dataform & Datastream',
-          'Integrate ML flow metrics with centralized dashboards',
-          'Deploy first GenAI-enabled use case under governance'
-        ]
-      },
-      {
-        id: 'phase3',
-        title: 'Phase 3: Optimize (6–12 months)',
-        ...phaseColors.phase3,
-        items: customizations.phases.phase3 || [
-          'Formalize MLOps CI/CD for model deployment',
-          'Expand GenAI use cases with RAG implementation',
-          'Align data mesh principles with Dataplex Universal Catalog'
-        ]
-      }
-    ];
-  };
-  
-  const roadmapPhases = getRoadmapPhases();
 
   // Get pillar-specific results
   // Helper function to extract text from recommendation items
@@ -3850,7 +3446,7 @@ const AssessmentResultsNew = () => {
                 {editingPillar === pillar.id ? (
                   <PillarBody style={{ display: 'block' }}>
                     <div style={{ marginBottom: '20px' }}>
-                      <label style={{ display: 'block', fontWeight: 600, marginBottom: '8px', color: '#10b981', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <label style={{ fontWeight: 600, marginBottom: '8px', color: '#10b981', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <FiCheckCircle /> What's Working (one per line):
                       </label>
                       <EditableTextarea
@@ -3860,7 +3456,7 @@ const AssessmentResultsNew = () => {
                       />
                     </div>
                     <div style={{ marginBottom: '20px' }}>
-                      <label style={{ display: 'block', fontWeight: 600, marginBottom: '8px', color: '#ef4444', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <label style={{ fontWeight: 600, marginBottom: '8px', color: '#ef4444', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <FiAlertTriangle /> Key Challenges (one per line):
                       </label>
                       <EditableTextarea
@@ -3870,7 +3466,7 @@ const AssessmentResultsNew = () => {
                       />
                     </div>
                     <div>
-                      <label style={{ display: 'block', fontWeight: 600, marginBottom: '8px', color: '#3b82f6', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <label style={{ fontWeight: 600, marginBottom: '8px', color: '#3b82f6', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <FiInfo /> Strategic Recommendations (one per line):
                       </label>
                       <EditableTextarea
@@ -6297,11 +5893,6 @@ const AssessmentResultsNew = () => {
                     // Get pillar data from results using the same logic as getPillarData
                     const resultsData = results?.data || results;
                     const categoryData = resultsData?.categoryDetails?.[pillarDef.id];
-                    
-                    // Get prioritizedActions for this pillar (contains theGood/theBad)
-                    const prioritized = Array.isArray(resultsData?.prioritizedActions) 
-                      ? resultsData.prioritizedActions.find(pa => pa.area === pillarDef.id || pa.pillar === pillarDef.id || pa.pillarId === pillarDef.id)
-                      : null;
                     
                     // Calculate maturity level from score
                     const score = categoryData?.score || 0;

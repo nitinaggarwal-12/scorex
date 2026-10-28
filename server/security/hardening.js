@@ -348,10 +348,15 @@ function installSecurity(app) {
         if (req.method === 'OPTIONS') return res.status(204).end();
 
         if (req.path === '/status') {
+          const { getDurablePersistenceStatus } = require('../utils/durableGcsPersistence');
+          const dp = getDurablePersistenceStatus();
           return res.status(200).json({
             success: true,
             status: 'ok',
-            service: 'scorex-api'
+            service: 'scorex-api',
+            storageMode: dp.mode,
+            postgresConnected: dp.postgresConnected,
+            gcsEnabled: dp.gcsEnabled
           });
         }
 

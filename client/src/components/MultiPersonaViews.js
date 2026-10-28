@@ -369,16 +369,11 @@ const MultiPersonaViews = ({
   const gap = Math.max(0.5, tgt - curr);
 
   // Dynamic Board Metrics (Harmonized with Live Gemini 3.8 Flash financialAnalysis)
-  const quartileBefore = curr < 2.5 ? 'Bottom 40%' : curr < 3.5 ? 'Mid 50%' : 'Top 25%';
   const quartileAfter = tgt >= 4.0 ? 'Top 10% (Leader)' : 'Top 25% (Advanced)';
   const estSavings = Number(aiReport?.financialAnalysis?.annualSavingsUsd) > 0
     ? Number(aiReport.financialAnalysis.annualSavingsUsd)
     : Math.max(120000, Math.round(gap * 380000));
   const calculatedRiskAvoidance = aiReport?.financialAnalysis?.annualSavingsFormatted || `$${Math.round(estSavings).toLocaleString()}/yr`;
-  const implCost = Math.round(estSavings * 0.38);
-  const calculatedPayback = aiReport?.financialAnalysis?.paybackMonths
-    ? `${Number(aiReport.financialAnalysis.paybackMonths).toFixed(1)} Months`
-    : `${Math.max(2.1, Math.min(16.0, Number(((implCost / estSavings) * 12).toFixed(1)))).toFixed(1)} Months`;
 
   // Dynamic Phase 1, 2, 3 data from roadmap or prioritizedActions
   const roadmapPhases = Array.isArray(effectiveRoadmap.phases) ? effectiveRoadmap.phases : null;

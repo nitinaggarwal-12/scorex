@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiPlus, FiEdit2, FiCopy, FiTrash2, FiX, FiEye, FiEyeOff, FiLink } from 'react-icons/fi';
+import toast from 'react-hot-toast';
 import customQuestionsService from '../services/customQuestionsService';
 import * as assessmentService from '../services/assessmentService';
 
@@ -659,13 +660,17 @@ const QuestionManager = () => {
     }));
   };
 
+  const pendingQuestionDeleteRef = React.useRef({ id: null, expiresAt: 0 });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       if (editingQuestion) {
         await customQuestionsService.updateQuestion(editingQuestion.id, formData);
+        toast.success('Custom question updated');
       } else {
         await customQuestionsService.createQuestion(formData);
+        toast.success('Custom question created');
       }
       setShowModal(false);
       resetForm();
@@ -673,7 +678,7 @@ const QuestionManager = () => {
       fetchStats();
     } catch (error) {
       console.error('Error saving question:', error);
-      alert(error.message);
+      toast.error(error.message || 'Failed to save question');
     }
   };
 
@@ -708,24 +713,31 @@ const QuestionManager = () => {
         maturity_level_5: question.maturity_level_5 || '',
         notes_placeholder: question.notes_placeholder || ''
       });
+      toast.success('Question cloned');
       fetchQuestions();
       fetchStats();
     } catch (error) {
       console.error('Error cloning question:', error);
-      alert(error.message);
+      toast.error(error.message || 'Failed to clone question');
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('⚠️ Are you sure you want to DELETE this question permanently?\n\nThis will remove it from all assessments where it is assigned.\n\nThis action cannot be undone.')) {
-      try {
-        await customQuestionsService.deleteQuestion(id, true); // Pass true for hard delete
-        fetchQuestions();
-        fetchStats();
-      } catch (error) {
-        console.error('Error deleting question:', error);
-        alert(error.message);
-      }
+    const now = Date.now();
+    if (pendingQuestionDeleteRef.current.id !== id || pendingQuestionDeleteRef.current.expiresAt < now) {
+      pendingQuestionDeleteRef.current = { id, expiresAt: now + 4500 };
+      toast('Click Delete again within 4s to permanently remove this question', { icon: '⚠️', id: `confirm-qm-${id}` });
+      return;
+    }
+    pendingQuestionDeleteRef.current = { id: null, expiresAt: 0 };
+    try {
+      await customQuestionsService.deleteQuestion(id, true);
+      toast.success('Custom question deleted');
+      fetchQuestions();
+      fetchStats();
+    } catch (error) {
+      console.error('Error deleting question:', error);
+      toast.error(error.message || 'Failed to delete question');
     }
   };
 
@@ -738,7 +750,7 @@ const QuestionManager = () => {
       fetchStats();
     } catch (error) {
       console.error('Error toggling question status:', error);
-      alert(error.message);
+      toast.error(error.message || 'Failed to toggle question status');
     }
   };
 
@@ -767,7 +779,7 @@ const QuestionManager = () => {
     const pillarSamples = SAMPLE_QUESTIONS[pillarValue];
     
     if (!pillarSamples || pillarSamples.length === 0) {
-      alert('No sample question available for this pillar');
+      toast.error('No sample question available for this pillar');
       return;
     }
     
@@ -790,7 +802,7 @@ const QuestionManager = () => {
     
     // Show a message if all samples were already used
     if (unusedSamples.length === 0) {
-      alert(`All ${pillarSamples.length} sample questions for this pillar have been used.\n\nPlease edit this question to make it unique.`);
+      toast(`All ${pillarSamples.length} sample questions for this pillar have been used — edit to make it unique.`, { icon: 'ℹ️' });
     }
     
     setFormData({
@@ -825,7 +837,7 @@ const QuestionManager = () => {
       setShowAssignModal(true);
     } catch (error) {
       console.error('Error loading assignments:', error);
-      alert('Failed to load assessments: ' + error.message);
+      toast.error('Failed to load assessments: ' + error.message);
     }
   };
 
@@ -855,12 +867,12 @@ const QuestionManager = () => {
         await customQuestionsService.removeAssignment(assigningQuestion.id, assessmentId);
       }
       
-      alert(`Successfully updated assignments! Question assigned to ${selectedAssessments.length} assessment(s).`);
+      toast.success(`Assigned question to ${selectedAssessments.length} assessment(s)`);
       setShowAssignModal(false);
       setAssigningQuestion(null);
     } catch (error) {
       console.error('Error saving assignments:', error);
-      alert('Failed to save assignments: ' + error.message);
+      toast.error('Failed to save assignments: ' + error.message);
     }
   };
 
@@ -875,7 +887,7 @@ const QuestionManager = () => {
       setShowViewModal(true);
     } catch (error) {
       console.error('Error loading assignments:', error);
-      alert('Failed to load assignments: ' + error.message);
+      toast.error('Failed to load assignments: ' + error.message);
     }
   };
 

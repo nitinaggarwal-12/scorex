@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
@@ -6,13 +6,8 @@ import {
   FiArrowLeft, 
   FiBriefcase, 
   FiAward, 
-  FiCheckCircle, 
-  FiTrendingUp, 
-  FiLayers, 
   FiFileText, 
   FiPlus, 
-  FiArrowRight,
-  FiActivity,
   FiEdit3,
   FiCopy,
   FiTrash2
@@ -171,11 +166,7 @@ const CustomerPortfolioDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [portfolioData, setPortfolioData] = useState(null);
 
-  useEffect(() => {
-    loadPortfolio();
-  }, [customerName]);
-
-  const loadPortfolio = async () => {
+  const loadPortfolio = useCallback(async () => {
     try {
       setLoading(true);
       const data = await dynamicAssessmentService.getCustomerPortfolioRollup(customerName);
@@ -190,7 +181,11 @@ const CustomerPortfolioDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [customerName]);
+
+  useEffect(() => {
+    loadPortfolio();
+  }, [loadPortfolio]);
 
   const handleClone = async (item) => {
     try {
@@ -208,10 +203,16 @@ const CustomerPortfolioDashboard = () => {
     }
   };
 
+  const pendingPortfolioDeleteRef = React.useRef({ id: null, expiresAt: 0 });
+
   const handleDelete = async (item) => {
-    if (!window.confirm(`Delete "${item.title || 'this assessment'}"? This action cannot be undone.`)) {
+    const now = Date.now();
+    if (pendingPortfolioDeleteRef.current.id !== item.id || pendingPortfolioDeleteRef.current.expiresAt < now) {
+      pendingPortfolioDeleteRef.current = { id: item.id, expiresAt: now + 4500 };
+      toast(`Click Delete again within 4s to remove "${item.title || 'this assessment'}"`, { icon: '⚠️', id: `confirm-port-${item.id}` });
       return;
     }
+    pendingPortfolioDeleteRef.current = { id: null, expiresAt: 0 };
     try {
       await dynamicAssessmentService.deleteInstance(item.id);
       toast.success('Assessment deleted');

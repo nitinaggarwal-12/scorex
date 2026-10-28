@@ -1,16 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import { 
   FiAward, 
-  FiTrendingUp, 
-  FiBarChart2, 
-  FiTarget, 
-  FiShield, 
-  FiCheckCircle, 
-  FiAlertCircle, 
-  FiLayers,
-  FiGlobe
+  FiBarChart2
 } from "react-icons/fi";
 import { HiSparkles } from "react-icons/hi";
 import dynamicAssessmentService from "../services/dynamicAssessmentService";
@@ -326,15 +319,9 @@ const INDUSTRIES = [
 const IndustryPeerBenchmarkingCard = ({ instanceId, defaultIndustry = "Retail & E-Commerce", theme = "light" }) => {
   const [selectedIndustry, setSelectedIndustry] = useState(defaultIndustry);
   const [benchmarkData, setBenchmarkData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (instanceId) {
-      loadBenchmarks(selectedIndustry);
-    }
-  }, [instanceId, selectedIndustry]);
-
-  const loadBenchmarks = async (industry) => {
+  const loadBenchmarks = useCallback(async (industry) => {
     try {
       setLoading(true);
       const res = await dynamicAssessmentService.getBenchmarks(instanceId, industry);
@@ -346,7 +333,13 @@ const IndustryPeerBenchmarkingCard = ({ instanceId, defaultIndustry = "Retail & 
     } finally {
       setLoading(false);
     }
-  };
+  }, [instanceId]);
+
+  useEffect(() => {
+    if (instanceId) {
+      loadBenchmarks(selectedIndustry);
+    }
+  }, [instanceId, selectedIndustry, loadBenchmarks]);
 
   if (!benchmarkData) return null;
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -6,19 +6,13 @@ import {
   FiAward, 
   FiCheckCircle, 
   FiAlertTriangle, 
-  FiTrendingUp, 
   FiCalendar, 
-  FiClock, 
-  FiShare2, 
-  FiDownload, 
   FiLayers, 
   FiArrowLeft,
   FiUser,
   FiFileText,
-  FiList,
   FiTarget,
   FiCheck,
-  FiSliders,
   FiEdit3,
   FiCopy,
   FiTrash2,
@@ -27,7 +21,6 @@ import {
 import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import dynamicAssessmentService from '../services/dynamicAssessmentService';
-import LoadingSpinner from './LoadingSpinner';
 import AIGenerationProgressModal from './AIGenerationProgressModal';
 import ScenarioSimulator from './ScenarioSimulator';
 import FinancialImpactCard from './FinancialImpactCard';
@@ -45,7 +38,7 @@ import OmniCriticReviewCard from './OmniCriticReviewCard';
 import { exportDynamicAssessmentToExcel } from '../services/excelExportService';
 import { generateDynamicPDFReport } from '../services/pdfExportService';
 import { exportAssessmentToPPTX } from '../services/pptxExportService';
-import { exportAssessmentToJSON, exportAssessmentToCSV, exportAssessmentToWord, exportCompleteDeliverablesBundle } from '../services/dataExportService';
+import { exportAssessmentToJSON, exportCompleteDeliverablesBundle } from '../services/dataExportService';
 
 const DropdownWrapper = styled.div`
   position: relative;
@@ -529,11 +522,7 @@ const DynamicAssessmentReport = () => {
   const [activeExecutiveTab, setActiveExecutiveTab] = useState('overview');
   const theme = 'light';
 
-  useEffect(() => {
-    loadReport();
-  }, [id, token]);
-
-  const loadReport = async (overridePasscode = null) => {
+  const loadReport = useCallback(async (overridePasscode = null) => {
     setLoading(true);
     setLoadError(null);
     try {
@@ -603,7 +592,11 @@ const DynamicAssessmentReport = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, token]);
+
+  useEffect(() => {
+    loadReport();
+  }, [loadReport]);
 
   const handleRegenerateLiveGemini = async () => {
     if (!id) return;
@@ -688,12 +681,18 @@ const DynamicAssessmentReport = () => {
     }
   };
 
+  const pendingReportDeleteRef = React.useRef({ id: null, expiresAt: 0 });
+
   const handleDeleteAssessment = async () => {
     const targetId = instance?.id || id;
     if (!targetId) return;
-    if (!window.confirm(`Are you sure you want to delete "${instance?.customerName || framework?.title || 'this assessment'}"?`)) {
+    const now = Date.now();
+    if (pendingReportDeleteRef.current.id !== targetId || pendingReportDeleteRef.current.expiresAt < now) {
+      pendingReportDeleteRef.current = { id: targetId, expiresAt: now + 4500 };
+      toast(`Click Delete again within 4s to permanently delete "${instance?.customerName || framework?.title || 'this assessment'}"`, { icon: '⚠️', id: 'confirm-rep-del' });
       return;
     }
+    pendingReportDeleteRef.current = { id: null, expiresAt: 0 };
     try {
       toast.loading('Deleting assessment...', { id: 'delete-inst' });
       await dynamicAssessmentService.deleteInstance(targetId);

@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import toast from 'react-hot-toast';
-import { FiUser, FiMail, FiFileText, FiSend, FiArrowLeft, FiX, FiUserPlus } from 'react-icons/fi';
+import { FiUser, FiFileText, FiSend, FiArrowLeft, FiUserPlus } from 'react-icons/fi';
 import authService from '../services/authService';
 import * as assessmentService from '../services/assessmentService';
 import assignmentService from '../services/assignmentService';
@@ -89,21 +88,6 @@ const Label = styled.label`
   color: #334155;
   margin-bottom: 8px;
   font-size: 0.9375rem;
-`;
-
-const Select = styled.select`
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: all 0.2s;
-  background: white;
-  
-  &:focus {
-    outline: none;
-    border-color: #3b82f6;
-  }
 `;
 
 const Input = styled.input`

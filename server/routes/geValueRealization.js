@@ -25,9 +25,58 @@ const {
   generateGeminiAssessmentReport
 } = require('../services/geCustomerMultiSourceIngestor');
 
+const db = require('../db/connection');
+const { resolveDataDir, scheduleStateFileSync, isPostgresConnected } = require('../utils/durableGcsPersistence');
+
 function getDossiersFile() {
-  const dataDir = process.env.DATA_DIR || path.join(__dirname, '../../data');
-  return path.join(dataDir, 'ge_value_realization_dossiers.json');
+  return path.join(resolveDataDir(), 'ge_value_realization_dossiers.json');
+}
+
+let pgGeHydrated = false;
+async function hydrateGeFromPostgresIfConnected() {
+  if (pgGeHydrated || !isPostgresConnected()) return;
+  pgGeHydrated = true;
+  try {
+    const res = await db.query('SELECT id, dossier_payload FROM ge_value_realization_dossiers');
+    if (res && Array.isArray(res.rows) && res.rows.length > 0) {
+      const current = loadServerDossiers();
+      let changed = false;
+      for (const row of res.rows) {
+        if (row.id && row.dossier_payload && !current[row.id]) {
+          current[row.id] = row.dossier_payload;
+          changed = true;
+        }
+      }
+      if (changed) saveServerDossiers(current, { skipPostgres: true });
+    }
+  } catch (_) {}
+}
+
+function syncGeMapToPostgresAsync(dossiers, deletedId = null) {
+  if (!isPostgresConnected()) return;
+  Promise.resolve().then(async () => {
+    try {
+      if (deletedId) {
+        await db.query('DELETE FROM ge_value_realization_dossiers WHERE id = $1', [deletedId]);
+        return;
+      }
+      for (const [id, d] of Object.entries(dossiers || {})) {
+        if (!d || typeof d !== 'object') continue;
+        const sfdcId = d.meta?.sfdcAccountId || d.sfdcAccountId || null;
+        const custName = d.meta?.customerName || d.customerName || null;
+        await db.query(
+          `INSERT INTO ge_value_realization_dossiers (id, sfdc_account_id, customer_name, dossier_payload, updated_at)
+           VALUES ($1, $2, $3, $4::jsonb, CURRENT_TIMESTAMP)
+           ON CONFLICT (id) DO UPDATE SET
+             sfdc_account_id = EXCLUDED.sfdc_account_id,
+             customer_name = EXCLUDED.customer_name,
+             dossier_payload = EXCLUDED.dossier_payload,
+             updated_at = CURRENT_TIMESTAMP`,
+          [id, sfdcId, custName, JSON.stringify(d)]
+        );
+      }
+    } catch (_) {}
+  });
 }
 
 const CANONICAL_SFDC_ACCOUNT_IDS = [
@@ -44,6 +93,7 @@ const CANONICAL_SFDC_ACCOUNT_IDS = [
 ];
 
 function loadServerDossiers() {
+  hydrateGeFromPostgresIfConnected();
   const dossiersFile = getDossiersFile();
   let existingCustom = {};
   try {
@@ -86,14 +136,19 @@ function loadServerDossiers() {
   return initialMap;
 }
 
-function saveServerDossiers(dossiers) {
+function saveServerDossiers(dossiers, options = {}) {
   try {
     const dossiersFile = getDossiersFile();
     const dir = path.dirname(dossiersFile);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    const serialized = JSON.stringify(dossiers, null, 2);
     const tmpFile = `${dossiersFile}.${process.pid}.${Date.now()}.sync.tmp`;
-    fs.writeFileSync(tmpFile, JSON.stringify(dossiers, null, 2), 'utf8');
+    fs.writeFileSync(tmpFile, serialized, 'utf8');
     fs.renameSync(tmpFile, dossiersFile);
+    scheduleStateFileSync(dossiersFile, serialized);
+    if (!options.skipPostgres) {
+      syncGeMapToPostgresAsync(dossiers, options.deletedId || null);
+    }
   } catch (e) {
     console.warn('Could not write ge_value_realization_dossiers.json:', e.message);
   }
@@ -236,12 +291,12 @@ router.post(['/extract-grounded-answers', '/extract-sources'], async (req, res) 
 
     const dossiers = loadServerDossiers();
     const id = result.dossier.id || `ge_vr_${Date.now().toString(36)}`;
-    dossiers[id] = result.dossier;
+    dossiers[id] = { ...(dossiers[id] || {}), ...result.dossier, id };
     saveServerDossiers(dossiers);
 
     return res.json({
       success: true,
-      dossier: result.dossier,
+      dossier: dossiers[id],
       extractionSummary: result.extractionSummary
     });
   } catch (err) {
@@ -260,12 +315,12 @@ router.post(['/generate-gemini-report', '/generate-report'], async (req, res) =>
 
     const dossiers = loadServerDossiers();
     const id = updatedDossier.id || 'ge_vr_acc-1001-aerovg';
-    dossiers[id] = updatedDossier;
+    dossiers[id] = { ...(dossiers[id] || {}), ...updatedDossier, id };
     saveServerDossiers(dossiers);
 
     return res.json({
       success: true,
-      dossier: updatedDossier,
+      dossier: dossiers[id],
       geminiReport: updatedDossier.geminiReport,
       modelChainPipeline: updatedDossier.geminiReport?.modelChainPipeline,
       report: updatedDossier.geminiReport,
@@ -447,7 +502,7 @@ router.delete('/dossiers/:id', (req, res) => {
     const id = req.params.id;
     if (dossiers[id]) {
       delete dossiers[id];
-      saveServerDossiers(dossiers);
+      saveServerDossiers(dossiers, { deletedId: id });
     }
     return res.json({ success: true, deletedId: id });
   } catch (err) {

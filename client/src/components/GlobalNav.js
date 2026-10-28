@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { FiMenu, FiX, FiPlay, FiList, FiLogIn, FiLogOut, FiUser, FiFileText, FiUsers, FiSend, FiChevronDown, FiLock, FiUserPlus, FiMail, FiMessageSquare, FiSettings, FiBook, FiMonitor, FiCpu, FiAward, FiLayers, FiBarChart2, FiTrendingUp, FiDatabase, FiShield, FiShare2, FiArrowRight, FiZap } from 'react-icons/fi';
+import { FiMenu, FiX, FiPlay, FiList, FiLogIn, FiLogOut, FiUser, FiFileText, FiUsers, FiChevronDown, FiMail, FiMessageSquare, FiAward, FiLayers, FiBarChart2, FiTrendingUp, FiDatabase, FiShield, FiShare2, FiArrowRight } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
-import * as assessmentService from '../services/assessmentService';
 import dynamicAssessmentService from '../services/dynamicAssessmentService';
 import authService from '../services/authService';
 import LoginModal from './LoginModal';
@@ -701,18 +700,6 @@ const GlobalNav = () => {
     setMobileTrySampleOpen(false);
   };
 
-  const scrollToSection = (sectionId) => {
-    closeMobileMenu();
-    if (location.pathname !== '/') {
-      navigate('/', { state: { scrollTo: sectionId } });
-    } else {
-      const element = document.getElementById(sectionId);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }
-  };
-
   const handleLogoClick = () => {
     closeMobileMenu();
     navigate('/');
@@ -722,22 +709,6 @@ const GlobalNav = () => {
   const handleNavigate = (path) => {
     closeMobileMenu();
     navigate(path);
-  };
-
-  const handleTrySampleCore = async () => {
-    closeMobileMenu();
-    setTrySampleDropdownOpen(false);
-    setAssessmentsDropdownOpen(false);
-    toast.success('Opening Enterprise Data & AI Maturity Executive Report...');
-    navigate('/results/inst_enterprise_data_ai_maturity_demo');
-  };
-
-  const handleTrySampleGenAI = async () => {
-    closeMobileMenu();
-    setTrySampleDropdownOpen(false);
-    setAssessmentsDropdownOpen(false);
-    toast.success('Opening Gemini Enterprise Migration Executive Report...');
-    navigate('/assessments/report/inst_openai_to_gemini_enterprise_migration_demo');
   };
 
   const handleTrySampleDynamic = async (typeKey, title) => {
@@ -772,8 +743,6 @@ const GlobalNav = () => {
       toast.error('Failed to open dynamic sample report');
     }
   };
-
-  const handleTrySample = handleTrySampleCore;
 
   const handleExploreAsGuest = (redirectPath = '/assessments') => {
     closeMobileMenu();

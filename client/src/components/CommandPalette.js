@@ -9,8 +9,6 @@ import {
   FiAward, 
   FiTrendingUp, 
   FiGrid, 
-  FiMoon, 
-  FiSun, 
   FiCpu, 
   FiCornerDownLeft,
   FiShield,

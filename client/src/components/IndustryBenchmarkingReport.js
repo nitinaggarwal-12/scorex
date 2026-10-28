@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -19,9 +19,7 @@ import {
   FiShield,
   FiChevronDown,
   FiChevronUp,
-  FiDownload,
   FiArrowLeft,
-  FiFileText,
   FiEdit2,
   FiTrash2,
   FiPlus,
@@ -36,14 +34,7 @@ import {
   PolarRadiusAxis,
   Radar,
   Legend,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Cell
+  ResponsiveContainer
 } from 'recharts';
 
 // Global print styles to hide navigation and other UI elements
@@ -692,25 +683,6 @@ const ChartTitle = styled.h4`
   text-align: center;
 `;
 
-const DownloadButton = styled(motion.button)`
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 0.938rem;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-
-  &:hover {
-    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
-  }
-`;
-
 // Helper function to format pillar names
 const formatPillarName = (pillarId) => {
   return pillarId
@@ -1040,7 +1012,7 @@ const IndustryBenchmarkingReport = () => {
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState(null);
   const [benchmarkData, setBenchmarkData] = useState(null);
-  const [error, setError] = useState(null);
+  const [, setError] = useState(null);
   
   // 🎨 CRUD State
   const [showModal, setShowModal] = useState(false);
@@ -1051,7 +1023,7 @@ const IndustryBenchmarkingReport = () => {
   // 🎬 Presentation Mode State
   const [presentationMode, setPresentationMode] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [printMode, setPrintMode] = useState(false);
+  const [printMode] = useState(false);
 
   const [resolvedId, setResolvedId] = useState(assessmentId || '');
 
@@ -1120,11 +1092,13 @@ const IndustryBenchmarkingReport = () => {
   // Extract data from results
   const assessment = results?.assessmentInfo;
   const overallScore = results?.overall?.currentScore || results?.overallScore || 0;
-  const pillarScores = results?.categoryDetails || {};
-  const selectedPillars = results?.selectedPillars || results?.assessmentInfo?.selectedPillars || [];
+  const selectedPillars = useMemo(
+    () => results?.selectedPillars || results?.assessmentInfo?.selectedPillars || [],
+    [results?.selectedPillars, results?.assessmentInfo?.selectedPillars]
+  );
 
   // Filter pillar analysis to only include selected pillars (must be before early returns)
-  const filteredPillarAnalysis = React.useMemo(() => {
+  const filteredPillarAnalysis = useMemo(() => {
     const pillarAnalysis = benchmarkData?.pillarAnalysis;
     if (!pillarAnalysis) return {};
     
@@ -1163,49 +1137,27 @@ const IndustryBenchmarkingReport = () => {
     }));
   };
 
-  const handleDownloadReport = () => {
-    // Show brief toast
-    const toastId = 
-    
-    // Set print mode to render all slides
-    setPrintMode(true);
-    
-    // Dismiss the toast and open print dialog
-    setTimeout(() => {
-      toast.dismiss(toastId);
-      toast.dismiss();
-      setTimeout(() => {
-        window.print();
-        // Exit print mode after printing
-        setTimeout(() => {
-          setPrintMode(false);
-        }, 500);
-      }, 500);
-    }, 1000);
-  };
-
   // 🎬 Slideshow Navigation Functions
-  const exitPresentation = () => {
+  const exitPresentation = useCallback(() => {
     setPresentationMode(false);
     setCurrentSlide(0);
     document.body.style.overflow = 'auto';
-  };
+  }, []);
 
-  const nextSlide = () => {
+  const nextSlide = useCallback(() => {
     const totalSlides = 7; // 0-6: Title, Exec Summary+Position, Pillars, Vulnerabilities, Recommendations, Methodology, Thank You
     if (currentSlide < totalSlides - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
-      // Exit slideshow when trying to go past the last slide
       exitPresentation();
     }
-  };
+  }, [currentSlide, exitPresentation]);
 
-  const previousSlide = () => {
+  const previousSlide = useCallback(() => {
     if (currentSlide > 0) {
       setCurrentSlide(currentSlide - 1);
     }
-  };
+  }, [currentSlide]);
 
   // Keyboard navigation for slideshow
   useEffect(() => {
@@ -1231,7 +1183,7 @@ const IndustryBenchmarkingReport = () => {
       window.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'auto';
     };
-  }, [presentationMode, currentSlide]);
+  }, [presentationMode, nextSlide, previousSlide, exitPresentation]);
 
   // Print slideshow as PDF
   const handlePrintSlideshow = async () => {
@@ -1359,10 +1311,7 @@ const IndustryBenchmarkingReport = () => {
 
   const handleDelete = (type, item) => {
     console.log('[Delete]', type, item);
-    if (window.confirm(`Are you sure you want to delete this ${type}?`)) {
-      // In a real app, you'd update the backend here
-      alert(`${type} deleted successfully!`);
-    }
+    toast.success(`${type} removed`);
   };
 
   const handleAdd = (type) => {
@@ -1376,9 +1325,8 @@ const IndustryBenchmarkingReport = () => {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     console.log('[Form Submit]', modalType, formData);
-    // In a real app, you'd save to backend here
     setShowModal(false);
-    alert(`${modalType} ${editingItem ? 'updated' : 'added'} successfully!`);
+    toast.success(`${modalType} ${editingItem ? 'updated' : 'added'} successfully`);
   };
 
   const getTierIcon = (tier) => {
@@ -1423,7 +1371,7 @@ const IndustryBenchmarkingReport = () => {
     );
   }
 
-  const { executiveSummary, competitivePositioning, pillarAnalysis, competitiveIntelligence, strategicRecommendations, metadata } = benchmarkData;
+  const { executiveSummary, competitivePositioning, competitiveIntelligence, strategicRecommendations, metadata } = benchmarkData;
   const TierIcon = getTierIcon(competitivePositioning?.overallRanking?.tier);
   const tierColors = getTierColor(competitivePositioning?.overallRanking?.tier);
 

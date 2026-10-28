@@ -7,16 +7,13 @@ import {
   FiDownload, 
   FiCopy, 
   FiCheck, 
-  FiExternalLink, 
   FiShield, 
   FiCode, 
   FiTerminal, 
-  FiLayers,
   FiChevronDown,
   FiChevronUp,
   FiAlertCircle,
   FiCpu,
-  FiDollarSign,
   FiGitPullRequest
 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
@@ -325,7 +322,7 @@ resource "google_monitoring_alert_policy" "finops_budget" {
   conditions {
     display_name = "Unallocated Spend or Token Burn Spike"
     condition_threshold {
-      filter          = "metric.type=\"compute.googleapis.com/instance/uptime\""
+      filter          = "metric.type=\\"compute.googleapis.com/instance/uptime\\""
       comparison      = "COMPARISON_GT"
       threshold_value = 500
     }
@@ -431,7 +428,7 @@ resource "google_monitoring_alert_policy" "finops_budget" {
   conditions {
     display_name = "Cloud Compute Runaway Spike"
     condition_threshold {
-      filter          = "metric.type=\"compute.googleapis.com/instance/uptime\""
+      filter          = "metric.type=\\"compute.googleapis.com/instance/uptime\\""
       comparison      = "COMPARISON_GT"
       threshold_value = 500
     }
