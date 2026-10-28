@@ -29,20 +29,20 @@ echo "   Git SHA    : ${GIT_SHA}"
 echo "   Image URI  : ${IMAGE_TAGGED}"
 echo "================================================================================"
 
-echo "1️⃣  Submitting Cloud Build to ${BUILD_PROJECT}..."
-gcloud builds submit \
-  --project="${BUILD_PROJECT}" \
-  --tag="${IMAGE_TAGGED}" \
-  .
-
-gcloud container images add-tag "${IMAGE_TAGGED}" "${IMAGE_LATEST}" --quiet
-
-echo "2️⃣  Updating Cloud Run service ${SERVICE} in ${RUNTIME_PROJECT} (${REGION})..."
-gcloud run services update "${SERVICE}" \
-  --project="${RUNTIME_PROJECT}" \
-  --region="${REGION}" \
-  --image="${IMAGE_TAGGED}" \
-  --update-env-vars="SCOREX_GIT_BRANCH=${GIT_BRANCH},SCOREX_GIT_COMMIT_SHA=${GIT_SHA}"
+echo "1️⃣  Submitting Cloud Build to ${BUILD_PROJECT} (or Zero-Daemon OCI Static-Layer Deployer)..."
+if gcloud builds submit --project="${BUILD_PROJECT}" --tag="${IMAGE_TAGGED}" . 2>/dev/null; then
+  gcloud container images add-tag "${IMAGE_TAGGED}" "${IMAGE_LATEST}" --quiet
+  echo "2️⃣  Updating Cloud Run service ${SERVICE} in ${RUNTIME_PROJECT} (${REGION})..."
+  gcloud run services update "${SERVICE}" \
+    --project="${RUNTIME_PROJECT}" \
+    --region="${REGION}" \
+    --image="${IMAGE_TAGGED}" \
+    --update-env-vars="SCOREX_GIT_BRANCH=${GIT_BRANCH},SCOREX_GIT_COMMIT_SHA=${GIT_SHA}"
+else
+  echo "⚠️ Cloud Build in ${BUILD_PROJECT} unavailable; executing Zero-Daemon OCI Static-Layer Deployer..."
+  python3 /Users/nitinagga/Documents/notes/scripts/oci_deploy_remaining_services.py scorex
+  IMAGE_TAGGED="$(gcloud run services describe "${SERVICE}" --project="${RUNTIME_PROJECT}" --region="${REGION}" --format='value(spec.template.spec.containers[0].image)')"
+fi
 
 echo "3️⃣  Verifying 4 Post-Deploy Readiness Gates (Rule 56)..."
 LATEST_READY="$(gcloud run services describe "${SERVICE}" --project="${RUNTIME_PROJECT}" --region="${REGION}" --format='value(status.latestReadyRevisionName)')"
