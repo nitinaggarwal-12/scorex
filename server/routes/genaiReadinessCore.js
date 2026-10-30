@@ -10,7 +10,7 @@ router.get('/framework', (req, res) => {
   res.json(genAIFramework);
 });
 
-// Generate Live Gemini 3.8 Flash synthesis for a GenAI Readiness assessment
+// Generate Live Gemini 2.5 Flash synthesis for a GenAI Readiness assessment
 router.post('/assessments/:id/ai-synthesis', async (req, res) => {
   try {
     const { id } = req.params;
@@ -19,7 +19,7 @@ router.post('/assessments/:id/ai-synthesis', async (req, res) => {
       return res.status(404).json({ error: 'Assessment not found' });
     }
 
-    const prompt = `Synthesize a Live Gemini 3.8 Flash Executive Readiness Report for customer "${assessment.customerName || assessment.customer_name || 'Enterprise Client'}" (Total Score: ${assessment.totalScore || assessment.total_score}/${assessment.maxScore || assessment.max_score}, Maturity Level: ${assessment.maturityLevel || assessment.maturity_level}).
+    const prompt = `Synthesize a Live Gemini 2.5 Flash Executive Readiness Report for customer "${assessment.customerName || assessment.customer_name || 'Enterprise Client'}" (Total Score: ${assessment.totalScore || assessment.total_score}/${assessment.maxScore || assessment.max_score}, Maturity Level: ${assessment.maturityLevel || assessment.maturity_level}).
 Dimension Scores: ${JSON.stringify(assessment.scores || {})}
 
 Return ONLY valid JSON matching this schema:
@@ -33,18 +33,18 @@ Return ONLY valid JSON matching this schema:
     "platform": ["<Bespoke action 1>", "<Bespoke action 2>", "<Bespoke action 3>"],
     "governance": ["<Bespoke action 1>", "<Bespoke action 2>", "<Bespoke action 3>"]
   },
-  "modelUsed": "gemini-3.8-flash"
+  "modelUsed": "gemini-2.5-flash"
 }`;
 
     const result = await geminiService._generateWithFallback(
       prompt,
-      'You are the Chief GenAI Strategy Advisor powered by Google Gemini 3.8 Flash. Output pure JSON only.',
+      'You are the Chief GenAI Strategy Advisor powered by Google Gemini 2.5 Flash. Output pure JSON only.',
       0.7,
       'application/json'
     );
 
     const parsed = JSON.parse(result.text.match(/\{[\s\S]*\}/)?.[0] || result.text);
-    parsed.modelUsed = result.modelUsed || 'gemini-3.8-flash';
+    parsed.modelUsed = result.modelUsed || 'gemini-2.5-flash';
     res.json({ success: true, aiSynthesis: parsed });
   } catch (error) {
     console.warn('GenAI Readiness Live Gemini synthesis error:', error.message);

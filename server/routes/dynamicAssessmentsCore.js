@@ -11,7 +11,7 @@ const { classifyConversationalIntent } = require('../utils/conversationalIntentG
 
 /**
  * Dynamic Assessment Routes
- * Powered by Google Gemini (gemini-3.8-flash)
+ * Powered by Google Gemini (gemini-2.5-flash)
  */
 
 // In-Memory Sliding-Window Rate Limiter for Gemini AI Endpoints
@@ -1005,7 +1005,7 @@ router.get('/instances/:id', async (req, res) => {
             template05MasterLayout: true,
             gcpReferenceLayout: true,
             diagramEngine: existingDiags.diagramEngine || 'nano-banana-2',
-            imageModel: existingDiags.imageModel || 'gemini-3.1-flash-image-preview'
+            imageModel: existingDiags.imageModel || 'gemini-2.5-flash-image'
           }
         : {
             ...existingDiags,
@@ -1013,7 +1013,7 @@ router.get('/instances/:id', async (req, res) => {
             template05MasterLayout: true,
             gcpReferenceLayout: true,
             diagramEngine: existingDiags.diagramEngine || 'nano-banana-2',
-            imageModel: existingDiags.imageModel || 'gemini-3.1-flash-image-preview'
+            imageModel: existingDiags.imageModel || 'gemini-2.5-flash-image'
           };
       if (instance.aiReport) {
         instance.aiReport.architectureDiagrams = instance.architectureDiagrams;
@@ -1030,7 +1030,7 @@ router.get('/instances/:id', async (req, res) => {
         template05MasterLayout: true,
         gcpReferenceLayout: true,
         diagramEngine: 'nano-banana-2',
-        imageModel: 'gemini-3.1-flash-image-preview'
+        imageModel: 'gemini-2.5-flash-image'
       };
       if (!instance.executiveReport) instance.executiveReport = {};
       instance.executiveReport.architectureDiagrams = instance.architectureDiagrams;
@@ -1061,12 +1061,12 @@ router.get('/instances/:id', async (req, res) => {
       : Math.round(Number(instance.totalScore || 64));
 
     instance.aiModelStack = {
-      audioStorytellingModel: 'google-omni-1.1',
-      audioStorytellingSubModel: 'gemini-omni-1.1-flash',
+      audioStorytellingModel: 'gemini-2.5-pro',
+      audioStorytellingSubModel: 'gemini-2.5-flash',
       architectureDiagramModel: 'nano-banana-2',
-      architectureImagePreviewModel: 'gemini-3.1-flash-image-preview',
-      supportAgentModel: 'gemini-3.8-flash-live-preview',
-      uiUxCriticModel: 'google-omni-1.1'
+      architectureImagePreviewModel: 'gemini-2.5-flash-image',
+      supportAgentModel: 'gemini-2.5-flash',
+      uiUxCriticModel: 'gemini-2.5-pro'
     };
 
     if (!instance.omniCriticReview) {
@@ -1478,7 +1478,7 @@ router.post('/instances/:id/clone', async (req, res) => {
   }
 });
 
-// 6. Executive AI Report Generation (Powered by Google Gemini 3.8 Flash)
+// 6. Executive AI Report Generation (Powered by Google Gemini 2.5 Flash)
 router.post('/instances/:id/generate-report', aiRateLimiter(15, 60000), async (req, res) => {
   try {
     const { id } = req.params;
@@ -1543,7 +1543,7 @@ router.post('/instances/:id/generate-report', aiRateLimiter(15, 60000), async (r
       aiReport,
       report: aiReport,
       isLiveGemini: !isDeterministicFallback,
-      modelUsed: aiReport.modelUsed || 'gemini-3.8-flash',
+      modelUsed: aiReport.modelUsed || 'gemini-2.5-flash',
       instance: sanitizeInstance(updated)
     });
   } catch (error) {
@@ -1555,7 +1555,7 @@ router.post('/instances/:id/generate-report', aiRateLimiter(15, 60000), async (r
   }
 });
 
-// 7. Bespoke Architecture Diagrams Generation via Gemini 3.8 Flash
+// 7. Bespoke Architecture Diagrams Generation via Gemini 2.5 Flash
 router.post('/instances/:id/generate-diagrams', aiRateLimiter(15, 60000), async (req, res) => {
   try {
     const { id } = req.params;
@@ -1618,7 +1618,7 @@ router.post('/instances/:id/generate-diagrams', aiRateLimiter(15, 60000), async 
       mutated: true,
       diagrams,
       instance: sanitizeInstance(updated),
-      message: 'Bespoke architecture diagrams generated with Gemini 3.8 Flash'
+      message: 'Bespoke architecture diagrams generated with Gemini 2.5 Flash'
     });
   } catch (error) {
     console.error('Error generating bespoke architecture diagrams:', error);
@@ -1705,7 +1705,7 @@ router.get('/instances/:id/benchmarks', async (req, res) => {
       keyTakeaway: percentile >= 75
         ? `Outperforming the ${industry} median across key architecture pillars with a strong foundation for next-generation automated scale.`
         : `Opportunity to capture significant competitive advantage by accelerating modernization across identified lagging pillars.`,
-      modelUsed: 'gemini-3.8-flash'
+      modelUsed: 'gemini-2.5-flash'
     };
 
     if (ai === 'true' && geminiService.isAvailable()) {
@@ -1721,16 +1721,16 @@ Return ONLY valid JSON:
 }`;
         const aiRes = await geminiService._generateWithFallback(
           benchPrompt,
-          'You are a Chief Industry Benchmarking Analyst powered by Google Gemini 3.8 Flash. Output JSON only.',
+          'You are a Chief Industry Benchmarking Analyst powered by Google Gemini 2.5 Flash. Output JSON only.',
           0.6,
           'application/json'
         );
         const parsedBench = JSON.parse(aiRes.text.match(/\{[\s\S]*\}/)?.[0] || aiRes.text);
         if (parsedBench.summary) insights.summary = parsedBench.summary;
         if (parsedBench.keyTakeaway) insights.keyTakeaway = parsedBench.keyTakeaway;
-        insights.modelUsed = aiRes.modelUsed || 'gemini-3.8-flash';
+        insights.modelUsed = aiRes.modelUsed || 'gemini-2.5-flash';
       } catch (benchAiErr) {
-        console.warn('Industry benchmark Gemini 3.8 Flash synthesis fallback:', benchAiErr.message);
+        console.warn('Industry benchmark Gemini 2.5 Flash synthesis fallback:', benchAiErr.message);
       }
     }
 
@@ -1752,7 +1752,7 @@ Return ONLY valid JSON:
   }
 });
 
-// 8b. Live Gemini 3.8 Flash Infrastructure-as-Code (Terraform HCL) Blueprint Synthesis
+// 8b. Live Gemini 2.5 Flash Infrastructure-as-Code (Terraform HCL) Blueprint Synthesis
 router.post('/instances/:id/generate-terraform', async (req, res) => {
   try {
     const { id } = req.params;
@@ -1775,40 +1775,40 @@ router.post('/instances/:id/generate-terraform', async (req, res) => {
       : isSecurity
       ? `terraform {\n  required_providers {\n    google = { source = "hashicorp/google", version = "~> 6.0" }\n  }\n}\n\nprovider "google" {\n  project = "${slug}-secops-trism"\n  region  = "us-central1"\n}\n\nresource "google_kms_key_ring" "hsm_keyring" {\n  name     = "${slug}-hsm-cmek-ring"\n  location = "us-central1"\n}\n\nresource "google_access_context_manager_service_perimeter" "zero_trust_ai" {\n  parent = "accessPolicies/default"\n  name   = "accessPolicies/default/servicePerimeters/${slug.replace(/-/g, '_')}_zero_trust"\n  title  = "${org} Zero-Trust AI & DLP Perimeter"\n  status {\n    restricted_services = ["aiplatform.googleapis.com", "dlp.googleapis.com", "cloudkms.googleapis.com"]\n  }\n}`
       : isAgentic || isGeminiMig
-      ? `terraform {\n  required_providers {\n    google = { source = "hashicorp/google", version = "~> 6.0" }\n  }\n}\n\nprovider "google" {\n  project = "${slug}-vertex-ai"\n  region  = "us-central1"\n}\n\nresource "google_kms_key_ring" "ai_keyring" {\n  name     = "${slug}-cmek-ring"\n  location = "us-central1"\n}\n\nresource "google_vertex_ai_endpoint" "gemini_gateway" {\n  name         = "${slug}-gemini-3-8-mesh"\n  display_name = "${org} ${isAgentic ? 'Vertex Agent Engine & MCP Gateway' : 'Gemini 3.8 Enterprise Gateway'}"\n  location     = "us-central1"\n}`
-      : `terraform {\n  required_providers {\n    google = { source = "hashicorp/google", version = "~> 6.0" }\n  }\n}\n\nprovider "google" {\n  project = "${slug}-lakehouse-prod"\n  region  = "us-central1"\n}\n\nresource "google_kms_key_ring" "ai_keyring" {\n  name     = "${slug}-cmek-ring"\n  location = "us-central1"\n}\n\nresource "google_bigquery_dataset" "lakehouse" {\n  dataset_id                 = "${slug.replace(/-/g, '_')}_iceberg_gold"\n  location                   = "US"\n  delete_contents_on_destroy = false\n}\n\nresource "google_vertex_ai_endpoint" "gemini_gateway" {\n  name         = "${slug}-gemini-3-8-flash"\n  display_name = "${org} Gemini 3.8 Enterprise Gateway"\n  location     = "us-central1"\n}`;
+      ? `terraform {\n  required_providers {\n    google = { source = "hashicorp/google", version = "~> 6.0" }\n  }\n}\n\nprovider "google" {\n  project = "${slug}-vertex-ai"\n  region  = "us-central1"\n}\n\nresource "google_kms_key_ring" "ai_keyring" {\n  name     = "${slug}-cmek-ring"\n  location = "us-central1"\n}\n\nresource "google_vertex_ai_endpoint" "gemini_gateway" {\n  name         = "${slug}-gemini-2-5-mesh"\n  display_name = "${org} ${isAgentic ? 'Vertex Agent Engine & MCP Gateway' : 'Gemini 2.5 Enterprise Gateway'}"\n  location     = "us-central1"\n}`
+      : `terraform {\n  required_providers {\n    google = { source = "hashicorp/google", version = "~> 6.0" }\n  }\n}\n\nprovider "google" {\n  project = "${slug}-lakehouse-prod"\n  region  = "us-central1"\n}\n\nresource "google_kms_key_ring" "ai_keyring" {\n  name     = "${slug}-cmek-ring"\n  location = "us-central1"\n}\n\nresource "google_bigquery_dataset" "lakehouse" {\n  dataset_id                 = "${slug.replace(/-/g, '_')}_iceberg_gold"\n  location                   = "US"\n  delete_contents_on_destroy = false\n}\n\nresource "google_vertex_ai_endpoint" "gemini_gateway" {\n  name         = "${slug}-gemini-2-5-flash"\n  display_name = "${org} Gemini 2.5 Enterprise Gateway"\n  location     = "us-central1"\n}`;
 
     const fallbackTerraform = {
       gcp: gcpHcl,
       aws: `provider "aws" {\n  region = "us-east-1"\n}\n\nresource "aws_iam_openid_connect_provider" "gcp_workload_federation" {\n  url             = "https://accounts.google.com"\n  client_id_list  = ["sts.googleapis.com"]\n  thumbprint_list = ["08745487e891c19e3078c1f2a07e452950ef36f6"]\n}\n\nresource "aws_s3_bucket" "cross_cloud_telemetry" {\n  bucket = "${slug}-governed-telemetry"\n}`,
       azure: `provider "azurerm" {\n  features {}\n}\n\nresource "azurerm_resource_group" "cross_cloud_ai" {\n  name     = "rg-${slug}-ai-federation"\n  location = "East US"\n}\n\nresource "azurerm_federated_identity_credential" "vertex_federation" {\n  name                = "fc-${slug}-vertex-bridge"\n  resource_group_name = azurerm_resource_group.cross_cloud_ai.name\n  parent_id           = azurerm_resource_group.cross_cloud_ai.id\n  audience            = ["api://AzureADTokenExchange"]\n  issuer              = "https://accounts.google.com"\n  subject             = "system:serviceaccount:${slug}:vertex-agent"\n}`,
-      modelUsed: 'gemini-3.8-flash'
+      modelUsed: 'gemini-2.5-flash'
     };
 
     if (req.body?.liveAi === true && geminiService.isAvailable()) {
       try {
         const prompt = `Generate bespoke production-grade Terraform HCL (main.tf) blueprints for customer "${org}" (Initiative: "${instance.useCase || instance.frameworkSnapshot?.title || 'Cloud & AI Modernization'}", Maturity Score: ${instance.totalScore || 3.0}/5.0).
-Key Architectural Recommendations to provision: ${recs || 'Vertex AI Gemini 3.8 Flash endpoint, KMS CMEK encryption, BigQuery/BigLake Iceberg lakehouse, VPC Service Controls perimeter'}.
+Key Architectural Recommendations to provision: ${recs || 'Vertex AI Gemini 2.5 Flash endpoint, KMS CMEK encryption, BigQuery/BigLake Iceberg lakehouse, VPC Service Controls perimeter'}.
 
 Return ONLY valid JSON matching this schema:
 {
   "gcp": "<Complete 25-35 line production Terraform HCL for Google Cloud provisioning the exact recommended resources for ${org}>",
   "aws": "<Complete 18-25 line production Terraform HCL for AWS cross-cloud federation / Bedrock relay for ${org}>",
   "azure": "<Complete 18-25 line production Terraform HCL for Azure cross-cloud identity & AI relay for ${org}>",
-  "modelUsed": "gemini-3.8-flash"
+  "modelUsed": "gemini-2.5-flash"
 }`;
 
         const aiRes = await geminiService._generateWithFallback(
           prompt,
-          'You are a Principal Cloud Infrastructure Architect powered by Google Gemini 3.8 Flash. Output valid JSON only.',
+          'You are a Principal Cloud Infrastructure Architect powered by Google Gemini 2.5 Flash. Output valid JSON only.',
           0.5,
           'application/json'
         );
         const parsed = JSON.parse(aiRes.text.match(/\{[\s\S]*\}/)?.[0] || aiRes.text);
-        parsed.modelUsed = aiRes.modelUsed || 'gemini-3.8-flash';
+        parsed.modelUsed = aiRes.modelUsed || 'gemini-2.5-flash';
         return res.json({ success: true, terraform: parsed });
       } catch (aiErr) {
-        console.warn('Terraform Gemini 3.8 Flash synthesis fallback:', aiErr.message);
+        console.warn('Terraform Gemini 2.5 Flash synthesis fallback:', aiErr.message);
       }
     }
 
@@ -2476,7 +2476,7 @@ router.post('/regenerate-workflow-assets', async (req, res) => {
   }
 });
 
-// 18. Google Omni 1.1 (google-omni-1.1 / gemini-omni-1.1-flash) Critic Review for a Specific Assessment Instance
+// 18. Google Omni 1.1 (gemini-2.5-pro / gemini-2.5-flash) Critic Review for a Specific Assessment Instance
 router.get('/instances/:id/omni-critic', async (req, res) => {
   try {
     const { id } = req.params;

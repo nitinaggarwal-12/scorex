@@ -7,12 +7,12 @@
 -- OCTOBER 2025 RELEASES (Continued)
 -- ==============================================================================
 
--- 11. Gemini 3.1 Pro and 3.8 Flash Models
+-- 11. Gemini 2.5 Pro and 2.5 Flash Models
 INSERT INTO databricks_features (name, category, short_description, detailed_description, release_date, ga_quarter, ga_status, documentation_url, is_serverless, requires_unity_catalog, complexity_weeks)
 VALUES (
-    'Gemini 3.1 Pro and 3.8 Flash on Pay-Per-Token',
+    'Gemini 2.5 Pro and 2.5 Flash on Pay-Per-Token',
     'genai',
-    'Google Gemini 3.1 Pro and 3.8 Flash models on Mosaic AI Model Serving',
+    'Google Gemini 2.5 Pro and 2.5 Flash models on Mosaic AI Model Serving',
     'Latest Google Gemini models now available with pay-per-token pricing. Features multimodal understanding (text, image, video), 1M token context window, and advanced reasoning capabilities for complex tasks.',
     '2025-10-15',
     'Q4 2025',
@@ -27,14 +27,14 @@ INSERT INTO feature_technical_details (feature_id, api_endpoint, api_method, con
 SELECT id,
     '/api/2.0/serving-endpoints/{name}/invocations',
     'POST',
-    'import requests\n\nresponse = requests.post(\n    f"{workspace_url}/serving-endpoints/gemini-endpoint/invocations",\n    headers={"Authorization": f"Bearer {token}"},\n    json={\n        "messages": [{"role": "user", "content": "Analyze this image..."}],\n        "model": "gemini-3.1-pro-preview",\n        "max_tokens": 8192\n    }\n)',
+    'import requests\n\nresponse = requests.post(\n    f"{workspace_url}/serving-endpoints/gemini-endpoint/invocations",\n    headers={"Authorization": f"Bearer {token}"},\n    json={\n        "messages": [{"role": "user", "content": "Analyze this image..."}],\n        "model": "gemini-2.5-pro",\n        "max_tokens": 8192\n    }\n)',
     'Mosaic AI Model Serving, Google Cloud API key'
-FROM databricks_features WHERE name = 'Gemini 3.1 Pro and 3.8 Flash on Pay-Per-Token';
+FROM databricks_features WHERE name = 'Gemini 2.5 Pro and 2.5 Flash on Pay-Per-Token';
 
 INSERT INTO feature_benefits (feature_id, benefit_type, benefit_description, quantifiable_impact)
-SELECT id, 'performance', 'Multimodal AI with 1M token context window', 'Process entire codebases or documents in single query' FROM databricks_features WHERE name = 'Gemini 3.1 Pro and 3.8 Flash on Pay-Per-Token'
+SELECT id, 'performance', 'Multimodal AI with 1M token context window', 'Process entire codebases or documents in single query' FROM databricks_features WHERE name = 'Gemini 2.5 Pro and 2.5 Flash on Pay-Per-Token'
 UNION ALL
-SELECT id, 'cost', 'Pay-per-token pricing vs. provisioned throughput', '60-80% cost savings for variable workloads' FROM databricks_features WHERE name = 'Gemini 3.1 Pro and 3.8 Flash on Pay-Per-Token';
+SELECT id, 'cost', 'Pay-per-token pricing vs. provisioned throughput', '60-80% cost savings for variable workloads' FROM databricks_features WHERE name = 'Gemini 2.5 Pro and 2.5 Flash on Pay-Per-Token';
 
 -- 12. AWS Capacity Blocks Configuration
 INSERT INTO databricks_features (name, category, short_description, detailed_description, release_date, ga_quarter, ga_status, documentation_url, is_serverless, requires_unity_catalog, complexity_weeks)

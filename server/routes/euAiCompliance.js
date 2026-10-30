@@ -9,7 +9,7 @@ router.use(requireAuth);
 /**
  * POST /api/eu-ai-compliance/generate-synthesis
  * Generates an executive legal synthesis, statutory risk analysis,
- * enforcement timeline, and Annex IV technical file draft using Gemini 3.8 Flash.
+ * enforcement timeline, and Annex IV technical file draft using Gemini 2.5 Flash.
  */
 router.post('/generate-synthesis', async (req, res) => {
   try {
@@ -88,7 +88,7 @@ router.post('/live-audit', async (req, res) => {
   try {
     const { auditorModel, meta, answers, evaluation } = req.body;
     const auditReport = await euAiGeminiService.runIndependentLiveAudit(
-      auditorModel || 'google-omni-1.1',
+      auditorModel || 'gemini-2.5-pro',
       meta || {},
       answers || {},
       evaluation || {}

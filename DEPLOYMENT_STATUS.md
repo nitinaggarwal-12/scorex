@@ -17,11 +17,11 @@
 - **Template 05 3-Zone Diagram Semantic, Logical & Visual Integrity Gate**: Certified across all 6 canonical blueprints × 3 stages (`18/18` diagrams) with `0` `..` truncations, `0` intra-word hyphen splits, `6/6` unique pain badges per assessment, 100% bijective `L1 CHANNELS`..`L6 ZERO-TRUST` bridge alignment, 100% domain-differentiated To-Be cylinders/hexagons/enablers/outcomes, and byte-synced server/client compilers.
 
 ### 🧠 5-Tier Google / Gemini / DeepMind Model Stack
-- **Tier 1 (Orchestrator & Forensic Judge)**: `Google Omni 1.1` (`google-omni-1.1` / `gemini-omni-1.1-flash`)
-- **Tier 2 (Deep Reasoning, CFO Value & Vision)**: `Gemini 3.1 Pro` (`gemini-3.1-pro-preview`)
-- **Tier 3 (Fast Classifier & Blueprint Compiler)**: `Gemini 3.8 Flash` (`gemini-3.8-flash`)
-- **Tier 4 (Real-Time Interactive Streaming)**: `Gemini Flash Live` (`gemini-3.8-flash-live-preview` / `gemini-3.1-flash-live-preview`)
-- **Tier 5 (Multimodal Media & Embeddings)**: `Veo 3.1` (`veo-3.1-generate-preview`), `Lyria 3.5` (`lyria-3.5` / `models/lyria-3-pro-preview`), `Neural Audio` (`gemini-3.1-flash-tts-preview`), `Nano Banana 2 / Imagen 3` (`gemini-3.1-flash-image-preview` / `models/imagen-3.0-generate-002`), `Gemini Embedding 001` (`gemini-embedding-001` / `text-embedding-005`)
+- **Tier 1 (Orchestrator & Forensic Judge)**: `Google Omni 1.1` (`gemini-2.5-pro` / `gemini-2.5-flash`)
+- **Tier 2 (Deep Reasoning, CFO Value & Vision)**: `Gemini 3.1 Pro` (`gemini-2.5-pro`)
+- **Tier 3 (Fast Classifier & Blueprint Compiler)**: `Gemini 2.5 Flash` (`gemini-2.5-flash`)
+- **Tier 4 (Real-Time Interactive Streaming)**: `Gemini Flash Live` (`gemini-2.5-flash` / `gemini-2.5-flash`)
+- **Tier 5 (Multimodal Media & Embeddings)**: `Veo 3.1` (`veo-3.0-generate-preview`), `Lyria 3.5` (`lyria-3.5` / `models/lyria-realtime-exp`), `Neural Audio` (`gemini-2.5-flash-preview-tts`), `Nano Banana 2 / Imagen 3` (`gemini-2.5-flash-image` / `models/imagen-3.0-generate-002`), `Gemini Embedding 001` (`gemini-embedding-001` / `text-embedding-005`)
 
 ### 🌐 Endpoints
 - **Canonical Verified BeyondCorp URL (`ramp-portal-dev` / `248990048888`, `us-west1`)**:

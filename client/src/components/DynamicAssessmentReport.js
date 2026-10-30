@@ -554,7 +554,7 @@ const DynamicAssessmentReport = () => {
           setFramework(inst.frameworkSnapshot);
           if (inst.aiReport) {
             setReport(inst.aiReport);
-            // Auto-upgrade deterministic fallbacks or legacy pre-baked demo snapshots lacking Gemini 3.8 Flash schema fields
+            // Auto-upgrade deterministic fallbacks or legacy pre-baked demo snapshots lacking Gemini 2.5 Flash schema fields
             const needsLiveGeminiUpgrade =
               inst.aiReport.modelUsed === 'rule-based-deterministic-synthesis' ||
               inst.aiReport.isDeterministicFallback ||
@@ -565,10 +565,10 @@ const DynamicAssessmentReport = () => {
                 .then(genRes => {
                   if (genRes && genRes.report) {
                     setReport(genRes.report);
-                    toast.success('⚡ Upgraded report with Live Gemini 3.8 Flash synthesis!', { id: 'gemini-upgrade' });
+                    toast.success('⚡ Upgraded report with Live Gemini 2.5 Flash synthesis!', { id: 'gemini-upgrade' });
                   }
                 })
-                .catch(upErr => console.warn('Background Gemini 3.8 Flash upgrade skipped:', upErr?.message));
+                .catch(upErr => console.warn('Background Gemini 2.5 Flash upgrade skipped:', upErr?.message));
             }
           } else {
             try {
@@ -601,16 +601,16 @@ const DynamicAssessmentReport = () => {
   const handleRegenerateLiveGemini = async () => {
     if (!id) return;
     try {
-      toast.loading('⚡ Synthesizing fresh report & architecture with Live Gemini 3.8 Flash...', { id: 'regen-gemini' });
+      toast.loading('⚡ Synthesizing fresh report & architecture with Live Gemini 2.5 Flash...', { id: 'regen-gemini' });
       const genRes = await dynamicAssessmentService.generateReport(id);
       if (genRes && genRes.report) {
         setReport(genRes.report);
-        toast.success('✅ Live Gemini 3.8 Flash report & diagrams updated!', { id: 'regen-gemini' });
+        toast.success('✅ Live Gemini 2.5 Flash report & diagrams updated!', { id: 'regen-gemini' });
       } else {
         toast.error('Could not regenerate report', { id: 'regen-gemini' });
       }
     } catch (err) {
-      toast.error('Failed to regenerate with Live Gemini 3.8 Flash', { id: 'regen-gemini' });
+      toast.error('Failed to regenerate with Live Gemini 2.5 Flash', { id: 'regen-gemini' });
     }
   };
 
@@ -926,7 +926,7 @@ const DynamicAssessmentReport = () => {
           </div>
 
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
-            {/* Live Gemini 3.8 Flash Regenerate Action */}
+            {/* Live Gemini 2.5 Flash Regenerate Action */}
             <button
               style={{
                 background: 'linear-gradient(135deg, #059669, #10b981)',
@@ -943,9 +943,9 @@ const DynamicAssessmentReport = () => {
                 boxShadow: '0 4px 14px rgba(16, 185, 129, 0.3)'
               }}
               onClick={handleRegenerateLiveGemini}
-              title="Re-run live synthesis & bespoke Draw.io architecture generation using Google Gemini 3.8 Flash"
+              title="Re-run live synthesis & bespoke Draw.io architecture generation using Google Gemini 2.5 Flash"
             >
-              <span>⚡</span> Gemini 3.8 Flash
+              <span>⚡</span> Gemini 2.5 Flash
             </button>
 
             {/* 3. What-If Simulator Action */}
@@ -987,7 +987,7 @@ const DynamicAssessmentReport = () => {
                 boxShadow: '0 4px 14px rgba(245, 158, 11, 0.3)'
               }}
               onClick={() => setPreviewDocState({ isOpen: true, type: 'slides' })}
-              title="Launch Unified 16:9 Executive Presentation Deck (Gemini 3.8 Flash)"
+              title="Launch Unified 16:9 Executive Presentation Deck (Gemini 2.5 Flash)"
             >
               <span>📊</span> Present Deck
             </button>
@@ -1190,7 +1190,7 @@ const DynamicAssessmentReport = () => {
                 <span><FiUser /> Customer: <strong>{instance.customerName}</strong></span>
                 {instance.useCase && <span><FiTarget /> Initiative: <strong>{instance.useCase}</strong></span>}
                 <span><FiCalendar /> Completed: <strong>{new Date(instance.completedAt || instance.createdAt).toLocaleDateString()}</strong></span>
-                <span><HiSparkles /> Report Generator: <strong>{report?.modelUsed === 'rule-based-deterministic-synthesis' ? 'Gemini 3.8 Flash (Deterministic Input-Locked)' : 'Gemini 3.8 Flash'}</strong></span>
+                <span><HiSparkles /> Report Generator: <strong>{report?.modelUsed === 'rule-based-deterministic-synthesis' ? 'Gemini 2.5 Flash (Deterministic Input-Locked)' : 'Gemini 2.5 Flash'}</strong></span>
                 <span style={{
                   background: 'rgba(16, 185, 129, 0.14)',
                   color: '#059669',
@@ -1200,7 +1200,7 @@ const DynamicAssessmentReport = () => {
                   fontSize: '0.78rem',
                   fontWeight: 700
                 }}>
-                  ✓ Independent LLM Judge: {report?.llmJudgeAudit?.judgeModel || 'gemini-3.1-pro-preview'} + {report?.llmJudgeAudit?.secondaryJudgeModel || 'google-omni-1.1'} (Zero-Assumption Verified)
+                  ✓ Independent LLM Judge: {report?.llmJudgeAudit?.judgeModel || 'gemini-2.5-pro'} + {report?.llmJudgeAudit?.secondaryJudgeModel || 'gemini-2.5-pro'} (Zero-Assumption Verified)
                 </span>
               </HeroMeta>
             </div>
@@ -1441,7 +1441,7 @@ const DynamicAssessmentReport = () => {
         {/* ========================================================================= */}
         {(activeExecutiveTab === "financial" || activeExecutiveTab === "all") && (
           <div>
-            {/* Quantified Financial & TCO Impact Engine (Powered by Live Gemini 3.8 Flash) */}
+            {/* Quantified Financial & TCO Impact Engine (Powered by Live Gemini 2.5 Flash) */}
             <FinancialImpactCard theme={theme}
               pillarScores={simulatedDimensionScores}
               framework={framework}
@@ -1532,7 +1532,7 @@ const DynamicAssessmentReport = () => {
               <FiCheckCircle color="#0284c7" /> 🛡️ 6-Factor Anti-Hallucination Audit Ledger &amp; 5 ScoreX Domain Skills Verification
             </CardTitle>
             <p style={{ color: "#64748b", fontSize: "0.92rem", marginBottom: "18px" }}>
-              Every answer is locked to a verbatim source citation across Salesforce CRM, Buganizer, Uploaded Diagrams, or Email Threads, scored via <strong>scorex-grounded-rubric-scorer</strong>, and audited by <strong>scorex-omni-forensic-critic</strong> (<code>gemini-3.1-pro-preview</code> + <code>google-omni-1.1</code>).
+              Every answer is locked to a verbatim source citation across Salesforce CRM, Buganizer, Uploaded Diagrams, or Email Threads, scored via <strong>scorex-grounded-rubric-scorer</strong>, and audited by <strong>scorex-omni-forensic-critic</strong> (<code>gemini-2.5-pro</code> + <code>gemini-2.5-pro</code>).
             </p>
 
             {/* 5 ScoreX Domain Skills + 6 Anti-Hallucination Grounding Factors Banner */}
@@ -1571,7 +1571,7 @@ const DynamicAssessmentReport = () => {
                   { id: "F3", title: "3. Deterministic Rubric Anchor", desc: "Strict L1–L5 prerequisite keyword checklist enforcement" },
                   { id: "F4", title: "4. Cross-Source Conflict Resolver", desc: "Stale CRM claims overridden by recent incident logs or diagrams" },
                   { id: "F5", title: "5. Strict Abstention Gate (<0.75)", desc: "Insufficient evidence abstains instead of guessing an answer" },
-                  { id: "F6", title: "6. Dual-Model Critic Audit", desc: "Generator (gemini-3.8-flash) audited by gemini-3.1-pro-preview" }
+                  { id: "F6", title: "6. Dual-Model Critic Audit", desc: "Generator (gemini-2.5-flash) audited by gemini-2.5-pro" }
                 ].map((f) => (
                   <div key={f.id} style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "8px 10px" }}>
                     <div style={{ fontSize: "0.76rem", fontWeight: 800, color: "#0f172a" }}>{f.title}</div>
@@ -1661,7 +1661,7 @@ const DynamicAssessmentReport = () => {
                           color: theme === 'dark' ? "#d1fae5" : "#065f46",
                           lineHeight: "1.45"
                         }}>
-                          <div>⚡ <strong>Gemini 3.8 Flash Gap Analysis:</strong> {geminiReadout.gapAnalysis}</div>
+                          <div>⚡ <strong>Gemini 2.5 Flash Gap Analysis:</strong> {geminiReadout.gapAnalysis}</div>
                           {geminiReadout.remediationAction && (
                             <div style={{ marginTop: "4px" }}>🛠️ <strong>Prescription to Level 5:</strong> {geminiReadout.remediationAction}</div>
                           )}

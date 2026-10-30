@@ -1456,7 +1456,7 @@ export default function EuAiComplianceWorkspace() {
   const [copilotMessages, setCopilotMessages] = useState([
     {
       role: 'assistant',
-      text: 'Greetings. I am your EU AI Act Regulatory Copilot powered by Gemini 3.8 Flash Live Preview (gemini-3.8-flash-live-preview). I have full context of your evaluation for "' + (meta.systemName || 'this system') + '". How can I assist with Article 9–15 requirements, Article 26 deployer obligations, fine liability calculation, or Annex IV technical documentation?',
+      text: 'Greetings. I am your EU AI Act Regulatory Copilot powered by Gemini 2.5 Flash Live Preview (gemini-2.5-flash). I have full context of your evaluation for "' + (meta.systemName || 'this system') + '". How can I assist with Article 9–15 requirements, Article 26 deployer obligations, fine liability calculation, or Annex IV technical documentation?',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
@@ -1670,7 +1670,7 @@ export default function EuAiComplianceWorkspace() {
   const [syncingServer, setSyncingServer] = useState(false);
 
   // Independent Multi-Model LLM Live API Audit State
-  const [auditorModel, setAuditorModel] = useState('google-omni-1.1');
+  const [auditorModel, setAuditorModel] = useState('gemini-2.5-pro');
   const [liveAuditReport, setLiveAuditReport] = useState(null);
   const [runningLiveAudit, setRunningLiveAudit] = useState(false);
   const [showWeightJustificationTable, setShowWeightJustificationTable] = useState(false);
@@ -2019,10 +2019,10 @@ export default function EuAiComplianceWorkspace() {
     toast.success(`Task status updated to "${newStatus}"`);
   };
 
-  // Generate Legal Synthesis with Gemini 3.8 Flash
+  // Generate Legal Synthesis with Gemini 2.5 Flash
   const handleGenerateSynthesis = async () => {
     setLoadingSynthesis(true);
-    const toastId = toast.loading('✨ Gemini 3.8 Flash synthesizing statutory legal analysis...');
+    const toastId = toast.loading('✨ Gemini 2.5 Flash synthesizing statutory legal analysis...');
     try {
       const res = await axios.post('/api/eu-ai-compliance/generate-synthesis', {
         meta,
@@ -2040,7 +2040,7 @@ export default function EuAiComplianceWorkspace() {
           synthesis: res.data.synthesis,
           financialConfig: { globalTurnoverMillions, isSme, includeConcurrentGdprNis2 }
         }).catch(() => {});
-        toast.success('✅ Gemini 3.8 Flash Legal Synthesis Generated!', { id: toastId });
+        toast.success('✅ Gemini 2.5 Flash Legal Synthesis Generated!', { id: toastId });
         if (activeTab === 'questionnaire') {
           setActiveTab('dashboard');
         }
@@ -2220,7 +2220,7 @@ export default function EuAiComplianceWorkspace() {
             <ActionButton 
               onClick={handleGenerateSynthesis}
               disabled={loadingSynthesis}
-              title="Generate AI Legal Synthesis with Gemini 3.8 Flash"
+              title="Generate AI Legal Synthesis with Gemini 2.5 Flash"
               style={{
                 background: 'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)',
                 color: '#ffffff',
@@ -3062,9 +3062,9 @@ export default function EuAiComplianceWorkspace() {
                     onChange={(e) => setAuditorModel(e.target.value)}
                     style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '7px 12px', fontSize: '0.78rem', fontWeight: '700', color: '#0f172a', cursor: 'pointer' }}
                   >
-                    <option value="google-omni-1.1">Independent Judge: Google Omni 1.1 (Chief Forensic Statutory Judge)</option>
-                    <option value="gemini-3.1-pro-preview">Independent Judge: Gemini 3.1 Pro (Deep Statutory Reasoning & Annex IV)</option>
-                    <option value="gemini-3.1-flash-live-preview">Independent Judge: Gemini Flash Live (Real-Time Interactive Audit)</option>
+                    <option value="gemini-2.5-pro">Independent Judge: Google Omni 1.1 (Chief Forensic Statutory Judge)</option>
+                    <option value="gemini-2.5-pro">Independent Judge: Gemini 3.1 Pro (Deep Statutory Reasoning & Annex IV)</option>
+                    <option value="gemini-2.5-flash">Independent Judge: Gemini Flash Live (Real-Time Interactive Audit)</option>
                   </select>
 
                   <ActionButton
@@ -3182,14 +3182,14 @@ export default function EuAiComplianceWorkspace() {
               )}
             </div>
 
-            {/* Gemini 3.8 Flash AI Legal Synthesis */}
+            {/* Gemini 2.5 Flash AI Legal Synthesis */}
             <GeminiSynthesisContainer>
               <SynthesisHeaderBar>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                     <HiSparkles color="#6366f1" size={20} />
                     <h3 style={{ fontSize: '1.25rem', fontWeight: '900', color: '#0f172a', margin: 0 }}>
-                      Gemini 3.8 Flash Statutory Legal Synthesis & Enforcement Analysis
+                      Gemini 2.5 Flash Statutory Legal Synthesis & Enforcement Analysis
                     </h3>
                   </div>
                   <span style={{ fontSize: '0.82rem', color: '#64748b' }}>
@@ -3200,7 +3200,7 @@ export default function EuAiComplianceWorkspace() {
                 <SynthesisBadgeGroup>
                   <GeminiModelBadge>
                     <HiSparkles size={13} />
-                    Model: Gemini 3.8 Flash
+                    Model: Gemini 2.5 Flash
                   </GeminiModelBadge>
                   <span style={{ fontSize: '0.74rem', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', padding: '4px 10px', borderRadius: '999px', fontWeight: '800' }}>
                     Zero-Hallucination Grounded
@@ -3223,7 +3223,7 @@ export default function EuAiComplianceWorkspace() {
                     <HiSparkles size={26} />
                   </div>
                   <h4 style={{ fontSize: '1.15rem', fontWeight: '800', color: '#0f172a', margin: 0 }}>
-                    Generate Board-Level Legal Synthesis with Gemini 3.8 Flash
+                    Generate Board-Level Legal Synthesis with Gemini 2.5 Flash
                   </h4>
                   <p style={{ maxWidth: '680px', fontSize: '0.88rem', color: '#475569', margin: 0, lineHeight: 1.55 }}>
                     Perform deep statutory legal synthesis across Article 5 prohibitions, Annex III point 4 criteria, the 2025–2027 enforcement timeline, Article 99 fine liability calculation, and an initial Annex IV Technical File draft.
@@ -4086,9 +4086,9 @@ export default function EuAiComplianceWorkspace() {
                     onChange={(e) => setAuditorModel(e.target.value)}
                     style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '4px 8px', fontSize: '0.75rem', fontWeight: '700' }}
                   >
-                    <option value="google-omni-1.1">Independent Judge: Google Omni 1.1</option>
-                    <option value="gemini-3.1-pro-preview">Independent Judge: Gemini 3.1 Pro</option>
-                    <option value="gemini-3.1-flash-live-preview">Independent Judge: Gemini Flash Live</option>
+                    <option value="gemini-2.5-pro">Independent Judge: Google Omni 1.1</option>
+                    <option value="gemini-2.5-pro">Independent Judge: Gemini 3.1 Pro</option>
+                    <option value="gemini-2.5-flash">Independent Judge: Gemini Flash Live</option>
                   </select>
                   <button
                     type="button"
@@ -4335,7 +4335,7 @@ export default function EuAiComplianceWorkspace() {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
                   <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <HiSparkles color="#6366f1" size={18} />
-                    5. Statutory Legal Synthesis & Annex IV Technical Documentation (Gemini 3.8 Flash)
+                    5. Statutory Legal Synthesis & Annex IV Technical Documentation (Gemini 2.5 Flash)
                   </h3>
                   <span style={{ fontSize: '0.72rem', background: '#eef2ff', color: '#4f46e5', border: '1px solid #c7d2fe', padding: '3px 10px', borderRadius: '999px', fontWeight: '800' }}>
                     Article 11 & Annex IV Grounded
@@ -4374,7 +4374,7 @@ export default function EuAiComplianceWorkspace() {
       <CopilotFab
         type="button"
         onClick={() => setCopilotOpen(true)}
-        title="Open EU AI Act Regulatory Copilot (Gemini 3.8 Flash)"
+        title="Open EU AI Act Regulatory Copilot (Gemini 2.5 Flash)"
       >
         <FiMessageSquare size={18} />
         <span>EU AI Act Copilot</span>
@@ -4404,7 +4404,7 @@ export default function EuAiComplianceWorkspace() {
                         EU AI Act Regulatory Copilot
                       </h3>
                       <span style={{ fontSize: '0.72rem', color: '#2563eb', fontWeight: 700 }}>
-                        ⚡ Gemini 3.8 Flash Live Preview (gemini-3.8-flash-live-preview) • Zero-Hallucination
+                        ⚡ Gemini 2.5 Flash Live Preview (gemini-2.5-flash) • Zero-Hallucination
                       </span>
                     </div>
                   </div>
@@ -4489,7 +4489,7 @@ export default function EuAiComplianceWorkspace() {
                   {copilotLoading && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#6366f1', fontSize: '0.8rem', fontStyle: 'italic', padding: '6px 12px' }}>
                       <FiRefreshCw size={14} className="animate-spin" />
-                      Gemini 3.8 Flash analyzing statutory obligations...
+                      Gemini 2.5 Flash analyzing statutory obligations...
                     </div>
                   )}
                 </CopilotChatList>

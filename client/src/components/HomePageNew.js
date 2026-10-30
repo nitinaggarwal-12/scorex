@@ -695,7 +695,7 @@ const GROUNDING_FACTORS = [
   {
     code: 'GF-6',
     title: 'Cross-Model Generator vs. Forensic Judge',
-    text: 'gemini-3.8-flash extracts candidate answers while gemini-3.1-pro-preview + google-omni-1.1 audit and reject any ungrounded inference.'
+    text: 'gemini-2.5-flash extracts candidate answers while gemini-2.5-pro + gemini-2.5-pro audit and reject any ungrounded inference.'
   }
 ];
 

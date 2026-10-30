@@ -68,7 +68,7 @@ router.post('/conversation/start', async (req, res) => {
   }
 });
 
-// Send a message and get AI response (Powered by Gemini 3.8 Flash)
+// Send a message and get AI response (Powered by Gemini 2.5 Flash)
 router.post('/message', async (req, res) => {
   try {
     const { conversationId, message, sessionId, userEmail, context } = req.body;
@@ -226,9 +226,9 @@ router.post('/message', async (req, res) => {
 
     let aiResponse = null;
     let suggestedQuestions = null;
-    const supportAgentModel = 'gemini-3.8-flash-live-preview';
+    const supportAgentModel = 'gemini-2.5-flash';
 
-    // 🌟 1. Try Gemini 3.8 Flash Live Preview first if API key is provided
+    // 🌟 1. Try Gemini 2.5 Flash Live Preview first if API key is provided
     if (geminiService.isAvailable()) {
       try {
         console.log(`🤖 Generating Support Agent response with ${supportAgentModel}...`);
@@ -244,7 +244,7 @@ router.post('/message', async (req, res) => {
           console.log(`✅ Received Support Agent response (${geminiResult.model || supportAgentModel})`);
         }
       } catch (geminiError) {
-        console.warn('⚠️ Gemini 3.8 Flash Live Preview notice, using framework-grounded fallback:', geminiError.message);
+        console.warn('⚠️ Gemini 2.5 Flash Live Preview notice, using framework-grounded fallback:', geminiError.message);
       }
     }
 
@@ -258,14 +258,14 @@ router.post('/message', async (req, res) => {
       const strongest = dims[dims.length - 1];
       const topRec = assessmentData?.recommendations?.[0];
 
-      aiResponse = `**Gemini 3.8 Flash Live Preview Support Agent** — **${fwName}** (${orgName})\n\n` +
+      aiResponse = `**Gemini 2.5 Flash Live Preview Support Agent** — **${fwName}** (${orgName})\n\n` +
         (dims.length > 0
           ? `Based on live telemetry for **${orgName}**, your composite maturity score is **${overallPct}%** (**${assessmentData?.maturityStage || 'Developing'}**):\n` +
             `- **Primary Bottleneck**: **${weakest?.name}** at **${weakest?.score}%** — requires immediate Phase 1 architectural remediation.\n` +
             `- **Core Anchor Strength**: **${strongest?.name}** at **${strongest?.score}%** — ready to support target-state scaling.\n` +
             (topRec ? `- **Priority #1 Action**: **${topRec.title}** — ${topRec.action || topRec.impact || 'Execute immediate foundation hardening.'}\n\n` : '\n') +
             `You can inspect the **Nano Banana 2** 3-Stage Architecture Blueprint, listen to the **Google Omni 1.1** 5-Act Audio Story, or review the **Omni 1.1 Critic Audit** directly in this report.`
-          : `I am actively monitoring your **${fwName}** workspace via **Gemini 3.8 Flash Live Preview** (\`gemini-3.8-flash-live-preview\`). Ask me about any scoring dimension, statutory control, ROI sensitivity lever, or **Nano Banana 2** target architecture pattern.`);
+          : `I am actively monitoring your **${fwName}** workspace via **Gemini 2.5 Flash Live Preview** (\`gemini-2.5-flash\`). Ask me about any scoring dimension, statutory control, ROI sensitivity lever, or **Nano Banana 2** target architecture pattern.`);
 
       suggestedQuestions = dims.length > 0
         ? [

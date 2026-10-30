@@ -5,37 +5,37 @@ const { GoogleGenAI } = require('@google/genai');
  */
 const MODEL_STACK = {
   tier1_orchestrator: {
-    primary: process.env.GEMINI_ORCHESTRATOR_MODEL || 'google-omni-1.1',
-    flash: 'gemini-omni-1.1-flash',
-    audio_storytelling: process.env.OMNI_AUDIO_STORY_MODEL || 'google-omni-1.1',
-    ui_ux_critic: process.env.OMNI_CRITIC_MODEL || 'google-omni-1.1'
+    primary: process.env.GEMINI_ORCHESTRATOR_MODEL || 'gemini-2.5-pro',
+    flash: 'gemini-2.5-flash',
+    audio_storytelling: process.env.OMNI_AUDIO_STORY_MODEL || 'gemini-2.5-flash',
+    ui_ux_critic: process.env.OMNI_CRITIC_MODEL || 'gemini-2.5-pro'
   },
   tier2_deep_reasoning: {
-    argon: process.env.GEMINI_ARGON_MODEL || 'gemini-4-argon',
-    primary: process.env.GEMINI_PRO_MODEL || 'gemini-3.1-pro-preview',
-    vision: 'gemini-3.1-pro-preview'
+    argon: process.env.GEMINI_ARGON_MODEL || 'gemini-2.5-pro',
+    primary: process.env.GEMINI_PRO_MODEL || 'gemini-2.5-pro',
+    vision: 'gemini-2.5-pro'
   },
   tier3_fast_classifier: {
-    primary: process.env.GEMINI_FLASH_MODEL || 'gemini-3.8-flash'
+    primary: process.env.GEMINI_FLASH_MODEL || 'gemini-2.5-flash'
   },
   tier4_live_streaming: {
-    primary: process.env.GEMINI_LIVE_MODEL || 'gemini-3.8-flash-live-preview',
-    support_agent: process.env.GEMINI_SUPPORT_AGENT_MODEL || 'gemini-3.8-flash-live-preview',
-    fallback_live: 'gemini-3.1-flash-live-preview'
+    primary: process.env.GEMINI_LIVE_MODEL || 'gemini-2.5-flash',
+    support_agent: process.env.GEMINI_SUPPORT_AGENT_MODEL || 'gemini-2.5-flash',
+    fallback_live: 'gemini-2.5-flash'
   },
   tier5_multimodal_platform: {
-    video: process.env.GEMINI_VIDEO_MODEL || 'veo-3.1-generate-preview',
-    audio_composition: process.env.GEMINI_AUDIO_MODEL || 'lyria-3.5',
-    neural_tts: process.env.GEMINI_TTS_MODEL || 'gemini-3.1-flash-tts-preview',
-    neural_tts_v38: 'gemini-3.8-flash-tts',
-    neural_tts_lite: 'gemini-3.8-flash-lite-tts',
-    architecture_diagram: process.env.NANO_BANANA_MODEL || 'nano-banana-2',
-    architecture_diagram_v21: 'gemini-nano-banana-2.1',
-    image_generation: process.env.GEMINI_IMAGE_MODEL || 'gemini-3.1-flash-image-preview',
-    image_generation_ga: 'gemini-3.1-flash-image',
+    video: process.env.GEMINI_VIDEO_MODEL || 'veo-3.0-generate-preview',
+    audio_composition: process.env.GEMINI_AUDIO_MODEL || 'lyria-realtime-exp',
+    neural_tts: process.env.GEMINI_TTS_MODEL || 'gemini-2.5-flash-preview-tts',
+    neural_tts_v38: 'gemini-2.5-flash-preview-tts',
+    neural_tts_lite: 'gemini-2.5-flash-preview-tts',
+    architecture_diagram: process.env.NANO_BANANA_MODEL || 'gemini-2.5-flash-image',
+    architecture_diagram_v21: 'gemini-2.5-flash-image',
+    image_generation: process.env.GEMINI_IMAGE_MODEL || 'gemini-2.5-flash-image',
+    image_generation_ga: 'gemini-2.5-flash-image',
     embedding_primary: process.env.GEMINI_EMBEDDING_MODEL || 'gemini-embedding-001',
-    embedding_v2: 'gemini-embedding-2',
-    embedding_secondary: 'text-embedding-005',
+    embedding_v2: 'gemini-embedding-001',
+    embedding_secondary: 'text-embedding-004',
     graph_engine: 'BigQuery Property Graphs (ISO GQL)',
     agent_sidecar: 'Google ADK 4-Agent Scheduled Sidecar',
     bi_analytics: 'gemini-data-analytics-api',
@@ -46,10 +46,10 @@ const MODEL_STACK = {
 /**
  * Gemini AI Service
  * Powered by the Canonical 5-Tier Google / Gemini / DeepMind Model Stack
- * - Frontier Deep Reasoning & Orthogonal Judge: Gemini 4 Argon (gemini-4-argon) & Gemini 3.1 Pro (gemini-3.1-pro-preview)
- * - Audio Storytelling & Multimodal Critic: Google Omni 1.1 (google-omni-1.1 / gemini-omni-1.1-flash)
- * - Architecture Diagram Generation: Nano Banana 2 (nano-banana-2 / gemini-nano-banana-2.1 / gemini-3.1-flash-image-preview)
- * - Support Agent / Live Copilot: Gemini 3.8 Flash Live Preview (gemini-3.8-flash-live-preview / gemini-3.1-flash-live-preview)
+ * - Frontier Deep Reasoning & Orthogonal Judge: Gemini 2.5 Pro (gemini-2.5-pro) & Gemini 3.1 Pro (gemini-2.5-pro)
+ * - Audio Storytelling & Multimodal Critic: Google Omni 1.1 (gemini-2.5-pro / gemini-2.5-flash)
+ * - Architecture Diagram Generation: Nano Banana 2 (nano-banana-2 / gemini-nano-banana-2.1 / gemini-2.5-flash-image)
+ * - Support Agent / Live Copilot: Gemini 2.5 Flash Live Preview (gemini-2.5-flash / gemini-2.5-flash)
  */
 class GeminiService {
   constructor() {
@@ -72,23 +72,7 @@ class GeminiService {
    */
   _resolveWireModel(model) {
     if (process.env.GEMINI_WIRE_MODEL) return process.env.GEMINI_WIRE_MODEL;
-    if (
-      model === 'gemini-4-argon' ||
-      model === 'google-omni-1.1' ||
-      model === 'gemini-omni-1.1-flash' ||
-      model === 'gemini-3.8-flash' ||
-      model === 'gemini-3.8-flash-live-preview' ||
-      model === 'gemini-3.8-flash-tts' ||
-      model === 'gemini-3.8-flash-lite-tts' ||
-      model === 'gemini-3.1-pro-preview' ||
-      model === 'gemini-3.1-flash-live-preview' ||
-      model === 'nano-banana-2' ||
-      model === 'gemini-nano-banana-2.1' ||
-      model === 'gemini-embedding-2'
-    ) {
-      return process.env.GEMINI_RUNTIME_WIRE_ENDPOINT || model;
-    }
-    return model;
+    return process.env.GEMINI_RUNTIME_WIRE_ENDPOINT || model || 'gemini-2.5-flash';
   }
 
   getApiKey() {
@@ -124,15 +108,15 @@ class GeminiService {
   /**
    * Internal helper to generate content with automatic exponential backoff retry and model fallback.
    * Supports options = { preferredModel, excludeModel } to enforce strict separation of duties
-   * between Report Generator models (e.g. gemini-3.8-flash) and Independent LLM-as-a-Judge models
-   * (e.g. gemini-4-argon, gemini-3.1-pro-preview, google-omni-1.1).
+   * between Report Generator models (e.g. gemini-2.5-flash) and Independent LLM-as-a-Judge models
+   * (e.g. gemini-2.5-pro, gemini-2.5-pro, gemini-2.5-pro).
    */
   async _generateWithFallback(promptOrContents, systemInstruction = '', temperature = 0.7, responseMimeType = null, maxRetries = 2, options = {}) {
     if (!this.isAvailable()) {
       const vertexToken = await this.getVertexAccessToken();
       if (vertexToken) {
         const proj = process.env.GOOGLE_CLOUD_PROJECT || process.env.GCLOUD_PROJECT || 'ramp-portal-dev';
-        const wireModel = this._resolveWireModel((options && options.preferredModel) || this.primaryModel || 'gemini-3.8-flash');
+        const wireModel = this._resolveWireModel((options && options.preferredModel) || this.primaryModel || 'gemini-2.5-flash');
         const url = `https://aiplatform.googleapis.com/v1/projects/${proj}/locations/global/publishers/google/models/${wireModel}:generateContent`;
         const generationConfig = { temperature, maxOutputTokens: 32768 };
         if (responseMimeType) generationConfig.responseMimeType = responseMimeType;
@@ -208,7 +192,7 @@ class GeminiService {
           if (responseMimeType) {
             config.responseMimeType = responseMimeType;
           }
-          // Breaking Change 2A Guard: gemini-4-argon strictly requires discrete thinkingLevel ('LOW'|'MEDIUM'|'HIGH')
+          // Breaking Change 2A Guard: gemini-2.5-pro strictly requires discrete thinkingLevel ('LOW'|'MEDIUM'|'HIGH')
           if (String(wireModel).includes('4-argon')) {
             config.thinkingConfig = { thinkingLevel: 'HIGH' };
           } else if (String(wireModel).includes('3.8-flash') && !String(wireModel).includes('tts')) {
@@ -258,16 +242,16 @@ class GeminiService {
    */
   async runIndependentLlmJudgeAudit({
     engineName = 'ScoreX Assessment Engine',
-    generatorModel = 'gemini-3.8-flash',
-    preferredJudgeModel = 'gemini-3.1-pro-preview',
-    secondaryJudgeModel = 'google-omni-1.1',
+    generatorModel = 'gemini-2.5-flash',
+    preferredJudgeModel = 'gemini-2.5-pro',
+    secondaryJudgeModel = 'gemini-2.5-pro',
     customerName = 'Enterprise Client',
     inputFacts = {},
     generatedReport = {}
   } = {}) {
     // Ensure Judge model is strictly distinct from Generator model
     const effectiveJudgeModel = preferredJudgeModel === generatorModel
-      ? (secondaryJudgeModel !== generatorModel ? secondaryJudgeModel : 'google-omni-1.1')
+      ? (secondaryJudgeModel !== generatorModel ? secondaryJudgeModel : 'gemini-2.5-pro')
       : preferredJudgeModel;
 
     const verificationHash = 'JUDGE-' + Math.random().toString(36).substring(2, 8).toUpperCase() + '-' + Date.now().toString().slice(-4);
@@ -315,7 +299,7 @@ Return a JSON object with this exact schema:
         return {
           engineName,
           generatorModel,
-          generatorModelLabel: generatorModel === 'gemini-3.8-flash' ? 'Gemini 3.8 Flash (Tier 3 Fast Synthesis)' : generatorModel,
+          generatorModelLabel: generatorModel === 'gemini-2.5-flash' ? 'Gemini 2.5 Flash (Tier 3 Fast Synthesis)' : generatorModel,
           judgeModel: effectiveJudgeModel,
           judgeModelLabel: 'Google Omni 1.1 (Tier 1 Statutory & Multimodal Judge — Live API)',
           secondaryJudgeModel,
@@ -342,7 +326,7 @@ Return a JSON object with this exact schema:
     return {
       engineName,
       generatorModel,
-      generatorModelLabel: generatorModel === 'gemini-3.8-flash' ? 'Gemini 3.8 Flash (Tier 3 Fast Synthesis)' : generatorModel,
+      generatorModelLabel: generatorModel === 'gemini-2.5-flash' ? 'Gemini 2.5 Flash (Tier 3 Fast Synthesis)' : generatorModel,
       judgeModel: effectiveJudgeModel,
       judgeModelLabel: 'Google Omni 1.1 (Tier 1 Statutory Judge — Deterministic Rule Engine)',
       secondaryJudgeModel,
@@ -375,17 +359,17 @@ Return a JSON object with this exact schema:
 
   /**
    * Generate conversational response for the ScoreX Support Agent & Live Copilot
-   * Powered by Gemini 3.8 Flash Live Preview (gemini-3.8-flash-live-preview / gemini-3.1-flash-live-preview)
+   * Powered by Gemini 2.5 Flash Live Preview (gemini-2.5-flash / gemini-2.5-flash)
    */
   async generateChatResponse(userMessage, conversationHistory = [], context = {}, assessmentData = null) {
     if (!this.isAvailable()) {
       return null;
     }
 
-    const supportModel = MODEL_STACK.tier4_live_streaming.support_agent || 'gemini-3.8-flash-live-preview';
+    const supportModel = MODEL_STACK.tier4_live_streaming.support_agent || 'gemini-2.5-flash';
     const frameworkLabel = assessmentData?.frameworkName || assessmentData?.typeName || context?.frameworkName || 'ScoreX Multi-Engine Enterprise Assessment';
 
-    const systemInstruction = `You are the ScoreX Live Support Agent & Principal Enterprise Architect, powered by Gemini 3.8 Flash Live Preview (${supportModel}).
+    const systemInstruction = `You are the ScoreX Live Support Agent & Principal Enterprise Architect, powered by Gemini 2.5 Flash Live Preview (${supportModel}).
 Your mission is to provide real-time, domain-accurate guidance across all 5 ScoreX Assessment Subsystems:
 1. Subsystem 1 — Gemini Enterprise (GE) Value Realization & FinOps Dossier (82 Questions across 10 Modules C·P·A·W·T·Q·U·L·R·F, 8 Evidence Sources, 10 CRM Accounts, Seat Funnel WAU<=MAU<=Assigned<=Provisioned<=Contracted, 3-Year ROI/NPV, Timed 6-Stage Workflows)
 2. Subsystem 2 — Dynamic Blueprint Assessments (6 Canonical Blueprints & 6 Starter Instances):
@@ -481,14 +465,14 @@ Provide a direct, consultative, and framework-accurate response. At the very end
         wireModel: result.modelUsed || supportModel
       };
     } catch (error) {
-      console.error('❌ Error generating Gemini 3.8 Flash Live Preview support response:', error.message);
+      console.error('❌ Error generating Gemini 2.5 Flash Live Preview support response:', error.message);
       return null;
     }
   }
 
   /**
    * Omni 1.1 Critic Review Across Every Assessment Type
-   * Powered by Google Omni 1.1 (google-omni-1.1 / gemini-omni-1.1-flash)
+   * Powered by Google Omni 1.1 (gemini-2.5-pro / gemini-2.5-flash)
    * Audits UI/UX, Visuals, Technical Depth, Accuracy, Relevancy, Completeness, Anti-Hallucination, and Live Interactivity.
    */
   async runOmniCriticAssessmentReview({
@@ -506,8 +490,8 @@ Provide a direct, consultative, and framework-accurate response. At the very end
     hasAudioStory = true,
     hasNanoBananaDiagram = true
   } = {}) {
-    const criticModel = MODEL_STACK.tier1_orchestrator.ui_ux_critic || 'google-omni-1.1';
-    const flashCriticModel = MODEL_STACK.tier1_orchestrator.flash || 'gemini-omni-1.1-flash';
+    const criticModel = MODEL_STACK.tier1_orchestrator.ui_ux_critic || 'gemini-2.5-pro';
+    const flashCriticModel = MODEL_STACK.tier1_orchestrator.flash || 'gemini-2.5-flash';
     const coveragePct = totalQuestions > 0 ? Math.round((answeredCount / totalQuestions) * 100) : 100;
 
     const sortedDims = [...(Array.isArray(dimensions) ? dimensions : [])].sort((a, b) => (a.score || 0) - (b.score || 0));
@@ -534,14 +518,15 @@ Provide a direct, consultative, and framework-accurate response. At the very end
       frameworkName,
       customerName,
       compositeQualityScore,
-      verdict: compositeQualityScore >= 92 ? 'CERTIFIED_ENTERPRISE_GRADE' : 'VERIFIED_WITH_ADVISORIES',
+      verdict: 'DETERMINISTIC_TELEMETRY_AUDIT',
+      isLiveLlmCritique: false,
       rubricScores: {
         visualUx: { score: visualUxScore, label: 'Visual & UX Ergonomics', status: 'Optimal — High-contrast executive hierarchy, responsive KPI cards & interactive Draw.io / Nano Banana 2 topology' },
         technicalAccuracy: { score: accuracyScore, label: 'Technical & Mathematical Accuracy', status: `100% deterministic derivation from ${answeredCount}/${totalQuestions || answeredCount} submitted responses (${overallScore}% composite)` },
         domainRelevancy: { score: relevancyScore, label: 'Framework & Industry Relevancy', status: `Strictly aligned to ${frameworkName} (${industry}) — zero cross-domain template contamination` },
         completeness: { score: completenessScore, label: 'Evidence Completeness & Coverage', status: `${coveragePct}% question evidence coverage across ${dimensions.length || 6} evaluated dimensions` },
         antiHallucination: { score: antiHallucinationScore, label: 'Zero-Hallucination & Provenance', status: 'Zero fabricated metrics; unanswered items explicitly isolated as Input Pending' },
-        dynamicFreshness: { score: technicalDepthScore, label: 'Zero Stale / Static Artifacts', status: 'All 5-Act Audio Scripts (Omni 1.1), Architecture Blueprints (Nano Banana 2), and Support Copilot (Gemini 3.8 Flash Live) dynamically bound to live assessment telemetry' }
+        dynamicFreshness: { score: technicalDepthScore, label: 'Zero Stale / Static Artifacts', status: 'All 5-Act Audio Scripts (Omni 1.1), Architecture Blueprints (Nano Banana 2), and Support Copilot (Gemini 2.5 Flash Live) dynamically bound to live assessment telemetry' }
       },
       keyStrengths: [
         `Strongest capability validated in "${strongestDim.name}" (${strongestDim.score ?? overallScore}%), providing an anchor for target-state scaling.`,
@@ -612,9 +597,11 @@ Return a JSON object with:
           const parsed = JSON.parse(res.text.replace(/```json/g, '').replace(/```/g, '').trim());
           return {
             ...deterministicCritique,
+            verdict: compositeQualityScore >= 92 ? 'CERTIFIED_ENTERPRISE_GRADE' : 'VERIFIED_WITH_ADVISORIES',
+            isLiveLlmCritique: true,
             executiveCriticSummary: parsed.executiveCriticSummary || `Google Omni 1.1 verified ${customerName}'s ${frameworkName} dossier (${overallScore}% composite across ${answeredCount} evidence inputs) with zero cross-domain hallucinations.`,
             topArchitecturalRisk: parsed.topArchitecturalRisk || `${weakestDim.name} (${weakestDim.score}%) represents the primary technical bottleneck requiring immediate Phase 1 remediation.`,
-            uxAndCompletenessNote: parsed.uxAndCompletenessNote || `All visual topology cards (Nano Banana 2), 5-Act audio narratives (Omni 1.1), and live copilot prompts (Gemini 3.8 Flash Live Preview) are dynamically synchronized.`
+            uxAndCompletenessNote: parsed.uxAndCompletenessNote || `All visual topology cards (Nano Banana 2), 5-Act audio narratives (Omni 1.1), and live copilot prompts (Gemini 2.5 Flash Live Preview) are dynamically synchronized.`
           };
         }
       } catch (_) {
@@ -626,7 +613,7 @@ Return a JSON object with:
       ...deterministicCritique,
       executiveCriticSummary: `Google Omni 1.1 audited ${customerName}'s ${frameworkName} assessment (${overallScore}% composite, ${coveragePct}% evidence coverage): all visual topologies, 5-Act audio scripts, and recommendations trace strictly to submitted telemetry with zero static placeholders.`,
       topArchitecturalRisk: `${weakestDim.name} (${weakestDim.score ?? overallScore}%) is the primary architectural bottleneck limiting transition to target-state maturity.`,
-      uxAndCompletenessNote: `UI/UX hierarchy, Nano Banana 2 visual architecture blueprints, Omni 1.1 audio storytelling, and Gemini 3.8 Flash Live Preview support copilot verified active and context-bound.`
+      uxAndCompletenessNote: `UI/UX hierarchy, Nano Banana 2 visual architecture blueprints, Omni 1.1 audio storytelling, and Gemini 2.5 Flash Live Preview support copilot verified active and context-bound.`
     };
   }
 
@@ -1017,7 +1004,7 @@ Return ONLY valid JSON.`;
     prompt,
     systemInstruction = '',
     temperature = 0.3,
-    preferredModel = 'gemini-3.1-pro-preview',
+    preferredModel = 'gemini-2.5-pro',
     timeoutMs = 9500,
     forceMode = null
   } = {}) {
@@ -1091,7 +1078,7 @@ Return ONLY valid JSON.`;
         'nitina-ggarwal-sandbox-647724'
       ].filter(Boolean)));
 
-      const vertexWireModels = ['gemini-4-argon', 'gemini-3.1-pro-preview'];
+      const vertexWireModels = ['gemini-2.5-pro', 'gemini-2.5-pro'];
 
       for (const vertexWireModel of vertexWireModels) {
         for (const proj of candidateProjects) {

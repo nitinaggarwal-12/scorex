@@ -506,7 +506,7 @@ const ChatWidget = () => {
     let pageData = {
       assessmentId,
       instanceId: assessmentId,
-      aiSupportModel: 'gemini-3.8-flash-live-preview'
+      aiSupportModel: 'gemini-2.5-flash'
     };
 
     if (path === '/') {
@@ -805,10 +805,10 @@ const ChatWidget = () => {
                     padding: '2px 7px',
                     borderRadius: '999px'
                   }}>
-                    ⚡ gemini-3.8-flash-live-preview
+                    ⚡ gemini-2.5-flash
                   </span>
                 </ChatTitle>
-                <ChatSubtitle>Gemini 3.8 Flash Live Preview • Multi-Engine Assessment Copilot</ChatSubtitle>
+                <ChatSubtitle>Gemini 2.5 Flash Live Preview • Multi-Engine Assessment Copilot</ChatSubtitle>
               </div>
               <HeaderButtons>
                 <IconButton onClick={handleMinimize} title="Minimize">
@@ -825,7 +825,7 @@ const ChatWidget = () => {
                 <WelcomeMessage>
                   <WelcomeIcon>⚡</WelcomeIcon>
                   <WelcomeText>
-                    Hi! I'm your <strong>ScoreX Support Agent</strong> powered by <strong>Gemini 3.8 Flash Live Preview</strong>.
+                    Hi! I'm your <strong>ScoreX Support Agent</strong> powered by <strong>Gemini 2.5 Flash Live Preview</strong>.
                     Ask me about any Dynamic Blueprint, GE Value Realization, or EU AI Act assessment!
                   </WelcomeText>
                 </WelcomeMessage>

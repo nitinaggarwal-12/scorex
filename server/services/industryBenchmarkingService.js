@@ -1,7 +1,7 @@
 const geminiService = require('./geminiService');
 
 /**
- * Generate Industry Benchmarking Report using Gemini (gemini-3.8-flash / gemini-3.1-pro-preview)
+ * Generate Industry Benchmarking Report using Gemini (gemini-2.5-flash / gemini-2.5-pro)
  * Professional-grade, vendor-neutral competitive intelligence and market analysis
  */
 class IndustryBenchmarkingService {
@@ -24,7 +24,7 @@ class IndustryBenchmarkingService {
       return this.getFallbackReport(industry, customerScore, pillarScores);
     }
 
-    // 🌟 1. Primary: Use Gemini (gemini-3.8-flash / gemini-3.1-pro-preview) if available (when refresh=true)
+    // 🌟 1. Primary: Use Gemini (gemini-2.5-flash / gemini-2.5-pro) if available (when refresh=true)
     if (geminiService.isAvailable()) {
       try {
         console.log('[IndustryBenchmarking] Generating benchmark report using Gemini...');

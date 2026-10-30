@@ -6,7 +6,7 @@ const { compileAll3GroundedDiagrams } = require('./dynamicAssessmentDiagramCompi
 /**
  * Dynamic Assessment Engine
  * Generates custom assessment frameworks, questions, options, and comprehensive executive reports
- * powered by Google Gemini (gemini-3.8-flash).
+ * powered by Google Gemini (gemini-2.5-flash).
  */
 class DynamicAssessmentEngine {
   constructor() {
@@ -21,7 +21,7 @@ class DynamicAssessmentEngine {
    */
   async generateFrameworkFromPrompt(prompt, options = {}) {
     const tier = options.tier || 'deep_dive'; // 'rapid' | 'deep_dive' | 'comprehensive'
-    console.log(`🤖 Generating dynamic assessment framework (Tier: ${tier}) with Gemini (gemini-3.8-flash)...`);
+    console.log(`🤖 Generating dynamic assessment framework (Tier: ${tier}) with Gemini (gemini-2.5-flash)...`);
     console.log('📝 Prompt:', prompt);
 
     let tierConfig = {
@@ -306,7 +306,7 @@ Output a strictly valid JSON object with the following schema:
    * Main report synthesis engine
    */
   async generateDynamicReport(instance, framework) {
-    console.log(`🤖 Generating executive report for "${instance.customerName}" (${framework.title}) with Gemini 3.8 Flash...`);
+    console.log(`🤖 Generating executive report for "${instance.customerName}" (${framework.title}) with Gemini 2.5 Flash...`);
 
     const scores = this.calculateScores(instance.responses, framework);
     const selectedPainPoints = [];
@@ -344,7 +344,7 @@ Output a strictly valid JSON object with the following schema:
     if (isAgentic) {
       domainGuidance = `- Multi-Agent Orchestration & MCP: Google Cloud Vertex AI Agent Engine, Gemini 3.8 Super-Orchestrator, Apigee Model Context Protocol (MCP) Gateway, AlloyDB AI & Cloud Spanner Graph episodic memory, OpenTelemetry agent trajectory tracing, and Human-in-the-Loop (HITL) governance.`;
     } else if (isGenAI) {
-      domainGuidance = `- GenAI Modernization & Parity: OpenAI API to Google Cloud Vertex AI translation, Gemini 3.8 Flash & Pro native 2M context windows.
+      domainGuidance = `- GenAI Modernization & Parity: OpenAI API to Google Cloud Vertex AI translation, Gemini 2.5 Flash & Pro native 2M context windows.
 - FinOps Token Economics: Vertex AI Prompt Context Caching (75% token discount), dynamic model routing (Flash for triage, Pro for reasoning).
 - Security & Agent Mesh: Google Cloud Model Armor prompt injection defense, Model Context Protocol (MCP) standardized tool calling, and VPC Service Controls.
 - CI/CD Quality: Automated LLM-as-a-judge regression evaluation pipelines. STRICTLY avoid referencing BigQuery reservation slots or Lakehouse catalogs in GenAI assessments unless explicitly mentioned by user.`;
@@ -356,7 +356,7 @@ Output a strictly valid JSON object with the following schema:
       domainGuidance = `- Open Data Lakehouse: Dataplex Universal Catalog, Apache Iceberg, BigLake, BigQuery Editions, Datastream CDC, Dataform SQLX, and Looker Semantic Layer.`;
     }
 
-    const systemInstruction = `You are a Lead Executive Advisor and CTO Strategy Consultant at ScoreX powered by Google Gemini 3.8 Flash.
+    const systemInstruction = `You are a Lead Executive Advisor and CTO Strategy Consultant at ScoreX powered by Google Gemini 2.5 Flash.
 You specialize in synthesizing maturity assessments into executive-ready strategic transformation reports for Board Members, CTOs, CIOs, and VP-level leaders.
 
 Deliver a rigorous, consultative, highly contextualized report based on the customer's actual scores, identified pain points, and specific notes.
@@ -518,7 +518,7 @@ Generate a comprehensive JSON executive report matching this exact schema:
 
     let parsed = null;
     try {
-      // Run Executive Report Synthesis and Bespoke Draw.io Architecture Topology Generation in parallel via Gemini 3.8 Flash
+      // Run Executive Report Synthesis and Bespoke Draw.io Architecture Topology Generation in parallel via Gemini 2.5 Flash
       const [result, liveDiagrams] = await Promise.all([
         this.gemini._generateWithFallback(
           userPrompt + '\n\nIMPORTANT: Output ONLY pure JSON matching the schema.',
@@ -563,14 +563,14 @@ Generate a comprehensive JSON executive report matching this exact schema:
         parsed.architectureXml = parsed.architectureDiagrams?.targetStateXml || null;
         parsed.currentArchitectureXml = parsed.architectureDiagrams?.currentStateXml || null;
         parsed.generatedAt = new Date().toISOString();
-        parsed.modelUsed = result.modelUsed || 'gemini-3.8-flash';
+        parsed.modelUsed = result.modelUsed || 'gemini-2.5-flash';
         parsed.isLiveGemini = true;
         parsed.calculatedScores = scores;
         parsed.llmJudgeAudit = await this.gemini.runIndependentLlmJudgeAudit({
           engineName: 'ScoreX Dynamic Assessment Engine',
-          generatorModel: parsed.modelUsed || 'gemini-3.8-flash',
-          preferredJudgeModel: 'gemini-3.1-pro-preview',
-          secondaryJudgeModel: 'google-omni-1.1',
+          generatorModel: parsed.modelUsed || 'gemini-2.5-flash',
+          preferredJudgeModel: 'gemini-2.5-pro',
+          secondaryJudgeModel: 'gemini-2.5-pro',
           customerName: instance.customerName || 'Enterprise Client',
           inputFacts: {
             overallScore: scores.overallScore,
@@ -593,9 +593,9 @@ Generate a comprehensive JSON executive report matching this exact schema:
     const fallbackReport = this._generateDeterministicReportFallback(framework, instance, scores, selectedPainPoints);
     fallbackReport.llmJudgeAudit = await this.gemini.runIndependentLlmJudgeAudit({
       engineName: 'ScoreX Dynamic Assessment Engine',
-      generatorModel: 'gemini-3.8-flash',
-      preferredJudgeModel: 'gemini-3.1-pro-preview',
-      secondaryJudgeModel: 'google-omni-1.1',
+      generatorModel: 'gemini-2.5-flash',
+      preferredJudgeModel: 'gemini-2.5-pro',
+      secondaryJudgeModel: 'gemini-2.5-pro',
       customerName: instance.customerName || 'Enterprise Client',
       inputFacts: {
         overallScore: scores.overallScore,
@@ -905,7 +905,7 @@ Generate a comprehensive JSON executive report matching this exact schema:
             milestones: [
               'Publish Looker FinOps executive showback/chargeback scorecards mapped to business unit KPIs',
               'Deploy BQML real-time cost anomaly detection with automated Pub/Sub budget circuit-breakers',
-              'Operationalize model-tier arbitrage routing simple tasks to Gemini 3.8 Flash and complex reasoning to Pro'
+              'Operationalize model-tier arbitrage routing simple tasks to Gemini 2.5 Flash and complex reasoning to Pro'
             ]
           }
         }
@@ -1004,7 +1004,7 @@ Generate a comprehensive JSON executive report matching this exact schema:
             timeline: '6–12 Months',
             focus: 'Optimize latency/cost routing and scale compound Gemini agent workflows',
             milestones: [
-              'Deploy dynamic complexity routing between Gemini 3.8 Flash (sub-second tasks) and Gemini 3.8 Pro (deep reasoning)',
+              'Deploy dynamic complexity routing between Gemini 2.5 Flash (sub-second tasks) and Gemini 3.8 Pro (deep reasoning)',
               techFlags.isLangChain
                 ? 'Refactor legacy LangChain wrappers into native Vertex AI Agent Builder & MCP tool microservices'
                 : 'Refactor legacy custom orchestration wrappers into native Vertex AI Agent Builder & MCP tool microservices',
@@ -1227,15 +1227,15 @@ Generate a comprehensive JSON executive report matching this exact schema:
       },
       expectedOutcomes: domainExpectedOutcomes,
       generatedAt: new Date().toISOString(),
-      modelUsed: 'gemini-3.8-flash',
+      modelUsed: 'gemini-2.5-flash',
       calculatedScores: scores,
       llmJudgeAudit: {
         engineName: 'ScoreX Dynamic Assessment Engine',
-        generatorModel: 'gemini-3.8-flash',
-        generatorModelLabel: 'Gemini 3.8 Flash (Tier 3 Fast Synthesis)',
-        judgeModel: 'gemini-3.1-pro-preview',
+        generatorModel: 'gemini-2.5-flash',
+        generatorModelLabel: 'Gemini 2.5 Flash (Tier 3 Fast Synthesis)',
+        judgeModel: 'gemini-2.5-pro',
         judgeModelLabel: 'Gemini 3.1 Pro (Tier 2 Deep Reasoning Judge)',
-        secondaryJudgeModel: 'google-omni-1.1',
+        secondaryJudgeModel: 'gemini-2.5-pro',
         secondaryJudgeModelLabel: 'Google Omni 1.1 (Tier 1 Statutory & Multimodal Judge)',
         isIndependentModel: true,
         zeroAssumptionVerified: true,
@@ -1243,7 +1243,7 @@ Generate a comprehensive JSON executive report matching this exact schema:
         confidenceScore: 98,
         answeredInputsVerified: totalAnswered,
         totalQuestionsScope: totalFrameworkQuestions,
-        auditSummary: `Audited by Gemini 3.1 Pro + Google Omni 1.1 (strictly independent of generator Gemini 3.8 Flash): all displayed scores and financial metrics derive deterministically from ${totalAnswered}/${totalFrameworkQuestions} submitted user inputs with zero unverified assumptions.`,
+        auditSummary: `Audited by Gemini 3.1 Pro + Google Omni 1.1 (strictly independent of generator Gemini 2.5 Flash): all displayed scores and financial metrics derive deterministically from ${totalAnswered}/${totalFrameworkQuestions} submitted user inputs with zero unverified assumptions.`,
         auditedAt: new Date().toISOString(),
         verificationHash: 'JUDGE-DYN-' + Date.now().toString().slice(-6)
       },
@@ -1252,7 +1252,7 @@ Generate a comprehensive JSON executive report matching this exact schema:
   }
 
   /**
-   * AI-generate bespoke Draw.io XML Architecture Diagrams using Gemini 3.8 Flash
+   * AI-generate bespoke Draw.io XML Architecture Diagrams using Gemini 2.5 Flash
    */
   _extractArchitectureContext(responses = {}, metadata = {}) {
     const selectedPainPoints = [];
@@ -1363,7 +1363,7 @@ Generate a comprehensive JSON executive report matching this exact schema:
   }
 
   /**
-   * AI-generate bespoke Draw.io XML Architecture Diagrams using Gemini 3.8 Flash
+   * AI-generate bespoke Draw.io XML Architecture Diagrams using Gemini 2.5 Flash
    */
   async generateArchitectureDiagramsWithGemini(framework = {}, responses = {}, scores = {}, metadata = {}, customInstructions = '') {
     // Handle both object-argument calling pattern and positional calling pattern
@@ -1376,7 +1376,7 @@ Generate a comprehensive JSON executive report matching this exact schema:
       customInstructions = opts.customInstructions || '';
     }
 
-    console.log(`🤖 [Gemini 3.8 Flash] Generating bespoke Architecture Diagrams for: ${metadata.customerName || 'Enterprise Client'} (${framework?.title || 'Enterprise Architecture'})...`);
+    console.log(`🤖 [Gemini 2.5 Flash] Generating bespoke Architecture Diagrams for: ${metadata.customerName || 'Enterprise Client'} (${framework?.title || 'Enterprise Architecture'})...`);
 
     // Extract pain points, notes, comments and detect technologies
     const extractor = (this && typeof this._extractArchitectureContext === 'function') 
@@ -1433,7 +1433,7 @@ CRITICAL QUESTIONNAIRE DYNAMIC ADAPTATION & LOGO/ICON MANDATE:
 
 - In TARGET STATE Diagram (STRICTLY 100% GOOGLE CLOUD / GCP / GEMINI NATIVE):
   * You MUST modernize that exact legacy stack into native Google Cloud architecture:
-    - Core Foundation AI: Google Vertex AI Gemini 3.8 Flash / 3.1 Pro (<img src="https://api.iconify.design/logos:google-gemini.svg" width="24" height="24"/>) with 2M native context & Vertex AI Prompt Context Caching (75% token cost discount).
+    - Core Foundation AI: Google Vertex AI Gemini 2.5 Flash / 3.1 Pro (<img src="https://api.iconify.design/logos:google-gemini.svg" width="24" height="24"/>) with 2M native context & Vertex AI Prompt Context Caching (75% token cost discount).
     - Ingress & Compute: Google Cloud Run (<img src="https://api.iconify.design/logos:google-cloud-run.svg" width="24" height="24"/>) and GKE Autopilot (<img src="https://api.iconify.design/logos:kubernetes.svg" width="24" height="24"/>).
     - Agent Protocol: Standardized Model Context Protocol (MCP) tool mesh on Vertex AI Reasoning Engine.
     - Vector Search: Vertex AI Vector Search & BigQuery Vector Search (<img src="https://api.iconify.design/logos:google-cloud.svg" width="24" height="24"/>).
@@ -1525,7 +1525,7 @@ Generate a strictly valid JSON response matching this schema:
           transformations: grounded3Diagrams.transformations,
           diagramCount: 3,
           diagramEngine: 'nano-banana-2',
-          imageModel: 'gemini-3.1-flash-image-preview',
+          imageModel: 'gemini-2.5-flash-image',
           promptCanvasSource: true,
           grounded3StageCompiler: true,
           generatedAt: new Date().toISOString(),

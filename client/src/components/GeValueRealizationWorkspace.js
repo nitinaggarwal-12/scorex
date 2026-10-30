@@ -384,7 +384,7 @@ const GeValueRealizationWorkspace = () => {
         reader.readAsText(file);
       }
     });
-    toast.success(`Attached ${files.length} document/image artifact(s) for Model 1 (gemini-3.8-flash) grounded extraction`);
+    toast.success(`Attached ${files.length} document/image artifact(s) for Model 1 (gemini-2.5-flash) grounded extraction`);
   };
 
   // 1-Click attach realistic sample QBR PDF + Architecture Diagram Image + Buganizer IDs
@@ -431,7 +431,7 @@ const GeValueRealizationWorkspace = () => {
   const handleExtractGroundedAnswers = async () => {
     setExtractingSources(true);
     const toastId = toast.loading(
-      `🔍 Model 1 (gemini-3.8-flash): Extracting grounded answers & citations across 82 questions from ${uploadedDocuments.length} uploaded doc(s), Salesforce ID & Buganizer...`
+      `🔍 Model 1 (gemini-2.5-flash): Extracting grounded answers & citations across 82 questions from ${uploadedDocuments.length} uploaded doc(s), Salesforce ID & Buganizer...`
     );
     try {
       const targetSfdc = newAssessmentForm.sfdcAccountId || dossier.meta?.sfdcAccountId || selectedSfdcId || '';
@@ -763,7 +763,7 @@ const GeValueRealizationWorkspace = () => {
   const handleSubmitAndGenerateGeminiReport = async () => {
     setGeneratingGeminiReport(true);
     const toastId = toast.loading(
-      `🧠 Running 3-Stage Chained Gemini Pipeline (Model 1: gemini-3.8-flash Extractor → Model 2: gemini-3.1-pro-preview Synthesizer → Model 3: google-omni-1.1 Judge) for ${dossier.meta?.customerName}...`
+      `🧠 Running 3-Stage Chained Gemini Pipeline (Model 1: gemini-2.5-flash Extractor → Model 2: gemini-2.5-pro Synthesizer → Model 3: gemini-2.5-pro Judge) for ${dossier.meta?.customerName}...`
     );
     try {
       const payloadDossier = {
@@ -784,7 +784,7 @@ const GeValueRealizationWorkspace = () => {
         setPrimaryView('report');
         fetchSavedAssessmentsList();
         toast.success(
-          `✨ 3-Model Chain (${res.data.geminiReport?.modelUsed || 'gemini-3.8-flash → gemini-3.1-pro-preview → google-omni-1.1'}) synthesized & verified Executive Report for ${res.data.dossier.meta?.customerName}!`,
+          `✨ 3-Model Chain (${res.data.geminiReport?.modelUsed || 'gemini-2.5-flash → gemini-2.5-pro → gemini-2.5-pro'}) synthesized & verified Executive Report for ${res.data.dossier.meta?.customerName}!`,
           { id: toastId, duration: 5500 }
         );
       } else {
@@ -1825,7 +1825,7 @@ const GeValueRealizationWorkspace = () => {
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
                   <span style={{ background: '#0284c7', color: '#ffffff', fontSize: '0.68rem', fontWeight: 900, padding: '3px 10px', borderRadius: '999px', textTransform: 'uppercase' }}>
-                    📎 Multimodal Evidence & Citation Extractor (Model 1: gemini-3.8-flash)
+                    📎 Multimodal Evidence & Citation Extractor (Model 1: gemini-2.5-flash)
                   </span>
                   <span style={{ fontSize: '0.73rem', color: '#0369a1', fontWeight: 700 }}>
                     Upload PDFs, Word/Excel Docs, or Images + Enter Salesforce Account ID & Buganizer Issue IDs (`b/...`) → Extracts Grounded Answers & Citations for All 82 Questions
@@ -4568,7 +4568,7 @@ const GeValueRealizationWorkspace = () => {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', marginBottom: '12px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                     <span style={{ background: '#0284c7', color: '#ffffff', fontSize: '0.7rem', fontWeight: 900, padding: '3px 10px', borderRadius: '999px', textTransform: 'uppercase' }}>
-                      ✨ 3-Model Grounded AI Synthesis ({dossier.geminiReport.modelUsed || 'gemini-3.8-flash + gemini-3.8-pro'})
+                      ✨ 3-Model Grounded AI Synthesis ({dossier.geminiReport.modelUsed || 'gemini-2.5-flash + gemini-2.5-pro'})
                     </span>
                     <span style={{ fontSize: '0.74rem', color: '#1e3a8a', fontFamily: 'monospace' }}>
                       Synthesized from {dossier.geminiReport.questionCountSubmitted || GE_QUESTIONS.length} Questions ({dossier.geminiReport.manualAnswerCount || 0} Manual • {dossier.geminiReport.aiFilledCount || 0} AI-Extracted) • {dossier.geminiReport.generatedAt?.slice(0, 19).replace('T', ' ')} UTC
@@ -4596,17 +4596,17 @@ const GeValueRealizationWorkspace = () => {
                   {(dossier.geminiReport.modelPipeline || [
                     {
                       stage: 'Model 1: Multimodal Evidence & Citation Extractor',
-                      model: 'gemini-3.8-flash',
+                      model: 'gemini-2.5-flash',
                       role: 'Ingests uploaded PDFs, images, spreadsheets, Salesforce (SFDC), & Buganizer tickets; fills unanswered questions with citations'
                     },
                     {
                       stage: 'Model 2: Deterministic Actuarial & 5-Gate Validator',
-                      model: 'gemini-3.8-pro',
+                      model: 'gemini-2.5-pro',
                       role: 'Enforces 100% math accuracy across 5 Benefit Columns, 6-Stage Effort Matrix, and 5 Release Gates (Zero Hallucination)'
                     },
                     {
                       stage: 'Model 3: Executive Readout & Citation Synthesizer',
-                      model: 'gemini-3.8-pro',
+                      model: 'gemini-2.5-pro',
                       role: 'Synthesizes Executive Minto Pyramid SCR, CFO Audit Opinion, and Grounded Citation Index'
                     }
                   ]).map((mStage, idx) => (

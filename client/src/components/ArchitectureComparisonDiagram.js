@@ -521,7 +521,7 @@ class DiagramErrorBoundary extends React.Component {
             Architecture Diagram Rendering Notice
           </div>
           <p style={{ fontSize: '0.85rem', color: '#475569', maxWidth: '480px', margin: 0 }}>
-            The graph canvas encountered a parsing anomaly. You can trigger an instant AI auto-heal regeneration with Nano Banana 2 (gemini-3.1-flash-image-preview).
+            The graph canvas encountered a parsing anomaly. You can trigger an instant AI auto-heal regeneration with Nano Banana 2 (gemini-2.5-flash-image).
           </p>
           <button
             onClick={() => {
@@ -958,7 +958,7 @@ const ArchitectureComparisonDiagram = ({
     }
 
     setIsGenerating(true);
-    const toastId = toast.loading('Calling Nano Banana 2 (nano-banana-2 / gemini-3.1-flash-image-preview) to synthesize architecture diagrams...');
+    const toastId = toast.loading('Calling Nano Banana 2 (nano-banana-2 / gemini-2.5-flash-image) to synthesize architecture diagrams...');
 
     try {
       const res = await dynamicAssessmentService.generateArchitectureDiagrams(instanceId, customPrompt);
@@ -1147,14 +1147,14 @@ const ArchitectureComparisonDiagram = ({
           { name: '2. Compute & Cluster Sizing', tag: 'Elastic Serverless', icon: <FiZap color="#10b981" />, items: ['GKE Autopilot & Cloud Run scale-to-zero compute', 'Automated 15-minute idle cluster termination', 'Continuous rightsizing recommendations in CI/CD'] },
           { name: '3. Commitment Portfolio', tag: '80%+ CUD Optimization', icon: <FiRepeat color="#10b981" />, items: ['Centralized flexible Committed Use Discounts', 'Automated slot reservation autoscaling', '42% blended compute rate reduction'] },
           { name: '4. Storage & Query Tiering', tag: 'Partitioned & Autoclass', icon: <FiDatabase color="#10b981" />, items: ['GCS Autoclass lifecycle tiering (Standard → Archive)', 'Mandatory partition/cluster keys & BI Engine caching', 'Query cost guards and slot governance'] },
-          { name: '5. AI & LLM Token FinOps', tag: '75% Cached Savings', icon: <HiSparkles color="#10b981" />, items: ['Semantic router: Gemini 3.8 Flash vs 3.1 Pro', 'Vertex AI Context Caching (75% input token discount)', 'Per-department token budgets & rate governors'] },
+          { name: '5. AI & LLM Token FinOps', tag: '75% Cached Savings', icon: <HiSparkles color="#10b981" />, items: ['Semantic router: Gemini 2.5 Flash vs 3.1 Pro', 'Vertex AI Context Caching (75% input token discount)', 'Per-department token budgets & rate governors'] },
           { name: '6. FinOps Governance & CoE', tag: 'Autonomous Unit Economics', icon: <FiShield color="#10b981" />, items: ['Real-time ML spend anomaly detection & Slack alerts', 'Unit-economics telemetry tied to revenue', 'FinOps-certified engineering sprint gates'] }
         ],
         processFlowSteps: [
           { step: 'STEP 1', badge: '⚠️ Untagged Spend', title: 'Multi-Cloud Billing Ingress', legacy: 'Fragmented account bills, 40% untagged shared infrastructure, manual finance reconciliation.', target: 'Mandatory Terraform label policies + real-time BigQuery billing telemetry.' },
           { step: 'STEP 2', badge: '⚠️ Idle Compute', title: 'Workload Provisioning & Sizing', legacy: 'Static peak-sized VMs and clusters running 24/7 without auto-suspend.', target: 'Serverless scale-to-zero compute + automated rightsizing & CUD coverage.' },
           { step: 'STEP 3', badge: '⚠️ Scan Spikes', title: 'Analytical Query & Storage Execution', legacy: 'Unbounded full-table scans and hot storage retention on historical datasets.', target: 'Partitioned Iceberg/BigQuery tables + BI Engine caching & slot autoscaling.' },
-          { step: 'STEP 4', badge: '⚠️ Token Burn', title: 'GenAI Inference & Prompt Routing', legacy: '100% uncached frontier LLM calls for routine tasks without quota circuit breakers.', target: 'Gemini 3.8 Flash tiered routing + Vertex AI Context Caching (75% savings).' },
+          { step: 'STEP 4', badge: '⚠️ Token Burn', title: 'GenAI Inference & Prompt Routing', legacy: '100% uncached frontier LLM calls for routine tasks without quota circuit breakers.', target: 'Gemini 2.5 Flash tiered routing + Vertex AI Context Caching (75% savings).' },
           { step: 'STEP 5', badge: '⚠️ Invoice Shock', title: 'Unit Economics & Anomaly Governance', legacy: 'End-of-month budget overruns discovered weeks after deployment.', target: 'Real-time autonomous anomaly alerts + per-product unit cost dashboards.' }
         ]
       };
@@ -1318,11 +1318,11 @@ const ArchitectureComparisonDiagram = ({
             <Title>
               Google Cloud Reference Architecture: Current Estate → Migration Waves → Google Cloud Target
               <GeminiBadge>
-                <SiGooglecloud /> NANO BANANA 2 (NANO-BANANA-2 • GEMINI-3.1-FLASH-IMAGE-PREVIEW)
+                <SiGooglecloud /> NANO BANANA 2 (NANO-BANANA-2 • gemini-2.5-flash-image)
               </GeminiBadge>
             </Title>
             <Subtitle>
-              End-to-end Google Cloud reference architecture synthesized by <strong>Nano Banana 2</strong> (<code>nano-banana-2</code> / <code>gemini-3.1-flash-image-preview</code>) &amp; PromptCanvas for <strong>{activeFrameworkTitle}</strong>: the Current Estate across six architectural tiers (L1 Channels → L6 Zero-Trust), the Wave 1–2 migration plan, and the Google Cloud Target pipeline (Ingest → Store → Govern → Serve → Operate) with numbered data-flow steps in one canvas.
+              End-to-end Google Cloud reference architecture synthesized by <strong>Nano Banana 2</strong> (<code>nano-banana-2</code> / <code>gemini-2.5-flash-image</code>) &amp; PromptCanvas for <strong>{activeFrameworkTitle}</strong>: the Current Estate across six architectural tiers (L1 Channels → L6 Zero-Trust), the Wave 1–2 migration plan, and the Google Cloud Target pipeline (Ingest → Store → Govern → Serve → Operate) with numbered data-flow steps in one canvas.
             </Subtitle>
           </div>
         </TitleBlock>
@@ -1607,7 +1607,7 @@ const ArchitectureComparisonDiagram = ({
                   padding: '2px 8px',
                   borderRadius: '999px'
                 }}>
-                  🍌 Nano Banana 2 • gemini-3.1-flash-image-preview
+                  🍌 Nano Banana 2 • gemini-2.5-flash-image
                 </span>
               </div>
               <div style={{ fontSize: '0.82rem', color: '#64748B', marginTop: '3px' }}>
@@ -1779,7 +1779,7 @@ const ArchitectureComparisonDiagram = ({
               </ModalHeader>
 
               <p style={{ fontSize: '0.84rem', color: '#64748b', margin: '0 0 12px 0' }}>
-                Specify any custom technology stack, cloud provider, or domain requirements. Nano Banana 2 (gemini-3.1-flash-image-preview) will synthesize complete, tailored Draw.io XML models across Current Estate, Migration Waves, and Google Cloud Target.
+                Specify any custom technology stack, cloud provider, or domain requirements. Nano Banana 2 (gemini-2.5-flash-image) will synthesize complete, tailored Draw.io XML models across Current Estate, Migration Waves, and Google Cloud Target.
               </p>
 
               <PromptChips>

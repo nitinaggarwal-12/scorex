@@ -407,7 +407,7 @@ class AudioNarrationService {
   }
 
   /**
-   * 🎬 Google Omni 1.1 (google-omni-1.1 / gemini-omni-1.1-flash) SSML Audio Storytelling Director:
+   * 🎬 Google Omni 1.1 (gemini-2.5-pro / gemini-2.5-flash) SSML Audio Storytelling Director:
    * Generates a 5-Act theatrical script grounded in the exact assessment framework, scores, and recommendations.
    */
   async buildDirectorScript(instance, report, style = 'storyteller', persona = 'jonathan') {
@@ -427,7 +427,7 @@ class AudioNarrationService {
       {
         act: 'Act I',
         chapterTitle: 'The Landscape',
-        storyEngine: 'google-omni-1.1',
+        storyEngine: 'gemini-2.5-pro',
         text: `Picture this... In an era where architectural precision defines market leadership, the executive team at ${customer} embarked on a decisive mission: to benchmark and transform their capabilities across ${ctx.framework}.`,
         ssml: `<speak>
           <prosody rate="92%" pitch="-1st">
@@ -441,7 +441,7 @@ class AudioNarrationService {
       {
         act: 'Act II',
         chapterTitle: 'The Conflict',
-        storyEngine: 'google-omni-1.1',
+        storyEngine: 'gemini-2.5-pro',
         text: this.naturalizeTextForSpeech(ctx.conflictText),
         ssml: `<speak>
           <prosody rate="94%" pitch="-2st">
@@ -452,7 +452,7 @@ class AudioNarrationService {
       {
         act: 'Act III',
         chapterTitle: 'The Epiphany',
-        storyEngine: 'google-omni-1.1',
+        storyEngine: 'gemini-2.5-pro',
         text: `Then came the moment of clarity... Powered by Google Omni one point one, our comprehensive diagnostic evaluated ${customer} at ${scoreDisplay}, placing the organization in the ${stage} tier. ${summary}`,
         ssml: `<speak>
           <prosody rate="96%" pitch="+0st">
@@ -466,7 +466,7 @@ class AudioNarrationService {
       {
         act: 'Act IV',
         chapterTitle: 'The Awakening',
-        storyEngine: 'google-omni-1.1',
+        storyEngine: 'gemini-2.5-pro',
         text: this.naturalizeTextForSpeech(ctx.awakeningText),
         ssml: `<speak>
           <prosody rate="102%" pitch="+1st">
@@ -477,7 +477,7 @@ class AudioNarrationService {
       {
         act: 'Act V',
         chapterTitle: 'The Horizon',
-        storyEngine: 'google-omni-1.1',
+        storyEngine: 'gemini-2.5-pro',
         text: `The path forward is clear... ${recs.length > 0 ? recs.map((r, i) => `Priority ${i + 1}: ${r}.`).join(' ') : `Prioritize immediate hardening of ${ctx.weakestDim}.`} The Nano Banana two blueprint is illuminated. The horizon is yours to claim. Chapter One begins today.`,
         ssml: `<speak>
           <prosody rate="93%" pitch="-1st">
@@ -508,7 +508,7 @@ class AudioNarrationService {
         chapterTitle: 'The Opening Exchange',
         speaker: 'Jonathan (Chief Architect)',
         persona: 'jonathan',
-        storyEngine: 'google-omni-1.1',
+        storyEngine: 'gemini-2.5-pro',
         text: `Welcome to the Google Omni 1.1 executive briefing for ${customer}. Today, we're unpacking their ${ctx.framework} assessment. Victoria, looking across their telemetry, where is the strongest foundation and where is the friction?`
       },
       {
@@ -516,7 +516,7 @@ class AudioNarrationService {
         chapterTitle: 'The Hidden Gaps',
         speaker: 'Victoria (Strategy Partner)',
         persona: 'victoria',
-        storyEngine: 'google-omni-1.1',
+        storyEngine: 'gemini-2.5-pro',
         text: `Thanks Jonathan. Their standout strength is ${ctx.strongestDim}, which gives them a real launchpad. However, ${ctx.weakestDim} is currently acting as the primary bottleneck holding back end-to-end velocity.`
       },
       {
@@ -524,7 +524,7 @@ class AudioNarrationService {
         chapterTitle: 'The Audit Score',
         speaker: 'Jonathan (Chief Architect)',
         persona: 'jonathan',
-        storyEngine: 'google-omni-1.1',
+        storyEngine: 'gemini-2.5-pro',
         text: `Exactly. Our diagnostic establishes ${customer}'s composite maturity at ${scoreDisplay}, placing them in the ${stage} tier for ${ctx.framework}. Every score traces directly to verified assessment inputs.`
       },
       {
@@ -532,7 +532,7 @@ class AudioNarrationService {
         chapterTitle: 'The Modernization Payoff',
         speaker: 'Victoria (Strategy Partner)',
         persona: 'victoria',
-        storyEngine: 'google-omni-1.1',
+        storyEngine: 'gemini-2.5-pro',
         text: `${this.naturalizeTextForSpeech(ctx.awakeningText)}`
       },
       {
@@ -540,7 +540,7 @@ class AudioNarrationService {
         chapterTitle: 'The Executive Call to Action',
         speaker: 'Jonathan (Chief Architect)',
         persona: 'jonathan',
-        storyEngine: 'google-omni-1.1',
+        storyEngine: 'gemini-2.5-pro',
         text: `With the Nano Banana 2 target architecture and phased roadmap locked in, Phase One begins with remediating ${ctx.weakestDim}. Let's execute.`
       }
     ];
@@ -761,21 +761,21 @@ class AudioNarrationService {
     }
 
     const modelsToTry = [
-      'gemini-3.8-flash-tts',
-      'gemini-3.8-flash-lite-tts',
-      'google-omni-1.1',
-      'gemini-omni-1.1-flash',
+      'gemini-2.5-flash-preview-tts',
+      'gemini-2.5-flash-preview-tts',
+      'gemini-2.5-pro',
+      'gemini-2.5-flash',
       'lyria-3.5',
-      'gemini-3.1-flash-tts-preview',
-      'gemini-3.8-flash-live-preview',
-      'gemini-3.1-flash-live-preview',
-      'gemini-3.8-flash'
+      'gemini-2.5-flash-preview-tts',
+      'gemini-2.5-flash',
+      'gemini-2.5-flash',
+      'gemini-2.5-flash'
     ];
 
     let lastError = null;
     for (const modelName of modelsToTry) {
       try {
-        // Breaking Change 2C Guard: gemini-3.8-flash-tts / lite-tts treats `contents` strictly as a
+        // Breaking Change 2C Guard: gemini-2.5-flash-preview-tts / lite-tts treats `contents` strictly as a
         // verbatim transcript and will speak stage directions aloud unless separated from `text`.
         const isVerbatimTtsModel = modelName.includes('3.8-flash') && modelName.includes('tts');
         const ttsContents = isVerbatimTtsModel

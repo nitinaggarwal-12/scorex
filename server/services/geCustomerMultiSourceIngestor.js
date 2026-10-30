@@ -4025,9 +4025,9 @@ async function extractGroundedAnswersFromMultimodalSources(options = {}) {
     baseDossier.ingestionAudit = sfdcSeededDossier.ingestionAudit;
   }
 
-  // Optional live Gemini Multimodal Extraction pass (Model 1: gemini-3.8-flash / gemini-3.1-pro-preview Vision)
+  // Optional live Gemini Multimodal Extraction pass (Model 1: gemini-2.5-flash / gemini-2.5-pro Vision)
   let geminiExtractedMap = {};
-  let extractorModelUsed = 'gemini-3.8-flash';
+  let extractorModelUsed = 'gemini-2.5-flash';
   if (geminiService.isAvailable() && (cleanDocs.length > 0 || parsedBuganizerList.length > 0 || sanitizedOtherSources)) {
     try {
       const docSummaries = cleanDocs.map((d, i) =>
@@ -4065,7 +4065,7 @@ Abstain on any question not supported by the sources. Return ONLY valid JSON:
 }`;
       const aiRes = await geminiService.generateJSON(
         extractionPrompt,
-        'You are Model 1 (gemini-3.8-flash Multimodal Evidence Extractor). Extract only verifiable facts with exact citations. Never guess.',
+        'You are Model 1 (gemini-2.5-flash Multimodal Evidence Extractor). Extract only verifiable facts with exact citations. Never guess.',
         0.2
       );
       if (aiRes && aiRes.extractedAnswers) {
@@ -4219,9 +4219,9 @@ Abstain on any question not supported by the sources. Return ONLY valid JSON:
 
 /**
  * Executes the 3-Stage Chained Gemini Pipeline (Model 1 -> Model 2 -> Model 3):
- * - Model 1 (gemini-3.8-flash / gemini-omni-1.1-flash): Multimodal Evidence Extractor, Entity Lock & Grounding Ledger Builder
- * - Model 2 (gemini-3.1-pro-preview): Deep Reasoning Quantitative & Executive Report Synthesizer
- * - Model 3 (google-omni-1.1): Independent Truthfulness, Completeness & Hallucination Judge (strictly excluding Models 1 & 2)
+ * - Model 1 (gemini-2.5-flash / gemini-2.5-flash): Multimodal Evidence Extractor, Entity Lock & Grounding Ledger Builder
+ * - Model 2 (gemini-2.5-pro): Deep Reasoning Quantitative & Executive Report Synthesizer
+ * - Model 3 (gemini-2.5-pro): Independent Truthfulness, Completeness & Hallucination Judge (strictly excluding Models 1 & 2)
  */
 async function generateGeminiAssessmentReport(dossierInput = {}) {
   let dossier = dossierInput;
@@ -4258,10 +4258,10 @@ async function generateGeminiAssessmentReport(dossierInput = {}) {
 
   // =========================================================================
   // STAGE 1 — MODEL 1: MULTIMODAL EVIDENCE EXTRACTOR & GROUNDING LEDGER
-  // Model: gemini-3.8-flash (Tier 3 Fast Classifier / Multimodal Extractor)
+  // Model: gemini-2.5-flash (Tier 3 Fast Classifier / Multimodal Extractor)
   // =========================================================================
   const stage1StartedAt = new Date().toISOString();
-  const model1Name = 'gemini-3.8-flash';
+  const model1Name = 'gemini-2.5-flash';
   const groundedFacts = [];
   let totalCitationsCount = 0;
   let answeredCount = 0;
@@ -4336,11 +4336,11 @@ async function generateGeminiAssessmentReport(dossierInput = {}) {
 
   // =========================================================================
   // STAGE 2 — MODEL 2: DEEP REASONING QUANTITATIVE & EXECUTIVE SYNTHESIZER
-  // Model: gemini-3.1-pro-preview (Tier 2 Deep Reasoning Synthesizer)
+  // Model: gemini-2.5-pro (Tier 2 Deep Reasoning Synthesizer)
   // Receives Stage 1 Evidence Ledger + Deterministic 3-Column CFO Engine Output
   // =========================================================================
   const stage2StartedAt = new Date().toISOString();
-  const model2Name = 'gemini-3.1-pro-preview';
+  const model2Name = 'gemini-2.5-pro';
 
   const systemInstruction = `You are Model 2 (${model2Name} — Deep Reasoning Quantitative & Executive Report Synthesizer) in a 3-stage Gemini pipeline.
 You receive the Stage 1 Grounded Evidence Ledger from Model 1 (${model1Name}) and the deterministic 3-Column CFO Financial Engine evaluation.
@@ -4598,11 +4598,11 @@ Return ONLY valid JSON with this exact schema (include inline [Citation: ...] ta
 
   // =========================================================================
   // STAGE 3 — MODEL 3: INDEPENDENT TRUTHFULNESS, COMPLETENESS & CITATION JUDGE
-  // Model: google-omni-1.1 (Tier 1 Statutory & Multimodal Judge — excludes Models 1 & 2)
+  // Model: gemini-2.5-pro (Tier 1 Statutory & Multimodal Judge — excludes Models 1 & 2)
   // Receives Stage 1 Evidence Ledger + Stage 2 Draft Report -> Audits 5 Pillars
   // =========================================================================
   const stage3StartedAt = new Date().toISOString();
-  const model3Name = 'google-omni-1.1';
+  const model3Name = 'gemini-2.5-pro';
   let llmJudgeAudit = null;
   if (forceMode !== 'static') {
     try {
@@ -4610,7 +4610,7 @@ Return ONLY valid JSON with this exact schema (include inline [Citation: ...] ta
         engineName: 'GE Value Realization Engine (82-Question 3-Model Chain)',
         generatorModel: model2Name,
         preferredJudgeModel: model3Name,
-        secondaryJudgeModel: 'gemini-3.1-pro-preview',
+        secondaryJudgeModel: 'gemini-2.5-pro',
         customerName: meta.customerName || 'Enterprise Customer',
         inputFacts: {
           sfdcAccountId: meta.sfdcAccountId || meta.vectorAccountId,
@@ -4650,7 +4650,7 @@ Return ONLY valid JSON with this exact schema (include inline [Citation: ...] ta
         stage: 1,
         name: 'Multimodal Evidence Extractor & Grounding Router',
         model: model1Name,
-        wireModel: stage1UsedLiveApi ? 'gemini-3.1-pro-preview (Vertex AI Global REST)' : 'Deterministic Multimodal Regex & Schema Parser',
+        wireModel: stage1UsedLiveApi ? 'gemini-2.5-pro (Vertex AI Global REST)' : 'Deterministic Multimodal Regex & Schema Parser',
         tier: 'Tier 3 Fast Multimodal Classifier',
         executionMode: stage1UsedLiveApi ? 'LIVE_API_CALL' : 'STATIC_MANIPULATION',
         executionBadge: stage1UsedLiveApi ? '🟢 LIVE GEMINI API CALL' : '⚙️ STATIC / DETERMINISTIC MANIPULATION',
@@ -4670,7 +4670,7 @@ Return ONLY valid JSON with this exact schema (include inline [Citation: ...] ta
         stage: 2,
         name: 'Deep Reasoning Quantitative & Minto SCR Synthesizer',
         model: model2Name,
-        wireModel: stage2Telemetry?.wireModel || (stage2UsedLiveApi ? 'gemini-3.1-pro-preview' : 'Deterministic Minto SCR Template Engine'),
+        wireModel: stage2Telemetry?.wireModel || (stage2UsedLiveApi ? 'gemini-2.5-pro' : 'Deterministic Minto SCR Template Engine'),
         apiEndpoint: stage2Telemetry?.apiEndpoint || 'Local In-Memory Deterministic Synthesizer',
         tier: 'Tier 2 Deep Reasoning Pro',
         executionMode: stage2UsedLiveApi ? 'LIVE_API_CALL' : 'STATIC_MANIPULATION',
@@ -4693,7 +4693,7 @@ Return ONLY valid JSON with this exact schema (include inline [Citation: ...] ta
         stage: 3,
         name: 'Independent Truthfulness, Completeness & Hallucination Judge',
         model: llmJudgeAudit?.judgeModel || model3Name,
-        wireModel: llmJudgeAudit?.executionTelemetry?.wireModel || (stage3UsedLiveApi ? 'gemini-3.1-pro-preview' : 'Deterministic Statutory Rule Verifier'),
+        wireModel: llmJudgeAudit?.executionTelemetry?.wireModel || (stage3UsedLiveApi ? 'gemini-2.5-pro' : 'Deterministic Statutory Rule Verifier'),
         apiEndpoint: llmJudgeAudit?.executionTelemetry?.apiEndpoint || 'Local Statutory Rule Verifier',
         tier: 'Tier 1 Statutory & Multimodal Judge (Strictly Excludes Models 1 & 2)',
         executionMode: stage3UsedLiveApi ? 'LIVE_API_CALL' : 'STATIC_MANIPULATION',
@@ -4782,7 +4782,7 @@ Return ONLY valid JSON with this exact schema (include inline [Citation: ...] ta
       sectionTitle: 'Full Executive Readout Page (Release Gates, AI Synthesis, Exhibits 1, 1B, 2, 3, 4, 5)',
       modelId: `3-Model Chain (${model1Name} → ${model2Name} → ${model3Name}) + Deterministic CFO Actuarial Engine`,
       wireEndpoint: stage2UsedLiveApi
-        ? (stage2Telemetry?.apiEndpoint || 'https://aiplatform.googleapis.com/v1/.../models/gemini-3.1-pro-preview:generateContent')
+        ? (stage2Telemetry?.apiEndpoint || 'https://aiplatform.googleapis.com/v1/.../models/gemini-2.5-pro:generateContent')
         : 'server/services/geCustomerMultiSourceIngestor.js::generateGeminiAssessmentReport() (Static Fallback)',
       executionMode: stage2UsedLiveApi ? 'HYBRID_LIVE_API_AND_STATIC' : 'STATIC_MANIPULATION',
       executionBadge: stage2UsedLiveApi
@@ -4822,7 +4822,7 @@ Return ONLY valid JSON with this exact schema (include inline [Citation: ...] ta
       sectionTitle: 'Multimodal Evidence & Citation Extractor (PDF, Excel, Word, Images, SFDC, Buganizer)',
       modelId: model1Name,
       wireEndpoint: stage1UsedLiveApi
-        ? 'Vertex AI Multimodal Endpoint (gemini-3.1-pro-preview)'
+        ? 'Vertex AI Multimodal Endpoint (gemini-2.5-pro)'
         : 'server/services/geCustomerMultiSourceIngestor.js::extractGroundedAnswersFromMultimodalSources()',
       executionMode: stage1UsedLiveApi ? 'LIVE_API_CALL' : 'STATIC_MANIPULATION',
       executionBadge: stage1UsedLiveApi ? '🟢 LIVE GEMINI API CALL' : '⚙️ STATIC / DETERMINISTIC PARSER MANIPULATION',

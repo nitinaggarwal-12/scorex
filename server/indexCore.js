@@ -1333,7 +1333,7 @@ app.post('/api/assessment/:id/submit', async (req, res) => {
       }
     });
 
-    // 3. Asynchronously trigger live Gemini 3.8 Flash AI report & blueprint generation in the background
+    // 3. Asynchronously trigger live Gemini 2.5 Flash AI report & blueprint generation in the background
     (async () => {
       try {
         const dynamicEngine = require('./services/dynamicAssessmentEngine');
@@ -3581,7 +3581,7 @@ app.get('/api/assessment/:id/pillar/:pillarId/results', requireAuth, async (req,
       pillarId,
       generatedAt: new Date().toISOString(),
       isPillarSpecific: true,
-      _engineType: geminiService.isReady() ? 'gemini-3.8-flash' : 'deterministic-rule-engine',
+      _engineType: geminiService.isReady() ? 'gemini-2.5-flash' : 'deterministic-rule-engine',
       _contentSource: geminiService.isReady() ? 'gemini-generated' : 'deterministic-rule-based'
     });
   } catch (error) {

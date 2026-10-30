@@ -14,7 +14,7 @@ Enterprise-grade platform for evaluating technical maturity, CFO value realizati
      - `agentic_ai_mesh_mcp_banking_readiness` (`inst_agentic_ai_mesh_mcp_banking_readiness_demo` — `Apex Global Banking & Wealth`): Agentic AI Mesh, A2A & MCP Banking Readiness
      - `edw_lakehouse_to_bigquery_modernization` (`inst_edw_lakehouse_to_bigquery_modernization_demo` — `Global Logistics Alliance`): EDW & Lakehouse to BigQuery Autonomous Modernization
      - `enterprise_ai_zero_trust_security` (`inst_enterprise_ai_zero_trust_security_demo` — `CyberShield Health & Life Sciences`): Enterprise AI Zero-Trust Security & Model Armor Governance
-   - **Infinite AI Custom Blueprint Generator (`/assessments/ai-generator`)**: Synthesize new domain-specific maturity rubrics in `< 2.5s` via `Gemini 3.8 Flash` (`gemini-3.8-flash`) and `Gemini 3.1 Pro` (`gemini-3.1-pro-preview`), protected by the 4-Category Conversational Non-Mutation Guard (`server/utils/conversationalIntentGuard.js`).
+   - **Infinite AI Custom Blueprint Generator (`/assessments/ai-generator`)**: Synthesize new domain-specific maturity rubrics in `< 2.5s` via `Gemini 2.5 Flash` (`gemini-2.5-flash`) and `Gemini 3.1 Pro` (`gemini-2.5-pro`), protected by the 4-Category Conversational Non-Mutation Guard (`server/utils/conversationalIntentGuard.js`).
    - **Multimodal Evidence & Template 05 3-Zone Architecture Compiler (`dynamicAssessmentDiagramCompiler.js` ↔ `template05DiagramCompiler.js`)**: Upload PDFs, architecture diagrams, or spreadsheets to auto-populate maturity scores, executive reports, and Draw.io / SVG 3-Zone architecture blueprints with 100% bijective 1-to-1 horizontal tier-to-bridge alignment (`L1 CHANNELS`..`L6 ZERO-TRUST`), 6/6 unique As-Is pain badges, domain-differentiated Left/Middle/Right/Bottom zones across all 6 canonical frameworks, unskewed composite score math, and zero `..` mid-word truncations across all 18 Stage 1/2/3 diagrams.
 
 2. **Engine 2 — Gemini Enterprise Value Realization Engine** (`/ge-value-realization`, `/ge-value-realization/:dossierId`, `/roi-calculator`, `/tco-calculator`, with `/value-realization` redirecting to `/ge-value-realization`)
@@ -27,7 +27,7 @@ Enterprise-grade platform for evaluating technical maturity, CFO value realizati
 
 3. **Engine 3 — EU AI Act Statutory Compliance Engine** (`/eu-ai-compliance`, `/eu-ai-compliance/:id`, `/eu-ai-act`, `/eu-ai-act/system/:id`)
    - **20 Statutory Questions & Risk Pyramid Classification**: Regulation (EU) 2024/1689 Article 5 (Prohibited Practices), Article 6 & Annex III (High-Risk AI Systems), Articles 9–15 (Risk Management, Data Governance, Human Oversight), Article 50 (Transparency), and Articles 51–55 (GPAI / Systemic Risk).
-   - **Annex IV Conformity Dossier Generator**: Pre-seeded with `EUAIA-2026-HR4902` (`TalentPulse HR Screening & Candidate Ranking AI`), featuring automated technical documentation, conformity checklists, and penalty exposure calculation via `Gemini 3.1 Pro` (`gemini-3.1-pro-preview`) and audited by `Google Omni 1.1` (`google-omni-1.1`).
+   - **Annex IV Conformity Dossier Generator**: Pre-seeded with `EUAIA-2026-HR4902` (`TalentPulse HR Screening & Candidate Ranking AI`), featuring automated technical documentation, conformity checklists, and penalty exposure calculation via `Gemini 3.1 Pro` (`gemini-2.5-pro`) and audited by `Google Omni 1.1` (`gemini-2.5-pro`).
 
 ---
 
@@ -35,11 +35,11 @@ Enterprise-grade platform for evaluating technical maturity, CFO value realizati
 
 | Tier | Role & Capability | Canonical Model IDs |
 | :--- | :--- | :--- |
-| **Tier 1** | **Master Orchestrator & Multimodal Forensic Judge** | `Google Omni 1.1` (`google-omni-1.1` / `gemini-omni-1.1-flash`) |
-| **Tier 2** | **Deep Reasoning, CFO Value Synthesis, Annex IV & Vision** | `Gemini 3.1 Pro` (`gemini-3.1-pro-preview` with `thinkingConfig` + `responseSchema`) |
-| **Tier 3** | **High-Throughput Classifier, Evidence Extraction & Blueprint Compiler** | `Gemini 3.8 Flash` (`gemini-3.8-flash` with Function Calling) |
-| **Tier 4** | **Real-Time Bidirectional & Sub-Second Copilot Streaming** | `Gemini Flash Live` (`gemini-3.1-flash-live-preview`) |
-| **Tier 5** | **Native DeepMind Multimodal Media, Embeddings & Enterprise Mesh** | `Google DeepMind Veo 3.1` (`veo-3.1-generate-preview`), `DeepMind Lyria 3.5` (`lyria-3.5` / `models/lyria-3-pro-preview`), `Google DeepMind Neural Audio` (`gemini-3.1-flash-tts-preview`), `Google DeepMind Imagen 3` (`gemini-3.1-flash-image-preview` / `models/imagen-3.0-generate-002`), `Gemini Embedding 001` & `Text Embedding 005` (`gemini-embedding-001` / `text-embedding-005`), `BigQuery Property Graphs (ISO GQL)`, `Google ADK Sidecar`, `Gemini Data Analytics API`, `Google Cloud Model Armor` |
+| **Tier 1** | **Master Orchestrator & Multimodal Forensic Judge** | `Google Omni 1.1` (`gemini-2.5-pro` / `gemini-2.5-flash`) |
+| **Tier 2** | **Deep Reasoning, CFO Value Synthesis, Annex IV & Vision** | `Gemini 3.1 Pro` (`gemini-2.5-pro` with `thinkingConfig` + `responseSchema`) |
+| **Tier 3** | **High-Throughput Classifier, Evidence Extraction & Blueprint Compiler** | `Gemini 2.5 Flash` (`gemini-2.5-flash` with Function Calling) |
+| **Tier 4** | **Real-Time Bidirectional & Sub-Second Copilot Streaming** | `Gemini Flash Live` (`gemini-2.5-flash`) |
+| **Tier 5** | **Native DeepMind Multimodal Media, Embeddings & Enterprise Mesh** | `Google DeepMind Veo 3.1` (`veo-3.0-generate-preview`), `DeepMind Lyria 3.5` (`lyria-3.5` / `models/lyria-realtime-exp`), `Google DeepMind Neural Audio` (`gemini-2.5-flash-preview-tts`), `Google DeepMind Imagen 3` (`gemini-2.5-flash-image` / `models/imagen-3.0-generate-002`), `Gemini Embedding 001` & `Text Embedding 005` (`gemini-embedding-001` / `text-embedding-005`), `BigQuery Property Graphs (ISO GQL)`, `Google ADK Sidecar`, `Gemini Data Analytics API`, `Google Cloud Model Armor` |
 
 ---
 

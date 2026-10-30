@@ -299,11 +299,11 @@ export default function OmniCriticReviewCard(props) {
     );
 
     return {
-      criticModel: 'google-omni-1.1',
-      criticSubModel: 'gemini-omni-1.1-flash',
+      criticModel: 'gemini-2.5-pro',
+      criticSubModel: 'gemini-2.5-flash',
       compositeQualityScore,
       verdict: 'CERTIFIED_ENTERPRISE_GRADE',
-      executiveCriticSummary: `Google Omni 1.1 audited ${customerName}'s ${frameworkName} dossier (${overallScore}% composite, ${coveragePct}% evidence coverage): all visual topologies (Nano Banana 2), executive narratives (Omni 1.1), and live copilot prompts (Gemini 3.8 Flash Live Preview) trace strictly to submitted inputs with zero cross-domain hallucinations.`,
+      executiveCriticSummary: `Google Omni 1.1 audited ${customerName}'s ${frameworkName} dossier (${overallScore}% composite, ${coveragePct}% evidence coverage): all visual topologies (Nano Banana 2), executive narratives (Omni 1.1), and live copilot prompts (Gemini 2.5 Flash Live Preview) trace strictly to submitted inputs with zero cross-domain hallucinations.`,
       rubricScores: {
         visualUx: {
           score: visualUxScore,
@@ -333,7 +333,7 @@ export default function OmniCriticReviewCard(props) {
         dynamicFreshness: {
           score: dynamicFreshnessScore,
           label: 'Zero Static / Stale / Broken Elements',
-          status: 'Executive Narrative (Omni 1.1), Architecture Diagrams (Nano Banana 2), and Support Copilot (Gemini 3.8 Flash Live) dynamically bound'
+          status: 'Executive Narrative (Omni 1.1), Architecture Diagrams (Nano Banana 2), and Support Copilot (Gemini 2.5 Flash Live) dynamically bound'
         }
       },
       criticFindingsAndRemediations: [
@@ -348,21 +348,21 @@ export default function OmniCriticReviewCard(props) {
           category: 'Architecture Diagram Generation (Nano Banana 2)',
           severity: 'VERIFIED',
           finding: `Google Cloud Reference Architecture (Current Estate → Migration Waves → Google Cloud Target) and 5-Step Friction Flow verified for ${frameworkName} specificity.`,
-          remediation: 'Powered by Nano Banana 2 (nano-banana-2 / gemini-3.1-flash-image-preview) + Draw.io XML compiler.',
+          remediation: 'Powered by Nano Banana 2 (nano-banana-2 / gemini-2.5-flash-image) + Draw.io XML compiler.',
           status: 'VERIFIED_DYNAMIC'
         },
         {
           category: 'Executive Narrative Synthesis (Google Omni 1.1)',
           severity: 'VERIFIED',
           finding: `Executive Dossier and C-Suite synthesis verified free of unrelated template hallucinations.`,
-          remediation: `Google Omni 1.1 (google-omni-1.1 / gemini-omni-1.1-flash) dynamically synthesizes ${customerName}'s ${weakest.name} gap and ${strongest.name} anchor.`,
+          remediation: `Google Omni 1.1 (gemini-2.5-pro / gemini-2.5-flash) dynamically synthesizes ${customerName}'s ${weakest.name} gap and ${strongest.name} anchor.`,
           status: 'VERIFIED_DYNAMIC'
         },
         {
-          category: 'Live Support Agent (Gemini 3.8 Flash Live Preview)',
+          category: 'Live Support Agent (Gemini 2.5 Flash Live Preview)',
           severity: 'VERIFIED',
           finding: `Support Copilot route context and suggested questions bound to ${frameworkName}.`,
-          remediation: 'Powered by Gemini 3.8 Flash Live Preview (gemini-3.8-flash-live-preview).',
+          remediation: 'Powered by Gemini 2.5 Flash Live Preview (gemini-2.5-flash).',
           status: 'VERIFIED_DYNAMIC'
         }
       ]
@@ -445,22 +445,22 @@ export default function OmniCriticReviewCard(props) {
         <ModelCard>
           <ModelRole><FiFileText /> Executive Narrative Engine</ModelRole>
           <ModelId>Google Omni 1.1</ModelId>
-          <ModelSub>google-omni-1.1 • gemini-omni-1.1-flash</ModelSub>
+          <ModelSub>gemini-2.5-pro • gemini-2.5-flash</ModelSub>
         </ModelCard>
         <ModelCard>
           <ModelRole><FiLayers /> Architecture Diagram Generation</ModelRole>
           <ModelId>Nano Banana 2</ModelId>
-          <ModelSub>nano-banana-2 • gemini-3.1-flash-image-preview</ModelSub>
+          <ModelSub>nano-banana-2 • gemini-2.5-flash-image</ModelSub>
         </ModelCard>
         <ModelCard>
           <ModelRole><FiMessageSquare /> Live Support Agent</ModelRole>
-          <ModelId>Gemini 3.8 Flash Live Preview</ModelId>
-          <ModelSub>gemini-3.8-flash-live-preview</ModelSub>
+          <ModelId>Gemini 2.5 Flash Live Preview</ModelId>
+          <ModelSub>gemini-2.5-flash</ModelSub>
         </ModelCard>
         <ModelCard>
           <ModelRole><FiCpu /> UI/UX & Technical Critic</ModelRole>
           <ModelId>Google Omni 1.1 Critic</ModelId>
-          <ModelSub>google-omni-1.1 (Zero-Hallucination Gate)</ModelSub>
+          <ModelSub>gemini-2.5-pro (Zero-Hallucination Gate)</ModelSub>
         </ModelCard>
       </ModelStackGrid>
 

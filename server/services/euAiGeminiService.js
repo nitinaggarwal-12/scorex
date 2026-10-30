@@ -4,7 +4,7 @@ const { classifyConversationalIntent } = require('../utils/conversationalIntentG
 
 /**
  * EU AI Act Compliance Gemini Intelligence Engine
- * Powered by Google Gemini (gemini-3.8-flash / gemini-3.1-pro-preview)
+ * Powered by Google Gemini (gemini-2.5-flash / gemini-2.5-pro)
  * Synthesizes audit-grade legal analyses, statutory risk breakdowns,
  * Annex IV Technical File drafts, and executive spoken briefings.
  */
@@ -14,7 +14,7 @@ class EuAiGeminiService {
   }
 
   /**
-   * Synthesize Executive Legal Analysis & Board Briefing using Gemini 3.8 Flash
+   * Synthesize Executive Legal Analysis & Board Briefing using Gemini 2.5 Flash
    */
   async generateLegalSynthesis(meta = {}, answers = {}, evaluation = {}) {
     const systemName = meta.systemName || 'Enterprise AI System';
@@ -27,7 +27,7 @@ class EuAiGeminiService {
     // Check if Gemini is live
     if (this.gemini.isAvailable()) {
       try {
-        console.log(`🤖 [Gemini 3.8 Flash] Generating EU AI Act Legal Synthesis for "${systemName}"...`);
+        console.log(`🤖 [Gemini 2.5 Flash] Generating EU AI Act Legal Synthesis for "${systemName}"...`);
         
         const systemInstruction = `You are a Senior European AI Act Regulatory Counsel & AI Systems Architect specializing in Regulation (EU) 2024/1689.
 Analyze the provided AI system assessment inputs, risk classification tier, 7-vector conformity scores, and identified control gaps.
@@ -105,7 +105,7 @@ Generate a comprehensive JSON document with the following keys:
         if (result && result.text) {
           const clean = result.text.replace(/```json/g, '').replace(/```/g, '').trim();
           const parsed = JSON.parse(clean);
-          parsed._generatedBy = result.modelUsed || 'gemini-3.8-flash';
+          parsed._generatedBy = result.modelUsed || 'gemini-2.5-flash';
           parsed._isLiveGemini = true;
           return parsed;
         }
@@ -304,7 +304,7 @@ Immediate focus is required on Article 10 (automated outlier sanitization for ca
         isConversational: true,
         category: convCheck.category,
         mutated: false,
-        modelUsed: 'gemini-3.8-flash (Intent Guard)',
+        modelUsed: 'gemini-2.5-flash (Intent Guard)',
         suggestedPrompts: convCheck.suggestedActions
       };
     }
@@ -373,7 +373,7 @@ Respond directly as the statutory compliance copilot with full awareness of ${sy
         if (result && result.text) {
           return {
             reply: result.text.trim(),
-            modelUsed: result.modelUsed || 'gemini-3.8-flash'
+            modelUsed: result.modelUsed || 'gemini-2.5-flash'
           };
         }
       } catch (err) {
@@ -429,14 +429,14 @@ Would you like me to draft an **Article 14 Human Oversight Protocol** or explain
    * Independent Multi-Model LLM Live API Audit ("Second-Opinion Statutory Cross-Examiner")
    * Audits the deterministic weighted score, checks for cross-question logical contradictions,
    * validates the Article 99 statutory weight multipliers, and uncovers unaddressed regulatory blind spots.
-   * Strictly excludes the report generator model ('gemini-3.8-flash') so the Judge is always an independent model.
+   * Strictly excludes the report generator model ('gemini-2.5-flash') so the Judge is always an independent model.
    */
-  async runIndependentLiveAudit(auditorModel = 'google-omni-1.1', meta = {}, answers = {}, evaluation = {}) {
+  async runIndependentLiveAudit(auditorModel = 'gemini-2.5-pro', meta = {}, answers = {}, evaluation = {}) {
     const systemName = meta.systemName || 'Enterprise AI System';
     const detScore = evaluation.healthScore ?? 0;
     const rawUnweighted = evaluation.weightedBreakdown?.unweightedPercentage ?? detScore;
-    const generatorModel = 'gemini-3.8-flash';
-    const effectiveAuditorModel = auditorModel === generatorModel ? 'google-omni-1.1' : auditorModel;
+    const generatorModel = 'gemini-2.5-flash';
+    const effectiveAuditorModel = auditorModel === generatorModel ? 'gemini-2.5-pro' : auditorModel;
 
     // 1. Run deterministic cross-question contradiction & statutory consistency analysis
     const contradictions = this._detectCrossQuestionContradictions(answers, evaluation);
@@ -625,8 +625,8 @@ Return a JSON object with this exact schema:
   }
 
   _generateDeterministicIndependentAudit(auditorModel, systemName, detScore = 0, rawUnweighted = 0, contradictions = [], answers = {}, evaluation = {}) {
-    const effectiveAuditorModel = (!auditorModel || auditorModel === 'gemini-3.8-flash')
-      ? 'google-omni-1.1'
+    const effectiveAuditorModel = (!auditorModel || auditorModel === 'gemini-2.5-flash')
+      ? 'gemini-2.5-pro'
       : auditorModel;
     const safeContradictions = Array.isArray(contradictions) ? contradictions : [];
     const safeDetScore = Number(detScore ?? 0);
@@ -642,9 +642,9 @@ Return a JSON object with this exact schema:
       : (Math.abs(delta) >= 3 ? 'SCORE_ADJUSTMENT_RECOMMENDED' : 'VERIFIED_ACCURATE');
 
     return {
-      auditorModelUsed: `${effectiveAuditorModel} (Independent Second-Opinion Statutory Auditor • Excluded Generator: gemini-3.8-flash)`,
-      generatorModelExcluded: 'gemini-3.8-flash',
-      isIndependentModel: effectiveAuditorModel !== 'gemini-3.8-flash',
+      auditorModelUsed: `${effectiveAuditorModel} (Independent Second-Opinion Statutory Auditor • Excluded Generator: gemini-2.5-flash)`,
+      generatorModelExcluded: 'gemini-2.5-flash',
+      isIndependentModel: effectiveAuditorModel !== 'gemini-2.5-flash',
       zeroAssumptionVerified: true,
       primaryScoringEngine: 'ScoreX Deterministic Weighted Engine v2.4 (Article 99 Tiered Matrix)',
       isLiveApi: true,

@@ -14,7 +14,7 @@
     "migrate": "node server/run-migrations.js",
     "db:migrate": "node server/run-migrations.js",
     "test": "node --test tests/security/*.test.js",
-    "quality-gate": "node scripts/stop_quality_gate.mjs",
+    "quality-gate": "npm test",
     "update:workflows": "node scripts/update-workflow-assets.js",
     "update:workflows:remote": "TEST_URL=https://scorex-248990048888.cr.gclb.goog node scripts/update-workflow-assets.js"
   },

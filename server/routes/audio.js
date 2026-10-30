@@ -109,8 +109,8 @@ router.post('/script', generationLimiter, async (req, res) => {
     const chapters = await audioNarrationService.buildDirectorScript(resolvedInstance, resolvedReport, style, persona);
     res.json({
       success: true,
-      scriptModel: 'google-omni-1.1',
-      wireModel: 'gemini-omni-1.1-flash',
+      scriptModel: 'gemini-2.5-pro',
+      wireModel: 'gemini-2.5-flash',
       chapters,
       script: Array.isArray(chapters) ? chapters.map((c) => c.script).join('\n\n') : ''
     });
@@ -136,8 +136,8 @@ router.post('/podcast-script', generationLimiter, async (req, res) => {
     const turns = await audioNarrationService.buildPodcastDialogueScript(resolvedInstance, resolvedReport);
     res.json({
       success: true,
-      scriptModel: 'google-omni-1.1',
-      wireModel: 'gemini-omni-1.1-flash',
+      scriptModel: 'gemini-2.5-pro',
+      wireModel: 'gemini-2.5-flash',
       turns
     });
   } catch (err) {

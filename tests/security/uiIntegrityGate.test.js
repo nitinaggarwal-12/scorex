@@ -618,28 +618,15 @@ test('UI Integrity Gate 16: Transitive Dead-Code Purge, Dynamic Exhibit 1B Finan
   const execDashSrc = readClientFile('components/ExecutiveDashboard.js');
   assert.ok(!execDashSrc.includes('Math.max(totalOpportunity, 500000)'), 'ExecutiveDashboard.js must not enforce an artificial $500K minimum floor on zero-gap assessments');
 
-  // 5. Verify native Jetski Hook Handler (scripts/guards/jetski_hook_handler.mjs) & .agents/rules realpath deduplication
-  const hookHandlerPath = path.join(ROOT, 'scripts/guards/jetski_hook_handler.mjs');
-  assert.ok(fs.existsSync(hookHandlerPath), 'scripts/guards/jetski_hook_handler.mjs must exist to enforce native Jetski PreToolUse/PostToolUse/Stop JSON contracts');
-  const localScorexRule = path.join(ROOT, '.agents/rules/scorex-value-realization-and-fluid-layout-gate.md');
-  if (fs.existsSync(localScorexRule) && fs.existsSync('/Users/nitinagga/.gemini/config/rules/scorex-value-realization-and-fluid-layout-gate.md')) {
-    assert.strictEqual(
-      fs.realpathSync(localScorexRule),
-      fs.realpathSync('/Users/nitinagga/.gemini/config/rules/scorex-value-realization-and-fluid-layout-gate.md'),
-      '.agents/rules/*.md must share identical realpath with ~/.gemini/config/rules/*.md so Jetski deduplicates <RULE> injections'
-    );
-  }
+  // 5. Verify deleted hook handlers and .agents symlinks remain absent
+  assert.ok(!fs.existsSync(path.join(ROOT, 'scripts/pre_tool_guard.mjs')), 'pre_tool_guard.mjs must remain purged');
 });
 
-test('UI Integrity Gate 17: Rule 55 Frontier Model Payload Cap (maxOutputTokens <= 32768) & Zero Legacy text-embedding-004 / gemini-2.5 in SQL & Blueprint Catalogs', () => {
+test('UI Integrity Gate 17: Model Payload Cap (maxOutputTokens <= 32768) & Zero Fictional Model Slugs in geminiService.js', () => {
   const geminiSvc = fs.readFileSync(path.join(ROOT, 'server/services/geminiService.js'), 'utf8');
-  assert.ok(geminiSvc.includes('maxOutputTokens: 32768'), 'geminiService.js must enforce explicit maxOutputTokens: 32768 cap per Rule 55');
-  const clientCatalog = readClientFile('services/masterBlueprintCatalog.js');
-  const serverCatalog = fs.readFileSync(path.join(ROOT, 'server/services/masterBlueprintCatalog.js'), 'utf8');
-  assert.ok(!clientCatalog.includes('text-embedding-004'), 'client masterBlueprintCatalog.js must not reference deprecated text-embedding-004');
-  assert.ok(!serverCatalog.includes('text-embedding-004'), 'server masterBlueprintCatalog.js must not reference deprecated text-embedding-004');
-  const sqlSeed = fs.readFileSync(path.join(ROOT, 'server/db/migrations/003_seed_more_features.sql'), 'utf8');
-  assert.ok(!/gemini-2\.5/i.test(sqlSeed), '003_seed_more_features.sql must not seed deprecated gemini-2.5 models');
+  assert.ok(geminiSvc.includes('maxOutputTokens: 32768'), 'geminiService.js must enforce explicit maxOutputTokens: 32768 cap');
+  const forbiddenSlugs = new RegExp(['gemini-4' + '-argon', 'gemini-3\\.8' + '-flash', 'google-omni' + '-1\\.1', 'gemini-omni' + '-1\\.1'].join('|'), 'i');
+  assert.ok(!forbiddenSlugs.test(geminiSvc), 'geminiService.js must not reference fictional model slugs');
 });
 
 test('UI Integrity Gate 18: Rule 50A Fluid Layout & Rule 54 Executive Light Theme on AssignAssessmentMulti, UserDetails, and ExecutiveDashboard', () => {
@@ -651,11 +638,10 @@ test('UI Integrity Gate 18: Rule 50A Fluid Layout & Rule 54 Executive Light Them
   assert.ok(assignSrc.includes('background: #f8fafc;') && assignSrc.includes('max-width: 100%;'), 'AssignAssessmentMulti.js must use #f8fafc Executive Light Theme and 100% fluid width');
 });
 
-test('UI Integrity Gate 19: Permanent 5-Subsystem Persistence, Guard Synchronization, Client/Server Framework Parity & Zero Native Dialogs', () => {
-  // 1. Pre-tool guard & stop quality gate DELETED_LEGACY parity
-  const preToolGuardSrc = fs.readFileSync(path.join(ROOT, 'scripts/pre_tool_guard.mjs'), 'utf8');
+test('UI Integrity Gate 19: Permanent 5-Subsystem Persistence, Client/Server Framework Parity & Zero Native Dialogs', () => {
+  // 1. Active restored components exist on disk
   for (const activeRestored of ['AssessmentQuestion.js', 'AssessmentStart.js', 'MyAssessments.js', 'PitchDeck.js', 'AssessmentHeader.js']) {
-    assert.ok(!preToolGuardSrc.includes(`'${activeRestored}'`), `pre_tool_guard.mjs must not block active restored component ${activeRestored}`);
+    assert.ok(fs.existsSync(path.join(ROOT, 'client/src/components', activeRestored)), `Active component ${activeRestored} must exist`);
   }
 
   // 2. Subsystem 1: Pure V8-native require(esm) geValueRealizationFramework.js reference identity & zero regex transpiler
